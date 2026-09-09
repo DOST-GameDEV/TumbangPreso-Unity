@@ -10,7 +10,8 @@
 
 1. **Exact Toon Shading & Outlines**: Characters require the custom `TumbangPreso/Toon` shader, `ToonSkin.PersonOutlineWidth` ink border, and two-band cel-shading.
 2. **Linear Color Space Accuracy**: Unity converts palette sRGB values to linear space (`c.linear`). External scripts bypass this, leading to washed-out or inaccurate colors.
-3. **Rig & 32 Animation Validation**: `PersonSwapProbe` validates that the mesh bounds and all 32 retargeted animation clips execute with 0 warnings/errors.
+3. **Rig & Animation Validation**: `PersonSwapProbe` validates that the mesh bounds are sane and that every clip the rig carries executes with 0 warnings/errors. ⚠️ **This line said "all 32" and the number had gone stale.** Clips are authored per character now, so the count differs per rig and moves with every animation session; `docs/TODO.md` § 151.20 found the same stale 32 written down in nine places. The probe asserts that no clip of the REFERENCE rig went missing, never that the counts match.
+4. **Motion is a separate question and needs a separate picture**: every probe listed here samples frame zero. `ClipMotionStrip` is the one that photographs a clip across its length. See section 3b.
 
 ---
 
@@ -52,7 +53,37 @@ Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Uni
 *Outputs Generated in `Logs/`:*
 - `Logs/person-swap-turnaround.png` (4-angle full body turnaround)
 - `Logs/cast_lineup.png` (full cast comparative lineup)
-- `Logs/person-swap-probe.png` (32 animation clips test sheet)
+- `Logs/person-swap-probe.png` (one posed cell per clip the rig carries)
+
+---
+
+### Step 3b: Render a clip ACROSS ITS LENGTH (`ClipMotionStrip`)
+
+> [!IMPORTANT]
+> **A TURNAROUND CANNOT APPROVE AN ANIMATION.** Every probe in step 3 poses the rig with
+> `clip.SampleAnimation(model, 0.0f)`, so it photographs the first frame and nothing else.
+> `docs/TODO.md` § 151.16 is the entry. Do not report a clip as visually verified from a
+> turnaround, a lineup or a Blender deformation sample; none of the three is a picture of the
+> motion in this game's camera, shader and outline.
+
+```powershell
+Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.ClipMotionStrip.Run -rig sean -clip slide -logFile Logs/motion.log" -Wait
+```
+
+Every argument is optional: `-rig <rosterId>`, `-clip <action>`, `-frames <n>`,
+`-times 0,0.14,0.25`, `-views side,quarter`. The defaults are Sean's retrieval slide.
+
+*Outputs:*
+- `Logs/motion/<rig>_<clip>_side_v<N>.png` and `..._quarter_v<N>.png`, auto-versioned so a
+  second run never overwrites the strip a review is being conducted against.
+- `Logs/motion/<rig>_<clip>.txt`, which carries the things a picture cannot answer: which name
+  the game's own fallback chain resolved and whether that was slot 0 or a fallback, the lowest
+  deformed vertex and reaching-hand height per pose in metres, the peak bone speed across a
+  trace sampled far finer than the strip, and the distance between the last frame and `idle`.
+
+⚠️ **The strip draws the floor at world y = 0 and darkens the band beneath it.** Floor
+penetration is the fault this exists to make obvious, and it is invisible in a render with no
+ground in it.
 
 ---
 

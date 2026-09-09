@@ -16,8 +16,10 @@ looked right and were not.
 python tools/build_person_voxel.py
 ```
 
-That reads a CC0 rig, keeps its skeleton and all 32 clips, replaces the mesh, and
-writes a `.glb` plus a palette `.tres`. Then:
+That reads a CC0 rig, keeps its skeleton and every clip it carries, replaces the mesh, and
+writes a `.glb` plus a palette `.tres`. ⚠️ **This said "all 32 clips" and the number had gone
+stale**: the pack really did ship 32, but clips are authored per character now, so what the
+tool preserves is whatever the source rig holds. `docs/TODO.md` § 151.20. Then:
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -quit -projectPath . -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.Build -logFile Logs/roster.log

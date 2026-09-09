@@ -55,14 +55,24 @@ namespace TumbangPreso.EditorTools
         /// deliberately a bald faceless mannequin**: that is what the file is, and a run that
         /// photographs hair or a face means the base rig has stopped being a base rig.
         ///
-        /// ⚠️ THE OLD MODEL IS THE CC0 RIG THE SKELETON AND ALL 32 CLIPS COME FROM, which is
-        /// what makes the height comparison meaningful. It is not the shape donor: the skull is
-        /// lifted off `character-male-d`.
+        /// ⚠️ THE OLD MODEL IS THE CC0 RIG THIS SKELETON AND ITS IMPORTED CLIP SET COME FROM,
+        /// which is what makes the height comparison meaningful. It is not the shape donor: the
+        /// skull is lifted off `character-male-d`.
+        /// ⚠️⚠️ **THIS SENTENCE SAID "ALL 32 CLIPS" AND THE NUMBER HAD GONE STALE.** The CC0 pack
+        /// really did ship 32, so that is correct as history and wrong as a statement about
+        /// either file today: this project authors clips per character now, and `docs/TODO.md`
+        /// § 151.20 found the same number written down in nine places. **Do not put a count
+        /// back.** It is 33 on twelve rigs, 33 on five team rigs and 36 on three, and it moves
+        /// again with every hero session in `ASTRA.md`.
+        ///
+        /// ⚠️ Both paths are public so the test that owns the superset rule names the same two
+        /// files this probe compares. `CLAUDE.md` § 5's drift rule: a path written twice is a
+        /// path that disagrees with itself eventually.
         /// </summary>
-        private const string NewModel =
+        public const string NewModel =
             "Assets/TumbangPreso/Art/characters/persons/team-custom-base.glb";
 
-        private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
+        public const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
         private const string RosterId = "custom_base";
         private const string ReportPath = "Logs/person-swap-probe.txt";
@@ -149,6 +159,40 @@ namespace TumbangPreso.EditorTools
 
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// Base-rig clips the rebuilt rig no longer has.
+        ///
+        /// ⚠️⚠️ THIS WAS AN EQUALITY TEST AND IT STARTED FAILING CORRECT RIGS THE DAY THIS
+        /// PROJECT BEGAN AUTHORING CLIPS PER CHARACTER. `docs/TODO.md` § 151.20: the check read
+        /// `clips.Count != oldClips.Count`, which was safe only while every rig in the game
+        /// carried the identical imported set. `team-custom-base` holds 51 now (the source set,
+        /// `slide`, and all eighteen hero casts, because a custom character borrows a whole hero
+        /// kit) against `character-female-a`'s 33, so the probe reported the clip set as not
+        /// having survived a rebuild that went perfectly.
+        ///
+        /// ⚠️⚠️ AND A RED PROBE ON A RIG THAT IS CORRECT IS § 124.11's FAULT, WHICH THIS
+        /// REPOSITORY HAS PAID FOR ALREADY: *"a green probe for a screen nobody can reach is
+        /// worse than a red one, and a red one for a screen that works teaches the next reader
+        /// to skim the results."* This probe owns `CheckAnimationBinds`, the only thing in the
+        /// repository that can catch a clip which imported perfectly and moves nothing, so
+        /// teaching anybody to skim it is expensive.
+        ///
+        /// ⚠️ THE ASSERTION IS A SUPERSET ONE BECAUSE THAT IS WHAT IT ALWAYS MEANT: the rebuilt
+        /// rig must not have LOST anything the base rig had. Extra authored actions are the
+        /// point of the work. The count is still reported BOTH ways at the call site so a
+        /// genuine loss reads at a glance rather than hiding inside a bigger number.
+        /// </summary>
+        public static string[] MissingBaseClips(IEnumerable<string> rebuilt, IEnumerable<string> baseRig)
+        {
+            var have = new HashSet<string>(rebuilt ?? Enumerable.Empty<string>());
+
+            return (baseRig ?? Enumerable.Empty<string>())
+                   .Where(name => !have.Contains(name))
+                   .Distinct()
+                   .OrderBy(name => name, System.StringComparer.Ordinal)
+                   .ToArray();
+        }
+
         private static bool CheckAsset(StringBuilder report)
         {
             report.AppendLine("-- asset");
@@ -172,11 +216,13 @@ namespace TumbangPreso.EditorTools
                                         .Where(c => !c.name.StartsWith("__preview"))
                                         .ToList();
 
-            report.AppendLine($"clips: {clips.Count} (base rig has {oldClips.Count})");
+            var lost = MissingBaseClips(clips.Select(c => c.name), oldClips.Select(c => c.name));
 
-            if (clips.Count != oldClips.Count)
+            report.AppendLine($"clips: {clips.Count} (base rig has {oldClips.Count}, {lost.Length} missing)");
+
+            if (lost.Length > 0)
             {
-                report.AppendLine("FAIL: the clip set did not survive the rebuild.");
+                report.AppendLine($"FAIL: the clip set did not survive the rebuild. Lost: {string.Join(", ", lost)}");
                 ok = false;
             }
 

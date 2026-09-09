@@ -148,18 +148,31 @@ Verify that Unity actually resolves the intended action instead of its fallback.
 
 ### Step 6: Render motion honestly
 
-Read the current verification guidance in the repo before claiming the animation was visually
-verified.
+⚠️⚠️ **THE MOTION STRIP HAS LANDED, 2026-09-09. USE IT.** `docs/TODO.md` § 151.16 is closed and
+`docs/CANONICAL_RENDERING_PIPELINE.md` step 3b has the full command and every argument:
 
-Existing frame-zero probes are not enough to prove motion.
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.ClipMotionStrip.Run -rig sean -clip slide -logFile Logs/motion.log
+```
 
-If a motion-strip/frame-strip probe has landed, use it.
+It writes two auto-versioned strips to `Logs/motion/` (side and three-quarter) plus a text
+report. **Read the report as well as the picture**, because three of the things a review has to
+catch are not visible in either strip:
 
-If it has not landed:
+* **which clip the GAME resolved.** The report says the slot. `CharacterAnimator`'s chains are
+  fallback chains, so a rig missing `slide` plays the lunge, looks like a dash, and logs
+  nothing. **Slot 0 or you are reviewing the wrong animation.**
+* **the peak bone speed and when.** The trace is sampled far finer than the strip, so a snap
+  between two photographed poses still shows up with a time attached.
+* **the distance between the last frame and `idle` frame 0**, which is whether it comes back.
 
-* do not build the `.cs` probe yourself
-* do not claim a bind-pose image verifies motion
-* state clearly that integration was checked but the motion itself was not photographed
+The strip draws the floor at world y = 0 and darkens the band beneath it, and every pose
+carries its lowest deformed vertex and its reaching-hand height in metres. **Negative is
+through the street.**
+
+Existing frame-zero probes are still not enough to prove motion: `HeroTurnaroundProbe`,
+`PersonSwapProbe` and the lineup all sample `0.0f`. Do not claim a bind-pose image, a cast
+lineup or a Blender deformation sample verifies a clip.
 
 ### Step 7: Commit and push
 
@@ -743,11 +756,23 @@ which is the check that the solver is a correction and not a rewrite.
 
 ### Remaining, before checking task 3
 
-* ⚠️⚠️ **NOTHING HAS PHOTOGRAPHED THE MOTION.** `docs/TODO.md` § 151.16 is still
-  open and still engineering's: every character probe in the repository samples
-  `clip.SampleAnimation(model, 0.0f)`. Blender deformation sampling is evidence that
-  the clip moves the mesh; it is not a picture of the clip in this game's camera,
-  shader and outline. Do not let the numbers above stand in for one.
+* ✅ **THE MOTION IS PHOTOGRAPHED NOW, 2026-09-09, AND NOBODY HAS JUDGED IT.**
+  `docs/TODO.md` § 151.16 is closed: `ClipMotionStrip` shoots nine poses across the
+  0.95 s clip through the game's camera, toon shader and ink outline, with the floor
+  drawn at y = 0. **Sean's `slide` resolves at SLOT 0**, its own authored clip rather
+  than the `attack-kick-right` lunge fallback. Evidence:
+  `docs/reports/motion/sean_slide_side_v1.png` and `..._quarter_v1.png`, with
+  `sean_slide_v1.txt` beside them.
+  ⚠️⚠️ **AND THE PROBE INDEPENDENTLY CONFIRMED THIS FILE'S OWN BLENDER SOLVE.** The
+  reach was solved to `REACH_FRACTION` **6.17 per cent** in Blender against deformed
+  meshes. Unity measures the lowest `arm-right` vertex at **0.125 m** through the whole
+  contact window against a **2.018 m** rig: **6.19 per cent**. Two toolchains, one
+  number. Floor penetration is **-0.002 m at its deepest**, the peak bone speed is
+  **8.71 m/s on `head` at 0.115 s**, and the last frame is **identical to `idle` frame
+  0**, so there is nothing to snap back from.
+  ⚠️ **What is still not evidence: the strip shows the clip in ISOLATION.** Transitions
+  into and out of it, the blend weight, and whether the reach lands near the tsinelas at
+  the moment the pickup fires are things only a match shows.
 * **Nobody has felt it in a match.** Transitions into and out of `slide`, whether the
   0.95 s recovery reads as vulnerable, and whether the reach lands near the tsinelas at
   the moment the pickup fires. No player build was made in this session.
@@ -808,7 +833,15 @@ retuning the gameplay.
   pickup or cooldown retuning. This requires engineering; no `.cs` was edited.
 
 
-### 5. `PersonSwapProbe` asserts every rig carries the same clip count (engineering)
+### 5. `PersonSwapProbe` asserts every rig carries the same clip count (engineering) ✅ DONE 2026-09-09
+
+- [x] **Fixed.** `PersonSwapProbe.MissingBaseClips` is a superset check now and the report line
+  says the count both ways (`51 clips (base rig has 33, 0 missing)`), so a genuine loss still
+  reads at a glance. `AnimationReviewTests` owns the rule from both sides: an extra authored
+  action is not a loss, and a base clip that disappeared fails even when the total went UP.
+  `docs/TODO.md` § 151.20.
+
+  The original entry, kept for its reasoning:
 
 - [ ] `Assets/TumbangPreso/Editor/PersonSwapProbe.cs` compares
   `team-custom-base.glb`'s clip count against `character-female-a.glb`'s and reports
@@ -830,7 +863,20 @@ retuning the gameplay.
   `fissure-slam` and the rest. Done means the first-person arms match the body's casts.
   Same rule as task 4: no movement, cooldown or balance retuning.
 
-### 7. "32 clips" is a stale count in three `.cs` comments (engineering)
+### 7. "32 clips" is a stale count in three `.cs` comments (engineering) ✅ DONE 2026-09-09
+
+- [x] **Fixed, and it was more than three places.** `ModelImportSetup`, `RosterEntryAsset`,
+  `DanceClip` and `PersonSwapProbe` in code, plus `docs/CANONICAL_RENDERING_PIPELINE.md`,
+  `docs/Port_Ledger.md`, `docs/Port_Plan.md` and `docs/Voxel_Person_Guide.md`. Each one now
+  says what it is describing without naming a total, and each carries a ⚠️ line saying the
+  count was there and had gone stale, so nobody puts one back.
+  ⚠️ **`docs/Voxel_Person_Log.md` is deliberately UNTOUCHED**: it is a record of one day and
+  32 was true on that day. `docs/Port_Plan.md` § 8's retargeting permission was the one worth
+  reading twice, because it was not a comment but a MEASUREMENT (*"`head`, `arm-left` and
+  `arm-right` translations are never keyed"*) and an authored clip is free to key a translation
+  the CC0 pack never touched. It says so now rather than being deleted.
+
+  The original entry, kept for its reasoning:
 
 - [ ] `ModelImportSetup`, `RosterEntryAsset` and `DanceClip` each state that a rig
   carries 32 clips. It is 33 on most, 36 on the six hero rigs and 51 on the two custom

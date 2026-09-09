@@ -45,8 +45,8 @@ either of those.
 | **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The CODE side of § 146.6 is done**: both call sites ask for `"slide"` and the chain falls through to the lunge clip until a real one lands, so the clip drops in by name with no code change (§ 150.8). ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
-| **P1** | 151.16 | ⚠️⚠️ **NOTHING IN THE REPOSITORY CAN PHOTOGRAPH AN ANIMATION, AND `ASTRA.md`'s WHOLE QUEUE IS ANIMATION.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig with `clip.SampleAnimation(model, 0.0f)`: frame zero, nothing else. So `CLAUDE.md` § 6.1's *"show, do not describe"* cannot be obeyed for a clip, and eighteen hero casts would be judged from bind poses | A probe that writes a STRIP of poses sampled across `clip.length` through the existing camera and shader. `HeroTurnaroundProbe` is most of it already; the change is the sample time and composing side by side, which `ModelSheet` does. ⚠️ **It is now AFTER: twenty rigs carry `slide` and nothing has photographed one.** § 151.16 |
-| **P1** | 151.20 | ⚠️⚠️ **CAUSED BY THE ANIMATION PASS AND NOT YET FIXED: `PersonSwapProbe` FAILS ON A RIG THAT IS CORRECT.** It asserts `clips.Count == oldClips.Count` between `team-custom-base` and `character-female-a`, and those are **51** and **33** now, because clips are authored per character. A red probe for a thing that works is § 124.11 | A superset check rather than an equality one, which is what it always meant: `oldClips.Except(clips)` is the finding and extra clips are the point. ⚠️ Not a build gate. ⚠️ The same assumption is the literal 32 in nine places. § 151.20 |
+| **ASTRA** | 151.16 | ⚠️⚠️ **THE MOTION EVIDENCE EXISTS NOW AND NOBODY HAS LOOKED AT IT.** `ClipMotionStrip` writes a strip of poses across `clip.length` through the game camera, shader and outline, with the floor drawn at y = 0. Sean’s `slide` is shot and resolves at SLOT 0, its own authored clip rather than the lunge fallback | Not this queue’s work: it is Astra’s review under `ASTRA.md` task 3, and `ASTRA.md` step 6 has the command. ⚠️ **Read the text report as well as the picture**: the resolved slot, the peak bone speed and the last-frame-against-idle distance are not visible in any strip. § 151.16 |
+| **P2** | 151.21 | ⚠️⚠️ **`PersonSwapProbe` STILL READS `RESULT: FAIL`, AND THE THREE REMAINING FAILS ARE THE SUBJECT RIG BEING BALD AND FACELESS ON PURPOSE.** § 151.20’s clip-count fault is closed; what is left is *"nothing uses slot 8. The face is drawn in it"*, *"could not find face ink"* and *"no slot-2 vertices"* against `team-custom-base.glb`, which § 112 built that way. § 124.11 on the probe that owns `CheckAnimationBinds` | The checks ask the rig they are pointed at: either the face and hair assertions move behind a property the naked base sets, or the probe gains a second subject that has both. ⚠️ **Do not delete them**; § 112.12 is what that family of check catches. Not a build gate. § 151.21 |
 | **P2** | 151.19 | ⚠️ **THE EIGHTEEN PROCEDURAL HERO CASTS USE THE PLAYER-ONLY CURVE API THAT MADE THE DANCE A T-POSE, AND ALL EIGHTEEN ARE AUTHORED NOW, SO THE EXPOSURE IS CLOSED AND THE OBSERVATION IS NOT.** `docs/TODO_Archive.md` § 80.8, archived while still open. `HeroAbilityClips.BuildAll` fills non-legacy clips with `SetCurve` at runtime, which returns a valid EMPTY clip in a player, and an empty clip is the bind pose. **Nobody has opened a player and cast an ability** | Cast one ability in a built player and look at it, which nothing has yet done. ⚠️ The authored clips win the name lookup on every rig the roster loads, so this is now about what `HeroAbilityClips` is still the fallback FOR rather than about the casts. § 151.19 |
 | **P2** | 151.18 | ⚠️ **FOUND AND NOT FIXED: two of the 22 `person_*.asset` files belong to no id in `Roster.People`.** `person_berto.asset` and `person_iggy.asset` match nothing, so `RosterBookBuilder.Fill` never opens them and the build logs `20 people` against 22 files. They still carry a model, a palette and a full entry shape, **so anything enumerating that folder to find out what ships gets 22 and two rigs no player can select**, which is what happened to the retrieval-slide pass | Delete the two, and make `Fill`'s caller assert that every `person_*.asset` on disk has an id, beside the `no model mapped` error already there. ⚠️ The second half is the one that matters: an orphan nothing checks for comes back. § 151.18 also carries a second finding about rig ROOT NODE names that must NOT be fixed |
 | **P2** | 151.15 | ⚠️⚠️ **FOUND AND NOT FIXED, AND IT IS THE HOLE ALL THREE OF THIS PASS'S CUE DEFECTS CAME THROUGH: nothing asks whether a NON-`NetCue` world cue is heard by anybody but the peer that fired it.** `audit_audio_reach.py` asks only about host GATES, `audit_presentation_reach.py` the same, and `audit_cue_relay.py` only walks `NetCue` sites. **An owner-driven `GameServices.Audio.PlayAt` is invisible to all three**, which is how the throw wind-up and the retrieval slide shipped audible to one player each | Classify every positional `GameServices.Audio` site as host-only, owner-driven or every-peer, the way `audit_cue_relay` already classifies `NetCue` ones, with a named allowlist for the cues that are correctly private (your own stamina bar). § 151.15 |
@@ -60,6 +60,8 @@ either of those.
 behind § 143.9, and the list of real pads behind § 138 are all in
 [`../Attention.md`](../Attention.md). **Adding one back here is how this queue stops being read**,
 which is the whole reason the split exists.
+
+✅ **Closed by the 2026-09-09 animation-review pass: § 151.16 and § 151.20.** Together they were the reason an authored clip could not be approved: nothing here could photograph motion, and the one probe that owns `CheckAnimationBinds` went red on a rig that was correct. `ClipMotionStrip` is the strip and `PersonSwapProbe.MissingBaseClips` is the superset rule, with `AnimationReviewTests` asserting both. ⚠️⚠️ **NEITHER CLOSES AN ANIMATION.** The evidence exists and nobody has judged it; that is Astra’s row above and `ASTRA.md` task 3.
 
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
@@ -1377,89 +1379,157 @@ sites get a row each naming their own guard line.
 cue while changing how it is pitched would make both halves unreviewable at once, and one of the
 two (`stamina_empty`) is correctly private anyway.
 
-### 151.16 ⚠️⚠️ OPEN: EVERY CHARACTER PROBE PHOTOGRAPHS FRAME ZERO, SO NOTHING CAN VERIFY AN ANIMATION
+### 151.16 ⚠️⚠️ FIXED 2026-09-09: `ClipMotionStrip` PHOTOGRAPHS A CLIP ACROSS ITS LENGTH, AND CALIBRATING IT FOUND A SILENT 2.38x
 
-2026-09-07: retrieval-slide authoring is COMPLETE under `ASTRA.md` task 3 and this
-item is what stops it being ticked. **All twenty shipped rigs carry `slide`**, the
-roster serializes it, and `tools/audit_clip_import.py` follows every reference into
-Unity's own imported artifact. **None of that is a picture of the motion.** The clip is
-0.95 seconds with contact at 0.14, 0.25 and 0.342 seconds and recovery through 0.95;
-those are the sample times this probe wants, and `team-sean` is the rig to shoot first
-because it is the one whose pose is CORRECTED rather than shared (`ASTRA.md` task 3 has
-the arithmetic). Blender deformation sampling proves the mesh moves. It is not this
-game's camera, shader or outline, and it cannot answer whether the slide reads.
+**`Assets/TumbangPreso/Editor/ClipMotionStrip.cs`.** It takes a rig, an action name and a
+frame count and writes a horizontal STRIP of poses sampled across `clip.length`, through the
+same camera, light, toon shader, ink outline and colour grade `HeroTurnaroundProbe` uses.
+`ASTRA.md` step 6 is rewritten around it and `docs/CANONICAL_RENDERING_PIPELINE.md` step 3b has
+the command and every argument.
 
-**`ASTRA.md`'s whole queue is animation work and its "How to verify a clip" section pointed at a
-pipeline that cannot verify a clip.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig
-with `clip.SampleAnimation(model, 0.0f)`, so what comes out is **the first frame and nothing
-else**. That is exactly right for *"is this the right character, at the right scale, wearing the
-right thing"* and it says nothing at all about motion, which is the only thing an animation is.
-
-⚠️⚠️ **SO `CLAUDE.md` § 6.1'S RULE CANNOT CURRENTLY BE OBEYED FOR AN ANIMATION.** *"SHOW, DO NOT
-DESCRIBE. A model change with no render attached cannot be judged"* is the standard, and the
-honest state is that Astra can attach a picture of the bind pose and nobody can tell from it
-whether the clip is any good.
-
-**What done looks like:** an editor probe that takes a rig, a clip name and a frame count and
-writes a horizontal STRIP of poses sampled evenly across `clip.length`, through the same camera,
-shader and outline the turnaround probe already uses. `HeroTurnaroundProbe` is 90 per cent of it
-already: it loads the model, finds the clip, samples it and encodes a PNG. **The change is
-sampling at `t = i / (n - 1) * clip.length` instead of at `0.0f`, and composing the results side
-by side**, which `ModelSheet` already does for a grid of models.
-
-⚠️ **IT IS ENGINEERING WORK AND NOT ASTRA'S**, which is why it is here: `ASTRA.md` draws the line
-at a `.cs` edit, and a queue that asks somebody to build their own reviewing tool is a queue that
-gets a worse review.
-
-⚠️ **AND IT IS WORTH DOING BEFORE THE FIRST CLIP LANDS, NOT AFTER.** The alternative is judging
-eighteen hero casts from still frames and then re-judging them.
-
-### 151.20 ⚠️⚠️ OPEN, AND THIS ONE WAS CAUSED HERE: `PersonSwapProbe` NOW FAILS BY CONSTRUCTION, AND "32 CLIPS" IS A STALE COUNT IN NINE PLACES
-
-**Authoring clips per character broke an assumption that was true for the whole life of
-this project: that every rig carries the same clip set.** It does not any more, and the
-first thing to notice it is a probe that will now go red for a reason that has nothing
-to do with what it is looking at.
-
-`PersonSwapProbe` compares `team-custom-base.glb` against `character-female-a.glb`:
-
-```csharp
-if (clips.Count != oldClips.Count)
-{
-    report.AppendLine("FAIL: the clip set did not survive the rebuild.");
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.ClipMotionStrip.Run -rig sean -clip slide -logFile Logs/motion.log
 ```
 
-`team-custom-base` holds **51** now (32 source, `slide`, and all eighteen hero casts,
-because a custom character borrows a whole hero kit) and `character-female-a` holds
-**33**. So
-that probe reports the clip set as not having survived a rebuild that went perfectly.
+**The first Sean run, and it is the evidence the ASTRA queue was blocked on**
+(`docs/reports/motion/`, and `Logs/motion/` on the machine that ran it):
 
-⚠️ **THAT IS EXACTLY § 124.11'S FAULT AND IT IS WORTH THE SAME URGENCY.** *"A green
-probe for a screen nobody can reach is worse than a red one, and a red one for a screen
-that works teaches the next reader to skim the results."* A red `PersonSwapProbe` on a
-rig that is correct is how somebody learns to ignore it, and it is the probe that owns
-`CheckAnimationBinds`, which is the only thing in the repository that can catch a clip
-that imported perfectly and moves nothing.
+| | |
+|---|---|
+| resolved | **`slide`, slot 0** of `slide -> attack-kick-right -> attack-melee-right -> interact-right`. The rig's OWN clip, not the lunge fallback |
+| clip | 0.950 s, `isLooping` **true**, 36 serialised clips on the roster entry |
+| poses | 0.000, **0.140**, **0.250**, **0.342**, 0.407, 0.543, 0.679, 0.814, 0.950 s |
+| lowest deformed vertex | **0.000 m at all nine poses**, and **-0.002 m at 0.095 s** in the finer trace. No floor penetration worth the name |
+| reaching hand, lowest vertex weighted to `arm-right` | 0.376 m at rest, **0.125 m through the whole contact window**, back to 0.319 m |
+| peak bone speed | **8.71 m/s on `head` at 0.115 s**, the dive |
+| last frame against `idle` frame 0 | **0.000 m, every bone identical.** The clip ends at the rest pose, so there is nothing to snap back from |
 
-**Done looks like a SUPERSET check rather than an equality one**, because that is what
-the assertion always meant: the rebuilt rig must not have LOST any of the base rig's
-clips. `oldClips.Except(clips)` is the finding; extra clips are the point of the work.
-⚠️ **Say the count both ways in the report line** (`36 (base rig has 33, 0 missing)`), so
-a genuine loss still reads at a glance.
+⚠️⚠️ **AND THE HAND NUMBER IS AN INDEPENDENT CONFIRMATION OF A BLENDER SOLVE, WHICH IS WORTH
+MORE THAN THE PICTURE.** `ASTRA.md` task 3 solved Sean's reach to `REACH_FRACTION`, **6.17 per
+cent of the rig's own standing height**, in Blender, against deformed meshes, with no Unity in
+the loop. This probe measures 0.125 m against a 2.018 m rig read out of Unity's imported
+artifact: **6.19 per cent.** Two toolchains, two measurement paths, one number.
 
-⚠️ **AND THE SAME ASSUMPTION IS WRITTEN AS THE LITERAL NUMBER 32 IN NINE PLACES**,
-which is `CLAUDE.md` § 5's drift rule with a number instead of a sentence:
-`ModelImportSetup` (*"carry 32 clips each"*), `RosterEntryAsset` (*"The 32 clips"*),
-`DanceClip` (*"All 32 clips are locomotion..."*), `docs/CANONICAL_RENDERING_PIPELINE.md`,
-`docs/Port_Ledger.md`, `docs/Port_Plan.md`, `docs/Voxel_Person_Guide.md` and
-`docs/Voxel_Person_Log.md`. **Some of those are history and are correct as history**
-(the CC0 pack really did ship 32, and the voxel log is a record of one day). ⚠️ **The
-ones that state the CURRENT contents of a rig are the ones to fix**, and the fix is to
-stop naming a number: the count is 33 on twelve rigs, 33 on five team rigs and 36 on
-three, and it changes again with every hero session in `ASTRA.md`.
+### 151.16b ⚠️⚠️ THE PROBE'S FIRST OUTPUT WAS WRONG IN A WAY THAT WOULD HAVE SURVIVED REVIEW, AND THE CALIBRATION IS THE FIX
 
-⚠️ **Nothing here is a build gate.** `PersonSwapProbe` is not in `Checks.RunAll`, so no
-build refuses because of this. It is a probe somebody runs and reads.
+**The first strip drew Sean at a fifth of the frame and reported a hand at 0.896 m.** Both
+came from one line: `SkinnedMeshRenderer.BakeMesh(mesh)` then `transform.localToWorldMatrix`,
+which is the documented idiom and which **applied `CharacterVisual.PersonScale` twice**. The
+bake had already resolved the bones through the scaled root.
+
+⚠️⚠️ **THE REASON THIS IS WRITTEN DOWN RATHER THAN QUIETLY FIXED IS THAT THE ONE NUMBER IT DID
+NOT CORRUPT IS THE FLOOR PENETRATION.** The rig's root sits at the feet, so scaling about it
+leaves the lowest vertex at zero either way: **the report read `low 0.000 m` at every pose and
+was right by accident, while every other metre in it was out by 2.38.** A reviewer would have
+seen a clean floor, a plausible strip and a hand height nothing in the repository could
+contradict. `CLAUDE.md` § 6.2c's *"what is this size measured AGAINST"* on a measurement rather
+than a rectangle.
+
+**So the probe calibrates itself and prints the working.** `Calibrate` bakes the rest pose both
+ways and compares each SPAN against `Renderer.bounds`, which is the box the camera actually
+draws:
+
+```
+[side] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803;
+       rest pose sits at 0.000 m against a floor at 0)
+```
+
+2.018 against 4.803 is 2.380, and the report says which candidate won on every run, so the same
+factor cannot come back silently on another rig or another Unity version. ⚠️ **The camera is
+framed off `Renderer.bounds` and never off the bake**, because a framing computed from the same
+source the camera reads cannot disagree with the picture.
+
+⚠️ **The second fault was the caption band**, sized for the floor stripe alone, so the second
+line of every caption was cut off the bottom of the image. The margin is 34 per cent of the rig
+below the floor now and the top is 20 per cent above the bind-pose box, because a raised leg
+leaves that box and 12 per cent put a knee against the top edge.
+
+### 151.16c What the strip deliberately does NOT do
+
+- **It is not a general capture framework**, per `docs/NATIONALS_POLISH.md`'s first polish batch
+  increment 2: *"no general capture framework or roster-wide probe campaign."* One rig, one
+  clip, one run.
+- **It does not run in `Checks.RunAll` and gates no build.** It is a probe somebody runs and
+  reads, exactly like `PersonSwapProbe`.
+- ⚠️ **It does not replace a player.** It shows the clip in isolation at the poses it was asked
+  for. Transitions INTO and OUT of the action, the blend weight, the first-person arm and
+  whether the reach lands near the tsinelas at the moment the pickup fires are all things only
+  a match shows. `ASTRA.md` task 3's remaining list still says so.
+
+### 151.20 ⚠️⚠️ FIXED 2026-09-09: THE CLIP-SET CHECK IS A SUPERSET ONE NOW, AND THE STALE 32 IS OUT OF EIGHT PLACES
+
+**`PersonSwapProbe.MissingBaseClips` is the assertion**, and it says what the check always
+meant: the rebuilt rig must not have LOST any of the base rig's clips. Extra authored actions
+are the point of the work.
+
+```
+clips: 51 (base rig has 33, 0 missing)
+```
+
+⚠️ **The count is reported BOTH ways deliberately**, so a genuine loss reads at a glance rather
+than hiding inside a bigger number, and the FAIL line names the clips that went missing rather
+than only saying that something did.
+
+**The focused assertions are `AnimationReviewTests`** and they own the rule from both sides,
+because a superset check that cannot fail is worse than the equality it replaced:
+
+| Case | What it proves |
+|---|---|
+| `AnExtraAuthoredActionIsNotALostBaseClip` | four clips against two, nothing missing, PASSES |
+| `AMissingBaseClipIsStillALoss` | ⚠️⚠️ **four clips against three, `walk` and `sprint` gone, FAILS.** The total went UP and the rig is still broken, which is exactly the case the old equality answered backwards |
+| `TheRealRebuiltRigPassesAgainstTheRealReferenceRig` | the real `team-custom-base.glb` against the real `character-female-a.glb`, on disk, 0 missing. ⚠️ It also asserts the two counts still DIFFER, so if they ever converge again this test stops quietly proving anything |
+
+### 151.20b The stale 32, and the two places it was deliberately left alone
+
+**Fixed, in code:** `ModelImportSetup`, `RosterEntryAsset`, `DanceClip` and `PersonSwapProbe`'s
+own header. **Fixed, in documents:** `docs/CANONICAL_RENDERING_PIPELINE.md`,
+`docs/Port_Ledger.md`, `docs/Port_Plan.md`, `docs/Voxel_Person_Guide.md`. Each one now describes
+what it is describing without naming a total, and each carries a ⚠️ line saying a count was
+there and had gone stale, so nobody puts one back.
+
+- ⚠️ **`docs/Voxel_Person_Log.md` is untouched on purpose.** It is a record of one day and 32
+  was true on that day. `CLAUDE.md` § 2.3: the archive keeps whole bodies and unchanged numbers.
+- ⚠️⚠️ **`docs/Port_Plan.md` § 8'S ROW WAS THE ONE WORTH READING TWICE, BECAUSE IT WAS NOT A
+  COMMENT.** *"`head`, `arm-left` and `arm-right` translations are never keyed by any of the 32
+  clips, so those bones are free"* is a MEASUREMENT, and it is the permission the whole
+  retargeting argument rests on. An authored clip is free to key a translation the CC0 pack
+  never touched, so the sentence is now scoped to the pack it measured and says to re-measure
+  against the rig in front of you. Deleting the number without noticing that would have left a
+  narrower claim reading like a wider one.
+
+### 151.21 ⚠️⚠️ OPEN, FOUND WHILE FIXING § 151.20: `PersonSwapProbe` STILL COMES OUT RED, AND THE THREE REMAINING FAILS DESCRIBE A DELIBERATE DESIGN
+
+**§ 151.20's clip-count fault is closed and the probe still reads `RESULT: FAIL`.** With
+`clips: 51 (base rig has 33, 0 missing)` now passing, three checks remain red on
+`team-custom-base.glb` and **not one of them is a defect**:
+
+```
+FAIL: nothing uses slot 8. The face is drawn in it.
+FAIL: could not find face ink on the new rig.
+FAIL: no slot-2 vertices. The hair carries no dye/clip at all.
+```
+
+⚠⚠ **ALL THREE ARE THE SUBJECT RIG BEING BALD, BARE AND FACELESS ON PURPOSE.**
+`team-custom-base.glb` is the character maker's naked base (§ 112): `tools/build_base_voxel.py`
+builds it from `character-male-d`'s skull **with slot 8, the painted eyes and mouth, dropped**,
+and with no hair to dye. The probe was written against a rig that had a face and hair, its
+subject was changed to one that deliberately has neither, and its three checks now assert that
+the design is wrong.
+
+⚠⚠ **THIS IS § 124.11 AGAIN AND IT IS THE SAME PROBE § 151.20 WAS ABOUT.** *"A red one for a
+screen that works teaches the next reader to skim the results."* This probe owns
+`CheckAnimationBinds`, the only thing in the repository that can catch a clip which imported
+perfectly and moves nothing, so a permanent red on it is expensive. It was left red by this
+pass on purpose rather than silenced: **which of the three should become a property of the
+SUBJECT rather than of every rig is a judgement about what the naked base is allowed to lack**,
+and guessing it would weaken a check that has caught real faults on dressed rigs.
+
+**Done looks like the checks asking the rig they are pointed at.** Either the face and hair
+assertions move behind a flag the base rig sets (it has no face by construction), or the probe
+gains a second subject that DOES have both and each subject is asserted for what it is.
+⚠️ **Do not simply delete them**: § 112.12 records the whole wardrobe sampling the wrong palette
+cell, and the slot checks are the family of assertion that catches it.
+⚠️ Not a build gate. `PersonSwapProbe` is not in `Checks.RunAll`.
 
 ### 151.19 ⚠️⚠️ OPEN, AND IT IS AN ARCHIVED ENTRY COMING BACK WITH EVIDENCE: THE EIGHTEEN PROCEDURAL HERO CASTS PROBABLY DO NOT ANIMATE IN A BUILD
 

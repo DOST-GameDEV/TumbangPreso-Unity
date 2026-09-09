@@ -723,9 +723,11 @@ can produce.
    shader has none. `EnvColourPass` reported 418 of 434 renderers repainted while
    changing nothing on screen. Tint through a material variant and check
    `HasProperty`.
-6. **An asset nothing references is stripped from the build.** The 32 animation
-   clips per character live inside the `.glb`; without a serialised reference the
-   whole cast stood still in the player only.
+6. **An asset nothing references is stripped from the build.** Every animation
+   clip a character has lives inside its `.glb`; without a serialised reference the
+   whole cast stood still in the player only. ⚠️ **This read "the 32 animation clips
+   per character" and the number had gone stale**: clips are authored per character
+   now and the count differs per rig. `docs/TODO.md` § 151.20.
 7. **A surface shader declares `_MainTex_ST` for you.** Naming an Input field
    `uv_MainTex` makes the generator emit that declaration, and a second one is a
    hard "redefinition" error that kills ONLY the lit pass. A hand-written outline

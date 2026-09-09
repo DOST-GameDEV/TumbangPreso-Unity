@@ -1,0 +1,40 @@
+CLIP MOTION STRIP
+rig:  sean
+clip: slide
+
+model: Assets/TumbangPreso/Art/characters/persons/team-sean.glb
+serialised clips on the roster entry: 36
+chain: slide -> attack-kick-right -> attack-melee-right -> interact-right
+resolved: 'slide' (slot 0, the action's OWN clip, not a fallback)
+length: 0.950 s, looping: True
+
+-- samples
+times: 0.000, 0.140, 0.250, 0.342, 0.407, 0.543, 0.679, 0.814, 0.950
+
+[side] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803; rest pose sits at 0.000 m against a floor at 0)
+[side] SUCCESS: 9 poses, 5040x539
+
+-- per pose, metres against the floor at y = 0 (negative is through the street)
+     time    lowest vertex    reaching hand
+    0.000          0.000 m          0.376 m
+    0.140          0.000 m          0.125 m
+    0.250          0.000 m          0.125 m
+    0.342          0.000 m          0.193 m
+    0.407          0.000 m          0.241 m
+    0.543          0.000 m          0.334 m
+    0.679          0.000 m          0.385 m
+    0.814          0.000 m          0.389 m
+    0.950          0.000 m          0.319 m
+[quarter] bake space: already scaled (renderer box 2.018 m, baked spans 2.018 and 4.803; rest pose sits at 0.000 m against a floor at 0)
+[quarter] SUCCESS: 9 poses, 5040x539
+
+-- motion trace (finer than the strip, so a snap between two photographs still shows)
+steps: 241 across 0.950 s (4.0 ms apart)
+peak bone speed: 8.71 m/s on 'head' at 0.115 s
+deepest point of the whole clip: -0.002 m at 0.095 s
+last frame against idle frame 0: 0.000 m, every bone identical. The clip ENDS at the rig's rest pose, so there is nothing to snap back from.
+
+wrote: Logs/motion/sean_slide_side_v1.png
+wrote: Logs/motion/sean_slide_quarter_v1.png
+
+RESULT: PASS

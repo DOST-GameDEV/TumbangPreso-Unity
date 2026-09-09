@@ -545,8 +545,12 @@ palette in the same file.
 **The skeleton can be RETARGETED, which §8.2 implied it could not.** The constraint is not
 "the bones cannot move", it is "the clips must not be contradicted", and those are different:
 
-- `head`, `arm-left` and `arm-right` translations are never keyed by any of the 32 clips, so
-  those bones are free.
+- `head`, `arm-left` and `arm-right` translations are never keyed by any clip in the CC0 pack
+  the rigs were branched from, so those bones are free. ⚠️ **That sentence named a count of 32
+  and is a MEASUREMENT of the imported pack rather than a permanent property of a rig**: this
+  project authors clips per character now, and an authored one is free to key a translation the
+  pack never touched. Re-measure against the rig in front of you before retargeting it.
+  `docs/TODO.md` § 151.20.
 - `root`, both legs and `torso` are keyed by four clips, and every track is an ABSOLUTE local
   position, so shifting the rest position and every keyframe by the same vector moves the bone
   and preserves the animation exactly.
