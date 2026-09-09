@@ -261,6 +261,8 @@ resulting player is tested and built, and the branch is pushed. No human approva
 is implied by technical validation. Keep individual findings in their existing
 numbered entries and archive completed sections whole.
 
+**152.1 closed:** result controls now receive presses above gameplay controls; isolated InputSurfaceProbe 5/5. Full evidence is archived in TODO_Archive.md section 152.1.
+
 ---
 
 ## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, merged to `main`

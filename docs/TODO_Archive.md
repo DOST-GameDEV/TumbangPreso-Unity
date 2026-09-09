@@ -21511,3 +21511,19 @@ network behavior or unrelated camera behavior changed.
    same successful and failed slide is pressed once on each available device with
    no dropped edge or different outcome. Controller-support implementation remains
    owned elsewhere and was not edited.
+
+
+---
+
+### 152.1 Result controls under the gameplay input plane: CLOSED, 2026-09-09
+
+Isolated InputSurfaceProbe at `a457abf` reproduced the previous report: 4 passed,
+1 failed, with Next Map, Rematch and Menu intercepted by LookArea across all
+three arenas. MatchResult's nested canvas was order 100 and gameplay controls
+order 300. The repair enables explicit nested sorting at 400 while preserving
+Clean Feed parenting. Done: the same isolated scene/raycast sweep passes and the
+result remains readable and operable in the player. This also affects Windows
+touchscreen systems; it is not an Android build task.
+
+
+Verification: isolated InputSurfaceProbe now passes 5/5, with all result controls reachable across its scene and resolution sweep. A second-run defect in discovery was also fixed: the runner temporarily adds Assets/InitTestScene to build indices; the probe now excludes only that generated bootstrap while retaining every game scene. Exact-player verification remains in the release stage of section 152.

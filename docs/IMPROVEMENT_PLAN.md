@@ -22,9 +22,11 @@ context reset. Resume from the status table and execution record below. Change
 the plan only for new evidence or user direction, recording the reason here.
 
 No work on, merge into, or push to `main`. No usage reset. Ask before paid external
-work. Preserve user profiles and unrelated checkouts. Controller and touch must
-work with every affected feature; do not replace the separately maintained device
-mapping architecture as an incidental UI cleanup.
+work. Preserve user profiles and unrelated checkouts. Windows is the only build
+target for this pass, per the user's latest direction. Do not spend this pass on
+Android builds or handset certification. Preserve controller support and existing
+input contracts; do not replace the separately maintained device mapping
+architecture as an incidental UI cleanup.
 
 ## What better means
 
@@ -52,8 +54,22 @@ The user explicitly wants the game to feel more Filipino and better to play, wit
 full creative freedom. Express place through the contact of rubber and tin,
 neighborhood-specific materials and reactions, character gestures and readable
 street rivalry. Decorative symbols alone do not meet that request. The user's
-girlfriend is supplying a UI plan; integrate it before major visual or structural
-UI redesign. Confirmed usability repairs can proceed while that reference is pending.
+girlfriend's `TUMP.pdf` idea board is supplied: study pages 1-7, 20-26 and 35-40.
+It is reference material, not a literal implementation specification. The explicit
+direction is peaceful, simple, quirky UI with icons where understandable and text
+where helpful. The home scene must contain a simple looping video that gives a
+feel for the game. Flow and visual hierarchy are part of the design task.
+[CALM_FRONT_END.md](CALM_FRONT_END.md) records the interpretation and live routes.
+Keep the existing game and core elements; no feature overload. Push every
+substantial verified change so work is preserved throughout the pass.
+The user explicitly requests a complete UI overhaul. Make the character maker
+inaccessible in the shipped game while retaining all its repository code/assets
+for a possible return. Hide its doors and guard direct opening; do not delete it.
+Graphics improvements and accessible quality settings for lower-end Windows PCs
+are explicitly requested. Inspect existing settings first, then provide coherent
+presets and necessary controls. Compare actual gameplay views at each tier. Reduce
+expensive decorative work while preserving can/shoe/player/ability readability;
+do not equate stronger post effects with better graphics.
 
 Preserve established character identities and skin tones, the logo-derived menu
 palette, preferred can recordings, authored asset detail and the Generic rigs.
@@ -69,7 +85,7 @@ heroes, progression systems or controls are implied by this polish request.
 
 | ID | Status | Outcome and work | Acceptance / evidence |
 |---|---|---|---|
-| P0 | in progress | Establish current branch, tools, baseline and reconcile open claims | Exact starting SHA, clean isolated checkout, required reads, discovered test partition, current failures separated from historical ones |
+| P0 | complete | Establish current branch, tools, baseline and reconcile open claims | Isolated branch at requested SHA; Core 559/559, EditMode 442/442; 76 PlayMode fixtures in six groups; result obstruction reproduced in isolated InputSurfaceProbe (4 passed, 1 failed) |
 | P1 | pending | Make the core retrieval sequence coherent | Successful and failed slides at full speed; entry/contact/recovery and possession alignment; owner and remote authored body; female-a geometry identified; keep passing clips |
 | P2 | pending | Repair confirmed release and correctness defects | TODO 151.6 hazard bound, 151.18 roster orphans, 151.21 probe subject, 151.15 audio reach, 149.4 duplicate requests; targeted behavioral evidence and required audits |
 | P3 | pending | Make menus and match state understandable | Reproduce touch/result obstruction and surviving layout failures; fix relevant layers; review boot/play/settings/loadout/pause/results journeys; network feedback and one useful highlight reader where current paths lack them |
@@ -79,7 +95,7 @@ heroes, progression systems or controls are implied by this polish request.
 | P7 | pending | Finish Bayan Plaza and Ilalim presentation and investigate route anomaly | Distinct lighting/depth/material treatment, ordinary/reverse views; recorded Ilalim seed traced; no speculative collision or balance edits; sourced jeepney preserved |
 | P8 | pending | Connect start, role changes, final action and ending | No stale effects or stranded input after interruption/rematch; existing victory/audio path verified; useful recorded highlights subordinate to result; observer/replay framing checked |
 | P9 | pending | Close remaining actionable queue work and documentation drift | Review every current implementation row; 149.5 lookup cost measured before caching, 151.9 clocks/lunge/outlier investigated, 149.7 removals justified by stronger coverage; archive complete sections whole |
-| P10 | pending | Qualify and deliver the resulting game | Core, EditMode, isolated PlayMode gate twice, editor checks, required source audits; clean Windows build and exact-player smoke/multiplayer evidence; Android build if installed toolchain supports it; push branch |
+| P10 | pending | Qualify and deliver the resulting game | Core, EditMode, isolated PlayMode gate twice, editor checks, required source audits; clean Windows build and exact-player smoke/multiplayer evidence; push branch |
 
 Correctness blockers found at any stage move ahead of visual polish. P2 and P3 can
 proceed while an asset inspection or baseline run is in flight. Never edit C# or
@@ -183,8 +199,13 @@ for reachable duplicate effects, with focused tests rather than a protocol rewri
   ProjectSettings files untouched. Unity 6000.5.8f1 and Blender are installed.
 - 2026-09-09: current user direction expands art, engineering and UI scope and
   explicitly forbids subagents. This plan replaces the old stop-after-one workflow.
-- 2026-09-09: Filipino identity and tactile play are explicit priorities. Major UI
-  design waits for the forthcoming supplied plan; independent game work continues.
+- 2026-09-09: Filipino identity and tactile play are explicit priorities. The UI
+  idea board arrived with selected pages, peaceful/quirky direction and a looping
+  home video. Windows-only delivery supersedes the earlier Android build plan.
 - Next: complete baseline/tool inspection, inspect committed slide evidence and
-  current code, then work P1/P2/P3 from observed failures. No implementation or
-  fresh test/build result is claimed by this initial planning checkpoint.
+  current code, then work P1/P2/P3 from observed failures.
+- Baseline completed: Core 559/559, EditMode 442/442. InputSurfaceProbe reproduced
+  ResultCanvas controls covered by LookArea. The first repair gives the nested
+  result canvas explicit sorting above the gameplay controls. Verified 5/5 in the isolated InputSurfaceProbe after excluding the test runner bootstrap from scene discovery.
+
+- Character direction: subtle Filipino clothing/accessory/gesture cues are authorized, preserving each established personality rather than forcing motifs.

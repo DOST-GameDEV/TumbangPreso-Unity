@@ -605,7 +605,14 @@ namespace TumbangPreso.UI
             // so it never inherited the setting every other surface in the game has. It is the
             // screen a match ends on and it is nothing but reading matter.
             _canvas.pixelPerfect = true;
-            _canvas.sortingOrder = 100;   // over the HUD
+            // ⚠️ The result is a nested canvas so Clean Feed can hide it, but its
+            // input plane must sit above the match controls. The old order of 100
+            // put every result button under TouchControlsCanvas's transparent
+            // LookArea at 300. A Windows touchscreen then could not rematch or
+            // leave. Explicit nested sorting preserves Clean Feed parenting while
+            // giving the result both visual and raycast priority over gameplay.
+            _canvas.overrideSorting = true;
+            _canvas.sortingOrder = 400;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

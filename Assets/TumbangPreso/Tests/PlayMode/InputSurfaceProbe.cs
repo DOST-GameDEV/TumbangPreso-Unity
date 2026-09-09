@@ -220,6 +220,13 @@ namespace TumbangPreso.PlayTests
                 string path = SceneUtility.GetScenePathByBuildIndex(i);
                 string name = Path.GetFileNameWithoutExtension(path);
 
+                // ⚠️ The runner can append its own bootstrap scene to the build
+                // list on a subsequent launch. It is not a shipped menu and has
+                // no camera. Keep discovering every game scene, but do not load
+                // the runner's temporary scene as though it were player content.
+                if (path.StartsWith("Assets/InitTestScene", System.StringComparison.Ordinal)
+                    && name.StartsWith("InitTestScene", System.StringComparison.Ordinal)) continue;
+
                 // The splash is a timed video with no controls at all; asserting a focus path on
                 // it would be asserting that a cutscene is a menu.
                 if (name == UI.SceneFlow.Splash) continue;
