@@ -1,11 +1,11 @@
-# Nationals polish: finish, polish, differentiate, playtest
+# Nationals polish: coherence, identity and memorable play
 
 ## 0. MISSION
 
 The current strategic roadmap for game feel, presentation and Nationals polish.
 The systems-expansion era has supplied enough machinery. The next win is making a
 player remember the moment they ran back for a slipper with the taya closing in.
-**Finish, polish, differentiate, playtest.** Both Classic and Hero Strike ship;
+**Make the core coherent, then author the whole experience.** Both modes ship;
 Classic remains the tournament ruleset unless the human changes that decision.
 
 This file decides **what matters next and why**. It is not another execution queue.
@@ -21,16 +21,26 @@ controls and progression. [FUTURE.md](FUTURE.md) is the retired systems-era road
 [CLAUDE.md](../CLAUDE.md) governs repository work and [VISION.md](VISION.md) governs
 the product. Existing balance and authority contracts stay intact.
 
-**Evidence boundary, 2026-09-08, source `7612a04c8a1a`:** this is a targeted
-source/asset-reference and existing-report evaluation, not a fresh playtest. No
+**Evidence boundary, revised 2026-09-09 from `58e0f57f`, game source still
+`7612a04c8a1a`:** this preserves the earlier source/asset-reference and report
+evaluation, with selective source checks, not a fresh playtest. New art, sound and
+staging directions are proposals, not freshly observed defects. No
 Unity or Blender run, new motion capture, or listening approval was performed.
-Older local lineup and Ilalim captures were inspected as historical context only;
+The earlier evaluation inspected old lineup and Ilalim captures as history only;
 they predate the latest art, map and animation work and cannot certify today's look.
 Below, **confirmed** means visible in current code or serialized references;
 **recorded** means an earlier observation; **judge in play** is a proposed quality
 test, not a defect claimed from a screenshot nobody took.
 
-## 1. CURRENT STATE EVALUATION
+## 1. DIRECTOR'S VERDICT AND CURRENT STATE
+
+**Yes, the first roadmap was too conservative.** Executed well, it would chiefly
+make this a cleaner version of the same game. Its best insight was the retrieval
+loop; its mistake was letting isolated repairs stand in for production direction.
+Keep those prerequisites, then invest in a complete audiovisual sequence, distinct
+places, a cast with presence and an ending worth remembering. A competition win
+cannot be certified by a plan; the ambition is a visible difference in ordinary
+play, not a longer list of closed issues.
 
 ### ALREADY STRONG
 
@@ -53,45 +63,34 @@ test, not a defect claimed from a screenshot nobody took.
   sari-sari dressing, pisonet, pares, the LRT and the intact sourced jeepney are
   concrete identities. Wholesale asset replacement would discard that investment.
 
-### GOOD FOUNDATION, WEAK PRESENTATION
+### FIVE QUALITY GAPS TO ADDRESS
 
-The clearest confirmed mismatch is **retrieval's body versus its owner's view**:
-`ViewmodelArms.PlayAction("slide")` still chooses `LungeClip`. The body now reaches
-low; the first-person player gets a combat dash gesture. The sound also blurs the
-choice: slide requests `dash`, and shove's `bump_swing` aliases that same recording.
+1. **Retrieval contradicts itself across body, hand and sound.** Confirmed:
+   `ViewmodelArms.PlayAction("slide")` selects `LungeClip`; slide requests `dash`,
+   and shove's `bump_swing` aliases that recording. Low retrieval reads as combat.
+2. **Animation approval stops at structural evidence.** TODO section 151.16 records
+   frame-zero probes; section 151.20's clip-count comparison rejects valid rigs.
+   Import cannot approve clipping, transitions or recovery. Those remain unverified.
+3. **Finish varies between layers.** TODO section 131.3 records five sourced VFX
+   families, while section 131.6 leaves compositions unfinished. Confirmed:
+   `HeroHazards.CreateThunderstrike` still draws the flat `ThunderShockRing` star;
+   `StreetParesInteractive` reacts with `slipper_bounce` and `ImpactBurst`.
+4. **Map-wide presentation lacks an approved target here.** Roadside repairs did
+   not define lighting, depth or ordinary camera composition. This is a planning
+   gap, not a fresh finding that every map looks bad.
+5. **The whole experience lacks current feel approval.** Sound hierarchy, camera
+   recovery, transitions and ending have not been judged together. TODO section 151
+   fixed the listener and remote wind-up/slide cues; their usefulness under music
+   and abilities needs ears, not another implementation. Sourced sounds remain
+   provisional until heard in play.
 
-Hero VFX have a mixed finish, not six missing families. TODO § 131.3 records sourced
-formation/impact work in five families; § 131.6 records unfinished compositions.
-Current `HeroHazards.CreateThunderstrike` still builds a flat, saturated
-`ThunderShockRing` star under the drawn lightning. Shape variety exists, but the
-largest remaining flat shape can dominate the more authored parts.
+### FIVE THINGS PEOPLE SHOULD REMEMBER
 
-The audio listener and remote wind-up/slide cues were fixed in TODO § 151. The
-remaining question is whether those spatial cues are useful under the music and
-abilities, especially across the court. That is an ear test, not another listener
-implementation. Sourced recordings remain provisional until heard in play.
-
-### BIGGEST QUALITY GAPS
-
-1. **The signature retrieval is not yet a coherent action across body, hand and
-   sound.** This is more damaging than a background prop lacking detail.
-2. **Animation approval has stopped at structural evidence.** TODO § 151.16 records
-   frame-zero-only character probes; § 151.20 records a clip-count comparison that
-   now rejects valid rigs. A good import cannot tell us whether a hand clips, a
-   transition snaps, or the recovery reads as commitment. Those remain unverified.
-3. **The finish varies between layers.** Authored casts can sit beside unfinished
-   VFX shapes and reused sound meanings. One coherent hero beats six more effects.
-   The map equivalent is scenery that looks specific but reacts with a generic
-   combat sound: `StreetParesInteractive` currently uses `slipper_bounce` and an
-   `ImpactBurst` when a character touches it.
-
-### POTENTIAL SIGNATURE STRENGTHS
-
-An unmistakable tin knock followed by a desperate low retrieval and a narrowly
-missed tag; a curved bank whose path is readable to someone watching behind the
-player; a hero power that opens a retrieval opportunity rather than eclipsing the
-street game; and a neighborhood that responds briefly, then lets the chase breathe.
-Those are stronger reasons to remember this entry than its account or ranked stack.
+- The tin crack, sudden opening, low retrieval and taya's missed reach as one scene.
+- A bank whose contact and changed flight can be followed without an explanation.
+- Three Filipino places, each with its own light, depth and sound.
+- Six heroes whose posture, timing and powers belong to the same authored person.
+- A final play that resolves into a character response and clean musical closure.
 
 ## 2. POLISH NORTH STAR
 
@@ -109,144 +108,214 @@ Those are stronger reasons to remember this entry than its account or ranked sta
 - **Another player must understand the same event.** Local polish that disappears
   for the defender, joiner or spectator is unfinished polish.
 
+### What the two modes should feel like
+
+**Classic: tactile, intimate street rivalry.** Sun and shade frame a small can,
+rubber skims the road, approaching feet tighten the space, and a missed hand makes
+a tiny escape thrilling. Ordinary pickup stays calm; banks, commitment and timing
+supply the spectacle. Its sparse mix, grounded contact and neighborhood presence
+are a complete aesthetic, with the same quality of transitions and ending as Hero
+Strike. Simplicity should feel chosen at every beat.
+
+**Hero Strike: six strong personalities interrupt the same street tension.** The
+street remains visible beneath the power. A cast has recognizable preparation,
+a readable job, one peak and an aftermath returning attention to possession.
+The pleasure is seeing a hero create or deny a retrieval opening. Coordinated
+motion, material, sound and timing make powers feel expensive.
+
+**Screenshot identity:** voxel silhouettes, authored can labels, sourced footwear,
+chalk on quiet road, locally specific facades, strong depth and short comic-like
+impact punctuation. Their composition should identify this game beyond its voxel
+style. Preserve canonical art and the established toon/outline treatment.
+
 ## 3. CORE MOMENTS
 
-These are quality bars for existing actions, not orders to add a new effect to each.
+Quality bars for existing actions, not orders to add an effect to every beat.
 The throw/lata/retrieval/chase sequence gets the majority of effort.
 
 ### Throw, consequence, exposed slipper
 
-**Charge:** body and viewmodel wind-up plus the relayed `throw_charge` already
-provide anticipation. Excellent means power builds visibly in the held shoe and
-shoulder without constant camera vibration; the taya can hear preparation while
-looking elsewhere. Judge short legal charge, long hold and release while moving.
+**Charge/release:** body and viewmodel wind-up plus relayed `throw_charge` already
+provide anticipation. Power builds through shoe and shoulder without vibration;
+the taya can hear preparation while looking elsewhere. `Carrier` already plays
+the throw, varied release cue and replicated flair. Hand release must coincide
+with the world slipper leaving; flight, bank, bounce and rest stay readable across
+light and dark road. Judge short legal charge, long hold and moving release.
+Do not alter flight, collision or aim to repair presentation.
 
-**Release and flight:** `Carrier` already plays the throw action, varied release
-cue and replicated flair. The hand should let go exactly when the world slipper
-leaves, with one crisp release and a readable spinning/curving silhouette. Judge
-the transition into its bounce and rest across a light and dark road patch. Do not
-alter flight, collision or aim to repair presentation.
+**Lata knockdown:** preserve the replicated 45 ms freeze and directional punch
+(`Lata.AnnounceUprightChange`) and preferred `lata_impact` / `lata_knockdown` sounds.
+Tin attack, tipping and settling should read as one consequence. Clear transients
+so the shoe becomes the next focus. Camera strength 0.8 has no distance attenuation;
+judge the distant observer before strengthening it. The opening should be clear
+without imposing the nearby player's camera violence on the whole court.
 
-**Lata knockdown:** the existing replicated 45 ms freeze and directional camera
-punch are the right foundation (`Lata.AnnounceUprightChange`). Preserve the
-human-preferred `lata_impact` and `lata_knockdown` recordings. Make the initial tin
-attack, tipping motion and settling tail read as one consequence; clear transient
-effects promptly so the loose shoe becomes the next focal point. A distant observer
-should see the opening without receiving the nearby player's camera violence.
-The current camera punch passes strength 0.8 without distance attenuation; judge
-that distant-view cost before making the impact stronger.
+**Reset:** existing channel cues, grab and restoration end on one clear upright-can
+beat. Judge cancellation and sabotage: no final cue may promise safety before the
+authoritative completion. No cinematic pause.
 
-**Lata reset:** channel-start/completion cues, grab motion and restoration already
-exist. A defender's effort must end on a clear upright-can beat, distinct from
-knocking it down. Judge cancellation and sabotage too: the final sound must not
-promise safety before the authoritative reset completes. No cinematic pause here.
-
-**Bank shot, near miss, block/deflect:** `Slipper` and `MatchFlair` already recognize
-these separately. A bank should show contact then redirected flight, rather than
-only announcing the trick afterwards. A near miss needs a small passing/bounce
-read that never sounds like a successful tin hit. A block should show the defender
-meeting the shoe and its changed path; protect existing burst, flash and body
-squash. Keep all three shorter and quieter than a knockdown. Evaluate the actual
-trajectory and sound, with no new labels or Street Hype redesign.
+**Bank / near miss / block:** `Slipper` and `MatchFlair` already recognize them.
+Show bank contact then redirected flight, a small passing read for a miss, and the
+defender meeting the shoe for a block. Preserve block burst, flash and body squash;
+keep these beats below knockdown prominence. No false tin hit, new labels or Street
+Hype redesign. Improve the action that earns recognition, not its display.
 
 ### Enter, commit, escape or get caught
 
-**Approaching the exposed slipper:** the tension should move from the throw to the
-gap between shoe and taya. Existing landed-shoe presentation and approaching
-footsteps need to survive road texture, shade and skill overlap. Judge from normal
-eye height; an overhead screenshot cannot establish retrieval readability. Do not
-add an omniscient chase cue that reveals an unseen opponent.
+**Approach / normal pickup:** attention shifts to shoe-taya distance. Landed-shoe
+presentation and footsteps must survive texture, shade and powers at eye height.
+No omniscient chase sound revealing unseen opponents. Ordinary grab remains calm,
+confirms possession once and joins hand to shoe without apparent teleportation.
 
-**Normal pickup:** keep it a valid, calmer choice. The existing grab, pickup cue and
-carry attachment should communicate possession once, without a celebratory freeze
-or repeated sound. The hand/shoe join must not look like a teleport through the arm.
+**Committed slide:** low entry, reach toward this shoe, catch only on real pickup,
+then vulnerable rise. A failure retains skid and recovery without catch confirmation.
+The authored 0.95 s clip and 0.14/0.25/0.342 s contact samples are review points, not
+new gameplay timers. Align FPP with that body commitment; keep the taya trackable.
 
-**Committed retrieval slide:** anticipation is a deliberate low entry; action is a
-reach toward this slipper; impact is the actual pickup if it succeeds; audio is a
-scrape then catch; recovery is a vulnerable rise. A failed slide still has the skid
-and recovery, but no catch confirmation. The authored 0.95 s body clip and its
-0.14/0.25/0.342 s contact samples are the review starting points, not new gameplay
-timers. Match the first-person arm to that commitment, not the lunge. Keep camera
-motion low and brief enough to track the taya throughout.
+**Chase / lunge / punch / tag:** foot planting and sprint-turn-action blends sell
+pursuit. Stationary punch is arm-led; lunge spends the body and has a readable missed
+recovery. Approaching steps communicate distance. `MatchFlair` already supplies
+tag burst, freeze, flash, camera and voice: let contact win, then return control
+without extra holds. A tiny escape reads from the missed reach and continued
+momentum, followed by space in the mix. No new escape detector or reward system.
 
-**Taya chase, lunge and punch:** existing charge poses and differentiated melee
-actions should make pursuit feel intentional. The stationary punch needs a close
-arm-led tag read; the lunge needs body-led commitment and a visibly spent recovery
-when it misses. Judge foot planting through sprint/turn/action blends and whether
-approaching steps communicate distance before the defender enters view. A bot
-deciding to chase is not evidence that its animation sells aggression.
+**Shove / trip / recovery:** shove is an outward push, distinct from punch and slide,
+with different hit/miss sound. Trips and get-up disclose loss and return of control
+without lengthening mash rules. TODO section 151.6 measured Ilalim's live trip hazard
+outside the competitive box; no added hazards. Review transitions around one
+selected family, including interruption and remote playback.
 
-**Tag and tiny escape:** tag already has burst, freeze, flash, camera response and
-voice through `MatchFlair`. Let contact win that instant; do not prolong punishment
-with extra holds. A tiny escape should be readable from the missed reach and the
-attacker's continuing momentum, followed by space in the mix. Do not invent a new
-escape detector or reward system to celebrate it.
+### Hero Strike and the ending
 
-**Shove, trip and recovery:** shove's outward arm motion exists and must remain
-different from punch and slide. Match the push, displaced body and sound; judge
-hit versus miss. Trips remain relevant in supported contexts, but TODO § 151.6
-already measured Ilalim's live trip hazard outside the competitive box. Do not add
-more hazards. Downed poses and get-up should disclose loss and return of control,
-without lengthening the existing mash/recovery rules for animation.
+**Skills / ultimate:** review a hero's three casts in order, body/FPP, effects,
+audio and return together. The first skill discloses direction/footprint; the second
+shows its own job. Sean's chambering is not an immediate blast. The ultimate earns
+one peak. Judge with effects hidden, then during contested retrieval.
 
-**Street Hype:** protect the existing recognition of banks, curves, close calls
-and blocks. Polish the action that earns the reaction, not its display. Routine
-touches of a roadside prop must not borrow the sound of a scored event.
+**Round / match closure:** existing countdown, voice and music transitions clear
+the previous round and establish the new taya. Preserve requested clean music cuts.
+`MatchResult` already handles result audio; do not re-add a jingle. `CharacterAnimator`
+maps the emote relabelled victory to `crouch`, but that does not prove the ending
+calls it. Trace the live path before selecting a celebration. This is A tier after
+the core reference, with results UI untouched.
 
-### Hero Strike and the match's ending
+## 4. CHARACTER DIRECTION AND HERO SIGNATURES
 
-**Skill 1, skill 2, ultimate:** review a hero's complete three-cast sequence in
-order. The normal skill needs an obvious direction or footprint; the second must
-show a different job, such as Sean chambering a future throw rather than firing an
-immediate blast. The ultimate earns the strongest silhouette and one dominant
-payoff. Pair the body, existing first-person action, effect onset, impact sound and
-return to locomotion. Judge with effects hidden first, then in a contested retrieval.
+Protect voxel proportions, canonical skin, faces, hair geometry and identities.
+No wholesale redesign or retargeting. The highest-value model pass fixes a
+visible gameplay-distance silhouette, clothing overlap or material separation
+problem on one character. Review lineup and real camera distance before details.
+Improve pose, clothing readability or shader response within those constraints;
+canonical hair is not a silhouette-cleanup free-for-all. Keep existing Generic
+rigs and authored action names.
 
-**Round transition:** existing countdown, voice and music transitions should clear
-the previous round's visual/audio residue and make the new taya's presence apparent
-in the world. Preserve the requested clean music cuts; do not introduce fades.
+Sean's slide is the first motion reference: ASTRA task 3 corrected short-arm reach
+with torso roll. Verify it before reauthoring it. `character-female-a`'s recorded
+accessory/sleeve floor-contact ambiguity is a separate single-rig review. Later,
+select one idle-to-movement or locomotion-to-action family on one character when
+it strengthens presence; do not commission six locomotion sets by default.
 
-**Final victory:** `MatchResult` already has result-audio handling, so do not re-add
-a jingle. Judge whether the winner's body and final sound actually conclude the
-match. `CharacterAnimator` still maps the emote relabelled victory to `crouch`;
-that is a concrete placeholder, but not proof the result sequence calls it. Trace
-the existing ending before selecting one character's celebration pose. Keep this
-below retrieval and hero coherence, and leave the results UI alone.
+### Compact hero grammar
 
-## 4. VISUAL / ANIMATION / CHARACTER PASS
+Motion below builds on ASTRA section 1's authored work; paired VFX/audio direction
+is the proposed next quality bar. Preserve established accents and role colors.
+Shared finish means readable onset, material intent and clean decay, not one
+builder recolored six ways.
 
-**Protect proportions and canonical faces.** The small voxel cast, large readable
-heads and specific hair/clothing are an identity, not a reason to replace rigs with
-a realistic library. Preserve fixed skin tones, faces and silhouettes. Inspect seam,
-accessory and material consistency in motion before adding detail that disappears
-at match distance. Keep the existing Generic rig setup and authored action names.
+- **Sean: propelled confidence.** Hip coil, one-axis extension, braced arrest;
+  arms rake back. Fire sweeps and tears along travel, with a compact body and sparse
+  embers. Pressure build, breathy release and brief hot crack support the motion.
+  Supernova's signature is the body becoming the descending impact. Ignition
+  chambers a future throw; old sourcing prose calling it a projectile must not
+  turn it into an immediate blast. Avoid bloom balls and sustained fire noise.
+- **Zack: bladed electrical precision.** Side-on counter-rotation, lateral skate,
+  asymmetric aimed call. Branching paths and discontinuous light differ from
+  Sean's continuous fire. Tense chatter resolves into a dry crack and short decay.
+  Bolt Sprint has no impact beat; do not force one onto locomotion. Thunderstrike
+  should be remembered as aimed bolt/contact, not its flat saturated ground star.
+- **Dante: planted mass.** Low head, wide braced base, downward force; the carapace
+  widens him rather than replaying the stomp. Opaque broken planes, fissures and
+  restrained dust carry weight. A compressed low body sound with a distinct crack
+  supplies impact without sustained rumble. Titan Fissure splits the ground;
+  no leap, glowing shield bubble or generic round explosion.
+- **Cheska: exact control.** Upright body, one forearm drawing a plane, precise stop
+  and held shape. Facets, tapered shards and crisp boundaries make ice solid.
+  A fine formation sound locks into a short crystalline attack and sparse tail.
+  Glacial Nova's release-to-stillness is its signature; avoid blue smoke, whiteout
+  and Phaister-like ornament.
+- **Nemu: unsettling weightlessness.** Limbs lead the torso; she rises without a
+  push-off and is pulled inward. Dark negative space, inward wisps and the live
+  Kuro presence carry supernatural identity. Inward air and an uncanny hollow
+  release should identify her without purple light. No heavy stomp, generic cloud
+  or automatic impact hold on Phantom Veil.
+- **Phaister: theatrical witchcraft.** Off-axis flourish, deliberate presentation,
+  open held finish; Shadow Blink's instant departure is the exception. Written
+  sigils, torn vertical wisps and sparse overhead corona belong to distinct
+  actions. Incantatory texture, stamped attack and clipped magical tail suggest
+  performance. Grand Coven earns its flourish and reveal without stacked circles.
+  No Nemu-like drifting blink or Cheska-like shortest-path ritual.
 
-The highest-value art review is **Sean's retrieval slide through entry, contact and
-recovery**. ASTRA task 3 already corrected his short-arm reach with torso roll; an
-angle shared across rigs was not a shared reach. Verify that correction in the game
-before reauthoring it. Separately, `character-female-a` has a recorded accessory/
-sleeve floor-contact ambiguity; judge that rig alone rather than reopening twenty.
+Test both ways: hide VFX and identify movement; hide the body and distinguish the
+effect/audio family. Custom characters borrowing a kit must retain its tells.
+Review one hero's full three-cast sequence, then select only necessary corrections.
+`ViewmodelArms` already has hero actions; ASTRA task 6 is alignment, not eighteen
+missing clips. Do not change hit timing, range or recovery rules to fit a pose.
+Extreme angular-speed measurements are not a polish score.
 
-Then approve **one hero's three casts per session**, starting with Sean as the
-complete presentation reference. Preserve the authored distinctions: Zack's lateral
-carve and aimed call must not become Sean's thrust; Dante's grounded widened stance
-must not become another leap; Cheska's exact stop must not become a flourish; Nemu's
-weightless drift must not gain a heavy stomp; Phaister's flourish must not become
-Cheska's shortest-path gesture. Extreme angular-speed measurements are not a polish
-score. Watch full-speed silhouettes, hands through torsos, foot clearance and blends.
+### Ultimates: explicit two-phase investment
 
-Locomotion, throw, grab, shove, lunge, punch and reactions already have action paths.
-Review transitions around the selected move, including interruption and remote
-playback, rather than commission a wholesale locomotion set. Hero first-person
-actions also already exist in `ViewmodelArms`; ASTRA task 6 asks for alignment, not
-eighteen missing arm clips.
+**Phase A, CLAUDE: establish the reusable presentation contract.** ASTRA task 8
+records no cinematic action name. Existing `UltimateStarted` / presentation flow
+and introductions already work (TODO section 134.7); do not replace them or redesign
+their UI. Select the smallest route: stage the existing cast when it supplies the
+pose, or expose a named separate presentation action where it truly needs one.
+A shared integration hook must permit different staging, not mandate a shared pose.
 
-Keep new ultimate cinematic authoring out of the first batch. Existing introductions
-are present, while ASTRA task 8 records no agreed cinematic action hook. First make
-an existing ultimate cast exceptional. Do not stretch cast timing or commission six
-unreachable intro clips to fill that architectural ambiguity.
+The contract states accepted-cast trigger, action selection, authoritative onset,
+local/opponent/spectator camera behavior, existing audio/VFX cues, deduplication,
+overlapping ultimates, interruption/round-end cleanup and recovery. Exercise one
+real cast on host/joiner and the existing observer path, plus refusal and
+interruption, before commissioning a cinematic clip. No longer freeze, new input
+lock or altered damage window. ASTRA section 2's proposed global cinematic freeze
+is not authorization to expand shared hitstop. Reject any version requiring it
+and keep the signature within existing play timing.
+
+**Phase B, ASTRA then CLAUDE then HUMAN: one authored signature at a time.** Start
+with Sean's kit reference. One session reviews or authors only his ultimate
+motion/pose on the agreed hook; a separate bounded integration aligns camera,
+effect and sound. The other five follow their own grammar and release/recovery.
+Do not stretch existing cast clips to hide a missing intro hook. A brief lighting
+response is optional; existing weather may already do the job. Decline extra
+lighting if it washes out role colors or hides the shoe.
+
+Advance only after the signature works in contested retrieval from caster and
+opponent viewpoints. If the hook adds no visible value, retain the existing cast
+and direct its staging. Missing cinematic support must block unreachable assets,
+not improvements to live casts.
 
 ## 5. VFX / CAMERA / GAME-FEEL PASS
+
+**Direct emphasis before adding response.** Sound, body and camera should agree
+on which instant matters. Tune timing, direction, duration, recovery and distance
+before amplitude. The core lata/retrieval camera pass belongs in S tier; the wider
+action-family pass is A. Use `CameraRig` and existing spectator/replay interest.
+
+- **Release / pickup:** small arm/camera timing agreement where needed. Possession
+  gets clarity, not a celebratory hold or automatic FOV kick.
+- **Lata / tag:** contact-aligned directional punctuation, then quick recovery to
+  shoe and opponent. Judge the distant-view cost of lata's unattenuated punch.
+- **Slide / lunge:** restrained inertia and stable horizon; track the taya through
+  entry and recovery. Judge misses, repeated use, and mouse, pad and touch comfort.
+- **Skills / ultimate:** emphasize the hero's real release or consequence, not
+  every particle onset. Distinct timing may require less camera movement.
+- **Start / ending / spectator:** establish place and retain the final action when
+  control is already outside live play. During play, keep caster, consequence and
+  retrieval opening in context instead of cutting to the biggest effect.
+
+Reject forced live-player cuts, aim displacement, horizon rolls, nausea-inducing
+inertia, constant shake and automatic FOV pumping. Keep stronger framing in existing
+spectator/replay contexts where appropriate. Do not add settings/UI here or assume
+an unbuilt reduced-effects setting exists.
 
 Use the existing stack. Shared `Hitstop` is bounded to 20-80 ms and ignores overlap;
 `HitFeel` holds only the victim's view, while the world keeps moving. They solve
@@ -254,7 +323,7 @@ different problems. Do not globalize ordinary hits or add caster feedback that
 reveals offscreen victims. Existing camera holds were repaired for drift in § 150;
 judge repeated impacts at the end of a chase before increasing any strength.
 
-The first isolated VFX target is **Zack's ThunderShockRing**: retain the lightning
+The first repair within Zack's hero pass is **ThunderShockRing**: retain the lightning
 star's directionality, break up the flat filled appearance, and allow the existing
 bolt/contact to lead. Keep gameplay radius and the sourced bolt intact. Later,
 select one unfinished composition from § 131.6: Carapace's body plates, Barricade's
@@ -278,37 +347,58 @@ TODO § 151.8 already measured maximum-effects load and found no accumulating le
 Its warm cost is a diagnostic reading, not target-device certification. Do not start
 a pooling rewrite or simplify sourced models without a new measured player problem.
 
-## 6. AUDIO PASS
+## 6. AUDIO DIRECTION
 
-**First, distinguish decisions.** Audition a dry retrieval scrape/catch against the
-current shove sound in a contested pickup. Pitch variation already exists and does
-not make one recording mean two actions. Keep the preferred can recordings as the
-reference against which throw, flight/bounce, block, tag and reset are mixed.
+**S tier within the core sequence:** space, preparation, release, tin, opening,
+approaching feet, scrape/catch, tag or escape, release of tension. Flight connects
+hand to contact without a constant whistle. The can transient commands knockdown;
+its tail yields to footsteps and retrieval. Missed slides never confirm a catch.
 
-**Second, make the corrected space useful.** `AudioDirector` now follows the active
-camera; world voices use a 2-32 m linear rolloff. Attention § 18 records the far
-diagonal concern and the difference between first-person and third-person ears.
-Listen to approach, behind-camera landing, sprint and slide from both sides of the
-same play, including a joiner. Tune one cue family only if it becomes inaudible or
-misleading. Do not compensate for a sound nobody has listened to by raising all SFX.
+Direct loudness, frequency and duration together. Tin needs a clear upper attack,
+approaching steps a usable midrange, and hero weight must not smother either.
+Trim competing tails and ambience before raising foreground gain. Leave holes in
+the mix rather than sounding every beat. These are audition hypotheses, not fixed
+EQ numbers. Preserve preferred can recordings; section 4 gives each hero its own
+preparation, peak and decay. An ultimate is not simply a louder skill.
 
-**Third, establish hero and environment hierarchy.** The 42 elemental replacements
-and remaining earlier sourced cues are provisional (Asset_Sourcing § 5.5), not
-blanket-approved. One hero audition should distinguish cast preparation, skill hit,
-ultimate and tail without simply getting louder at each step. Pisonet's score-sting
-misuse was fixed; its pitched click still needs a coin-sound judgment. Pares should
-not impersonate a bouncing slipper. These are specific environmental sound choices,
-not a new ambience system.
+**First audition:** slide scrape/catch against shove in contested pickup. Pitch
+variation exists but cannot make one recording mean two decisions. Human chooses
+the distinction; engineering integrates the approved timing and relay.
 
-Music already has a continuous late-round pressure lift and announcement ducking.
-The two delivered beds do not become adaptive scoring merely by adding a new track.
-Judge a full ending with the OST active: approaching feet and tin must survive the
-lift, the final victory must register, and the deliberate cuts must be clean.
-Quiet between events is useful. Reject constant voice chatter or global chase loops.
-Human-recorded tsinelas, neighborhood sounds and Tagalog exertions can be a later
-identity pass, one source family at a time (Attention § 9).
+**Space:** `AudioDirector` follows the active camera; world voices use **2-32 m
+linear rolloff**. Attention section 18 records far-diagonal and FPP/TPP questions.
+Hear approach, behind-camera landing and slide from both sides, including a joiner.
+Tune one family only when inaudible or misleading, not all SFX. The 42 elemental
+replacements and earlier sourced cues remain provisional (Asset_Sourcing section
+5.5). Pisonet's score-sting misuse is fixed; its pitched click needs a coin-sound
+judgment. Pares should not impersonate a bouncing slipper.
+
+Music already has late-round pressure lift and announcement ducking. Hear a full
+ending with the OST: feet and tin survive the lift, victory registers, deliberate
+cuts remain clean. No new adaptive-score system, music fades, constant chatter or
+global chase loops. Human-recorded tsinelas, neighborhood sounds or Tagalog exertion
+can serve S/A identity when filling a specific gap, one family at a time (Attention
+section 9). Judge headphones and ordinary speakers for nearby watchers as well.
 
 ## 7. MAPS / ENVIRONMENT PASS
+
+**Each map needs a final art-direction pass, delivered in small increments.**
+The unit of direction is the whole map; the unit of work is one lighting/composition
+pass, one landmark or one frontage. A prettier corner alone does not finish a map.
+For each, select three existing gameplay views: first throw toward the lata,
+retrieval at eye height, and the defender's reverse view, plus one existing
+spectator angle. Stage foreground edges, readable action midground and a background
+landmark. At least one should make a strong hero shot from the ordinary camera.
+
+**Players, lata, loose shoe and chalk first; landmark second; dressing last.**
+Start with key-light direction, ambient fill, broad shadow shapes, contact grounding
+and material response. Check slippers in sunlight and shade, can metal/label
+separation, asphalt versus pavement, cloth versus hard surfaces and characters
+against facades. Use existing rendering controls before new props or shaders.
+No automatic PBR conversion, wet-road makeover, volumetric/bloom upgrade or renderer
+replacement. A new rendering feature needs visible benefit and measured cost on
+target hardware, including the supported lower setting. Warm probe cost alone
+cannot approve it. Cooler shadow does not mean saturated defense-blue streets.
 
 Read [Art_Direction.md](Art_Direction.md) before choosing new environment colors:
 offense orange and defense blue identify roles, not decoration. Preserve authored
@@ -324,14 +414,18 @@ frame for Classic's personal chase. Its narrow lateral space makes the two long
 approaches important. **Recorded roughness already addressed:** § 134.14 grounded
 cars and extended the geometry gate; do not list floating cars as still broken.
 
-**Next opportunity:** one roadside composition pass beside the nearest existing
-sari-sari frontage. Judge the contrast between richly dressed edge and quiet
-retrieval ground, facade/material repetition, roof/cable silhouettes and whether
-the ambient bed identifies a neighborhood. Hero Strike needs a crowded-lane frame
-here, because an acceptable effect in open space can consume this narrow view.
-Do not widen the map as a polish fix. Done is one coherent landmark visible from
-the first throw position without obscuring a shoe or taya; a reaction is optional
-and should be omitted unless it improves that actual view.
+**Direction:** close neighborhood warmth and claustrophobic chase. Warm roadside
+life, neutral readable ground, layered facades, sampay, roofs and cables frame the
+long approaches. Light should distinguish the near sari-sari frontage from the road
+and far layer without an orange wash. Keep rich edges and broad quiet lane values.
+The sound is low domestic/shop life with occasional distant activity, not chatter
+over footsteps. Existing cloth or prop motion is a peripheral accent only.
+
+**First increment:** one lighting/composition pass across the three views, then
+frontage refinement if needed. Done when the normal and reverse views identify a
+neighborhood, the near/far layers separate, and the retrieval line survives both
+shade and narrow-lane Hero Strike overlap. Do not widen the map. A decorative
+reaction is optional; the stronger whole-map view is the S-tier outcome.
 
 ### BAYAN PLAZA
 
@@ -340,13 +434,16 @@ trees can provide a calmer, more public counterpoint to Eskinita. **Correction:*
 `BayanPlazaMonumentFix` already removed the blocking intrusion into the defender's
 box; the older map document is history on that point.
 
-**Next opportunity:** one monument-side approach. The fix deliberately leaves a
-small walkable visual overlap rather than move the whole arranged corner. Judge
-that seam at eye height, plus whether the landmark anchors the broad ground or
-leaves it visually anonymous. Inspect foreground paving, tree shade and ambience
-before filling empty space with props. Preserve collision and the open floor. Done
-is an unmistakable plaza view and an understandable monument edge with no new
-obstacle or retrieval occlusion. Do not replan the entire square from an old defect.
+**Direction:** open civic space and confident sunlight. Broad sunlight/shadow
+rhythm, a clear monument and church/tree silhouettes create a public barangay
+feeling. Foreground paving leads into open action space and a far landmark. Empty
+ground is a positive part of this identity. Use a more distant, open street bed
+than Eskinita and sparse canopy motion; no extra stalls or clutter to fill frames.
+
+**First increment:** one monument-side lighting/composition pass checked from the
+reverse defense view. The fix retains a small walkable visual overlap: judge the
+seam, do not replan collision. Done is deliberate open ground, grounded characters,
+a clear landmark and a view distinct from Eskinita without map text.
 
 ### ILALIM NG TULAY
 
@@ -356,14 +453,22 @@ field-recording source already exist. `LrtTrainFlyby` now defaults to a rare
 300-second interval; do not restore the old document's 24-second rhythm or retune
 its gameplay-linked pass while adding ambience.
 
-**First concern is retrieval continuity.** The
+**Direction:** cool-neutral bridge shadow, restrained shop-light pockets and urban
+weight. Guideway mass sits above a clear carriageway; pisonet/pares/PC Express frame
+the edge, the jeepney anchors a distant silhouette. Depth and selective highlights
+reveal metal without road darkness or glare. Avoid a neon reskin. A subdued urban
+bed yields to footsteps, while the existing rare train provides the interruption.
+
+**Foundation concern is retrieval continuity.** The
 [six-seed report](reports/bot-sweep-2fde55d32246.md), on its recorded commit, has
 0-48 idle penalties in Hero Strike on Ilalim, with almost all the dead time in one
 seed. That is a location to investigate, not proof of an unreachable slipper or
-broken map. Trace that recorded outlier before a broad prop pass or balance change.
+broken map. Trace that recorded outlier before polishing the implicated retrieval
+area; independent lighting direction need not wait. Do not infer a balance change.
 
-**Presentation opportunity:** one pisonet/pares frontage audition after the route
-check. It already reacts; the question is whether the sounds and bursts make it
+**First art increment:** shadow-to-shop composition across the three gameplay
+views, then one pisonet/pares frontage audition after the route check. It already
+reacts; the question is whether the sounds and bursts make it
 feel like a food/computer street or another fight. Judge shop light and signage
 against the bridge shadow, material consistency at the asphalt/pavement boundary,
 and environmental noise during an ultimate. The jeepney's metallic factors and
@@ -371,74 +476,137 @@ reflection probe were repaired in § 151.5; approve the finish visually before
 changing lighting again. Done is one legible, recognizable roadside zone whose
 reactions leave room for footsteps, can and slipper. No new hazards or rules.
 
-## 8. NATIONALS PRIORITY TIERS
+**Life is selective direction, not mandatory animation everywhere.** Prefer an
+existing reaction with recognizable cause, brief local response and quiet afterward.
+Do not trigger a gag to compete with a tin hit or chase. Still frames and mix come
+first. One meaningful shop response can earn A tier; another decorative background
+motion accent remains C. No automatic traffic, moving everything or hidden players.
 
-### S TIER
+## 8. REVISED NATIONALS PRIORITIES
 
-**Retrieval coherence and the first lata payoff.** Huge player/judge impact; narrow
-art, hand-animation and cue work on existing hooks; moderate integration risk.
-The small motion-review tool is a prerequisite that earns its cost only by answering
-these moves. A playable reference sequence outranks more isolated screenshots.
+### Two layers, one quality reference
 
-### A TIER
+**Foundation / coherence** removes contradictory signals: body/FPP mismatch,
+misleading sounds, unreadable ground, broken blends or missing remote feedback.
+Fix the relevant blocker. Motion capture earns its place by answering a selected
+move, not by becoming a tooling project.
 
-**One complete hero, one unfinished dominant effect, and one real map problem at a
-time.** Approve Sean's three casts and their existing arm/VFX timing; finish Zack's
-flat shock star; locate Ilalim's retrieval outlier. Then choose one map-side pass
-from § 7 or the `character-female-a` slide contact review. High visible return,
-bounded scope; stop a map or animation pass if it starts requiring balance changes.
+**Transformative polish** gives a whole sequence and place deliberate rhythm:
+light and composition, motion and sound identity, camera emphasis, quiet and payoff.
+Start when its own prerequisites work, without waiting for every minor defect to
+close. Each increment states its intended perceptual change and ends in comparable
+gameplay evidence. An improvement visible only in an isolated preview is unfinished.
 
-### B TIER
+First approve the core sequence on Eskinita; extend that standard to its ordinary
+map views and one hero's complete presentation. Carry the quality bar across maps
+and heroes, not the same treatment. Start and ending must bookend the experience.
+Tiers describe impact, not task size. Release/security blockers keep their separate
+priority; this presentation plan does not demote them.
 
-**Finishing the supporting beats.** One character's locomotion/action seam, one
-block/bank contact pass, one existing ending/celebration, or one pisonet/pares audio
-pair. Useful once the central sequence works; lower impact than fixing the player's
-own retrieval. Evaluate a concrete captured problem before opening an asset task.
+### S TIER: the production-value change
 
-### C TIER
+1. **Complete throw/lata/retrieval/chase reference.** Foundation: body/FPP, sound
+   meaning and motion evidence agree. Transformative: author anticipation, tin
+   payoff, footsteps, contact and recovery as one scene. Audio and camera direction
+   are part of S, not optional later fixes. Highest repeated player/judge return;
+   narrow integration protects control and authority.
+2. **Map-wide art direction, Eskinita first.** Deliberate lighting, composition,
+   material response and Filipino specificity in ordinary views. Establish one
+   map, then give Bayan Plaza and Ilalim their distinct treatments in separate
+   passes. This outranks scattered seam repair; readability and device cost gate it.
+3. **One complete Hero Strike reference, Sean first.** Character presence, three
+   casts, body/FPP transitions, VFX and sonic identity, with the existing ultimate
+   as the peak. Several small sessions deliver one result. Phase A of the ultimate
+   contract is a prerequisite only when a new presentation action is selected.
 
-**Small decorative rewards.** One background motion accent, one nonessential prop
-material seam, or one human-recorded neighborhood accent. Low gameplay return and
-easy to overdo. Only pursue after the main views and sound hierarchy pass; never
-turn the whole street into constantly moving effects.
+### A TIER: carry the standard through the experience
 
-### DO NOT DO
+- **Five remaining hero treatments and Phase B ultimate signatures**, one hero and
+  one art/integration task at a time. Zack's star repair belongs within his grammar,
+  not ahead of whole-game identity just because it is easy to name.
+- **Transitions and match closure.** Around one selected family, review idle to
+  sprint, sprint to throw, throw to recovery, pickup to sprint, slide/get-up, hit
+  to locomotion and cast exits, including interruption and remote playback. Start
+  establishes the street; new taya begins without stale effects; final play resolves
+  into character response and existing music/audio closure. Trace `MatchResult`
+  and victory-to-`crouch` before selecting one celebration. No results UI, extra
+  jingle, live-player camera cut or timer change. The last impression matters.
+- **Supporting sound/camera hierarchy and meaningful environmental reactions** in
+  full play with the OST. One bank/block family, one map ambience or one shop
+  response can strengthen the whole scene after the reference is approved.
+- **Ilalim's route outlier**, a foundation investigation rather than promised
+  spectacle. Reproduce the recorded seed and log the slipper's rest position;
+  escalate demonstrated obstruction, not an inferred map or balance defect.
 
-No new systems by default; no UI tasks; no global hitstop on every hit; no larger
-skill footprints, stacked floor planes or white flashes to simulate quality; no
-automatic sourcing sweep; no reauthoring all rigs; no six-hero cinematic project
-before its hook and benefit are agreed; no extra traffic or hazards that change
-decisions; no reviving old FUTURE/INSPIRATION prompts as the default work order.
-Do not retune slide recovery from bot usage alone or repeat a broad probe suite
-that already answers the question.
+### B TIER: observed local roughness
 
-### SPECULATIVE - HUMAN APPROVAL REQUIRED
+One rig's accessory contact, material seam or noncentral action mismatch surviving
+main passes. Promote it if it obscures a player, misstates possession or blocks a
+selected S-tier sequence. Do not repair every model because a metric is unusual.
 
-No new gameplay idea is recommended by this evaluation. A geometry change that
-creates new bank routes, a recurring environmental bonus, or a longer shared
-ultimate freeze would change play and needs a separate human decision. None is
-part of the polish order above.
+### C TIER: optional decorative rewards
 
-## 9. NATIONALS QUALITY BAR
+Background motion accents, detail invisible at match distance and extra dressing.
+Human-recorded audio is not automatically C: a distinctive foreground source can
+serve S/A, while another background accent can wait. Remove tasks whose only value
+is being measurable or whose addition duplicates an existing beat.
 
-The **first 30 seconds in the arena** should establish a recognizable street,
-grounded moving characters and a readable can. The **first knockdown** should make
-the player react and immediately spot the retrieval opening. The **first chase**
-should make both ordinary pickup and risky slide understandable. The **first hero
-skill** should disclose its job and caster; the **first ultimate** should supply
-one signature silhouette and consequence without hiding the street game.
+### DO NOT DO BEFORE NATIONALS
 
-Use one full Classic match and one Hero Strike match as the final cohesion check,
-with at least one other person watching from the player's shoulder or the existing
-spectator view. Ask them to explain a bank, a failed lunge and a retrieval escape
-without coaching. Ask afterwards what they remember besides the powers. If the
-answer is not a particular street-game moment, the next batch still belongs in S
-tier. These are proposed acceptance observations, not playtests completed today.
+No new modes, heroes, abilities, meters, controls, progression, hazards or UI/HUD;
+no wholesale roster, audio-library or renderer replacement; speculative pooling,
+asset decimation or sourcing sweep; six unreachable cinematics; larger footprints,
+stacked floor planes or white flashes; constant shake, chatter or street motion;
+wet/glossy everything; arbitrary prop density; generic capture frameworks or broad
+repeat probes without a new question. Orphan-file cleanup and comment-count repairs
+remain engineering housekeeping, not transformative polish. Do not revive old
+FUTURE/INSPIRATION prompts as the default order.
 
-Use existing replay/highlight evidence where it captures the needed event. Record
-the build commit, mode, map and viewpoint with judgments; approvals belong in
-Attention.md, not another report stream here. Mechanical passes do not substitute
-for the human's timing, taste and listening approval.
+No new gameplay is recommended. Changes to routes, collision, scoring, control or
+freeze duration need a separate human gameplay decision and are outside this plan.
+Do not retune slide recovery from bot usage alone. Preserve the geometry, white-frame
+and overlap constraints in section 5 throughout every art pass.
+
+## 9. HUMAN QUALITY BAR AND STOPPING RULES
+
+The first view establishes a Filipino street; the first knockdown creates a clear
+opening; the first chase sells ordinary pickup and risky slide; the first skill
+shows its job; the ultimate has one signature; the ending resolves the final play.
+Use existing player/replay/capture tools. No large new test campaign.
+
+**Ten ordinary screenshots:** sample ten times without selecting pretty frames
+from an unedited segment. Record commit, mode, map and viewpoint. Count frames with
+intentional silhouettes, depth, landmark, color/value hierarchy and VFX coverage;
+compare before/after and name repeated failures. **8/10 appealing ordinary frames**
+is an initial working aspiration, not a measured result or permission for two
+unreadable frames. Necessary in-view gameplay information must remain readable
+throughout. Apply this as each map pass lands; a staged hero shot cannot certify it.
+
+**Thirty-second clip:** use ordinary unedited gameplay with natural audio. When a
+bank, knockdown, retrieval, missed lunge or ultimate occurs, can an uncoached watcher
+understand it and react? Two or three reactions are an aspiration when those events
+occur, not a quota requiring extra spectacle during quiet play. If nothing eventful
+occurs, judge pacing in a longer segment rather than inventing events. Ask what was
+memorable without suggesting the answer. Watch muted for motion clarity, listen
+without the picture for sound identity, then judge them together.
+
+**Player and judge:** include FPP thrower, defender/opponent, joiner and existing
+spectator view where relevant. Someone behind the player should follow the same
+lata-to-shoe-to-taya story. Spectator framing keeps cause and consequence in view,
+not just the largest explosion; maps supply readable backdrops. Headphones alone
+cannot approve a room-facing presentation. Compare the same action, map, viewpoint,
+mix level and supported quality setting. Retain a change for perceptible benefit,
+not asset count; revert if it costs tracking, comfort or clarity.
+
+**Whole experience:** once references work, judge one full Classic match and one
+Hero Strike match with a watcher, including start and ending. Classic must stand
+on its own without powers; Hero Strike should still be remembered for street-game
+decisions. Judge each remaining map as its pass lands. Mechanical checks prove
+wiring; humans approve timing, taste, sound, comfort and competitive readability.
+Record actual approvals in Attention.md with build/viewpoint, using section 17.2
+for slide feel, section 18 for spatial mix, section 13 for sourced cues and section
+9 for recordings. Reuse existing entries; do not duplicate an approval ledger here.
+Nothing in this revision claims those judgments or playtests are complete.
 
 ## FIRST POLISH BATCH
 
@@ -505,24 +673,36 @@ answer. Ask before credit-consuming external work; never perform a usage reset.
    **Verify:** nearby thrower, defender and distant observer hear/see the same
    consequence; compare against unchanged feedback and retain it if already better.
    Human approves, CLAUDE changes only a demonstrated mismatch (TODO § 151.3 context).
+   Close the batch by watching the resulting throw-to-retrieval/chase sequence with
+   the OST, so separate successful fixes become one approved timing/mix reference.
 
-7. **ASTRA: review Sean's three existing casts as one motion language.**
-   **Problem:** imported actions and deformation metrics do not establish readability.
-   **Why:** one approved hero supplies the quality reference for later hero sessions.
-   **Scope:** ASTRA § 1A, Flame Rush, Ignition Cannon and Supernova only; judge coil,
-   extension, stop and recovery within their existing timings.
-   **Done:** rush, chambering and vertical slam read differently without VFX, and the
-   ultimate feels strongest without enlarging its effect.
-   **Verify:** versioned strips and full-speed gameplay after increment 2; compare
-   existing FPP actions and record any engineering mismatch instead of editing it.
+## NEXT: MAKE THE REFERENCE TRANSFORMATIVE
 
-8. **CLAUDE: finish Zack's existing ThunderShockRing composition.**
-   **Problem:** the flat saturated star competes with authored lightning (§ 131.6).
-   **Why:** one dominant shape can cheapen the first ultimate despite good casts.
-   **Scope:** the ground shock's visual shape/value/decay only; retain the star
-   identity, bolt, gameplay footprint and all cast timing.
-   **Done:** the bolt/contact leads, the ground opens visually between branches,
-   and the lata and escape route remain visible.
-   **Verify:** current live ultimate in a solo and overlapping-effects view on
-   Eskinita, the white-frame gate, and human before/after judgment. Route to the
-   existing TODO § 131.6 entry; no new VFX framework.
+After the first six increments, select a transformative S-tier outcome rather
+than filling the schedule with B-tier repairs. These are ownership lanes, never
+instructions to contact another conversation. Each selected task enters its
+existing queue; do not copy all future proposals into TODO or ASTRA.
+
+- **ASTRA:** one hero's full presentation review (Sean first, ASTRA section 1A),
+  then only the necessary motion correction. Done when the three jobs read without
+  VFX in full-speed in-engine evidence. A separate model pass is another task.
+- **CLAUDE:** one approved cast's FPP/body/VFX/audio timing or transition seam.
+  Done when owner and opponent see the same release and recovery in a player.
+- **SHARED:** one map's lighting/composition pass across section 7's three views,
+  Eskinita first. CLAUDE owns scene/builder/shader integration; ASTRA owns one
+  selected Blender asset only if needed. Human judges depth, mood and clear ground.
+  This does not widen ASTRA.md into scene-code work. A landmark is a separate task.
+- **CLAUDE then ASTRA:** one Phase A ultimate contract increment, then one hero's
+  Phase B motion/pose on the agreed hook, then separate integration and human review.
+- **SHARED:** one match-ending review, then one approved body/audio/camera correction
+  through existing hooks. Done when final action and closure feel connected.
+- **CLAUDE:** Zack's ThunderShockRing shape/value/decay within his hero pass
+  (TODO section 131.6). Retain bolt, star direction, footprint and timing; compare
+  solo and Eskinita overlap, plus the white-frame gate. Bolt/contact leads and
+  the ground opens between branches. No new VFX framework.
+
+One Plus-sized session owns one hero review, animation family, model, map view
+family or integration seam. Stop with evidence and a decision; integration and
+human approval are explicit dependencies, not assumed outcomes. Keep useful
+existing work when it passes. Ask before credit-consuming external work, never
+reset usage, and never contact another conversation.
