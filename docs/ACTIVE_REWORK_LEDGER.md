@@ -34,6 +34,18 @@ this ledger resolves the later owner feedback that changed the scope.
 
 ### Models and style: latest correction is binding
 
+- **Latest correction: stay cute and blocky.** The owner rejected the rounded Berto
+  prototype shown in `Logs/character-design/berto-individual-v1.png` as ugly and
+  broken. Its oversized blank head, tiny eye marks, lumpy clothing and rigid stance
+  are not a direction to carry forward. The previous model and its dependent
+  roster, arm and runtime files have been restored to the pushed checkpoint.
+- The owner also rejects the added thumb shape. Remove that protruding addition;
+  retain the original simple block hands. This applies to body and matching FPP.
+  Keep flat graphic faces. Improve individual proportions, clothing construction,
+  silhouette, restrained outlines and natural posing inside the existing cute,
+  blocky language. Do not replace it with rounded anatomical or realistic models.
+
+
 - The owner reviewed `all-playable-characters-v4.jpg` and said the model improvement
   was not noticeable and did not look better. Most Classic characters still look
   identical or weird. **The first refinement pass is not accepted or complete.**
@@ -72,8 +84,8 @@ this ledger resolves the later owner feedback that changed the scope.
   presentation, normal play, and relevant 30/60/144 Hz conditions.
 - Preserve authored slide timing/contact and motor/authority contracts while
   improving the rig and motion. Keep Generic rigs and existing bone paths/clip
-  names compatible. Added bend joints are being prototyped on Berto; do not claim
-  they are integrated until attachments, masks and clips actually support them.
+  names compatible. The first bend-joint prototype was discarded with the rejected Berto model.
+  Articulation remains open; choose it to support the preserved blocky style.
 
 ### Every existing skill, SFX and VFX
 
@@ -138,7 +150,8 @@ Blender executable:
   matching FPP meshes, feedback/audio correctness and evidence, pushed.
 - **Last pushed gameplay/art checkpoint: `ad91efd`**, measured cadence correction,
   foley random-stream isolation, diagnostics and expanded owner brief. Later
-  documentation-only commits do not make the in-flight Berto prototype verified.
+  documentation-only commits do not certify later model changes. The unpushed
+  Berto prototype was rejected and its source/dependent files restored.
 
 ### Verified at e730878
 
@@ -221,7 +234,7 @@ whole task after one character.
 
 | Order | Character / saved ID | Individual pass |
 |---|---|---|
-| 1 | Berto / `bayan` | Draft mesh/rig written; not imported or reviewed yet |
+| 1 | Berto / `bayan` | Rounded draft rejected; previous source restored; blocky refinement pending |
 | 2 | Maring / `maring` | Pending individual design |
 | 3 | Totoy / `totoy` | Pending individual design |
 | 4 | Inday / `inday` | Pending individual design |
@@ -243,57 +256,32 @@ whole task after one character.
 The two custom bases remain retained and inaccessible. Keep their compatibility;
 do not present them as additional selectable characters in a cast sheet.
 
-### Berto prototype: exact in-flight state
+### Rejected Berto prototype and next design constraints
 
-- `tools/characters/mesh_author.py`: new low-level GLB/mesh helper. It has no face,
-  haircut, costume or character-proportion template. It can append joints, retarget
-  existing translation keys, write bind matrices, loft/bevel/surface/segment forms
-  and blend joint weights. It requires review/testing, especially skinning.
-- `tools/characters/author_berto.py`: individual explicit Berto design. A broader
-  head contour with simple flat eye/mouth graphics, cropped side-swept hair, complete
-  rolled green shirt over a pale undershirt, useful khaki shorts, towel and sandals.
-  No realistic nose, brows or wrinkles. This replaces the old exposed-waist/central
-  trouser-stripe construction rather than adding more trim to it.
-- Written in place to `character-male-f.glb`, retaining its GUID, root name and saved
-  ID. Draft has 3,007 body vertices / 1,481 triangles and 695 head vertices / 343
-  triangles. Palette: `MapSource/materials_persons/person_bayan_authored.tres`;
-  `RosterBookBuilder.PersonPalettes` now points Berto at it.
-- The original seven joint names/paths remain. Added knees, ankles, elbows and
-  wrists give fifteen joints. Hips/torso were raised 0.05 model units; original
-  translation tracks are offset in parent space. This is a prototype, not a claim
-  that all inherited clips now look good.
-- Current runtime patch prefers `wrist-right` before `arm-right` for the hand
-  anchor, with legacy fallbacks. Current FPP extractor includes the arm's descendant
-  joints and blended weights. These patches are **not yet verified in Unity**.
-- New bend-joint motion, individual idle/ready/carry/throw/retrieval/turn poses and
-  settled FPP work have NOT been authored yet. Do not display this prototype as a
-  finished character.
+The draft imported and rendered, but the owner rejected the actual four-angle
+image. Successful import was not successful art. The draft was never pushed.
+Its model, palette mapping, derived arms and speculative wrist integration were
+restored to HEAD `536c1c7` (gameplay/art at `ad91efd`). The restored GLB blob hash
+is `ce6e7f1786e11baefdbfe39f9c2db8c7a3714204`. The failed source scripts, palette
+and GLB are quarantined under `Logs/rejected-berto-2026-09-10`, outside the live
+asset and authoring paths. Do not rerun them as the next design.
 
-### Required rig integration work, not yet completed
+The draft had fifteen joints, but no new articulated motion had been authored.
+The proposed offline IK, gait metadata and FPP articulation were candidates,
+not completed systems. Reassess those needs against the existing blocky rigs.
 
-1. Import/rebuild and inspect Berto's actual mesh, simple face, proportions, clothes
-   and silhouette. Fix visual defects before applying this pipeline to another actor.
-2. Check blended joint weights and actual hand socket. `PalmCentre`, authored slide
-   tooling and FPP extraction previously assumed the complete limb was owned by one
-   arm/leg bone. Added descendants must be included where the contract is a limb.
-3. Extend the gait mask over knee/ankle descendants; it currently enables only root
-   and the two old leg names. Preserve full-body ownership during actions.
-4. Author planted articulated gait paths and realistic support/weight transfer.
-   Offline two-link IK and authored curves are a candidate; do not add runtime
-   physics fighting the motor. Include elbow/wrist posture and recovery.
-5. The current sine-swing cadence formula is for the old rigid-leg cycles. If new
-   gait paths have different stance duty/travel, bake their actual cycle distance
-   or measure it in the editor. Keep legacy rigs working during incremental conversion.
-   Extending existing `GeneratedAnimationSet` metadata is one possible route, not
-   an implemented requirement or permission to build an elaborate subsystem.
-6. First-person forearm/wrist articulation may require separate derived pieces and
-   bind metadata. Current FPP meshes are still static whole-arm geometry. Preserve
-   visible shoe size, stable grip, charge/release and cancellation contracts.
-7. Reauthor/re-solve motion against the settled geometry. Keep working authored
-   slides and their timing/contact intent; record before/after changes rather than
-   silently replacing approved motion.
-8. Test actual imported clips and meaningful contact/continuity behavior. Existing
-   seven-bone assumptions need appropriate stronger coverage, not suppressed failures.
+The rejected first-pass thumb additions have now been removed from all eighteen
+playable source models: 384 added vertices / 176 triangles per model, preserving
+all animation sampler data. Roster/FPP regeneration succeeded. Berto
+four-angle comparison was inspected in Unity; outline/arm/motion checks pass
+14/14 in `Logs/block-hands-contracts-v2.xml`. See
+`docs/reports/improvement-2026-09-10/block-hands-and-ink.md`. Character hull width is reduced from 0.008 to 0.0045 model units
+(44% less expansion), with the original weld retained to avoid torn corners. Then refine Berto's existing angular forms,
+not the discarded rounder recipe. Keep recognizable head size and a legible simple
+expression, make shirt/shorts read as complete clothing, and use uncluttered shape
+changes that remain visible at gameplay distance. Check each change from all four
+angles and in motion before treating it as an improvement. No individual character
+pass is complete yet. The other seventeen still require their own design work.
 
 ## 5. Eighteen-skill ledger
 
@@ -396,7 +384,7 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
   pass. Do not use `-nographics` for PlayMode or `-batchmode -quit` as compile proof.
 - Final candidate needs Core, EditMode, eight checks, source audits and the isolated
   PlayMode gate twice from the settled state. Prior e730878 results do not certify
-  the newer cadence or in-flight individual models.
+  the newer cadence or subsequent individual model changes.
 - Run appropriate WallClock evidence separately: actual action sequences, overlap,
   frame conditions, updated rig contact and performance. Inspect normal-speed
   motion; tests alone cannot establish feel.
@@ -446,19 +434,25 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
   Its only source is specific-window Game Capture with game audio; the game window
   is not selected yet. No recording has started. Original `Untitled` collection/
   profile contents remain; restore that selection after finishing OBS work.
-- `HeroTurnaroundProbe`'s four-column camera uses 1.0 world spacing but 0.58 ortho
-  size; this offsets subjects inside nominal 600px cells. A dedicated individual
-  review or matching 0.5 ortho framing should avoid misleading crops. Do not spend
-  this work on product UI.
+- `HeroTurnaroundProbe.RunOne` provides versioned individual four-angle review.
+  Cell spacing now matches the 1.16-unit vertical view; the previous 1.0 spacing
+  offset subjects in nominal 600px cells. This is evidence tooling, not product UI.
 
 ## 9. Immediate continuation
 
-1. Import and inspect the current Berto prototype; resolve mesh/rig/hand/FPP issues.
-2. Complete his individually authored motion, style and matching arms, with actual
+1. Continue Berto's individual block-form refinement. The block hands and lighter
+   ink have been checked separately. `tools/refine_berto.py` is a prepared, unrun
+   candidate for complete clothing, smaller block hands and a relaxed idle. Do not
+   call it imported, reviewed or complete until it is actually exercised.
+2. Refine Berto within the original angular forms. Complete his individually
+   authored motion, style and matching arms, with actual
    in-engine/game-distance evidence. Keep simple faces. Then continue one at a time.
 3. Work through every remaining character and every skill row, keeping this ledger
    honest about implementation versus verification versus owner acceptance.
-4. Complete maps/chase/feedback scrutiny and final Windows qualification/delivery.
+4. After the character work, complete the remaining motion, all eighteen deep
+   skill/SFX/VFX rows, maps/chase/feedback scrutiny and Windows qualification. The
+   owner explicitly reiterated this order after the style correction; do not stop
+   with the character batch or silently drop any other deliverable.
 
 The owner has explicitly asked not to lose important planning across compactions.
 Before a context boundary, update the current in-flight state and next concrete

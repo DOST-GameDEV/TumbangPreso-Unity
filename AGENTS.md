@@ -71,6 +71,8 @@ player can click the control. Reproduce a defect before replacing a working fix.
   individual character authoring, especially distinct Classic faces and silhouettes.
   Review each model before moving to the next; regenerate matching FPP arms after
   its design settles. Keep recognizable identities and do not homogenize the cast.
+  Keep the cute blocky forms and simple block hands. The rounded Berto draft and
+  added thumb shapes were explicitly rejected; do not revive that recipe.
   Keep simple flat graphic faces. Realistic noses, brows and wrinkles are not the
   requested style improvement. Motion realism concerns weight and articulation.
   Do not decimate, compress or repaint sourced art for an unmeasured performance concern.

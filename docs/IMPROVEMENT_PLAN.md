@@ -1,13 +1,15 @@
 # Game improvement plan
 
-Current state: PRESENTATION BATCH IMPLEMENTED; FULL RELEASE QUALIFICATION AND PLAYER VERIFICATION PENDING.
+Current state: FIRST PRESENTATION PASS IMPLEMENTED; INDIVIDUAL BLOCKY CHARACTER AND DEEP SKILL REWORK OPEN; FINAL QUALIFICATION PENDING.
 Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks`.
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.
 
 **Latest owner decisions and exact current execution state:**
 [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md). Read it after the required
 CLAUDE/VISION/TODO order. The owner explicitly requested that planning survive
-compactions. The rejected first model refinement is not a completed deliverable.
+compactions. The rejected first model refinement is not a completed deliverable. The later
+rounded Berto draft was also rejected and restored. Keep cute blocky forms, simple
+flat faces and block hands; remove the added thumbs. Improve within that style.
 
 ## Authority and current delivery
 

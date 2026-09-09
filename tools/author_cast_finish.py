@@ -1,4 +1,4 @@
-"""Refine the live cast's grip, footwear and everyday clothing on its existing rigs.
+"""Maintain the first-pass footwear/clothing while preserving simple block hands.
 
 The named faces, hair, skeleton, palettes and animation bytes remain intact. Added
 geometry uses the existing skin joints and atlas. Inday's long imported hand props
@@ -17,7 +17,72 @@ import numpy as np
 from glb_mesh_dump import read_glb, read_accessor
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "cast-grip-and-clothing-v1"
+VERSION = "cast-block-hands-v2"
+LEGACY_VERSION = "cast-grip-and-clothing-v1"
+# Exact body offsets from the v1 export. Inday's removed hand props were compacted
+# before writing, so her original live body ends at 968 rather than 1052 vertices.
+# These are a bounded migration of rejected additions, not a character recipe.
+LEGACY_THUMB_START = {
+    "bayan": 930, "maring": 902, "totoy": 804, "inday": 968,
+    "kuya_boy": 760, "ate_girlie": 726, "tikboy": 926, "bebang": 774,
+    "jun_jun": 864, "lola_pacing": 845, "mang_kanor": 728, "aling_nena": 704,
+    "dante": 9060, "cheska": 6840, "sean": 16056, "zack": 7464,
+    "nemu": 5710, "phaister": 13944,
+}
+
+
+def store_geometry(g, blob, primitive, attributes, indices):
+    for name, values in attributes.items():
+        prior = g["accessors"][primitive["attributes"][name]]
+        primitive["attributes"][name] = add_accessor(g, blob, values, prior["type"],
+            5123 if name == "JOINTS_0" else 5126, "H" if name == "JOINTS_0" else "f")
+    primitive["indices"] = add_accessor(g, blob, [(i,) for i in indices], "SCALAR", 5125, "I")
+
+
+def add_accessor(g, blob, values, kind, component, fmt):
+    while len(blob) % 4: blob.append(0)
+    offset = len(blob)
+    for value in values: blob.extend(struct.pack("<" + fmt * len(value), *value))
+    view = len(g["bufferViews"])
+    g["bufferViews"].append({"buffer": 0, "byteOffset": offset, "byteLength": len(blob)-offset})
+    accessor = {"bufferView": view, "componentType": component, "count": len(values), "type": kind}
+    if kind == "VEC3":
+        a = np.asarray(values); accessor["min"] = a.min(0).tolist(); accessor["max"] = a.max(0).tolist()
+    g["accessors"].append(accessor)
+    return len(g["accessors"]) - 1
+
+
+def remove_legacy_thumbs(character, path, g, original):
+    before = animation_digest(g, original)
+    node = next(n for n in g["nodes"] if "skin" in n and
+        "body" in g["meshes"][n["mesh"]].get("name", "").lower())
+    primitive = g["meshes"][node["mesh"]]["primitives"][0]
+    attributes = {k: list(read_accessor(g, original, v)) for k, v in primitive["attributes"].items()}
+    indices = [v[0] for v in read_accessor(g, original, primitive["indices"])]
+    start = LEGACY_THUMB_START[character]
+    removed = set(range(start, start + 384))
+    names = [g["nodes"][i]["name"] for i in g["skins"][node["skin"]]["joints"]]
+    for i in removed:
+        joint = attributes["JOINTS_0"][i][0]
+        assert names[joint] in ("arm-left", "arm-right"), (character, i, names[joint])
+        assert attributes["WEIGHTS_0"][i][0] == 1, (character, i)
+    triangles = [indices[i:i+3] for i in range(0, len(indices), 3)]
+    assert all(not any(i in removed for i in t) or all(i in removed for i in t) for t in triangles)
+    kept = [t for t in triangles if t[0] not in removed]
+    assert len(triangles)-len(kept) == 176, character
+    used = [i for i in range(len(attributes["POSITION"])) if i not in removed]
+    remap = {old: new for new, old in enumerate(used)}
+    attributes = {k: [values[i] for i in used] for k, values in attributes.items()}
+    indices = [remap[i] for t in kept for i in t]
+    blob = bytearray(original)
+    store_geometry(g, blob, primitive, attributes, indices)
+    g["extras"]["castFinish"] = VERSION
+    write(path, g, blob)
+    result_g, result_b = read_glb(path)
+    assert animation_digest(result_g, result_b) == before, "Animation bytes changed"
+    return {"id": character, "state": "removed rejected thumbs", "removed_vertices": 384,
+            "removed_triangles": 176, "animation_sha256": before}
+
 
 
 def cell(slot):
@@ -107,6 +172,8 @@ def author(character,path):
     if g.get("extras",{}).get("castFinish")==VERSION:
         return {"id":character,"file":str(path.relative_to(ROOT)),"state":"already authored",
                 "animation_sha256":animation_digest(g,original)}
+    if g.get("extras",{}).get("castFinish") == LEGACY_VERSION:
+        return remove_legacy_thumbs(character, path, g, original)
     before=animation_digest(g,original)
     nodes=g["nodes"]
     body_node=next(n for n in nodes if "skin" in n and "body" in g["meshes"][n["mesh"]].get("name","").lower())
@@ -151,12 +218,8 @@ def author(character,path):
         lo,hi=palm.min(0),palm.max(0)
         tone=Counter(slots[distal]).most_common(1)[0][0]
         side=1 if bone_name=="arm-left" else -1
-        height=float(hi[1]-lo[1])
-        center=((far-.044)*side,float((lo[1]+hi[1])*.5-.015),float(hi[2]+.009))
-        size=(.058,max(.036,min(.05,height*.40)),.045)
-        geom.bevel(center,size,bone,int(tone),.009)
-        # A compact second plane gives a thumb pad rather than a square peg.
-        geom.bevel((center[0]+side*.016,center[1]-.011,center[2]+.004),(.032,.031,.038),bone,int(tone),.007)
+        # The owner explicitly rejected added thumbs. Preserve the original block
+        # hand and use its measured reach only to place existing cuff details.
         hands.append({"bone":bone_name,"skin_slot":int(tone),"palm_max":far})
     # A beveled toe/sole edge follows each existing foot's own size and material.
     # Bare feet retain their skin; this does not put every person into a new shoe.

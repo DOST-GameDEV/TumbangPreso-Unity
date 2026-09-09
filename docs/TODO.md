@@ -274,6 +274,16 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Latest owner correction, 2026-09-10: keep the cute, blocky cast and simple flat
+faces. The rounded Berto prototype was explicitly rejected and its source and
+dependents restored to the pushed checkpoint; it was never pushed. Remove the
+added thumb shapes and preserve simple block hands. This correction is now
+implemented on all eighteen playable bodies, matching arms regenerated, character
+ink reduced by 44%, and focused outline/arm/motion checks pass 14/14.
+[Before/after and limits](reports/improvement-2026-09-10/block-hands-and-ink.md). Individual proportions,
+clothing, silhouette, outline restraint and natural posing remain open, as do all
+eighteen deep skill reviews. See [the active ledger](ACTIVE_REWORK_LEDGER.md).
+
 Owner review, 2026-09-10: the first model refinement was rejected as insufficiently
 noticeable. Individual character redesigns, distinct Classic faces/silhouettes and
 a complete functionality/SFX/VFX pass over all eighteen skills are now explicitly

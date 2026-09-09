@@ -58,7 +58,10 @@ namespace TumbangPreso.Visual
 
         /// <summary>`person_outline.tres` carries 0.008 in the model space of a rig that is then
         /// scaled by PERSON_SCALE 2.38, so the world width it renders at is this.</summary>
-        public const float PersonOutlineWidth = 0.008f * 2.38f;
+        // The owner rejected the heavy borders around cuffs, clothing relief and
+        // hands. Keep a continuous outer edge with 44% less expansion; mesh welding
+        // remains responsible for closure. Props have their own measured width.
+        public const float PersonOutlineWidth = 0.0045f * 2.38f;
 
         /// <summary>
         /// The ink every outline in the game is drawn in, characters, props and world alike.

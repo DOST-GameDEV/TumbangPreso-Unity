@@ -39,6 +39,29 @@ namespace TumbangPreso.EditorTools
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
+        public static void RunOne()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            string id = null, output = null;
+            for (int i = 0; i + 1 < args.Length; i++)
+            {
+                if (args[i] == "-rig") id = args[i + 1];
+                if (args[i] == "-out") output = args[i + 1];
+            }
+            var book = RosterBook.Load();
+            var entry = book?.People.FirstOrDefault(p => p != null && p.Id == id);
+            if (entry == null || entry.Model == null || string.IsNullOrEmpty(output))
+                throw new ArgumentException("RunOne requires an existing -rig ID and a versioned -out path.");
+            output = Path.GetFullPath(output);
+            if (File.Exists(output)) throw new IOException("Use a new review filename: " + output);
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
+            string name = Core.Roster.AllPeople.FirstOrDefault(p => p.Id == id)?.Name ?? id;
+            var report = new StringBuilder();
+            bool ok = ShootHeroTurnaround(id, name, AssetDatabase.GetAssetPath(entry.Model), output, report);
+            File.WriteAllText(Path.ChangeExtension(output, ".txt"), report.ToString());
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
         public static bool Execute()
         {
             var report = new StringBuilder();
@@ -98,10 +121,12 @@ namespace TumbangPreso.EditorTools
 
             for (int col = 0; col < Angles.Length; col++)
             {
-                PlaceTurn(modelPath, id, $"{name.ToUpper()} - {Angles[col].Label.ToUpper()}", Angles[col].Yaw, palette, col, 0);
+                PlaceTurn(modelPath, id, $"{name.ToUpper()} - {Angles[col].Label.ToUpper()}", Angles[col].Yaw, palette, col, 0, 1.16f);
             }
 
-            var camera = BuildCamera(Angles.Length, 1);
+            // Cell spacing must equal the 1.16-unit vertical view. Otherwise a
+            // four-column image puts the first subject at x=424 in a 600px cell.
+            var camera = BuildCamera(Angles.Length, 1, 1.16f);
             camera.orthographicSize = 0.58f;
             bool success = CaptureTo(camera, Angles.Length * CellPixels, CellPixels, outPath);
 
