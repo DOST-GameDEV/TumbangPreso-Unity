@@ -255,12 +255,12 @@ The full scope, order, dependencies and acceptance checks are in
 request includes art, animation, audio, effects, UI and game engineering and
 removes the old one-task stopping limit. No subagents or other conversations.
 
-The UI placeholder implementation is complete for handoff, with final runtime
-verification explicitly deferred by the user. The remaining gameplay/world work
-is queued in the plan. The next chat may revise proposals when evidence supports
-a better result, and owns tests and the Windows build. No human approval
-is implied by technical validation. Keep individual findings in their existing
-numbered entries and archive completed sections whole.
+The 2026-09-10 request activates verification, the full gameplay/world improvement
+scope and a Windows build in the current task. The earlier deferral applied only
+to the previous UI task. Work autonomously, with no delegation and minimal UI
+decoration effort. The plan contains live progress and evidence boundaries.
+No human approval is implied by technical validation. Keep individual findings in
+their existing numbered entries and archive completed sections whole.
 
 **152.3 implemented, verification deferred:** the UI placeholder, illustrated loading, typography and navigation pass is recorded whole in TODO_Archive.md section 152.3 and `docs/reports/ui-placeholder-2026-09-09.md`. Final illustration/loading changes were not tested or built at the user's request. Start the next execution at IMPROVEMENT_PLAN V0.
 
@@ -268,7 +268,19 @@ numbered entries and archive completed sections whole.
 
 **152.1 closed:** result controls now receive presses above gameplay controls; isolated InputSurfaceProbe 5/5. Full evidence is archived in TODO_Archive.md section 152.1.
 
+**152.5 closed:** initial carry/charge locomotion, blend/rebind continuity and FPP
+recovery repairs; Core 559/559, EditMode 452/452, focused carry/slide/motion 22/22.
+Full batch evidence and limitations are in TODO_Archive.md section 152.5. The
+broader improvement and release scope below remains active.
+
 ### 152.4 Repeated play must feel substantially better: OPEN
+
+2026-09-10: baseline 1x captures and traces are in `Logs/improvement-baseline-v1`.
+The carried sprint measured 3.6053 m/s with frozen legs. Motion-layer, charge,
+crossfade, rebind and FPP recovery repairs are in verification; the full scope
+remains open. Home/story real-raycast journeys pass 3/3, and obsolete English
+display-copy assertions have been updated while retaining ID/rule coverage.
+AGENTS.md now carries current branch, autonomy, evidence and delivery contracts.
 
 Use IMPROVEMENT_PLAN's outcome table and P1 motion candidates before polishing
 minor details. Source review found that CharacterAnimator.Choose puts carrying

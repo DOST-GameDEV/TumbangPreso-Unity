@@ -2475,7 +2475,10 @@ namespace TumbangPreso.CameraSystem
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)
         {
             if (_rightPivot == null) return;
-            float k = Mathf.Clamp01(ReachSpeed * dt);
+            // ⚠️ Preserve the old 60 Hz response while composing exactly across frame
+            // rates. Linear 14*dt settled faster at 30 Hz and snapped after a short stall.
+            float rate = -60f * Mathf.Log(1f - ReachSpeed / 60f);
+            float k = 1f - Mathf.Exp(-rate * Mathf.Max(0f, dt));
 
             _rightPivot.localPosition = Vector3.Lerp(_rightPivot.localPosition, position, k);
             _rightPivot.localRotation = Quaternion.Slerp(_rightPivot.localRotation, rotation, k);

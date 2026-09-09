@@ -168,7 +168,7 @@ GROUPS = [
         destroyed` failures are holding.
      """, [
         "AntiAliasStateProbe", "CosmeticSurfaceProbe", "GameplayShots", "ModelFacingProbe",
-        "MsaaResolveProbe", "NationalsShowcaseProbe", "NearFadeProbe", "ToneSweep",
+        "MsaaResolveProbe", "NationalsShowcaseProbe", "ImprovementEvidenceProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
         "ReplayCaptureProbe", "AbilityStressProbe",
     ]),

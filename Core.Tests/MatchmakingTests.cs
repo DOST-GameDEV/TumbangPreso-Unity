@@ -122,7 +122,7 @@ namespace TumbangPreso.Core.Tests
         {
             string promise = MatchmakingRules.TayaRotationPromise;
 
-            Assert.Contains("taya rotates", promise);
+            Assert.Contains("defender rotates", promise);
             Assert.Contains("everyone defends exactly once", promise);
             Assert.Contains("bad first round is not a lost match", promise);
         }

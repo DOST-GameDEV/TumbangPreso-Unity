@@ -25,6 +25,7 @@ namespace TumbangPreso.Visual
     /// exists at all.
     /// </summary>
     [RequireComponent(typeof(CharacterMotor))]
+    [DefaultExecutionOrder(-50)]
     public sealed class CharacterAnimator : MonoBehaviour
     {
         /// <summary>Names as they appear in the shipped GLBs. Verified by ModelProbe.</summary>
@@ -225,6 +226,12 @@ namespace TumbangPreso.Visual
 
         private PlayableGraph _graph;
         private AnimationMixerPlayable _mixer;
+        private AnimationLayerMixerPlayable _layers;
+        private AnimationMixerPlayable _gait;
+        private AnimationClipPlayable _walkGait, _runGait;
+        private AvatarMask _legsMask;
+        private float _gaitWeight, _runWeight, _gaitPhase;
+        private bool _running;
         private readonly Dictionary<string, AnimationClip> _clips = new Dictionary<string, AnimationClip>();
 
         private string _current;
@@ -272,6 +279,9 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void Bind(GameObject model, AnimationClip[] clips)
         {
+            // ⚠️ A wardrobe/seat swap can rebind a live component. Retire the old output
+            // before replacing its Animator, including when the replacement has no clips.
+            ReleaseGraph();
             if (model == null) return;
 
             _animator = model.GetComponentInChildren<Animator>();
@@ -296,9 +306,12 @@ namespace TumbangPreso.Visual
             _graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
 
             _mixer = AnimationMixerPlayable.Create(_graph, 2);
+            _layers = AnimationLayerMixerPlayable.Create(_graph, 2);
+            _layers.ConnectInput(0, _mixer, 0, 1f);
+            BuildGaitLayer();
 
             var output = AnimationPlayableOutput.Create(_graph, "out", _animator);
-            output.SetSourcePlayable(_mixer);
+            output.SetSourcePlayable(_layers);
 
             _graph.Play();
             Play(Idle, loop: true, force: true);
@@ -401,6 +414,9 @@ namespace TumbangPreso.Visual
             }
 #endif
 
+#if UNITY_EDITOR
+            // ⚠️ SetCurve cannot build these non-legacy clips in a player. Authored
+            // roster clips own the shipping route; missing clips use the explicit chains.
             var heroClips = HeroAbilityClips.BuildAll(_animator.transform);
             if (heroClips != null)
             {
@@ -408,21 +424,35 @@ namespace TumbangPreso.Visual
                     if (kvp.Value != null && !_clips.ContainsKey(kvp.Key))
                         _clips[kvp.Key] = kvp.Value;
             }
+#endif
         }
 
-        private void OnDestroy()
+        private void OnDestroy() => ReleaseGraph();
+
+        private void ReleaseGraph()
         {
+            ClearChargePose();
             if (_graph.IsValid()) _graph.Destroy();
+            if (_legsMask != null)
+            {
+                if (Application.isPlaying) Destroy(_legsMask);
+                else DestroyImmediate(_legsMask);
+            }
+            _legsMask = null;
+            _current = null;
+            _oneShotLeft = _gaitWeight = _runWeight = _gaitPhase = 0;
+            _tripPhase = 0;
+            _running = false;
         }
 
         private void Update()
         {
             if (!_graph.IsValid()) return;
 
-            // ⚠️ BEFORE EVERYTHING BELOW, and it returns early while a pose is held. See
-            // StepChargePose: a locomotion clip re-selected every frame keys the same arm bone
-            // straight back over the wind-up.
-            if (StepChargePose()) return;
+            // Charge state is resolved first, with the arm applied after graph evaluation.
+            // The lower-body layer can keep moving throughout the held preparation.
+            StepChargePose();
+            StepGait();
 
             // ⚠️ BEFORE THE ONE-SHOT, because a fall interrupts whatever the body was doing.
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
@@ -449,6 +479,70 @@ namespace TumbangPreso.Visual
             HoldLastFrame();
 
             StepEmoteFinished(emoting);
+        }
+
+        private void BuildGaitLayer()
+        {
+            if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
+            _gait = AnimationMixerPlayable.Create(_graph, 2);
+            _walkGait = AnimationClipPlayable.Create(_graph, walk);
+            _runGait = AnimationClipPlayable.Create(_graph, run);
+            _walkGait.SetApplyFootIK(false); _runGait.SetApplyFootIK(false);
+            _walkGait.SetSpeed(0); _runGait.SetSpeed(0);
+            _gait.ConnectInput(0, _walkGait, 0, 1f);
+            _gait.ConnectInput(1, _runGait, 0, 0f);
+            _legsMask = new AvatarMask();
+            var transforms = _animator.GetComponentsInChildren<Transform>();
+            _legsMask.transformCount = transforms.Length;
+            for (int i = 0; i < _legsMask.transformCount; i++)
+            {
+                // Mask paths, like clip bindings, are relative to this Animator.
+                // AddTransformPath includes the seat hierarchy on a spawned instance.
+                var transform = transforms[i];
+                string path = "";
+                for (var step = transform; step != _animator.transform; step = step.parent)
+                    path = string.IsNullOrEmpty(path) ? step.name : step.name + "/" + path;
+                _legsMask.SetTransformPath(i, path);
+                string bone = transform.name;
+                // Root lift belongs to the planted gait; torso and arms belong to the
+                // carry/fatigue pose. This preserves the original anti-swimming fix.
+                _legsMask.SetTransformActive(i, bone == "root" || bone == "leg-left" || bone == "leg-right");
+            }
+            _layers.ConnectInput(1, _gait, 0, 0f);
+            _layers.SetLayerMaskFromAvatarMask(1, _legsMask);
+        }
+
+        private float FlatSpeed => new Vector2(_motor.Velocity.x, _motor.Velocity.z).magnitude;
+
+        private float OrdinaryWalkSpeed => Core.Balance.Speed * Core.Stamina.RoleSpeedScale(_motor.IsDefender)
+            * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
+            * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
+
+        private void StepGait()
+        {
+            float speed = FlatSpeed;
+            _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
+            if (!_gait.IsValid()) return;
+            bool layered = _motor.IsGrounded && !_motor.IsTripped && _oneShotLeft <= 0
+                && (_emote == null || !_emote.IsEmoting)
+                && (_carrier == null || _carrier.ChannelRatio <= 0)
+                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing);
+            float target = layered && speed > WalkSpeedThreshold ? 1f : 0f;
+            _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, Time.deltaTime / .08f);
+            // Accepted actions immediately own every bone. A leg layer lingering over a
+            // slide or stomp would erase its support pose at the moment of commitment.
+            if (_oneShotLeft > 0 || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
+            _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, Time.deltaTime / .10f);
+            float reference = Mathf.Lerp(2.8f, 5.4f, _runWeight);
+            float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);
+            _gaitPhase = (_gaitPhase + Time.deltaTime * Mathf.Clamp(speed / reference, .35f, 1.6f) / length) % 1f;
+            _walkGait.SetTime(_gaitPhase * _walkGait.GetAnimationClip().length);
+            _runGait.SetTime(_gaitPhase * _runGait.GetAnimationClip().length);
+            _gait.SetInputWeight(0, 1f - _runWeight); _gait.SetInputWeight(1, _runWeight);
+            _layers.SetInputWeight(1, _gaitWeight);
+            var front = Front();
+            if (front.IsValid() && (_current == Walk || _current == Sprint))
+                front.SetSpeed(Mathf.Clamp(speed / (_current == Sprint ? 5.4f : 2.8f), .35f, 1.6f));
         }
 
         /// <summary>
@@ -562,7 +656,7 @@ namespace TumbangPreso.Visual
             // exists precisely so *"the taya now has a window in which they can see an attacker
             // winding up and act on it"*, and a wind-up nobody else can see deletes that window
             // while leaving the cost.
-            if (_carrier != null && _carrier.ObservedChargePower >= 0.0f) return Throwing;
+            if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
@@ -578,6 +672,8 @@ namespace TumbangPreso.Visual
             // to the three people deciding whether to chase them.
             if (_motor.Stamina.IsFatigued) return Crouch;
 
+            // ⚠️ The historical fix below still owns the UPPER BODY. BuildGaitLayer now
+            // replaces only root lift and legs, so its original grip guarantee survives.
             // ⚠️⚠️ CARRYING BEATS WALK AND SPRINT OUTRIGHT, NOT ONLY WHEN STANDING STILL, AND
             // GETTING THAT WRONG IS *"the hands are just floating"*. The rig has no
             // holding-right-walk, so a carrying unit that switches to `walk` swings the arm bone
@@ -592,20 +688,17 @@ namespace TumbangPreso.Visual
             flat.y = 0.0f;
             float speed = flat.magnitude;
 
-            // ⚠️ SPEED THRESHOLDS, NOT THE SPRINT KEY, AND THEY ARE THE .gd's OWN NUMBERS.
-            // Reading `IsSprinting` gave a bot — which never presses the key on a peer that is
-            // not simulating it — a walk cycle at 6.9 m/s. 7.5 sits above the sprint speed the
-            // rules can produce for a walker and below the dash, so the clip follows the body
-            // rather than the input, and fatigue and the role speed scale both show up honestly.
-            if (speed > RunSpeedThreshold) return Sprint;
+            // ⚠️ Observed speed still owns gait selection. The former fixed 7.5 m/s
+            // threshold never admitted an ordinary 3.795 m/s attacker sprint. StepGait
+            // compares against this role's walking range with hysteresis on every peer.
+            if (_running) return Sprint;
             if (speed > WalkSpeedThreshold) return Walk;
 
             return Idle;
         }
 
-        /// <summary>`character_visual.gd`'s own thresholds. See <see cref="Choose"/>.</summary>
+        /// <summary>The established stationary dead zone. Running uses the role's range.</summary>
         public const float WalkSpeedThreshold = 0.4f;
-        public const float RunSpeedThreshold = 7.5f;
 
         // ---- THE THIRD-PERSON WIND-UP ---------------------------------------
 
@@ -655,7 +748,7 @@ namespace TumbangPreso.Visual
         /// that. With the graph stopped nothing else writes the bone and the pose is exactly
         /// what this function says it is.
         /// </summary>
-        /// <returns>True while a pose is being held, so the caller leaves locomotion alone.</returns>
+        /// <returns>True while the upper-body charge override is active.</returns>
         private bool StepChargePose()
         {
             float power = ObservedCharge();
@@ -672,14 +765,19 @@ namespace TumbangPreso.Visual
                 if (!ResolveChargeBone()) return false;
 
                 _chargePosing = true;
-                _graph.Stop();
             }
 
-            // Written every frame, and the graph is stopped, so nothing else is fighting for it.
-            _chargeBone.localRotation = _chargeBoneRest * Quaternion.AngleAxis(
-                ChargePoseRad * Mathf.Clamp01(power) * Mathf.Rad2Deg, ChargePoseAxis);
-
             return true;
+        }
+
+        private void LateUpdate()
+        {
+            // ⚠️ Evaluate after the graph, before Carrier's LateUpdate reads the hand.
+            // Stopping the entire graph froze moving legs throughout every charge.
+            if (!_chargePosing || _chargeBone == null) return;
+            _chargeBoneRest = _chargeBone.localRotation;
+            _chargeBone.localRotation = _chargeBoneRest * Quaternion.AngleAxis(
+                ChargePoseRad * Mathf.Clamp01(ObservedCharge()) * Mathf.Rad2Deg, ChargePoseAxis);
         }
 
         /// <summary>The deepest live charge on this unit, or -1 when none is running. The three
@@ -749,8 +847,11 @@ namespace TumbangPreso.Visual
         {
             if (!_graph.IsValid() || !_clips.TryGetValue(clipName, out var clip)) return;
 
+            ClearChargePose();
             Play(clipName, loop: false, force: true);
             _oneShotLeft = clip.length;
+            if (_layers.IsValid()) _layers.SetInputWeight(1, 0f);
+            _gaitWeight = 0f;
         }
 
         public void PlayPickUp() => PlayOneShot(PickUp);
@@ -988,14 +1089,28 @@ namespace TumbangPreso.Visual
             // destroyed input 0 and then never connected anything there, so the clip LEAVING
             // input 1 was disconnected and abandoned: one orphaned `AnimationClipPlayable` per
             // clip change, for the life of the graph. A match makes hundreds per character.
-            var outgoing = _mixer.GetInput(1);
-
-            if (_mixer.GetInput(0).IsValid()) _mixer.GetInput(0).Destroy();
-
-            if (outgoing.IsValid())
+            Playable outgoing;
+            if (_weight < 1f && _mixer.GetInput(0).IsValid())
             {
-                _graph.Disconnect(_mixer, 1);
+                // ⚠️ A second action inside a crossfade starts from the mixed pose
+                // the player saw, not the new clip's still-small contribution. Freeze
+                // that branch and retire it as soon as the new transition finishes.
+                outgoing = _mixer;
+                outgoing.SetSpeed(0);
+                _graph.Disconnect(_layers, 0);
+                _mixer = AnimationMixerPlayable.Create(_graph, 2);
+                _layers.ConnectInput(0, _mixer, 0, 1f);
                 _mixer.ConnectInput(0, outgoing, 0);
+            }
+            else
+            {
+                outgoing = _mixer.GetInput(1);
+                RetireOutgoing();
+                if (outgoing.IsValid())
+                {
+                    _graph.Disconnect(_mixer, 1);
+                    _mixer.ConnectInput(0, outgoing, 0);
+                }
             }
 
             var playable = AnimationClipPlayable.Create(_graph, clip);
@@ -1003,7 +1118,9 @@ namespace TumbangPreso.Visual
             playable.SetDuration(loop ? double.MaxValue : clip.length);
 
             _mixer.ConnectInput(1, playable, 0);
-            _weight = 0.0f;
+            _weight = outgoing.IsValid() ? 0.0f : 1.0f;
+            _mixer.SetInputWeight(0, 1f - _weight);
+            _mixer.SetInputWeight(1, _weight);
             _current = clipName;
             _holdAtEnd = !loop;
         }
@@ -1014,6 +1131,15 @@ namespace TumbangPreso.Visual
 
             _mixer.SetInputWeight(0, 1.0f - _weight);
             _mixer.SetInputWeight(1, _weight);
+            if (_weight >= 1f) RetireOutgoing();
+        }
+
+        private void RetireOutgoing()
+        {
+            var old = _mixer.GetInput(0);
+            if (!old.IsValid()) return;
+            _graph.Disconnect(_mixer, 0);
+            _graph.DestroySubgraph(old);
         }
     }
 }

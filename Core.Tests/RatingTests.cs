@@ -240,8 +240,8 @@ namespace TumbangPreso.Core.Tests
 
             Assert.Equal(RankTier.Barangay, RatingRules.TierFor(RatingRules.StartRating));
 
-            Assert.Equal("BATA", RatingRules.TierName(RankTier.Bata));
-            Assert.Equal("ALAMAT", RatingRules.TierName(RankTier.Alamat));
+            Assert.Equal("ROOKIE", RatingRules.TierName(RankTier.Bata));
+            Assert.Equal("LEGEND", RatingRules.TierName(RankTier.Alamat));
             Assert.Equal("UNRANKED", RatingRules.TierName(RankTier.Unranked));
 
             // Every tier has a sentence, because a rung nobody can decode is a word.

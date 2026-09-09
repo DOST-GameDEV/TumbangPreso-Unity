@@ -1,5 +1,42 @@
 # TODO archive: the batch reports and the closed work
 
+## 152.5 Initial motion continuity batch: CLOSED, 2026-09-10
+
+Fresh baseline capture confirmed a moving carrier at 3.6053 m/s with zero leg
+rotation. HoldingRight was deliberately suppressing the gait to stop the hand
+and slipper from swimming. Charging also stopped the entire graph.
+
+CharacterAnimator now layers the existing authored root/leg gait under the stable
+upper body, selects running relative to observed role speed with hysteresis, and
+scales cadence with observed speed. The charge override is evaluated after the
+graph and before Carrier reads the hand. Accepted actions remove the leg layer so
+the authored slide, stomp and other full-body support poses retain ownership.
+
+Interrupted blends preserve the pose currently visible; completed outgoing
+branches are retired. Model rebinding destroys the prior graph and clears its
+action. Runtime generation of empty non-legacy hero fallback clips is restricted
+to editor fixtures; authored roster clips and existing fallback chains ship.
+Viewmodel recovery uses exponential smoothing calibrated to the old 60 Hz response.
+
+Evidence: `reports/improvement-2026-09-10/carry-baseline-v1.mp4` and
+`carry-layered-v2.mp4`, each with its timestamp CSV. Encoded at recorded wall-clock
+speed, without frame interpolation. The new trace visibly swings the legs during
+the same carrying sprint. These are automated witness views; the held world shoe
+is hidden by the owner camera in this capture, so they do not prove grip alignment
+visually. The attachment regression supplies that separate measurement.
+
+Verification: Core 559/559; EditMode 452/452, including mixed-pose interruption,
+graph rebinding, stable arm/moving leg separation, both role speeds and 30/60/144 Hz
+recovery. Focused carry/slide/motion PlayMode 22/22. Home/story real-raycast journeys
+3/3. Initial failures were obsolete English copy expectations and an incorrect
+mask path rooted at the spawned seat; both were repaired without lowering bounds.
+
+The current AGENTS.md records the active autonomy, branch, scope and delivery
+contracts. This completed batch does not close section 152.4 or the overall pass:
+all-map modeling, cast improvement, all eighteen hero actions, complete owner/
+observer sequences, inherited UI sweep and Windows player qualification continue.
+
+
 **This is the record, not the worklist.** [`TODO.md`](TODO.md) is what a session reads;
 a section lands here once its heading no longer says OPEN, IN PROGRESS or NOT DONE.
 Split out on 2026-09-03, when `TODO.md` had reached **22,930 lines** and had stopped being

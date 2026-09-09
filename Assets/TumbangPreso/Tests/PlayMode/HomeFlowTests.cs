@@ -1,8 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -36,7 +38,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             var settings = Object.FindFirstObjectByType<ConvertedSettingsPanel>();
             Assert.IsNotNull(settings);
-            settings.GetComponentsInChildren<Button>().First(b => b.name == "BackButton").onClick.Invoke();
+            Press("BackButton");
             yield return null;
             yield return null;
             Assert.IsTrue(ActiveButton("StartButton").isActiveAndEnabled);
@@ -57,7 +59,7 @@ namespace TumbangPreso.PlayTests
             yield return UiRuntimeShots.Capture("Gear-before-overhaul-v1", 1920, 1080);
             Assert.IsFalse(picker.GetComponentsInChildren<Button>(true).Any(b => b.name == "CustomDoor"),
                            "The withdrawn maker must not acquire a new door through Home.");
-            picker.GetComponentsInChildren<Button>().First(b => b.name == "BackButton").onClick.Invoke();
+            Press("BackButton");
             yield return null;
             Assert.IsFalse(picker.gameObject.activeSelf);
             Assert.IsTrue(GameObject.Find("HomeCanvas").GetComponent<Canvas>().enabled);
@@ -98,6 +100,52 @@ namespace TumbangPreso.PlayTests
 
         private static Button ActiveButton(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
             .First(b => b.name == name && b.isActiveAndEnabled);
-        private static void Press(string name) => ActiveButton(name).onClick.Invoke();
+
+        // A callback can pass while artwork or another canvas consumes every real press.
+        // Exercise the top raycast target before dispatching the pointer event to it.
+        private static void Press(string name)
+        {
+            Canvas.ForceUpdateCanvases();
+            var button = ActiveButton(name);
+            var rect = (RectTransform)button.transform;
+            var canvas = button.GetComponentInParent<Canvas>();
+            var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            var position = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            var pointer = new PointerEventData(EventSystem.current) { position = position, button = PointerEventData.InputButton.Left };
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointer, hits);
+            Assert.IsNotEmpty(hits, name + " has no raycast target.");
+            Assert.AreEqual(button, hits[0].gameObject.GetComponentInParent<Button>(),
+                name + " is covered by " + hits[0].gameObject.name);
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerClickHandler);
+        }
+
+        [UnityTest]
+        public IEnumerator LoadingStoryCanBeOpenedAdvancedAndClosedWithoutSkippingReadiness()
+        {
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Splash);
+            yield return new WaitForSecondsRealtime(0.6f);
+            Assert.IsNotNull(Object.FindFirstObjectByType<SplashScreen>());
+            Press("LoadingArtButton");
+            yield return null;
+            var story = GameObject.Find("LoadingStoryRoot");
+            Assert.IsNotNull(story);
+            var text = story.GetComponentsInChildren<Text>().First(t => t.text.Contains("TUMP's world"));
+            string first = text.text;
+            Press("LoadingStoryNext");
+            yield return null;
+            Assert.AreNotEqual(first, text.text);
+            yield return new WaitForSecondsRealtime(15.1f);
+            Assert.AreEqual(SceneFlow.Splash, SceneManager.GetActiveScene().name,
+                "Reading must hold the loading screen past its maximum random dwell.");
+            Press("LoadingStoryClose");
+            yield return null;
+            Assert.IsFalse(story.activeSelf);
+            float end = Time.realtimeSinceStartup + 60f;
+            while (SceneManager.GetActiveScene().name != SceneFlow.MainMenu && Time.realtimeSinceStartup < end)
+                yield return null;
+            Assert.AreEqual(SceneFlow.MainMenu, SceneManager.GetActiveScene().name);
+            Assert.IsNotNull(ActiveButton("StartButton"));
+        }
     }
 }

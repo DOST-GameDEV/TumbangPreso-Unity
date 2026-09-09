@@ -254,9 +254,9 @@ namespace TumbangPreso.Tests
         {
             string hud = Read("UI/Hud.cs");
 
-            StringAssert.Contains("OUT  ·  NO TSINELAS LEFT", hud);
-            StringAssert.Contains("LAST TSINELAS  ·  DO NOT GET TAGGED", hud);
-            StringAssert.Contains("case ScoreEvent.LastTsinelasStanding: return \"LAST TSINELAS\"", hud);
+            StringAssert.Contains("OUT  ·  NO SLIPPERS LEFT", hud);
+            StringAssert.Contains("LAST SLIPPER  ·  DO NOT GET TAGGED", hud);
+            StringAssert.Contains("case ScoreEvent.LastTsinelasStanding: return \"LAST SLIPPER\"", hud);
         }
     }
 }

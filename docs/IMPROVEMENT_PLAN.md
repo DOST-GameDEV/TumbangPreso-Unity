@@ -1,15 +1,16 @@
 # Game improvement plan
 
-Current state: UI PLACEHOLDERS IMPLEMENTED; FINAL VERIFICATION AND GAMEPLAY PASS QUEUED.
-Starting checkpoint: `0028b3a901b8c338538d31251380c6433a7f6aa6` on `ASTRAReworks`.
+Current state: ACTIVE IMPROVEMENT PASS; BASELINE CAPTURED, MOTION IMPLEMENTATION IN VERIFICATION.
+Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks`.
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.
 
 ## Authority and current delivery
 
-The latest request is to finish the UI placeholders and planning, push the branch,
-and provide a copy-paste handoff in chat. The user explicitly stopped further test
-runs and player builds in this chat; the next chat owns those checks. Earlier
-passes do not verify later changes. No final player was built for this UI state.
+The 2026-09-10 request activates the full improvement pass, tests and Windows
+delivery. The earlier test/build deferral applied to the preceding UI task only.
+The user is AFK and requests autonomous completion of all actionable work, with
+particular emphasis on maps, model geometry and all eighteen skill animations.
+Keep UI effort limited to functional verification and genuine defects.
 
 The next executor may change the priorities, proposed designs and implementation
 choices below when current evidence supports a better result. Record the reason
@@ -106,8 +107,8 @@ and a detailed realistic porch, are outside the shipping resource set.
 
 | Phase | State | Outcome |
 |---|---|---|
-| V0 | next | Verify the final UI/asset/loading changes before building on them |
-| P1 | queued | Complete the throw/can/retrieval/chase motion and feedback reference |
+| V0 | in progress | Fresh import compiled; home/story real-raycast journeys 3/3; inherited screen sweep remains |
+| P1 | in progress | Frozen carry legs measured at 3.6053 m/s; masked gait, live charge, blend/rebind continuity and consistent FPP recovery implemented; regression/capture review underway |
 | P2 | partly complete | Close concrete correctness and release-integrity findings |
 | P3 | implemented, verification pending | Home, mode selection, icons, fonts, graphics settings, loading and dormant maker |
 | P4 | queued | Establish one coherent visual/sound reference on Eskinita |
@@ -116,7 +117,33 @@ and a detailed realistic porch, are outside the shipping resource set.
 | P7 | queued | Improve all three maps and investigate the Ilalim retrieval outlier |
 | P8 | queued | Connect round starts, interruptions, final action and match ending |
 | P9 | queued | Resolve remaining actionable findings and documentation drift |
-| P10 | next chat | Run release checks, build Windows and verify the exact player |
+| P10 | pending implementation | Run release checks, build Windows and verify the exact player in this task |
+
+### Active evidence and decisions, 2026-09-10
+
+- Fetch confirmed clean local and remote `4623348`; no newer work was overwritten.
+- `Logs/improvement-baseline-v1` contains timestamped 1x carry/charge/release
+  frames, ordinary Classic footage and four eye-height views per map. The trace
+  records frozen leg rotation through a carrying sprint at 3.6053 m/s.
+- Baseline Core: 557/559; EditMode: 445/446. The failures were obsolete English
+  display-copy expectations. They are updated without changing IDs or rules.
+- HomeFlowTests now asserts top raycast targets before clicking; real loading
+  story open/next/close holds past the maximum dwell and reaches the ready menu.
+  Fresh result: 3/3. Keyboard/controller and full inherited screen coverage remain.
+- The body change preserves holding-right's stable upper body with a masked
+  authored leg gait. Charge writes after graph evaluation and before the hand
+  attachment. Rebinding retires the previous graph; interrupted crossfades retain
+  their visible mixture. No movement or action/contact timings were retuned.
+- First-person smoothing preserves the original 60 Hz response and composes across
+  frame rates. Authored hero clips retain priority; player-only empty procedural
+  fallback creation is removed from the shipping path.
+- Map baseline priorities: deepen Eskinita's frontages; reauthor Bayan's bare civic
+  landmark geometry; establish material and shadow separation under Ilalim's rail
+  deck. Preserve quiet ground and sourced livery. Actual Philippine references
+  are being reviewed before authoring.
+- Do not mark P1 or section 152.4 complete from these engineering changes alone.
+  Full-speed comparison, cast modeling, all hero presentations, maps and player
+  verification remain part of the active request.
 
 A release/correctness blocker moves ahead of art. Otherwise prioritize perceptible
 improvement to the repeated play sequence over housekeeping and invisible detail.
