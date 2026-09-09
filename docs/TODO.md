@@ -45,7 +45,6 @@ either of those.
 | **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The CODE side of § 146.6 is done**: both call sites ask for `"slide"` and the chain falls through to the lunge clip until a real one lands, so the clip drops in by name with no code change (§ 150.8). ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
-| **ASTRA** | 151.16 | ⚠️⚠️ **THE MOTION EVIDENCE EXISTS NOW AND NOBODY HAS LOOKED AT IT.** `ClipMotionStrip` writes a strip of poses across `clip.length` through the game camera, shader and outline, with the floor drawn at y = 0. Sean’s `slide` is shot and resolves at SLOT 0, its own authored clip rather than the lunge fallback | Not this queue’s work: it is Astra’s review under `ASTRA.md` task 3, and `ASTRA.md` step 6 has the command. ⚠️ **Read the text report as well as the picture**: the resolved slot, the peak bone speed and the last-frame-against-idle distance are not visible in any strip. § 151.16 |
 | **P2** | 151.21 | ⚠️⚠️ **`PersonSwapProbe` STILL READS `RESULT: FAIL`, AND THE THREE REMAINING FAILS ARE THE SUBJECT RIG BEING BALD AND FACELESS ON PURPOSE.** § 151.20’s clip-count fault is closed; what is left is *"nothing uses slot 8. The face is drawn in it"*, *"could not find face ink"* and *"no slot-2 vertices"* against `team-custom-base.glb`, which § 112 built that way. § 124.11 on the probe that owns `CheckAnimationBinds` | The checks ask the rig they are pointed at: either the face and hair assertions move behind a property the naked base sets, or the probe gains a second subject that has both. ⚠️ **Do not delete them**; § 112.12 is what that family of check catches. Not a build gate. § 151.21 |
 | **P2** | 151.19 | ⚠️ **THE EIGHTEEN PROCEDURAL HERO CASTS USE THE PLAYER-ONLY CURVE API THAT MADE THE DANCE A T-POSE, AND ALL EIGHTEEN ARE AUTHORED NOW, SO THE EXPOSURE IS CLOSED AND THE OBSERVATION IS NOT.** `docs/TODO_Archive.md` § 80.8, archived while still open. `HeroAbilityClips.BuildAll` fills non-legacy clips with `SetCurve` at runtime, which returns a valid EMPTY clip in a player, and an empty clip is the bind pose. **Nobody has opened a player and cast an ability** | Cast one ability in a built player and look at it, which nothing has yet done. ⚠️ The authored clips win the name lookup on every rig the roster loads, so this is now about what `HeroAbilityClips` is still the fallback FOR rather than about the casts. § 151.19 |
 | **P2** | 151.18 | ⚠️ **FOUND AND NOT FIXED: two of the 22 `person_*.asset` files belong to no id in `Roster.People`.** `person_berto.asset` and `person_iggy.asset` match nothing, so `RosterBookBuilder.Fill` never opens them and the build logs `20 people` against 22 files. They still carry a model, a palette and a full entry shape, **so anything enumerating that folder to find out what ships gets 22 and two rigs no player can select**, which is what happened to the retrieval-slide pass | Delete the two, and make `Fill`'s caller assert that every `person_*.asset` on disk has an id, beside the `no model mapped` error already there. ⚠️ The second half is the one that matters: an orphan nothing checks for comes back. § 151.18 also carries a second finding about rig ROOT NODE names that must NOT be fixed |
@@ -61,7 +60,7 @@ behind § 143.9, and the list of real pads behind § 138 are all in
 [`../Attention.md`](../Attention.md). **Adding one back here is how this queue stops being read**,
 which is the whole reason the split exists.
 
-✅ **Closed by the 2026-09-09 animation-review pass: § 151.16 and § 151.20.** Together they were the reason an authored clip could not be approved: nothing here could photograph motion, and the one probe that owns `CheckAnimationBinds` went red on a rig that was correct. `ClipMotionStrip` is the strip and `PersonSwapProbe.MissingBaseClips` is the superset rule, with `AnimationReviewTests` asserting both. ⚠️⚠️ **NEITHER CLOSES AN ANIMATION.** The evidence exists and nobody has judged it; that is Astra’s row above and `ASTRA.md` task 3.
+✅ **Closed by the 2026-09-09 animation-review pass: § 151.16 and § 151.20.** Together they were the reason an authored clip could not be approved: nothing here could photograph motion, and the one probe that owns `CheckAnimationBinds` went red on a rig that was correct. `ClipMotionStrip` is the strip and `PersonSwapProbe.MissingBaseClips` is the superset rule, with `AnimationReviewTests` asserting both. ⚠️⚠️ **NEITHER CLOSES AN ANIMATION.** Sean's subsequent isolated strip review keeps the clip unchanged, recorded in `ASTRA.md` task 3 and archived section 151.22. Full-speed match transitions, pickup alignment and human feel remain open; the first-person arm is task 4.
 
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
@@ -1400,7 +1399,7 @@ the command and every argument.
 | clip | 0.950 s, `isLooping` **true**, 36 serialised clips on the roster entry |
 | poses | 0.000, **0.140**, **0.250**, **0.342**, 0.407, 0.543, 0.679, 0.814, 0.950 s |
 | lowest deformed vertex | **0.000 m at all nine poses**, and **-0.002 m at 0.095 s** in the finer trace. No floor penetration worth the name |
-| reaching hand, lowest vertex weighted to `arm-right` | 0.376 m at rest, **0.125 m through the whole contact window**, back to 0.319 m |
+| reaching hand, lowest vertex weighted to `arm-right` | 0.376 m at rest, **0.125 m at 0.140/0.250 s, 0.193 m at 0.342 s**, back to 0.319 m |
 | peak bone speed | **8.71 m/s on `head` at 0.115 s**, the dive |
 | last frame against `idle` frame 0 | **0.000 m, every bone identical.** The clip ends at the rest pose, so there is nothing to snap back from |
 
@@ -1408,7 +1407,10 @@ the command and every argument.
 MORE THAN THE PICTURE.** `ASTRA.md` task 3 solved Sean's reach to `REACH_FRACTION`, **6.17 per
 cent of the rig's own standing height**, in Blender, against deformed meshes, with no Unity in
 the loop. This probe measures 0.125 m against a 2.018 m rig read out of Unity's imported
-artifact: **6.19 per cent.** Two toolchains, two measurement paths, one number.
+artifact: **6.19 per cent at 0.140/0.250 s**. The review in section 151.22 corrected
+the earlier whole-window claim: the report and both captions read **0.193 m at
+0.342 s**, or **9.56 per cent**, as the hand withdraws. The early contacts agree
+with the Blender target; the claim that all three held that height was prose drift.
 
 ### 151.16b ⚠️⚠️ THE PROBE'S FIRST OUTPUT WAS WRONG IN A WAY THAT WOULD HAVE SURVIVED REVIEW, AND THE CALIBRATION IS THE FIX
 
@@ -11196,6 +11198,10 @@ EditMode test on the host-side clamp and rate limit.
 ---
 
 ## The archive index
+
+- **151.22, Sean retrieval-slide strip review, CLOSED 2026-09-09:** kept unchanged;
+  five judgments, corrected hand-height record and evidence limits in
+  [TODO_Archive.md](TODO_Archive.md). Full task 3 remains open for match review.
 
 One row per section that now lives in [`TODO_Archive.md`](TODO_Archive.md). Same numbers,
 whole bodies, nothing deleted. **This table exists so that a pointer written anywhere in the

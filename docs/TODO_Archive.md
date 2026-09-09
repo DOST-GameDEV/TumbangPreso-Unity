@@ -21376,3 +21376,45 @@ person, not a session.
   about overlapping Hero Strike abilities, which neither drives.
 
 ---
+
+
+## 151.22 · SEAN RETRIEVAL-SLIDE STRIP REVIEW, CLOSED 2026-09-09
+
+First polish batch increment 3, reviewed on `ef6cd703` of `ASTRAReworks`.
+**Keep the clip, it passes the isolated strip review.** No asset, solver, runtime,
+balance or evidence file changed. The detailed five judgments are also recorded
+under `ASTRA.md` task 3.
+
+Evidence inspected: `docs/reports/motion/sean_slide_side_v1.png`,
+`sean_slide_quarter_v1.png` and `sean_slide_v1.txt`. The resolved action is `slide`,
+slot 0, duration 0.950 s, 36 serialized clips, looping true. The chosen baked span
+and renderer box both read 2.018 m; the rejected double-scaled span is 4.803 m.
+
+1. Entry from 0.000 to 0.140 reads as a committed feet-forward skid, with the face
+   lifted and reaching shoulder lowered; the head peak of 8.71 m/s at 0.115 s is
+   consistent with that forceful dive, but sparse poses cannot exclude a snap
+   between frames at full speed.
+2. Contact keeps the forward hand distinct in quarter view and a long low body
+   in side view, legible at the strip's small display size; the hand is 0.125 m
+   at 0.140/0.250 s and withdraws to 0.193 m at 0.342 s.
+3. The 0.407 to 0.814 progression passes through low support and a bent-knee rise,
+   so recovery reads as exposure before straightening rather than an instant reset.
+4. The almost-upright 0.814 pose leads to planted rest at 0.950; the zero bone
+   difference against idle frame 0 is a useful endpoint, not proof of runtime
+   blend quality and not by itself evidence of a cut.
+5. Keep it: no visible defect warrants reauthoring, with all nine floor readings
+   at 0.000 m and a finest-trace minimum of -0.002 m at 0.095 s.
+
+**The documentation defect fixed with this review:** the earlier whole-window
+0.125 m claim in task 3 and section 151.16 contradicted the report and image
+captions at 0.342 s. That sample is 0.193 m, 9.56% of rig height; only the two
+previous contact samples are 6.19%. Preserve the report as the source rather
+than changing an animation to fit its summary.
+
+**Verification boundary:** existing committed strips and report inspected, plus
+source confirmation that `ViewmodelArms.PlayAction` still selects `LungeClip`
+for `slide`. No fresh Unity/Blender run, tests, player build or full-speed match
+capture was performed for this documentation-only review. No human approval is
+claimed. Full task 3 stays open for live transitions and pickup alignment;
+`Attention.md` section 17.2 owns feel, task 4 owns the first-person arm, and the
+already-recorded `character-female-a` accessory contact is a separate rig task.

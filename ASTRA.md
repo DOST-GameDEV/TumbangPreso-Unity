@@ -754,9 +754,46 @@ which is the check that the solver is a correction and not a rewrite.
   anything matching by name: it attributed `team-dante`'s artifact to `team-bayan` and
   then reported `team-dante` as having no imported slide at all.
 
-### Remaining, before checking task 3
+### Sean reference review, 2026-09-09
 
-* ✅ **THE MOTION IS PHOTOGRAPHED NOW, 2026-09-09, AND NOBODY HAS JUDGED IT.**
+- [x] **First polish batch increment 3: keep Sean's `slide`; it passes the
+  isolated strip review.** Reviewed the committed side and quarter v1 strips and
+  `docs/reports/motion/sean_slide_v1.txt` on `ef6cd703`. No export or solver change.
+  This is Sean's reference approval, not completion of the broader task 3.
+
+1. **Entry:** 0.000 to 0.140 reads as deliberate commitment into a feet-forward
+   skid, with a lowered reaching shoulder and a lifted face rather than a trip;
+   the 8.71 m/s head peak at 0.115 s supports a forceful dive, but sampled poses
+   cannot rule out an inter-frame snap in full-speed playback.
+2. **Low movement and reach:** the quarter view separates the forward hand from
+   the torso while the side view preserves a long low silhouette, so the pose
+   reads as road-level retrieval at the strip's small display size, with hand
+   clearance 0.125 m at 0.140/0.250 and 0.193 m at 0.342 as withdrawal begins.
+3. **Follow-through and recovery:** 0.407 to 0.814 moves through a tilted low
+   support and bent-knee rise before straightening, which reads as an exposed
+   recovery rather than an immediate stand-up, within the existing 0.950 s clip.
+4. **Return to rest:** the almost-upright 0.814 pose leads into the planted 0.950
+   pose, so matching idle frame 0 is an appropriate destination rather than
+   evidence of a cut; the reported zero bone difference establishes endpoint
+   continuity, not the behavior of the runtime blend.
+5. **Verdict:** keep the clip, it passes this review; there is no visible defect
+   warranting an export, and the nine floor readings are 0.000 m with only
+   -0.002 m at 0.095 in the finer trace.
+
+**Measurement correction:** the earlier claim below that 0.125 m held through
+the whole contact window was wrong. The report and both image captions say
+**0.193 m at 0.342 s**, or **9.56%** of the 2.018 m rig, versus **6.19%** at the
+two earlier contacts. The calibrated renderer box and chosen baked span both
+read 2.018 m; the rejected double-scaled span is 4.803 m. The rising hand is
+visible in both views and does not justify changing the clip to fit stale prose.
+
+No fresh Unity/Blender run, player build, full-speed match capture, or human feel
+approval is claimed. The unchanged v1 evidence remains the review source.
+`docs/TODO_Archive.md` section 151.22 records this completed bounded review.
+
+### Remaining, before checking the whole task 3
+
+* ✅ **THE MOTION IS PHOTOGRAPHED AND SEAN'S ISOLATED STRIP IS APPROVED ABOVE.**
   `docs/TODO.md` § 151.16 is closed: `ClipMotionStrip` shoots nine poses across the
   0.95 s clip through the game's camera, toon shader and ink outline, with the floor
   drawn at y = 0. **Sean's `slide` resolves at SLOT 0**, its own authored clip rather
@@ -765,9 +802,10 @@ which is the check that the solver is a correction and not a rewrite.
   `sean_slide_v1.txt` beside them.
   ⚠️⚠️ **AND THE PROBE INDEPENDENTLY CONFIRMED THIS FILE'S OWN BLENDER SOLVE.** The
   reach was solved to `REACH_FRACTION` **6.17 per cent** in Blender against deformed
-  meshes. Unity measures the lowest `arm-right` vertex at **0.125 m** through the whole
-  contact window against a **2.018 m** rig: **6.19 per cent**. Two toolchains, one
-  number. Floor penetration is **-0.002 m at its deepest**, the peak bone speed is
+  meshes. Unity measures the lowest `arm-right` vertex at **0.125 m** at 0.140 and
+  0.250 s against a **2.018 m** rig: **6.19 per cent**; at 0.342 s it is **0.193 m**.
+  The early contacts agree with the target; the entire window does not hold it.
+  Floor penetration is **-0.002 m at its deepest**, the peak bone speed is
   **8.71 m/s on `head` at 0.115 s**, and the last frame is **identical to `idle` frame
   0**, so there is nothing to snap back from.
   ⚠️ **What is still not evidence: the strip shows the clip in ISOLATION.** Transitions
@@ -785,8 +823,9 @@ which is the check that the solver is a correction and not a rewrite.
   the hip is what touches the floor through its skid. Worth an eye before this rig's
   slide is called finished; it is not a reason to hold the other twenty-one.
 
-Task 3 stays unchecked for the first three of those. No hero skill or ultimate task
-has been started.
+Task 3 stays unchecked for the live-match review and first-person dependency.
+Sean's bounded strip review is complete; the separate accessory question remains
+outside its scope. No hero skill or ultimate task was started in this review.
 
 Unity clip name:
 
