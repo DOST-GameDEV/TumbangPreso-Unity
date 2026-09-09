@@ -12,6 +12,11 @@ animation-only and stop-after-one-hero restrictions in ASTRA.md. Current user
 instructions take precedence over repository guidance. The rules below make the
 active scope explicit so an older reference cannot silently undo it.
 
+Read [docs/ACTIVE_REWORK_LEDGER.md](docs/ACTIVE_REWORK_LEDGER.md) for the latest
+owner decisions, rejected first-pass model result, individual character/skill
+queues and exact in-flight state. The owner explicitly requested this record to
+survive compactions. Keep it current; do not restart or narrow the task after one.
+
 ## Active scope and boundaries
 
 - Work on `ASTRAReworks` only. Fetch first, inspect branch, status and remote HEAD,
@@ -66,6 +71,8 @@ player can click the control. Reproduce a defect before replacing a working fix.
   individual character authoring, especially distinct Classic faces and silhouettes.
   Review each model before moving to the next; regenerate matching FPP arms after
   its design settles. Keep recognizable identities and do not homogenize the cast.
+  Keep simple flat graphic faces. Realistic noses, brows and wrinkles are not the
+  requested style improvement. Motion realism concerns weight and articulation.
   Do not decimate, compress or repaint sourced art for an unmeasured performance concern.
 - Keep the character maker inaccessible to players while retaining implementation,
   assets and saved data. English display copy must not rename persisted IDs.

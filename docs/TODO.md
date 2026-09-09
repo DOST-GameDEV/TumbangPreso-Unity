@@ -9,6 +9,13 @@ before inventing a task, and update it in the same commit as the work.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**Current owner-requested compaction record:**
+[ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md) preserves all active constraints,
+the individual eighteen-character and eighteen-skill queues, rejected approaches,
+verified checkpoints and unverified in-flight work. Read and update it alongside
+section 152. Flat graphic faces remain intentional; rigid posing and repeated
+designs must be improved. Every hero also receives individual treatment.
+
 **2026-09-09 expanded improvement pass: section 152 and
 [IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md).** The current request authorizes game,
 model, animation, SFX, VFX and UI improvements on `ASTRAReworks`, continuing across

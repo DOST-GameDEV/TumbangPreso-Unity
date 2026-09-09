@@ -4,6 +4,11 @@ Current state: PRESENTATION BATCH IMPLEMENTED; FULL RELEASE QUALIFICATION AND PL
 Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks`.
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.
 
+**Latest owner decisions and exact current execution state:**
+[ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md). Read it after the required
+CLAUDE/VISION/TODO order. The owner explicitly requested that planning survive
+compactions. The rejected first model refinement is not a completed deliverable.
+
 ## Authority and current delivery
 
 The 2026-09-10 request activates the full improvement pass, tests and Windows
@@ -565,9 +570,11 @@ owner state every five continuously-loose seconds, for the historical bridge lea
 
 ### Next individual work
 
-Berto: a grounded neighborhood regular, with a distinctive mature face, projecting
-nose, moustache and cropped hair; a real rolled-sleeve work shirt, khaki shorts,
-towel and rubber footwear. Author his geometry individually on the existing rig,
+Berto: a grounded neighborhood regular, with an individually shaped head, simple
+flat eye/mouth graphics and cropped hair; a complete rolled-sleeve work shirt,
+khaki shorts, towel and rubber footwear. The owner explicitly clarified that flat
+faces are intentional; the earlier proposal for realistic noses/brows is withdrawn.
+Author his geometry individually with compatible articulated limb joints,
 inspect front/side/back and ordinary gameplay distance, then continue the remaining
 Classic cast and the six heroes. This is a visual brief, not new gameplay lore.
 
