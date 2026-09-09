@@ -519,3 +519,60 @@ The bot clock discrepancy was inherited eight-round configuration, now pinned an
 printed explicitly. No scoring retune. Full isolated PlayMode twice, fresh Checks,
 Windows build, exact-player play/network/performance and outstanding queue review
 remain required. UI effort remains functional only.
+
+## Owner review and expanded individual pass, 2026-09-10
+
+The owner reviewed the full cast sheet and explicitly rejected the first model
+refinement as too subtle. Most Classic characters still read as identical or odd.
+The model deliverable is NOT accepted or complete. Author and review characters
+one by one, with individually designed faces, proportions, hair, clothing and
+silhouettes. Shared low-level mesh/export utilities are fine; a shared face/body
+recipe with different colors is not the requested work. Rebuild first-person arms
+after the body designs settle. Classic characters go first. Existing names, saved
+IDs, rig/clip contracts and the game's recognizable identity remain. The latest
+request permits redesigning the Classic faces; earlier face-preservation guidance
+does not freeze the generic faces the owner is rejecting.
+
+The owner also adopted all seven scrutiny priorities: stronger silhouettes, better
+footwork, more convincing cast commitment, readable effect overlap, believable
+chases, purposeful map edges and consistent first-person feedback. UI is excluded
+from further polish. They explicitly say most skills feel weak and authorize
+improving every existing skill's functionality, sound and effects. All six
+ultimates must feel imposing through buildup, impact and aftermath. Preserve the
+core game, skill count, networking authority and two modes; do not add complex
+systems. Per-ability timing/function may change when a concrete improvement merits
+it; document the reason and update the actual descriptions and coverage.
+
+### Cadence follow-up
+
+The e730878 checkpoint passed Core 559/559, EditMode 466/466, all eight checks and
+the isolated PlayMode gate twice: 197 passed, 9 skipped, zero failed per pass. This
+proved correctness of that checkpoint, not the owner's model/skill taste approval.
+All original results are retained under Logs/qualification-e730878.
+
+An additional actual-clip measurement found Berto's walk advanced the calibration
+2.016 m per cycle while his feet traveled only 0.769 m. The new regression was seen
+red across the roster. Cadence now uses each rig's bind-pose leg reach and the
+authored swing angles. Walk swing is 38 degrees; sprint remains 44. The authoring
+script reads these same angles. Footfall accents follow the resulting cycle length
+and do not advance the AI random stream. Fresh EditMode: 467/467; targeted real
+motion/retrieval: 18/18. Logs/gait-cadence.csv records all forty gait comparisons.
+
+The existing network report now exposes the already-collected live frame histogram
+and actual graphics/hardware settings for exact-player verification. It honors an
+existing collection opt-out. Bot reports now record resting slipper positions and
+owner state every five continuously-loose seconds, for the historical bridge lead.
+
+### Next individual work
+
+Berto: a grounded neighborhood regular, with a distinctive mature face, projecting
+nose, moustache and cropped hair; a real rolled-sleeve work shirt, khaki shorts,
+towel and rubber footwear. Author his geometry individually on the existing rig,
+inspect front/side/back and ordinary gameplay distance, then continue the remaining
+Classic cast and the six heroes. This is a visual brief, not new gameplay lore.
+
+Skill review has already found a concrete stale behavior: Zack's aimed Thunderstrike
+still applies forward impulses for its seven-second active period, inherited from
+an older overdrive design. Its recall also uses a radial arc footprint scaled by
+the entire recall distance. These need targeted functional/presentation review,
+not a generic increase in brightness or hit radius.

@@ -17,10 +17,13 @@ root=Path(__file__).resolve().parents[1]
 source=(root/"Assets/TumbangPreso/Editor/RosterBookBuilder.cs").read_text(encoding="utf-8")
 table=source.split("PersonModels =",1)[1].split("};",1)[0]
 entries=re.findall(r'\{\s*"([^"]+)"\s*,\s*"([^"]+\.glb)"',table)
+motion=(root/"Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs").read_text(encoding="utf-8")
+def swing(name):
+    return float(re.search(rf"const float {name}\s*=\s*([\d.]+)f",motion)[1])
 reports=[]
 for character,relative in entries:
     path=root/"Assets/TumbangPreso/Art"/relative
-    for name,period,amplitude,arm_swing,lean in [("walk",.72,28,12,2),("sprint",.48,44,24,4)]:
+    for name,period,amplitude,arm_swing,lean in [("walk",.72,swing("WalkLegSwingDegrees"),12,2),("sprint",.48,swing("RunLegSwingDegrees"),24,4)]:
         rig=Rig(path)
         feet=rig.owned_by("leg-left")+rig.owned_by("leg-right")
         foot_floor=min(rig.height_of(v,rig.rest) for v in feet)

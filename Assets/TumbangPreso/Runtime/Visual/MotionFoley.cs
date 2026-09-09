@@ -27,12 +27,15 @@ namespace TumbangPreso.Visual
                 || (_animator != null && _animator.IsPlayingAction) || speed<.4f || travel>.8f)
             { _distance=0;return; }
             _distance+=travel;
-            float stride=speed>3.1f ? 1.12f : .92f;
+            // One quiet accent per cycle avoids a wall of taps from four runners.
+            float stride=_animator!=null ? Mathf.Max(.3f,_animator.FootfallCycleMetres) : 1f;
             if (_distance<stride)return;
             _distance%=stride;_left=!_left;
             // Quiet, short rubber contact. It cannot play from a parked or teleported
             // body, and never fabricates an approaching-enemy proximity warning.
-            GameServices.Audio?.PlayAtVaried("step_rubber",now+transform.right*(_left?-.11f:.11f),.96f,1.04f,.9f);
+            var randomState=Random.state;
+            try { GameServices.Audio?.PlayAtVaried("step_rubber",now+transform.right*(_left?-.11f:.11f),.96f,1.04f,.9f); }
+            finally { Random.state=randomState; } // Cosmetic contacts must not advance the AI's random stream.
         }
     }
 }

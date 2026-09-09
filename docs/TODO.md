@@ -267,6 +267,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Owner review, 2026-09-10: the first model refinement was rejected as insufficiently
+noticeable. Individual character redesigns, distinct Classic faces/silhouettes and
+a complete functionality/SFX/VFX pass over all eighteen skills are now explicitly
+required. All six ultimates must feel imposing. UI is excluded from further polish.
+The expanded brief and the measured cadence correction are recorded in
+[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md). This section remains open.
+
 2026-09-10 second implementation batch: all eighteen live models, forty matching
 first-person arms, forty grounded gaits, eighteen body/FPP casts and all three maps
 are reworked. Current focused checks are green, with timestamped owner/body reels

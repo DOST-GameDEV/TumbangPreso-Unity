@@ -226,6 +226,14 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"mode            : {UI.SceneFlow.SelectedMode}");
             sb.AppendLine($"map             : {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
             sb.AppendLine($"sampled         : {_elapsed:F1} s");
+            sb.AppendLine($"graphics        : {Settings.GraphicsProfiles.Of(Settings.GraphicsProfiles.Current).Label}; {Screen.width}x{Screen.height}; vsync={QualitySettings.vSyncCount}; target={Application.targetFrameRate}");
+            sb.AppendLine($"hardware        : {SystemInfo.processorType}; {SystemInfo.graphicsDeviceName}; RAM={SystemInfo.systemMemorySize} MB");
+            var frames=GameServices.Stats?.FrameRate;
+            if(frames!=null && frames.Frames>0)
+                sb.AppendLine(string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    "live frame rate : frames={0}; seconds={1:F3}; avg={2:F2}; p50={3:F2}; p5={4:F2}; p1={5:F2}; max_ms={6:F2}",
+                    frames.Frames,frames.Seconds,frames.AverageFps,frames.LowFps(50),frames.LowFps(5),frames.LowFps(1),frames.MaxSeconds*1000));
+            else sb.AppendLine("live frame rate : unavailable (no live sample or collection disabled)");
             sb.AppendLine($"round           : {(match != null ? match.RoundNumber : -1)}");
             sb.AppendLine($"defender        : {(match != null ? match.DefenderSlot : -1)}");
             sb.AppendLine($"round active    : {(round != null && round.RoundActive)}");

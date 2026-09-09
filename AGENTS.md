@@ -62,8 +62,11 @@ player can click the control. Reproduce a defect before replacing a working fix.
   camera paths. Emotes end by interruption, not by a new completion timer.
 - Keep Generic rigs, exact clip names, authored slide timing and stable asset
   GUIDs. After GLB exports rebuild the roster and verify serialized clip resolution.
-- Preserve canonical faces and skin. Do not decimate, compress or repaint sourced
-  art to address an unmeasured performance concern.
+- The owner rejected the first model refinement as too subtle and now requires
+  individual character authoring, especially distinct Classic faces and silhouettes.
+  Review each model before moving to the next; regenerate matching FPP arms after
+  its design settles. Keep recognizable identities and do not homogenize the cast.
+  Do not decimate, compress or repaint sourced art for an unmeasured performance concern.
 - Keep the character maker inaccessible to players while retaining implementation,
   assets and saved data. English display copy must not rename persisted IDs.
 

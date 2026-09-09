@@ -119,6 +119,54 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [Test]
+        public void GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig()
+        {
+            var failures = new System.Collections.Generic.List<string>();
+            var rows = new System.Collections.Generic.List<string> { "id,gait,authored_cycle_metres,calibrated_cycle_metres" };
+            foreach (var entry in Resources.Load<RosterBook>("RosterBook").People)
+            {
+                var old = _model;
+                _model = Object.Instantiate(entry.Model, _seat.transform);
+                _model.transform.localScale = Vector3.one * CharacterVisual.PersonScale;
+                _driver.Bind(_model, entry.Clips);
+                Object.DestroyImmediate(old);
+                var graph = Get<PlayableGraph>(_driver, "_graph");
+                graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+                var skin = _model.GetComponentsInChildren<SkinnedMeshRenderer>().First(s =>
+                    s.bones.Any(b => b.name == "leg-left"));
+                int index = System.Array.FindIndex(skin.bones, b => b.name == "leg-left");
+                var vertices = skin.sharedMesh.vertices;
+                var weights = skin.sharedMesh.boneWeights;
+                var inverse = skin.sharedMesh.bindposes[index];
+                var foot = Enumerable.Range(0, vertices.Length)
+                    .Where(i => weights[i].boneIndex0 == index && weights[i].weight0 > .99f)
+                    .Select(i => inverse.MultiplyPoint3x4(vertices[i])).ToArray();
+                float floor = foot.Min(p => p.y);
+                var sole = foot.Where(p => p.y < floor + .02f).ToArray();
+                Vector3 local = sole.Aggregate(Vector3.zero, (sum,p) => sum+p) / sole.Length;
+                foreach (string gait in new[] { "walk", "sprint" })
+                {
+                    _driver.PlayOneShot(gait);
+                    Set(_driver,"_weight",1f); Invoke(_driver,"Blend");
+                    var front = (AnimationClipPlayable)Invoke(_driver,"Front");
+                    float duration = front.GetAnimationClip().length;
+                    front.SetTime(duration*.25f); graph.Evaluate(0);
+                    Vector3 first = skin.bones[index].TransformPoint(local);
+                    front.SetTime(duration*.75f); graph.Evaluate(0);
+                    Vector3 last = skin.bones[index].TransformPoint(local);
+                    float cycle = 2f * Mathf.Abs(Vector3.Dot(last-first,_model.transform.forward));
+                    float calibrated = duration * Get<float>(_driver,gait=="walk"?"_walkReference":"_runReference");
+                    rows.Add($"{entry.Id},{gait},{cycle:F4},{calibrated:F4}");
+                    if (cycle < .1f || Mathf.Abs(calibrated-cycle) > cycle*.15f)
+                        failures.Add($"{entry.Id}/{gait}: feet travel {cycle:F3} m per cycle, calibration moves the body {calibrated:F3} m");
+                }
+            }
+            System.IO.Directory.CreateDirectory("Logs");
+            System.IO.File.WriteAllLines("Logs/gait-cadence.csv",rows);
+            Assert.IsEmpty(failures,string.Join("\n",failures));
+        }
+
         private static T Get<T>(object target, string name) => (T)target.GetType().GetField(name, Private).GetValue(target);
         private static void Set(object target, string name, object value) => target.GetType().GetField(name, Private).SetValue(target, value);
         private static object Invoke(object target, string name, params object[] args)

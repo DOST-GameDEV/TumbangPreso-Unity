@@ -40,6 +40,9 @@ namespace TumbangPreso.Visual
         private const string Throwing = "holding-right-shoot";
         private const string Interact = "interact-right";
         private const string Die = "die";
+        // The gait author reads these same angles; cadence follows actual leg reach.
+        public const float WalkLegSwingDegrees = 38f;
+        public const float RunLegSwingDegrees = 44f;
 
         /// <summary>The fatigued pose. ⚠️ THE RIG SHIPS NO PANTING CLIP — enumerated in full it
         /// carries attack-melee ×4, crouch, die, drive, emote-no, emote-yes, fall, holding-* ×6,
@@ -495,6 +498,7 @@ namespace TumbangPreso.Visual
         private void BuildGaitLayer()
         {
             if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
+            CalibrateGait(walk,run);
             _gait = AnimationMixerPlayable.Create(_graph, 2);
             _walkGait = AnimationClipPlayable.Create(_graph, walk);
             _runGait = AnimationClipPlayable.Create(_graph, run);
@@ -524,6 +528,40 @@ namespace TumbangPreso.Visual
         }
 
         private float FlatSpeed => new Vector2(_motor.Velocity.x, _motor.Velocity.z).magnitude;
+        private float _walkReference = 2.8f;
+        private float _runReference = 5.4f;
+        private float _walkCycleMetres = .92f;
+        private float _runCycleMetres = 1.12f;
+        public float FootfallCycleMetres => Mathf.Lerp(_walkCycleMetres,_runCycleMetres,_runWeight);
+
+        private void CalibrateGait(AnimationClip walk, AnimationClip run)
+        {
+            float reach=0;
+            foreach(var skin in _animator.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                var mesh=skin.sharedMesh;
+                if(mesh==null)continue;
+                // Bind matrices and mesh bounds remain pose-independent, including
+                // a rebind during a cast. No vertex readback or per-frame scan.
+                var binds=mesh.bindposes;
+                var bones=skin.bones;
+                for(int i=0;i<bones.Length && i<binds.Length;i++)
+                {
+                    if(bones[i]==null || (bones[i].name!="leg-left" && bones[i].name!="leg-right"))continue;
+                    float localReach=binds[i].inverse.MultiplyPoint3x4(Vector3.zero).y-mesh.bounds.min.y;
+                    reach=Mathf.Max(reach,localReach*skin.transform.TransformVector(Vector3.up).magnitude);
+                }
+            }
+            _walkReference=2.8f; _runReference=5.4f;
+            if(reach>.05f && reach<1.5f)
+            {
+                // One stance crosses 2*reach*sin(swing); two stances form a cycle.
+                _walkReference=4f*reach*Mathf.Sin(WalkLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,walk.length);
+                _runReference=4f*reach*Mathf.Sin(RunLegSwingDegrees*Mathf.Deg2Rad)/Mathf.Max(.05f,run.length);
+            }
+            _walkCycleMetres=_walkReference*walk.length;
+            _runCycleMetres=_runReference*run.length;
+        }
 
         private float OrdinaryWalkSpeed => Core.Balance.Speed * Core.Stamina.RoleSpeedScale(_motor.IsDefender)
             * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
@@ -544,16 +582,16 @@ namespace TumbangPreso.Visual
             // slide or stomp would erase its support pose at the moment of commitment.
             if (_oneShotLeft > 0 || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
             _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, Time.deltaTime / .10f);
-            float reference = Mathf.Lerp(2.8f, 5.4f, _runWeight);
+            float reference = Mathf.Lerp(_walkReference, _runReference, _runWeight);
             float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);
-            _gaitPhase = (_gaitPhase + Time.deltaTime * Mathf.Clamp(speed / reference, .35f, 1.6f) / length) % 1f;
+            _gaitPhase = (_gaitPhase + Time.deltaTime * Mathf.Clamp(speed / reference, .05f, 2.6f) / length) % 1f;
             _walkGait.SetTime(_gaitPhase * _walkGait.GetAnimationClip().length);
             _runGait.SetTime(_gaitPhase * _runGait.GetAnimationClip().length);
             _gait.SetInputWeight(0, 1f - _runWeight); _gait.SetInputWeight(1, _runWeight);
             _layers.SetInputWeight(1, _gaitWeight);
             var front = Front();
             if (front.IsValid() && (_current == Walk || _current == Sprint))
-                front.SetSpeed(Mathf.Clamp(speed / (_current == Sprint ? 5.4f : 2.8f), .35f, 1.6f));
+                front.SetSpeed(Mathf.Clamp(speed / (_current == Sprint ? _runReference : _walkReference), .05f, 2.6f));
         }
 
         /// <summary>

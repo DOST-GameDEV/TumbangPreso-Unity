@@ -508,6 +508,8 @@ namespace TumbangPreso.PlayTests
 
             var travelled = new float[seats.Count];
             var slipperWasLoose = new Dictionary<Slipper, bool>();
+            var looseSeconds = new Dictionary<Slipper, float>();
+            var restingShoes = new List<string>();
 
             // ⚠️⚠️ SEEDED A SECOND TIME, HERE, AND THE FIRST SEED IS NOT ENOUGH ON ITS OWN.
             // The one above runs before `LoadSceneAsync`, so every draw the LOAD makes comes out
@@ -613,6 +615,14 @@ namespace TumbangPreso.PlayTests
                     // so the retrieval counter incremented every frame and reported 90,885
                     // retrievals against 72 throws.
                     slipperWasLoose[slipper] = slipper.State == SlipperState.Loose;
+                    looseSeconds.TryGetValue(slipper,out float oldLoose);
+                    float loose = slipper.State == SlipperState.Loose ? oldLoose+FixedStep : 0f;
+                    looseSeconds[slipper]=loose;
+                    if(restingShoes.Count<128 && Mathf.FloorToInt(loose/5f)>Mathf.FloorToInt(oldLoose/5f))
+                    {
+                        var owner=round.PlayerAt(slipper.OwnerSlot);
+                        restingShoes.Add($"round={match.RoundNumber} loose={loose:F1}s origin={slipper.SeatOfOrigin} owner={slipper.OwnerSlot} shoe={slipper.transform.position} velocity={slipper.Velocity} ownerAt={(owner!=null?owner.transform.position:Vector3.zero)} plan={owner?.GetComponent<AIController>()?.Plan} canAct={owner?.CanAct()} grabbable={(owner!=null && slipper.CanBeGrabbedBy(owner))}");
+                    }
 
                     // ⚠️ A HELD SLIPPER IS NOT MEASURED AGAINST THE WALL. It rides a hand
                     // anchor roughly 0.6 m in front of a body, so a player standing legally on
@@ -738,6 +748,8 @@ namespace TumbangPreso.PlayTests
                            $"z {bodyZ:F2} of {AIController.PlayableHalfZ:F1}");
             log.AppendLine($"furthest a free slipper reached: x {strayX:F2}  z {strayZ:F2}");
             foreach (string escape in escapes) log.AppendLine("  escaped: " + escape);
+            log.AppendLine("Resting-shoe samples at each five seconds continuously loose:");
+            foreach(string resting in restingShoes)log.AppendLine("  "+resting);
             for (int i = 0; i < seats.Count; i++)
                 log.AppendLine($"seat {i} travelled {travelled[i]:F1} m  final score {match.ScoreFor(i)}");
 
