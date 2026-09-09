@@ -19,6 +19,11 @@ survive compactions. Keep it current; do not restart or narrow the task after on
 
 ## Active scope and boundaries
 
+**Latest owner correction (2026-09-10): keep the cleaned current cast at `7c7fcb5`
+and move to other work. Stop the individual character redesign queue. Prioritize
+animation, all eighteen skills/SFX/VFX, gameplay/maps and Windows delivery. The
+older model-rebuild instructions below are historical and superseded.**
+
 - Work on `ASTRAReworks` only. Fetch first, inspect branch, status and remote HEAD,
   and preserve newer commits and uncommitted user changes. Never switch to, merge
   into or push `main`. Do not touch another checkout's unrelated changes.

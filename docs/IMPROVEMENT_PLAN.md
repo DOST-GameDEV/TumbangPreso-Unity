@@ -1,6 +1,6 @@
 # Game improvement plan
 
-Current state: FIRST PRESENTATION PASS IMPLEMENTED; INDIVIDUAL BLOCKY CHARACTER AND DEEP SKILL REWORK OPEN; FINAL QUALIFICATION PENDING.
+Current state: CLEANED CAST KEPT BY OWNER; MODEL REDESIGNS STOPPED; ANIMATION, DEEP SKILL AND REMAINING GAMEPLAY/MAP WORK OPEN; FINAL QUALIFICATION PENDING.
 Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks`.
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.
 
@@ -12,6 +12,11 @@ rounded Berto draft was also rejected and restored. Keep cute blocky forms, simp
 flat faces and block hands; remove the added thumbs. Improve within that style.
 
 ## Authority and current delivery
+
+Latest owner decision: the cleaned Classic cast is already solid; keep the current
+models at `7c7fcb5` and move on. The individual character redesign queue is
+superseded. Preserve the models/outfits and focus on remaining motion, all eighteen
+skills and their effects/sound, gameplay, maps and Windows verification/delivery.
 
 The 2026-09-10 request activates the full improvement pass, tests and Windows
 delivery. The earlier test/build deferral applied to the preceding UI task only.

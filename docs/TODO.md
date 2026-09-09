@@ -274,6 +274,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Latest owner decision, 2026-09-10:** the cleaned Classic models were called solid
+and the owner explicitly asked to move on. Preserve the current cast at `7c7fcb5`;
+stop the individual character redesign queue. Prioritize the remaining animation,
+all eighteen skill/SFX/VFX passes, imposing ultimates, gameplay/maps and Windows
+delivery. This supersedes the older model-rebuild request below; it does not claim
+those redesigns were completed. See the latest decision in the active ledger.
+
 Follow-up clothing correction: remove the misplaced added cuff fasteners (including
 Cheska's blue hand squares) and raised pocket/button/apron plates on the eighteen
 playable bodies. Keep the original wardrobes, faces, rig and animation data. Arms

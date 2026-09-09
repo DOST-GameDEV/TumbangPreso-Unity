@@ -9,6 +9,23 @@ ledger and docs/IMPROVEMENT_PLAN.md. Current owner instructions supersede older
 restrictions in repository documents. The plan's outcome table remains useful;
 this ledger resolves the later owner feedback that changed the scope.
 
+
+## Latest owner decision: keep the current models and move on
+
+The owner reviewed the cleaned Classic cast in
+`current-playable-18-clean-clothes-v3.png` and said these were already solid,
+explicitly asking to move to other work. **Stop character redesigns. Preserve the
+current cast models/outfits at `7c7fcb5` and prioritize animation, all eighteen
+skills and their SFX/VFX, gameplay and map work, then Windows delivery.**
+
+This supersedes the earlier request to individually rebuild every character.
+It is a scope decision and approval of the shown Classic designs, not a claim
+that all eighteen individual redesigns were completed. Do not revive the rejected
+Berto bodies or integrate the separate forearm study as a new character model.
+Animation work still includes convincing weight, footwork, carrying, throws,
+retrieval, interrupted actions, all hero casts and imposing ultimates. Preserve
+recognizable models, simple faces, block hands, original clothing and lighter ink.
+
 ## 1. Owner requirements that must survive compaction
 
 - Make the existing game substantially better to play, look at and experience.
@@ -32,7 +49,12 @@ this ledger resolves the later owner feedback that changed the scope.
   window state next time. Do not leave an unrelated app, microphone or desktop
   capture recording.
 
-### Models and style: latest correction is binding
+### Models and style: history, subject to the latest keep-models decision
+
+- **Berto outfit correction:** the owner says they liked his old clothes. Keep his
+  original green outfit, straps and belt. These are restored. Improve rig/posing
+  and genuine geometry defects without replacing that outfit with the rejected
+  plain shirt/slab design. Do not repaint it into a different costume by default.
 
 - The owner flagged Cheska's blue hand squares and the pasted-on clothing
   outlines. These were first-pass cuff fasteners and raised front pockets/buttons,
@@ -166,9 +188,12 @@ Blender executable:
   matching FPP meshes, feedback/audio correctness and evidence, pushed.
 - `ad91efd`: measured cadence correction,
   foley random-stream isolation, diagnostics and expanded owner brief, pushed.
-- **Last pushed gameplay/art checkpoint: `f300e2a`**: remove added thumbs from all
+- `f300e2a`: remove added thumbs from all
   eighteen playable models, regenerate matching arms, lighten character ink, and
   preserve rejection/style decisions. Focused outline/arm/motion checks pass 14/14.
+- **Last pushed gameplay/art checkpoint: `7c7fcb5`**: remove misplaced cuff and
+  clothing additions, regenerate arms, preserve the original wardrobes, current
+  eighteen-person sheet and the repeated Berto rejections. Focused checks 14/14.
 
 ### Verified at e730878
 
@@ -242,33 +267,32 @@ Do not report the editor witnesses as remote network-client or human playtest pr
 - Closed bodies 151.18, 151.15, 151.21, 151.6, 149.7 and 147.3 were archived whole with
   index pointers. Section 152.4 remains open.
 
-## 4. Individual character ledger
+## 4. Character ledger: redesign queue superseded by owner decision
 
-Every row needs its own authored design, in-engine review, gameplay-distance read,
-rig/skinning/action check and matching FPP work. Do not mark a row done for merely
-running an exporter. Continue to the next after completing the row; do not end the
-whole task after one character.
+The owner chose to keep the cleaned models and move on. The earlier individual
+redesign queue below is preserved as history; do not execute it as open work.
+Animation, rig compatibility and matching existing FPP presentation remain in scope.
 
 | Order | Character / saved ID | Individual pass |
 |---|---|---|
-| 1 | Berto / `bayan` | Rounded and block-body drafts rejected; f300e2a model restored; individual pass still open |
-| 2 | Maring / `maring` | Pending individual design |
-| 3 | Totoy / `totoy` | Pending individual design |
-| 4 | Inday / `inday` | Pending individual design |
-| 5 | Kuya Boy / `kuya_boy` | Pending individual design |
-| 6 | Ate Girlie / `ate_girlie` | Pending individual design |
-| 7 | Tikboy / `tikboy` | Pending individual design |
-| 8 | Bebang / `bebang` | Pending individual design |
-| 9 | Jun-Jun / `jun_jun` | Pending individual design |
-| 10 | Lola Pacing / `lola_pacing` | Pending individual design |
-| 11 | Mang Kanor / `mang_kanor` | Pending individual design |
-| 12 | Aling Nena / `aling_nena` | Pending individual design |
-| 13 | Sean / `sean` | Pending individual hero refinement and motion integration |
-| 14 | Zack / `zack` | Pending individual hero refinement and motion integration |
-| 15 | Dante / `dante` | Pending individual hero refinement and motion integration |
-| 16 | Cheska / `cheska` | Pending individual hero refinement and motion integration |
-| 17 | Nemu / `nemu` | Pending individual hero refinement and motion integration |
-| 18 | Phaister / `phaister` | Pending individual hero refinement and motion integration |
+| 1 | Berto / `bayan` | Rejected drafts discarded; current original design kept by owner |
+| 2 | Maring / `maring` | Keep current model; redesign superseded |
+| 3 | Totoy / `totoy` | Keep current model; redesign superseded |
+| 4 | Inday / `inday` | Keep current model; redesign superseded |
+| 5 | Kuya Boy / `kuya_boy` | Keep current model; redesign superseded |
+| 6 | Ate Girlie / `ate_girlie` | Keep current model; redesign superseded |
+| 7 | Tikboy / `tikboy` | Keep current model; redesign superseded |
+| 8 | Bebang / `bebang` | Keep current model; redesign superseded |
+| 9 | Jun-Jun / `jun_jun` | Keep current model; redesign superseded |
+| 10 | Lola Pacing / `lola_pacing` | Keep current model; redesign superseded |
+| 11 | Mang Kanor / `mang_kanor` | Keep current model; redesign superseded |
+| 12 | Aling Nena / `aling_nena` | Keep current model; redesign superseded |
+| 13 | Sean / `sean` | Keep current model; prioritize hero motion and skill presentation |
+| 14 | Zack / `zack` | Keep current model; prioritize hero motion and skill presentation |
+| 15 | Dante / `dante` | Keep current model; prioritize hero motion and skill presentation |
+| 16 | Cheska / `cheska` | Keep current model; prioritize hero motion and skill presentation |
+| 17 | Nemu / `nemu` | Keep current model; prioritize hero motion and skill presentation |
+| 18 | Phaister / `phaister` | Keep current model; prioritize hero motion and skill presentation |
 
 The two custom bases remain retained and inaccessible. Keep their compatibility;
 do not present them as additional selectable characters in a cast sheet.
@@ -482,19 +506,17 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
 
 ## 9. Immediate continuation
 
-1. Inspect the restored original Berto rig and shoulder connections before another
-   body edit. Both the rounded draft and oversized block-body trial are rejected.
-   Preserve the pushed block hands and lighter outline. The trial scripts are
-   quarantined outside the authoring path; no individual rebuild is complete.
-2. Refine Berto within the original angular forms. Complete his individually
-   authored motion, style and matching arms, with actual
-   in-engine/game-distance evidence. Keep simple faces. Then continue one at a time.
-3. Work through every remaining character and every skill row, keeping this ledger
-   honest about implementation versus verification versus owner acceptance.
-4. After the character work, complete the remaining motion, all eighteen deep
-   skill/SFX/VFX rows, maps/chase/feedback scrutiny and Windows qualification. The
-   owner explicitly reiterated this order after the style correction; do not stop
-   with the character batch or silently drop any other deliverable.
+1. Stop the model redesign work. The owner likes the cleaned cast and explicitly
+   asked to move on. Current live models are `7c7fcb5`, not the rejected bodies.
+2. Complete animation and footwork refinement, then all eighteen deep skill/SFX/VFX
+   rows, including genuinely imposing but readable ultimates. Use the existing
+   authored rigs and verified contact/authority paths. Do not spend another batch
+   changing Berto's outfit or body silhouette.
+3. Complete remaining map/chase/gameplay/feedback scrutiny and Windows verification,
+   build, exact executable checks, comparable full-speed evidence and push.
+4. Preserve the pending character-selectable evidence probe change; exercise it in
+   the animation work before committing. The native Blender review was read-only
+   with respect to the live assets. The forearm study exists only under Logs.
 
 The owner has explicitly asked not to lose important planning across compactions.
 Before a context boundary, update the current in-flight state and next concrete
