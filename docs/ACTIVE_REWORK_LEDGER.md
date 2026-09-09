@@ -34,6 +34,22 @@ this ledger resolves the later owner feedback that changed the scope.
 
 ### Models and style: latest correction is binding
 
+- The owner flagged Cheska's blue hand squares and the pasted-on clothing
+  outlines. These were first-pass cuff fasteners and raised front pockets/buttons,
+  not necessary original costume features. They are removed from all eighteen
+  playable bodies in the current batch, preserving original wardrobe geometry.
+  Roster/FPP regenerated; current cast inspected at
+  `Logs/character-design/current-playable-18-clean-clothes-v3.png`; focused
+  outline/arm/motion contracts pass 14/14 in `Logs/clean-clothing-contracts-v3.xml`.
+- The owner asked to use Blender directly. Blender 5.2.1 is already installed.
+  No additional package/download is needed for mesh and rig inspection. The native
+  app was opened and the restored Berto inspected front/side. The review-only
+  `.blend` is `Logs/character-design/berto-clean-rig-review-v2.blend`; its palette
+  lookup accounts for Blender's imported V-coordinate flip. It is not a new model.
+- The prior Escape interruption was accidental PC use, according to the owner.
+  They explicitly asked to resume PC control and continue. Stop input when not
+  needed; the overall task remains authorized and active.
+
 - **Latest correction: stay cute and blocky.** The owner rejected the rounded Berto
   prototype shown in `Logs/character-design/berto-individual-v1.png` as ugly and
   broken. Its oversized blank head, tiny eye marks, lumpy clothing and rigid stance
@@ -148,10 +164,11 @@ Blender executable:
 - `8275111`: first motion/continuity batch and expanded AGENTS.md, pushed.
 - `e730878`: model refinement, map geometry/lighting, eighteen cast animations,
   matching FPP meshes, feedback/audio correctness and evidence, pushed.
-- **Last pushed gameplay/art checkpoint: `ad91efd`**, measured cadence correction,
-  foley random-stream isolation, diagnostics and expanded owner brief. Later
-  documentation-only commits do not certify later model changes. The unpushed
-  Berto prototype was rejected and its source/dependent files restored.
+- `ad91efd`: measured cadence correction,
+  foley random-stream isolation, diagnostics and expanded owner brief, pushed.
+- **Last pushed gameplay/art checkpoint: `f300e2a`**: remove added thumbs from all
+  eighteen playable models, regenerate matching arms, lighten character ink, and
+  preserve rejection/style decisions. Focused outline/arm/motion checks pass 14/14.
 
 ### Verified at e730878
 
@@ -234,7 +251,7 @@ whole task after one character.
 
 | Order | Character / saved ID | Individual pass |
 |---|---|---|
-| 1 | Berto / `bayan` | Rounded draft rejected; previous source restored; blocky refinement pending |
+| 1 | Berto / `bayan` | Rounded and block-body drafts rejected; f300e2a model restored; individual pass still open |
 | 2 | Maring / `maring` | Pending individual design |
 | 3 | Totoy / `totoy` | Pending individual design |
 | 4 | Inday / `inday` | Pending individual design |
@@ -257,6 +274,31 @@ The two custom bases remain retained and inaccessible. Keep their compatibility;
 do not present them as additional selectable characters in a cast sheet.
 
 ### Rejected Berto prototype and next design constraints
+
+**Second rejection, after the first restoration:** the block-body trials in
+`Logs/character-design/berto-block-clothing-v3.png` through `v6.png` are also
+rejected. The broad torso enclosed the shoulder pivots; shortening the arms hid
+the upper arms and made the fists look attached near the hips. The shirt read as
+a green bib/slab, with no clear chest-to-shoulder-to-arm connection. This is a
+construction failure, not evidence that the original cute blocky style is wrong.
+Do not resume `refine_berto.py` or carry that body into another character.
+
+That trial source and script are quarantined in
+`Logs/rejected-berto-block-body-2026-09-10`. The live Berto model, idle, slide,
+roster entry and arms are restored to pushed `f300e2a`; GLB blob
+`fb6867f9f5bdb42f74e602e2a8472ba30b215c13`. Thumb removal and lighter ink remain.
+The trial slide had needed re-solving after geometry changes: the independent
+import found a 0.01082-unit floor penetration before the solve and zero at sampled
+beats afterward. That solved trial is discarded with its rejected body. It is not
+an improvement claimed for the restored model.
+
+Next model work must establish readable shoulder/upper-arm connections in rest,
+relaxed pose, raised arms and side/back views before changing dimensions again.
+The original shoulder joint is near x=0.0999; the rejected shirt extended to
+x=0.159. Rotating shortened arms down around a joint buried that far into the
+shirt made them disappear inside it. Do not compensate by endlessly shrinking
+hands or flattening the shirt. Review the actual rig and connected volumes.
+
 
 The draft imported and rendered, but the owner rejected the actual four-angle
 image. Successful import was not successful art. The draft was never pushed.
@@ -440,10 +482,10 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
 
 ## 9. Immediate continuation
 
-1. Continue Berto's individual block-form refinement. The block hands and lighter
-   ink have been checked separately. `tools/refine_berto.py` is a prepared, unrun
-   candidate for complete clothing, smaller block hands and a relaxed idle. Do not
-   call it imported, reviewed or complete until it is actually exercised.
+1. Inspect the restored original Berto rig and shoulder connections before another
+   body edit. Both the rounded draft and oversized block-body trial are rejected.
+   Preserve the pushed block hands and lighter outline. The trial scripts are
+   quarantined outside the authoring path; no individual rebuild is complete.
 2. Refine Berto within the original angular forms. Complete his individually
    authored motion, style and matching arms, with actual
    in-engine/game-distance evidence. Keep simple faces. Then continue one at a time.

@@ -274,6 +274,21 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Follow-up clothing correction: remove the misplaced added cuff fasteners (including
+Cheska's blue hand squares) and raised pocket/button/apron plates on the eighteen
+playable bodies. Keep the original wardrobes, faces, rig and animation data. Arms
+regenerated; focused outline/arm/motion checks pass 14/14. Current eighteen-person
+render inspected. Individual designs and the remaining full improvement scope are
+still open. The owner asked for direct Blender inspection; the restored source has
+now been inspected in the native app before further authoring.
+
+The subsequent Berto block-body trial was also rejected: oversized shirt geometry
+buried the shoulder pivots and shortened upper arms. That model, idle, slide and
+matching arm changes are reverted to `f300e2a`. Keep the thumb/ink correction;
+resolve actual shoulder connections before further body reshaping. No individual
+character pass is complete. All remaining character, animation, skill, map and
+Windows delivery work stays open in [the ledger](ACTIVE_REWORK_LEDGER.md).
+
 Latest owner correction, 2026-09-10: keep the cute, blocky cast and simple flat
 faces. The rounded Berto prototype was explicitly rejected and its source and
 dependents restored to the pushed checkpoint; it was never pushed. Remove the

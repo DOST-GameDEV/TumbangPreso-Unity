@@ -62,6 +62,40 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        public static void RunPlayableCast()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            int outputArg = Array.IndexOf(args, "-out");
+            if (outputArg < 0 || outputArg + 1 >= args.Length)
+                throw new ArgumentException("RunPlayableCast requires a versioned -out path.");
+            string output = Path.GetFullPath(args[outputArg + 1]);
+            if (File.Exists(output)) throw new IOException("Use a new review filename: " + output);
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
+            var people = Core.Roster.HeroPeople.Concat(Core.Roster.ClassicPeople).ToArray();
+            if (people.Length != 18 || people.Select(p => p.Id).Distinct().Count() != 18)
+                throw new InvalidOperationException("Review the changed playable roster before rendering this sheet.");
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            BuildLight();
+            var book = RosterBook.Load();
+            var report = new StringBuilder("Current playable cast: six heroes, twelve Classic characters.\n");
+            for (int i = 0; i < people.Length; i++)
+            {
+                var person = people[i];
+                var entry = book.People.First(p => p != null && p.Id == person.Id);
+                if (entry.Model == null) throw new InvalidOperationException("Missing model: " + person.Id);
+                string model = AssetDatabase.GetAssetPath(entry.Model);
+                PlaceTurn(model, person.Id, person.Name.ToUpperInvariant(), 180, entry.Palette,
+                    i % 6, i / 6, 1.16f, 1.16f);
+                report.AppendLine(person.Id + " | " + person.Name + " | " + model);
+            }
+            var camera = BuildCamera(6, 3, 1.16f, 1.16f);
+            camera.orthographicSize = 3.25f * 1.16f * .5f;
+            bool ok = CaptureTo(camera, 2400, 1300, output);
+            File.WriteAllText(Path.ChangeExtension(output, ".txt"), report.ToString());
+            EditorSceneManager.CloseScene(scene, true);
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
         public static bool Execute()
         {
             var report = new StringBuilder();

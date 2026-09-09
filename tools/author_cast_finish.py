@@ -1,4 +1,4 @@
-"""Maintain the first-pass footwear/clothing while preserving simple block hands.
+"""Maintain first-pass foot/contact corrections without rejected decorative additions.
 
 The named faces, hair, skeleton, palettes and animation bytes remain intact. Added
 geometry uses the existing skin joints and atlas. Inday's long imported hand props
@@ -17,7 +17,8 @@ import numpy as np
 from glb_mesh_dump import read_glb, read_accessor
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "cast-block-hands-v2"
+VERSION = "cast-clean-clothing-v3"
+BLOCK_HAND_VERSION = "cast-block-hands-v2"
 LEGACY_VERSION = "cast-grip-and-clothing-v1"
 # Exact body offsets from the v1 export. Inday's removed hand props were compacted
 # before writing, so her original live body ends at 968 rather than 1052 vertices.
@@ -76,13 +77,44 @@ def remove_legacy_thumbs(character, path, g, original):
     indices = [remap[i] for t in kept for i in t]
     blob = bytearray(original)
     store_geometry(g, blob, primitive, attributes, indices)
-    g["extras"]["castFinish"] = VERSION
+    g["extras"]["castFinish"] = BLOCK_HAND_VERSION
     write(path, g, blob)
     result_g, result_b = read_glb(path)
     assert animation_digest(result_g, result_b) == before, "Animation bytes changed"
     return {"id": character, "state": "removed rejected thumbs", "removed_vertices": 384,
             "removed_triangles": 176, "animation_sha256": before}
 
+
+
+
+def remove_legacy_clothing(character, path, g, original):
+    before = animation_digest(g, original)
+    node = next(n for n in g["nodes"] if "skin" in n and
+        "body" in g["meshes"][n["mesh"]].get("name", "").lower())
+    primitive = g["meshes"][node["mesh"]]["primitives"][0]
+    attributes = {k: list(read_accessor(g, original, v)) for k, v in primitive["attributes"].items()}
+    indices = [v[0] for v in read_accessor(g, original, primitive["indices"])]
+    # v2 kept two 96-vertex sole pieces after the original body, followed by the
+    # rejected front plates or cuff fasteners. Original wardrobe geometry stays.
+    keep_count = LEGACY_THUMB_START[character] + 192
+    previous_count = len(attributes["POSITION"])
+    assert previous_count > keep_count, (character, previous_count, keep_count)
+    names = [g["nodes"][i]["name"] for i in g["skins"][node["skin"]]["joints"]]
+    for i in range(keep_count, previous_count):
+        assert names[attributes["JOINTS_0"][i][0]] in ("torso", "arm-left", "arm-right")
+    triangles = [indices[i:i+3] for i in range(0,len(indices),3)]
+    assert all(max(t) < keep_count or min(t) >= keep_count for t in triangles)
+    kept = [t for t in triangles if max(t) < keep_count]
+    blob = bytearray(original)
+    store_geometry(g, blob, primitive, {k: v[:keep_count] for k,v in attributes.items()},
+                   [i for t in kept for i in t])
+    g["extras"]["castFinish"] = VERSION
+    write(path, g, blob)
+    after_g, after_b = read_glb(path)
+    assert animation_digest(after_g, after_b) == before
+    return {"id": character, "state": "removed misplaced clothing additions",
+            "removed_vertices": previous_count-keep_count,
+            "removed_triangles": len(triangles)-len(kept), "animation_sha256": before}
 
 
 def cell(slot):
@@ -173,7 +205,10 @@ def author(character,path):
         return {"id":character,"file":str(path.relative_to(ROOT)),"state":"already authored",
                 "animation_sha256":animation_digest(g,original)}
     if g.get("extras",{}).get("castFinish") == LEGACY_VERSION:
-        return remove_legacy_thumbs(character, path, g, original)
+        remove_legacy_thumbs(character, path, g, original)
+        g, original = read_glb(path)
+    if g.get("extras",{}).get("castFinish") == BLOCK_HAND_VERSION:
+        return remove_legacy_clothing(character, path, g, original)
     before=animation_digest(g,original)
     nodes=g["nodes"]
     body_node=next(n for n in nodes if "skin" in n and "body" in g["meshes"][n["mesh"]].get("name","").lower())
@@ -232,37 +267,9 @@ def author(character,path):
         width=(hi[0]-lo[0])*.83
         geom.bevel(((lo[0]+hi[0])/2,lo[1]+.023,hi[2]-.025),
                    (width,.035,.055),bone,color,.007)
-    torso=names.index("torso")
-    ids=np.where(bones==torso)[0];p=positions[ids];lo,hi=p.min(0),p.max(0)
-    cloth=Counter(int(slots[i]) for i in ids if slots[i] not in [8,13,14,15]).most_common(1)[0][0]
-    # The file's front is +Z. Unity's PersonModelYaw describes another space;
-    # glb_face_side.py and the in-engine turnaround establish this orientation.
-    front=float(hi[2]+.004);hip=float(lo[1]);chest=float(lo[1]+(hi[1]-lo[1])*.68)
-    if character in ["bayan","kuya_boy"]:
-        x=float(lo[0]*.68)
-        geom.bevel((x,hip+.012,front+.012),(.054,.112,.021),torso,12,.003)
-        for y in [-.025,.006,.037]: geom.bevel((x,hip+y,front+.024),(.048,.004,.005),torso,cloth,.001)
-    elif character=="inday":
-        geom.bevel((0,hip+.014,front+.003),(.195,.092,.015),torso,0,.005)
-        for x in [-.047,.047]: geom.bevel((x,hip+.039,front+.012),(.056,.006,.009),torso,cloth,.002)
-    elif character=="bebang":
-        for x in [-.095,-.047,0,.047,.095]:
-            geom.bevel((x,hip+.035,front),(.023,.013,.010),torso,cloth,.003)
-    elif character in ["maring","totoy","ate_girlie","tikboy","jun_jun","lola_pacing","mang_kanor","aling_nena"]:
-        x=float(lo[0]*.52)
-        geom.bevel((x,chest,front),(.061,.052,.013),torso,cloth,.004)
-        geom.bevel((x,chest+.023,front+.009),(.06,.006,.006),torso,12 if character in ["totoy","ate_girlie"] else cloth,.002)
-        if character in ["lola_pacing","aling_nena","jun_jun"]:
-            for y in [chest-.02,chest+.018,chest+.053]:
-                geom.bevel((0,y,front+.008),(.009,.010,.009),torso,12,.002)
-    # Heroes retain their already detailed costume language. Added cuff fasteners
-    # and sculpted grips refine it without putting cultural symbols on every hero.
-    else:
-        for hand in hands:
-            bone=names.index(hand["bone"]);side=1 if hand["bone"]=="arm-left" else -1
-            points=positions[np.where(bones==bone)[0]]
-            y=float(np.median(points[:,1]));z=float(points[:,2].max()+.002)
-            geom.bevel(((hand["palm_max"]-.11)*side,y,z),(.016,.019,.008),bone,cloth,.003)
+    # Do not add generic raised pockets, buttons, apron plates or hand fasteners.
+    # The owner rejected them as pasted-on blocks with disproportionate outlines.
+    # Individual clothing construction is authored and reviewed per character.
 
     if character=="inday":
         # HandAnchor and the slide solver inspect vertex arrays, not only triangles.
