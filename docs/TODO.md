@@ -9,6 +9,13 @@ before inventing a task, and update it in the same commit as the work.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**2026-09-09 expanded improvement pass: section 152 and
+[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md).** The current request authorizes game,
+model, animation, SFX, VFX and UI improvements on `ASTRAReworks`, continuing across
+items without delegation. It supersedes the older one-task stopping limits. The
+plan records priorities, acceptance checks and progress; the numbered sections
+below remain the evidence for individual findings.
+
 ⚠️⚠️ **START HERE, AFTER `CLAUDE.md` AND `VISION.md`. THIS IS AN EXECUTION INDEX AND NOT A
 REPLACEMENT FOR THE REASONING BELOW IT.** Each row is work a coding session can pick up and finish
 on its own. **Use the detailed numbered sections further down for the evidence, the measurements
@@ -237,6 +244,22 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 152 · Coherent game improvement and release verification: IN PROGRESS, 2026-09-09
+
+The full scope, order, dependencies and acceptance checks are in
+[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md). Start from checkpoint
+`0028b3a901b8c338538d31251380c6433a7f6aa6` on `ASTRAReworks` only. The current
+request includes art, animation, audio, effects, UI and game engineering and
+removes the old one-task stopping limit. No subagents or other conversations.
+
+Done means the actionable work in that plan is implemented or verified as already
+correct, the remaining human/hardware dependencies are explicitly recorded, the
+resulting player is tested and built, and the branch is pushed. No human approval
+is implied by technical validation. Keep individual findings in their existing
+numbered entries and archive completed sections whole.
 
 ---
 
