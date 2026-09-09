@@ -47,16 +47,9 @@ either of those.
 | **HUMAN** | 151.1 | ⚠️⚠️ **THE LISTENER IS AT THE PLAYER NOW AND IT NEEDS AN EAR.** § 150.7's defect is closed: the ears ride `Camera.main` every frame and the THIRTEEN non-diegetic cues that faked a position have a named 2D route. **This changed the spatial image of every cue in the game at once**, so `CLAUDE.md` § 6 applies | Not code. 🧑 plays one round in headphones and answers the five questions in [`../Attention.md`](../Attention.md) § 18. ⚠️ **The 2 m to 32 m rolloff was deliberately NOT retuned in the same pass**, so that what he hears is one change and not two |
 | **P2** | 149.4 | **The one-shot / duplicate / replayable request sweep.** Three of its class are closed (§ 149.1, § 149.2, § 149.3). ⚠️ **The vote and reset paths were walked in § 150.9 and are idempotent by construction**; the rest of the list has not been | Concrete reachable bugs with focused tests, and no generalised framework. § 149.4, and § 150.9 for what has already been cleared |
 | **P2** | 149.5 | **Repeated scene lookups in network hot paths.** Seat to `CharacterMotor`, seat to `Slipper`, the current `Lata` | ⚠️ **Measure first**: the exact APIs, the real call frequency, and whether the path is per packet or per frame. If it is negligible, record the number and leave the code alone. § 149.5. ⚠️ The two the row names first are **already caches, not scene searches**; the live surface is the AI and the combat sweep |
-| **P2** | 149.7 | **The test suite's own value.** Source-text assertions that duplicate behavioural coverage, and a protocol floor checked twice | ⚠️ **For every test removed, name the stronger test that now owns that invariant.** Never delete a failing one to green the suite. § 149.7 |
-| **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
 | **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S BODY CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The generated first-person arm is closed in § 151.23 and ASTRA task 4**: it now has its own low reach, failed recovery and successful transition into actual carry, with the lunge unchanged. Task 3 remains open for the body clip's full-speed match review. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
-| **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
-| **P2** | 151.21 | ⚠️⚠️ **`PersonSwapProbe` STILL READS `RESULT: FAIL`, AND THE THREE REMAINING FAILS ARE THE SUBJECT RIG BEING BALD AND FACELESS ON PURPOSE.** § 151.20’s clip-count fault is closed; what is left is *"nothing uses slot 8. The face is drawn in it"*, *"could not find face ink"* and *"no slot-2 vertices"* against `team-custom-base.glb`, which § 112 built that way. § 124.11 on the probe that owns `CheckAnimationBinds` | The checks ask the rig they are pointed at: either the face and hair assertions move behind a property the naked base sets, or the probe gains a second subject that has both. ⚠️ **Do not delete them**; § 112.12 is what that family of check catches. Not a build gate. § 151.21 |
 | **P2** | 151.19 | ⚠️ **THE EIGHTEEN PROCEDURAL HERO CASTS USE THE PLAYER-ONLY CURVE API THAT MADE THE DANCE A T-POSE, AND ALL EIGHTEEN ARE AUTHORED NOW, SO THE EXPOSURE IS CLOSED AND THE OBSERVATION IS NOT.** `docs/TODO_Archive.md` § 80.8, archived while still open. `HeroAbilityClips.BuildAll` fills non-legacy clips with `SetCurve` at runtime, which returns a valid EMPTY clip in a player, and an empty clip is the bind pose. **Nobody has opened a player and cast an ability** | Cast one ability in a built player and look at it, which nothing has yet done. ⚠️ The authored clips win the name lookup on every rig the roster loads, so this is now about what `HeroAbilityClips` is still the fallback FOR rather than about the casts. § 151.19 |
-| **P2** | 151.18 | ⚠️ **FOUND AND NOT FIXED: two of the 22 `person_*.asset` files belong to no id in `Roster.People`.** `person_berto.asset` and `person_iggy.asset` match nothing, so `RosterBookBuilder.Fill` never opens them and the build logs `20 people` against 22 files. They still carry a model, a palette and a full entry shape, **so anything enumerating that folder to find out what ships gets 22 and two rigs no player can select**, which is what happened to the retrieval-slide pass | Delete the two, and make `Fill`'s caller assert that every `person_*.asset` on disk has an id, beside the `no model mapped` error already there. ⚠️ The second half is the one that matters: an orphan nothing checks for comes back. § 151.18 also carries a second finding about rig ROOT NODE names that must NOT be fixed |
-| **P2** | 151.15 | ⚠️⚠️ **FOUND AND NOT FIXED, AND IT IS THE HOLE ALL THREE OF THIS PASS'S CUE DEFECTS CAME THROUGH: nothing asks whether a NON-`NetCue` world cue is heard by anybody but the peer that fired it.** `audit_audio_reach.py` asks only about host GATES, `audit_presentation_reach.py` the same, and `audit_cue_relay.py` only walks `NetCue` sites. **An owner-driven `GameServices.Audio.PlayAt` is invisible to all three**, which is how the throw wind-up and the retrieval slide shipped audible to one player each | Classify every positional `GameServices.Audio` site as host-only, owner-driven or every-peer, the way `audit_cue_relay` already classifies `NetCue` ones, with a named allowlist for the cues that are correctly private (your own stamina bar). § 151.15 |
-| **P2** | 151.6 | ⚠️ **FOUND AND NOT FIXED: the hazard placement rule and the gate that checks it disagree by 5.6 m.** `IlalimNgTulayBuilder` states the bound as distance from the can and the maps obey it (the one live hazard is 8.551 m out, outside the confinement box entirely). **`MapGeometryCheck` only refuses one centred inside `LataClearance`, which is 1.4**, so a hazard dropped at 3 m from the can passes every gate in the repository | Re-derive the bound, or give hazards their own constant. ⚠️ **Do not simply raise `LataClearance`**: the same check measures every non-hazard prop against it and 7.0 would start refusing the street. § 151.6 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
 | **HUMAN** | 144.3 | ⚠️ **MEASURED AND ANSWERED (§ 144.3b): it is a mirror, three generators were feeding it, and 61 of its 117 files differ from what ships.** It is no longer written to. **What is left is 🧑's**: it holds the pre-replacement sound for those 61 cues, and `CLAUDE.md` § 6 makes the sourced ones provisional until he has heard them | Deleting it is one commit once he says the sourced cues are keepers. Not autonomous work. `Attention.md` § 13 |
 | **HUMAN** | 151.5 | ⚠️ **§ 144.8 IS CLOSED IN CODE AND NEEDS AN EYE.** Both causes are fixed and re-measured after a full `IlalimNgTulayPipeline.Run`: every material now carries `metallicFactor` / `roughnessFactor` (chrome **0.95 / 0.20**, paint 0.40 / 0.35, panels 0.55 / 0.65, seats still 0.00) and the scene holds **1** reflection probe against 0 | Not code. Look at a render or the built player and say whether the jeepney reads as metal. ⚠️ **If it still does not, that is § 144.8's fourth possibility** (lighting rather than material numbers) and it is the first time anybody can honestly ask it |
@@ -187,9 +180,8 @@ numbers refuse each other by design, so a stale number here sends somebody hunti
 that is a rebuild.
 
 **So it names no number at all now.** The command above is two seconds and cannot be wrong, and
-the two tests that own the exact value, `InputContractTests
-.TheInputPassDidNotMoveTheProtocolVersion` and `ChatAndLobbyChromeTests
-.TheProtocolCarriesEveryRosterBump`, go red when it moves, which is what makes a bump a
+the test that owns the exact value, `ChatAndLobbyChromeTests
+.TheProtocolCarriesEveryRosterBump`, goes red when it moves, which is what makes a bump a
 deliberate act rather than something to notice later.
 
 ⚠️ **`docs/FUTURE.md` § 0.2's row said 16 for four days** while the code went 17 through 23. **The
@@ -274,6 +266,12 @@ Full batch evidence and limitations are in TODO_Archive.md section 152.5. The
 broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
+
+2026-09-10 second implementation batch: all eighteen live models, forty matching
+first-person arms, forty grounded gaits, eighteen body/FPP casts and all three maps
+are reworked. Current focused checks are green, with timestamped owner/body reels
+and eye-height map comparisons in [the batch report](reports/improvement-2026-09-10/presentation-batch.md).
+Full qualification, Windows build and exact-player verification remain open.
 
 2026-09-10: baseline 1x captures and traces are in `Logs/improvement-baseline-v1`.
 The carried sprint measured 3.6053 m/s with frozen legs. Motion-layer, charge,
@@ -1014,44 +1012,6 @@ and `AsphaltRoadSurface` is a separate pass that runs after it; the pipeline exi
 because the steps are order-dependent and a missed one is invisible in a render. **Nothing in the
 builder's own doc comment says so**, which is why it is written here.
 
-### 151.6 ✅ MEASURED, NOT A BUG: THE TRIP HAZARDS ARE ALREADY OUT OF COMPETITIVE CLASSIC'S WAY
-
-The brief asked whether `StreetTripHazard` is active inside the Classic play area and to remove it
-if so. **Measured against the shipped SCENE FILES rather than against the builder**, which matters
-because the builder is what a reader would check and the scene is what ships:
-
-| Scene | `StreetTripHazard` components |
-|---|---|
-| `BayanPlaza.unity` | **0** |
-| `Eskinita.unity` | **0** |
-| `IlalimNgTulay.unity` | **1**, `TripHazard_PisonetCord` |
-
-The one hazard resolves through its parent chain (`StreetTripHazards` / `Hazards` / `Dressing` /
-`IlalimNgTulay`, all at local zero) to world **(8.400, 0.212, 1.600)**, which is **8.551 m from the
-can**. `Balance.ConfinementRadius` is 7.0 and the box is a SQUARE (`CLAUDE.md` § 4), so its
-`BoxCollider` spans x from 7.7 to 9.1 and is **entirely outside the confinement box on the x axis
-alone**. You meet it running the long way round or cutting a wide corner, never on a straight run
-for your tsinelas.
-
-⚠️ **AND THAT IS NOT LUCK, IT IS THE THIRD CUT.** Seven became four on 2026-08-26, four became two
-on 2026-08-27 (*"theres too many places where u can trip can we remove some?"*) and two became one
-the same day (*"lessen trip areas in map, maybe js one is okay, its overstimulating"*). The rule
-that came out of it is already written into `IlalimNgTulayBuilder`: **the bound is distance from
-the origin, not the count.**
-
-⚠️⚠️ **AND THE ONLY THING ENFORCING IT IS A 1.40 m EXCLUSION, WHICH IS FAR TOO SMALL TO MEAN
-IT.** `MapGeometryCheck` refuses a hazard centred inside `LataClearance`, and that constant is
-**1.4**, against a `ConfinementRadius` of 7.0. The builder's own note already says so in as many
-words. **So today's placement is a decision somebody made three times and not a rule anything
-checks**, and a hazard dropped at 3 m from the can would pass every gate in this repository.
-⚠️ **It is written down rather than fixed**, because raising that constant to 7.0 would also
-start refusing every non-hazard prop the same check measures, and re-deriving that bound is a
-map-geometry decision rather than part of this pass.
-
-**No gameplay change was made.** Deleting the last one would take the map's one authored
-interaction with a business that is already on the street, against a design decision that has been
-argued three times and settled.
-
 ### 151.7 ⚠️⚠️ CONFIRMED AND FIXED: THE RETRIEVAL SLIDE HAD NO NUMBER ANYWHERE IN THE REPOSITORY
 
 § 145.6's row says the sweep's first job is *"the retrieval slide (§ 146) as the first thing
@@ -1139,6 +1099,13 @@ applies to spawners too: **an unmeasured optimisation is a pure loss**, and this
 future session cites when it decides to leave `HeroHazards` alone.
 
 ### 151.9 THE MULTI-SEED SWEEP, RUN, AND THE PACING IT MEASURES
+
+2026-09-10: the clock discrepancy was traced to the probe retaining eight rounds
+when switching only the mode to Classic. A fresh pinned 90-second round counted
+75 events and 75 recorded ticks. The probe now pins the full ruleset and prints it.
+The historical sweep below is retained; its per-seat defence totals include two
+defending rounds. Gameplay scoring and slide balance were not changed. The Ilalim
+seed and lunge diagnostics remain separate work.
 
 § 145.6's row has read *"A real multi-seed sweep has still not been RUN. The harness is built and
 verified on synthetic arms; nothing has measured the shipped game across seeds since the numbers
@@ -1565,40 +1532,6 @@ there and had gone stale, so nobody puts one back.
   against the rig in front of you. Deleting the number without noticing that would have left a
   narrower claim reading like a wider one.
 
-### 151.21 ⚠️⚠️ OPEN, FOUND WHILE FIXING § 151.20: `PersonSwapProbe` STILL COMES OUT RED, AND THE THREE REMAINING FAILS DESCRIBE A DELIBERATE DESIGN
-
-**§ 151.20's clip-count fault is closed and the probe still reads `RESULT: FAIL`.** With
-`clips: 51 (base rig has 33, 0 missing)` now passing, three checks remain red on
-`team-custom-base.glb` and **not one of them is a defect**:
-
-```
-FAIL: nothing uses slot 8. The face is drawn in it.
-FAIL: could not find face ink on the new rig.
-FAIL: no slot-2 vertices. The hair carries no dye/clip at all.
-```
-
-⚠⚠ **ALL THREE ARE THE SUBJECT RIG BEING BALD, BARE AND FACELESS ON PURPOSE.**
-`team-custom-base.glb` is the character maker's naked base (§ 112): `tools/build_base_voxel.py`
-builds it from `character-male-d`'s skull **with slot 8, the painted eyes and mouth, dropped**,
-and with no hair to dye. The probe was written against a rig that had a face and hair, its
-subject was changed to one that deliberately has neither, and its three checks now assert that
-the design is wrong.
-
-⚠⚠ **THIS IS § 124.11 AGAIN AND IT IS THE SAME PROBE § 151.20 WAS ABOUT.** *"A red one for a
-screen that works teaches the next reader to skim the results."* This probe owns
-`CheckAnimationBinds`, the only thing in the repository that can catch a clip which imported
-perfectly and moves nothing, so a permanent red on it is expensive. It was left red by this
-pass on purpose rather than silenced: **which of the three should become a property of the
-SUBJECT rather than of every rig is a judgement about what the naked base is allowed to lack**,
-and guessing it would weaken a check that has caught real faults on dressed rigs.
-
-**Done looks like the checks asking the rig they are pointed at.** Either the face and hair
-assertions move behind a flag the base rig sets (it has no face by construction), or the probe
-gains a second subject that DOES have both and each subject is asserted for what it is.
-⚠️ **Do not simply delete them**: § 112.12 records the whole wardrobe sampling the wrong palette
-cell, and the slot checks are the family of assertion that catches it.
-⚠️ Not a build gate. `PersonSwapProbe` is not in `Checks.RunAll`.
-
 ### 151.19 ⚠️⚠️ OPEN, AND IT IS AN ARCHIVED ENTRY COMING BACK WITH EVIDENCE: THE EIGHTEEN PROCEDURAL HERO CASTS PROBABLY DO NOT ANIMATE IN A BUILD
 
 **`docs/TODO_Archive.md` § 80.8 was archived while still OPEN**, in a sweep that listed
@@ -1651,83 +1584,6 @@ built player:
 for any rig that has no authored action, its timing section is the source of the impact
 model `tools/author_hero_action.py` reproduces, and in the EDITOR it works, which is
 where every probe and every PlayMode test looks.
-
-### 151.18 ⚠️ OPEN: TWO ROSTER ASSETS ON DISK BELONG TO NOBODY, AND ONE RIG IN THREE IS NAMED AFTER A DIFFERENT CHARACTER
-
-**Both were found while auditing the retrieval slide across the whole cast, and neither
-is animation work.** They are here because `ASTRA.md` hands back anything needing a
-`.cs` edit or a call about shipped data.
-
-**`Assets/TumbangPreso/Resources/Roster/` holds 22 `person_*.asset` files and
-`Roster.People` owns 20 ids.** `person_berto.asset` and `person_iggy.asset` match no
-id: there is no `berto` (the character is `bayan`, display name BERTO, and it already
-has `person_bayan.asset`) and no `iggy` at all. `RosterBookBuilder.Fill` iterates the
-truth list, so it never opens either file, which is why the build logs `[RosterBook] OK.
-20 people` against 22 files on disk and neither stale asset has been refreshed for as
-long as they have existed.
-
-⚠️⚠️ **THE COST IS NOT DISK, IT IS THAT THEY READ AS LIVE CHARACTERS TO EVERYTHING THAT
-IS NOT `RosterBookBuilder`.** They carry a model reference, a palette and a full entry
-shape, so a session enumerating `person_*.asset` to find out what ships gets 22 and two
-extra rigs, `team-bayan.glb` and `team-iggy.glb`, that no player can ever select. **This
-session did exactly that and started authoring ten rigs for a job that needed eight**,
-which cost nothing here because the two extras are duplicate skeletons, and would not
-have been free for anything more expensive than an animation clip.
-
-**Done looks like** either deleting the two assets, or making the builder assert that
-every `person_*.asset` on disk corresponds to an id in `Roster.People`. ⚠️ **The second
-is the better half** and is the same argument `InputSurfaceProbe` makes about
-discovering screens rather than listing them: an orphan that nothing checks for is an
-orphan that comes back. It is one `Debug.LogError` in `Fill`'s caller and it belongs
-beside the `no model mapped` error already there.
-
-⚠️ **AND THE SECOND FINDING IS ABOUT THE ART RATHER THAN THE DATA: three team rigs carry
-another character's name at their root node.** `team-dante.glb`'s root is `team-bayan`,
-`team-cheska.glb`'s is `team-inday` and `team-sean.glb`'s is `team-iggy`, left over from
-whichever rig each was branched off. **In the game this is harmless and must stay that
-way**: every clip in a `.glb` addresses that file's own hierarchy by path, so renaming a
-root would invalidate all 33 clips in the file at once, which is exactly the silent
-failure `PersonSwapProbe.CheckAnimationBinds` was written to catch. **It is not harmless
-to tooling that matches by name.** `tools/audit_clip_import.py` attributed
-`team-dante`'s imported clip to `team-bayan` and then reported `team-dante` as having no
-imported slide at all, which reads as a failed import rather than as a naming collision.
-It reads the root out of each `.glb` and asserts the twenty are distinct now. **Anything
-else keying on a rig's name should do the same, and nothing should rename the roots.**
-
-### 151.15 ⚠️⚠️ OPEN: NOTHING ASKS WHETHER A NON-`NetCue` WORLD CUE IS HEARD BY ANYBODY ELSE
-
-**All three cue defects in this pass came through one hole, and the hole is still there.**
-
-| Audit | The question it asks |
-|---|---|
-| `audit_audio_reach.py` | is a `ShouldResolve()` early return open at this call's brace depth |
-| `audit_presentation_reach.py` | the same, propagated to a fixed point up the call graph |
-| `audit_cue_relay.py` | of the `NetCue` sites, which are relayed AND played locally |
-
-⚠️⚠️ **NONE OF THEM CAN SEE AN OWNER-DRIVEN `GameServices.Audio.PlayAt`.** It is not host-gated,
-so the first two report it reachable by every peer, which is true of the CODE and false of the
-SOUND: the method runs on one machine because `_motor.Intent` is only filled on one machine. And
-it is not a `NetCue` site, so the third never looks at it.
-
-**That is exactly how both of these shipped**, and in each case the line above or below says what
-the cue is for:
-
-- `Carrier.StepAttacker`'s `throw_charge`, whose own comment reads *"It is the taya's cue that a
-  throw is coming, and it is the only one that reaches a player who is looking away."* ⚠️⚠️ **The
-  VISIBLE half of the same wind-up is relayed deliberately** (`BroadcastCharge` calls
-  `SetThrowCharge` and its header says *"IT TICKS ON EVERY PEER, which is what makes the wind-up
-  counterplay work"*). **The look travelled and the sound stayed home.**
-- `CombatVerbs.ReleaseSlide`'s `dash`, which is § 151.13c.
-
-**Both are fixed**, each through `NetCue.PlayVaried` with its own `OWNER_DRIVEN` row in
-`audit_cue_relay.py` naming the guard line that makes the claim true, so deleting the guard
-fails there rather than going quiet in a match. Reading after: **50 `NetCue` call sites, 3
-owner-driven, 0 UNGATED**, up from 48 and 1. **The audit that would have FOUND them is not
-built.** ⚠️ It needs a named
-allowlist, because some cues are correctly private: `stamina_empty` is feedback about your own bar
-and nobody else's business, and `respawn` needs an authority reading before anybody decides. That
-allowlist is `OWNER_DRIVEN`'s contract applied one file over, and its rows must assert the line
-that makes each claim true, exactly as that one does.
 
 ### 151.17 ✅ EVERY REGRESSION THIS PASS ADDED HAS BEEN SEEN RED
 
@@ -2103,63 +1959,6 @@ the window in which "offline" is a lie. ⚠️ A LOCAL quit deliberately does no
 need to: a player who pressed QUIT really is offline afterwards, and denying them their own solo
 sandbox would be the fix causing the bug.
 
-### 149.7 ⚠️ P2: THE TEST SUITE'S OWN VALUE
-
-**The goal is not fewer tests.** It is removing assertions that carry no unique failure signal:
-source-text assertions that duplicate behavioural coverage, tests that regex a constant out of a
-file and then assert the same compiled constant, assertions about comments rather than behaviour,
-historical hardening tests whose failure a stronger central invariant has since made impossible,
-and expensive Unity probes that only repeat something cheaper coverage already proves.
-
-⚠️⚠️ **THE RULE: FOR EVERY TEST REMOVED OR MERGED, NAME THE STRONGER TEST THAT NOW OWNS THAT
-INVARIANT.** Never delete a failing test to green the suite, never trade coverage for a faster
-qualification, and never drop an integration test because a unit test looks similar without first
-checking whether the lifecycle or the network behaviour differs.
-
-#### THE ONE THE BRIEF NAMED, REMOVED, 2026-09-05
-
-`LastTsinelasMatchHalfTests.TheEliminationTravelsAndThePeersAgreeOnTheStockTable` asserted one
-claim twice in one method:
-
-```csharp
-var moved = Regex.Match(session, @"ProtocolVersion\s*=\s*(\d+)");
-Assert.IsTrue(moved.Success, "NetSession.ProtocolVersion is gone or renamed.");
-Assert.GreaterOrEqual(int.Parse(moved.Groups[1].Value), 22, ...);
-// ⚠️ THE SECOND STATEMENT OF THE SAME CLAIM ... so it stays
-Assert.GreaterOrEqual(Net.NetSession.ProtocolVersion, 22, ...);
-```
-
-**The stronger test that owns it now is the compiler.** The only thing the regex added over the
-compiled assertion was *"ProtocolVersion is gone or renamed"*, and
-`Net.NetSession.ProtocolVersion` on the next line **does not compile** if that happens: a build
-failure rather than a test failure, and one no `-testFilter` can skip. A source assertion that is
-strictly weaker than the compiler is a second place to edit when somebody moves the number, and
-nothing else.
-
-⚠️ **THE LOOSE `>= 22` STAYS LOOSE.** `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump`
-owns the EXACT value with a paragraph per bump; this one owns *"the number had already moved past
-21 by the time this feature shipped"*, and pinning it would go red every time somebody correctly
-bumped a shared constant. Two different questions, one each.
-
-#### WHAT WAS LOOKED AT AND DELIBERATELY KEPT
-
-⚠️⚠️ **NOT EVERY SOURCE-TEXT ASSERTION IS A DUPLICATE, AND THE DIFFERENCE IS WHETHER THE COMPILER
-COULD HAVE ANSWERED.** Three kinds were checked and only the first is redundant:
-
-| Kind | Verdict |
-|---|---|
-| A constant read out of source AND asserted as a compiled value | **Redundant.** The compiler proves the name and the value harder than the regex does |
-| A CROSS-LANGUAGE contract (`WorkingTreeRules` in C# and `qualify.py` in Python; `IntegrityRules.Digest` and `match-record.js`) | **Kept.** Nothing compiles both sides, which is precisely why `tools/check_digest_contract.js` exists |
-| A CALL-SITE claim (*"every screen backs out through `MenuNav`"*, *"both boards ask `SeatLabel`"*, *"`HandleIdentify` pins the approved token"*) | **Kept.** The compiler cannot see that something is NOT called, and `CLAUDE.md` § 4a records three faults that were invisible to every other check |
-
-⚠️ **AND THE EXPENSIVE PROBES WERE NOT TOUCHED.** `InputSurfaceProbe`, `BotBehaviourProbe` and
-`AbilityShowcaseProbe` are minutes each and every one of them tests integration, lifecycle or a
-picture that no cheaper coverage reaches. § 149.7's own rule says an integration test is not
-replaced by a unit test that looks similar.
-
-**Still open:** the rest of the sweep. This closed the case the brief named and set the rule for
-the next one; nobody has walked the whole suite.
-
 ### 149.8 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SINGLE EXIT FROM A MATCH CLEARED NOTHING
 
 The remaining lifecycle risk is not the first launch, it is process-wide state surviving into
@@ -2414,24 +2213,6 @@ reported and got a whole trigger deleted rather than fixed.
 picked: longer than any chain one gameplay event produces (those arrive inside one physics step,
 or one 5 Hz snapshot at the outside) and no longer than `Balance.LungeCooldown`, so **no genuine
 second event can be swallowed**, the taya cannot tag twice inside it. Asserted both ways.
-
-### 147.3 ⚠️ OPEN: NOTHING DRAWS IT YET
-
-The markers exist, are deterministic, are deduplicated and are joined to a replay clip. **No
-screen reads them.** The obvious next users, in order of how cheap they are:
-
-1. **The end-of-match board.** Three lines under the scoreboard, off `HighlightLog.Report()`.
-   ⚠️ `CLAUDE.md` § 6.2 first: what is the ONE thing on that screen, and is this it.
-2. **A spectator ticker.** `SpectatorCamera` already draws an overlay and already knows the
-   captions.
-3. **An export.** `LastClipMarker` plus the clip is enough to name a file.
-
-⚠️ **A CLIENT'S LOG IS ONE KIND SHORT AND THAT IS WRITTEN DOWN RATHER THAN FIXED.** The retrieval
-is recorded in `Slipper.HostGrab`, which is host-side; every other producer rides `MatchFlair` and
-reaches every peer. Adding a wire message for a caption would cost a protocol field for something
-no rule reads. `MatchHighlights`' class note carries the argument.
-
----
 
 ## 146 · CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main`
 
@@ -11267,6 +11048,18 @@ EditMode test on the host-side clamp and rate limit.
 ---
 
 ## The archive index
+
+- **147.3, CLOSED 2026-09-10:** one observed result-board moment, without score changes; reader and clearing verified. Whole entry in [TODO_Archive.md](TODO_Archive.md).
+
+- **149.7, CLOSED 2026-09-10:** duplicate protocol assertion removed; the exact compiled owner remains in ChatAndLobbyChromeTests. Whole review in [TODO_Archive.md](TODO_Archive.md).
+
+- **151.6, CLOSED 2026-09-10:** Trip hazards now have their own Balance.ConfinementRadius clearance, separate from the unchanged 1.4 m generic-prop clearance. Current Checks.RunAll reports all eight checks passed. The first patch accidentally changed the generic-prop loop; the geometry gate caught it and that loop was corrected before this checkpoint. Whole entry in [TODO_Archive.md](TODO_Archive.md).
+
+- **151.21, CLOSED 2026-09-10:** PersonSwapProbe now tests face ink, facing and head-weighted dye on the named Zack reference while the naked base retains rig, clip, height, palette and hand-anchor checks. The current probe reports RESULT: PASS in Logs/person-swap-finish-v2.log. Face/hair assertions were retained. Whole entry in [TODO_Archive.md](TODO_Archive.md).
+
+- **151.15, CLOSED 2026-09-10:** Added audit_positional_audio.py: all 21 direct positional producers carry explicit ownership/reach classifications, with new or stale sites rejected. Private motor confirmations are local 2D cues; jump/land use NetCue. Fourteen gating source audits pass. Live network verification remains part of section 152.4. Whole entry in [TODO_Archive.md](TODO_Archive.md).
+
+- **151.18, CLOSED 2026-09-10:** Removed the two unregistered person assets and made RosterBookBuilder reject new unregistered person filenames. All twenty intended roster entries remain, including the inaccessible maker rigs. Historical root names were preserved. Roster rebuild and exact arm-geometry tests pass. Whole entry in [TODO_Archive.md](TODO_Archive.md).
 
 - **151.23, dedicated first-person retrieval slide, CLOSED 2026-09-09:** own low
   reach and recovery, authoritative transition into carry, versioned action evidence

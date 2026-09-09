@@ -293,32 +293,10 @@ namespace TumbangPreso.Tests
             asset.RemoveAllBindingOverrides();
         }
 
-        /// <summary>
-        /// ⚠️⚠️ CROSSPLAY IS A PROTOCOL CLAIM AND NOTHING IN THIS BATCH MAY MOVE IT. The handoff's
-        /// own framing: `NetSession.ProtocolVersion` is the match FORMAT, and peers refuse each
-        /// other across a mismatch by design. Input is entirely local: a pad, a thumb and a
-        /// keyboard all arrive at `InputIntent` and nothing about which one was used goes on the
-        /// wire. **So a phone and a desktop built from this commit must carry the same number**,
-        /// and the way to guarantee that is to not touch it.
-        ///
-        /// ⚠️ IT ASSERTS THE VALUE, WHICH IS ON PURPOSE. A bump is legitimate when the match
-        /// format changes; this test turning red is the prompt to ask whether it did, and to
-        /// rebuild BOTH players before shipping either. `FUTURE.md` § 15: *"Mobile and desktop
-        /// must ship the same version at the same time or they will refuse each other,
-        /// correctly, and it will look like a bug."*
-        /// </summary>
-        [Test]
-        public void TheInputPassDidNotMoveTheProtocolVersion()
-        {
-            // ⚠️ 24 SINCE 2026-09-05, AND THE MOVE WAS NOT AN INPUT CHANGE. `ConnectionHello`
-            // gained the ladder rating the seat handover needs (`docs/TODO.md` § 144.7). This
-            // assertion's job is unchanged: a bump has to be a deliberate act somebody edited a
-            // test for, and the sentence below is what they read while doing it.
-            Assert.AreEqual(24, Net.NetSession.ProtocolVersion,
-                "ProtocolVersion moved. Input is local and does not travel, so if this changed " +
-                "for an input reason it is wrong. If the match format genuinely changed, update " +
-                "this number AND rebuild the Windows and Android players from the same commit.");
-        }
+        // ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump owns the exact
+        // compiled protocol value and the reasons for each bump. The former input
+        // test repeated that same assertion without a distinct input invariant.
+
     }
 
     internal static class DictionaryExtensions

@@ -92,7 +92,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroIceBright;
             light.range = 5.0f;
-            light.intensity = 2.5f;
+            light.intensity = 2.5f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠️⚠️ A WALL GOING UP PLAYED THE SOUND OF SOMETHING BREAKING, AND SO DID THE
             // SHEET. `ability_shatter_trap` was on BOTH of Cheska's ground powers, so two
@@ -344,7 +344,7 @@ namespace TumbangPreso.Abilities
             // flatter, so what is left spills onto the road, which is the job: the glow tells a
             // player something is there before they can see what it is.
             light.range = radius * 2.2f;
-            light.intensity = 0.9f;
+            light.intensity = 0.9f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠️⚠️ CHESKA'S AMBIENCE IS ON HER ZONE, NOT ON HER BODY. She is the one hero with
             // no aura of her own and that is deliberate: all three of her powers are placed on
@@ -678,7 +678,7 @@ namespace TumbangPreso.Abilities
             // Fixed rather than radius-scaled, and dimmed for the reason on the fire trail's
             // light: at 3.5 it rendered its own scorch as flat yellow.
             light.range = 3.0f;
-            light.intensity = 1.0f;
+            light.intensity = 1.0f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
             // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
@@ -1113,7 +1113,7 @@ namespace TumbangPreso.Abilities
             // paints the effect, not the street. At 1.1 the char stays burnt and the glow still
             // reaches the road, which is the only thing the light was ever for.
             light.range = 3.2f;
-            light.intensity = 0.55f;
+            light.intensity = 0.55f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
             // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
@@ -1244,7 +1244,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroSpiritBright;
             light.range = 5.5f;
-            light.intensity = 3.0f;
+            light.intensity = 3.0f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
 
             var comp = go.AddComponent<GhostPoltergeistComponent>();
@@ -1419,7 +1419,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroMagmaCore;
             light.range = 7.0f;
-            light.intensity = 3.5f;
+            light.intensity = 3.5f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             var comp = go.AddComponent<EarthPillarComponent>();
             comp.Duration = duration;
@@ -1574,7 +1574,7 @@ namespace TumbangPreso.Abilities
             // This is 2.6 over 6.6 m, which is a pool of light inside the decal's own footprint
             // rather than a flash across the court, and the probe measures it either way.
             light.range = radius * 3.0f;
-            light.intensity = 2.6f;
+            light.intensity = 2.6f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠️⚠️ AND THE ROCK GOES OUT OVER THE ZONE'S LIFE. `Hero_Strike_Balance.md` § 8.5
             // item 2: a spent effect and a live one looked identical, so a player crossing this
@@ -1834,7 +1834,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroSpiritBright;
             light.range = radius * 2.6f;
-            light.intensity = 1.1f;
+            light.intensity = 1.1f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             // ⚠️ THE VORTEX EMITS FOR ITS WHOLE LIFE, not just at the moment it opens. It is
             // a 5 s zone that DRAGS people in, so it has to keep looking dangerous the whole
@@ -2357,7 +2357,7 @@ namespace TumbangPreso.Abilities
             l.type = LightType.Point;
             l.color = new Color(1.00f, 0.52f, 0.20f);
             l.range = radius * 2.4f;
-            l.intensity = 1.5f;
+            l.intensity = 1.5f * .40f; // Keep the effect readable without bleaching nearby bodies.
             l.shadows = LightShadows.None;
 
             HazardVolume.Attach(go, radius, ownerSlot);
@@ -2639,7 +2639,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroSpiritBright;
             light.range = radius * 2.0f;
-            light.intensity = 0.85f;
+            light.intensity = 0.85f * .40f; // Keep the effect readable without bleaching nearby bodies.
             light.shadows = LightShadows.None;
 
             // ⚠️ `MawIntake`, NOT `VoidWisp`. Her phase already uses `VoidWisp` and that one is
@@ -3037,7 +3037,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroWitchBright;
             light.range = radius * 2.4f;
-            light.intensity = 1.1f;
+            light.intensity = 1.1f * .40f; // Keep the effect readable without bleaching nearby bodies.
 
             var inscribe = go.AddComponent<WardInscribe>();
             inscribe.Rules = ward.transform;
@@ -3223,7 +3223,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = new Color(0.86f, 0.62f, 1.00f);
             light.range = 5.0f;
-            light.intensity = 2.2f;
+            light.intensity = 2.2f * .40f; // Keep the effect readable without bleaching nearby bodies.
             light.shadows = LightShadows.None;
 
             var anim = go.AddComponent<RiftOpen>();
@@ -3521,7 +3521,7 @@ namespace TumbangPreso.Abilities
             // one is eleven metres away from everything it lights, so its falloff across the
             // court is nearly flat and it reads as a sky rather than as a lamp.
             light.range = 26.0f;
-            light.intensity = 2.4f;
+            light.intensity = 2.4f * .40f; // Keep the effect readable without bleaching nearby bodies.
             light.shadows = LightShadows.None;
 
             // The reach, on the ground. An annulus, because `docs/TODO.md` § 19.2's rule is that
@@ -4350,9 +4350,9 @@ namespace TumbangPreso.Abilities
             // Bolt Sprint trail has used it since the silhouette pass. His ultimate was still
             // drawing the circle the trail had already stopped drawing.
             var shockRing = VfxShapes.Lay(null, "ThunderShockRing",
-                                          VfxShapes.Star(9, 0.46f, boltSeed), 0.5f, 0.0f);
+                                            VfxShapes.StarOutline(9, 0.46f, boltSeed), 0.5f, 0.0f);
             shockRing.transform.position = position + Vector3.up * 0.04f;
-            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroElectric, 0.8f);
+            VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), UiTheme.HeroElectric, 0.50f);
 
             // 3b. The ionisation column.
             //
@@ -4410,7 +4410,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = UiTheme.HeroElectricBright;
             light.range = radius * 1.6f;
-            light.intensity = 3.0f;
+            light.intensity = 3.0f * .40f; // Keep the effect readable without bleaching nearby bodies.
             Object.Destroy(lightGo, 0.35f);
 
             // ⚠️⚠️ THIS WAS `ability_flick_dash`. Zack's ultimate, the loudest thing in his kit,
@@ -4957,7 +4957,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = look.CoreColour;
             light.range = radius * 2.6f;
-            light.intensity = look.FlashIntensity;
+            light.intensity = look.FlashIntensity * .40f;
             Object.Destroy(lightGo, look.FlashSeconds);
 
             // 5. The elemental particle burst, which already existed per element and was simply

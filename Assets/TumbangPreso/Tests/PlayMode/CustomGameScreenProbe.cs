@@ -175,7 +175,7 @@ namespace TumbangPreso.PlayTests
             StringAssert.Contains("60s", headline,
                 "the headline does not say how long a round is");
 
-            StringAssert.Contains("2 tsinelas", headline,
+            StringAssert.Contains("2 slippers", headline,
                 "the headline does not carry the tsinelas stock, which is the one number LAST " +
                 "TSINELAS STANDING is about");
         }
@@ -196,7 +196,7 @@ namespace TumbangPreso.PlayTests
             var canvas = Root("CustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
-            Assert.IsNull(RowNamed(canvas, "TSINELAS EACH"),
+            Assert.IsNull(RowNamed(canvas, "SLIPPERS EACH"),
                 "a STANDARD match is offering a TSINELAS EACH row, which does nothing. " +
                 "SceneFlow.SelectedTsinelas is read only under LAST TSINELAS STANDING.");
 
@@ -209,7 +209,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             yield return null;
 
-            Assert.IsNotNull(RowNamed(canvas, "TSINELAS EACH"),
+            Assert.IsNotNull(RowNamed(canvas, "SLIPPERS EACH"),
                 "LAST TSINELAS STANDING has no control for its own stock, so the format ships " +
                 "with a number nothing can change. docs/TODO.md § 130.13.");
         }

@@ -437,6 +437,8 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             string outPath = $"{OutDir}/{mapName}.unity";
+            if (mapName == "Eskinita" || mapName == "BayanPlaza")
+                NeighborhoodFinishAuthor.FinishLoadedScene(mapName);
             bool saved = UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene, outPath);
             report.AppendLine(saved ? $"   wrote {outPath}" : $"   FAILED to write {outPath}");
 

@@ -102,23 +102,9 @@ namespace TumbangPreso.PlayTests
             yield return Blank();
         }
 
-        /// <summary>Replaces every loaded scene with one empty one.</summary>
-        private static IEnumerator Blank()
-        {
-            var blank = SceneManager.CreateScene($"PhaseSurfaceBlank{Time.frameCount}");
-            SceneManager.SetActiveScene(blank);
-
-            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
-            {
-                var scene = SceneManager.GetSceneAt(i);
-                if (scene == blank || !scene.isLoaded) continue;
-
-                var unload = SceneManager.UnloadSceneAsync(scene);
-                yield return ProbeWait.Done(unload, "scene unload");
-            }
-
-            yield return null;
-        }
+        // The former local loop also unloaded InitTestScene. Alone, this fixture
+        // could destroy the runner and leave Unity alive forever with no result XML.
+        private static IEnumerator Blank() => PlayModeWorld.Reset();
 
         /// <summary>Activates every inactive ancestor so a rect can be measured. See the note in
         /// the XP case for why the hierarchy may arrive switched off.</summary>
@@ -218,6 +204,23 @@ namespace TumbangPreso.PlayTests
             _host = new GameObject("ResultProbeHost");
             var board = _host.AddComponent<MatchResult>();
             yield return null;
+
+            // The caption is a reader of observed moments, with no career write.
+            var moments = Diagnostics.MatchHighlights.Log;
+            moments.Clear();
+            var showMoment=typeof(MatchResult).GetMethod("ShowMatchMoment",BindingFlags.Instance|BindingFlags.NonPublic);
+            var caption=(UnityEngine.UI.Text)typeof(MatchResult).GetField("_highlightLine",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(board);
+            showMoment.Invoke(board,null);
+            Assert.IsFalse(caption.gameObject.activeSelf);
+            var best=new HighlightMarker(HighlightKind.BankShot,12,1,1,-1,0,1);
+            moments.Add(best);
+            moments.Add(new HighlightMarker(HighlightKind.Tag,15,1,0,1,0,.5f));
+            showMoment.Invoke(board,null);
+            Assert.IsTrue(caption.gameObject.activeSelf);
+            StringAssert.Contains(HighlightRules.Describe(best),caption.text);
+            moments.Clear();
+            showMoment.Invoke(board,null);
+            Assert.IsFalse(caption.gameObject.activeSelf,"A rematch must not display the preceding match's moment.");
 
             var (profile, record, line) = LevelUpFixture();
             var award = ProgressionRules.Award(profile, record, line);
@@ -330,6 +333,11 @@ namespace TumbangPreso.PlayTests
                 "records it as the one phase 1 to 3 surface that did NOT move.");
             panel.gameObject.SetActive(true);
             for (int i = 0; i < 10; i++) yield return null;
+            // The row belongs to PLAYER. An inactive tab retains its unlaid-out
+            // prefab rectangles, which are not the dimensions a player sees.
+            for (int i = 0; i < ConvertedSettingsPanel.TabCount; i++)
+                if (ConvertedSettingsPanel.TabTitle(i) == "PLAYER") panel.ShowTab(i);
+            for (int i = 0; i < 2; i++) yield return null;
 
             var canvas = panel.GetComponentInParent<Canvas>(true);
             Assert.IsNotNull(canvas, "the settings panel is not under a canvas");

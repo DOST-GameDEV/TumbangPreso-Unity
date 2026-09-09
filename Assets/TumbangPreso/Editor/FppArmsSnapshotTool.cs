@@ -17,8 +17,8 @@ namespace TumbangPreso.EditorTools
         /// `fpp_nemu_showcase.png` unversioned for its whole life, which is why nobody could
         /// review two iterations of an arm in one sitting.
         /// </summary>
-        private const string Version = "v21";
-        private const string SlideVersion = "v1";
+        private const string Version = "v22";
+        private const string SlideVersion = "v2";
         private const int Width = 1280;
         private const int Height = 720;
 

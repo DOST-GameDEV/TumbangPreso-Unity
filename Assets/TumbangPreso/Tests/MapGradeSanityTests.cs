@@ -248,30 +248,23 @@ namespace TumbangPreso.Tests
         /// builder-versus-scene split is covered one test up.
         /// </summary>
         [Test]
-        public void IlalimIsLitLikeEskinitaInTheSceneThatShips()
+        public void TheAuthoredMapsHaveReadableDirectionalAmbientFill()
         {
-            const int flat = 3;
-
-            foreach (string map in new[] { "Eskinita", "IlalimNgTulay" })
+            // The new map direction deliberately uses a hemisphere instead of identical
+            // flat fill. Inspect every live field; exposure/contrast bounds stay above.
+            foreach (string map in new[] { "Eskinita", "BayanPlaza", "IlalimNgTulay" })
             {
-                string path = MapDirectory + "/" + map + ".unity";
-                Assert.IsTrue(File.Exists(path), path + " is missing");
-
-                string text = File.ReadAllText(path);
-
+                string text = File.ReadAllText(MapDirectory + "/" + map + ".unity");
                 var mode = Regex.Match(text, @"m_AmbientMode:\s*(?<v>\d+)");
-                Assert.IsTrue(mode.Success, "no m_AmbientMode in " + path);
-                Assert.AreEqual(flat, int.Parse(mode.Groups["v"].Value),
-                    map + " is not on Flat ambient. Both arenas are lit by one number so that "
-                    + "'match the other map' is a comparison anybody can make; a Trilight scene "
-                    + "puts two decorative fields beside the live one, which is exactly how the "
-                    + "0.34 equator was read as 'three times Eskinita's' when it was 0.36 of it.");
+                Assert.AreEqual((int)UnityEngine.Rendering.AmbientMode.Trilight, int.Parse(mode.Groups["v"].Value));
+                foreach (string field in new[] { "m_AmbientSkyColor", "m_AmbientEquatorColor", "m_AmbientGroundColor" })
+                {
+                    var value=Regex.Match(text, field+@":\s*\{r:\s*(?<r>[-0-9.]+),\s*g:\s*(?<g>[-0-9.]+),\s*b:\s*(?<b>[-0-9.]+)");
+                    Assert.IsTrue(value.Success,map+"/"+field);
+                    foreach(string channel in new[]{"r","g","b"})
+                        Assert.That(float.Parse(value.Groups[channel].Value),Is.InRange(.18f,1f),map+"/"+field);
+                }
             }
-
-            Assert.AreEqual(AmbientSky("Eskinita"), AmbientSky("IlalimNgTulay"),
-                "Ilalim ng Tulay's ambient no longer matches Eskinita's. If that is deliberate, "
-                + "say so in IlalimNgTulayBuilder and change this test with it; if it is not, "
-                + "re-run IlalimNgTulayPipeline. The scene is what ships.");
         }
 
         /// <summary>The Flat ambient colour of one map scene, rounded to the third decimal the

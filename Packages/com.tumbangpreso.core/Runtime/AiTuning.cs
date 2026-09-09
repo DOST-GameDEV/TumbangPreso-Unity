@@ -288,7 +288,10 @@ namespace TumbangPreso.Core
         /// `docs/VISION.md` § 2 is right that the bots are the canary for whether a human can
         /// read the floor. This is that canary made automatic.
         /// </summary>
-        public const float HazardAvoidMaxRadius = 3.0f;
+        // Kuro's live field is 4 m, despite the old 2.8 m preview. Its 4.55 m
+        // avoidance envelope leaves room inside the 7 m half-court; the old cap
+        // silently ignored it. Larger court-covering ultimates retain their policy.
+        public const float HazardAvoidMaxRadius = 4.0f;
 
         /// <summary>sin(22.5°). The threshold that snaps a heading onto one of eight
         /// compass directions, so a bot walks the same lanes a keyboard player does

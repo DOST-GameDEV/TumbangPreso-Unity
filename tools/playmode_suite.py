@@ -386,6 +386,8 @@ def run_group(group, members, log_suffix=""):
            "-testCategory", CATEGORIES, "-testFilter", test_filter,
            "-testResults", str(xml), "-logFile", str(log)]
 
+    if sys.platform == "win32":
+        cmd = [sys.executable, str(ROOT / "tools" / "run_unity_guarded.py"), *cmd[1:]]
     proc = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True, errors="replace")
     return read_group_xml(group, xml, started, members, proc.returncode)
 

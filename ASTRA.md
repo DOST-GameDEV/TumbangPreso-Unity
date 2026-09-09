@@ -1,6 +1,15 @@
 # ASTRA.md
 
-**The animation and Blender queue. This file is Astra's; nobody else works from it.**
+**Animation and Blender history plus the current improvement pass.**
+
+2026-09-10 authority: the owner explicitly expanded this work to the whole game on
+`ASTRAReworks` only, without agents or one-character stopping limits. Never use
+`main`. [IMPROVEMENT_PLAN.md](docs/IMPROVEMENT_PLAN.md) owns the active outcome table.
+All eighteen named character models and their first-person arm geometry are now
+reworked; forty gait clips and all eighteen hero body/FPP actions have current
+in-engine evidence in [the presentation report](docs/reports/improvement-2026-09-10/presentation-batch.md).
+The full-speed player and multiplayer acceptance checks remain open. These captures
+are automated observations and do not claim the owner's taste approval.
 
 Created 2026-09-05 at 🧑's instruction to split animation authoring away from gameplay
 engineering. The engineering queue is [`docs/TODO.md`](docs/TODO.md) and it intentionally does
@@ -8,7 +17,7 @@ not contain the work below.
 
 ---
 
-## Astra Rules
+## Historical Astra Rules (superseded where they conflict with the authority above)
 
 * Read [`CLAUDE.md`](CLAUDE.md), [`docs/VISION.md`](docs/VISION.md),
   [`docs/TODO.md`](docs/TODO.md), and this file first.

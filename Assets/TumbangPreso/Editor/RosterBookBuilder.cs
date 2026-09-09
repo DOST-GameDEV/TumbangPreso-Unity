@@ -173,6 +173,14 @@ namespace TumbangPreso.EditorTools
             book.Slippers.Clear();
 
             bool ok = true;
+            foreach (string path in Directory.GetFiles(EntryDir,"person_*.asset"))
+            {
+                string id=Path.GetFileNameWithoutExtension(path).Substring("person_".Length);
+                if (PersonModels.ContainsKey(id)) continue;
+                Debug.LogError("[RosterBook] Unregistered person asset: " + path
+                    + ". Register its id or remove the orphan; folder enumeration must not invent a roster.");
+                ok=false;
+            }
             ok &= Fill(book.People, Roster.People, PersonModels, "person");
             ok &= Fill(book.Cans, Roster.Cans, CanModels, "can");
             ok &= Fill(book.Slippers, Roster.Slippers, SlipperModels, "slipper");
@@ -200,6 +208,8 @@ namespace TumbangPreso.EditorTools
             }
 
             EditorUtility.SetDirty(book);
+            // A model export updates both views in the same authoring transaction.
+            ViewmodelArmAuthor.Bake(book);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 

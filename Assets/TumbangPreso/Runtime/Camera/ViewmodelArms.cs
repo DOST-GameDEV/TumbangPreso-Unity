@@ -218,6 +218,7 @@ namespace TumbangPreso.CameraSystem
         private float _actionReturnLeft;
         private string _currentHeroId;
         private bool _heroInitialized;
+        private GameObject _matchedBody;
         private bool _built;
 
         /// <summary>Active normalized hero identity currently styled on these arms.</summary>
@@ -459,13 +460,15 @@ namespace TumbangPreso.CameraSystem
 
             // Against the parent's CURRENT world scale, so the slipper keeps this size while
             // the carry pose is still interpolating in rather than growing as the arm settles.
-            float parent = Mathf.Max(0.0001f, _heldSlipper.parent.lossyScale.x);
-
-            float k = SlipperLength / longest / parent;
-
-            _heldSlipper.localScale = Vector3.one * k;
+            float k = SlipperLength / longest;
+            Transform parent = _heldSlipper.parent;
+            Vector3 scale = new Vector3(
+                k / Mathf.Max(.0001f,parent.TransformVector(HeldSlipperGrip * Vector3.right).magnitude),
+                k / Mathf.Max(.0001f,parent.TransformVector(HeldSlipperGrip * Vector3.up).magnitude),
+                k / Mathf.Max(.0001f,parent.TransformVector(HeldSlipperGrip * Vector3.forward).magnitude));
+            _heldSlipper.localScale = scale;
             _heldSlipper.localRotation = HeldSlipperGrip;
-            _heldSlipper.localPosition = HeldSlipperLocal - HeldSlipperGrip * (bounds.center * k);
+            _heldSlipper.localPosition = HeldSlipperLocal - HeldSlipperGrip * Vector3.Scale(bounds.center,scale);
         }
 
         // -------------------------------------------------------------------
@@ -477,11 +480,16 @@ namespace TumbangPreso.CameraSystem
         {
             public readonly float T;
             public readonly Vector3 Godot;
+            public readonly Vector3 Left;
+            public readonly bool Sharp;
 
-            public Key(float t, float x, float y, float z)
+            public Key(float t, float x, float y, float z,
+                       float lx = 0, float ly = 0, float lz = 0, bool sharp = false)
             {
                 T = t;
                 Godot = new Vector3(x, y, z);
+                Left = new Vector3(lx, ly, lz);
+                Sharp = sharp;
             }
         }
 
@@ -634,127 +642,148 @@ namespace TumbangPreso.CameraSystem
         // § BESPOKE HERO ACTION CLIPS
         private static readonly Key[] ThrustFireClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.08f,  0.45f,  0.20f, -0.10f),
-            new Key(0.20f, -0.95f, -0.15f,  0.15f),
-            new Key(0.42f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.045f, 0.380f, 0.140f, 0.160f, 0.200f, -0.140f, -0.120f),
+            new Key(0.110f, 0.750f, 0.200f, 0.080f, 0.640f, -0.150f, -0.080f, true),
+            new Key(0.190f, 0.690f, 0.170f, 0.070f, 0.600f, -0.130f, -0.060f),
+            new Key(0.360f, 0.380f, 0.100f, 0.040f, 0.300f, -0.080f, -0.030f),
+            new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] IgniteClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.12f,  0.60f, -0.25f,  0.20f),
-            new Key(0.24f,  0.48f, -0.20f,  0.15f),
-            new Key(0.40f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.050f, 0.220f, -0.180f, 0.120f, -0.120f, 0.200f, -0.140f),
+            new Key(0.130f, 0.550f, -0.320f, 0.200f, -0.250f, 0.320f, -0.220f, true),
+            new Key(0.280f, 0.470f, -0.260f, 0.160f, -0.200f, 0.260f, -0.170f),
+            new Key(0.520f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] SupernovaSlamClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.15f,  0.90f,  0.25f,  0.10f),
-            new Key(0.30f,  0.85f,  0.20f,  0.10f),
-            new Key(0.45f, -1.10f, -0.20f, -0.15f),
-            new Key(0.70f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.200f, 0.650f, 0.120f, 0.090f, 0.620f, -0.120f, -0.090f),
+            new Key(0.520f, 1.050f, 0.160f, 0.100f, 0.940f, -0.160f, -0.100f),
+            new Key(0.780f, 0.950f, 0.120f, 0.090f, 0.860f, -0.120f, -0.090f),
+            new Key(1.120f, -1.050f, -0.120f, -0.100f, -0.940f, 0.120f, 0.100f, true),
+            new Key(1.300f, -0.350f, -0.050f, -0.040f, -0.280f, 0.050f, 0.040f),
+            new Key(1.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] SprintElectricClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.08f, -0.50f,  0.30f,  0.20f),
-            new Key(0.18f,  0.60f, -0.25f, -0.15f),
-            new Key(0.28f, -0.55f,  0.25f,  0.15f),
-            new Key(0.45f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.160f, 0.300f, 0.420f, -0.220f, -0.300f, -0.300f, 0.180f),
+            new Key(0.320f, -0.300f, 0.200f, 0.120f, 0.260f, -0.400f, -0.160f),
+            new Key(0.480f, 0.280f, 0.360f, -0.180f, -0.240f, -0.260f, 0.140f),
+            new Key(0.640f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] OverchargeClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.08f,  0.35f, -0.15f,  0.25f),
-            new Key(0.16f,  0.25f, -0.10f,  0.15f),
-            new Key(0.24f,  0.35f, -0.15f,  0.25f),
-            new Key(0.38f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.045f, -0.450f, -0.350f, 0.100f, -0.250f, 0.200f, -0.140f),
+            new Key(0.120f, 0.700f, -0.200f, 0.240f, -0.350f, 0.360f, -0.220f, true),
+            new Key(0.290f, 0.360f, -0.120f, 0.120f, -0.180f, 0.180f, -0.100f),
+            new Key(0.520f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] SummonLightningClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.14f,  1.10f,  0.30f,  0.00f),
-            new Key(0.28f,  1.05f,  0.28f,  0.00f),
-            new Key(0.42f, -0.95f, -0.15f,  0.10f),
-            new Key(0.65f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.110f, 0.450f, 0.220f, -0.080f, 0.150f, -0.180f, 0.060f),
+            new Key(0.270f, 0.880f, 0.280f, -0.140f, 0.280f, -0.240f, 0.100f),
+            new Key(0.340f, 0.840f, 0.260f, -0.120f, 0.250f, -0.220f, 0.090f),
+            new Key(0.400f, -0.780f, 0.200f, 0.140f, 0.160f, -0.180f, 0.080f, true),
+            new Key(0.530f, -0.350f, 0.120f, 0.080f, 0.100f, -0.120f, 0.050f),
+            new Key(0.650f, -0.160f, 0.060f, 0.040f, 0.050f, -0.060f, 0.020f),
+            new Key(0.820f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] StompHeavyClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.12f,  0.80f,  0.20f, -0.10f),
-            new Key(0.24f, -1.05f, -0.15f,  0.05f),
-            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.045f, 0.350f, 0.100f, -0.080f, 0.300f, -0.100f, 0.080f),
+            new Key(0.100f, -0.800f, -0.100f, 0.060f, -0.700f, 0.120f, -0.060f, true),
+            new Key(0.240f, -0.270f, -0.040f, 0.030f, -0.230f, 0.050f, -0.030f),
+            new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] CarapaceGuardClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.12f,  0.45f, -0.45f,  0.35f),
-            new Key(0.32f,  0.40f, -0.40f,  0.30f),
-            new Key(0.55f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.055f, 0.200f, -0.280f, 0.180f, 0.180f, 0.280f, -0.180f),
+            new Key(0.140f, 0.480f, -0.520f, 0.320f, 0.420f, 0.520f, -0.320f, true),
+            new Key(0.360f, 0.440f, -0.480f, 0.300f, 0.390f, 0.480f, -0.300f),
+            new Key(0.700f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] FissureSlamClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.16f,  1.15f,  0.25f, -0.10f),
-            new Key(0.35f, -1.20f, -0.20f,  0.00f),
-            new Key(0.70f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.180f, 0.650f, 0.100f, -0.100f, 0.300f, -0.160f, 0.080f),
+            new Key(0.310f, 0.940f, 0.160f, -0.140f, 0.440f, -0.220f, 0.100f),
+            new Key(0.400f, -1.050f, -0.120f, 0.040f, -0.480f, 0.160f, -0.040f, true),
+            new Key(0.540f, -0.420f, -0.060f, 0.020f, -0.200f, 0.080f, -0.020f),
+            new Key(0.700f, -0.160f, -0.030f, 0.000f, -0.080f, 0.040f, 0.000f),
+            new Key(1.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] FrostSweepClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.10f,  0.35f,  0.40f, -0.20f),
-            new Key(0.24f, -0.45f, -0.55f,  0.30f),
-            new Key(0.45f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.045f, -0.120f, 0.550f, -0.300f, 0.080f, -0.100f, -0.060f),
+            new Key(0.110f, -0.350f, -0.450f, 0.300f, 0.140f, -0.200f, -0.100f, true),
+            new Key(0.300f, -0.300f, -0.400f, 0.270f, 0.130f, -0.180f, -0.090f),
+            new Key(0.560f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] RaiseBarricadeClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.10f, -0.55f,  0.10f, -0.15f),
-            new Key(0.24f,  0.75f, -0.20f,  0.20f),
-            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.050f, -0.400f, 0.080f, -0.100f, -0.280f, -0.080f, 0.100f),
+            new Key(0.120f, 0.750f, -0.150f, 0.180f, 0.500f, 0.150f, -0.180f, true),
+            new Key(0.340f, 0.700f, -0.140f, 0.170f, 0.460f, 0.140f, -0.170f),
+            new Key(0.620f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] NovaBurstClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.12f,  0.50f, -0.30f,  0.20f),
-            new Key(0.25f, -0.90f,  0.15f, -0.25f),
-            new Key(0.55f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.230f, 0.450f, -0.300f, 0.200f, 0.400f, 0.300f, -0.200f),
+            new Key(0.400f, -0.700f, 0.200f, -0.250f, -0.600f, -0.200f, 0.250f, true),
+            new Key(0.550f, -0.300f, 0.120f, -0.140f, -0.270f, -0.120f, 0.140f),
+            new Key(0.680f, -0.120f, 0.060f, -0.060f, -0.100f, -0.060f, 0.060f),
+            new Key(0.850f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] GhostStepClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.14f, -0.30f,  0.35f,  0.25f),
-            new Key(0.30f,  0.25f, -0.20f, -0.15f),
-            new Key(0.48f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.180f, 0.200f, 0.320f, 0.150f, -0.080f, -0.150f, -0.120f),
+            new Key(0.360f, 0.100f, -0.220f, -0.160f, 0.180f, 0.180f, 0.100f),
+            new Key(0.500f, 0.060f, -0.100f, -0.060f, 0.080f, 0.080f, 0.040f),
+            new Key(0.620f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] ProjectSpiritClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.10f,  0.45f, -0.15f,  0.10f),
-            new Key(0.22f, -0.85f,  0.05f, -0.10f),
-            new Key(0.44f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.050f, 0.180f, -0.150f, 0.080f, 0.250f, 0.200f, -0.120f),
+            new Key(0.140f, -0.550f, 0.100f, -0.140f, 0.400f, 0.260f, -0.180f, true),
+            new Key(0.320f, -0.500f, 0.090f, -0.120f, 0.300f, 0.180f, -0.130f),
+            new Key(0.600f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] SeanceChannelClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.15f,  0.60f,  0.30f, -0.25f),
-            new Key(0.32f,  0.35f, -0.35f,  0.30f),
-            new Key(0.50f, -0.60f, -0.10f,  0.15f),
-            new Key(0.75f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.180f, 0.420f, 0.260f, -0.200f, 0.300f, -0.220f, 0.160f),
+            new Key(0.310f, 0.520f, 0.300f, -0.240f, 0.400f, -0.280f, 0.200f),
+            new Key(0.400f, -0.400f, -0.340f, 0.120f, -0.150f, 0.240f, -0.100f, true),
+            new Key(0.570f, -0.320f, -0.250f, 0.100f, -0.120f, 0.180f, -0.080f),
+            new Key(0.730f, -0.150f, -0.120f, 0.040f, -0.050f, 0.080f, -0.030f),
+            new Key(0.950f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         // -------------------------------------------------------------------
@@ -782,12 +811,12 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private static readonly Key[] CastHexClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.12f,  0.35f,  0.45f, -0.30f),
-            new Key(0.24f,  0.50f, -0.10f, -0.55f),
-            new Key(0.36f,  0.20f, -0.50f, -0.20f),
-            new Key(0.50f, -0.70f, -0.15f,  0.35f),
-            new Key(0.72f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.045f, 0.250f, 0.450f, -0.280f, 0.120f, -0.100f, 0.080f),
+            new Key(0.085f, 0.400f, -0.350f, -0.450f, 0.220f, 0.080f, 0.150f),
+            new Key(0.140f, -0.620f, -0.120f, 0.250f, 0.100f, 0.200f, -0.140f, true),
+            new Key(0.300f, -0.200f, -0.050f, 0.120f, 0.050f, 0.100f, -0.060f),
+            new Key(0.640f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         /// <summary>
@@ -798,10 +827,11 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private static readonly Key[] BlinkClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.09f, -0.55f,  0.50f,  0.40f),
-            new Key(0.18f,  0.75f, -0.45f, -0.50f),
-            new Key(0.40f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.040f, 0.550f, 0.300f, 0.200f, 0.400f, -0.300f, -0.200f),
+            new Key(0.090f, -0.650f, -0.350f, -0.350f, -0.400f, 0.280f, 0.300f, true),
+            new Key(0.220f, -0.250f, -0.120f, -0.150f, -0.140f, 0.100f, 0.120f),
+            new Key(0.460f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         /// <summary>
@@ -814,16 +844,22 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private static readonly Key[] CovenEclipseClip =
         {
-            new Key(0.00f,  0.00f,  0.00f,  0.00f),
-            new Key(0.18f, -0.30f,  0.20f,  0.15f),
-            new Key(0.30f, -0.95f,  0.10f, -0.10f),
-            new Key(0.58f, -0.90f, -0.05f, -0.05f),
-            new Key(0.70f,  0.65f, -0.20f,  0.30f),
-            new Key(0.95f,  0.00f,  0.00f,  0.00f),
+            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.040f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
+            new Key(0.080f, 0.800f, 0.100f, -0.100f, 0.700f, -0.100f, 0.100f),
+            new Key(0.115f, 0.780f, 0.050f, -0.080f, 0.680f, -0.050f, 0.080f),
+            new Key(0.140f, 0.850f, -0.100f, -0.050f, 0.730f, 0.100f, 0.050f),
+            new Key(0.180f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
+            new Key(0.380f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
+            new Key(0.850f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private Key[] _clip;
         private float _clipTime;
+        private Quaternion _clipFromRight, _clipFromLeft, _returnFromLeft;
+        private float _returnDuration = SlideCarryBlendSeconds;
+        private string _actionName;
+        private bool _heroAction;
 
         /// <summary>
         /// § THE WIND-UP. How far the throwing arm cocks back at full charge, radians.
@@ -898,7 +934,7 @@ namespace TumbangPreso.CameraSystem
         {
             _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
 
-            if (_charge >= 0.0f) _clip = null;
+            if (_charge >= 0.0f && !_heroAction) _clip = null;
         }
 
         /// <summary>
@@ -906,6 +942,9 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public bool PlayAction(string clip)
         {
+            _clipFromRight = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
+            _clipFromLeft = _leftArm != null ? _leftArm.localRotation : Quaternion.identity;
+            _actionName = clip;
             _clip = clip == "throw" ? ThrowClip
                   : clip == "grab" ? GrabClip
                   : clip == "punch" ? PunchClip
@@ -962,6 +1001,8 @@ namespace TumbangPreso.CameraSystem
 
             _clipTime = 0.0f;
             _actionReturnLeft = 0.0f;
+            _heroAction = _clip != null && _clip != ThrowClip && _clip != GrabClip
+                && _clip != PunchClip && _clip != LungeClip && _clip != SlideClip && _clip != ShoveClip;
 
             // ⚠️ THE PER-CLIP SLEEVE IMPULSES WENT WITH THE SOLVER. See the field block at the
             // top of this class: they fed `ViewmodelClothPhysics`, and the recoil they added was
@@ -979,26 +1020,29 @@ namespace TumbangPreso.CameraSystem
         {
             if (_rightArm == null) return;
 
-            if (_charge >= 0.0f)
+            if (_charge >= 0.0f && (_clip == null || !_heroAction))
             {
                 _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,
                                                            0.0f, 0.0f);
+                if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
                 return;
             }
 
             if (_actionReturnLeft > 0.0f)
             {
                 _actionReturnLeft = Mathf.Max(0.0f, _actionReturnLeft - dt);
-                float t = 1.0f - _actionReturnLeft / SlideCarryBlendSeconds;
+                float t = 1.0f - _actionReturnLeft / _returnDuration;
                 t = t * t * (3.0f - 2.0f * t);
                 _rightArm.localRotation = Quaternion.Slerp(_actionReturnFrom,
                                                            Quaternion.identity, t);
+                if (_leftArm != null) _leftArm.localRotation = Quaternion.Slerp(_returnFromLeft, Quaternion.identity, t);
                 return;
             }
 
             if (_clip == null)
             {
                 _rightArm.localRotation = Quaternion.identity;
+                if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
                 return;
             }
 
@@ -1007,7 +1051,9 @@ namespace TumbangPreso.CameraSystem
             if (_clipTime >= _clip[_clip.Length - 1].T)
             {
                 _clip = null;
+                _heroAction = false;
                 _rightArm.localRotation = Quaternion.identity;
+                if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
                 return;
             }
 
@@ -1018,10 +1064,15 @@ namespace TumbangPreso.CameraSystem
                 float span = Mathf.Max(0.0001f, _clip[i].T - _clip[i - 1].T);
                 float t = (_clipTime - _clip[i - 1].T) / span;
 
-                t = t * t * (3.0f - 2.0f * t);
+                t = _clip[i].Sharp ? Mathf.Pow(t, 2.2f) : t * t * (3.0f - 2.0f * t);
 
-                _rightArm.localRotation = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Godot),
-                                                           ToUnityLocal(_clip[i].Godot), t);
+                float enter = Mathf.SmoothStep(0,1,Mathf.Clamp01(_clipTime/.06f));
+                var right = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Godot), ToUnityLocal(_clip[i].Godot), t);
+                var left = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Left), ToUnityLocal(_clip[i].Left), t);
+                _rightArm.localRotation = Quaternion.Slerp(_clipFromRight,right,enter);
+                if (_leftArm != null) _leftArm.localRotation = Quaternion.Slerp(_clipFromLeft,left,enter);
+                // An empower cast can use the off hand while the throwing grip stays charged.
+                if (_charge >= 0) _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,0,0);
                 return;
             }
         }
@@ -1029,8 +1080,17 @@ namespace TumbangPreso.CameraSystem
         private void BeginActionReturn(float seconds)
         {
             _actionReturnFrom = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
+            _returnFromLeft = _leftArm != null ? _leftArm.localRotation : Quaternion.identity;
             _actionReturnLeft = Mathf.Max(0.0001f, seconds);
+            _returnDuration = _actionReturnLeft;
             _clip = null;
+            _heroAction = false;
+        }
+
+        public void CancelAction(string expected = null)
+        {
+            if (_clip == null || (expected != null && expected != _actionName)) return;
+            BeginActionReturn(.12f);
         }
 
         private void Awake() => EnsureBuilt();
@@ -1219,6 +1279,8 @@ namespace TumbangPreso.CameraSystem
             if (character == null) return;
 
             _characterMotor = character;
+            var body = character.GetComponent<Visual.CharacterVisual>()?.Model;
+            if (body != _matchedBody) { _matchedBody=body; _heroInitialized=false; }
 
             string charId = null;
             if (character.Mode == Core.GameMode.HeroStrike)
@@ -1267,6 +1329,10 @@ namespace TumbangPreso.CameraSystem
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
+            if (UseRosterArms(characterId)) return;
+            var fallback = Resources.Load<Mesh>("Models/viewmodel_arm");
+            _rightArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
+            _leftArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
 
             float thickness = characterId switch
             {
@@ -1323,6 +1389,41 @@ namespace TumbangPreso.CameraSystem
 
             if (_rightArm != null) BuildArmAccessories(_rightArm, characterId, isRight: true, parent: this);
             if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false, parent: this);
+        }
+
+        private bool UseRosterArms(string characterId)
+        {
+            var actual = _characterMotor != null ? _characterMotor.GetComponent<Visual.CharacterVisual>() : null;
+            if (actual != null && actual.SourceModel != null)
+            {
+                foreach (var candidate in RosterBook.Load().People)
+                    if (candidate.Model == actual.SourceModel) { characterId=candidate.Id; break; }
+            }
+            var right = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_right");
+            var left = Resources.Load<Mesh>("Models/RosterArms/" + characterId + "_left");
+            var entry = RosterBook.Load()?.FindPersonArt(characterId);
+            if (right == null || left == null || entry == null || entry.Model == null) return false;
+            var source = entry.Model.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            var palette = _characterMotor != null
+                ? _characterMotor.GetComponent<Visual.CharacterVisual>()?.AppliedPalette : null;
+            if (palette == null || palette.Length == 0) palette = entry.Palette;
+            ApplyRosterArm(_rightArm, _rightArmRenderer, right, source.sharedMaterial, palette);
+            ApplyRosterArm(_leftArm, _leftArmRenderer, left, source.sharedMaterial, palette);
+            return true;
+        }
+
+        private static void ApplyRosterArm(Transform arm, MeshRenderer renderer, Mesh mesh, Material source, Color[] palette)
+        {
+            float section = Mathf.Max(mesh.bounds.size.x,mesh.bounds.size.z);
+            float width = Mathf.Min(1f,.50f / Mathf.Max(.001f,section));
+            arm.localScale = new Vector3(width,1f,width);
+            renderer.enabled = true;
+            renderer.GetComponent<MeshFilter>().sharedMesh = mesh;
+            renderer.sharedMaterial = source;
+            renderer.SetPropertyBlock(null);
+            // The close camera needs the same cloth and hand geometry with a finer
+            // contour than a two-metre body. Imported meshes are shared, never destroyed.
+            Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PersonOutlineWidth * .45f, palette);
         }
 
         /// <summary>

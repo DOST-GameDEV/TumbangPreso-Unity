@@ -312,7 +312,7 @@ namespace TumbangPreso.Abilities
                        "Launches you up and slams you back down. The blast throws everyone near it clear and leaves the road burning behind you.",
                        0.0f, 5.6f, TumbangPreso.UI.AbilityGlyph.SeanSupernova,
                        summary: "Leap and crash down. Leaves burning ground where you land.",
-                       telegraphRadius: 4.8f, telegraphRange: 0.0f,
+                       telegraphRadius: 5.4f, telegraphRange: 0.0f,
                        castAction: "hero-sean-supernova",
                        viewmodelAction: "supernova-slam",
                        castCue: "sfx_cast_sean_supernova")

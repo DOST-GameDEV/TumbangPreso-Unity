@@ -97,7 +97,7 @@ def pose(t):
     raise ValueError(t)
 
 
-def author(path):
+def author(path, replace=False):
     # ⚠️ THE SURGERY IS `tools/glb_action.py`'s NOW, AND WHAT IS LEFT HERE IS THE POSE.
     # It was one file until the hero casts needed the same buffer append; a second
     # transcription of it would have been the copy that drifts. `Rig` loads and asserts,
@@ -163,7 +163,7 @@ def author(path):
         for n, q in rots.items():
             tracks[n].append((q.x, q.y, q.z, q.w))
 
-    report = append_action(rig, 'slide', times, tracks, heights, order=order)
+    report = append_action(rig, 'slide', times, tracks, heights, order=order, replace=replace)
     report.update(pelvis_drop=round(-min(v[1] for v in heights), 5),
                   reach_roll_deg=round(reach_roll, 3),
                   reach_roll_clamped=reach_clamped,
@@ -179,8 +179,9 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser()
     ap.add_argument('file',type=Path)
     ap.add_argument('--blend',type=Path)
+    ap.add_argument('--replace',action='store_true')
     args=ap.parse_args(sys.argv[sys.argv.index('--')+1:])
-    report=author(args.file)
+    report=author(args.file, replace=args.replace)
     if args.blend:
         bpy.ops.wm.read_factory_settings(use_empty=True)
         bpy.ops.import_scene.gltf(filepath=str(args.file.resolve()))

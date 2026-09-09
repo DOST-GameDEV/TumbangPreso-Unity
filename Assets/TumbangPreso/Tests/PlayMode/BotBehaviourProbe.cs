@@ -38,6 +38,8 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class BotBehaviourProbe
     {
+        private CustomRules _entryRules;
+        private bool _entryPin, _entryBots;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -45,7 +47,12 @@ namespace TumbangPreso.PlayTests
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _entryRules=UI.SceneFlow.SelectedRules.Clone();
+            _entryPin=UI.SceneFlow.RulesPinned; _entryBots=GameLaunch.AllBots;
+            yield return PlayModeWorld.Reset();
+        }
 
         [UnityTearDown]
         public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
@@ -118,6 +125,12 @@ namespace TumbangPreso.PlayTests
         [TearDown]
         public void TearDown()
         {
+            if (_entryRules != null)
+            {
+                UI.SceneFlow.AdoptRemoteRules(_entryRules);
+                if (_entryPin) UI.SceneFlow.PinSelectedRules(_entryRules); else UI.SceneFlow.UnpinSelectedRules();
+                GameLaunch.AllBots=_entryBots;
+            }
             Hitstop.End();
             Time.timeScale = 1.0f;
 
@@ -430,8 +443,11 @@ namespace TumbangPreso.PlayTests
 
         private IEnumerator RunMatch(GameMode mode, string map, string label = null)
         {
-            var previousMode = UI.SceneFlow.SelectedMode;
-            UI.SceneFlow.SelectedMode = mode;
+            var previousRules = UI.SceneFlow.SelectedRules.Clone();
+            bool previousPin = UI.SceneFlow.RulesPinned;
+            // Setting only Mode retained a saved eight-round count in a Classic
+            // report labelled four rounds. Pin the complete measured ruleset.
+            UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
 
             // ⚠️⚠️ ALL FOUR SEATS ARE BOTS, AND UNTIL 2026-08-26 ONE OF THEM WAS NOT.
             // `GameLaunch.SoloSeat` defaults to 1, so seat 1 got a `PlayerInputReader` in a run
@@ -634,6 +650,7 @@ namespace TumbangPreso.PlayTests
 
             var log = new StringBuilder();
             log.AppendLine($"bot behaviour probe  ·  {mode}  ·  {map}");
+            log.AppendLine($"rules: {CustomGameRules.ToWire(UI.SceneFlow.SelectedRules)}; actual rounds {UI.SceneFlow.SelectedRoundCount}; seconds per round {UI.SceneFlow.SelectedRoundSeconds}");
 
             // ⚠️ THE FRAME COUNT IS THE REPRODUCIBLE NUMBER AND THE WALL CLOCK IS NOT. Both are
             // printed because the second one is how you notice the machine is struggling, but
@@ -743,7 +760,8 @@ namespace TumbangPreso.PlayTests
 
             _lastReport = comparable.ToString();
 
-            UI.SceneFlow.SelectedMode = previousMode;
+            UI.SceneFlow.AdoptRemoteRules(previousRules);
+            if (previousPin) UI.SceneFlow.PinSelectedRules(previousRules); else UI.SceneFlow.UnpinSelectedRules();
             GameLaunch.AllBots = previousAllBots;
 
             // ---- THE MATCH ITSELF ------------------------------------------------------

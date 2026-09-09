@@ -1,0 +1,25 @@
+# Authored by tools/author_neighborhood_models.py
+newmtl bark
+Kd 0.3 0.22 0.13
+Ks 0.04 0.04 0.04
+Ns 18
+d 1
+illum 2
+newmtl leaf_shadow
+Kd 0.13 0.24 0.09
+Ks 0.04 0.04 0.04
+Ns 18
+d 1
+illum 2
+newmtl leaf
+Kd 0.21 0.34 0.12
+Ks 0.04 0.04 0.04
+Ns 18
+d 1
+illum 2
+newmtl leaf_light
+Kd 0.3 0.42 0.17
+Ks 0.04 0.04 0.04
+Ns 18
+d 1
+illum 2

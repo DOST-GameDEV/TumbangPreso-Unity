@@ -142,7 +142,7 @@ def rotations(angles):
     return out
 
 
-def append_action(rig, name, times, tracks, root_translation, order=None):
+def append_action(rig, name, times, tracks, root_translation, order=None, replace=False):
     """Write `name` into the rig's `.glb`, in place, keeping every original byte.
 
     `tracks` maps bone name to a list of (x, y, z, w) rotations, one per time.
@@ -150,6 +150,10 @@ def append_action(rig, name, times, tracks, root_translation, order=None):
     `order` fixes the channel order when byte-for-byte reproducibility matters.
     """
     gltf, blob = rig.gltf, bytearray(rig.original)
+    # Explicit replacement preserves newly repaired geometry and all other actions.
+    # Restoring an old whole rig just to remove one clip would lose model work.
+    if replace:
+        gltf["animations"] = [a for a in gltf.get("animations", []) if a.get("name") != name]
     assert not any(a.get("name") == name for a in gltf.get("animations", [])), (
         f"'{name}' already exists in {rig.path.name}; restore the source before "
         "reauthoring, so the clip in the file is always the one this tool produced")

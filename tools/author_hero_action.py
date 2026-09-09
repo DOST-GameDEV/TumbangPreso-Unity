@@ -562,6 +562,55 @@ HEROES = {
 }
 
 
+# The 2026-09-10 runtime capture showed several instant effects arriving a quarter
+# second before the body's peak, and Supernova recovering while still descending.
+# These are PRESENTATION clocks. Ability windup, contact, range and cooldown remain
+# owned by the game. Distinct source poses above are retained and timed to their jobs.
+CAST_PRESENTATION_TIMES = {
+    "hero-sean-dash": (0,.045,.11,.19,.36,.58),
+    "hero-sean-ignite": (0,.05,.13,.28,.52),
+    "hero-sean-supernova": (0,.20,.52,.78,1.12,1.30,1.55),
+    "hero-zack-sprint": (0,.16,.32,.48,.64),
+    "hero-zack-summon": (0,.11,.27,.34,.40,.53,.65,.82),
+    "hero-dante-stomp": (0,.045,.10,.24,.58),
+    "hero-dante-roar": (0,.055,.14,.36,.70),
+    "hero-dante-fissure": (0,.18,.31,.40,.54,.70,1.0),
+    "hero-cheska-frostwave": (0,.045,.11,.30,.56),
+    "hero-cheska-raise": (0,.05,.12,.34,.62),
+    "hero-cheska-nova": (0,.23,.40,.55,.68,.85),
+    "hero-nemu-ghoststep": (0,.18,.36,.50,.62),
+    "hero-nemu-project": (0,.05,.14,.32,.60),
+    "hero-nemu-seance": (0,.18,.31,.40,.57,.73,.95),
+    "hero-phaister-hex": (0,.045,.085,.14,.30,.64),
+    "hero-phaister-blink": (0,.04,.09,.22,.46),
+    "hero-phaister-eclipse": (0,.04,.08,.115,.14,.18,.38,.85),
+}
+for actions in HEROES.values():
+    for name,spec in actions.items():
+        if name not in CAST_PRESENTATION_TIMES: continue
+        times=CAST_PRESENTATION_TIMES[name]
+        previous=[b[0] for b in spec["beats"]]
+        assert len(times)==len(previous),name
+        remap=dict(zip(previous,times))
+        spec["beats"]=[(t,*b[1:]) for t,b in zip(times,spec["beats"])]
+        spec["grounded"]=tuple(remap[t] for t in spec["grounded"])
+        if spec["punch"] is not None:spec["punch"]=remap[spec["punch"]]
+
+# Magnet is a retrieval now, not the old held-shoe overcharge. Aim the off hand
+# toward the street, draw the receiving arm inward, then release the shoulder.
+HEROES["zack"]["hero-zack-charge"] = {
+    "punch": .12,
+    "beats": [
+        (0.,1.,0.,0., 0,0,0, 0,0, 0,0,0,0, 0,0,0,0),
+        (.045,1.,0.,0., 12,18,7, -4,14, -6,-4,8,3, -52,22,-66,-8),
+        (.12,1.,0.,-.015, -6,-22,-5, 4,-12, 4,3,-6,-2, -68,26,18,-30),
+        (.29,1.,0.,-.008, -3,-12,-2, 2,-6, 2,1,-3,-1, -35,16,10,-19),
+        (.52,1.,0.,0., 0,0,0, 0,0, 0,0,0,0, 0,0,0,0),
+    ],
+    "grounded": (0.,.045,.12,.29,.52),
+}
+
+
 def sample(beats, punch, t):
     """The pose at t, with the hang-and-snap ease on the run into the impact.
 
@@ -591,7 +640,7 @@ def angles_from(values):
              "arm-left": (alp, 0, als), "arm-right": (arp, 0, ars)})
 
 
-def author(path, name, spec):
+def author(path, name, spec, replace=False):
     rig = Rig(path)
     beats, punch = spec["beats"], spec["punch"]
     duration = beats[-1][0]
@@ -633,7 +682,7 @@ def author(path, name, spec):
 
     worst = min(dips, key=lambda d: d[1])
 
-    report = append_action(rig, name, times, tracks, root, order=order)
+    report = append_action(rig, name, times, tracks, root, order=order, replace=replace)
     report.update(punch=punch,
                   deepest_dip=round(worst[1], 5), deepest_dip_at=worst[0],
                   grounded_beats=list(spec["grounded"]),
@@ -647,6 +696,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--hero", required=True, choices=sorted(HEROES))
     ap.add_argument("--action", help="one action name; default is all three")
+    ap.add_argument("--replace", action="store_true", help="replace only these named actions, retaining current geometry")
     ap.add_argument("files", type=Path, nargs="+")
     args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:]
                          if "--" in sys.argv else sys.argv[1:])
@@ -657,4 +707,4 @@ if __name__ == "__main__":
 
     for path in args.files:
         for name, spec in actions.items():
-            print("HERO_ACTION " + json.dumps(author(path, name, spec)))
+            print("HERO_ACTION " + json.dumps(author(path, name, spec, replace=args.replace)))

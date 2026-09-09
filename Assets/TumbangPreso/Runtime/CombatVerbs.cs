@@ -574,7 +574,7 @@ namespace TumbangPreso
             // within seconds."* ⚠️⚠️ `dash` is ALSO what `bump_swing` aliases to, so a shove and
             // a committed slide are the same recording; that is a sound-source call rather than
             // an engineering one and it is `Attention.md` § 18.1.
-            NetCue.PlayVaried("dash", transform.position);
+            NetCue.PlayVaried("slide_scrape", transform.position);
 
             if (NetAuthority.ShouldRequest())
             {

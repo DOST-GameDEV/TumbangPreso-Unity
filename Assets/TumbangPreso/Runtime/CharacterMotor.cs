@@ -61,6 +61,8 @@ namespace TumbangPreso
         public bool IsPerson { get => _isPerson; set => _isPerson = value; }
         public bool IsCan { get => _isCan; set => _isCan = value; }
         public bool IsBot { get => _isBot; set => _isBot = value; }
+        private bool IsLocalHuman => !_isBot && _playerSlot ==
+            (NetAuthority.IsNetworked ? NetAuthority.LocalSlot : GameLaunch.SoloSeat);
 
         /// <summary>Empty is a real value: it means "never set one", and every reader
         /// falls back to <see cref="DisplayName"/> rather than printing a blank row.</summary>
@@ -334,6 +336,7 @@ namespace TumbangPreso
         {
             _cc = GetComponent<CharacterController>();
             Stamina = new Stamina();
+            if (GetComponent<Visual.MotionFoley>() == null) gameObject.AddComponent<Visual.MotionFoley>();
         }
 
         /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
@@ -530,7 +533,7 @@ namespace TumbangPreso
             // ⚠️ ITS REACH IS DELIBERATELY NOT CHANGED IN THE SAME PASS. This sits behind
             // `MayMutateGameplayState`, and deciding whether it should relay needs an authority
             // reading rather than a guess; `docs/TODO.md` § 151.15 is where that is written down.
-            GameServices.Audio?.PlayAtVaried("respawn", transform.position);
+            if (IsLocalHuman) GameServices.Audio?.PlayUi("respawn");
         }
 
         /// <summary>
@@ -795,13 +798,13 @@ namespace TumbangPreso
             // every frame, which is the buzzsaw case `AudioCues.HeadroomDb` exists to keep out.
             bool fatigued = Stamina.IsFatigued;
 
-            if (fatigued && !_wasFatigued)
+            if (fatigued && !_wasFatigued && IsLocalHuman)
                 // ⚠️ VARIED, for the reason on the respawn above: the bar bottoms out several
                 // times a round per seat. ⚠️ AND IT STAYS PRIVATE ON PURPOSE, unlike the throw
                 // wind-up and the slide: your own bar running out is feedback about you, and
                 // telling the taya when an attacker is fatigued would be handing over a read the
                 // game does not otherwise give. `docs/TODO.md` § 151.15.
-                GameServices.Audio?.PlayAtVaried("stamina_empty", transform.position);
+                GameServices.Audio?.PlayUi("stamina_empty");
 
             _wasFatigued = fatigued;
 
@@ -861,7 +864,7 @@ namespace TumbangPreso
             {
                 float weight = Mathf.InverseLerp(Balance.LandSfxMinSpeed,
                                                  Balance.MaxFallSpeed, _fallSpeed);
-                GameServices.Audio?.PlayAtVaried("land", transform.position,
+                NetCue.PlayVaried("land", transform.position,
                                                  0.86f, 1.04f,
                                                  Mathf.Lerp(0.65f, 1.0f, weight));
                 GetComponentInChildren<Visual.CharacterSquashStretch>()?
@@ -1231,7 +1234,7 @@ namespace TumbangPreso
                 if (Intent.JustPressed(Verb.Jump) && CanMove())
                 {
                     _velocity.y = Balance.JumpVelocity;
-                    GameServices.Audio?.PlayAtVaried("jump", transform.position,
+                    NetCue.PlayVaried("jump", transform.position,
                                                      0.96f, 1.08f, 0.9f);
                     GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);
                 }
@@ -1786,10 +1789,9 @@ namespace TumbangPreso
             // can buy nothing more, which is exactly when `CanMashOutOfStun` goes false and the
             // card stops asking. Waiting for the stun to expire would put the sound on the clock
             // rather than on the player.
-            if (after <= Balance.MinStunDown && before > Balance.MinStunDown)
+            if (after <= Balance.MinStunDown && before > Balance.MinStunDown && IsLocalHuman)
             {
-                GameServices.Audio?.PlayAtVaried("sfx_stun_break", transform.position,
-                                                 0.94f, 1.06f, 1.0f);
+                GameServices.Audio?.PlayUi("sfx_stun_break");
             }
 
             // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the

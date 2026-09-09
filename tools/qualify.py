@@ -495,6 +495,8 @@ def unity(args, logfile, timeout=None):
     """
     cmd = [str(UNITY), "-batchmode", "-projectPath", str(ROOT),
            "-buildTarget", BUILD_TARGET, "-logFile", str(logfile)] + args
+    if sys.platform == "win32":
+        cmd = [sys.executable, str(ROOT / "tools" / "run_unity_guarded.py"), *cmd[1:]]
     return subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
                           errors="replace", timeout=timeout)
 
@@ -605,6 +607,7 @@ AUDITS = [
     ("request call sites", "audit_request_call_sites.py"),
     ("wire payloads", "audit_wire_payloads.py"),
     ("audio reach", "audit_audio_reach.py"),
+    ("positional audio ownership", "audit_positional_audio.py"),
     ("presentation reach", "audit_presentation_reach.py"),
     ("cue relay", "audit_cue_relay.py"),
     ("shader stripping", "audit_shader_stripping.py"),

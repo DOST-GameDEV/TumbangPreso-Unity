@@ -816,7 +816,7 @@ namespace TumbangPreso.UI
             label.rectTransform.offsetMin = new Vector2(30.0f, 0.0f);
             label.rectTransform.offsetMax = new Vector2(-30.0f, -4.0f);
 
-            var caption = PaperKit.Ink(go.transform, says, PaperKit.Caption,
+            var caption = PaperKit.Ink(go.transform, says, MenuKit.MinReadableUnits,
                                        TextAnchor.UpperCenter, soft: true);
             caption.name = "DoorCaption";
             caption.color = dark ? UiTheme.CreamMuted : UiTheme.PaperInkSoft;

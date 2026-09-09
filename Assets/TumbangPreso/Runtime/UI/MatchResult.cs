@@ -46,6 +46,7 @@ namespace TumbangPreso.UI
         /// rather than the board waiting on a network message before it can be drawn at all.
         /// </summary>
         private Text _yourMatchLine;
+        private Text _highlightLine;
 
         /// <summary>
         /// The progression block: the level line, the bar, and what the match paid for.
@@ -190,6 +191,7 @@ namespace TumbangPreso.UI
                 : UiTheme.Amber;
 
             RenderStandings(winningSlot);
+            ShowMatchMoment();
 
             // ⚠️ READ BACK RATHER THAN WAITED FOR. On the host the record is already written by
             // the time this runs; on a client it is not, and `RecordReady` fills the line in
@@ -260,6 +262,23 @@ namespace TumbangPreso.UI
         /// is the honest version of it: the listener rides the camera now, and a cue that is not
         /// in the world does not get a position at all.
         /// </summary>
+        private void ShowMatchMoment()
+        {
+            if (_highlightLine == null) return;
+            var markers = Diagnostics.MatchHighlights.Log.Markers;
+            Core.HighlightMarker? best = null;
+            foreach (var marker in markers)
+            {
+                if (marker.Actor < 0 || marker.Actor >= Core.Balance.PlayerCount) continue;
+                if (!best.HasValue || marker.Importance > best.Value.Importance
+                    || (marker.Importance == best.Value.Importance && marker.AtSeconds > best.Value.AtSeconds)) best = marker;
+            }
+            _highlightLine.gameObject.SetActive(best.HasValue);
+            _highlightLine.text = best.HasValue
+                ? "MATCH MOMENT  ·  " + NameFor(best.Value.Actor) + "  ·  " + Core.HighlightRules.Describe(best.Value)
+                : "";
+        }
+
         private void PlayTheWin()
         {
             GameServices.Audio?.PlayUi("match_win");
@@ -659,6 +678,10 @@ namespace TumbangPreso.UI
             // board's type against `MenuKit.MinReadableUnits`.
             _yourMatchLine = CardLabel(card, "YourMatchLine", MenuKit.MinReadableUnits,
                                        UiTheme.CreamMuted, 30, TextAnchor.MiddleCenter);
+            _highlightLine = CardLabel(card,"MatchMoment",MenuKit.MinReadableUnits,
+                UiTheme.CreamMuted,44,TextAnchor.MiddleCenter);
+            _highlightLine.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _highlightLine.gameObject.SetActive(false);
 
             _xpHeadline = CardLabel(card, "XpHeadline", 19, UiTheme.Amber, 26,
                                     TextAnchor.MiddleCenter);

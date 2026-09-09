@@ -84,6 +84,12 @@ WRAPPED = [
 # `docs/TODO.md` § 135.6 carried this row as open work needing "an OWNER-DRIVEN verdict the
 # tool cannot currently express".
 OWNER_DRIVEN = [
+    {"file": "CharacterMotor.cs", "cue": "jump",
+     "guard": "if (NetAuthority.IsNetworked && !IsLocallySimulated())",
+     "why": "Only the owner or host-driven bot simulates the jump; its cue must travel once."},
+    {"file": "CharacterMotor.cs", "cue": "land",
+     "guard": "if (NetAuthority.IsNetworked && !IsLocallySimulated())",
+     "why": "Only the simulated body detects the landing edge; replicas receive the cue."},
     {
         "file": "CombatVerbs.cs",
         "cue": "bump_swing",
@@ -100,7 +106,7 @@ OWNER_DRIVEN = [
     # it either. `docs/TODO.md` § 151.15 is the hole; it is written down and not yet closed.
     {
         "file": "CombatVerbs.cs",
-        "cue": "dash",
+        "cue": "slide_scrape",
         "guard": "if (!_motor.Intent.JustPressed(Verb.Lunge)) return;",
         "why": "StepSlide runs only on the peer whose input filled Intent, so the committed "
                "retrieval is played once and relayed once. It was a plain Audio.PlayAt until "

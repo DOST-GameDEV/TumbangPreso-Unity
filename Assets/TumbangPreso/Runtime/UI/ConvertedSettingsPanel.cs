@@ -1388,7 +1388,7 @@ namespace TumbangPreso.UI
             // explanation has to go in before the thing it explains.
             BuildTelemetryNote();
 
-            BuildDropdownRow("TelemetryRow", "Share Anonymous Stats", options,
+            BuildDropdownRow("TelemetryRow", "Anonymous stats", options,
                              SettingsStore.Current.TelemetryEnabled ? 1 : 0,
                              index =>
                              {

@@ -754,6 +754,9 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        public virtual Vector3 TelegraphCentre(AbilityContext context)
+            => context.Position + context.Forward * TelegraphRange;
+
         public virtual bool CanReactivate => false;
 
         public virtual void Reactivate(AbilityContext ctx)

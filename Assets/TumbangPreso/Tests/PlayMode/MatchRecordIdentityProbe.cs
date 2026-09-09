@@ -54,6 +54,7 @@ namespace TumbangPreso.PlayTests
         private GameMode _savedMode;
         private bool _savedAllBots;
         private int _savedSoloSeat;
+        private bool _savedNetworked;
         private Net.CareerStore _suspendedCareer;
 
         [SetUp]
@@ -62,6 +63,7 @@ namespace TumbangPreso.PlayTests
             _savedMode = SceneFlow.SelectedMode;
             _savedAllBots = GameLaunch.AllBots;
             _savedSoloSeat = GameLaunch.SoloSeat;
+            _savedNetworked = SceneFlow.Networked;
         }
 
         /// <summary>
@@ -82,6 +84,7 @@ namespace TumbangPreso.PlayTests
             SceneFlow.SelectedMode = _savedMode;
             GameLaunch.AllBots = _savedAllBots;
             GameLaunch.SoloSeat = _savedSoloSeat;
+            SceneFlow.Networked = _savedNetworked;
             GameServices.Round?.EndRound();
             GameServices.Match?.ResetForNewMatch();
             GameServices.Round?.ResetForNewMatch();
@@ -119,6 +122,11 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator AFinishedMatchNamesExactlyOneSeatAsThisPlayer()
         {
+            // This is a solo record. A preceding lobby fixture can legitimately leave
+            // the persistent network session owning seat zero, overriding SoloSeat.
+            Net.NetSession.Instance?.Stop();
+            SceneFlow.Networked = false;
+            yield return null;
             SceneFlow.SelectedMode = GameMode.Classic;
             GameLaunch.AllBots = false;
             GameLaunch.SoloSeat = ProbeSeat;

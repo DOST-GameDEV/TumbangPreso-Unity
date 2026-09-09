@@ -261,6 +261,9 @@ namespace TumbangPreso.UI
             rect.offsetMax = new Vector2(-80.0f, -160.0f);
 
             _list = UiRows.ScrollList(host.transform, "Rules", out _scroll);
+            // Stretch the viewport as well as its content. Its default 100-unit rect
+            // left the closed room summary only 24 units wide inside a full-size host.
+            MenuKit.Stretch(_scroll.viewport);
         }
 
         private void BuildFooter()

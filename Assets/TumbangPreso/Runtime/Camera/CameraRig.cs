@@ -281,6 +281,12 @@ namespace TumbangPreso.CameraSystem
             rig.ViewmodelKick(Vector3.forward);
         }
 
+        public static void CancelViewmodelAction(CharacterMotor who, string expected = null)
+        {
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig != null && rig.IsFollowing(who)) rig._arms?.CancelAction(expected);
+        }
+
         // -------------------------------------------------------------------
 
         private void Awake()
@@ -290,6 +296,9 @@ namespace TumbangPreso.CameraSystem
 
             _camera.fieldOfView = _fieldOfView;
             _camera.nearClipPlane = 0.05f;
+            // The authored districts and 112 m rail corridor fit within this range.
+            // The old 1000 m default wasted most depth precision on empty distance.
+            _camera.farClipPlane = 240f;
 
             // ⚠️⚠️ THE MAP'S COLOUR GRADE, WHICH NOTHING IN THE PORT APPLIED. Every Godot
             // Environment in this game enables `adjustment_*` and Eskinita runs contrast 1.03 and

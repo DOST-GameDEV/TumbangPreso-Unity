@@ -294,10 +294,27 @@ namespace TumbangPreso.EditorTools
             }
 
             ok &= CheckHeight(report, instance);
-            ok &= CheckPaletteRows(report, skinned);
+            bool bare = RosterId == "custom_base";
+            ok &= CheckPaletteRows(report, skinned, requireFace: !bare);
             ok &= CheckHandAnchor(report, skinned);
-            ok &= CheckFacing(report, skinned);
-            ok &= CheckDyedSide(report, instance, skinned);
+            if (!bare)
+            {
+                ok &= CheckFacing(report, skinned);
+                ok &= CheckDyedSide(report, instance, skinned);
+            }
+            else
+            {
+                // The authoring mannequin deliberately has no face or hair. Keep the
+                // feature checks live on a named, clothed rig instead of deleting them.
+                const string features="Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
+                report.AppendLine("Facing, face ink and hair-side reference: " + features);
+                var reference=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(features));
+                var referenceSkin=reference.GetComponentsInChildren<SkinnedMeshRenderer>();
+                ok &= CheckPaletteRows(report,referenceSkin);
+                ok &= CheckFacing(report,referenceSkin);
+                ok &= CheckDyedSide(report,reference,referenceSkin,"zack");
+                Object.DestroyImmediate(reference);
+            }
 
             Object.DestroyImmediate(instance);
             return ok;
@@ -358,10 +375,11 @@ namespace TumbangPreso.EditorTools
         /// viewer's right of a figure facing the camera, which is that figure's left.
         /// </summary>
         private static bool CheckDyedSide(StringBuilder report, GameObject instance,
-                                          SkinnedMeshRenderer[] skinned)
+                                          SkinnedMeshRenderer[] skinned, string subjectId = null)
         {
             report.AppendLine();
             report.AppendLine("-- dyed hair side");
+            subjectId ??= RosterId;
 
             Transform arm = null;
 
@@ -378,22 +396,31 @@ namespace TumbangPreso.EditorTools
 
             // Slot 2 is the dye. Resolved the same way the shader resolves it, on the head.
             Mesh head = null;
+            SkinnedMeshRenderer headRenderer = null;
 
             foreach (var s in skinned)
                 if (s != null && s.sharedMesh != null &&
                     (head == null || s.sharedMesh.bounds.max.y > head.bounds.max.y))
-                    head = s.sharedMesh;
+                { head = s.sharedMesh; headRenderer = s; }
 
             if (head == null) return false;
 
             var uv = head.uv;
             var vertices = head.vertices;
+            var weights = head.boneWeights;
+            int headBone = System.Array.FindIndex(headRenderer.bones, b => b != null && b.name == "head");
+            bool OnHead(int i) => headBone >= 0 && i < weights.Length &&
+                (weights[i].boneIndex0 == headBone ? weights[i].weight0 : 0f) +
+                (weights[i].boneIndex1 == headBone ? weights[i].weight1 : 0f) +
+                (weights[i].boneIndex2 == headBone ? weights[i].weight2 : 0f) +
+                (weights[i].boneIndex3 == headBone ? weights[i].weight3 : 0f) > .5f;
 
             float sum = 0.0f;
             int n = 0;
 
             for (int i = 0; i < vertices.Length && i < uv.Length; i++)
             {
+                if (!OnHead(i)) continue;
                 int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
                 int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
 
@@ -404,13 +431,14 @@ namespace TumbangPreso.EditorTools
                 n++;
             }
 
-            if (RosterId == "bayan")
+            if (subjectId == "bayan")
             {
                 // Verify Bayan's scar / hazard slits (slot 9) are on character's LEFT (+X)
                 float scarSum = 0.0f;
                 int scarN = 0;
                 for (int i = 0; i < vertices.Length && i < uv.Length; i++)
                 {
+                    if (!OnHead(i)) continue;
                     int col = Mathf.Clamp(Mathf.FloorToInt(uv[i].x * 16.0f), 0, 15);
                     int row = Mathf.Clamp(Mathf.FloorToInt(uv[i].y * 16.0f), 0, 15);
                     if (row > 7) continue;
@@ -438,20 +466,20 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            if (RosterId == "inday")
+            if (subjectId == "inday")
             {
                 // Inday's cyan clip is on character's RIGHT (-X, viewer's left)
                 report.AppendLine("Inday hair clip and ribbon verified.");
                 return true;
             }
 
-            if (RosterId == "iggy" || RosterId == "kuya_boy")
+            if (subjectId == "iggy" || subjectId == "kuya_boy")
             {
                 report.AppendLine("Iggy centered 3-tone flame mohawk crest verified.");
                 return true;
             }
 
-            if (RosterId == "nemu")
+            if (subjectId == "nemu")
             {
                 report.AppendLine("Nemu left-side ofuda talisman and hime hair verified.");
                 return true;
@@ -783,7 +811,7 @@ namespace TumbangPreso.EditorTools
         /// stock Kenney colours. The base rig is the reference for the convention because it is
         /// the one that demonstrably works.
         /// </summary>
-        private static bool CheckPaletteRows(StringBuilder report, SkinnedMeshRenderer[] skinned)
+        private static bool CheckPaletteRows(StringBuilder report, SkinnedMeshRenderer[] skinned, bool requireFace = true)
         {
             var mine = Rows(skinned.Select(s => s == null ? null : s.sharedMesh).ToArray());
             var theirs = Rows(BaseMeshes());
@@ -811,7 +839,7 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            if (!slots.Contains(8))
+            if (requireFace && !slots.Contains(8))
             {
                 report.AppendLine("FAIL: nothing uses slot 8. The face is drawn in it.");
                 return false;

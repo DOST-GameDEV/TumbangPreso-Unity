@@ -1,0 +1,5 @@
+Inherited rules: 1|0|8|90|0|3|0|1|0
+Measured rules: 0|0|4|90|0|3|0|1|0
+Scene components: 2032
+Slipper query: 10000 calls, 0.0568 ms/call, 0.0 bytes/call, 40000 results
+Round ended=True; events=75; collected=75; live game seconds=90.006; real seconds=91.180

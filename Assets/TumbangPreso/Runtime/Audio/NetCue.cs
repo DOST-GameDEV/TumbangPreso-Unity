@@ -42,6 +42,11 @@ namespace TumbangPreso
     {
         private static int _relaySuppressionDepth;
 
+        // Clients announce only their own input/motion tells. Scores, can impacts
+        // and hero consequences are announced by the authoritative event paths.
+        public static bool ClientMayRelay(string id)
+            => id is "bump_swing" or "slide_scrape" or "throw_charge" or "jump" or "land";
+
         /// <summary>
         /// A replicated copy plays the cue locally but must not send it back around the wire.
         /// This scope also covers delayed wind-ups when HeroAbilitySystem ticks a remote kit.

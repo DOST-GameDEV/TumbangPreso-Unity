@@ -130,6 +130,8 @@ namespace TumbangPreso.Audio
 
                 { "ui_hover",       -8.0f },
                 { "land",           -6.0f },
+                { "step_rubber",   -11.0f },
+                { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
                 { "slipper_bounce", -4.0f },
@@ -196,6 +198,7 @@ namespace TumbangPreso.Audio
 
             // Bodies.
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
+            "step_rubber", "slide_scrape",
             "stamina_empty",
 
             // Hero Abilities & Special Effects.

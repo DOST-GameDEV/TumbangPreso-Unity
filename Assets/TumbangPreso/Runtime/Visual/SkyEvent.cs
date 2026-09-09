@@ -453,6 +453,10 @@ namespace TumbangPreso.Visual
         private void Apply(float k)
         {
             if (!_captured) return;
+            // Weather keeps its duration and sky signature. World illumination is
+            // restrained so clothing, role colours, chalk and loose shoes stay legible.
+            float skyWeight = k;
+            k *= .40f;
 
             RenderSettings.ambientMode = _ambientMode;
             RenderSettings.ambientSkyColor = Color.Lerp(_ambientSky, _profile.Sky, k);
@@ -497,11 +501,11 @@ namespace TumbangPreso.Visual
                 if (_skyInstance.HasProperty(ExposureId))
                 {
                     _skyInstance.SetFloat(ExposureId,
-                        Mathf.Lerp(_skyExposure, _skyExposure * _profile.SkyExposure, k));
+                        Mathf.Lerp(_skyExposure, _skyExposure * _profile.SkyExposure, skyWeight));
                 }
 
                 if (_skyInstance.HasProperty(TintId))
-                    _skyInstance.SetColor(TintId, Color.Lerp(_skyTint, _profile.SkyTint, k));
+                    _skyInstance.SetColor(TintId, Color.Lerp(_skyTint, _profile.SkyTint, skyWeight));
             }
 
             if (_fill != null)

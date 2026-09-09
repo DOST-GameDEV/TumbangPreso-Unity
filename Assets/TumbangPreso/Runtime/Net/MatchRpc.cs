@@ -2458,6 +2458,9 @@ namespace TumbangPreso.Net
             if (!Audio.AudioCues.IsKnown(id)) return;
             if (!Finite(position) || !Finite(volumeScale)) return;
             if (position.sqrMagnitude > 250000.0f) return;
+            if (!NetCue.ClientMayRelay(id)) return;
+            if (!TrySenderSeat(senderClientId,out int cueSeat)) return;
+            if (!PlausibleIntentPose(Unit(cueSeat),position)) return;
             if (!CueBudgetAllows(senderClientId)) return;
 
             volumeScale = Mathf.Clamp(volumeScale, 0.0f, 1.5f);

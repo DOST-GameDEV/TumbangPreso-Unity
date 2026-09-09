@@ -720,7 +720,7 @@ namespace TumbangPreso.Abilities
 
             // Visual feedback: momentary cast flash
             Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(),
-                ability != null && ability.HasTelegraph ? Mathf.Min(ability.TelegraphRadius, 2.5f) : 1.8f);
+                .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
             // TAP. Every one of these powers fires on the press edge and resolves instantly, so
@@ -792,6 +792,7 @@ namespace TumbangPreso.Abilities
             // those outward would have a client asking the host to announce the end of an effect
             // the host never started.
             using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);
+            _motor.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction(ability.CastAction,ability.ViewmodelAction);
 
             _answer[(int)slot] = HeroKit.CastOutcome.Cooling;
             _answeredAt[(int)slot] = Time.time;
@@ -803,7 +804,8 @@ namespace TumbangPreso.Abilities
             // ⚠️ QUIET, AND ON THE PLAYER RATHER THAN AT A WORLD POINT. This fires on a mash, so
             // it is mixed to be noticed once and ignored the tenth time; `ui_error` already
             // carries the menu's refusal and reusing it means the player has heard it before.
-            GameServices.Audio?.PlayAtVaried("ui_error", transform.position, 0.94f, 1.06f, 0.55f);
+            if (_motor != null && !_motor.IsBot)
+                GameServices.Audio?.PlayUi("ui_error", .55f);
         }
 
         private HeroAbility AbilityFor(Slot slot)
@@ -836,7 +838,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private Vector3 TelegraphCentre(HeroAbility ability)
         {
-            return _context.Position + _context.Forward * ability.TelegraphRange;
+            return ability.TelegraphCentre(_context);
         }
 
         /// <summary>
@@ -1229,6 +1231,7 @@ namespace TumbangPreso.Abilities
         public void ResetKit()
         {
             Kit?.ResetForRound(_context);
+            _motor?.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction();
             ClearBuffers();
         }
 
@@ -1236,6 +1239,7 @@ namespace TumbangPreso.Abilities
         public void ResetKitForMatch()
         {
             Kit?.ResetForMatch(_context);
+            _motor?.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction();
             ClearBuffers();
         }
 

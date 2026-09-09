@@ -210,6 +210,8 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
+            AppliedPalette = palette;
+            SourceModel = prefab;
             if (_instance != null) Destroy(_instance);
             if (_petInstance != null) Destroy(_petInstance);
 
@@ -303,6 +305,9 @@ namespace TumbangPreso.Visual
             ModelVersion++;
             ModelApplied?.Invoke();
         }
+
+        public Color[] AppliedPalette { get; private set; }
+        public GameObject SourceModel { get; private set; }
 
         /// <summary>
         /// The point a carried tsinelas sits on, riding the hand bone through every clip.

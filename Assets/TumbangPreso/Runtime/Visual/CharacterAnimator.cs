@@ -233,10 +233,14 @@ namespace TumbangPreso.Visual
         private float _gaitWeight, _runWeight, _gaitPhase;
         private bool _running;
         private readonly Dictionary<string, AnimationClip> _clips = new Dictionary<string, AnimationClip>();
+#if UNITY_EDITOR
+        private readonly List<AnimationClip> _generated = new List<AnimationClip>();
+#endif
 
         private string _current;
         private float _weight;
         private float _oneShotLeft;
+        private float _transitionSeconds;
 
         /// ⚠️⚠️ EVERY CLIP ON THESE RIGS IS 0.333 s AND EVERY ONE IS MARKED `isLooping = true`,
         /// MEASURED OFF ALL 29 GLBs ON 2026-08-26. That single fact is behind both halves of the
@@ -410,7 +414,7 @@ namespace TumbangPreso.Visual
             if (!_clips.ContainsKey(DanceClip.ClipName))
             {
                 var dance = DanceClip.Build(_animator.transform);
-                if (dance != null) _clips[DanceClip.ClipName] = dance;
+                if (dance != null) { _clips[DanceClip.ClipName] = dance; _generated.Add(dance); }
             }
 #endif
 
@@ -421,8 +425,11 @@ namespace TumbangPreso.Visual
             if (heroClips != null)
             {
                 foreach (var kvp in heroClips)
-                    if (kvp.Value != null && !_clips.ContainsKey(kvp.Key))
-                        _clips[kvp.Key] = kvp.Value;
+                {
+                    if (kvp.Value == null) continue;
+                    if (!_clips.ContainsKey(kvp.Key)) { _clips[kvp.Key] = kvp.Value; _generated.Add(kvp.Value); }
+                    else DestroyImmediate(kvp.Value);
+                }
             }
 #endif
         }
@@ -433,6 +440,10 @@ namespace TumbangPreso.Visual
         {
             ClearChargePose();
             if (_graph.IsValid()) _graph.Destroy();
+#if UNITY_EDITOR
+            foreach (var clip in _generated) if (clip != null) DestroyImmediate(clip);
+            _generated.Clear();
+#endif
             if (_legsMask != null)
             {
                 if (Application.isPlaying) Destroy(_legsMask);
@@ -842,6 +853,16 @@ namespace TumbangPreso.Visual
         /// the gesture that announces it.</summary>
         public bool IsPlayingAction => _oneShotLeft > 0.0f;
 
+        public void CancelHeroAction(string expected = null, string viewmodel = null)
+        {
+            if (_current == null || !_current.StartsWith("hero-")) return;
+            if (expected != null && ResolveChain(ActionClips,expected) != _current) return;
+            _oneShotLeft = 0;
+            ClearChargePose();
+            CameraSystem.CameraRig.CancelViewmodelAction(_motor,viewmodel);
+            Play(Idle,true,true);
+        }
+
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
         {
@@ -1034,6 +1055,7 @@ namespace TumbangPreso.Visual
 
             if (_motor.TripLeft <= Core.Balance.MinTripDown)
             {
+                _oneShotLeft = 0;
                 if (_tripPhase != 2)
                 {
                     _tripPhase = 2;
@@ -1053,6 +1075,10 @@ namespace TumbangPreso.Visual
             }
             else if (_tripPhase != 1)
             {
+                // A fall interrupts the action instead of resuming a stale spell
+                // after the complete get-up. This does not cancel ability gameplay.
+                _oneShotLeft = 0;
+                CameraSystem.CameraRig.CancelViewmodelAction(_motor);
                 _tripPhase = 1;
                 Play(Die, loop: false, force: true);
             }
@@ -1123,11 +1149,12 @@ namespace TumbangPreso.Visual
             _mixer.SetInputWeight(1, _weight);
             _current = clipName;
             _holdAtEnd = !loop;
+            _transitionSeconds = loop ? _blend : Mathf.Min(_blend,.07f);
         }
 
         private void Blend()
         {
-            _weight = _blend <= 0.0f ? 1.0f : Mathf.Min(1.0f, _weight + Time.deltaTime / _blend);
+            _weight = _transitionSeconds <= 0.0f ? 1.0f : Mathf.Min(1.0f, _weight + Time.deltaTime / _transitionSeconds);
 
             _mixer.SetInputWeight(0, 1.0f - _weight);
             _mixer.SetInputWeight(1, _weight);

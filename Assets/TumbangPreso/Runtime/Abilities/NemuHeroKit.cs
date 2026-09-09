@@ -300,13 +300,19 @@ namespace TumbangPreso.Abilities
                        // ⚠️ THE AREA COMES BACK AS THE FUNNEL. `docs/VISION.md` § 2 rule 3: a
                        // smaller flat plane is still a puddle. The void reads vertically now,
                        // through a deeper core and pulled debris, rather than by being wide.
-                       telegraphRadius: 2.8f, telegraphRange: 3.5f,
+                       telegraphRadius: 4.0f, telegraphRange: 3.5f,
                        castAction: "hero-nemu-seance",
                        viewmodelAction: "seance-channel",
                        castCue: "sfx_cast_nemu_seance")
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Maw;
                 Windup = UltimateWindup;
+            }
+
+            public override Vector3 TelegraphCentre(AbilityContext ctx)
+            {
+                var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
+                return companion != null ? companion.transform.position : base.TelegraphCentre(ctx);
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -320,9 +326,7 @@ namespace TumbangPreso.Abilities
                 var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
 
                 bool onPet = companion != null;
-                Vector3 at = onPet
-                    ? companion.transform.position
-                    : ctx.Position + ctx.Forward * FallbackRange;
+                Vector3 at = TelegraphCentre(ctx);
 
                 // ⚠️⚠️ THE PET IS CONSUMED BY IT AND THAT IS THE ANIMATION. `Devour` swells Kuro
                 // into the maw over the wind-up and hides the pet inside it, so what the other

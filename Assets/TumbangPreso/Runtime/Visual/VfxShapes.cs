@@ -105,6 +105,32 @@ namespace TumbangPreso.Visual
         ///
         /// Width is a fraction of length, so the same mesh serves a short scorch and a long one.
         /// </summary>
+        public static Mesh StarOutline(int points = 9, float innerRatio = .46f, int seed = 0)
+        {
+            Mesh filled = Star(points,innerRatio,seed);
+            var contour = filled.vertices;
+            int count = contour.Length-1;
+            var vertices = new Vector3[count*2];
+            var normals = new Vector3[vertices.Length];
+            var uv = new Vector2[vertices.Length];
+            var triangles = new int[count*6];
+            for(int i=0;i<count;i++)
+            {
+                vertices[i*2] = contour[i+1];
+                vertices[i*2+1] = contour[i+1]*.88f;
+                normals[i*2] = normals[i*2+1] = Vector3.up;
+                uv[i*2] = new Vector2(vertices[i*2].x,vertices[i*2].z)*.5f+Vector2.one*.5f;
+                uv[i*2+1] = new Vector2(vertices[i*2+1].x,vertices[i*2+1].z)*.5f+Vector2.one*.5f;
+                int next = ((i+1)%count)*2, t=i*6;
+                triangles[t]=i*2;triangles[t+1]=i*2+1;triangles[t+2]=next;
+                triangles[t+3]=i*2+1;triangles[t+4]=next+1;triangles[t+5]=next;
+            }
+            if(Application.isPlaying) Object.Destroy(filled); else Object.DestroyImmediate(filled);
+            var mesh = new Mesh {name="Discharge outline",vertices=vertices,normals=normals,uv=uv,triangles=triangles};
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
         public static Mesh Streak(float width = 0.62f, int sides = 12, int seed = 0)
         {
             var state = Random.state;

@@ -684,6 +684,16 @@ namespace TumbangPreso.PlayTests
                 // made on purpose; deleting the button is not, and a gate that cannot tell them
                 // apart gets its output skimmed, which is § 124.11's lesson.
                 var parts = row.Split('\t');
+                if (parts.Length >= 3)
+                {
+                    // Explicit scope changes, not a replacement baseline. The maker
+                    // is withdrawn; the tutorial now lives on the rules screen and
+                    // HomeFlowTests follows that door. Equipment keeps the same jobs.
+                    if (parts[2] == "CustomDoor") continue;
+                    if (parts[2] == "TutorialButton" && (parts[0] == "settings" || parts[0] == "login")) continue;
+                    if (parts[2] == "Button_LATA") parts[2] = "Button_CAN";
+                    if (parts[2] == "Button_TSINELAS") parts[2] = "Button_SLIPPER";
+                }
                 string stem = parts.Length >= 3
                     ? $"{parts[0]}\t{parts[1]}\t{parts[2]}\t"
                     : row;

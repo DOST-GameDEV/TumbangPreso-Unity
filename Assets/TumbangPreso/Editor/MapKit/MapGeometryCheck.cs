@@ -67,6 +67,9 @@ namespace TumbangPreso.EditorTools.MapKit
 
         /// <summary>How close a prop may come to the can, which spawns at the world origin.</summary>
         public const float LataClearance = 1.4f;
+        // Trip hazards belong at the perimeter. The generic prop clearance only
+        // protects the can itself and previously accepted a hazard three metres out.
+        public const float TripHazardClearance = Balance.ConfinementRadius;
 
         /// <summary>
         /// The step a body climbs without pathing around it.
@@ -747,7 +750,7 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 Vector3 c = t.transform.position;
                 float d = new Vector2(c.x, c.z).magnitude;
-                if (d >= LataClearance) continue;
+                if (d >= TripHazardClearance) continue;
 
                 sb.AppendLine($"   FAIL {PathOf(t.transform)}: a trip hazard is centred {d:F2} m from " +
                               "the can. Retrieval already happens there; this trips everybody who " +

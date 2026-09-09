@@ -267,11 +267,11 @@ namespace TumbangPreso.Tests
 
             AssertTelegraph("nemu", 1, 0.0f, 0.0f);     // mobility
             AssertTelegraph("nemu", 2, 0.0f, 0.0f);     // projectile decoy
-            AssertTelegraph("nemu", 3, 2.8f, 3.5f);     // SpawnSeanceVoid(pos + fwd*3.5, 2.8)
+            AssertTelegraph("nemu", 3, 4.0f, 3.5f);     // Live KuroUnbound radius; range is the petless fallback.
 
             AssertTelegraph("sean", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("sean", 2, 0.0f, 0.0f);     // throw empower
-            AssertTelegraph("sean", 3, 4.8f, 0.0f);     // CreateExplosion(pos, 4.8)
+            AssertTelegraph("sean", 3, 5.4f, 0.0f);     // Live blast and crater share the 5.4 m footprint.
 
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
@@ -566,7 +566,12 @@ namespace TumbangPreso.Tests
                     if (r.gameObject.name.StartsWith("~HeroAccessory_")) accessoryCount++;
                 }
 
-                Assert.Greater(accessoryCount, 0, $"{charId} viewmodel arms are missing bespoke sleeves/markings/accessories");
+                var baked = Resources.Load<Mesh>("Models/RosterArms/" + norm + "_right");
+                if (baked != null)
+                    Assert.AreSame(baked,vm.transform.Find("RightPivot/Arm").GetComponent<MeshFilter>().sharedMesh,
+                        charId + " is not using its actual authored sleeve and hand");
+                else
+                    Assert.Greater(accessoryCount, 0, $"{charId} viewmodel fallback has no clothing");
             }
 
             Object.DestroyImmediate(vm.gameObject);
@@ -724,38 +729,13 @@ namespace TumbangPreso.Tests
             Assert.IsNotNull(rightArm, "RightPivot/Arm missing");
             Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
 
-            var rightSleeve = rightArm.Find("~HeroAccessory_HoodieSleeve");
-            Assert.IsNotNull(rightSleeve, "Right hoodie sleeve missing");
-
-            // The hem, and the lavender bar down each side face.
-            Assert.IsNotNull(rightArm.Find("~HeroAccessory_HoodieHem"),
-                             "Right hoodie hem missing");
-            Assert.IsNotNull(rightArm.Find("~HeroAccessory_LavenderStripeA"),
-                             "Right lavender side stripe missing");
-            Assert.IsNotNull(rightArm.Find("~HeroAccessory_LavenderStripeB"),
-                             "Left-facing lavender side stripe missing");
-
-            // Verify spirit hand
-            var rightHand = rightArm.Find("~HeroAccessory_SpiritHand");
-            Assert.IsNotNull(rightHand, "Right spirit hand missing");
-
-            // ⚠️⚠️ THE SLEEVE IS A BOX AND HAS TO STAY ONE. `Logs/model-ref-nemu.png` is the
-            // reference: her arms are straight plum boxes with a vertical lavender bar down the
-            // outer edge. The viewmodel carried three lofted 24-segment tubes that flared toward
-            // the cuff with a rim around the opening, which is a different garment in the right
-            // colours. A box mesh has 24 vertices; anything with hundreds is a loft again.
-            //
-            // ⚠️ IT ALSO CATCHES THE DELETED CLOTH SOLVER. That solver's first act was
-            // `Instantiate(sharedMesh)`, so a per-instance `_Deformed` copy is its signature.
-            var mf = rightSleeve.GetComponent<MeshFilter>();
-            Assert.IsNotNull(mf, "Right hoodie sleeve lost its MeshFilter");
+            // The whole sleeve, hem, stripe and hand now come from the actual roster mesh.
+            // RosterArmGeometryTests compares the baked vertices and UVs to that source.
+            var mf = rightArm.GetComponent<MeshFilter>();
+            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_right"), mf.sharedMesh);
+            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_left"), leftArm.GetComponent<MeshFilter>().sharedMesh);
             Assert.IsFalse(mf.sharedMesh.name.Contains("Deformed"),
-                           "Something is instancing and deforming Nemu's sleeve mesh again. "
-                           + "See ViewmodelArms' Nemu block: the sleeve, the hem and the stripes "
-                           + "share a volume and only one of them would be moved.");
-            Assert.LessOrEqual(mf.sharedMesh.vertexCount, 32,
-                               "Nemu's sleeve is a lofted tube again. It is a box, like every "
-                               + "other hero's arm and like her own voxel model.");
+                "The sleeve must remain the shared authored geometry, without a per-instance cloth solver.");
 
             // A throw still plays, and stepping the arms is still stable with no solver in them.
             vm.StepVisuals(0.016f);
