@@ -330,6 +330,8 @@ namespace TumbangPreso.Settings
         /// </summary>
         public int AntiAliasMode = AntiAliasModes.Default;
 
+        public int GraphicsQuality = GraphicsProfiles.Default;
+
         /// <summary>
         /// Whether the game waits for the display before showing a frame, as an index into
         /// <see cref="VSyncModes.All"/>.
@@ -503,6 +505,7 @@ namespace TumbangPreso.Settings
         public void Apply()
         {
             ApplyDisplay();
+            GraphicsProfiles.Apply(GraphicsQuality);
             AntiAliasModes.Apply(AntiAliasMode);
             VSyncModes.Apply(VSyncMode);
             RenderStyles.Apply(RenderStyle);
@@ -566,6 +569,7 @@ namespace TumbangPreso.Settings
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
+            GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
 

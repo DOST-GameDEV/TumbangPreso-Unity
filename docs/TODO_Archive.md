@@ -21527,3 +21527,16 @@ touchscreen systems; it is not an Android build task.
 
 
 Verification: isolated InputSurfaceProbe now passes 5/5, with all result controls reachable across its scene and resolution sweep. A second-run defect in discovery was also fixed: the runner temporarily adds Assets/InitTestScene to build indices; the probe now excludes only that generated bootstrap while retaining every game scene. Exact-player verification remains in the release stage of section 152.
+
+
+---
+
+## 152.2 Character maker withdrawal and graphics choices: CLOSED, 2026-09-09
+
+The maker's player-facing door is no longer constructed and CustomCharacterScreen.Open refuses entry. Its assets, profile data, rendering and editor/test authoring route remain intact. The retained authoring probes use the explicit non-shipping route, while a new regression asserts the ordinary player route stays closed.
+
+VIDEO now offers Low, Balanced and High graphics profiles through the existing settings flow. The profiles reduce shadow distance from the inherited Ultra 150 m to 24/40/70 m, with corresponding shadow resolution/cascades and pixel-light budgets. Low still covers the 19.8 m diagonal of the competitive court. No textures, meshes, role tells, effect footprints or chosen render style are removed. Existing anti-aliasing and VSync remain independent. Selection previews immediately, persists through the existing settings serialization and rolls back on discard.
+
+WorldOutline's binary coverage mask now requests Linear R8. The default sRGB request fell back to RGBA on this Windows GPU and logged a warning on every allocation. This changes data format, not an artistic color.
+
+Verification: all EditMode tests 444/444, including settings round-trip and discard behavior; targeted PlayMode 3/3, including the inaccessible-maker regression, settings scrolling and the existing full screen render route. Baseline screenshots in Logs/shots-runtime were inspected. They also show existing excessive chrome, character/lobby overlap in the old direct overlay shot, harsh contrast and noisy environment edges; these remain part of the full visual overhaul rather than being called resolved by these checks. Exact-player and full release gates remain in section 152.

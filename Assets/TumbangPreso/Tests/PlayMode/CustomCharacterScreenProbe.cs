@@ -38,6 +38,16 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class CustomCharacterScreenProbe
     {
+        [UnityTest]
+        public IEnumerator TheDormantMakerCannotBeOpenedByAPlayer()
+        {
+            var screen = CustomCharacterScreen.Ensure();
+            screen.Open();
+            yield return null;
+            Assert.IsFalse(screen.IsOpen, "The retained maker must have no player entry.");
+            Object.Destroy(screen.gameObject);
+        }
+
         /// <summary>
         /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
         /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
@@ -129,7 +139,7 @@ namespace TumbangPreso.PlayTests
             yield return Boot(report);
 
             var screen = CustomCharacterScreen.Ensure();
-            screen.Open();
+            screen.OpenForAuthoring();
             yield return null;
             yield return null;
 
@@ -182,7 +192,7 @@ namespace TumbangPreso.PlayTests
             yield return Boot(report);
 
             var screen = CustomCharacterScreen.Ensure();
-            screen.Open();
+            screen.OpenForAuthoring();
             yield return null;
 
             // ⚠️ 1366x768 IS IN THIS LIST ON PURPOSE AND IT IS THE ONE THAT MATTERS.

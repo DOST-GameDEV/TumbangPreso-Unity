@@ -49,6 +49,11 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class CustomCharacterScreen : MonoBehaviour
     {
+        // ⚠️ Withdrawn from the player on request, with the authoring work retained.
+        // Gate the destination as well as its door so a stale callback cannot open
+        // it. The editor-only entry preserves previews and regression coverage.
+        public static bool AvailableToPlayers => false;
+
         /// <summary>
         /// ⚠️ 520, ABOVE THE HUB'S 500 AND THE SIGN-IN SCREEN'S 510. `MenuKit.BuildCanvas` records
         /// what a wrong number here costs and, worse, what an INERT one costs: a nested canvas
@@ -259,6 +264,16 @@ namespace TumbangPreso.UI
         }
 
         public void Open()
+        {
+            if (!AvailableToPlayers) return;
+            OpenRetainedScreen();
+        }
+
+#if UNITY_EDITOR || UNITY_INCLUDE_TESTS
+        public void OpenForAuthoring() => OpenRetainedScreen();
+#endif
+
+        private void OpenRetainedScreen()
         {
             if (_root == null) Build();
 

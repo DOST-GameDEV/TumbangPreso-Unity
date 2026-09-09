@@ -261,6 +261,8 @@ resulting player is tested and built, and the branch is pushed. No human approva
 is implied by technical validation. Keep individual findings in their existing
 numbered entries and archive completed sections whole.
 
+**152.2 closed:** character maker is unavailable to players but retained for authoring; graphics quality offers Low/Balanced/High with reversible previews, and the outline coverage mask uses a supported linear format. Evidence: TODO_Archive.md section 152.2. Windows player qualification remains under section 152.
+
 **152.1 closed:** result controls now receive presses above gameplay controls; isolated InputSurfaceProbe 5/5. Full evidence is archived in TODO_Archive.md section 152.1.
 
 ---

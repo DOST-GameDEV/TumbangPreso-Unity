@@ -393,17 +393,20 @@ namespace TumbangPreso.PlayTests
                     break;
                 }
 
-            Assert.IsNotNull(maker,
-                "the picker must carry the MAKE YOUR OWN door. It is the character maker's only "
-                + "entrance; see ConvertedCharacterSelect.BuildCustomDoor.");
-
-            maker.onClick.Invoke();
-            yield return new WaitForSecondsRealtime(1.0f);
-            yield return Capture($"CharacterMaker-{ShotVersion}");
-
-            var made = Object.FindFirstObjectByType<CustomCharacterScreen>();
-            if (made != null) made.Close();
-            yield return new WaitForSecondsRealtime(0.4f);
+            // The maker is retained for authoring and intentionally absent from the player.
+            if (CustomCharacterScreen.AvailableToPlayers)
+            {
+                Assert.IsNotNull(maker);
+                maker.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(1.0f);
+                yield return Capture($"CharacterMaker-{ShotVersion}");
+                var made = Object.FindFirstObjectByType<CustomCharacterScreen>();
+                if (made != null) made.Close();
+            }
+            else
+            {
+                Assert.IsNull(maker, "The character maker must have no player-facing door.");
+            }
 
             SceneFlow.Networked = previousNetworked;
             SceneFlow.SelectedMode = previousMode;

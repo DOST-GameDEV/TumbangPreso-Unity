@@ -60,6 +60,7 @@ namespace TumbangPreso.EditorTools
             // frame renders with, so `AntiAliasStateProbe` and the post-AA pass see exactly what
             // they saw before. `docs/TODO.md` § 149.11.
             Settings.AntiAliasModes.AppliedInEditor += ForgetTheWrite;
+            Settings.GraphicsProfiles.AppliedInEditor += ForgetTheWrite;
 
             // ⚠️ DEFERRED BY ONE EDITOR TICK. A static constructor runs during domain reload,
             // where `AssetDatabase` is not reliably ready; `delayCall` is the documented seam and

@@ -70,6 +70,13 @@ are explicitly requested. Inspect existing settings first, then provide coherent
 presets and necessary controls. Compare actual gameplay views at each tier. Reduce
 expensive decorative work while preserving can/shoe/player/ability readability;
 do not equate stronger post effects with better graphics.
+Shader changes are authorized. Establish a shared art direction across UI, maps,
+characters and effects so colors, ink weight and material response feel coherent.
+Keep individual map/hero identity inside that direction. Handmade warmth and
+careful authored detail matter more than another shader effect or decoration.
+Maps that feel empty or unattractive are explicitly part of the request. Reuse
+existing assets or author new ones where needed. Give additions a compositional
+or place-making purpose; keep competitive space readable rather than filling it.
 
 Preserve established character identities and skin tones, the logo-derived menu
 palette, preferred can recordings, authored asset detail and the Generic rigs.
@@ -209,3 +216,5 @@ for reachable duplicate effects, with focused tests rather than a protocol rewri
   result canvas explicit sorting above the gameplay controls. Verified 5/5 in the isolated InputSurfaceProbe after excluding the test runner bootstrap from scene discovery.
 
 - Character direction: subtle Filipino clothing/accessory/gesture cues are authorized, preserving each established personality rather than forcing motifs.
+
+- Implemented and verified: inaccessible player character maker with retained authoring path; Low/Balanced/High graphics setting; linear outline mask. EditMode 444/444 and focused PlayMode 3/3. Full front-end baseline images inspected; proceed to home video/UI and visual coherence.

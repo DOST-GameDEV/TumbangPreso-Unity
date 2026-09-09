@@ -78,6 +78,7 @@ namespace TumbangPreso.UI
             BuildAntiAliasRow();
             BuildVSyncRow();
             BuildRenderStyleRow();
+            BuildGraphicsQualityRow();
             WireSliders();
             WireChecks();
             WireNameField();
@@ -596,7 +597,7 @@ namespace TumbangPreso.UI
                             "InvertYCheck"),
             new SettingsTab("AUDIO", "MasterVolumeRow", "SfxVolumeRow", "MusicVolumeRow"),
             new SettingsTab("VIDEO", "FullscreenCheck", "RenderStyleRow", "AntiAliasRow",
-                            "VSyncRow"),
+                            "VSyncRow", "GraphicsQualityRow"),
             new SettingsTab("PLAYER", "PlayerNameRow", "SlipperHighlightRow", "TelemetryRow",
                             "TelemetryNote"),
         };
@@ -1493,6 +1494,23 @@ namespace TumbangPreso.UI
                                           SettingsStore.Current.AntiAliasMode, PickAntiAlias);
         }
 
+        private Dropdown _graphicsQuality;
+
+        private void BuildGraphicsQualityRow()
+        {
+            var options = new List<SwatchDropdown.Option>();
+            foreach (var profile in GraphicsProfiles.All)
+                options.Add(new SwatchDropdown.Option(profile.Label, null));
+
+            _graphicsQuality = BuildDropdownRow("GraphicsQualityRow", "Graphics quality",
+                options, SettingsStore.Current.GraphicsQuality, index =>
+                {
+                    SettingsStore.Current.GraphicsQuality = Mathf.Clamp(index, 0, GraphicsProfiles.All.Length - 1);
+                    GraphicsProfiles.Apply(SettingsStore.Current.GraphicsQuality);
+                    RefreshApplyState();
+                });
+        }
+
         /// <summary>
         /// The vertical sync picker.
         ///
@@ -2164,6 +2182,9 @@ namespace TumbangPreso.UI
 
             if (_antiAlias != null)
                 _antiAlias.SetValueWithoutNotify(SettingsStore.Current.AntiAliasMode);
+
+            if (_graphicsQuality != null)
+                _graphicsQuality.SetValueWithoutNotify(SettingsStore.Current.GraphicsQuality);
 
             // ⚠️ AND THE SAME FOR THE STYLE, which has the strongest claim of the three: a picker
             // reading "Chromatic" over a frame that has just been given its ink outlines back is

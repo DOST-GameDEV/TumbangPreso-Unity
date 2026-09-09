@@ -702,7 +702,11 @@ namespace TumbangPreso.Visual
                 ? RenderTextureFormat.R8
                 : RenderTextureFormat.ARGB32;
 
-            _mask = new RenderTexture(width, height, 0, format)
+            // ⚠️ This is coverage data, not color. Requesting the default sRGB R8
+            // format caused a fallback to four channels on this Windows GPU and
+            // logged a warning on every allocation. Linear R8 is the supported
+            // one-channel format the coverage shader expects.
+            _mask = new RenderTexture(width, height, 0, format, RenderTextureReadWrite.Linear)
             {
                 name = "WorldOutlineMask",
                 filterMode = FilterMode.Bilinear,

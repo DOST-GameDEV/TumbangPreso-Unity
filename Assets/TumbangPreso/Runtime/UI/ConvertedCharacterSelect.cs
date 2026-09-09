@@ -689,9 +689,10 @@ namespace TumbangPreso.UI
             // the render put it at 26 units off the floor with **its lower half outside the
             // screen**. A sign error against a bottom anchor is invisible in review and obvious in
             // one picture, which is `CLAUDE.md` § 6.1 in four words.
-            _customDoor = StageDoor("CustomDoor", "MAKE YOUR OWN", "build a character",
-                                    "›", false, 0.0f,
-                                    () => CustomCharacterScreen.Ensure().Open());
+            if (CustomCharacterScreen.AvailableToPlayers)
+                _customDoor = StageDoor("CustomDoor", "MAKE YOUR OWN", "build a character",
+                                        "›", false, 0.0f,
+                                        () => CustomCharacterScreen.Ensure().Open());
 
             if (heroes)
                 _loadoutDoor = StageDoor("LoadoutDoor", "LOADOUT", "your two skills",
