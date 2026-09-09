@@ -21540,3 +21540,29 @@ VIDEO now offers Low, Balanced and High graphics profiles through the existing s
 WorldOutline's binary coverage mask now requests Linear R8. The default sRGB request fell back to RGBA on this Windows GPU and logged a warning on every allocation. This changes data format, not an artistic color.
 
 Verification: all EditMode tests 444/444, including settings round-trip and discard behavior; targeted PlayMode 3/3, including the inaccessible-maker regression, settings scrolling and the existing full screen render route. Baseline screenshots in Logs/shots-runtime were inspected. They also show existing excessive chrome, character/lobby overlap in the old direct overlay shot, harsh contrast and noisy environment edges; these remain part of the full visual overhaul rather than being called resolved by these checks. Exact-player and full release gates remain in section 152.
+
+
+---
+
+## 152.3 UI placeholder and execution-plan handoff: IMPLEMENTED, VERIFICATION DEFERRED
+
+The final source review also converted existing role/equipment instructions,
+tutorial/ability copy and rank/reward display names to English. Saved IDs and
+gameplay thresholds remain unchanged. This final copy pass is untested, together
+with the final illustration/loading integration; the next executor owns V0.
+
+The final scope changed to finish the UI as functional, appealing placeholders for the team's later art remake, push it and hand the gameplay/world pass to the next session. The user explicitly requested no further tests and no player build in this chat. That instruction supersedes the normal session release procedure for this handoff only; it is not a qualification claim.
+
+Home now reaches profile, the existing character/equipment picker, settings and a separate Play selection space. Rules and match entry are separate decisions; tutorial sits under Play, and ranked retains the Hero Strike ladder without automatically opening a LAN room. The maker remains unavailable to players while its authoring implementation, assets and data remain intact.
+
+The UI brief's Darumadrop/Kawit Extended/Lydian roles are implemented. The owner confirmed Lydian embedding permission. Two technical issues were corrected: a GUID-only import inherited a small static font atlas, and the supplied Lydian had positive signed descent fields that halved its line box. Dynamic imports and a sign correction preserve the supplied letterforms while restoring readable rendering. The supplied font archives and original reference PDF/art are retained under docs/refs/ui.
+
+The user rejected heavy pill/red-frame buttons, native game footage as a menu background and a detailed realistic porch. The placeholder instead follows the supplied street sketch and logo: hand-drawn outlines, a warm palette, a foreground can/slipper and sparse neighborhood composition. Its clean plate, transparent tree, transparent sun and full fallback are separate resources. A 14-second loop gently moves the illustration independently of the UI. Back and Close use icons through the existing button callbacks and hit targets.
+
+Startup now holds the illustrated screen for a randomized 5-15 seconds while retaining actual asset/account readiness. Clicking the art reveals optional stories/tips; reading holds the screen, Next changes the text and Close/Escape returns. The supplied slipper mark is the moving loading indicator. This final loading integration is statically reviewed but not runtime-verified.
+
+Earlier evidence: Core 559/559; EditMode up to 446/446; isolated result input sweep 5/5; home flow 2/2 before the final illustration/loading replacement; all eight editor checks and gating source audits passed before that replacement. The cue-audio diagnostic still flagged six known files. No final-state test or build claim is made. The record and V0 checklist are in docs/reports/ui-placeholder-2026-09-09.md and IMPROVEMENT_PLAN.md.
+
+Additional motion evidence gathered without changing a GLB: Inday's slide resolves at authored slot 0, height 1.846 m, with long arm-weighted support/accessory-like geometry at floor contact. The new inday_slide_v1 report and side/quarter strips are committed under docs/reports/motion. Exact geometry identification and full-speed owner/observer review remain ASTRA task 3 work. The whole task was not checked off.
+
+Next: verify this final UI state, then execute or improve the evidence-informed gameplay, animation, collision, character, map, shader and sound plan. Preserve the core game, avoid complicated new features, target Windows, work only ASTRAReworks and push substantial progress. Human feel and hardware judgments remain explicit rather than inferred.

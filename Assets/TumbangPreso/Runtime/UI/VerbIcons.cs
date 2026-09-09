@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
             switch (glyph)
             {
                 case VerbGlyph.Sprint: return "SPEED LINES";
-                case VerbGlyph.ThrowSlipper: return "TSINELAS ON AN ARC";
+                case VerbGlyph.ThrowSlipper: return "SLIPPER ON AN ARC";
                 case VerbGlyph.Hand: return "OPEN HAND";
                 case VerbGlyph.Jump: return "LIFT OFF A LINE";
                 case VerbGlyph.Lunge: return "FORWARD THRUST";

@@ -86,7 +86,7 @@ namespace TumbangPreso.UI
         public const int StatusRowLimit = 4;
         public const int StatusFontSize = 20;
         public const int TayaBadgeFontSize = 15;
-        public const string TayaBadge = "TAYA";
+        public const string TayaBadge = "DEFENDER";
 
         /// <summary>
         /// ⚠️ 5, NOT `TextOutline`'s 8. The .tscn sets `outline_size = 5` on every scoreboard
@@ -582,7 +582,7 @@ namespace TumbangPreso.UI
             else
             {
                 _readyObjective.text = defending
-                    ? "Guard the lata, block the shots, tag the retriever."
+                    ? "Guard the can, block the shots, tag the retriever."
                     : "Curve or bank the throw, then risk the retrieval.";
             }
 
@@ -919,7 +919,7 @@ namespace TumbangPreso.UI
         {
             switch (e)
             {
-                case ScoreEvent.LataKnocked: return "LATA DOWN";
+                case ScoreEvent.LataKnocked: return "CAN DOWN";
                 case ScoreEvent.Sabotage: return "SABOTAGE";
                 case ScoreEvent.Tag: return "TAG";
                 case ScoreEvent.TayaCampPenalty: return "CAMPING";
@@ -929,7 +929,7 @@ namespace TumbangPreso.UI
                 // second beside a number, and the format's full name is already on the lobby
                 // card and the results board. `CustomGameRules.FormatName` is the long form and
                 // is deliberately not reused here.
-                case ScoreEvent.LastTsinelasStanding: return "LAST TSINELAS";
+                case ScoreEvent.LastTsinelasStanding: return "LAST SLIPPER";
 
                 default: return "DEFENSE";
             }
@@ -1467,7 +1467,7 @@ namespace TumbangPreso.UI
                 }
                 else if (lata != null && lata.IsProtected)
                 {
-                    _crosshair.text = $"LATA PROTECTED\n{lata.ProtectionLeft:0.0}s";
+                    _crosshair.text = $"CAN PROTECTED\n{lata.ProtectionLeft:0.0}s";
                     _crosshair.color = UiTheme.Defense;
                 }
                 else
@@ -1499,8 +1499,8 @@ namespace TumbangPreso.UI
                 {
                     _crosshair.fontSize = 22;
                     _crosshair.text = OnTouch
-                        ? "+\nHOLD AT THE LATA TO RESET"
-                        : "+\nHOLD " + KeyLabel("Grab") + " AT THE LATA";
+                        ? "+\nHOLD AT THE CAN TO RESET"
+                        : "+\nHOLD " + KeyLabel("Grab") + " AT THE CAN";
                     _crosshair.color = UiTheme.Defense;
                 }
                 else
@@ -1729,7 +1729,7 @@ namespace TumbangPreso.UI
                         // at thirty seconds of a ninety second round is not a warning.
                         _timerPressure.text = _local == null
                             ? "LAST 10"
-                            : _local.IsDefender ? "LAST 10  ·  DEFEND THE LATA"
+                            : _local.IsDefender ? "LAST 10  ·  DEFEND THE CAN"
                                                 : "LAST 10  ·  ATTACK NOW";
                         _timerPressure.color = UiTheme.Highlight;
 
@@ -2048,7 +2048,7 @@ namespace TumbangPreso.UI
             if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
             {
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
-                _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA DOWN";
+                _lataLabel.text = lata.IsUpright ? "CAN  ·  UPRIGHT" : "CAN DOWN";
                 _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
 
                 // ⚠️ RE-FIT ON THE FRAME THE TEXT CHANGES, not on the next one. The call at the
@@ -2137,7 +2137,7 @@ namespace TumbangPreso.UI
 
                 if (left <= 0)
                 {
-                    line = "OUT  ·  NO TSINELAS LEFT";
+                    line = "OUT  ·  NO SLIPPERS LEFT";
                 }
                 else
                 {
@@ -2146,8 +2146,8 @@ namespace TumbangPreso.UI
                     // one that teaches none, and "1 TSINELAS(S) LEFT" is the front end admitting
                     // it did not know what it was saying.
                     line = left == 1
-                        ? "LAST TSINELAS  ·  DO NOT GET TAGGED"
-                        : $"{left} TSINELAS LEFT";
+                        ? "LAST SLIPPER  ·  DO NOT GET TAGGED"
+                        : $"{left} SLIPPERS LEFT";
                 }
             }
             else if (lata.IsProtected)
@@ -2156,7 +2156,7 @@ namespace TumbangPreso.UI
             }
             else if (_local == null)
             {
-                line = lata.IsUpright ? "TAYA MAY TAG" : "ATTACKERS MAY RETRIEVE";
+                line = lata.IsUpright ? "DEFENDER MAY TAG" : "ATTACKERS MAY RETRIEVE";
             }
             else if (_local.IsDefender)
             {
@@ -3531,9 +3531,9 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly string[] LataAlertLines =
         {
-            "LATA DOWN",
-            "LATA DOWN  ·  RESET IT NOW",
-            "LATA DOWN  ·  RETRIEVE NOW",
+            "CAN DOWN",
+            "CAN DOWN  ·  RESET IT NOW",
+            "CAN DOWN  ·  RETRIEVE NOW",
         };
 
         /// <summary>Bottom-right, at the .tscn's -396,-172 to -16,-64.</summary>
@@ -3550,7 +3550,7 @@ namespace TumbangPreso.UI
             // and it is why the lata card reads a size smaller than the Godot build's.
             _lataLabel = HudLabel(card.transform, "LataLabel", 32, UiTheme.Amber,
                                   TextAnchor.MiddleLeft);
-            _lataLabel.text = "LATA";
+            _lataLabel.text = "CAN";
 
             _lataHint = HudLabel(card.transform, "LataHintLabel", 34, UiTheme.Cream,
                                  TextAnchor.MiddleLeft);
@@ -3589,8 +3589,8 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly string[] LataTitleLines =
         {
-            "LATA  ·  UPRIGHT",
-            "LATA DOWN",
+            "CAN  ·  UPRIGHT",
+            "CAN DOWN",
         };
 
         /// <summary>The authored width, which the fit below can only ever widen past.</summary>
@@ -3699,7 +3699,7 @@ namespace TumbangPreso.UI
         /// worst case is whatever this array says it is today.
         public static readonly string[] LataHintLines =
         {
-            "TAYA MAY TAG",
+            "DEFENDER MAY TAG",
             "ATTACKERS MAY RETRIEVE",
             "RESETTING  100%",
             "HOLD E IN THE RING",
@@ -4744,10 +4744,10 @@ namespace TumbangPreso.UI
         {
             switch (tier)
             {
-                case 4: return "HALIMAW!";
-                case 3: return "ASTIG!";
-                case 2: return "MAINIT!";
-                case 1: return "GISING!";
+                case 4: return "UNSTOPPABLE!";
+                case 3: return "BRILLIANT!";
+                case 2: return "ON FIRE!";
+                case 1: return "WARMING UP!";
                 default: return "SIMULA";
             }
         }

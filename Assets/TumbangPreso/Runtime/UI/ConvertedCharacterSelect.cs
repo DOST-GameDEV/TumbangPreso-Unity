@@ -23,7 +23,7 @@ namespace TumbangPreso.UI
         /// <summary>Raised when the panel closes, so the setup screen can re-read the picks.</summary>
         public event System.Action Closed;
 
-        private static readonly string[] TabNames = { "PERSON", "LATA", "TSINELAS" };
+        private static readonly string[] TabNames = { "PERSON", "CAN", "SLIPPER" };
 
         private static readonly string[][] MeterLabels =
         {
@@ -33,6 +33,12 @@ namespace TumbangPreso.UI
         };
 
         private int _tab;
+
+        public void SelectCategory(int category)
+        {
+            _tab = Mathf.Clamp(category, 0, TabNames.Length - 1);
+            Refresh();
+        }
         private readonly int[] _pick = new int[3];
 
         // -------------------------------------------------------------------------------------
@@ -2692,31 +2698,31 @@ namespace TumbangPreso.UI
                 case "bayan":
                 case "berto": return "The original defender. Immovable, unhurriable, and still standing exactly where you left him.";
                 case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
-                case "totoy": return "Raised barefoot in the eskinita. Nobody in this town has caught him twice.";
+                case "totoy": return "Raised barefoot on this street. Nobody in this town has caught him twice.";
                 case "inday": return "Minds the corner stall and is afraid of absolutely nothing that walks past it.";
                 case "kuya_boy":
-                case "iggy": return "Eldest of seven. He has been the taya since before he could count, and both the arm and the footwork know it.";
-                case "ate_girlie": return "Queen of patintero, slumming it at tumbang preso. The footwork came with her.";
-                case "tikboy": return "Always down to one tsinelas. Half the footwear, twice the throwing arm.";
+                case "iggy": return "Eldest of seven. He has been the defender since before he could count, and both the arm and the footwork know it.";
+                case "ate_girlie": return "A champion of playground line games, trying a new court. The footwork came with her.";
+                case "tikboy": return "Always down to one slipper. Half the footwear, twice the throwing arm.";
                 case "bebang": return "Hits like a jeepney door closing, and moves about as easily. Do not tease her about it, and do not stand in front of her.";
-                case "jun_jun": return "The bunso of the street. Small, slippery, and impossible to corner. Also impossible to keep upright.";
+                case "jun_jun": return "The youngest on the street. Small, slippery, and impossible to corner. Also impossible to keep upright.";
                 case "lola_pacing": return "Watches from the window most afternoons. On the good ones she comes down to play, and she does not miss twice.";
                 case "mang_kanor": return "Tricycle driver. He knows every corner of this town by its potholes and he takes them at speed. Braking was never the strong suit.";
-                case "aling_nena": return "She owns the sari-sari store, so she owns the rules. Nobody has ever argued a call twice.";
+                case "aling_nena": return "She owns the corner store, so she owns the rules. Nobody has ever argued a call twice.";
 
-                case "pasip": return "Softdrink na hindi Pepsi. Tall, thin and empty, it goes over if you look at it hard, and it is back up before you have turned around.";
+                case "pasip": return "Definitely a different soft drink. Tall, thin and empty, it goes over if you look at it hard, and it is back up before you have turned around.";
                 case "boyben": return "Leftover fence paint, half set solid. Nothing on the mark stands its ground like it does, but righting it is a proper job.";
                 case "decades": return "Flakes in oil from Aling Nena's. Squat and low, so tipping it is the hard part, and setting it back up is barely a motion.";
-                case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the tsinelas across the street, and it is slow to stand back up.";
-                case "piyesta": return "Fruit cocktail, saved for handaan and opened early anyway. The widest can on the mark and still full of syrup, so it plants itself and swallows the hit whole.";
-                case "karne": return "Corned beef, the tin that tapers. Top-heavy over a narrow lid so it tips at the first excuse, but it is packed solid and it kicks the tsinelas back at you.";
+                case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the slipper across the street, and it is slow to stand back up.";
+                case "piyesta": return "Fruit cocktail, saved for a family feast and opened early anyway. The widest can on the mark and still full of syrup, so it plants itself and swallows the hit whole.";
+                case "karne": return "Corned beef, the tin that tapers. Top-heavy over a narrow lid so it tips at the first excuse, but it is packed solid and it kicks the slipper back at you.";
 
                 case "tsinelas": return "The street-game original. Thick layered sole, printed Y-strap, worn down at the heel. Balanced in flight, impact and recovery.";
                 case "crocs": return "Holes in the top, strap swung round the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
-                case "pantulog": return "Lola's house slipper, fur worn flat and a bow hanging on by a thread. No weight behind it at all, but it is ready again before the taya has turned around.";
+                case "pantulog": return "Grandma's house slipper, fur worn flat and a bow hanging on by a thread. No weight behind it at all, but it is ready again before the defender has turned around.";
                 case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
-                case "spartan": return "Black rubber and a red Y-strap, straight from the kanto. Hits harder than the basic pair, but takes longer to settle back into your hand.";
-                case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the taya turns.";
+                case "spartan": return "Black rubber and a red Y-strap, straight from the corner shop. Hits harder than the basic pair, but takes longer to settle back into your hand.";
+                case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the defender turns.";
                 case "pambahay": return "The scuffed white slide that lives by the shower, somebody's toes moulded into the footbed. Light rubber that lands flat and soft, and you have it back before the puddle has dried.";
                 case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
                 case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";

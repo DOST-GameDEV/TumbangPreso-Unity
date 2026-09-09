@@ -1945,7 +1945,7 @@ namespace TumbangPreso.CameraSystem
             else
             {
                 lataKnockedNow = _lastLataUpright && !lata.IsUpright;
-                if (lataKnockedNow) QueueHighlight("LATA KNOCKDOWN");
+                if (lataKnockedNow) QueueHighlight("CAN KNOCKDOWN");
                 _lastLataUpright = lata.IsUpright;
             }
 
@@ -2001,7 +2001,7 @@ namespace TumbangPreso.CameraSystem
             switch (scoreEvent)
             {
                 case ScoreEvent.LataKnocked:
-                    QueueHighlight("LATA KNOCKDOWN", slot);
+                    QueueHighlight("CAN KNOCKDOWN", slot);
                     break;
                 case ScoreEvent.Tag:
                     QueueHighlight("TAG", slot);
@@ -2690,7 +2690,7 @@ namespace TumbangPreso.CameraSystem
         private string FollowName()
         {
             if (_follow == null) return "";
-            return $"{_follow.DisplayName()} · {(_follow.IsDefender ? "TAYA" : "ATTACKER")}";
+            return $"{_follow.DisplayName()} · {(_follow.IsDefender ? "DEFENDER" : "ATTACKER")}";
         }
     }
 

@@ -44,9 +44,9 @@ namespace TumbangPreso.Abilities
                 // rule 1 asks for. The area it loses comes back as relief: the decal now carries
                 // a raised cracked lip and standing rock chunks rather than being a flat plane.
                 : base("dante_skill1", "SEISMIC STOMP",
-                       "Slams the ground under you. Shoves nearby players off their feet and kicks loose tsinelas out of reach.",
+                       "Slams the ground under you. Shoves nearby players off their feet and kicks loose slippers out of reach.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.DanteStomp,
-                       summary: "Ground slam. Shoves players and tsinelas away from you.",
+                       summary: "Ground slam. Shoves players and slippers away from you.",
                        telegraphRadius: 2.2f, telegraphRange: 0.0f,
                        castAction: "hero-dante-stomp",
                        viewmodelAction: "stomp-heavy",

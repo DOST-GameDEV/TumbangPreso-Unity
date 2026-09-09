@@ -683,7 +683,7 @@ namespace TumbangPreso
             {
                 case Lesson.Look:
                     title = "LOOK AROUND";
-                    body = "Move the mouse and find the lata. Your camera is also your aim.";
+                    body = "Move the mouse and find the can. Your camera is also your aim.";
                     action = "MOUSE  ·  LOOK AND AIM";
                     _marker?.Bind(_lata.transform);
                     break;
@@ -708,8 +708,8 @@ namespace TumbangPreso
 
                 case Lesson.Throw:
                     PrepareAttackerThrow();
-                    title = "THROW AT THE LATA";
-                    body = "Hold to charge, aim at the lata, then release. Throwing is safe; retrieving is the risk.";
+                    title = "THROW AT THE CAN";
+                    body = "Hold to charge, aim at the can, then release. Throwing is safe; retrieving is the risk.";
                     action = Key("SpecialAbility") + "  ·  HOLD, AIM, RELEASE";
                     _marker?.Bind(_lata.transform);
                     break;
@@ -720,7 +720,7 @@ namespace TumbangPreso
                     // still holding it, and you cannot pick up what is already in your hand.
                     if (_ownSlipper == null || _ownSlipper.State != SlipperState.Loose)
                         PlaceOwnSlipperTowardTheLata();
-                    title = "GET YOUR TSINELAS BACK";
+                    title = "GET YOUR SLIPPER BACK";
                     body = "Walk to your own slipper and press the pickup key. Holding it inside the box makes you taggable.";
                     action = Key("Grab") + "  ·  PICK UP";
                     _marker?.Bind(_ownSlipper != null ? _ownSlipper.transform : null);
@@ -787,7 +787,7 @@ namespace TumbangPreso
                     // its mark, which is the whole point of the reordering. The second call was
                     // a duplicate that happened to be the one whose placement was wrong.
                     title = "ROLE SWAP: DEFENDER";
-                    body = "You are now the taya. Stay inside the chalk box and hold the pickup key by the down lata to stand it up.";
+                    body = "You are now the defender. Stay inside the chalk box and hold the pickup key beside the fallen can to stand it up.";
                     action = Key("Grab") + "  ·  HOLD TO RESET";
                     _marker?.Bind(_lata.transform);
                     _armRoutine = StartCoroutine(ArmDefenderReset());

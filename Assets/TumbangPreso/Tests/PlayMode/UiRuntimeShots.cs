@@ -891,7 +891,7 @@ namespace TumbangPreso.PlayTests
         /// screen nobody in this room has seen."* Every call still defaults to 1920x1080, so
         /// nothing that already had a picture changed shape.
         /// </summary>
-        private static IEnumerator Capture(string name, int width, int height)
+        internal static IEnumerator Capture(string name, int width, int height)
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null)

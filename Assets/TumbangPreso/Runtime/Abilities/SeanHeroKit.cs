@@ -244,7 +244,7 @@ namespace TumbangPreso.Abilities
                 // Sean is the one whose near miss still counts. `docs/Hero_Strike_Balance.md`
                 // § 4.4.
                 : base("sean_skill2", "IGNITION CANNON",
-                       "Loads your next throw with fire. Wherever that tsinelas lands it goes off, so a near miss still counts.",
+                       "Loads your next throw with fire. Wherever that slipper lands it goes off, so a near miss still counts.",
                        0.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.SeanIgnite,
                        summary: "Your next throw explodes where it lands.",
                        castAction: "hero-sean-ignite",

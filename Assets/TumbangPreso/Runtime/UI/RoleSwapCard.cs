@@ -213,7 +213,7 @@ namespace TumbangPreso.UI
             if (m == null) return "";
 
             int taya = m.DefenderSlot;
-            return $"{NameOf(taya)} HELD THE LATA FOR {m.ScoreFor(taya)} PTS";
+            return $"{NameOf(taya)} HELD THE CAN FOR {m.ScoreFor(taya)} PTS";
         }
 
         private void FillStandings(int nextDefenderSlot)
@@ -324,7 +324,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE CAPTION IS A COLUMN TO THE LEFT OF THE VALUE, NOT A HEADER ABOVE IT, and
             // the caption column is the only fixed width on this card. Two captions whose text
             // never changes are what make the two value columns start at the same x.
-            _tayaName = BuildSwapRow(swapRows, "NEXT TAYA", 32, UiTheme.Defense);
+            _tayaName = BuildSwapRow(swapRows, "NEXT DEFENDER", 32, UiTheme.Defense);
             _attackerNames = BuildSwapRow(swapRows, "ATTACKERS", 24, UiTheme.Offense);
 
             var standings = BuildPanel(column.transform, "StandingsPanel", 6.0f, out _standingsPanel);
@@ -346,7 +346,7 @@ namespace TumbangPreso.UI
         private const float ColumnWidth = 860.0f;
 
         /// <summary>The caption column. See <see cref="BuildSwapRow"/>.</summary>
-        private const float CaptionWidth = 190.0f;
+        private const float CaptionWidth = 240.0f;
 
         private static VerticalLayoutGroup BuildColumn(Transform parent)
         {
@@ -413,6 +413,7 @@ namespace TumbangPreso.UI
 
             var captionLabel = MenuKit.Label(rowGo.transform, caption, 24, UiTheme.CreamMuted,
                 Centre, Vector2.zero, new Vector2(CaptionWidth, 40.0f), TextAnchor.MiddleLeft);
+            MenuKit.Read(captionLabel);
 
             var captionElement = captionLabel.gameObject.AddComponent<LayoutElement>();
             captionElement.minWidth = CaptionWidth;

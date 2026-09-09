@@ -174,7 +174,7 @@ namespace TumbangPreso.Core
         /// The names, in the game's own voice. ⚠️ 🧑 CHOSE THIS SET ON 2026-08-31, from
         /// `FUTURE.md` § 9's suggestion. **This array is the one place they are written.**
         /// </summary>
-        public static readonly string[] TierNames = { "BATA", "KANTO", "BARANGAY", "KAMPEON", "ALAMAT" };
+        public static readonly string[] TierNames = { "ROOKIE", "REGULAR", "CONTENDER", "CHAMPION", "LEGEND" };
 
         /// <summary>
         /// One line each, because a tier name nobody can decode is a word rather than a rank.
@@ -186,7 +186,7 @@ namespace TumbangPreso.Core
         {
             "Learning the throw and the run back in.",
             "Knows the arc. Still gets caught retrieving.",
-            "Reads the taya and picks the moment.",
+            "Reads the defender and picks the moment.",
             "Wins the round nobody thought was winnable.",
             "The leaderboard. Everyone knows the name.",
         };

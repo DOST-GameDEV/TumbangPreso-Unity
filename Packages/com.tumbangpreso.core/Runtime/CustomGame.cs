@@ -350,7 +350,7 @@ namespace TumbangPreso.Core
 
             if (rules.Format == MatchFormat.LastTsinelas &&
                 (rules.Tsinelas < MinTsinelas || rules.Tsinelas > MaxTsinelas))
-                return $"Last Tsinelas Standing needs {MinTsinelas} to {MaxTsinelas} tsinelas each.";
+                return $"Last Slipper Standing needs {MinTsinelas} to {MaxTsinelas} slippers each.";
 
             if (rules.Rounds < MinRounds || rules.Rounds > MaxRounds)
                 return $"A match is {MinRounds} to {MaxRounds} rounds.";
@@ -380,7 +380,7 @@ namespace TumbangPreso.Core
         /// <summary>How a format is written for a player to read.</summary>
         public static string FormatName(MatchFormat format) => format switch
         {
-            MatchFormat.LastTsinelas => "LAST TSINELAS STANDING",
+            MatchFormat.LastTsinelas => "LAST SLIPPER STANDING",
             MatchFormat.Mirror => "MIRROR",
             _ => "STANDARD",
         };
@@ -389,9 +389,9 @@ namespace TumbangPreso.Core
         public static string FormatBlurb(MatchFormat format) => format switch
         {
             MatchFormat.LastTsinelas =>
-                "Three tsinelas each. Lose them all and you are out. The last attacker takes the round.",
+                "Three slippers each. Lose them all and you are out. The last attacker takes the round.",
             MatchFormat.Mirror =>
-                "Everybody plays the same character and the same tsinelas. It changes every week.",
+                "Everybody plays the same character and the same slipper. It changes every week.",
             _ => "The game as it ships.",
         };
 

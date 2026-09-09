@@ -133,7 +133,7 @@ GROUPS = [
         (`MatchResult`, `PausePanel`, `BootSting`), and § 126.8d measured that isolating
         them from the match fixtures turns every one of them green.
      """, [
-        "AspectRatioProbes", "CustomCharacterScreenProbe", "CustomGameScreenProbe",
+        "AspectRatioProbes", "CustomCharacterScreenProbe", "CustomGameScreenProbe", "HomeFlowTests",
         "HeroPickerLayoutProbe", "HudLayoutProbe", "HudOverflowProbe", "LoadoutSurfaceProbe",
         "LobbyChatProbe", "LobbyChatStripProbe", "LobbyStyleProbe", "LobbyTypingProbe",
         "NestedCanvasProbe", "NetworkedLobbyTypingProbe", "PaperPurityProbe",

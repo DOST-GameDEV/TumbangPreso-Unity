@@ -39,6 +39,9 @@ namespace TumbangPreso.UI
         /// <summary>Verbatim. See the class note before touching a character of these.</summary>
         public static readonly Credit[] CcByCredits =
         {
+            new Credit("KAWIT EXTENDED",
+                "Kawit Free Ext Italic by Aaron Amar. Licensed under CC BY 4.0. " +
+                "behance.net/gallery/96516483/Kawit-Free-Brush-Typeface | creativecommons.org/licenses/by/4.0"),
             new Credit("CROCS",
                 "This work is based on \"crocs\" (sketchfab.com/3d-models/crocs-fbede59e03394e928ed0eccf27e8fc23) by fnk (sketchfab.com/fnk), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
             new Credit("PANTULOG",
@@ -72,19 +75,19 @@ namespace TumbangPreso.UI
         {
             new Credit("ENVIRONMENT & KITS",
                 "Kenney kits (Mini Characters, City, Suburban, Fantasy Town, Mini Forest, Food, Furniture, Car) — CC0, kenney.nl. Attribution is courtesy, not required."),
-            // ⚠️ TWO FACES SINCE 2026-09-03, AND BOTH ARE NAMED HERE. `docs/TODO.md` § 133:
-            // Darumadrop ships one weight, so it was setting four-line ability descriptions and
-            // faking every bold. It is the DISPLAY face now and Work Sans carries the reading.
-            // `Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt` has the licences and the
-            // measurements; both are SIL OFL and neither is modified.
+            // ⚠️ Keep retained font credits alongside the current three-face brief.
+            // FONT_USAGE records the supplied Lydian permission and metric correction;
+            // Kawit's required attribution is in the CC BY list above.
             new Credit("TYPEFACES",
-                "Darumadrop One (display) — Copyright 2020 The Darumadrop One Project Authors (github.com/ManiackersDesign/darumadrop). Work Sans (text) — Copyright 2019 The Work Sans Project Authors (github.com/weiweihuanghuang/Work-Sans). Both licensed under the SIL Open Font License 1.1."),
+                "Darumadrop One: The Darumadrop One Project Authors, SIL Open Font License 1.1. " +
+                "Lydian: copyright Roger White, 1994, used with permission. " +
+                "Work Sans: The Work Sans Project Authors, SIL Open Font License 1.1, retained for supporting assets."),
             new Credit("AUDIO",
-                "All music and sound effects are original. The OST is written by the team; the SFX and ambience beds are synthesised in-house by this project's own tools. No third-party audio ships in this build."),
-            new Credit("TSINELAS",
-                "This project's own mesh, generated procedurally — not a sourced asset."),
-            new Credit("DEVELOPMENT TOOLS",
-                "Claude Code (Anthropic) was used as a coding assistant during development — programming, debugging, testing and documentation. It helped write the bot AI that drives the computer-controlled players, wrote the procedural code that generates the lata meshes, this project's own tsinelas mesh and the map geometry, repurposed sourced assets into this game's formats, and wrote the tools that synthesise the SFX and ambience beds. Every skin, texture and drawing is the team's own, and the team wrote the soundtrack. All game logic, mechanics and design decisions are the team's own, and the team takes full responsibility for the code submitted. No generative-AI image, music or video service was used."),
+                "Music is written by the team. Sound effects combine original work and sourced recordings; source and license details are recorded in the project asset ledger."),
+            new Credit("SLIPPER",
+                "Footwear combines credited sourced models and the project's authored prop work."),
+            new Credit("MENU ARTWORK",
+                "TUMP logos and the UI direction are original team artwork. Additional illustrated layers were prepared for this placeholder UI pass; final interface artwork will be replaced by the team."),
         };
 
         public readonly struct TeamMember

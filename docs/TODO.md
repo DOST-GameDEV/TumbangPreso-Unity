@@ -255,15 +255,35 @@ The full scope, order, dependencies and acceptance checks are in
 request includes art, animation, audio, effects, UI and game engineering and
 removes the old one-task stopping limit. No subagents or other conversations.
 
-Done means the actionable work in that plan is implemented or verified as already
-correct, the remaining human/hardware dependencies are explicitly recorded, the
-resulting player is tested and built, and the branch is pushed. No human approval
+The UI placeholder implementation is complete for handoff, with final runtime
+verification explicitly deferred by the user. The remaining gameplay/world work
+is queued in the plan. The next chat may revise proposals when evidence supports
+a better result, and owns tests and the Windows build. No human approval
 is implied by technical validation. Keep individual findings in their existing
 numbered entries and archive completed sections whole.
+
+**152.3 implemented, verification deferred:** the UI placeholder, illustrated loading, typography and navigation pass is recorded whole in TODO_Archive.md section 152.3 and `docs/reports/ui-placeholder-2026-09-09.md`. Final illustration/loading changes were not tested or built at the user's request. Start the next execution at IMPROVEMENT_PLAN V0.
 
 **152.2 closed:** character maker is unavailable to players but retained for authoring; graphics quality offers Low/Balanced/High with reversible previews, and the outline coverage mask uses a supported linear format. Evidence: TODO_Archive.md section 152.2. Windows player qualification remains under section 152.
 
 **152.1 closed:** result controls now receive presses above gameplay controls; isolated InputSurfaceProbe 5/5. Full evidence is archived in TODO_Archive.md section 152.1.
+
+### 152.4 Repeated play must feel substantially better: OPEN
+
+Use IMPROVEMENT_PLAN's outcome table and P1 motion candidates before polishing
+minor details. Source review found that CharacterAnimator.Choose puts carrying
+and fatigue before locomotion, and uses a 7.5 m/s sprint threshold against an
+ordinary attacker sprint of 3.795 m/s before modifiers. The carry ordering was
+an intentional workaround for swimming hands, so replacing it must preserve the
+grip while restoring convincing legs. ViewmodelArms.StepToward also uses a
+frame-dependent interpolation factor. Graph rebinding and interrupted crossfades
+need live inspection. These are candidates, not runtime-confirmed new defects.
+
+Done means complete, visibly improved movement and throw/retrieval sequences,
+grounded body/contact, coherent hero presentation and all three intentional maps,
+with comparable full-speed owner/observer evidence. Tests and housekeeping alone
+do not close this item. The next executor may revise the proposed techniques to
+achieve a better result without changing the core game or adding complex systems.
 
 ---
 

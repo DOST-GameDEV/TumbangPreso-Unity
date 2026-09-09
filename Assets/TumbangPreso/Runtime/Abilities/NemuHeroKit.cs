@@ -51,7 +51,7 @@ namespace TumbangPreso.Abilities
                 // hero read like an accessory to her pet. This tile teaches the actual verb:
                 // Nemu phases, surges and denies a tag.
                 : base("nemu_skill1", "PHANTOM VEIL",
-                       "Slip beyond the taya's reach: surge forward, move faster, and become untouchable until you reclaim a tsinelas.",
+                       "Slip beyond the defender's reach: surge forward, move faster, and become untouchable until you reclaim a slipper.",
                        52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
                        summary: "Phase forward, outrun pursuit, and deny the next tag.",
                        castAction: "hero-nemu-ghoststep",
@@ -286,7 +286,7 @@ namespace TumbangPreso.Abilities
 
             public NightmareSeanceVoidAbility()
                 : base("nemu_ultimate", "DEVOURING SEANCE",
-                       "Tear open a hungry spirit maw at your familiar's position, dragging players and loose tsinelas into the ritual.",
+                       "Tear open a hungry spirit maw at your familiar's position, dragging players and loose slippers into the ritual.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
                        summary: "Open a consuming seance where your familiar stands.",
                        // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.

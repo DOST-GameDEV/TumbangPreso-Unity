@@ -50,6 +50,15 @@ namespace TumbangPreso.UI
             });
 
             OnClick("BackButton", () => SceneFlow.Go(SceneFlow.MainMenu));
+            PlaySelectionScreen.Install(this);
+        }
+
+        protected override bool Cancel()
+        {
+            var screen = GetComponent<PlaySelectionScreen>();
+            if (screen == null) return base.Cancel();
+            screen.Back();
+            return true;
         }
     }
 }

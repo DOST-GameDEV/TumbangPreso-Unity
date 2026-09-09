@@ -357,7 +357,7 @@ namespace TumbangPreso.UI
             // otherwise"*, and a control for a meaningless number is § 6.2's third failure.
             if (_editing.Format == MatchFormat.LastTsinelas)
             {
-                UiRows.StepperRow(_list, "TSINELAS EACH", _editing.Tsinelas.ToString(),
+                UiRows.StepperRow(_list, "SLIPPERS EACH", _editing.Tsinelas.ToString(),
                     _editing.Tsinelas - CustomGameRules.MinTsinelas, TsinelasOptionCount,
                     v => { _editing.Tsinelas = CustomGameRules.MinTsinelas + v; Apply(); },
                     "How many an attacker starts a round with. Lose them all and you are out " +
@@ -449,7 +449,7 @@ namespace TumbangPreso.UI
                     : "";
 
                 string stock = _editing.Format == MatchFormat.LastTsinelas
-                    ? " · " + _editing.Tsinelas + " tsinelas"
+                    ? " · " + _editing.Tsinelas + " slippers"
                     : "";
 
                 _headline.text =

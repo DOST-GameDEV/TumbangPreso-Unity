@@ -157,7 +157,7 @@ namespace TumbangPreso.UI
         private static readonly string[] DifficultyDetails =
         {
             "EASY Slower reactions and looser angles. Good for learning the throw arc.",
-            "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the lata, and blocks about 38% of what you throw.",
+            "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the can, and blocks about 38% of what you throw.",
             "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
             "NONE No filler bots. Practice starts alone; multiplayer waits until all four human seats are filled."
         };
@@ -484,6 +484,12 @@ namespace TumbangPreso.UI
 
             RejoinRunningMatch();
 
+            if (PlaySelectionScreen.RequestedLobbyMode.HasValue)
+            {
+                var requested = PlaySelectionScreen.RequestedLobbyMode.Value;
+                PlaySelectionScreen.RequestedLobbyMode = null;
+                SelectMode(requested);
+            }
             AutoHost();
         }
 
@@ -512,6 +518,8 @@ namespace TumbangPreso.UI
         private async void AutoHost()
         {
             if (!IsLobby) return;
+            // Ranked is a queue destination, not a request to open a LAN room.
+            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked) return;
 
             var net = NetSession.Instance;
             if (net == null || net.IsNetworked) return;
@@ -987,7 +995,7 @@ namespace TumbangPreso.UI
             if (rect == null) return;
 
             _customDoor = UiRows.ButtonRow(rect, "CUSTOM GAME", CustomDoorLabel(), OpenCustomGame,
-                "Round length, score target, tsinelas stock, bots and a private room.");
+                "Round length, score target, slipper stock, bots and a private room.");
         }
 
         private Button _customDoor;
@@ -2938,7 +2946,7 @@ namespace TumbangPreso.UI
         private static string SeatName(int seat)
         {
             string label = $"P{seat + 1}";
-            if (seat == MatchRules.DefenderSlotFor(1)) label += "  ·  TAYA FIRST";
+            if (seat == MatchRules.DefenderSlotFor(1)) label += "  ·  DEFENDER FIRST";
             return label;
         }
 
@@ -3247,7 +3255,7 @@ namespace TumbangPreso.UI
             var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
             string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "DANTE" : "BAYAN");
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
-            string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "TSINELAS";
+            string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "SLIPPER";
 
             // ⚠️⚠️ TWO LINES IN `Street`, ONE IN `Classic`, AND THE DIFFERENCE IS WHERE THE BUTTON
             // IS. In the player card it is a 430 px block with room for the character's name at 32
@@ -3386,7 +3394,7 @@ namespace TumbangPreso.UI
             {
                 SetText("SeatHeading", "YOUR CHARACTER");
                 SetText("SeatHint",
-                        "Four players, one taya. The taya rotates every round, so everyone defends "
+                        "Four players, one defender. The defender rotates every round, so everyone defends "
                         + "exactly once. Empty seats are bots, the kids from the street who fill in.");
 
                 if (_addressRow != null) _addressRow.SetActive(false);

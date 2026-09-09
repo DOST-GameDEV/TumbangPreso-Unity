@@ -341,7 +341,8 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildKeyArt()
         {
-            var art = Resources.Load<Texture2D>("UI/splash_art");
+            var art = Resources.Load<Texture2D>("UI/illustrations/street_key_art")
+                      ?? Resources.Load<Texture2D>("UI/splash_art");
             HasKeyArt = art != null;
             if (art == null) return;
 

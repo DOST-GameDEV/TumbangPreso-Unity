@@ -110,6 +110,7 @@ namespace TumbangPreso.UI
             // plate from this screen would have deleted the LOGIN step out of the sequence 🧑
             // wrote down. That is § 6.2c question 5 (*if I delete this, what else was it doing*)
             // answered before the deletion instead of after it.
+            HomeScreen.Install(this, Node("SettingsPanel"), Node("CreditsPanel"));
             OfferTheLoginStep();
         }
 

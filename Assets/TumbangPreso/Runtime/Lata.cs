@@ -436,8 +436,7 @@ namespace TumbangPreso
             Hitstop.Trigger(0.045f, 0.10f);
 
             GameServices.Voice?.OnLataKnocked();
-            string callout = UI.SceneFlow.SelectedMode == GameMode.Classic
-                ? "TUMBA!" : "LATA DOWN!";
+            const string callout = "CAN DOWN!";
             Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
             UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
             Visual.ImpactBurst.SpawnAt(transform.position);

@@ -39,7 +39,10 @@ namespace TumbangPreso.UI
             /// screen, a hero or player name, a big value, a pennant.</summary>
             Display,
 
-            /// <summary>Work Sans. A word somebody READS: a sentence, a settings row, a
+            /// <summary>Kawit Extended. Short labels, actions and printed accents.</summary>
+            Accent,
+
+            /// <summary>Lydian. A word somebody READS: a sentence, a settings row, a
             /// caption, a chat line, a form field and its hint, a secondary button, a list
             /// row.</summary>
             Body,
@@ -48,6 +51,10 @@ namespace TumbangPreso.UI
         private static Font _font;
         private static Font _body;
         private static Font _bodyBold;
+        private static Font _accent;
+
+        public static Font AccentFont => _accent != null
+            ? _accent : _accent = Load("UI/fonts/KawitExtended", "Kawit Extended");
 
         /// <summary>
         /// The display face.
@@ -62,28 +69,20 @@ namespace TumbangPreso.UI
             ? _font
             : _font = Load("UI/fonts/DarumadropOne-Regular", "Darumadrop");
 
-        /// <summary>Work Sans Regular. See <see cref="Face.Body"/>.</summary>
+        /// <summary>The supplied Lydian reading face. See <see cref="Face.Body"/>.</summary>
         public static Font BodyFont => _body != null
             ? _body
-            : _body = Load("UI/fonts/WorkSans-Regular", "Work Sans Regular");
+            : _body = Load("UI/fonts/Lydian-Regular", "Lydian");
 
         /// <summary>
-        /// Work Sans Bold, as a SEPARATE FILE rather than as a font style.
-        ///
-        /// ⚠️⚠️ THE WHOLE OF § 133 IS ABOUT THIS ONE LINE. Legacy `Text` given
-        /// `FontStyle.Bold` on a face that ships no bold does not fail and does not warn: it
-        /// draws every glyph twice at an offset, which is a SMEAR rather than a weight, and it
-        /// is worst at <see cref="MinReadableUnits"/>, which is where most of the words in this
-        /// game live. There were **42 of those** across the project when this landed.
-        ///
-        /// ⚠️ SO THE BOLD IS A FONT, NOT A STYLE, AND <see cref="Apply"/> IS THE ONLY CALLER.
-        /// `CLAUDE.md` § 4a's argument: *"the answer is construction, not discipline."* A rule
-        /// saying "do not write FontStyle.Bold" is a rule somebody forgets, and forgetting it
-        /// compiles and even looks approximately right in a screenshot.
+        /// Lydian's supplied weight remains regular for compatibility with existing callers.
+        /// The earlier Work Sans pass supplied a separate bold file to avoid synthetic
+        /// emboldening. That reason still applies: emphasis now uses the display/accent
+        /// role or size, and Apply keeps FontStyle.Normal rather than inventing a weight.
         /// </summary>
         public static Font BodyBoldFont => _bodyBold != null
             ? _bodyBold
-            : _bodyBold = Load("UI/fonts/WorkSans-Bold", "Work Sans Bold");
+            : _bodyBold = BodyFont;
 
         private static Font Load(string path, string human)
         {
@@ -125,7 +124,7 @@ namespace TumbangPreso.UI
         {
             if (label == null) return null;
 
-            label.font = face == Face.Body
+            label.font = face == Face.Accent ? AccentFont : face == Face.Body
                 ? (bold ? BodyBoldFont : BodyFont)
                 : Font;
 

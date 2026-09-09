@@ -288,6 +288,7 @@ namespace TumbangPreso.InputLayer
                 if (!Owns(s)) continue;
 
                 _order.Add(s);
+                if (s is Button button) UI.NavigationSymbol.Apply(button);
             }
 
             _lastCount = _order.Count;

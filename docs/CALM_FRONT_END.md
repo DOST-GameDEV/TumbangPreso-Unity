@@ -1,81 +1,104 @@
-# A quiet street before the match
+# UI placeholders and the supplied direction
 
-Status: IN PROGRESS, 2026-09-09. IMPROVEMENT_PLAN P3/P8, TODO 152.
+Status: IMPLEMENTED, FINAL RUNTIME VERIFICATION DEFERRED at the user's request.
+The girlfriend will remake the final UI art. These screens preserve useful flows,
+replaceable art and clear interaction, rather than claiming final visual approval.
 
-## Reference and intent
+## References and decisions
 
-The supplied TUMP.pdf pages 1-7, 20-26 and 35-40 are an idea board, not a literal
-specification. The user wants peace, quirkiness, simplicity and Filipino character,
-with a simple looping home video showing what the existing game feels like.
-This improves the team's game rather than replacing it or expanding its features.
-The user requests a complete UI overhaul. Character maker must be inaccessible
-in the shipped game, with its implementation and assets retained in the repository.
+The original reference is [TUMP.pdf](refs/ui/TUMP.pdf). Pages 1-7 establish the logo,
+fonts, palette and materials; pages 20-26 are examples; pages 36-40 carry the strongest
+composition and interaction direction. Original logo and slipper variants are beside
+the PDF in `docs/refs/ui`. They are reference sources, not instructions to add shops,
+currencies, battle passes or other systems from the example games.
 
-The logo, slipper motif, loose headings, warm print colors and woven/paper material
-suggest a handmade street identity. The useful composition is space around one
-subject, a small set of obvious doors and one Play action. References to shops,
-mail and currencies do not request new systems. No borrowed game footage.
+The user wants English player-facing copy, calm navigation, a quirky Filipino
+identity, sharp text and icons where their function is familiar. Proper character,
+game and place names keep their identity. Back is an arrow; Close is a cross.
+Meaningful choices such as Ranked, Custom Room and ability effects keep words.
+Role and equipment instructions use defender, can and slipper. Rank/reward display
+labels are English too; their saved identifiers and requirements remain unchanged.
 
-## Design decisions
+The initial heavy red/pill controls and native-game menu recording were rejected.
+So was a detailed realistic porch painting. The accepted direction follows the
+actual street sketch: low view, foreground can and slipper, simple receding street,
+bold imperfect contours, warm flat color and visible drawing. The illustrated
+placeholder now has a background plate, separate tree and sun, and a full-image
+fallback. It is not gameplay footage. A 14-second cycle gently sways the tree and
+breathes the sun; the UI itself remains still.
 
-- The video owns the home screen's center. Play is the one large action at bottom
-  right. A pressable face/name owns identity; a short rail reaches character and
-  gear; small utility controls open settings, tutorial and existing social pages.
-- Pair unfamiliar icons with short labels. A player should not need hover to find
-  out what a button does. Focus exposes the same detail as pointer hover.
-- One decision per layer: home invites play/preparation; the play space chooses
-  mode and company; lobby shows seats/readiness; custom rules stay secondary.
-  Character selection chooses a person, with ability detail available on demand.
-- Use the measured logo palette and readable body font. Darumadrop handles a few
-  big headings. Warm cream provides space, deep red supplies a restrained edge,
-  chartreuse marks the primary and persimmon marks selection. No cold menu chrome.
-- Concentrate personality in a slightly irregular shape, printed stamp, slipper
-  cue or character gesture. Keep alignment, label baselines and navigation steady.
-  Paper/weave belongs at edges rather than beneath text or on every rectangle.
-- Motion settles quickly. No wobbling labels, bouncing controls or repeated large
-  entrances. The loop is silent beneath the existing menu OST, without flashes,
-  explosions or combat shake. Keep the center calm enough to leave open.
+## Actual navigation
 
-## The home video
+```mermaid
+flowchart LR
+  Home --> Play[Play: choose rules]
+  Home --> Profile[Profile and existing account/social pages]
+  Home --> Character[Character picker]
+  Home --> Gear[Equipment picker]
+  Home --> Settings[Settings]
+  Play --> Classic
+  Play --> Hero[Hero Strike]
+  Play --> Tutorial[Learn to play]
+  Classic --> Practice[Practice with bots]
+  Classic --> Custom[Custom room]
+  Hero --> Practice
+  Hero --> Ranked
+  Hero --> Custom
+  Practice --> Lobby[Existing match setup]
+  Ranked --> Lobby
+  Custom --> Lobby
+```
 
-An Eskinita street in deliberate warm light, a quiet can/chalk midground, a loose
-tsinelas, and existing characters resting around the play space. A small cyclic
-camera drift, natural idle gestures and peripheral neighborhood motion give life.
-Reserve the left rail and bottom-right Play area when composing the shot.
+Ranked remains the existing Hero Strike ladder. Entering the ranked destination
+must not auto-host a LAN room. Custom rooms keep their existing hosting/joining
+behavior. Profile, character and gear have direct home doors; the home picker
+reuses the original picker component and a generated copy of its authored hierarchy.
+No second inventory or account system was introduced.
 
-Render the game's actual Unity world, models, shaders and animations over an
-integer number of cycles. Encode a Windows-compatible looping video and ship its
-matching still as the immediate loading/failure fallback. Preparation is asynchronous
-and never gates Play or sign-in. Hide/pause under opaque screens. Verify the loop
-seam, first boot, fallback and teardown without leaking players or render textures.
+The character maker is unavailable to players: its door is absent and its public
+Open route refuses entry. Its code, models, saved data and editor/test authoring
+route remain in the repository for a possible return.
 
-## Existing destinations
+## Loading
 
-| Intent | Existing route | Treatment |
-|---|---|---|
-| Play | SceneFlow.MatchSetup / ConvertedMatchSetup | One clear home action; seats and readiness first, advanced options folded |
-| Learn | SceneFlow.StartTraining | Quiet, visible tutorial entry; no account needed |
-| Identity, friends, career | PlayerHub | Face/name opens the hub; summary first and existing tabs for detail |
-| Character and gear | ConvertedCharacterSelect and its equipment/custom surfaces | Reach existing choices directly; no parallel inventory |
-| Settings | ConvertedSettingsPanel | Preserve four pages and mapping, visible selection and reliable back |
-| Account | SignInScreen | Art plus a compact form and visible offline guest escape |
-| Result/rematch | MatchResult | Result first, next action second; a small actual highlight if useful |
+The illustrated loading screen displays for a randomly selected 5-15 seconds,
+while the existing preload and account-readiness checks still run. It cannot leave
+before actual readiness. Clicking the artwork opens an optional story/tip card;
+reading keeps the screen open, the cross closes it and the arrow advances the text.
+The provided slipper mark moves gently as the loading indicator. Internal preload
+stage details are not printed as technical instructions to the player.
 
-Inspect current scene/lifetime behavior before routing doors. Preserve working
-features except the explicitly withdrawn character maker. Simplify through disclosure,
-not silent removal. Build through the existing
-MenuKit/ConvertedScreen, PaperKit, UiRows and ScreenFocus infrastructure.
+## Art and typography slots
 
-## Acceptance
+- `Resources/UI/illustrations/street_key_art.png`: complete fallback illustration.
+- `street_background.png`, `street_tree.png`, `street_sun.png`: aligned background
+  and transparent motion layers. Keep their canvas proportions aligned. If either
+  overlay or the clean plate is absent, the complete image is used instead.
+- `Resources/UI/brand`: the team's existing logo, wordmark and slipper variants.
+- `HomeAssetsAuthor.SavePickerFromMenu`: regenerates `Resources/UI/home/CharacterPicker.prefab`
+  from the real MatchSetup picker after authored hierarchy changes.
+- [FONT_USAGE.md](FONT_USAGE.md): Darumadrop display, Kawit Extended accents and
+  Lydian reading text. Their imports include dynamic font data and preserve sharp
+  rendering at requested sizes. Lydian's signed descent was corrected without
+  changing letterforms; owner embedding permission is recorded there.
 
-Capture home, boot sign-in, play/lobby, character, gear, profile, settings, pause and
-results over their real backgrounds and live chrome. Check 1280x720, 4:3, short wide
-window and ultrawide on Windows. Keep existing readability bounds. Walk each changed
-journey in and out with mouse and controller, then reload and repeat. No covered
-controls, click through overlays, stranded focus or network-dependent escape.
+`StreetGraphic`, `StreetIcon` and `StreetUi` are replaceable placeholder surfaces.
+`NavigationSymbol` preserves the existing button callback and target rectangle,
+so discard handling and controller navigation continue to use the original paths.
+Settings keeps its existing pages and adds Low/Balanced/High graphics quality.
 
-## Progress
+## Verification boundary and next check
 
-- Selected reference pages visually inspected. No implementation approval claimed.
-- Core baseline 559/559 and EditMode baseline 442/442 passed.
-- Next: baseline views, home/lobby hierarchy, then implementation and in-engine review.
+Earlier stages passed Core 559/559, EditMode 446/446, the isolated result-input
+sweep 5/5 and focused HomeFlowTests 2/2. All editor checks and gating source audits
+also passed before the final illustration/loading changes. Those results are
+historical checkpoints, not verification of the final working tree.
+
+The user then explicitly requested no further tests and no player build in this
+chat. Final illustration/loading integration received static review only. Next:
+run the home/settings/profile/gear/back journeys, both rules branches, ranked and
+custom entry, animated layers, loading duration/readiness, story open/next/close,
+and return/reload with mouse and controller. Check 1280x720, short wide, 4:3 and
+ultrawide, including the longer defender captions and rank/reward labels. Re-run
+the screen and input-surface groups, resolve real failures, and
+build/launch the exact Windows player. Do not cite an old screenshot as a final render.

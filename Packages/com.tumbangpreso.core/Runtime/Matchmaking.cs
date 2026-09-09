@@ -485,6 +485,6 @@ namespace TumbangPreso.Core
         /// player. It lives in the core beside the rule it describes so it cannot drift from it.
         /// </summary>
         public const string TayaRotationPromise =
-            "The taya rotates every round, so everyone defends exactly once. A bad first round is not a lost match.";
+            "The defender rotates every round, so everyone defends exactly once. A bad first round is not a lost match.";
     }
 }

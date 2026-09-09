@@ -76,7 +76,8 @@ namespace TumbangPreso.UI
         /// AFTERWARDS AND SAYS WHY IN A COMMENT.
         /// </summary>
         public static MenuKit.Face FaceFor(int size)
-            => size >= Body ? MenuKit.Face.Display : MenuKit.Face.Body;
+            => size >= Display ? MenuKit.Face.Display
+             : size >= Title ? MenuKit.Face.Accent : MenuKit.Face.Body;
 
         /// <summary>
         /// The one gap. Every space between two things on a paper screen is this or a multiple.

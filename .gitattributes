@@ -1,0 +1,2 @@
+# Preserve the supplied reference PDF byte-for-byte, including its stream offsets.
+docs/refs/ui/*.pdf binary

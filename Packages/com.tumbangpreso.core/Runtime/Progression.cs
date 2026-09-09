@@ -318,10 +318,10 @@ namespace TumbangPreso.Core
             if (place >= 1 && place <= PlacementXp.Length)
                 lines.Add(new XpLine(PlacementLabel(place), PlacementXp[place - 1]));
 
-            if (line.Knockdowns > 0) lines.Add(new XpLine("KNOCKED THE LATA", ObjectiveKnockdownXp));
+            if (line.Knockdowns > 0) lines.Add(new XpLine("KNOCKED THE CAN", ObjectiveKnockdownXp));
             if (line.RetrievalsUnderPressure > 0)
                 lines.Add(new XpLine("RETRIEVED UNDER PRESSURE", ObjectivePressureRetrievalXp));
-            if (line.Tags > 0) lines.Add(new XpLine("TAGGED AS TAYA", ObjectiveTagXp));
+            if (line.Tags > 0) lines.Add(new XpLine("TAGGED AS DEFENDER", ObjectiveTagXp));
             if (line.Sabotages > 0) lines.Add(new XpLine("SABOTAGE", ObjectiveSabotageXp));
             if (line.TayaCampPenalties == 0 && line.UnretrievedSlipperPenalties == 0)
                 lines.Add(new XpLine("NO PENALTIES", ObjectiveCleanXp));
@@ -492,17 +492,17 @@ namespace TumbangPreso.Core
         /// <summary>Account titles, by the level that grants them.</summary>
         private static readonly (int Level, RewardKind Kind, string Id, string Label)[] AccountTable =
         {
-            (5,   RewardKind.Title,   "title.taga_kanto",     "TAGA-KANTO"),
-            (10,  RewardKind.Badge,   "badge.first_lata",     "FIRST LATA"),
-            (15,  RewardKind.Title,   "title.palaboy",        "PALABOY"),
-            (25,  RewardKind.Title,   "title.hari_ng_tapat",  "HARI NG TAPAT"),
-            (35,  RewardKind.Badge,   "badge.tsinelas_tatlo", "TATLONG TSINELAS"),
-            (50,  RewardKind.Border,  "border.tanso",         "TANSO"),
-            (60,  RewardKind.Title,   "title.tagapagtanggol", "TAGAPAGTANGGOL"),
-            (75,  RewardKind.Title,   "title.walang_takas",   "WALANG TAKAS"),
-            (100, RewardKind.Border,  "border.pilak",         "PILAK"),
-            (150, RewardKind.Border,  "border.ginto",         "GINTO"),
-            (200, RewardKind.Title,   "title.alamat",         "ALAMAT"),
+            (5,   RewardKind.Title,   "title.taga_kanto",     "STREET REGULAR"),
+            (10,  RewardKind.Badge,   "badge.first_lata",     "FIRST CAN"),
+            (15,  RewardKind.Title,   "title.palaboy",        "WANDERER"),
+            (25,  RewardKind.Title,   "title.hari_ng_tapat",  "HOME COURT HERO"),
+            (35,  RewardKind.Badge,   "badge.tsinelas_tatlo", "THREE SLIPPERS"),
+            (50,  RewardKind.Border,  "border.tanso",         "BRONZE"),
+            (60,  RewardKind.Title,   "title.tagapagtanggol", "DEFENDER"),
+            (75,  RewardKind.Title,   "title.walang_takas",   "NO ESCAPE"),
+            (100, RewardKind.Border,  "border.pilak",         "SILVER"),
+            (150, RewardKind.Border,  "border.ginto",         "GOLD"),
+            (200, RewardKind.Title,   "title.alamat",         "LEGEND"),
         };
 
         /// <summary>

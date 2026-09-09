@@ -134,7 +134,7 @@ namespace TumbangPreso.UI
             // match already says the bare word (the round line, the scoreboard marker). This card
             // was the only surface still carrying the translation, six minutes into a match, in
             // the busiest corner of the screen.
-            _class.text = isDefense ? "TAYA" : "ATTACKER";
+            _class.text = isDefense ? "DEFENDER" : "ATTACKER";
 
             // ⚠️ THE SCORE WAS REMOVED FROM THIS ROW. 🧑 2026-07-31: *"why are there points
             // here, it's already up top it feels redundant"*. The row says who you are instead.

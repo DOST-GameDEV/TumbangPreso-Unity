@@ -860,7 +860,7 @@ namespace TumbangPreso.UI
                 var taya = new List<string>();
                 for (int i = 0; i < record.DefenderByRound.Length; i++)
                     taya.Add($"R{i + 1} P{record.DefenderByRound[i] + 1}");
-                lines.Add("TAYA EACH ROUND   " + string.Join("   ", taya));
+                lines.Add("DEFENDER EACH ROUND   " + string.Join("   ", taya));
             }
 
             _detailBody.text = string.Join("\n", lines);
@@ -1441,7 +1441,7 @@ namespace TumbangPreso.UI
             // twice what the old page showed at once and is the exact complaint this rebuild
             // answers. Closed, the career tab is six headings and one sentence each, and the
             // player opens the one they came for.
-            if (Group("Attack", "What you did with the tsinelas in your hand.", false))
+            if (Group("Attack", "What you did with the slipper in your hand.", false))
             {
                 UiRows.ValueRow(_list, "Throws", totals.Throws.ToString());
                 UiRows.ValueRow(_list, "Knockdowns", totals.Knockdowns.ToString());
@@ -1455,13 +1455,13 @@ namespace TumbangPreso.UI
             {
                 UiRows.ValueRow(_list, "Retrievals", totals.Retrievals.ToString());
                 UiRows.ValueRow(_list, "Under pressure", totals.RetrievalsUnderPressure.ToString(),
-                    $"Made within {MatchRecordRules.PressureRadius:0.0} m of the taya, their reach.");
+                    $"Made within {MatchRecordRules.PressureRadius:0.0} m of the defender, their reach.");
                 if (totals.MatchesWithAThrow > 0)
                     UiRows.ValueRow(_list, "Average first throw",
                         $"{ProfileRules.AverageTimeToFirstThrow(totals):0.0} s");
             }
 
-            if (Group("Defence", "The rounds you spent as the taya.", false))
+            if (Group("Defence", "The rounds you spent as the defender.", false))
             {
                 UiRows.ValueRow(_list, "Rounds defended", totals.RoundsDefended.ToString());
                 UiRows.ValueRow(_list, "Tags", totals.Tags.ToString());

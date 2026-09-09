@@ -597,7 +597,7 @@ namespace TumbangPreso.UI
                 0.0f, hasTitle ? -(4.0f + TagHeight + 2.0f) : -4.0f);
 
             var tagText = _tagLabels[seat];
-            tagText.text = "TAYA FIRST";
+            tagText.text = "DEFENDER FIRST";
             tagText.fontSize = TagSize;
             MenuKit.Fit(tagText, wanted - (PlatePadding * 2.0f));
         }

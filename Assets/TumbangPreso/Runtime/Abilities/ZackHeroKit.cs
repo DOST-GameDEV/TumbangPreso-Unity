@@ -272,9 +272,9 @@ namespace TumbangPreso.Abilities
 
             public MagnetRecallAbility(ZackHeroKit kit)
                 : base("zack_skill2", "MAGNET",
-                       "Snaps your own tsinelas back into your hand from anywhere, still live. That throw flies faster and jolts where it lands.",
+                       "Snaps your own slipper back into your hand from anywhere, still live. That throw flies faster and jolts where it lands.",
                        0.0f, ChargeSeconds, TumbangPreso.UI.AbilityGlyph.ZackOvercharge,
-                       summary: "Pulls your tsinelas back, charged. No walk back in.",
+                       summary: "Pulls your slipper back, charged. No walk back in.",
                        castAction: "hero-zack-charge",
                        viewmodelAction: "overcharge",
                        castCue: "sfx_cast_zack_magnet",

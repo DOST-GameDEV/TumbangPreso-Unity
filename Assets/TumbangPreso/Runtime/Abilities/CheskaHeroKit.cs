@@ -144,9 +144,9 @@ namespace TumbangPreso.Abilities
                 // central risk rather than by a timer. It is also the only recharge in the game
                 // keyed to this event, which keeps it hers.
                 : base("cheska_skill2", "ICE BARRICADE",
-                       "Hold to pick the line, then let go to raise three ice pillars. Bodies and thrown tsinelas both stop at them.",
+                       "Hold to pick the line, then let go to raise three ice pillars. Bodies and thrown slippers both stop at them.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
-                       summary: "Hold to aim, release to raise. Bodies and tsinelas stop at it.",
+                       summary: "Hold to aim, release to raise. Bodies and slippers stop at it.",
                        telegraphRadius: 1.6f, telegraphRange: WallMaxRange,
                        castAction: "hero-cheska-raise",
                        viewmodelAction: "raise-barricade",
@@ -193,9 +193,9 @@ namespace TumbangPreso.Abilities
         {
             public GlacialShatterBurstAbility()
                 : base("cheska_ultimate", "GLACIAL NOVA",
-                       "Freezes everyone standing near you and blows the loose tsinelas away. Your way out when the whole court is on you.",
+                       "Freezes everyone standing near you and blows the loose slippers away. Your way out when the whole court is on you.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaNova,
-                       summary: "Freezes everyone near you and clears the tsinelas away.",
+                       summary: "Freezes everyone near you and clears loose slippers away.",
                        telegraphRadius: 4.6f, telegraphRange: 0.0f,
                        castAction: "hero-cheska-nova",
                        viewmodelAction: "nova-burst",

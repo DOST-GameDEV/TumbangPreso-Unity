@@ -189,7 +189,7 @@ namespace TumbangPreso.UI
                     return "PROJECTILE";
                 case AbilityGlyph.Phase: return "EVASION";
                 case AbilityGlyph.Slam: return "FROM ABOVE";
-                case AbilityGlyph.Empower: return "TSINELAS BUFF";
+                case AbilityGlyph.Empower: return "SLIPPER BUFF";
                 // ⚠️⚠️ EVERY BESPOKE GLYPH REPORTS ITS JOB, AND FOR A YEAR IT REPORTED ITS OWN
                 // NAME. `Logs/shots-hero/hero_inspect_dante_v1.png` is what that looked like on
                 // the one screen this string is drawn on: **SEISMIC STOMP in green, then
@@ -222,13 +222,13 @@ namespace TumbangPreso.UI
                 // PROJECTILE. Both of them change what YOUR NEXT THROW does rather than
                 // producing something of their own, which is exactly what that word is for, and
                 // it is the single most useful thing the tray can tell a player about either.
-                case AbilityGlyph.SeanIgnite: return "TSINELAS BUFF";
+                case AbilityGlyph.SeanIgnite: return "SLIPPER BUFF";
                 case AbilityGlyph.SeanSupernova: return "FROM ABOVE";
                 case AbilityGlyph.CheskaFrostSheet: return "GROUND ZONE";
                 case AbilityGlyph.CheskaBarricade: return "BLOCKER";
                 case AbilityGlyph.CheskaNova: return "AREA BURST";
                 case AbilityGlyph.ZackSprint: return "MOBILITY";
-                case AbilityGlyph.ZackOvercharge: return "TSINELAS BUFF";
+                case AbilityGlyph.ZackOvercharge: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
                 case AbilityGlyph.NemuPhase: return "EVASION";
                 case AbilityGlyph.NemuAstralPet: return "MOBILITY";
@@ -236,7 +236,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
-                case AbilityGlyph.PhaisterWitchfire: return "TSINELAS BUFF";
+                case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
                 default:
                     return "POWER";
             }

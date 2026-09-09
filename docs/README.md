@@ -8,6 +8,13 @@ add its row here in the same commit.
 
 ## Read these, in this order
 
+The active 2026-09-09 improvement pass also uses
+[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md) for durable progress,
+[CALM_FRONT_END.md](CALM_FRONT_END.md) for the supplied UI direction and flow,
+and [LORE.md](../LORE.md) for the sporting world and character/place connections.
+[FONT_USAGE.md](FONT_USAGE.md) records the supplied faces, their roles and import fixes.
+They preserve the required rulebook, VISION and TODO read order below.
+
 | File | What it is |
 |---|---|
 | [`../CLAUDE.md`](../CLAUDE.md) | **First, always.** The rules of the repository: which git repo is live, the engine-free core rule, the build and test commands, the traps on this machine. |

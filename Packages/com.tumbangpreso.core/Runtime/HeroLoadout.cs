@@ -218,7 +218,7 @@ namespace TumbangPreso.Core
 
             new AbilityVariant("cheska.2.barricade", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
                 "ICE BARRICADE",
-                "One solid wall where you aim. Bodies and tsinelas stop at it.",
+                "One solid wall where you aim. Bodies and slippers stop at it.",
                 0.0f, 0.0f, "Nothing gets through", "One wall, one place"),
 
             new AbilityVariant("cheska.2.spires", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
@@ -241,11 +241,11 @@ namespace TumbangPreso.Core
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
                 "IGNITION CANNON",
-                "Your next throw explodes where it lands, on a tsinelas arc.",
+                "Your next throw explodes where it lands, on a slipper arc.",
                 0.0f, 0.0f, "It still arcs over", "You have to lead it"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "FLARE SHOT", "Flat, fast, and cracks in a tight circle. Made for the lata.",
+                "FLARE SHOT", "Flat, fast, and cracks in a tight circle. Made for the can.",
                 0.25f, -0.25f, "Hard to dodge", "You must hit it",
                 "Use Ignition Cannon eight times", true, 8),
 
@@ -279,7 +279,7 @@ namespace TumbangPreso.Core
             // exact fault § 108.3 records about `berto`.
             new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
                 "MAGNET",
-                "Your tsinelas comes back charged, so you never walk in for it.",
+                "Your slipper comes back charged, so you never walk in for it.",
                 0.0f, 0.0f, "You never walk in", "One use per knockdown"),
 
             // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade

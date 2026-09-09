@@ -8,10 +8,11 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The BH Studios boot sting. Plays on **every** launch, then hands off to the title.
+    /// Illustrated boot loading with an optional reading card, then the title.
+    /// The studio video remains a fallback when the illustration is unavailable.
     ///
     /// ⚠️ EVERY TIME IS LITERAL. There is no "seen it already" flag and no skip-on-second-launch.
-    /// That was an explicit call and it is not an oversight to fix.
+    /// The requested random reading window runs on each launch.
     ///
     /// ⚠️⚠️ THIS IS ALSO THE BOOT LOADING SCREEN, SO INPUT NEVER SKIPS IT. Earlier builds let a
     /// buffered click jump straight to the menu while shaders, audio and both rosters were still
@@ -33,6 +34,13 @@ namespace TumbangPreso.UI
     {
         /// <summary>When crossed, log that loading is slow but keep the barrier intact.</summary>
         public const float MaxWait = 6.0f;
+        private IllustratedBackdrop _illustration;
+        private float _displaySeconds;
+        private GameObject _storyRoot;
+        private Text _storyText;
+        private Button _artButton;
+        private RectTransform _loadingMark;
+        private int _storyIndex;
 
         [SerializeField] private VideoClip _clip;
         [SerializeField] private AudioClip _sting;
@@ -137,6 +145,7 @@ namespace TumbangPreso.UI
 
         private IEnumerator Run()
         {
+            _displaySeconds = LoadingPresentation.ChooseDuration(new System.Random());
             BuildSurface();
             BeginPreload();
             // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
@@ -161,21 +170,18 @@ namespace TumbangPreso.UI
                 GameServices.Audio?.PlayClipUi(_sting, Mathf.Clamp01(s.SfxGain));
             }
 
-            if (_clip != null)
+            if (_clip != null && _video != null)
             {
                 _video.clip = _clip;
                 _video.Play();
             }
-            else
+            else if (_illustration == null)
             {
                 Debug.LogWarning("[Splash] no video clip bound; run Tumbang Preso > Import Godot UI.");
             }
 
-            // ⚠️⚠️ THE FADE-IN IS FROM WHITE, NOT FROM BLACK, AND THAT IS THE JOIN BETWEEN TWO
-            // SCREENS RATHER THAN A TASTE. The Unity splash is white now (`docs/TODO.md` § 114.2)
-            // and this screen is white, so a 0.35 s fade up from black between them is a black
-            // flash in the middle of one continuous white beat. `_fade` is built white and is
-            // repainted black only for the exit, where what follows IS dark.
+            // ⚠️ The original white fade avoided a black flash after the studio mark
+            // (114.2). The illustrated route uses warm paper for the same quiet join.
             float fade = 0.0f;
 
             while (!_leaving)
@@ -191,31 +197,29 @@ namespace TumbangPreso.UI
                     SetLoadingStage("signing in", SignInSpan + 0.04f);
 
                 UpdateLoadingAnimation();
+                if (_storyRoot != null && _storyRoot.activeSelf && InputLayer.MenuNav.CancelPressed)
+                {
+                    ShowStory(false);
+                    ScreenTakeover.ConsumeEscape();
+                }
 
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
-                bool presentationComplete = _clip == null
+                bool presentationComplete = _illustration != null || _clip == null
                     ? _elapsed >= 0.5f
                     : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
-                // ⚠️⚠️ THE VIDEO'S LAST FRAME IS HELD ON PURPOSE NOW, AND THIS BLOCK USED TO DO
-                // THE OPPOSITE. It switched `_surface` off the frame the sting ended so that the
-                // GAME'S KEY ART underneath was revealed for the rest of the preload, which is
-                // six seconds and more of marketing art before a first-time player has seen a
-                // menu. 🧑 2026-09-01: *"i dont like that loading screen keeps showing the pic of
-                // our game"*, and, of the white studio frame, *"dude the loading screen is in the
-                // white bh mark"*. A finished `VideoPlayer` leaves its last frame in the render
-                // texture, so holding the surface IS holding that frame, at no cost.
-                //
-                // ⚠️ `BuildSplashArt` AND ITS FIELD ARE DELETED, so there is nothing under here to
-                // reveal by accident. `docs/TODO.md` § 114.3.
-                if (presentationComplete && PreloadComplete && accountReady) break;
+                // ⚠️ The illustrated route and reading window were requested after
+                // the studio-only choice in 114.3. Neither route bypasses readiness;
+                // the fallback video still holds its final frame while loading finishes.
+                if (presentationComplete && LoadingPresentation.CanLeave(PreloadComplete, accountReady,
+                        _storyRoot != null && _storyRoot.activeSelf, _elapsed, _displaySeconds)) break;
 
-                if (!_slowLoadReported && _elapsed >= MaxWait)
+                if (!_slowLoadReported && !PreloadComplete && _elapsed >= MaxWait)
                 {
                     _slowLoadReported = true;
-                    Debug.LogWarning("[Splash] preload exceeded six seconds; keeping the BH loading screen visible until it is genuinely ready.");
+                    Debug.LogWarning("[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.");
                 }
 
                 yield return null;
@@ -240,10 +244,12 @@ namespace TumbangPreso.UI
                 telemetry.NoteMenuReached();
             }
 
-            // Out on black, then hand over. ⚠️ THE PLATE IS REPAINTED HERE: it is white for the
-            // fade IN, because the Unity splash it follows is white, and black for the fade OUT,
-            // because the login screen and the lit street it precedes are not.
-            SetFadeColour(Color.black);
+            // ⚠️ Commit to leaving before the fade so a late press cannot open a
+            // story after its readiness/reading barrier has already been evaluated.
+            if (_artButton != null) _artButton.interactable = false;
+            if (_illustration != null) _illustration.Animating = false;
+            // The illustrated home continues on paper; the legacy video exits on black.
+            SetFadeColour(_illustration != null ? UiTheme.Paper : Color.black);
 
             for (float t = 0.0f; t < 0.22f; t += Time.unscaledDeltaTime)
             {
@@ -669,11 +675,13 @@ namespace TumbangPreso.UI
         private void SetLoadingStage(string label, float progress)
         {
             _targetProgress = Mathf.Max(_targetProgress, Mathf.Clamp01(progress));
-            if (_loadingLabel != null) _loadingLabel.text = label;
+            if (_loadingLabel != null) _loadingLabel.text = label == "ready" ? "Ready" : "Getting ready";
         }
 
         private void UpdateLoadingAnimation()
         {
+            if (_loadingMark != null)
+                _loadingMark.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(_elapsed * 2.1f) * 8f);
             // ⚠️ THE MENU LOAD IS A CONTINUOUS SOURCE, so it is read every frame rather than being
             // announced once. `LoadSceneAsync` held at 0.9 is "done"; the divide normalises that.
             if (_assetsPreloaded && _menu != null)
@@ -726,6 +734,11 @@ namespace TumbangPreso.UI
 
         private void BuildSurface()
         {
+            if (Resources.Load<Texture2D>("UI/illustrations/street_key_art") != null)
+            {
+                BuildIllustratedSurface();
+                return;
+            }
             // ⚠️⚠️ A ROOT OBJECT, NOT A CHILD OF THE CONVERTED NODE, AND THAT IS THE WHOLE FIX
             // FOR "THE LOGO IS A POSTAGE STAMP". A nested Canvas inherits its PARENT's rect, and
             // the node the importer attaches this component to is a converted Control whose rect
@@ -805,6 +818,89 @@ namespace TumbangPreso.UI
             // studio mark on every window that is not 16:9, which is the one 🧑 plays in. The
             // white Backdrop above is what the fit leaves showing, and it is the same white.
             _video.aspectRatio = VideoAspectRatio.FitInside;
+        }
+
+        private void BuildIllustratedSurface()
+        {
+            var canvas = MenuKit.BuildCanvas(null, "SplashCanvas");
+            canvas.sortingOrder = 500;
+            _canvas = canvas.gameObject;
+            HideConvertedContent();
+            var root = canvas.transform;
+            var artGo = new GameObject("LoadingArtButton", typeof(RectTransform), typeof(RawImage));
+            artGo.transform.SetParent(root, false);
+            _surface = artGo.GetComponent<RawImage>();
+            MenuKit.Stretch(_surface.rectTransform);
+            _illustration = artGo.AddComponent<IllustratedBackdrop>();
+            _surface.raycastTarget = true;
+            _artButton = artGo.AddComponent<Button>();
+            _artButton.targetGraphic = _surface;
+            _artButton.transition = Selectable.Transition.None;
+            _artButton.onClick.AddListener(() => ShowStory(true));
+
+            var plate = StreetUi.Detail(root, "LoadingPaper", StreetGraphic.Surface.Card);
+            MenuKit.Place(plate.rectTransform, new Vector2(0,0), new Vector2(330,130), new Vector2(560,174));
+            var title = MenuKit.Label(root, "LOADING", 40, UiTheme.PaperInk,
+                Vector2.zero, new Vector2(180,170), new Vector2(250,56), TextAnchor.MiddleLeft);
+            MenuKit.Apply(title, MenuKit.Face.Accent);
+            title.raycastTarget = false;
+            _loadingLabel = MenuKit.Label(root, "Getting ready", 24, UiTheme.PaperInkSoft,
+                Vector2.zero, new Vector2(278,119), new Vector2(440,34), TextAnchor.MiddleLeft);
+            MenuKit.Read(_loadingLabel); _loadingLabel.raycastTarget = false;
+            var hint = MenuKit.Label(root, "Click the artwork for stories and tips.", 22, UiTheme.PaperInk,
+                Vector2.zero, new Vector2(308, 75), new Vector2(500,32), TextAnchor.MiddleLeft);
+            MenuKit.Read(hint); hint.raycastTarget = false;
+
+            var markGo = new GameObject("LoadingSlipper", typeof(RectTransform), typeof(RawImage));
+            markGo.transform.SetParent(root, false);
+            var mark = markGo.GetComponent<RawImage>();
+            mark.texture = Resources.Load<Texture2D>("UI/brand/tsinelas_hit");
+            mark.raycastTarget = false;
+            _loadingMark = mark.rectTransform;
+            float ratio = mark.texture != null ? mark.texture.width/(float)mark.texture.height : 1f;
+            MenuKit.Place(_loadingMark, new Vector2(1,0), new Vector2(-116,126), new Vector2(116*ratio,116));
+
+            _storyRoot = new GameObject("LoadingStoryRoot", typeof(RectTransform));
+            _storyRoot.transform.SetParent(root, false);
+            MenuKit.Stretch((RectTransform)_storyRoot.transform);
+            var paper = StreetUi.Detail(_storyRoot.transform, "StoryPaper", StreetGraphic.Surface.Card);
+            MenuKit.Place(paper.rectTransform, new Vector2(.5f,.5f), Vector2.zero, new Vector2(820,460));
+            paper.raycastTarget = true;
+            _storyText = MenuKit.Label(_storyRoot.transform, "", 28, UiTheme.PaperInk,
+                new Vector2(.5f,.5f), new Vector2(0,20), new Vector2(700,300), TextAnchor.UpperLeft);
+            MenuKit.Read(_storyText); _storyText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _storyText.raycastTarget = false;
+            var close = StreetUi.Button(_storyRoot.transform, "LoadingStoryClose", "", 24, StreetGraphic.Surface.Navigation);
+            MenuKit.Place((RectTransform)close.transform, new Vector2(.5f,.5f), new Vector2(354,183), new Vector2(64,64));
+            StreetUi.Icon(close.transform, StreetIcon.Glyph.Close, new Vector2(.5f,.5f), Vector2.zero, new Vector2(28,28));
+            close.onClick.AddListener(() => ShowStory(false));
+            var next = StreetUi.Button(_storyRoot.transform, "LoadingStoryNext", "", 24, StreetGraphic.Surface.Navigation);
+            MenuKit.Place((RectTransform)next.transform, new Vector2(.5f,.5f), new Vector2(330,-170), new Vector2(72,58));
+            StreetUi.Icon(next.transform, StreetIcon.Glyph.Next, new Vector2(.5f,.5f), Vector2.zero, new Vector2(32,32));
+            next.onClick.AddListener(() => { _storyIndex++; RefreshStory(); });
+            InputLayer.ScreenFocus.Install(_storyRoot);
+            _storyRoot.SetActive(false);
+
+            var fadeGo = new GameObject("LoadingFade", typeof(RectTransform), typeof(Image));
+            fadeGo.transform.SetParent(root, false);
+            _fade = fadeGo.GetComponent<Image>();
+            _fade.color = UiTheme.Paper; _fade.raycastTarget = false;
+            MenuKit.Stretch(_fade.rectTransform);
+        }
+
+        private void ShowStory(bool open)
+        {
+            if (_storyRoot == null) return;
+            _storyRoot.SetActive(open);
+            if (_artButton != null) _artButton.interactable = !open;
+            if (_illustration != null) _illustration.Animating = !open;
+            if (open) { RefreshStory(); _storyRoot.GetComponent<InputLayer.ScreenFocus>()?.Rebuild(); }
+        }
+
+        private void RefreshStory()
+        {
+            if (_storyText != null)
+                _storyText.text = LoadingPresentation.Stories[_storyIndex % LoadingPresentation.Stories.Length];
         }
 
         private void BuildLoadingIndicator(Transform parent)
