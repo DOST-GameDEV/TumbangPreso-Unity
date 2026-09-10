@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -803,7 +803,7 @@ namespace TumbangPreso.Abilities
             ReleaseRoot();
             WindupRemaining = 0.0f;
 
-            EndEarly(ctx);
+            CancelActive(ctx);
 
             if (UsesCharges) GrantCharge();
             else CooldownRemaining = 0.0f;
@@ -853,9 +853,21 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public void ResetForRound(AbilityContext ctx)
         {
-            EndEarly(ctx);
+            CancelActive(ctx);
             Reset();
         }
+
+        private void CancelActive(AbilityContext ctx)
+        {
+            if (DurationRemaining<=0) return;
+            DurationRemaining=0;
+            OnCancelled(ctx);
+        }
+
+        // Most cancellation only releases an existing grant. A recalled familiar
+        // also relocates its owner on normal completion, which a denied/reset cast
+        // must never do. Keep that distinction explicit without changing recasts.
+        protected virtual void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
 
         protected virtual void OnActivate(AbilityContext ctx) { }
         protected virtual void OnTick(AbilityContext ctx, float dt) { }

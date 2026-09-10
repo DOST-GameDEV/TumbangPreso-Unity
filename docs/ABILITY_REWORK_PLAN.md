@@ -459,3 +459,17 @@ before/after rationale and role/counterplay evidence.
   untextured new mesh's default UV to map every surface to the same person slot.
   Preserve the live possession/return/owner-visibility link and actual pull center.
   Keep persistent human character designs unchanged.
+
+
+## Latest explicit networking request, 2026-09-10
+
+The owner explicitly says networking is broken and asks for a thorough fix. Treat
+this as required release work, not an optional polish item. Verify separate
+host/joiner/observer processes, actual skill/familiar positions and contacts,
+seating/ownership, denied or repeated requests, reconnects, round/rematch transitions,
+stale effects and authority. Include the proven missing controlled-familiar motion
+route and the projection cancellation fixes already in progress. Keep both modes,
+four players, saved IDs and profiles. Use existing transport/movement contracts,
+finite/bounds/elapsed-distance validation and a protocol bump if the wire changes.
+Do not claim same-process witness evidence verifies LAN. Network work remains in
+this same task; no new task, subagent, paid service or usage reset is authorized.

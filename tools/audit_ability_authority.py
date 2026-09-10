@@ -45,10 +45,14 @@ SELFISH = re.compile(r'(ctx\.Motor|_rooted|_motor|caster|Ctx\.Motor)\s*[\?\.]')
 
 rows = []
 for dirpath, _, filenames in os.walk(ROOT):
-    if not any(("%s%s%s" % (os.sep, s, os.sep)) in dirpath + os.sep for s in SUBTREES):
+    ability_tree=any(("%s%s%s" % (os.sep,s,os.sep)) in dirpath+os.sep for s in SUBTREES)
+    companion_tree=dirpath.endswith(os.sep+"Visual")
+    if not ability_tree and not companion_tree:
         continue
     for fn in sorted(filenames):
         if not fn.endswith(".cs"):
+            continue
+        if not ability_tree and fn != "GhostPetCompanion.cs":
             continue
         path = os.path.join(dirpath, fn)
         lines = open(path, encoding="utf-8", errors="replace").read().split("\n")

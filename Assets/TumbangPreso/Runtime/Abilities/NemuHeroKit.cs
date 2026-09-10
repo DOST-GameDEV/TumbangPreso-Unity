@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -9,6 +9,7 @@ namespace TumbangPreso.Abilities
     public sealed class NemuHeroKit : HeroKit
     {
         public bool IsPhantomPhaseActive => Skill1 != null && Skill1.IsActive;
+        public override float MovementSpeedScale => IsPhantomPhaseActive ? Balance.NemuPhaseSpeedScale : 1f;
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
@@ -34,7 +35,8 @@ namespace TumbangPreso.Abilities
 
         private sealed class PhantomPhaseAbility : HeroAbility
         {
-            private GameObject _phantomLightGo;
+            private NemuVeilPresentation _veil;
+            private bool _wasHolding;
             private bool _longFadeSlow;
 
             public PhantomPhaseAbility()
@@ -51,9 +53,9 @@ namespace TumbangPreso.Abilities
                 // hero read like an accessory to her pet. This tile teaches the actual verb:
                 // Nemu phases, surges and denies a tag.
                 : base("nemu_skill1", "PHANTOM VEIL",
-                       "Slip beyond the defender's reach: surge forward, move faster, and become untouchable until you reclaim a slipper.",
+                       "Surge into a ghostly veil. Move faster and ignore tags briefly; picking up a new slipper ends the veil.",
                        52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
-                       summary: "Phase forward, outrun pursuit, and deny the next tag.",
+                       summary: "Move faster and ignore tags. A new pickup ends the veil.",
                        castAction: "hero-nemu-ghoststep",
                        viewmodelAction: "ghost-step",
                        castCue: "sfx_cast_nemu_veil")
@@ -62,97 +64,29 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _longFadeSlow = ctx.HasVariant("nemu.1.fade");
-                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(0.65f);
-                NetCue.Play("hero_nemu_grunt", ctx.Position);
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.3f);
-
-                // Mini forward slip
-                ctx.Motor.ApplyImpulse(ctx.Forward * 5.5f);
-
-                if (_phantomLightGo != null) UnityEngine.Object.Destroy(_phantomLightGo);
-                _phantomLightGo = new GameObject("PhantomGhostLight");
-                _phantomLightGo.transform.SetParent(ctx.Motor.transform, false);
-                _phantomLightGo.transform.localPosition = new Vector3(0, 1.0f, 0);
-                var light = _phantomLightGo.AddComponent<Light>();
-                light.type = LightType.Point;
-                light.color = UiTheme.HeroSpiritBright;
-                light.range = 5.0f;
-                light.intensity = 3.5f;
-
-                // ⚠️⚠️ THE AURA IS THE ONLY THING THAT TELLS ANYBODY ELSE SHE CANNOT BE TAGGED.
-                // Phantom Phase grants tag immunity for 2.5 s, and until this landed the ONLY
-                // sign of it was a point light on her own model, which a taya chasing her from
-                // behind cannot see at all. A taya who lunges at a phased Nemu and gets nothing
-                // has been given no way to know why. World-simulated, so the motes trail behind
-                // her instead of riding along.
-                //
-                // ⚠️ IT IS SIZED TO THE ABILITY'S OWN DURATION AND DESTROYS ITSELF. Nothing in
-                // `OnEnd` has to remember it, which is where the previous aura leak came from.
-                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
-                                             Visual.AbilityVfx.Aura.VoidWisp, Duration);
-
-                // ⚠️⚠️ THE MOMENT SHE GOES, WHICH IS THE HALF THE AURA CANNOT SAY.
-                // `docs/Asset_Sourcing.md` § 3 for Phantom Veil: *"one small bloom at activation
-                // and deactivation"*. The wisps are a STATE, and a state has no beginning: the
-                // three players she is running from need one frame that says *she just became
-                // untaggable*, and until now the only thing marking it was her body starting to
-                // shed motes, which is exactly as visible as her body already was.
-                //
-                // ⚠️ 1.4 m AND AT CHEST HEIGHT, WHICH IS A PERSON AND NOT A FOOTPRINT. This is
-                // the smallest sheet placement in the game on purpose: it belongs to a body, it
-                // leaves nothing on the floor, and `docs/VISION.md` § 2 rule 1's 1.8 to 2.5 m is
-                // about what a skill puts on the ground.
-                //
-                // ⚠️ IT IS SPAWNED IN WORLD SPACE RATHER THAN PARENTED TO HER. She phases FORWARD
-                // at speed; a bloom stuck to her chest would travel with her and say nothing about
-                // where she went, where one left behind marks where she disappeared from.
-                Visual.VfxFlipbook.Play(Visual.VfxSheets.Bloom,
-                                        ctx.Position + Vector3.up * 1.0f, 1.4f);
+                _longFadeSlow=ctx.HasVariant("nemu.1.fade");
+                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(.65f);
+                _wasHolding=ctx.Motor.HoldingSlipper;
+                NetCue.Play("hero_nemu_grunt",ctx.Position);
+                ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(.04f);
+                ctx.Motor.ApplyImpulse(ctx.Forward*5.5f);
+                if (_veil!=null) _veil.Release();
+                _veil=NemuVeilPresentation.Attach(ctx.Motor,Duration);
             }
 
-            protected override void OnTick(AbilityContext ctx, float dt)
+            protected override void OnTick(AbilityContext ctx,float dt)
             {
-                if (ctx.Motor.HoldingSlipper)
-                {
-                    DurationRemaining = 0.0f;
-                    NetCue.Play("slipper_land", ctx.Position);
-                    ComicPopup.Spawn(ctx.Position, "PHASE BROKEN!", UiTheme.HeroSpiritBright, 1.0f);
-                    return;
-                }
-
-                // Speed boost during phantom phase
-                ctx.Motor.ApplyImpulse(ctx.Forward * 3.0f * dt);
+                bool holding=ctx.Motor.HoldingSlipper;
+                // Reclaiming ends the veil. A shoe held BEFORE the cast is not a
+                // new acquisition and must not waste the full cooldown next frame.
+                if (holding && !_wasHolding) DurationRemaining=0;
+                _wasHolding=holding;
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
-                if (_longFadeSlow)
-                {
-                    ctx.Motor.ExitSpeedZone(0.65f);
-                    _longFadeSlow = false;
-                }
-
-                if (_phantomLightGo != null)
-                {
-                    UnityEngine.Object.Destroy(_phantomLightGo);
-                    _phantomLightGo = null;
-                }
-
-                // ⚠️ AND THE MOMENT SHE COMES BACK. `Asset_Sourcing.md` asks for a bloom at
-                // activation AND deactivation, and the second one is the more useful of the two:
-                // the end of the veil is when she becomes taggable again, which is the frame the
-                // taya is waiting for. Same sheet, same size, so the pair reads as one gesture
-                // opening and closing rather than as two effects.
-                //
-                // ⚠️ IT FIRES ON THE BREAK PATH TOO, AND THAT IS CORRECT. `OnTick` ends the veil
-                // early by zeroing `DurationRemaining` when she picks a tsinelas up, and
-                // `HeroAbility` routes every ending through `OnEnd`. A veil broken by a pickup is
-                // still a veil that stopped.
-                Visual.VfxFlipbook.Play(Visual.VfxSheets.Bloom,
-                                        ctx.Position + Vector3.up * 1.0f, 1.4f);
+                if (_longFadeSlow) {ctx.Motor.ExitSpeedZone(.65f);_longFadeSlow=false;}
+                if (_veil!=null) {_veil.Release();_veil=null;}
             }
         }
 
@@ -181,7 +115,7 @@ namespace TumbangPreso.Abilities
                 // that is no longer a nicety, it is the only thing standing between the player
                 // and a permanent possession.
                 : base("nemu_skill2", "ASTRAL HIJACK",
-                       "Possess your familiar and scout the street in spirit form. Press again to pull Nemu through the veil.",
+                       "Scout as your familiar; recast to bring Nemu to it. Possession waits until it finishes feeding or returning.",
                        0.0f, 6.0f, TumbangPreso.UI.AbilityGlyph.NemuAstralPet,
                        summary: "Possess your familiar; recast to teleport to it.",
                        castAction: "hero-nemu-project",
@@ -192,6 +126,13 @@ namespace TumbangPreso.Abilities
             }
 
             public override bool CanReactivate => true;
+
+            public override bool CanActivate(AbilityContext ctx)
+            {
+                if (!base.CanActivate(ctx)) return false;
+                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                return pet==null || (!pet.IsDevouring && !pet.IsReturning);
+            }
 
             /// <summary>
             /// ⚠️ HOW MUCH LONGER KURO'S PROJECTED BODY LIVES THAN THE ABILITY THAT SPAWNED IT.
@@ -223,72 +164,45 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            protected override void OnEnd(AbilityContext ctx)
+            protected override void OnEnd(AbilityContext ctx) => FinishProjection(ctx,true);
+            protected override void OnCancelled(AbilityContext ctx) => FinishProjection(ctx,false);
+
+            private void FinishProjection(AbilityContext ctx,bool relocate)
             {
-                var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
-                if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+                var caster=ctx?.Motor;
+                var visual=caster!=null?caster.GetComponent<CharacterVisual>():null;
+                if(visual!=null && visual.Companion!=null && visual.Companion.IsPossessed)
                 {
-                    NetCue.Play("sfx_ghost_teleport", visual.transform.position);
-                    visual.Companion.EndPossession(teleportNemu: true);
+                    if(relocate) NetCue.Play("sfx_ghost_teleport",visual.Companion.transform.position);
+                    visual.Companion.EndPossession(teleportNemu:relocate);
                 }
-                else if (_projectedGhost != null)
+                if(_projectedGhost!=null)
                 {
-                    Vector3 destination = _projectedGhost.transform.position;
-                    NetCue.Play("sfx_ghost_teleport", destination);
-
-                    // Runtime movement goes through CharacterMotor so its controller and
-                    // ground-settle state stay coherent. EditMode ability tests have no live
-                    // controller, but still exercise the complete reactivation lifecycle.
-                    if (Application.isPlaying) ctx.Motor.Teleport(destination);
-                    else ctx.Motor.transform.position = destination;
-
-                    if (Application.isPlaying) UnityEngine.Object.Destroy(_projectedGhost);
+                    if(relocate && caster!=null)
+                    {
+                        Vector3 destination=_projectedGhost.transform.position;
+                        NetCue.Play("sfx_ghost_teleport",destination);
+                        if(Application.isPlaying)caster.Teleport(destination);else caster.transform.position=destination;
+                    }
+                    if(Application.isPlaying)UnityEngine.Object.Destroy(_projectedGhost);
                     else UnityEngine.Object.DestroyImmediate(_projectedGhost);
-                    _projectedGhost = null;
+                    _projectedGhost=null;
                 }
             }
         }
 
-        /// <summary>
-        /// Ultimate: DEVOURING SEANCE. The familiar becomes the ritual's mouth.
-        ///
-        /// ⚠️⚠️ IT WAS A VORTEX THAT APPEARED OUT OF NOTHING AND 🧑 CALLED IT: *"her black hole
-        /// dont make sense lowkey? maybe just make nemu's pet the black whole and make it look
-        /// like it got bigger and is sucking everyone up, change the text that says its a
-        /// blackhole"*. He is right, and the reason is worth stating because it is a design rule
-        /// rather than a preference: **every other thing Nemu does is Kuro**, and her most
-        /// expensive power was the one that ignored him. A hole in the road three metres in front
-        /// of a girl with a spirit pet is a physics effect wearing her colour.
-        ///
-        /// ⚠️⚠️ SO THE ULTIMATE IS THE PET, AND THAT CHANGES WHERE IT LANDS. It opens **on Kuro**
-        /// whenever Kuro is out, which makes Astral Projection a setup for it: send the pet
-        /// somewhere, then unbind it there. With no pet out it falls back to a point in front of
-        /// her, so the power is never unusable, and the fallback is deliberately the WORSE
-        /// option: the reward for playing her kit as a kit is that she chooses the spot in
-        /// advance. 🧑, in the same session: *"for nemu i want her skills to involve her pet more
-        /// as well as her ult"*.
-        ///
-        /// ⚠️ THE WORD "VOID" IS GONE FROM EVERY STRING A PLAYER READS. The name, the tactical
-        /// sentence and the select-screen summary all say what it now is. `Id` is unchanged at
-        /// `nemu_ultimate`, because ids are keys: `HeroPresentationTests`, the HUD deck and the
-        /// ability tray all index off it, and renaming a key to match a label is how a rename
-        /// becomes six silent lookup failures.
-        ///
-        /// ⚠️ THE FOOTPRINT AND THE HAZARD ARE UNCHANGED AT 2.8 m. This is a presentation and
-        /// fiction change, not a balance one: the drag, the slow and the radius are what
-        /// `Hero_Strike_Balance.md` measured and what the bots path around. The note below on
-        /// 2.8 versus 3.2 is still the reason for the number.
-        /// </summary>
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             /// <summary>Where it opens when Kuro is not out. Her own reach, as before.</summary>
+            private GameObject _field;
+            private GhostPetCompanion _familiar;
             private const float FallbackRange = 3.5f;
 
             public NightmareSeanceVoidAbility()
                 : base("nemu_ultimate", "DEVOURING SEANCE",
-                       "Tear open a hungry spirit maw at your familiar's position, dragging players and loose slippers into the ritual.",
-                       0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
-                       summary: "Open a consuming seance where your familiar stands.",
+                       "Your innocent-looking familiar becomes a giant, ravenous spirit. It drags rivals and loose slippers inward.",
+                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
+                       summary: "Turn your familiar into a raging spirit that pulls rivals in.",
                        // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
                        // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
                        // hazard in the game above it, so it was the one thing the bots were
@@ -307,6 +221,13 @@ namespace TumbangPreso.Abilities
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Maw;
                 Windup = UltimateWindup;
+            }
+
+            public override bool CanActivate(AbilityContext ctx)
+            {
+                if (!base.CanActivate(ctx) || IsActive) return false;
+                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                return pet==null || !pet.IsDevouring;
             }
 
             public override Vector3 TelegraphCentre(AbilityContext ctx)
@@ -345,9 +266,35 @@ namespace TumbangPreso.Abilities
                 // rule 4 caps what may OVERLAP; this is one zone, it paints no bright floor (the
                 // bite is near-black by construction), and it is the only thing on the court while
                 // it runs.
-                if (onPet) companion.Devour(7.0f);
+                _familiar=companion;
+                if (onPet)
+                {
+                    companion.Devour(Duration);
+                    // Devour ends the ride without teleporting Nemu. Close its
+                    // ability timer too, so a stale E recast cannot act as a ride.
+                    ctx.Motor.AbilitySystem?.Kit?.Skill2?.EndEarly(ctx);
+                }
 
-                HeroHazards.SpawnKuroUnbound(at, 4.0f, 7.0f, ctx.Motor.PlayerSlot, onPet);
+                _field=HeroHazards.SpawnKuroUnbound(at, 4.0f, Duration, ctx.Motor.PlayerSlot, onPet);
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                // Their matching timers own the normal close cue and return.
+                _field=null;_familiar=null;
+            }
+            protected override void OnCancelled(AbilityContext ctx)
+            {
+                // A denied or reset cast must not leave seven seconds of pull in
+                // the next state. Disable immediately before deferred destruction.
+                if (_field!=null)
+                {
+                    _field.SetActive(false);
+                    if(Application.isPlaying)UnityEngine.Object.Destroy(_field);
+                    else UnityEngine.Object.DestroyImmediate(_field);
+                }
+                if(_familiar!=null)_familiar.StopDevouring();
+                _field=null;_familiar=null;
             }
         }
     }

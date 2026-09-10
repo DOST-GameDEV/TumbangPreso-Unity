@@ -1,4 +1,4 @@
-namespace TumbangPreso.Core
+﻿namespace TumbangPreso.Core
 {
     /// <summary>
     /// Every tuned number in the game, in one place.
@@ -193,6 +193,10 @@ namespace TumbangPreso.Core
         // impulse was cancelled by Friction before movement. Keep its initial dash
         // and add a bounded 25% wish-speed gain for the existing active duration.
         public const float ZackSprintSpeedScale = 1.25f;
+
+        // Veil has a smaller sustained gain than Bolt Sprint, alongside tag immunity.
+        // The previous 3*dt impulse was erased by ordinary movement friction.
+        public const float NemuPhaseSpeedScale = 1.20f;
 
         /// <summary>
         /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,

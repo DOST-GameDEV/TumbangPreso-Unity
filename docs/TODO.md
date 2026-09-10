@@ -274,6 +274,18 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Nemu local function/collision/cancellation batch: 11/11 complete-cycle PlayMode,
+Core 559/559, copy follow-up 24/24 after full EditMode found one length failure.
+See [Nemu function evidence](reports/improvement-2026-09-10/nemu-function.md).
+Familiar networking and actual separate-process proof remain open.
+
+
+**Explicit owner addition, 2026-09-10:** thoroughly fix the broken networking too.
+Separate-process host/joiner/observer and reconnect/lifecycle verification are
+required, including controlled-familiar/skill positions and authoritative contacts.
+The active ledger records the missing possession-motion route and current fixes.
+
+
 **All-hero cultural direction, 2026-09-10: OPEN.** The owner wants every kit and its
 descriptions to carry fitting Philippine folklore/cultural influence without forced
 decoration. Keep English copy; Tagalog only when truly needed. Thorough planning

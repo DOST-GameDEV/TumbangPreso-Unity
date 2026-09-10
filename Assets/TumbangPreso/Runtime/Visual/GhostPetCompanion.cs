@@ -77,6 +77,8 @@ namespace TumbangPreso.Visual
         private AIController _temporaryAi;
         private GameObject _possessLightGo;
         private Vector2 _playerInput;
+        private Vector3 _lastSafeRecall;
+        private readonly System.Collections.Generic.Dictionary<int,float> _nextPossessionHit = new System.Collections.Generic.Dictionary<int,float>();
 
         public void SetPlayerInput(Vector2 input) => _playerInput = input;
 
@@ -153,6 +155,7 @@ namespace TumbangPreso.Visual
 
         /// <summary>True while Kuro is the ultimate rather than a pet.</summary>
         public bool IsDevouring => _devourLeft > 0.0f;
+        public bool IsReturning => _returnLeft > 0.0f;
         public Vector3 MouthPosition { get { FindFace(); return _mouth != null ? _mouth.position : transform.position; } }
 
         /// <summary>
@@ -171,6 +174,13 @@ namespace TumbangPreso.Visual
         /// `Bind` is called once; destroying and rebuilding him would drop the binding, the name
         /// plate and the possession state on the floor for the sake of five seconds.
         /// </summary>
+        public void StopDevouring()
+        {
+            if (!IsDevouring) return;
+            _devourLeft=0;
+            BeginReturn();
+        }
+
         public void Devour(float seconds)
         {
             _devourLeft = Mathf.Max(0.5f, seconds);
@@ -376,8 +386,8 @@ namespace TumbangPreso.Visual
                 Color to=_skinRest[i]*.48f;to.a=_skinRest[i].a;
                 _skinMaterials[i].color=Color.Lerp(_skinRest[i],to,k);
             }
-            if (_armWispL!=null) _armWispL.localRotation=Quaternion.Euler(0,0,48*k);
-            if (_armWispR!=null) _armWispR.localRotation=Quaternion.Euler(0,0,-48*k);
+            if (_armWispL!=null) _armWispL.localRotation=Quaternion.Euler(0,0,(44+7*Mathf.Sin((_devourTotal-_devourLeft)*4.2f))*k);
+            if (_armWispR!=null) _armWispR.localRotation=Quaternion.Euler(0,0,-(43+8*Mathf.Sin((_devourTotal-_devourLeft)*4.2f+1.1f))*k);
         }
 
         private void PrepareDevourMaterials()
@@ -844,6 +854,11 @@ namespace TumbangPreso.Visual
         public void BeginPossession(CharacterMotor nemuMotor, float speedScale = 1.0f)
         {
             _nemuMotor = nemuMotor;
+            _lastSafeRecall=nemuMotor.transform.position;
+            var ground=VfxShapes.GroundPoint(GhostPetMotion.ClampToCourt(nemuMotor,transform.position));
+            if(!GhostPetMotion.CanLand(nemuMotor,ground,false))ground=_lastSafeRecall;
+            transform.position=ground+Vector3.up*.9f;
+            _nextPossessionHit.Clear();
             IsPossessed = true;
             _possessionSpeedScale = Mathf.Clamp(speedScale, 0.5f, 1.5f);
             _playerInput = Vector2.zero;
@@ -888,9 +903,9 @@ namespace TumbangPreso.Visual
         {
             if (!IsPossessed) return;
 
-            if (teleportNemu && _nemuMotor != null)
+            if (teleportNemu && _nemuMotor != null && (NetAuthority.ShouldResolve() || _nemuMotor.PlayerSlot==NetAuthority.LocalSlot))
             {
-                _nemuMotor.Teleport(transform.position);
+                _nemuMotor.Teleport(GhostPetMotion.Recall(_nemuMotor,transform.position,_lastSafeRecall));
 
                 // ⚠️ THE RETURN IS THE ENTER SOUND REVERSED, on purpose: a falling formant onto
                 // a thump, so leaving and arriving are audibly one gesture in two directions.
@@ -968,7 +983,7 @@ namespace TumbangPreso.Visual
 
             if (IsPossessed)
             {
-                UpdatePossession(dt, time);
+                UpdatePossession(Mathf.Max(0,Time.deltaTime), time);
                 return;
             }
 
@@ -1363,24 +1378,13 @@ namespace TumbangPreso.Visual
             const float FlySpeedScale = 1.7f;
             float flySpeed = Core.Balance.Speed * FlySpeedScale * _possessionSpeedScale;
 
-            if (moveDir.sqrMagnitude > 0.01f)
-            {
-                transform.position += moveDir.normalized * flySpeed * dt;
-            }
+            moveDir=Vector3.ClampMagnitude(moveDir,1);
+            var next=GhostPetMotion.Move(_nemuMotor,transform.position,moveDir*flySpeed*dt);
+            var ground=VfxShapes.GroundPoint(next);
+            next.y=ground.y+.9f+Mathf.Sin(time*6f)*.02f;
+            transform.position=next;
+            if(GhostPetMotion.CanLand(_nemuMotor,ground,false))_lastSafeRecall=ground;
 
-            // Floating bob & tilt
-            transform.position += Vector3.up * Mathf.Sin(time * 6.0f) * 0.02f;
-
-            // Height clamp to hover over street
-            if (Physics.Raycast(transform.position + Vector3.up * 1.5f, Vector3.down, out RaycastHit hit, 5.0f, ~0, QueryTriggerInteraction.Ignore))
-            {
-                float targetY = hit.point.y + 0.9f;
-                Vector3 p = transform.position;
-                p.y = Mathf.Lerp(p.y, targetY, (1-Mathf.Exp(-8*dt)));
-                transform.position = p;
-            }
-
-            // Haunt and chill opponents touched by ghost
             var round = GameServices.Round;
             if (round != null && _nemuMotor != null)
             {
@@ -1389,10 +1393,14 @@ namespace TumbangPreso.Visual
                     if (p == null || p.PlayerSlot == _nemuMotor.PlayerSlot) continue;
                     Vector3 diff = p.transform.position - transform.position;
                     diff.y = 0.0f;
-                    if (diff.magnitude < 1.6f)
+                    if (NetAuthority.ShouldResolve() && diff.magnitude < 1.6f &&
+                        (!_nextPossessionHit.TryGetValue(p.PlayerSlot,out float nextHit) || Time.time>=nextHit))
                     {
-                        p.ApplyStagger(0.35f);
-                        p.ApplyImpulse(diff.normalized * 3.0f * dt);
+                        // A passing scare, not a .35-second stun refreshed every
+                        // frame. The discrete nudge survives movement friction.
+                        _nextPossessionHit[p.PlayerSlot]=Time.time+1.25f;
+                        p.ApplyStagger(.35f);
+                        p.ApplyImpulse(diff.normalized*3f);
                     }
                 }
             }

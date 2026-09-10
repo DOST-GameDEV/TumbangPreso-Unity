@@ -354,7 +354,8 @@ namespace TumbangPreso.PlayTests
                     Verb verb = slot == 0 ? Verb.Skill1 : slot == 1 ? Verb.Skill2 : Verb.Ultimate;
                     var answerSlot = (HeroAbilitySystem.Slot)slot;
                     bool accepted = false;
-                    yield return Record(witness, hero + "-" + (slot+1), 3.2f, who, t =>
+                    float captureSeconds=Mathf.Max(3.2f,ability.Duration+ability.Windup+1.5f);
+                    yield return Record(witness, hero + "-" + (slot+1), captureSeconds, who, t =>
                     {
                         who.Intent.Set(verb, t >= .25f && t < .65f);
                         if (t > .25f && abilities.LastAnswer(answerSlot) == HeroKit.CastOutcome.Cast

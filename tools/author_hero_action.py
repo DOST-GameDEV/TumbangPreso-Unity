@@ -578,7 +578,7 @@ CAST_PRESENTATION_TIMES = {
     "hero-cheska-frostwave": (0,.045,.11,.30,.56),
     "hero-cheska-raise": (0,.05,.12,.34,.62),
     "hero-cheska-nova": (0,.23,.40,.55,.68,.85),
-    "hero-nemu-ghoststep": (0,.18,.36,.50,.62),
+    "hero-nemu-ghoststep": (0,.04,.10,.28,.55),
     "hero-nemu-project": (0,.05,.14,.32,.60),
     "hero-nemu-seance": (0,.18,.31,.40,.57,.73,.95),
     "hero-phaister-hex": (0,.045,.085,.14,.30,.64),

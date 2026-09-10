@@ -723,9 +723,10 @@ namespace TumbangPreso.CameraSystem
                 _viewmodel.gameObject.SetActive(false);
 
             float yaw = companion.transform.eulerAngles.y;
-            Vector3 mount = companion.transform.position + Vector3.up * 0.35f;
+            Vector3 mount = companion.transform.position + Vector3.up * 0.20f;
             var rot = Quaternion.Euler(Mathf.Clamp(_pitchDeg, -45.0f, 65.0f), yaw, 0.0f);
-            Vector3 wanted = mount - (rot * Vector3.forward) * 2.0f;
+            Vector3 wanted = mount - (rot * Vector3.forward) * 1.2f;
+            wanted=ConstrainCompanionCamera(mount,wanted);
 
             // ⚠️⚠️ THE ARRIVAL IS TRAVELLED, NOT CUT. See `PossessBlendSeconds`. Until the blend
             // completes the eye is carried from where it stood in Nemu's head to the mount
@@ -738,12 +739,25 @@ namespace TumbangPreso.CameraSystem
                 // stop reads as a scripted move; easing both ends reads as the eye being pulled.
                 float e = _possessBlend * _possessBlend * (3.0f - 2.0f * _possessBlend);
 
-                transform.SetPositionAndRotation(Vector3.Lerp(_possessFromPos, wanted, e),
-                                                 Quaternion.Slerp(_possessFromRot, rot, e));
+                transform.SetPositionAndRotation(ConstrainCompanionCamera(mount,Vector3.Lerp(_possessFromPos,wanted,e)),
+                                                 Quaternion.Slerp(_possessFromRot,rot,e));
                 return;
             }
 
             transform.SetPositionAndRotation(wanted, rot);
+        }
+
+        private static Vector3 ConstrainCompanionCamera(Vector3 mount,Vector3 wanted)
+        {
+            var delta=wanted-mount;float distance=delta.magnitude;
+            if(distance<.001f)return wanted;
+            float clear=distance;
+            foreach(var hit in Physics.SphereCastAll(mount,.12f,delta/distance,distance,~0,QueryTriggerInteraction.Ignore))
+            {
+                if(hit.collider.GetComponentInParent<CharacterMotor>()!=null || hit.collider.GetComponentInParent<Slipper>()!=null)continue;
+                clear=Mathf.Min(clear,Mathf.Max(.16f,hit.distance-.06f));
+            }
+            return mount+delta.normalized*clear;
         }
 
         /// <summary>

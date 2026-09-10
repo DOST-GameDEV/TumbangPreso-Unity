@@ -760,10 +760,10 @@ namespace TumbangPreso.CameraSystem
         private static readonly Key[] GhostStepClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.180f, 0.200f, 0.320f, 0.150f, -0.080f, -0.150f, -0.120f),
-            new Key(0.360f, 0.100f, -0.220f, -0.160f, 0.180f, 0.180f, 0.100f),
-            new Key(0.500f, 0.060f, -0.100f, -0.060f, 0.080f, 0.080f, 0.040f),
-            new Key(0.620f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.040f, 0.200f, 0.320f, 0.150f, -0.080f, -0.150f, -0.120f),
+            new Key(0.100f, 0.100f, -0.220f, -0.160f, 0.180f, 0.180f, 0.100f),
+            new Key(0.280f, 0.060f, -0.100f, -0.060f, 0.080f, 0.080f, 0.040f),
+            new Key(0.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private static readonly Key[] ProjectSpiritClip =

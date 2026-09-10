@@ -410,6 +410,55 @@ per-action design direction, verification criteria and resume order. Read it bef
 further skill work. Character models stay kept; spawned skill models may be reworked.
 Next: Permafrost Sheet art, then complete all three Cheska actions and the other kits.
 
+### Current Nemu gameplay/FX work after pushed Kuro checkpoint a1ac87b
+
+**New source findings that must not be lost:** GhostPetCompanion.UpdatePossession
+currently has no map clamp or movement collision, integrates vertical bob directly
+per frame, and applies a .35-second stagger every frame inside 1.6 m. Its 3*dt nudge
+also loses to friction. The live possessed familiar pose/input has no route in the
+network code (search of Runtime/Net and HeroAbilitySystem found none), even though
+recast and ultimate placement read that local companion position. Fix the actual
+networked possession route using the existing movement/ownership contracts, with
+finite/bounds/speed/rate validation and host-only contact resolution. Do not claim
+same-process witness footage is remote proof. Audit safe recall placement and
+possession camera wall clipping too; the current camera has a fixed 2 m arm and no
+collision query in ApplyCompanionPossessionView. These are existing-skill defects,
+not a reason to add a generalized network framework or new mechanic.
+
+Nemu kit-function v4 passes all seven tests: measured 2.6501 -> 3.1758 m/s actual
+movement, held/newly-acquired slipper behavior, busy familiar charge preservation,
+reset/denial without teleport, normal recall with teleport, and immediate reset
+removal of the pull field. Ultimate duration now tracks its real seven-second field
+so cancellation can own it. Core remains 559/559; fourteen source audits pass.
+Full common-cancellation regression checks and the remaining Nemu work are open.
+
+- Kuro's model/personality batch is pushed at a1ac87b. All eight authorable idle
+  clips and native source are retained; human character models remain unchanged.
+- Uncommitted Veil: actual 20% sustained movement gain through
+  Balance.NemuPhaseSpeedScale, initial 5.5 impulse preserved, existing long-fade
+  slow retained. A slipper held before casting no longer cancels it; a genuine
+  new acquisition still ends the veil. No more 3*dt impulse erased by friction.
+- Replaced the phase light/large bloom with spectral body/FPP edges and two thin
+  motion trails. Rims restore and the detached trails fade on end. Fixed an initial
+  MaterialPropertyBlock field-initializer exception by creating it in Attach.
+- Retimed Nemu's authored ghoststep and matching FPP clip to .04 preparation /
+  .10 release / .55 recovery; model/skin/material data remain unchanged.
+- Possession cannot spend its charge while Kuro is feeding or returning. The first
+  busy/return test passes. Reclaim-to-end Veil also passes. The first physical-speed
+  route was contaminated by camera-relative steering/collision; the fixture now
+  chooses movement aiming and a clear central lane, and measures actual displacement.
+  Current run: Logs/nemu-kit-function-v3.xml, session 45976; collect its XML.
+- New correctness finding: normal projection completion teleports Nemu, and both
+  rollback and round reset previously called that same completion. Added a small
+  OnCancelled hook to HeroAbility (default calls OnEnd); rollback/reset use it.
+  Nemu projection cancellation ends possession/disposes the fallback WITHOUT
+  teleporting, while normal recall/expiry still relocates. Add real-path tests for
+  reset, denial and successful recast, then broaden verification across other kits.
+- The live giant now has asymmetric grasping wisp motion, not a frozen T pose.
+  Remaining Nemu work: full field/return lifecycle and overlap review, actual
+  pull/rim escape measurements, possession arrival/model audit, SFX timing and final
+  normal-speed owner/observer evidence. The other kits/maps/motion/build remain open.
+
 ### Current Nemu work after pushed Cheska checkpoint 1b83710
 
 **Latest owner request:** Kuro must have idle animations and a visible personality,
@@ -806,3 +855,46 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
 The owner has explicitly asked not to lose important planning across compactions.
 Before a context boundary, update the current in-flight state and next concrete
 steps here. Resume the same task; do not restart or silently narrow its scope.
+
+
+## Latest explicit networking request, 2026-09-10
+
+The owner explicitly says networking is broken and asks for a thorough fix. Treat
+this as required release work, not an optional polish item. Verify separate
+host/joiner/observer processes, actual skill/familiar positions and contacts,
+seating/ownership, denied or repeated requests, reconnects, round/rematch transitions,
+stale effects and authority. Include the proven missing controlled-familiar motion
+route and the projection cancellation fixes already in progress. Keep both modes,
+four players, saved IDs and profiles. Use existing transport/movement contracts,
+finite/bounds/elapsed-distance validation and a protocol bump if the wire changes.
+Do not claim same-process witness evidence verifies LAN. Network work remains in
+this same task; no new task, subagent, paid service or usage reset is authorized.
+
+### Nemu function checkpoint before familiar networking
+
+- Fresh `nemu-kit-complete-cycle-v1.xml`: 11/11, including ten real-input
+  contracts and all three complete cast/recovery captures. Intake measurement:
+  player 1.4960 -> 0.4786 m, loose slipper 0.8242 -> 0.1200 m; can unchanged.
+- Full EditMode 480/481: remaining failure was description length, not behavior.
+  Shortened both inspected descriptions and the ultimate summary; focused copy
+  verification is running. Do not mark full suite passed before reading it.
+- The model/cycle witness is an isolated familiar camera, not ordinary overlap or
+  network proof. Current witness frame35 has readable teeth/angry eyes and reach;
+  map lighting/sky saturation still needs the planned broader pass.
+- Networking source confirms controlled Kuro never transmits position. Also,
+  BeginPossession adds temporary AI even to remote human replicas, potentially
+  changing body authority. Use CharacterMotor.IsLocallySimulated for ownership.
+- Revised implementation direction: unreliable sequenced familiar pose stream,
+  just like existing body poses, plus a reliable final anchor in the ability
+  transaction. Do not put the continuous stream behind reliable retransmission;
+  MatchRpc documents a previous actual head-of-line blocking regression.
+- Validate seat, current round, active possession, finite pose, court, collision,
+  floor height and time-accrued travel. A reliable final anchor must be captured
+  BEFORE local reactivation destroys possession. Broadcast the accepted anchor
+  with the cast so observer R/E uses the same position. Budget starts at cast,
+  not the first received movement. No per-packet distance gifts.
+- Keep cancellation/reset fixes separate and commit the locally verified Nemu
+  function/audio batch before changing the protocol. Separate-process networking,
+  reconnect transient restoration and all remaining original scope stay open.
+
+Copy follow-up `nemu-copy-edit-v2.xml`: 24/24 passed after shortening text.

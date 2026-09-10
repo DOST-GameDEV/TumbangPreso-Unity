@@ -1,0 +1,126 @@
+{
+  "source_commit": "a1ac87b",
+  "auditory_approval": false,
+  "cues": [
+    {
+      "cue": "sfx_cast_nemu_veil",
+      "before": {
+        "seconds": 1.1,
+        "peak": 0.49231,
+        "rms": 0.09076,
+        "peak_seconds": 0.49
+      },
+      "after": {
+        "seconds": 0.38,
+        "peak": 0.25719,
+        "rms": 0.06353,
+        "peak_seconds": 0.1271
+      }
+    },
+    {
+      "cue": "sfx_cast_nemu_hijack",
+      "before": {
+        "seconds": 1.0,
+        "peak": 0.65375,
+        "rms": 0.10334,
+        "peak_seconds": 0.2352
+      },
+      "after": {
+        "seconds": 0.42,
+        "peak": 0.36855,
+        "rms": 0.07234,
+        "peak_seconds": 0.1752
+      }
+    },
+    {
+      "cue": "sfx_cast_nemu_seance",
+      "before": {
+        "seconds": 1.6,
+        "peak": 0.85995,
+        "rms": 0.19809,
+        "peak_seconds": 0.6878
+      },
+      "after": {
+        "seconds": 0.4,
+        "peak": 0.5619,
+        "rms": 0.13866,
+        "peak_seconds": 0.1428
+      }
+    },
+    {
+      "cue": "sfx_possess_enter",
+      "before": {
+        "seconds": 1.0,
+        "peak": 0.87994,
+        "rms": 0.26108,
+        "peak_seconds": 0.8019
+      },
+      "after": {
+        "seconds": 0.45,
+        "peak": 0.82715,
+        "rms": 0.19895,
+        "peak_seconds": 0.2614
+      }
+    },
+    {
+      "cue": "sfx_possess_exit",
+      "before": {
+        "seconds": 0.9,
+        "peak": 0.87994,
+        "rms": 0.30921,
+        "peak_seconds": 0.4578
+      },
+      "after": {
+        "seconds": 0.5,
+        "peak": 0.82715,
+        "rms": 0.1837,
+        "peak_seconds": 0.1078
+      }
+    },
+    {
+      "cue": "sfx_kuro_unbound",
+      "before": {
+        "seconds": 2.2,
+        "peak": 0.87994,
+        "rms": 0.25667,
+        "peak_seconds": 1.8885
+      },
+      "after": {
+        "seconds": 1.08,
+        "peak": 0.82715,
+        "rms": 0.22814,
+        "peak_seconds": 0.5967
+      }
+    },
+    {
+      "cue": "sfx_kuro_return",
+      "before": {
+        "seconds": 0.8,
+        "peak": 0.87994,
+        "rms": 0.24058,
+        "peak_seconds": 0.5203
+      },
+      "after": {
+        "seconds": 0.8,
+        "peak": 0.81845,
+        "rms": 0.22614,
+        "peak_seconds": 0.5225
+      }
+    },
+    {
+      "cue": "sfx_ult_theme_nemu",
+      "before": {
+        "seconds": 3.0,
+        "peak": 0.87994,
+        "rms": 0.23978,
+        "peak_seconds": 2.7694
+      },
+      "after": {
+        "seconds": 2.35,
+        "peak": 0.62296,
+        "rms": 0.17264,
+        "peak_seconds": 1.7224
+      }
+    }
+  ]
+}
