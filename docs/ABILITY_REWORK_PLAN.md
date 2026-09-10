@@ -6,6 +6,14 @@ Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER
 
 ## Current owner instructions
 
+- **Latest cultural brief, all six heroes:** make abilities and descriptions more
+  Filipino through well-fitting folklore, places/materials and cultural references,
+  without forced decoration or cringe. Keep English copy; use Tagalog only if a
+  specific term is truly needed. Thoroughly plan before implementation. The owner
+  is AFK and expects complete autonomous execution. The researched direction is
+  [PHILIPPINE_ABILITY_DIRECTION.md](PHILIPPINE_ABILITY_DIRECTION.md); read it before
+  further cultural design changes. It complements every action below.
+
 - **Explicit Phaister brief:** improve all her magic. Grand Coven must be grand
   spellcasting, with runes and a complex magic circle unfolding through distinct
   phases. This is a core deliverable. Readable complexity is wanted; a large flat

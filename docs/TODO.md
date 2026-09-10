@@ -274,6 +274,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**All-hero cultural direction, 2026-09-10: OPEN.** The owner wants every kit and its
+descriptions to carry fitting Philippine folklore/cultural influence without forced
+decoration. Keep English copy; Tagalog only when truly needed. Thorough planning
+precedes implementation, then continue autonomously while the owner is AFK. See
+[PHILIPPINE_ABILITY_DIRECTION.md](PHILIPPINE_ABILITY_DIRECTION.md) for researched
+sources, six distinct directions, all-eighteen copy drafts and verification rules.
+
 **Explicit Phaister/Nemu requirements, 2026-09-10: OPEN.** Improve all of Phaister's
 magic. Grand Coven must feel like grand magic being cast: a complex magic circle,
 runes and a deliberate sequence of visible phases, not merely a large flat ring

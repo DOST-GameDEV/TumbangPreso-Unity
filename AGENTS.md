@@ -21,6 +21,9 @@ For current skill work read [docs/ABILITY_REWORK_PLAN.md](docs/ABILITY_REWORK_PL
 It preserves the all-eighteen geometry/animation/SFX/VFX audit, current owner feedback,
 action-specific direction and completion checks. Start with the rejected ice skill;
 keep the current character designs and finish the remaining overall game scope.
+Also read [docs/PHILIPPINE_ABILITY_DIRECTION.md](docs/PHILIPPINE_ABILITY_DIRECTION.md):
+the latest owner request covers culturally grounded reworks for all six heroes,
+English copy, research/planning before implementation, and autonomous AFK execution.
 
 ## Active scope and boundaries
 

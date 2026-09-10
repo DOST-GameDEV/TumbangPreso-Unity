@@ -353,6 +353,25 @@ pass is complete yet. The other seventeen still require their own design work.
 
 ## 5. Eighteen-skill ledger
 
+**Latest all-hero cultural request:** incorporate fitting Philippine folklore and
+cultural references into all six kits and descriptions, without forced decoration.
+English player-facing copy remains the rule; Tagalog only if genuinely needed.
+The owner asked for thorough planning first and then full autonomous completion
+while AFK. [PHILIPPINE_ABILITY_DIRECTION.md](PHILIPPINE_ABILITY_DIRECTION.md) records
+researched sources, limitations, a distinct direction for every kit and English
+copy drafts. Complete that plan before further cultural implementation; no optional
+approval wait is required. Preserve phased Grand Coven and the raging ghost transformation.
+
+Current uncommitted ice prototype: `tools/author_permafrost_models.py`, native
+`MapSource/abilities/cheska/permafrost.blend`, three OBJ meshes under
+`Resources/Models/Permafrost`, `FrostSurface.shader`, `FrostSurfacePresentation.cs`,
+`PermafrostModelImport.cs`, GameBuilder shader inclusion and the SpawnIceSheet
+replacement. It removes the platform/spikes/cutout in favor of thin fractured film.
+`Logs/permafrost-play-v1.xml`: 1/2 passed; all-map placement passed, kerb check
+hit an unexpected collider at y=0.5 while the vertex was at .003. Diagnose the hit
+before changing code/coverage. Images are in `Logs/permafrost-review-v1` and still
+need visual review. This is not finished art or a verified release candidate.
+
 **Latest explicit Phaister/Nemu brief:** all Phaister magic must improve. Her
 ultimate should read as grand magic, with runes and a complex magic circle that
 unfolds in distinct phases. Rework Nemu's ghost and skill presentation. Her ultimate
