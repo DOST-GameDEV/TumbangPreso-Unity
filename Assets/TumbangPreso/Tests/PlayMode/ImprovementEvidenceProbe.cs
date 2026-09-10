@@ -363,7 +363,10 @@ namespace TumbangPreso.PlayTests
                     File.WriteAllText(Path.Combine(Output,"hero-coverage.csv"), coverage.ToString());
                     Assert.IsTrue(accepted, hero + "/" + ability.Name + " never accepted the real press.");
                     abilities.ResetKit();
-                    yield return new WaitForSecondsRealtime(.2f);
+                    // Isolated reviews let legitimate lingering fields expire. The
+                    // default sequence remains the separate overlap review.
+                    yield return new WaitForSecondsRealtime(
+                        Environment.GetEnvironmentVariable("TUMP_REVIEW_ISOLATED") == "1" ? 7f : .2f);
                 }
                 Object.Destroy(witness.gameObject);
                 yield return PlayModeWorld.Reset();

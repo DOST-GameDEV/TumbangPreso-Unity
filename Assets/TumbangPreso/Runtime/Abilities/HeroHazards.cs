@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -35,77 +35,10 @@ namespace TumbangPreso.Abilities
             go.transform.position = position;
             go.transform.rotation = Quaternion.LookRotation(forward);
 
-            // Create compact glacial wall (3 jagged ice crystals in a focused barrier)
-            for (int i = -1; i <= 1; i++)
-            {
-                var pillar = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                pillar.name = $"IcePillar_{i}";
-                pillar.transform.SetParent(go.transform, false);
+            // Authored fractured slabs replace the rotated cubes, disconnected
+            // diamond toppers, rigidbody chips and persistent cyan point light.
+            CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale);
 
-                float height = (2.6f - Mathf.Abs(i) * 0.4f) * Random.Range(0.95f, 1.15f);
-                float width = 0.85f;
-                float rotY = i * 8.0f + Random.Range(-4.0f, 4.0f);
-                float rotZ = i * -4.0f;
-
-                pillar.transform.localScale = new Vector3(width, height, 0.55f * thicknessScale);
-                pillar.transform.localPosition = new Vector3(i * 0.75f * spanScale,
-                    height * 0.5f, -Mathf.Abs(i) * 0.12f);
-                pillar.transform.localRotation = Quaternion.Euler(Random.Range(-4.0f, 4.0f), rotY, rotZ);
-
-                // ⚠️ THE ONE EFFECT THAT IS BOTH SEE-THROUGH AND SOLID. Everything else that
-                // goes through `VfxMaterial` loses its collider; a barricade is the wall the
-                // ability is named after, so it keeps it.
-                VfxMaterial.Ghost(pillar.GetComponent<Renderer>(),
-                                  new Color(0.35f, 0.90f, 1.0f, 0.92f), 0.35f,
-                                  stripCollider: false);
-
-                var col = pillar.GetComponent<Collider>();
-                if (col != null) col.isTrigger = false;
-
-                // Crystal diamond topper for each pillar
-                var topper = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                topper.name = $"IceTopper_{i}";
-                topper.transform.SetParent(pillar.transform, false);
-                topper.transform.localPosition = new Vector3(0, 0.5f, 0);
-                topper.transform.localRotation = Quaternion.Euler(45.0f, 45.0f, 0);
-                topper.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);
-                VfxMaterial.Ghost(topper.GetComponent<Renderer>(), new Color(0.85f, 0.98f, 1.0f, 0.95f), 0.6f);
-            }
-
-            // Initial ground eruption frost chips
-            for (int c = 0; c < 6; c++)
-            {
-                var chip = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                chip.name = "IceEruptChip";
-                chip.transform.position = position + forward * Random.Range(-0.3f, 0.3f) + Vector3.up * 0.2f;
-                chip.transform.localScale = Vector3.one * Random.Range(0.14f, 0.26f);
-                VfxMaterial.Ghost(chip.GetComponent<Renderer>(), new Color(0.70f, 0.95f, 1.0f, 0.85f));
-                var rb = chip.AddComponent<Rigidbody>();
-                rb.linearVelocity = Vector3.up * 3.0f + Random.insideUnitSphere * 1.6f;
-                Object.Destroy(chip, 0.75f);
-            }
-
-            // Cyan frost glow light
-            var lightGo = new GameObject("IceLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 1.2f, 0);
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroIceBright;
-            light.range = 5.0f;
-            light.intensity = 2.5f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
-            // ⚠️⚠️ A WALL GOING UP PLAYED THE SOUND OF SOMETHING BREAKING, AND SO DID THE
-            // SHEET. `ability_shatter_trap` was on BOTH of Cheska's ground powers, so two
-            // different abilities shared one cue and that cue is a shatter fired at the moment
-            // something is BUILT. This is the fault `tools/generate_ability_audio.py` was written
-            // for (`ability_bagsak_bomb` on four callers, `ability_flick_dash` on a lightning
-            // strike) surviving in the one kit that pass did not reach.
-            //
-            // ⚠️ `sfx_barricade_raise` ARRIVES AND STOPS, which is the gameplay half: three
-            // pillars are a solid object that is now in the way, and the hard lock at the end of
-            // the cue is the frame it becomes true. The sheet gets a rising shimmer instead,
-            // because a sheet spreads and a wall lands.
             GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
@@ -120,6 +53,7 @@ namespace TumbangPreso.Abilities
         {
             public float Duration = 6.0f;
             private float _left;
+            private bool _shattered;
 
             private void Start() => _left = Duration;
 
@@ -134,37 +68,12 @@ namespace TumbangPreso.Abilities
 
             public void Shatter()
             {
-                // Spawn 12 cartoon bouncy ice explosion cubes on break
-                for (int i = 0; i < 12; i++)
-                {
-                    var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    shard.name = "IceShard";
-                    shard.transform.position = transform.position + Vector3.up * Random.Range(0.4f, 2.0f) + Random.insideUnitSphere * 0.9f;
-                    shard.transform.localScale = Vector3.one * Random.Range(0.25f, 0.5f);
-                    shard.transform.rotation = Random.rotation;
-
-                    // ⚠️⚠️ THE COLLIDER GOES, AND THAT IS A GAMEPLAY FIX RATHER THAN A VISUAL
-                    // ONE. Twelve cubes with rigidbodies AND colliders spawned inside the
-                    // barricade every time one expired, so anybody standing near a wall that
-                    // timed out got shoved around by decoration.
-                    VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
-                                      new Color(0.6f, 0.95f, 1.0f, 0.85f));
-
-                    var rb = shard.AddComponent<Rigidbody>();
-                    rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.4f) * Random.Range(4.0f, 9.0f);
-                    rb.angularVelocity = Random.insideUnitSphere * 20.0f;
-
-                    Object.Destroy(shard, 1.2f);
-                }
-
-                // ⚠️⚠️ THIS PLAYED `slipper_land`: A RUBBER SANDAL HITTING THE ROAD, for a wall
-                // of ice failing and coming down in twelve pieces. It is the single worst cue
-                // mismatch left in the game and it is in the one place in Cheska's kit where ice
-                // genuinely does break.
-                // ⚠️⚠️ BOTH HALVES TRAVEL. `Shatter` is reached only from a host-gated
-                // `Update`, so a wall of ice coming down in twelve pieces did it silently and
-                // invisibly for three players. The note above about the cue being the worst
-                // mismatch in the game is still true of the sound; this is who hears it.
+                if (_shattered) return;
+                _shattered=true;
+                foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled=false;
+                CheskaIceVisuals.Shatter(transform.position,true);
+                // Keep the actual ice-break cue and shared match event. Decorative
+                // fragments have no physics or colliders and cannot shove players.
                 NetCue.Play("sfx_ice_shatter", transform.position);
                 Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.IceShatter, -1, -1,
                                            transform.position);
@@ -231,6 +140,7 @@ namespace TumbangPreso.Abilities
             /// `OnDestroy`.
             /// </summary>
             private readonly HashSet<int> _chilled = new HashSet<int>();
+            private readonly HashSet<CharacterMotor> _tractionTargets = new HashSet<CharacterMotor>();
 
             private void Start() => _left = Duration;
 
@@ -244,6 +154,14 @@ namespace TumbangPreso.Abilities
             /// </summary>
             private void OnDestroy()
             {
+                foreach (var target in _tractionTargets)
+                {
+                    if (target != null && (NetAuthority.ShouldResolve() || target.PlayerSlot == NetAuthority.LocalSlot))
+                    {
+                        target.SetIceSurface(this,0);
+                    }
+                }
+                _tractionTargets.Clear();
                 var round = GameServices.Round;
                 if (round == null) { _chilled.Clear(); return; }
 
@@ -288,8 +206,8 @@ namespace TumbangPreso.Abilities
                     return;
                 }
 
-                // Slow rotation on the ice zone
-                transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
+                // The mesh was fitted to this exact street footprint at creation.
+                // Rotating the old platform moved raised kerb vertices over the road.
 
                 // ⚠️⚠️ IT SLOWS YOU NOW, AND UNTIL 2026-08-29 IT DID NOTHING A PLAYER COULD NAME.
                 // 🧑: *"make cheska q ice slow ppl or have impact bcz it doesnt feel lke
@@ -345,6 +263,11 @@ namespace TumbangPreso.Abilities
                     // thing standing between a client and somebody else's body.
                     if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
                     {
+                        if (inside)
+                        {
+                            p.SetIceSurface(this,SlipScale);
+                            _tractionTargets.Add(p);
+                        }
                         if (inside && !chilled)
                         {
                             p.EnterSpeedZone(ChillMultiplier);
@@ -353,26 +276,18 @@ namespace TumbangPreso.Abilities
                         else if (!inside && chilled)
                         {
                             p.ExitSpeedZone(ChillMultiplier);
+                            p.SetIceSurface(this,0);
+                            _tractionTargets.Remove(p);
                             _chilled.Remove(p.PlayerSlot);
                         }
                     }
 
                     if (inside)
                     {
-                        // The cartoon overshoot is kept ON TOP of the slow: the slow is what
-                        // costs you, the slide is what tells you why.
+                        // Traction now carries the overshoot in the movement step.
+                        // Keep the sparse slipping cue and shared match event.
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
-                            Vector3 slip = p.Velocity.normalized * 5.5f * SlipScale * Time.deltaTime;
-
-                            if (NetAuthority.ShouldResolve() ||
-                                p.PlayerSlot == NetAuthority.LocalSlot)
-                            {
-                                p.ApplyImpulse(slip);
-                            }
-
-                            // ⚠️ THE POPUP AND THE CUE ARE ANNOUNCEMENTS AND STAY HOST-ONLY, so
-                            // four machines do not each raise their own copy of one event.
                             if (resolves && _whoaCooldown <= 0.0f)
                             {
                                 _whoaCooldown = 1.2f;
@@ -4819,16 +4734,10 @@ namespace TumbangPreso.Abilities
         {
             if (victim == null) return null;
 
-            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = "IceCubePrison";
-            go.transform.position = victim.position + Vector3.up * 0.95f;
+            var go = new GameObject("IceCubePrison");
+            go.transform.position = victim.position;
             go.transform.rotation = victim.rotation;
-            go.transform.localScale = new Vector3(1.35f, 1.95f, 1.35f);
-
-            // ⚠️ THIS ONE HAD TO BE SEE-THROUGH OR THE ABILITY IS UNPLAYABLE. It encases a
-            // PLAYER, so at full opacity the victim spent 2.5 s looking at the inside of a
-            // solid box and everyone else lost track of where they were.
-            VfxMaterial.Ghost(go.GetComponent<Renderer>(), new Color(0.45f, 0.92f, 1.0f, 0.72f), 0.3f);
+            CheskaIceVisuals.BuildRestraint(go.transform);
 
             var comp = go.AddComponent<IceCubePrisonComponent>();
             comp.Duration = duration;
@@ -4842,52 +4751,29 @@ namespace TumbangPreso.Abilities
             public float Duration = 2.5f;
             public Transform Victim;
             private float _left;
-
-            private void Start() => _left = Duration;
-
+            private CharacterMotor _motor;
+            private bool _shattered;
+            private void Start()
+            {
+                _left=Duration;
+                if (Victim != null) _motor=Victim.GetComponent<CharacterMotor>();
+            }
             private void Update()
             {
-                if (Victim != null)
-                {
-                    transform.position = Victim.position + Vector3.up * 0.95f;
-                }
-
-                _left -= Time.deltaTime;
-                if (_left <= 0.0f)
-                {
+                if (Victim == null) { Object.Destroy(gameObject); return; }
+                transform.position=Victim.position;
+                _left-=Time.deltaTime;
+                // Mash-out, immunity and a replaced status must release the visual
+                // restraint too; a fixed timer falsely showed escaped players frozen.
+                if (_left<=0 || (_motor != null && (!_motor.IsStunned || _motor.StunElement != StunElement.Ice)))
                     Shatter();
-                }
-                else if (_left <= 0.5f)
-                {
-                    // Wobble before breaking
-                    transform.position += Random.insideUnitSphere * 0.04f;
-                }
             }
-
             public void Shatter()
             {
-                for (int i = 0; i < 12; i++)
-                {
-                    var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    shard.name = "PrisonIceShard";
-                    shard.transform.position = transform.position + Random.insideUnitSphere * 0.6f;
-                    shard.transform.localScale = Vector3.one * Random.Range(0.2f, 0.4f);
-                    shard.transform.rotation = Random.rotation;
-
-                    VfxMaterial.Ghost(shard.GetComponent<Renderer>(),
-                                      new Color(0.7f, 0.96f, 1.0f, 0.85f));
-
-                    var rb = shard.AddComponent<Rigidbody>();
-                    rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(3.5f, 8.0f);
-                    rb.angularVelocity = Random.insideUnitSphere * 25.0f;
-
-                    Object.Destroy(shard, 1.2f);
-                }
-
-                // ⚠️ THE SHATTER IS TWELVE FLYING SHARDS AND A SOUND. It does not also need
-                // a word, and it fires once per frozen player, so a three-target nova used to
-                // print three of them 2.5 s after the cast.
-                NetCue.Play("sfx_ice_freeze", transform.position);
+                if (_shattered) return;
+                _shattered=true;
+                CheskaIceVisuals.Shatter(transform.position,false);
+                NetCue.PlayVaried("sfx_ice_shatter",transform.position,.98f,1.04f,.45f);
                 Object.Destroy(gameObject);
             }
         }

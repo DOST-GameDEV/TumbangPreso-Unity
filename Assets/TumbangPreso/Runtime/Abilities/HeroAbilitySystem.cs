@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
@@ -958,7 +958,13 @@ namespace TumbangPreso.Abilities
             // ⚠️ THE IMPACT FEEDBACK BELOW STAYS ON THE PRESS AND IS NOT A SECOND PUNCH. It
             // reads as the caster bracing into the wind-up; the blast supplies its own shake
             // when it lands, scaled per style and per radius in `HeroHazards.CreateExplosion`.
-            Visual.UltimateColumn.Raise(_context.Position, AccentColour());
+            // Cheska gathers cold around her hands; her authored radial release
+            // carries the payoff. A nine-metre glowing cylinder hid the caster and
+            // bleached the court for 2.2 seconds after a 0.4-second preparation.
+            if (Kit != null && Kit.HeroId == "cheska")
+                Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
+            else
+                Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
             // IN SIX KITS ON PURPOSE. 🧑 2026-08-26, having asked for Phaister's eclipse: *"maybe

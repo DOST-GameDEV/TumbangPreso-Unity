@@ -316,11 +316,26 @@ hand-aura anchoring are also corrected and under broad verification. Details and
 exact receipts are in the active ledger. Full animation/SFX/VFX quality remains
 open; do not close this section for these correctness fixes alone.
 
-Permafrost now has an authored thin-film prototype in native Blender source with
-three runtime meshes. Kerb probes exposed and verified fixes for deferred decorative
-collider removal and quantized ground-height caching. Targeted PlayMode passes 3/3.
-Positional toon-light falloff passes both GPU fixtures; remaining palette/render
-appearance and full Cheska animation/SFX/VFX quality are still open in the ledger.
+Cheska's local kit pass now includes authored fractured ice slabs with matching
+collision, a low freeze restraint that clears on actual escape, a grounded freeze
+wave and cold-gather preparation replacing the generic giant light column. Held
+placement has FPP preparation with 30/60/144 FPS continuity checks. Wall/nova body
+poses have less excessive backbend and stretch, and seven sound layers are timed
+to the gestures with lower measured peak/RMS budgets. Audio listening remains
+unverified. Actual casts, ground placement, collision and escape checks pass.
+
+The sheet's old repeated shove lost to normal friction. It now reduces traction
+within its existing slow zone, preserving owner immunity and combat impulse rules.
+An actual stop test measures 0.2163 m of ice drift versus 0.0000 m on dry ground;
+overlap expiry restores normal control. The frozen mesh no longer rotates off its
+ground fit; kerb vertices are checked at spawn and after one second. Final remote,
+ordinary-play, all-kit overlap and release qualification remain open. See the active
+ledger for exact tests and evidence; do not close section 152.4 for one kit.
+
+The next ghost pass has a source-grounded cause: Kuro's GLB is one merged mesh, so
+the runtime's named mouth/eyes/tail transformation targets do not exist. Reauthor
+those parts in Blender, preserving the live companion/possession/return contract.
+The full all-hero cultural, animation and map/tree scope remains open in the plans.
 
 **Latest owner decision, 2026-09-10:** the cleaned Classic models were called solid
 and the owner explicitly asked to move on. Preserve the current cast at `7c7fcb5`;

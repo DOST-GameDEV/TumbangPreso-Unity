@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -111,21 +111,24 @@ namespace TumbangPreso.PlayTests
             var ice = HeroHazards.SpawnIceSheet(new Vector3(0, 4, 0), 2.3f, 2);
             var fire = HeroHazards.SpawnFireTrail(new Vector3(0, 4, 4), 1, 2);
             int checkedVertices = 0;
-            foreach (var surface in new[] { ice.transform.Find("FrozenSkin"), fire.transform.Find("FireChar") })
+            for (int sample=0;sample<2;sample++)
             {
-                var mesh = surface.GetComponent<MeshFilter>().sharedMesh;
-                var vertices = mesh.vertices;
-                var normals = mesh.normals;
-                for (int i = 0; i < vertices.Length; i++)
+                if (sample>0) yield return new WaitForSeconds(1f);
+                foreach (var surface in new[] { ice.transform.Find("FrozenSkin"), fire.transform.Find("FireChar") })
                 {
-                    Vector3 world = surface.TransformPoint(vertices[i]);
-                    Assert.IsTrue(Physics.Raycast(new Vector3(world.x, 1, world.z), Vector3.down,
-                        out var support, 2, ~0, QueryTriggerInteraction.Ignore));
-                    Assert.AreEqual(support.point.y + .003f, world.y, .012f,
-                        surface.name + " has a floating or buried floor vertex at " + world
-                        + "; support=" + support.collider.name + " parent=" + support.collider.transform.parent?.name
-                        + " supportY=" + support.point.y);
-                    checkedVertices++;
+                    var mesh = surface.GetComponent<MeshFilter>().sharedMesh;
+                    var vertices = mesh.vertices;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        Vector3 world = surface.TransformPoint(vertices[i]);
+                        Assert.IsTrue(Physics.Raycast(new Vector3(world.x, 1, world.z), Vector3.down,
+                            out var support, 2, ~0, QueryTriggerInteraction.Ignore));
+                        Assert.AreEqual(support.point.y + .003f, world.y, .012f,
+                            surface.name + " has a floating or buried floor vertex at " + world
+                            + "; support=" + support.collider.name + " parent=" + support.collider.transform.parent?.name
+                            + " supportY=" + support.point.y);
+                        checkedVertices++;
+                    }
                 }
             }
             Assert.Greater(checkedVertices, 12, "No meaningful floor geometry was examined.");

@@ -30,7 +30,7 @@ SUBTREES = ("Abilities",)
 # a body is, how fast it moves, or what the scoreboard says is not.
 EFFECT = re.compile(
     r'\.(ApplyStagger|ApplyImpulse|ApplyTrip|ApplyStun|Teleport|ClearStun|ClearTrip'
-    r'|Respawn|EnterSpeedZone|ExitSpeedZone|AddScore|ForceDrop|Drop)\s*\('
+    r'|Respawn|EnterSpeedZone|ExitSpeedZone|SetIceSurface|AddScore|ForceDrop|Drop)\s*\('
 )
 
 SIG = re.compile(r'^(public|private|protected|internal)\s+[\w<>\[\],\. ]+\s+\w+\s*\(')

@@ -6,6 +6,7 @@ Shader "TumbangPreso/FrostSurface"
         _Growth ("Formation Radius", Float) = 1.12
         _Opacity ("Life Opacity", Range(0,1)) = 1
         _Glass ("Ice Sheen", Range(0,1)) = 0
+        _Trail ("Wave Trail Width", Float) = 2
     }
     SubShader
     {
@@ -32,7 +33,7 @@ Shader "TumbangPreso/FrostSurface"
                 UNITY_FOG_COORDS(3)
             };
             float4 _Color;
-            float _Growth, _Opacity, _Glass;
+            float _Growth, _Opacity, _Glass, _Trail;
             v2f vert(appdata v)
             {
                 v2f o;
@@ -46,7 +47,7 @@ Shader "TumbangPreso/FrostSurface"
             fixed4 frag(v2f i) : SV_Target
             {
                 float radius = length((i.uv-.5)*2);
-                float reveal = saturate((_Growth-radius)/.08);
+                float reveal = saturate((_Growth-radius)/.08) * saturate((radius-_Growth+_Trail)/.08);
                 float3 n = normalize(i.normal);
                 float3 view = normalize(_WorldSpaceCameraPos-i.world);
                 float grazing = pow(1-saturate(abs(dot(n,view))),3);

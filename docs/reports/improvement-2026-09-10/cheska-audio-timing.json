@@ -1,0 +1,111 @@
+{
+  "source_commit": "a275138",
+  "auditory_approval": false,
+  "cues": [
+    {
+      "cue": "sfx_cast_cheska_sheet",
+      "before": {
+        "seconds": 1.15,
+        "peak": 0.7341,
+        "rms": 0.05372,
+        "peak_seconds": 0.0642
+      },
+      "after": {
+        "seconds": 0.19,
+        "peak": 0.35253,
+        "rms": 0.03331,
+        "peak_seconds": 0.109
+      }
+    },
+    {
+      "cue": "sfx_ice_form",
+      "before": {
+        "seconds": 1.0,
+        "peak": 0.87994,
+        "rms": 0.08469,
+        "peak_seconds": 0.2547
+      },
+      "after": {
+        "seconds": 0.65,
+        "peak": 0.82715,
+        "rms": 0.0666,
+        "peak_seconds": 0.1063
+      }
+    },
+    {
+      "cue": "sfx_cast_cheska_barricade",
+      "before": {
+        "seconds": 1.0,
+        "peak": 0.82306,
+        "rms": 0.07719,
+        "peak_seconds": 0.8657
+      },
+      "after": {
+        "seconds": 0.25,
+        "peak": 0.46206,
+        "rms": 0.04786,
+        "peak_seconds": 0.1557
+      }
+    },
+    {
+      "cue": "sfx_barricade_raise",
+      "before": {
+        "seconds": 0.95,
+        "peak": 0.87994,
+        "rms": 0.08629,
+        "peak_seconds": 0.5117
+      },
+      "after": {
+        "seconds": 0.59,
+        "peak": 0.82715,
+        "rms": 0.05743,
+        "peak_seconds": 0.1518
+      }
+    },
+    {
+      "cue": "sfx_cast_cheska_nova",
+      "before": {
+        "seconds": 1.4,
+        "peak": 0.84647,
+        "rms": 0.17499,
+        "peak_seconds": 1.2602
+      },
+      "after": {
+        "seconds": 0.4,
+        "peak": 0.52481,
+        "rms": 0.04611,
+        "peak_seconds": 0.1718
+      }
+    },
+    {
+      "cue": "sfx_ult_theme_cheska",
+      "before": {
+        "seconds": 3.0,
+        "peak": 0.87994,
+        "rms": 0.22342,
+        "peak_seconds": 2.6668
+      },
+      "after": {
+        "seconds": 1.35,
+        "peak": 0.63356,
+        "rms": 0.11476,
+        "peak_seconds": 0.4291
+      }
+    },
+    {
+      "cue": "sfx_frost_nova",
+      "before": {
+        "seconds": 1.5,
+        "peak": 0.87994,
+        "rms": 0.20148,
+        "peak_seconds": 0.0155
+      },
+      "after": {
+        "seconds": 0.85,
+        "peak": 0.82715,
+        "rms": 0.11893,
+        "peak_seconds": 0.0105
+      }
+    }
+  ]
+}

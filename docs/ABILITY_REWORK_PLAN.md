@@ -433,3 +433,24 @@ before/after rationale and role/counterplay evidence.
 - Update this file and ACTIVE_REWORK_LEDGER.md when priorities, findings or results
   change. Keep TODO current in the same commits. On compaction, resume this exact
   queue and the remaining overall game work; do not restart the model redesigns.
+
+
+## Additional source findings, 2026-09-10
+
+- Cheska's grounded sheet still rotated its root 20 degrees/sec after initial mesh
+  conformance. The strengthened probe now checks after one second as well as at
+  spawn. Its old 5.5*dt impulse also loses to the motor's Friction=30. A bounded
+  traction correction is under actual movement verification; see active ledger.
+- **Kuro's current GLB has ONE node and ONE mesh**, named GhostPetRoot/GhostPetMesh,
+  with bounds x[-.038,.036], y[-.126,.042], z[-.036,.047]. This is decisive for the
+  failed transformation: GhostPetCompanion.FindFace searches named mouth, eye-l,
+  eye-r and tail transforms, but none exist in that source. Scaling the root and
+  adding horns cannot animate those missing facial parts. Reauthor the explicitly
+  authorized ghost as a native Blender model with separately named simple face,
+  body, arm-wisp and tail parts, preserving a cute flat-face baseline and enabling
+  a visibly widening mouth, angry eyes, broader silhouette and trailing wisps.
+- Kuro is currently given Nemu's sixteen-color PERSON palette by CharacterVisual.
+  The reauthored companion needs its own deliberate materials; do not allow an
+  untextured new mesh's default UV to map every surface to the same person slot.
+  Preserve the live possession/return/owner-visibility link and actual pull center.
+  Keep persistent human character designs unchanged.

@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace TumbangPreso.EditorTools
 {
@@ -8,7 +8,8 @@ namespace TumbangPreso.EditorTools
     {
         private void OnPreprocessModel()
         {
-            if (!assetPath.StartsWith("Assets/TumbangPreso/Resources/Models/Permafrost/")) return;
+            if (!assetPath.StartsWith("Assets/TumbangPreso/Resources/Models/Permafrost/")
+                && !assetPath.StartsWith("Assets/TumbangPreso/Resources/Models/CheskaIce/")) return;
             var importer = (ModelImporter)assetImporter;
             importer.isReadable = true;
             importer.addCollider = false;

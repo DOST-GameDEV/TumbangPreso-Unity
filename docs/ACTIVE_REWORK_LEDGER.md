@@ -410,6 +410,68 @@ per-action design direction, verification criteria and resume order. Read it bef
 further skill work. Character models stay kept; spawned skill models may be reworked.
 Next: Permafrost Sheet art, then complete all three Cheska actions and the other kits.
 
+### Current uncommitted Cheska kit batch after a275138
+
+- Native Blender wall source and four small mesh exports under Models/CheskaIce.
+  Three separately drawn crowns replace rotated cubes and detached diamond toppers.
+  Convex collision uses each exact rendered slab mesh; bases anchor to the lowest
+  supporting corner. No persistent cyan light or physical decorative debris.
+- Freeze restraint now uses five low shards and the existing full-body frost coat,
+  leaving faces/FPP eye lines open. It follows the victim and ends when the actual
+  Ice status ends, including mash-out, rather than always waiting the original timer.
+- Cheska's ultimate no longer uses the shared nine-metre glowing column. Six tiny
+  cold fragments gather during windup, then a short radial wave reaches the actual
+  4.6 m blast radius and thaws. Existing blast/stun/shove rules are preserved.
+- FPP held-aim preview added for existing placement actions. No extra cast/resource
+  event; throw/lunge charge and active action priority remain. Instant releases can
+  continue from the held preparation key. Thunderstrike retains its full windup clock.
+- Cheska squash/stretch amplitudes reduced to 3.5/4.5/6.5 percent; authored weight
+  carries her casts rather than a 20-35 percent body deformation.
+- First actual-kit review accepted all three casts. Tests then exposed two fixture
+  issues: test floor transforms were not synced before ground rays, and twelve
+  same-frame mash calls were correctly throttled by the existing anti-spam interval.
+  The corrected fixture syncs its floor and spaces real mash calls by .12 seconds;
+  it still requires visible collider bounds and early restraint removal.
+- Local visual/animation/audio verification now passes: EditMode 478/478 including
+  held preparation/cancellation at 30/60/144 FPS and throw-charge priority; PlayMode
+  cheska-ice-kit-v4.xml 6/6 including actual three casts, wall collision, escaped
+  restraint and grounding. Checks.RunAll passes all eight. Fourteen source audits
+  pass; the existing informational audio audit still flags seven of 119 cues.
+- Isolated owner/local-witness captures are in Logs/cheska-ice-kit-v4-isolated,
+  encoded at recorded wall-clock intervals with no interpolation (silent videos).
+  The wall is distinct and transparent; the nova no longer bleaches its caster.
+  Reduced the excessive combined torso/head backbend in wall/nova authored clips.
+  Their GLB author reports unchanged model/skin/material data and preserved source
+  binary, with grounded contact checks passing. This did not redesign Cheska.
+- Seven sound layers shortened and shaped with preserved/lower peak and RMS budgets.
+  tools/refine_cheska_audio.py rebuilds from the baked cues at a275138, not its own
+  outputs. Mixed recorded/synthesised source provenance stays explicit. Timing and
+  signal measurements are in the committed cheska-audio-timing.json; no listening
+  approval is claimed. The old cast wall peak was .866 s, now .156 s; the nova
+  preparation ends at its .4 s windup and the payload peaks at .011 s.
+- Subsequent live-source review found IceSheetComponent still rotated its grounded
+  root by 20 degrees/sec, which invalidated kerb conformance after the initial frame.
+  Removed it and strengthened the kerb test to recheck vertices after one second.
+- The old 5.5*dt ice impulse was erased by Friction=30. Current uncommitted correction
+  registers per-sheet traction on the motor, keeps the existing slow/owner immunity,
+  and approaches movement intent with 3.8 m/s2 acceleration while grounded on ice.
+  Combat external-impulse friction and authored retrieval slides are untouched.
+  Sources release independently on exit/destroy, including overlapping sheets.
+  IceTractionProbe drives actual dry/ice stops and overlap/owner-immunity cleanup.
+  Logs/ice-traction-play.xml passes 4/4. Actual dry stopping distance was 0.0000 m;
+  on ice it was 0.2163 m, with input released, and overlap/owner-immunity cleanup
+  passed. The dynamic kerb check also passes after one second. The authority audit
+  now includes SetIceSurface and reports 49 sites, zero ungated other-body writes.
+- The final refreshed EditMode run Logs/cheska-final-edit.xml passes 478/478.
+  This locally verified Cheska batch is ready for a stable push; the all-hero and
+  Windows release task continues. Remote and final ordinary-play
+  qualification stay open for the complete task.
+  Existing audio peaks occur at .866 s for a wall cast and 1.26 s for nova preparation,
+  after their meaningful gestures. Plan to align preparation/contact/recovery using
+  current licensed baked recordings, preserving peak/RMS headroom. Source downloads
+  are absent in this checkout; do not claim unavailable stems were inspected.
+  Audio listening is unsupported by the current model; never claim auditory approval.
+
 ### Current implementation batch: Zack function and grounded skill placement
 
 **Latest art feedback:** the owner called the grounded ice skill ugly and renewed

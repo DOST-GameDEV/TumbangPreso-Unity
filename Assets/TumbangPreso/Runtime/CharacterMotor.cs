@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -508,6 +508,27 @@ namespace TumbangPreso
             Stamina.SpeedZones.Exit(multiplier);
         }
 
+        // Ice changes traction, not the speed-zone stack or combat impulse friction.
+        // The old per-frame 5.5*dt shove lost to Friction=30 before it could slide.
+        // Keep each sheet as a source so leaving one overlapping patch cannot clear
+        // another. Only the host or this body's predicted owner reaches these calls.
+        private readonly Dictionary<UnityEngine.Object,float> _iceSurfaces = new Dictionary<UnityEngine.Object,float>();
+        public bool IsOnIce => _iceSurfaces.Count > 0;
+        public void SetIceSurface(UnityEngine.Object source, float slipperiness)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (slipperiness <= 0) _iceSurfaces.Remove(source);
+            else _iceSurfaces[source]=Mathf.Clamp(slipperiness,.25f,3f);
+        }
+        private float IceAcceleration()
+        {
+            float strongest=1;
+            foreach (float value in _iceSurfaces.Values) strongest=Mathf.Max(strongest,value);
+            // At the normal slowed walk, stopping takes roughly .38 s / .28 m.
+            // Incoming momentum takes longer to arrest, which makes crossing matter.
+            return 3.8f/strongest;
+        }
+
         /// <summary>The slow currently applied to this unit, 1.0 when clear.</summary>
         public float SpeedMultiplier => Stamina.SpeedZones.Value;
 
@@ -827,8 +848,11 @@ namespace TumbangPreso
             {
                 Vector3 wish = Steer(axis, dt);
 
-                _velocity.x = wish.x * speed;
-                _velocity.z = wish.z * speed;
+                var target=new Vector2(wish.x*speed,wish.z*speed);
+                if (IsOnIce && _grounded)
+                    target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
+                _velocity.x=target.x;
+                _velocity.z=target.y;
             }
             else
             {

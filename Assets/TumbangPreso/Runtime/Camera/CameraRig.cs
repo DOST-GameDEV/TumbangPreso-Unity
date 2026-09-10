@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 // ShadowCastingMode, for the first-person self-hide. See ApplyFppSelfHide.
 using UnityEngine.Rendering;
@@ -861,6 +861,16 @@ namespace TumbangPreso.CameraSystem
             }
 
             _arms.SetCharge(charge);
+            var hero=_character.GetComponent<Abilities.HeroAbilitySystem>();
+            string aiming=null;
+            if (_character.CanAct() && hero != null && hero.Kit != null)
+            {
+                if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill1)) aiming=hero.Kit.Skill1.ViewmodelAction;
+                else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill2)) aiming=hero.Kit.Skill2.ViewmodelAction;
+                else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Ultimate)) aiming=hero.Kit.Ultimate.ViewmodelAction;
+            }
+            _arms.SetAimPreview(aiming);
+
 
             // ⚠️ THE VIEWMODEL WEARS THE PICKED SKIN. A player who chose CROCS held a brown
             // flip-flop in their own hands while every peer saw what they had actually picked.

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
 {
@@ -856,6 +856,8 @@ namespace TumbangPreso.CameraSystem
 
         private Key[] _clip;
         private float _clipTime;
+        private float _clipBlendTime;
+        private string _aimPreview;
         private Quaternion _clipFromRight, _clipFromLeft, _returnFromLeft;
         private float _returnDuration = SlideCarryBlendSeconds;
         private string _actionName;
@@ -937,6 +939,15 @@ namespace TumbangPreso.CameraSystem
             if (_charge >= 0.0f && !_heroAction) _clip = null;
         }
 
+        /// <summary>Pose the held placement gesture without starting or paying for a cast.</summary>
+        public void SetAimPreview(string action) => _aimPreview=action;
+
+        private static Key[] AimClip(string action) => action == "frost-sweep" ? FrostSweepClip
+            : action == "raise-barricade" ? RaiseBarricadeClip
+            : action == "summon-lightning" ? SummonLightningClip
+            : action == "cast-hex" ? CastHexClip
+            : action == "blink" ? BlinkClip : null;
+
         /// <summary>
         /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
         /// </summary>
@@ -999,7 +1010,11 @@ namespace TumbangPreso.CameraSystem
                   : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 
-            _clipTime = 0.0f;
+            // A held gesture has already paid its preparation visually. Continue
+            // from that key; a tap still plays the whole authored action.
+            _clipTime = _aimPreview == clip && AimClip(clip) != null && clip != "summon-lightning" ? _clip[1].T : 0.0f;
+            _clipBlendTime=0;
+            _aimPreview=null;
             _actionReturnLeft = 0.0f;
             _heroAction = _clip != null && _clip != ThrowClip && _clip != GrabClip
                 && _clip != PunchClip && _clip != LungeClip && _clip != SlideClip && _clip != ShoveClip;
@@ -1041,12 +1056,17 @@ namespace TumbangPreso.CameraSystem
 
             if (_clip == null)
             {
-                _rightArm.localRotation = Quaternion.identity;
-                if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
+                var aim=AimClip(_aimPreview);
+                var right=aim != null ? ToUnityLocal(aim[1].Godot) : Quaternion.identity;
+                var left=aim != null ? ToUnityLocal(aim[1].Left) : Quaternion.identity;
+                float settle=1-Mathf.Exp(-16*Mathf.Max(0,dt));
+                _rightArm.localRotation=Quaternion.Slerp(_rightArm.localRotation,right,settle);
+                if (_leftArm != null) _leftArm.localRotation=Quaternion.Slerp(_leftArm.localRotation,left,settle);
                 return;
             }
 
             _clipTime += dt;
+            _clipBlendTime += dt;
 
             if (_clipTime >= _clip[_clip.Length - 1].T)
             {
@@ -1066,7 +1086,7 @@ namespace TumbangPreso.CameraSystem
 
                 t = _clip[i].Sharp ? Mathf.Pow(t, 2.2f) : t * t * (3.0f - 2.0f * t);
 
-                float enter = Mathf.SmoothStep(0,1,Mathf.Clamp01(_clipTime/.06f));
+                float enter = Mathf.SmoothStep(0,1,Mathf.Clamp01(_clipBlendTime/.06f));
                 var right = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Godot), ToUnityLocal(_clip[i].Godot), t);
                 var left = Quaternion.Slerp(ToUnityLocal(_clip[i - 1].Left), ToUnityLocal(_clip[i].Left), t);
                 _rightArm.localRotation = Quaternion.Slerp(_clipFromRight,right,enter);

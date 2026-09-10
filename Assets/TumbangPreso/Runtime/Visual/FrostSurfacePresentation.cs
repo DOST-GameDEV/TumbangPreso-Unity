@@ -10,6 +10,7 @@ namespace TumbangPreso.Visual
         public float LifeSeconds => Duration;
         private Material _skin, _veins, _edge;
         private float _elapsed;
+        private bool _nova;
 
         public static FrostSurfacePresentation Build(Transform parent, float radius, float duration)
         {
@@ -23,6 +24,25 @@ namespace TumbangPreso.Visual
                 new Color(.16f,.49f,.59f,.66f), 0, 2);
             effect.StepTo(0);
             return effect;
+        }
+
+        public static GameObject Nova(Vector3 position, float radius)
+        {
+            var root=new GameObject("GlacialNovaWave");
+            root.transform.position=VfxShapes.GroundPoint(position);
+            var effect=root.AddComponent<FrostSurfacePresentation>();
+            effect.Duration=.62f;effect._nova=true;
+            effect._skin=Part(root.transform,"ColdFront","permafrost_skin",radius,
+                new Color(.48f,.81f,.89f,.46f),0,0);
+            effect._skin.SetFloat("_Trail",.26f);
+            effect._veins=Part(root.transform,"FlashFractures","permafrost_veins",radius,
+                new Color(.80f,.96f,1,.68f),0,1);
+            effect._veins.SetFloat("_Trail",.42f);
+            effect._edge=Part(root.transform,"NovaReach","permafrost_edge",radius,
+                new Color(.38f,.76f,.84f,.66f),0,2);
+            effect.StepTo(0);
+            Object.Destroy(root,effect.Duration);
+            return root;
         }
 
         private static Material Part(Transform parent, string name, string asset, float radius,
@@ -55,6 +75,16 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             _elapsed = seconds;
+            if (_nova)
+            {
+                // A short outward pressure front, followed by thaw. It ends at the
+                // actual instantaneous blast radius, with no lingering slow field.
+                float travel=Mathf.Lerp(.02f,1.55f,Mathf.Clamp01(seconds/.40f));
+                Set(_skin,travel,Mathf.Clamp01((Duration-seconds)/.22f));
+                Set(_veins,travel,Mathf.Clamp01((Duration-seconds)/.25f));
+                Set(_edge,2,Mathf.Clamp01((.44f-seconds)/.22f));
+                return;
+            }
             float growth = Mathf.Lerp(.03f,1.12f,Mathf.SmoothStep(0,1,seconds/.28f));
             float remaining = Mathf.Max(0,Duration-seconds);
             float film = Mathf.Clamp01(remaining/.7f);

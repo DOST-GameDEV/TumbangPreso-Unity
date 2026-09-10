@@ -56,9 +56,9 @@ namespace TumbangPreso.Abilities
                 // `docs/VISION.md` § 2 rule 4 broken by one ability against itself. That is
                 // fixed in `HeroHazards.SpawnIceSheet` rather than here.
                 : base("cheska_skill1", "PERMAFROST SHEET",
-                       "Hold to place a frozen patch, then let go. Anyone who runs across it loses their footing and slides.",
+                       "Hold to draw cold across a patch of street, then release. Rivals crossing the ice slow down and struggle to stop or turn.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
-                       summary: "Hold to aim, release to freeze. Whoever crosses slides.",
+                       summary: "Freeze a patch of street. Rivals lose speed and traction.",
                        telegraphRadius: 2.3f, telegraphRange: MaxRange,
                        castAction: "hero-cheska-frostwave",
                        viewmodelAction: "frost-sweep",
@@ -97,7 +97,7 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("hero_cheska_grunt", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
+                if (squash != null) squash.Squash(0.035f);
 
                 float areaScale = ctx.CostScale("cheska.1.blackice");
                 float effectScale = ctx.GainScale("cheska.1.blackice");
@@ -162,7 +162,7 @@ namespace TumbangPreso.Abilities
             {
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Squash(0.2f);
+                if (squash != null) squash.Squash(0.045f);
 
                 Vector3 wallPos = AimedDestination(ctx);
 
@@ -217,7 +217,7 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("sfx_frost_nova", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.35f);
+                if (squash != null) squash.Stretch(0.065f);
 
                 // Screen shake on main camera
                 if (UnityEngine.Camera.main != null)
@@ -273,7 +273,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 // Burst particles via AbilityVfx
-                Visual.AbilityVfx.SpawnIceBurst(ctx.Position, 4.6f);
+                Visual.FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
             }
         }
     }
