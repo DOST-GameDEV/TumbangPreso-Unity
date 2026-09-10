@@ -337,7 +337,8 @@ namespace TumbangPreso.Net
         /// ⚠️⚠️ AND `CLAUDE.md` § 4a'S CONSEQUENCE IS NOT OPTIONAL: **the Windows player and the
         /// .apk are rebuilt from this commit and shipped together**, or they refuse each other
         /// correctly and it reads as a bug. `docs/TODO.md` § 144.7.
-        public const int ProtocolVersion = 24;
+        // 24 -> 25 adds familiar poses and a final anchor to both ability messages.
+        public const int ProtocolVersion = 25;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1523,6 +1524,7 @@ namespace TumbangPreso.Net
                         : $"This game is full: {LobbySession.MaxPlayers} players and "
                           + $"{LobbySession.MaxSpectators} spectators.";
 
+            Debug.Log($"[NetApproval] peer={request.ClientNetworkId} approved={response.Approved} reason={response.Reason}");
             if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
         }
 
@@ -1563,6 +1565,7 @@ namespace TumbangPreso.Net
 
         private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
         {
+            if(senderClientId!=NetworkManager.ServerClientId)return;
             reader.ReadValueSafe(out int seat);
             ApplyAssignedSeat(seat);
         }
@@ -1704,6 +1707,7 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 
             // ⚠️ AFTER `Admit`, NOT THROUGH IT. `Admit` has five callers and a widened signature
             // would make four of them pass a number they do not have; a rating is known only on
@@ -1760,6 +1764,7 @@ namespace TumbangPreso.Net
 
         private void OnClientDisconnected(ulong clientId)
         {
+            Debug.Log($"[NetDisconnect] peer={clientId} local={_nm?.LocalClientId} server={_nm?.IsServer} connected={_nm?.IsConnectedClient}");
             if (IsHost && clientId != _nm.LocalClientId)
             {
                 // ⚠️ THE SEAT IS HELD, NOT FREED, so a reconnecting player gets their own chair

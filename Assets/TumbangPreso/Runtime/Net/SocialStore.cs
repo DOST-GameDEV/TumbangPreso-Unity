@@ -73,7 +73,7 @@ namespace TumbangPreso.Net
         }
 
         private static string Path =>
-            System.IO.Path.Combine(Application.persistentDataPath, "social.json");
+            System.IO.Path.Combine(ProfilePaths.Root, "social.json");
 
         private void Awake()
         {

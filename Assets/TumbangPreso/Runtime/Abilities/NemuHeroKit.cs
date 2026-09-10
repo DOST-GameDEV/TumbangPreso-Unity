@@ -11,6 +11,19 @@ namespace TumbangPreso.Abilities
         public bool IsPhantomPhaseActive => Skill1 != null && Skill1.IsActive;
         public override float MovementSpeedScale => IsPhantomPhaseActive ? Balance.NemuPhaseSpeedScale : 1f;
 
+        public void RestoreFamiliar(CharacterMotor motor,int mode,Vector3 position,float remaining)
+        {
+            if(motor==null || remaining<=0)return;
+            var ctx=new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>());
+            using(NetCue.SuppressRelay())
+            {
+                if(mode==1 && !Ultimate.IsActive && !Ultimate.IsWindingUp)
+                    ((GhostlyPoltergeistAbility)Skill2).RestoreProjection(ctx,position,remaining);
+                else if(mode==2)
+                    ((NightmareSeanceVoidAbility)Ultimate).RestoreSeance(ctx,position,remaining);
+            }
+        }
+
         public NemuHeroKit() : base("nemu", "NEMU")
         {
             Skill1 = new PhantomPhaseAbility();
@@ -125,6 +138,14 @@ namespace TumbangPreso.Abilities
             {
             }
 
+            public void RestoreProjection(AbilityContext ctx,Vector3 position,float remaining)
+            {
+                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                if(pet==null)return;
+                if(!pet.IsPossessed)pet.BeginPossession(ctx.Motor,ctx.GainScale("nemu.2.leash"));
+                pet.ApplyCastAnchor(position);RestoreLiveClock(remaining);
+            }
+
             public override bool CanReactivate => true;
 
             public override bool CanActivate(AbilityContext ctx)
@@ -230,6 +251,21 @@ namespace TumbangPreso.Abilities
                 return pet==null || !pet.IsDevouring;
             }
 
+            public void RestoreSeance(AbilityContext ctx,Vector3 position,float remaining)
+            {
+                remaining=Mathf.Clamp(remaining,0,Duration);
+                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                if(pet==null)return;
+                // The predicted root has its own scheduled destruction. Recreate
+                // that short-lived field on confirmation so its lifetime agrees
+                // with the authoritative ghost/ability clock, even at high latency.
+                if(_field!=null){_field.SetActive(false);UnityEngine.Object.Destroy(_field);}
+                _field=HeroHazards.SpawnKuroUnbound(position,4,remaining,ctx.Motor.PlayerSlot,true,false);
+                _familiar=pet;pet.RestoreDevour(position,Duration,remaining);
+                ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
+                RestoreLiveClock(remaining);
+            }
+
             public override Vector3 TelegraphCentre(AbilityContext ctx)
             {
                 var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
@@ -276,6 +312,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 _field=HeroHazards.SpawnKuroUnbound(at, 4.0f, Duration, ctx.Motor.PlayerSlot, onPet);
+                Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot);
             }
 
             protected override void OnEnd(AbilityContext ctx)

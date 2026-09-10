@@ -77,10 +77,11 @@ namespace TumbangPreso.Visual
         private AIController _temporaryAi;
         private GameObject _possessLightGo;
         private Vector2 _playerInput;
+        private bool _hasPlayerInput;
         private Vector3 _lastSafeRecall;
         private readonly System.Collections.Generic.Dictionary<int,float> _nextPossessionHit = new System.Collections.Generic.Dictionary<int,float>();
 
-        public void SetPlayerInput(Vector2 input) => _playerInput = input;
+        public void SetPlayerInput(Vector2 input){_playerInput=input;_hasPlayerInput=true;}
 
         // -------------------------------------------------------------------
         // § BEING PHOTOGRAPHED
@@ -179,6 +180,19 @@ namespace TumbangPreso.Visual
             if (!IsDevouring) return;
             _devourLeft=0;
             BeginReturn();
+        }
+
+        public Vector3 DevourGround=>_devourGround;
+        public float DevourRemaining=>_devourLeft;
+        public void RestoreDevour(Vector3 ground,float duration,float remaining)
+        {
+            if(!IsDevouring)
+            {
+                transform.localScale=_baseScale;RestoreFace();
+                transform.position=ground;Devour(duration);
+            }
+            _devourGround=VfxShapes.GroundPoint(ground);_devourTotal=duration;
+            StepTo(Mathf.Clamp(duration-remaining,0,duration));
         }
 
         public void Devour(float seconds)
@@ -825,6 +839,7 @@ namespace TumbangPreso.Visual
         {
             _target = target;
             var owner=target != null ? target.GetComponentInParent<CharacterMotor>() : null;
+            _nemuMotor=owner;
             _idleRandom=new System.Random(1709+(owner != null ? owner.PlayerSlot*97 : 0));
             _timeOffset=(float)_idleRandom.NextDouble()*7f;
             ResetFidgetTimer();
@@ -850,6 +865,52 @@ namespace TumbangPreso.Visual
         }
 
         private float _possessionSpeedScale = 1.0f;
+        private Core.MoveBudget _flightBudget;
+        private Vector3 _networkPosition;
+        private float _networkYaw, _nextPoseSend;
+        private bool _hasNetworkPose;
+        public float FlightSpeed => Core.Balance.Speed * 1.7f * _possessionSpeedScale;
+
+        // The host spends elapsed metres, never a fresh allowance per packet.
+        // Floor height and swept collision are validated before spending credit.
+        public bool AcceptFlightPose(Vector3 position,float yaw)
+        {
+            if(!IsPossessed || _nemuMotor==null || _flightBudget==null ||
+                !FinitePose(position,yaw))return false;
+            if((GhostPetMotion.ClampToCourt(_nemuMotor,position)-position).sqrMagnitude>.0001f)return false;
+            var ground=VfxShapes.GroundPoint(position);
+            if(Mathf.Abs(position.y-ground.y-.9f)>.12f)return false;
+            var swept=GhostPetMotion.Move(_nemuMotor,transform.position,position-transform.position);
+            if(Vector3.ProjectOnPlane(swept-position,Vector3.up).sqrMagnitude>.01f)return false;
+            float distance=Vector3.ProjectOnPlane(position-transform.position,Vector3.up).magnitude;
+            if(!_flightBudget.TryTravel(Time.realtimeSinceStartupAsDouble,distance))return false;
+            transform.SetPositionAndRotation(position,Quaternion.Euler(0,yaw,0));
+            if(GhostPetMotion.CanLand(_nemuMotor,ground,false))_lastSafeRecall=ground;
+            return true;
+        }
+
+        private static bool FinitePose(Vector3 p,float yaw) =>
+            !float.IsNaN(p.x) && !float.IsInfinity(p.x) &&
+            !float.IsNaN(p.y) && !float.IsInfinity(p.y) &&
+            !float.IsNaN(p.z) && !float.IsInfinity(p.z) &&
+            !float.IsNaN(yaw) && !float.IsInfinity(yaw);
+
+        public void ApplyCastAnchor(Vector3 position)
+        {
+            if(!FinitePose(position,0))return;
+            transform.position=position;
+            _networkPosition=position;
+        }
+
+        public void ApplyFlightPose(Vector3 position,float yaw,bool exact=false)
+        {
+            if(!IsPossessed || !FinitePose(position,yaw))return;
+            _networkPosition=position;_networkYaw=yaw;_hasNetworkPose=true;
+            if(exact || (_nemuMotor!=null && _nemuMotor.IsLocallySimulated() &&
+                Vector3.Distance(transform.position,position)>1.5f))
+                transform.SetPositionAndRotation(position,Quaternion.Euler(0,yaw,0));
+        }
+
 
         public void BeginPossession(CharacterMotor nemuMotor, float speedScale = 1.0f)
         {
@@ -862,6 +923,10 @@ namespace TumbangPreso.Visual
             IsPossessed = true;
             _possessionSpeedScale = Mathf.Clamp(speedScale, 0.5f, 1.5f);
             _playerInput = Vector2.zero;
+            _hasPlayerInput=false;
+            _hasNetworkPose=false;_nextPoseSend=0;
+            _flightBudget=new Core.MoveBudget(FlightSpeed,.85f,1f);
+            _flightBudget.TryTravel(Time.realtimeSinceStartupAsDouble,0);
 
             if (_possessLightGo == null)
             {
@@ -883,7 +948,7 @@ namespace TumbangPreso.Visual
             // undefined component order, so the return press was erased about as often as it
             // survived. `AIController.AbilitiesEnabled` carries the reasoning: while a human is
             // driving the pet, the human owns the hero keys and the bot owns the legs.
-            if (_nemuMotor != null && _nemuMotor.GetComponent<AIController>() == null)
+            if (_nemuMotor != null && _nemuMotor.IsLocallySimulated() && _nemuMotor.GetComponent<AIController>() == null)
             {
                 _temporaryAi = _nemuMotor.gameObject.AddComponent<AIController>();
                 _temporaryAi.AbilitiesEnabled = false;
@@ -905,6 +970,7 @@ namespace TumbangPreso.Visual
 
             if (teleportNemu && _nemuMotor != null && (NetAuthority.ShouldResolve() || _nemuMotor.PlayerSlot==NetAuthority.LocalSlot))
             {
+                _nemuMotor.ExpectAbilityTeleport(1);
                 _nemuMotor.Teleport(GhostPetMotion.Recall(_nemuMotor,transform.position,_lastSafeRecall));
 
                 // ⚠️ THE RETURN IS THE ENTER SOUND REVERSED, on purpose: a falling formant onto
@@ -928,6 +994,8 @@ namespace TumbangPreso.Visual
 
             if (_temporaryAi != null)
             {
+                _temporaryAi.enabled=false;
+                if(_nemuMotor!=null)_nemuMotor.Intent.Move=Vector2.zero;
                 Destroy(_temporaryAi);
                 _temporaryAi = null;
             }
@@ -939,6 +1007,7 @@ namespace TumbangPreso.Visual
             }
 
             _playerInput = Vector2.zero;
+            _hasPlayerInput=false;
             IsPossessed = false;
 
             // ⚠️ SEE § THE FACE HE MAKES WHILE HE IS EATING. He is bound for the whole match, so
@@ -968,6 +1037,9 @@ namespace TumbangPreso.Visual
             // straight at him in. It is local rotation on child transforms, so it composes with
             // whatever the branch below then does to the body.
             StepTail(time);
+            // The familiar is the committed ultimate target. Keep it still during
+            // invocation on every peer; cancellation automatically releases this.
+            if(_nemuMotor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp==true)return;
 
             if (_devourLeft > 0.0f)
             {
@@ -1327,7 +1399,19 @@ namespace TumbangPreso.Visual
 
         private void UpdatePossession(float dt, float time)
         {
-            Vector2 move = _playerInput.sqrMagnitude > 0.001f
+            bool local=_nemuMotor!=null && _nemuMotor.IsLocallySimulated();
+            if(!local)
+            {
+                if(!NetAuthority.IsHost && _hasNetworkPose)
+                {
+                    float blend=1-Mathf.Exp(-18f*dt);
+                    transform.position=Vector3.Lerp(transform.position,_networkPosition,blend);
+                    transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.Euler(0,_networkYaw,0),blend);
+                }
+                ResolvePossessionContacts();
+                return;
+            }
+            Vector2 move = _hasPlayerInput
                 ? _playerInput
                 : (_nemuMotor != null && _nemuMotor.Intent != null ? _nemuMotor.Intent.MoveAxis : Vector2.zero);
 
@@ -1375,8 +1459,7 @@ namespace TumbangPreso.Visual
             // crosses six metres, which is why it read as uncontrollable even with the spin
             // fixed. He is still the fastest thing on the court, which is the point of riding
             // him, and `Balance.Speed` is named here rather than copied so the two cannot drift.
-            const float FlySpeedScale = 1.7f;
-            float flySpeed = Core.Balance.Speed * FlySpeedScale * _possessionSpeedScale;
+            float flySpeed = FlightSpeed;
 
             moveDir=Vector3.ClampMagnitude(moveDir,1);
             var next=GhostPetMotion.Move(_nemuMotor,transform.position,moveDir*flySpeed*dt);
@@ -1385,6 +1468,16 @@ namespace TumbangPreso.Visual
             transform.position=next;
             if(GhostPetMotion.CanLand(_nemuMotor,ground,false))_lastSafeRecall=ground;
 
+            if(NetAuthority.IsNetworked && Time.unscaledTime>=_nextPoseSend)
+            {
+                _nextPoseSend=Time.unscaledTime+.05f;
+                Net.MatchRpc.Instance?.SubmitFamiliarPose(_nemuMotor.PlayerSlot,transform.position,transform.eulerAngles.y);
+            }
+            ResolvePossessionContacts();
+        }
+
+        private void ResolvePossessionContacts()
+        {
             var round = GameServices.Round;
             if (round != null && _nemuMotor != null)
             {

@@ -147,6 +147,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] Modifiers =
         {
+            new Modifier("NetFamiliarProbe.Active",
+                "A scripted network fixture that parks bystanders and drives a familiar. Never a bracket match."),
             new Modifier("PracticeSandbox.Wanted",
                 "No cooldowns, no charge cost and casting during the warm-up. It is already " +
                 "fail-closed on `!NetAuthority.IsNetworked`, so it cannot reach a networked " +
@@ -222,6 +224,7 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("-tp-familiarcase","A case parameter of the explicitly guarded familiar fixture."),
             new Modifier("SceneFlow.Networked",
                 "Not a modifier, a fact: whether this process is in a networked session. It is " +
                 "written by the start paths and read by the lobby to decide whether it is a lobby " +
@@ -340,6 +343,7 @@ namespace TumbangPreso.Core
         {
             switch (switchName)
             {
+                case "-tp-familiartrace": return "NetFamiliarProbe.Active";
                 case "-tp-allbots": return "GameLaunch.AllBots";
                 case "-tp-botmatch": return "GameLaunch.AllBots";
 

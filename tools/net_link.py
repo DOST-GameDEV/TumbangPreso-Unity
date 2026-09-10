@@ -123,6 +123,10 @@ class Link:
         self.host_addr = (args.to_host, args.to_port)
 
         self.face = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Windows reports a dead UDP destination as an ICMP reset on the next
+        # receive. It must not permanently retire a proxy serving a reconnect.
+        if hasattr(socket, "SIO_UDP_CONNRESET"):
+            self.face.ioctl(socket.SIO_UDP_CONNRESET, False)
 
         # WARNING: LOOPBACK BY DEFAULT, AND BINDING `0.0.0.0` BROKE THE FIRST RUN IN A WAY THAT
         # LOOKED LIKE A PROXY BUG AND WAS NOT. `LanBeacon` broadcasts the game's presence over
@@ -198,12 +202,16 @@ class Link:
                 payload, addr = self.face.recvfrom(RECV)
             except socket.timeout:
                 continue
+            except ConnectionResetError:
+                continue
             except OSError:
                 return
 
             sock = self.upstream.get(addr)
             if sock is None:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                if hasattr(socket, "SIO_UDP_CONNRESET"):
+                    sock.ioctl(socket.SIO_UDP_CONNRESET, False)
                 sock.settimeout(0.05)
                 self.upstream[addr] = sock
                 self.owner[sock] = addr
@@ -220,6 +228,8 @@ class Link:
             try:
                 payload, _ = sock.recvfrom(RECV)
             except socket.timeout:
+                continue
+            except ConnectionResetError:
                 continue
             except OSError:
                 return

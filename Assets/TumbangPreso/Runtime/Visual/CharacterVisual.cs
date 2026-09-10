@@ -148,6 +148,18 @@ namespace TumbangPreso.Visual
         private float _flashLeft;
         private GameObject _instance;
         private GameObject _petInstance;
+        private GameObject _sourcePetModel;
+        private AnimationClip[] _sourceClips;
+        private Color[] _sourcePalette;
+        private bool _sourcePerson;
+        private static bool SameValues<T>(T[] a,T[] b)
+        {
+            if(ReferenceEquals(a,b))return true;
+            if(a==null || b==null || a.Length!=b.Length)return false;
+            for(int i=0;i<a.Length;i++)if(!EqualityComparer<T>.Default.Equals(a[i],b[i]))return false;
+            return true;
+        }
+
 
         /// <summary>The instanced rig, or null before a model has been applied. Read-only:
         /// <see cref="ApplyModel"/> is the one writer, and the facing correction lives on this
@@ -161,6 +173,7 @@ namespace TumbangPreso.Visual
         {
             _block = new MaterialPropertyBlock();
             if (_modelRoot == null) _modelRoot = transform;
+            _alignedLocal=_modelRoot==transform?Vector3.zero:_modelRoot.localPosition;
         }
 
         private void OnDestroy()
@@ -187,6 +200,7 @@ namespace TumbangPreso.Visual
             if (root == null) return;
 
             _modelRoot = root;
+            _alignedLocal=root==transform?Vector3.zero:root.localPosition;
         }
 
         /// <summary>Swap in the model for a roster pick.</summary>
@@ -210,6 +224,17 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
+            var motor = GetComponent<CharacterMotor>();
+            bool person = motor == null || motor.IsPerson;
+            // Roster snapshots repeat unchanged picks. Rebuilding those models
+            // destroyed an active Kuro and interrupted every observer's animation.
+            // Compare the actual assets and palette, not just a mode-relative index.
+            if(_instance!=null && SourceModel==prefab && _sourcePetModel==petModel &&
+                _sourcePerson==person && _tint==tint && SameValues(_sourceClips,clips) &&
+                SameValues(_sourcePalette,palette) && (petModel==null || (_petInstance!=null && Companion!=null)))return;
+            _sourcePetModel=petModel;_sourcePerson=person;
+            _sourceClips=clips!=null?(AnimationClip[])clips.Clone():null;
+            _sourcePalette=palette!=null?(Color[])palette.Clone():null;
             AppliedPalette = palette;
             SourceModel = prefab;
             if (_instance != null) Destroy(_instance);
@@ -220,8 +245,7 @@ namespace TumbangPreso.Visual
             // Asked before the model is instanced, because a Person is the only thing that takes
             // PERSON_SCALE and the scale has to be on the transform before `CacheRenderers` and
             // `AlignToCapsuleFloor` measure the bounds it produces.
-            var motor = GetComponent<CharacterMotor>();
-            bool person = motor == null || motor.IsPerson;
+
 
             if (prefab != null)
             {
@@ -630,6 +654,13 @@ namespace TumbangPreso.Visual
         public void AlignToCapsuleFloor()
         {
             if (_renderers.Count == 0) return;
+            // Remote smoothing temporarily offsets the rendered root. It must
+            // never become the permanent alignment when a roster model rebinds.
+            if(_modelRoot!=transform)
+            {
+                _modelRoot.localPosition=_alignedLocal;
+                _modelRoot.localRotation=Quaternion.identity;
+            }
 
             bool any = false;
             Bounds combined = default;

@@ -20,12 +20,13 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class TournamentGuardTests
     {
-        private bool _sandbox, _allBots, _spectator, _tutorial, _preview, _bots, _thumb, _replay;
+        private bool _familiar, _sandbox, _allBots, _spectator, _tutorial, _preview, _bots, _thumb, _replay;
         private CustomRules _rules;
 
         [SetUp]
         public void Remember()
         {
+            _familiar=Diagnostics.NetFamiliarProbe.Active;
             _sandbox = PracticeSandbox.Wanted;
             _allBots = GameLaunch.AllBots;
             _spectator = GameLaunch.Spectator;
@@ -40,6 +41,7 @@ namespace TumbangPreso.Tests
         [TearDown]
         public void Restore()
         {
+            Diagnostics.NetFamiliarProbe.Active=_familiar;
             PracticeSandbox.Wanted = _sandbox;
             GameLaunch.AllBots = _allBots;
             GameLaunch.Spectator = _spectator;
@@ -109,6 +111,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void ApplyClearsEverythingAndSaysWhatItCleared()
         {
+            Diagnostics.NetFamiliarProbe.Active=true;
             PracticeSandbox.Wanted = true;
             GameLaunch.AllBots = true;
             GameLaunch.Spectator = true;
@@ -254,6 +257,7 @@ namespace TumbangPreso.Tests
 
         private static void ResetAll()
         {
+            Diagnostics.NetFamiliarProbe.Active=false;
             PracticeSandbox.Wanted = false;
             GameLaunch.AllBots = false;
             GameLaunch.Spectator = false;
@@ -269,6 +273,7 @@ namespace TumbangPreso.Tests
             switch (name)
             {
                 case "PracticeSandbox.Wanted": PracticeSandbox.Wanted = value; break;
+                case "NetFamiliarProbe.Active": Diagnostics.NetFamiliarProbe.Active=value; break;
                 case "GameLaunch.AllBots": GameLaunch.AllBots = value; break;
                 case "GameLaunch.Spectator": GameLaunch.Spectator = value; break;
                 case "GameLaunch.GuidedTutorial": GameLaunch.GuidedTutorial = value; break;

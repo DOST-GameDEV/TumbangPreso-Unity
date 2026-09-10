@@ -178,7 +178,7 @@ namespace TumbangPreso.Net
         public string LastVerdict { get; private set; } = "";
 
         public static string Path =>
-            System.IO.Path.Combine(Application.persistentDataPath, "career.json");
+            System.IO.Path.Combine(ProfilePaths.Root, "career.json");
 
         private void Awake()
         {

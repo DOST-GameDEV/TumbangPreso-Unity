@@ -1,5 +1,18 @@
 # Game improvement plan
 
+## Latest owner additions, 2026-09-10
+
+Thorough networking repair is required. The owner also authorizes changing or
+replacing boring abilities and making every existing loadout alternative justify
+its slot. Whole-kit planning and acceptance are in
+[HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md), with cultural direction
+in [PHILIPPINE_ABILITY_DIRECTION.md](PHILIPPINE_ABILITY_DIRECTION.md). This overrides
+older presentation-only or blanket no-mechanic-change restrictions for the existing
+ability slots. Preserve the core game, six heroes, both modes and loadout structure.
+Keep the current approved people models; do not reopen their redesign queue.
+Current execution and failures are in [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md).
+
+
 Current state: CLEANED CAST KEPT BY OWNER; MODEL REDESIGNS STOPPED; ANIMATION, DEEP SKILL AND REMAINING GAMEPLAY/MAP WORK OPEN; FINAL QUALIFICATION PENDING.
 Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks`.
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.

@@ -393,9 +393,32 @@ namespace TumbangPreso
             Intent.Parked = true;
         }
 
+        public int MovementEpoch { get; private set; }
+        private int _predictingAbility=-1,_teleportAbility=-1;
+        private bool _awaitingTeleport;
+        public bool AwaitingAuthoritativeTeleport=>_awaitingTeleport;
+        public void BeginAbilityPrediction(int slot){_predictingAbility=slot;}
+        public void EndAbilityPrediction(){_predictingAbility=-1;}
+        public void ExpectAbilityTeleport(int slot)
+        {
+            if(NetAuthority.ShouldRequest() && _playerSlot==NetAuthority.LocalSlot)
+            {_awaitingTeleport=true;_teleportAbility=slot;}
+        }
+        public bool RefuseAbilityTeleport(int slot)
+        {
+            if(!_awaitingTeleport || _teleportAbility!=slot)return false;
+            _awaitingTeleport=false;_teleportAbility=-1;return true;
+        }
+        public void AdoptMovementEpoch(int epoch)
+        {
+            if(epoch<=MovementEpoch)return;
+            MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
+        }
+
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
             // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
             // teleport skips the whole movement step, so a caller handing this an arbitrary
@@ -420,6 +443,17 @@ namespace TumbangPreso
             transform.position = position;
             _cc.enabled = true;
             BeginSpawnSettle();
+            // A host-side replica still has an interpolation target. Recall must
+            // replace that target too, or the next step slides back to the old body.
+            _networkTargetPosition=position;
+            _networkTargetYaw=transform.eulerAngles.y;
+            _networkTargetVelocity=Vector3.zero;
+            _networkSmoothVelocity=Vector3.zero;
+            _networkYawVelocity=0;
+            GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            if(NetAuthority.IsNetworked && NetAuthority.ShouldResolve() &&
+                GameServices.Round?.PlayerAt(_playerSlot)==this)
+                Net.MatchRpc.Instance?.BroadcastTeleport(_playerSlot,position,transform.eulerAngles.y);
         }
 
         /// <summary>Where this unit returns to when it falls off the world. Written at
@@ -1075,7 +1109,8 @@ namespace TumbangPreso
             _networkGrounded = grounded;
 
             float error = Vector3.Distance(transform.position, position);
-            if (reconcileLocal && error < 1.25f) return;
+            if(reconcileLocal && !force && _awaitingTeleport)return;
+            if (reconcileLocal && !force && error < 1.25f) return;
 
             // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
             // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
@@ -1101,6 +1136,11 @@ namespace TumbangPreso
             // which is what `StepNetworkReplica`'s one-beat lead and the animator both read.
             _velocity = velocity;
 
+            if(force)
+            {
+                _spawnSettleAt=position;
+                if(!IsLocallySimulated())_spawnSettle=0;
+            }
             _networkTargetPosition = position;
             _networkTargetYaw = yaw;
             _networkTargetVelocity = velocity;

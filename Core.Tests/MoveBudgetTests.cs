@@ -24,6 +24,22 @@ namespace TumbangPreso.Core.Tests
     /// </summary>
     public class MoveBudgetTests
     {
+        [Theory]
+        [InlineData(20)]
+        [InlineData(144)]
+        [InlineData(5000)]
+        public void FamiliarRateCannotBeMultipliedByPacketCount(int packets)
+        {
+            const float speed=7.82f,burst=.85f;
+            var budget=new MoveBudget(speed,burst,1);
+            budget.TryTravel(0,0);
+            float total=0;
+            for(int i=1;i<=packets;i++)
+                if(budget.TryTravel(i/(double)packets,.01f))total+=.01f;
+            Assert.InRange(total,0,burst+speed+.01f);
+            Assert.False(budget.TryTravel(1,burst+speed+1));
+        }
+
         /// <summary>The most a seat may legitimately have travelled in that much elapsed time.</summary>
         private static float Bound(double seconds) =>
             MoveBudget.Ceiling + (MoveBudget.MetresPerSecond * (float)seconds);

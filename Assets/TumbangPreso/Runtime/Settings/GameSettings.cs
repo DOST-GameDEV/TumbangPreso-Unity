@@ -633,7 +633,7 @@ namespace TumbangPreso.Settings
         }
 
         public static string Path =>
-            System.IO.Path.Combine(Application.persistentDataPath, "settings.json");
+            System.IO.Path.Combine(ProfilePaths.Root, "settings.json");
 
         public static void Load()
         {

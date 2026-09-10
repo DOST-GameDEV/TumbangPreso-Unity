@@ -97,6 +97,21 @@ namespace TumbangPreso.Core
         /// <summary>The most metres this seat can ever be holding at once.</summary>
         public static float Ceiling => BurstMetres + (MetresPerSecond * CatchUpSeconds);
 
+        private readonly float _rate, _burst, _ceiling;
+
+        public MoveBudget() : this(MetresPerSecond, BurstMetres, CatchUpSeconds) { }
+
+        // Different controllable bodies use their actual speed, while retaining the
+        // same time-accrued invariant and the existing human-body defaults.
+        public MoveBudget(float rate, float burst, float catchUpSeconds)
+        {
+            if (float.IsNaN(rate) || float.IsInfinity(rate) || rate <= 0 ||
+                float.IsNaN(burst) || float.IsInfinity(burst) || burst < 0 ||
+                float.IsNaN(catchUpSeconds) || float.IsInfinity(catchUpSeconds) || catchUpSeconds < 0)
+                throw new ArgumentOutOfRangeException(nameof(rate));
+            _rate=rate; _burst=burst; _ceiling=burst+rate*catchUpSeconds;
+        }
+
         private double _lastCreditedAt;
         private float _credit;
         private bool _started;
@@ -147,7 +162,7 @@ namespace TumbangPreso.Core
                 // reconnect a free 28 m.
                 _started = true;
                 _lastCreditedAt = now;
-                _credit = BurstMetres;
+                _credit = _burst;
                 return;
             }
 
@@ -160,7 +175,7 @@ namespace TumbangPreso.Core
             if (!(elapsed > 0.0)) elapsed = 0.0;
 
             _lastCreditedAt = now;
-            _credit = (float)Math.Min(Ceiling, _credit + (MetresPerSecond * elapsed));
+            _credit = (float)Math.Min(_ceiling, _credit + (_rate * elapsed));
         }
 
         /// <summary>

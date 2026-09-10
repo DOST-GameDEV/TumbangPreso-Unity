@@ -73,6 +73,7 @@ namespace TumbangPreso
                 // toggle. The guard is the thing being checked, so the check reads the raw switch.
                 case "PracticeSandbox.Wanted": return PracticeSandbox.Wanted;
 
+                case "NetFamiliarProbe.Active": return Diagnostics.NetFamiliarProbe.Active;
                 case "GameLaunch.AllBots": return GameLaunch.AllBots;
                 case "GameLaunch.Spectator": return GameLaunch.Spectator;
                 case "GameLaunch.GuidedTutorial": return GameLaunch.GuidedTutorial;
@@ -92,6 +93,7 @@ namespace TumbangPreso
             switch (name)
             {
                 case "PracticeSandbox.Wanted": PracticeSandbox.Wanted = value; break;
+                case "NetFamiliarProbe.Active": Diagnostics.NetFamiliarProbe.Active = value; break;
                 case "GameLaunch.AllBots": GameLaunch.AllBots = value; break;
                 case "GameLaunch.Spectator": GameLaunch.Spectator = value; break;
                 case "GameLaunch.GuidedTutorial": GameLaunch.GuidedTutorial = value; break;

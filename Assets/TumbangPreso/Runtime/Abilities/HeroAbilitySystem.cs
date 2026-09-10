@@ -578,10 +578,17 @@ namespace TumbangPreso.Abilities
 
         private HeroKit.CastOutcome Cast(Slot slot)
         {
+            // Capture before reactivation returns the pet or moves its owner.
+            var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
+            bool hasFamiliar=familiar!=null;
+            Vector3 familiarPosition=hasFamiliar?familiar.transform.position:Vector3.zero;
+            Vector3 castPosition=_context.Position,castForward=_context.Forward,castAim=_context.AimPoint;
             HeroKit.CastOutcome outcome;
             if (NetAuthority.IsNetworked)
             {
-                using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);
+                _motor.BeginAbilityPrediction((int)slot);
+                try{using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);}
+                finally{_motor.EndAbilityPrediction();}
             }
             else
             {
@@ -591,19 +598,19 @@ namespace TumbangPreso.Abilities
 
             var ability = AbilityFor(slot);
             float held = ability != null ? ability.HeldSecondsOnCast : 0.0f;
-            Vector3 aimPoint = _context.AimPoint;
+            Vector3 aimPoint = castAim;
 
             if (NetAuthority.IsHost)
             {
                 Net.MatchRpc.Instance?.BroadcastAbilityCast(
-                    _motor.PlayerSlot, (int)slot, _context.Position, _context.Forward,
-                    aimPoint, held, exceptClientId: null);
+                    _motor.PlayerSlot, (int)slot, castPosition, castForward,
+                    aimPoint, held, exceptClientId: null, hasFamiliar:hasFamiliar, familiarPosition:familiarPosition);
             }
             else if (_motor.PlayerSlot == NetAuthority.LocalSlot)
             {
                 Net.MatchRpc.Instance?.RequestAbilityCastServerRpc(
-                    _motor.PlayerSlot, (int)slot, _context.Position, _context.Forward,
-                    aimPoint, held);
+                    _motor.PlayerSlot, (int)slot, castPosition, castForward,
+                    aimPoint, held, hasFamiliar, familiarPosition);
             }
 
             return outcome;

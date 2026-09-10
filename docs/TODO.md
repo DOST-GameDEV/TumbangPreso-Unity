@@ -274,6 +274,22 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Stable networking batch verification: Core562/562, EditMode486/486, Nemu PlayMode
+20/20 with fresh NUnit XML, all8 checks and all14 gating audits. Direct hard
+reconnect during Kuro's ultimate passes with remaining state/resources restored.
+Official Unity plugin/Pipeline is connected and used for live verification; native
+XML export preserves the same evidence contract. Remaining network impacts,
+alternate binding and broader matrices are explicitly still open.
+
+
+Networking foundation evidence and remaining gaps are in
+[network-foundation.md](reports/improvement-2026-09-10/network-foundation.md).
+The direct hard-reconnect/familiar case now passes, including seat, remaining
+field lifetime and charge state. A reproduced Unity Transport receive-pool leak
+is patched durably in the embedded6.5.0 dependency. Broader networking and all
+remaining hero/loadout/map/animation acceptance remain open.
+
+
 **Latest owner expansion, 2026-09-10:** change or replace boring/redundant hero
 abilities and make every existing loadout alternative serve a distinct useful
 role. Plan each entire kit before implementation; carry purpose, counterplay,

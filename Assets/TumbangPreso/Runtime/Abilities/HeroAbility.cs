@@ -101,6 +101,7 @@ namespace TumbangPreso.Abilities
         private const float RootSpeed = 0.0f;
 
         private CharacterMotor _rooted;
+        private AbilityContext _committedContext;
 
         // ------------------------------------------------------------------ charges
         //
@@ -684,6 +685,10 @@ namespace TumbangPreso.Abilities
             if (Windup > 0.0f && ctx != null && ctx.Motor != null)
             {
                 WindupRemaining = Windup;
+                // Hold the accepted release aim through the delay. A replica's live
+                // intent is not the sender's cast and can point somewhere else.
+                _committedContext=new AbilityContext(ctx.Motor,ctx.Carrier,ctx.Verbs,
+                    ctx.Position,ctx.Forward,ctx.AimPoint);
 
                 _rooted = ctx.Motor;
                 _rooted.EnterSpeedZone(RootSpeed);
@@ -740,7 +745,9 @@ namespace TumbangPreso.Abilities
                 ReleaseRoot();
 
                 DurationRemaining = Duration;
-                OnActivate(ctx);
+                var committed=_committedContext??ctx;
+                _committedContext=null;
+                OnActivate(committed);
                 return;
             }
 
@@ -802,6 +809,7 @@ namespace TumbangPreso.Abilities
         {
             ReleaseRoot();
             WindupRemaining = 0.0f;
+            _committedContext=null;
 
             CancelActive(ctx);
 
@@ -825,6 +833,7 @@ namespace TumbangPreso.Abilities
             // release it. See `ReleaseRoot`.
             ReleaseRoot();
             WindupRemaining = 0.0f;
+            _committedContext=null;
 
             CooldownRemaining = 0.0f;
             DurationRemaining = 0.0f;
@@ -867,6 +876,14 @@ namespace TumbangPreso.Abilities
         // Most cancellation only releases an existing grant. A recalled familiar
         // also relocates its owner on normal completion, which a denied/reset cast
         // must never do. Keep that distinction explicit without changing recasts.
+        // Rehydrate an already accepted live effect without spending resources or
+        // replaying the activation callback. Used by explicit familiar snapshots.
+        protected void RestoreLiveClock(float remaining)
+        {
+            ReleaseRoot();_committedContext=null;WindupRemaining=0;
+            DurationRemaining=Mathf.Clamp(remaining,0,Duration);
+        }
+
         protected virtual void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
 
         protected virtual void OnActivate(AbilityContext ctx) { }

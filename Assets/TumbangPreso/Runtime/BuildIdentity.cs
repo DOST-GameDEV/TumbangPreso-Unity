@@ -358,14 +358,23 @@ namespace TumbangPreso
 
                 string refName = head.Substring(4).Trim();
 
-                string loose = Path.Combine(dotGit, refName.Replace('/', Path.DirectorySeparatorChar));
+                // Linked worktrees keep HEAD here but branch refs in commondir.
+                // Looking only beside HEAD stamped a real checkout as no-sha.
+                string commonFile=Path.Combine(dotGit,"commondir");
+                string refsDir=dotGit;
+                if(File.Exists(commonFile))
+                {
+                    string common=File.ReadAllText(commonFile).Trim();
+                    refsDir=Path.GetFullPath(Path.IsPathRooted(common)?common:Path.Combine(dotGit,common));
+                }
+                string loose = Path.Combine(refsDir, refName.Replace('/', Path.DirectorySeparatorChar));
                 if (File.Exists(loose))
                 {
                     string sha = File.ReadAllText(loose).Trim();
                     if (LooksLikeSha(sha)) return sha;
                 }
 
-                string packed = Path.Combine(dotGit, "packed-refs");
+                string packed = Path.Combine(refsDir, "packed-refs");
                 if (File.Exists(packed))
                 {
                     foreach (string line in File.ReadAllLines(packed))

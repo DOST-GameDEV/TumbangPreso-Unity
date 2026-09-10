@@ -1,13 +1,37 @@
 # Active TUMP rework ledger
 
-Updated 2026-09-10. **The task is ongoing. Do not treat a compaction or a green test
-run as completion.** This file preserves the owner's current instructions, the
-actual state and the unfinished work. Update it when a decision or result changes.
+## Current execution pointer (live, 2026-09-10)
 
-Read CLAUDE.md first, docs/VISION.md second and docs/TODO.md third. Then read this
-ledger and docs/IMPROVEMENT_PLAN.md. Current owner instructions supersede older
-restrictions in repository documents. The plan's outcome table remains useful;
-this ledger resolves the later owner feedback that changed the scope.
+Continue the same task, do not restart or finish after this network batch. Branch
+ASTRAReworks only. The major networking foundation is verified and being committed;
+read git log/status for the exact current checkpoint. Detailed results are in
+reports/improvement-2026-09-10/network-foundation.md. Earlier entries below are a
+chronological record, including failures and disproved hypotheses, not fresh state.
+
+Current verification: Core562/562, full EditMode486/486, current Nemu PlayMode20/20
+with native NUnit XML, all8 checks, all14 gating source audits. The native UDP
+regression fails on upstream6.5.0 and passes after the embedded receive-pool patch.
+Three real processes agree on clean recall/ult and a correctly seated300 ms/2%
+recall; direct owner hard-reconnect v6 reclaims the seat, restores the live ultimate
+and retains charge counts. Settled remote model/body offsets are zero. These are
+local real-process proofs, not a final-release or human playtest approval.
+
+Next: reproduce/fix one-shot impacts on remote human victims (no impact RPC exists),
+then same-hero non-default loadout binding and remaining network/mode/round/rematch
+coverage. Continue all six hero kits and twelve existing loadout alternatives,
+body/FPP animation/SFX/VFX, three maps/trees and final Windows qualification.
+Owner explicitly permits replacing boring/redundant abilities; read
+HERO_KIT_REWORK_DECISIONS.md and PHILIPPINE_ABILITY_DIRECTION.md. Preserve the
+approved people models, flat faces and block hands; no renewed people redesign or
+UI art effort. Progress last communicated as approximately45% of the full scope.
+
+Official Unity plugin0.1.3-beta is installed/enabled; CLI1.0.0-beta.5 is available.
+com.unity.pipeline0.6.0-exp.1 is installed in this project and a live connection was
+verified. It ran20/20 tests. LiveTestResultRecorder now exports native XML for live
+runs too. Always target this checkout explicitly. No Editor/player/native-control
+session is currently needed or left running after qualification; use the guarded
+runner for profile preservation. Runtime Pipeline control defaults off in builds.
+No subagents, new tasks, paid work or usage reset. No user configuration is needed.
 
 
 ## Latest owner decision: keep the current models and move on
@@ -1117,3 +1141,387 @@ dffbf5fd3753a06ec0d31e34a1f3acf3534a2537b50bbd15861e2343c8fa7473.
 Now running familiar-ultimate-300ms-v2: three real processes, owner link150 ms each
 way with2% packet loss. Do not claim it passed until reading result.json. Reconnect,
 all-other-kit effects, ordinary play/mode matrices and final release still open.
+
+### Actual delayed ultimate result
+
+familiar-ultimate-300ms-v2 PASS:150 ms each way,2% configured packet loss, three
+actual processes. All three field centers (-0.6184,15.4216), zero recorded endpoint
+error, expiry spread14.5 ms. No duplicate field. This tests a delayed ultimate,
+not all networking. Note the fixture staging body spawn was corrected by incoming
+initial poses on this delayed run; it still exercised a real six-metre controlled
+flight and common field anchor, but not a matched art-camera position.
+Now running the same link with recall in familiar-recall-300ms-v2.
+
+Further source audit: SubmitMove/SyncUnit carry no round number, so a stale pose
+can cross a round reset. Also review all client announcement sender guards and
+reliable ability requests being overtaken by predicted body poses, especially
+Phaister blink. Do not mark broad networking done after familiar-only success.
+
+### Delayed recall failure and movement epochs
+
+Delayed recall v2 FAILED by6.53 m; keep the red trace. Old accepted body echoes
+rewound the owner after its predicted recall; old owner movement then overwrote
+the host's recall. Its old spawn-settle target also resurfaced when the owner left.
+Clean recall and both ultimate traces do not cover this ordering failure.
+
+Implemented next: reliable Teleport message plus a per-seat movement epoch in
+SubmitMove and SyncUnit. Host teleports start a new epoch; old-epoch movement is
+rejected. A locally predicted ability teleport holds its outgoing body stream and
+ignores old echoes until the host confirms a newer epoch. CastDenied carries the
+host pose/epoch so a denied teleport resumes at the real source without a free
+warp. This preserves responsive local prediction while making the discontinuity
+an explicit accepted event. Normal Nemu timed recall marks the same pending path.
+
+Added host-sender validation to the remaining fifteen state announcements without
+changing their existing loopback behavior. Current wire audit:66 messages, zero
+mismatches;74 numeric fields, zero unchecked. Nemu epoch contracts are running in
+network-teleport-epoch-contract.xml,18 cases expected. No epoch player built yet.
+
+Before rebuild: preserve owner look direction when applying a position-only
+teleport correction; ensure only the registered live unit announces teleports;
+strengthen recall trace acceptance to compare the destination against last flight
+and sample before the owner quits (host bot takeover is not the recall endpoint).
+Then rebuild verification v3 and repeat delayed recall and ult. Do not declare
+network done or leave this failed case unresolved after compaction.
+
+### Epoch player v3 and reconnect runner ready
+
+Epoch contract passes18/18. The v3 verification player built successfully in35 s,
+995 MB, identity60dea16+dirty, protocol25. Owner view yaw is preserved across
+position corrections, and only a registered live unit announces a teleport.
+Recall acceptance now checks proximity to the last controlled familiar position
+and samples before owner shutdown, so mere agreement back at the source cannot
+pass. Delayed recall v3 is running in familiar-recall-300ms-v3.
+
+The runner now supports --case ultimate --reconnect: after the owner casts a real
+field, kill and reopen that same profile, use the observer-only fixture path, and
+verify the reclaimed seat, recreated field, expiry and retained resource counts.
+The observe path neither grants charge nor teleports or presses skills. v3 includes
+that path and CSV charge fields. Run it after delayed recall finishes. No native
+control active; existing profile files are restored around every row.
+
+### Correct the shaped-peer fixture before accepting v3
+
+The first v3 recall endpoints agree, but inspection caught the delayed connection
+joining second: owner.csv LocalSlot2, observer.csv LocalSlot1. Thus that run shaped
+an observer, not the actual driver, and is NOT delayed-owner acceptance despite
+its old result.json being green. The runner now waits for the delayed owner to
+actually occupy seat1 before launching the observer, and fails incorrect seats.
+Repeat as familiar-recall-300ms-v3b with the same built runtime. Do not quote the
+old v3 row as passing the intended latency case.
+
+Additional source findings for continuing network work: host-only impulses applied
+to remote human replicas never integrate, because FixedUpdate exits into replica
+smoothing, and no impulse RPC exists. Add an explicit authoritative one-shot impact
+route at resolved impact sites; do NOT blindly relay all ApplyImpulse calls because
+caster prediction and continuous locally applied Seance pull would double. Verify
+an actual remote victim. Also inspect the observer's post-recall pet/model anchor:
+physical body and familiar follow target separated in v3 CSV; CharacterVisual binds
+Kuro to the rendered person instance, not directly to the motor.
+
+### Intended delayed recall now passes
+
+familiar-recall-300ms-v3b PASS with verified owner in seat1 and observer in seat2,
+150 ms each way and2% configured loss. All three observed6.0908 m controlled
+flight and agreed on recall body(1.1791,-1.5714), zero recorded endpoint error.
+Runtime hash2efffcdb25d625b05fb324c1dafd82ce4e7d33812e13cde36e698c47c85c0625.
+Now running actual owning-profile reconnect during ultimate in
+familiar-reconnect-clean-v3. Collect that before edits/another live run.
+
+Observer model/pet anchor suspicion is source-grounded: CharacterVisual's
+AlignToCapsuleFloor stores its current modelRoot.localPosition as _alignedLocal,
+which may include a temporary remote-smoothing XZ offset during model rebind.
+That makes the transient offset permanent. Remove smoothing before measuring and
+retain the authored alignment baseline; add a regression and capture ModelRoot
+position beside the actual motor in the multi-process trace. Snap the rendered
+root on a confirmed teleport, while preserving ordinary smoothing. This is an
+alignment repair, not restarting the stopped character redesign queue.
+
+### Actual reconnect v3 is red
+
+familiar-reconnect-clean-v3 FAILED. Rejoined owner wrote no gameplay rows and hit
+MaxConnectionAttempts. Observer initially held seat2, then reset itself to slot0
+when another peer left; its scene teardown also exposed a fixture null check using
+?. on a destroyed Unity object. No reconnect success is claimed.
+
+NetSession.OnClientDisconnected only special-cases a host observing another peer.
+A CLIENT observing another peer falls into its own disconnect cleanup, clears its
+seat/lobby and announces MatchAbandon. Check NGO callback identity semantics and
+filter unrelated peer notifications without suppressing the actual host-loss path.
+Read the real logs and re-run the exact reconnect case after fixing it. Also add
+non-secret approval-reason logging if the replacement client's initial transport
+failure remains unexplained. Preserve identity security checks.
+
+### Reconnect diagnosis correction and model regression in flight
+
+The foreign-disconnect-callback explanation was NOT confirmed. Installed NGO
+ClientDisconnectedMessage invokes OnPeerDisconnectedCallback for other peers;
+OnClientDisconnectCallback is local connection loss. Observer's log says actual
+ClosedByRemote while host was still alive. Do not add a guessed filter and claim
+this is fixed. Added non-secret approval/arrival/replacement/disconnect-ID logs to
+NetSession for the next reproduction. The reconnect failure remains open.
+
+Host/owner/observer first CSV times16.0417/16.1441/16.1448; host last40.0004,
+observer last31.2735. No host rendering stall (largest gap77 ms). This rules out
+both the guessed early host timeout and an eight-second render freeze. New arrival
+has no gameplay rows and reaches transport MaxConnectionAttempts. Trace its real
+approval/transport path on the next build.
+
+Implemented the independently evidenced visual alignment fix: SetModelRoot/Awake
+remember the base offset; AlignToCapsuleFloor removes temporary remote smoothing
+before measuring, and accepted teleports snap the rendered root. Forced replica
+poses also update/clear stale spawn-settle targets, preventing a later ownership
+handover from reviving an old teleport. Probe now captures modelX/modelZ beside
+bodyX/bodyZ and safely checks destroyed Unity objects. Nemu/model contract run
+network-model-alignment-contract is active,19 cases expected.
+
+### v4 alignment/connection diagnostic build
+
+Nemu/model alignment contracts pass19/19. Verification build v4 is running with
+non-secret connection approval/arrival/replacement/disconnect logs and model-root
+CSV fields. No speculative peer-callback filter was applied. Reconnect v3 remains
+red and source still needs a real cause; preserve the record of the disproven
+hypothesis above. Next rerun actual reconnect with v4, inspect exact IDs and
+transport outcomes, then verify model-root/body agreement and delayed recall.
+
+The source, protocol and model-alignment changes are still uncommitted after the
+pushed plan checkpoint60dea16. Preserve them and do not restore broad paths. Known
+Unity-generated noise is only RosterArms tangent serialization, QualitySettings,
+ProjectAuditorSettings and line-only ProjectSettings, which must be checked before
+restoring. After stable verification, commit/push this significant networking batch
+with TODO in the same commit, while keeping unfinished wider network and all
+hero/loadout/map/animation scope open.
+
+### v4 reconnect still fails before approval
+
+v4 direct reconnect is also red. Instrumented host sees peer0/1/2 approval and
+arrival, then disconnects1 and2; there is NO approval/arrival for the replacement
+client. Observer's callback is peer2/local2, so it really lost its own connection.
+The earlier foreign-callback theory is disproved and no such filter was added.
+Host stays alive and rendering throughout. The replacement reaches transport
+MaxConnectionAttempts. No identity security check is being relaxed.
+
+Isolating transport behavior next: familiar-reconnect-proxy-v4 runs the same case
+with a1 ms persistent UDP proxy on the owner link, so killing the owner does not
+close the server's immediate UDP endpoint. This can distinguish direct endpoint/
+ICMP or transport reconnection behavior from application identity/field recovery.
+It is an isolation experiment, not a workaround offered to players. No result yet.
+
+### Receive-pool defect found in installed Unity Transport6.5.0
+
+The repaired proxy now keeps receiving after the old client closes; proxy-v4b
+reclaims seat1 as peer3 replacing peer1. The remaining proxy case failure is active
+field reconstruction, not admission. Physical/model offsets are now zero in the
+settled host/observer trace. The proxy's own Windows UDP reset handling is fixed
+in tools/net_link.py; do not mistake the earlier dead proxy thread for game proof.
+
+Installed package source UDPNetworkInterface.ReceiveJob acquires buffers through
+PacketsQueue.TryAcquireBuffer, but on Failed completion or invalid byte count it
+continues without ReleaseBuffer and without enqueueing the buffer for later
+release. A dead Windows UDP endpoint can generate failed receives; empty datagrams
+are a deterministic way to exercise the same retirement. After enough discarded
+completions the driver has no buffers left to schedule, matching a host that keeps
+rendering/sending yet cannot receive a reconnect or other client traffic.
+
+Added actual local-UDP EditMode regression TransportReceiveRecoveryTests: send2048
+empty packets in bounded batches, then require a legitimate transport connection.
+Unpatched run transport-empty-before is in flight. Read its fresh XML before
+embedding/fixing the package. Do not edit ignored Library as the durable fix.
+
+Proposed minimal durable fix: embed the full installed com.unity.transport6.5.0
+package (291 files,1511KiB; Runtime/Editor/docs/samples/license retained) under
+Packages/com.unity.transport, return buffers on failed/invalid/failed-enqueue
+completions, document the exact patch and upstream version. Baselib's completion
+result carries the original requestUserdata, identifying the acquired buffer.
+Unity Companion License notice is preserved; official current license reviewed
+https://unity.com/legal/licenses/unity-companion-license . This is a Unity-dependent
+game, no paid service, upgrade or engine-version change. Re-run empty-packet test
+and the exact direct reconnect case; do not claim causal repair from static review.
+
+### UDP regression reproduced and durable package fix under test
+
+transport-empty-before.xml FAILED1/1 exactly at legitimate connection after2048
+empty UDP datagrams. The installed package's receive-pool retirement is reproduced,
+not just suspected from source. Embedded the complete6.5.0 package under
+Packages/com.unity.transport and pointed manifest there. Only its runtime
+UDPNetworkInterface.cs has behavior changes: ReleaseBuffer on failed completion,
+invalid size and failed enqueue. Upstream file SHA is
+9ccdca3a402e3c56e39eb8a3431e700afc38544bb4b4cf16cb3b876b82358e01.
+TUMP_PATCH.md records source/version/license and the regression. The fixed run
+transport-empty-after is in flight. No engine upgrade or paid dependency involved.
+
+Proxy-v4b demonstrated seat reclamation works once the proxy's ICMP-reset handling
+is fixed: peer3 reclaimed seat1, replacing peer1. It still missed the active field.
+Therefore direct transport receive recovery and active-effect restoration are two
+separate defects to verify. Next read fixed UDP XML, then build v5 and repeat the
+DIRECT reconnect case before changing its target/timing to hide the failure.
+
+### Receive-pool regression passes after patch
+
+transport-empty-after.xml PASS1/1 with exactly the same2048-empty-datagram then
+legitimate-connect test that failed before. The embedded receive-buffer repair is
+therefore measured against actual UDP, not merely source structure.
+
+Found active snapshot ordering: HostLateJoin calls HostSyncPeer before the later
+HandleIdentify BroadcastPicks. A cold client therefore receives ability/effect
+state while still holding its temporary default kit, then rebinds the intended
+hero and loses that state. HostSyncPeer now sends the reliable SyncPicks first,
+then rebind/world/resource/familiar snapshots. The larger lobby roster is on a
+separate fragmented stream, so relying on it arriving first was not safe.
+
+Next verification build v5 includes the transport fix and explicit kit-before-state
+ordering. Repeat DIRECT owning-profile reconnect, then delayed recall/ultimate.
+Core/whole EditMode/Checks must be rerun on the eventual stable source, not claimed
+from the earlier v2 tree. The broader one-shot impact replication gap remains open.
+
+### Wider networking work that must survive this focused repair
+
+- One-shot knockbacks on remote human victims are still unreplicated: the host
+  writes ApplyImpulse to a non-simulated replica; no impulse RPC exists. Add a
+  dedicated host-resolved impact event at one-shot victim sites, never a blanket
+  relay in ApplyImpulse (would double caster prediction and continuous local pull).
+  Reproduce with host Dante Q against an owning-client victim, measuring actual
+  displacement, then keep that separate-process case. Core shove needs the same
+  examination. Keep score/contact resolution host-only.
+- RebindKitIfHeroChanged returns on matching kit TYPE alone. Audit whether an
+  arriving player's non-default loadout is consequently ignored on the host's
+  pre-existing same-hero bot. Fix without resetting live cooldowns for cosmetic
+  updates. This directly matters to the newly expanded useful-loadout request.
+- All other kits need active-effect latejoin/cancel cleanup as they are reworked;
+  the explicit familiar snapshot is not a universal hazard reconstruction system.
+- Final qualification remains full Core/EditMode/Checks/audits, twice-isolated
+  PlayMode gate, both modes, round/rematch/disconnect matrices, actual Windows
+  executable and ordinary/full-speed visual evidence after all kit/map work.
+
+### Direct reconnect v5 now running
+
+Verification v5 build succeeded in74 s,995 MB, protocol25,60dea16+dirty. It includes
+both the measured receive-buffer repair and reliable picks-before-live-state
+ordering. Direct owning-profile reconnect during ultimate is running at
+Logs/familiar-reconnect-clean-v5. Read its independent result/CSVs before declaring
+transport or snapshot acceptance. No proxy in this case. No native control active.
+
+### Direct transport recovery proven; actual effect loss isolated
+
+Direct reconnect v5 now admits peer3 into the same seat1 and observer remains
+connected through its run. The previous direct transport failure is repaired.
+The only remaining row failure is live field reconstruction.
+
+CSV proves why: host's pet IsDevouring changes1->0 when the roster is resent on
+rejoin, while the actual pulling field and ultimate clock remain active. Every
+SyncPicks called CharacterVisual.ApplyModel unconditionally; ApplyModel destroyed
+both person and pet even when all assets were identical. BroadcastFamiliarEffect
+then saw an ordinary pet and sent no live state. This also interrupted animations
+and explains why snapshot ordering alone did not repair the effect.
+
+ApplyModel now compares actual model/pet assets, clip contents, palette contents,
+tint and person/prop mode and preserves an identical existing binding. It still
+rebuilds changed models or appearances; mode-relative index equality is not used.
+Added real active-ghost/duplicate-roster regression. network-model-snapshot-contract
+is next (20 cases). Do not call complete until direct reconnect reruns on v6.
+
+## Latest tooling request
+
+The owner asks whether any Unity configuration is needed and explicitly requests
+checking/using the new Unity plugin wherever it helps this task. Existing local
+Unity/tests/builds work; no configuration is currently needed from the owner.
+Investigating the local plugin catalog through the installed CLI. No Unity tool is
+currently exposed in this conversation, and the connector's search/suggest plugin
+tools are absent; do not claim it installed/connected without verification.
+Plugin-management and OpenAI-docs skills were read. Official plugin docs were
+fetched; inspect the concrete Unity entry rather than infer capabilities.
+Continue game work while plugin discovery proceeds; no new task or subagent.
+
+### Exact current run correction
+
+Duplicate-model snapshot PlayMode run was19/20, not20/20: no-teleport assertion
+sampled after a rendered frame and saw0.106 m ordinary body motion against0.1 m.
+Inspect temporary AI/input cleanup and assert the actual synchronous snapshot
+operation before ordinary motion resumes; do not simply widen the threshold.
+Verification build v6 was launched before that output was fully inspected. It is
+not a passing-test checkpoint. Read build outcome, fix/verify that contract before
+committing, and do not cite20/20 from this run. The duplicate-binding case itself
+passed. No native control active.
+
+### Official Unity plugin is available
+
+CLI catalog confirms unity@openai-curated-remote0.1.3-beta installed/enabled, authored
+by Unity Technologies. It is a skills package; its live-editor route is Unity CLI
+plus com.unity.pipeline, not an already-exposed Unity MCP tool in this session.
+Read unity-cli/SKILL.md and integration-advanced.md from its installed cache.
+The CLI already exists at C:/Users/Matthew/AppData/Local/Unity/bin/unity.exe.
+Checking status/package setup; always target this checkout explicitly and keep one
+Editor. User authorizes use wherever helpful. Existing tests/builds need no new
+user config/credential. Monetization/cloud changes are not requested.
+
+The plugin's audio-mixer workflow was only inspected for capabilities, not applied;
+its manual-mixer-creation/approval steps are not a reason to block current gameplay
+work. Use relevant skills deliberately, preserving this task's standing autonomy
+and limited UI scope. Plan/code sources retain the existing sole-author rules.
+
+### Unity plugin live connection verified
+
+Unity CLI1.0.0-beta.5 and official plugin0.1.3-beta were already installed. Added
+com.unity.pipeline0.6.0-exp.1 through `unity pipeline install` for this checkout.
+Launched one resident batch Editor via the profile-preserving runner, log
+Logs/unity-pipeline-editor.log. It is ready on local port7800; CLI editor_status
+confirms correct project and6000.5.8f1, not compiling, Play Mode initially stopped.
+Use explicit --project-path on all commands. Asset import worker is not a second
+project Editor. No native desktop control is active.
+
+Plugin command catalog saved as Logs/unity-command-catalog.json. It exposes eval,
+scene operations, capture_game_view, console, run_tests and test_status. Started
+NemuKitContractProbe asynchronously through the plugin after fixing the0.106m
+post-frame assertion: snapshot no-teleport is now checked synchronously at.001m;
+temporary body AI is disabled and its movement intent cleared before destruction.
+This is a20-case live run. Poll test_status, inspect actual counts/failures and
+retain the result. JSON is not automatically an NUnit XML gate; investigate export
+or rerun the repository batch gate later. Do not claim the prior19/20 run passed.
+
+The resident Editor is held by exec session36397 and must be closed through a
+verified Editor command/eval before source/imported edits or another Unity batch.
+The runner restores persistent files after that Editor exits. Do not terminate
+unrelated Editors or leave this one running when unnecessary.
+
+### Plugin used successfully; resumed real-player reconnect
+
+Live plugin test_status reports20/20 passed in34.06 s after temporary AI cleanup
+and synchronous no-teleport assertion. Preserved raw report at
+Logs/unity-live-nemu-completed.json and wrapped response at
+Logs/unity-live-nemu-test-status.json. This is verified plugin JSON, not an NUnit
+XML substitute for the final gate. CLI eval then scheduled EditorApplication.Exit;
+collecting runner36397 restores the profile snapshot. No resident Editor is needed
+for the next standalone-player row and it was closed normally.
+
+The CLI's old1.0.0-beta.5 skill-install dry-run would write the entire skill into
+AGENTS.md, so that migration was not applied. Existing curated skills plus explicit
+CLI commands work; do not bloat or overwrite the carefully maintained AGENTS.md.
+
+Now running direct familiar-reconnect-clean-v6. V6 includes duplicate model binding
+preservation, but predates the tiny temporary-AI cleanup and test timing change.
+Keep its exact runtime hash/report scope honest. After verification, add the live
+NUnit report exporter or use the existing batch XML gate before stable delivery.
+
+### Progress estimate communicated
+
+The owner asked percent complete. Answered approximately45% of the FULL expanded
+scope, explicitly a rough scope estimate rather than test percentage. Listed the
+cleaned cast/core movement, Cheska first deep pass, Kuro model/idles, Nemu gameplay
+and implemented networking repairs; stated that reconnect verification, other
+kits/distinct alternatives, deeper animation, all three maps/trees and final
+Windows qualification remain. Do not silently treat this as45% of networking only
+or claim the broader work is done when the next network test passes.
+
+### Direct reconnect v6 passes
+
+familiar-reconnect-clean-v6 PASS. The restarted owning profile reclaims seat1,
+reconstructs the actual live field at(1.1712,-1.5592), matches its lifetime and
+retains s2charges0/ultcharge0. Settled model/body error0 on host and observer.
+Runtime hashf9a972cfd93e926f6f5f048b43efbe3637c7d736e6ea69447d477bd76d7bc460.
+This closes the reproduced familiar/receive-pool/repeated-model failure chain;
+it does not close all networking or the broader game-polish task.
+
+Adding a small Editor-only native NUnit result recorder so plugin-driven tests
+retain the repository's XML evidence contract. Full EditMode, current20-case Nemu
+XML and checks/audits will gate the stable batch before commit/push. Keep remaining
+remote impacts/loadout binding/all-kit states and final matrices open.

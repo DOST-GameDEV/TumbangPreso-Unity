@@ -18,8 +18,10 @@ namespace TumbangPreso.PlayTests
         private int _soloSeat;
         private CustomRules _rules;
         private CharacterMotor _who;
+        private INetProvider _provider;
         [UnitySetUp] public IEnumerator Before()
         {
+            _provider=NetAuthority.Provider;
             _allBots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_soloSeat=GameLaunch.SoloSeat;
             _rules=SceneFlow.SelectedRules.Clone();_pinned=SceneFlow.RulesPinned;
             yield return PlayModeWorld.Reset();
@@ -42,6 +44,7 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTearDown] public IEnumerator After()
         {
+            NetAuthority.Provider=_provider;
             yield return PlayModeWorld.Reset();
             GameLaunch.AllBots=_allBots;GameLaunch.Spectator=_spectator;GameLaunch.SoloSeat=_soloSeat;
             SceneFlow.AdoptRemoteRules(_rules);
@@ -52,6 +55,186 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,true);yield return new WaitForSeconds(.08f);
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
+        private sealed class HostReplicaProvider : INetProvider
+        {
+            public bool IsHost=>true;
+            public bool IsNetworked=>true;
+            public int LocalSlot=>0;
+            public int LocalPeerId=>0;
+            public bool IsSeatlessReferee=>false;
+        }
+        private sealed class OwnerProvider : INetProvider
+        {
+            public bool IsHost=>false;public bool IsNetworked=>true;
+            public int LocalSlot=>1;public int LocalPeerId=>1;
+            public bool IsSeatlessReferee=>false;
+        }
+        [UnityTest]
+        public IEnumerator PredictedRecallIgnoresOldEchoUntilANewMovementEpoch()
+        {
+            NetAuthority.Provider=new OwnerProvider();
+            var before=_who.transform.position;
+            _who.BeginAbilityPrediction(1);_who.Teleport(before+Vector3.right*3);_who.EndAbilityPrediction();
+            Assert.IsTrue(_who.AwaitingAuthoritativeTeleport);
+            _who.ApplyNetworkTransform(before,0,Vector3.zero,true,true);
+            Assert.Greater(_who.transform.position.x-before.x,2.9f,"An old echo erased the predicted recall.");
+            Assert.IsFalse(_who.RefuseAbilityTeleport(0),"Another slot's refusal cancelled the teleport.");
+            _who.AdoptMovementEpoch(1);
+            _who.ApplyNetworkTransform(before+Vector3.right*3.1f,0,Vector3.zero,true,true,true);
+            Assert.IsFalse(_who.AwaitingAuthoritativeTeleport);
+            Assert.AreEqual(1,_who.MovementEpoch);
+            Assert.AreEqual(before.x+3.1f,_who.transform.position.x,.01f);
+            yield return null;
+        }
+
+        private sealed class DelayedAimProbe : HeroAbility
+        {
+            public AbilityContext Seen;
+            public DelayedAimProbe():base("aim-probe","AIM","probe",0,0,
+                TumbangPreso.UI.AbilityGlyph.Burst){Windup=.4f;}
+            protected override void OnActivate(AbilityContext ctx){Seen=ctx;}
+        }
+        [UnityTest]
+        public IEnumerator DelayedCastKeepsTheAcceptedAimInsteadOfTheReplicaIntent()
+        {
+            var ability=new DelayedAimProbe();
+            var requested=new AbilityContext(_who,null,null,new Vector3(1,0,2),Vector3.right,new Vector3(4,0,3));
+            ability.Activate(requested);
+            var replica=new AbilityContext(_who,null,null,Vector3.zero,Vector3.back,new Vector3(-5,0,-5));
+            ability.Tick(replica,.41f);
+            Assert.IsNotNull(ability.Seen);
+            Assert.AreEqual(requested.AimPoint,ability.Seen.AimPoint);
+            Assert.AreEqual(requested.Position,ability.Seen.Position);
+            Assert.AreEqual(requested.Forward,ability.Seen.Forward);
+            yield return null;
+        }
+        [UnityTest]
+        public IEnumerator RemoteHumanProjectionDoesNotAcquireAIOrSimulateFlight()
+        {
+            foreach(var reader in _who.GetComponents<PlayerInputReader>())Object.Destroy(reader);
+            foreach(var brain in _who.GetComponents<AIController>())Object.Destroy(brain);
+            yield return null;
+            _who.IsBot=false;_who.ForgetInputSource();
+            NetAuthority.Provider=new HostReplicaProvider();
+            Assert.IsFalse(_who.IsLocallySimulated());
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            pet.BeginPossession(_who);pet.SetPlayerInput(Vector2.up);
+            Vector3 before=pet.transform.position;
+            yield return new WaitForSeconds(.2f);
+            Assert.IsNull(_who.GetComponent<AIController>(),"Remote possession stole body simulation from its owner.");
+            Assert.Less(Vector3.Distance(before,pet.transform.position),.001f,"Host replica invented flight from local input.");
+            pet.EndPossession(false);
+        }
+        [UnityTest]
+        public IEnumerator ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection()
+        {
+            yield return Press(Verb.Skill2);
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            pet.SetPlayerInput(Vector2.zero);
+            _who.Intent.Move=Vector2.right;
+            Vector3 before=pet.transform.position;
+            yield return new WaitForSeconds(.2f);
+            Assert.Less(Vector3.ProjectOnPlane(pet.transform.position-before,Vector3.up).magnitude,.001f);
+        }
+        [UnityTest]
+        public IEnumerator AuthoritativeRecallClearsTheOldReplicaInterpolationTarget()
+        {
+            foreach(var reader in _who.GetComponents<PlayerInputReader>())Object.Destroy(reader);
+            foreach(var brain in _who.GetComponents<AIController>())Object.Destroy(brain);
+            yield return null;
+            _who.IsBot=false;_who.ForgetInputSource();NetAuthority.Provider=new HostReplicaProvider();
+            _who.ApplyNetworkTransform(new Vector3(0,.12f,-10),0,Vector3.right,true,false,true);
+            var destination=new Vector3(2,.12f,-10);_who.Teleport(destination);
+            yield return new WaitForSeconds(.2f);
+            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-destination,Vector3.up).magnitude,.01f);
+        }
+
+        [UnityTest]
+        public IEnumerator AuthoritativeFlightRejectsInvalidHeightWallsAndUnfundedTravel()
+        {
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            pet.BeginPossession(_who);pet.SetPlayerInput(Vector2.zero);
+            Vector3 start=pet.transform.position;
+            Assert.IsFalse(pet.AcceptFlightPose(new Vector3(float.NaN,1,0),0));
+            Assert.IsFalse(pet.AcceptFlightPose(start,float.PositiveInfinity));
+            Assert.IsFalse(pet.AcceptFlightPose(start+Vector3.up*3,0));
+            Assert.IsFalse(pet.AcceptFlightPose(start+Vector3.right*8,0),"A first packet bought an arena crossing.");
+            var next=start+Vector3.right*.2f;
+            next.y=VfxShapes.GroundPoint(next).y+.9f;
+            Assert.IsTrue(pet.AcceptFlightPose(next,20));
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.transform.position=next+Vector3.right*.6f;wall.transform.localScale=new Vector3(.2f,3,3);
+            Physics.SyncTransforms();
+            Assert.IsFalse(pet.AcceptFlightPose(next+Vector3.right*1.2f,20));
+            Assert.Less(Vector3.Distance(next,pet.transform.position),.001f);
+            Object.Destroy(wall);pet.EndPossession(false);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport()
+        {
+            yield return Press(Verb.Skill2);
+            var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
+            var before=_who.transform.position;
+            int charges=kit.Skill2.ChargesRemaining;float meter=kit.UltimateCharge;
+            var ground=VfxShapes.GroundPoint(new Vector3(0,1,-5));
+            kit.RestoreFamiliar(_who,2,ground,.7f);
+            kit.RestoreFamiliar(_who,2,ground,.6f);
+            Assert.Less(Vector3.Distance(before,_who.transform.position),.001f,"Replacing possession recalled Nemu.");
+            yield return null;
+            var fields=Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None)
+                .Where(f=>f.OwnerSlot==_who.PlayerSlot && f.isActiveAndEnabled).ToArray();
+            Assert.AreEqual(1,fields.Length,"Repeated snapshot duplicated the field.");
+            Assert.Less(Vector3.Distance(fields[0].transform.position,ground),.03f);
+            Assert.AreEqual(charges,kit.Skill2.ChargesRemaining);Assert.AreEqual(meter,kit.UltimateCharge);
+            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsPossessed);
+            yield return new WaitForSeconds(.8f);
+            Assert.IsFalse(kit.Ultimate.IsActive);
+            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsDevouring);
+            Assert.IsFalse(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None)
+                .Any(f=>f.OwnerSlot==_who.PlayerSlot && f.isActiveAndEnabled));
+        }
+        [UnityTest]
+        public IEnumerator ProjectionSnapshotRestoresOnlyItsRemainingTrip()
+        {
+            var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
+            var position=new Vector3(1,.9f,-8);
+            int charges=kit.Skill2.ChargesRemaining;
+            kit.RestoreFamiliar(_who,1,position,.6f);
+            Assert.IsTrue(kit.Skill2.IsActive);
+            Assert.AreEqual(charges,kit.Skill2.ChargesRemaining);
+            Assert.Less(Vector3.Distance(_who.GetComponent<CharacterVisual>().Companion.transform.position,position),.01f);
+            yield return new WaitForSeconds(.8f);
+            Assert.IsFalse(kit.Skill2.IsActive);
+            Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsPossessed);
+        }
+
+        [UnityTest]
+        public IEnumerator ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment()
+        {
+            var visual=_who.GetComponent<CharacterVisual>();var root=visual.ModelRoot;
+            Vector3 aligned=root.localPosition;
+            root.localPosition+=new Vector3(3,0,7);
+            visual.AlignToCapsuleFloor();
+            Assert.AreEqual(aligned.x,root.localPosition.x,.001f);
+            Assert.AreEqual(aligned.z,root.localPosition.z,.001f);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator RepeatedRosterSnapshotPreservesTheActiveFamiliar()
+        {
+            var visual=_who.GetComponent<CharacterVisual>();var pet=visual.Companion;
+            pet.Devour(7);
+            var entry=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu");
+            visual.ApplyModel(entry.Model,entry.Tint,(AnimationClip[])entry.Clips.Clone(),
+                (Color[])entry.Palette.Clone(),entry.PetModel);
+            yield return null;
+            Assert.AreSame(pet,visual.Companion,"An unchanged roster update deleted the live ghost.");
+            Assert.IsTrue(pet.IsDevouring);
+        }
+
         [UnityTest]
         public IEnumerator SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan()
         {

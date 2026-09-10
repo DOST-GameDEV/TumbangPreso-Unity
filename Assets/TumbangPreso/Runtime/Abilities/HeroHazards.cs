@@ -2325,14 +2325,14 @@ namespace TumbangPreso.Abilities
         /// The `Hollow` rim on the ground says how far it reaches and the maw says what it is.
         /// </summary>
         public static GameObject SpawnKuroUnbound(Vector3 position, float radius, float duration,
-                                                   int ownerSlot, bool fromPet = false)
+                                                   int ownerSlot, bool fromPet = false, bool playSound = true)
         {
             position=VfxShapes.GroundPoint(position);
             var go=new GameObject("KuroUnbound");go.transform.position=position;
             // The transformed familiar is the event. The old nested maw, horned
             // fallback, enormous implosion card and lights hid its face and intake.
             KuroIntakePresentation.Build(go.transform,radius,duration,ownerSlot,fromPet);
-            GameServices.Audio?.PlayAt("sfx_kuro_unbound",position);
+            if(playSound)GameServices.Audio?.PlayAt("sfx_kuro_unbound",position);
             var comp=go.AddComponent<SeanceVoidComponent>();
             comp.Radius=radius;comp.Duration=duration;comp.OwnerSlot=ownerSlot;
             comp.PullStrength=62;comp.LiftHeight=2.4f;comp.SlipperPull=9;
