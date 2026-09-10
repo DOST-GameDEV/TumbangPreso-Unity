@@ -2411,10 +2411,10 @@ namespace TumbangPreso.Visual
         // rule 5 is that a frame mid-fight must still show every player. Draping is the only
         // answer that keeps the ink on the ground everywhere.
         //
-        // ⚠️ THE CAST IS PER VERTEX, CACHED ON A 12 CM GRID, AND IT HAPPENS ONCE. These meshes
-        // are built at cast time and never rebuilt, so the cost is one burst of a few hundred
-        // rays rather than anything per frame. The grid is what stops a 72-segment ring paying
-        // 144 of them when its neighbours share a height.
+        // Ground conformance runs once per generated mesh, not every frame. Cache
+        // exact repeated XZ coordinates only: the old 12 cm grid merged points on
+        // opposite sides of a kerb and lifted street vertices onto the pavement.
+        // Duplicate triangle vertices still share a query without flattening a step.
         // -------------------------------------------------------------------
 
         /// <summary>
@@ -2505,14 +2505,13 @@ namespace TumbangPreso.Visual
             float planeY = t.position.y;
 
             var vertices = mesh.vertices;
-            var cache = new System.Collections.Generic.Dictionary<long, float>(vertices.Length);
+            var cache = new System.Collections.Generic.Dictionary<Vector2, float>(vertices.Length);
 
             for (int i = 0; i < vertices.Length; i++)
             {
                 Vector3 world = t.TransformPoint(vertices[i]);
 
-                long key = ((long)Mathf.RoundToInt(world.x * 8.0f) << 32)
-                           ^ (uint)Mathf.RoundToInt(world.z * 8.0f);
+                var key = new Vector2(world.x, world.z);
 
                 if (!cache.TryGetValue(key, out float ground))
                 {

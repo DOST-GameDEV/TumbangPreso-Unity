@@ -592,6 +592,10 @@ namespace TumbangPreso.Visual
             var collider = go.GetComponent<Collider>();
             if (collider == null) return;
 
+            // Destroy is deferred until the end of the frame. Disable immediately:
+            // an Ember collider was still intercepting a same-frame ground query
+            // half a metre above the court, despite being purely decorative.
+            collider.enabled = false;
             if (Application.isPlaying) Object.Destroy(collider);
             else Object.DestroyImmediate(collider);
         }

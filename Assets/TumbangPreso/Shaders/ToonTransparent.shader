@@ -100,7 +100,11 @@ Shader "TumbangPreso/ToonTransparent"
             half level = lerp(_ShadowBand, 1.0h, band);
 
             half4 c;
-            c.rgb = s.Albedo * _LightColor0.rgb * level;
+            // Preserve the authored directional-light toon shadow band. Positional
+            // lights must still fade with range: a near-range-edge point retained
+            // most of its color contribution and washed the cast in nearby colors.
+            half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
+            c.rgb = s.Albedo * _LightColor0.rgb * level * falloff;
             c.a = s.Alpha;
             return c;
         }

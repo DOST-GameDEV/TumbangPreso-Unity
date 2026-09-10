@@ -859,6 +859,7 @@ namespace TumbangPreso.EditorTools
                 // only thing saying so would be one warning in a log nobody reads during a
                 // playtest. That is worse than pink, not better.
                 "TumbangPreso/VolcanicRock",
+                "TumbangPreso/FrostSurface",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

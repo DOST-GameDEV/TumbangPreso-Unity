@@ -367,10 +367,32 @@ Current uncommitted ice prototype: `tools/author_permafrost_models.py`, native
 `Resources/Models/Permafrost`, `FrostSurface.shader`, `FrostSurfacePresentation.cs`,
 `PermafrostModelImport.cs`, GameBuilder shader inclusion and the SpawnIceSheet
 replacement. It removes the platform/spikes/cutout in favor of thin fractured film.
-`Logs/permafrost-play-v1.xml`: 1/2 passed; all-map placement passed, kerb check
-hit an unexpected collider at y=0.5 while the vertex was at .003. Diagnose the hit
-before changing code/coverage. Images are in `Logs/permafrost-review-v1` and still
-need visual review. This is not finished art or a verified release candidate.
+The initial kerb failures are diagnosed and fixed: decorative colliders stayed
+active until deferred destruction, and the 12.5 cm ground cache merged vertices
+across kerbs. Decorative colliders now disable immediately; mesh draping caches
+exact repeated XZ coordinates. `Logs/permafrost-play-v3.xml` passes 3/3, including
+kerbs, all three maps and all three accepted Cheska casts. The look diagnostic
+passes 1/1 (`permafrost-look-diagnostic.xml`). v3 stills show a thin blue cracked
+film, no platform/spikes/cutout. Art and full kit completion remain open.
+
+The toon shaders also now apply positional-light attenuation to the final lit
+color, preserving the directional toon shadow floor. The red fixture measured
+72% remaining light near its range edge; the final solid/transparent fixtures
+measure 7.3% / 8.4% and zero outside range (`toon-light-falloff-green-v2.xml`, 2/2).
+Actual map captures still show strongly saturated yellow clothing and dark hair.
+Isolated no-camera-effect and ambient-only captures preserve the expected orange
+skin and yellow Zack clothes; the map key and grade intensify them. Runtime skin
+palette13, tint and flash inputs are normal. No palette rewrite is justified by
+that capture alone; assess the warm key/grade during the planned map-lighting pass.
+`Logs/permafrost-look-isolate.xml` passes 1/1. Temporary diagnostic toggles removed.
+Foundation verification: Core 559/559, EditMode 472/472. The shader-stripping audit
+caught FrostSurface missing from serialized GraphicsSettings despite the builder
+list entry; both now include it. All fourteen gating source audits pass after that correction. This is a stable foundation batch, not completion of the eighteen skills.
+
+Audio source analysis/preparation is possible, but the available model cannot
+listen to tool-provided audio. No auditory approval is claimed. Original cues
+remain unchanged in this batch. MP3 review copies are under Logs/cheska-audio-review.
+
 
 **Latest explicit Phaister/Nemu brief:** all Phaister magic must improve. Her
 ultimate should read as grand magic, with runes and a complex magic circle that

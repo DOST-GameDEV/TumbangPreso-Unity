@@ -260,11 +260,11 @@ copy intentionally; do not ship a stronger claim because it sounds attractive.
 The initial low permafrost prototype predates this cultural brief. Its thin-surface
 approach fits the moisture/cold direction and may be refined, but it is not accepted
 or complete. It is uncommitted: native Blender source, three small OBJ meshes,
-FrostSurface shader/presentation and an import hook. Actual-map placement passed;
-the kerb probe failed with an unexpected collider at y=0.5 while its vertex was at
-0.003. Investigate the actual hit collider and deferred decorative collider removal;
-do not weaken the ground check or assume the diagnosis. No Unity process or native
-PC input is currently active.
+FrostSurface shader/presentation and an import hook. Actual-map and kerb placement now pass (permafrost-play-v3.xml, 3/3).
+The failures were a decorative collider surviving until end of frame, then a
+quantized height cache crossing a kerb. Both are fixed without weakening coverage.
+The latest film is visually reviewed but is not a completed full Cheska pass.
+The active ledger records the separate lighting diagnostic and next work.
 
 Finish this planned direction in the durable ledgers, then resolve the prototype's
 verification, inspect its real appearance, and complete Cheska's three actions.

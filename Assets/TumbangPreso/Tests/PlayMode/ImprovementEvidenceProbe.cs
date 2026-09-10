@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -216,12 +216,47 @@ namespace TumbangPreso.PlayTests
                 camera.transform.position = new Vector3(-7, 1.7f, -7);
                 camera.transform.LookAt(new Vector3(-1, .3f, 0));
                 yield return new WaitForSeconds(.15f);
+                yield return GameplayShots.Render(camera, map + "-ground-skills-forming", false, Output);
+                yield return new WaitForSeconds(.4f);
                 yield return GameplayShots.Render(camera, map + "-ground-skills", false, Output);
+                RecordLookInputs(map, camera);
+
                 Object.Destroy(camera.gameObject);
                 yield return PlayModeWorld.Reset();
             }
             Directory.CreateDirectory(Output);
             File.WriteAllText(Path.Combine(Output, "ground-placement.csv"), report.ToString());
+        }
+
+        private static void RecordLookInputs(string map, Camera camera)
+        {
+            var log = new StringBuilder();
+            log.AppendLine("grade=" + JsonUtility.ToJson(camera.GetComponent<ColourGrade>()));
+            log.AppendLine("ambient=" + RenderSettings.ambientMode + " / " + RenderSettings.ambientLight
+                + " sky=" + RenderSettings.ambientSkyColor + " equator=" + RenderSettings.ambientEquatorColor);
+            foreach (var player in GameServices.Round.Players)
+            {
+                log.AppendLine("actor=" + Roster.PersonIdAt(player.Mode, player.CharacterIndex));
+                foreach (var renderer in player.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if (renderer.GetComponentInParent<VfxRenderTag>() != null) continue;
+                    var block = new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
+                    foreach (var material in renderer.sharedMaterials)
+                    {
+                        var palette = material.GetVectorArray("_Palette");
+                        log.AppendLine(renderer.name + " shader=" + material.shader.name
+                            + " color=" + (material.HasProperty("_Color") ? material.GetColor("_Color").ToString() : "none")
+                            + " palette13=" + (palette.Length > 13 ? palette[13].ToString("F4") : "missing")
+                            + " blockColor=" + block.GetColor("_Color") + " flash=" + block.GetFloat("_FlashAmount")
+                            + " frost=" + block.GetFloat("_FrostAmount"));
+                    }
+                }
+            }
+            foreach (var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if (light.enabled) log.AppendLine("light=" + light.name + " type=" + light.type + " color=" + light.color
+                    + " intensity=" + light.intensity + " range=" + light.range + " at=" + light.transform.position);
+            Directory.CreateDirectory(Output);
+            File.WriteAllText(Path.Combine(Output, map + "-look-inputs.txt"),log.ToString());
         }
 
         [UnityTest]

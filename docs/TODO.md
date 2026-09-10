@@ -316,6 +316,12 @@ hand-aura anchoring are also corrected and under broad verification. Details and
 exact receipts are in the active ledger. Full animation/SFX/VFX quality remains
 open; do not close this section for these correctness fixes alone.
 
+Permafrost now has an authored thin-film prototype in native Blender source with
+three runtime meshes. Kerb probes exposed and verified fixes for deferred decorative
+collider removal and quantized ground-height caching. Targeted PlayMode passes 3/3.
+Positional toon-light falloff passes both GPU fixtures; remaining palette/render
+appearance and full Cheska animation/SFX/VFX quality are still open in the ledger.
+
 **Latest owner decision, 2026-09-10:** the cleaned Classic models were called solid
 and the owner explicitly asked to move on. Preserve the current cast at `7c7fcb5`;
 stop the individual character redesign queue. Prioritize the remaining animation,
