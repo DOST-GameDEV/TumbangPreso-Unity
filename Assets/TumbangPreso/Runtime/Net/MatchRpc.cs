@@ -1768,6 +1768,7 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(mode);
                 writer.WriteValueSafe(position);
                 writer.WriteValueSafe(expiresAt);
+                writer.WriteValueSafe(pet.transform.eulerAngles.y);
                 _nm.CustomMessagingManager.SendNamedMessage("FamiliarEffect",peer,writer);
             }
         }
@@ -1780,12 +1781,13 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int mode);
             reader.ReadValueSafe(out Vector3 position);
             reader.ReadValueSafe(out float expiresAt);
-            if(!ValidSlot(slot) || (mode!=1 && mode!=2) || !Finite(position) || !Finite(expiresAt) ||
+            reader.ReadValueSafe(out float yaw);
+            if(!ValidSlot(slot) || (mode!=1 && mode!=2) || !Finite(position) || !Finite(expiresAt) || !Finite(yaw) ||
                 GameServices.Match==null || GameServices.Match.RoundNumber!=round)return;
             var unit=Unit(slot);
             float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
             if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
-                kit.RestoreFamiliar(unit,mode,position,remaining);
+                kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
         }
 
         private void OnSyncFamiliarMsg(ulong senderClientId,FastBufferReader reader)

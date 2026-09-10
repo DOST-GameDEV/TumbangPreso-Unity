@@ -340,7 +340,9 @@ namespace TumbangPreso.Net
         // 24 -> 25 adds familiar poses and a final anchor to both ability messages.
         // 25 -> 26 adds host-resolved discrete impacts to the owning movement peer.
         // 26 -> 27 identifies recovery episodes and acknowledges mash inputs.
-        public const int ProtocolVersion = 27;
+        //28 includes accepted familiar facing, so late joins see the same giant
+        //pose instead of reconstructing its yaw from a caster who already moved.
+        public const int ProtocolVersion = 28;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -55,6 +55,53 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,true);yield return new WaitForSeconds(.08f);
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
+
+        [UnityTest]
+        public IEnumerator FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor()
+        {
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            var ultimate=_who.AbilitySystem.Kit.Ultimate;
+            var carrier=_who.GetComponent<Carrier>();var verbs=_who.GetComponent<CombatVerbs>();
+            Vector3 ownerStart=_who.transform.position;
+            var ctx=new AbilityContext(_who,carrier,verbs,ownerStart,Vector3.forward,ownerStart+Vector3.forward*10);
+            Vector3 shown=ultimate.TelegraphCentre(ctx);
+            Assert.Greater(Vector3.Distance(shown,ownerStart),3,"Following giant still grows around the player's camera.");
+            pet.SampleIdleForCapture(GhostPetCompanion.FidgetState.CatSmile,.9f);
+            ultimate.Activate(ctx);
+            Assert.IsFalse(pet.PlayIdleGesture(GhostPetCompanion.FidgetState.CatSmile),"Idle gesture overrides an accepted invocation.");
+            Assert.AreEqual(Vector3.zero,pet.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="KuroExpressions").localScale,"The invocation kept a cute expression frozen on the familiar.");
+            // Turn the live owner away after committing. The accepted cast and
+            // ground reticle must stay together through the windup.
+            _who.transform.rotation=Quaternion.Euler(0,150,0);
+            yield return new WaitForSeconds(ultimate.Windup+.75f);
+            var field=Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>();
+            Assert.IsNotNull(field);Assert.IsTrue(pet.IsRageFormVisible);
+            Assert.Less(Vector3.Distance(shown,field.transform.position),.08f);
+            Assert.Less(Vector3.Distance(pet.DevourGround,field.transform.position),.08f);
+            var towardsOwner=ownerStart-pet.DevourGround;towardsOwner.y=0;
+            Assert.Greater(Vector3.Dot(pet.transform.forward,towardsOwner.normalized),.98f,"Owner sees the giant's back.");
+            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-ownerStart,Vector3.up).magnitude,.05f,"Casting teleported Nemu.");
+        }
+
+        [UnityTest]
+        public IEnumerator ResetDuringInvocationReleasesTheFamiliarWithoutGrowingIt()
+        {
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            // The fixture just teleported the owner; its trailing pet has not
+            // necessarily caught up. Compare with the authored follow anchor,
+            // not that transient pre-cast position on the far side of the map.
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var followTarget=(Transform)typeof(GhostPetCompanion).GetField("_target",flags).GetValue(pet);
+            var followOffset=(Vector3)typeof(GhostPetCompanion).GetField("_localOffset",flags).GetValue(pet);
+            _who.AbilitySystem.Kit.AddUltimateCharge(100);
+            yield return Press(Verb.Ultimate);
+            Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsWindingUp);
+            _who.AbilitySystem.ResetKit();
+            yield return new WaitForSeconds(.9f);
+            Assert.IsFalse(pet.IsDevouring);Assert.IsFalse(pet.IsRageFormVisible);
+            Assert.IsNull(Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
+            Assert.Less(Vector3.Distance(pet.transform.position,followTarget.TransformPoint(followOffset)),.2f,"Cancelled staging did not restore the familiar's normal shoulder offset.");
+        }
         [UnityTest] public IEnumerator QuickKeyboardTapReachesStunRecovery() => QuickRecoveryTap(false);
         [UnityTest] public IEnumerator QuickControllerTapReachesStunRecovery() => QuickRecoveryTap(true);
         private IEnumerator QuickRecoveryTap(bool controller)
@@ -111,6 +158,56 @@ namespace TumbangPreso.PlayTests
                 action.Dispose();UnityEngine.InputSystem.InputSystem.RemoveDevice(device);
                 inputSettings.backgroundBehavior=oldBackground;
                 inputSettings.editorInputBehaviorInPlayMode=oldEditorInput;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PossessedFamiliarCanDevourThroughTheKeyboardReader()
+        {
+            yield return Press(Verb.Skill2);
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            Assert.IsTrue(pet.IsPossessed);
+            _who.AbilitySystem.Kit.AddUltimateCharge(100);
+            var inputSettings=UnityEngine.InputSystem.InputSystem.settings;
+            var background=inputSettings.backgroundBehavior;var editorInput=inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode=UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard=UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keyboard);
+            var action=new UnityEngine.InputSystem.InputAction("DevourProbe",UnityEngine.InputSystem.InputActionType.Button,"<Keyboard>/f");
+            var reader=_who.GetComponent<PlayerInputReader>()??_who.gameObject.AddComponent<PlayerInputReader>();reader.enabled=false;
+            typeof(PlayerInputReader).GetField("_ultimate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(reader,action);
+            action.Enable();UnityEngine.InputSystem.InputSystem.Update();
+            try
+            {
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.F));
+                UnityEngine.InputSystem.InputSystem.Update();
+                Assert.IsTrue(action.IsPressed(),"The fixture's device was not received.");
+                reader.SendMessage("Update");
+                _who.AbilitySystem.SendMessage("Update");
+                Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsWindingUp,"Possession swallowed the physical ultimate input.");
+                yield return new WaitForSeconds(_who.AbilitySystem.Kit.Ultimate.Windup+.15f);
+                Assert.IsTrue(_who.AbilitySystem.Kit.Ultimate.IsActive,"The accepted windup did not release the ultimate.");
+                Assert.IsTrue(pet.IsDevouring);Assert.IsFalse(pet.IsPossessed);
+            }
+            finally
+            {
+                action.Dispose();UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior=background;inputSettings.editorInputBehaviorInPlayMode=editorInput;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator OrdinaryProjectionReturnNeverBecomesTheGiant()
+        {
+            yield return Press(Verb.Skill2);
+            var pet=_who.GetComponent<CharacterVisual>().Companion;
+            Assert.IsTrue(pet.IsPossessed);
+            yield return Press(Verb.Skill2);
+            for(int i=0;i<8;i++)
+            {
+                Assert.IsFalse(pet.IsRageFormVisible,"Normal E recall borrowed the ultimate transformation.");
+                yield return new WaitForSeconds(.08f);
             }
         }
 
@@ -319,13 +416,14 @@ namespace TumbangPreso.PlayTests
             var before=_who.transform.position;
             int charges=kit.Skill2.ChargesRemaining;float meter=kit.UltimateCharge;
             var ground=VfxShapes.GroundPoint(new Vector3(0,1,-5));
-            kit.RestoreFamiliar(_who,2,ground,.7f);
-            kit.RestoreFamiliar(_who,2,ground,.6f);
+            kit.RestoreFamiliar(_who,2,ground,.7f,107);
+            kit.RestoreFamiliar(_who,2,ground,.6f,107);
             Assert.Less(Vector3.Distance(before,_who.transform.position),.001f,"Replacing possession recalled Nemu.");
             yield return null;
             var fields=Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None)
                 .Where(f=>f.OwnerSlot==_who.PlayerSlot && f.isActiveAndEnabled).ToArray();
             Assert.AreEqual(1,fields.Length,"Repeated snapshot duplicated the field.");
+            Assert.Less(Mathf.Abs(Mathf.DeltaAngle(107,_who.GetComponent<CharacterVisual>().Companion.transform.eulerAngles.y)),.1f,"Snapshot lost the accepted giant facing.");
             Assert.Less(Vector3.Distance(fields[0].transform.position,ground),.03f);
             Assert.AreEqual(charges,kit.Skill2.ChargesRemaining);Assert.AreEqual(meter,kit.UltimateCharge);
             Assert.IsFalse(_who.GetComponent<CharacterVisual>().Companion.IsPossessed);

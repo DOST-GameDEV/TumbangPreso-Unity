@@ -16,7 +16,21 @@ namespace TumbangPreso.EditorTools
         public static void Build()
         {
             var entry=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu");
-            if(entry.PetModel==null)throw new InvalidOperationException("Refresh the actual Kuro roster reference first.");
+            var imported=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
+            if(imported==null)throw new InvalidOperationException("The authored Kuro model did not import.");
+            if(entry.PetModel!=imported)
+            {
+                entry.PetModel=imported;EditorUtility.SetDirty(entry);AssetDatabase.SaveAssets();
+            }
+            var rageSource=AssetDatabase.LoadAllAssetsAtPath("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb")
+                .OfType<AnimationClip>().FirstOrDefault(c=>c.name.Contains("KuroRageInhale"));
+            if(rageSource==null)throw new InvalidOperationException("Kuro's authored giant animation did not import.");
+            var rageClip=Object.Instantiate(rageSource);rageClip.name="KuroRageInhale";rageClip.legacy=false;
+            const string ragePath="Assets/TumbangPreso/Resources/KuroRageInhale.anim";
+            var oldRage=AssetDatabase.LoadAssetAtPath<AnimationClip>(ragePath);
+            if(oldRage==null)AssetDatabase.CreateAsset(rageClip,ragePath);
+            else {EditorUtility.CopySerialized(rageClip,oldRage);EditorUtility.SetDirty(oldRage);Object.DestroyImmediate(rageClip);}
+            AssetDatabase.SaveAssets();
             Directory.CreateDirectory(Folder);
             var target=new GameObject("Kuro clip origin");
             var actor=Object.Instantiate(entry.PetModel);

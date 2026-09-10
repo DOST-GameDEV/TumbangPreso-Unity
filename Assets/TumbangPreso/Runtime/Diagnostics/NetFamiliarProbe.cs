@@ -47,7 +47,7 @@ namespace TumbangPreso.Diagnostics
             probe._scenario=Argument("-tp-familiarcase")??"recall";
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(probe._path)));
             probe._writer=new StreamWriter(probe._path){AutoFlush=true};
-            probe._writer.WriteLine("time,elapsed,host,local,possessed,devouring,x,y,z,bodyX,bodyZ,fieldX,fieldZ,fieldCount,s2active,ultactive,s2charges,ultcharge,modelX,modelZ,sourceCharges,sourceX,sourceZ,stunLeft,mashPresses,tripPresses");
+            probe._writer.WriteLine("time,elapsed,host,local,possessed,devouring,x,y,z,bodyX,bodyZ,fieldX,fieldZ,fieldCount,s2active,ultactive,s2charges,ultcharge,modelX,modelZ,sourceCharges,sourceX,sourceZ,stunLeft,mashPresses,tripPresses,petYaw");
         }
         private void Update()
         {
@@ -124,6 +124,8 @@ namespace TumbangPreso.Diagnostics
                     pet.SetPlayerInput(elapsed>=3.5f && elapsed<4.8f?Vector2.up*.6f:Vector2.zero);
                 }
             }
+            if(NetAuthority.LocalSlot==1 && _scenario=="staged")
+                _who.Intent.Set(Verb.Ultimate,elapsed>=5.5f && elapsed<5.68f);
             if(now>=_next)
             {
                 _next=now+.05;
@@ -140,7 +142,7 @@ namespace TumbangPreso.Diagnostics
                     _who.AbilitySystem.Kit.Skill2.ChargesRemaining,F(_who.AbilitySystem.Kit.UltimateCharge),
                     F(_who.GetComponent<CharacterVisual>().ModelRoot.position.x),F(_who.GetComponent<CharacterVisual>().ModelRoot.position.z),
                     round.PlayerAt(0).AbilitySystem.Kit.Skill1.ChargesRemaining,
-                    F(round.PlayerAt(0).transform.position.x),F(round.PlayerAt(0).transform.position.z),F(_who.StunLeft),_who.StunMashPresses,_who.MashPresses}));
+                    F(round.PlayerAt(0).transform.position.x),F(round.PlayerAt(0).transform.position.z),F(_who.StunLeft),_who.StunMashPresses,_who.MashPresses,F(pet.transform.eulerAngles.y)}));
             }
             if(elapsed>(NetAuthority.IsHost?24:20)){_writer.Flush();Application.Quit();}
         }

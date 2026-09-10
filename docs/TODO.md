@@ -285,8 +285,19 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Latest owner delivery scope:** finish ALL improvements to all three maps now,
+then hand off the remaining non-map work directly in chat for the next session.
+This includes map architecture/geometry, trees and props, materials/lighting,
+collision, retrieval routes and ordinary-play verification, not only technical
+clearance checks. ACTIVE_REWORK_LEDGER.md preserves ongoing Kuro/network work
+and the exact unverified items that must carry forward.
+
 Latest Kuro corrections: keep BOTH forms in Nemu's purple palette; the cute form
-must not read white. Settle the giant first, then revise the cute version. Trace
+must not read white. The small form must resemble the giant while remaining
+friendly, with occasional distinct :3 / XoX / shy-pout-like expressions and matching
+small gestures. Their six graphic meshes and three distinct gesture samplers are
+now authored locally, with reusable clips being rebuilt; actual Unity visual and
+interruption verification remains open. Settle the giant first, then revise the cute version. Trace
 and address the detached purple piece beside Nemu that the owner flagged. Details
 and rejected giant approaches remain in ACTIVE_REWORK_LEDGER.md.
 

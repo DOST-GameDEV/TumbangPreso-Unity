@@ -11,16 +11,25 @@ namespace TumbangPreso.Abilities
         public bool IsPhantomPhaseActive => Skill1 != null && Skill1.IsActive;
         public override float MovementSpeedScale => IsPhantomPhaseActive ? Balance.NemuPhaseSpeedScale : 1f;
 
-        public void RestoreFamiliar(CharacterMotor motor,int mode,Vector3 position,float remaining)
+        public void RestoreFamiliar(CharacterMotor motor,int mode,Vector3 position,float remaining,float? yaw=null)
         {
             if(motor==null || remaining<=0)return;
             var ctx=new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>());
             using(NetCue.SuppressRelay())
             {
-                if(mode==1 && !Ultimate.IsActive && !Ultimate.IsWindingUp)
+                if(mode==1)
+                {
+                    if(Ultimate.IsActive || Ultimate.IsWindingUp)return;
                     ((GhostlyPoltergeistAbility)Skill2).RestoreProjection(ctx,position,remaining);
+                }
                 else if(mode==2)
                     ((NightmareSeanceVoidAbility)Ultimate).RestoreSeance(ctx,position,remaining);
+                else return;
+                if(yaw.HasValue && !float.IsNaN(yaw.Value) && !float.IsInfinity(yaw.Value))
+                {
+                    var pet=motor.GetComponent<CharacterVisual>()?.Companion;
+                    if(pet!=null)pet.transform.rotation=Quaternion.Euler(0,yaw.Value,0);
+                }
             }
         }
 
@@ -218,12 +227,15 @@ namespace TumbangPreso.Abilities
             private GameObject _field;
             private GhostPetCompanion _familiar;
             private const float FallbackRange = 3.5f;
+            private Vector3 _castAnchor,_approachStart;
+            private Quaternion _castFacing;
+            private bool _approaching;
 
             public NightmareSeanceVoidAbility()
                 : base("nemu_ultimate", "DEVOURING SEANCE",
-                       "Your innocent-looking familiar becomes a giant, ravenous spirit. It drags rivals and loose slippers inward.",
+                       "Send your familiar ahead as a giant, pulling rivals and loose slippers inward. While possessed, it transforms in place.",
                        0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
-                       summary: "Turn your familiar into a raging spirit that pulls rivals in.",
+                       summary: "Send a giant spirit ahead to pull rivals and slippers inward.",
                        // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
                        // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
                        // hazard in the game above it, so it was the one thing the bots were
@@ -256,20 +268,55 @@ namespace TumbangPreso.Abilities
                 remaining=Mathf.Clamp(remaining,0,Duration);
                 var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
                 if(pet==null)return;
+                _castAnchor=position;_approaching=false;
+                Vector3 facing=ctx.Position-position;facing.y=0;
+                if(facing.sqrMagnitude<.01f)facing=-ctx.Forward;
+                _castFacing=Quaternion.LookRotation(facing.normalized,Vector3.up);
                 // The predicted root has its own scheduled destruction. Recreate
                 // that short-lived field on confirmation so its lifetime agrees
                 // with the authoritative ghost/ability clock, even at high latency.
                 if(_field!=null){_field.SetActive(false);UnityEngine.Object.Destroy(_field);}
                 _field=HeroHazards.SpawnKuroUnbound(position,4,remaining,ctx.Motor.PlayerSlot,true,false);
-                _familiar=pet;pet.RestoreDevour(position,Duration,remaining);
+                _familiar=pet;pet.transform.rotation=_castFacing;pet.RestoreDevour(position,Duration,remaining);
                 ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
                 RestoreLiveClock(remaining);
             }
 
             public override Vector3 TelegraphCentre(AbilityContext ctx)
             {
+                if(IsWindingUp || IsActive)return _castAnchor;
+                return ResolveAnchor(ctx);
+            }
+
+            private static Vector3 ResolveAnchor(AbilityContext ctx)
+            {
                 var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
-                return companion != null ? companion.transform.position : base.TelegraphCentre(ctx);
+                if(companion!=null && companion.IsPossessed)return VfxShapes.GroundPoint(companion.transform.position);
+                return VfxShapes.GroundPoint(GhostPetMotion.Move(ctx.Motor,ctx.Position,ctx.Forward*FallbackRange));
+            }
+
+            public override void Activate(AbilityContext ctx)
+            {
+                _castAnchor=ResolveAnchor(ctx);
+                _familiar=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                _familiar?.PrepareForInvocation();
+                _approaching=_familiar!=null && !_familiar.IsPossessed;
+                _approachStart=_familiar!=null?_familiar.transform.position:_castAnchor;
+                Vector3 towardsCaster=ctx.Position-_castAnchor;towardsCaster.y=0;
+                if(towardsCaster.sqrMagnitude<.01f)towardsCaster=-ctx.Forward;
+                _castFacing=Quaternion.LookRotation(towardsCaster.normalized,Vector3.up);
+                base.Activate(ctx);
+            }
+
+            public override void Tick(AbilityContext ctx,float dt)
+            {
+                if(IsWindingUp && _approaching && _familiar!=null)
+                {
+                    float p=Mathf.SmoothStep(0,1,1-Mathf.Max(0,WindupRemaining-dt)/Windup);
+                    _familiar.ApplyCastAnchor(Vector3.Lerp(_approachStart,_castAnchor+Vector3.up*.9f,p));
+                    _familiar.transform.rotation=Quaternion.Slerp(_familiar.transform.rotation,_castFacing,p);
+                }
+                base.Tick(ctx,dt);
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -283,7 +330,7 @@ namespace TumbangPreso.Abilities
                 var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
 
                 bool onPet = companion != null;
-                Vector3 at = TelegraphCentre(ctx);
+                Vector3 at = _castAnchor;
 
                 // ⚠️⚠️ THE PET IS CONSUMED BY IT AND THAT IS THE ANIMATION. `Devour` swells Kuro
                 // into the maw over the wind-up and hides the pet inside it, so what the other
@@ -305,6 +352,12 @@ namespace TumbangPreso.Abilities
                 _familiar=companion;
                 if (onPet)
                 {
+                    // The following familiar crosses the existing3.5m cast reach
+                    // during invocation. The controlled familiar keeps its anchor.
+                    // Both then grow on that exact field, facing the caster so the
+                    // first-person view sees the maw instead of a giant's back.
+                    companion.ApplyCastAnchor(at+Vector3.up*.9f);
+                    companion.transform.rotation=_castFacing;
                     companion.Devour(Duration);
                     // Devour ends the ride without teleporting Nemu. Close its
                     // ability timer too, so a stale E recast cannot act as a ride.
@@ -312,13 +365,14 @@ namespace TumbangPreso.Abilities
                 }
 
                 _field=HeroHazards.SpawnKuroUnbound(at, 4.0f, Duration, ctx.Motor.PlayerSlot, onPet);
+                _approaching=false;
                 Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot);
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
                 // Their matching timers own the normal close cue and return.
-                _field=null;_familiar=null;
+                _field=null;_familiar=null;_approaching=false;
             }
             protected override void OnCancelled(AbilityContext ctx)
             {

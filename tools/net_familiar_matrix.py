@@ -46,10 +46,10 @@ def evaluate(folder,case,reconnected=False):
             if travel<.35:errors.append(name+" victim did not move from the actual stomp")
             if after[-1]["sourceCharges"]!=1:errors.append(name+" did not observe exactly one real source cast")
             continue
-        flight=[r for r in rows if r["possessed"]==1]
+        flight=rows if case=="staged" else [r for r in rows if r["possessed"]==1]
         if len(flight)<5:errors.append(name+" did not observe sustained possession");continue
         travel=math.hypot(max(r["x"] for r in flight)-min(r["x"] for r in flight),max(r["z"] for r in flight)-min(r["z"] for r in flight))
-        details[name]={"flight_span":travel,"rows":len(rows)}
+        details[name]={"stage_span" if case=="staged" else "flight_span":travel,"rows":len(rows)}
         settled=[r for r in rows if 10<=r["elapsed"]<=18 and "modelX" in r]
         if settled:
             model_error=max(math.hypot(r["modelX"]-r["bodyX"],r["modelZ"]-r["bodyZ"]) for r in settled)
@@ -57,11 +57,12 @@ def evaluate(folder,case,reconnected=False):
             if model_error>.25:errors.append(name+" rendered body remained detached from its motor")
         if travel<1:errors.append(name+" familiar did not actually travel")
         if max(r["fieldCount"] for r in rows)>1:errors.append(name+" duplicated the pulling field")
-        if case=="ultimate":
+        if case in ("ultimate","staged"):
             active=[r for r in rows if r["fieldCount"]==1]
             minimum=1 if reconnected and name=="owner" else 20
             if len(active)<minimum:errors.append(name+" did not observe the actual field");continue
             details[name].update(field=[active[-1]["fieldX"],active[-1]["fieldZ"]],ends=active[-1]["time"])
+            if "petYaw" in active[-1]:details[name]["pet_yaw"]=active[-1]["petYaw"]
             if not (reconnected and name=="owner") and (rows[-1]["devouring"] or rows[-1]["fieldCount"]):errors.append(name+" leaked its ultimate")
         else:
             if rows[-1]["possessed"]:errors.append(name+" never ended projection")
@@ -72,13 +73,17 @@ def evaluate(folder,case,reconnected=False):
             if math.dist(details[name]["body"],destination)>1.1:
                 errors.append(name+" did not recall near its last controlled familiar position")
     if len(details)==3:
-        key="field" if case=="ultimate" else "body"
+        key="field" if case in ("ultimate","staged") else "body"
         for name in ("owner","observer"):
             if key in details[name] and key in details["host"]:
                 error=math.dist(details[name][key],details["host"][key]);details[name]["final_error"]=error
                 if error>.35:errors.append(name+" final "+key+" disagreed by "+str(error))
+            if "pet_yaw" in details[name] and "pet_yaw" in details["host"]:
+                yaw_error=abs((details[name]["pet_yaw"]-details["host"]["pet_yaw"]+180)%360-180)
+                details[name]["yaw_error"]=yaw_error
+                if yaw_error>.5:errors.append(name+" giant facing disagreed by "+str(yaw_error))
         clocks=[d for n,d in details.items() if not (reconnected and n=="owner")]
-        if case=="ultimate" and all("ends" in d for d in clocks):
+        if case in ("ultimate","staged") and all("ends" in d for d in clocks):
             spread=max(d["ends"] for d in clocks)-min(d["ends"] for d in clocks)
             if spread>.35:errors.append("field expiry spread exceeds 350 ms: "+str(spread))
     if reconnected:
@@ -96,7 +101,7 @@ def evaluate(folder,case,reconnected=False):
     return {"ok":not errors,"errors":errors,"measurements":details}
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument("exe",type=Path);ap.add_argument("--case",choices=["recall","ultimate","impact","mash"],default="recall");ap.add_argument("--delay",type=float,default=0);ap.add_argument("--loss",type=float,default=0);ap.add_argument("--out",type=Path);ap.add_argument("--reconnect",action="store_true");a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument("exe",type=Path);ap.add_argument("--case",choices=["recall","ultimate","staged","impact","mash"],default="recall");ap.add_argument("--delay",type=float,default=0);ap.add_argument("--loss",type=float,default=0);ap.add_argument("--out",type=Path);ap.add_argument("--reconnect",action="store_true");a=ap.parse_args()
     if a.reconnect and a.case!="ultimate":ap.error("reconnect uses the ultimate case")
     folder=(a.out or ROOT/"Logs"/("familiar-"+a.case+"-"+uuid.uuid4().hex[:8])).resolve();folder.mkdir(parents=True,exist_ok=False)
     backup=folder/"profiles";manifest={}

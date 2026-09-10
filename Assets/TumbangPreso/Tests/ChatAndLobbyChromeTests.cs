@@ -252,7 +252,8 @@ namespace TumbangPreso.Tests
             // at their own skill level, and a 23 peer cannot say what that is. A room with one of
             // each hands two abandoned seats over by two different rules, and nobody in it can
             // tell which rule they got. `docs/TODO.md` § 144.7.
-            Assert.AreEqual(27, NetSession.ProtocolVersion,
+            //28 carries the accepted familiar facing through effect snapshots.
+            Assert.AreEqual(28, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

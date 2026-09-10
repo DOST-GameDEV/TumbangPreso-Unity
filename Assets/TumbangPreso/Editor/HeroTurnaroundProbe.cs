@@ -235,7 +235,7 @@ namespace TumbangPreso.EditorTools
                         var pet = UnityEngine.Object.Instantiate(petPrefab, model.transform);
                         pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
                         pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                        ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                        PreparePetPreview(pet);
                     }
                 }
 
@@ -307,11 +307,23 @@ namespace TumbangPreso.EditorTools
                     var pet = UnityEngine.Object.Instantiate(petPrefab, model.transform);
                     pet.transform.localPosition = new Vector3(-0.30f, 0.60f, 0.04f);
                     pet.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                    ToonSkin.Apply(pet, ToonSkin.PersonOutlineWidth, palette);
+                    PreparePetPreview(pet);
                 }
             }
 
             Caption(pivot.transform, label, -0.45f);
+        }
+
+        private static void PreparePetPreview(GameObject pet)
+        {
+            // The familiar owns its palette. Nemu's clothing atlas turned this
+            // preview into an unrelated purple fragment in the old roster sheet.
+            var rage=pet.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="RageForm");
+            if(rage!=null)rage.gameObject.SetActive(false);
+            ToonSkin.Apply(pet,ToonSkin.PersonOutlineWidth*.4f,null);
+            foreach(var renderer in pet.GetComponentsInChildren<Renderer>())
+                if(renderer.name.Contains("eye") || renderer.name.Contains("mouth") || renderer.name.StartsWith("ghost-arm") || renderer.name=="ghost-crown-curl")
+                    ToonSkin.Apply(renderer,0,null);
         }
 
         private static Color[] PaletteFor(string id)

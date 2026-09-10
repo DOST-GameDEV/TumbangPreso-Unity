@@ -1,5 +1,13 @@
 # Working in this repository
 
+**Latest delivery scope,2026-09-10:** finish ALL improvements to all three maps,
+then hand off the remaining non-map work directly in chat for the next session.
+Read [docs/MAP_FINAL_PASS.md](docs/MAP_FINAL_PASS.md) and the current execution
+pointer in ACTIVE_REWORK_LEDGER.md. Do not stop after tree replacements or a
+clearance probe: architecture, ground/props, materials/light, collision/retrieval
+and ordinary-play verification are all part of the map delivery. Preserve the
+ongoing Kuro/ability/network work and its exact verification state.
+
 ## Standing model-style requirement
 
 **New models must look native to TUMP, not overly detailed or from another game.**

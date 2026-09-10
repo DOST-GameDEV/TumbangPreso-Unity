@@ -17,6 +17,55 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (live, 2026-09-10)
 
+**LATEST OWNER SCOPE CHANGE:** finish ALL map improvements for Eskinita, Bayan
+Plaza and Ilalim ng Tulay, then deliver a handoff directly in chat. Everything
+else is deferred to the next session. This supersedes the earlier instruction to
+finish the entire non-map queue before stopping. Do not mistake Kuro's map
+clearance probe for completing map improvements: architecture/ground geometry,
+trees/props/models, materials/lighting, collision/slipper retrieval routes and
+ordinary-play validation on all THREE maps remain the required current delivery.
+Preserve all ongoing Kuro/ability/network work and record its exact verification
+state for the next session. No UI-art polish, no people redesign, no delegation.
+
+No Unity/Blender/player process is active. Last guarded Editor closed and restored
+17 existing profile files. Current map work is docs/MAP_FINAL_PASS.md; fresh before
+views/ordinary Classic clips are in Logs/maps-before-final-pass (1/1). The installed
+tree inventory was opened in Unity Search and rendered through Blender:
+Logs/map-tree-inventory/installed-trees.png. All eight installed source trees are
+cones/conifers; no suitable broadleaf/palm pack was found (only small plant/planter
+assets). Author appropriate clean native broadleaf forms. Existing maps have ugly
+cone skylines and dark flattened canopies; inspect every baseline view, improve
+architecture/prop grouping/lighting and fix collision/retrieval as planned.
+
+Preserved Kuro work: Full EditMode489/489, Core562/562, all14 source audits
+pass. Nemu complete-cycle PlayMode33/33 (live-tests-20260910-123021-2644.xml),
+including real invocation clearing cute expressions and cancellation returning
+to the authored shoulder anchor. KuroMapClearanceProbe passes1/1 at six positions:
+lowest visible surface0.035m above floor, top5.263m, below Ilalim's8m guideway.
+Corrected BakeMesh scale compensation avoids the prior invalid7.27m reading.
+The new native forms, three expressions/eleven idle clips, staged following cast
+and protocol28 familiar yaw are being committed as the preserved local batch. Real-process protocol28
+verification and roster refresh remain pending; preserve this honestly if deferred.
+
+Latest local work: the CLEAN giant imports purple after fixing Blender node
+materials; evaluated geometry/scale/animation tests pass3/3. Native normals showed
+the open maw bowl facing OUT instead of inward, explaining the missing black
+interior in Unity. Reversed those cavity faces, then regenerated the clean rig.
+Nemu complete-cycle contracts pass31/31, including possessed keyboard ultimate and
+ordinary E return staying small (live-tests-20260910-115344-0344.xml).
+
+Small form now has matching purple chamfered forms, a tiny crown curl, and six
+authored graphic expression meshes for :3, XoX and a shy pout. Three distinct
+gestures (CatSmile, GoofyDizzy, ShyPout) use the existing private cosmetic RNG and
+trailer sampler. Expression line art changes cleanly after anticipation and clears
+before casts. No new gameplay state. Blender study at Logs/kuro-small-purple-study-v2;
+runtime integration is UNVERIFIED. Current guarded author run session88184,
+Logs/kuro-expressions-author.log. Collect exit before editing imported files/C#.
+Next: actual Unity expression/giant captures and tests; fix any mismatch, then
+finish giant cast placement/owner visibility and continue the wider improvement
+scope. Model batch remains uncommitted, not owner-approved. Standing docs are
+pushed20dd859; no people redesign or UI art work is requested.
+
 Continue the same task, do not restart or finish after a single batch. Branch
 ASTRAReworks only. Networking recovery/impact batch is pushed at `e56b2e3`; its
 report is reports/improvement-2026-09-10/recovery-and-impacts.md. Core562/562,
@@ -2037,3 +2086,90 @@ animations for different actions. Repetition should happen only when necessary.
 Recorded the whole-action requirement in the canonical art document and the
 main agent, product, animation, lore and implementation plans. Do not narrow it
 back to only weight/timing or body clips after compaction.
+
+
+## Current integration work after the standing rules were pushed
+
+Standing style/action-animation docs are pushed at20dd859. The clean native giant
+now uses26 large forms, not the rejected reconstruction. Latest source study is
+Logs/kuro-clean-block-study-v2. Hand hooks curl forward (avoid an upright middle-
+finger-like silhouette), the head leans forward more, and the mouth back is placed
+in front of solid body geometry so it actually reads as a dark recess.
+
+Rig source tools/rig_kuro_rage.py now reads that CLEAN study, creates18 bones
+(including individual fingers), rigidly assigns block parts by authored rig_group,
+and exports a1.8s native KuroRageInhale cycle to MapSource/characters/kuro/rage.
+A subsequent source correction makes transform flattening explicitly assign
+Matrix.Identity rather than relying on an in-place matrix mutation. Regenerate
+that rig and the combined pet before judging the next capture.
+
+Unverified runtime integration added KuroRagePresentation.cs: manual Playables
+sampling of the native clip, a separately staged RageForm, restrained existing
+Toon rim settings and floating-eye wisps. GhostPetCompanion hides the giant at bind,
+restricts small face/tail discovery to CalmForm, stages size/feet through transform
+and return, and avoids turning ordinary possession-return into a rage transform.
+KuroIdleClipAuthor extracts the imported rage clip into Resources before rebaking
+small idles. This is not yet verified or committed. Guarded Unity author run is
+session89832, Logs/kuro-clean-block-author.log; inspect result/compile errors and
+wait for process exit before C#/imported asset edits. No new shader or gameplay
+authority is introduced. Owner-view placement and all-map size checks remain open.
+
+
+## Small Kuro identity and expressions, latest owner request
+
+The small cute ghost must resemble the big ghost's design and remain the SAME
+purple spirit, but not be scary. Use a softer/chamfered version of the clean giant
+forms, recognizable curled lower body and small friendly hands. No white/Casper
+body and no scary giant maw/fangs on the small form. Finish giant first, then
+refine the small version as the owner ordered.
+
+The owner explicitly asks for occasional cute emoticon-like expressions, e.g.
+:3, XoX and :.<. Implement actual distinct face shapes/poses, not just scaling the
+same oval mouth. Suggested reads: cat-mouth grin, goofy crossed eyes with an o
+mouth, and a shy squint/pout. Pair them with small relevant body/hand gestures,
+keep them occasional/subtle during ordinary matches, prioritize active movement
+and casts, preserve deterministic trailer sampling and avoid consuming gameplay
+randomness. The current eight-idle system is a base, not proof these new faces
+already exist. This expands small-form expression work beyond simple repainting.
+
+
+### Import normalization and latest run
+
+The new clean rig hit an installed glTFast importer job-safety error when a
+skinned mesh had multiple material primitives. Source inspection showed it
+schedules normalization over the whole bone buffer before filling a subsequent
+primitive. The hypothesis of shared accessor IDs was disproved (none were shared).
+The asset-side workaround separates each skinned primitive into its own child
+mesh without changing vertex/material/animation data. Unused original multi-
+primitive meshes must also be removed; the first normalization omitted that and
+still failed. tools/normalize_gltf_skin_primitives.py now does both, and the
+combined asset has53 meshes, all single-primitive. No glTFast package was patched.
+Current author attempt: session12153, Logs/kuro-clean-block-author-v3.log. Wait for
+exit before C#/imported-asset edits. Current new giant/graph is still unverified.
+
+
+### Current clean-form integration evidence and pending corrections
+
+After removing unused original multi-primitive meshes, the normalized combined
+pet imports successfully. A direct-child lookup initially missed CalmForm/RageForm
+beneath glTF's scene wrapper; recursive exact-name discovery corrected it. Current
+idle authoring is140 transform curves, not the accidental1030 including the hidden
+giant. Resources/KuroRageInhale.anim is now generated from the native clip.
+
+Live Unity Editor is currently running via guarded session33323,
+Logs/kuro-clean-live-editor.log, output Logs/kuro-clean-runtime-v1. KuroFormTests
+pass2/3. The remaining failure used conservative renderer bounds for ground
+contact (minY -0.562); a live CLI inspection found actual baked world vertices at
+-0.136. Do not loosen the bound; switch the contact assertion to actual baked
+geometry and author proper floor clearance across the full loop. Rig source has
+been prepared to measure evaluated vertices over55 frames and lift its lowest
+point to0.025m, but that corrected source has NOT been exported/imported yet.
+The current real-cast capture is running before that adjustment for visual review.
+Close the Editor and collect the guarded runner before C#/asset edits.
+
+New work still needed: complete and verify giant model/rig/aura/transformation,
+fix its idle-follow cast placement so it grows ahead of Nemu, check huge size in
+all maps, then repaint/reform the cute ghost to match its purple/blocky identity
+and implement the owner-requested distinct :3, XoX and shy-pout expressions.
+Regenerate the roster preview so the old wrong-palette pet fragment is gone.
+No Kuro art changes have been committed; all rejected designs remain rejected.

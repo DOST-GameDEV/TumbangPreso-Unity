@@ -19,7 +19,10 @@ namespace TumbangPreso.Visual
             OrbitArc,
             SleepySnooze,
             CheekyGiggle,
-            HeartbeatPulse
+            HeartbeatPulse,
+            CatSmile,
+            GoofyDizzy,
+            ShyPout
         }
 
         [Header("Follow Target & Offset")]
@@ -114,9 +117,11 @@ namespace TumbangPreso.Visual
             float open=Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
             float grown=Mathf.Lerp(1,DevourScale,open);
             float breath=1+Mathf.Sin(seconds*9f)*.018f*open;
-            _devourStretch=new Vector3(Mathf.Lerp(1,1.30f,open),Mathf.Lerp(1,1.08f,open),Mathf.Lerp(1,1.08f,open));
+            _devourStretch=_ragePresentation!=null?Vector3.one:
+                new Vector3(Mathf.Lerp(1,1.30f,open),Mathf.Lerp(1,1.08f,open),Mathf.Lerp(1,1.08f,open));
             transform.localScale=Vector3.Scale(_baseScale,_devourStretch)*(grown*breath);
-            transform.position=_devourGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
+            transform.position=_ragePresentation!=null?Vector3.Lerp(_devourStartPosition,_devourGround,open):
+                _devourGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
             PoseDevourFace(open);
             PoseDevourBody(open);
         }
@@ -157,7 +162,7 @@ namespace TumbangPreso.Visual
         /// <summary>True while Kuro is the ultimate rather than a pet.</summary>
         public bool IsDevouring => _devourLeft > 0.0f;
         public bool IsReturning => _returnLeft > 0.0f;
-        public Vector3 MouthPosition { get { FindFace(); return _mouth != null ? _mouth.position : transform.position; } }
+        public Vector3 MouthPosition { get { FindFace(); return IsRageFormVisible?_ragePresentation.MawPosition:(_mouth != null ? _mouth.position : transform.position); } }
 
         /// <summary>
         /// How long the flight home takes.
@@ -197,6 +202,7 @@ namespace TumbangPreso.Visual
 
         public void Devour(float seconds)
         {
+            FindFace();_devourStartPosition=transform.position;
             _devourLeft = Mathf.Max(0.5f, seconds);
             _devourTotal = _devourLeft;
             _returnLeft = 0.0f;
@@ -329,6 +335,10 @@ namespace TumbangPreso.Visual
         private Vector3 _devourStretch = Vector3.one;
 
         private float _devourTotal;
+        private KuroRagePresentation _ragePresentation;
+        private Vector3 _devourStartPosition;
+        private bool _returnFromDevour;
+        public bool IsRageFormVisible => _ragePresentation!=null && _ragePresentation.Visible;
 
         /// <summary>
         /// Kuro swelling into the thing, and staying visible inside it.
@@ -380,8 +390,25 @@ namespace TumbangPreso.Visual
         private readonly System.Collections.Generic.List<Material> _skinMaterials =
             new System.Collections.Generic.List<Material>();
         private Transform _armWispL,_armWispR;
-        private Material _eyeLMaterial,_eyeRMaterial;
+        private readonly System.Collections.Generic.List<(SkinnedMeshRenderer renderer,int shape,float fullWeight)> _rageMorphs =
+            new System.Collections.Generic.List<(SkinnedMeshRenderer,int,float)>();
+        private float _rageMorphWeight=-1;
+
+        private void PoseRageMorph(float amount)
+        {
+            float weight=Mathf.Clamp01(amount);
+            if(Mathf.Approximately(weight,_rageMorphWeight))return;
+            _rageMorphWeight=weight;
+            foreach(var morph in _rageMorphs)
+                if(morph.renderer!=null)morph.renderer.SetBlendShapeWeight(morph.shape,weight*morph.fullWeight);
+        }
+        private Material _eyeLMaterial,_eyeRMaterial,_mouthMaterial;
+        private Color _mouthInk;
         private Color _eyeLInk,_eyeRInk;
+        private Transform _expressionRoot;
+        private Vector3 _idleHandLeftRest,_idleHandRightRest;
+        private readonly System.Collections.Generic.Dictionary<string,Transform> _expressionParts =
+            new System.Collections.Generic.Dictionary<string,Transform>();
 
         private readonly System.Collections.Generic.List<Renderer> _skin =
             new System.Collections.Generic.List<Renderer>();
@@ -397,11 +424,11 @@ namespace TumbangPreso.Visual
             for (int i=0;i<_skin.Count;i++)
             {
                 if (_skin[i]==null || _skinMaterials[i]==null) continue;
-                Color to=_skinRest[i]*.48f;to.a=_skinRest[i].a;
+                Color to=Color.Lerp(_skinRest[i]*.48f,new Color(.19f,.09f,.31f,_skinRest[i].a),.65f);to.a=_skinRest[i].a;
                 _skinMaterials[i].color=Color.Lerp(_skinRest[i],to,k);
             }
-            if (_armWispL!=null) _armWispL.localRotation=Quaternion.Euler(0,0,(44+7*Mathf.Sin((_devourTotal-_devourLeft)*4.2f))*k);
-            if (_armWispR!=null) _armWispR.localRotation=Quaternion.Euler(0,0,-(43+8*Mathf.Sin((_devourTotal-_devourLeft)*4.2f+1.1f))*k);
+            if (_armWispL!=null) _armWispL.localRotation=Quaternion.Euler(0,0,(4+4*Mathf.Sin((_devourTotal-_devourLeft)*3.1f))*k);
+            if (_armWispR!=null) _armWispR.localRotation=Quaternion.Euler(0,0,-(5+4*Mathf.Sin((_devourTotal-_devourLeft)*3.1f+1.1f))*k);
         }
 
         private void PrepareDevourMaterials()
@@ -419,9 +446,11 @@ namespace TumbangPreso.Visual
 
         private void OnDestroy()
         {
+            _ragePresentation?.Dispose();
             var ownedMaterials=new System.Collections.Generic.List<Material>(_skinMaterials);
             if (_eyeLMaterial!=null) ownedMaterials.Add(_eyeLMaterial);
             if (_eyeRMaterial!=null) ownedMaterials.Add(_eyeRMaterial);
+            if (_mouthMaterial!=null) ownedMaterials.Add(_mouthMaterial);
             foreach (var material in ownedMaterials)
                 if (material!=null)
                 {
@@ -498,12 +527,33 @@ namespace TumbangPreso.Visual
         /// <summary>Sway cycles per second.</summary>
         private const float TailRate = 2.3f;
 
+        internal static Transform FindForm(Transform root,string name)
+        {
+            foreach(var child in root.GetComponentsInChildren<Transform>(true))
+                if(child.name==name)return child;
+            return null;
+        }
+
         private void FindFace()
         {
             if (_faceFound) return;
             _faceFound = true;
 
-            foreach (var child in GetComponentsInChildren<Transform>(true))
+            var calm=FindForm(transform,"CalmForm")??transform;
+            _expressionRoot=FindForm(calm,"KuroExpressions");
+            if(_expressionRoot!=null)
+            {
+                foreach(var part in _expressionRoot.GetComponentsInChildren<Transform>(true))
+                    if(part!=_expressionRoot)_expressionParts[part.name]=part;
+                foreach(var renderer in _expressionRoot.GetComponentsInChildren<Renderer>(true))
+                {
+                    ToonSkin.Apply(renderer,0,null);
+                    renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.receiveShadows=false;
+                }
+                _expressionRoot.localScale=Vector3.zero;
+            }
+            foreach (var child in calm.GetComponentsInChildren<Transform>(true))
             {
                 string n = child.name.ToLowerInvariant();
 
@@ -511,6 +561,7 @@ namespace TumbangPreso.Visual
                 // cluster and posing them separately would slide an eye's highlight off the eye.
                 if (n.Contains("pupil") || n.Contains("glint")) continue;
 
+                if (_expressionRoot!=null && child.IsChildOf(_expressionRoot))continue;
                 if (_mouth == null && n.Contains("mouth")) _mouth = child;
                 else if (_eyeL == null && n.Contains("eye-l")) _eyeL = child;
                 else if (_eyeR == null && n.Contains("eye-r")) _eyeR = child;
@@ -524,11 +575,40 @@ namespace TumbangPreso.Visual
             // unsorted list would run the wave through the tail in whatever order the voxel
             // builder emitted the cubes and the motion would scatter instead of travelling.
             // Local Y is the honest key: the builder stacks the wisps downward from the body.
+            foreach(var renderer in calm.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if(renderer.sharedMesh==null)continue;
+                int shape=renderer.sharedMesh.GetBlendShapeIndex("Rage");
+                if(shape>=0)
+                {
+                    // glTFast authors full frames at1; other importers commonly
+                    // use100. Read the mesh contract instead of extrapolating it.
+                    int frame=renderer.sharedMesh.GetBlendShapeFrameCount(shape)-1;
+                    float full=renderer.sharedMesh.GetBlendShapeFrameWeight(shape,frame);
+                    _rageMorphs.Add((renderer,shape,full));
+                }
+            }
+
+            var rage=FindForm(transform,"RageForm");
+            if(rage!=null)_ragePresentation=new KuroRagePresentation(gameObject,calm,rage);
+            if(_armWispL!=null)_idleHandLeftRest=_armWispL.localPosition;
+            if(_armWispR!=null)_idleHandRightRest=_armWispR.localPosition;
+            // The body carries the silhouette. Expanding thin curls creates
+            // black holes and seams, especially when the hands tuck inward.
+            foreach(var renderer in calm.GetComponentsInChildren<Renderer>(true))
+                if(renderer.name.StartsWith("ghost-arm")||renderer.name=="ghost-crown-curl")
+                    ToonSkin.Apply(renderer,0,null);
+
             _tail.Sort((a, b) => b.localPosition.y.CompareTo(a.localPosition.y));
 
             foreach (var t in _tail) _tailRest.Add(t.localRotation);
 
-            if (_mouth != null) _mouthRest = _mouth.localScale;
+            if (_mouth != null)
+            {
+                _mouthRest = _mouth.localScale;
+                _mouthMaterial=OwnEyeMaterial(_mouth);
+                if(_mouthMaterial!=null)_mouthInk=_mouthMaterial.color;
+            }
 
             if (_eyeL != null)
             {
@@ -604,6 +684,12 @@ namespace TumbangPreso.Visual
         private void PoseDevourFace(float k)
         {
             FindFace();
+            if(_expressionRoot!=null)_expressionRoot.localScale=Vector3.zero;
+            if(_armWispL!=null)_armWispL.localPosition=_idleHandLeftRest;
+            if(_armWispR!=null)_armWispR.localPosition=_idleHandRightRest;
+            PoseRageMorph(k);
+            _ragePresentation?.Sample(k,Mathf.Max(0,_devourTotal-_devourLeft),_originAboveFeet/Mathf.Max(.001f,_baseScale.y));
+            if(_mouthMaterial!=null)_mouthMaterial.color=Color.Lerp(_mouthInk,new Color(.009f,.002f,.018f,1),k);
 
             if (_mouth != null)
             {
@@ -612,7 +698,7 @@ namespace TumbangPreso.Visual
                     _mouthRest.y * Mathf.Lerp(1.0f, 5.8f, k),
                     _mouthRest.z * Mathf.Lerp(1.0f, 2.2f, k));
 
-                PoseTeeth(k);
+                if(_ragePresentation==null)PoseTeeth(k);
             }
 
             EyeColor(k);
@@ -621,13 +707,13 @@ namespace TumbangPreso.Visual
 
             if (_eyeL != null)
             {
-                _eyeL.localScale = new Vector3(_eyeLRest.x, _eyeLRest.y * narrow, _eyeLRest.z);
+                _eyeL.localScale = new Vector3(_eyeLRest.x*Mathf.Lerp(1,1.4f,k), _eyeLRest.y * narrow, _eyeLRest.z);
                 _eyeL.localRotation = _eyeLRestRot * Quaternion.Euler(0.0f, 0.0f, slant);
             }
 
             if (_eyeR != null)
             {
-                _eyeR.localScale = new Vector3(_eyeRRest.x, _eyeRRest.y * narrow, _eyeRRest.z);
+                _eyeR.localScale = new Vector3(_eyeRRest.x*Mathf.Lerp(1,1.4f,k), _eyeRRest.y * narrow, _eyeRRest.z);
                 _eyeR.localRotation = _eyeRRestRot * Quaternion.Euler(0.0f, 0.0f, -slant);
             }
         }
@@ -701,7 +787,7 @@ namespace TumbangPreso.Visual
 
                     // Across the opening, at its top or bottom edge, and leaning outward at the
                     // corners so the row follows the mouth's curve rather than sitting in a line.
-                    tooth.transform.localPosition = new Vector3(t * 0.82f, dir * 0.42f, 0.65f);
+                    tooth.transform.localPosition = new Vector3(t * 0.82f, dir * (.50f-Mathf.Abs(t)*.12f), 0.65f);
 
                     // ⚠️ THE UPPER ROW IS TURNED OVER. `Spire` points up by construction, so an
                     // upper canine has to be rotated 180 or it grows out of his snout.
@@ -724,7 +810,13 @@ namespace TumbangPreso.Visual
         /// <summary>Put his face back. Called from every exit out of the maw.</summary>
         private void RestoreFace()
         {
+            if(_expressionRoot!=null)_expressionRoot.localScale=Vector3.zero;
             if (!_faceFound) return;
+            if(_armWispL!=null)_armWispL.localPosition=_idleHandLeftRest;
+            if(_armWispR!=null)_armWispR.localPosition=_idleHandRightRest;
+            PoseRageMorph(0);
+            _ragePresentation?.Sample(0,0,0);
+            if(_mouthMaterial!=null)_mouthMaterial.color=_mouthInk;
 
             if (_mouth != null) _mouth.localScale = _mouthRest;
 
@@ -762,6 +854,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void BeginReturn()
         {
+            _returnFromDevour=_devourTotal>0 || IsRageFormVisible;
             _returnFrom = transform.position;
             _returnTotal = ReturnSeconds;
             _returnLeft = ReturnSeconds;
@@ -813,7 +906,7 @@ namespace TumbangPreso.Visual
             // face, the horns and the colour, so passing it `1 - eased` retracts the horns, lets
             // the lavender back in and closes the mouth across the whole 0.85 s flight. Clearing
             // them at the end would make the arrival a pop.
-            float undo = 1.0f - eased;
+            float undo = _returnFromDevour?1.0f-eased:0;
             PoseDevourFace(undo);
             PoseDevourBody(undo);
 
@@ -848,6 +941,10 @@ namespace TumbangPreso.Visual
 
             _baseScale = Vector3.one * scaleMultiplier;
             transform.localScale = _baseScale;
+            // The combined source retains both forms. A following companion
+            // starts as its small form, never both overlapping in the scene.
+            var rageForm=FindForm(transform,"RageForm");
+            if(rageForm!=null)rageForm.gameObject.SetActive(false);
 
             // In gameplay, unparent to world root so the companion is its own independent entity
             if (transform.parent != null && !transform.parent.name.Contains("PreviewStage"))
@@ -1232,8 +1329,8 @@ namespace TumbangPreso.Visual
                     _nextFidgetTimer -= dt;
                     if (_nextFidgetTimer <= 0.0f)
                     {
-                        // Trigger a random cute idle behavior (1 to 7)
-                        int pick = _idleRandom.Next(1,8);
+                        // Occasional gestures share the private cosmetic stream.
+                        int pick = _idleRandom.Next(1,(int)FidgetState.ShyPout+1);
                         _currentFidget = (FidgetState)pick;
                         _fidgetProgress = 0.0f;
 
@@ -1266,13 +1363,25 @@ namespace TumbangPreso.Visual
             FidgetState.SleepySnooze => 1.8f,
             FidgetState.CheekyGiggle => 1f,
             FidgetState.HeartbeatPulse => 1.3f,
+            FidgetState.CatSmile => 1.8f,
+            FidgetState.GoofyDizzy => 1.35f,
+            FidgetState.ShyPout => 1.9f,
             _ => 4.4f,
         };
 
         /// <summary>Stage an existing idle gesture without overriding possession or a cast.</summary>
+        public void PrepareForInvocation()
+        {
+            _currentFidget=FidgetState.None;_fidgetProgress=0;_stillTime=0;
+            EvaluateIdleGesture(FidgetState.None,0);PoseIdleFace(FidgetState.None,0,0);
+            transform.localScale=_baseScale;ResetFidgetTimer();
+        }
+
+        private bool InvocationActive => _nemuMotor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp==true;
+
         public bool PlayIdleGesture(FidgetState gesture)
         {
-            if (IsDevouring || IsPossessed || _returnLeft>0 || _lastSpeed>.15f) return false;
+            if (IsDevouring || IsPossessed || InvocationActive || _returnLeft>0 || _lastSpeed>.15f) return false;
             _currentFidget=gesture;_fidgetProgress=0;_fidgetDuration=IdleGestureDuration(gesture);
             return true;
         }
@@ -1280,7 +1389,7 @@ namespace TumbangPreso.Visual
         /// <summary>Deterministic pose sampling for authored clips and future trailer shots.</summary>
         public bool SampleIdleForCapture(FidgetState gesture,float seconds)
         {
-            if (_target==null || IsDevouring || IsPossessed || _returnLeft>0) return false;
+            if (_target==null || IsDevouring || IsPossessed || InvocationActive || _returnLeft>0) return false;
             float duration=IdleGestureDuration(gesture);
             float p=Mathf.Clamp01(seconds/duration);
             EvaluateIdleGesture(gesture,p);
@@ -1371,6 +1480,24 @@ namespace TumbangPreso.Visual
                         _fidgetExtraPitch = -pulseSin * 10.0f;
                         _fidgetScaleMul = new Vector3(1.0f + pulseScale, 1.0f - pulseScale * 0.5f, 1.0f + pulseScale);
                         break;
+
+                    case FidgetState.CatSmile:
+                        float content=Mathf.Sin(p*Mathf.PI);
+                        _fidgetExtraRoll=-11*content;
+                        _fidgetExtraPitch=-5*content;
+                        _fidgetOffset=new Vector3(0,.025f*content,.025f*content);
+                        break;
+                    case FidgetState.GoofyDizzy:
+                        float wobble=Mathf.Sin(p*Mathf.PI);
+                        _fidgetExtraRoll=Mathf.Sin(p*Mathf.PI*5)*13*wobble;
+                        _fidgetExtraYaw=Mathf.Sin(p*Mathf.PI*3)*9*wobble;
+                        _fidgetOffset=new Vector3(Mathf.Sin(p*Mathf.PI*4)*.018f*wobble,-.018f*wobble,0);
+                        break;
+                    case FidgetState.ShyPout:
+                        float shy=Mathf.Sin(p*Mathf.PI);
+                        _fidgetExtraYaw=-18*shy;_fidgetExtraPitch=10*shy;_fidgetExtraRoll=7*shy;
+                        _fidgetOffset=new Vector3(-.018f*shy,-.015f*shy,-.025f*shy);
+                        break;
                 }
 
         }
@@ -1395,6 +1522,51 @@ namespace TumbangPreso.Visual
             float arms=(gesture==FidgetState.HappyHop || gesture==FidgetState.CheekyGiggle) ? expression*12 : 0;
             if (_armWispL!=null)_armWispL.localRotation=Quaternion.Euler(0,0,arms);
             if (_armWispR!=null)_armWispR.localRotation=Quaternion.Euler(0,0,-arms);
+            PoseIdleExpression(gesture,p,expression);
+        }
+
+        private void PoseIdleExpression(FidgetState gesture,float p,float amount)
+        {
+            if(_expressionRoot==null)return;
+            if(_armWispL!=null)_armWispL.localPosition=_idleHandLeftRest;
+            if(_armWispR!=null)_armWispR.localPosition=_idleHandRightRest;
+            bool cat=gesture==FidgetState.CatSmile;
+            bool goofy=gesture==FidgetState.GoofyDizzy;
+            bool shy=gesture==FidgetState.ShyPout;
+            // Graphic faces switch crisply after the anticipation and before the
+            // recovery. Blending overlapping line art makes an unreadable face.
+            bool show=(cat||goofy||shy) && p>=.15f && p<=.82f;
+            _expressionRoot.localScale=show?Vector3.one:Vector3.zero;
+            if(show)
+            {
+                foreach(var pair in _expressionParts)
+                {
+                    bool selected=cat?pair.Key=="KuroCatMouth":goofy?
+                        pair.Key=="KuroCrossLeft"||pair.Key=="KuroCrossRight"||pair.Key=="KuroGoofyMouth":
+                        pair.Key=="KuroShyEye"||pair.Key=="KuroPoutMouth";
+                    pair.Value.localScale=selected?Vector3.one:Vector3.zero;
+                }
+                if(_mouth!=null)_mouth.localScale=Vector3.zero;
+                if(goofy && _eyeL!=null)_eyeL.localScale=Vector3.zero;
+                if((goofy||shy) && _eyeR!=null)_eyeR.localScale=Vector3.zero;
+            }
+            else foreach(var part in _expressionParts.Values)part.localScale=Vector3.zero;
+            if(cat)
+            {
+                if(_armWispL!=null)_armWispL.localRotation=Quaternion.Euler(-8*amount,0,18*amount);
+                if(_armWispR!=null)_armWispR.localRotation=Quaternion.Euler(0,0,-8*amount);
+            }
+            if(goofy)
+            {
+                float flap=Mathf.Sin(p*Mathf.PI*5)*14*amount;
+                if(_armWispL!=null)_armWispL.localRotation=Quaternion.Euler(0,0,flap);
+                if(_armWispR!=null)_armWispR.localRotation=Quaternion.Euler(0,0,flap);
+            }
+            if(shy)
+            {
+                if(_armWispL!=null){_armWispL.localRotation=Quaternion.Euler(-24*amount,-20*amount,-28*amount);_armWispL.localPosition+=Vector3.forward*.03f*amount;}
+                if(_armWispR!=null){_armWispR.localRotation=Quaternion.Euler(-24*amount,20*amount,28*amount);_armWispR.localPosition+=Vector3.forward*.03f*amount;}
+            }
         }
 
         private void UpdatePossession(float dt, float time)

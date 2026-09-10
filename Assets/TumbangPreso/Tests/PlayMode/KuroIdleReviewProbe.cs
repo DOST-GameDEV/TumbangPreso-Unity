@@ -48,6 +48,17 @@ namespace TumbangPreso.PlayTests
                     yield return ImprovementEvidenceProbe.Record(camera,"kuro-idle-"+gesture,duration,null,
                         seconds=>Assert.IsTrue(companion.SampleIdleForCapture(gesture,seconds)));
                 }
+                companion.Devour(7);companion.StepTo(.8f);
+                // Teeth are spawned by Devour after the initial layer assignment.
+                foreach(var node in pet.GetComponentsInChildren<Transform>())node.gameObject.layer=30;
+                var renderers=pet.GetComponentsInChildren<Renderer>();
+                var bounds=renderers[0].bounds;
+                foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+                camera.transform.position=bounds.center+(front+Vector3.Cross(Vector3.up,front)*.18f).normalized*
+                    Mathf.Max(bounds.size.y*1.9f,bounds.size.x*1.3f);
+                camera.transform.LookAt(bounds.center);
+                yield return ImprovementEvidenceProbe.Record(camera,"kuro-rage-portrait",.4f,null,
+                    seconds=>companion.StepTo(.8f));
             }
             finally
             {

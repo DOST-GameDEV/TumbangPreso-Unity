@@ -1,5 +1,9 @@
 # Kuro: articulated form and personality
 
+**Historical report.** The owner subsequently rejected these model forms. Current
+replacement work is recorded in [Kuro matching forms](kuro-matching-forms.md).
+The images and verification below describe the earlier checkpoint only.
+
 The old familiar had one merged mesh. The runtime searched for named mouth, eyes
 and tail transforms, so those animations had nothing to move. Kuro now has nine
 separate mesh parts, with native Blender source under `MapSource/characters/kuro`.

@@ -17,6 +17,27 @@ Updated 2026-09-10. Status: ACTIVE, NOT COMPLETE. Source checkpoint: `c09fba2`.
 This is the owner's requested durable plan, not a final handoff or completion claim.
 Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER.md.
 
+### Next source-grounded Phaister review after the Kuro batch
+
+Fresh source inspection confirms another concrete placement defect:
+HeroHazards.SpawnGrandCovenEclipse hangs its moon at11m and claims this is under
+Ilalim's guideway, but MapKit.IlalimNgTulayBuilder sets the soffit to8m. That comment
+is false. Verify the real overhead view and author a coherent visible placement
+under the guideway, without moving the ground footprint onto its roof.
+
+Grand Coven still applies its first curse immediately in OnActivate while the
+inscription takes1.55s to build, and its constructor has no windup. Its current
+10.5m radius also needs a deliberate counterplay decision. Design invocation,
+inscription/alignment, actual curse, repeated pulses and unbinding as one sequence;
+do not hide active control behind an unfinished visual warning. Ground-draped
+layers must not subsequently rotate/scale off their sampled floor. Keep the
+fictional lunar/eclipse grammar in PHILIPPINE_ABILITY_DIRECTION.md, and inspect
+the whole Q/E/ultimate kit and loadout alternatives rather than only adding rings.
+
+Before alternate-ability comparisons, fix the reproduced same-hero build-binding
+gap in MatchRpc.RebindKitIfHeroChanged without resetting active kit state or
+applying variant multipliers twice. This remains open, not implemented here.
+
 ## Current owner instructions
 
 - **Latest cultural brief, all six heroes:** make abilities and descriptions more
