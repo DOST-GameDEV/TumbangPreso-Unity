@@ -274,6 +274,21 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Explicit Phaister/Nemu requirements, 2026-09-10: OPEN.** Improve all of Phaister's
+magic. Grand Coven must feel like grand magic being cast: a complex magic circle,
+runes and a deliberate sequence of visible phases, not merely a large flat ring
+plus a colored column. Rework Nemu's ghost and all her skills. Her ultimate must
+visibly transform the cute ghost into a giant, raging, frightening ghost that
+sucks everyone inward. The transformation, scale, rage, intake and return must be
+readable in actual play. Preserve the intended existing pull/authority contracts
+and make the visuals truthful to them. These are core design requirements in
+[ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md), not optional stretch polish.
+
+Map-stage addition: current trees explicitly rejected. Inspect installed nature/tree
+assets first, choose appropriate replacements or substantial refinements, and plan
+vegetation with all three maps' lighting, architecture and sightlines. Do this after
+the ability pass; retain this request across compaction.
+
 The all-eighteen source/model audit and durable execution directions are in
 [ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md). All six v5 action sheets were
 reviewed; the plan distinguishes observed artifacts, source-confirmed defects and

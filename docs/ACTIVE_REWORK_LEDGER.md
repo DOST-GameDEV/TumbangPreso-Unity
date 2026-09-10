@@ -353,6 +353,16 @@ pass is complete yet. The other seventeen still require their own design work.
 
 ## 5. Eighteen-skill ledger
 
+**Latest explicit Phaister/Nemu brief:** all Phaister magic must improve. Her
+ultimate should read as grand magic, with runes and a complex magic circle that
+unfolds in distinct phases. Rework Nemu's ghost and skill presentation. Her ultimate
+should turn the cute ghost into a giant raging/scary ghost that visibly sucks
+everyone inward. The owner specifically renewed these requirements after earlier
+attempts failed. Treat transformation and phased invocation as core deliverables.
+Persistent character designs stay kept; this explicit ghost rework and temporary
+ultimate forms are authorized. Trace the live companion/hero path so the intended
+figure actually transforms; do not substitute an unrelated floor maw/column.
+
 **Execution plan:** [ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md) contains the
 owner's latest all-ability/model instructions, source inventory, reviewed findings,
 per-action design direction, verification criteria and resume order. Read it before
@@ -477,6 +487,14 @@ observer and player-build behavior. Keep alternate loadout modifiers working.
   licences and preferred can/UI audio; do not replace everything with generic noise.
 
 ## 6. Maps, chase and other open work
+
+- **Latest tree feedback:** the owner calls the current trees ugly and expects
+  better alternatives may already be installed. At the map stage, inventory the
+  existing tree/nature assets before downloading or making replacements. Plan all
+  three maps thoroughly, with appropriate tree silhouettes/materials/placement,
+  architecture, lighting, retrieval routes and sightlines considered together.
+  Replace or substantially improve the current weak trees; do not treat the first
+  map pass as final. Keep the ability pass first and map rework afterward.
 
 - Review all three maps from first throw, retrieval, defender reverse view and
   spectator view. Examine repeated architecture, prop grouping, physical/visual

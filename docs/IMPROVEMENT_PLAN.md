@@ -49,6 +49,12 @@ SFX, VFX, descriptions and icons. Windows is the target; Android is deferred.
 
 ## Product direction
 
+Latest map-stage feedback: the owner rejects the current trees and expects suitable
+replacement assets may already be installed. Inventory existing nature/tree assets
+first, then make a thorough per-map plan for vegetation, materials, architecture,
+lighting and playable routes. Schedule this after the active ability pass. The
+first map presentation batch is not final approval of its trees or composition.
+
 Improve this game substantially, not a replacement game. Keep four players, the
 rotating defender, the can and the risky run back for a slipper. Classic and Hero
 Strike both remain first-class. Do not overload the player with new modes, heroes,

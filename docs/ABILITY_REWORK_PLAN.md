@@ -6,6 +6,16 @@ Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER
 
 ## Current owner instructions
 
+- **Explicit Phaister brief:** improve all her magic. Grand Coven must be grand
+  spellcasting, with runes and a complex magic circle unfolding through distinct
+  phases. This is a core deliverable. Readable complexity is wanted; a large flat
+  ring, generic column or pure brightness does not satisfy it.
+- **Explicit Nemu brief:** rework her ghost and all her skills. The ultimate must
+  transform the cute ghost into a giant, raging/scary ghost that sucks everyone
+  inward. A floor maw or colored aura without that transformation is insufficient.
+  Make anticipation, transformation, rage, intake and return readable. Inspect the
+  live companion/hero link rather than guessing which mesh is actually transformed.
+
 - Thoroughly improve **all eighteen existing abilities**, including the geometry
   and models they spawn, body/FPP animation, sounds, effects, utility, timing,
   recovery, interruption and overlapping presentation. Do not stop at one hero.
@@ -164,8 +174,7 @@ body and slipper interception remain reliable; end/break sounds match removal.
 ### Glacial Nova / cheska_ultimate: OPEN
 
 Path: `GlacialShatterBurstAbility` -> `SpawnIceBurst`, victim `SpawnIceCubePrison`,
-stagger/deflect paths. Body `hero-cheska-nova`, FPP `nova-shatter` (verify inventory
-if names change). Current effect shares generic ultimate wash and particle burst;
+stagger/deflect paths. Body `hero-cheska-nova`, FPP `nova-burst`. Current effect shares generic ultimate wash and particle burst;
 victim prison is a separate model and must also be reviewed.
 
 Direction: compress cold inward during commitment, then release one sharp fracture
@@ -318,16 +327,32 @@ The useful projection must be visible without large repeated bloom circles.
 Gate: first press and second press, flight/lifetime, destination legality, cleanup
 and remote presentation. Preserve the already-fixed reactivation input edge logic.
 
-### Devouring Seance / nemu_ultimate: OPEN
+### Devouring Seance / nemu_ultimate: OPEN, explicit transformation deliverable
 
-Live path is `SpawnKuroUnbound`, centered on the companion when available, not the
-old `SpawnSeanceVoid` showcase. Inspect the companion's temporary Devour form and
-its floor maw/rim separately from the retained character model.
-Direction: make the companion's change of scale/posture and predatory intake the
-main event, with a grounded bite boundary and restrained inward spirit motion.
-Avoid a purple pole over an unreadable black heap. Keep Nemu and the can locatable.
-Gate: pet-present and fallback paths, actual 4 m ground footprint, pull/interrupt/
-return/expiry, distinctive layered voice/inhale/impact without broad color wash.
+The owner explicitly wants the cute ghost to become a giant raging/scary ghost
+that sucks everyone inward. Rework the ghost itself and its temporary ultimate
+form; this is authorized despite keeping the current person cast. The character
+and companion linkage must be traced in the live path, so the intended ghost
+actually transforms rather than a generic replacement shape appearing nearby.
+
+Live path: `NemuCompanion.Devour` when present, with `SpawnKuroUnbound` providing
+the floor zone. The old `SpawnSeanceVoid` showcase is not the shipping ultimate.
+Review the normal ghost's model/material/animation and every transformed part.
+
+Direction: a recognizably cute resting ghost; an unsettling, visible escalation;
+a large, furious devouring silhouette with an expressive mouth/face and forceful
+body motion; then an intake whose inward movement and sound explain the pull.
+Keep the giant form recognizably derived from the cute one. Make the rise, raging
+sustain, strongest intake and collapse/return distinct phases. The floor boundary
+supports the creature; it must not be the main event. Do not replace this request
+with a purple pole, unreadable black heap, larger aura or more particles alone.
+
+Gate: normal and transformed ghost both reviewed from multiple angles; actual
+pet-present and fallback paths; 4 m gameplay pull footprint remains truthful unless
+a documented functional change is verified; affected bodies/slippers remain
+trackable; expiry/reset returns to the correct cute form without stale scale,
+materials or effects. Layer the anticipation, roar/inhale, pull sustain and return
+sounds. Verify owner, observer and actual network presentation at normal speed.
 
 ## Phaister: deliberate inscription, a torn passage and an enclosing eclipse
 
@@ -349,22 +374,45 @@ geometry and perspective, rather than loose line fragments in front of the camer
 Gate: valid/invalid destinations, held aim, actual teleport/recovery, arrival shove
 footprint and collider legality; no visual promise of travelling through blocked space.
 
-### Grand Coven / phaister_ultimate: OPEN
+### Grand Coven / phaister_ultimate: OPEN, explicit grand-magic deliverable
 
-Current live source uses `Reach = 10.5f`, repeated curse and seven-second duration.
-Do not quote the helper's default radius as the gameplay radius. Its constructor
+The owner explicitly wants grand magic being cast, with runes and a complex magic
+circle that has phases. Rework all of Phaister's magic coherently, with this
+ultimate as its most elaborate expression. Complexity should have structure and
+meaning, rather than uniform density, random symbols or every ring moving at once.
+
+Current live source: `Reach = 10.5f`, repeated curse and seven-second duration.
+Do not quote the helper's default radius as the gameplay radius. The constructor
 currently does not set `Windup = UltimateWindup`; the other kits' common-windup
-comments do not prove it has one. Investigate/verify the actual committed warning
-and defender counterplay before changing timing or range. At a central cast,
-10.5 m exceeds the confined box's center-to-corner distance; test that case.
+comments do not prove it has one. Verify the actual committed warning and defender
+counterplay before changing timing or range. At a central cast, 10.5 m exceeds
+the confined box's center-to-corner distance; test that case.
 
-Direction: deliberate invocation, an enclosing but legible eclipse, a coherent
-formation of the existing summoned figures and inscription, and a strong toll/
-arrival followed by a restrained sustaining presence. The current common magenta
-column/flare must not outshine the eclipse or turn the hands into a solid pink block.
-Gate: all summon models, written reach, active curse/recurse, cleanup and empowered
-throw lifecycle; preserve correct ground draping. Any functional retune needs a
-specific before/after rationale and role/counterplay evidence.
+Proposed readable phases to author and review as one spell:
+
+1. Invocation: a purposeful body/FPP gesture and a sparse first inscription make
+   the origin and impending event unmistakable.
+2. Inscription: major concentric rules and intersecting structures draw in a
+   deliberate sequence; secondary runes activate in groups with clear hierarchy.
+3. Alignment: selected rings/rune groups align and lock, with restrained motion
+   elsewhere. The composition should feel like an actual ritual reaching its trigger.
+4. Payoff: the eclipse/coven arrives with a weighty visual and sonic event, visibly
+   connected to the completed circle and the real accepted control effect.
+5. Sustain and release: readable periodic curse pulses and summoned figures, then
+   ordered unbinding/return. Avoid a field that stays at peak brightness for seven seconds.
+
+The exact phase clocks must match the live gameplay warning and repeated curse,
+not invent a delayed visual warning after victims are already affected. Keep the
+existing witch identity. Review every summon model, inscription layer, eclipse,
+shader, sound and body/FPP pose. Preserve correct ground draping and the visible
+playable space inside the spell. The common magenta column/flare must not replace
+or outshine the actual ritual or turn the hands into a solid pink block.
+
+Gate: each phase recognisable at normal speed from both caster and opponents;
+complexity readable across all three maps and low graphics; actual reach/curse/
+recurse/empowered-throw behavior is truthful; every layer cleans up on expiry and
+round/reset/refusal paths. Any timing/range/function retune needs a specific
+before/after rationale and role/counterplay evidence.
 
 ## Resume state
 
