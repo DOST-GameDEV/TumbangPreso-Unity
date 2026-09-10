@@ -1493,7 +1493,7 @@ namespace TumbangPreso.Visual
                         // frame. The discrete nudge survives movement friction.
                         _nextPossessionHit[p.PlayerSlot]=Time.time+1.25f;
                         p.ApplyStagger(.35f);
-                        p.ApplyImpulse(diff.normalized*3f);
+                        p.ApplyResolvedImpact(diff.normalized*3f);
                     }
                 }
             }

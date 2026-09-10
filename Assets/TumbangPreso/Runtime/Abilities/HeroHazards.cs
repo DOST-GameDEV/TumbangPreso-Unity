@@ -1055,7 +1055,7 @@ namespace TumbangPreso.Abilities
                         // against: heavier than Sean shrugging off a burn, lighter than
                         // standing inside a nova.
                         _target.ApplyStagger(1.8f, StunElement.Void, 6);
-                        _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
+                        _target.ApplyResolvedImpact(Random.onUnitSphere * 4.0f);
 
                         // ⚠️ RELAYED, LIKE THE `downed` CUE THREE LINES DOWN. The sound of the
                         // poltergeist connecting reached every peer and the sight of it did not.
@@ -4003,7 +4003,7 @@ namespace TumbangPreso.Abilities
                         // rather than encases: it is the one element in `StunCoat` drawn almost
                         // entirely on the rim, and the escape is priced to match.
                         p.ApplyStagger(2.0f, StunElement.Shock, 7);
-                        p.ApplyImpulse((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
+                        p.ApplyResolvedImpact((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
                         Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
                                                    sourceSlot, p.PlayerSlot,
                                                    p.transform.position, 2.0f);
@@ -4300,7 +4300,7 @@ namespace TumbangPreso.Abilities
                     Vector3 push = (to.sqrMagnitude > 0.01f ? to.normalized : Vector3.forward) * force;
                     push.y = 5.5f;
 
-                    p.ApplyImpulse(push);
+                    p.ApplyResolvedImpact(push);
                     if (p.PlayerSlot != sourceSlot && stunTime > 0.0f)
                     {
                         // ⚠️ THE ELEMENT COMES FROM THE STYLE THE CALLER ALREADY PASSED,

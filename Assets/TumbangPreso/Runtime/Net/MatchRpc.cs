@@ -336,6 +336,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
+            cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
             cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);
@@ -1803,6 +1804,31 @@ namespace TumbangPreso.Net
 
         // An accepted teleport starts a new movement epoch. Old unreliable poses
         // can arrive afterward, but cannot pull the body back across the court.
+        public void BroadcastImpact(int slot,Vector3 impulse)
+        {
+            if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || !Finite(impulse) || _nm?.CustomMessagingManager==null)return;
+            int epoch=_movementEpochs[slot];
+            if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] send slot={slot} epoch={epoch} impulse={impulse}");
+            using var writer=new FastBufferWriter(32,Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(epoch);
+            writer.WriteValueSafe(impulse);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Impact",writer);
+        }
+
+        private void OnImpactMsg(ulong senderClientId,FastBufferReader reader)
+        {
+            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int epoch);
+            reader.ReadValueSafe(out Vector3 impulse);
+            if(!ValidSlot(slot) || slot!=NetAuthority.LocalSlot || !Finite(impulse))return;
+            var unit=Unit(slot);
+            if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] receive slot={slot} epoch={epoch} localEpoch={unit?.MovementEpoch} sim={unit?.IsLocallySimulated()} impulse={impulse}");
+            if(unit==null || epoch!=unit.MovementEpoch)return;
+            unit.ApplyImpulse(impulse);
+        }
+
         public void BroadcastTeleport(int slot,Vector3 position,float yaw)
         {
             if(!NetAuthority.ShouldResolve() || !ValidSlot(slot) || _nm?.CustomMessagingManager==null)return;
@@ -1929,6 +1955,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.Stamina.Current);
             writer.WriteValueSafe(unit.Stamina.IdleSeconds);
             writer.WriteValueSafe(unit.Stamina.FatigueLeft);
+            writer.WriteValueSafe(unit.RecoveryEpisode);
+            writer.WriteValueSafe(unit.RecoveryAcknowledged);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer, PoseDelivery);
         }
 
@@ -1959,6 +1987,9 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float staminaCurrent);
             reader.ReadValueSafe(out float staminaIdle);
             reader.ReadValueSafe(out float fatigueLeft);
+            reader.ReadValueSafe(out int recoveryEpisode);
+            reader.ReadValueSafe(out int recoveryAcknowledged);
+            if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
 
             // ⚠️⚠️ A NON-FINITE POSE MAKES A BODY VANISH AND SPAMS THE LOG ONCE A FRAME, and at a
             // venue that reads as "the game broke" rather than as one bad packet. `Transform`
@@ -1985,7 +2016,8 @@ namespace TumbangPreso.Net
             unit.ApplyNetworkState(stunLeft, stunTotal, (StunElement)stunElement,
                                    stunBreakPresses, stunMashPresses,
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,
-                                   staminaCurrent, staminaIdle, fatigueLeft);
+                                   staminaCurrent, staminaIdle, fatigueLeft,
+                                   recoveryEpisode,recoveryAcknowledged);
         }
 
         // -------------------------------------------------------------------
@@ -3120,13 +3152,15 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>One client mash press; the host decides which active state it answers.</summary>
-        public void RequestMashServerRpc(int claimedSlot)
+        public void RequestMashServerRpc(int claimedSlot,int episode,int sequence)
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             if (NetAuthority.IsHost) return;
 
             using var writer = new FastBufferWriter(16, Allocator.Temp);
             writer.WriteValueSafe(claimedSlot);
+            writer.WriteValueSafe(episode);
+            writer.WriteValueSafe(sequence);
             _nm.CustomMessagingManager.SendNamedMessage("ReqMash", NetworkManager.ServerClientId, writer);
         }
 
@@ -3134,10 +3168,11 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
             reader.ReadValueSafe(out int claimedSlot);
+            reader.ReadValueSafe(out int episode);
+            reader.ReadValueSafe(out int sequence);
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
 
-            if (unit.IsTripped) unit.MashRecover();
-            else if (unit.StunElement != StunElement.None) unit.MashOutOfStun();
+            unit.AcceptRecoveryRequest(episode,sequence);
 
             SyncUnitTransformClientRpc(claimedSlot, unit.transform.position,
                                        unit.transform.eulerAngles.y, unit.Velocity);

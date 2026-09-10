@@ -190,6 +190,14 @@ namespace TumbangPreso
                 return;
             }
 
+            // Recovery and hero controls still belong to the human while Kuro
+            // owns movement. Preserve quick Jump taps until the physics consumer.
+            intent.Set(Verb.Jump, _jump.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Jump));
+            if (_jump.WasPressedThisFrame()) intent.BufferPress(Verb.Jump);
+            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill1));
+            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
+            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Ultimate));
+
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {
@@ -205,10 +213,6 @@ namespace TumbangPreso
 
                 visual.Companion.SetPlayerInput(petMove);
                 intent.LookDelta = ReadLookDelta();
-
-                // Allow skill2 recast to teleport and end possession
-                if (_skill2 != null)
-                    intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
 
                 return;
             }
@@ -230,14 +234,10 @@ namespace TumbangPreso
 
             intent.Move = move;
             intent.Set(Verb.Sprint, _sprint.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Sprint));
-            intent.Set(Verb.Jump, _jump.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Jump));
             intent.Set(Verb.SpecialAbility, _special.IsPressed() || InputLayer.TouchInput.Pressed(Verb.SpecialAbility));
             intent.Set(Verb.Grab, _grab.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Grab));
             intent.Set(Verb.Lunge, _lunge.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Lunge));
             intent.Set(Verb.EmoteWheel, _emote.IsPressed() || InputLayer.TouchInput.Pressed(Verb.EmoteWheel));
-            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill1));
-            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
-            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Ultimate));
 
             intent.LookDelta = ReadLookDelta();
 

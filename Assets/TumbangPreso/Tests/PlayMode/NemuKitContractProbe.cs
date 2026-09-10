@@ -55,6 +55,127 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,true);yield return new WaitForSeconds(.08f);
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
+        [UnityTest] public IEnumerator QuickKeyboardTapReachesStunRecovery() => QuickRecoveryTap(false);
+        [UnityTest] public IEnumerator QuickControllerTapReachesStunRecovery() => QuickRecoveryTap(true);
+        private IEnumerator QuickRecoveryTap(bool controller)
+        {
+            var device=controller?(UnityEngine.InputSystem.InputDevice)UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Gamepad>()
+                :UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            var action=new UnityEngine.InputSystem.InputAction("RecoveryProbe",UnityEngine.InputSystem.InputActionType.Button,
+                controller?"<Gamepad>/buttonSouth":"<Keyboard>/space");
+            var reader=_who.GetComponent<PlayerInputReader>()??_who.gameObject.AddComponent<PlayerInputReader>();
+            reader.enabled=false;
+            typeof(PlayerInputReader).GetField("_jump",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(reader,action);
+            var inputSettings=UnityEngine.InputSystem.InputSystem.settings;
+            var oldBackground=inputSettings.backgroundBehavior;
+            var oldEditorInput=inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode=UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            UnityEngine.InputSystem.InputSystem.EnableDevice(device);
+            action.Enable();
+            UnityEngine.InputSystem.InputSystem.Update();
+            try
+            {
+                _who.ApplyStagger(4,StunElement.Ice,6);
+                _who.Intent.Clear();_who.Intent.CommitFrame();
+                // Both hardware events arrive before one physics tick. A held-state
+                // sample alone sees false, even though Input System observed a press.
+                if(controller)
+                {
+                    UnityEngine.InputSystem.InputSystem.QueueStateEvent((UnityEngine.InputSystem.Gamepad)device,
+                        new UnityEngine.InputSystem.LowLevel.GamepadState().WithButton(UnityEngine.InputSystem.LowLevel.GamepadButton.South));
+
+                }
+                else
+                {
+                    UnityEngine.InputSystem.InputSystem.QueueStateEvent((UnityEngine.InputSystem.Keyboard)device,
+                        new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Space));
+
+                }
+                UnityEngine.InputSystem.InputSystem.Update();
+                Assert.IsTrue(action.WasPressedThisFrame(),$"Fixture never delivered a hardware press: controls={action.controls.Count}, enabled={device.enabled}, phase={action.phase}, value={action.ReadValue<float>()}.");
+                Assert.IsTrue(action.IsPressed(),"Fixture press is not held.");
+                reader.SendMessage("Update");
+                if(controller)UnityEngine.InputSystem.InputSystem.QueueStateEvent((UnityEngine.InputSystem.Gamepad)device,new UnityEngine.InputSystem.LowLevel.GamepadState());
+                else UnityEngine.InputSystem.InputSystem.QueueStateEvent((UnityEngine.InputSystem.Keyboard)device,new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update();
+                Assert.IsFalse(action.IsPressed(),"Fixture must release before physics.");
+                reader.SendMessage("Update");
+                yield return new WaitForFixedUpdate();
+                Assert.AreEqual(1,_who.StunMashPresses,"A quick physical tap was lost before recovery.");
+                yield return new WaitForSeconds(.15f);
+                Assert.AreEqual(1,_who.StunMashPresses,"One tap became repeated recovery.");
+            }
+            finally
+            {
+                action.Dispose();UnityEngine.InputSystem.InputSystem.RemoveDevice(device);
+                inputSettings.backgroundBehavior=oldBackground;
+                inputSettings.editorInputBehaviorInPlayMode=oldEditorInput;
+            }
+        }
+
+        private void RecoverySnapshot(int episode,int ack,float left=4,int presses=0,bool trip=false)
+            => _who.ApplyNetworkState(left,4,trip?StunElement.None:StunElement.Ice,6,trip?0:presses,
+                trip?left:0,trip?4:0,trip?presses:0,0,100,0,0,episode,ack);
+
+        [UnityTest]
+        public IEnumerator OldSnapshotKeepsOnlyUnacknowledgedRecoveryForTheSameStun()
+        {
+            NetAuthority.Provider=new OwnerProvider();
+            int episode=_who.RecoveryEpisode+1;
+            RecoverySnapshot(episode,0);
+            Assert.IsTrue(_who.RecoverFromInput());
+            float predicted=_who.StunLeft;
+            RecoverySnapshot(episode,0);
+            Assert.AreEqual(1,_who.StunMashPresses,"Old snapshot erased an in-flight tap.");
+            Assert.AreEqual(predicted,_who.StunLeft,.001f);
+            RecoverySnapshot(episode,0);
+            Assert.AreEqual(predicted,_who.StunLeft,.001f,"Replaying a snapshot spent the tap twice.");
+            RecoverySnapshot(episode,1,predicted,1);
+            Assert.AreEqual(1,_who.StunMashPresses);
+            Assert.AreEqual(predicted,_who.StunLeft,.001f,"Acknowledged tap was predicted again.");
+            RecoverySnapshot(episode+1,0);
+            Assert.AreEqual(0,_who.StunMashPresses,"Fresh ice inherited taps from previous ice.");
+            Assert.AreEqual(4,_who.StunLeft,.001f);
+            RecoverySnapshot(episode,1,predicted,1);
+            Assert.AreEqual(4,_who.StunLeft,.001f,"Stale episode replaced a fresh stun.");
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator TripRecoverySurvivesOldSnapshotsWithoutDoubleSpending()
+        {
+            NetAuthority.Provider=new OwnerProvider();
+            int episode=_who.RecoveryEpisode+1;
+            RecoverySnapshot(episode,0,4,0,true);
+            Assert.IsTrue(_who.RecoverFromInput());
+            float left=_who.TripLeft;
+            RecoverySnapshot(episode,0,4,0,true);
+            Assert.AreEqual(1,_who.MashPresses);
+            Assert.AreEqual(left,_who.TripLeft,.001f);
+            RecoverySnapshot(episode,0,4,0,true);
+            Assert.AreEqual(left,_who.TripLeft,.001f);
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator RecoveryRequestsCannotReplayCrossEpisodesOrBypassTheRateCap()
+        {
+            _who.ApplyStagger(4,StunElement.Ice,6);
+            int episode=_who.RecoveryEpisode;
+            Assert.IsTrue(_who.AcceptRecoveryRequest(episode,1));
+            float left=_who.StunLeft;
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,1));
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,2),"Same-frame spam bypassed Core's cap.");
+            Assert.AreEqual(2,_who.RecoveryAcknowledged,"Refused prediction was not acknowledged.");
+            Assert.AreEqual(left,_who.StunLeft,.001f);
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,999));
+            _who.ApplyStagger(5,StunElement.Ice,6);
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,3),"Old request affected a new ice hold.");
+            Assert.AreEqual(0,_who.StunMashPresses);
+            yield return null;
+        }
+
         private sealed class HostReplicaProvider : INetProvider
         {
             public bool IsHost=>true;
@@ -69,6 +190,25 @@ namespace TumbangPreso.PlayTests
             public int LocalSlot=>1;public int LocalPeerId=>1;
             public bool IsSeatlessReferee=>false;
         }
+        [UnityTest]
+        public IEnumerator DestroyedBotCannotRemainTheHostSimulationOwner()
+        {
+            foreach(var reader in _who.GetComponents<PlayerInputReader>())Object.Destroy(reader);
+            foreach(var brain in _who.GetComponents<AIController>())Object.Destroy(brain);
+            yield return null;
+            NetAuthority.Provider=new HostReplicaProvider();
+            var ai=_who.gameObject.AddComponent<AIController>();ai.enabled=false;
+            _who.IsBot=true;_who.ForgetInputSource();
+            Assert.IsTrue(_who.IsLocallySimulated());
+            // MatchRpc's handover destroys the bot and invalidates the cache.
+            // An intervening visual/ability query can refill it before Destroy runs.
+            Object.Destroy(ai);_who.IsBot=false;_who.ForgetInputSource();
+            _who.IsLocallySimulated();
+            yield return null;
+            Assert.IsNull(_who.GetComponent<AIController>());
+            Assert.IsFalse(_who.IsLocallySimulated(),"Destroyed AI left a permanent stale host-ownership cache.");
+        }
+
         [UnityTest]
         public IEnumerator PredictedRecallIgnoresOldEchoUntilANewMovementEpoch()
         {
@@ -233,6 +373,44 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.AreSame(pet,visual.Companion,"An unchanged roster update deleted the live ghost.");
             Assert.IsTrue(pet.IsDevouring);
+        }
+
+        [UnityTest]
+        public IEnumerator ReplicaDoesNotStoreAnImpulseForALaterOwnershipHandover()
+        {
+            foreach(var reader in _who.GetComponents<PlayerInputReader>())Object.Destroy(reader);
+            foreach(var brain in _who.GetComponents<AIController>())Object.Destroy(brain);
+            yield return null;
+            _who.IsBot=false;_who.ForgetInputSource();NetAuthority.Provider=new HostReplicaProvider();
+            var before=_who.transform.position;
+            _who.ApplyImpulse(Vector3.right*10);
+            NetAuthority.Provider=_provider;
+            yield return new WaitForSeconds(.2f);
+            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-before,Vector3.up).magnitude,.02f,
+                "A replica stored an old force and launched when simulation ownership changed.");
+        }
+        [UnityTest]
+        public IEnumerator AClientCannotOriginateResolvedImpacts()
+        {
+            NetAuthority.Provider=new OwnerProvider();
+            var before=_who.transform.position;
+            _who.ApplyResolvedImpact(Vector3.right*10);
+            yield return new WaitForSeconds(.15f);
+            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-before,Vector3.up).magnitude,.02f);
+        }
+        [UnityTest]
+        public IEnumerator CarapaceStopsResolvedImpactWithoutDisablingOwnMovement()
+        {
+            _who.AbilitySystem.BindHero("dante");
+            var ctx=new AbilityContext(_who,_who.GetComponent<Carrier>(),_who.GetComponent<CombatVerbs>());
+            _who.AbilitySystem.Kit.Skill2.Activate(ctx);
+            var before=_who.transform.position;
+            _who.ApplyResolvedImpact(Vector3.right*10);
+            yield return new WaitForSeconds(.15f);
+            Assert.Less(Vector3.ProjectOnPlane(_who.transform.position-before,Vector3.up).magnitude,.02f);
+            _who.ApplyImpulse(Vector3.right*6);
+            yield return new WaitForSeconds(.3f);
+            Assert.Greater(_who.transform.position.x-before.x,.35f,"Armor incorrectly disabled the caster's own locomotion impulse.");
         }
 
         [UnityTest]

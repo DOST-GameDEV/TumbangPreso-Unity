@@ -338,7 +338,9 @@ namespace TumbangPreso.Net
         /// .apk are rebuilt from this commit and shipped together**, or they refuse each other
         /// correctly and it reads as a bug. `docs/TODO.md` § 144.7.
         // 24 -> 25 adds familiar poses and a final anchor to both ability messages.
-        public const int ProtocolVersion = 25;
+        // 25 -> 26 adds host-resolved discrete impacts to the owning movement peer.
+        // 26 -> 27 identifies recovery episodes and acknowledges mash inputs.
+        public const int ProtocolVersion = 27;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -310,7 +310,7 @@ namespace TumbangPreso.Abilities
                     repel.y = 0.0f;
                     if (repel.sqrMagnitude < 0.01f) repel = facing;
 
-                    other.ApplyImpulse(repel.normalized * 6.0f + Vector3.up * 2.0f);
+                    other.ApplyResolvedImpact(repel.normalized * 6.0f + Vector3.up * 2.0f);
                     other.ApplyStagger(0.4f);
                 }
             }

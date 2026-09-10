@@ -167,7 +167,7 @@ namespace TumbangPreso.Abilities
                             _hitSlots.Add(p.PlayerSlot);
                             Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
                             hitForce.y = 4.5f;
-                            p.ApplyImpulse(hitForce);
+                            p.ApplyResolvedImpact(hitForce);
                             // ⚠️ 4, WHICH IS THE LIGHTEST HOLD IN THE GAME ON PURPOSE. This is
                             // a SKILL on a short cooldown, not an ultimate: it should interrupt
                             // a run and be shrugged off, and a burn nobody can shake is a

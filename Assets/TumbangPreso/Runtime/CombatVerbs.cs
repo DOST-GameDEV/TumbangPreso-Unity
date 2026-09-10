@@ -932,7 +932,7 @@ namespace TumbangPreso
                    / Roster.PersonGritScale(victim.CharacterIndex, victim.Mode);
             push.y = Balance.ShoveLift;
 
-            victim.ApplyImpulse(push);
+            victim.ApplyResolvedImpact(push);
             victim.ApplyStagger(Balance.ShoveStun);
             Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
             Visual.ComicPopup.Bonk(victim.transform.position);

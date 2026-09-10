@@ -274,6 +274,19 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Recovery/remote impacts, 2026-09-10:** quick input taps and network progress
+rollback are repaired with actual input-event and three-process evidence in
+[recovery-and-impacts.md](reports/improvement-2026-09-10/recovery-and-impacts.md).
+Core562/562, EditMode486/486, focused PlayMode29/29. Delayed owner recovery agrees
+with host; real remote stomp moves the victim0.7281m on all peers. Ordinary-play
+possession controls and the broader network/mode/round matrices remain open.
+
+**Latest Kuro art request:** make the small ghost cuter, using Hu Tao's ghost as a
+loose silhouette/expression reference in Nemu's palette/theme. Improve the giant
+as well, especially the wing-like arms, to be more imposing and frightening.
+Blender studies are in progress; keep the approved eighteen people unchanged.
+
+
 Stable networking batch verification: Core562/562, EditMode486/486, Nemu PlayMode
 20/20 with fresh NUnit XML, all8 checks and all14 gating audits. Direct hard
 reconnect during Kuro's ultimate passes with remaining state/resources restored.

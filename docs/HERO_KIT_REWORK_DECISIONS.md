@@ -59,3 +59,45 @@ A central cast reaches all corners of the confined defender box. A grand ritual
 needs an actual warning before control begins, not elaborate drawing after the
 first curse. Measure escape opportunity and preserve the imposing event through
 phase, motion and sound rather than indiscriminate area or brightness.
+
+
+Additional Dante source issue found while preparing the remote-impact baseline:
+Stomp adds an upward impulse to its caster, and CreateExplosion also applies
+knockback to the source slot (it excludes only source stun). This can make the
+planted-strength hero launch himself from his own stomp. Review the real sequence
+before the deep Dante pass; do not preserve accidental self-bounce as a contact
+contract. Verify Carapace's actual knockback resistance as well as its copy.
+
+## Owner reaffirmed connected lore and visible culture, 2026-09-10
+
+Tie maps, characters and what they can do into one coherent lore. Show Filipino
+culture in abilities, descriptions and maps. The written foundation already exists
+in LORE.md, but writing it is not the same as completing its in-game expression.
+Carry it through actual kit choices, animation/gesture, sound, materials, everyday
+map use and concise English descriptions. Retain proper names. Cultural references
+must fit the particular hero/place, not become compulsory flags, borrowed sacred
+writing or forced Tagalog renames. Keep the warm sporting world and cute style.
+
+For the three maps, establish why people gather/play there and place architecture,
+shade, shops/seating and props accordingly. For the approved Classic cast, express
+neighborhood relationships and temperament without reopening model redesign or
+adding biography screens. For heroes, connect each tactical role and alternative
+to its personality and established cultural direction. Use existing optional
+stories/descriptions where helpful; no new campaign/mode or UI art project.
+
+## Owner-reported stun-mash defect, 2026-09-10
+
+The owner reports stun button mashing seems broken or incompletely implemented.
+Treat as an explicit gameplay/network bug to reproduce, not a cosmetic prompt
+request. Trace actual keyboard/controller input edge -> InputIntent -> motor mash
+selection -> host ReqMash validation/cooldown -> authoritative stun/trip reduction
+-> replicated owner/observer state -> get-up animation and HUD feedback. Verify
+repeated presses, held input, relevant frame rates, floor/minimum recovery, distinct
+stun elements, host and remote owner, and interaction with jump after recovery.
+Preserve existing anti-spam and authority contracts unless evidence proves those
+contracts wrong. Do not weaken a test or widen timing merely to call it fixed.
+
+This joins the active gameplay-critical network work after the currently running
+remote-impact verification, before declaring the networking pass complete. Record
+the original reproduction and corrected real-input results in the same durable
+ledger/report. Existing unit passes alone do not answer the user's report.

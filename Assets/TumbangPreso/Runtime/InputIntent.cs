@@ -31,16 +31,16 @@ namespace TumbangPreso
     /// call a gameplay method directly ("it is simpler, it is only for the AI") reintroduces
     /// the divergence this prevents. Do not take it.
     ///
-    /// ⚠️ EDGES ARE DERIVED, NOT REPORTED. The producer sets only the held state; this type
-    /// diffs against the previous frame to answer "just pressed" and "just released". A
-    /// producer that had to report edges itself could report an impossible pair (released
-    /// without ever being pressed), and an AI that missed a frame would silently never fire
-    /// a tap-only verb like the shove.
+    /// Held-state edges are derived against the previous physics snapshot. Hardware
+    /// recovery taps additionally buffer a press observed by Input System, because
+    /// a press and release can both occur between physics ticks. The consumer clears
+    /// that observation exactly once; it never turns it into a held button.
     /// </summary>
     public sealed class InputIntent
     {
         private readonly HashSet<Verb> _held = new HashSet<Verb>();
         private readonly HashSet<Verb> _heldPrev = new HashSet<Verb>();
+        private readonly HashSet<Verb> _bufferedPresses = new HashSet<Verb>();
 
         public Vector2 Move { get; set; }
 
@@ -118,15 +118,24 @@ namespace TumbangPreso
             else _held.Remove(v);
         }
 
-        /// <summary>Call once at the end of every producer's frame, after all Set calls.</summary>
+        // Hardware can press and release between physics ticks. Preserve the
+        // observed press without inventing a held state or repeat presses.
+        public void BufferPress(Verb verb)
+        {
+            if (!Parked && !Locked(verb)) _bufferedPresses.Add(verb);
+        }
+
+        /// <summary>Called by the motor after the physics consumers have read intent.</summary>
         public void CommitFrame()
         {
+            _bufferedPresses.Clear();
             _heldPrev.Clear();
             foreach (var v in _held) _heldPrev.Add(v);
         }
 
         public void Clear()
         {
+            _bufferedPresses.Clear();
             _held.Clear();
             Move = Vector2.zero;
             LookDelta = Vector2.zero;
@@ -183,7 +192,7 @@ namespace TumbangPreso
         public bool Pressed(Verb v) => !Parked && !Locked(v) && _held.Contains(v);
 
         public bool JustPressed(Verb v)
-            => !Parked && !Locked(v) && _held.Contains(v) && !_heldPrev.Contains(v);
+            => !Parked && !Locked(v) && (_bufferedPresses.Contains(v) || (_held.Contains(v) && !_heldPrev.Contains(v)));
 
         public bool JustReleased(Verb v)
             => !Parked && !Locked(v) && !_held.Contains(v) && _heldPrev.Contains(v);

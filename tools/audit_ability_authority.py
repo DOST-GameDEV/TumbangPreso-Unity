@@ -29,7 +29,7 @@ SUBTREES = ("Abilities",)
 # method an ability calls. Reading a position is free on any peer; changing where
 # a body is, how fast it moves, or what the scoreboard says is not.
 EFFECT = re.compile(
-    r'\.(ApplyStagger|ApplyImpulse|ApplyTrip|ApplyStun|Teleport|ClearStun|ClearTrip'
+    r'\.(ApplyStagger|ApplyImpulse|ApplyResolvedImpact|ApplyTrip|ApplyStun|Teleport|ClearStun|ClearTrip'
     r'|Respawn|EnterSpeedZone|ExitSpeedZone|SetIceSurface|AddScore|ForceDrop|Drop)\s*\('
 )
 

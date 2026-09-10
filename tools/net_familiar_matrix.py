@@ -13,6 +13,39 @@ def evaluate(folder,case,reconnected=False):
     for name,rows in data.items():
         expected={"host":0,"owner":1,"observer":2}[name]
         if not rows or any(r["local"]!=expected for r in rows):errors.append(name+" occupied the wrong seat; shaped-link coverage is invalid")
+        if case=="mash":
+            active=[r for r in rows if r["stunLeft"]>0]
+            if not active:errors.append(name+" missed the stun");continue
+            peak=max(r["mashPresses"] for r in active)
+            drops=sum(b["mashPresses"]<a["mashPresses"] for a,b in zip(active,active[1:]) if b["stunLeft"]>.05)
+            duration=active[-1]["time"]-active[0]["time"]
+            details[name]={"accepted_presses":peak,"progress_rollbacks":drops,"stun_duration":duration}
+            if peak<3:errors.append(name+" lost the recovery presses")
+            if duration>3.3:errors.append(name+" did not shorten the four-second stun")
+            if drops:errors.append(name+" recovery progress went backwards")
+            continue
+        if case=="impact":
+            # Processes begin observing at different server times. Anchor to the
+            # actual charge transition, not a local elapsed window that can start
+            # after the owner has already integrated the impact.
+            cast=next((i for i,r in enumerate(rows) if r["sourceCharges"]==1),None)
+            if cast is None or cast==0:
+                errors.append(name+" missed the pre-cast charge transition");continue
+            before=rows[cast-1]
+            after=[r for r in rows[cast:] if r["time"]<=rows[cast]["time"]+5]
+            origin=[before["bodyX"],before["bodyZ"]]
+            travel=max(math.dist(origin,[r["bodyX"],r["bodyZ"]]) for r in after)
+            details[name]={"impact_displacement":travel,"source_charges":after[-1]["sourceCharges"],"rows":len(rows),"cast_time":rows[cast]["time"]}
+            closest=min(math.hypot(r["sourceX"]-r["bodyX"],r["sourceZ"]-r["bodyZ"]) for r in after[:5])
+            details[name]["cast_separation"]=closest
+            details[name]["observed_stun"]=max(r.get("stunLeft",0) for r in after)
+            details[name]["body"]=[after[-1]["bodyX"],after[-1]["bodyZ"]]
+            if before["sourceCharges"]!=2:errors.append(name+" source did not begin with two charges")
+            if closest>2.2:errors.append(name+" victim was outside the actual stomp; fixture invalid")
+            if details[name]["observed_stun"]<=0:errors.append(name+" did not observe contact stun")
+            if travel<.35:errors.append(name+" victim did not move from the actual stomp")
+            if after[-1]["sourceCharges"]!=1:errors.append(name+" did not observe exactly one real source cast")
+            continue
         flight=[r for r in rows if r["possessed"]==1]
         if len(flight)<5:errors.append(name+" did not observe sustained possession");continue
         travel=math.hypot(max(r["x"] for r in flight)-min(r["x"] for r in flight),max(r["z"] for r in flight)-min(r["z"] for r in flight))
@@ -63,7 +96,7 @@ def evaluate(folder,case,reconnected=False):
     return {"ok":not errors,"errors":errors,"measurements":details}
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument("exe",type=Path);ap.add_argument("--case",choices=["recall","ultimate"],default="recall");ap.add_argument("--delay",type=float,default=0);ap.add_argument("--loss",type=float,default=0);ap.add_argument("--out",type=Path);ap.add_argument("--reconnect",action="store_true");a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument("exe",type=Path);ap.add_argument("--case",choices=["recall","ultimate","impact","mash"],default="recall");ap.add_argument("--delay",type=float,default=0);ap.add_argument("--loss",type=float,default=0);ap.add_argument("--out",type=Path);ap.add_argument("--reconnect",action="store_true");a=ap.parse_args()
     if a.reconnect and a.case!="ultimate":ap.error("reconnect uses the ultimate case")
     folder=(a.out or ROOT/"Logs"/("familiar-"+a.case+"-"+uuid.uuid4().hex[:8])).resolve();folder.mkdir(parents=True,exist_ok=False)
     backup=folder/"profiles";manifest={}

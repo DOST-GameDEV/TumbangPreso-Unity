@@ -244,7 +244,7 @@ namespace TumbangPreso.Abilities
                             // also the one ability whose fiction and whose element are the same
                             // word, so if any stun should read as being encased, it is this.
                             p.ApplyStagger(2.5f, StunElement.Ice, 9);
-                            p.ApplyImpulse(diff.normalized * 8.5f + Vector3.up * 2.5f);
+                            p.ApplyResolvedImpact(diff.normalized * 8.5f + Vector3.up * 2.5f);
                             // ⚠️⚠️ NO PER-VICTIM CALLOUT. Three frozen players used to mean
                             // three FREEZE callouts stacked on top of the nova's own, which is
                             // four lines of text in one frame saying one thing. The ice prison

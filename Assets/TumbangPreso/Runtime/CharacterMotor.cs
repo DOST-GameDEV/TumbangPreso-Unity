@@ -944,23 +944,7 @@ namespace TumbangPreso
             // already uses: one control, one action, resolved by context. No new binding is
             // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
             bool mashPressed = Intent.JustPressed(Verb.Jump);
-            if (_tripLeft > 0.0f && mashPressed) MashRecover();
-
-            // ⚠️ THE SAME KEY ANSWERS AN ELEMENT STUN, AND THE ORDER MATTERS. A body that is
-            // both tripped and stunned is handled by the line above, which already clears both;
-            // `MashOutOfStun` returns early on a live trip rather than racing it, so one press
-            // can never be spent twice. Jump is meaningless while stunned for exactly the reason
-            // it is meaningless face down, so this takes nothing away and needs no teaching, and
-            // no new binding means `InputMapAndAbilityTests`' one-control-one-action rule is
-            // untouched.
-            if (_stunElement != StunElement.None && mashPressed) MashOutOfStun();
-
-            // The local press is predicted for immediate feedback, then the host applies the
-            // same rule to its authoritative stun/trip clock. Without this request a client
-            // could fill its own meter while the host still considered it fully stunned, and
-            // the next state packet put the whole bar back.
-            if (mashPressed && NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
-                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot);
+            if (mashPressed) RecoverFromInput();
 
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
@@ -1061,12 +1045,15 @@ namespace TumbangPreso
         {
             if (!_inputSourceKnown)
             {
-                _hostDriven = GetComponent<PlayerInputReader>() != null
-                              || GetComponent<AIController>() != null;
+                _hostReader = GetComponent<PlayerInputReader>();
+                _hostBrain = GetComponent<AIController>();
                 _inputSourceKnown = true;
             }
 
-            return _hostDriven;
+            // Destroy is deferred. A same-frame query can refill this cache before
+            // the old bot disappears; Unity references become null afterward,
+            // whereas a cached boolean kept the host simulating that seat forever.
+            return _hostReader != null || _hostBrain != null;
         }
 
         /// <summary>
@@ -1268,7 +1255,8 @@ namespace TumbangPreso
         }
 
         private bool _inputSourceKnown;
-        private bool _hostDriven;
+        private PlayerInputReader _hostReader;
+        private AIController _hostBrain;
 
         /// <summary>
         /// ⚠️⚠️ SHARED WITH `StepNetworkReplica`'S GROUNDED WINDOW, AND THAT SHARING IS THE
@@ -1619,6 +1607,7 @@ namespace TumbangPreso
         public void ClearStun()
         {
             if (!MayMutateGameplayState()) return;
+            AdvanceRecoveryEpisode();
             _stunLeft = 0.0f;
             _stunTotal = 0.0f;
 
@@ -1633,6 +1622,7 @@ namespace TumbangPreso
         public void ClearTrip()
         {
             if (!MayMutateGameplayState()) return;
+            AdvanceRecoveryEpisode();
             _tripLeft = 0.0f;
             _tripTotal = 0.0f;
             _mashPresses = 0;
@@ -1653,6 +1643,7 @@ namespace TumbangPreso
             if (!MayMutateGameplayState()) return;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
 
+            AdvanceRecoveryEpisode();
             _tripLeft = Mathf.Max(_tripLeft, duration);
             _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
             ApplyStagger(duration);
@@ -1763,6 +1754,7 @@ namespace TumbangPreso
             _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
 
             if (!wins) return;
+            AdvanceRecoveryEpisode();
 
             _stunElement = element;
             _stunBreakPresses = breakPresses;
@@ -1773,6 +1765,66 @@ namespace TumbangPreso
         private int _stunBreakPresses = Balance.StunBreakPressesDefault;
         private int _stunMashPresses;
         private float _lastStunMashTime = -99.0f;
+
+        private int _recoveryEpisode, _recoveryAcknowledged, _recoverySequence;
+        private readonly List<int> _pendingRecovery = new List<int>();
+        public int RecoveryEpisode => _recoveryEpisode;
+        public int RecoveryAcknowledged => _recoveryAcknowledged;
+
+        private void AdvanceRecoveryEpisode()
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            _recoveryEpisode++;
+            _recoveryAcknowledged=0;
+            _recoverySequence=0;
+            _pendingRecovery.Clear();
+        }
+
+        // One physical press, with the same Core rate limit for humans and bots.
+        // Record only accepted local predictions; a held button does not call this
+        // repeatedly, and a fresh authoritative stun cannot inherit these presses.
+        public bool RecoverFromInput()
+        {
+            if (!IsLocallySimulated() || _pendingRecovery.Count>=32) return false;
+            bool accepted=IsTripped ? MashRecover() : MashOutOfStun();
+            if (accepted && NetAuthority.ShouldRequest() && _playerSlot==NetAuthority.LocalSlot)
+            {
+                int sequence=++_recoverySequence;
+                _pendingRecovery.Add(sequence);
+                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot,_recoveryEpisode,sequence);
+            }
+            return accepted;
+        }
+
+        public bool AcceptRecoveryRequest(int episode,int sequence)
+        {
+            if (!NetAuthority.ShouldResolve() || episode!=_recoveryEpisode ||
+                sequence<=_recoveryAcknowledged || sequence-_recoveryAcknowledged>32) return false;
+            // A refusal is also acknowledged so it cannot remain predicted forever.
+            _recoveryAcknowledged=sequence;
+            return IsTripped ? MashRecover() : MashOutOfStun();
+        }
+
+        private void ReplayUnacknowledgedRecovery()
+        {
+            foreach (int sequence in _pendingRecovery)
+            {
+                if (_tripLeft>0)
+                {
+                    float after=Combat.MashRecover(_tripLeft,Balance.MashCooldown,out bool accepted);
+                    if (!accepted) continue;
+                    float removed=_tripLeft-after;
+                    _tripLeft=after;_mashRemoved+=removed;_mashPresses++;
+                    _stunLeft=Mathf.Max(0,_stunLeft-removed);
+                }
+                else if (_stunElement!=StunElement.None)
+                {
+                    _stunLeft=Combat.MashOutOfStun(_stunLeft,_stunTotal,_stunBreakPresses,
+                        Balance.MashCooldown,out bool accepted);
+                    if (accepted) _stunMashPresses++;
+                }
+            }
+        }
 
         /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
         public StunElement StunElement => _stunElement;
@@ -1792,8 +1844,21 @@ namespace TumbangPreso
                                       int stunBreakPresses, int stunMashPresses,
                                       float tripLeft, float tripTotal, int tripMashPresses,
                                       float tripMashRemoved, float staminaCurrent,
-                                      float staminaIdle, float fatigueLeft)
+                                      float staminaIdle, float fatigueLeft,
+                                      int recoveryEpisode=-1, int recoveryAcknowledged=0)
         {
+            if (recoveryEpisode>=0)
+            {
+                if (recoveryEpisode<_recoveryEpisode) return;
+                if (recoveryEpisode>_recoveryEpisode)
+                {
+                    _pendingRecovery.Clear();_recoverySequence=0;
+                    _recoveryEpisode=recoveryEpisode;
+                }
+                _recoveryAcknowledged=Mathf.Max(0,recoveryAcknowledged);
+                _recoverySequence=Mathf.Max(_recoverySequence,_recoveryAcknowledged);
+                _pendingRecovery.RemoveAll(sequence=>sequence<=_recoveryAcknowledged);
+            }
             _stunLeft = Mathf.Max(0.0f, stunLeft);
             _stunTotal = Mathf.Max(_stunLeft, stunTotal);
             _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
@@ -1805,6 +1870,8 @@ namespace TumbangPreso
             _mashPresses = Mathf.Max(0, tripMashPresses);
             _mashRemoved = Mathf.Clamp(tripMashRemoved, 0.0f, _tripTotal);
 
+            if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
+                ReplayUnacknowledgedRecovery();
             Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
         }
 
@@ -1873,9 +1940,24 @@ namespace TumbangPreso
             return before - after > 0.0f;
         }
 
+        // Contact is resolved once by the host. A remote human integrates movement
+        // on its owning peer, so this discrete result must reach that peer explicitly.
+        public void ApplyResolvedImpact(Vector3 impulse)
+        {
+            if(!NetAuthority.ShouldResolve())return;
+            if(AbilitySystem!=null && AbilitySystem.IsImmuneToStuns)return;
+            if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] resolve slot={_playerSlot} bot={IsBot} sim={IsLocallySimulated()} reader={GetComponent<PlayerInputReader>()!=null} ai={GetComponent<AIController>()!=null}");
+            if(!IsLocallySimulated())
+            {
+                Net.MatchRpc.Instance?.BroadcastImpact(_playerSlot,impulse);
+                return;
+            }
+            ApplyImpulse(impulse);
+        }
+
         public void ApplyImpulse(Vector3 impulse)
         {
-            if (!MayMutateGameplayState()) return;
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;

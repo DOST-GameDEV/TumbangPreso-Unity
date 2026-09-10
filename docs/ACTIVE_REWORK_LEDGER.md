@@ -3,8 +3,9 @@
 ## Current execution pointer (live, 2026-09-10)
 
 Continue the same task, do not restart or finish after this network batch. Branch
-ASTRAReworks only. The major networking foundation is verified and being committed;
-read git log/status for the exact current checkpoint. Detailed results are in
+ASTRAReworks only. The networking foundation is pushed at `61e2a8c`.
+Current uncommitted work is discrete impacts and the reported stun-mash defect;
+read git log/status before continuing. Detailed results are in
 reports/improvement-2026-09-10/network-foundation.md. Earlier entries below are a
 chronological record, including failures and disproved hypotheses, not fresh state.
 
@@ -1525,3 +1526,227 @@ Adding a small Editor-only native NUnit result recorder so plugin-driven tests
 retain the repository's XML evidence contract. Full EditMode, current20-case Nemu
 XML and checks/audits will gate the stable batch before commit/push. Keep remaining
 remote impacts/loadout binding/all-kit states and final matrices open.
+
+## Network foundation pushed; remote impact reproduction next
+
+Code/report/plugin/embedded-transport batch pushed at61e2a8c277542ff9b64e9a8f13b0bb77b89c52a2.
+Tree was clean. Current next change adds an explicit impact case to the existing
+real-process fixture: host Dante casts actual Q at a stationary owning-client
+victim. It records source charge consumption and actual horizontal victim travel;
+this is a baseline before adding an impact RPC. The existing protocol25 code is
+otherwise unchanged for that baseline. Keep Core rules, recipient authority and
+caster prediction; never blindly relay continuous ApplyImpulse calls.
+
+## Restart recovery and impact baseline correction
+
+The owner restarted the desktop app. Old exec session77086 no longer exists, but
+Git/plans/code are intact and61e2a8c is pushed. No test processes were orphaned.
+remote-impact-before/result.json exists: one Q charge spent, zero victim travel.
+However the victim ended at its normal spawn(-1.8,9), not the intended close-range
+placement. That means the first impact case did NOT establish a hit and is not
+valid proof of missing impulse delivery. Source still supports that hypothesis.
+
+The fixture now waits for a real round number and local ready countdown completion
+before placement, and records caster position and victim stun. Acceptance requires
+source charge consumption, actual <=2.2m cast separation and observed contact stun
+as well as displacement. Rebuild/repeat this baseline before modifying impact code.
+
+Unity Workbench's bug-investigation skill and mandatory evidence/hypothesis/baseline
+foundations, instrumentation, multiplayer/NGO and validation references were read.
+The established repository context replaces redundant onboarding. Keep testing
+competing causes; do not treat a mispositioned fixture as a confirmed game defect.
+
+### Independent art preparation while verification builds
+
+Installed tree models were actually rendered in Blender and all six candidates
+proved conical or single teardrop crowns. Prepare an original broad-canopy shade
+-tree study outside imported Assets while network builds run. Deliberate branching,
+open lower silhouette, restrained leaf masses and separate bark/foliage materials
+should fit the existing faceted world. A rain-tree/acacia-like umbrella suits the
+plaza; do not label introduced rain trees native. Review in engine before adopting
+it or placing anything into retrieval routes. This is preparation for the still-open
+map pass, not a completed map redesign or permission to scatter decoration.
+
+### Goal and remaining plan restated to the owner
+
+The owner asked for the actual goal/plan. Reaffirmed: substantially better play and
+intentional presentation within the cute blocky Filipino street-sport identity;
+four players, can/retrieval, rotating defender and both modes remain. Finish
+critical network behavior, then whole hero kits/meaningful alternatives one at a
+time, convincing body/FPP casting and movement, all three maps/routes/trees,
+ordinary-play/overlap review and exact final Windows build verification. Keep the
+approved people cast and minimal functional UI scope. Tests alone do not establish
+visual/game-feel quality. Lore threads for all six and the Phaister/Kuro ultimate
+directions remain explicit. Continue autonomously.
+
+Corrected impact baseline build succeeded; actual three-process run is now
+Logs/remote-impact-before-v2. It must prove close-range contact and stun before
+its displacement result can confirm the remote-impact hypothesis.
+
+## Owner reaffirmed connected lore and visible culture, 2026-09-10
+
+Tie maps, characters and what they can do into one coherent lore. Show Filipino
+culture in abilities, descriptions and maps. The written foundation already exists
+in LORE.md, but writing it is not the same as completing its in-game expression.
+Carry it through actual kit choices, animation/gesture, sound, materials, everyday
+map use and concise English descriptions. Retain proper names. Cultural references
+must fit the particular hero/place, not become compulsory flags, borrowed sacred
+writing or forced Tagalog renames. Keep the warm sporting world and cute style.
+
+For the three maps, establish why people gather/play there and place architecture,
+shade, shops/seating and props accordingly. For the approved Classic cast, express
+neighborhood relationships and temperament without reopening model redesign or
+adding biography screens. For heroes, connect each tactical role and alternative
+to its personality and established cultural direction. Use existing optional
+stories/descriptions where helpful; no new campaign/mode or UI art project.
+
+## Remote impact now reproduced with actual contact
+
+Corrected baseline remote-impact-before-v2 spends exactly one Dante Q charge,
+records the victim inside2.2m and observes contact stun on host/owner/observer,
+but actual horizontal victim travel is0m on all three. This is valid evidence
+unlike the first misplaced fixture. The host writes a force to a non-simulating
+remote replica and no impact message reaches the owning movement process.
+
+Implemented a discrete host-resolved ApplyResolvedImpact path plus reliable Impact
+message addressed by seat and movement epoch. Only the owning client integrates
+it; host sender, finite values and epoch are checked. Converted host-resolved
+one-shot victim sites (core shove, explosions, lightning, hero contacts); caster
+prediction and continuous pull keep their local integration path. ApplyImpulse
+no longer banks force on non-simulated replicas for a later takeover. Carapace
+resists hostile resolved impacts while leaving self-movement impulses available.
+Protocol increments25->26. All67 wire schemas and75 numeric fields pass; ability
+audit still finds51 effects,35 host-gated,zero ungated-other-body mutations.
+
+Added regressions for stale replica force after handover, client-origin rejection
+and Carapace impact vs self-motion. Current Nemu/impact fixture run expects23 cases.
+After it passes, build the after player and repeat the identical actual-contact
+three-process case before claiming the networking fix validated.
+
+## Owner-reported stun-mash defect, 2026-09-10
+
+The owner reports stun button mashing seems broken or incompletely implemented.
+Treat as an explicit gameplay/network bug to reproduce, not a cosmetic prompt
+request. Trace actual keyboard/controller input edge -> InputIntent -> motor mash
+selection -> host ReqMash validation/cooldown -> authoritative stun/trip reduction
+-> replicated owner/observer state -> get-up animation and HUD feedback. Verify
+repeated presses, held input, relevant frame rates, floor/minimum recovery, distinct
+stun elements, host and remote owner, and interaction with jump after recovery.
+Preserve existing anti-spam and authority contracts unless evidence proves those
+contracts wrong. Do not weaken a test or widen timing merely to call it fixed.
+
+This joins the active gameplay-critical network work after the currently running
+remote-impact verification, before declaring the networking pass complete. Record
+the original reproduction and corrected real-input results in the same durable
+ledger/report. Existing unit passes alone do not answer the user's report.
+
+### Remote-impact and parallel art state
+
+Local impact/Nemu contracts pass23/23, including no stored replica force on handover,
+client-origin rejection and Carapace resisting resolved impacts without disabling
+self-movement. Protocol26 after-player build is running in
+Logs/network-impact-after; repeat the exact validated-contact before-v2 case.
+
+Blender shade-tree study was authored outside imported Assets and rendered at
+Logs/map-tree-study/shade-tree-study.png, with native .blend/.glb beside it. Review:
+broad branching silhouette is the right direction, but the leaf masses read as
+stacked flat plates and the studio render is too yellow/light. It is NOT adopted
+into maps. Refine crown continuity/edge variation and review in actual game lighting
+before replacing existing trees. Preserve the native study for comparison.
+
+### Stun-mash/input hypotheses being checked
+
+Source inspection: PlayerInputReader copies Jump.IsPressed in render Update while
+CharacterMotor consumes JustPressed at FixedUpdate; a short press/release between
+physics steps can disappear. Test the actual input device path before changing it.
+The owner also predicts mash reductions, but ApplyNetworkState unconditionally
+rewrites counts/timers from older host snapshots; test delayed owner feedback and
+host acknowledgement separately. Do not blindly take min(stun) globally because
+that would erase newly applied stuns of the same element/duration.
+
+Another concrete missing input branch: while Kuro is possessed, PlayerInputReader
+forwards only Skill2 and returns before Jump/Skill1/Ultimate. The intent-driven
+ability probes bypassed that branch. This can prevent actual human R casting and
+recovery input while possessing Kuro. Add real keyboard/controller-path regression,
+then route allowed hero/recovery controls consistently while the body AI owns its
+movement. Keep these observations distinct from the tested remote-impact result.
+
+
+## Recovery input investigation, 2026-09-10
+
+The owner reports that stun button mashing is broken. This is required work, not
+an optional polish note. The current hardware regression synthesizes real Input
+System events and calls the actual PlayerInputReader before the physics step.
+The test restores input focus settings and removes its devices. Initial two
+fixtures were invalid because headless Editor focus disabled the devices. With
+focus configured and the device enabled, the controller regression fails on the
+old code with zero accepted taps. Keyboard and controller both pass after the
+buffer fix in `Logs/mash-input-after.xml` (2/2). No physical-pad claim is made.
+
+InputIntent now supports an observed press retained until the motor consumes it;
+Clear discards it and Set(false) does not. PlayerInputReader uses it for Jump,
+without turning a held key into repeats. Hero controls and Jump are read before
+the Kuro possession branch, which previously returned before Ultimate/Skill1/Jump.
+Possession-specific runtime coverage and broader input regression remain to run.
+Do not call the entire mash issue fixed: old host state still overwrites local
+predicted recovery. A three-process mash case is being prepared to measure that.
+
+Discrete remote impacts are implemented with a host-only reliable message and a
+movement epoch, across existing host-resolved victim hit sites. Local contracts
+passed23/23 before adding input tests. Corrected clean three-process evaluation
+shows0m before and0.7281m after on all peers with identical settled positions.
+The original evaluator used each peer's local elapsed time and sampled the owner
+AFTER contact as its baseline. It now anchors to the observed charge transition;
+original evidence is retained with separate charge-anchored-result.json files.
+The configured150ms each-way/2% loss case still FAILS: host briefly moves, owner
+stays still. Investigate actual simulation ownership and impact send/receive
+before attributing this to packet loss. Diagnostic logging is enabled only for
+the explicit familiar probe. Internal build is network-recovery-baseline; it is
+not a final Desktop delivery. The final Windows/whole-game scope remains open.
+
+The owner asked to see Kuro. Shown current committed Unity calm/sleepy/raging
+captures from reports/improvement-2026-09-10/kuro-personality. These are the same
+current model, not newly generated concept art or a claim of final approval.
+
+
+### Network recovery baseline
+
+`Logs/mash-network-before/result.json` reproduces the owner's concern across three
+actual processes at configured150ms each way and2% loss: the host accepts five
+presses and shortens the4s stun, but the owner's progress goes backwards once.
+This is a prediction reconciliation fault, separate from quick taps being lost.
+Plan: identify each authoritative recovery episode, number recovery requests and
+include the host acknowledgement in state. Reapply only unacknowledged accepted
+local presses to that episode's snapshot. New stuns must discard the old presses,
+and rejected/duplicate/too-fast requests must not become free recovery. Keep the
+Core floor and10Hz cap unchanged; do not use a global max-count/min-duration hack.
+
+The repeated instrumented delayed-impact run passes with identical0.7281m travel.
+That does not erase the earlier failure. A focused ownership-cache regression is
+running: deferred destruction of a bot can let another same-frame query cache
+`hostDriven=true` permanently even after the component is gone. Test before fix;
+if confirmed, cache Unity object references so destroyed components invalidate the
+answer naturally, rather than caching a boolean about their previous existence.
+
+
+## Latest owner correction: make small Kuro cute, 2026-09-10
+
+The owner rejected the shown calm familiar as a floating blob and requested a
+cuter ghost, citing Hu Tao's ghost as a loose reference, in Nemu's colors/effects/
+theme. This is an explicit pet-model revision, not permission to reopen the
+approved eighteen people. Prioritize a soft playful ghost silhouette, expressive
+small arms, connected curled tail, mischievous simple face and readable lavender/
+void palette. Keep the separate animated targets, baked trailer idles, ground
+alignment and clear same-character transformation into the imposing raging form.
+Author in Blender, inspect at actual companion scale and in Unity with Nemu, and
+show the result after reviewing it. Do not satisfy the request with new concept
+art that the runtime never loads. Reference: HoYoLAB character imagery and the
+Hu Tao ghost image search; borrow the expression/silhouette principle without
+copying her costume/fire palette or adding unrelated cultural decoration.
+
+Recovery/ownership contracts are now29/29, Core562/562, wire67 messages/0 mismatches,
+finite75 numeric fields/0 findings. Protocol27 adds authoritative recovery episode
+and request acknowledgements. Old snapshots replay only pending accepted local
+presses; a new stun discards them. Deferred-destruction ownership regression failed
+before and passes with cached component references instead of a stale boolean.
+Actual three-process after-verification is next; no final network completion yet.
