@@ -1,5 +1,63 @@
 # Art Direction — the laws
 
+## 0 · New models must belong to TUMP
+
+**Standing owner instruction, 2026-09-10: every new, replacement or reworked model
+must look like it came from this game. Do not make it overly detailed or push it
+into a different visual style.** This applies to people, first-person arms, pets,
+summons, skill/VFX geometry, props, vegetation and map assets, regardless of which
+tool produced them. This is a current Unity art requirement.
+
+Use the existing approved cast and current game as the first style reference.
+The [approved Classic cast reference](refs/style/approved-classic-style-2026-09-10.png)
+preserves the owner's example. Build from a few clear chunky/chamfered forms,
+broad deliberate planes, restrained materials and readable silhouettes. Keep the
+cute blocky character language and simple graphic features. Match the surrounding
+game's level of detail, palette, outline treatment and scale relationships.
+
+Improve proportions, silhouette, construction, posing and purposeful detail.
+Photorealistic anatomy/materials, sculpted muscles, surface noise and crowded
+ornaments are not default upgrades. Converting an overly detailed model into a
+pile of voxels or irregular facets does not make it fit. Phased magic circles and
+distinct architecture should use the same clean visual language and readability
+budget. An imposing ultimate earns its presence through silhouette, scale,
+choreography, sound and a clear payoff within this style.
+
+**Animation realism means convincing weight, timing, contact, articulation and
+recovery inside TUMP's stylization. It does not authorize realistic-looking
+models.** Preserve the approved people and intentional flat faces unless the
+owner specifically changes that direction. Character-specific corrections, such
+as Kuro's floating spirit eyes and matching purple forms, live in
+[ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md) and remain binding.
+
+External references, generated concepts, reconstruction tools and downloaded
+assets must be adapted to the game. A concept can establish an idea; approving
+that idea does not approve the resulting mesh. Review the actual imported model
+in Unity beside existing assets, at ordinary gameplay distance and lighting, from
+multiple views and through its animation. A test pass, higher polygon count or an
+attractive isolated render is not a style verdict. Rework mismatches and keep them
+open; do not present rejected drafts as finished. Continue routine iteration
+within the owner's authorization without creating a new approval gate.
+
+### 0.1 · Animation includes the whole action, not only the body clip
+
+**Owner clarification, 2026-09-10:** better animation also means better skill VFX,
+better casting, and separate/authored animation for different actions. Do not
+repeat animations unless reuse is necessary.
+
+Treat preparation, body gesture, first-person hands, moving skill geometry/VFX,
+release, impact, interruption and recovery as one designed sequence. Different
+heroes, abilities and existing loadout alternatives should communicate their own
+intent and function through appropriate distinct motion and effects. A generic
+cast/reach/burst reused with another color is not sufficient animation polish.
+
+Reuse requires a concrete reason: the action is actually the same, or an existing
+shared locomotion/contact contract needs it. Preserve working shared rules without
+using them as an excuse to give unrelated skills identical presentation. Record
+necessary reuse and verify the complete action at normal speed. The request for
+more convincing motion is broader than biomechanical realism and never waives
+TUMP's blocky model-style rule.
+
 ## 1 · The colour law — the one rule that never bends
 
 **Orange `#f87020` means OFFENSE. Blue `#0080e8` means DEFENCE.** They track the ROLE,

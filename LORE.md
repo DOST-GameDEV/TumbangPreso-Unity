@@ -1,5 +1,13 @@
 # TUMP: the game that grew from the street
 
+**Visual expression:** this lore belongs to TUMP's existing cute blocky world.
+New creatures, skill models and places must look native to that game, with
+purposeful restrained detail. Cultural or dramatic ambition is not permission to
+switch to realistic-looking fantasy anatomy. Follow the standing
+[model-style rule](docs/Art_Direction.md#0--new-models-must-belong-to-tump).
+Character identity should also appear in distinct casting and skill-VFX motion;
+repeated generic animation is not a substitute (the same document, section0.1).
+
 Creative foundation, 2026-09-09. This connects the existing game, rather than
 adding a campaign or asking the player to learn a fictional history.
 

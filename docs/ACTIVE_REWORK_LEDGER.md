@@ -1,38 +1,96 @@
 # Active TUMP rework ledger
 
+## Standing requirement that must survive compaction
+
+The owner explicitly requested this in AGENTS.md and the main documents: **new
+models must look like they came from TUMP and must not be overly detailed.**
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump) is the
+canonical rule, with an owner-provided approved Classic style reference. Apply it
+to every model/asset deliverable and every tool's output. Keep clean cute blocky
+forms and purposeful detail. Animation realism concerns motion, not realistic
+anatomy. Concept approval is not mesh approval; verify actual Unity presentation.
+Better animation also includes casting, skill VFX and distinct animation for
+different actions. Do not repeat animations unless necessary. Body/FPP gesture,
+release, impact, interruption and recovery belong to one authored sequence;
+Art_Direction.md section0.1 records the owner's explicit clarification.
+
+
 ## Current execution pointer (live, 2026-09-10)
 
-Continue the same task, do not restart or finish after this network batch. Branch
-ASTRAReworks only. The networking foundation is pushed at `61e2a8c`.
-Current uncommitted work is discrete impacts and the reported stun-mash defect;
-read git log/status before continuing. Detailed results are in
-reports/improvement-2026-09-10/network-foundation.md. Earlier entries below are a
-chronological record, including failures and disproved hypotheses, not fresh state.
+Continue the same task, do not restart or finish after a single batch. Branch
+ASTRAReworks only. Networking recovery/impact batch is pushed at `e56b2e3`; its
+report is reports/improvement-2026-09-10/recovery-and-impacts.md. Core562/562,
+EditMode486/486 and focused PlayMode29/29. Three real delayed-link peers agree on
+recovery with no progress rollback and0.7281m stomp displacement. Earlier network
+foundation `61e2a8c` includes familiar replication, rejoin and the receive-pool fix.
 
-Current verification: Core562/562, full EditMode486/486, current Nemu PlayMode20/20
-with native NUnit XML, all8 checks, all14 gating source audits. The native UDP
-regression fails on upstream6.5.0 and passes after the embedded receive-pool patch.
-Three real processes agree on clean recall/ult and a correctly seated300 ms/2%
-recall; direct owner hard-reconnect v6 reclaims the seat, restores the live ultimate
-and retains charge counts. Settled remote model/body offsets are zero. These are
-local real-process proofs, not a final-release or human playtest approval.
+**Newest owner rejection:** the owner says the latest blockified candidate is
+"really ugly". Discard BOTH the voxel-pile and faceted reconstructed variants as
+final designs. Do not keep polishing or rigging them as if accepted. The agent
+acknowledged the cause: forcing a detailed/fleshy reconstruction into blocks made
+a jagged rock monster. Rebuild around FEW clean chunky masses matching the actual
+TUMP cast, retaining the approved IDEA (looming hunch, huge maw, grasping hands,
+floating spectral eyes, violet theme, very large size). No muscular anatomy,
+crumpled topology or piles of small cubes. Small Kuro and approved people stay.
 
-Next: reproduce/fix one-shot impacts on remote human victims (no impact RPC exists),
-then same-hero non-default loadout binding and remaining network/mode/round/rematch
-coverage. Continue all six hero kits and twelve existing loadout alternatives,
-body/FPP animation/SFX/VFX, three maps/trees and final Windows qualification.
-Owner explicitly permits replacing boring/redundant abilities; read
-HERO_KIT_REWORK_DECISIONS.md and PHILIPPINE_ABILITY_DIRECTION.md. Preserve the
-approved people models, flat faces and block hands; no renewed people redesign or
-UI art effort. Progress last communicated as approximately45% of the full scope.
+**Latest owner art direction (including explicit VERY BIG request):** the owner LOVES THE IDEA of the new hunched giant,
+but explicitly says it is too realistic/off-theme. Keep the concept's imposing
+silhouette, large maw and grasp, and make the actual model BLOCKY/chunky to fit
+TUMP. Remove smooth fleshy/realistic surfaces. The giant eyes do NOT need to lie
+on its face: the owner explicitly permits floating eyes with a spectral aura,
+using Gastly-like ghost presentation as a loose reference. This supersedes the
+projected/drawn-on giant eye approach. Keep Nemu's violet/lavender theme. Preserve
+the new cute small form and all approved people; do not reopen those redesigns.
+Approval is of the IDEA, not of an implemented final mesh or human playtest.
 
-Official Unity plugin0.1.3-beta is installed/enabled; CLI1.0.0-beta.5 is available.
-com.unity.pipeline0.6.0-exp.1 is installed in this project and a live connection was
-verified. It ran20/20 tests. LiveTestResultRecorder now exports native XML for live
-runs too. Always target this checkout explicitly. No Editor/player/native-control
-session is currently needed or left running after qualification; use the guarded
-runner for profile preservation. Runtime Pipeline control defaults off in builds.
-No subagents, new tasks, paid work or usage reset. No user configuration is needed.
+Current actual candidate is a refined TripoSR mesh, not yet imported into the
+game. tools/refine_kuro_reconstruction.py outputs
+Logs/kuro-refined-reconstruction-v3/kuro-refined.blend: a hunched3.5m body, about30k
+faces, a real carved mouth, separate fangs, solid violet materials. It still has
+the too-smooth finish and drawn-on eyes the owner has now corrected. Next: produce
+broad blocky planes / chunky construction, replace projected eye surfaces with
+floating spirit eyes/aura, rig and inspect in Unity before adopting.
+
+A free MIT local TripoSR installation is being tested to carry that design into
+actual 3D before Blender refinement/rigging. User already authorized downloading
+needed tools. Location: C:/Users/Matthew/Documents/CodexTools/TripoSR, upstream SHA
+107cefdc244c39106fa830359024f6a2f1c78871. Venv is .venv; torch2.5.1+cu121 /
+torchvision0.20.1+cu121 installed. All dependencies installed; pip check is clean. The first attempt started too
+early and failed before rembg installation finished. The inference completed successfully in65.7s; no inference process remains.
+Its log is Logs/kuro-triposr-v1.log, outputs
+Logs/kuro-triposr-v1. HF_HOME is C:/Users/Matthew/Documents/CodexTools/model-cache.
+Repository wrapper tools/run_triposr_geometry.py uses scikit-image CPU marching
+cubes instead of requiring a CUDA compiler. Source/weights are MIT. Hunyuan was
+considered and NOT adopted because its license restricts output territories.
+Hardware measured RTX4050 Laptop6GB, RAM16GB. Do not run Unity rendering and mesh
+inference together if memory would be tight. No paid service or usage reset.
+
+Blender fallback studies: tools/author_kuro_rage_study.py outputs to
+Logs/kuro-rage-rebuild-study-v4 (native .blend, .glb, three views). These are NOT
+adopted. They still need a convincing forward hunched head and coherent grasp,
+not just the vertical oval/body used in v1/v2. Continuous sweep frames and dense
+projected eye surfaces fixed technical artifacts, not the fundamental art gap.
+
+No Unity Editor/player/native capture is currently active. The last guarded v6
+portrait run ended and profiles were restored. All Unity checks must remain
+separate from C#/imported-asset edits. Official Unity CLI/Pipeline is installed and
+verified on this checkout; use it when useful. Current uncommitted small-form work
+has three tail bones, four Rage morphs and eight rebaked idle clips; those giant
+morphs are the rejected design and need replacing. The old weight100 versus full
+frame1 bug is corrected, and mouth/teeth rendering cleanup does not change the
+owner's rejection. Current captured gameplay v4 and neutral portraits v6 must not
+be called accepted art. Keyboard ultimate during possession passes its real input
+path after respecting the actual0.4s windup. Owner-view ultimate obstruction still
+needs a cast-placement/readability fix before closing Nemu.
+
+After pet revision, continue same-hero non-default loadout binding, all six hero
+kits/twelve existing loadout alternatives, body/FPP animation/SFX/VFX, three maps/
+trees and final Windows qualification. Owner permits replacing boring/redundant
+abilities; read HERO_KIT_REWORK_DECISIONS.md and PHILIPPINE_ABILITY_DIRECTION.md.
+Phaister grand phased ritual remains major work. No UI art effort. Preserve both
+modes, four-player core rules, approved people/flat faces/block hands and profiles.
+No subagents, other tasks, paid work or usage reset. No user config is needed.
+Keep this pointer and the detailed chronological evidence below current.
 
 
 ## Latest owner decision: keep the current models and move on
@@ -1750,3 +1808,232 @@ and request acknowledgements. Old snapshots replay only pending accepted local
 presses; a new stun discards them. Deferred-destruction ownership regression failed
 before and passes with cached component references instead of a stale boolean.
 Actual three-process after-verification is next; no final network completion yet.
+
+
+## In-flight pet revision and checkpoint, 2026-09-10
+
+Network recovery/impact batch is pushed at `e56b2e3`. After real delayed-link
+verification, all peers have five recovery presses, zero progress rollback and
+about1.57s versus the original4s hold. Remote stomp travels0.7281m on all peers.
+Full EditMode486/486, focused PlayMode29/29, Core562/562. The remaining whole-game
+scope continues; this is not final Windows delivery.
+
+Owner also explicitly requested a scarier, more imposing giant Kuro, especially
+replacing its jagged wing-like arms. Small-form reference is the playful Hu Tao
+ghost silhouette in Nemu's lavender/void theme. Blender author is now updated:
+one continuous skinned belly/tail, three named tail bones, a domed body, simple
+oval eyes and grin, and four authored Rage morphs (body, mouth, both arms). The
+arms morph from small upward curls into forward-curving reaching spirit arms.
+Rejected study v1 accidentally had default shape-key weights1; corrected to0.
+Studies v2/v3 were geometry previews only, not final in-game approval.
+
+The new GLB and native Blender source are imported locally, not committed yet.
+KuroIdleClipAuthor refreshes the actual roster reference if import IDs change and
+rebakes all eight trailer clips against the new hierarchy. Runtime applies the
+Rage morph and reduces the old44-degree wing rotation to a small reaching sway.
+New form/clip tests pass3/3 through the official Unity CLI/Pipeline, native XML
+Logs/live-tests-20260910-085913-5041.xml. Visual capture is in progress under
+Logs/kuro-cute-runtime-v1, then inspect the real ultimate and ordinary owner view.
+Do not call the art finished based on the contracts alone. No eighteen-person
+redesign or UI art work is reopened. Keep all six-kit/alternates/animation/maps
+and final qualification queues intact.
+
+
+Kuro visual review v1 caught a real regression despite3/3 form tests: glTFast's
+full blend-shape frame weight is1, not100. The first integration extrapolated the
+body/arms100x and produced a flattened giant. Confirmed through live Unity CLI
+inspection of all four imported meshes. Do not keep or present that giant as the
+result. Runtime now reads each mesh's authored full frame weight, and the test
+asserts that range plus baked body/arm geometry bounds. Re-capture next. The small
+idle capture already shows the intended soft silhouette and continuous curled
+tail. The first real-cast test passed only activation, not visual quality; its bad
+frames remain evidence of why image review is required.
+
+
+### Kuro v2/v3 visual correction
+
+The full morph weight fix corrected the giant proportions. The first baked-bounds
+test compared giant-scale baked output to authoring-scale mesh bounds; corrected
+to normalize the root during that comparison, retaining the4x bound. Current
+geometry contracts pass3/3 at Logs/kuro-cute-contract-v3.xml. The v2 capture then
+showed the simple mouth rim cutting through the rounded face. The new mouth is a
+subdivided graphic surface conformed to the actual body cross-sections, with an
+explicit outward face winding. Giant skin now retains a deeper violet hue and
+its narrowed eyes broaden slightly for a clearer glare. v3 real-cast capture is
+running next; visual acceptance is still pending. The ordinary owner's close-up
+view can be obscured by a giant growing at the idle familiar anchor; retain this
+as an actual Nemu placement/readability issue to solve before closing the kit.
+
+
+## Owner rejected the giant again, 2026-09-10
+
+The owner explicitly rejects the shown v4 giant as awkward, neither scary nor
+imposing. Do NOT commit or keep that giant as an accepted design. Preserve the
+small-form work, but replace the giant direction rather than adjusting teeth or
+color again. The failed silhouette is a squat round body with symmetrical crab/
+gorilla arms, small oval eyes and pasted-on identical triangle teeth. It lacks
+weight, depth, an expressive grasp and a convincing inhalation posture. The agent
+acknowledged that presenting it as imposing was wrong.
+
+New giant direction to develop before another in-game presentation: a taller,
+hunched spectral silhouette, a deep open maw with authored varied fangs, flowing
+arms with grasping spirit hands, and animation showing active strain/drag inward.
+Keep Kuro recognizable through the transformation and preserve the cute small
+form, Nemu palette, gameplay footprint, ground anchor and return. This supersedes
+the previous curved-crab-arm giant plan. Current v6 portrait capture is technical
+cleanup of the REJECTED design only; do not mistake passing it for art acceptance.
+The whole-game scope and the owner-view cast-placement defect remain open.
+
+
+### Tooling/reference record for the new giant
+
+ImageGen was used only for explicit design preparation after manual studies still
+failed to capture an imposing silhouette. The first transparent-background request
+returned RGB checkerboard pixels, so it was not treated as real alpha. A new square
+image with a uniform gray background is the reconstruction input; no checkerboard
+is being fed to the model. All selected images are copied into docs/refs/kuro.
+The original generated images remain under the Codex generated_images directory.
+The 3D pipeline must produce an actual mesh and must be inspected/retopologized,
+rigged and validated in Unity before use. Do not substitute the attractive concept
+for an implemented game result or imply that the user approved it.
+
+Primary tool sources: https://github.com/VAST-AI-Research/TripoSR (MIT source and
+weights, default6GB VRAM) and https://github.com/Tencent-Hunyuan/Hunyuan3D-2/blob/main/LICENSE
+(not adopted). No new engine package is required for these offline art tools.
+
+
+Local TripoSR successfully loads its official weights on the RTX4050 in about56s;
+actual mesh extraction and quality are not yet known. No engine assets have been
+replaced by reconstructed geometry. Latest input is the single gray-background
+concept, not the RGB checkerboard version. Root-cause/quality notes for manual
+study v4: dense eye projection and parallel-transport sweep frames removed
+clipping/twisted-arm artifacts, but the vertical body still falls short of the
+concept's forward-hunched silhouette. Do not integrate that study merely because
+it renders. The next mesh must be judged against the concept, including side view,
+hand shape, silhouette, true cavity and restrained stylized planes.
+
+
+## Actual mesh after reconstruction, 2026-09-10
+
+TripoSR produced67,582 vertices /135,180 faces in65.7s on the6GB laptop GPU.
+Raw outputs and result.json: Logs/kuro-triposr-v1. The initial review was sideways
+because TripoSR output axes differ from glTF's Y-up convention; the review script
+now uses root rotation(-90deg X, -90deg Z). Upright front/side/back captures exist.
+The silhouette is much closer to the concept, but raw colors/face/teeth are not
+acceptable as final assets. The CPU marching-cubes adapter initially had inward
+winding (watertight but negative volume -0.093984). Corrected the wrapper to use
+skimage gradient_direction=ascent and corrected the existing native mesh normals
+before further boolean work. This was our adapter, not a failure of the model.
+
+Current refinement: tools/refine_kuro_reconstruction.py, outputs
+Logs/kuro-refined-reconstruction-v3/kuro-refined.blend plus front/three-quarter/side
+PNGs. It preserves the hunched body and hands, normalizes to3.5m, reduces the mesh
+to about30,548 faces, carves a real mouth cavity, replaces fused teeth with eight
+individual curved fangs, projects dense graphic glare surfaces and uses a calm
+solid deep-violet material. Do not revive v1's patchy material posterization.
+No reconstructed model has been imported into Assets or committed yet.
+
+Next concrete integration: rig the refined body/head/arms/hand/tapered lower spirit
+and author a deliberate reaching/inhalation loop. Preserve the new cute small
+form. Prefer a dedicated RageForm beneath the same pet asset, rather than forcing
+the rejected four-morph squat body to represent this different anatomy. Hide the
+rage form at bind, use the existing devour/return clock to stage the transformation,
+and give it an actual maw anchor for the pull VFX. Keep all net/gameplay authority
+outside animation. Avoid old procedural triangle teeth. Reuse the existing Toon
+shader _RimColor/_RimStrength/_RimPower for restrained lavender separation; do not
+add a shader or repeat the old heavy outline issue. Check all views, transitions,
+return/reset and remote snapshots before adopting it. The current imported GLB
+still contains the rejected giant morphs and MUST NOT be treated as finished.
+
+The owner-view obstruction fix remains planned, not implemented: when Kuro is
+following Nemu, use the existing3.5m forward cast reach and checked ground/collision
+path to stage him ahead during the0.4s windup. A possessed familiar should retain
+its controlled anchor. Freeze that destination through the cast, keep the field
+and actual ghost on it, and test host/owner/observer agreement. This changes
+placement within the existing skill, not the core mode/rule structure. Preserve
+cancellation and no teleport of Nemu on ultimate. Do this before closing the kit.
+
+
+## Owner's latest correction, 2026-09-10
+
+"Too realistic", "off theme", "make that blocky", "I love the idea". Keep the
+imposing hunched giant idea but translate the geometry into the game's blocky
+language. Do not keep polishing realistic smooth anatomy. Eyes can float with an
+aura like Gastly instead of being attached/drawn onto the face. Giant-specific
+permission does not authorize detailed noses/brows on the approved people. The
+agent acknowledged chunky blocks/broad planes, floating spirit eyes, violet aura,
+and removal of the smooth fleshy finish. Continue autonomously with this direction.
+
+
+Owner additionally says "make it really big too". Target a towering presence,
+roughly three player heights (about4.5-5m, verify actual people heights), with
+large reaching hands. Validate full-scale geometry in all three maps, floor
+anchoring/overhead clearance, truthful existing gameplay footprint, and owner
+camera visibility. Do not quietly make it small to avoid testing those problems.
+
+First BLOCKY translation now exists at Logs/kuro-blocky-rage-v1/kuro-blocky-rage.blend,
+produced by tools/blockify_kuro_rage.py from the refined reconstruction. It uses
+block remeshing with small chamfers, prismatic fangs and separate floating eye
+forms/pupils/aura. About6,831 body polygons. This is a Blender study, not imported
+or approved gameplay art. Inspect it and refine before integration. The owner
+approved the giant concept idea but specifically rejects realistic/fleshy style.
+
+
+## Latest rejection and corrected method, 2026-09-10
+
+User: "dude it looks really ugly, wtf." This follows the blocky reconstruction
+studies. The agent explicitly discarded both voxel and faceted versions and
+acknowledged that blockifying realistic anatomy was the wrong approach. The next
+design must use a few deliberately authored chunky masses from the start, with
+TUMP's actual character models as the style reference. Keep the liked conceptual
+idea, floating eyes/aura, huge scale, deep maw and reaching hands. No realistic
+muscles or dense cube piles. Do not mistake the new12-bone rig or the combined
+imported GLB for acceptance: those are technically prepared but visually rejected.
+The current imported pet GLB includes the REJECTED RageForm and is uncommitted.
+Do not push it as a stable art batch. All other requested work remains queued.
+
+
+## Latest owner color and stray-piece correction, 2026-09-10
+
+The owner points to the little detached dark-purple/lavender piece beside Nemu
+in the roster image and asks why it remains. Trace its actual mesh/node/runtime
+purpose; remove it if it is leftover unwanted decoration. Do not guess that it
+is Kuro or describe it as fixed before inspecting the source.
+
+The owner now explicitly asks to repaint/remake BOTH ghost forms in the SAME
+Nemu purple color family. They do not want the cute form to read as a white ghost.
+Finish the giant direction first, then fix the cute version. This supersedes the
+prior preserve-small-form instruction insofar as color/style refinement is now
+requested. Keep the people designs otherwise approved; this is a pet/stray-piece
+correction, not a restart of eighteen character redesigns.
+
+Latest fresh native giant study is tools/author_clean_kuro_rage.py and
+Logs/kuro-clean-block-study-v1/kuro-clean-block.blend:26 deliberately authored
+large forms, no reconstruction/voxel-pile base, chunky hands, trapezoid hollow maw,
+block fangs and floating lavender eye shards. It still needs visual review and
+refinement. The latest generated clean-block concept remains a CONCEPT and must
+not be confused with this model. Save its image reference before compaction.
+
+
+The detached purple fragment is now traced: HeroTurnaroundProbe explicitly
+instantiates pet-nemu-ghost.glb beside Nemu and applies the PERSON palette to it.
+The shown current-playable-18-clean-clothes-v3.png dates from07:19, before the
+new Kuro work. Nemu's actual person mesh has no outlying head-height vertices
+outside x+/-0.18; this is the stale pet preview, not a body ornament to delete.
+Corrected the earlier unverified description in chat. PreparePetPreview now uses
+the pet's own materials/thin outline, no eye/mouth outline, and hides RageForm.
+Regenerate the roster after both purple ghost forms settle. Do not remove Nemu's
+hands/hair/mesh parts in response to that old crop.
+
+Selected clean block design reference is now saved as
+docs/refs/kuro/clean-block-direction-concept-2026-09-10.png. Native v1 at
+Logs/kuro-clean-block-study-v1 is26 deliberately authored forms, independent of
+the rejected TripoSR/voxel bases. Still refine the hunch and claw orientation;
+the upright middle-finger-looking pose is not a desired final gesture.
+
+
+Owner clarified that better animation includes skill VFX/casting and separate
+animations for different actions. Repetition should happen only when necessary.
+Recorded the whole-action requirement in the canonical art document and the
+main agent, product, animation, lore and implementation plans. Do not narrow it
+back to only weight/timing or body clips after compaction.

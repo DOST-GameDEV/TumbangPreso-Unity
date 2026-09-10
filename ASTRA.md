@@ -1,5 +1,18 @@
 # ASTRA.md
 
+**Model style is fixed by the game:** use
+[Art_Direction.md section0](docs/Art_Direction.md#0--new-models-must-belong-to-tump)
+for every Blender/model deliverable. New assets must look native to TUMP's cute
+blocky cast, without excessive detail or realistic anatomy. Requests for maximum
+animation realism concern weight, timing, contact and recovery inside that style.
+External reference games and generated concepts do not override it.
+
+**Animation scope includes casting and VFX:** author distinct whole-action
+sequences for different skills/actions, including body, FPP, moving effect geometry,
+release, impact and recovery. Do not repeat generic animations unless the same
+action or a shared contract makes reuse necessary. Record that reason. See
+Art_Direction.md section0.1; body-clip-only polish does not satisfy this brief.
+
 **Animation and Blender history plus the current improvement pass.**
 
 2026-09-10 authority: the owner explicitly expanded this work to the whole game on

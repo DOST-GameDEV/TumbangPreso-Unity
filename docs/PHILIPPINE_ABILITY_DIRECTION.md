@@ -1,5 +1,13 @@
 # Philippine direction for all six hero kits
 
+**Cultural direction stays inside TUMP's visual identity.** New folklore-inspired
+models and effects must use the existing cute blocky language and restrained
+detail, rather than realistic monsters/anatomy or ornamental overload. See the
+standing [model-style rule](Art_Direction.md#0--new-models-must-belong-to-tump).
+Express each hero through distinct casting and VFX motion, not a repeated generic
+animation with different cultural decoration. Reuse animation only when necessary;
+Art_Direction.md section0.1 defines the whole-action scope.
+
 Updated 2026-09-10. PLANNED BEFORE FURTHER CULTURAL IMPLEMENTATION.
 This supplements [ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md), not its scope.
 The owner is AFK and authorizes autonomous execution after thorough planning.

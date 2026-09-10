@@ -1,5 +1,15 @@
 # CLAUDE.md
 
+**Standing model-style rule, owner 2026-09-10:** every new or reworked model must
+look like it belongs to this game's cute blocky world, without unnecessary detail
+or realistic anatomy/materials. The canonical requirement and review criteria are
+[docs/Art_Direction.md section0](docs/Art_Direction.md#0--new-models-must-belong-to-tump).
+Read it for model, pet, skill/VFX geometry, prop and map work. Animation realism
+concerns weight/timing/contact inside this style; it does not change the style.
+Better animation also includes skill VFX, casting and separate animations for
+different actions. Do not repeat animations unless necessary; see the same
+canonical document, section0.1.
+
 The rules of this repository. Read this first, every session.
 
 **Read order: this file, then [`docs/VISION.md`](docs/VISION.md), then

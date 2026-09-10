@@ -1,5 +1,23 @@
 # Working in this repository
 
+## Standing model-style requirement
+
+**New models must look native to TUMP, not overly detailed or from another game.**
+Read [docs/Art_Direction.md section0](docs/Art_Direction.md#0--new-models-must-belong-to-tump)
+before model/asset work. Keep the existing cute blocky language: few clean chunky
+forms, broad planes, restrained materials and purposeful detail. This covers pets,
+skills/VFX models, FPP arms, props, trees and maps as well as characters. Avoid
+realistic anatomy and noisy reconstruction/voxel results. Judge the actual Unity
+asset beside the existing cast. Realistic animation means better weight and
+timing within the style, not realistic-looking models. Current owner corrections
+and rejected drafts in ACTIVE_REWORK_LEDGER.md must survive compaction.
+
+**Animation means the whole action:** improve casting, body/FPP motion, skill
+VFX/geometry motion, release, impact and recovery. Give different actions/skills
+appropriate separate animations; do not repeat a generic cast with new colors.
+Reuse only when necessary for the same action or an existing shared contract,
+and record why. See Art_Direction.md section0.1.
+
 ## Start here
 
 Read [CLAUDE.md](CLAUDE.md) first, [docs/VISION.md](docs/VISION.md) second,

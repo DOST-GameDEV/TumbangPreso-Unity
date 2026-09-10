@@ -1,5 +1,14 @@
 # Hero kit decisions and distinct loadout jobs
 
+**Style acceptance is mandatory for every kit:** models must belong to TUMP,
+using its cute blocky forms and restrained detail. A mechanically improved skill
+with an off-theme model is unfinished. Follow
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump)
+and the latest owner corrections before authoring or adopting any concept/model.
+Animation includes casting and skill VFX as well as body/FPP clips. Give different
+actions and alternatives suitable distinct sequences; do not repeat animations
+unless necessary, and document the reason for reuse (Art_Direction.md section0.1).
+
 Status: planning in progress, 2026-09-10. The owner explicitly authorized replacing
 boring abilities and making every existing loadout choice justify its place.
 Read LORE.md, ABILITY_REWORK_PLAN.md and PHILIPPINE_ABILITY_DIRECTION.md with this.

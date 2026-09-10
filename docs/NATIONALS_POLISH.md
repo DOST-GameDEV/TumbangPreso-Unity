@@ -1,5 +1,14 @@
 # Nationals polish: coherence, identity and memorable play
 
+**Standing owner art requirement, 2026-09-10:** all new/reworked models must look
+like they came from TUMP. Keep clean chunky forms and purposeful detail consistent
+with the actual game. Visual fidelity must not drift into realistic anatomy or
+surface noise. Motion can gain weight and precision while the models stay cute
+and blocky. [Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump)
+defines the rule and review criteria. Section0.1 also requires animation polish
+to include casting and skill VFX, with distinct action sequences and no repeated
+animation unless reuse is necessary.
+
 ## 0. MISSION
 
 The current strategic roadmap for game feel, presentation and Nationals polish.

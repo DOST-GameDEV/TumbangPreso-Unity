@@ -1,5 +1,13 @@
 # Vision: what this game is for
 
+**Visual identity is part of the product:** new models must look native to TUMP's
+cute blocky world. Clear shapes, purposeful detail and convincing motion carry
+improvement. Overly detailed or realistic-looking assets that clash with the
+existing game fail that goal. [Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump)
+is the standing owner rule for every model and environment asset. Animation
+quality also includes casting and skill VFX. Different actions should have their
+own appropriate sequences, with animation reused only when necessary (section0.1).
+
 **Read this before `Port_Plan.md`, before `Design.md`, before the code.** Everything else in
 this repository says HOW. This says WHY, and it is the thing that keeps getting re-derived
 wrongly by whoever picks the project up next.

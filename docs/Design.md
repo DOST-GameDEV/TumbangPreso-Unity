@@ -1,5 +1,12 @@
 # Design — the rules, and every number that decides them
 
+**Model/art requirement:** new and reworked models must belong to TUMP's cute
+blocky visual language and avoid unnecessary detail. Gameplay changes and stronger
+motion do not waive that requirement. See
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump).
+Animation quality includes casting and skill VFX; distinct actions need suitable
+separate presentation. Reuse animation only when necessary (section0.1).
+
 **This file is the balance source of truth.** A number in the code must match a number
 here, or one of the two is a bug. Any lane that moves one moves it here in the same
 commit.

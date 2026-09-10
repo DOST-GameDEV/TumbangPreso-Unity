@@ -9,6 +9,17 @@ before inventing a task, and update it in the same commit as the work.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**Standing model-style rule:** every new/reworked model must look native to TUMP
+and avoid excessive detail. Use the existing cute blocky cast as the reference.
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump)
+applies to people, pets, skill models, FPP arms, props, trees and maps. A model
+that compiles but clashes with this style remains open work.
+Animation work includes casting and skill VFX, not only body clips. Give different
+actions suitable separate sequences; reuse animation only when necessary and
+record the reason. Art_Direction.md section0.1 is the shared rule.
+
+
+
 **Current owner-requested compaction record:**
 [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md) preserves all active constraints,
 the individual eighteen-character and eighteen-skill queues, rejected approaches,
@@ -274,6 +285,12 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Latest Kuro corrections: keep BOTH forms in Nemu's purple palette; the cute form
+must not read white. Settle the giant first, then revise the cute version. Trace
+and address the detached purple piece beside Nemu that the owner flagged. Details
+and rejected giant approaches remain in ACTIVE_REWORK_LEDGER.md.
+
+
 **Recovery/remote impacts, 2026-09-10:** quick input taps and network progress
 rollback are repaired with actual input-event and three-process evidence in
 [recovery-and-impacts.md](reports/improvement-2026-09-10/recovery-and-impacts.md).
@@ -284,7 +301,13 @@ possession controls and the broader network/mode/round matrices remain open.
 **Latest Kuro art request:** make the small ghost cuter, using Hu Tao's ghost as a
 loose silhouette/expression reference in Nemu's palette/theme. Improve the giant
 as well, especially the wing-like arms, to be more imposing and frightening.
-Blender studies are in progress; keep the approved eighteen people unchanged.
+The owner rejected the first curved-arm giant as awkward, not scary/imposing.
+Replace its squat/crab-like silhouette and identical triangle teeth. The owner
+likes the new hunched giant CONCEPT but says it is too realistic: translate it to
+blocky/chunky TUMP geometry. Giant eyes may float with a spectral aura (Gastly-like)
+instead of being drawn on. Make it genuinely huge, about three player heights,
+while verifying floor/ceiling, footprint and owner-view readability. Preserve the new small form. Full decision is
+in ACTIVE_REWORK_LEDGER.md. Keep the approved eighteen people unchanged.
 
 
 Stable networking batch verification: Core562/562, EditMode486/486, Nemu PlayMode

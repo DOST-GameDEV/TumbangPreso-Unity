@@ -1,5 +1,15 @@
 # Game improvement plan
 
+**Standing art constraint, owner 2026-09-10:** every new model must look like it
+came from TUMP. Preserve the clean cute/blocky visual language; avoid overly
+detailed, realistic or noisy assets. This applies across all character, pet,
+ability, FPP, prop and map deliverables. See
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump).
+Stronger animation also includes better casting and skill VFX, with distinct
+sequences for different actions. Do not repeat generic animations unless reuse
+is necessary. Better weight/contact/timing is one part of that broader scope;
+see Art_Direction.md section0.1.
+
 ## Latest owner additions, 2026-09-10
 
 Thorough networking repair is required. The owner also authorizes changing or

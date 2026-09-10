@@ -1,5 +1,18 @@
 # Ability rework plan
 
+**Standing model-style rule:** all reworked skill models, summons, pets and FPP
+assets must look native to TUMP's cute blocky world and avoid unnecessary detail.
+Use clean chunky forms and purposeful effects; scale, pose, timing and sound make
+an ultimate imposing. Follow
+[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump).
+Kuro's current purple/blocky/floating-eye corrections remain in the active ledger.
+
+**Owner's animation clarification:** improve skill VFX and casting as well as
+body/FPP clips. Different abilities/actions need appropriate distinct animation
+through preparation, release, impact and recovery. Repetition is allowed only
+when necessary, with the reason recorded. A generic cast or burst recolored across
+kits does not satisfy this work. Art_Direction.md section0.1 is the standing rule.
+
 Updated 2026-09-10. Status: ACTIVE, NOT COMPLETE. Source checkpoint: `c09fba2`.
 This is the owner's requested durable plan, not a final handoff or completion claim.
 Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER.md.
