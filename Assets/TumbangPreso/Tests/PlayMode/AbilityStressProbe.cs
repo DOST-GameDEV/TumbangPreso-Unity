@@ -57,6 +57,129 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private const float EffectLife = 4.0f;
 
+        [UnityTest]
+        public IEnumerator GroundSkillsUseTheRaisedFloorInsteadOfTheAirborneCasterHeight()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Ground";
+            floor.transform.position = new Vector3(0, .35f, 0);
+            floor.transform.localScale = new Vector3(30, .5f, 30);
+            Physics.SyncTransforms();
+            float top = floor.GetComponent<Collider>().bounds.max.y;
+            var ice = HeroHazards.SpawnIceSheet(new Vector3(-4, 3, 0), 2.3f, 2);
+            var fire = HeroHazards.SpawnFireTrail(new Vector3(0, 3, 0), 1, 2);
+            var wall = HeroHazards.SpawnIceBarricade(new Vector3(4, 3, 0), Vector3.forward, 2);
+            yield return null;
+            float worst = Mathf.Max(Mathf.Abs(top - ice.transform.position.y),
+                Mathf.Abs(top - fire.transform.position.y), Mathf.Abs(top - wall.transform.position.y));
+            Assert.Less(worst, .025f, $"Ground skills kept the airborne height: floor={top}, " +
+                $"ice={ice.transform.position.y}, fire={fire.transform.position.y}, wall={wall.transform.position.y}");
+        }
+
+        [UnityTest]
+        public IEnumerator GroundSkillPlacementIgnoresTheBridgeDeckAndExistingBarriers()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Ground";
+            floor.transform.position = new Vector3(0, -.25f, 0);
+            floor.transform.localScale = new Vector3(30, .5f, 30);
+            var deck = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            deck.name = "BridgeDeck";
+            deck.transform.position = new Vector3(0, 5, 0);
+            deck.transform.localScale = new Vector3(10, .5f, 10);
+            Physics.SyncTransforms();
+            var wall = HeroHazards.SpawnIceBarricade(Vector3.zero, Vector3.forward, 2);
+            Physics.SyncTransforms();
+            var ice = HeroHazards.SpawnIceSheet(new Vector3(0, 8, 0), 2.3f, 2);
+            yield return null;
+            Assert.AreEqual(0, ice.transform.position.y, .025f,
+                "Ground skills belong to the court, not the overhead deck or a previous ice wall.");
+        }
+
+        [UnityTest]
+        public IEnumerator GroundSkillMeshesFollowTheKerbAcrossTheirFootprint()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Ground";
+            floor.transform.position = new Vector3(0, -.25f, 0);
+            floor.transform.localScale = new Vector3(20, .5f, 20);
+            var kerb = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            kerb.name = "Pavement";
+            kerb.transform.position = new Vector3(3, .075f, 0);
+            kerb.transform.localScale = new Vector3(5, .15f, 20);
+            Physics.SyncTransforms();
+            var ice = HeroHazards.SpawnIceSheet(new Vector3(0, 4, 0), 2.3f, 2);
+            var fire = HeroHazards.SpawnFireTrail(new Vector3(0, 4, 4), 1, 2);
+            int checkedVertices = 0;
+            foreach (var surface in new[] { ice.transform.Find("IceSlab"), fire.transform.Find("FireChar") })
+            {
+                var mesh = surface.GetComponent<MeshFilter>().sharedMesh;
+                var vertices = mesh.vertices;
+                var normals = mesh.normals;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    if (surface.name == "IceSlab" && normals[i].y > -.5f) continue;
+                    Vector3 world = surface.TransformPoint(vertices[i]);
+                    Assert.IsTrue(Physics.Raycast(new Vector3(world.x, 1, world.z), Vector3.down,
+                        out var support, 2, ~0, QueryTriggerInteraction.Ignore));
+                    Assert.AreEqual(support.point.y + .003f, world.y, .012f,
+                        surface.name + " has a floating or buried floor vertex.");
+                    checkedVertices++;
+                }
+            }
+            Assert.Greater(checkedVertices, 12, "No meaningful floor geometry was examined.");
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator MagnetRecallTraceFollowsOnlyTheHandAndExpires()
+        {
+            var hand = new GameObject("Recall receiving hand");
+            hand.transform.position = new Vector3(3, 1, 0);
+            Vector3 from = new Vector3(-4, .1f, 0);
+            var go = Visual.MagnetRecallTrace.Spawn(from, hand.transform, hand.transform.position);
+            var line = go.GetComponent<LineRenderer>();
+            Assert.AreEqual(from, line.GetPosition(0));
+            Assert.AreEqual(hand.transform.position, line.GetPosition(line.positionCount - 1));
+            Assert.AreEqual(0, go.GetComponentsInChildren<Collider>().Length);
+            for (int i = 0; i < line.positionCount; i++)
+            {
+                Vector3 point = line.GetPosition(i);
+                Vector3 segment = hand.transform.position - from;
+                float u = Mathf.Clamp01(Vector3.Dot(point - from, segment) / segment.sqrMagnitude);
+                Assert.Less(Vector3.Distance(point, from + segment * u), .06f,
+                    "Recall must remain a narrow connection, not arc toward nearby objects.");
+            }
+            hand.transform.position += new Vector3(1, .3f, 2);
+            yield return null;
+            Assert.Less(Vector3.Distance(hand.transform.position, line.GetPosition(line.positionCount - 1)), .001f);
+            yield return new WaitForSeconds(Visual.MagnetRecallTrace.LifeSeconds + .1f);
+            Assert.IsTrue(go == null, "The brief recall trace outlived its presentation.");
+            Object.Destroy(hand);
+        }
+
+        [UnityTest]
+        public IEnumerator ChargedHandAuraUsesTheMeasuredHandAnchor()
+        {
+            var actor = new GameObject("Charge anchor review");
+            var motor = actor.AddComponent<CharacterMotor>();
+            motor.enabled = false;
+            motor.Mode = GameMode.HeroStrike;
+            motor.CharacterIndex = 3;
+            var visual = actor.AddComponent<Visual.CharacterVisual>();
+            var entry = RosterBook.Load().People.Find(p => p != null && p.Id == "zack");
+            visual.ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
+            Assert.IsNotNull(visual.HandAnchor);
+            var aura = Visual.AbilityVfx.AttachHandVfx(actor.transform, Visual.AbilityVfx.Aura.ElectricSpark, .5f);
+            Assert.AreSame(visual.HandAnchor, aura.transform.parent,
+                "A hand charge must follow the actual grip, not a guessed offset from the arm.");
+            Assert.Less(Vector3.Distance(visual.HandAnchor.position, aura.transform.position), .001f);
+            Object.Destroy(actor);
+            yield return null;
+            Assert.IsTrue(aura == null, "Hand charge must disappear with its actor.");
+        }
+
+
         /// <summary>Frames counted per arm. Enough that the median is not one hitch.</summary>
         private const int SampleFrames = 240;
 

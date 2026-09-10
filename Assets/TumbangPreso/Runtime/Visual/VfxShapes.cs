@@ -2433,27 +2433,51 @@ namespace TumbangPreso.Visual
             return fallback + Mathf.Clamp(ground - fallback, -maxRise, maxRise);
         }
 
-        /// <summary>Ground height under a point, ignoring bodies, props and trigger volumes.</summary>
+        /// <summary>Anchor a ground skill without retaining the caster's airborne height.</summary>
+        public static Vector3 GroundPoint(Vector3 at)
+        {
+            float height = GroundUnder(at, 2.0f, 32.0f);
+            at.y = float.IsNegativeInfinity(height) ? 0.0f : height;
+            return at;
+        }
+
+        private static bool IsCourtSurface(Collider collider)
+        {
+            if (collider is TerrainCollider) return true;
+            // These are the actual floor groups in the three map builders. Prefer
+            // them over the overhead guideway when a jumping cast starts above it.
+            for (var node = collider.transform; node != null; node = node.parent)
+            {
+                string name = node.name;
+                if (name == "Ground" || name == "Floor" || name == "Lupa"
+                    || name == "Pavement" || name == "Sidewalk"
+                    || System.Array.IndexOf(EnvColourPass.RoadGroups, name) >= 0) return true;
+            }
+            return false;
+        }
+
+        /// <summary>Ground height excluding actors, loose objects, effects and generated barriers.</summary>
         private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow)
         {
             var from = new Vector3(at.x, at.y + searchAbove, at.z);
             var hits = Physics.RaycastAll(from, Vector3.down, searchAbove + searchBelow, ~0,
-                                          QueryTriggerInteraction.Ignore);
-
-            float best = float.NegativeInfinity;
+                QueryTriggerInteraction.Ignore);
+            float court = float.NegativeInfinity;
+            float fallback = float.NegativeInfinity;
             foreach (var hit in hits)
             {
-                // ⚠️ THE SAME EXCLUSIONS `Slipper.GroundY` USES, AND FOR THE SAME REASON: a body
-                // is not the ground. Draping onto somebody standing in the circle would make the
-                // ink climb them, which is the fault this fixes with the sign flipped.
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
-                if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
-                if (hit.collider.GetComponentInParent<Lata>() != null) continue;
-
-                if (hit.point.y > best) best = hit.point.y;
+                var collider = hit.collider;
+                if (hit.normal.y < .65f) continue;
+                if (collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (collider.GetComponentInParent<Slipper>() != null) continue;
+                if (collider.GetComponentInParent<Lata>() != null) continue;
+                if (collider.GetComponentInParent<Abilities.HazardVolume>() != null) continue;
+                if (collider.GetComponentInParent<VfxRenderTag>() != null) continue;
+                if (collider.attachedRigidbody != null) continue;
+                if (IsCourtSurface(collider)) court = Mathf.Max(court, hit.point.y);
+                else if (hit.point.y <= at.y + .60f) fallback = Mathf.Max(fallback, hit.point.y);
             }
-
-            return best;
+            return float.IsNegativeInfinity(court) ? fallback : court;
         }
 
         /// <summary>

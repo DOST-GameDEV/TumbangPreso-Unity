@@ -189,6 +189,11 @@ namespace TumbangPreso.Core
 
         public const float Speed = 4.6f;
 
+        // Bolt Sprint promises sustained skating speed. Its old 4 m/s² per-tick
+        // impulse was cancelled by Friction before movement. Keep its initial dash
+        // and add a bounded 25% wish-speed gain for the existing active duration.
+        public const float ZackSprintSpeedScale = 1.25f;
+
         /// <summary>
         /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,
         /// after playing the 8-round Hero Strike build: *"defender kinda hard now so can we slow

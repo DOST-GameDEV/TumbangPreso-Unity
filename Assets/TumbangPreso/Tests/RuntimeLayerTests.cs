@@ -17,6 +17,36 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class RuntimeLayerTests
     {
+        [TestCase(30)]
+        [TestCase(60)]
+        [TestCase(144)]
+        public void ThunderstrikeActiveTailDoesNotSteerTheCastersKnockback(int updatesPerSecond)
+        {
+            var go = new GameObject("Thunderstrike movement contract");
+            try
+            {
+                var motor = go.AddComponent<CharacterMotor>();
+                var kit = new Abilities.ZackHeroKit();
+                var context = new Abilities.AbilityContext(motor, null, null);
+                var external = typeof(CharacterMotor).GetField("_externalVelocity",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                var incoming = new Vector3(2, 0, -1);
+                motor.ApplyImpulse(incoming);
+                Assert.AreEqual(incoming, (Vector3)external.GetValue(motor), "Fixture could not apply its incoming impulse.");
+
+                // Isolate the live tail from the one-shot lightning spawners. The
+                // aimed strike may empower throws, but it must not steer a body
+                // that is standing still or already being knocked sideways.
+                typeof(Abilities.HeroAbility).GetProperty("DurationRemaining")
+                    .SetValue(kit.Ultimate, kit.Ultimate.Duration);
+                for (int frame = 0; frame < updatesPerSecond; frame++)
+                    kit.Ultimate.Tick(context, 1f / updatesPerSecond);
+                Assert.Less(Vector3.Distance(incoming, (Vector3)external.GetValue(motor)), 0.0001f,
+                    "The aimed ultimate added a self-impulse during its active tail.");
+            }
+            finally { Object.DestroyImmediate(go); }
+        }
+
         // -------------------------------------------------------------------
         // InputIntent: the shared human/AI table.
         // -------------------------------------------------------------------

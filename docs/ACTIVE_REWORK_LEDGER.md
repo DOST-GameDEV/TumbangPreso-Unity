@@ -351,6 +351,69 @@ pass is complete yet. The other seventeen still require their own design work.
 
 ## 5. Eighteen-skill ledger
 
+### Current implementation batch: Zack function and grounded skill placement
+
+**Latest art feedback:** the owner called the grounded ice skill ugly and renewed
+the request to thoroughly improve all eighteen abilities. Keep ground placement
+fixed but rework the raised platform, five decorative spikes and central upright
+cutout into a convincing frozen street surface. Broader animation/SFX/VFX work
+remains mandatory. Additional tools may be downloaded if needed; existing Blender,
+Python and media tools are currently sufficient. No paid work has been used.
+
+This correction batch passed broad verification and is being committed. Models stay at the kept
+`7c7fcb5` checkpoint; no body or forearm study was integrated. Blender is closed
+and the native input session was reset.
+
+- Zack Bolt Sprint's per-tick 4 m/s² impulse was erased by the motor's 30 m/s²
+  friction. A kit-owned wish-speed multiplier now grants 25% for its existing
+  2.5-second active period. Initial dash, cooldown, trail radius/cap and slows
+  remain. Real input measured 2.6565 -> 3.3206 -> 2.6565 m/s before/during/reset.
+- Thunderstrike's old per-tick self-impulse was seen failing at 30/60/144 update
+  rates: 5.5 m/s of added impulse over one simulated second, altering an incoming
+  knockback. Removed that active-tail impulse. Existing seven-second charged
+  throws remain. Do not claim it caused visible standing drift: ordinary friction
+  can erase small per-frame impulses.
+- Magnet now draws a narrow 0.22-second source-to-hand trace, not arcs toward
+  nearby objects. Host equip remains immediate; the unused 0.45-second-flight
+  claim was removed. Its owned trace/hand charge clean up on end/reset/consumption.
+- Hand auras now attach to the measured HandAnchor when available. The old guessed
+  arm-local offset was not the grip position. The anchor/lifecycle checks pass.
+- `MagnetRecallTrace.cs` is new, including its Unity-generated meta. The first
+  compile lacked explicit IVfxTimeline.LifeSeconds; corrected. A strict endpoint
+  check found a floating-point endpoint offset; endpoints are now set exactly.
+- The owner reported floating ground skills, especially Cheska and Sean. The
+  marker snapped to the ground but the actual hazard retained caster Y. Red tests
+  found ice/fire/wall at y=3 above a floor at 0.6, and ice at y=8 above a bridge.
+- Existing VfxShapes ground sampling is now shared by actual placement and the
+  reticle. GroundPoint makes full downward placement; small-piece GroundAt keeps
+  its existing local clamp. Sampling excludes actors, slippers, can, rigid bodies,
+  VFX and generated barriers, and prefers the actual map floor groups over the
+  overhead guideway. Ceiling/wall normals are excluded.
+- Eleven floor spawners now project to ground, including ice sheet/wall, fire and
+  shock trails, magma/pillars, crater, hex, Kuro floor zone, coven and thunder.
+  Explosion floor rings project separately; airborne blast cores retain their
+  impact origin. Ice slab/rim/cracks, fire char, shock scorch/ring and crater bed/
+  rim use existing mesh draping at 3 mm clearance across kerbs.
+- Focused checks: `zack-motion-green-v2.xml` 10/10; `ground-skill-green.xml` 4/4;
+  `ground-map-play-v1.xml` 3/3 including kerb mesh vertices, all maps and the actual
+  sprint speed/reset. Ground rows: Eskinita .1000/.1000, Bayan .1000/.1000,
+  Ilalim .0000/.0000 for both ice and fire. Three in-game images inspected under
+  `Logs/ground-skill-review-v1`.
+- `Logs/zack-skill-review-v1` contains accepted real-input captures of all three
+  Zack actions and encoded full-speed owner/local-witness MP4s. Earlier PlayMode
+  result 3/4 failed only on the exact trace endpoint; the trace now passes in the
+  ground-focused rerun. This is not real network-observer evidence or finished
+  Zack animation/SFX/ultimate quality approval.
+- Capture finding: faces look strongly yellow in skill and warm-up images.
+  Trace material/lighting and capture color handling before assuming all of it is
+  electric light spill. UltimateColumn's filled flare and strong glow still merit
+  individual readability/impact review. Do not tune blind from one still.
+- Broad correction verification: Core 559/559; full EditMode 470/470; all fourteen
+  gating audits pass (informational cue audio still seven flags / 119 files). See
+  `docs/reports/improvement-2026-09-10/ground-and-zack-correction.md`. The complete final
+  twice-through PlayMode gate, build and exact-player checks remain required.
+
+
 Names below are read from current constructors. All eighteen have first-pass body
 and FPP animation work; **all still need the owner's requested deep individual
 functionality, SFX and VFX review**. Keep per-row receipts, not one blanket "polished."
@@ -360,9 +423,9 @@ functionality, SFX and VFX review**. Keep per-row receipts, not one blanket "pol
 | Sean | Flame Rush | `sean_skill1` | Pending |
 | Sean | Ignition Cannon | `sean_skill2` | Pending |
 | Sean | Supernova | `sean_ultimate` | Pending imposing-ultimate pass |
-| Zack | Bolt Sprint | `zack_skill1` | Pending |
-| Zack | Magnet | `zack_skill2` | Pending |
-| Zack | Thunderstrike | `zack_ultimate` | Pending imposing-ultimate pass |
+| Zack | Bolt Sprint | `zack_skill1` | Real sustained-speed correction verified; animation/SFX/VFX refinement remains |
+| Zack | Magnet | `zack_skill2` | Recall trace and hand anchor/cleanup corrected; deeper presentation remains |
+| Zack | Thunderstrike | `zack_ultimate` | Stale self-impulse removed; imposing animation/SFX/VFX pass remains |
 | Dante | Seismic Stomp | `dante_skill1` | Pending |
 | Dante | Demonic Carapace | `dante_skill2` | Pending |
 | Dante | Titan Fissure | `dante_ultimate` | Pending imposing-ultimate pass |

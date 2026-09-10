@@ -132,7 +132,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator CarryChargeReleaseAndReturn()
         {
-            SceneFlow.SelectedMode = GameMode.HeroStrike;
+            string reviewId = Environment.GetEnvironmentVariable("TUMP_REVIEW_CHARACTER");
+            var mode = !string.IsNullOrEmpty(reviewId) && Roster.ClassicPeople.Any(p => p.Id == reviewId)
+                ? GameMode.Classic : GameMode.HeroStrike;
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.SoloSeat = 1;
             GameLaunch.Spectator = false;
             GameLaunch.AllBots = false;
@@ -142,6 +145,20 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSecondsRealtime(.3f);
             var who = GameServices.Round.PlayerAt(1);
             Assert.IsNotNull(who);
+            who.IsBot = true; // Review input must not grant a real profile unlocks.
+            if (!string.IsNullOrEmpty(reviewId))
+            {
+                var roster = Roster.GetPeople(mode);
+                int index = Enumerable.Range(0, roster.Count).Where(i => roster[i].Id == reviewId).DefaultIfEmpty(-1).First();
+                Assert.GreaterOrEqual(index, 0, "Unknown review character: " + reviewId);
+                who.CharacterIndex = index;
+                var entry = RosterBook.Load().People.First(p => p.Id == reviewId);
+                who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
+                foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
+                    arms.SetCharacter(reviewId);
+                Directory.CreateDirectory(Output);
+                File.WriteAllText(Path.Combine(Output, "review-character.txt"), reviewId + " / " + mode);
+            }
             foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None))
                 brain.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None))
@@ -173,9 +190,90 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator AirborneGroundSkillsStayOnEveryMapsActualFloor()
+        {
+            var report = new StringBuilder("map,effect,expected_y,placed_y\n");
+            foreach (string map in new[] { SceneFlow.Eskinita, SceneFlow.BayanPlaza, SceneFlow.IlalimNgTulay })
+            {
+                SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                GameLaunch.AllBots = true; GameLaunch.Spectator = true;
+                yield return SceneManager.LoadSceneAsync(map);
+                yield return new WaitForSecondsRealtime(.3f);
+                var points = new[] { new Vector3(-3, .5f, -2), new Vector3(3, .5f, 2) };
+                var effects = new GameObject[2];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    Assert.IsTrue(Physics.Raycast(points[i], Vector3.down, out var hit, 2, ~0,
+                        QueryTriggerInteraction.Ignore), map + " review point has no physical floor.");
+                    Vector3 airborne = points[i]; airborne.y = 4;
+                    effects[i] = i == 0 ? HeroHazards.SpawnIceSheet(airborne, 2.3f, 4)
+                        : HeroHazards.SpawnFireTrail(airborne, 1, 4);
+                    Assert.AreEqual(hit.point.y, effects[i].transform.position.y, .025f, map + "/" + effects[i].name);
+                    report.AppendLine(string.Format(CultureInfo.InvariantCulture,"{0},{1},{2:F4},{3:F4}",
+                        map, effects[i].name, hit.point.y, effects[i].transform.position.y));
+                }
+                var camera = MakeWitness();
+                camera.transform.position = new Vector3(-7, 1.7f, -7);
+                camera.transform.LookAt(new Vector3(-1, .3f, 0));
+                yield return new WaitForSeconds(.15f);
+                yield return GameplayShots.Render(camera, map + "-ground-skills", false, Output);
+                Object.Destroy(camera.gameObject);
+                yield return PlayModeWorld.Reset();
+            }
+            Directory.CreateDirectory(Output);
+            File.WriteAllText(Path.Combine(Output, "ground-placement.csv"), report.ToString());
+        }
+
+        [UnityTest]
+        public IEnumerator ZackSprintSustainsSpeedAfterTheInitialImpulseAndResets()
+        {
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            GameLaunch.SoloSeat = 1; GameLaunch.Spectator = false; GameLaunch.AllBots = false;
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            yield return new WaitForSecondsRealtime(.5f);
+            Object.FindFirstObjectByType<SliceRunner>().Begin();
+            yield return new WaitForSecondsRealtime(.3f);
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
+            foreach (var player in GameServices.Round.Players) player.Intent.Clear();
+            var who = GameServices.Round.PlayerAt(1);
+            who.IsBot = true;
+            who.CharacterIndex = Roster.HeroPeople.Select((p,i) => (p,i)).First(p => p.p.Id == "zack").i;
+            who.AbilitySystem.BindHero("zack");
+            who.Teleport(new Vector3(-6, who.transform.position.y, -5));
+            who.Intent.Parked = false;
+            who.Intent.Move = Vector2.right;
+            yield return new WaitForSeconds(.5f);
+            float before = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
+            Assert.Greater(before, 1, "Fixture never reached a normal walk.");
+            who.Intent.Set(Verb.Skill1, true);
+            yield return new WaitForSeconds(.1f);
+            who.Intent.Set(Verb.Skill1, false);
+            Assert.IsTrue(who.AbilitySystem.Kit.Skill1.IsActive, "Real sprint press was not accepted.");
+            yield return new WaitForSeconds(.65f);
+            float boosted = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
+            Assert.AreEqual(before * Balance.ZackSprintSpeedScale, boosted, .1f,
+                "The skill lost its speed benefit after the initial dash impulse decayed.");
+            who.AbilitySystem.ResetKit();
+            yield return new WaitForSeconds(.3f);
+            float restored = new Vector2(who.Velocity.x, who.Velocity.z).magnitude;
+            Assert.AreEqual(before, restored, .1f, "Reset left a speed boost on the actor.");
+            Directory.CreateDirectory(Output);
+            File.WriteAllText(Path.Combine(Output, "zack-sprint-speed.csv"),
+                string.Format(CultureInfo.InvariantCulture, "phase,speed\nbefore,{0:F4}\nboosted,{1:F4}\nreset,{2:F4}\n", before, boosted, restored));
+            who.Intent.Clear();
+        }
+
+        [UnityTest]
         public IEnumerator EveryHeroActionThroughTheRealPressAndRelease()
         {
             string[] heroes = { "sean", "zack", "dante", "cheska", "nemu", "phaister" };
+            string selectedHero = Environment.GetEnvironmentVariable("TUMP_REVIEW_HERO");
+            if (!string.IsNullOrEmpty(selectedHero))
+            {
+                CollectionAssert.Contains(heroes, selectedHero);
+                heroes = new[] { selectedHero };
+            }
             var coverage = new StringBuilder("hero,slot,body,first_person,accepted\n");
             foreach (string hero in heroes)
             {

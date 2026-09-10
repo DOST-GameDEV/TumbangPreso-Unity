@@ -30,6 +30,7 @@ namespace TumbangPreso.Abilities
                                                    float spanScale = 1.0f,
                                                    float thicknessScale = 1.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceBarricade");
             go.transform.position = position;
             go.transform.rotation = Quaternion.LookRotation(forward);
@@ -178,6 +179,7 @@ namespace TumbangPreso.Abilities
                                                 float duration = 5.0f, int ownerSlot = -1,
                                                 float effectScale = 1.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceSheetZone");
             go.transform.position = position;
 
@@ -389,6 +391,8 @@ namespace TumbangPreso.Abilities
             // 2.5 m bound is about what a skill leaves on the floor, and this leaves nothing.
             VfxFlipbook.Play(VfxSheets.FrostNova, position + Vector3.up * 0.03f, radius * 1.5f);
 
+            VfxShapes.DrapeToGround(visual, .003f);
+            VfxShapes.DrapeToGround(rim, .003f);
             return go;
         }
 
@@ -595,6 +599,7 @@ namespace TumbangPreso.Abilities
                                                  float duration = 3.0f, int ownerSlot = -1,
                                                  float effectScale = 1.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("ShockTrailZone");
             go.transform.position = position;
 
@@ -696,6 +701,8 @@ namespace TumbangPreso.Abilities
             comp.OwnerSlot = ownerSlot;
             comp.EffectScale = effectScale;
 
+            VfxShapes.DrapeToGround(visual, .003f);
+            VfxShapes.DrapeToGround(ring, .003f);
             return go;
         }
 
@@ -856,6 +863,7 @@ namespace TumbangPreso.Abilities
                                                float duration = 3.0f, int ownerSlot = -1,
                                                Vector3 forward = default)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("FireTrailZone");
             go.transform.position = position;
 
@@ -1130,6 +1138,7 @@ namespace TumbangPreso.Abilities
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
 
+            VfxShapes.DrapeToGround(visual, .003f);
             return go;
         }
 
@@ -1363,6 +1372,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static GameObject SpawnEarthPillar(Vector3 position, float duration = 6.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("EarthPillar");
             go.transform.position = position;
 
@@ -1449,6 +1459,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static GameObject SpawnCrackedLavaDecal(Vector3 position, float radius = 2.4f, float duration = 4.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("CrackedLavaDecal");
             go.transform.position = position;
 
@@ -2195,6 +2206,7 @@ namespace TumbangPreso.Abilities
             VfxMaterial.Ghost(cracks.GetComponent<Renderer>(),
                               new Color(0.72f, 0.88f, 0.98f, 0.42f), 0.0f);
             VfxMaterial.StripCollider(cracks);
+            VfxShapes.DrapeToGround(cracks, .003f);
             return cracks;
         }
 
@@ -2324,6 +2336,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnSupernovaCrater(Vector3 position, float radius,
                                                       float duration, int ownerSlot)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("SupernovaCrater");
             go.transform.position = position;
 
@@ -2369,6 +2382,8 @@ namespace TumbangPreso.Abilities
             comp.Glow = l;
 
             Object.Destroy(go, duration);
+            VfxShapes.DrapeToGround(rim, .003f);
+            VfxShapes.DrapeToGround(bed, .003f);
             return go;
         }
 
@@ -2594,6 +2609,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnKuroUnbound(Vector3 position, float radius, float duration,
                                                   int ownerSlot, bool fromPet)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("KuroUnbound");
             go.transform.position = position;
 
@@ -2965,6 +2981,7 @@ namespace TumbangPreso.Abilities
                                                float duration = 6.0f, int ownerSlot = -1,
                                                float effectScale = 1.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("HexWardZone");
             go.transform.position = position;
 
@@ -3446,6 +3463,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f,
                                                         float duration = 5.0f)
         {
+            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("GrandCovenEclipseEffect");
             go.transform.position = position;
 
@@ -4290,6 +4308,7 @@ namespace TumbangPreso.Abilities
 
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
         {
+            position = VfxShapes.GroundPoint(position);
             // 1. Sky Lightning Bolt Column & Multi-segment Arc
             // ⚠️⚠️ 12 m, DOWN FROM 24, AND THE FORKS WITH IT. The reach was chosen when a bolt
             // was four stretched cylinders, where length costs nothing because a tube has no
@@ -4919,7 +4938,7 @@ namespace TumbangPreso.Abilities
             //    stripped one, so every blast in the game briefly put two solid bodies in the
             //    street. `VfxShapes.Lay` builds a `MeshFilter` and a `MeshRenderer` and nothing else.
             var shockRing = VfxShapes.Lay(null, "ShockwaveRing", look.Ring(seed), 0.5f, 0.0f);
-            shockRing.transform.position = center + Vector3.up * 0.05f;
+            shockRing.transform.position = VfxShapes.GroundPoint(center) + Vector3.up * 0.015f;
 
             VfxMaterial.Ghost(shockRing.GetComponent<Renderer>(), look.Edge, 0.8f);
 

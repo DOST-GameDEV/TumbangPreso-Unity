@@ -820,6 +820,7 @@ namespace TumbangPreso
                           * Roster.PersonSpeedScale(_characterIndex, Mode)
                           * sprint
                           * Stamina.SpeedZones.Value
+                          * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f);
 
             if (canSteer)

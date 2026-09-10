@@ -557,35 +557,7 @@ namespace TumbangPreso.Visual
         /// stack decals a few centimetres apart and z-fight.
         /// </summary>
         private Vector3 GroundUnder(Vector3 worldPos)
-        {
-            Vector3 from = worldPos + Vector3.up * 2.0f;
-            var hits = Physics.RaycastAll(from, Vector3.down, 12.0f, ~0, QueryTriggerInteraction.Ignore);
-
-            float bestDistance = float.MaxValue;
-            bool found = false;
-            Vector3 best = worldPos;
-
-            for (int i = 0; i < hits.Length; i++)
-            {
-                var hit = hits[i];
-                if (_owner != null && hit.collider.GetComponentInParent<CharacterMotor>() == _owner) continue;
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
-                if (hit.distance >= bestDistance) continue;
-
-                bestDistance = hit.distance;
-                best = hit.point;
-                found = true;
-            }
-
-            if (!found)
-            {
-                best = worldPos;
-                best.y = 0.0f;
-            }
-
-            best.y += 0.02f;
-            return best;
-        }
+            => VfxShapes.GroundPoint(worldPos) + Vector3.up * .02f;
 
         private void Paint()
         {

@@ -274,6 +274,20 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Ground-placement/Zack correction verified: Core 559/559, EditMode 470/470, fourteen
+gating audits and seven final targeted PlayMode cases pass. Six ground rows match
+the actual map floor. [Receipt](reports/improvement-2026-09-10/ground-and-zack-correction.md).
+The owner rejected the ice skill's art even after grounding; rework its raised
+platform/spikes/cutout presentation and complete the all-eighteen ability pass.
+
+Active follow-up: the reported airborne ground-skill bug is reproduced and fixed
+in the current candidate. Eleven ground spawners share actual floor projection;
+flat pieces drape across kerbs. Raised-floor/bridge and real-map checks pass.
+Zack's sustained sprint, stale ultimate self-impulse, recall trace and measured
+hand-aura anchoring are also corrected and under broad verification. Details and
+exact receipts are in the active ledger. Full animation/SFX/VFX quality remains
+open; do not close this section for these correctness fixes alone.
+
 **Latest owner decision, 2026-09-10:** the cleaned Classic models were called solid
 and the owner explicitly asked to move on. Preserve the current cast at `7c7fcb5`;
 stop the individual character redesign queue. Prioritize the remaining animation,

@@ -1041,9 +1041,11 @@ namespace TumbangPreso.Visual
             if (host == null) return null;
 
             // Find right arm/hand bone if skinned mesh exists, otherwise use host
-            Transform mount = null;
+            var visual = host.GetComponent<CharacterVisual>();
+            Transform handAnchor = visual != null ? visual.HandAnchor : null;
+            Transform mount = handAnchor;
             var skinned = host.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (skinned != null && skinned.bones != null)
+            if (mount == null && skinned != null && skinned.bones != null)
             {
                 foreach (var bone in skinned.bones)
                 {
@@ -1059,7 +1061,8 @@ namespace TumbangPreso.Visual
 
             var go = new GameObject("Vfx_HandAura_" + aura);
             go.transform.SetParent(mount, false);
-            go.transform.localPosition = mount == host ? new Vector3(0.35f, 0.8f, 0.35f) : new Vector3(0.0f, 0.35f, 0.0f);
+            go.transform.localPosition = mount == handAnchor ? Vector3.zero
+                : mount == host ? new Vector3(0.35f, 0.8f, 0.35f) : new Vector3(0.0f, 0.35f, 0.0f);
 
             var ps = go.AddComponent<ParticleSystem>();
             Quiesce(ps);

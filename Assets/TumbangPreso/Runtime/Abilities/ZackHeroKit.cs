@@ -11,6 +11,8 @@ namespace TumbangPreso.Abilities
     {
         public bool IsOverchargeThrowActive { get; set; }
         public bool IsThunderstrikeActive => Ultimate != null && Ultimate.IsActive;
+        public override float MovementSpeedScale => Skill1 != null && Skill1.IsActive
+            ? Balance.ZackSprintSpeedScale : 1.0f;
 
         public ZackHeroKit() : base("zack", "ZACK")
         {
@@ -147,9 +149,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                // Speed boost during rail grind
-                ctx.Motor.ApplyImpulse(ctx.Forward * 4.0f * dt);
-
+                // Sustained speed is applied to the motor's wish speed. A 4 m/s²
+                // impulse was erased by the motor's 30 m/s² friction before movement.
                 _trailDropTimer -= dt;
                 if (_trailDropTimer > 0.0f) return;
                 _trailDropTimer = 0.30f;
@@ -235,21 +236,10 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private sealed class MagnetRecallAbility : HeroAbility
         {
-            /// <summary>
-            /// How long the tsinelas takes to reach him, in seconds.
-            ///
-            /// ⚠️⚠️ IT IS NOT INSTANT AND THE DELAY IS THE COUNTERPLAY. An arc that crosses the
-            /// court is the loudest thing on screen and it points straight at Zack, so the taya
-            /// is TOLD that he is about to be armed and where he is standing. A recall with no
-            /// flight would be a hero who rearms with no tell at all, which is the one shape
-            /// `docs/VISION.md` § 1.1 rules out: every power has to be readable by the people it
-            /// is used against.
-            ///
-            /// ⚠️ 0.45 s IS UNDER `Balance.TagStunTime` AND THAT IS DELIBERATE. It has to be
-            /// short enough that recalling mid-chase is a real option; it is long enough that a
-            /// taya standing next to him gets a beat to close.
-            /// </summary>
-            private const float FlightSeconds = 0.45f;
+            // Recall already equips immediately on the host. The previous 0.45 s
+            // flight comment described no implemented delay. A short collapsing
+            // trace now shows the actual source and receiving hand without changing
+            // equip authority or inventing a damaging radial field.
 
             /// <summary>
             /// How long the returned tsinelas stays live in his hand, in seconds.
@@ -269,6 +259,8 @@ namespace TumbangPreso.Abilities
             private const float ChargeSeconds = 10.0f;
 
             private readonly ZackHeroKit _kit;
+            private GameObject _recallTrace;
+            private GameObject _handCharge;
 
             public MagnetRecallAbility(ZackHeroKit kit)
                 : base("zack_skill2", "MAGNET",
@@ -345,16 +337,12 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("hero_zack_grunt", ctx.Position);
                 NetCue.Play("slipper_bounce", from);
 
-                // ⚠️⚠️ THE ARC IS DRAWN FOR EVERYBODY AND THE EQUIP IS DECIDED BY THE HOST, WHICH
-                // IS `CLAUDE.md` § 4 IN ONE METHOD. `SpawnCircuitArcs` is presentation and runs on
-                // every peer; `Slipper.HostForceEquip` opens with `NetAuthority.ShouldResolve()`
-                // and is a no-op anywhere else, so a client predicts the effect and the host
-                // decides the state. A client that could put a tsinelas in its own hand is a
-                // client that can arm itself.
-                HeroHazards.SpawnCircuitArcs(from, Mathf.Max(2.0f, Vector3.Distance(from, ctx.Position)),
-                                             ctx.Motor.PlayerSlot);
-                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform,
-                                                Visual.AbilityVfx.Aura.ElectricSpark, ChargeSeconds);
+                var hand = ctx.Motor.GetComponent<CharacterVisual>()?.HandAnchor;
+                if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
+                if (_handCharge != null) UnityEngine.Object.Destroy(_handCharge);
+                _recallTrace = MagnetRecallTrace.Spawn(from, hand, ctx.Position + Vector3.up * .95f);
+                _handCharge = Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform,
+                    Visual.AbilityVfx.Aura.ElectricSpark, ChargeSeconds);
 
                 mine.HostForceEquip(ctx.Motor);
 
@@ -364,9 +352,18 @@ namespace TumbangPreso.Abilities
                 _kit.IsOverchargeThrowActive = true;
             }
 
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (!_kit.IsOverchargeThrowActive) EndEarly(ctx);
+            }
+
             protected override void OnEnd(AbilityContext ctx)
             {
                 _kit.IsOverchargeThrowActive = false;
+                if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
+                if (_handCharge != null) UnityEngine.Object.Destroy(_handCharge);
+                _recallTrace = null;
+                _handCharge = null;
             }
         }
 
@@ -439,10 +436,9 @@ namespace TumbangPreso.Abilities
                 if (squash != null) squash.Stretch(0.4f);
             }
 
-            protected override void OnTick(AbilityContext ctx, float dt)
-            {
-                ctx.Motor.ApplyImpulse(ctx.Forward * 5.5f * dt);
-            }
+            // No per-tick self impulse: Thunderstrike is an aimed strike, not the
+            // old forward overdrive. Its active tail still empowers throws through
+            // IsThunderstrikeActive, but cannot redirect an incoming knockback.
         }
     }
 }

@@ -17,6 +17,9 @@ namespace TumbangPreso.Abilities
 
         public float UltimateCharge { get; protected set; }
 
+        /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
+        public virtual float MovementSpeedScale => 1.0f;
+
         /// <summary>
         /// ⚠️⚠️ KEPT AS THE METER'S FULL-SCALE VALUE, NOT AS THE PRICE. It used to be both, and
         /// that is why every hero's ultimate cost the same. <see cref="UltimateCost"/> is the
