@@ -336,6 +336,15 @@ The next ghost pass has a source-grounded cause: Kuro's GLB is one merged mesh, 
 the runtime's named mouth/eyes/tail transformation targets do not exist. Reauthor
 those parts in Blender, preserving the live companion/possession/return contract.
 The full all-hero cultural, animation and map/tree scope remains open in the plans.
+Kuro now has separately articulated face/wisp/tail geometry and eight reproducibly
+baked idle clips for future trailer staging. Sleepy eyes, a wink, curiosity and
+hopping accompany body/tail gestures; live fidgets do not consume gameplay random.
+The giant form has an opening mouth, inward-slanted eyes, fangs and reaching wisps.
+Local form/idle/cast checks pass, and the new source/material ownership is verified.
+See [Kuro personality report](reports/improvement-2026-09-10/kuro-personality.md).
+Nemu's Veil function, possession/ultimate interactions, full pull review and SFX
+still need the next kit batch. Keep curiosity, sleepy drift, playful turns and
+reactions to Nemu in the current ghost scope; see the active ledger.
 
 **Latest owner decision, 2026-09-10:** the cleaned Classic models were called solid
 and the owner explicitly asked to move on. Preserve the current cast at `7c7fcb5`;

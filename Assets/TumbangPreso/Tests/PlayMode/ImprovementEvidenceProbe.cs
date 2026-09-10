@@ -327,6 +327,8 @@ namespace TumbangPreso.PlayTests
                 who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
                 var abilities = who.AbilitySystem;
                 abilities.BindHero(hero);
+                if (hero=="nemu") Assert.IsNotNull(who.GetComponent<CharacterVisual>().Companion,
+                    "The real Nemu cast is missing its familiar; a fallback is not this review.");
                 var witness = MakeWitness();
                 for (int slot = 0; slot < 3; slot++)
                 {
@@ -386,7 +388,7 @@ namespace TumbangPreso.PlayTests
             return camera;
         }
 
-        private static IEnumerator Record(Camera camera, string name, float seconds,
+        internal static IEnumerator Record(Camera camera, string name, float seconds,
             CharacterMotor subject = null, Action<float> drive = null)
         {
             string folder = Path.Combine(Output, name);
@@ -415,6 +417,19 @@ namespace TumbangPreso.PlayTests
                     {
                         camera.transform.position = subject.transform.position + new Vector3(3, 1.5f, 4);
                         camera.transform.LookAt(subject.transform.position + Vector3.up * .9f);
+                        var familiar=subject.GetComponent<CharacterVisual>()?.Companion;
+                        if (familiar!=null && Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1")
+                        {
+                            var parts=familiar.GetComponentsInChildren<Renderer>();
+                            Assert.IsNotEmpty(parts);
+                            var bounds=parts[0].bounds;
+                            foreach(var part in parts) if(part.enabled && part.bounds.size.sqrMagnitude>.00001f) bounds.Encapsulate(part.bounds);
+                            var front=familiar.MouthPosition-familiar.transform.position;front.y=0;
+                            front=front.sqrMagnitude>.000001f?front.normalized:familiar.transform.forward;
+                            var direction=(front+Vector3.Cross(Vector3.up,front)*.28f).normalized;
+                            camera.transform.position=bounds.center+direction*Mathf.Max(.9f,bounds.size.y*1.6f)+Vector3.up*bounds.size.y*.08f;
+                            camera.transform.LookAt(bounds.center);
+                        }
                     }
                     var owner = subject != null ? Camera.main : null;
                     if (owner != null && owner != camera)
@@ -433,6 +448,13 @@ namespace TumbangPreso.PlayTests
                         .SelectMany(a=>a.GetComponentsInChildren<Renderer>()).ToArray();
                     var privateEnabled = privateArms.Select(r=>r.enabled).ToArray();
                     foreach(var renderer in privateArms)renderer.enabled=false;
+                    // This optional close-up is an art review camera; surrounding
+                    // bodies may stand inside it. The owner camera above stays ordinary.
+                    var occluders=Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1"
+                        ? Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).SelectMany(p=>p.GetComponentsInChildren<Renderer>()).Distinct().ToArray()
+                        : Array.Empty<Renderer>();
+                    var occluderEnabled=occluders.Select(r=>r.enabled).ToArray();
+                    foreach(var renderer in occluders)renderer.enabled=false;
                     for (int i = 0; i < renderers.Length; i++)
                         if (shadow[i] == ShadowCastingMode.ShadowsOnly) renderers[i].shadowCastingMode = ShadowCastingMode.On;
                     try
@@ -442,6 +464,7 @@ namespace TumbangPreso.PlayTests
                     }
                     finally
                     {
+                        for(int i=0;i<occluders.Length;i++)if(occluders[i]!=null)occluders[i].enabled=occluderEnabled[i];
                         for (int i = 0; i < renderers.Length; i++) if(renderers[i]!=null) renderers[i].shadowCastingMode = shadow[i];
                         for (int i = 0; i < privateArms.Length; i++) if(privateArms[i]!=null) privateArms[i].enabled = privateEnabled[i];
                     }

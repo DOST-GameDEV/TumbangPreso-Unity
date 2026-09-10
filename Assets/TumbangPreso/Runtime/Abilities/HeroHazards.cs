@@ -1657,7 +1657,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 // Rotate cosmic vortex discs
-                transform.Rotate(Vector3.up, 75.0f * Time.deltaTime);
+                // Ground-fitted reach stays fixed; only the airborne intake wisps move.
 
                 // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND THAT IS
                 // WHY THREE OF THE FOUR PLAYERS FELT NOTHING. 🧑 2026-08-29: *"walang higop ss ni
@@ -2325,203 +2325,22 @@ namespace TumbangPreso.Abilities
         /// The `Hollow` rim on the ground says how far it reaches and the maw says what it is.
         /// </summary>
         public static GameObject SpawnKuroUnbound(Vector3 position, float radius, float duration,
-                                                  int ownerSlot, bool fromPet)
+                                                   int ownerSlot, bool fromPet = false)
         {
-            position = VfxShapes.GroundPoint(position);
-            var go = new GameObject("KuroUnbound");
-            go.transform.position = position;
-
-            // The bite out of the road: her motif, and the thing that says how far it reaches.
-            var rim = VfxShapes.Lay(go.transform, "Bite",
-                                    VfxShapes.Hollow(48, 0.66f, 0.18f, ownerSlot * 13 + 5),
-                                    radius, 0.02f);
-            VfxMaterial.Ghost(rim.GetComponent<Renderer>(),
-                              new Color(0.06f, 0.02f, 0.10f, 0.92f), 0.0f);
-            VfxMaterial.StripCollider(rim);
-
-            // ⚠️ THE MAW IS A `NovaShell` TURNED INSIDE OUT BY ITS COLOUR, NOT A NEW BUILDER.
-            // Nemu already owns one construction here (`Hollow`) and § 27's rule is one motif per
-            // hero, not one builder per object: a shell painted so dark it reads as an opening is
-            // the same statement as the rim, in three dimensions. Giving her a second bespoke
-            // solid would be the thing that rule exists to stop.
-            // ⚠️⚠️ IT IS A MOUTH AROUND HIM, NOT A DOME OVER HIM, AND THE FIRST VERSION WAS THE
-            // second. `ability_kuro_unbound_eye_v23.png` is a 1.3 m shell standing where the pet
-            // is: at 5x scale Kuro is about 2.5 m, so the shell covered his legs and most of his
-            // body and the effect read as a hole with a dog's head on top. **The whole point of
-            // moving this ultimate onto the pet is that the pet is the thing you look at**, so
-            // the shell comes down to a knee-high collar of teeth and he stands in it.
-            //
-            // ⚠️ AND IT IS GHOSTED HARDER FOR THE SAME REASON. At 0.88 it occluded him outright
-            // from any angle that put it between him and the camera, which in a four-player
-            // arena is most of them.
-            var maw = VfxShapes.Stand(go.transform, "Maw",
-                                      VfxShapes.NovaShell(6, 12, 0.22f, ownerSlot * 7 + 3),
-                                      radius * 0.62f, heightScale: radius * 0.20f, lift: 0.10f);
-            VfxMaterial.Ghost(maw.GetComponent<Renderer>(),
-                              new Color(0.10f, 0.03f, 0.16f, 0.62f), 0.10f);
-            VfxMaterial.StripCollider(maw);
-
-            // ⚠️ A DARK SOURCE IS NOT A THING, SO THE LIGHT IS A THIN VIOLET RIM LIGHT RATHER
-            // THAN A GLOW IN THE MIDDLE. Lighting the inside of a hole is the one thing that
-            // would destroy the read, and every hazard light in this file already came down by
-            // two thirds for the smaller version of the same mistake.
-            var lightGo = new GameObject("MawRimLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0.0f, 0.25f, 0.0f);
-
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroSpiritBright;
-            light.range = radius * 2.0f;
-            light.intensity = 0.85f * .40f; // Keep the effect readable without bleaching nearby bodies.
-            light.shadows = LightShadows.None;
-
-            // ⚠️ `MawIntake`, NOT `VoidWisp`. Her phase already uses `VoidWisp` and that one is
-            // her body coming apart: motes leaving a person and drifting. This has to say the
-            // opposite, that the court is being taken IN, and the geometry cannot say it on its
-            // own. The two auras differ by the sign and the size of one module.
-            // ⚠️⚠️ WITH NO PET OUT THERE IS NOTHING IN THE MIDDLE, AND THAT IS A HOLE IN THE
-            // DESIGN RATHER THAN IN THE RENDER. `ability_kuro_unbound_v23.png` is what an empty
-            // one looks like and 🧑 asked the right question of it: *"where tf is kiro in this
-            // ult? did u js forget to render him or what"*. In a match with Kuro out he is the
-            // centrepiece: `GhostPetCompanion.Devour` grows him five times, horns him and turns
-            // him black, and the geometry above is what happens AROUND him.
-            //
-            // ⚠️⚠️ BUT THE ABILITY HAS A FALLBACK PATH (`NemuHeroKit`, no pet out, it opens in
-            // front of her) AND ON THAT PATH THERE IS NO KURO AT ALL. So the ultimate would be a
-            // torn ring with a hole in it, which is the old Seance Void wearing the new name: the
-            // exact thing this rework was for. **The fallback grows its own.** A spectral core,
-            // dark, spiky and turning, so the power always has a body at its centre and the
-            // sentence "Kuro is the black hole" is true however it was cast.
-            //
-            // ⚠️ IT IS DELIBERATELY NOT THE PET'S MESH. Loading `character-ghost.glb` here would
-            // put an asset dependency into the hazard layer, and the fallback is not Kuro: it is
-            // the shape of him that the spell reaches for when he is not there. `Spire` at a low
-            // side count reads as a hunched, horned mass at this size and is what his own horns
-            // are made of, which ties the two paths together without pretending they are one.
-            if (!fromPet)
-            {
-                var core = VfxShapes.Stand(go.transform, "MawCore",
-                                           VfxShapes.Spire(5, 0.34f, 0.42f, ownerSlot * 17 + 9),
-                                           radius * 0.30f,
-                                           heightScale: radius * 0.62f,
-                                           lift: 0.05f);
-
-                VfxMaterial.Ghost(core.GetComponent<Renderer>(),
-                                  new Color(0.09f, 0.03f, 0.14f, 0.94f), 0.12f);
-                VfxMaterial.StripCollider(core);
-
-                for (int h = 0; h < 5; h++)
-                {
-                    float a = h / 5.0f * Mathf.PI * 2.0f;
-
-                    var horn = VfxShapes.Stand(core.transform, $"MawCoreHorn_{h}",
-                                               VfxShapes.Spire(4, 0.08f, 0.30f, 700 + h * 13),
-                                               0.30f, heightScale: 0.85f);
-
-                    horn.transform.localPosition = new Vector3(Mathf.Cos(a) * 0.42f, 0.55f,
-                                                               Mathf.Sin(a) * 0.42f);
-                    horn.transform.localRotation = Quaternion.Euler(Mathf.Sin(a) * 38.0f, 0.0f,
-                                                                    -Mathf.Cos(a) * 38.0f);
-
-                    VfxMaterial.Ghost(horn.GetComponent<Renderer>(),
-                                      new Color(0.06f, 0.02f, 0.10f, 0.96f), 0.0f);
-                    VfxMaterial.StripCollider(horn);
-                }
-
-                var turn = core.AddComponent<MawCoreTurn>();
-                turn.Duration = duration;
-            }
-
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.MawIntake, duration);
-
-            GameServices.Audio?.PlayAt("sfx_kuro_unbound", position);
-
-            var anim = go.AddComponent<MawSwell>();
-            anim.Rim = rim.transform;
-            anim.Maw = maw.transform;
-            anim.Duration = duration;
-
-            var comp = go.AddComponent<SeanceVoidComponent>();
-            comp.Radius = radius;
-            comp.Duration = duration;
-            comp.OwnerSlot = ownerSlot;
-
-            // ⚠️⚠️ THE ULTIMATE PULLS 3.5x AS HARD AS THE SKILL THAT SHARES THIS COMPONENT.
-            // 🧑 2026-08-27: *"make kuro's pull stronger and longer"*. At the shared default of
-            // 4.0 the drag was about 13 per cent of `Balance.Speed`, which anybody could simply
-            // walk out of: the most expensive thing Nemu can do was a visual with a slow on it.
-            // 14.0 is about 3.0 m/s of inward drag against a 4.6 m/s walk, so leaving is still
-            // possible and is now a decision rather than a formality. That bound is the whole
-            // design: `docs/VISION.md` § 4 forbids anything with no counterplay, and a pull the
-            // player cannot beat is a stun that lasts as long as the ultimate does.
-            // ⚠️⚠️ 14.0 TO 30.0, AND THE HONEST REASON IS THAT 14 WAS NEVER THE NUMBER ANYBODY
-            // ACTUALLY FELT. 🧑 2026-08-29: *"walang higop ss ni Nemu"*, *"make nemu ult pull
-            // stronger"*, *"MAKE NEEMUS PULL REALLY GOOD LIKE ACTUALLY FEELABLE BY EVERYONE"*.
-            // The drag was host-only until this batch, so on three machines out of four the
-            // strength was irrelevant: it was multiplying an effect that never ran. Raising it
-            // without fixing that would have been tuning a number nobody was reading.
-            //
-            // ⚠️ WITH `CentreBite` 2.2 THE MIDDLE PULLS AT 66, which is comfortably more than
-            // `Balance.Speed`, so the very centre is genuinely inescapable and the rim at 30 is
-            // a hard fight you can still win. That gradient is the point: an ultimate you can
-            // stroll out of anywhere is decoration, and one you cannot escape anywhere is a stun
-            // with a 7 second duration, which `docs/VISION.md` § 4 rules out.
-            //
-            // ⚠️ AND IT STILL PULLS NOBODY IT SHOULD NOT. The owner is exempt, and the lata is
-            // not touched by any of this: see the note in the component, which is the whole
-            // reason there is no code for it there.
-            comp.PullStrength = 62.0f;
-
-            // The tsinelas get dragged properly too, which is the *"pull tsinelas humans"* half.
-            // 5.5 m/s was slower than a walk, so a shoe sitting inside the void barely crept.
-            comp.SlipperPull = 16.0f;
-
-            // The centre takes them off their feet. See `LiftHeight`.
-            comp.LiftHeight = 2.4f;
-            comp.SlipperPull = 9.0f;
-
-            HazardVolume.Attach(go, radius, ownerSlot);
-
-            // ⚠️⚠️ THE MOMENT KURO OPENS, WHICH THE ULTIMATE HAS NEVER HAD.
-            // `docs/Asset_Sourcing.md` § 3 for Devouring Seance: *"Place the implosion inside the
-            // existing dished funnel, then pull a few wisps inward above it. Keep the centre dark
-            // and vertically profiled."* The bite, the maw and the pull are the seven seconds
-            // that follow and none of them move; this is the half second nothing was drawing.
-            //
-            // ⚠️⚠️ AT 0.8 OF THE RADIUS, WHICH IS THIS EFFECT'S OWN HISTORY RATHER THAN A GUESS.
-            // The note on `SpawnSeanceVoid` lists three separate faults and all three were the
-            // MIDDLE of the void being the brightest thing in the frame: a white inner disc, an
-            // opaque core sphere and a 4.5-intensity light over the lot. `void-implosion` has a
-            // lit core of its own, so drawing it out to the rim would put that fault straight
-            // back. Held inside the bite, its bright pixels sit where the geometry is already
-            // darkest and the read stays *this goes down*.
-            //
-            // ⚠️⚠️ ABOVE THE MAW, NOT INSIDE IT, AND THE FIRST ATTEMPT PUT IT INSIDE.
-            // `ability_kuro_unbound_nopet_eye_v53.png` at 1.2 m is a dark purple lump sitting on
-            // a dark purple mouth: two objects of the same colour occupying the same space, which
-            // is `docs/VISION.md` § 2 rule 3's stacking complaint exactly. The maw is the thing
-            // with a mouth; the implosion is what is being pulled INTO it, so it belongs in the
-            // air over the throat where there is nothing else drawn. 2.35 m is head height for a
-            // standing player, which is also where their eye already is.
-            //
-            // ⚠️ IT IS A SIBLING OF THE ZONE, so `Object.Destroy(go, duration)` on the seven
-            // second maw cannot take a half second transient with it, and the probe's own sweep
-            // still collects it: `AbilityShowcaseProbe.Transient` diffs the scene roots.
-            VfxFlipbook.Play(VfxSheets.Implosion, position + Vector3.up * 2.35f, radius * 0.95f);
-
-            Object.Destroy(go, duration);
+            position=VfxShapes.GroundPoint(position);
+            var go=new GameObject("KuroUnbound");go.transform.position=position;
+            // The transformed familiar is the event. The old nested maw, horned
+            // fallback, enormous implosion card and lights hid its face and intake.
+            KuroIntakePresentation.Build(go.transform,radius,duration,ownerSlot,fromPet);
+            GameServices.Audio?.PlayAt("sfx_kuro_unbound",position);
+            var comp=go.AddComponent<SeanceVoidComponent>();
+            comp.Radius=radius;comp.Duration=duration;comp.OwnerSlot=ownerSlot;
+            comp.PullStrength=62;comp.LiftHeight=2.4f;comp.SlipperPull=9;
+            HazardVolume.Attach(go,radius,ownerSlot);
+            Object.Destroy(go,duration);
             return go;
         }
 
-        /// <summary>
-        /// The fallback core rising and turning.
-        ///
-        /// ⚠️ IT TURNS THE OPPOSITE WAY FROM THE SHELL AROUND IT, for the reason
-        /// `GhostPetCompanion.StepDevour` gives about the real pet: two objects turning at the
-        /// same rate are one rigid object, and the whole read here is a thing standing inside
-        /// something else.
-        /// </summary>
         public sealed class MawCoreTurn : MonoBehaviour, Visual.IVfxTimeline
         {
             public float Duration = 5.0f;

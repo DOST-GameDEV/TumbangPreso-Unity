@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
@@ -10,7 +10,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class GhostPetCompanion : MonoBehaviour, IVfxTimeline
     {
-        private enum FidgetState
+        public enum FidgetState
         {
             None,
             TwirlSpin,
@@ -44,6 +44,8 @@ namespace TumbangPreso.Visual
         private bool _mirrored;
         private Vector3 _baseScale = Vector3.one;
         private float _timeOffset;
+        private System.Random _idleRandom = new System.Random(1709);
+        private bool _reactingToEmote;
         private float _tiltVelocity;
         private float _currentBank;
         private Vector3 _lastTargetPos;
@@ -104,21 +106,14 @@ namespace TumbangPreso.Visual
 
         public void StepTo(float seconds)
         {
-            if (_devourTotal <= 0.0f) return;
-
-            _devourLeft = Mathf.Max(0.0f, _devourTotal - seconds);
-
-            float t = 1.0f - _devourLeft / _devourTotal;
-            float open = Mathf.Sqrt(Mathf.Clamp01(t * 4.0f));
-            float grown = Mathf.Lerp(1.0f, DevourScale, open);
-
-            transform.localScale = new Vector3(
-                _baseScale.x * grown * Mathf.Lerp(1.0f, 0.82f, open),
-                _baseScale.y * grown * Mathf.Lerp(1.0f, 1.14f, open),
-                _baseScale.z * grown * Mathf.Lerp(1.0f, 1.26f, open));
-
-            transform.position = _devourGround + Vector3.up * (_originAboveFeet * grown);
-
+            if (_devourTotal <= 0) return;
+            _devourLeft=Mathf.Max(0,_devourTotal-seconds);
+            float open=Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
+            float grown=Mathf.Lerp(1,DevourScale,open);
+            float breath=1+Mathf.Sin(seconds*9f)*.018f*open;
+            _devourStretch=new Vector3(Mathf.Lerp(1,1.30f,open),Mathf.Lerp(1,1.08f,open),Mathf.Lerp(1,1.08f,open));
+            transform.localScale=Vector3.Scale(_baseScale,_devourStretch)*(grown*breath);
+            transform.position=_devourGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
             PoseDevourFace(open);
             PoseDevourBody(open);
         }
@@ -158,6 +153,7 @@ namespace TumbangPreso.Visual
 
         /// <summary>True while Kuro is the ultimate rather than a pet.</summary>
         public bool IsDevouring => _devourLeft > 0.0f;
+        public Vector3 MouthPosition { get { FindFace(); return _mouth != null ? _mouth.position : transform.position; } }
 
         /// <summary>
         /// How long the flight home takes.
@@ -224,19 +220,8 @@ namespace TumbangPreso.Visual
                 _originAboveFeet = Mathf.Max(0.05f, drop);
             }
 
-            var hits = Physics.RaycastAll(transform.position + Vector3.up * 2.0f,
-                                          Vector3.down, 12.0f, ~0,
-                                          QueryTriggerInteraction.Ignore);
-
-            float best = float.MaxValue;
-            foreach (var hit in hits)
-            {
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
-                if (hit.distance >= best) continue;
-
-                best = hit.distance;
-                _devourGround = hit.point;
-            }
+            // Prefer the real court under an overhead bridge, just as ground skills do.
+            _devourGround=VfxShapes.GroundPoint(transform.position);
         }
 
         /// <summary>Where the road is under the maw. Written once, at the cast.</summary>
@@ -345,87 +330,10 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void StepDevour(float dt)
         {
-            _devourLeft -= dt;
-
-            float t = _devourTotal > 0.0f ? 1.0f - _devourLeft / _devourTotal : 1.0f;
-            float open = Mathf.Sqrt(Mathf.Clamp01(t * 4.0f));
-            float grown = Mathf.Lerp(1.0f, DevourScale, open);
-
-            // ⚠️ THE GULP. A body that only grows and turns is a prop; something eating pulses,
-            // and it pulses at a rate you can count. Two hertz, three per cent, applied on top of
-            // the swell rather than replacing it, so it survives the whole five seconds without
-            // ever fighting the growth curve.
-            float gulp = 1.0f + Mathf.Sin(_devourTotal - _devourLeft > 0.0f
-                                          ? (_devourTotal - _devourLeft) * 12.6f : 0.0f) * 0.03f;
-
-            // ⚠️⚠️ HE CHANGES SHAPE, NOT ONLY SIZE. 🧑 2026-08-27: *"kuro should look a bit
-            // different, not js bigger when he transforms, give him like scarier qualities and
-            // shit"*. A uniform scale is a big friendly pet, and the reason is proportion: a
-            // creature that is exactly itself at five times the size reads as a toy held closer
-            // to the camera. Narrowing him and stretching him along his own length gives him a
-            // predator's proportions, which is a different animal at the same volume.
-            // ⚠️⚠️ THE THREE WERE 0.82 / 1.14 / 1.26 AND ARE 0.70 / 1.34 / 1.46. 🧑 2026-08-27,
-            // with a screenshot of the form: *"i think u should change his shape too during this
-            // form"*. The old set was a 14 per cent stretch, which is inside the range a viewer
-            // reads as perspective rather than as a different animal: at 7x scale across a 14 m
-            // court nobody can tell a 1.14 from a 1.0. These are large enough to be a shape.
-            //
-            // ⚠️ NARROW FIRST, THEN LONG, THEN TALL, WHICH IS THE ORDER THAT READS AS A PREDATOR.
-            // Volume is roughly preserved (0.70 x 1.34 x 1.46 = 1.37 against 1.18 before), so he
-            // is not simply bigger again: `DevourScale` already does bigger, and stacking more
-            // size on it is the thing the § THE OTHER THINGS THAT MAKE HIM SCARY note warns
-            // against.
-            // ⚠️⚠️ 0.70 / 1.34 / 1.46 CAME BACK TO 0.80 / 1.18 / 1.32, MEASURED OFF
-            // `ability_kuro_unbound_eye_v30.png`. The first set was chosen to be *"large enough
-            // to be a shape"* and it was, but combined with `DevourScale` it turned him into two
-            // enormous flat wedges that filled the frame from a player's eye height. Kuro is a
-            // boxy voxel ghost: stretching a box tall and narrow exaggerates the boxiness rather
-            // than making it a creature, which is the opposite of 🧑's *"make nemu' look better"*.
-            //
-            // ⚠️ THESE ARE STILL WELL ABOVE THE ORIGINAL 0.82 / 1.14 / 1.26, so the shape change
-            // he asked for is real; what came out is the part that was fighting the silhouette.
-            float narrow = Mathf.Lerp(1.0f, 0.80f, open);
-            float tall = Mathf.Lerp(1.0f, 1.18f, open);
-            float lengthen = Mathf.Lerp(1.0f, 1.32f, open);
-
-            // ⚠️ REMEMBERED FOR `PoseDevourBody`, WHICH HAS TO DIVIDE IT BACK OUT OF THE HORNS.
-            // They are children, so the body's stretch multiplies them too: without this a horn
-            // authored as a spike comes out 1.34 times longer and 0.70 times thinner than it was
-            // drawn, which is a different object at every point on the swell curve.
-            _devourStretch = new Vector3(narrow, tall, lengthen);
-
-            transform.localScale = new Vector3(
-                _baseScale.x * grown * gulp * narrow,
-                _baseScale.y * grown * gulp * tall,
-                _baseScale.z * grown * gulp * lengthen);
-
-            // ⚠️ HE RIDES THE ROAD, AND THE LIFT GROWS WITH HIM. See `DevourLift`: the origin has
-            // to climb as the body does or the jaw goes under the tarmac partway up the curve.
-            // He also stops following Nemu for the duration, which is correct: the maw opens
-            // where he was standing and the hazard is already registered at that point, so a pet
-            // that kept trailing her would drag the mouth away from the damage.
-            //
-            // ⚠️⚠️ AND THE VERTICAL PROPORTION IS IN THE LIFT, NOT ONLY IN THE SCALE. `grown`
-            // alone was correct while the two matched; the moment the body is stretched to
-            // `tall` and the origin is not, the distance from the origin down to his feet grows
-            // by that factor and he sinks into the road by `_originAboveFeet * grown * (tall-1)`.
-            // At the old 1.14 that was 0.20 m and easy to miss; at 1.34 it is 0.48 m, which is
-            // his jaw in the tarmac. This is the same class of fault `DevourLift` records, where
-            // a factor that cancelled at one scale stopped cancelling at another, and it is
-            // exactly the kind only a render catches.
-            transform.position = _devourGround + Vector3.up * (_originAboveFeet * grown * tall);
-
-            // ⚠️ A SLOW TURN, NOT A SPIN, AND AT A DIFFERENT RATE FROM THE SHELL AROUND HIM.
-            // `HeroHazards.MawSwell` turns the shell at 22 degrees a second; a body inside it
-            // turning at 34 is what stops the two reading as one rigid object.
-            transform.Rotate(Vector3.up, 34.0f * dt, Space.World);
-
-            PoseDevourFace(open);
-            PoseDevourBody(open);
-
-            if (_devourLeft > 0.0f) return;
-
-            BeginReturn();
+            // Review sampling and runtime use the same transformation and clock.
+            // Keep facing the court instead of spinning the face away from its victims.
+            StepTo(_devourTotal-_devourLeft+dt);
+            if (_devourLeft<=0) BeginReturn();
         }
 
         // -------------------------------------------------------------------
@@ -445,193 +353,56 @@ namespace TumbangPreso.Visual
         // teleport with an arc drawn on it.
         // -------------------------------------------------------------------
 
-        /// <summary>How many horns. Odd, so there is never a symmetric pair facing the camera.</summary>
-        private const int Horns = 7;
-
-        private readonly System.Collections.Generic.List<Transform> _horns =
-            new System.Collections.Generic.List<Transform>();
+        private readonly System.Collections.Generic.List<Material> _skinMaterials =
+            new System.Collections.Generic.List<Material>();
+        private Transform _armWispL,_armWispR;
+        private Material _eyeLMaterial,_eyeRMaterial;
+        private Color _eyeLInk,_eyeRInk;
 
         private readonly System.Collections.Generic.List<Renderer> _skin =
             new System.Collections.Generic.List<Renderer>();
         private readonly System.Collections.Generic.List<Color> _skinRest =
             new System.Collections.Generic.List<Color>();
 
-        /// <summary>
-        /// Horns out, colour down.
-        ///
-        /// ⚠️ THE HORNS ARE BUILT ONCE AND SCALED, NOT SPAWNED PER FRAME. They are children of the
-        /// pet, so they inherit his growth, his turn and his gulp for free; spawning them in the
-        /// world would mean matching all three by hand every frame.
-        ///
-        /// ⚠️ `VfxShapes.Spire` IS ZACK'S ION COLUMN AT A DIFFERENT SIZE AND THAT IS FINE HERE.
-        /// The no-shared-builders rule (`docs/TODO.md` § 29) is about the SIGNATURE of an
-        /// ability, which is its footprint and its motion; a horn is a horn, and inventing an
-        /// eighth builder to make seven 20 cm spikes would be the rule followed past its point.
-        /// </summary>
+        // The same familiar becomes broader and darker, with reaching arm wisps.
+        // Its face now has real named geometry; extra horns could never replace
+        // the missing mouth/eye motion on the previous single merged mesh.
         private void PoseDevourBody(float k)
         {
-            if (_horns.Count == 0) BuildHorns();
-
-            for (int i = 0; i < _horns.Count; i++)
+            if (_skin.Count==0) PrepareDevourMaterials();
+            for (int i=0;i<_skin.Count;i++)
             {
-                if (_horns[i] == null) continue;
-
-                // They come out of him, so they scale from zero and only along their length at
-                // first: a horn that grows uniformly looks like a balloon.
-                //
-                // ⚠️⚠️ THE LENGTH WENT FROM 0.16 TO 0.30 AND IS THE ONLY PART OF "MORE IMPOSING"
-                // THAT COSTS NOTHING. 🧑 2026-08-27: *"i think u should change his shape too
-                // during this form"*. At 0.16 against a body scaled to `DevourScale` 7.0 the
-                // horns were about two per cent of his height, which is a texture rather than a
-                // silhouette: from across a 14 m arena he was a smooth dark egg. Doubling them
-                // changes his OUTLINE, which is the only thing readable at that distance and
-                // through the dark his own weather brings.
-                //
-                // ⚠️⚠️ AND 0.30 WAS TOO FAR. MEASURED OFF `ability_kuro_unbound_eye_v28.png`,
-                // WHICH IS THE ONLY REASON IT WAS CAUGHT. These are children of a body already at
-                // `PersonScale` 2.38 times `DevourScale` 7.0, so the parent is about 17x before
-                // the stretch and a local 0.30 is a **6.7 m spike over a 2.8 m maw**: three of
-                // them filled the frame and hid the pet they were supposed to be growing out of.
-                //
-                // ⚠️⚠️ THE LENGTH IS BACK AT 0.16, WHICH IS WHAT IT ALWAYS WAS, BECAUSE SIZE WAS
-                // NEVER THE REASON THEY COULD NOT BE SEEN. 🧑's *"he can barely be seen"* is a
-                // CONTRAST report, and the two fixes for it are the value floor and the emission
-                // below. Making them longer as well was solving the same complaint twice, and the
-                // second solution is the one that put a 6.7 m slab in front of the ultimate.
-                //
-                // ⚠️ THIS IS THE SAME CLASS OF FAULT `DevourLift` RECORDS, and it arrived the
-                // same way: a local number read as metres when the real parent carries two
-                // multipliers stacked on a voxel model authored in centimetres.
-                //
-                // ⚠️⚠️ AND THE BODY'S STRETCH IS DIVIDED BACK OUT. `_devourStretch` narrows the
-                // body to 0.70 and lengthens it to 1.34/1.46, and a child inherits all three: a
-                // horn would come out squashed on one axis and drawn out on another, which is
-                // what turned spikes into slabs in `ability_kuro_unbound_eye_v29.png`. Dividing
-                // means the horns keep the proportions they are built with while still growing
-                // with him through `grown`.
-                float grow = Mathf.Clamp01(k * 1.2f);
-                var s = _devourStretch;
-                _horns[i].localScale = new Vector3(
-                    0.055f * grow / Mathf.Max(0.01f, s.x),
-                    0.16f * grow * grow / Mathf.Max(0.01f, s.y),
-                    0.055f * grow / Mathf.Max(0.01f, s.z));
+                if (_skin[i]==null || _skinMaterials[i]==null) continue;
+                Color to=_skinRest[i]*.48f;to.a=_skinRest[i].a;
+                _skinMaterials[i].color=Color.Lerp(_skinRest[i],to,k);
             }
+            if (_armWispL!=null) _armWispL.localRotation=Quaternion.Euler(0,0,48*k);
+            if (_armWispR!=null) _armWispR.localRotation=Quaternion.Euler(0,0,-48*k);
+        }
 
-            // ⚠️ VALUE, NOT HUE. He stays his own colour and goes dark, which is what makes it
-            // read as the same animal in shadow rather than as a recoloured one. Hue is the
-            // channel this game cannot spare (`Hero_Strike_Balance.md` § 8.1) and Nemu already
-            // owns violet.
-            //
-            // ⚠️⚠️ 0.22 BECAME 0.46, AND THE OLD VALUE WAS NOT WRONG SO MUCH AS UNMEASURED
-            // AGAINST THE OTHER HALF OF HIS OWN ULTIMATE. 🧑 2026-08-27, with a screenshot:
-            // *"make nemu' look better and more imposing, he can barely be seen"*. Two changes
-            // that were each correct alone landed in the same power and multiplied:
-            // `PoseDevourBody` takes him to 22 per cent of his own value, and `Visual.SkyEvent`'s
-            // `Seance` look simultaneously drops the whole street's ambient and pulls a violet
-            // sky over it. A dark violet animal at 22 per cent value, under a violet sky, at
-            // night, is a hole in the picture.
-            //
-            // ⚠️⚠️ SO THE VALUE FLOOR IS NOW SET AGAINST THE WEATHER HE BRINGS, NOT AGAINST THE
-            // DAYLIGHT STREET HE WAS TUNED IN. This is the same class of fault `docs/TODO.md`
-            // § 26 records for the sky itself, where every look had to be clamped net-darkening
-            // because a system that changes the global light can break an effect tuned without
-            // it. 0.46 still reads as "in shadow" against the untouched map and stays separable
-            // from the road under his own eclipse.
-            for (int i = 0; i < _skin.Count; i++)
+        private void PrepareDevourMaterials()
+        {
+            foreach (var renderer in GetComponentsInChildren<Renderer>(true))
             {
-                if (_skin[i] == null) continue;
-
-                var mat = _skin[i].material;
-                if (mat == null) continue;
-
-                Color to = _skinRest[i] * 0.46f;
-                to.a = _skinRest[i].a;
-
-                var now = Color.Lerp(_skinRest[i], to, k);
-                mat.color = now;
-                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", now);
-
-                // ⚠️⚠️ AND HE LIGHTS HIMSELF, WHICH IS THE HALF THE VALUE FLOOR CANNOT DO. A
-                // darker body under a darker sky is a contrast problem, and raising the body's
-                // ALBEDO far enough to fix it would have made him pale rather than menacing.
-                // Emission is separate from albedo: it survives the ambient drop his own weather
-                // causes, so the silhouette holds at any light level without the skin reading
-                // lighter. It ramps with `k`, so the glow arrives with the transformation and
-                // unwinds with it on the flight home like every other channel here.
-                if (mat.HasProperty("_EmissionColor"))
-                {
-                    mat.EnableKeyword("_EMISSION");
-                    // ⚠️ 0.30 RATHER THAN 0.55. The first pass set the body and the horns hot
-                    // together and `ability_kuro_unbound_eye_v28.png` came back with both clipped
-                    // to near-white. The body is the larger surface of the two, so it is the one
-                    // that must stay clearly under 1: this is a lift off the floor of the value
-                    // range, not a light source.
-                    mat.SetColor("_EmissionColor", UI.UiTheme.HeroSpiritBright * (0.30f * k));
-                }
+                if (renderer.sharedMaterial==null) continue;
+                string part=renderer.name;
+                if (!part.Contains("ghost-body") && !part.Contains("ghost-tail") && !part.Contains("ghost-arm")) continue;
+                var owned=new Material(renderer.sharedMaterial);
+                renderer.sharedMaterial=owned;
+                _skin.Add(renderer);_skinRest.Add(owned.color);_skinMaterials.Add(owned);
             }
         }
 
-        private void BuildHorns()
+        private void OnDestroy()
         {
-            foreach (var r in GetComponentsInChildren<Renderer>(true))
-            {
-                if (r == null || r.sharedMaterial == null) continue;
-
-                _skin.Add(r);
-                _skinRest.Add(r.material.color);
-            }
-
-            for (int i = 0; i < Horns; i++)
-            {
-                float a = i / (float)Horns * Mathf.PI * 2.0f;
-
-                var horn = VfxShapes.Stand(transform, $"KuroHorn_{i}",
-                                           VfxShapes.Spire(5, 0.10f, 0.24f, 400 + i * 11),
-                                           0.055f, heightScale: 0.16f);
-
-                horn.transform.localPosition = new Vector3(Mathf.Cos(a) * 0.052f, 0.055f,
-                                                           Mathf.Sin(a) * 0.052f);
-
-                // Splayed outward, so the silhouette is spiky from every angle rather than a
-                // crown seen edge-on from half of them.
-                horn.transform.localRotation = Quaternion.Euler(Mathf.Sin(a) * 34.0f, 0.0f,
-                                                                -Mathf.Cos(a) * 34.0f);
-
-                // ⚠️⚠️ THE HORNS CARRY THE EMISSION, THE BODY CARRIES THE VALUE, AND THAT SPLIT
-                // IS WHAT MAKES HIM READ AS LIT FROM INSIDE RATHER THAN AS A GLOWING BLOB. A
-                // near-black spike with a violet emission is an edge the eye finds instantly
-                // against a dark road; the same emission spread over the whole body would wash
-                // the proportions out and undo the narrowing above. `0.06, 0.02, 0.09` is kept
-                // as the albedo for exactly that reason: the horn itself is still almost black.
-                var hornRenderer = horn.GetComponent<Renderer>();
-                VfxMaterial.Solid(hornRenderer, new Color(0.06f, 0.02f, 0.09f));
-
-                // ⚠️⚠️ THE EMISSION IS SET HERE RATHER THAN THROUGH `VfxMaterial.Solid`'s
-                // `emission` PARAMETER, AND THAT IS NOT A STYLE CHOICE. That parameter computes
-                // `colour * emission`, so it can only ever glow the albedo it was given: asking
-                // a near-black horn for an emission of 0.85 returns a near-black glow, which is
-                // an invisible fix for a visibility bug. The whole point here is a DARK horn with
-                // a BRIGHT edge, which needs the two colours to be independent.
-                //
-                // ⚠️⚠️ 1.35 WAS FAR TOO HOT AND `ability_kuro_unbound_eye_v28.png` IS THE PROOF.
-                // An emission multiplier above 1 on a bright theme colour clips: the horns came
-                // back as flat near-white cutouts with no facets in them, which is the exact
-                // failure `docs/VISION.md` § 2 rule 5 and `AbilityShowcaseProbe`'s 12 per cent
-                // blowout bound exist to catch, arriving on an object too small to trip the
-                // frame-wide measurement. 0.30 is a lit EDGE rather than a lamp: the spikes stay
-                // dark violet, read against the road, and keep their geometry.
-                var hornMat = hornRenderer != null ? hornRenderer.sharedMaterial : null;
-                if (hornMat != null && hornMat.HasProperty("_EmissionColor"))
+            var ownedMaterials=new System.Collections.Generic.List<Material>(_skinMaterials);
+            if (_eyeLMaterial!=null) ownedMaterials.Add(_eyeLMaterial);
+            if (_eyeRMaterial!=null) ownedMaterials.Add(_eyeRMaterial);
+            foreach (var material in ownedMaterials)
+                if (material!=null)
                 {
-                    hornMat.EnableKeyword("_EMISSION");
-                    hornMat.SetColor("_EmissionColor", UI.UiTheme.HeroSpiritBright * 0.30f);
-                    hornMat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+                    if (Application.isPlaying) Destroy(material); else DestroyImmediate(material);
                 }
-                VfxMaterial.StripCollider(horn);
-
-                horn.transform.localScale = Vector3.zero;
-                _horns.Add(horn.transform);
-            }
         }
 
         // -------------------------------------------------------------------
@@ -720,6 +491,8 @@ namespace TumbangPreso.Visual
                 else if (_eyeL == null && n.Contains("eye-l")) _eyeL = child;
                 else if (_eyeR == null && n.Contains("eye-r")) _eyeR = child;
                 else if (n.Contains("tail")) _tail.Add(child);
+                else if (n=="ghost-arm-l") _armWispL=child;
+                else if (n=="ghost-arm-r") _armWispR=child;
             }
 
             // ⚠️ SORTED BY HOW FAR DOWN THE MODEL THEY SIT, NOT BY THE ORDER THE HIERARCHY
@@ -737,12 +510,14 @@ namespace TumbangPreso.Visual
             {
                 _eyeLRest = _eyeL.localScale;
                 _eyeLRestRot = _eyeL.localRotation;
+                _eyeLMaterial=OwnEyeMaterial(_eyeL);if(_eyeLMaterial!=null)_eyeLInk=_eyeLMaterial.color;
             }
 
             if (_eyeR != null)
             {
                 _eyeRRest = _eyeR.localScale;
                 _eyeRRestRot = _eyeR.localRotation;
+                _eyeRMaterial=OwnEyeMaterial(_eyeR);if(_eyeRMaterial!=null)_eyeRInk=_eyeRMaterial.color;
             }
         }
 
@@ -757,6 +532,19 @@ namespace TumbangPreso.Visual
         /// step drifts out of time with the body's bob, which is computed from the clock. Sampling
         /// the same clock keeps the tail and the float one motion.
         /// </summary>
+        private static Material OwnEyeMaterial(Transform eye)
+        {
+            var renderer=eye.GetComponent<Renderer>();
+            if(renderer==null || renderer.sharedMaterial==null)return null;
+            var material=new Material(renderer.sharedMaterial);renderer.sharedMaterial=material;return material;
+        }
+        private void EyeColor(float rage)
+        {
+            var pale=new Color(.94f,.86f,.68f);
+            if(_eyeLMaterial!=null) _eyeLMaterial.color=Color.Lerp(_eyeLInk,pale,rage);
+            if(_eyeRMaterial!=null) _eyeRMaterial.color=Color.Lerp(_eyeRInk,pale,rage);
+        }
+
         private void StepTail(float time)
         {
             FindFace();
@@ -796,26 +584,27 @@ namespace TumbangPreso.Visual
             if (_mouth != null)
             {
                 _mouth.localScale = new Vector3(
-                    _mouthRest.x * Mathf.Lerp(1.0f, 4.0f, k),
-                    _mouthRest.y * Mathf.Lerp(1.0f, 7.0f, k),
+                    _mouthRest.x * Mathf.Lerp(1.0f, 3.4f, k),
+                    _mouthRest.y * Mathf.Lerp(1.0f, 5.8f, k),
                     _mouthRest.z * Mathf.Lerp(1.0f, 2.2f, k));
 
                 PoseTeeth(k);
             }
 
+            EyeColor(k);
             float slant = 26.0f * k;
-            float narrow = Mathf.Lerp(1.0f, 0.55f, k);
+            float narrow = Mathf.Lerp(1.0f, 0.32f, k);
 
             if (_eyeL != null)
             {
                 _eyeL.localScale = new Vector3(_eyeLRest.x, _eyeLRest.y * narrow, _eyeLRest.z);
-                _eyeL.localRotation = _eyeLRestRot * Quaternion.Euler(0.0f, 0.0f, -slant);
+                _eyeL.localRotation = _eyeLRestRot * Quaternion.Euler(0.0f, 0.0f, slant);
             }
 
             if (_eyeR != null)
             {
                 _eyeR.localScale = new Vector3(_eyeRRest.x, _eyeRRest.y * narrow, _eyeRRest.z);
-                _eyeR.localRotation = _eyeRRestRot * Quaternion.Euler(0.0f, 0.0f, slant);
+                _eyeR.localRotation = _eyeRRestRot * Quaternion.Euler(0.0f, 0.0f, -slant);
             }
         }
 
@@ -839,7 +628,7 @@ namespace TumbangPreso.Visual
         // -------------------------------------------------------------------
 
         /// <summary>Teeth per row. Two rows, upper and lower.</summary>
-        private const int TeethPerRow = 6;
+        private const int TeethPerRow = 3;
 
         private readonly System.Collections.Generic.List<Transform> _teeth =
             new System.Collections.Generic.List<Transform>();
@@ -849,8 +638,8 @@ namespace TumbangPreso.Visual
             if (_teeth.Count == 0) BuildTeeth();
 
             // The parent's stretch, so each tooth can undo it and keep its own proportions.
-            float sx = Mathf.Lerp(1.0f, 4.0f, k);
-            float sy = Mathf.Lerp(1.0f, 7.0f, k);
+            float sx = Mathf.Lerp(1.0f, 3.4f, k);
+            float sy = Mathf.Lerp(1.0f, 5.8f, k);
             float sz = Mathf.Lerp(1.0f, 2.2f, k);
 
             for (int i = 0; i < _teeth.Count; i++)
@@ -862,9 +651,9 @@ namespace TumbangPreso.Visual
                 // than growing through a closed face.
                 float show = Mathf.Clamp01(k * 1.6f - 0.6f);
 
-                _teeth[i].localScale = new Vector3(0.34f * show / sx,
-                                                   0.40f * show / sy,
-                                                   0.34f * show / sz);
+                _teeth[i].localScale = new Vector3(0.42f * show / sx,
+                                                   1.30f * show / sy,
+                                                   0.80f * show / sz);
             }
         }
 
@@ -888,7 +677,7 @@ namespace TumbangPreso.Visual
 
                     // Across the opening, at its top or bottom edge, and leaning outward at the
                     // corners so the row follows the mouth's curve rather than sitting in a line.
-                    tooth.transform.localPosition = new Vector3(t * 0.82f, dir * 0.42f, -0.05f);
+                    tooth.transform.localPosition = new Vector3(t * 0.82f, dir * 0.42f, 0.65f);
 
                     // ⚠️ THE UPPER ROW IS TURNED OVER. `Spire` points up by construction, so an
                     // upper canine has to be rotated 180 or it grows out of his snout.
@@ -899,7 +688,7 @@ namespace TumbangPreso.Visual
                     // the teeth are the one thing that must stay pale, because they are only
                     // legible against the hole they are in.
                     VfxMaterial.Solid(tooth.GetComponent<Renderer>(),
-                                      new Color(0.90f, 0.88f, 0.82f));
+                                      new Color(0.90f, 0.88f, 0.82f), .18f);
                     VfxMaterial.StripCollider(tooth);
 
                     tooth.transform.localScale = Vector3.zero;
@@ -1007,23 +796,28 @@ namespace TumbangPreso.Visual
             if (_returnLeft > 0.0f) return;
 
             transform.localScale = _baseScale;
+            _devourTotal=0;_devourLeft=0;
         }
 
         private void Awake()
         {
             _baseScale = transform.localScale;
-            _timeOffset = Random.Range(0.0f, 100.0f);
+            _timeOffset = (float)_idleRandom.NextDouble()*7f;
             ResetFidgetTimer();
         }
 
         private void ResetFidgetTimer()
         {
-            _nextFidgetTimer = Random.Range(2.8f, 4.8f);
+            _nextFidgetTimer = 3.6f+(float)_idleRandom.NextDouble()*2.8f;
         }
 
         public void Bind(Transform target, Vector3? customOffset = null, float scaleMultiplier = 1.0f)
         {
             _target = target;
+            var owner=target != null ? target.GetComponentInParent<CharacterMotor>() : null;
+            _idleRandom=new System.Random(1709+(owner != null ? owner.PlayerSlot*97 : 0));
+            _timeOffset=(float)_idleRandom.NextDouble()*7f;
+            ResetFidgetTimer();
             if (customOffset.HasValue)
                 _localOffset = customOffset.Value;
 
@@ -1145,6 +939,8 @@ namespace TumbangPreso.Visual
             dt = Mathf.Min(dt, 0.10f);
 
             float time = (Application.isPlaying ? Time.time : Time.unscaledTime) + _timeOffset;
+            if (_target==null) { Destroy(gameObject); return; }
+            MirrorOwnerVisibility(_target.gameObject.activeInHierarchy);
 
             // ⚠️ THE MAW AND THE FLIGHT ARE CHECKED BEFORE THE POSSESSION AND BEFORE THE FOLLOW,
             // because both of them own the transform outright for their duration. Letting the
@@ -1160,13 +956,13 @@ namespace TumbangPreso.Visual
 
             if (_devourLeft > 0.0f)
             {
-                StepDevour(dt);
+                StepDevour(Mathf.Max(0,Time.deltaTime));
                 return;
             }
 
             if (_returnLeft > 0.0f)
             {
-                StepReturn(dt);
+                StepReturn(Mathf.Max(0,Time.deltaTime));
                 return;
             }
 
@@ -1263,7 +1059,7 @@ namespace TumbangPreso.Visual
 
             Quaternion baseRot = _target.rotation;
             Quaternion tiltRot = Quaternion.Euler(idlePitch, idleYaw, _currentBank + idleRoll);
-            transform.rotation = Quaternion.Slerp(transform.rotation, baseRot * tiltRot, dt * 14.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, baseRot * tiltRot, (1-Mathf.Exp(-14*dt)));
 
             // Cute breathing scale pulse with speed stretch
             float pulse = 1.0f + Mathf.Sin(time * _pulseSpeed) * _pulseAmount;
@@ -1274,6 +1070,8 @@ namespace TumbangPreso.Visual
                                              _baseScale.y * _fidgetScaleMul.y * (pulse - speedSquashX),
                                              _baseScale.z * _fidgetScaleMul.z * (pulse + speedStretchZ));
             transform.localScale = finalScale;
+            PoseIdleFace(_reactingToEmote ? FidgetState.HappyHop : _currentFidget,
+                _reactingToEmote ? Mathf.Repeat(time*.5f,1) : Mathf.Clamp01(_fidgetProgress),time);
         }
 
         /// <summary>
@@ -1303,15 +1101,18 @@ namespace TumbangPreso.Visual
 
         private void UpdateFidgetAI(float dt, float speed, float time)
         {
+            _reactingToEmote=false;
             var ownerEmotes = _target != null ? _target.GetComponentInParent<Social.EmotePlayer>() : null;
             if (ownerEmotes != null && ownerEmotes.IsEmoting)
             {
-                // Dance and bounce happily alongside the player during emotes
-                _fidgetExtraYaw = (_fidgetExtraYaw + dt * 280.0f) % 360.0f;
+                // Answer Nemu's emote with an attentive sway and little hops.
+                // The old endless pirouette made the familiar read as a spinning prop.
+                _reactingToEmote=true;
+                _fidgetExtraYaw = Mathf.Sin(time*2.8f)*18;
                 _fidgetExtraPitch = Mathf.Sin(time * 6.0f) * 8.0f;
                 _fidgetExtraRoll = Mathf.Cos(time * 6.0f) * 6.0f;
-                _fidgetOffset = new Vector3(0.0f, Mathf.Sin(time * 7.0f) * 0.10f, 0.0f);
-                float squash = 1.0f + Mathf.Sin(time * 7.0f) * 0.14f;
+                _fidgetOffset = new Vector3(0.0f, Mathf.Abs(Mathf.Sin(time * 3.5f)) * 0.055f, 0.0f);
+                float squash = 1.0f + Mathf.Sin(time * 7.0f) * 0.06f;
                 _fidgetScaleMul = new Vector3(1.0f / Mathf.Sqrt(squash), squash, 1.0f / Mathf.Sqrt(squash));
                 return;
             }
@@ -1321,11 +1122,11 @@ namespace TumbangPreso.Visual
                 // Active movement cancels idle fidgets smoothly
                 _stillTime = 0.0f;
                 _currentFidget = FidgetState.None;
-                _fidgetOffset = Vector3.Lerp(_fidgetOffset, Vector3.zero, dt * 8.0f);
-                _fidgetExtraYaw = Mathf.Lerp(_fidgetExtraYaw, 0.0f, dt * 8.0f);
-                _fidgetExtraPitch = Mathf.Lerp(_fidgetExtraPitch, 0.0f, dt * 8.0f);
-                _fidgetExtraRoll = Mathf.Lerp(_fidgetExtraRoll, 0.0f, dt * 8.0f);
-                _fidgetScaleMul = Vector3.Lerp(_fidgetScaleMul, Vector3.one, dt * 8.0f);
+                _fidgetOffset = Vector3.Lerp(_fidgetOffset, Vector3.zero, (1-Mathf.Exp(-8*dt)));
+                _fidgetExtraYaw = Mathf.Lerp(_fidgetExtraYaw, 0.0f, (1-Mathf.Exp(-8*dt)));
+                _fidgetExtraPitch = Mathf.Lerp(_fidgetExtraPitch, 0.0f, (1-Mathf.Exp(-8*dt)));
+                _fidgetExtraRoll = Mathf.Lerp(_fidgetExtraRoll, 0.0f, (1-Mathf.Exp(-8*dt)));
+                _fidgetScaleMul = Vector3.Lerp(_fidgetScaleMul, Vector3.one, (1-Mathf.Exp(-8*dt)));
                 return;
             }
 
@@ -1333,11 +1134,11 @@ namespace TumbangPreso.Visual
 
             if (_currentFidget == FidgetState.None)
             {
-                _fidgetOffset = Vector3.Lerp(_fidgetOffset, Vector3.zero, dt * 4.0f);
-                _fidgetExtraYaw = Mathf.Lerp(_fidgetExtraYaw, 0.0f, dt * 4.0f);
-                _fidgetExtraPitch = Mathf.Lerp(_fidgetExtraPitch, 0.0f, dt * 4.0f);
-                _fidgetExtraRoll = Mathf.Lerp(_fidgetExtraRoll, 0.0f, dt * 4.0f);
-                _fidgetScaleMul = Vector3.Lerp(_fidgetScaleMul, Vector3.one, dt * 4.0f);
+                _fidgetOffset = Vector3.Lerp(_fidgetOffset, Vector3.zero, (1-Mathf.Exp(-4*dt)));
+                _fidgetExtraYaw = Mathf.Lerp(_fidgetExtraYaw, 0.0f, (1-Mathf.Exp(-4*dt)));
+                _fidgetExtraPitch = Mathf.Lerp(_fidgetExtraPitch, 0.0f, (1-Mathf.Exp(-4*dt)));
+                _fidgetExtraRoll = Mathf.Lerp(_fidgetExtraRoll, 0.0f, (1-Mathf.Exp(-4*dt)));
+                _fidgetScaleMul = Vector3.Lerp(_fidgetScaleMul, Vector3.one, (1-Mathf.Exp(-4*dt)));
 
                 if (_stillTime > 1.2f)
                 {
@@ -1345,34 +1146,11 @@ namespace TumbangPreso.Visual
                     if (_nextFidgetTimer <= 0.0f)
                     {
                         // Trigger a random cute idle behavior (1 to 7)
-                        int pick = Random.Range(1, 8);
+                        int pick = _idleRandom.Next(1,8);
                         _currentFidget = (FidgetState)pick;
                         _fidgetProgress = 0.0f;
 
-                        switch (_currentFidget)
-                        {
-                            case FidgetState.TwirlSpin:
-                                _fidgetDuration = 0.85f;
-                                break;
-                            case FidgetState.HappyHop:
-                                _fidgetDuration = 1.1f;
-                                break;
-                            case FidgetState.CuriousPeek:
-                                _fidgetDuration = 1.6f;
-                                break;
-                            case FidgetState.OrbitArc:
-                                _fidgetDuration = 2.2f;
-                                break;
-                            case FidgetState.SleepySnooze:
-                                _fidgetDuration = 1.8f;
-                                break;
-                            case FidgetState.CheekyGiggle:
-                                _fidgetDuration = 1.0f;
-                                break;
-                            case FidgetState.HeartbeatPulse:
-                                _fidgetDuration = 1.3f;
-                                break;
-                        }
+                        _fidgetDuration=IdleGestureDuration(_currentFidget);
                     }
                 }
             }
@@ -1381,7 +1159,63 @@ namespace TumbangPreso.Visual
                 _fidgetProgress += dt / _fidgetDuration;
                 float p = Mathf.Clamp01(_fidgetProgress);
 
-                switch (_currentFidget)
+                EvaluateIdleGesture(_currentFidget,p);
+
+                if (_fidgetProgress >= 1.0f)
+                {
+                    if (_currentFidget==FidgetState.TwirlSpin) _fidgetExtraYaw=0;
+                    _currentFidget = FidgetState.None;
+                    ResetFidgetTimer();
+                }
+            }
+        }
+
+        public static float IdleGestureDuration(FidgetState gesture) => gesture switch
+        {
+            FidgetState.TwirlSpin => .85f,
+            FidgetState.HappyHop => 1.1f,
+            FidgetState.CuriousPeek => 1.6f,
+            FidgetState.OrbitArc => 2.2f,
+            FidgetState.SleepySnooze => 1.8f,
+            FidgetState.CheekyGiggle => 1f,
+            FidgetState.HeartbeatPulse => 1.3f,
+            _ => 4.4f,
+        };
+
+        /// <summary>Stage an existing idle gesture without overriding possession or a cast.</summary>
+        public bool PlayIdleGesture(FidgetState gesture)
+        {
+            if (IsDevouring || IsPossessed || _returnLeft>0 || _lastSpeed>.15f) return false;
+            _currentFidget=gesture;_fidgetProgress=0;_fidgetDuration=IdleGestureDuration(gesture);
+            return true;
+        }
+
+        /// <summary>Deterministic pose sampling for authored clips and future trailer shots.</summary>
+        public bool SampleIdleForCapture(FidgetState gesture,float seconds)
+        {
+            if (_target==null || IsDevouring || IsPossessed || _returnLeft>0) return false;
+            float duration=IdleGestureDuration(gesture);
+            float p=Mathf.Clamp01(seconds/duration);
+            EvaluateIdleGesture(gesture,p);
+            if (gesture==FidgetState.None)
+            {
+                float phase=p*Mathf.PI*2;
+                _fidgetOffset=new Vector3(Mathf.Sin(phase)*.018f,Mathf.Sin(phase*2)*.028f,0);
+                _fidgetExtraRoll=Mathf.Sin(phase)*2.5f;
+            }
+            transform.position=_target.TransformPoint(_localOffset+_fidgetOffset);
+            transform.rotation=_target.rotation*Quaternion.Euler(_fidgetExtraPitch,_fidgetExtraYaw,_fidgetExtraRoll);
+            transform.localScale=Vector3.Scale(_baseScale,_fidgetScaleMul);
+            StepTail(p*Mathf.PI*2/TailRate);
+            PoseIdleFace(gesture,p,seconds);
+            return true;
+        }
+
+        private void EvaluateIdleGesture(FidgetState gesture,float p)
+        {
+            _fidgetOffset=Vector3.zero;_fidgetScaleMul=Vector3.one;
+            _fidgetExtraYaw=_fidgetExtraPitch=_fidgetExtraRoll=0;
+                switch (gesture)
                 {
                     case FidgetState.TwirlSpin:
                         // 360 degree celebratory pirouette with slight upward bounce
@@ -1406,7 +1240,7 @@ namespace TumbangPreso.Visual
                         float peekT = Mathf.Sin(p * Mathf.PI);
                         _fidgetOffset = new Vector3(0.06f * peekT, 0.02f * peekT, 0.14f * peekT);
                         _fidgetExtraYaw = Mathf.Sin(p * Mathf.PI * 2.0f) * 24.0f;
-                        _fidgetExtraRoll = Mathf.Cos(p * Mathf.PI * 2.0f) * 16.0f;
+                        _fidgetExtraRoll = Mathf.Cos(p * Mathf.PI * 2.0f) * 16.0f * peekT;
                         _fidgetExtraPitch = -9.0f * peekT;
                         _fidgetScaleMul = Vector3.one;
                         break;
@@ -1452,12 +1286,28 @@ namespace TumbangPreso.Visual
                         break;
                 }
 
-                if (_fidgetProgress >= 1.0f)
-                {
-                    _currentFidget = FidgetState.None;
-                    ResetFidgetTimer();
-                }
-            }
+        }
+
+        private void PoseIdleFace(FidgetState gesture,float p,float seconds)
+        {
+            FindFace();
+            EyeColor(0);
+            float blink=Mathf.Clamp01(1-Mathf.Abs(Mathf.Repeat(seconds,3.7f)-2.8f)/.12f);
+            float lid=1-.92f*blink;
+            float expression=Mathf.Sin(p*Mathf.PI);
+            float mouthWide=1,mouthTall=1,leftLid=lid,rightLid=lid;
+            if (gesture==FidgetState.SleepySnooze)
+                leftLid=rightLid=Mathf.Min(lid,1-.92f*expression);
+            if (gesture==FidgetState.CuriousPeek) {leftLid*=1+.15f*expression;mouthTall+=.4f*expression;}
+            if (gesture==FidgetState.HappyHop) {mouthWide+=.18f*expression;mouthTall+=.45f*expression;}
+            if (gesture==FidgetState.CheekyGiggle)
+            {leftLid=Mathf.Min(lid,1-.90f*expression);mouthWide+=.32f*expression;mouthTall-=.35f*expression;}
+            if (_eyeL!=null) {_eyeL.localScale=Vector3.Scale(_eyeLRest,new Vector3(1,leftLid,1));_eyeL.localRotation=_eyeLRestRot;}
+            if (_eyeR!=null) {_eyeR.localScale=Vector3.Scale(_eyeRRest,new Vector3(1,rightLid,1));_eyeR.localRotation=_eyeRRestRot;}
+            if (_mouth!=null) _mouth.localScale=Vector3.Scale(_mouthRest,new Vector3(mouthWide,mouthTall,1));
+            float arms=(gesture==FidgetState.HappyHop || gesture==FidgetState.CheekyGiggle) ? expression*12 : 0;
+            if (_armWispL!=null)_armWispL.localRotation=Quaternion.Euler(0,0,arms);
+            if (_armWispR!=null)_armWispR.localRotation=Quaternion.Euler(0,0,-arms);
         }
 
         private void UpdatePossession(float dt, float time)
@@ -1526,7 +1376,7 @@ namespace TumbangPreso.Visual
             {
                 float targetY = hit.point.y + 0.9f;
                 Vector3 p = transform.position;
-                p.y = Mathf.Lerp(p.y, targetY, dt * 8.0f);
+                p.y = Mathf.Lerp(p.y, targetY, (1-Mathf.Exp(-8*dt)));
                 transform.position = p;
             }
 

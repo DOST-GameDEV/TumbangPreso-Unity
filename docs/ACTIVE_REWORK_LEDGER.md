@@ -410,6 +410,99 @@ per-action design direction, verification criteria and resume order. Read it bef
 further skill work. Character models stay kept; spawned skill models may be reworked.
 Next: Permafrost Sheet art, then complete all three Cheska actions and the other kits.
 
+### Current Nemu work after pushed Cheska checkpoint 1b83710
+
+**Latest owner request:** Kuro must have idle animations and a visible personality,
+with future trailers in mind. Make curious looks, sleepy hovering, playful turns,
+attention/reactions to Nemu and recovery readable on the real rebuilt face/body/tail.
+Keep ordinary play subtle. Preserve authorable/reproducible animation sampling for
+trailer capture; do not rely solely on random fidgets that cannot be staged again.
+Audit the existing seven fidget states before adding or replacing behavior. The
+separate face parts now make eye/mouth personality possible. This is an explicit
+part of the current ghost deliverable, not an optional future feature.
+
+- Cheska's full local batch is pushed at 1b83710. It includes actual traction, all
+  three visual/action passes, seven timing-aligned sound layers and the shared FPP
+  held-preparation support. See reports/improvement-2026-09-10/cheska-kit.md.
+- Nemu baseline actual three-cast capture: Logs/nemu-before-ghost-rework, 1/1 test.
+  At full size the old ghost is a giant glowing placard with its unchanged cute
+  face. The one-node/one-mesh GLB confirms the mouth/eye/tail posing could not bind.
+- Current uncommitted native ghost: tools/author_kuro.py,
+  MapSource/characters/kuro/kuro.blend, and replacement pet-nemu-ghost.glb at the
+  same path/GUID. Nine meshes / ten nodes, separately named eyes/mouth/arm wisps/tail.
+  The cute baseline has a chamfered lavender body, simple ink face and connected
+  tapered wisps. Its person owner has NOT been redesigned.
+- Current GhostPetCompanion changes unify runtime/review devour sampling, broaden
+  the form, remove automatic spinning, use the actual court height and animate the
+  now-existing face/arms. Remove old horn material logic; use owned body materials.
+  CharacterVisual now gives the companion its own materials and thin body ink,
+  with no outline around the little face planes, instead of Nemu's person palette.
+- The initial missing-field replacement was fixed and the runtime run compiled.
+  However, nemu-articulated-ghost-v1.xml passing 1/1 only proves accepted casts:
+  visual inspection showed the old petless fallback. The rebuilt GLB changed its
+  prefab fileID, so the roster PetModel reference must be refreshed. Existing
+  RosterBookBuilder.Build completed and refreshed PetModel to fileID
+  6209952159126781060 under the existing GUID. The only actual roster content diff
+  is that reference; most other listed roster/arm changes are serialization noise.
+- New KuroFormTests checks the REAL roster PetModel and named face/tail/arm targets,
+  visible mouth/eye changes, a broad giant scale, return and source material safety.
+  It passes 1/1 after the reference refresh (Logs/kuro-form-contract.xml).
+  Do not accept a generic fallback as evidence of the ghost rework.
+- This prototype is not visually approved or complete. Before further changes,
+  verify the roster PetModel reference still resolves and all named targets exist.
+  Review the real cute/transform/raging/return states, including FPP and three-quarter.
+- Remaining Nemu kit: fix Veil's immediate cancellation while already holding a
+  slipper and its erased 3*dt speed impulse; preserve acquisition-driven end and
+  existing variant tradeoff. Rework phase/project/arrival cues and sound layers.
+  Replace the remaining generic ultimate column/floor maw/light with the actual
+  giant ghost plus restrained inward flow to its mouth, retaining truthful radius.
+  Measure center/rim pull and escape before deciding whether values need adjustment.
+  Preserve possession, return, owner visibility, authority and can immunity.
+- Then Phaister's phased grand magic, the other kits and all remaining motion,
+  maps/trees/gameplay/Windows delivery. The full plans remain authoritative.
+
+- The v2 runtime cast capture passes 1/1 with the reference fixed. Its witness
+  camera follows Nemu and can miss the independently located familiar after Astral
+  Hijack. A TUMP_REVIEW_FAMILIAR=1 camera option now frames the actual ghost's front
+  and bounds; use it for the next real cast capture. The owner view stays ordinary.
+- Removed Nemu's generic light column. SpawnKuroUnbound now keeps its existing
+  gameplay component/values but draws the real familiar plus a grounded thin reach
+  ring and eight inward wisp packets. It has no old opaque maw/implosion card/light.
+  Wisp source ground points are cached once. This needs visual and lifecycle review.
+- Added the owner's explicit idle/personality work to the actual ghost. Existing
+  seven gestures now share one sampler with live idle faces (blink/sleep/curiosity/
+  cheerful mouth/wink), with exponential settling, no pirouette rewind and calmer
+  reactions to Nemu's emotes. Fidget randomness is per-ghost System.Random and does
+  not consume gameplay UnityEngine.Random. Capture sampling is deterministic and
+  refuses to override possession/devour/return.
+- KuroIdleClipAuthor.Build completed: eight named Unity .anim clips (hover plus
+  seven gestures), baked from the live sampler into Art/animations/kuro-idles for
+  future Timeline/trailer authoring. No new player mode or UI. The first bake had
+  redundant dense constant curves (about 35 MB); the author now keeps identical
+  endpoints for constant channels and every animated sample. Rerun the author
+  after the current Unity run, then compare exported clips against sampler poses.
+- KuroFormTests passes all three focused checks (kuro-idle-contracts.xml): real
+  face/return/source-material safety, repeatable idle sampling/gameplay-random
+  isolation, and all eight baked clips versus the sampler. Subsequent review
+  found mirrored runtime eye/arm rotations made the rage face sad and wisps hang
+  down. Their signs are corrected and a new assertion requires inner eye corners
+  below the outer corners. Expired devour timeline sampling is now inert.
+  The refreshed full EditMode run Logs/kuro-full-edit.xml passes 481/481.
+- Personality/form v4 review passes 2/2: all eight idle sequences and the actual
+  three-cast Nemu sequence. Logs/kuro-personality-and-form-v4 has timestamped stills
+  and encoded silent MP4s. The familiar close-up optionally hides surrounding
+  bodies only for its witness camera; the owner's view remains ordinary. These are
+  art close-ups, not ordinary-play overlap evidence. The real companion is asserted.
+  v4 shows a clear cute/sleepy face and broad toothed form. Corrected-form v5 passes
+  1/1 and visually confirms inward-slanting angry eyes and outward-reaching wisps.
+  Model/idle source audits pass all fourteen gates; audio retains seven informational
+  flags. Checks.RunAll passes all eight (kuro-model-idle-checks.log).
+  Nemu's remaining function/SFX/possession/pull work is not yet complete.
+- Model/personality sampling, exported clips, actual cute/giant forms and source
+  material safety are locally verified. Push this stable model/idle batch, then
+  complete Veil, possession, pull/counterplay, cast motion and SFX. Do not treat the
+  familiar work as completion of the full Nemu kit or the other five hero queues.
+
 ### Current uncommitted Cheska kit batch after a275138
 
 - Native Blender wall source and four small mesh exports under Models/CheskaIce.

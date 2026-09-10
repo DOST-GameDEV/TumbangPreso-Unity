@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace TumbangPreso.Visual
@@ -271,7 +271,12 @@ namespace TumbangPreso.Visual
                 var companion = _petInstance.AddComponent<GhostPetCompanion>();
                 companion.Bind(_instance != null ? _instance.transform : transform, new Vector3(-0.52f, 0.50f, -0.05f), PersonScale);
                 Companion = companion;
-                ToonSkin.Apply(_petInstance, person ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth, palette);
+                // The familiar has its own authored materials. Applying Nemu's person
+                // palette mapped its plain face parts through an unrelated atlas slot.
+                ToonSkin.Apply(_petInstance, ToonSkin.PersonOutlineWidth*.4f, null);
+                foreach (var face in _petInstance.GetComponentsInChildren<Renderer>())
+                    if (face.name.Contains("eye") || face.name.Contains("mouth"))
+                        ToonSkin.Apply(face,0,null);
                 _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
             }
 

@@ -963,7 +963,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else
+            else if (Kit == null || Kit.HeroId != "nemu")
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN

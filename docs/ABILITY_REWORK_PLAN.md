@@ -23,6 +23,11 @@ Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER
   inward. A floor maw or colored aura without that transformation is insufficient.
   Make anticipation, transformation, rage, intake and return readable. Inspect the
   live companion/hero link rather than guessing which mesh is actually transformed.
+- **Latest Kuro personality/trailer brief:** author distinct idle expressions and
+  body/tail gestures, including curiosity, sleepy drift, playfulness and attention
+  to Nemu. Keep them subtle during matches and reproducibly stageable for future
+  trailers. Audit existing fidget states and make them operate on the real model's
+  separated parts; random root movement alone is insufficient.
 
 - Thoroughly improve **all eighteen existing abilities**, including the geometry
   and models they spawn, body/FPP animation, sounds, effects, utility, timing,
