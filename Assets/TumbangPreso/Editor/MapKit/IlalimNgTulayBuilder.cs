@@ -329,7 +329,9 @@ namespace TumbangPreso.EditorTools.MapKit
             // the map nobody has ever called dull, and what stays different is the ambient LEVEL,
             // which is the thing that is actually true about being under a viaduct.
             var grade = mapRoot.AddComponent<MapGrade>();
-            grade.Set(1.00f, 1.03f, 1.02f, 1.00f, 1.90f);
+            // Final map pass keeps neutral saturation and slightly softer contrast.
+            // Match the post-authoring scene, which the regression reads directly.
+            grade.Set(1.00f, 1.02f, 1.00f, 1.00f, 1.90f);
 
             BuildLighting(mapRoot.transform);
             BuildGameplayRig(mapRoot.transform);

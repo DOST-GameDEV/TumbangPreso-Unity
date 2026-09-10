@@ -1,5 +1,12 @@
 # ASTRA.md
 
+**Current continuation state:** the owner requested a wrap-up and thorough chat
+handoff, including unfinished maps. Kuro's matching blocky purple forms,18-bone
+giant loop and eleven idle clips (including :3/XoX/shy-pout gestures) are pushed
+at864cead. The approved people are retained. Broader animation/FPP/skill acceptance
+remains open; read docs/ACTIVE_REWORK_LEDGER.md and docs/MAP_FINAL_PASS.md before
+resuming, rather than restarting the rejected model studies recorded below.
+
 **Model style is fixed by the game:** use
 [Art_Direction.md section0](docs/Art_Direction.md#0--new-models-must-belong-to-tump)
 for every Blender/model deliverable. New assets must look native to TUMP's cute

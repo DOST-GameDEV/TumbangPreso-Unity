@@ -15,132 +15,47 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (live, 2026-09-10)
+## Current execution pointer (wrap-up, 2026-09-10)
 
-**LATEST OWNER SCOPE CHANGE:** finish ALL map improvements for Eskinita, Bayan
-Plaza and Ilalim ng Tulay, then deliver a handoff directly in chat. Everything
-else is deferred to the next session. This supersedes the earlier instruction to
-finish the entire non-map queue before stopping. Do not mistake Kuro's map
-clearance probe for completing map improvements: architecture/ground geometry,
-trees/props/models, materials/lighting, collision/slipper retrieval routes and
-ordinary-play validation on all THREE maps remain the required current delivery.
-Preserve all ongoing Kuro/ability/network work and record its exact verification
-state for the next session. No UI-art polish, no people redesign, no delegation.
+The owner explicitly asks to finish the current work, commit/push, update the
+relevant docs and provide a very thorough continuation handoff in chat. They
+explicitly permit unfinished MAP work in that handoff too. Verify the current
+batch, do not expand this session, and do not claim the full map/game pass done.
 
-No Unity/Blender/player process is active. Last guarded Editor closed and restored
-17 existing profile files. Current map work is docs/MAP_FINAL_PASS.md; fresh before
-views/ordinary Classic clips are in Logs/maps-before-final-pass (1/1). The installed
-tree inventory was opened in Unity Search and rendered through Blender:
-Logs/map-tree-inventory/installed-trees.png. All eight installed source trees are
-cones/conifers; no suitable broadleaf/palm pack was found (only small plant/planter
-assets). Author appropriate clean native broadleaf forms. Existing maps have ugly
-cone skylines and dark flattened canopies; inspect every baseline view, improve
-architecture/prop grouping/lighting and fix collision/retrieval as planned.
+Previous pushed checkpoint:864cead (Kuro matching purple forms, three expressions,
+eleven idle clips, authored giant, staged following cast, protocol28 facing).
+Core562/562, EditMode489/489, Nemu PlayMode33/33 and all14 source audits passed for
+that batch. Kuro all-map geometry passes at six points: floor clearance0.035m,
+top5.263m, below Ilalim's8m guideway. Real-process protocol28 yaw/staged/rejoin
+verification and the new18-person sheet remain deferred, not completed.
 
-Preserved Kuro work: Full EditMode489/489, Core562/562, all14 source audits
-pass. Nemu complete-cycle PlayMode33/33 (live-tests-20260910-123021-2644.xml),
-including real invocation clearing cute expressions and cancellation returning
-to the authored shoulder anchor. KuroMapClearanceProbe passes1/1 at six positions:
-lowest visible surface0.035m above floor, top5.263m, below Ilalim's8m guideway.
-Corrected BakeMesh scale compensation avoids the prior invalid7.27m reading.
-The new native forms, three expressions/eleven idle clips, staged following cast
-and protocol28 familiar yaw are being committed as the preserved local batch. Real-process protocol28
-verification and roster refresh remain pending; preserve this honestly if deferred.
+Current partial map checkpoint: MAP_FINAL_PASS.md and MapFinalPassAuthor describe
+three native Blender broadleaf trees, grouping non-solid furniture beyond the
+playable walls, complete civic roof/nave geometry and paving, properly scaled
+Ilalim conductors, and lighting refinement. V1 had all8 editor checks and ordinary
+Classic capture1/1 pass. V2 refines tree density/materials and paving and removes
+awkward duplicated shop canopies. Final verification passes489/489 EditMode,
+8/8 editor checks,14/14 source audits and1/1 three-map Classic capture. Current
+report and before/after images are in reports/improvement-2026-09-10/map-checkpoint.md.
 
-Latest local work: the CLEAN giant imports purple after fixing Blender node
-materials; evaluated geometry/scale/animation tests pass3/3. Native normals showed
-the open maw bowl facing OUT instead of inward, explaining the missing black
-interior in Unity. Reversed those cavity faces, then regenerated the clean rig.
-Nemu complete-cycle contracts pass31/31, including possessed keyboard ultimate and
-ordinary E return staying small (live-tests-20260910-115344-0344.xml).
+The under-viaduct throw experiment remains unresolved. The below-flight-query
+patch did NOT fix the fixture's reset and has been reverted; no Slipper runtime
+change is included. The exploratory fixture/patch are preserved as non-compiled
+text in reports/improvement-2026-09-10/map-investigation, also locally in Logs.
+The PlayMode-to-EditMode resident test transition hit a GenericPadBridge recursive
+device callback; that Editor was stopped and profiles restored. See map-checkpoint.md.
+The final fresh Editor exited normally; no Unity/Blender/player process remains
+active. Its log is Logs/map-checkpoint-validation.log and output is Logs/maps-final-v2.
+All17 existing profile files were restored, as were known test-only arm tangent
+serialization and quality-setting changes. Rejected untracked Kuro study tools
+were retained locally under Logs/rejected-kuro-studies. Do not treat the earlier
+stopped controller-loop run as a pass. No new final Windows build was made.
 
-Small form now has matching purple chamfered forms, a tiny crown curl, and six
-authored graphic expression meshes for :3, XoX and a shy pout. Three distinct
-gestures (CatSmile, GoofyDizzy, ShyPout) use the existing private cosmetic RNG and
-trailer sampler. Expression line art changes cleanly after anticipation and clears
-before casts. No new gameplay state. Blender study at Logs/kuro-small-purple-study-v2;
-runtime integration is UNVERIFIED. Current guarded author run session88184,
-Logs/kuro-expressions-author.log. Collect exit before editing imported files/C#.
-Next: actual Unity expression/giant captures and tests; fix any mismatch, then
-finish giant cast placement/owner visibility and continue the wider improvement
-scope. Model batch remains uncommitted, not owner-approved. Standing docs are
-pushed20dd859; no people redesign or UI art work is requested.
-
-Continue the same task, do not restart or finish after a single batch. Branch
-ASTRAReworks only. Networking recovery/impact batch is pushed at `e56b2e3`; its
-report is reports/improvement-2026-09-10/recovery-and-impacts.md. Core562/562,
-EditMode486/486 and focused PlayMode29/29. Three real delayed-link peers agree on
-recovery with no progress rollback and0.7281m stomp displacement. Earlier network
-foundation `61e2a8c` includes familiar replication, rejoin and the receive-pool fix.
-
-**Newest owner rejection:** the owner says the latest blockified candidate is
-"really ugly". Discard BOTH the voxel-pile and faceted reconstructed variants as
-final designs. Do not keep polishing or rigging them as if accepted. The agent
-acknowledged the cause: forcing a detailed/fleshy reconstruction into blocks made
-a jagged rock monster. Rebuild around FEW clean chunky masses matching the actual
-TUMP cast, retaining the approved IDEA (looming hunch, huge maw, grasping hands,
-floating spectral eyes, violet theme, very large size). No muscular anatomy,
-crumpled topology or piles of small cubes. Small Kuro and approved people stay.
-
-**Latest owner art direction (including explicit VERY BIG request):** the owner LOVES THE IDEA of the new hunched giant,
-but explicitly says it is too realistic/off-theme. Keep the concept's imposing
-silhouette, large maw and grasp, and make the actual model BLOCKY/chunky to fit
-TUMP. Remove smooth fleshy/realistic surfaces. The giant eyes do NOT need to lie
-on its face: the owner explicitly permits floating eyes with a spectral aura,
-using Gastly-like ghost presentation as a loose reference. This supersedes the
-projected/drawn-on giant eye approach. Keep Nemu's violet/lavender theme. Preserve
-the new cute small form and all approved people; do not reopen those redesigns.
-Approval is of the IDEA, not of an implemented final mesh or human playtest.
-
-Current actual candidate is a refined TripoSR mesh, not yet imported into the
-game. tools/refine_kuro_reconstruction.py outputs
-Logs/kuro-refined-reconstruction-v3/kuro-refined.blend: a hunched3.5m body, about30k
-faces, a real carved mouth, separate fangs, solid violet materials. It still has
-the too-smooth finish and drawn-on eyes the owner has now corrected. Next: produce
-broad blocky planes / chunky construction, replace projected eye surfaces with
-floating spirit eyes/aura, rig and inspect in Unity before adopting.
-
-A free MIT local TripoSR installation is being tested to carry that design into
-actual 3D before Blender refinement/rigging. User already authorized downloading
-needed tools. Location: C:/Users/Matthew/Documents/CodexTools/TripoSR, upstream SHA
-107cefdc244c39106fa830359024f6a2f1c78871. Venv is .venv; torch2.5.1+cu121 /
-torchvision0.20.1+cu121 installed. All dependencies installed; pip check is clean. The first attempt started too
-early and failed before rembg installation finished. The inference completed successfully in65.7s; no inference process remains.
-Its log is Logs/kuro-triposr-v1.log, outputs
-Logs/kuro-triposr-v1. HF_HOME is C:/Users/Matthew/Documents/CodexTools/model-cache.
-Repository wrapper tools/run_triposr_geometry.py uses scikit-image CPU marching
-cubes instead of requiring a CUDA compiler. Source/weights are MIT. Hunyuan was
-considered and NOT adopted because its license restricts output territories.
-Hardware measured RTX4050 Laptop6GB, RAM16GB. Do not run Unity rendering and mesh
-inference together if memory would be tight. No paid service or usage reset.
-
-Blender fallback studies: tools/author_kuro_rage_study.py outputs to
-Logs/kuro-rage-rebuild-study-v4 (native .blend, .glb, three views). These are NOT
-adopted. They still need a convincing forward hunched head and coherent grasp,
-not just the vertical oval/body used in v1/v2. Continuous sweep frames and dense
-projected eye surfaces fixed technical artifacts, not the fundamental art gap.
-
-No Unity Editor/player/native capture is currently active. The last guarded v6
-portrait run ended and profiles were restored. All Unity checks must remain
-separate from C#/imported-asset edits. Official Unity CLI/Pipeline is installed and
-verified on this checkout; use it when useful. Current uncommitted small-form work
-has three tail bones, four Rage morphs and eight rebaked idle clips; those giant
-morphs are the rejected design and need replacing. The old weight100 versus full
-frame1 bug is corrected, and mouth/teeth rendering cleanup does not change the
-owner's rejection. Current captured gameplay v4 and neutral portraits v6 must not
-be called accepted art. Keyboard ultimate during possession passes its real input
-path after respecting the actual0.4s windup. Owner-view ultimate obstruction still
-needs a cast-placement/readability fix before closing Nemu.
-
-After pet revision, continue same-hero non-default loadout binding, all six hero
-kits/twelve existing loadout alternatives, body/FPP animation/SFX/VFX, three maps/
-trees and final Windows qualification. Owner permits replacing boring/redundant
-abilities; read HERO_KIT_REWORK_DECISIONS.md and PHILIPPINE_ABILITY_DIRECTION.md.
-Phaister grand phased ritual remains major work. No UI art effort. Preserve both
-modes, four-player core rules, approved people/flat faces/block hands and profiles.
-No subagents, other tasks, paid work or usage reset. No user config is needed.
-Keep this pointer and the detailed chronological evidence below current.
-
+Preserve the approved18 people at7c7fcb5. Flat faces, simple hands and native cute
+blocky style remain binding. The remaining full map route/idle investigation,
+whole hero/loadout/VFX/SFX/animation/network scope and Windows release work are
+still open. The old execution pointers near the end are HISTORICAL, not commands
+to restart their rejected model studies or act on obsolete process IDs.
 
 ## Latest owner decision: keep the current models and move on
 
@@ -2173,3 +2088,150 @@ all maps, then repaint/reform the cute ghost to match its purple/blocky identity
 and implement the owner-requested distinct :3, XoX and shy-pout expressions.
 Regenerate the roster preview so the old wrong-palette pet fragment is gone.
 No Kuro art changes have been committed; all rejected designs remain rejected.
+
+
+## Historical execution pointer superseded by the wrap-up above
+
+### Earlier execution pointer (historical)
+
+**NEWEST OWNER WRAP-UP REQUEST:** finish the current work, commit/push, update
+relevant documents, and provide a very thorough continuation handoff directly in
+chat. Do not start further scope. This permits handing off remaining map work as
+well as the non-map queue; do not claim all map improvements complete merely
+because the owner now wants the session wrapped up. Finish/verify the current
+map refinement batch and the reproduced under-viaduct slipper-flight fix first.
+
+Current map changes are uncommitted: MapFinalPassAuthor, three Blender broadleaf
+trees, cleaner furniture grouping, civic geometry/paving, utility conductors and
+lighting. V1 compiles, all8 editor checks and ordinary Classic capture1/1 pass.
+V2 pending: quieter continuous paving below chalk, thinner Bayan background
+planting, explicit tree materials, removal of awkward duplicate shop canopies.
+The under-viaduct throw regression fails before the fix in
+Logs/viaduct-flight-before-v2.xml: release at (2,3.6,-2), then unexpectedly near
+the owner mark after0.1s. The flight landing query now searches only below the
+projectile while preserving the broad public resting query and existing roof
+recovery. Verify this exact fix before committing. No process is currently active.
+
+**LATEST OWNER SCOPE CHANGE:** finish ALL map improvements for Eskinita, Bayan
+Plaza and Ilalim ng Tulay, then deliver a handoff directly in chat. Everything
+else is deferred to the next session. This supersedes the earlier instruction to
+finish the entire non-map queue before stopping. Do not mistake Kuro's map
+clearance probe for completing map improvements: architecture/ground geometry,
+trees/props/models, materials/lighting, collision/slipper retrieval routes and
+ordinary-play validation on all THREE maps remain the required current delivery.
+Preserve all ongoing Kuro/ability/network work and record its exact verification
+state for the next session. No UI-art polish, no people redesign, no delegation.
+
+No Unity/Blender/player process is active. Last guarded Editor closed and restored
+17 existing profile files. Current map work is docs/MAP_FINAL_PASS.md; fresh before
+views/ordinary Classic clips are in Logs/maps-before-final-pass (1/1). The installed
+tree inventory was opened in Unity Search and rendered through Blender:
+Logs/map-tree-inventory/installed-trees.png. All eight installed source trees are
+cones/conifers; no suitable broadleaf/palm pack was found (only small plant/planter
+assets). Author appropriate clean native broadleaf forms. Existing maps have ugly
+cone skylines and dark flattened canopies; inspect every baseline view, improve
+architecture/prop grouping/lighting and fix collision/retrieval as planned.
+
+Preserved Kuro work: Full EditMode489/489, Core562/562, all14 source audits
+pass. Nemu complete-cycle PlayMode33/33 (live-tests-20260910-123021-2644.xml),
+including real invocation clearing cute expressions and cancellation returning
+to the authored shoulder anchor. KuroMapClearanceProbe passes1/1 at six positions:
+lowest visible surface0.035m above floor, top5.263m, below Ilalim's8m guideway.
+Corrected BakeMesh scale compensation avoids the prior invalid7.27m reading.
+The new native forms, three expressions/eleven idle clips, staged following cast
+and protocol28 familiar yaw are being committed as the preserved local batch. Real-process protocol28
+verification and roster refresh remain pending; preserve this honestly if deferred.
+
+Latest local work: the CLEAN giant imports purple after fixing Blender node
+materials; evaluated geometry/scale/animation tests pass3/3. Native normals showed
+the open maw bowl facing OUT instead of inward, explaining the missing black
+interior in Unity. Reversed those cavity faces, then regenerated the clean rig.
+Nemu complete-cycle contracts pass31/31, including possessed keyboard ultimate and
+ordinary E return staying small (live-tests-20260910-115344-0344.xml).
+
+Small form now has matching purple chamfered forms, a tiny crown curl, and six
+authored graphic expression meshes for :3, XoX and a shy pout. Three distinct
+gestures (CatSmile, GoofyDizzy, ShyPout) use the existing private cosmetic RNG and
+trailer sampler. Expression line art changes cleanly after anticipation and clears
+before casts. No new gameplay state. Blender study at Logs/kuro-small-purple-study-v2;
+runtime integration is UNVERIFIED. Current guarded author run session88184,
+Logs/kuro-expressions-author.log. Collect exit before editing imported files/C#.
+Next: actual Unity expression/giant captures and tests; fix any mismatch, then
+finish giant cast placement/owner visibility and continue the wider improvement
+scope. Model batch remains uncommitted, not owner-approved. Standing docs are
+pushed20dd859; no people redesign or UI art work is requested.
+
+Continue the same task, do not restart or finish after a single batch. Branch
+ASTRAReworks only. Networking recovery/impact batch is pushed at `e56b2e3`; its
+report is reports/improvement-2026-09-10/recovery-and-impacts.md. Core562/562,
+EditMode486/486 and focused PlayMode29/29. Three real delayed-link peers agree on
+recovery with no progress rollback and0.7281m stomp displacement. Earlier network
+foundation `61e2a8c` includes familiar replication, rejoin and the receive-pool fix.
+
+**Newest owner rejection:** the owner says the latest blockified candidate is
+"really ugly". Discard BOTH the voxel-pile and faceted reconstructed variants as
+final designs. Do not keep polishing or rigging them as if accepted. The agent
+acknowledged the cause: forcing a detailed/fleshy reconstruction into blocks made
+a jagged rock monster. Rebuild around FEW clean chunky masses matching the actual
+TUMP cast, retaining the approved IDEA (looming hunch, huge maw, grasping hands,
+floating spectral eyes, violet theme, very large size). No muscular anatomy,
+crumpled topology or piles of small cubes. Small Kuro and approved people stay.
+
+**Latest owner art direction (including explicit VERY BIG request):** the owner LOVES THE IDEA of the new hunched giant,
+but explicitly says it is too realistic/off-theme. Keep the concept's imposing
+silhouette, large maw and grasp, and make the actual model BLOCKY/chunky to fit
+TUMP. Remove smooth fleshy/realistic surfaces. The giant eyes do NOT need to lie
+on its face: the owner explicitly permits floating eyes with a spectral aura,
+using Gastly-like ghost presentation as a loose reference. This supersedes the
+projected/drawn-on giant eye approach. Keep Nemu's violet/lavender theme. Preserve
+the new cute small form and all approved people; do not reopen those redesigns.
+Approval is of the IDEA, not of an implemented final mesh or human playtest.
+
+Current actual candidate is a refined TripoSR mesh, not yet imported into the
+game. tools/refine_kuro_reconstruction.py outputs
+Logs/kuro-refined-reconstruction-v3/kuro-refined.blend: a hunched3.5m body, about30k
+faces, a real carved mouth, separate fangs, solid violet materials. It still has
+the too-smooth finish and drawn-on eyes the owner has now corrected. Next: produce
+broad blocky planes / chunky construction, replace projected eye surfaces with
+floating spirit eyes/aura, rig and inspect in Unity before adopting.
+
+A free MIT local TripoSR installation is being tested to carry that design into
+actual 3D before Blender refinement/rigging. User already authorized downloading
+needed tools. Location: C:/Users/Matthew/Documents/CodexTools/TripoSR, upstream SHA
+107cefdc244c39106fa830359024f6a2f1c78871. Venv is .venv; torch2.5.1+cu121 /
+torchvision0.20.1+cu121 installed. All dependencies installed; pip check is clean. The first attempt started too
+early and failed before rembg installation finished. The inference completed successfully in65.7s; no inference process remains.
+Its log is Logs/kuro-triposr-v1.log, outputs
+Logs/kuro-triposr-v1. HF_HOME is C:/Users/Matthew/Documents/CodexTools/model-cache.
+Repository wrapper tools/run_triposr_geometry.py uses scikit-image CPU marching
+cubes instead of requiring a CUDA compiler. Source/weights are MIT. Hunyuan was
+considered and NOT adopted because its license restricts output territories.
+Hardware measured RTX4050 Laptop6GB, RAM16GB. Do not run Unity rendering and mesh
+inference together if memory would be tight. No paid service or usage reset.
+
+Blender fallback studies: tools/author_kuro_rage_study.py outputs to
+Logs/kuro-rage-rebuild-study-v4 (native .blend, .glb, three views). These are NOT
+adopted. They still need a convincing forward hunched head and coherent grasp,
+not just the vertical oval/body used in v1/v2. Continuous sweep frames and dense
+projected eye surfaces fixed technical artifacts, not the fundamental art gap.
+
+No Unity Editor/player/native capture is currently active. The last guarded v6
+portrait run ended and profiles were restored. All Unity checks must remain
+separate from C#/imported-asset edits. Official Unity CLI/Pipeline is installed and
+verified on this checkout; use it when useful. Current uncommitted small-form work
+has three tail bones, four Rage morphs and eight rebaked idle clips; those giant
+morphs are the rejected design and need replacing. The old weight100 versus full
+frame1 bug is corrected, and mouth/teeth rendering cleanup does not change the
+owner's rejection. Current captured gameplay v4 and neutral portraits v6 must not
+be called accepted art. Keyboard ultimate during possession passes its real input
+path after respecting the actual0.4s windup. Owner-view ultimate obstruction still
+needs a cast-placement/readability fix before closing Nemu.
+
+After pet revision, continue same-hero non-default loadout binding, all six hero
+kits/twelve existing loadout alternatives, body/FPP animation/SFX/VFX, three maps/
+trees and final Windows qualification. Owner permits replacing boring/redundant
+abilities; read HERO_KIT_REWORK_DECISIONS.md and PHILIPPINE_ABILITY_DIRECTION.md.
+Phaister grand phased ritual remains major work. No UI art effort. Preserve both
+modes, four-player core rules, approved people/flat faces/block hands and profiles.
+No subagents, other tasks, paid work or usage reset. No user config is needed.
+Keep this pointer and the detailed chronological evidence below current.

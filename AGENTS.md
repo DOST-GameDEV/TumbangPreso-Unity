@@ -1,11 +1,13 @@
 # Working in this repository
 
-**Latest delivery scope,2026-09-10:** finish ALL improvements to all three maps,
-then hand off the remaining non-map work directly in chat for the next session.
+**Latest delivery scope,2026-09-10:** the owner now asks to wrap up the current
+work, commit/push and hand off. They explicitly allow unfinished map work to be
+included in the continuation handoff. Verify the current batch and record its
+limits; do not claim the full map pass is complete or start further scope.
 Read [docs/MAP_FINAL_PASS.md](docs/MAP_FINAL_PASS.md) and the current execution
-pointer in ACTIVE_REWORK_LEDGER.md. Do not stop after tree replacements or a
-clearance probe: architecture, ground/props, materials/light, collision/retrieval
-and ordinary-play verification are all part of the map delivery. Preserve the
+pointer in ACTIVE_REWORK_LEDGER.md. Architecture, ground/props, materials/light,
+collision/retrieval and ordinary-play verification all remain part of the map
+goal for continuation. Preserve the
 ongoing Kuro/ability/network work and its exact verification state.
 
 ## Standing model-style requirement

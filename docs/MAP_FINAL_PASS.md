@@ -2,8 +2,21 @@
 
 Owner scope change,2026-09-10: finish ALL map improvements on Eskinita, Bayan
 Plaza and Ilalim ng Tulay, then hand off everything else directly in chat for the
-next session. Status: IN PROGRESS. This document is the active implementation
+next session. Status: PARTIAL CHECKPOINT, NOT FINISHED. This document is the active implementation
 plan, not the final handoff. Preserve the retained cute blocky cast and core rules.
+
+**Superseding wrap-up instruction:** the owner explicitly permits unfinished map
+work to go into the handoff. Finish verifying the current batch, commit/push and
+provide the thorough continuation handoff in chat. Do not expand this session or
+mark the whole map plan complete. The rows below remain the continuation goal.
+
+Final checkpoint verification:489/489 EditMode,8/8 editor checks,14/14 source
+audits and1/1 ordinary Classic capture covering all three maps. Unity is closed;
+17 existing profile files were restored. No new final Windows build was made.
+See [map-checkpoint.md](reports/improvement-2026-09-10/map-checkpoint.md) for
+before/after images, precise evidence and unresolved work. The slipper runtime
+experiment was reverted; its source/patch survive as non-compiled investigation
+text. Finish broader composition, route/edge/idle and exact-player review later.
 
 ## Baseline and observed problems
 
@@ -73,3 +86,67 @@ All architecture, vegetation, material/light, collision/retrieval and ordinary-
 play rows above remain open until supported by fresh evidence. Human taste or
 playtest approval must not be claimed. UI art and further people/ability redesign
 are deferred under the owner's latest scope.
+
+## First implementation batch, not yet reviewed
+
+Kuro's prior work and the scope transition are pushed at864cead. The current map
+batch introduces MapFinalPassAuthor, called after the existing neighborhood finish
+from both retained scene editing and map rebuilds. It owns only its named group,
+new materials/meshes, and explicit dressing changes.
+
+- Three original Blender trees: street-broadleaf, plaza-shade, courtyard-tree.
+  Native source is MapSource/environment/urban-trees; authoring is
+  tools/author_urban_trees.py (--publish after reviewing a versioned study).
+  The first plaza study exposed a cut trunk stub; extended it into the crown
+  before publication. Source studies are Logs/urban-trees-v2.
+- Replace original tree/conifer meshes throughout the three maps, including the
+  old flattened-canopy override. Preserve source assets. Reachable trunks gain
+  narrow collision outside the chalk; distant scenery remains non-colliding.
+- Eskinita: move non-solid furniture and stores into two street-end pockets,
+  add supported shade roofs and preserve the already improved house fronts.
+- Bayan: group seating/stalls beyond the playable walls, retain excess assets
+  inactive, add a complete church nave/roof/buttresses and hall roof end walls,
+  and give the quiet central plaza broad stone paving with restrained variation.
+- Ilalim: replace the giant wire tubes with44mm conductors connected to the
+  existing pole crossarms, and add mounted shelter to PC Express/pisonet fronts.
+  Existing physical pillars, kiosks, carts and their gameplay contracts stay.
+- All maps: neutralize the yellow/green lighting cast while keeping warm sun,
+  readable hemispherical shade and existing imported livery.
+
+Historical v1 author run (finished): session59344, Logs/map-final-author-v1.log.
+Do not treat an intended change as
+verified. Inspect fresh four-direction/ordinary-play captures, physical route
+checks and author idempotence next; fix ugly placements or collisions before
+marking any of these rows complete. The old Ilalim idle outlier still needs its
+source-grounded investigation. No map completion or final build is claimed yet.
+
+### V1 review and next corrections
+
+First authored maps compile and all8 editor checks pass, including zero gated
+geometry findings. Ordinary Classic capture passes1/1 at Logs/maps-final-v1.
+The visual review is not complete: Bayan has too many broad shade crowns and
+bright paving gaps. Thin its background planting, keep broad shade at selected
+near positions, and make paving continuous with quiet tonal variation. Ilalim's
+generic added shop canopies duplicate existing work and read as floating blocks;
+remove them. Preserve the already modeled shop fronts and livery. Eskinita's
+cleared play lane reads better, with activity moved to street-end pockets.
+
+In the actual Ilalim scene, Slipper.GroundY at (2,.5,-2) returns0, but at
+(2,3.6,-2) returns9.040001, the TOP of the guideway while the throw is underneath.
+FixedUpdate uses that query to decide whether flight has landed. A HostThrow
+regression is being run before the fix (Logs/viaduct-flight-before-v2.xml/log).
+The first fixture started too soon after round initialization, so its observed
+low-height flight was not accepted as conclusive; v2 waits for initialization and
+logs the release/after state. Distinguish this from the historical48-idle-penalty
+seed. Preserve raised-ground and unreachable-roof recovery when fixing flight.
+
+### Wrap-up disposition of the flight investigation
+
+The below-flight query attempt did NOT resolve the real HostThrow probe: it still
+reported InFlight near the owner after0.1s. Therefore the query observation alone
+does not establish the cause of that test's spatial reset. The runtime attempt
+will be reverted before this checkpoint is pushed, and the failing exploratory
+fixture kept outside the test gate for continuation. Next session should trace
+the actual position writer and ensure all intent/AI drivers are frozen before
+deciding whether the fixture, carrier release, grounding, or another path owns
+the reset. Do not claim this bug or the historical idle outlier fixed.

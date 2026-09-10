@@ -1,0 +1,55 @@
+using System.Collections;
+using NUnit.Framework;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class MapRetrievalProbe
+    {
+        private bool _bots,_spectator,_pinned;private int _seat;private CustomRules _rules;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _bots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_seat=GameLaunch.SoloSeat;
+            _pinned=SceneFlow.RulesPinned;_rules=SceneFlow.SelectedRules.Clone();
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();GameLaunch.AllBots=_bots;GameLaunch.Spectator=_spectator;GameLaunch.SoloSeat=_seat;
+            SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
+        }
+        private IEnumerator Load(string map)
+        {
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));GameLaunch.AllBots=false;GameLaunch.Spectator=false;GameLaunch.SoloSeat=1;
+            yield return SceneManager.LoadSceneAsync(map);yield return new WaitForSeconds(.3f);
+            Object.FindFirstObjectByType<SliceRunner>().Begin();
+            yield return new WaitForSeconds(.3f);
+            foreach(var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None))brain.enabled=false;
+            foreach(var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None))reader.enabled=false;
+            foreach(var player in GameServices.Round.Players){player.Intent.Clear();player.Intent.Parked=true;}
+            yield return null;
+        }
+        [UnityTest]
+        public IEnumerator AThrowBelowTheViaductDoesNotLandOnItsRoof()
+        {
+            yield return Load(SceneFlow.IlalimNgTulay);
+            var owner=GameServices.Round.PlayerAt(1);owner.IsBot=true;
+            var shoe=owner.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
+            Vector3 from=new Vector3(2,3.6f,-2);
+            Assert.IsTrue(Physics.Raycast(from,Vector3.down,out var floor,4,~0,QueryTriggerInteraction.Ignore));
+            Assert.AreEqual(0,floor.point.y,.02f);
+            shoe.HostThrow(owner,from,Vector3.right*2);
+            Assert.Less(Vector3.Distance(from,shoe.transform.position),.001f,"Fixture release origin was not applied.");
+            Debug.Log("[Viaduct flight] released "+shoe.State+" at "+shoe.transform.position);
+            yield return new WaitForSeconds(.1f);
+            Debug.Log("[Viaduct flight] after0.1s "+shoe.State+" at "+shoe.transform.position);
+            Assert.AreEqual(SlipperState.InFlight,shoe.State,"A throw below the deck was treated as landing on its roof.");
+            Assert.Greater(shoe.transform.position.y,3,"The map silently recovered a mid-air slipper to its owner mark.");
+            Assert.Greater(shoe.transform.position.x,from.x+.1f,"The throw did not continue its accepted flight.");
+        }
+    }
+}

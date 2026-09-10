@@ -1,5 +1,12 @@
 # CLAUDE.md
 
+**Current owner wrap-up,2026-09-10:** verify and push the current batch, then give
+a thorough continuation handoff directly in chat. The owner explicitly permits
+unfinished map work in that handoff. The remaining full improvement goal is not
+complete. Current evidence and scope are in docs/ACTIVE_REWORK_LEDGER.md and
+docs/MAP_FINAL_PASS.md; their newest execution pointer supersedes historical
+in-flight notes and earlier session stopping limits.
+
 **Standing model-style rule, owner 2026-09-10:** every new or reworked model must
 look like it belongs to this game's cute blocky world, without unnecessary detail
 or realistic anatomy/materials. The canonical requirement and review criteria are

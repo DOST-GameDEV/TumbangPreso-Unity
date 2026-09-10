@@ -106,7 +106,9 @@ namespace TumbangPreso.EditorTools.MapKit
             if (map == "BayanPlaza") Plaza(group);
             if (map == "IlalimNgTulay") Guideway(group);
             report.AppendLine("  finish renderers=" + group.GetComponentsInChildren<Renderer>().Length);
-            ShadeTrees(map,group);
+            // The final map pass owns vegetation; retain the old authoring
+            // assets for history without creating a second hidden tree layer.
+            MapFinalPassAuthor.FinishLoadedScene(map,report);
         }
 
         private static void SetLight(string map)
@@ -128,7 +130,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 light.shadowNormalBias = .25f;
             }
             var grade = Object.FindFirstObjectByType<MapGrade>();
-            if (grade != null) grade.Set(1f, 1.03f, map == "Eskinita" ? 1.06f : 1.02f, 1f, 1.9f);
+            if (grade != null) grade.Set(1f, 1.02f, 1f, 1f, 1.9f);
         }
 
         private static Material Material(string name, Color color)

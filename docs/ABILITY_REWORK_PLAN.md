@@ -17,6 +17,13 @@ Updated 2026-09-10. Status: ACTIVE, NOT COMPLETE. Source checkpoint: `c09fba2`.
 This is the owner's requested durable plan, not a final handoff or completion claim.
 Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER.md.
 
+Latest checkpoint: Kuro's matching purple forms, three graphic expressions and
+eleven idle clips are pushed at864cead, documented in
+[kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md).
+Whole-kit/default-alternate redesign and broader animation/SFX/VFX/network
+acceptance remain open. The owner subsequently asked to wrap up with unfinished
+maps included in a thorough chat handoff; preserve this plan for continuation.
+
 ### Next source-grounded Phaister review after the Kuro batch
 
 Fresh source inspection confirms another concrete placement defect:

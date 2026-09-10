@@ -12,6 +12,14 @@ see Art_Direction.md section0.1.
 
 ## Latest owner additions, 2026-09-10
 
+Latest delivery instruction: wrap up the current work, verify/commit/push it and
+provide a thorough continuation handoff in chat. The owner explicitly permits
+unfinished map work in that handoff. The full scope below remains open. Current
+map implementation and remaining review are in [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md).
+Kuro's matching purple forms/expressions and their verification are recorded in
+[kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md),
+pushed at864cead. Do not confuse local tests with final release/taste approval.
+
 Thorough networking repair is required. The owner also authorizes changing or
 replacing boring abilities and making every existing loadout alternative justify
 its slot. Whole-kit planning and acceptance are in

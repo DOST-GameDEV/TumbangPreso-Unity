@@ -1,0 +1,29 @@
+diff --git a/Assets/TumbangPreso/Runtime/Slipper.cs b/Assets/TumbangPreso/Runtime/Slipper.cs
+index c01b75c..ad5ee7f 100644
+--- a/Assets/TumbangPreso/Runtime/Slipper.cs
++++ b/Assets/TumbangPreso/Runtime/Slipper.cs
+@@ -1058,7 +1058,10 @@ namespace TumbangPreso
+             // the thud and § THE LANDED HIGHLIGHT should fire for, which is exactly the
+             // distinction the Godot original draws by grouping the timeout with the void
+             // recovery instead.
+-            if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight)
++            // A flight can only land on a surface below it. The broad resting
++            // query also sees roofs overhead; below Ilalim's guideway that made
++            // a3.6m-high throw "land" on the9.04m deck and recover to its mark.
++            if (transform.position.y <= FindGroundY(transform.position,.04f) + Balance.SlipperRestHeight)
+                 Land(fromFlight: true);
+             else if (_flightTime >= Balance.MaxFlightTime
+                      || _airborneTotal >= Balance.MaxAirborneTime)
+@@ -1422,8 +1425,11 @@ namespace TumbangPreso
+         /// slipper below the world is recovered to its spawn, not balanced on nothing.
+         /// </summary>
+         public static float GroundY(Vector3 at)
++            => FindGroundY(at,6.0f);
++
++        private static float FindGroundY(Vector3 at,float scanAbove)
+         {
+-            var from = new Vector3(at.x, at.y + 6.0f, at.z);
++            var from = new Vector3(at.x, at.y + scanAbove, at.z);
+ 
+             var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
+                                           QueryTriggerInteraction.Ignore);

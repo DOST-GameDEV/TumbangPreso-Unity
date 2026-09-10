@@ -8,6 +8,15 @@ add its row here in the same commit.
 
 ## Read these, in this order
 
+For the current continuation, read [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md)
+after the required rulebook/VISION/TODO order. [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md)
+tracks the unfinished map pass, references and verified iterations. The owner now
+permits unfinished maps in the requested wrap-up handoff. Kuro's latest source,
+expressions, tests and limitations are in
+[kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md).
+The partial map implementation and its explicit limitations are in
+[map-checkpoint.md](reports/improvement-2026-09-10/map-checkpoint.md).
+
 The active 2026-09-09 improvement pass also uses
 [IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md) for durable progress,
 [CALM_FRONT_END.md](CALM_FRONT_END.md) for the supplied UI direction and flow,

@@ -25,6 +25,10 @@ Eleven reusable idle clips are baked from the same deterministic runtime sampler
 No new emote menu or player mechanic is introduced. The giant has a separate
 native clip, extracted into Resources/KuroRageInhale.anim for runtime Playables.
 
+Current in-engine evidence: [small cat grin](kuro-current/cat-smile.jpg) and
+[giant beneath the guideway](kuro-current/giant.jpg). These show the imported
+model, not generated concepts; they do not claim owner taste approval.
+
 ## Casting and networking
 
 The following familiar now moves into the existing3.5m forward cast reach during

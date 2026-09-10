@@ -1,5 +1,11 @@
 # World composition review
 
+The later partial implementation is documented in
+[map-checkpoint.md](map-checkpoint.md), with its continuation plan in
+../../MAP_FINAL_PASS.md. It replaces the first shade-tree pass, refines prop
+grouping/civic geometry/utilities and records actual test limits. The owner now
+permits unfinished maps in the wrap-up handoff; this is not full map approval.
+
 The initial matched views are in `Logs/improvement-baseline-v1`, from the
 `4623348` runtime before the presentation changes. These are composite places,
 not surveyed reproductions. Reference photographs are used for observation;

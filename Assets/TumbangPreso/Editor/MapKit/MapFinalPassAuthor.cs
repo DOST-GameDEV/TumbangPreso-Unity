@@ -1,0 +1,276 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using TumbangPreso.Visual;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Object=UnityEngine.Object;
+
+namespace TumbangPreso.EditorTools.MapKit
+{
+    /// <summary>Repeatable map composition, original foliage and physically honest dressing.</summary>
+    public static class MapFinalPassAuthor
+    {
+        private const string Folder="Assets/TumbangPreso/Art/MapFinalPass";
+        public static void Run()
+        {
+            var report=new StringBuilder();
+            foreach(string map in new[]{"Eskinita","BayanPlaza","IlalimNgTulay"})
+            {
+                var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                NeighborhoodFinishAuthor.FinishLoadedScene(map,report);
+                EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
+            }
+            AssetDatabase.SaveAssets();Directory.CreateDirectory("Logs");File.WriteAllText("Logs/map-final-author.txt",report.ToString());
+            Debug.Log(report.ToString());EditorApplication.Exit(0);
+        }
+
+        public static void FinishLoadedScene(string map,StringBuilder report)
+        {
+            Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
+            var old=GameObject.Find("MapFinalPass");if(old!=null)Object.DestroyImmediate(old);
+            var root=new GameObject("MapFinalPass").transform;
+            var dressing=GameObject.Find(map+"/Dressing")??GameObject.Find("Dressing");
+            if(dressing!=null)root.SetParent(dressing.transform,false);
+            ReplaceTrees(map,root,report);ArrangeFurniture(map,report);FinishLight(map);
+            if(map=="BayanPlaza"){CompleteCivicBuildings(root);PlazaPaving(root);}
+            if(map=="IlalimNgTulay")UtilityConductors(root,report);
+            if(map=="Eskinita")NeighborhoodPockets(root);
+            report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
+        }
+
+        private static string Hierarchy(Transform t)
+        {string p=t.name;while(t.parent!=null){t=t.parent;p=t.name+"/"+p;}return p;}
+        private static Bounds BoundsOf(GameObject go)
+        {
+            var renderers=go.GetComponentsInChildren<Renderer>(true);var b=renderers[0].bounds;
+            foreach(var r in renderers)b.Encapsulate(r.bounds);return b;
+        }
+        private static Material Mat(string name,Color color,float smooth=.12f)
+        {
+            string path=Folder+"/"+name+".mat";var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
+            if(mat==null){mat=new Material(Shader.Find("Standard"));AssetDatabase.CreateAsset(mat,path);}
+            mat.color=color;mat.SetFloat("_Glossiness",smooth);mat.SetFloat("_Metallic",0);EditorUtility.SetDirty(mat);return mat;
+        }
+        private static GameObject Block(Transform root,string name,Vector3 at,Vector3 size,Material mat,bool mounted=false)
+        {
+            var go=GameObject.CreatePrimitive(PrimitiveType.Cube);go.name=name;go.transform.SetParent(root,false);
+            go.transform.position=at;go.transform.localScale=size;go.GetComponent<Renderer>().sharedMaterial=mat;
+            Object.DestroyImmediate(go.GetComponent<Collider>());go.isStatic=true;
+            if(mounted)AirborneByDesign.Attach(go,"Architectural member attached to the existing building, not a freestanding prop.");
+            return go;
+        }
+        private static GameObject MeshObject(Transform root,string name,List<Vector3> vertices,List<int>[] indices,Material[] materials)
+        {
+            var mesh=new Mesh{name=name};mesh.indexFormat=vertices.Count>65535?IndexFormat.UInt32:IndexFormat.UInt16;
+            mesh.SetVertices(vertices);mesh.subMeshCount=indices.Length;
+            for(int i=0;i<indices.Length;i++)mesh.SetTriangles(indices[i],i);
+            mesh.RecalculateNormals();mesh.RecalculateBounds();
+            string path=Folder+"/"+name+".asset";var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if(existing==null)AssetDatabase.CreateAsset(mesh,path);
+            else{EditorUtility.CopySerialized(mesh,existing);Object.DestroyImmediate(mesh);mesh=existing;EditorUtility.SetDirty(mesh);}
+            var go=new GameObject(name);go.transform.SetParent(root,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterials=materials;go.isStatic=true;return go;
+        }
+        private static void Quad(List<Vector3> vertices,List<int> indices,Vector3 a,Vector3 b,Vector3 c,Vector3 d)
+        {int n=vertices.Count;vertices.AddRange(new[]{a,b,c,d});indices.AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}
+
+        private static void ReplaceTrees(string map,Transform root,StringBuilder report)
+        {
+            var sources=Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+                .Where(r=>!r.transform.IsChildOf(root)).Select(r=>(renderer:r,model:Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(r.GetComponent<MeshFilter>()?.sharedMesh))))
+                .Where(p=>p.model.StartsWith("tree",StringComparison.OrdinalIgnoreCase)||p.model=="env_tree"||p.model=="env_tree_far"||p.model=="env_shade_tree")
+                .OrderBy(p=>Hierarchy(p.renderer.transform)).ToArray();
+            int count=0,solid=0,farPlaza=0;
+            foreach(var source in sources)
+            {
+                var r=source.renderer;r.enabled=false;
+                // The first shade pass duplicated these original tree locations.
+                if(source.model=="env_shade_tree")continue;
+                var b=r.bounds;var at=new Vector3(b.center.x,b.min.y,b.center.z);
+                if(new Vector2(at.x,at.z).magnitude>95)continue;
+                float halfX=map=="Eskinita"?8.1f:map=="BayanPlaza"?12.5f:11;
+                float halfZ=map=="Eskinita"?17.5f:map=="BayanPlaza"?12.5f:16.5f;
+                if(Mathf.Abs(at.x)<7 && Mathf.Abs(at.z)<7)at.z=(at.z<0?-1:1)*(halfZ+2);
+                bool near=map=="BayanPlaza"?Hierarchy(r.transform).Contains("/TreesNear/"):Mathf.Abs(at.x)<25 && Mathf.Abs(at.z)<28;
+                if(map=="BayanPlaza" && !near && farPlaza++%2!=0)continue;
+                string kind=b.size.y<3.5f?"courtyard-tree":map=="BayanPlaza"&&near?"plaza-shade":"street-broadleaf";
+                var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/urban-trees/"+kind+".glb");
+                if(prefab==null)throw new InvalidOperationException("Missing authored tree: "+kind);
+                var tree=(GameObject)PrefabUtility.InstantiatePrefab(prefab);tree.name="Broadleaf_"+count;tree.transform.SetParent(root,false);
+                var raw=BoundsOf(tree);float height=Mathf.Clamp(b.size.y,1.8f,near?7.8f:8.6f);
+                float scale=height/Mathf.Max(.1f,raw.size.y);tree.transform.localScale=Vector3.one*scale;
+                tree.transform.rotation=Quaternion.Euler(0,(count*67)%360,0);
+                // Scene ground is flat here; retain authored scenery levels outside
+                // the court, but seat reachable trunks on the actual physical floor.
+                bool reachable=Mathf.Abs(at.x)<halfX-.5f && Mathf.Abs(at.z)<halfZ-.5f;
+                if(reachable)at.y=VfxShapes.GroundPoint(at+Vector3.up*1.5f).y;
+                tree.transform.position=at-Vector3.up*raw.min.y*scale;tree.isStatic=true;
+                foreach(var foliage in tree.GetComponentsInChildren<MeshRenderer>())
+                {
+                    foliage.sharedMaterials=foliage.sharedMaterials.Select(m=>m.name.Contains("bark")?
+                        Mat("tree_bark",new Color(.34f,.25f,.16f)):m.name.Contains("new growth")?
+                        Mat("tree_new_growth",new Color(.34f,.46f,.23f)):m.name.Contains("shaded foliage")?
+                        Mat("tree_shaded_foliage",new Color(.23f,.34f,.18f)):
+                        Mat("tree_foliage",new Color(.29f,.41f,.21f))).ToArray();
+                }
+                if(reachable)
+                {
+                    var trunk=tree.AddComponent<CapsuleCollider>();trunk.radius=.33f;trunk.height=3.1f;trunk.center=new Vector3(0,1.55f,0);solid++;
+                }
+                else AirborneByDesign.Attach(tree,"Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.");
+                count++;
+            }
+            report.AppendLine(map+": replaced "+count+" cone/conifer trees; "+solid+" reachable trunks have collision.");
+        }
+
+        private static Transform FurnitureRoot(Transform t)
+        {
+            for(var p=t;p!=null;p=p.parent)
+                if(p.name.StartsWith("Kalat_")||p.name.StartsWith("Clutter_")||p.name.StartsWith("Bench_")||p.name.StartsWith("Stool_"))return p;
+            return PrefabUtility.GetNearestPrefabInstanceRoot(t.gameObject)?.transform??t;
+        }
+        private static void Place(Transform t,Vector3 at,float yaw)
+        {t.gameObject.SetActive(true);t.position=at;t.rotation=Quaternion.Euler(0,yaw,0);}
+        private static void ArrangeFurniture(string map,StringBuilder report)
+        {
+            if(map=="IlalimNgTulay")return; // Its kiosks/carts already have real solid footprints.
+            var candidates=Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+                .Where(r=>Hierarchy(r.transform).StartsWith(map+"/Dressing/"))
+                .Select(r=>(root:FurnitureRoot(r.transform),file:AssetDatabase.GetAssetPath(r.GetComponent<MeshFilter>()?.sharedMesh)))
+                .Where(p=>p.file.Contains("stall-bench")||p.file.Contains("stall-stool")||p.file.Contains("monobloc_chair")||p.file.Contains("crate_stack"))
+                .GroupBy(p=>p.root).Select(g=>g.First()).OrderBy(p=>p.root.name).ToArray();
+            int benches=0,seats=0,crates=0,moved=0;
+            foreach(var p in candidates)
+            {
+                bool bench=p.file.Contains("bench"),crate=p.file.Contains("crate");int n=bench?benches++:crate?crates++:seats++;
+                int cap=map=="BayanPlaza"?(bench?6:crate?2:6):(bench?2:crate?4:6);
+                if(n>=cap){p.root.gameObject.SetActive(false);continue;}
+                Vector3 at;float yaw;
+                if(map=="BayanPlaza")
+                {
+                    float side=n%2==0?-1:1;
+                    at=bench?new Vector3(side*14.0f,.1f,new[]{7.4f,4.0f,-6.0f}[n/2]):
+                        new Vector3(side*(crate?16.1f:14.2f+(n/2)*.7f),.1f,side<0?10.4f:-10.4f);
+                    yaw=side<0?90:270;
+                }
+                else
+                {
+                    float end=n%2==0?1:-1;
+                    at=new Vector3(-end*(bench?5.2f:crate?7.1f:4.2f+(n/2)*.8f),.1f,end*(bench?19.2f:crate?21.2f:20.1f));yaw=end>0?180:0;
+                }
+                Place(p.root,at,yaw);moved++;
+            }
+            foreach(var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            {
+                if(map=="BayanPlaza" && t.name.StartsWith("Stall_"))t.position=new Vector3(Mathf.Sign(t.position.x)*15.2f,.1f,t.position.z);
+                if(map=="Eskinita" && (t.name=="SariSari_W"||t.name=="SariSari_E"))
+                    t.position=new Vector3(t.name=="SariSari_W"?-7.15f:7.15f,.1f,t.name=="SariSari_W"?20.0f:-20.0f);
+            }
+            report.AppendLine(map+": grouped "+moved+" non-solid furniture pieces beyond the playable walls; excess seats retained inactive.");
+        }
+
+        private static void FinishLight(string map)
+        {
+            RenderSettings.ambientMode=AmbientMode.Trilight;RenderSettings.ambientIntensity=1;
+            RenderSettings.ambientSkyColor=new Color(.64f,.69f,.72f);
+            RenderSettings.ambientEquatorColor=map=="IlalimNgTulay"?new Color(.49f,.52f,.52f):new Color(.48f,.47f,.42f);
+            RenderSettings.ambientGroundColor=new Color(.32f,.29f,.24f);
+            foreach(var sun in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if(sun.type==LightType.Directional){sun.color=new Color(1,.95f,.86f);sun.intensity=map=="BayanPlaza"?1.03f:1.0f;}
+            Object.FindFirstObjectByType<MapGrade>()?.Set(1,1.02f,1,1,1.9f);
+        }
+
+        private static void CompleteCivicBuildings(Transform root)
+        {
+            var plaster=Mat("civic_lime_plaster",new Color(.72f,.68f,.57f));var roof=Mat("civic_roof_clay",new Color(.48f,.24f,.15f));
+            var timber=Mat("civic_timber",new Color(.30f,.23f,.16f));
+            Block(root,"ChurchNave",new Vector3(-4.2f,3.0f,20.2f),new Vector3(5.6f,5.8f,10.0f),plaster);
+            Roof(root,"ChurchNaveRoof",-4.2f,15.1f,25.4f,6.0f,5.9f,8.05f,roof);
+            foreach(float x in new[]{-7.15f,-1.25f})foreach(float z in new[]{17.0f,20.5f,24.0f})
+            {
+                Block(root,"NaveButtress",new Vector3(x,2.25f,z),new Vector3(.34f,4.3f,.52f),plaster);
+                Block(root,"NaveSideVent",new Vector3(x,4.7f,z),new Vector3(.04f,1.05f,.60f),timber,true);
+            }
+            // The retained hall already has depth, but its roof ends were open.
+            var v=new List<Vector3>();var ix=new List<int>();
+            foreach(float x in new[]{1.6f,14.0f})
+            {
+                int n=v.Count;v.AddRange(new[]{new Vector3(x,6.97f,13.6f),new Vector3(x,8.65f,16.6f),new Vector3(x,6.97f,19.6f)});
+                ix.AddRange(x<7?new[]{n,n+1,n+2}:new[]{n,n+2,n+1});
+            }
+            var ends=MeshObject(root,"HallRoofEndWalls",v,new[]{ix},new[]{plaster});AirborneByDesign.Attach(ends,"Gable end walls close the retained municipal hall roof.");
+        }
+        private static void Roof(Transform root,string name,float x,float front,float back,float width,float eave,float peak,Material mat)
+        {
+            var p=new[]{new Vector3(x-width/2,eave,front),new Vector3(x+width/2,eave,front),new Vector3(x,peak,front),new Vector3(x-width/2,eave,back),new Vector3(x+width/2,eave,back),new Vector3(x,peak,back)};
+            int[] triangles={0,2,1,3,4,5,0,3,5,0,5,2,2,5,4,2,4,1,0,1,4,0,4,3};
+            var vertices=triangles.Select(i=>p[i]).ToList();var ids=Enumerable.Range(0,vertices.Count).ToList();
+            var go=MeshObject(root,name,vertices,new[]{ids},new[]{mat});AirborneByDesign.Attach(go,"Pitched roof seated on the authored nave walls.");
+        }
+        private static void PlazaPaving(Transform root)
+        {
+            var vertices=new List<Vector3>();var indices=new[]{new List<int>(),new List<int>()};
+            for(int x=-8;x<8;x++)for(int z=-8;z<8;z++)
+            {
+                float a=x*1.5f,b=z*1.5f;float y=.101f;
+                Quad(vertices,indices[(Math.Abs(x*13+z*7)%7)==0?1:0],new Vector3(a,y,b),new Vector3(a,y,b+1.5f),new Vector3(a+1.5f,y,b+1.5f),new Vector3(a+1.5f,y,b));
+            }
+            MeshObject(root,"PlazaStonePaving",vertices,indices,new[]{Mat("plaza_stone",new Color(.52f,.50f,.45f)),Mat("plaza_stone_variation",new Color(.55f,.53f,.48f))});
+        }
+
+        private static void UtilityConductors(Transform root,StringBuilder report)
+        {
+            foreach(var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+                if(r.name.StartsWith("SidewalkWire_"))r.enabled=false;
+            var vertices=new List<Vector3>();var indices=new List<int>();int spans=0;
+            foreach(string side in new[]{"W","E"})
+            {
+                var poles=Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(r=>r.name.StartsWith("SidewalkPole_"+side+"_")).OrderBy(r=>r.bounds.center.z).ToArray();
+                for(int p=0;p+1<poles.Length;p++)foreach(float offset in new[]{-.58f,0,.58f})
+                {
+                    var a=new Vector3(poles[p].bounds.center.x+offset,poles[p].bounds.max.y-.38f,poles[p].bounds.center.z);
+                    var b=new Vector3(poles[p+1].bounds.center.x+offset,poles[p+1].bounds.max.y-.38f,poles[p+1].bounds.center.z);
+                    int start=vertices.Count;
+                    for(int s=0;s<=18;s++)
+                    {
+                        float t=s/18f;var at=Vector3.Lerp(a,b,t)-Vector3.up*(4*t*(1-t)*.42f);
+                        for(int k=0;k<5;k++){float angle=k*Mathf.PI*2/5;vertices.Add(at+new Vector3(Mathf.Cos(angle)*.022f,Mathf.Sin(angle)*.022f,0));}
+                    }
+                    for(int s=0;s<18;s++)for(int k=0;k<5;k++){int n=start+s*5+k,j=start+s*5+(k+1)%5;indices.AddRange(new[]{n,j,j+5,n,j+5,n+5});}
+                    spans++;
+                }
+            }
+            var cable=MeshObject(root,"IlalimUtilityConductors",vertices,new[]{indices},new[]{Mat("utility_cable",new Color(.075f,.078f,.075f),.08f)});
+            AirborneByDesign.Attach(cable,"Tensioned utility conductors join the existing pole crossarms above pedestrian height.");
+            report.AppendLine("Ilalim: "+spans+" connected conductor spans,44mm visual diameter, no oversized tube bundles.");
+        }
+        private static void ShelteredShopfronts(Transform root)
+        {
+            var steel=Mat("shop_canopy_steel",new Color(.34f,.38f,.35f));var timber=Mat("shop_canopy_bracket",new Color(.28f,.25f,.20f));
+            var stores=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(t=>t.name=="PC_Express_Store"||t.name.StartsWith("Pisonet_Kiosk_")).ToArray();
+            foreach(var store in stores)
+            {
+                var b=BoundsOf(store.gameObject);float side=Mathf.Sign(b.center.x);float edge=side<0?b.max.x:b.min.x;float z=b.center.z;
+                float width=Mathf.Min(3.4f,b.size.z*.8f);
+                Block(root,"ShelteredShopCanopy",new Vector3(edge-side*.36f,2.95f,z),new Vector3(.95f,.10f,width),steel,true);
+                foreach(float dz in new[]{-.42f,.42f})Block(root,"CanopyWallBracket",new Vector3(edge-side*.18f,2.73f,z+width*dz),new Vector3(.5f,.36f,.065f),timber,true);
+            }
+        }
+        private static void NeighborhoodPockets(Transform root)
+        {
+            var timber=Mat("neighborhood_bench_wood",new Color(.38f,.25f,.14f));
+            var metal=Mat("neighborhood_canopy",new Color(.44f,.44f,.38f));
+            foreach(float end in new[]{-1f,1f})
+            {
+                float x=-end*5.5f,z=end*20.0f;
+                foreach(float dx in new[]{-1.7f,1.7f})Block(root,"NeighborhoodShadePost",new Vector3(x+dx,1.45f,z),new Vector3(.10f,2.7f,.10f),timber);
+                Block(root,"NeighborhoodShadeRoof",new Vector3(x,2.86f,z+.45f*end),new Vector3(3.7f,.10f,1.55f),metal,true);
+            }
+        }
+    }
+}

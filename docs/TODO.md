@@ -292,6 +292,20 @@ collision, retrieval routes and ordinary-play verification, not only technical
 clearance checks. ACTIVE_REWORK_LEDGER.md preserves ongoing Kuro/network work
 and the exact unverified items that must carry forward.
 
+**Superseded by the owner's wrap-up request:** finish/verify the current batch,
+commit/push and hand off. The owner explicitly permits remaining map work in the
+handoff too. The full map goal stays open; its continuation plan is
+[MAP_FINAL_PASS.md](MAP_FINAL_PASS.md). Do not claim all maps are complete.
+
+Partial map checkpoint: three authored broadleaf tree models,33/29/1 replacements
+across Eskinita/Bayan/Ilalim, seven reachable trunk colliders, deliberate edge
+furniture groups, civic nave/roof/paving geometry,78 thinner conductor spans and
+revised light balance. [Map checkpoint](reports/improvement-2026-09-10/map-checkpoint.md)
+records actual verification and unresolved work. The slipper-flight query/reset
+investigation remains open; its unsuccessful runtime attempt was reverted and
+its reproducer retained as non-compiled evidence. Complete map route/edge/idle
+coverage and broader composition review in continuation, not by marking this done.
+
 Latest Kuro corrections: keep BOTH forms in Nemu's purple palette; the cute form
 must not read white. The small form must resemble the giant while remaining
 friendly, with occasional distinct :3 / XoX / shy-pout-like expressions and matching

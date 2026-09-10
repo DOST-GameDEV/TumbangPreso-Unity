@@ -11,6 +11,11 @@ animation unless reuse is necessary.
 
 ## 0. MISSION
 
+Current execution is being wrapped up at the owner's request, with unfinished
+maps explicitly permitted in the chat handoff. This roadmap remains the broader
+goal, not a completion claim. Use MAP_FINAL_PASS.md and the newest execution
+pointer in ACTIVE_REWORK_LEDGER.md for the actual checkpoint and remaining work.
+
 The current strategic roadmap for game feel, presentation and Nationals polish.
 The systems-expansion era has supplied enough machinery. The next win is making a
 player remember the moment they ran back for a slipper with the taya closing in.
