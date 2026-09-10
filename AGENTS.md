@@ -17,6 +17,11 @@ owner decisions, rejected first-pass model result, individual character/skill
 queues and exact in-flight state. The owner explicitly requested this record to
 survive compactions. Keep it current; do not restart or narrow the task after one.
 
+For current skill work read [docs/ABILITY_REWORK_PLAN.md](docs/ABILITY_REWORK_PLAN.md).
+It preserves the all-eighteen geometry/animation/SFX/VFX audit, current owner feedback,
+action-specific direction and completion checks. Start with the rejected ice skill;
+keep the current character designs and finish the remaining overall game scope.
+
 ## Active scope and boundaries
 
 **Latest owner correction (2026-09-10): keep the cleaned current cast at `7c7fcb5`

@@ -1,0 +1,443 @@
+{
+  "checkpoint": "c09fba2",
+  "note": "Source inventory, not a completed visual review. Shared spawners may create further geometry/audio.",
+  "abilities": [
+    {
+      "hero": "sean",
+      "ability_id": "sean_skill1",
+      "name": "FLAME RUSH",
+      "class": "RocketBurnDashAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs",
+      "body_clip": "hero-sean-dash",
+      "first_person_action": "thrust-fire",
+      "cast_cue": "sfx_cast_sean_rush",
+      "hazard_spawners": [
+        "SpawnFireTrail"
+      ],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "bump",
+        "hero_sean_grunt"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [
+        "VfxFlipbook.Play"
+      ],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "sean",
+      "ability_id": "sean_skill2",
+      "name": "IGNITION CANNON",
+      "class": "IgnitionCannonAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs",
+      "body_clip": "hero-sean-ignite",
+      "first_person_action": "ignite",
+      "cast_cue": "sfx_cast_sean_cannon",
+      "hazard_spawners": [],
+      "other_vfx": [
+        "AttachHandVfx"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [],
+      "direct_primitives": [],
+      "special_visual_calls": [
+        "VfxFlipbook.Play"
+      ],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "sean",
+      "ability_id": "sean_ultimate",
+      "name": "SUPERNOVA",
+      "class": "SupernovaSmashdownAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs",
+      "body_clip": "hero-sean-supernova",
+      "first_person_action": "supernova-slam",
+      "cast_cue": "sfx_cast_sean_supernova",
+      "hazard_spawners": [
+        "CreateExplosion",
+        "SpawnSupernovaCrater"
+      ],
+      "other_vfx": [],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_sean_ult",
+        "sfx_explosion_heavy"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "zack",
+      "ability_id": "zack_skill1",
+      "name": "BOLT SPRINT",
+      "class": "StaticRailGrindAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs",
+      "body_clip": "hero-zack-sprint",
+      "first_person_action": "sprint-electric",
+      "cast_cue": "sfx_cast_zack_sprint",
+      "hazard_spawners": [
+        "SpawnShockTrail"
+      ],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_zack_grunt"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "zack",
+      "ability_id": "zack_skill2",
+      "name": "MAGNET",
+      "class": "MagnetRecallAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs",
+      "body_clip": "hero-zack-charge",
+      "first_person_action": "overcharge",
+      "cast_cue": "sfx_cast_zack_magnet",
+      "hazard_spawners": [],
+      "other_vfx": [
+        "AttachHandVfx"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_zack_grunt",
+        "slipper_bounce"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [
+        "MagnetRecallTrace.Spawn"
+      ],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "zack",
+      "ability_id": "zack_ultimate",
+      "name": "THUNDERSTRIKE",
+      "class": "ThunderstrikeOverdriveAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs",
+      "body_clip": "hero-zack-summon",
+      "first_person_action": "summon-lightning",
+      "cast_cue": "sfx_cast_zack_summon",
+      "hazard_spawners": [
+        "CreateThunderstrike"
+      ],
+      "other_vfx": [
+        "SpawnElectricArcs"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_zack_ult",
+        "sfx_lightning_strike"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "dante",
+      "ability_id": "dante_skill1",
+      "name": "SEISMIC STOMP",
+      "class": "SeismicStompAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs",
+      "body_clip": "hero-dante-stomp",
+      "first_person_action": "stomp-heavy",
+      "cast_cue": "sfx_cast_dante_stomp",
+      "hazard_spawners": [
+        "CreateExplosion",
+        "SpawnCrackedLavaDecal",
+        "SpawnVolcanicRockDebris"
+      ],
+      "other_vfx": [
+        "SpawnMagmaEruption"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_dante_grunt"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "dante",
+      "ability_id": "dante_skill2",
+      "name": "DEMONIC CARAPACE",
+      "class": "DemonicCarapaceAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs",
+      "body_clip": "hero-dante-roar",
+      "first_person_action": "carapace-guard",
+      "cast_cue": "sfx_cast_dante_carapace",
+      "hazard_spawners": [],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "guard_block"
+      ],
+      "direct_primitives": [
+        "Cube",
+        "Sphere"
+      ],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "dante",
+      "ability_id": "dante_ultimate",
+      "name": "TITAN FISSURE",
+      "class": "DemonTitanFissureAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs",
+      "body_clip": "hero-dante-fissure",
+      "first_person_action": "fissure-slam",
+      "cast_cue": "sfx_cast_dante_fissure",
+      "hazard_spawners": [
+        "CreateExplosion",
+        "SpawnEarthPillar",
+        "SpawnVolcanicRockDebris"
+      ],
+      "other_vfx": [
+        "SpawnMagmaEruption"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_dante_ult"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "cheska",
+      "ability_id": "cheska_skill1",
+      "name": "PERMAFROST SHEET",
+      "class": "PermafrostSheetAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs",
+      "body_clip": "hero-cheska-frostwave",
+      "first_person_action": "frost-sweep",
+      "cast_cue": "sfx_cast_cheska_sheet",
+      "hazard_spawners": [
+        "SpawnIceSheet"
+      ],
+      "other_vfx": [],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_cheska_grunt"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "cheska",
+      "ability_id": "cheska_skill2",
+      "name": "ICE BARRICADE",
+      "class": "IceBarricadeAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs",
+      "body_clip": "hero-cheska-raise",
+      "first_person_action": "raise-barricade",
+      "cast_cue": "sfx_cast_cheska_barricade",
+      "hazard_spawners": [
+        "SpawnIceBarricade"
+      ],
+      "other_vfx": [],
+      "inline_geometry": [],
+      "additional_cues": [],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "cheska",
+      "ability_id": "cheska_ultimate",
+      "name": "GLACIAL NOVA",
+      "class": "GlacialShatterBurstAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs",
+      "body_clip": "hero-cheska-nova",
+      "first_person_action": "nova-burst",
+      "cast_cue": "sfx_cast_cheska_nova",
+      "hazard_spawners": [
+        "SpawnIceCubePrison"
+      ],
+      "other_vfx": [
+        "SpawnIceBurst"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_cheska_ult",
+        "sfx_frost_nova"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "nemu",
+      "ability_id": "nemu_skill1",
+      "name": "PHANTOM VEIL",
+      "class": "PhantomPhaseAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs",
+      "body_clip": "hero-nemu-ghoststep",
+      "first_person_action": "ghost-step",
+      "cast_cue": "sfx_cast_nemu_veil",
+      "hazard_spawners": [],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_nemu_grunt",
+        "slipper_land"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [
+        "VfxFlipbook.Play"
+      ],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "nemu",
+      "ability_id": "nemu_skill2",
+      "name": "ASTRAL HIJACK",
+      "class": "GhostlyPoltergeistAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs",
+      "body_clip": "hero-nemu-project",
+      "first_person_action": "project-spirit",
+      "cast_cue": "sfx_cast_nemu_hijack",
+      "hazard_spawners": [
+        "SpawnGhostPoltergeist"
+      ],
+      "other_vfx": [],
+      "inline_geometry": [],
+      "additional_cues": [
+        "sfx_ghost_teleport"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "nemu",
+      "ability_id": "nemu_ultimate",
+      "name": "DEVOURING SEANCE",
+      "class": "NightmareSeanceVoidAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs",
+      "body_clip": "hero-nemu-seance",
+      "first_person_action": "seance-channel",
+      "cast_cue": "sfx_cast_nemu_seance",
+      "hazard_spawners": [
+        "SpawnKuroUnbound"
+      ],
+      "other_vfx": [],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_nemu_ult"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [
+        "companion.Devour"
+      ],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "phaister",
+      "ability_id": "phaister_skill1",
+      "name": "HEX",
+      "class": "HexSigilAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "body_clip": "hero-phaister-hex",
+      "first_person_action": "cast-hex",
+      "cast_cue": "sfx_cast_phaister_hex",
+      "hazard_spawners": [
+        "SpawnHexSigil"
+      ],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_phaister_grunt"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "phaister",
+      "ability_id": "phaister_skill2",
+      "name": "SHADOW BLINK",
+      "class": "ShadowPhaseBlinkAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "body_clip": "hero-phaister-blink",
+      "first_person_action": "blink",
+      "cast_cue": "sfx_cast_phaister_blink",
+      "hazard_spawners": [
+        "SpawnShadowArrival",
+        "SpawnShadowRift"
+      ],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_phaister_grunt",
+        "sfx_blink_arrive"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    },
+    {
+      "hero": "phaister",
+      "ability_id": "phaister_ultimate",
+      "name": "GRAND COVEN",
+      "class": "GrandCovenEclipseAbility",
+      "source": "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+      "body_clip": "hero-phaister-eclipse",
+      "first_person_action": "coven-eclipse",
+      "cast_cue": "sfx_cast_phaister_coven",
+      "hazard_spawners": [
+        "SpawnGrandCovenEclipse"
+      ],
+      "other_vfx": [
+        "AttachAura"
+      ],
+      "inline_geometry": [],
+      "additional_cues": [
+        "hero_phaister_ult",
+        "sfx_eclipse_toll"
+      ],
+      "direct_primitives": [],
+      "special_visual_calls": [],
+      "source_inspected": true,
+      "deep_pass_complete": false
+    }
+  ]
+}

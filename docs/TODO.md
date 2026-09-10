@@ -274,6 +274,12 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+The all-eighteen source/model audit and durable execution directions are in
+[ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md). All six v5 action sheets were
+reviewed; the plan distinguishes observed artifacts, source-confirmed defects and
+unverified leads. Start the ice-sheet redesign, then complete every kit. No deep
+ability row is closed merely by the earlier correction batch.
+
 Ground-placement/Zack correction verified: Core 559/559, EditMode 470/470, fourteen
 gating audits and seven final targeted PlayMode cases pass. Six ground rows match
 the actual map floor. [Receipt](reports/improvement-2026-09-10/ground-and-zack-correction.md).

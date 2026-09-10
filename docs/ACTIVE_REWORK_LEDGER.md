@@ -191,9 +191,11 @@ Blender executable:
 - `f300e2a`: remove added thumbs from all
   eighteen playable models, regenerate matching arms, lighten character ink, and
   preserve rejection/style decisions. Focused outline/arm/motion checks pass 14/14.
-- **Last pushed gameplay/art checkpoint: `7c7fcb5`**: remove misplaced cuff and
+- `7c7fcb5`: remove misplaced cuff and
   clothing additions, regenerate arms, preserve the original wardrobes, current
   eighteen-person sheet and the repeated Berto rejections. Focused checks 14/14.
+- **Last pushed gameplay checkpoint: `c09fba2`**, ground placement and Zack function
+  correction. Character geometry is still the kept `7c7fcb5` version.
 
 ### Verified at e730878
 
@@ -350,6 +352,12 @@ angles and in motion before treating it as an improvement. No individual charact
 pass is complete yet. The other seventeen still require their own design work.
 
 ## 5. Eighteen-skill ledger
+
+**Execution plan:** [ABILITY_REWORK_PLAN.md](ABILITY_REWORK_PLAN.md) contains the
+owner's latest all-ability/model instructions, source inventory, reviewed findings,
+per-action design direction, verification criteria and resume order. Read it before
+further skill work. Character models stay kept; spawned skill models may be reworked.
+Next: Permafrost Sheet art, then complete all three Cheska actions and the other kits.
 
 ### Current implementation batch: Zack function and grounded skill placement
 
