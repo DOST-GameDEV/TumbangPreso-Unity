@@ -431,8 +431,10 @@ before/after rationale and role/counterplay evidence.
 
 - No full deep ability pass is complete. The verified correction checkpoint is
   `c09fba2`; it is a foundation, not the finished visual/animation result.
-- Next implementation is the Permafrost Sheet redesign, followed by the rest of
-  Cheska's kit. Keep all other rows open and continue without asking to proceed.
+- Cheska's deep pass and Kuro model/personality have now landed (1b83710 and
+  a1ac87b); Nemu local function/audio is pushed at 74664f4. Finish the explicit
+  networking request in the active ledger, then continue Phaister's phased magic
+  and the remaining kits. Keep all other rows open and continue without asking to proceed.
 - Store new model/source assets and licenses appropriately. Preserve before/after
   normal-speed evidence; do not overwrite a rejected iteration and call it approved.
 - Update this file and ACTIVE_REWORK_LEDGER.md when priorities, findings or results
@@ -473,3 +475,46 @@ four players, saved IDs and profiles. Use existing transport/movement contracts,
 finite/bounds/elapsed-distance validation and a protocol bump if the wire changes.
 Do not claim same-process witness evidence verifies LAN. Network work remains in
 this same task; no new task, subagent, paid service or usage reset is authorized.
+
+## Latest ability and loadout scope expansion, 2026-09-10
+
+The owner explicitly authorizes changing or replacing boring abilities, as well
+as improving their presentation. Every hero's loadout alternatives must differ
+enough to have a real use case and deserve their slot. This supersedes the earlier
+blanket restriction against changing existing ability mechanics where it would
+prevent the requested kit rework. Preserve four players, rotating defender,
+can/slipper throw/retrieval, both modes, six hero identities and the existing
+loadout structure. No extra modes or feature systems are requested.
+
+Before implementing each kit, record the base action and each existing alternative:
+its distinct tactical job, attacker and defender use case, readable tell, response
+available to opponents, cost/opportunity cost and cancellation/network contract.
+Compare alternatives side by side. A tiny statistical difference or cosmetic
+recolour alone does not satisfy the latest request. Replace a redundant option
+within its existing slot rather than accumulating more abilities or complexity.
+Review actual play and loadout descriptions together, in English with restrained
+Philippine cultural grounding. Keep all existing IDs/save migration obligations
+explicit if an ability's function changes. Animation/FPP/VFX/SFX must communicate
+that function, especially imposing but readable ultimates.
+
+Finish the currently exposed network failures first, then execute this expanded
+six-kit review and remaining animation/map work. Do not quietly return to the
+old presentation-only interpretation after compaction. No subagents or new tasks.
+
+### Lore anchor confirmed with the owner
+
+The owner asked whether the intended ability/lore vision was retained and accepted
+this answer: powers express the character's personality and lore; cultural cues
+belong in behavior, material, motion and sound, not forced names or decoration;
+casting must be visible through body/FPP preparation, release and recovery;
+loadout choices need real jobs; ultimates are major readable events. Phaister is
+phased grand ritual, Nemu's cute familiar becomes a giant inward-pulling rage form.
+
+LORE.md remains the world constraint: this is expressive, extraordinary SPORT,
+without lasting injury, destroyed neighborhoods or a world-ending villain. Phaister
+is a showy performer with sporting mischief; Nemu/Kuro are curious and playful
+outside their imposing competitive cast. Sean commits, Zack finds precise angles,
+Dante holds difficult space, Cheska shapes useful routes. Reworks should strengthen
+those differences, not turn all six into generic destructive spellcasters.
+
+The whole-kit/default-alternative review is now in [HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md). It records all twelve choice pairs, source contradictions, candidate replacements, lore boundaries and actual-play acceptance. Candidates are not marked implemented or balanced.

@@ -21,11 +21,26 @@ For current skill work read [docs/ABILITY_REWORK_PLAN.md](docs/ABILITY_REWORK_PL
 It preserves the all-eighteen geometry/animation/SFX/VFX audit, current owner feedback,
 action-specific direction and completion checks. Start with the rejected ice skill;
 keep the current character designs and finish the remaining overall game scope.
+The detailed default/alternate decision matrix is
+[docs/HERO_KIT_REWORK_DECISIONS.md](docs/HERO_KIT_REWORK_DECISIONS.md); it records
+all twelve choice pairs and candidate replacements without claiming they are done.
 Also read [docs/PHILIPPINE_ABILITY_DIRECTION.md](docs/PHILIPPINE_ABILITY_DIRECTION.md):
 the latest owner request covers culturally grounded reworks for all six heroes,
 English copy, research/planning before implementation, and autonomous AFK execution.
 
 ## Active scope and boundaries
+
+**Latest scope expansion, 2026-09-10:** thoroughly repair networking and improve
+all eighteen abilities plus every existing loadout alternative. The owner now
+explicitly permits replacing boring/redundant abilities. Plan each whole hero kit
+with distinct tactical purposes, useful alternatives, counterplay, role-specific
+use cases and synchronized animation/FPP/VFX/SFX before implementation. This
+supersedes presentation-only or blanket no-mechanic-change restrictions for those
+existing ability slots. Preserve the core game, six heroes, both modes and the
+existing loadout structure; do not add modes or unnecessary systems. The latest
+sections of ACTIVE_REWORK_LEDGER.md and ABILITY_REWORK_PLAN.md record decisions,
+open defects, exact verification state and next actions. Keep them current.
+
 
 **Latest owner correction (2026-09-10): keep the cleaned current cast at `7c7fcb5`
 and move to other work. Stop the individual character redesign queue. Prioritize

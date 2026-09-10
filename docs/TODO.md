@@ -274,6 +274,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Latest owner expansion, 2026-09-10:** change or replace boring/redundant hero
+abilities and make every existing loadout alternative serve a distinct useful
+role. Plan each entire kit before implementation; carry purpose, counterplay,
+role-specific use cases, animations/FPP/VFX/SFX and truthful English copy together.
+The active ledger and ability plan preserve this authorization and its boundaries.
+
+
 Nemu local function/collision/cancellation batch: 11/11 complete-cycle PlayMode,
 Core 559/559, copy follow-up 24/24 after full EditMode found one length failure.
 See [Nemu function evidence](reports/improvement-2026-09-10/nemu-function.md).
@@ -281,6 +288,23 @@ Familiar networking and actual separate-process proof remain open.
 
 
 **Explicit owner addition, 2026-09-10:** thoroughly fix the broken networking too.
+
+Protocol25 first actual recall proof: three separate Windows processes observed
+6.04 m familiar flight and agreed exactly on the recorded final body position
+(Logs/familiar-recall-clean-v2/result.json). Ultimate/delayed/reconnect cases remain
+open. The real run first exposed a roster buffer overflow; dynamic UTF-16 sizing,
+fragmented roster/identity delivery and profile-file isolation now have regressions.
+Full EditMode485 passes. New whole-kit planning is in
+[HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md).
+
+Protocol 25 repair is in progress locally: controlled familiar movement and cast
+anchors, actual effect snapshots, preserved delayed aim, source pose before local
+teleports, replica interpolation cleanup and missing host announcement guards.
+Core 562/562; full EditMode 481/481 before the new diagnostic fixture; local
+familiar contracts 15/15 before the new snapshot cases. Real host/client/observer
+trace and delayed-link verification are next. Do not mark network complete from
+these editor checks. Full active-effect recovery for the other kits remains open.
+
 Separate-process host/joiner/observer and reconnect/lifecycle verification are
 required, including controlled-familiar/skill positions and authoritative contacts.
 The active ledger records the missing possession-motion route and current fixes.

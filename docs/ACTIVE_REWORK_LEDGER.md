@@ -898,3 +898,222 @@ this same task; no new task, subagent, paid service or usage reset is authorized
   reconnect transient restoration and all remaining original scope stay open.
 
 Copy follow-up `nemu-copy-edit-v2.xml`: 24/24 passed after shortening text.
+
+### Network implementation in progress, after 74664f4
+
+The local Nemu function/audio batch is pushed at 74664f4. Protocol 25 changes are
+uncommitted and must not be called release-ready. Implemented locally: a 20 Hz
+unreliable-sequenced familiar pose pair; final familiar anchor in reliable
+ReqAbility/PlayAbility; floor/court/collision and elapsed-distance validation;
+local-only temporary body AI; non-simulating host/observer familiar replicas.
+Cast source position is now captured BEFORE local teleport, which matters for
+Phaister blink too: the old request reported its destination as its source and
+could fail the host's 2.25 m intent plausibility check.
+
+Also found and fixed delayed OnActivate dropping the received cast context and
+using the replica's live aim after windup. The accepted release position/forward/
+aim now survives the delay. Kuro holds still during ultimate invocation. Countdown
+announcements now explicitly require the host, matching other play messages.
+
+Core 562/562 and unchanged local Nemu 10/10 pass. Wire shape: 64 messages, zero
+mismatches; request paths: 61, zero unreachable; numeric wire fields: 68, zero
+findings. Added actual remote-body ownership, rejected-flight and delayed-aim
+contracts; `familiar-network-contract-v1` is running. Check fresh XML.
+
+Remaining before calling network repair done: owner confirmation/correction of
+accepted ultimate anchor at high latency; actual host/client/observer flight,
+recall, denial and cast traces; latejoin/reconnect active effects; remote body
+teleport/interpolation state; disconnect/round/rematch. A temporary verification
+player under Logs may be necessary for real processes; it is not final delivery
+or a replacement of the Desktop build. Final Windows delivery still waits for
+remaining hero/motion/map work.
+
+Map preparation while tests run found reusable tree models already installed in
+Art/models/kits/city (small/large), forest (tree/tree-high), town
+(tree/tree-high/tree-high-round/tree-crooked). Review those assets in engine before
+choosing replacements; do not download another pack without inspecting them.
+
+### Further network findings and verification preparation
+
+- `familiar-network-contract-v2.xml` is 15/15. It adds genuine host-replica
+  ownership, zero-input, invalid-flight, preserved delayed aim and teleport-target
+  checks. Core remains 562/562; fourteen source gates pass before snapshot changes.
+- Found four more host announcement handlers lacking sender guards: Seating,
+  RematchTally, BeginRematch and RebindSeat. Added the same host-only sender and
+  host-loopback checks used by adjacent messages; host call sites already run the
+  local action directly. This is explicit authorization, not merely finite data.
+- Added a reliable FamiliarEffect message for the actual ultimate anchor/lifetime
+  and explicit latejoin snapshots. Flight remains unreliable. NGO's ServerTime
+  removes travel time from the effect's remaining lifetime. Owner and observers
+  can rehydrate Kuro and the actual pulling field without spending a charge or
+  replaying a full fresh cast. Full EditMode `network-foundation-edit` is running.
+- Need verify this snapshot code after compilation, including duplicate state,
+  late join, no teleport when replacing possession, exact floor and expiration.
+  Known review point: an existing predicted field has its own scheduled Destroy;
+  a restored longer clock must also correct that field's lifetime rather than
+  only the ghost/ability timer. Do not leave that mismatch for the final player.
+- A scripted three-process familiar trace is being prepared, using real input on
+  the owning client and independent host/observer CSVs. Use isolated profile
+  backup/restore around all processes. Avoid interpreting NetworkMultiProcessProbes
+  as actual processes; despite its name those tests simulate state in one editor.
+
+### Exact verification state for the current protocol work
+
+Full EditMode `network-foundation-edit.xml`: 481/481. Familiar contract v1 after
+snapshot compilation: 15/15. New snapshot tests are running in
+`familiar-effect-contract-v2.xml` (17 expected). The predicted field now rebuilds
+on authoritative confirmation, inactive old root first, so its scheduled Destroy
+agrees with the restored ghost clock. Repeated-state and no-teleport/resource
+contracts cover this. NGO ServerTime supplies the expiry clock.
+
+Prepared `NetFamiliarProbe` and `tools/net_familiar_matrix.py` for actual three
+process traces. The fixture is explicit, guarded as tournament modifier
+NetFamiliarProbe.Active, default off; its command line selects Nemu, parks
+bystanders and drives only the owning client's real input. No ordinary game/UI
+flow reaches it. Its two cases are recall and ultimate during possession; no
+mid-run cooldown reset is needed. The runner launches hidden/batch players,
+optionally shapes only the owner's link, compares independent trace endpoints,
+actual field count and expiry, and backs up/restores existing profile files.
+
+Next: read fresh 17-case XML, fix any actual failures, run Checks.RunAll, build a
+verification-only Windows player under Logs with GameBuilder -buildOutput and run
+both cases clean and delayed. Do not replace the Desktop build or call this final
+shipping; the broader ability/map/motion scope is still open. While Unity builds,
+prepare/review Phaister geometry and installed map assets, without imported edits.
+
+### First actual protocol-25 verification player
+
+Snapshot contracts pass 17/17; Checks.RunAll passes all eight; all fourteen source
+checks pass. GameBuilder succeeded in 77 seconds, 995 MB, nine scenes, at
+Logs/network-verification-v1/TumbangPreso.exe. This is an internal verification
+player, not final delivery; Desktop output was untouched. Build log reports
+protocol25 and dirty tree, but unexpectedly no SHA. Investigate that identity
+lookup before final release; use the executable hash in the trace report meanwhile.
+
+Three actual processes are now running recall case under
+Logs/familiar-recall-clean-v1, orchestrated by tools/net_familiar_matrix.py.
+Fresh result.json and independent CSVs, not process survival, determine success.
+No native control or recording is active. All player processes and profile restore
+are owned by the script; collect its result before edits or another live run.
+
+Installed-tree review used Blender without changing source assets. All six
+reviewed candidates are conical evergreen forms or single teardrop canopies,
+including town/tree-crooked. They do not solve the requested Philippine urban
+shade-tree silhouette. Prefer an authored branching broad canopy for plaza shade
+and smaller street forms rather than swapping one cone for another. Reference:
+https://ncr.denr.gov.ph/news-events/denr-ncr-declares-new-heritage-tree-in-metro-manila/
+identifies established Metro Manila heritage species including Narra, Acacia,
+Mango and Rain Trees. The design inference is to use fitting shade-tree forms,
+not claim all these species are native. Native trees and introduced rain trees
+must not be conflated in copy.
+
+## Latest ability and loadout scope expansion, 2026-09-10
+
+The owner explicitly authorizes changing or replacing boring abilities, as well
+as improving their presentation. Every hero's loadout alternatives must differ
+enough to have a real use case and deserve their slot. This supersedes the earlier
+blanket restriction against changing existing ability mechanics where it would
+prevent the requested kit rework. Preserve four players, rotating defender,
+can/slipper throw/retrieval, both modes, six hero identities and the existing
+loadout structure. No extra modes or feature systems are requested.
+
+Before implementing each kit, record the base action and each existing alternative:
+its distinct tactical job, attacker and defender use case, readable tell, response
+available to opponents, cost/opportunity cost and cancellation/network contract.
+Compare alternatives side by side. A tiny statistical difference or cosmetic
+recolour alone does not satisfy the latest request. Replace a redundant option
+within its existing slot rather than accumulating more abilities or complexity.
+Review actual play and loadout descriptions together, in English with restrained
+Philippine cultural grounding. Keep all existing IDs/save migration obligations
+explicit if an ability's function changes. Animation/FPP/VFX/SFX must communicate
+that function, especially imposing but readable ultimates.
+
+Finish the currently exposed network failures first, then execute this expanded
+six-kit review and remaining animation/map work. Do not quietly return to the
+old presentation-only interpretation after compaction. No subagents or new tasks.
+
+### Actual three-process failure and fixes in progress
+
+The first recall trace FAILED, honestly: no process reached sustained possession.
+Do not count it as network acceptance. It exposed a real OverflowException in
+BroadcastLobbyPicks, where four variable-length player records were written into
+512 bytes. The fix sizes that buffer from actual UTF-16 encoded strings and uses
+reliable fragmented delivery. Identify and SelectLobbyPick had the same fixed-size
+string-payload pattern; they now size their own data and fragment reliably too.
+
+The first run also showed simultaneous settings.json.tmp writes despite distinct
+-tp-profile values: only network authentication/token salt was isolated. New
+ProfilePaths routes settings, career and social files into a stable hashed
+subdirectory for explicit launch profiles. With no profile argument, the exact
+existing default paths remain. Save/profile preservation remains required.
+
+Fixture correction: pin Hero Strike rules and have the host stage the intended
+Nemu fixture and broadcast its pick when the installed seat differs. The initial
+fixture waited for Nemu without ensuring its late-installed pick, producing empty
+CSV evidence instead of a false pass. All three first-run processes were stopped
+and all ten pre-existing persistent files restored by the runner.
+
+Build identity no-sha cause confirmed: this checkout is a linked Git worktree.
+HEAD is in its worktree gitdir, while refs live in commondir. HeadSha now resolves
+that file for loose/packed refs. The separate checkout's content was read only;
+none of its unrelated user changes were touched.
+
+Full EditMode network-roster-edit-v1 is running after those fixes. Add direct
+regressions for long/unicode roster payload sizing, isolated/default profile paths
+and linked-worktree SHA; then rebuild the verification player and rerun traces.
+
+### Remaining flight-stream latency correction
+
+Before the next verification build, distinguish accepted flight echoes from real
+host corrections. The first stream patch applies a received owner pose whenever
+it differs by >1.5 m. At Kuro speed a healthy delayed echo can exceed that distance;
+rewinding to every old accepted echo would turn ping into a movement penalty.
+Transmit a correction flag on SyncFamiliar. Owner ignores accepted echoes and
+applies only explicit rejections/corrections; observers interpolate both. Keep
+server time-accrued distance and collision validation. This is still protocol25,
+which has not been pushed/released. The actual delayed-link trace must prove it.
+
+New full EditMode network-roster-edit-v2 is running. The first pass found the
+new diagnostic modifier was absent from TournamentGuardTests' explicit setter/
+reset fixture, and the payload regression needed NGO/Collections test assembly
+references. These were corrected without weakening the nine-modifier assertions.
+
+### Verification player v2 in flight
+
+Full EditMode network-roster-edit-v2 passes 485/485, including long Unicode roster
+allocation, explicit/default profile isolation, linked worktree loose/packed refs
+and the complete nine-modifier guard coverage. SyncFamiliar now carries an explicit
+correction bit: the owner ignores accepted delayed echoes, while observers still
+interpolate them. All 65 wire messages have matching field counts.
+
+The second verification-only build is running under
+Logs/network-verification-v2/TumbangPreso.exe, log network-verification-build-v2.log.
+Read the fresh success/identity, then run net_familiar_matrix recall and ultimate
+again. v1 traces remain failed evidence, not a baseline pass. No native PC control
+or recording active. Continue expanded all-six kits/loadouts and remaining maps/
+motion after the active network failure is resolved.
+
+### Verification v2 built and running
+
+The second verification player built successfully in 37 seconds, 995 MB, and now
+correctly stamps 74664f4ea446175e29c38b31ec58acb947d6780d + dirty, protocol25.
+Linked-worktree identity is fixed. Recall clean v2 is running actual three-process
+trace. Core 562, EditMode485, Nemu PlayMode17 and all14 audits are the preceding
+verified counts. Do not call the actual trace passed until result.json says so.
+
+The whole-kit/default-alternative review is now in [HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md). It records all twelve choice pairs, source contradictions, candidate replacements, lore boundaries and actual-play acceptance. Candidates are not marked implemented or balanced.
+
+### Actual clean familiar network results
+
+Recall clean v2 PASS: host/owner flight span6.0401 m; observer6.0491 m. All three
+final bodies (1.1757,-1.6029), zero recorded endpoint error.
+Ultimate clean v2 PASS: all three actual field centers (0.6378,-0.8670), zero
+endpoint error; expiry times spread46 ms; no duplicate/live-leftover field.
+Owner remains at its original body after R, as required (ultimate is not recall).
+Executable launcher hashes are shared by Unity builds and cannot identify code;
+the runner now also records TumbangPreso.Runtime.dll SHA256. V2 runtime hash:
+dffbf5fd3753a06ec0d31e34a1f3acf3534a2537b50bbd15861e2343c8fa7473.
+
+Now running familiar-ultimate-300ms-v2: three real processes, owner link150 ms each
+way with2% packet loss. Do not claim it passed until reading result.json. Reconnect,
+all-other-kit effects, ordinary play/mode matrices and final release still open.
