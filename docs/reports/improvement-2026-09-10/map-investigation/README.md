@@ -1,5 +1,12 @@
 # Unresolved slipper-flight investigation
 
+**2026-09-12 continuation:** the original files below remain unchanged historical
+evidence. A corrected isolated fixture now distinguishes retained Carrier.Held
+from the overhead-flight ground query. Both reproduce separately and the focused
+correction passes4/4 including raised-floor and roof-recovery contracts. See
+[current investigation](../../improvement-2026-09-12/map-retrieval.md).
+This does not establish the cause of the historical48-idle-penalty outlier.
+
 These text files preserve an exploratory fixture and an unsuccessful runtime
 patch. Neither is compiled or applied. The patch did not resolve the fixture's
 observed position reset and was reverted before the map checkpoint.

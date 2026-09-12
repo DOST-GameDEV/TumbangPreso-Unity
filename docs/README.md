@@ -16,6 +16,9 @@ expressions, tests and limitations are in
 [kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md).
 The partial map implementation and its explicit limitations are in
 [map-checkpoint.md](reports/improvement-2026-09-10/map-checkpoint.md).
+The new continuation's isolated flight correction and saved-authoring verification
+are in [map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md) and
+[map-repeatability.md](reports/improvement-2026-09-12/map-repeatability.md).
 
 The active 2026-09-09 improvement pass also uses
 [IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md) for durable progress,
@@ -26,7 +29,8 @@ They preserve the required rulebook, VISION and TODO read order below.
 
 | File | What it is |
 |---|---|
-| [`../CLAUDE.md`](../CLAUDE.md) | **First, always.** The rules of the repository: which git repo is live, the engine-free core rule, the build and test commands, the traps on this machine. |
+| [`../AGENTS.md`](../AGENTS.md) | **First, always.** Self-contained current instructions for ChatGPT/Codex: scope, branch/checkout, gameplay/art contracts, verification, compaction continuity and delivery. |
+| [`../CLAUDE.md`](../CLAUDE.md) | Historical incident reasoning and receipts. Consult relevant sections; current instruction routing and owner decisions are in AGENTS.md. |
 | [`VISION.md`](VISION.md) | **What the game is FOR.** The two modes and why both ship, the readability budget, how a player is meant to learn a power, what is settled. Read before making a design call. |
 | [`TODO.md`](TODO.md) | **What is actually open, and nothing else.** What is wrong, where it lives, what done looks like. Check before inventing a task; update in the same commit as the work. A section lives here while its HEADING says OPEN, IN PROGRESS or NOT DONE. |
 | [`TODO_Archive.md`](TODO_Archive.md) | **The record: every finished section and every batch report, whole, under its original number.** Split out on 2026-09-03, when `TODO.md` had reached 22,930 lines and stopped being readable. ⚠️ **Nothing was deleted and nothing was renumbered**, so a `docs/TODO.md` § N pointer written anywhere in this repository still resolves: `TODO.md` keeps an index row for each and sends you here. ⚠️ Numbers are not unique (§ 53, § 63, § 64, § 65 repeat); search by title too. |

@@ -1,5 +1,13 @@
 # CLAUDE.md
 
+**Instruction routing changed by the owner, 2026-09-12:**
+[AGENTS.md](AGENTS.md) is now the primary self-contained instruction file for
+ChatGPT/Codex. Read AGENTS.md, docs/VISION.md, docs/TODO.md, then the newest active
+ledger pointer. This file preserves incident reasoning and historical rules.
+Its older read-first, tool-specific workflow and dated scope statements do not
+override AGENTS.md or current owner instructions. Consult relevant sections as
+evidence; do not treat this archive as a mandatory full-session preamble.
+
 **Current owner wrap-up,2026-09-10:** verify and push the current batch, then give
 a thorough continuation handoff directly in chat. The owner explicitly permits
 unfinished map work in that handoff. The remaining full improvement goal is not
@@ -17,9 +25,9 @@ Better animation also includes skill VFX, casting and separate animations for
 different actions. Do not repeat animations unless necessary; see the same
 canonical document, section0.1.
 
-The rules of this repository. Read this first, every session.
+Historical repository rules and incident receipts. Current rules are in AGENTS.md.
 
-**Read order: this file, then [`docs/VISION.md`](docs/VISION.md), then
+**Current read order: [`AGENTS.md`](AGENTS.md), then [`docs/VISION.md`](docs/VISION.md), then
 [`docs/TODO.md`](docs/TODO.md).** Everything else is reference;
 [`docs/README.md`](docs/README.md) indexes it.
 

@@ -1,5 +1,17 @@
 # Final map improvement pass
 
+**2026-09-12 continuation:** the owner's current request resumes this open plan.
+Use AGENTS.md and the newest active-ledger pointer. The saved/reopened two-run
+semantic comparison now passes on all three maps (16667 normalized rows, zero
+changes). The isolated flight/carrier defects have4/4 focused regressions, with
+the historical48-idle outlier still unattributed. See
+[map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md) and
+[map-repeatability.md](reports/improvement-2026-09-12/map-repeatability.md).
+Composition, route/idle and real FPP/exact-player review remain open. The older
+Eskinita side-eye captures at x=+/-10 are outside its8.1m wall; do not call them
+legal first-person views. Current real FPP uses the live1.25m offset and95-degree
+lens, not the old1.65m/52-degree witness.
+
 Owner scope change,2026-09-10: finish ALL map improvements on Eskinita, Bayan
 Plaza and Ilalim ng Tulay, then hand off everything else directly in chat for the
 next session. Status: PARTIAL CHECKPOINT, NOT FINISHED. This document is the active implementation

@@ -242,8 +242,8 @@ Hero Strike is aimed at a bracket. That is a set of engineering constraints, not
 
 Read in this order. It is short on purpose.
 
-1. **`CLAUDE.md`**: the rules of the repo. Which git repo is live, the engine-free core rule,
-   how to build and test on this machine.
+1. **`AGENTS.md`**: the current self-contained rules. Which git repo is live, the engine-free core rule,
+   how to build and test on this machine. `CLAUDE.md` preserves historical incident reasoning.
 2. **This file**: what the game is for.
 3. **`docs/TODO.md`**: what is actually open. Check it before inventing a task.
 4. **`docs/Design.md`**: every balance number, and § 13 for what it does NOT govern.

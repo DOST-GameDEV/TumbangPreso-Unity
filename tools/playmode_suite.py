@@ -151,7 +151,8 @@ GROUPS = [
         from either side.
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
-        "CarryTests", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
+        "CarryTests", "MapRetrievalProbe", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
+        "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
         "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
@@ -170,7 +171,7 @@ GROUPS = [
         "AntiAliasStateProbe", "CosmeticSurfaceProbe", "GameplayShots", "ModelFacingProbe",
         "MsaaResolveProbe", "NationalsShowcaseProbe", "ImprovementEvidenceProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
-        "ReplayCaptureProbe", "AbilityStressProbe",
+        "ReplayCaptureProbe", "AbilityStressProbe", "KuroIdleReviewProbe", "KuroMapClearanceProbe",
     ]),
 
     ("services", """

@@ -1,5 +1,9 @@
 # ASTRA.md
 
+**Current instruction routing, 2026-09-12:** start with AGENTS.md, docs/VISION.md,
+docs/TODO.md and the newest active-ledger pointer. AGENTS is self-contained for
+ChatGPT/Codex; the older instructions below and CLAUDE.md preserve history.
+
 **Current continuation state:** the owner requested a wrap-up and thorough chat
 handoff, including unfinished maps. Kuro's matching blocky purple forms,18-bone
 giant loop and eleven idle clips (including :3/XoX/shy-pout gestures) are pushed

@@ -12,6 +12,18 @@ see Art_Direction.md section0.1.
 
 ## Latest owner additions, 2026-09-10
 
+**2026-09-12 continuation:** the owner resumes the unfinished work from 0f08e992
+and explicitly allows useful additions, including more animation/feedback, when
+they improve the existing game without overcomplicating it. This overrides older
+blanket no-addition statements. Preserve both modes, the core retrieval game,
+approved people/style, saved data and branch/tool/ownership boundaries. The prior
+session's wrap-up remains historical; this continuation starts with the open map
+review and source-grounded flight/idle investigations in the newest active pointer.
+Current foundation: split under-guideway flight/direct-carrier correction4/4,
+Core562/562, graphical EditMode489/489,8/8 checks and14 gating audits. Saved-map
+two-run semantic repeatability passes all16667 rows. These are correctness and
+repeatability results, not completed map composition, full gate or player review.
+
 Latest delivery instruction: wrap up the current work, verify/commit/push it and
 provide a thorough continuation handoff in chat. The owner explicitly permits
 unfinished map work in that handoff. The full scope below remains open. Current

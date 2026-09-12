@@ -768,7 +768,12 @@ namespace TumbangPreso
             // through, but the AI, the networked throw and any future caller do not all pass the
             // holder as the thrower, and a carrier still pointing at a slipper in flight drags it
             // back out of the air.
-            ReleasePreviousHolder(thrower);
+            // A throw has no next holder. Passing the thrower here used the grab
+            // helper's same-holder exemption and left Carrier.Held attached on
+            // direct throws. RideAnchor then overwrote the flight every frame.
+            // Carrier.HostThrowAt also clears Held, but this entry point must be
+            // complete on its own. MapRetrievalProbe isolates both call paths.
+            ReleasePreviousHolder(null);
             Holder = null;
 
             transform.position = origin;
@@ -1058,8 +1063,16 @@ namespace TumbangPreso
             // the thud and § THE LANDED HIGHLIGHT should fire for, which is exactly the
             // distinction the Godot original draws by grouping the timeout with the void
             // recovery instead.
-            if (transform.position.y <= GroundY(transform.position) + Balance.SlipperRestHeight)
-                Land(fromFlight: true);
+            // Only support below this step's swept height can end its flight.
+            // The broad placement query sees Ilalim's 9.04 m guideway from a
+            // 3.6 m throw, so it previously landed and recovered on the first step.
+            // Include the previous height so a fast descent cannot skip a raised
+            // slab. Pass this same support into Land rather than reselecting a roof.
+            Vector3 supportAt = transform.position;
+            supportAt.y = Mathf.Max(prevPos.y, supportAt.y);
+            float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
+            if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
+                Land(fromFlight: true, landingGround: flightGround);
             else if (_flightTime >= Balance.MaxFlightTime
                      || _airborneTotal >= Balance.MaxAirborneTime)
                 Land(fromFlight: false);
@@ -1422,8 +1435,11 @@ namespace TumbangPreso
         /// slipper below the world is recovered to its spawn, not balanced on nothing.
         /// </summary>
         public static float GroundY(Vector3 at)
+            => FindGroundY(at, 6.0f);
+
+        private static float FindGroundY(Vector3 at, float scanAbove)
         {
-            var from = new Vector3(at.x, at.y + 6.0f, at.z);
+            var from = new Vector3(at.x, at.y + scanAbove, at.z);
 
             var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
                                           QueryTriggerInteraction.Ignore);
@@ -1459,7 +1475,7 @@ namespace TumbangPreso
         /// side: putting the sound in unconditionally played a triple thud at the start of
         /// every round, when three slippers are returned to their marks on one frame.
         /// </param>
-        private void Land(bool fromFlight)
+        private void Land(bool fromFlight, float? landingGround = null)
         {
             SetState(SlipperState.Loose);
             _velocity = Vector3.zero;
@@ -1483,7 +1499,7 @@ namespace TumbangPreso
             // ORIGIN sitting at the volume centroid, so "resting on the floor is half a slipper
             // up" — half a slipper up FROM THE FLOOR, which is what has to be found first.
             Vector3 p = transform.position;
-            float rest = GroundY(p) + RestHeight;
+            float rest = (landingGround ?? GroundY(p)) + RestHeight;
 
             // ⚠️⚠️ A SLIPPER THAT COMES TO REST OUT OF REACH DELETES AN ATTACKER FROM THE ROUND,
             // AND IT IS NOT RARE. `GroundY` casts down from six metres up and takes the HIGHEST

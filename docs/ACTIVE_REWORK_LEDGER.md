@@ -15,7 +15,78 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (wrap-up, 2026-09-10)
+## Current execution pointer (continuation, 2026-09-12)
+
+Fetched origin/ASTRAReworks in the specified ok-x20 checkout. Clean local and remote
+HEAD both equal 0f08e9921c96148bf0c332d09b8392497f0cc82e. No checkpoint reset, main
+operation or separate Documents/GitHub checkout change. Resume maps, route/idle
+investigation and then the remaining kits/network/animation qualification.
+
+The owner explicitly permits worthwhile additions along the way, including more
+animation/feedback, as long as they do not overcomplicate the game. Preserve the
+core game, both modes, retained eighteen people, existing input/data contracts and
+all other boundaries. This is permission for player benefits, not mandatory scope
+growth. Keep this clarification through subsequent continuation.
+
+Owner additionally requests compaction-safe working state and a self-contained
+AGENTS.md for ChatGPT/Codex. AGENTS is now primary, carrying the actual scope,
+gameplay/art contracts, tooling/verification and continuity rules. CLAUDE.md is
+retained as historical reasoning. Active read-order links use AGENTS first.
+Latest emphasis: thoroughly improve look and feel into a fully realized game that
+surprises people while retaining the existing style, with fitting Filipino aspects.
+Judge complete play sequences and coherent places, not only technical test totals.
+
+Current verified runtime correction: MapRetrievalProbe reproduced two separate
+failures on unchanged Slipper source (0/2, Logs/map-retrieval-before-v2.xml).
+Direct HostThrow retained Carrier.Held through the helper's same-holder exemption;
+the actual Carrier.HostThrowAt path cleared Held but landed prematurely on the
+overhead guideway query. Slipper now detaches its carrier and uses swept-height
+support for flight, passing the same support into Land. After:4/4 PlayMode,
+Logs/map-retrieval-after-v1.xml. Raised-slab descent and unreachable-roof recovery
+also pass. Five physics steps cover1.273m below the deck. The historical48-idle
+cause remains OPEN and is not attributed to either defect. Full report:
+[map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md).
+
+Core562/562 and all14 gating audits pass. The informational audio audit flags7
+files, not a clean listening verdict. The discovered PlayMode partition originally
+refused five inherited unassigned fixtures; all are now assigned to existing match
+or capture groups, with MapRetrievalProbe also included. Full gate is not run yet.
+EditMode v1 with -nographics:487/489, two near-light fixtures unable to illuminate
+their surfaces. Rerun with graphics, do not weaken those tests. V2 failed to compile
+the new semantic checker due to the removed InstanceIDToObject API; checker now
+uses SerializedProperty references. Graphic EditMode V3 passes489/489 in
+Logs/continuation-editmode-v3.xml/log. Guard completed and restored17 files.
+
+Verified editor authoring verifier: MapRepeatabilityCheck.Run saves/reopens
+each map after two NeighborhoodFinishAuthor runs and compares normalized loaded
+components, mesh/material contents and lighting, keeping inactive objects. It
+backs up scene bytes and retains baseline/run1/run2/differences in a versioned
+Logs folder. First semantic run refused an embedded scene material before making
+map edits. V2 exposed raw Unity reference-ID children in its serializer; V3 visits
+structural containers only, hashes embedded assets and retains semantic references.
+V3 PASSES two saved/reopened runs on all maps:2389 Eskinita,3055 Bayan,11223 Ilalim
+rows, zero changed rows on each. Baseline-to-run1 also zero. Art asset byte content
+is unchanged; scene diffs are generated object IDs. Restore the three scenes to
+their original clean bytes after the current run. Report is
+Logs/map-repeatability-v3/report.txt; snapshots/diffs are beside it. Do not quote
+V2's ID-only failures as map drift. Checks.RunAll passes8/8 in
+Logs/continuation-checks-v1.log. All Unity runs are complete; no active process.
+All proven test-only arm tangents, quality settings, line endings and generated
+scene IDs are restored to the initial clean bytes. Next: commit/push this stable
+throw/instruction/repeatability batch, then capture real FPP at legal map positions
+and test routes. No new Windows build yet.
+
+All completed guards restored17 existing profile files. Latest completed backup
+after checks:profile-preservation-95a84664e407. The36 named-person arm tangent
+changes and QualitySettings/ProjectAuditorSettings have been restored. Current
+work also includes AGENTS/read-order docs, Slipper, MapRetrievalProbe plus meta,
+MapRepeatabilityCheck plus meta, playmode_suite.py and this report/TODO/plan.
+No map composition has intentionally changed yet. Preserve all other state.
+The older side-eye captures on Eskinita use x=+/-10 outside its8.1m wall; they are
+not legal player views. The real FPP rig uses1.25m eye offset and95-degree FOV.
+Use it with actual follow/self-hide and legal body locations for the next review.
+
+## Previous execution pointer (wrap-up, 2026-09-10)
 
 The owner explicitly asks to finish the current work, commit/push, update the
 relevant docs and provide a very thorough continuation handoff in chat. They

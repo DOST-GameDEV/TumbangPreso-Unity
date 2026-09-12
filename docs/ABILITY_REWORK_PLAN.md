@@ -15,7 +15,7 @@ kits does not satisfy this work. Art_Direction.md section0.1 is the standing rul
 
 Updated 2026-09-10. Status: ACTIVE, NOT COMPLETE. Source checkpoint: `c09fba2`.
 This is the owner's requested durable plan, not a final handoff or completion claim.
-Read CLAUDE.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER.md.
+Read AGENTS.md, docs/VISION.md and docs/TODO.md first, then ACTIVE_REWORK_LEDGER.md.
 
 Latest checkpoint: Kuro's matching purple forms, three graphic expressions and
 eleven idle clips are pushed at864cead, documented in

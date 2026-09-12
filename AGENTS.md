@@ -1,186 +1,183 @@
-# Working in this repository
+# Working instructions for ChatGPT / Codex
 
-**Latest delivery scope,2026-09-10:** the owner now asks to wrap up the current
-work, commit/push and hand off. They explicitly allow unfinished map work to be
-included in the continuation handoff. Verify the current batch and record its
-limits; do not claim the full map pass is complete or start further scope.
-Read [docs/MAP_FINAL_PASS.md](docs/MAP_FINAL_PASS.md) and the current execution
-pointer in ACTIVE_REWORK_LEDGER.md. Architecture, ground/props, materials/light,
-collision/retrieval and ordinary-play verification all remain part of the map
-goal for continuation. Preserve the
-ongoing Kuro/ability/network work and its exact verification state.
+This is the primary, self-contained repository instruction file, maintained at
+owner request on 2026-09-12. Start here. `CLAUDE.md` retains historical reasoning
+and incident receipts; it is no longer the entry point or a competing rulebook.
+Explicit current owner instructions override repository guidance. Newer decisions
+override dated scope notes, not unrelated safety, data or gameplay contracts.
 
-## Standing model-style requirement
+## Read and resume
 
-**New models must look native to TUMP, not overly detailed or from another game.**
-Read [docs/Art_Direction.md section0](docs/Art_Direction.md#0--new-models-must-belong-to-tump)
-before model/asset work. Keep the existing cute blocky language: few clean chunky
-forms, broad planes, restrained materials and purposeful detail. This covers pets,
-skills/VFX models, FPP arms, props, trees and maps as well as characters. Avoid
-realistic anatomy and noisy reconstruction/voxel results. Judge the actual Unity
-asset beside the existing cast. Realistic animation means better weight and
-timing within the style, not realistic-looking models. Current owner corrections
-and rejected drafts in ACTIVE_REWORK_LEDGER.md must survive compaction.
+1. Read this file, then `docs/VISION.md`, then `docs/TODO.md` (implementation index
+   and complete numbered entries relevant to the work, especially 152/152.4).
+2. Read the **newest execution pointer** in `docs/ACTIVE_REWORK_LEDGER.md`. Older
+   process IDs, plans and rejected studies are history, never live instructions.
+3. For the current pass read `docs/MAP_FINAL_PASS.md` and
+   `docs/IMPROVEMENT_PLAN.md` (P1-P10). Ability work also requires
+   `docs/ABILITY_REWORK_PLAN.md`, `docs/HERO_KIT_REWORK_DECISIONS.md` and
+   `docs/PHILIPPINE_ABILITY_DIRECTION.md`.
+4. Use `docs/Art_Direction.md` sections 0/0.1 for all models and motion, `LORE.md`
+   for the sporting world, `ASTRA.md` for rigs/actions, and relevant `Attention.md`
+   entries for human judgments. `docs/README.md` indexes other references.
+5. Consult the relevant `CLAUDE.md` incident only when its historical mechanism
+   matters. Do not reread its entire archive or revive its superseded commands.
 
-**Animation means the whole action:** improve casting, body/FPP motion, skill
-VFX/geometry motion, release, impact and recovery. Give different actions/skills
-appropriate separate animations; do not repeat a generic cast with new colors.
-Reuse only when necessary for the same action or an existing shared contract,
-and record why. See Art_Direction.md section0.1.
+## Workspace and ownership
 
-## Start here
+- Live game: `DOST-GameDEV/TumbangPreso-Unity`. The Godot repository is read-only
+  historical reference. Never overwrite this game's source with its older files.
+- Work and push on **ASTRAReworks only**. Fetch first; inspect actual branch,
+  local/remote HEAD and dirty files. Preserve newer work. Never reset to a supplied
+  checkpoint, switch to/merge into/push main, or touch another checkout.
+- Authorized checkout:
+  `C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity`.
+  The separate `Documents\GitHub` checkout is outside this task.
+- No subagents, other-task delegation, usage resets or paid work without explicit
+  approval. Parallelize independent reads/preparation, not agent work.
+- Controller support has a separate owner: `GenericPadBridge`, CONTROLLER MAP,
+  `MenuNav` and device mapping. Read TODO 142 before entering that area; do not
+  independently implement/refactor it. Preserve a failure receipt and work around
+  test-process contamination with a fresh Editor rather than changing ownership.
+- Preserve profiles, saves, identifiers, source assets and unrelated changes.
+  Windows is the delivery target; Android qualification is deferred, its existing
+  input/data contracts still apply.
 
-Read [CLAUDE.md](CLAUDE.md) first, [docs/VISION.md](docs/VISION.md) second,
-then [docs/TODO.md](docs/TODO.md). Read the implementation queue and the full
-numbered entries relevant to the work. Do not treat a handoff as a substitute.
+## Product and creative authority
 
-The current improvement brief is [docs/IMPROVEMENT_PLAN.md](docs/IMPROVEMENT_PLAN.md),
-tracked in TODO section 152. It explicitly supersedes historical single-task,
-animation-only and stop-after-one-hero restrictions in ASTRA.md. Current user
-instructions take precedence over repository guidance. The rules below make the
-active scope explicit so an older reference cannot silently undo it.
+- Improve the existing game substantially. Four players, one rotating defender,
+  the can, throwing and risky slipper retrieval remain its foundation.
+- The owner wants a fully realized game that surprises people through strong
+  presentation and feel while keeping this style. Assess complete normal-speed
+  play sequences and coherent places; technical passes alone do not meet that bar.
+- **Both Classic and Hero Strike ship as first-class modes.** Classic has no
+  powers and four rounds; Hero Strike has six heroes and eight rounds. Do not
+  treat one as the real game and neglect the other.
+- The owner permits improving/replacing boring abilities within existing slots.
+  Plan each whole kit and all existing alternatives: purpose, role-specific use,
+  cost, tradeoff, counterplay, tell, interruption, authority and truthful copy.
+- **2026-09-12 addition:** useful additions are welcome, including more animation
+  and feedback, as long as they do not overcomplicate the game. Prefer a concrete
+  player benefit to accumulating controls, systems, meters or compulsory text.
+- Keep all eighteen approved people/outfits at the retained `7c7fcb5` direction.
+  Do not restart redesign. Preserve cute blocky shapes, flat graphic faces, simple
+  hands and recognizable identities. Rounded bodies, added thumbs, realistic
+  anatomy and noisy reconstructed/voxel studies were rejected.
+- All new models, trees, props, summons and effect geometry must look native to
+  TUMP. Use clean chunky forms and purposeful detail. Do not decimate, compress,
+  recolor or collapse sourced art/materials for unmeasured performance concerns.
+- Animation means the **whole action**: body/FPP preparation, moving skill
+  geometry/VFX, release, impact, interruption and recovery. Different actions need
+  appropriate distinct sequences. Reuse only for a justified shared action or
+  contract; record why. Convincing weight does not imply realistic anatomy.
+- Philippine identity comes naturally through place, material, movement, lore and
+  sound. Keep English player-facing copy and proper names. No forced symbols,
+  copied sacred writing or invented historical claims. This is extraordinary
+  sport, without killing, guns or lasting destruction.
+- UI art is low priority. Fix documented navigation, focus, raycast, loading and
+  readability defects. Keep the character maker inaccessible while retaining its
+  implementation, assets and saved data. Do not open a new UI decoration project.
+- Can, chalk, loose slippers, defender and useful routes must remain readable
+  during overlapping effects and Low graphics. More brightness/area is not polish.
 
-Read [docs/ACTIVE_REWORK_LEDGER.md](docs/ACTIVE_REWORK_LEDGER.md) for the latest
-owner decisions, rejected first-pass model result, individual character/skill
-queues and exact in-flight state. The owner explicitly requested this record to
-survive compactions. Keep it current; do not restart or narrow the task after one.
+## Runtime contracts
 
-For current skill work read [docs/ABILITY_REWORK_PLAN.md](docs/ABILITY_REWORK_PLAN.md).
-It preserves the all-eighteen geometry/animation/SFX/VFX audit, current owner feedback,
-action-specific direction and completion checks. Start with the rejected ice skill;
-keep the current character designs and finish the remaining overall game scope.
-The detailed default/alternate decision matrix is
-[docs/HERO_KIT_REWORK_DECISIONS.md](docs/HERO_KIT_REWORK_DECISIONS.md); it records
-all twelve choice pairs and candidate replacements without claiming they are done.
-Also read [docs/PHILIPPINE_ABILITY_DIRECTION.md](docs/PHILIPPINE_ABILITY_DIRECTION.md):
-the latest owner request covers culturally grounded reworks for all six heroes,
-English copy, research/planning before implementation, and autonomous AFK execution.
+- `Packages/com.tumbangpreso.core` stays engine-free. `Core` compiles those same
+  sources; do not create a second copy or introduce UnityEngine references.
+- Host distance checks resolve contact; `MatchDirector.AddScore` awards every
+  point. Derive defender rotation; preserve square confinement and deduplication.
+- Bots submit `InputIntent` through the same motor as people. Animation reads
+  observed motion/accepted actions; it must not invent a hit, pickup or score.
+- Overlapping stuns use Max, not addition. Derive impulse speed from friction and
+  intended travel. Balance/copy disagreements need a documented resolution.
+- People use FPP, props TPP; retain emote and spectator paths. Emotes end through
+  interruption, not a new timer. Preserve proper owner/observer visibility.
+- Keep Generic rigs, bone paths, exact action names and stable GUIDs. After GLB
+  edits rebuild the Roster Book and matching FPP assets, then verify that actual
+  serialized clips resolve in a player. A file existing is not runtime coverage.
+- Preserve keyboard/mouse, controller and touch for any changed feature. Use the
+  live binding for prompts. New verbs require InputCatalogue, pad and thumb paths;
+  regenerate InputAssetSync. Menus use MenuKit/ConvertedScreen and MenuNav to exit.
+- Input never changes the wire protocol. Read the current protocol from source;
+  legitimate wire changes need compatibility tests and explicit platform limits.
 
-## Active scope and boundaries
+## Evidence before edits
 
-**Latest scope expansion, 2026-09-10:** thoroughly repair networking and improve
-all eighteen abilities plus every existing loadout alternative. The owner now
-explicitly permits replacing boring/redundant abilities. Plan each whole hero kit
-with distinct tactical purposes, useful alternatives, counterplay, role-specific
-use cases and synchronized animation/FPP/VFX/SFX before implementation. This
-supersedes presentation-only or blanket no-mechanic-change restrictions for those
-existing ability slots. Preserve the core game, six heroes, both modes and the
-existing loadout structure; do not add modes or unnecessary systems. The latest
-sections of ACTIVE_REWORK_LEDGER.md and ABILITY_REWORK_PLAN.md record decisions,
-open defects, exact verification state and next actions. Keep them current.
+Trace the actual producer, caller, state owner and cleanup path. Reproduce a bug
+before choosing a correction. Isolate competing input/AI, carry, effect and network
+writers. Change one causal variable at a time; preserve unsuccessful experiments.
+A direct helper call, same-process witness or stale build proves only that path.
 
+Use controlled failures and focused regressions, actual ordinary-speed owner and
+observer views, and real separate processes for networking. Seeded bot counts are
+liveness evidence with measured run-to-run noise, not an n=1 balance comparison.
+Do not retune slide/lunge numbers from bot ratios without the corresponding play
+question. The historical Ilalim 48-idle outlier is not explained by another flight
+bug unless a trace connects them. Preserve raised-ground and roof recovery.
 
-**Latest owner correction (2026-09-10): keep the cleaned current cast at `7c7fcb5`
-and move to other work. Stop the individual character redesign queue. Prioritize
-animation, all eighteen skills/SFX/VFX, gameplay/maps and Windows delivery. The
-older model-rebuild instructions below are historical and superseded.**
+Capture versioned in-engine images/motion with timestamps and matched settings.
+Model changes need multiple angles and a cast comparison. A 1.65 m witness camera
+is not the real FPP rig; stills are not a complete action or human feel approval.
+Use source authors for maps/assets and verify a semantic two-run comparison;
+random Unity object IDs alone are not a geometry change.
 
-- Work on `ASTRAReworks` only. Fetch first, inspect branch, status and remote HEAD,
-  and preserve newer commits and uncommitted user changes. Never switch to, merge
-  into or push `main`. Do not touch another checkout's unrelated changes.
-- Complete the authorized improvement pass autonomously. Do not ask whether to
-  continue work already requested. Collect non-blocking questions for delivery.
-- Do not spawn subagents or delegate to other tasks. Independent read-only tools
-  and preparation may run in parallel.
-- Prioritize repeated play, all three maps, the Classic cast, six heroes, authored
-  motion and existing effects. UI is functional placeholder work for a later art
-  remake: fix navigation, loading, focus, raycasts and readability without making
-  placeholder decoration the project.
-- Preserve four players, rotating defender, can, throws and slipper retrieval,
-  Classic and Hero Strike. Add no new mechanics, modes or unnecessary systems.
-- Windows is the delivery target. Android qualification is deferred; preserve its
-  existing input and data contracts. Never perform a usage reset. Ask before paid
-  external work. Preserve profiles, saved identifiers and authored source assets.
+## Unity, tests and builds
 
-## Locate the truth before changing it
+- Unity is 6000.5.8f1. Official Pipeline is configured; CLI is
+  `C:\Users\Matthew\AppData\Local\Unity\bin\unity.exe`.
+  Blender is `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`.
+  Check actual installation/process state before using copied paths or IDs.
+- **Every Unity launch uses `python tools/run_unity_guarded.py ...`.** It backs up,
+  restores and hash-verifies the Windows profile. Never delete/reset the profile.
+- One Editor per checkout. Inspect active processes and lock/log state first.
+  Start long runs in the background; read, review or update docs while they run.
+  **Do not edit C# or imported assets during a Unity run.** Do not terminate an
+  unrelated process. Diagnose a stale lock only after confirming its owner is gone.
+- Core: `dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj`.
+  Fresh EditMode: guarded `-batchmode -runTests -testPlatform EditMode`, explicit
+  `-buildTarget Win64`, unique XML/log paths. No bare `-batchmode -quit` compile claim.
+- PlayMode: no `-nographics`. Require **fresh nonzero NUnit XML**, zero failures
+  and expected fixture coverage, never just exit code or result='Passed'. Single
+  fixture CLI filters worked; a semicolon-combined CLI filter produced zero tests.
+- The PlayMode gate is `python tools/playmode_suite.py --gate`; its discovered
+  partition must cover every fixture exactly once. Run `--gate --twice` for a
+  release candidate. A monolithic process is not a substitute. WallClock and
+  ThumbFloor exclusions do not constitute coverage; run relevant probes explicitly.
+- Run `Checks.RunAll` through the guard and all gating `tools/audit_*.py` source
+  checks via the qualification script. Use `PYTHONIOENCODING=utf-8` as needed.
+  `tools/qualify.py` records Core/EditMode/check/source stages. Inspect its actual
+  stage options. Scene text and loaded-reference checks detect different defects.
+- Preserve failed logs and classify new, inherited, environment and unverified
+  failures. Do not weaken tests, hide skips or modify production just to turn green.
+- When the selected work is ready, run guarded `GameBuilder.BuildWindows`. Its
+  validated purge removes the previous player first. Check for a running player;
+  never manually delete a computed directory without verifying the absolute path.
+- Verify executable AND data timestamps, launch that exact build, and exercise
+  both modes at ordinary speed plus relevant network paths. Older Desktop/internal
+  executables do not represent newer source. Report the actual artifact path.
 
-| Question | Source |
-|---|---|
-| Rules and historical failure modes | CLAUDE.md |
-| Product direction and readability | docs/VISION.md and LORE.md |
-| Open work and completion evidence | docs/TODO.md; closed bodies in docs/TODO_Archive.md |
-| Current improvement order and outcomes | docs/IMPROVEMENT_PLAN.md |
-| Authored rigs, exact action names and motion evidence | ASTRA.md |
-| Human taste, hardware and tournament rulings | Attention.md |
-| Placeholder UI and font roles | docs/CALM_FRONT_END.md and docs/FONT_USAGE.md |
-| Runtime balance | Packages/com.tumbangpreso.core; docs/Design.md explains Classic |
-| Network protocol, roster and build paths | Read their current implementation, never a copied number |
+## Keep work safe across compaction
 
-Trace the actual producer, runtime path and serialized asset before editing it.
-A clip existing on disk does not prove the player loads it. A showcase effect is
-not necessarily the live ability. A test invoking a callback does not prove a
-player can click the control. Reproduce a defect before replacing a working fix.
+Update the **newest execution pointer** in `docs/ACTIVE_REWORK_LEDGER.md` whenever
+an important decision, experiment, code batch or run changes state. Include:
+actual checkout/branch/HEAD, dirty files, accepted constraints, rejected approaches,
+observed versus inferred cause, exact command/log/XML/capture paths, active process
+or session ownership, profile snapshot and **next concrete step**. Retire completed
+run IDs immediately. Compaction is continuation, not a fresh start or a stop.
 
-## Preserve these contracts
+Keep TODO and the improvement plan current in the same commits as work. Move
+completed numbered entries and session reports whole to `TODO_Archive.md`, keep
+numbers and index pointers, and never delete the reasoning. Do not claim the larger
+goal complete from one verified batch. Latest owner permission allows unfinished
+maps in a handoff; disclose unfinished criteria and do not call them done.
 
-- The core package has no UnityEngine references. Core and Unity compile the same
-  sources, not divergent copies.
-- Host distance checks resolve contact; MatchDirector.AddScore awards points.
-  Preserve square confinement, derived role rotation and authority deduplication.
-- Bots use InputIntent and the same motor as people. Presentation reads observed
-  movement and accepted actions so owner, observer and bot views agree.
-- People use first person; props use third person. Preserve emote and spectator
-  camera paths. Emotes end by interruption, not by a new completion timer.
-- Keep Generic rigs, exact clip names, authored slide timing and stable asset
-  GUIDs. After GLB exports rebuild the roster and verify serialized clip resolution.
-- The owner rejected the first model refinement as too subtle and now requires
-  individual character authoring, especially distinct Classic faces and silhouettes.
-  Review each model before moving to the next; regenerate matching FPP arms after
-  its design settles. Keep recognizable identities and do not homogenize the cast.
-  Keep the cute blocky forms and simple block hands. The rounded Berto draft and
-  added thumb shapes were explicitly rejected; do not revive that recipe.
-  Keep simple flat graphic faces. Realistic noses, brows and wrinkles are not the
-  requested style improvement. Motion realism concerns weight and articulation.
-  Do not decimate, compress or repaint sourced art for an unmeasured performance concern.
-- Keep the character maker inaccessible to players while retaining implementation,
-  assets and saved data. English display copy must not rename persisted IDs.
+## Commit and delivery
 
-## Work, verify, deliver
-
-Use one Unity process per checkout. Never edit C# or imported assets while its
-Unity run is active. Launch long verification in the background, then read source,
-review evidence or update documents. Inspect the process and fresh log before
-starting the next run. Use hidden windows for background helpers.
-
-Choose verification for the behavior changed. Core tests are cheap. Unity test
-success requires fresh XML with nonzero total, zero failures and expected fixture
-coverage; process exit code alone proves nothing. Never use `-nographics` for
-PlayMode and never use `-batchmode -quit` alone as a compile check. Test filters
-use semicolons. The discovered `tools/playmode_suite.py --gate` partition is the
-PlayMode gate; a monolithic run is not a substitute. Run the gate twice for the
-release candidate, plus EditMode, Core, Checks.RunAll and the source audits.
-
-Capture before/after evidence at matched settings and ordinary camera heights.
-Inspect moving sequences at normal speed, including preparation, contact,
-interruption and recovery. Model iterations need versioned in-engine turnarounds
-and a cast lineup. A passing test or attractive still is not human playtest approval.
-
-Push significant stable verified batches to `origin ASTRAReworks`. Update TODO in
-the same commit. Move completed sections whole into TODO_Archive, preserving
-numbers and index pointers; keep unfinished acceptance criteria open. Keep the
-improvement plan current with decisions and their evidence.
-
-Commits are sole-authored, without coauthor trailers or tooling attribution.
-Write the message to a file and use `git commit -F`. No em dashes in new repository
-text. Describe why a fix exists and preserve useful historical reasoning.
-
-When the improvement work is ready, use GameBuilder.BuildWindows. Its validated
-purge protects against stale output; check for a running player before building.
-Verify the executable and data timestamps, launch that exact executable, and
-exercise both modes. Report the pushed checkpoint, actual test/build results,
-evidence and unresolved limitations. Any further handoff goes directly in chat,
-never in a committed handoff file.
-
-## Historical routing notes
-
-Read [CLAUDE.md](CLAUDE.md), then [docs/VISION.md](docs/VISION.md), then
-[docs/TODO.md](docs/TODO.md). CLAUDE.md is the canonical repository rulebook and
-wins if this routing file or another repository guide conflicts with it.
-
-For presentation and polish, consult [docs/NATIONALS_POLISH.md](docs/NATIONALS_POLISH.md),
-the current strategic roadmap. For animation and Blender work, also read
-[ASTRA.md](ASTRA.md). Human judgments belong in [Attention.md](Attention.md).
-
-The roadmap sets priorities; the existing files remain the execution queues.
-FUTURE.md and INSPIRATION.md remain historical/reference material, not the default
-next-work order. [docs/README.md](docs/README.md) indexes the documentation.
+Push substantial stable verified batches automatically to origin ASTRAReworks.
+Commit with a message file (`git commit -F`), sole author, no coauthor trailers or
+tooling attribution in commit messages/code. No em dashes in new repository text.
+This owner-requested instruction file may name ChatGPT/Codex as its intended reader.
+Inspect the final diff; restore only proven test-generated changes to their exact
+pre-run values, never unrelated work. Do not stop to ask whether to continue
+already-authorized work. Give concise useful progress during execution, and report
+completion honestly with tests, artifacts and limitations. Any further handoff
+belongs directly in chat, never in a committed handoff-prompt file.

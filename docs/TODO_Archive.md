@@ -1,5 +1,31 @@
 # TODO archive: the batch reports and the closed work
 
+## 152.6 Under-guideway flight and saved-map repeatability: CLOSED, 2026-09-12
+
+The archived HostThrow experiment contained two independent causes. Direct throws
+retained the same owner's Carrier.Held reference, allowing RideAnchor to overwrite
+the flight. The actual Carrier.HostThrowAt path cleared that reference but selected
+the 9.04m guideway as ground from a3.6m-high throw, immediately landing and recovering
+to the owner. Isolated baseline:0/2. Slipper now releases its previous carrier and
+samples support below the current step's swept height, passing the same floor to
+Land. After:4/4, including fast descent onto a1m raised slab and recovery from a3m
+unreachable roof. Trace and causal limits:
+[map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md).
+
+MapRepeatabilityCheck verifies two saved/reopened NeighborhoodFinishAuthor runs
+through component/reference/content/lighting semantics. All16667 rows across the
+three maps agree. Generated IDs were restored, preserving the map checkpoint.
+[Evidence and checker corrections](reports/improvement-2026-09-12/map-repeatability.md).
+Core562/562, graphical EditMode489/489,8/8 checks and14 gating audits pass.
+Five inherited fixtures missing from the isolated gate partition are now assigned.
+Full gate, real FPP/routes, historical48-idle attribution, broader kit/network/
+animation and final Windows delivery remain open under152.4. This closes only the
+measured flight contracts and retained-scene author repeatability.
+
+AGENTS.md now provides self-contained primary instructions, compaction continuity
+and the owner's permission for useful additions without overcomplication. The
+legacy rulebook remains historical reasoning; current read-order links use AGENTS.
+
 ## 152.5 Initial motion continuity batch: CLOSED, 2026-09-10
 
 Fresh baseline capture confirmed a moving carrier at 3.6053 m/s with zero leg

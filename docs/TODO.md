@@ -2,7 +2,7 @@
 
 **The open worklist. If it is not open, it is in [`TODO_Archive.md`](TODO_Archive.md).**
 
-Read [`../CLAUDE.md`](../CLAUDE.md) first and [`VISION.md`](VISION.md) second. Check this file
+Read [`../AGENTS.md`](../AGENTS.md) first and [`VISION.md`](VISION.md) second. Check this file
 before inventing a task, and update it in the same commit as the work.
 
 ---
@@ -284,6 +284,18 @@ Full batch evidence and limitations are in TODO_Archive.md section 152.5. The
 broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
+
+**Continuation, 2026-09-12:** fetched clean 0f08e992 on ASTRAReworks in the specified
+checkout. Resume map composition, real FPP, route/idle and repeatability review;
+then continue remaining kits, loadouts, networking and animation. The owner now
+also permits useful additions along the way if they do not overcomplicate the
+game. Retain the approved people/style and all branch/data/tool boundaries.
+The split direct-throw/carrier-ground failures now have a correction and4/4
+focused PlayMode evidence in [map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md).
+Historical48-idle attribution stays open. Core562/562, graphical EditMode489/489,
+8 checks,14 gating audits and all-map semantic repeatability pass. Full route/FPP,
+isolated gate and release qualification remain open. AGENTS.md is the primary instruction file, with the
+newest execution pointer tracking exact runs, dirty files and next actions.
 
 **Latest owner delivery scope:** finish ALL improvements to all three maps now,
 then hand off the remaining non-map work directly in chat for the next session.
@@ -11279,6 +11291,8 @@ EditMode test on the host-side clamp and rate limit.
 ---
 
 ## The archive index
+
+- **152.6, CLOSED 2026-09-12:** isolated under-guideway flight/direct-carrier release correction and saved-map semantic repeatability. Full entry in [TODO_Archive.md](TODO_Archive.md); broader map/game qualification remains under152.4.
 
 - **147.3, CLOSED 2026-09-10:** one observed result-board moment, without score changes; reader and clearing verified. Whole entry in [TODO_Archive.md](TODO_Archive.md).
 
