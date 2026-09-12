@@ -12,6 +12,8 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
    and complete numbered entries relevant to the work, especially 152/152.4).
 2. Read the **newest execution pointer** in `docs/ACTIVE_REWORK_LEDGER.md`. Older
    process IDs, plans and rejected studies are history, never live instructions.
+   `docs/EXECUTION_PLAN.md` is the owner's requested compact action plan, current
+   dirty-work/test state and next steps; read it alongside that pointer.
 3. For the current pass read `docs/MAP_FINAL_PASS.md` and
    `docs/IMPROVEMENT_PLAN.md` (P1-P10). Ability work also requires
    `docs/ABILITY_REWORK_PLAN.md`, `docs/HERO_KIT_REWORK_DECISIONS.md` and
@@ -49,6 +51,26 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 - The owner wants a fully realized game that surprises people through strong
   presentation and feel while keeping this style. Assess complete normal-speed
   play sequences and coherent places; technical passes alone do not meet that bar.
+- **Latest map/graphics authority, 2026-09-12:** the owner permits removing or
+  adding anything in the maps to thoroughly improve them. Legacy placement is not
+  protected merely because it exists. Architecture and props must make spatial
+  sense, with natural Filipino character. Thorough graphics and graphics-settings
+  improvements are also required: lower-spec play and visible higher-end benefits.
+  Measure frame cost and image/readability changes; retain gameplay tells on every
+  preset. Functional graphics UI is in scope, not a general UI-art remake.
+  Preserve each place's intention: Eskinita's neighborhood street, Bayan's civic
+  plaza and Ilalim's guideway/shop setting. Freedom to rebuild does not mean
+  replacing their Filipino identity with an unrelated setting.
+- **Fourth map approved with changes, 2026-09-12: Sa Bubong.** The owner accepted
+  the Metro Manila condo roofdeck concept after initially selecting 'Revise', and
+  requested a Filipino name. Keep an open court, fenced pool, shaded residents'
+  area and separate stairwell/utility/laundry corner. A clearly visible outer ledge
+  permits actual falls. **Players can button-mash to get back up. Fallen slippers
+  remain unavailable for about10 seconds before teleporting to a safe rooftop spot;
+  that delay is an intentional penalty.** Preserve both modes and the core game.
+  Also verify button mashing across ALL recovery contexts and keyboard/controller/
+  touch/network paths. The latest plain-text acceptance supersedes the earlier
+  pending concept-approval state; no further confirmation is required to implement.
 - **Both Classic and Hero Strike ship as first-class modes.** Classic has no
   powers and four rounds; Hero Strike has six heroes and eight rounds. Do not
   treat one as the real game and neglect the other.

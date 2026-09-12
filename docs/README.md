@@ -8,6 +8,10 @@ add its row here in the same commit.
 
 ## Read these, in this order
 
+The current compact action plan is [EXECUTION_PLAN.md](EXECUTION_PLAN.md), written
+at the owner's request for compaction-safe continuation. Read it with the newest
+active-ledger pointer after AGENTS/VISION/TODO.
+
 For the current continuation, read [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md)
 after the required rulebook/VISION/TODO order. [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md)
 tracks the unfinished map pass, references and verified iterations. The owner now

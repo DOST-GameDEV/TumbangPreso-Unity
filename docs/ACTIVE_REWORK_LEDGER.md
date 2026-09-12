@@ -17,9 +17,17 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (continuation, 2026-09-12)
 
+**Current action plan and exact working-state snapshot:**
+[EXECUTION_PLAN.md](EXECUTION_PLAN.md), explicitly requested by the owner for
+compaction safety. It includes latest approved Sa Bubong mechanics, graphics/
+mashing scope, pushed HEAD, dirty files, evidence, next actions and boundaries.
+At its latest update all Unity runs are complete; no Editor is active. V8 source
+and scenes are uncommitted after8a22f8b9. Do not follow older run IDs below as live.
+
 Fetched origin/ASTRAReworks in the specified ok-x20 checkout. Clean local and remote
-HEAD both equal 0f08e9921c96148bf0c332d09b8392497f0cc82e. No checkpoint reset, main
-operation or separate Documents/GitHub checkout change. Resume maps, route/idle
+HEAD both initially equaled 0f08e9921c96148bf0c332d09b8392497f0cc82e. No checkpoint reset, main
+operation or separate Documents/GitHub checkout change. Verified foundation is now
+pushed at8a22f8b9524ed943105f892fcfc54ef3a9bb43f5. Resume maps, route/idle
 investigation and then the remaining kits/network/animation qualification.
 
 The owner explicitly permits worthwhile additions along the way, including more
@@ -35,6 +43,40 @@ retained as historical reasoning. Active read-order links use AGENTS first.
 Latest emphasis: thoroughly improve look and feel into a fully realized game that
 surprises people while retaining the existing style, with fitting Filipino aspects.
 Judge complete play sequences and coherent places, not only technical test totals.
+Latest owner expansion: remove/add anything in the maps as useful. Correct spatial
+relationships thoroughly and increase natural Filipino place identity without
+forced decoration. Legacy placement is not protected just because it exists.
+Also thoroughly improve graphics AND graphics settings for lower-spec play and
+visible higher-end benefits. Measure frame cost and actual image differences;
+preserve gameplay readability at every preset. Functional graphics UI is explicitly
+in scope. Windows remains the established delivery target; do not imply testing
+on absent lower-end/Android hardware. Keep these requests through continuation.
+The owner reiterates that any map element may change, provided the original
+Filipino feel and purpose remain: neighborhood street, civic plaza and guideway/
+shop district. Preserve those identities through substantial spatial improvements.
+
+**Fourth map: APPROVED WITH CHANGES, Sa Bubong.** The owner permits/requested a Filipino
+rooftop/building/condo map with falling off at the very edge, then explicitly asked
+to hear the chosen concept and approve it while other work continues. Proposed
+in chat and via asynchronous approval question: **Skyline Roofdeck**, a Metro
+Manila condo roof with open central court, fenced pool, shaded residents' area,
+separate stairwell/laundry/water-tank corner, mostly railed edges and one clearly
+marked unfinished ledge. Falls cost time/position, recover safely and keep slippers
+retrievable. Both modes; no new controls/health system. This is a concept, not
+implemented mechanics. The owner first answered 'Revise the concept', then explained
+the requested revisions and explicitly said they already like the concept, asking
+for a Filipino name. The selected name is **Sa Bubong**. This later acceptance
+approves implementation; do not remain blocked on the old question.
+
+Required changes: players can button-mash to get back up after falling. A slipper
+that falls off remains unavailable for about10 seconds, then teleports back to a
+safe rooftop location. The owner explicitly calls that delay a penalty. Do not
+silently replace it with immediate recovery or permanent lost ammunition. Also
+thoroughly verify mashing in ALL contexts (stun, trip and rooftop recovery), through
+actual keyboard/controller/touch input paths and host/remote authority. Preserve
+the existing controller-ownership boundary. This is authorized new map gameplay,
+not just a decorative roof. No new map implementation exists yet; plan the real
+edge, return anchors, readable recovery, AI boundaries and network/round cleanup.
 
 Current verified runtime correction: MapRetrievalProbe reproduced two separate
 failures on unchanged Slipper source (0/2, Logs/map-retrieval-before-v2.xml).
@@ -85,6 +127,103 @@ No map composition has intentionally changed yet. Preserve all other state.
 The older side-eye captures on Eskinita use x=+/-10 outside its8.1m wall; they are
 not legal player views. The real FPP rig uses1.25m eye offset and95-degree FOV.
 Use it with actual follow/self-hide and legal body locations for the next review.
+
+**Active follow-up after8a22f8b9:** MapExperienceProbe is new/uncommitted, and
+MapRetrievalProbe.Load is now internal with an optional mode parameter. The
+capture fixture is registered in playmode_suite.py. Completed guarded session12915 ran
+Logs/map-owner-baseline-v1.xml/log with TUMP_EVIDENCE=Logs/map-owner-baseline-v1.
+It captures8 legal directions at Low/Balanced/High with the actual FPP rig in both
+modes/all maps, plus separate16-second controlled input-driven carry/throw/retrieve
+owner/body sequences at1x. Result1/2:144 static views recorded with correct1.25m
+offset/95-degree FOV, but visual inspection finds owner frames mostly black, so
+the static test's structural pass is NOT visual acceptance. The first controlled
+Eskinita retrieval failed near the parked defender and stopped that test before
+the other five sequences; investigate the actual route, not a completion claim.
+Static quality comparisons pause time and explicitly do not claim ordinary play.
+
+Completed guarded session51244 ran MapExperienceProbe.DiagnoseOwnerOcclusion,
+Logs/map-owner-occlusion-v1.xml/log and outputLogs/map-owner-occlusion-v1. It logs
+near renderers and compares ordinary owner/no-outline/no-viewmodel/no-body frames
+one variable at a time. Its renderer trace identifies the problem: the north
+camera station was teleported INSIDE seat2's visible head (center0,1.53,8.53),
+while its own body correctly remained ShadowsOnly. Pixel inspection finds24/144
+static views over80% black, concentrated at that north station; other directions
+are readable. This is fixture staging, not a demonstrated self-hide/runtime bug.
+StageOtherSeats now keeps all four people visible but moves the parked others off
+the measured paths. It asserts1.5m separation at each camera station. The diagnostic
+also captures a separated-seats control, and retrieval now logs actual positions.
+
+V2 completed: static144 views and separated-seat diagnostic pass; the controlled
+Ilalim retrieval failed with the body actually within0.1m of its loose shoe.
+The test wrote input in a coroutine after Update, and CharacterMotor.FixedUpdate
+committed away the edge before Carrier.Update consumed it. A test-only ReviewInput
+component now writes at Update order-300, matching normal producers. No runtime
+input change. V3 (completed session96432) PASSES1/1 across all6 map/mode sequences,
+Logs/map-owner-motion-v3.xml/log and matching folder. All six real throw releases
+and pickups occur at1x. Timestamped owner/body videos are encoded with
+tools/encode_motion_evidence.py; no speedup/interpolation. This is controlled
+sequence evidence, not free-play or a historical idle fix.
+
+**Current author batch, unreviewed:** MapFinalPassAuthor now groups selected
+non-solid pots, tyres, drums, bollards, corrugated panels, hedge/fence pieces and
+Ilalim loose chairs/crates beyond the physical play edges. Candidates with any
+collider retain their gameplay role; monument-related MonHedge stays. Excess art
+is retained inactive. Placement uses actual drawn bounds and includes inactive
+candidates for stable repeat runs. Eskinita's three retained Mountain paintings
+move farther away at smaller apparent scale, preserving texture/material/aspect;
+two accidental distant quad colliders are removed. No people or source art edited.
+Author session19958 completed successfully, Logs/map-composition-v3-author.log.
+It grouped24/20/18 non-solid pieces across Eskinita/Bayan/Ilalim and retained17/6/4
+excess pieces inactive. Three paintings retain their artwork. Scene changes are
+intentional and not visually accepted yet. Latest restored profile backup:
+profile-preservation-a801ef3f11be (17 existing files).
+
+Capture session3591 completed1/1,144 matched FPP views under
+Logs/map-owner-composition-v3. Visual review catches two author errors: the
+painted quads face away and disappear; Bayan's source hedge is long along localZ,
+so the chosen90-degree yaw made perpendicular fingers through the benches.
+Corrected both (quad local-Z normal faces court; side hedges use0/180-degree yaw).
+Sequence14109 completed; V4 capture passes1/1 with144 matched images. Correct
+hedge orientation now reads as a border outside the play wall. The paintings
+returned but their peaks barely cleared the roofs: the source alpha's top22% is
+transparent. V5 raises only their world placement (side centers34m, north28m),
+retaining distance, aspect, texture/material and the smaller angular size.
+Completed guarded sequence8769 ran author then Eskinita-only matched
+capture, Logs/map-composition-v5-author.log and Logs/map-owner-composition-v5
+xml/log/folder, TUMP_MAP_REVIEW=Eskinita. V5 passes1/1 with48 Eskinita images;
+the other maps retain V4. The painting now peeks clearly above rooftops at smaller
+apparent scale. MapRouteProbe completed1/1 in Logs/map-routes-composition-v5.xml/log:
+7420 clear resting samples have connected pickup approaches; all7047 walkable nodes
+connect. All18 actual motor routes/pickups pass. CSVs are beside map-composition.md.
+This probe (registered
+in the match partition) samples a0.5m resting/walkable grid and then drives the real
+motor to representative wall/trunk/pillar/monument/kiosk/cart pickup approaches.
+It ignores other actors for map-only path planning and disables their collision
+during these controlled route cases; this is not opponent/AI avoidance evidence.
+The next semantic run FAILED and stopped chained checks/EditMode before launch.
+Cause1: relative bounds placement accumulates tiny y-coordinate rounding.
+Cause2: Ilalim repeats names like env_bollard; name-only sort ties reordered them
+by enumeration order and swapped locations after reopening. Do not loosen the
+checker. The author now derives bounds from a fixed origin and sorts by sibling
+identity. Benches/chairs also use drawn center/base rather than imported pivots,
+correcting possible hedge overlaps. Fresh bounds export through MapFinalInventory.
+
+Sequence60471 completed; V6 semantic comparison passes all16666 rows with zero
+changes. Fresh spatial inventories exposed overlapping original crate stacks,
+chairs clipping shops, bench orientation and ghost roadside landmarks. V7 fixed
+the seating/store aisles and duplicate stacks. V8 adds a coherent tricycle bay and
+shaded waiting on Bayan's south apron, clears the monument approach and moves
+lanterns/planters/hoops beyond the play wall. Both captures pass1/1 with144 images;
+visual review remains separate. Latest outputs:Logs/map-spatial-v8 and
+Logs/map-owner-composition-v8, plus author/capture logs/XML. Sequence71051 finished,
+profile-preservation-ffac60607bc8 restored17 files; no Unity process remains.
+Current visual follow-up: review/reposition/fix facing of Bayan's hoops, which
+currently interfere with the civic facade view. Finish final checks/repeatability,
+update report/images and push the stable spatial batch. Graphics settings, Sa Bubong
+and expanded all-context mash work are approved but not implemented yet. The
+remaining full sequence is in EXECUTION_PLAN.md, not forgotten or complete.
+The newest source batch is uncommitted after pushed8a22f8b9; do not restore its
+intentional map scene changes as if they were the earlier ID-only experiment.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

@@ -285,6 +285,18 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Latest owner expansion, 2026-09-12:** maps may have anything added/removed to
+thoroughly improve their spatial logic and natural Filipino feel. Thorough graphics
+and graphics-settings improvements are required for lower-spec play and visible
+higher-end benefits. Measure frame/image results and retain gameplay tells at every
+preset. The newest active pointer and improvement plan carry exact current work.
+The fourth-map concept is now approved with revisions and named **Sa Bubong**:
+Metro Manila condo roofdeck, fall only at the actual exposed edge, button-mash
+recovery back up, and about10 seconds before a fallen slipper returns to a safe
+roof spot (intentional time penalty). Verify mashing across all existing/new
+recovery contexts and device/network paths. The active ledger records approval
+and requirements; implementation remains open.
+
 **Continuation, 2026-09-12:** fetched clean 0f08e992 on ASTRAReworks in the specified
 checkout. Resume map composition, real FPP, route/idle and repeatability review;
 then continue remaining kits, loadouts, networking and animation. The owner now

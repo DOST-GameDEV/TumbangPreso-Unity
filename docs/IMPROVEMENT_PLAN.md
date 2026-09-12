@@ -24,6 +24,16 @@ Core562/562, graphical EditMode489/489,8/8 checks and14 gating audits. Saved-map
 two-run semantic repeatability passes all16667 rows. These are correctness and
 repeatability results, not completed map composition, full gate or player review.
 
+Latest additions: the owner permits adding/removing anything in the maps to
+thoroughly improve their spatial logic and natural Filipino feel. Also thoroughly
+improve graphics and graphics settings for lower-spec play and visible higher-end
+benefits. This includes functional settings UI, measured frame cost, matched image
+comparisons and readable gameplay at every tier. Preserve the core and approved cast.
+The fourth-map condo roofdeck concept is approved as **Sa Bubong**, with actual
+edge falls, button-mash recovery back up and a roughly10-second unavailable period
+before fallen slippers return safely. That wait is explicitly a penalty. Verify
+all recovery-mash contexts and device/network paths as part of this expanded scope.
+
 Latest delivery instruction: wrap up the current work, verify/commit/push it and
 provide a thorough continuation handoff in chat. The owner explicitly permits
 unfinished map work in that handoff. The full scope below remains open. Current
