@@ -1,5 +1,39 @@
 # Active execution plan
 
+**Live run update:** no active Unity/Blender process. Author40128 completed V2,
+17 profiles restored,c11498d1631c. Glazing diagnostic15728 completed1/1 with3
+controls;17 profiles restored,c9547216d85f. Runtime glass remains Standard,
+Transparent,queue3000,alpha.12 and interiors are visible. Sign names clear roofs.
+Map V2 still needs critique/revision: overly uniform shop signs/frontages, oversized
+inherited roof attachments, fuller routes/world review. Evidence:
+Logs/map-glazing-diagnosis-v2 and Logs/map-place-draft-v2-author.log.
+
+
+**Latest live state,2026-09-12:** fetched ASTRAReworks; pushed HEAD38908619,
+no divergence. All prior Unity/Blender runs have completed. No active process.
+Ilalim draft V1 remains UNACCEPTED. Its48 player views exposed sign/roof
+occlusion, hidden interiors and orphaned roof attachments.
+
+Glazing cause isolated: NearFade installed its opaque shader on transparent and
+cutout materials. New regression failed0/2 before; the full NearFadeTests now
+passes13/13 after the scoped material exclusion. Logs/near-fade-alpha-before-v1.xml
+and after-v1.xml. Run53942 restored17 profiles,83c9577d267a. Actual renewed player
+view is still required. Diagnostic13705 failed because its own logging queried
+properties absent on NearFade; corrected with HasProperty, do not count it as pass.
+
+MapPlaceAuthor source now places signs ahead of roof lips and carries each old
+Bubong attachment with its retained body. These corrections are not yet in the
+saved V1 scene. Four original vendor V3 GLBs/native sources are copied to
+Art/models/street-stalls and MapSource/environment/street-stalls, not imported or
+placed yet. V2 invalid double faces were rejected and corrected in V3.
+
+The owner rejects flimsy house V1-V5. Keep the retained old chunky buildings as
+the baseline; none of those rejected houses is used in maps. Next: coherent vendor
+pockets and differentiated substantial frontages, regenerate Ilalim V2, then
+actual glazing/FPP/side-back critique. Verify attachments, signs, physical lanes
+and vendor scale before accepting. Bayan/Eskinita, play feel/Pektus/equipment,
+graphics/Sa Bubong and the rest of TODO remain required.
+
 Updated2026-09-12. This is the compact current state. The improvement goal is OPEN.
 Read AGENTS.md, VISION, TODO and the newest active-ledger pointer. Compaction is
 continuation. Historical snapshots are preserved in the reports linked below.
@@ -8,18 +42,14 @@ continuation. Historical snapshots are preserved in the reports linked below.
 
 - Only DOST-GameDEV/TumbangPreso-Unity, branch ASTRAReworks.
 - Checkout: C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity.
-- Current pushed HEAD:e7a6f90b (substantial map plan). Last implemented spatial
+- Current pushed HEAD:38908619 (research/plan/critique and play-feel scope). Last implemented spatial
   batch:97e61f92. Foundation flight/instruction fixes:8a22f8b9.
 - Fetch/inspect actual status; preserve newer work. No reset, main operations or
   changes to the separate Documents/GitHub checkout.
 - No subagents, paid work or usage resets. Use tools/run_unity_guarded.py for every
   Unity launch; preserve profiles/IDs, one Editor per checkout, no C#/imported-asset
   edits during runs. Controller ownership remains separate.
-- ALL Unity/Blender runs are complete. Last Unity75613 captured42 architecture
-  views (1/1); snapshot c616a5c3ea92 restored17 profile files. No Editor is active.
-- Blender75066 finished4 V3 building studies, copied to Art/models/neighborhood-buildings
-  and MapSource/environment/neighborhood-buildings. They are UNVERIFIED in Unity,
-  unplaced in scenes and uncommitted. V1/V2/V3 studies remain in Logs.
+- All prior runs are complete; the latest live state above is authoritative.
 
 ## Current user verdict and priority order
 
@@ -68,8 +98,8 @@ at7c7fcb5, flat graphic faces, simple hands and clean blocky forms.
 - docs/AGENTS/TODO/plan/ledger/research updates carry all new requests; preserve them.
 - MapExperienceProbe.ArchitectureAndStreetContinuity added and verified1/1,42 frames.
 - tools/map_layout_review.py uses existing Pillow/WorkSans to plot measured plans.
-- tools/author_neighborhood_buildings.py owns4 original V3 building studies and
-  packed native sources. No map scene uses them yet; critique/in-engine check next.
+- tools/author_neighborhood_buildings.py owns4 rejected V1-V5 house studies and
+  packed native sources. No map scene uses them; keep them out of accepted maps.
 - Potential test-generated dirt: bayan left/right RosterArms tangents and
   ProjectAuditorSettings. Restore only after byte/diff verification, never map work.
 - Never-compiled graphics-resolution/frame-cap experiment is archived as TEXT in
@@ -125,3 +155,37 @@ ASTRAReworks only. Actual handoffs belong in chat, no handoff-prompt files.
 
 History: [earlier working plan](reports/improvement-2026-09-12/execution-plan-history-02.md)
 and [earlier pointer](reports/improvement-2026-09-12/execution-pointer-history-02.md).
+
+## Current M01/M02 work
+
+M01 proposal: MapSource/environment/layouts/ilalim-place-plan-v1.json and
+reports/improvement-2026-09-12/map-transformation-audit/Ilalim-proposed-layout-v1.png.
+11 shop lots do not overlap;4 proposed vendor footprints leave the7.25..9.3m
+pedestrian band clear. Existing play walls have innerx+/-11,z+/-16.5 and are6m
+high. New private storefronts must align with those physical limits and read as
+real closed/service/glazed edges, not open doors into invisible walls. End-boundary
+visual/physics correspondence also needs review. Road half-width7,pavementY.212.
+
+Actual28 pole renderers spanz-75.176..83.444. Do NOT assume that means28 poles in
+the48m central map or reduce them without looking. The long street is intentional.
+
+M02: new NeighborhoodBuildingReview.cs reads Ilalim's actual sun/ambient/grade,
+creates an unsaved construction bench, compares4 building studies with approved
+Tikboy at CharacterVisual.PersonScale, and renders12 HDR-to-sRGB views. It is a
+construction/material preflight, not final FPP or normal-play evidence. Run10020 completed. These thin studies were subsequently rejected; Ilalim uses
+retained commercial bodies instead. See the latest live state above.
+
+## Owner rejects flimsy house construction
+
+2026-09-12: the owner says the new houses look flimsy, too thin, as if wind could
+knock them over, and lack the old houses' feel. V1-V5 thin-panel/wafer-roof studies
+are NOT accepted. Their added detail does not compensate for lost solid blocky
+mass. Do not revive them as the approved architecture after compaction.
+
+Use retained old house silhouettes/proportions as the baseline. Walls, roof edges,
+window/door frames, plinths and supports must have substantial chunky weight.
+Integrate Filipino construction/use into that mass; do not make spindly realistic
+frames. The next study must be compared directly beside a retained old house AND
+an approved person in Unity before broad placement. Existing map houses have not
+yet been replaced, so their source/direction remains intact. The broader map
+transformation and all later play-feel/TODO scope remain open.

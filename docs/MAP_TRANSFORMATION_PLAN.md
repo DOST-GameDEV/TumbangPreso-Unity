@@ -406,3 +406,33 @@ Current self-critique: the V3 native building studies have more coherent opening
 and roof/drainage construction, but still repeat similar massing/palettes and lack
 finished storefront/domestic use. They need reference-specific composition,
 materials and in-engine cast comparison. They are not approved final map assets.
+
+### M01 measured placement proposal
+
+See MapSource/environment/layouts/ilalim-place-plan-v1.json and the
+[proposed plan](reports/improvement-2026-09-12/map-transformation-audit/Ilalim-proposed-layout-v1.png).
+11 shop lots are non-overlapping;4 vendor ground footprints avoid the proposed
+pedestrian band. Ground/awning/door/pole clearance still needs loaded-scene review.
+The existing invisible bounds are6m tall at innerx+/-11,z+/-16.5. Align private
+storefronts with real closed/service/glazed edges; do not make an apparently
+walk-through door blocked by an unrelated invisible wall. Revisit end-boundary
+presentation/physical correspondence as part of the whole-map critique.
+
+Pole count alone is misleading:28 pole renderers span about159m of extended
+street. Do not simplify this to28 poles within the48m central map. Verify actual
+positions/connections and change only what improves the real composition.
+
+## Owner rejects flimsy house construction
+
+2026-09-12: the owner says the new houses look flimsy, too thin, as if wind could
+knock them over, and lack the old houses' feel. V1-V5 thin-panel/wafer-roof studies
+are NOT accepted. Their added detail does not compensate for lost solid blocky
+mass. Do not revive them as the approved architecture after compaction.
+
+Use retained old house silhouettes/proportions as the baseline. Walls, roof edges,
+window/door frames, plinths and supports must have substantial chunky weight.
+Integrate Filipino construction/use into that mass; do not make spindly realistic
+frames. The next study must be compared directly beside a retained old house AND
+an approved person in Unity before broad placement. Existing map houses have not
+yet been replaced, so their source/direction remains intact. The broader map
+transformation and all later play-feel/TODO scope remain open.

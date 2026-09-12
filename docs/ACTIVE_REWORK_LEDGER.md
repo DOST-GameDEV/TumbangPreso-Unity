@@ -1,5 +1,14 @@
 # Active TUMP rework ledger
 
+**Live run update:** no active Unity/Blender process. Author40128 completed V2,
+17 profiles restored,c11498d1631c. Glazing diagnostic15728 completed1/1 with3
+controls;17 profiles restored,c9547216d85f. Runtime glass remains Standard,
+Transparent,queue3000,alpha.12 and interiors are visible. Sign names clear roofs.
+Map V2 still needs critique/revision: overly uniform shop signs/frontages, oversized
+inherited roof attachments, fuller routes/world review. Evidence:
+Logs/map-glazing-diagnosis-v2 and Logs/map-place-draft-v2-author.log.
+
+
 
 **ACTIVE MAP PLAN: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md).**
 The owner rejected V9 as insufficient visually. Follow this substantial revision
@@ -19,51 +28,17 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (continuation, 2026-09-12)
+## Current execution pointer (continuation,2026-09-12)
 
-**The owner rejected V9 as insufficient visually.** Maps barely look improved,
-houses are plain, Bayan's paving/world are empty, and Ilalim's placement/signs/
-road details are wrong. Substantial nostalgic Filipino place transformation is
-first. Research real references, preserve the next-step plan, then implement.
-
-Current plan: [EXECUTION_PLAN.md](EXECUTION_PLAN.md). Map design and concrete
-M01-M11: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md). Research:
-[map-reference-research.md](reports/improvement-2026-09-12/map-reference-research.md).
-After maps: [PLAY_FEEL_REWORK_PLAN.md](PLAY_FEEL_REWORK_PLAN.md), then remaining
-requested graphics/Sa Bubong and ALL actionable TODO work. No stop is requested.
-
-Only ASTRAReworks in the authorized ok-x20 checkout. Current pushed HEAD e7a6f90b;
-last implemented spatial batch97e61f92. Inspect actual git status before resuming.
-ALL Unity/Blender runs are complete. Last Unity75613:42 architecture images,1/1,
-17 profile files restored, snapshot c616a5c3ea92. No Editor is active.
-
-Dirty preparation: latest instructions/research/plans, MapExperienceProbe's42-view
-architecture method, tools/map_layout_review.py, tools/author_neighborhood_buildings.py,
-4 V3 GLBs and packed .blends under Art/models and MapSource/environment/neighborhood-buildings.
-The buildings are not placed or accepted and still need Unity/style verification.
-Known possible test dirt:bayan arm tangents/ProjectAuditorSettings; inspect before
-restoring. No map scene reset. Graphics prototype is preserved as non-compiled text.
-
-Next: complete the measured Ilalim placement sheet (M01); validate native buildings
-and author coherent shop/sign/stall/road batches (M02-M07), then Bayan/Eskinita and
-whole-map critique (M08-M11). The owner supplied food/fruit/clothes-accessory refs,
-requests Bawal umihi dito and selective graffiti, and requires honest self-critique
-after every batch. Sources survive in Logs/reference-review and
-Logs/map-owner-references-2026-09-12. Preserve English gameplay/UI descriptions,
-proper names, approved18 blocky people and simple controls.
-
-Post-map scope explicitly includes visible throw-windup lean, realistic-feeling
-movement/physics/animation, small evaluated aiming instability, distinct Pektus
-arm/wrist spin release, meaningful slipper AND can attributes and proactive
-identification of other action mismatches. Recovery mashing in all contexts,
-all input paths and networking is required. Sa Bubong remains approved with actual
-edge falls, mash recovery and10s slipper return penalty. All remaining kits,
-networking, graphics and exact-player qualification remain open.
-
-Detailed earlier pointer preserved whole in
-[execution-pointer-history-02.md](reports/improvement-2026-09-12/execution-pointer-history-02.md).
-The historical entries below preserve reasoning, not live processes or current
-scope limits. V9 tests/closed152.7 do not constitute owner visual acceptance.
+Read EXECUTION_PLAN.md for live state and MAP_TRANSFORMATION_PLAN.md for M01-M11.
+Fetched ASTRAReworks at38908619, no divergence. No active Unity/Blender process.
+NearFade glazing regression: before0/2, after13/13; actual player view pending.
+Logs/near-fade-alpha-{before,after}-v1.xml; latest profile83c9577d267a restored17.
+Ilalim draft V1 remains unaccepted. Sign-lip/roof-attachment corrections are in
+MapPlaceAuthor source awaiting regeneration. Four vendor V3 assets are copied,
+not imported/placed. Rejected V1-V5 houses remain unused. Preserve old chunky mass.
+Next integrate believable vendor/frontage use, regenerate, inspect real FPP and
+side/back views, critique and correct. All three maps and broader scope remain open.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 
@@ -2285,3 +2260,22 @@ Phaister grand phased ritual remains major work. No UI art effort. Preserve both
 modes, four-player core rules, approved people/flat faces/block hands and profiles.
 No subagents, other tasks, paid work or usage reset. No user config is needed.
 Keep this pointer and the detailed chronological evidence below current.
+
+## Current M01/M02 work
+
+M01 proposal: MapSource/environment/layouts/ilalim-place-plan-v1.json and
+reports/improvement-2026-09-12/map-transformation-audit/Ilalim-proposed-layout-v1.png.
+11 shop lots do not overlap;4 proposed vendor footprints leave the7.25..9.3m
+pedestrian band clear. Existing play walls have innerx+/-11,z+/-16.5 and are6m
+high. New private storefronts must align with those physical limits and read as
+real closed/service/glazed edges, not open doors into invisible walls. End-boundary
+visual/physics correspondence also needs review. Road half-width7,pavementY.212.
+
+Actual28 pole renderers spanz-75.176..83.444. Do NOT assume that means28 poles in
+the48m central map or reduce them without looking. The long street is intentional.
+
+M02: new NeighborhoodBuildingReview.cs reads Ilalim's actual sun/ambient/grade,
+creates an unsaved construction bench, compares4 building studies with approved
+Tikboy at CharacterVisual.PersonScale, and renders12 HDR-to-sRGB views. It is a
+construction/material preflight, not final FPP or normal-play evidence. Guarded
+run10020 active at this update. No map scene has been changed by the new author yet.

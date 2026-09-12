@@ -285,6 +285,10 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+House V1-V5 studies are rejected as flimsy; retain the old chunky building mass.
+NearFade alpha correction is closed in152.8 (13/13 focused tests and a fresh
+player-camera diagnostic). Current map drafts remain unaccepted.
+
 **Owner continuation order:** after maps and play-feel/equipment work, resume all
 remaining actionable TODO work. No stop/handoff is requested. The broader goal
 remains open; EXECUTION_PLAN.md records the current sequence and boundaries.
@@ -11490,3 +11494,5 @@ repository still lands on something**: follow it here, find the number, read it 
 | 64 | The player can switch render styles, and the alternative is a chromatic look |
 | 65 | The white keyline round every silhouette, measured rather than argued |
 | - | Closed |
+
+- **152.8, CLOSED2026-09-12:** preserve transparent/cutout scenery during near-camera fading. Whole entry in [TODO_Archive.md](TODO_Archive.md); [evidence](reports/improvement-2026-09-12/near-fade-alpha.md).

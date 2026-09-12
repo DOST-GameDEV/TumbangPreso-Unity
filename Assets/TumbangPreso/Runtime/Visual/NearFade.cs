@@ -304,6 +304,14 @@ namespace TumbangPreso.Visual
 
         private static Material Build(Material source, Shader shader)
         {
+            // This shader is opaque and does not implement source alpha blending
+            // or texture cutout. Converting shop glass made entire interiors
+            // disappear, despite the copied color retaining its original alpha.
+            // Preserve these surfaces; transparent glass already limits occlusion.
+            string renderType = source.GetTag("RenderType", true);
+            if (source.renderQueue >= (int)UnityEngine.Rendering.RenderQueue.AlphaTest ||
+                renderType == "Transparent" || renderType == "TransparentCutout") return null;
+
             if (Faded.TryGetValue(source, out var cached) && cached != null) return cached;
 
             var material = new Material(shader) { name = $"{source.name}_NearFade" };

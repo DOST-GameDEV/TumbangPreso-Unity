@@ -96,6 +96,11 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   Do not restart redesign. Preserve cute blocky shapes, flat graphic faces, simple
   hands and recognizable identities. Rounded bodies, added thumbs, realistic
   anatomy and noisy reconstructed/voxel studies were rejected.
+- House-model clarification,2026-09-12: the owner rejects the flimsy V1-V5 native
+  house studies. Keep the old houses' solid chunky silhouettes/proportions and
+  substantial walls/roof edges/frames/supports. Build Filipino details into that
+  mass. Compare new work beside a retained old house and the cast; do not revive
+  thin panels, wafer roofs or spindly supports as accepted direction.
 - All new models, trees, props, summons and effect geometry must look native to
   TUMP. Use clean chunky forms and purposeful detail. Do not decimate, compress,
   recolor or collapse sourced art/materials for unmeasured performance concerns.

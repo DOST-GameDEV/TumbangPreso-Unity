@@ -24,6 +24,39 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class NearFadeTests
     {
+        [TestCase(3000,"Transparent")]
+        [TestCase(2450,"TransparentCutout")]
+        public void PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(int queue,string renderType)
+        {
+            var root=new UnityEngine.GameObject("Dressing");
+            var transparent=new UnityEngine.Material(UnityEngine.Shader.Find("Standard"));
+            transparent.color=new UnityEngine.Color(.5f,.7f,.6f,.12f);
+            transparent.renderQueue=queue;transparent.SetOverrideTag("RenderType",renderType);
+            var opaque=new UnityEngine.Material(UnityEngine.Shader.Find("Standard"));
+            var glass=UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            var post=UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);
+            glass.transform.SetParent(root.transform);post.transform.SetParent(root.transform);
+            var glassRenderer=glass.GetComponent<UnityEngine.Renderer>();var postRenderer=post.GetComponent<UnityEngine.Renderer>();
+            glassRenderer.sharedMaterial=transparent;postRenderer.sharedMaterial=opaque;
+            try
+            {
+                NearFade.Install(root.transform);
+                Assert.AreSame(transparent,glassRenderer.sharedMaterial,
+                    "The opaque near-fade shader cannot preserve a glass/decal surface's alpha contract.");
+                Assert.AreEqual(NearFade.ShaderName,postRenderer.sharedMaterial.shader.name);
+                NearFade.Install(root.transform);
+                Assert.AreSame(transparent,glassRenderer.sharedMaterial,"A repeated install changed the preserved surface.");
+            }
+            finally
+            {
+                var glassMaterial=glassRenderer.sharedMaterial;var postMaterial=postRenderer.sharedMaterial;
+                UnityEngine.Object.DestroyImmediate(root);
+                if(glassMaterial!=transparent)UnityEngine.Object.DestroyImmediate(glassMaterial);
+                if(postMaterial!=opaque)UnityEngine.Object.DestroyImmediate(postMaterial);
+                UnityEngine.Object.DestroyImmediate(transparent);UnityEngine.Object.DestroyImmediate(opaque);
+            }
+        }
+
         private const string ShaderPath = "Assets/TumbangPreso/Shaders/NearFade.shader";
         private const string InstallerPath = "Assets/TumbangPreso/Runtime/Visual/NearFade.cs";
         private const string ColourPassPath = "Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs";
