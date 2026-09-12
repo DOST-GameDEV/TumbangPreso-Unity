@@ -285,6 +285,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Ground contact,2026-09-13:** bounded rendered compensation for controller skin
+space,with physics/meshes retained. All18/bothwidths zero plantedgap;kerb/jump/land/
+teleport/supportloss and smoothing seam,6ordinarymap/mode sequences,Edit506 and
+14audits pass. Broader movement/graphics stillopen;see
+[ground-contact-review.md](reports/improvement-2026-09-13/ground-contact-review.md).
+
+
 **Throw/Pektus implementation,2026-09-13:** body coil/off-hand/signed arm roll,
 FPP forward release and corrected grip framing,protocol29 phase/spin/host tell
 repair. Core562,EditMode504,6ordinary signed throws bothmodes pass. Actual3process

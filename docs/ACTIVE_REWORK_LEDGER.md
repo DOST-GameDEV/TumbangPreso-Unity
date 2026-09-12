@@ -20,18 +20,18 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (2026-09-13, owner sleeping)
 
-Pushed50e07025 buildhelper;the motion/protocol29/handover batch is verified and
-readyforstablecommit. No Editor/player/encoder/auditactive. FullEdit504,Core562,
-Carry5,flight/retrieval4,8checks/14audits,and real3process Classic/Herodelay/rejoin
-causalcases pass. Both actualcases requireforeignshoe0 warmuppickup/disarm before
-whistle;all3phasesmatch,0ghostheldsamples;159active rejoin samples inHero.
+Pushed4981c986. Groundcontact batch verified,readyforcommit;no processesactive.
+CharacterVisual compensates only renderedskin-gap,physics/geometryunchanged.
+All18/bothwidths36samples zero gap;actualkerb/jump/land/teleport/raised/supportloss
+and smoothingseam pass;6ordinarymap/mode sequences1/1,12videosencoded;fullEdit506,
+14audits. Exactevidence in ground-contact-review.md. Aftercommit:analogmagnitude
+(sharedSteer currentlynormalizes everynonzero stick),observedvscommanded gaitspeed,
+backward/strafe/turn andcarrying/impact/FPP sequences. Keep equipment/mashing and
+alllatergraphics/SaBubong/wholekit/network/release scope. Shadowcontact andunclear
+Bayan/Ilalim groundslatvisuals flaggedforgraphics/M10;no guessedmodel lowering.
+InternalThrowReview player is older than groundcontact;not a finalrelease.
 
-Read compact EXECUTION_PLAN.md and throw-motion-review.md for exactcode/evidence/
-internalbuildhashes anddirtyscope. Currentinternalplayer is a diagnosticbase50e07025
-plusdirtyimplementation,NOT finalrelease. Failed captures/cases/reasoning andprior
-executionplan archivedwhole,including execution-plan-history-07.md. Nextcommit/push,
-thenmeasure drawnfoot support and improve movement/equipment/mashing;all graphics,
-SaBubong,wholekits/network/finalrelease requirements stayopen. Continue,nohandoff.
+Continue,nohandoff/approvalwait;fullscope inplans.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

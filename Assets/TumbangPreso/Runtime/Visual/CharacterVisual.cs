@@ -523,6 +523,9 @@ namespace TumbangPreso.Visual
         private Vector3 _alignedLocal;
 
         private CharacterMotor _motor;
+        private CharacterController _supportController;
+        private readonly RaycastHit[] _supportHits=new RaycastHit[16];
+        private float _groundContact;
 
         private Vector3 _smoothedWorld;
         private float _smoothedYawDeg;
@@ -562,6 +565,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void SnapRemoteTransform()
         {
+            _groundContact=0;
             _smoothedWorld = transform.position;
             _smoothedYawDeg = transform.eulerAngles.y;
             _smoothing = true;
@@ -593,10 +597,8 @@ namespace TumbangPreso.Visual
 
             if (!SmoothRemote)
             {
-                if (!_smoothing) return;
-
-                _modelRoot.localPosition = _alignedLocal;
-                _modelRoot.localRotation = Quaternion.identity;
+                _modelRoot.localPosition = _alignedLocal + GroundContactOffset(transform.position,dt);
+                if(_smoothing)_modelRoot.localRotation = Quaternion.identity;
                 _smoothing = false;
                 return;
             }
@@ -621,9 +623,36 @@ namespace TumbangPreso.Visual
             // position throws the alignment away and the character rides up out of the ground
             // the moment smoothing turns on.
             _modelRoot.localPosition = _alignedLocal
-                                       + transform.InverseTransformVector(_smoothedWorld - body);
+                                       + transform.InverseTransformVector(_smoothedWorld - body)
+                                       + GroundContactOffset(_smoothedWorld,dt);
             _modelRoot.localRotation = Quaternion.Euler(
                 0.0f, Mathf.DeltaAngle(bodyYaw, _smoothedYawDeg), 0.0f);
+        }
+
+        private Vector3 GroundContactOffset(Vector3 drawnBody,float dt)
+        {
+            if(_motor==null)_motor=GetComponent<CharacterMotor>();
+            if(_supportController==null)_supportController=GetComponent<CharacterController>();
+            float target=0;
+            if(_motor!=null && _motor.IsPerson && _motor.IsGrounded && _supportController!=null)
+            {
+                // PhysX skin keeps the capsule above support. Keep that collision
+                // tolerance; only compensate the rendered model, within that skin.
+                // The short downward query cannot select a roof above the player.
+                var feet=drawnBody+transform.TransformVector(_supportController.center-Vector3.up*(_supportController.height*.5f));
+                float skin=_supportController.skinWidth;
+                int count=Physics.RaycastNonAlloc(feet+Vector3.up*.02f,Vector3.down,_supportHits,skin+.05f,~0,QueryTriggerInteraction.Ignore);
+                float nearest=float.PositiveInfinity;
+                for(int i=0;i<count;i++)
+                {
+                    var hit=_supportHits[i];
+                    if(hit.collider==null || hit.normal.y<.5f || hit.distance>=nearest)continue;
+                    if(hit.collider.GetComponentInParent<CharacterMotor>()!=null || hit.collider.GetComponentInParent<Slipper>()!=null)continue;
+                    nearest=hit.distance;target=Mathf.Clamp(feet.y-hit.point.y,0,skin+.002f);
+                }
+            }
+            _groundContact=Mathf.MoveTowards(_groundContact,target,Mathf.Max(0,dt)*2f);
+            return transform.InverseTransformVector(Vector3.down*_groundContact);
         }
 
         private void CacheRenderers()

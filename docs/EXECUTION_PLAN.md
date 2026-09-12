@@ -1,12 +1,16 @@
 # Active execution plan
 
 <!-- LIVE_STATE_START -->
-**Live now,2026-09-13:** No Editor/player/encoder/audit running. Pushed50e07025.
-The substantial throw/Pektus/protocol29/handover batch is verified and being
-prepared for a sole-author stable commit/push. See throw-motion-review.md.
-Aftercommit:measure actualfoot support/skinwidth,then movement/backpedal/turn/
-carrying/contact/interrupted blends,equipment10slippers/6cans,all-contextmashing.
-Continue full latergraphics/SaBubong/kit/net/release scope. Ownerasleep,nohandoff.
+**Live now,2026-09-13:** Pushed4981c986. Groundcontact batch verified,readyforcommit;no processesactive.
+CharacterVisual compensates only renderedskin-gap,physics/geometryunchanged.
+All18/bothwidths36samples zero gap;actualkerb/jump/land/teleport/raised/supportloss
+and smoothingseam pass;6ordinarymap/mode sequences1/1,12videosencoded;fullEdit506,
+14audits. Exactevidence in ground-contact-review.md. Aftercommit:analogmagnitude
+(sharedSteer currentlynormalizes everynonzero stick),observedvscommanded gaitspeed,
+backward/strafe/turn andcarrying/impact/FPP sequences. Keep equipment/mashing and
+alllatergraphics/SaBubong/wholekit/network/release scope. Shadowcontact andunclear
+Bayan/Ilalim groundslatvisuals flaggedforgraphics/M10;no guessedmodel lowering.
+InternalThrowReview player is older than groundcontact;not a finalrelease.
 <!-- LIVE_STATE_END -->
 
 ## Standing scope and safe workflow
@@ -71,7 +75,7 @@ stillmissing. Retainoldchunkyhouses;rejectedthin V1-V5 quarantined inLogs. All n
 sources/authors and portablemapcritique reports are preserved. No mapart approval
 is inferred fromtechnicalpasses.
 
-## Throw/Pektus/handover batch ready to commit
+## Throw/Pektus/handover batch pushed4981c986
 
 Runtime:ThrowGesture,CharacterAnimator,ViewmodelArms,CameraRig,SpectatorCamera,
 Carrier,MatchRpc/NetSession(protocol29),Slipper/SliceRunner. Opt-inNetThrowProbe and

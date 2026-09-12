@@ -199,3 +199,42 @@ Dirty fix lives inSlipper.HostForceEquip,SliceRunner.EquipOwnedSlippers,and inac
 MatchRpc snapshot normalization. It does not alter flight/GroundY queries;dropped
 replacement is seated with existing silentLand using holder's foot-level support.
 Three focused regressions are running;actual3process reruns still required.
+
+
+## Ground contact baseline, after pushed4981c986
+
+FootSupportProbe baked actual skin vertices after movement/settle forBayan,Dante,
+andNemu. Atcontroller skin.08,root/sole/controllerbottom are.18 above road.10;
+at.035,allare.135. Importedbounds and solesagree. Baselinefailed0/1 withthree
+8cmplanted gaps;profile07743bd549ec preserved25files. Cause is capsule skinspace,
+not modelshape/bindbounds. No physics skinwidth/sourcegeometry change selected.
+
+Dirty CharacterVisual correction composes a bounded rendered contact offset with
+its existing model-root/smoothing owner. Only groundedpeople over nearby support,
+short downward nonallocquery,limitactualskinwidth;airborne/no-support returns0.
+Next:verifybothskin experiments,all18people,jump/kerb/slope/no-support/snap/rebind/
+remote smoothing,ordinaryplay and meaningful cadence/backwards/turn improvements.
+Do not call contact solved from idle samples alone.
+
+
+Foot contactV1 passes all6measurements:solegap0.0000m forbothskinwidths;controller
+bottom staysat.18/.135 above road.10. All18rigs andactualkerb/jump/teleport sequence
+nowunder verification. No successclaim forslopes/no-support orremoteuntilchecked.
+Further movement sourcelead:CharacterAnimator.FlatSpeed reads Motor.Velocity,which
+is steering velocity and excludes external impulse and actual collision displacement.
+StepGait also advances phaseforward regardless of backward/strafe movement. Measure
+those sequences before changing stride direction/cadence;keep gameplay velocity
+and network budget semantics separate from observed animation speed.
+
+
+FootV2:all18bodies/bothwidths,36measurements,all0.0000msolegap. The separatekerb
+fixture failedbefore contact sampling because its world+Z intent was interpreted
+in the defaultmouse/body-relative basis and moved toward-Z. It now explicitly
+selects movement aiming for its world-space route;no runtimephysics change from
+that fixture failure. Profileb13873006298 restored25files.
+
+Additional movementsourcefinding:Steer normalizes any nonzero wish in BOTH aim
+modes,discarding analog magnitude. Even reviewinput .2 therefore moved atfullspeed.
+After grounding,assess preserving analog magnitude in the sharedmotor (including
+AI partial-intent consumers),alongside observed ratherthancommanded gait speed.
+This concerns motor/control feel,not separate-owned controller device mappings.

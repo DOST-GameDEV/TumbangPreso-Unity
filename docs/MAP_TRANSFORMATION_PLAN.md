@@ -459,3 +459,17 @@ V3 retires those fences, gives roads real kerb depth/collision and adds closed
 side/rear nave and municipal windows/service access. Court boundary clarity at
 open-looking path mouths remains part of M10, alongside every side/back, route,
 lighting and ordinary-play review. No full artistic acceptance is implied.
+
+
+### Ordinary-play graphics observations,2026-09-13
+
+The ground-contact capture (Logs/ground-contact-ordinary-v1) shows broad wooden
+slat/platform shapes on Bayan and long dark strip shapes on Ilalim. They need
+explicit identification/review against the owner's earlier unclear-ground-object
+complaint;do not assume deactivated static decoration covered every active/runtime
+visual. StreetTripHazard is an existing actual mechanic,so distinguish the real
+hazard footprint/telegraph from decorative remnants before editing. Some camera
+views still suggest floating despite measured zero sole gap;review shadow contact/
+bias and actual action root lift in the graphics pass rather than lowering models
+by eye. NeighborhoodFinishAuthor sets shadowBias.035/normalBias.25. No shadow fix
+has yet been tested from this observation.

@@ -1,0 +1,8 @@
+stage,body_y,sole_y,support_y,grounded
+kerb,0.4300,0.3500,0.3500,True
+air,1.1860,1.3454,0.3500,False
+landed,0.4300,0.3500,0.3500,True
+teleported,0.1000,0.1000,0.1000,True
+smoothed,0.1800,0.1000,0.1000,True
+raised,1.1000,1.1000,1.1000,True
+unsupported,0.7400,0.7299,0.1000,False
