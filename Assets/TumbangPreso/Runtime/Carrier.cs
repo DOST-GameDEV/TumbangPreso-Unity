@@ -135,6 +135,9 @@ namespace TumbangPreso
 
         private float _pektusSpin;
         public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
+        public float ObservedPektusSpin => _observedCharge >= 0 ? _observedSpin : 0;
+        private float _observedSpin;
+        private float _chargeSyncLeft,_lastSentSpin;
 
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
         /// YOU card's charge meter.</summary>
@@ -231,7 +234,7 @@ namespace TumbangPreso
             // was wrong is that deciding and announcing were one line; `NetCue` separates them,
             // which is the shape `NetAuthority`'s class note already describes for every verb.
             NetCue.PlayVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
-            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(Visual.ThrowGesture.Action(spin));
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
             // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
             // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
@@ -281,6 +284,7 @@ namespace TumbangPreso
 
             Held = null;
             _motor.HoldingSlipper = false;
+            ApplyObservedCharge(false);
             _charge = 0.0f;
             _pektusSpin = 0.0f;
 
@@ -288,7 +292,7 @@ namespace TumbangPreso
             // owning client predicts its own; without this the other two peers saw a tsinelas
             // leave a body that never moved. `BroadcastAction` skips the host itself, and the
             // thrower is excluded by `PredictThrowPresentation` having already played it.
-            Net.MatchRpc.Instance?.BroadcastActionExceptOwner(_motor.PlayerSlot, "throw");
+            Net.MatchRpc.Instance?.BroadcastActionExceptOwner(_motor.PlayerSlot, Visual.ThrowGesture.Action(spin));
             Net.MatchRpc.Instance?.BroadcastSlipperState(thrown);
         }
 
@@ -306,6 +310,7 @@ namespace TumbangPreso
             // sound plays twice on the same frame and the grab clip restarts on its second frame.
             if (Held == what && what != null) return;
 
+            Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"holding");
             Held = what;
             _motor.HoldingSlipper = what != null;
 
@@ -404,6 +409,7 @@ namespace TumbangPreso
         {
             if (Held == what && what != null) return;
 
+            Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"equipped");
             Held = what;
             _motor.HoldingSlipper = what != null;
             _throwLockLeft = 0.0f;
@@ -593,6 +599,7 @@ namespace TumbangPreso
 
                 _charging = true;
                 _charge = 0.0f;
+                _pektusSpin=Mathf.Clamp(intent.SpinInput,-Balance.MaxPektusSpin,Balance.MaxPektusSpin);
                 BroadcastCharge(true);
 
                 // The wind-up is audible as well as visible. It is the taya's cue that a throw
@@ -621,6 +628,7 @@ namespace TumbangPreso
             {
                 _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
+                _observedSpin = _pektusSpin;
 
                 // Walking into the box, losing the slipper or ending the round cancels the
                 // commitment. The lata going down does not. That state is often caused by a
@@ -629,6 +637,12 @@ namespace TumbangPreso
                 // Release legality is still checked below, so holding the pose cannot bank an
                 // illegal shot inside the box or launch through restoration protection.
                 if (!canMaintainCharge) CancelCharge();
+                else
+                {
+                    _chargeSyncLeft-=dt;
+                    if(_chargeSyncLeft<=0 && (Mathf.Abs(_pektusSpin-_lastSentSpin)>.025f || _chargeSyncLeft<=-.4f))
+                        BroadcastCharge(true);
+                }
                 return;
             }
 
@@ -662,13 +676,19 @@ namespace TumbangPreso
         /// </summary>
         private void BroadcastCharge(bool active)
         {
-            ApplyObservedCharge(active);
+            ApplyObservedCharge(active,_charge,_pektusSpin);
+            _lastSentSpin=_pektusSpin;_chargeSyncLeft=.1f;
             if (NetAuthority.IsNetworked)
-                Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot, active);
+                Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot, active,_charge,_pektusSpin);
         }
 
         /// <summary>Applies another peer's visible throw wind-up without touching local input.</summary>
-        public void ApplyObservedCharge(bool active) => _observedCharge = active ? 0.0f : -1.0f;
+        public void ApplyObservedCharge(bool active,float seconds=0,float spin=0)
+        {
+            if(float.IsNaN(seconds) || float.IsInfinity(seconds) || float.IsNaN(spin) || float.IsInfinity(spin))return;
+            _observedCharge = active ? Mathf.Clamp(seconds,0,Balance.ChargeFullTime) : -1.0f;
+            _observedSpin=active ? Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin) : 0;
+        }
 
         private bool TryPickup()
         {
@@ -822,7 +842,7 @@ namespace TumbangPreso
         /// </summary>
         private void PredictThrowPresentation(Vector3 origin, float spin)
         {
-            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction(Visual.ThrowGesture.Action(spin));
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
         }
 
@@ -938,6 +958,7 @@ namespace TumbangPreso
         private void CancelAll()
         {
             CancelCharge();
+            ApplyObservedCharge(false);
             _channel = 0.0f;
             ChannelRatio = 0.0f;
         }

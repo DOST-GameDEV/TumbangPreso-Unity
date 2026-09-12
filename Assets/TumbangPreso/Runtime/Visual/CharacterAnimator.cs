@@ -140,6 +140,8 @@ namespace TumbangPreso.Visual
         private static readonly Dictionary<string, string[]> ActionClips = new Dictionary<string, string[]>
         {
             { "throw", new[] { Throwing, PickUp, Interact } },
+            { "throw-pektus-left", new[] { Throwing, PickUp, Interact } },
+            { "throw-pektus-right", new[] { Throwing, PickUp, Interact } },
 
             // ⚠️ THE SHOVE LEADS WITH THE OFF ARM AND THE PUNCH WITH THE STRONG ONE, so the two
             // are told apart from behind. They both played `attack-melee-right` and were one
@@ -442,6 +444,7 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearChargePose();
+            _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
 #if UNITY_EDITOR
             foreach (var clip in _generated) if (clip != null) DestroyImmediate(clip);
@@ -463,6 +466,17 @@ namespace TumbangPreso.Visual
         {
             if (!_graph.IsValid()) return;
 
+            RestoreChargeOffsets();
+            if (_throwReleaseTime >= 0)
+            {
+                _throwReleaseTime += Time.deltaTime;
+                if (_motor.IsStunned)
+                {
+                    _throwReleaseTime=-1;_oneShotLeft=0;
+                    CameraSystem.CameraRig.CancelViewmodelAction(_motor);
+                }
+                else if (_throwReleaseTime >= ThrowGesture.ReleaseSeconds) _throwReleaseTime=-1;
+            }
             // Charge state is resolved first, with the arm applied after graph evaluation.
             // The lower-body layer can keep moving throughout the held preparation.
             StepChargePose();
@@ -572,15 +586,15 @@ namespace TumbangPreso.Visual
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
-            bool layered = _motor.IsGrounded && !_motor.IsTripped && _oneShotLeft <= 0
+            bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || _throwReleaseTime >= 0)
                 && (_emote == null || !_emote.IsEmoting)
                 && (_carrier == null || _carrier.ChannelRatio <= 0)
-                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing);
+                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || _throwReleaseTime >= 0);
             float target = layered && speed > WalkSpeedThreshold ? 1f : 0f;
             _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, Time.deltaTime / .08f);
             // Accepted actions immediately own every bone. A leg layer lingering over a
             // slide or stomp would erase its support pose at the moment of commitment.
-            if (_oneShotLeft > 0 || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
+            if ((_oneShotLeft > 0 && _throwReleaseTime < 0) || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
             _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, Time.deltaTime / .10f);
             float reference = Mathf.Lerp(_walkReference, _runReference, _runWeight);
             float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);
@@ -752,24 +766,23 @@ namespace TumbangPreso.Visual
         // ---- THE THIRD-PERSON WIND-UP ---------------------------------------
 
         /// <summary>
-        /// How far the arm cocks back at full charge, in radians. ⚠️ READ FROM THE VIEWMODEL
-        /// RATHER THAN RESTATED: this is the same wind-up the thrower sees on their own arm, and
-        /// the two views disagreeing about how far back it went would be its own bug.
+        /// Legacy lunge preparation amplitude. ThrowGesture shares the charge clock
+        /// while fitting body and close-camera motion to their different bases.
         /// </summary>
         public const float ChargePoseRad = CameraSystem.ViewmodelArms.WindupRad;
 
-        /// <summary>
-        /// ⚠️ THE SIGN AND THE AXIS ARE MEASURED. `character_visual.gd` records that the first
-        /// build of this used -X and the hand DROPPED instead of cocking. A bone's local basis
-        /// is not readable by eye; flip the constant, never the caller.
-        /// </summary>
-        private static readonly Vector3 ChargePoseAxis = new Vector3(1.0f, 0.0f, 0.0f);
-
+        // Lunge retains the legacy positive-X arm preparation. Throw preparation
+        // uses the measured carrying pose and separate body/FPP axes in ThrowGesture.
         private static readonly string[] ChargePoseBones = { "arm-right", "arm-left" };
 
         private Transform _chargeBone;
         private Quaternion _chargeBoneRest;
         private bool _chargePosing;
+        private Transform _chargeTorso,_chargeHead,_chargeOff;
+        private Quaternion _torsoRest,_headRest,_offRest;
+        private bool _chargeOffsetsApplied;
+        private ThrowGesture.Pose _lastThrowPose=ThrowGesture.Rest,_throwReleaseFrom=ThrowGesture.Rest;
+        private float _throwReleaseTime=-1,_throwReleaseSpin;
 
         /// <summary>
         /// The wind-up, written onto the arm bone so OPPONENTS can read the commitment.
@@ -789,19 +802,14 @@ namespace TumbangPreso.Visual
         /// 0..1 ratio with -1 at rest, so they compose without any of them knowing about the
         /// others.
         ///
-        /// ⚠️⚠️ AND THE PLAYBACK HAS TO STOP, WHICH IS THE WHOLE DIFFERENCE BETWEEN A POSE AND A
-        /// FLICKER. Every clip on this rig keys `arm-right`, and the graph writes the bone after
-        /// this component's Update — so a bone write that merely races it lands only on frames
-        /// where the clip happens to have ended. Measured in the original: 0.025 m of hand
-        /// travel while racing, against 0.62 rad of rotation that should move it eight times
-        /// that. With the graph stopped nothing else writes the bone and the pose is exactly
-        /// what this function says it is.
+        /// The upper-body offsets run after graph evaluation; the graph and lower
+        /// body keep moving. Each prior offset is removed before the next sample.
         /// </summary>
         /// <returns>True while the upper-body charge override is active.</returns>
         private bool StepChargePose()
         {
             float power = ObservedCharge();
-            bool winding = power >= 0.0f && !_motor.IsStunned;
+            bool winding = power >= 0.0f && !_motor.IsStunned && _throwReleaseTime < 0;
 
             if (!winding)
             {
@@ -821,12 +829,31 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
-            // ⚠️ Evaluate after the graph, before Carrier's LateUpdate reads the hand.
-            // Stopping the entire graph froze moving legs throughout every charge.
-            if (!_chargePosing || _chargeBone == null) return;
-            _chargeBoneRest = _chargeBone.localRotation;
-            _chargeBone.localRotation = _chargeBoneRest * Quaternion.AngleAxis(
-                ChargePoseRad * Mathf.Clamp01(ObservedCharge()) * Mathf.Rad2Deg, ChargePoseAxis);
+            // Remove last frame's offsets even when the graph is paused or a clip
+            // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
+            RestoreChargeOffsets();
+            if (!_chargePosing && _throwReleaseTime < 0) return;
+            if (_chargeBone==null && !ResolveChargeBone()) return;
+            bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
+            var pose=_throwReleaseTime>=0 ? ThrowGesture.Release(_throwReleaseFrom,_throwReleaseTime,_throwReleaseSpin)
+                : throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
+                : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
+            _chargeBoneRest=_chargeBone.localRotation;
+            _chargeBone.localRotation=_chargeBoneRest*pose.Right;
+            if(_chargeTorso!=null){_torsoRest=_chargeTorso.localRotation;_chargeTorso.localRotation=_torsoRest*pose.Torso;}
+            if(_chargeHead!=null){_headRest=_chargeHead.localRotation;_chargeHead.localRotation=_headRest*pose.Head;}
+            if(_chargeOff!=null){_offRest=_chargeOff.localRotation;_chargeOff.localRotation=_offRest*pose.Left;}
+            _chargeOffsetsApplied=true;_lastThrowPose=pose;
+        }
+
+        private void RestoreChargeOffsets()
+        {
+            if(!_chargeOffsetsApplied)return;
+            if(_chargeBone!=null)_chargeBone.localRotation=_chargeBoneRest;
+            if(_chargeTorso!=null)_chargeTorso.localRotation=_torsoRest;
+            if(_chargeHead!=null)_chargeHead.localRotation=_headRest;
+            if(_chargeOff!=null)_chargeOff.localRotation=_offRest;
+            _chargeOffsetsApplied=false;
         }
 
         /// <summary>The deepest live charge on this unit, or -1 when none is running. The three
@@ -861,6 +888,13 @@ namespace TumbangPreso.Visual
                     if (bone == null || bone.name != wanted) continue;
 
                     _chargeBone = bone;
+                    foreach(var part in skinned.bones)
+                    {
+                        if(part==null)continue;
+                        if(part.name=="torso")_chargeTorso=part;
+                        else if(part.name=="head")_chargeHead=part;
+                        else if(part.name=="arm-left" && part!=bone)_chargeOff=part;
+                    }
 
                     // The pose the clip left the bone in, restored on release so two wind-ups
                     // cannot accumulate.
@@ -874,10 +908,9 @@ namespace TumbangPreso.Visual
 
         private void ClearChargePose()
         {
+            RestoreChargeOffsets();
             _chargePosing = false;
-
-            if (_chargeBone != null) _chargeBone.localRotation = _chargeBoneRest;
-            _chargeBone = null;
+            _chargeBone = _chargeTorso = _chargeHead = _chargeOff = null;
 
             // ⚠️ THE GRAPH RESTARTS BEFORE ANYTHING ELSE PLAYS. The end of a charge is usually
             // a THROW, and the release fires that one-shot through `PlayAction` on the very next
@@ -907,6 +940,7 @@ namespace TumbangPreso.Visual
             if (!_graph.IsValid() || !_clips.TryGetValue(clipName, out var clip)) return;
 
             ClearChargePose();
+            _throwReleaseTime=-1;
             Play(clipName, loop: false, force: true);
             _oneShotLeft = clip.length;
             if (_layers.IsValid()) _layers.SetInputWeight(1, 0f);
@@ -948,8 +982,15 @@ namespace TumbangPreso.Visual
             // added later cannot forget to.
             CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
 
+            var releaseFrom=(_chargePosing || _chargeOffsetsApplied) ? _lastThrowPose : ThrowGesture.Rest;
             string clip = ResolveChain(ActionClips, action);
             if (clip != null) PlayOneShot(clip);
+            if(ThrowGesture.IsThrow(action))
+            {
+                _throwReleaseFrom=releaseFrom;_throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
+                _oneShotLeft=ThrowGesture.ReleaseSeconds;
+            }
+            else _throwReleaseTime=-1;
         }
 
         /// <summary>

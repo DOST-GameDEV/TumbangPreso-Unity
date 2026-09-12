@@ -128,3 +128,74 @@ obvious host-local ApplyObservedCharge call in that handler. Trace all remaining
 input/snapshot writers and reproduce on the host before claiming this is the
 observed missing tell. Windup spin is absent from these payloads; existing spin
 serialization appears only in throw requests/loose-slipper state.
+
+
+## Active throw implementation,2026-09-13
+
+Baseline fresh regression0/1 fails with exactly0degrees torso preparation on Bayan,
+Logs/throw-motion-baseline.xml,profile19a202c86804 restored17. Current dirty runtime
+adds shared ThrowGesture timing/pose,torso/head/off-hand preparation,signed Pektus
+arm roll and forward release/recovery in body/FPP. Legs continue during throws.
+No extra controls/random trajectory changes. Original rigs/assets unchanged.
+This is unqualified. Windup spin currently local only;need complete host/peer
+accepted charge state/clock/spin relay and snapshot compatibility before shipping.
+Ordinary-speed visual review must assess arm/head/torso intersections,foot motion,
+release truthfulness,cancel return and18rig coverage. No artistic success yet.
+
+
+Protocol29 dirty:phase+signedspin in both charge payloads,host-local application,
+owned-seat validation,finite checks,rate-limited changing pose/heartbeat and world
+snapshot replay to observers. Owner retains local input authority;round inability,
+release and departure clear preparation. Old protocol28 players must be rebuilt;
+Windows is this qualification target,Android remains unqualified.
+
+Relay baseline0/1 reproduced hostObservedCharge=-1 despite an accepted peer request,
+Logs/throw-relay-baseline.xml/profile819b7b9568b1. V2 fullEditMode492/493:
+all new motion/relay regressions pass;DeadFeatureAudit's literal throw-call lookup
+misses directional dispatch. Updated it to follow the actual selector/call;initial
+follow-up failed compilation because its LINQ import was missing,now corrected.
+Wire audit initially counted compressed same-line writes once;expanded writes,
+added explicit finite guards in client receiver (Carrier also guards application).
+
+V1 ordinary capture rejected as evidence for final body pose:coroutine sampled
+before LateUpdate. Record now captures from a late callback after body/Carrier/FPP.
+V1 negative spin assertion also kept checking after a can hit consumed spin;now
+checks the first InFlight observation. No slipper-physics patch from that fixture.
+Reduced FPP spin roll after the negative preparation dropped too far below frame.
+V2b capture/critique and fresh gates are next. All failure logs preserved.
+
+
+V2b late-frame capture1/1,all6 throws/bothmodes (profile8f9dfdab22eb) succeeded.
+Critique: body+X charge offset applied on top of holding-right lowers the hand,
+instead of lifting it behind the shoulder. Old comment was not a measurement of
+this actual layered pose. V3 uses the negative offset and16degree back lean.
+FPP fixed-elbow carry lets charged rotations bring the shoe into the eye or below
+frame even at smaller spin angles. V3 solves elbow from the raised hand anchor
+and actual arm rotation,keeping forearm/slipper attached at arm's length. Added
+hand-space measurements and framing regression. No changes to people geometry.
+All style/timing/collision/play and separate-process criteria still need review.
+
+
+V4 capture1/1,both modes3styles,profileb24103d8836a. Reduced FPP throw-only cock
+angle and lower hand target keep the forearm reaching the frame edge;the legacy
+lunge FPP angle remains unchanged. Body timing/cock direction and signed roll
+retained. Seven motion/framing/recovery tests are now authored (all18body rigs plus
+3grips plus3signed release/cancel across30/60/144fps),fullEdit running. Current
+source audits14/14 pass. A new opt-in NetThrowProbe with a separate late recorder
+and tools/net_throw_matrix.py will drive only the owning client's actual input
+and inspect3real processes,delay/rejoin. Must build a new internal executable first.
+
+Movement lead: actual capture body root settles .08m above the road after motion;
+MatchInstaller leaves CharacterController.skinWidth at Unity's default. Rendered
+foot support still needs measuring before choosing a physics/alignment correction.
+Do not equate the projected shadow gap alone with a proven foot-position bug.
+
+
+Warmup handover investigation:real Hero150ms/rejoin trace isolated seat1 grabbing
+shoe0 beforewhistle,then being handed shoe1 without disarming parkedshoe0. Repeated
+inactive Held/holder1 packets re-equipped the ghost on clients after the throw.
+Baseline focused0/2 reproduces both forced replacement and parked holder leak.
+Dirty fix lives inSlipper.HostForceEquip,SliceRunner.EquipOwnedSlippers,and inactive
+MatchRpc snapshot normalization. It does not alter flight/GroundY queries;dropped
+replacement is seated with existing silentLand using holder's foot-level support.
+Three focused regressions are running;actual3process reruns still required.

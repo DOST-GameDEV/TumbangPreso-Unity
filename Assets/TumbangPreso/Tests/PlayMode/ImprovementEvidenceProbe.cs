@@ -399,10 +399,11 @@ namespace TumbangPreso.PlayTests
             var rt = new RenderTexture(960, 540, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
             var ldr = new RenderTexture(960, 540, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             var pixels = new Texture2D(960, 540, TextureFormat.RGB24, false);
-            var log = new StringBuilder("frame,real_seconds,game_seconds,speed,held,leg_angle,action\n");
+            var log = new StringBuilder("frame,real_seconds,game_seconds,speed,held,leg_angle,action,charge,spin,torso_x,arm_x,hand_y,hand_forward,hand_side,body_y\n");
             var field = typeof(CharacterAnimator).GetField("_current", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             float start = Time.realtimeSinceStartup, gameStart = Time.time, next = 0;
             int frame = 0;
+            var late=camera.gameObject.AddComponent<LateMotionCapture>();
             var previous = camera.targetTexture;
             var previousActive = RenderTexture.active;
             try
@@ -414,72 +415,90 @@ namespace TumbangPreso.PlayTests
                     yield return null;
                     if (t < next) continue;
                     next = t + .05f;
-                    if (subject != null)
+                    bool captured=false;
+                    late.Draw=()=>
                     {
-                        camera.transform.position = subject.transform.position + (witnessOffset ?? new Vector3(3, 1.5f, 4));
-                        camera.transform.LookAt(subject.transform.position + Vector3.up * .9f);
-                        var familiar=subject.GetComponent<CharacterVisual>()?.Companion;
-                        if (familiar!=null && Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1")
+                        try
                         {
-                            var parts=familiar.GetComponentsInChildren<Renderer>();
-                            Assert.IsNotEmpty(parts);
-                            var bounds=parts[0].bounds;
-                            foreach(var part in parts) if(part.enabled && part.bounds.size.sqrMagnitude>.00001f) bounds.Encapsulate(part.bounds);
-                            var front=familiar.MouthPosition-familiar.transform.position;front.y=0;
-                            front=front.sqrMagnitude>.000001f?front.normalized:familiar.transform.forward;
-                            var direction=(front+Vector3.Cross(Vector3.up,front)*.28f).normalized;
-                            camera.transform.position=bounds.center+direction*Mathf.Max(.9f,bounds.size.y*1.6f)+Vector3.up*bounds.size.y*.08f;
-                            camera.transform.LookAt(bounds.center);
+                            if (subject != null)
+                            {
+                                camera.transform.position = subject.transform.position + (witnessOffset ?? new Vector3(3, 1.5f, 4));
+                                camera.transform.LookAt(subject.transform.position + Vector3.up * .9f);
+                                var familiar=subject.GetComponent<CharacterVisual>()?.Companion;
+                                if (familiar!=null && Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1")
+                                {
+                                    var parts=familiar.GetComponentsInChildren<Renderer>();
+                                    Assert.IsNotEmpty(parts);
+                                    var bounds=parts[0].bounds;
+                                    foreach(var part in parts) if(part.enabled && part.bounds.size.sqrMagnitude>.00001f) bounds.Encapsulate(part.bounds);
+                                    var front=familiar.MouthPosition-familiar.transform.position;front.y=0;
+                                    front=front.sqrMagnitude>.000001f?front.normalized:familiar.transform.forward;
+                                    var direction=(front+Vector3.Cross(Vector3.up,front)*.28f).normalized;
+                                    camera.transform.position=bounds.center+direction*Mathf.Max(.9f,bounds.size.y*1.6f)+Vector3.up*bounds.size.y*.08f;
+                                    camera.transform.LookAt(bounds.center);
+                                }
+                            }
+                            var owner = subject != null ? Camera.main : null;
+                            if (owner != null && owner != camera)
+                            {
+                                var target = owner.targetTexture;
+                                owner.targetTexture = rt;
+                                owner.Render();
+                                owner.targetTexture = target;
+                                SaveFrame(rt,ldr,pixels,Path.Combine(ownerFolder,$"{frame:D5}.jpg"));
+                            }
+                            var renderers = subject != null ? subject.GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
+                            var held = subject != null ? subject.GetComponent<Carrier>()?.Held : null;
+                            if (held != null) renderers = renderers.Concat(held.GetComponentsInChildren<Renderer>()).Distinct().ToArray();
+                            var shadow = renderers.Select(r => r.shadowCastingMode).ToArray();
+                            var privateArms = Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)
+                                .SelectMany(a=>a.GetComponentsInChildren<Renderer>()).ToArray();
+                            var privateEnabled = privateArms.Select(r=>r.enabled).ToArray();
+                            foreach(var renderer in privateArms)renderer.enabled=false;
+                            // This optional close-up is an art review camera; surrounding
+                            // bodies may stand inside it. The owner camera above stays ordinary.
+                            var occluders=Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1"
+                                ? Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).SelectMany(p=>p.GetComponentsInChildren<Renderer>()).Distinct().ToArray()
+                                : Array.Empty<Renderer>();
+                            var occluderEnabled=occluders.Select(r=>r.enabled).ToArray();
+                            foreach(var renderer in occluders)renderer.enabled=false;
+                            for (int i = 0; i < renderers.Length; i++)
+                                if (shadow[i] == ShadowCastingMode.ShadowsOnly) renderers[i].shadowCastingMode = ShadowCastingMode.On;
+                            try
+                            {
+                                camera.targetTexture = rt;
+                                camera.Render();
+                            }
+                            finally
+                            {
+                                for(int i=0;i<occluders.Length;i++)if(occluders[i]!=null)occluders[i].enabled=occluderEnabled[i];
+                                for (int i = 0; i < renderers.Length; i++) if(renderers[i]!=null) renderers[i].shadowCastingMode = shadow[i];
+                                for (int i = 0; i < privateArms.Length; i++) if(privateArms[i]!=null) privateArms[i].enabled = privateEnabled[i];
+                            }
+                            SaveFrame(rt,ldr,pixels,Path.Combine(folder,$"{frame:D5}.jpg"));
+                            var leg = subject != null ? subject.GetComponentsInChildren<Transform>().FirstOrDefault(b => b.name == "leg-right") : null;
+                            string action = subject != null ? (string)field.GetValue(subject.GetComponent<CharacterAnimator>()) : "ordinary";
+                            var bones=subject!=null?subject.GetComponentsInChildren<Transform>():Array.Empty<Transform>();
+                            var torso=bones.FirstOrDefault(t=>t.name=="torso");var arm=bones.FirstOrDefault(t=>t.name=="arm-right");
+                            var palm=subject?.GetComponent<CharacterVisual>()?.HandAnchor;
+                            var hand=palm!=null ? subject.transform.InverseTransformPoint(palm.position) : Vector3.zero;
+                            var carrier=subject?.GetComponent<Carrier>();
+                            log.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1:F4},{2:F4},{3:F4},{4},{5:F3},{6},{7:F4},{8:F4},{9:F3},{10:F3},{11:F4},{12:F4},{13:F4},{14:F4}",
+                                frame++, Time.realtimeSinceStartup-start, Time.time-gameStart,
+                                subject != null ? new Vector2(subject.Velocity.x, subject.Velocity.z).magnitude : 0,
+                                subject != null && subject.HoldingSlipper, leg != null ? leg.localEulerAngles.x : 0, action,
+                                carrier!=null?carrier.ObservedChargePower:-1,carrier!=null?carrier.ObservedPektusSpin:0,
+                                torso!=null?Mathf.DeltaAngle(0,torso.localEulerAngles.x):0,arm!=null?Mathf.DeltaAngle(0,arm.localEulerAngles.x):0,
+                                hand.y,hand.z,hand.x,subject!=null?subject.transform.position.y:0));
                         }
-                    }
-                    var owner = subject != null ? Camera.main : null;
-                    if (owner != null && owner != camera)
-                    {
-                        var target = owner.targetTexture;
-                        owner.targetTexture = rt;
-                        owner.Render();
-                        owner.targetTexture = target;
-                        SaveFrame(rt,ldr,pixels,Path.Combine(ownerFolder,$"{frame:D5}.jpg"));
-                    }
-                    var renderers = subject != null ? subject.GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
-                    var held = subject != null ? subject.GetComponent<Carrier>()?.Held : null;
-                    if (held != null) renderers = renderers.Concat(held.GetComponentsInChildren<Renderer>()).Distinct().ToArray();
-                    var shadow = renderers.Select(r => r.shadowCastingMode).ToArray();
-                    var privateArms = Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)
-                        .SelectMany(a=>a.GetComponentsInChildren<Renderer>()).ToArray();
-                    var privateEnabled = privateArms.Select(r=>r.enabled).ToArray();
-                    foreach(var renderer in privateArms)renderer.enabled=false;
-                    // This optional close-up is an art review camera; surrounding
-                    // bodies may stand inside it. The owner camera above stays ordinary.
-                    var occluders=Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1"
-                        ? Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).SelectMany(p=>p.GetComponentsInChildren<Renderer>()).Distinct().ToArray()
-                        : Array.Empty<Renderer>();
-                    var occluderEnabled=occluders.Select(r=>r.enabled).ToArray();
-                    foreach(var renderer in occluders)renderer.enabled=false;
-                    for (int i = 0; i < renderers.Length; i++)
-                        if (shadow[i] == ShadowCastingMode.ShadowsOnly) renderers[i].shadowCastingMode = ShadowCastingMode.On;
-                    try
-                    {
-                        camera.targetTexture = rt;
-                        camera.Render();
-                    }
-                    finally
-                    {
-                        for(int i=0;i<occluders.Length;i++)if(occluders[i]!=null)occluders[i].enabled=occluderEnabled[i];
-                        for (int i = 0; i < renderers.Length; i++) if(renderers[i]!=null) renderers[i].shadowCastingMode = shadow[i];
-                        for (int i = 0; i < privateArms.Length; i++) if(privateArms[i]!=null) privateArms[i].enabled = privateEnabled[i];
-                    }
-                    SaveFrame(rt,ldr,pixels,Path.Combine(folder,$"{frame:D5}.jpg"));
-                    var leg = subject != null ? subject.GetComponentsInChildren<Transform>().FirstOrDefault(b => b.name == "leg-right") : null;
-                    string action = subject != null ? (string)field.GetValue(subject.GetComponent<CharacterAnimator>()) : "ordinary";
-                    log.AppendLine(string.Format(CultureInfo.InvariantCulture, "{0},{1:F4},{2:F4},{3:F4},{4},{5:F3},{6}",
-                        frame++, Time.realtimeSinceStartup-start, Time.time-gameStart,
-                        subject != null ? new Vector2(subject.Velocity.x, subject.Velocity.z).magnitude : 0,
-                        subject != null && subject.HoldingSlipper, leg != null ? leg.localEulerAngles.x : 0, action));
+                        finally{captured=true;}
+                    };
+                    while(!captured)yield return null;
                 }
             }
             finally
             {
+                if(late!=null){late.Draw=null;Object.Destroy(late);}
                 camera.targetTexture = previous;
                 RenderTexture.active = previousActive;
                 Object.DestroyImmediate(rt); Object.DestroyImmediate(ldr); Object.DestroyImmediate(pixels);
@@ -487,6 +506,15 @@ namespace TumbangPreso.PlayTests
                 if (subject != null) File.WriteAllText(Path.Combine(ownerFolder,"frames.csv"),log.ToString());
             }
             Assert.Greater(frame, seconds * 4, "The capture must contain enough actual frames to review.");
+        }
+
+        // Unity test coroutines resume before LateUpdate. Capture after the body,
+        // carried shoe and FPP rig have written the pose the player will actually see.
+        [DefaultExecutionOrder(10000)]
+        private sealed class LateMotionCapture : MonoBehaviour
+        {
+            public Action Draw;
+            private void LateUpdate(){var draw=Draw;Draw=null;draw?.Invoke();}
         }
 
         private static void SaveFrame(RenderTexture hdr, RenderTexture ldr, Texture2D pixels, string path)

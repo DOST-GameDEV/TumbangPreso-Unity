@@ -2412,7 +2412,7 @@ namespace TumbangPreso.CameraSystem
                 if (verbs != null) charge = verbs.ObservedLungeCharge;
             }
 
-            _povArms.SetCharge(charge);
+            _povArms.SetCharge(charge,held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
 
             if (held != null) _povArms.MatchSkin(held);
 

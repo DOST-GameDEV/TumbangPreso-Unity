@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -107,8 +108,14 @@ namespace TumbangPreso.Tests
 
             var missing = new List<string>();
 
-            foreach (string clip in new[] { "throw", "grab" })
-                if (!source.Contains($"PlayAction(\"{clip}\")")) missing.Add(clip);
+            // Throw dispatch now selects the accepted spin direction. Require the
+            // actual producer call and evaluate its straight case, not a literal
+            // "throw" argument that rejects valid directional dispatch.
+            string carrier=File.ReadAllText(Path.Combine(RuntimeRoot,"Carrier.cs"));
+            carrier=string.Join("\n",carrier.Split('\n').Where(line=>!line.TrimStart().StartsWith("//")));
+            if(!Regex.IsMatch(carrier,@"\.PlayAction\(\s*Visual\.ThrowGesture\.Action\(spin\)\s*\)")
+                || Visual.ThrowGesture.Action(0)!="throw")missing.Add("throw");
+            if(!source.Contains("PlayAction(\"grab\")"))missing.Add("grab");
 
             Assert.IsEmpty(missing,
                 "the viewmodel ships these clips and nothing plays them, so the player's own arm " +

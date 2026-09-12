@@ -285,6 +285,14 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Throw/Pektus implementation,2026-09-13:** body coil/off-hand/signed arm roll,
+FPP forward release and corrected grip framing,protocol29 phase/spin/host tell
+repair. Core562,EditMode504,6ordinary signed throws bothmodes pass. Actual3process
+Classic andHero150ms/rejoin causalhandover cases pass,0ghostre-equips;fullbroader
+movement/equipment/aim/grounding/network qualification remainsopen;see
+[throw-motion-review.md](reports/improvement-2026-09-13/throw-motion-review.md).
+
+
 **M09 Eskinita draft,2026-09-13:** retained solid house family with fitted local
 finishes,measured private plots/parking,corrected corner/back streets and assigned
 shop/household props. Fresh routes20/20 pass;all8 checks now gate all3 maps with

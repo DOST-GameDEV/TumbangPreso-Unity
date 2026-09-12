@@ -1,9 +1,12 @@
 # Active execution plan
 
 <!-- LIVE_STATE_START -->
-**Live now,2026-09-13:** No Unity/Blender/test process active. Utility batch verified,
-preparing stable commit on ASTRAReworks;HEAD420060bc matches origin after fetch.
-Next:throw/Pektus whole-action implementation. No new Windows player exists.
+**Live now,2026-09-13:** No Editor/player/encoder/audit running. Pushed50e07025.
+The substantial throw/Pektus/protocol29/handover batch is verified and being
+prepared for a sole-author stable commit/push. See throw-motion-review.md.
+Aftercommit:measure actualfoot support/skinwidth,then movement/backpedal/turn/
+carrying/contact/interrupted blends,equipment10slippers/6cans,all-contextmashing.
+Continue full latergraphics/SaBubong/kit/net/release scope. Ownerasleep,nohandoff.
 <!-- LIVE_STATE_END -->
 
 ## Standing scope and safe workflow
@@ -39,100 +42,100 @@ Criticize every batch for place/style,scale/mass/support/intersections,world dep
 routes/readability/motion and cost. Tests and isolated renders cannot approve art.
 Keep known failed experiments and do not invent causes or profile/run IDs.
 
-## Stable work and evidence
+## Stable map/tool checkpoints
 
--420060bc: Eskinita coherent solid homes/private plots/parking/corner-back streets,
-retained-house finishes,assigned domestic/shop props. Original family/assets kept.
-M09 final:48 owner views across both modes/3profiles,20/20 physical retrievals,
-EditMode491/491,8checks with all3 maps now gating geometry,21275 semantic rows
-without drift. See reports/improvement-2026-09-12/eskinita-neighborhood-draft.md.
--48372a85: Bayan original slab paving/connected4-road town/40 retained houses,
-civic side/rear depth and closed grounded terrain. V7 checks8/8,19707 semantic
-rows,48 real FPP views;20/20 physical retrievals. See bayan-town-draft.md.
--1661cb2b: Ilalim Gilmore/LRT shop lots,2 indoor pisonets,4 original street vendors,
-new signs/wall paint/crossings,28 measured pole placements/78 wires,roof and sign
-clearance. Core562,EditMode491,8checks,14audits,20/20 pickups,48FPP+22clearance views,
-19118 semantic rows. See ilalim-street-draft.md. Stronger but repetition remains.
--0611c6d4: NearFade preserves transparent/cutout scenery,13/13 focused tests.
--8a22f8b9: isolated direct-carrier release and swept-height flight support fixes,
-4/4 focused tests including raised-ground and unreachable-roof recovery.
+-50e07025: bounded concurrent Gitpipe reads in GameBuilder;actualbuildV3 blocked
+ on4131stderrbytes beforeits timeout. Ownedrun stopped/profile restored;2focused
+ tests pass with64KBstderr and failedcommand. Laterbuilds complete. See
+ reports/improvement-2026-09-13/build-git-pipe-investigation.md.
+-e2c19e16: Eskinita retainedutilityhardware,50connected neutral conductors/12posts
+ withmeasuredtrunkcollision.48matchedFPP,20/20pickups,21467semanticrows(no drift),
+ 8checks/14audits. Six currentIlalimcandidate seeds all0idle/camp;historical48cause
+ unresolved. Reports in improvement-2026-09-13.
+-420060bc: Eskinita solidhome/privateplot/parking/corner/backstreet transformation,
+ fittedretainedfamilydetails,assignedprops.48FPP/20pickups/491Edit/8checks,21275
+ semanticrows. eskinita-neighborhood-draft.md in improvement-2026-09-12.
+-48372a85: Bayan originalslabpaving,connected4road/40hometown,civic side/rear detail,
+ groundedclosedterrain.48FPP/20pickups/8checks/19707semanticrows.bayan-town-draft.md.
+-1661cb2b: Ilalim Gilmore/LRT11shoplots,2indoorpisonets,4originalBlender vendors,
+ readable signs/wallpaint/crossings,28measuredpoles/78wires,roof/signclearance.
+ Core562/Edit491/8checks/14audits/20pickups/48FPP+22clearance/19118semanticrows.
+-0611c6d4: NearFade preserves transparent/cutout materials,13focusedtests.
+-8a22f8b9: isolated directcarry release/flight swept-height support,4focusedtests
+ inclraisedground/unreachable-roof recovery. No historical48idle attribution.
 
-All3 maps have substantial transformation implemented, not full visual acceptance.
-M10/M11: boundary clarity at open-looking route ends,landscape/material/lighting
-coherence,broader ordinary-play/performance review remain. Complete these with the
-planned graphics and final play qualification,not an endless small-prop loop.
-NearFade normal-map preservation remains a graphics task. No claim that more
-renderers/triangles establishes better art or performance.
+M10/M11 finalmapcoherence is stillopen:boundary clarity at open-looking ends,
+landscape/material/lighttone,broader ordinaryplay/quality/performance. Finish with
+plannedgraphics/finalplayreview,notendlesssmallprops. NearFade normal-map copy is
+stillmissing. Retainoldchunkyhouses;rejectedthin V1-V5 quarantined inLogs. All native
+sources/authors and portablemapcritique reports are preserved. No mapart approval
+is inferred fromtechnicalpasses.
 
-## Utility batch ready to commit
+## Throw/Pektus/handover batch ready to commit
 
-EskinitaUtilityAuthor through EskinitaNeighborhoodAuthor;source author
- tools/author_utility_posts.py, native MapSource/environment/urban-utilities,
-import Art/models/urban-utilities. Retains original pole hardware,removes only
-8 baked wire components,12 placed posts with measured trunk collision and5named
-insulator anchors connecting50 neutral round44mm conductors. OriginalOBJ and
-scene instances preserved. Source crossarms turned across street.
+Runtime:ThrowGesture,CharacterAnimator,ViewmodelArms,CameraRig,SpectatorCamera,
+Carrier,MatchRpc/NetSession(protocol29),Slipper/SliceRunner. Opt-inNetThrowProbe and
+net_throw_matrix.py,guarded by TournamentPreset/Guard;neveractive inbracketgames.
+Tests:ThrowMotion7cases,ThrowChargeRelay,SlipperHandover5cases;capture in
+MapExperienceProbe/ImprovementEvidenceProbe now runs afterLateUpdate.
 
--Author73536 completed after an initial namespace compile failure was corrected.
--Matched owner73668:1/1,48 views,both modes3profiles;profilecdb0be60d3f6.
--Route16199:1/1,20/20 pickups,6982 connected nodes/7339 clear shoe samples,
-0 unreachable;profileab9333807a1b. Logs/eskinita-utility-v1-routes.*.
--Semantic21585:21467 rows(4148/3724/13595),0baseline/run1/run2 changes;
-profile315dedca3d3e. Logs/eskinita-utility-v1-semantic/report.txt.
--Checks63295:8/8,profile4bf49ba06ac4. All runs preserved17 profile files.
--Audits84985:14gating passes,7 informational audio flags.
--Cleanup script Logs/restore_verified_utility_test_dirt.py: Bayan/Ilalim compared
-against pushed420060bc semantic rows before restoring ID churn. Arm tangents
-only after byte-validating positions/normals/UVs/nonvertex data. Material trailing
-whitespace only. Never use prior cleanup scripts blindly on later map edits.
-Report:reports/improvement-2026-09-13/eskinita-utility-review.md.
+Bodycoil/headcompensation/offhand/signedarmroll and0.46srelease/recovery. FPPforward
+swing startsimmediately,withgrip/elbow solve;legacy lungeFPPfullangle stays. No people
+geometry,newcontrols,randomaimspread or trajectory/balancechange.
+Protocol29 phase/spin fixesmissing listenhost windup and observerrejoin. 10Hz max
+spinchange/2Hzsteadyheartbeat;ownerkeepslocalinput. Cancellation/stun/departureclear.
 
-## Historical Ilalim idle investigation
+Actual3processes founda warmuporphan:seat1grabbedshoe0,thenroundhandover gaveitshoe1
+withoutclearingparkedshoe0'sHolder1. Packets re-equippedthat ghostaftertherealthrow.
+Fixforcedreplacement andparkingdisarm,occupiedhandgrabrefusal,and inactivepacket
+normalization. DisplacedshoeusesexistingsilentLand/narrowfoot-levelsupport. Public
+GroundY andactualflightquery/trajectory unchanged. No historical48idleconnection.
 
-Six fresh source420060bc HeroStrike matches,seeds20260823/1/7/4242/20260904/99991:
-all1/1,zero idle/camp. Portable per-seed reports/summary in
-reports/improvement-2026-09-13;details in bridge-idle-investigation.md.
-Historical48-penalty report cannot identify which seed and raw claimedJSON was
-not tracked. Historical attribution stays UNRESOLVED. No speculative runtime
-change,not claimed fixed by the carrier patch or current0 counts.
+Evidence:
+-Core562;fullEdit504/504 (profile15a25637349e);5carry;4actualflight/retrieval incl
+ underguideway/raisedslab/unreachableroof (e818d65aa488);8checks(75151794b649),14audits.
+-6ordinarythrow sequencesbothmodes,owner/observer,12real-timestampMP4s:
+ Logs/throw-motion-v4-ordinary,profileb24103d8836a. Earlierpre-LateUpdate/awkwardpose
+ capturesrejected;fullhistory in throw-motion-investigation-history.md.
+-ActualClassicstrictcase:Logs/throw-network-classic-v4,passed all3signedphases,
+ forcedcausalwarmupviaordinaryMove/Grab,0ghostheldsamples.
+-ActualHero150msone-way+observerrejoin:Logs/throw-network-hero-delay-rejoin-v4,
+ samecausalsetup,allphases,159correctrejoinactivesamples,0ghostheld. Eachrunner
+ restored26files. EditorbuildV5restored25,profile66105cb04fbf.
+-InternalWindows Builds/ThrowReview/TumbangPreso.exe,base50e07025+dirtymotion,
+ RuntimeDLL307167a3a54ebb1f9ec44db7799bd14cad46321cf98b906c76b2fbf60bf2189c.
+ EXE6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8 isUnitylauncher
+ andstayssameacrossbuilds;alwayscheckRuntimeDLL/data too. NOT finalrelease.
+-Canonical portable report:reports/improvement-2026-09-13/throw-motion-review.md;
+ corrected andfailingCSV/results preservedbesideit. No claimofallhardware/humanfeel.
 
-## Play-feel implementation next
+Cleanup:Logs/restore_verified_throw_test_dirt.py verifiesallnontangentmeshdata and
+whitespacebefore restoringknownEditMode arm/materialnoise. Do notrestoremaps with
+oldmapcleanup scripts. QualitySettings testnoiseisexact5Balancedvalueswritteninto
+UnityUltra;validatefullrecognizeddiffbeforeHEADrestore. Canonicalblob-equal files
+can needgitadd statrefresh;neverchangegitautocrlfconfig. No C#/asseteditsduringruns.
 
-Read PLAY_FEEL_REWORK_PLAN.md source audit. ActualTimeScale1 carry/throw/retrieval
-baseline across6 map/mode sequences passed1/1. V1 witness obstructed and rejected;
-V2 courtside witness/owner videos use real timestamps,not fixed-frame speed.
-Logs/maps-ordinary-baseline-v2,profile4e19eb6ad113. Visible issue:throw preparation
-moves one arm while body stays upright. Pektus spin is local during windup;
-only active/inactive replicated. Host handler appears to relay without applying
-remote charge to host,needs controlled reproduction. No motion runtime edit yet.
+## Next concrete work
 
-Implement/review torso weight transfer,arm winding and signed spin-imparting
-release,off-hand balance,follow-through/cancel/return and continuous moving legs.
-Retain existing18 rigs/simple hands;no anatomy redesign. Verify owner/body/remote
-poses at ordinary speed. Trace release acceptance and network/snapshot cleanup.
-Subsequent:carrying/sprint/backward/turn/cadence/foot contact/interrupted blends;
-meaningful10slipper and6can role/tradeoff table;controlled aim instability evaluation;
-all-context mash reliability. Do not introduce arbitrary random misses or new controls.
+1.Commit/pushthisverifiedbatch onASTRAReworks only,soleauthor messagefile.
+2.Measureactualdrawnfeet vsfloor/CCskinWidth atidle/carry/charge/move;currentbody
+ rootsettles0.08mabove support. Distinguishcapsuleskin,meshbindbounds,authoredrootlift
+ andshadowprojection beforechanging. Thenfixgrounding/cadence/backwards/strafe/turn,
+ sprint/carry/FPP sync andinterruption/contact with ordinaryspeed evidence.
+3.Inventorycurrent10slipper/6canmechanicalconsumers/IDs anddesignsimple meaningful
+ role/tradeofftable. Slipperimpactcurrentlybodyblockpush,notcanknockdown. Cansscale
+ reset/rebound/hitmargin. Evaluatecontrol/aiminstability withoutarbitraryrandommisses.
+4.All-context recoverymash:actualKB/controller/touch routes,quicktap/hold30/60/144Hz,
+ minimumrecovery,host/remote/delay/rejoin. Separatecontrollerowner protected.
+5.Graphicsprofiles/settings low/high measuredbenefit/readability andmapM10coherence;
+ thenapprovedSaBubong actualedgefalls/mashget-up/10sfallen-shoeunavailability.
+6.Whole6kits/alternatives,sameherobuildbinding(livestate/doublemodifiers),Phaister
+ phasedritual/cursetiming/unbind/11mmoonvs8mguideway;Kuroacceptedpurpleforms/private
+ expressions/5.26mgiant/protocolstagedyawrejoin/rostersheet/overlapqualification.
+7.Broaderactiveeffects/builds/round/rematch/reconnect/hostloss bothmodes;remaining
+ actions/UIfunctionalTODO. FinalisolatedPlayModegate twice,exactWindowsbuild and
+ actualordinaryplay/separateprocessqualification. Desktopstillold;Androiddeferred.
 
-## Later scope stays required
-
-Graphics presets/settings measured low/high hardware;actual Low gameplay tells.
-Sa Bubong approved:condo roofdeck court/fenced pool/shade/utility-laundry,actual edge
-fall,mash get-up,fallen slipper10s unavailability then safe return. No new controls.
-Same-hero build rebind without live-state reset/double modifiers;all6 whole kits and
-alternatives;Phaister staged ritual/curse timing/clean unbind and11m moon vs8mguideway;
-Kuro accepted purple forms/private expressions/5.26mgiant retained,protocol28
-staged-yaw-rejoin and roster/wideroverlap qualification still owed. Broaderactive
-network effects/builds/round/rematch/reconnect/hostloss bothmodes. ExactWindowsbuild
-and bothmode ordinary play after appropriate gates and isolatedPlayMode twice.
-
-Controller ownership remains separate. Device-simulated tests do not certify real
-physical hardware. Larger goal remains OPEN;owner asleep,continue without handoff.
-
-## Durable archives
-
-The complete previous plan is preserved whole in
-reports/improvement-2026-09-13/execution-plan-history-06.md;earlier histories02-05
-and execution-pointer histories02-07 remain in reports/improvement-2026-09-12.
-They contain historical runs/rejected studies,not current commands. Consult current
-live banner and ACTIVE_REWORK_LEDGER newest pointer first after compaction.
+ReadPLAY_FEEL_REWORK_PLAN.md sourceaudit;allpriorrequirements remain. Full previous
+plansarchivedwholein improvement-2026-09-12/history02-05 and
+improvement-2026-09-13/execution-plan-history-06/07.md. OldprocessIDs arehistorical.

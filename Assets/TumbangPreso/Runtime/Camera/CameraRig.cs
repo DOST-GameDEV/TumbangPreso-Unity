@@ -874,7 +874,7 @@ namespace TumbangPreso.CameraSystem
                 if (verbs != null) charge = verbs.ObservedLungeCharge;
             }
 
-            _arms.SetCharge(charge);
+            _arms.SetCharge(charge,held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
             var hero=_character.GetComponent<Abilities.HeroAbilitySystem>();
             string aiming=null;
             if (_character.CanAct() && hero != null && hero.Kit != null)

@@ -257,7 +257,12 @@ namespace TumbangPreso
                 // ⚠️ IT IS RE-ENABLED IN `ResetWorld`, NOT HERE, because roles rotate: the seat
                 // that sits out this round throws next round, and a slipper switched off for
                 // good would leave that attacker empty-handed.
-                slipper.gameObject.SetActive(!(seated && index == defenderSlot));
+                bool park=seated && index==defenderSlot;
+                // The defender's shoe may be in somebody else's warmup hand.
+                // Inactivity alone does not clear that replicated relationship.
+                if(park)slipper.HostDisarm();
+                slipper.gameObject.SetActive(!park);
+                if(park)Net.MatchRpc.Instance?.BroadcastSlipperState(slipper);
 
                 if (slipper.OwnerSlot < 0) continue;
 

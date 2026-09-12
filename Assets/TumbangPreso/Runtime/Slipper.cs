@@ -467,6 +467,9 @@ namespace TumbangPreso
         {
             if (State != SlipperState.Loose || who == null) return false;
             if (who.IsDefender) return false;   // the taya has the tag, not the ammunition
+            // The same empty-hand rule as Carrier's local pickup route. A delayed
+            // remote grab must not overwrite a newer, already accepted possession.
+            if(who.HoldingSlipper) return false;
             if (!who.CanAct()) return false;
 
             return true;
@@ -565,6 +568,17 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return false;
             if (who == null || who.IsDefender) return false;
+
+            // A warmup grab or a recall may already occupy this hand. Replacing
+            // only Carrier.Held leaves the displaced shoe claiming the same holder,
+            // so later snapshots silently equip it again after the real throw.
+            var displaced=who.GetComponent<Carrier>()?.Held;
+            if(displaced!=null && displaced!=this && displaced.Holder==who && displaced.HostDisarm())
+            {
+                displaced.transform.position=who.transform.position;
+                displaced.Land(false,FindGroundY(who.transform.position,Balance.SlipperRestHeight));
+                Net.MatchRpc.Instance?.BroadcastSlipperState(displaced);
+            }
 
             ReleasePreviousHolder(who);
             SetState(SlipperState.Held);

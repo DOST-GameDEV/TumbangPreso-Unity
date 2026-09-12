@@ -20,18 +20,18 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (2026-09-13, owner sleeping)
 
-Utility batch verified and ready for commit after420060bc;no Unity/test process
-active. Actual branch ASTRAReworks,authorized checkout only,origin matches HEAD.
-20/20 actual retrievals,0 unreachable,48matchedFPP views,21467semantic rows with
-zero drift,8editor checks/14audits pass. Profiles restored17files each;exact
-receipts in EXECUTION_PLAN.md and eskinita-utility-review.md.
-Six current bridge seed reports all0idle/camp;historical48cause unresolved.
+Pushed50e07025 buildhelper;the motion/protocol29/handover batch is verified and
+readyforstablecommit. No Editor/player/encoder/auditactive. FullEdit504,Core562,
+Carry5,flight/retrieval4,8checks/14audits,and real3process Classic/Herodelay/rejoin
+causalcases pass. Both actualcases requireforeignshoe0 warmuppickup/disarm before
+whistle;all3phasesmatch,0ghostheldsamples;159active rejoin samples inHero.
 
-Current plan compacted with complete prior version archived as
-reports/improvement-2026-09-13/execution-plan-history-06.md. Next:stable commit/push,
-then whole-body throw/Pektus from PLAY_FEEL_REWORK_PLAN.md,remaining full scope
-preserved. Map final coherence/graphics qualification remains open. Owner asleep;
-continue,no handoff stop or approval wait. No new Windows build exists yet.
+Read compact EXECUTION_PLAN.md and throw-motion-review.md for exactcode/evidence/
+internalbuildhashes anddirtyscope. Currentinternalplayer is a diagnosticbase50e07025
+plusdirtyimplementation,NOT finalrelease. Failed captures/cases/reasoning andprior
+executionplan archivedwhole,including execution-plan-history-07.md. Nextcommit/push,
+thenmeasure drawnfoot support and improve movement/equipment/mashing;all graphics,
+SaBubong,wholekits/network/finalrelease requirements stayopen. Continue,nohandoff.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

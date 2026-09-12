@@ -893,6 +893,8 @@ namespace TumbangPreso.CameraSystem
         /// it here raises the read for the four other players too, which is the half of the
         /// report a first-person-only fix would have missed.
         /// </summary>
+        // The historical full-angle notes above describe the lunge basis. Throws
+        // use a smaller close-camera arc with an elbow/grip solve in ThrowGesture.
         public const float WindupRad = 1.02f;
 
         /// <summary>
@@ -931,10 +933,12 @@ namespace TumbangPreso.CameraSystem
 
         /// <summary>-1 when nothing is charging, 0..1 while something is.</summary>
         private float _charge = -1.0f;
+        private float _chargeSpin;
 
-        public void SetCharge(float power)
+        public void SetCharge(float power, float spin=0)
         {
             _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
+            _chargeSpin=_charge>=0 ? Mathf.Clamp(spin,-1,1) : 0;
 
             if (_charge >= 0.0f && !_heroAction) _clip = null;
         }
@@ -956,7 +960,7 @@ namespace TumbangPreso.CameraSystem
             _clipFromRight = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
             _clipFromLeft = _leftArm != null ? _leftArm.localRotation : Quaternion.identity;
             _actionName = clip;
-            _clip = clip == "throw" ? ThrowClip
+            _clip = Visual.ThrowGesture.IsThrow(clip) ? ThrowClip
                   : clip == "grab" ? GrabClip
                   : clip == "punch" ? PunchClip
                   : clip == "lunge" ? LungeClip
@@ -1031,15 +1035,18 @@ namespace TumbangPreso.CameraSystem
                              -godotEuler.y * Mathf.Rad2Deg,
                               godotEuler.z * Mathf.Rad2Deg);
 
+        private Quaternion ChargeArmRotation => _carrying
+            ? Visual.ThrowGesture.HandPreparation(_charge,_chargeSpin)
+            : Quaternion.Euler(WindupCarry*WindupRad*_charge*Mathf.Rad2Deg,0,0);
+
         private void StepAction(float dt)
         {
             if (_rightArm == null) return;
 
             if (_charge >= 0.0f && (_clip == null || !_heroAction))
             {
-                _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,
-                                                           0.0f, 0.0f);
-                if (_leftArm != null) _leftArm.localRotation = Quaternion.identity;
+                _rightArm.localRotation = ChargeArmRotation;
+                if (_leftArm != null) _leftArm.localRotation = _carrying ? Quaternion.Euler(-12*_charge,0,4*_charge) : Quaternion.identity;
                 return;
             }
 
@@ -1068,6 +1075,19 @@ namespace TumbangPreso.CameraSystem
             _clipTime += dt;
             _clipBlendTime += dt;
 
+            if(ReferenceEquals(_clip,ThrowClip))
+            {
+                float spin=Visual.ThrowGesture.Spin(_actionName);
+                float contact=Mathf.Clamp01(_clipTime/Visual.ThrowGesture.ContactSeconds);
+                var hit=Visual.ThrowGesture.HandFollowThrough(spin);
+                _rightArm.localRotation=_clipTime<Visual.ThrowGesture.ContactSeconds
+                    ? Quaternion.Slerp(_clipFromRight,hit,contact)
+                    : Quaternion.Slerp(hit,Quaternion.identity,Visual.ThrowGesture.Recovery(_clipTime));
+                if(_leftArm!=null)_leftArm.localRotation=Quaternion.Slerp(_clipFromLeft,Quaternion.identity,Visual.ThrowGesture.Recovery(_clipTime));
+                if(_clipTime>=Visual.ThrowGesture.ReleaseSeconds){_clip=null;_heroAction=false;}
+                return;
+            }
+
             if (_clipTime >= _clip[_clip.Length - 1].T)
             {
                 _clip = null;
@@ -1092,7 +1112,7 @@ namespace TumbangPreso.CameraSystem
                 _rightArm.localRotation = Quaternion.Slerp(_clipFromRight,right,enter);
                 if (_leftArm != null) _leftArm.localRotation = Quaternion.Slerp(_clipFromLeft,left,enter);
                 // An empower cast can use the off hand while the throwing grip stays charged.
-                if (_charge >= 0) _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,0,0);
+                if (_charge >= 0) _rightArm.localRotation = ChargeArmRotation;
                 return;
             }
         }
@@ -2580,6 +2600,15 @@ namespace TumbangPreso.CameraSystem
 
             Vector3 right = Vector3.Cross(dir, reference).normalized;
             Vector3 forward = Vector3.Cross(right, dir).normalized;
+            var pivotRotation=Quaternion.LookRotation(forward,dir);
+            if(_charge>=0)
+            {
+                // The original fixed elbow let a charged grip rotate towards the
+                // eye or below the screen. Cock the elbow around a readable hand
+                // position so both curve directions keep the slipper in view.
+                var hand=CarryAnchor+new Vector3(.04f,-.04f,.06f)*_charge;
+                elbow=hand-pivotRotation*(_rightArm.localRotation*Vector3.up)*reach;
+            }
 
             if (snap)
             {

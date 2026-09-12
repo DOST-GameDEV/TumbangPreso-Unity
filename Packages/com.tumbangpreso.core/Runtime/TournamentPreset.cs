@@ -147,6 +147,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] Modifiers =
         {
+            new Modifier("NetThrowProbe.Active",
+                "A scripted network throw fixture that parks bystanders and drives one player. Never a bracket match."),
             new Modifier("NetFamiliarProbe.Active",
                 "A scripted network fixture that parks bystanders and drives a familiar. Never a bracket match."),
             new Modifier("PracticeSandbox.Wanted",
@@ -224,6 +226,7 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("-tp-throwmode","A mode parameter used only by the explicitly guarded throw fixture."),
             new Modifier("-tp-familiarcase","A case parameter of the explicitly guarded familiar fixture."),
             new Modifier("SceneFlow.Networked",
                 "Not a modifier, a fact: whether this process is in a networked session. It is " +
@@ -343,6 +346,7 @@ namespace TumbangPreso.Core
         {
             switch (switchName)
             {
+                case "-tp-throwtrace": return "NetThrowProbe.Active";
                 case "-tp-familiartrace": return "NetFamiliarProbe.Active";
                 case "-tp-allbots": return "GameLaunch.AllBots";
                 case "-tp-botmatch": return "GameLaunch.AllBots";

@@ -342,7 +342,8 @@ namespace TumbangPreso.Net
         // 26 -> 27 identifies recovery episodes and acknowledges mash inputs.
         //28 includes accepted familiar facing, so late joins see the same giant
         //pose instead of reconstructing its yaw from a caster who already moved.
-        public const int ProtocolVersion = 28;
+        //29 carries charge phase and signed Pektus preparation to host/observers/rejoin.
+        public const int ProtocolVersion = 29;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -363,6 +363,43 @@ namespace TumbangPreso.PlayTests
             outline.enabled=true;
         }
 
+        [UnityTest, Timeout(300000)]
+        public IEnumerator StraightAndPektusThrowsAtOrdinarySpeed()
+        {
+            foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
+            foreach(float spin in new[]{0f,-1f,1f})
+            {
+                Time.timeScale=1;GraphicsProfiles.Apply(1);
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,mode);
+                var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+                var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Movement);
+                who.Teleport(new Vector3(0,.1f,9.2f));who.Intent.Parked=false;
+                var shoe=who.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
+                var witness=new GameObject("Throw motion witness").AddComponent<Camera>();
+                witness.enabled=false;witness.fieldOfView=45;witness.nearClipPlane=.05f;
+                witness.farClipPlane=400;witness.allowHDR=true;witness.cullingMask &= ~(1<<5);
+                witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                var input=who.gameObject.AddComponent<ReviewInput>();
+                float began=Time.realtimeSinceStartup;bool released=false;
+                input.Drive=()=>
+                {
+                    float t=Time.realtimeSinceStartup-began;
+                    who.Intent.Move=t>1.3f && t<2.5f ? new Vector2(.3f,0) : Vector2.zero;
+                    who.Intent.AimPoint=new Vector3(1,.2f,0);who.Intent.FaceAimPoint=true;
+                    who.Intent.SpinInput=spin;who.Intent.Set(Verb.SpecialAbility,t>.5f && t<2.9f);
+                    if(!released && shoe.State==SlipperState.InFlight)
+                    {released=true;Assert.AreEqual(spin,shoe.PektusSpin,.001f,"Motion capture no longer matches the actual accepted curve.");}
+                };
+                try
+                {
+                    yield return ImprovementEvidenceProbe.Record(witness,mode+"-throw-"+spin,4.3f,who,null,new Vector3(-3,1.5f,3));
+                    Assert.IsTrue(released,"The captured action never released a slipper.");
+                }
+                finally{Object.Destroy(input);Object.Destroy(witness.gameObject);}
+                yield return PlayModeWorld.Reset();
+            }
+        }
+
         // Input producers run before Carrier.Update. A coroutine writes after
         // Update; the next motor FixedUpdate can commit away its pickup edge before
         // Carrier ever sees it. Match the real input phase instead of repeatedly

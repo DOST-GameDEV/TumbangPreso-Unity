@@ -3181,20 +3181,20 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Replicates a throw wind-up, which is counterplay rather than decoration.</summary>
-        public void SetThrowCharge(int claimedSlot, bool active)
+        public void SetThrowCharge(int claimedSlot, bool active,float seconds=0,float spin=0)
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-
             if (!NetAuthority.IsHost)
             {
-                using var ask = new FastBufferWriter(16, Allocator.Temp);
+                using var ask = new FastBufferWriter(24, Allocator.Temp);
                 ask.WriteValueSafe(claimedSlot);
                 ask.WriteValueSafe(active);
+                ask.WriteValueSafe(seconds);
+                ask.WriteValueSafe(spin);
                 _nm.CustomMessagingManager.SendNamedMessage("ReqThrowCharge", NetworkManager.ServerClientId, ask);
                 return;
             }
-
-            BroadcastThrowCharge(claimedSlot, active, null);
+            BroadcastThrowCharge(claimedSlot,active,null,seconds,spin);
         }
 
         private void OnReqThrowChargeMsg(ulong senderClientId, FastBufferReader reader)
@@ -3202,23 +3202,28 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
             reader.ReadValueSafe(out int claimedSlot);
             reader.ReadValueSafe(out bool active);
-            if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out _)) return;
-            BroadcastThrowCharge(claimedSlot, active, senderClientId);
+            reader.ReadValueSafe(out float seconds);
+            reader.ReadValueSafe(out float spin);
+            if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var who)) return;
+            if(!Finite(seconds) || !Finite(spin))return;
+            if(active && (!who.CanAct() || who.GetComponent<Carrier>()?.Held==null))return;
+            BroadcastThrowCharge(claimedSlot,active,senderClientId,Mathf.Clamp(seconds,0,Balance.ChargeFullTime),Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin));
         }
 
-        private void BroadcastThrowCharge(int slot, bool active, ulong? except)
+        private void BroadcastThrowCharge(int slot, bool active, ulong? except,float seconds=0,float spin=0)
         {
-            // The guard `SetThrowCharge` carries. It mattered less while both callers were
-            // presses, and it matters now that `HostPeerLeft` reaches this during a teardown.
+            // A listen host is an observer too. Apply even without a messaging
+            // manager so local state does not depend on somebody else being connected.
+            Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
-                if (clientId == _nm.LocalClientId || (except.HasValue && clientId == except.Value))
-                    continue;
-                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                if (clientId == _nm.LocalClientId || (except.HasValue && clientId == except.Value))continue;
+                using var writer = new FastBufferWriter(24, Allocator.Temp);
                 writer.WriteValueSafe(slot);
                 writer.WriteValueSafe(active);
+                writer.WriteValueSafe(seconds);
+                writer.WriteValueSafe(spin);
                 _nm.CustomMessagingManager.SendNamedMessage("ThrowCharge", clientId, writer);
             }
         }
@@ -3228,7 +3233,13 @@ namespace TumbangPreso.Net
             if (senderClientId != NetworkManager.ServerClientId) return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out bool active);
-            Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active);
+            reader.ReadValueSafe(out float seconds);
+            reader.ReadValueSafe(out float spin);
+            // The owner samples its own input. A reconnect snapshot must not
+            // restart a held button that is no longer physically pressed there.
+            if(!Finite(seconds) || !Finite(spin))return;
+            if(slot==NetAuthority.LocalSlot)return;
+            Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
         }
 
         /// <summary>
@@ -4549,7 +4560,10 @@ namespace TumbangPreso.Net
             // note is about.
             if (inPlay && !s.gameObject.activeSelf) s.gameObject.SetActive(true);
 
-            var holder = holderSlot >= 0 ? Unit(holderSlot) : null;
+            // A parked item cannot occupy a hand, even if an inconsistent sender
+            // retained its old held flag. Apply the release before disabling it.
+            var holder = inPlay && holderSlot >= 0 ? Unit(holderSlot) : null;
+            if(!inPlay)state=(int)SlipperState.Loose;
             s.ApplySnapshotState((SlipperState)state, holder, pos, rot, velocity,
                                  pektusSpin, (SlipperAffinity)affinity, throwerSlot);
 
@@ -5095,6 +5109,10 @@ namespace TumbangPreso.Net
                 {
                     SyncUnitTransformClientRpc(slot, unit.transform.position, unit.transform.eulerAngles.y, unit.Velocity);
                     BroadcastAbilityState(slot, unit);
+                    var carrier=unit.GetComponent<Carrier>();
+                    bool charging=carrier!=null && carrier.Held!=null && carrier.ObservedChargePower>=0 && unit.CanAct();
+                    BroadcastThrowCharge(slot,charging,null,charging ? carrier.ObservedChargePower*Balance.ChargeFullTime : 0,
+                        charging ? carrier.ObservedPektusSpin : 0);
                 }
             }
         }
