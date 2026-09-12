@@ -21,8 +21,24 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 [EXECUTION_PLAN.md](EXECUTION_PLAN.md), explicitly requested by the owner for
 compaction safety. It includes latest approved Sa Bubong mechanics, graphics/
 mashing scope, pushed HEAD, dirty files, evidence, next actions and boundaries.
-At its latest update all Unity runs are complete; no Editor is active. V8 source
-and scenes are uncommitted after8a22f8b9. Do not follow older run IDs below as live.
+Checkpoint basis is5c0747dd (pushed working plan); inspect actual git HEAD/status
+before resuming. The V9 spatial batch is now verified and ready for commit/push.
+ALL Unity/Blender runs are COMPLETE; no Editor is active. Last sequence85437
+passed8/8 checks,489/489 graphical EditMode and MapRouteProbe1/1:7047 connected
+walk nodes,7420 clear resting samples,18/18 actual motor-driven pickups. Final
+profile snapshot368dce845f87 restored17 files. Known generated tangent-only mesh
+and quality-setting changes were verified and restored. Semantic comparison:
+16746 rows, zero baseline/run1/run2 changes.14 source audits pass, with7
+informational audio flags still present.
+
+V9 clears civic frontage with inward-facing side hoops and adds3 original blocky
+passenger tricycles to the roadside bay. All144 camera metadata rows match the
+baseline;24 Balanced Classic directions reviewed. Report/images/route CSVs and
+native Blender source are durable. Closed152.7 records this measured batch only.
+Next: commit/push it, then rendering/frame-cost baseline and graphics settings,
+all-context recovery mashing, Sa Bubong and the remaining kits/network/animation.
+No graphics-runtime, new mash or fourth-map implementation exists yet.
+
 
 Fetched origin/ASTRAReworks in the specified ok-x20 checkout. Clean local and remote
 HEAD both initially equaled 0f08e9921c96148bf0c332d09b8392497f0cc82e. No checkpoint reset, main

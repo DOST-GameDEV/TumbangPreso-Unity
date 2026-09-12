@@ -34,6 +34,14 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach(string map in new[]{"Eskinita","BayanPlaza","IlalimNgTulay"})
             {
                 EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                WriteLoadedScene(map, "Logs/map-inventory");
+            }
+            EditorApplication.Exit(0);
+        }
+
+        public static void WriteLoadedScene(string map, string directory)
+        {
+                Directory.CreateDirectory(directory);
                 var inventory=new Inventory{map=map};
                 inventory.surfaces=Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Select(r=>new Surface{
                     path=PathOf(r.transform),asset=AssetDatabase.GetAssetPath(r.GetComponent<MeshFilter>()?.sharedMesh),enabled=r.enabled,
@@ -42,10 +50,8 @@ namespace TumbangPreso.EditorTools.MapKit
                     parentColliders=r.GetComponentsInParent<Collider>().Length}).ToArray();
                 inventory.solids=Object.FindObjectsByType<Collider>(FindObjectsSortMode.None).Select(c=>new Solid{
                     path=PathOf(c.transform),type=c.GetType().Name,trigger=c.isTrigger,enabled=c.enabled,min=c.bounds.min,max=c.bounds.max}).ToArray();
-                File.WriteAllText("Logs/map-inventory/"+map+".json",JsonUtility.ToJson(inventory,true));
+                File.WriteAllText(Path.Combine(directory,map+".json"),JsonUtility.ToJson(inventory,true));
                 Debug.Log($"[Map inventory] {map}: {inventory.surfaces.Length} surfaces, {inventory.solids.Length} colliders");
-            }
-            EditorApplication.Exit(0);
         }
     }
 }

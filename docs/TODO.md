@@ -34,7 +34,7 @@ items without delegation. It supersedes the older one-task stopping limits. The
 plan records priorities, acceptance checks and progress; the numbered sections
 below remain the evidence for individual findings.
 
-⚠️⚠️ **START HERE, AFTER `CLAUDE.md` AND `VISION.md`. THIS IS AN EXECUTION INDEX AND NOT A
+⚠️⚠️ **START HERE, AFTER `AGENTS.md` AND `VISION.md`. THIS IS AN EXECUTION INDEX AND NOT A
 REPLACEMENT FOR THE REASONING BELOW IT.** Each row is work a coding session can pick up and finish
 on its own. **Use the detailed numbered sections further down for the evidence, the measurements
 and the acceptance criteria**; they are why each row is worded the way it is, and a row summarised
@@ -297,6 +297,16 @@ roof spot (intentional time penalty). Verify mashing across all existing/new
 recovery contexts and device/network paths. The active ledger records approval
 and requirements; implementation remains open.
 
+**V9 spatial batch, 2026-09-12:** actual1.25m/95-degree owner camera comparisons,
+edge dressing and customer-space corrections, a coherent Bayan waiting bay with
+an original blocky passenger tricycle, inward-facing side hoops and quieter
+retained Eskinita mountain paintings. Saved/reopened authoring passes16746 rows
+with zero changes. V9 routes:7420 clear rest samples,7047 connected walk nodes,
+18/18 pickups.8 checks,489 EditMode and14 source audits pass. See closed152.7 and
+[map-composition.md](reports/improvement-2026-09-12/map-composition.md). Graphics,
+all-context mashing, Sa Bubong, wider architecture/ordinary-play and the broader
+kit/network/animation/release scope remain OPEN. See EXECUTION_PLAN.md.
+
 **Continuation, 2026-09-12:** fetched clean 0f08e992 on ASTRAReworks in the specified
 checkout. Resume map composition, real FPP, route/idle and repeatability review;
 then continue remaining kits, loadouts, networking and animation. The owner now
@@ -309,14 +319,14 @@ Historical48-idle attribution stays open. Core562/562, graphical EditMode489/489
 isolated gate and release qualification remain open. AGENTS.md is the primary instruction file, with the
 newest execution pointer tracking exact runs, dirty files and next actions.
 
-**Latest owner delivery scope:** finish ALL improvements to all three maps now,
+**Historical prior-session delivery scope:** finish ALL improvements to all three maps now,
 then hand off the remaining non-map work directly in chat for the next session.
 This includes map architecture/geometry, trees and props, materials/lighting,
 collision, retrieval routes and ordinary-play verification, not only technical
 clearance checks. ACTIVE_REWORK_LEDGER.md preserves ongoing Kuro/network work
 and the exact unverified items that must carry forward.
 
-**Superseded by the owner's wrap-up request:** finish/verify the current batch,
+**Historical prior-session wrap-up (current continuation remains active):** finish/verify the current batch,
 commit/push and hand off. The owner explicitly permits remaining map work in the
 handoff too. The full map goal stays open; its continuation plan is
 [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md). Do not claim all maps are complete.
@@ -11304,6 +11314,7 @@ EditMode test on the host-side clamp and rate limit.
 
 ## The archive index
 
+- **152.7, CLOSED 2026-09-12:** owner-view spatial composition and retrieval-route batch, with original Bayan passenger tricycle and repeatable authoring. Full entry in [TODO_Archive.md](TODO_Archive.md); complete maps/graphics/new-map/game scope remains under152.4.
 - **152.6, CLOSED 2026-09-12:** isolated under-guideway flight/direct-carrier release correction and saved-map semantic repeatability. Full entry in [TODO_Archive.md](TODO_Archive.md); broader map/game qualification remains under152.4.
 
 - **147.3, CLOSED 2026-09-10:** one observed result-board moment, without score changes; reader and clearing verified. Whole entry in [TODO_Archive.md](TODO_Archive.md).

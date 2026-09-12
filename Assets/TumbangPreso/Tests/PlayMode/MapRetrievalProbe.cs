@@ -35,9 +35,9 @@ namespace TumbangPreso.PlayTests
             if (_pinned) SceneFlow.PinSelectedRules(_rules); else SceneFlow.UnpinSelectedRules();
         }
 
-        private static IEnumerator Load(string map)
+        internal static IEnumerator Load(string map, GameMode mode = GameMode.Classic)
         {
-            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
             GameLaunch.AllBots = false; GameLaunch.Spectator = false; GameLaunch.SoloSeat = 1;
             yield return SceneManager.LoadSceneAsync(map);
             yield return new WaitForSeconds(.3f);

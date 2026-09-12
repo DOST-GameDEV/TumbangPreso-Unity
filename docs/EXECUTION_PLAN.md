@@ -10,15 +10,18 @@ ACTIVE_REWORK_LEDGER.md preserves detailed decisions and experiments.
 - Repository:DOST-GameDEV/TumbangPreso-Unity. Branch:ASTRAReworks ONLY.
 - Checkout:`C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity`.
 - Started after fetching clean local/remote0f08e992. Current pushed HEAD:
-  `8a22f8b9524ed943105f892fcfc54ef3a9bb43f5`.
+  `5c0747dd01a0f8695a98d53fee31a85b4271175a`.
 - No resets, main operations or changes to the separate Documents/GitHub checkout.
 - No subagents, paid work or usage resets. Preserve profiles and saved IDs.
 - Every Unity launch uses tools/run_unity_guarded.py. One Editor per checkout;
   no C#/imported-asset edits during a run. AssetImportWorker children are not
   second independent Editors. Never terminate an unrelated process.
-- Current Unity runs are COMPLETE; no Unity process is active. Last completed
-  guarded sequence71051 authored/captured map V8. Last profile snapshot:
-  Logs/profile-preservation-ffac60607bc8. All17 existing profile files restored.
+- All Unity/Blender runs are COMPLETE. No Editor is active. Verification sequence
+ 85437 passed8 checks,489 EditMode tests and MapRouteProbe1/1 (18 pickups).
+  Last profile snapshot: Logs/profile-preservation-368dce845f87;17 files restored.
+  V9 semantic comparison and all14 source audits passed too. Known test-generated
+  arm tangents and quality-setting changes were verified/restored.
+
 
 ## Latest owner requirements
 
@@ -72,7 +75,7 @@ ACTIVE_REWORK_LEDGER.md preserves detailed decisions and experiments.
 Reports:reports/improvement-2026-09-12/map-retrieval.md and map-repeatability.md.
 The original unsuccessful flight experiment remains archived unchanged as text.
 
-## Current uncommitted work
+## V9 map batch, verified and ready to commit
 
 **Map authoring:** MapFinalPassAuthor.cs and MapFinalInventory.cs, all3 map scenes,
 four new terminal materials/meta files under Art/MapFinalPass. Scene changes are
@@ -91,24 +94,27 @@ INTENTIONAL. Do not restore them as if they were the earlier ID-only experiment.
   perimeter lanterns, aligned basketball hoops, fewer garden borders, a southern
  3-tricycle bay with parking marks and shaded waiting. Moved trunks behind that
  bay; retired unrelated boulders/extra vehicles and a placeholder flagpole.
-- V8 remains in visual review. In particular the centered north hoop interferes
-  with the civic view and the hoops may face away from play; inspect actual model
-  orientation and choose a coherent basketball layout before accepting them.
-  Review terminal/waiting access, store counters, foliage and side/back architecture.
+- V9 clears the civic frontage with inward-facing east/west hoops and brackets.
+  A new original motorcycle/sidecar model replaces3 ambiguous cargo-like terminal
+  props. Blender source: MapSource/environment/terminal; author:
+  tools/author_terminal_tricycle.py. Owner views show clear parked silhouettes,
+  shaded waiting and separate trunks. All24 Balanced Classic directions reviewed
+  as3 contact sheets in Logs/map-owner-composition-v9. Final route/checks and
+  broader side/back architecture/ordinary-play qualification remain open.
 
 **Verification tools:** MapExperienceProbe.cs/meta, MapRouteProbe.cs/meta,
 MapRetrievalProbe.Load made internal with a mode argument, playmode_suite.py
 registers the new fixtures. Both new capture/route fixtures are WallClock and must
 be run explicitly; registration does not mean the ordinary gate runs them.
 
-**Documentation/evidence:** AGENTS, TODO, active ledger, improvement/map plans,
-reports/improvement-2026-09-12/map-composition.md and its V5 images/route CSVs.
-That report/image set predates V8 and needs updating before the batch is committed.
+**Documentation/evidence:** TODO/closed152.7, active ledger, execution/map plans,
+reports/improvement-2026-09-12/map-composition.md, current V9 images/metadata/route
+CSVs and semantic receipt. Older V5 images/route CSVs remain historical evidence.
 
-**Known test-generated dirt to inspect/restore after runs:** bayan/dante left/right
-RosterArms tangent serialization and ProjectAuditorSettings. Later full tests may
-touch other named-person arm tangents and QualitySettings. Restore only confirmed
-generated changes to their prior bytes, preserving intentional work.
+**Test-generated dirt:**24 named-person arm tangent streams were byte-verified
+(position/normal/UV and other mesh properties unchanged), then restored. The
+Balanced profile written into QualitySettings by tests was restored too. Future
+runs may repeat this; restore only confirmed generated changes, never map scenes.
 
 ## Exact evidence and limitations
 
@@ -116,13 +122,13 @@ generated changes to their prior bytes, preserving intentional work.
 |---|---|---|
 | Logs/map-owner-baseline-v2 | 144 static views, correct rig metadata | Legal owner cameras in both modes at Low/Balanced/High; not ordinary play |
 | Logs/map-owner-motion-v3.xml and folder | 1/1, all6 map/mode sequences | 16s each at1x, actual input-driven carry/charge/release/retrieval; owner/body recordings encoded by real timestamps |
-| Logs/map-routes-composition-v5.xml/folder | 1/1,18 actual pickups | 7420 clear resting samples have approaches; all7047 walkable grid nodes connect; representative wall/trunk/monument/pillar/kiosk/cart routes work |
-| Logs/map-repeatability-composition-v6/report.txt | PASS | Two saved/reopened runs:2388/3055/11223 rows, zero differences, including baseline to first run |
-| Logs/map-owner-composition-v8.xml/folder | 1/1,144 static views | Current V8 render outputs; structural pass does not approve composition |
-| Logs/map-spatial-v8 | Fresh bounds inventories | Actual active surfaces/colliders for spatial review |
+| Logs/map-routes-composition-v9.xml/folder | 1/1,18 actual pickups | 7420 clear resting samples have approaches; all7047 walkable grid nodes connect; representative wall/trunk/monument/pillar/kiosk/cart routes work |
+| Logs/map-repeatability-composition-v9/report.txt | PASS | Two saved/reopened runs:2388/3135/11223 rows, zero differences, including baseline to first run |
+| Logs/map-owner-composition-v9.xml/folder | 1/1,144 static views | All144 camera metadata rows match baseline exactly;24 Balanced Classic directions reviewed |
+| Logs/map-spatial-v9 | Fresh bounds inventories | Actual active surfaces/colliders for spatial review |
 
 All144 baseline/final V5 camera rows matched exactly (position, eye offset1.25m,
-yaw,95-degree FOV, quality). V8 needs its final matched review. Earlier witness
+yaw,95-degree FOV, quality). V9 also matches all144 metadata rows exactly. Earlier witness
 cameras used1.65m/52degrees and Eskinita side stations outside its8.1m wall.
 
 Do not rediscover these fixture errors as game bugs:
@@ -141,10 +147,11 @@ Do not rediscover these fixture errors as game bugs:
 
 ## Next actions, in order
 
-1. Finish the current3-map spatial batch. Inspect V8 from actual owner and useful
-   side/back views. Fix hoop placement/facing and any concrete overlaps. Re-run
-   saved semantic comparison and the8 editor checks after final authoring. Keep
-   before/after images current. Push this stable batch with TODO/archive evidence.
+1. Commit/push the verified V9 spatial batch with its report and closed152.7.
+   Broader architecture/side-back/ordinary-player review remains open after this
+   batch; do not call all maps complete. The source/scenes/model and evidence are
+   ready, and all current Unity runs have finished. No new graphics runtime,
+   mashing changes or fourth-map code has been implemented yet.
 2. Establish rendering/frame-cost baseline. Active pipeline is Built-in, despite
    URP being installed: ColourGrade/PostAntiAlias/WorldOutline use OnRenderImage.
    Current3 quality profiles only vary shadows/lights/soft particles. VIDEO uses
@@ -153,6 +160,11 @@ Do not rediscover these fixture errors as game bugs:
 3. Implement/test graphics scaling and meaningful quality gains. Candidate design
    is3D resolution scaling/supersampling with native-resolution UI, a useful frame
    cap, clearer preset tradeoffs, and restrained contact/material/light quality.
+   One simpler prototype candidate is a scaled gameplay-camera target presented
+   by a lowest-order non-raycasting overlay RawImage, with normal UI drawn above.
+   This avoids a second presentation camera, but is NOT yet tested/settled.
+   Linear/HDR transfer, outline thickness, viewport-based offscreen indicators,
+   external capture targets, replay and camera lifecycle all need explicit checks.
    **No graphics-settings/runtime implementation has been made yet.** Prototype
    actual image delivery before committing to a render approach. Do not let scaling
    change aiming, HUD placement, capture/replay or render color. Retain save IDs and

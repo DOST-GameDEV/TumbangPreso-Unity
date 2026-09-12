@@ -1,0 +1,19 @@
+map,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up
+Eskinita,west wall,-7.840,0.192,-3.740,40,7.476,True
+Eskinita,east wall,7.660,0.192,-0.240,33,5.960,True
+Eskinita,south wall,-2.340,0.192,-17.240,57,10.799,True
+Eskinita,north wall,-0.840,0.192,17.260,20,3.022,True
+Eskinita,tree trunk,5.660,0.192,14.260,24,4.080,True
+BayanPlaza,west wall,-12.240,0.192,-0.240,42,7.850,True
+BayanPlaza,east wall,12.260,0.192,-0.240,42,7.858,True
+BayanPlaza,south wall,-0.240,0.192,-12.240,42,7.920,True
+BayanPlaza,north wall,-0.240,0.192,12.260,8,0.861,True
+BayanPlaza,monument,-8.240,0.192,-8.240,51,9.740,True
+IlalimNgTulay,west wall,-10.740,0.304,-0.240,45,8.038,True
+IlalimNgTulay,east wall,10.760,0.304,-0.240,39,7.240,True
+IlalimNgTulay,south wall,-0.240,0.092,-16.240,50,9.599,True
+IlalimNgTulay,north wall,-0.240,0.092,16.260,16,2.520,True
+IlalimNgTulay,kiosk,9.260,0.304,0.760,36,13.879,True
+IlalimNgTulay,cart,8.760,0.304,-6.740,49,9.119,True
+IlalimNgTulay,guideway pillar,-4.240,0.092,8.760,9,1.057,True
+IlalimNgTulay,tree trunk,-8.740,0.304,12.260,25,4.319,True

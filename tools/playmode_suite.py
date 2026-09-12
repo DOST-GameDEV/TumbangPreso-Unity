@@ -152,7 +152,7 @@ GROUPS = [
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "MapRetrievalProbe", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
-        "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe",
+        "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "MapRouteProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
         "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
@@ -171,7 +171,7 @@ GROUPS = [
         "AntiAliasStateProbe", "CosmeticSurfaceProbe", "GameplayShots", "ModelFacingProbe",
         "MsaaResolveProbe", "NationalsShowcaseProbe", "ImprovementEvidenceProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
-        "ReplayCaptureProbe", "AbilityStressProbe", "KuroIdleReviewProbe", "KuroMapClearanceProbe",
+        "ReplayCaptureProbe", "AbilityStressProbe", "KuroIdleReviewProbe", "KuroMapClearanceProbe", "MapExperienceProbe",
     ]),
 
     ("services", """

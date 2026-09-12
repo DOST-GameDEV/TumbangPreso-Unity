@@ -12,6 +12,15 @@ Eskinita side-eye captures at x=+/-10 are outside its8.1m wall; do not call them
 legal first-person views. Current real FPP uses the live1.25m offset and95-degree
 lens, not the old1.65m/52-degree witness.
 
+Current composition follow-up is being authored, not yet reviewed: clear selected
+non-solid plants/tyres/fences/hedges from playable lanes into purposeful perimeter
+groups, preserve real obstacles/interactions and retained inactive sources, and
+stage Eskinita's supplied mountain painting farther away at its original aspect.
+Actual owner baseline is Logs/map-owner-baseline-v2 (144 matched static views),
+with six completed1x controlled throw/retrieval sequences in
+Logs/map-owner-motion-v3. Fixture head-overlap and late-input staging errors are
+documented in the active ledger; neither was a runtime camera/input repair.
+
 Owner scope change,2026-09-10: finish ALL map improvements on Eskinita, Bayan
 Plaza and Ilalim ng Tulay, then hand off everything else directly in chat for the
 next session. Status: PARTIAL CHECKPOINT, NOT FINISHED. This document is the active implementation
@@ -162,3 +171,20 @@ fixture kept outside the test gate for continuation. Next session should trace
 the actual position writer and ensure all intent/AI drivers are frozen before
 deciding whether the fixture, carrier release, grounding, or another path owns
 the reset. Do not claim this bug or the historical idle outlier fixed.
+
+### 2026-09-12 V9 spatial continuation
+
+Owner views now use the real1.25m/95-degree first-person rig. The144 V9 camera
+metadata rows exactly match the baseline across both modes and all3 qualities.
+Loose dressing is grouped at scene edges using actual drawn bounds; imported
+benches/chairs/crates leave customer space. Bayan has a shaded southern tricycle
+bay with an original simple motorcycle/sidecar model, trunks behind it, open
+monument access and inward-facing east/west hoops clear of civic frontage.
+The author retains excess legacy props inactive. Eskinita's original mountain
+paintings retain their artwork and aspect at a quieter apparent distance.
+
+Saved/reopened two-run semantic comparison V9 passes16746 rows with zero changes.
+V9 route evidence has7420 resting samples and18 real pickups; all8 editor checks
+and489 graphical EditMode tests pass. See reports/improvement-2026-09-12/map-composition.md. This is
+one stable spatial batch; graphics, broader architecture/ordinary-speed player
+review and the approved Sa Bubong map remain part of the open improvement goal.
