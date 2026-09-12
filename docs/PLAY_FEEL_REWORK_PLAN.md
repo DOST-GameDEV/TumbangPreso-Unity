@@ -111,3 +111,20 @@ CSV values wrap0..360 and must be normalized before reporting motion amplitudes.
 Relevant owners:Runtime/Carrier.cs,Runtime/Visual/CharacterAnimator.cs,
 Runtime/Camera/ViewmodelArms.cs,Runtime/Net/MatchRpc.cs,Core ThrowRules/Roster/Balance.
 No play-feel runtime changes have been made in this audit.
+
+Equipment audit detail: Roster currently maps flight to launch speed,impact to
+body-block push,and recovery to post-pickup ThrowLockTime. Can scales affect
+reset time,rebound and hit margin. Do not assume the slipper IMPACT label already
+means easier can knockdown. AIController currently calls ThrowRules.LaunchSpeedFor
+in its aiming/charge solve,so the old comment about AI assuming one launch speed
+needs checking against current code before using it as a tuning restriction.
+Can entry0 has authored5/1/1 points while the comments describe neutral fallbacks;
+trace selection/default consumers before deciding the neutral-contract correction.
+No balance change is implemented from these observations yet.
+
+Network presentation lead:OnReqThrowChargeMsg validates the remote seat then
+BroadcastThrowCharge sends to peers excluding local host and source,without an
+obvious host-local ApplyObservedCharge call in that handler. Trace all remaining
+input/snapshot writers and reproduce on the host before claiming this is the
+observed missing tell. Windup spin is absent from these payloads; existing spin
+serialization appears only in throw requests/loose-slipper state.

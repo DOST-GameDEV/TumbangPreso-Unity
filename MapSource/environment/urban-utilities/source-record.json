@@ -1,0 +1,6 @@
+{
+  "source": "Assets\\TumbangPreso\\Art\\models\\env_post_electric.obj",
+  "removedSpanComponents": 8,
+  "removedFaces": 256,
+  "retained": "pole,timber crossarms,insulators,drum,coils and source materials with neutral wire hardware"
+}

@@ -1,12 +1,9 @@
 # Active execution plan
 
 <!-- LIVE_STATE_START -->
-**Live now,2026-09-13:** all Unity/Blender/encoder runs complete. M09 owner48,
-EditMode491,all-map checks8,20 physical pickups and21275-row semantic comparison
-passed. Ordinary baselineV2 completed all6 map/mode sequences with clear court-side
-observer and owner records; encoded using measured timing. Verified generated
-dirt restored without touching actual map work. Commit/push M09 now,then M10
-coherence/current idle investigation and movement/Pektus/equipment. Pushed48372a85.
+**Live now,2026-09-13:** No Unity/Blender/test process active. Utility batch verified,
+preparing stable commit on ASTRAReworks;HEAD420060bc matches origin after fetch.
+Next:throw/Pektus whole-action implementation. No new Windows player exists.
 <!-- LIVE_STATE_END -->
 
 ## Standing scope and safe workflow
@@ -42,171 +39,100 @@ Criticize every batch for place/style,scale/mass/support/intersections,world dep
 routes/readability/motion and cost. Tests and isolated renders cannot approve art.
 Keep known failed experiments and do not invent causes or profile/run IDs.
 
-## Stable checkpoints
+## Stable work and evidence
 
--48372a85,pushed: Bayan M08 intermediate town/paving batch and M09 preparation.
--1661cb2b,pushed: Ilalim V7 intermediate storefront/stall/utility-placement batch.
--0611c6d4,pushed: NearFade preserves transparent/cutout materials,13/13 focused tests.
--38908619: research,thorough map plan,self-critique and expanded play-feel scope.
--97e61f92: V9 spatial batch, rejected by owner as visually insufficient.
--8a22f8b9: isolated carrier/flight fixes,4/4 including raised slab/unreachable roof.
-Historical Ilalim48-idle cause remains unestablished. Never attribute it without trace.
+-420060bc: Eskinita coherent solid homes/private plots/parking/corner-back streets,
+retained-house finishes,assigned domestic/shop props. Original family/assets kept.
+M09 final:48 owner views across both modes/3profiles,20/20 physical retrievals,
+EditMode491/491,8checks with all3 maps now gating geometry,21275 semantic rows
+without drift. See reports/improvement-2026-09-12/eskinita-neighborhood-draft.md.
+-48372a85: Bayan original slab paving/connected4-road town/40 retained houses,
+civic side/rear depth and closed grounded terrain. V7 checks8/8,19707 semantic
+rows,48 real FPP views;20/20 physical retrievals. See bayan-town-draft.md.
+-1661cb2b: Ilalim Gilmore/LRT shop lots,2 indoor pisonets,4 original street vendors,
+new signs/wall paint/crossings,28 measured pole placements/78 wires,roof and sign
+clearance. Core562,EditMode491,8checks,14audits,20/20 pickups,48FPP+22clearance views,
+19118 semantic rows. See ilalim-street-draft.md. Stronger but repetition remains.
+-0611c6d4: NearFade preserves transparent/cutout scenery,13/13 focused tests.
+-8a22f8b9: isolated direct-carrier release and swept-height flight support fixes,
+4/4 focused tests including raised-ground and unreachable-roof recovery.
 
-## Bayan48372a85 evidence and remaining review
+All3 maps have substantial transformation implemented, not full visual acceptance.
+M10/M11: boundary clarity at open-looking route ends,landscape/material/lighting
+coherence,broader ordinary-play/performance review remain. Complete these with the
+planned graphics and final play qualification,not an endless small-prop loop.
+NearFade normal-map preservation remains a graphics task. No claim that more
+renderers/triangles establishes better art or performance.
 
-CivicTownAuthor.cs,hooked through MapFinalPassAuthor/NeighborhoodFinishAuthor.
-Original1.5m slab paving,connected4-street grid,40 retained chunky houses in
-front/back/corner blocks,2 recessed original vendors,garden trees,closed civic
-side/rear windows and stronger terminal shelter. Old belt/stalls/loose fences/
-conflicting trees/Slab/Apron groups remain inactive. Plan:
-MapSource/environment/layouts/bayan-town-plan-v1.json.
+## Utility batch ready to commit
 
-TownGround is at the map root,outside scenery fading. Road0,paving.102,closed
-kerbs/skirt/bottom to-.166,matching mesh collision; lower fallback floor remains.
-Base height uses authored box corners through TransformPoint,not stale physics
-bounds. Road paint is a terrain submesh. Do not revive V3's hidden-road surface,
-V5's cached-bounds floor toggle or separate floating ground/paint geometry.
+EskinitaUtilityAuthor through EskinitaNeighborhoodAuthor;source author
+ tools/author_utility_posts.py, native MapSource/environment/urban-utilities,
+import Art/models/urban-utilities. Retains original pole hardware,removes only
+8 baked wire components,12 placed posts with measured trunk collision and5named
+insulator anchors connecting50 neutral round44mm conductors. OriginalOBJ and
+scene instances preserved. Source crossarms turned across street.
 
-- V4 real FPP:48 matched images,both modes/3profiles,1/1; road and paving restored.
-- V2/V3 architecture:14 witness/district views each,1/1 capture; V3's road appearance
-  was rejected despite capture passing. Corrected side/rear architecture remains.
-- Fresh routes:20/20 actual pickups across3 maps,6994 connected nodes,7363 clear
-  samples,0 unreachable. Bayan2359/2359,2470 clear samples. Other actors isolated.
-- Final V7 checks8/8,profile4406b8074854. EditMode491/491 on V6 code before the
-  final closed-ground/paint mesh refinement; refinement compiled in author/checks.
-- Final V7 semantic19707 rows (2388/3724/13595),zero baseline/run1/run2 differences.
-  Profile2466329a74f8 restored/hash-verified17 files. All runs restored17.
-- Unchanged Eskinita/Ilalim semantic rows matched1661cb2b and their ID churn was
-  restored. Arm positions/normals/UVs/non-vertex data verified before restoring
-  generated tangents. Known Balanced writes to Unity's Ultra slot were verified
-  and restored. Tree was clean immediately after commit.
+-Author73536 completed after an initial namespace compile failure was corrected.
+-Matched owner73668:1/1,48 views,both modes3profiles;profilecdb0be60d3f6.
+-Route16199:1/1,20/20 pickups,6982 connected nodes/7339 clear shoe samples,
+0 unreachable;profileab9333807a1b. Logs/eskinita-utility-v1-routes.*.
+-Semantic21585:21467 rows(4148/3724/13595),0baseline/run1/run2 changes;
+profile315dedca3d3e. Logs/eskinita-utility-v1-semantic/report.txt.
+-Checks63295:8/8,profile4bf49ba06ac4. All runs preserved17 profile files.
+-Audits84985:14gating passes,7 informational audio flags.
+-Cleanup script Logs/restore_verified_utility_test_dirt.py: Bayan/Ilalim compared
+against pushed420060bc semantic rows before restoring ID churn. Arm tangents
+only after byte-validating positions/normals/UVs/nonvertex data. Material trailing
+whitespace only. Never use prior cleanup scripts blindly on later map edits.
+Report:reports/improvement-2026-09-13/eskinita-utility-review.md.
 
-Report:docs/reports/improvement-2026-09-12/bayan-town-draft.md and portable images.
-M10 still owes wider material/light/atmosphere/boundary clarity/ordinary play and
-performance review; this batch does not declare full artistic/game acceptance.
+## Historical Ilalim idle investigation
 
-## Ilalim1661cb2b preserved
+Six fresh source420060bc HeroStrike matches,seeds20260823/1/7/4242/20260904/99991:
+all1/1,zero idle/camp. Portable per-seed reports/summary in
+reports/improvement-2026-09-13;details in bridge-idle-investigation.md.
+Historical48-penalty report cannot identify which seed and raw claimedJSON was
+not tracked. Historical attribution stays UNRESOLVED. No speculative runtime
+change,not claimed fixed by the carrier patch or current0 counts.
 
-MapPlaceAuthor retains11 chunky commercial bodies,real shop rooms/stock,2 indoor
-pisonets,4 original Blender vendors with mesh collision,readable signs,1 original
-wall painting and sensible crossings. Separate28-pole stripatabsX9.80 and78
-connected thin conductors; roof attachments move with their buildings,laundry fits
-and has supports. Duplicate clutter/former-hazard-looking decoration inactive.
-Tree+planter together at street-end pavement. Poles use source timber/metal with
-subdued neutral tint. Owner bakery/pares sign/roof intersections were corrected.
+## Play-feel implementation next
 
-Evidence:Core562,EditMode491,14source audits (7 informational audio flags),8checks,
-20 physical pickups,48 matched owner views and22 final frontage/clearance views;
-19118 semantic rows without drift. Full ordinary-play/wider-world/lighting/overlap
-and final release qualification remain open. See ilalim-street-draft.md.
+Read PLAY_FEEL_REWORK_PLAN.md source audit. ActualTimeScale1 carry/throw/retrieval
+baseline across6 map/mode sequences passed1/1. V1 witness obstructed and rejected;
+V2 courtside witness/owner videos use real timestamps,not fixed-frame speed.
+Logs/maps-ordinary-baseline-v2,profile4e19eb6ad113. Visible issue:throw preparation
+moves one arm while body stays upright. Pektus spin is local during windup;
+only active/inactive replicated. Host handler appears to relay without applying
+remote charge to host,needs controlled reproduction. No motion runtime edit yet.
 
-## Current M09 house and neighborhood work
+Implement/review torso weight transfer,arm winding and signed spin-imparting
+release,off-hand balance,follow-through/cancel/return and continuous moving legs.
+Retain existing18 rigs/simple hands;no anatomy redesign. Verify owner/body/remote
+poses at ordinary speed. Trace release acceptance and network/snapshot cleanup.
+Subsequent:carrying/sprint/backward/turn/cadence/foot contact/interrupted blends;
+meaningful10slipper and6can role/tradeoff table;controlled aim instability evaluation;
+all-context mash reliability. Do not introduce arbitrary random misses or new controls.
 
-Measured proposal:MapSource/environment/layouts/eskinita-neighborhood-plan-v1.json.
-Every existing house/parking width is recorded. Proposed rows use.85m gaps,
-frontedgeabsX9.7 behind a legible private boundaryat8.1,cross-streetsZ+/-29.5 and
-corner fronts34.1. West total50.52m,east49.99m. Old Kanto/Bahay corners intersect;
-several source cars have buried wheel bounds. Fix placement by whole drawn bounds.
-Keep useful parking and source data. No Eskinita scene edit yet.
+## Later scope stays required
 
-Next implementation after the current model review:
-1. Preserve original bodies/assets inactive; author coherent near rows/private plots
-   from measured slots. Use a/c/e/o family in old d/j near plots: their prominent
-   fireplace chimneys do not fit this tropical neighborhood. Keep b's broad body.
-2. Align gates/walls/entries/service frontage with the existing play boundaries;
-   maintain clear retrieval and avoid apparent open routes through solid barriers.
-3. Replace old thin ad-hoc facade additions with fitted details. Existing original
-   source house mass stays. Reconcile trees,poles,vehicles,roof utilities and lots.
-4. Move/rebuild corner and back layers around actual cross-streets/alleys; preserve
-   the original mountain paintings where spatially sensible. Inspect all sides.
-5. Real FPP/district critique,physical routes/checks/semantic,stable sole-author
-   commit-message file and push ASTRAReworks,then M10 and the remaining full scope.
+Graphics presets/settings measured low/high hardware;actual Low gameplay tells.
+Sa Bubong approved:condo roofdeck court/fenced pool/shade/utility-laundry,actual edge
+fall,mash get-up,fallen slipper10s unavailability then safe return. No new controls.
+Same-hero build rebind without live-state reset/double modifiers;all6 whole kits and
+alternatives;Phaister staged ritual/curse timing/clean unbind and11m moon vs8mguideway;
+Kuro accepted purple forms/private expressions/5.26mgiant retained,protocol28
+staged-yaw-rejoin and roster/wideroverlap qualification still owed. Broaderactive
+network effects/builds/round/rematch/reconnect/hostloss bothmodes. ExactWindowsbuild
+and bothmode ordinary play after appropriate gates and isolatedPlayMode twice.
 
-Detail author:tools/author_retained_house_details.py. a/c V2 already pushed.
-Dirty b/e/o GLBs in Art/models/retained-house-details and native sources in
-MapSource/environment/retained-house-details. Current study:
-Logs/retained-house-unity-review-v2,20 views pending. b has fitted jalousies;
-e/o add timber upper finishes derived from original wall polygons; o has a closed
-terrace door,upper-front window and supported laundry on its measured terrace.
-Cladding sits behind retained deep frames; original bodies/roof mass stay.
+Controller ownership remains separate. Device-simulated tests do not certify real
+physical hardware. Larger goal remains OPEN;owner asleep,continue without handoff.
 
-Source previews:Logs/retained-house-details-v4 (e/o) and-v4-extra(b/d/j). d/j detail
-studies are rejected for the near street and NOT imported. Thin replacement V1-V5
-studies were never placed and remain under Logs/rejected-thin-house-studies.
-Never revive them. No new model is accepted merely because Blender/import succeeded.
+## Durable archives
 
-Detail transform: source bodies at5x; exported details in metres. Under a5x body,
-localScale.2/localPosition0. A separate detail root uses world scale1 and the body's
-exact pose so EnvColourPass cannot overwrite its material with a roof atlas.
-Mounted-only b/e/o finishes need honest attachment ownership; do not blanket-exempt
-whole grounded houses or terrain. Preserve actual supports and physical boundaries.
-
-## Later rendering finding and history
-
-NearFade does not currently copy normal maps. Generated civic normal study remains
-unwired in Logs/civic-paving-v2; no normal-map gain is claimed. Ground's own material
-now remains intact outside scenery fading. Finish broader material/scalability work
-in the graphics pass,with measured views/frame cost and gameplay tells on Low.
-
-Research:map-reference-research.md; Logs/reference-review and owner-reference index.
-Prior execution plans are preserved whole in execution-plan-history-02/03/04/05.md;
-prior pointers in execution-pointer-history-02/03/04/05.md under reports2026-09-12.
-Do not rerun old scene-restoration scripts after changing a map. Their semantic
-proof applied only to unchanged maps in their original batches. Verify new dirt
-against the current HEAD and intended work. Any actual handoff belongs in chat.
-
-Model review54792 completed20 construction views,profile94ab01928e31 restored17.
-The O oblique view exposed an EXISTING terrace door beside the new extra one;
-the earlier no-access inference was wrong. V5 removes the duplicate new door and
-preserves the original. O's new upper-front window/timber/laundry remain. New O
-export is copied from Logs/retained-house-details-v5; recheck during map integration.
-No active Unity/Blender run now. No M09 scene edits yet.
-
-M09 first author draft is concrete:EskinitaNeighborhoodAuthor.cs. It keeps old
-source objects inactive,places10 homes/4 parking slots from measured widths,
-adds private yard/gate fronts aligned to8.1,uses a/c/e/o in chimney-heavy near
-plots,adds26 back/corner houses and cross-streets. Existing sari-sari stores are
-in reserved recessed corner pockets beyond the cross-street,not the carriageway.
-Old thin Frontage_Bahay additions are removed from the generated group.
-This is unverified until scoped author/FPP/district/physical/semantic review.
-
-M09 V1 owner15830 completed1/1,48 images,profiled1bab1d78799 restored17.
-Critique:stronger house mass but close fences too uniform/dominant; old shade
-frames and road-spanning laundry no longer fit the rebuilt street. V2 varies
-masonry/steel plot fronts,lowers/lightens rails,removes the old mid-street shade
-author call and retires cross-road laundry. West former-j plot uses retained-a
-for asymmetry. Private O-terrace laundry stays. V2 author/corner review next.
-
-M09 V3 source reconciles remaining old dressing:3 atip-yero frames and central
-bollards retire; chairs/benches move to measured sari-sari customer pockets,
-plants to private house fronts. Stores move farther behind the cross-street
-footpath. The retained visual floor extends to600m so distant paintings no longer
-sit beyond its edge; playable collision is unchanged. This needs actual review.
-
-Historical Ilalim idle evidence limitation recovered from ledger: the committed
-six-seed report did NOT identify the48-penalty arm's individual seed; its raw JSON
-was not tracked. Seeds20260823,1,7,4242,20260904,99991. BotBehaviourProbe method
-HeroStrikeBotsPlayAWholeMatchUnderTheBridge accepts-tp-bot-seed and now records
-loose-shoe positions/owner state every5s. New runs can investigate current causes
-but cannot retroactively prove the missing historical arm. Preserve that distinction.
-
-Important gate finding:M09's previous8-check result did NOT gate Eskinita geometry;
-that map remained informational from old defects. V3 had5 vehicle-body/door rows.
-All4 wheels for each car sit at.1 and intersect their body. V4 verifies that
-explicitly and annotates only mounted parts,not the wheels/entire vehicle.
-After0 findings,move Eskinita into the gated set so future regressions fail.
-Checks95782 profile03eceb6a028b restored17.
-
-V4 semantic42334 completed,17 profiles restored49ae7429327c. Current owner
-capture26413 ACTIVE. Ordinary-speed carry/throw/retrieval across both modes and
-all3 maps is the next baseline; keep it distinct from still-image verification.
-
-M09 final owner26413 passed1/1,48 images;profilec9f1b9d16974 restored17.
-Current ordinary-speed baseline23596 is active across6 map/mode combinations.
-
-Ordinary baselineV1 completed all6 map/mode sequences,1/1,profile2f61ceae9fc8.
-Observer footage in Eskinita was occluded by a fence; do not use it as body-motion
-approval. V2 corrects only this test's witness offset and is ACTIVE as8359.
-Logs/maps-ordinary-baseline-v2.xml/log/folder. No C#/asset edits. V1 timestamped
-MP4s are encoded; findings/source owners recorded in PLAY_FEEL_REWORK_PLAN.md.
-M09 EditMode97361 passed491/491,profile40ff882ca74e restored17.
+The complete previous plan is preserved whole in
+reports/improvement-2026-09-13/execution-plan-history-06.md;earlier histories02-05
+and execution-pointer histories02-07 remain in reports/improvement-2026-09-12.
+They contain historical runs/rejected studies,not current commands. Consult current
+live banner and ACTIVE_REWORK_LEDGER newest pointer first after compaction.

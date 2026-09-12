@@ -288,8 +288,7 @@ broader improvement and release scope below remains active.
 **M09 Eskinita draft,2026-09-13:** retained solid house family with fitted local
 finishes,measured private plots/parking,corrected corner/back streets and assigned
 shop/household props. Fresh routes20/20 pass;all8 checks now gate all3 maps with
-zero geometry findings. Eskinita's old informational exclusion is removed. Final
-repeatability/current views are pending; see the execution plan and
+zero geometry findings. Eskinita's old informational exclusion is removed. Final repeatability21275 rows and48 current owner views passed;see the execution plan and
 [eskinita-neighborhood-draft.md](reports/improvement-2026-09-12/eskinita-neighborhood-draft.md).
 
 **Bayan M08 draft,2026-09-13:** original slab paving, connected town roads/blocks,
@@ -299,9 +298,11 @@ after a cached-bounds floor-toggle correction. Final batch evidence is in
 [bayan-town-draft.md](reports/improvement-2026-09-12/bayan-town-draft.md) and the
 execution plan. Larger map/art/ordinary-play and later scope remain open.
 
-M08 Bayan paving/connected-town implementation is underway after pushed1661cb2b.
-NearFade currently omits normal maps when copying materials; albedo paving is
-being authored now, normal-map preservation remains an explicit graphics task.
+M10 utility coherence: retained Eskinita pole hardware with connected neutral
+conductors/narrow collision. Fresh20/20 retrievals,8checks,14audits,21467 semantic
+rows without drift. Six current bridge seeds all0 idle/camp;historical48 cause
+unresolved. See reports/improvement-2026-09-13. Normal-map NearFade preservation,
+lighting/boundary/performance/final ordinary-play coherence remain graphics tasks.
 
 **Ilalim intermediate street batch,2026-09-12:** retained chunky shop bodies,
 indoor pisonets,4 original vendor pockets, revised signs/crossings, measured

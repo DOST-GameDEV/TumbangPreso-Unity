@@ -81,6 +81,7 @@ namespace TumbangPreso.EditorTools.MapKit
             ReconcileStreetShops(dressing,plan);
             ReconcileLooseDressing(dressing,plan);
             ExtendDistantGround(dressing.parent);
+            EskinitaUtilityAuthor.Finish(dressing,root,report);
             report.AppendLine("Eskinita neighborhood draft:"+homeCount+" retained-family homes,"+carCount+" grounded private parking plots; aligned closed fronts and rebuilt corner/back street layers. Spatial/art review remains open.");
         }
 

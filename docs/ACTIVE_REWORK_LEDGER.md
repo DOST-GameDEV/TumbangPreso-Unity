@@ -20,16 +20,18 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (2026-09-13, owner sleeping)
 
-Pushed48372a85;all runs complete. M09 current owner48,EditMode491,all-map checks8,
-20 physical pickups and21275-row semantic comparison passed. Ordinary baselineV2
-completed all6 map/mode sequences;both views encoded with actual timing. Verified
-generated scene/arm/material/quality dirt restored;actual map work preserved.
-Commit/push M09 next. Full details and remaining scope are in EXECUTION_PLAN.md.
+Utility batch verified and ready for commit after420060bc;no Unity/test process
+active. Actual branch ASTRAReworks,authorized checkout only,origin matches HEAD.
+20/20 actual retrievals,0 unreachable,48matchedFPP views,21467semantic rows with
+zero drift,8editor checks/14audits pass. Profiles restored17files each;exact
+receipts in EXECUTION_PLAN.md and eskinita-utility-review.md.
+Six current bridge seed reports all0idle/camp;historical48cause unresolved.
 
-M10 still owes map coherence/current idle investigation and ordinary-play critique;
-movement/Pektus/equipment,graphics,Sa Bubong,kits/network/TODO remain open. No
-handoff stop or approval wait. Owner asks continued work while asleep and durable
-ledgers;old process IDs are historical. Do not revive rejected model/camera studies.
+Current plan compacted with complete prior version archived as
+reports/improvement-2026-09-13/execution-plan-history-06.md. Next:stable commit/push,
+then whole-body throw/Pektus from PLAY_FEEL_REWORK_PLAN.md,remaining full scope
+preserved. Map final coherence/graphics qualification remains open. Owner asleep;
+continue,no handoff stop or approval wait. No new Windows build exists yet.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

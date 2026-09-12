@@ -1,0 +1,56 @@
+[
+  {
+    "seed": 20260823,
+    "throws": 171,
+    "retrievals": 166,
+    "restores": 87,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  },
+  {
+    "seed": 1,
+    "throws": 178,
+    "retrievals": 176,
+    "restores": 101,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  },
+  {
+    "seed": 7,
+    "throws": 161,
+    "retrievals": 156,
+    "restores": 88,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  },
+  {
+    "seed": 4242,
+    "throws": 168,
+    "retrievals": 166,
+    "restores": 87,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  },
+  {
+    "seed": 20260904,
+    "throws": 162,
+    "retrievals": 157,
+    "restores": 87,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  },
+  {
+    "seed": 99991,
+    "throws": 163,
+    "retrievals": 158,
+    "restores": 94,
+    "camp": 0,
+    "idle": 0,
+    "passed": 1
+  }
+]
