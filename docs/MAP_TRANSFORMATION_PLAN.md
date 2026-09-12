@@ -84,6 +84,30 @@ Before authoring each zone, record its actual plan and relevant heights:
 6. Give each finding a concrete action and inspectable before/after view. Keep a
    live checklist below. Do not expand to random decoration without a place/use.
 
+## Research-informed implementation sequence (current)
+
+Research receipt: [map-reference-research.md](reports/improvement-2026-09-12/map-reference-research.md).
+This is the current next-step order after the owner's research request. The earlier
+broad design sections remain requirements; this table makes the next work concrete.
+
+| Order | Work | Review/acceptance before moving on |
+|---|---|---|
+| M01 | Author Ilalim's actual road/pavement/shop cross-section and plot shop/stall/door/pole footprints from measured bounds. Keep roughly2m of continuous pedestrian route where feasible, distinct from the shop activity zone. | A labeled local/district plan, no blocked entrances or isolated furniture; actual court/physical limits retained. |
+| M02 | Build native shop-house/computer-shop fronts with real depth; review the four prepared building studies in Unity beside an approved person. Revise the roof/wall/opening/material design as needed. | Front/side/back and ordinary-distance views, correct scale, openings and supported roofs; no style verdict from Blender alone. |
+| M03 | Integrate the pisonets indoors/recessed with chairs, power source, service space and legible shop sign. Move or retire its old cosmetic collision effects and relocate the single cord risk only if its new physical source makes sense. | No outdoor computer row blocking a pavement; no stranded cord or misleading coin/time popup. Trace and preserve necessary runtime ownership before edits. |
+| M04 | Rebuild ALL poor Ilalim signs with proper typography, face separation, supports, size and business relationship. Include natural Bawal umihi dito notices and selective original graffiti. | Readable head-on/oblique, no backwards faces, overlapping letters or giant floating text. Gameplay/UI descriptions remain English; local environmental Filipino text is explicitly authorized. |
+| M05 | Author original food-frying/pares, fruit-display and clothing/accessory stalls from the owner's references; distribute them in sheltered customer pockets. Add visible stock, tools and storage at their point of use. | Each stall reads by silhouette/use without a paragraph; clear road and continuous through-pavement; stools/umbrellas/colliders do not block retrieval. No copied photo/brand art. |
+| M06 | Remove former-hazard trench/loose-manhole decoration and the oversized crossing ladders. Author modest flush road details and properly oriented crossings at real street connections. | Required TUMP chalk is unchanged and dominant; no floating gray sheets, fake holes or unexplained road bands. |
+| M07 | Rework Ilalim's structural material weight and distant blocks/rooflines, then capture the whole corridor in both directions and all storefront approaches. | Plausible guideway/services, continued urban world, safe8m clearance and complete physical route tests. |
+| M08 | Rebuild Bayan's paving and civic approaches, then lay out connected surrounding roads/blocks and distinguish church/hall/retail/garden sides. Reposition existing landmarks/terminal if the coherent town plan requires it. | Surface readable near and far; beyond-court world visible; doors connect to paths, streets have meaningful corners and the monument/gardens have usable circulation. |
+| M09 | Rebuild Eskinita's housing/store family and actual lots/side passages, roof/awning/utility continuity and domestic activity. | The result no longer reads as colored slabs or repeated generic houses; corner/side/back views and footsteps/retrieval remain coherent. |
+| M10 | Revisit all3 together for lighting, material balance, tree density, selective ambience and other problems found. Record additional concrete findings, not just owner-listed defects. | Matched FPP/corner/district images and full-speed sequences show a substantial transformation; both modes and scalability remain sound. |
+| M11 | Run repeatability, route, appropriate code/check/source and targeted PlayMode gates, push stable batches, then proceed to the requested movement/Pektus/equipment and remaining TODO work. | Fresh nonzero evidence, preserved profiles/IDs and honest unfinished criteria. Final exact-player release qualification remains mandatory. |
+
+User-provided original references survive locally in Logs/map-owner-references-2026-09-12.
+The supporting Gilmore/Pila/Project8 photos are already in Logs/reference-review.
+Do not drop the explicit vendor/signage/nostalgia requests at compaction.
+
 ## Place designs and substantial changes
 
 ### Ilalim ng Tulay: an established commercial street under a guideway
@@ -260,9 +284,9 @@ from files; push only ASTRAReworks. Any actual handoff belongs directly in chat.
 
 ## Current next action
 
-Produce the measured Ilalim shop/road/sign inventory and a top-down placement plan,
-then author its first coherent storefront/crossing revision. In parallel read/prep
-Bayan's paving and surrounding-block plan. No independent agent work. The graphics
+Research is recorded. Complete M01 using the measured Ilalim plan, then validate
+and integrate M02-M07 as coherent shop/street batches. Continue M08-M11 for Bayan,
+Eskinita and whole-map review. Do not stop after an isolated prop or texture. No independent agent work. The graphics
 prototype stays preserved as text until this map direction is materially improved.
 
 ### Audit finding added after initial plan
@@ -279,3 +303,106 @@ and TripHazard_PisonetCord is a separate nearby gameplay object. Repositioning
 must trace/relocate the associated controls/cord/hazards together, or deliberately
 retire a hazard that no longer has a sensible physical source. No secret removal
 of interaction and no cable left in the lane after the machines move.
+
+## Owner expansion after maps: movement, throwing and equipment identity
+
+2026-09-12: the owner explicitly requests improving how it feels to play after
+the map work. More convincing physics and animation are in scope. Their example
+is leaning back during throw windup/aiming, visibly replicated to other players,
+with body/FPP preparation and release matching. They suggest small noticeable
+shake and accuracy error to make aiming more skillful. They also authorize
+substantially differentiating or revamping slipper attributes, and the same for
+cans: each needs a reason to be chosen beyond its appearance.
+
+This is required follow-on design/implementation scope, not implemented behavior.
+The suggestions authorize investigation, not a mandate for arbitrary random spread.
+Examine the actual motor/throw/can/gear/network owners and existing attributes first.
+Design and test a small coherent set of useful tradeoffs. Favor readable control
+and counterplay, preserve simple controls and both modes. Maintain equipment IDs,
+owned items/profiles and truthful descriptions; no new progression grind or
+unrequested paid systems. Do not change the approved eighteen people/outfits.
+
+Plan the complete movement/action sequence: starts/stops, acceleration/deceleration,
+sprint/backwards/turn cadence, planted feet, carried slipper weight, windup lean,
+release/follow-through, impact, interruption and recovery. Owner and observer must
+see the same accepted action. Camera/FPP shake, actual trajectory and aim indication
+must agree; preserve motion settings without giving an accuracy advantage.
+
+Before changing balance, record current slipper/can behaviors and candidate roles,
+tradeoffs, relevant attributes and interactions in a focused play-feel plan. Compare
+normal-speed controlled trials and ordinary matches with all input paths and
+host/remote authority. Include hold-vs-release timing, movement while aiming,
+collision/retrieval, guideway/raised ground, equipment swaps, round/reset/rejoin,
+framerate independence and both modes. Do not conclude balance from one bot seed.
+Map transformation remains first. The broader kits, loadout binding, mashing,
+Sa Bubong, graphics and networking scope remains open alongside this expansion.
+
+### Pektus must visibly impart its curve
+
+Owner clarification,2026-09-12: Pektus currently feels like the slipper magically
+acquires curve. Author a distinct arm/forearm/wrist windup and release that visibly
+imparts the accepted spin/curve direction, then a matching follow-through. Verify
+left/right curve, hold/release, interruption, owner FPP, observer body and remote
+peers. Use existing simple hands/approved anatomy. Actual curved flight and
+presentation must agree; a generic straight throw with a curved projectile is not
+adequate. Trace current Pektus input/physics/animation/network data before choosing
+the sequence or modifying the curve.
+
+The owner explicitly asks us to find other mismatches like this proactively.
+Audit all movement/throw/retrieval/impact/ability actions for missing preparation,
+weight transfer, contact, moving geometry, interruption and recovery; do not wait
+for the owner to list each one. Record findings and planned full sequences in the
+post-map play-feel plan. Keep map transformation first and all prior scope open.
+
+## Continuation order confirmed by the owner
+
+2026-09-12: after the map and play-feel/equipment work, return to everything else
+in the actionable TODO list. The owner has not requested a stop or limited handoff.
+Current order: substantial three-map transformation; movement/throw/Pektus and
+slipper/can feel (including recovery mashing); remaining requested graphics and
+Sa Bubong work; then all remaining actionable TODO items, including whole kits,
+loadout binding, Kuro/Phaister qualification, animation and networking. Dependencies
+can be handled when needed, without dropping any accepted scope. Preserve the
+separate controller owner's work and human-only/external approval boundaries.
+The full improvement goal remains open until its required work is actually done.
+
+Owner reiteration,2026-09-12: implement convincing/realistic animation AND gameplay
+where appropriate, using the windup/lean, aiming and Pektus examples as guidance.
+Proactively identify the other applicable cases and implement the complete pass;
+do not limit it to those examples or ask the owner to specify every action.
+This changes motion/weight/contact/physics within the approved blocky style, not
+the eighteen people's anatomy or a new visual redesign. Map work remains first.
+
+## Mandatory self-critique after every visual/play-feel batch
+
+Owner requirement,2026-09-12: thoroughly evaluate and criticize each completed
+batch for whether it looks/feels right. They worry new edits may be ugly or out of
+place. This is an explicit acceptance requirement, not an optional final polish.
+
+Before accepting a batch, record actual strengths AND weaknesses against:
+
+- Style: fits the retained cute blocky cast and world at gameplay distance; no
+  realistic/noisy reconstructions, excessive detail or unrelated art language.
+- Place identity: does construction/use read as the intended Filipino place even
+  without a label explaining it? Nostalgia comes from coherent familiar details.
+- Spatial logic: doors, steps, roofs, counters, vendors, people and utilities have
+  plausible relationships; no arbitrary clutter, overlaps or disconnected access.
+- Proportions/materials: human scale, supported geometry, meaningful surfaces,
+  restrained wear and useful depth; no broad undifferentiated color slabs.
+- Composition: clear near/middle/far layers, distinct directions, connected wider
+  world, sufficient quiet space and no awkward empty gaps or repetitive stamping.
+- Gameplay: chalk/can/shoes/players/tells remain clear, routes usable, collisions
+  honest, both modes sound. Later action review must show preparation/contact/
+  momentum/recovery and truthful body/FPP/observer timing at ordinary speed.
+- Scalability: actual Low/Balanced/High images and measured costs, not assumptions
+  that polygon or renderer counts alone prove a frame-rate improvement.
+
+Include inconvenient views and report what still looks wrong, why, and the next
+correction. Passing XML, a nice isolated render or more objects is not acceptance.
+Revise within authorized scope without making the owner catch every obvious fault.
+Do not claim the owner likes a result unless they actually say so.
+
+Current self-critique: the V3 native building studies have more coherent openings
+and roof/drainage construction, but still repeat similar massing/palettes and lack
+finished storefront/domestic use. They need reference-specific composition,
+materials and in-engine cast comparison. They are not approved final map assets.

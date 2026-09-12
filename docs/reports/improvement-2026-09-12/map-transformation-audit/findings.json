@@ -1,0 +1,883 @@
+{
+  "Eskinita": {
+    "active_surfaces": 393,
+    "building_meshes": 101,
+    "sign_renderer_counts": {},
+    "building_aabb_candidates": [
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_36",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_44",
+        "xz_overlap_area": 6.4
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_9",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_10",
+        "xz_overlap_area": 16.72
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_9",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_37",
+        "xz_overlap_area": 27.75
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_10",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_2",
+        "xz_overlap_area": 7.89
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_10",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_37",
+        "xz_overlap_area": 57.01
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_10",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_1",
+        "xz_overlap_area": 20.79
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_10",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_38",
+        "xz_overlap_area": 3.18
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_21",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_22",
+        "xz_overlap_area": 5.72
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_58",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_35",
+        "xz_overlap_area": 19.34
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_58",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_24",
+        "xz_overlap_area": 0.5
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_58",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_57",
+        "xz_overlap_area": 23.56
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_58",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_25",
+        "xz_overlap_area": 7.77
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_28",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_42",
+        "xz_overlap_area": 53.51
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_28",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_27",
+        "xz_overlap_area": 47.74
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_28",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_7",
+        "xz_overlap_area": 19.83
+      },
+      {
+        "a": "Eskinita/Dressing/Kanto/Kanto_7",
+        "b": "Eskinita/Dressing/Bahay/Bahay_6_E",
+        "xz_overlap_area": 10.9
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_2",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_1",
+        "xz_overlap_area": 23.33
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_63",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_64",
+        "xz_overlap_area": 26.21
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_3",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_4",
+        "xz_overlap_area": 22.86
+      },
+      {
+        "a": "Eskinita/Dressing/Kanto/Kanto_0",
+        "b": "Eskinita/Dressing/Bahay/Bahay_0_W",
+        "xz_overlap_area": 9.07
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_19",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_16",
+        "xz_overlap_area": 18.78
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_19",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_15",
+        "xz_overlap_area": 8.26
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_19",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_20",
+        "xz_overlap_area": 7.42
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_19",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_54",
+        "xz_overlap_area": 3.76
+      },
+      {
+        "a": "Eskinita/Dressing/Kanto/Kanto_1",
+        "b": "Eskinita/Dressing/Kalat/SariSari_W/default",
+        "xz_overlap_area": 1.53
+      },
+      {
+        "a": "Eskinita/Dressing/Kanto/Kanto_1",
+        "b": "Eskinita/Dressing/Bahay/Bahay_0_W",
+        "xz_overlap_area": 1.35
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_30",
+        "b": "Eskinita/Dressing/Likod/Likod_10",
+        "xz_overlap_area": 12.49
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_37",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_38",
+        "xz_overlap_area": 4.04
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_29",
+        "b": "Eskinita/Dressing/Likod/Likod_10",
+        "xz_overlap_area": 9.54
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_46",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_45",
+        "xz_overlap_area": 18.84
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_32",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_31",
+        "xz_overlap_area": 10.99
+      },
+      {
+        "a": "Eskinita/Dressing/Bahay/Bahay_6_E",
+        "b": "Eskinita/Dressing/Kanto/Kanto_8",
+        "xz_overlap_area": 4.3
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_39",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_40",
+        "xz_overlap_area": 45.61
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_16",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_15",
+        "xz_overlap_area": 33.29
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_16",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_20",
+        "xz_overlap_area": 1.65
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_8",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_61",
+        "xz_overlap_area": 26.95
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_1",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_45",
+        "xz_overlap_area": 3.47
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_34",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_33",
+        "xz_overlap_area": 10.29
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_34",
+        "b": "Eskinita/Dressing/Likod/Likod_11",
+        "xz_overlap_area": 9.28
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_34",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_25",
+        "xz_overlap_area": 4.09
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_50",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_15",
+        "xz_overlap_area": 10.05
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_50",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_49",
+        "xz_overlap_area": 11.9
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_66",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_26",
+        "xz_overlap_area": 63.66
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_66",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_65",
+        "xz_overlap_area": 14.64
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_66",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_25",
+        "xz_overlap_area": 9.45
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_13",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_14",
+        "xz_overlap_area": 23.31
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_42",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_27",
+        "xz_overlap_area": 32.66
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_15",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_49",
+        "xz_overlap_area": 16.84
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_33",
+        "b": "Eskinita/Dressing/Likod/Likod_11",
+        "xz_overlap_area": 2.24
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_40",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_5",
+        "xz_overlap_area": 0.87
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_67",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_59",
+        "xz_overlap_area": 12.82
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_17",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_53",
+        "xz_overlap_area": 46.07
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_54",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_53",
+        "xz_overlap_area": 14.58
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_5",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_6",
+        "xz_overlap_area": 5.32
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_45",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_0",
+        "xz_overlap_area": 30.23
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_60",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_43",
+        "xz_overlap_area": 1.81
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoX_26",
+        "b": "Eskinita/Dressing/Malayo/MalayoX_25",
+        "xz_overlap_area": 13.96
+      },
+      {
+        "a": "Eskinita/Dressing/Malayo/MalayoZ_64",
+        "b": "Eskinita/Dressing/Malayo/MalayoZ_31",
+        "xz_overlap_area": 13.45
+      }
+    ]
+  },
+  "BayanPlaza": {
+    "active_surfaces": 611,
+    "building_meshes": 71,
+    "sign_renderer_counts": {},
+    "building_aabb_candidates": [
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_46",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_45",
+        "xz_overlap_area": 18.84
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_15",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_49",
+        "xz_overlap_area": 16.84
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_15",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_50",
+        "xz_overlap_area": 10.05
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_15",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_16",
+        "xz_overlap_area": 33.29
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_38",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_37",
+        "xz_overlap_area": 4.04
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_31",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_64",
+        "xz_overlap_area": 13.45
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_31",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_32",
+        "xz_overlap_area": 10.99
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_7",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_27",
+        "xz_overlap_area": 6.6
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_7",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_28",
+        "xz_overlap_area": 38.88
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_64",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_63",
+        "xz_overlap_area": 26.21
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_42",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_28",
+        "xz_overlap_area": 9.74
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_13",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_14",
+        "xz_overlap_area": 23.31
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_40",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_5",
+        "xz_overlap_area": 0.87
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_40",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_39",
+        "xz_overlap_area": 45.61
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_58",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_25",
+        "xz_overlap_area": 7.77
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_58",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_24",
+        "xz_overlap_area": 0.5
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_58",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_57",
+        "xz_overlap_area": 23.56
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_44",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_36",
+        "xz_overlap_area": 20.55
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_27",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_28",
+        "xz_overlap_area": 47.74
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_25",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_35",
+        "xz_overlap_area": 4.66
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_25",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_26",
+        "xz_overlap_area": 13.96
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_17",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_19",
+        "xz_overlap_area": 24.55
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_17",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_53",
+        "xz_overlap_area": 22.69
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_35",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_26",
+        "xz_overlap_area": 5.25
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_5",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_6",
+        "xz_overlap_area": 5.32
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_1",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_2",
+        "xz_overlap_area": 23.33
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_1",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_10",
+        "xz_overlap_area": 43.42
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_49",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_50",
+        "xz_overlap_area": 11.9
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_37",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_9",
+        "xz_overlap_area": 19.87
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_37",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_10",
+        "xz_overlap_area": 30.12
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_26",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_66",
+        "xz_overlap_area": 6.0
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_67",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_59",
+        "xz_overlap_area": 42.65
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_19",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_54",
+        "xz_overlap_area": 3.76
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_19",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_20",
+        "xz_overlap_area": 7.42
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_60",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_43",
+        "xz_overlap_area": 34.67
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_9",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_10",
+        "xz_overlap_area": 16.72
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_4",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_3",
+        "xz_overlap_area": 22.86
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_50",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_18",
+        "xz_overlap_area": 2.38
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_52",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_51",
+        "xz_overlap_area": 36.18
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_2",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_10",
+        "xz_overlap_area": 11.38
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_54",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_53",
+        "xz_overlap_area": 14.58
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_8",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_28",
+        "xz_overlap_area": 12.56
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_33",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_34",
+        "xz_overlap_area": 10.29
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_0",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_45",
+        "xz_overlap_area": 35.01
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltZ_66",
+        "b": "BayanPlaza/Dressing/Belt/BeltZ_65",
+        "xz_overlap_area": 14.64
+      },
+      {
+        "a": "BayanPlaza/Dressing/Belt/BeltX_21",
+        "b": "BayanPlaza/Dressing/Belt/BeltX_22",
+        "xz_overlap_area": 5.72
+      }
+    ]
+  },
+  "IlalimNgTulay": {
+    "active_surfaces": 2325,
+    "building_meshes": 124,
+    "sign_renderer_counts": {
+      "IlalimNgTulay/Dressing/Karatula/Sign_Billiards": 162,
+      "IlalimNgTulay/Dressing/Kalat/Karatula/Bawal_East": 102,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Goma": 42,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Xerox": 95,
+      "IlalimNgTulay/Dressing/Kalat/Karatula/Barangay_Tarp": 117,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Pisonet": 107,
+      "IlalimNgTulay/Dressing/Kalat/Karatula/Bawal_West": 102,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Pares": 82,
+      "IlalimNgTulay/Dressing/Karatula/Sign_PcRepair": 78,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Load": 32,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Panaderia": 82,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Paluto": 42,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Barber": 67,
+      "IlalimNgTulay/Dressing/Karatula/Sign_Labada": 52
+    },
+    "building_aabb_candidates": [
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W2",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "xz_overlap_area": 25.61
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W3",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_5",
+        "xz_overlap_area": 2.85
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W3",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_13",
+        "xz_overlap_area": 23.07
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_21",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-13",
+        "xz_overlap_area": 15.82
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_21",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-5",
+        "xz_overlap_area": 3.5
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_21",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_22",
+        "xz_overlap_area": 4.62
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BackgroundStreet/IntersectionShop_-1_-1_0",
+        "b": "IlalimNgTulay/Dressing/BackgroundStreet/IntersectionShop_-1_-1_1",
+        "xz_overlap_area": 14.22
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/DistrictOuter_34",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/Skyline_2",
+        "xz_overlap_area": 1.87
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E3",
+        "xz_overlap_area": 21.33
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_24",
+        "xz_overlap_area": 3.03
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E4",
+        "xz_overlap_area": 21.47
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E5",
+        "xz_overlap_area": 5.6
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_23",
+        "xz_overlap_area": 2.21
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_10",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 28.33
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/DistrictFar_52",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/Skyline_12",
+        "xz_overlap_area": 0.58
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E3",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E4",
+        "xz_overlap_area": 5.23
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E3",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E2",
+        "xz_overlap_area": 6.96
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E3",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 80.98
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_5",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_4",
+        "xz_overlap_area": 9.37
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_5",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_6",
+        "xz_overlap_area": 28.89
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_5",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/Backlot_2",
+        "xz_overlap_area": 42.16
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/DistrictOuter_13",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/Skyline_9",
+        "xz_overlap_area": 8.09
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_7",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_6",
+        "xz_overlap_area": 4.87
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_W1",
+        "xz_overlap_area": 17.91
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_5",
+        "xz_overlap_area": 19.28
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_W0",
+        "xz_overlap_area": 17.71
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_4",
+        "xz_overlap_area": 8.21
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/Backlot_0",
+        "xz_overlap_area": 27.61
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_2",
+        "xz_overlap_area": 2.73
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-3",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-11",
+        "xz_overlap_area": 20.6
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W1",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_W0",
+        "xz_overlap_area": 11.8
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W1",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-11",
+        "xz_overlap_area": 5.05
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/DistrictOuter_37",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/Skyline_12",
+        "xz_overlap_area": 3.24
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-13",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E1",
+        "xz_overlap_area": 13.37
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-13",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E0",
+        "xz_overlap_area": 31.16
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E1",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-5",
+        "xz_overlap_area": 9.06
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E1",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E0",
+        "xz_overlap_area": 3.44
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_24",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_25",
+        "xz_overlap_area": 7.66
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_24",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 1.53
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_24",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/Backlot_3",
+        "xz_overlap_area": 42.71
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W0",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-19",
+        "xz_overlap_area": 25.32
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_W0",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-11",
+        "xz_overlap_area": 16.16
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_4",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/Backlot_2",
+        "xz_overlap_area": 12.09
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E4",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E5",
+        "xz_overlap_area": 2.85
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_13",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_6",
+        "xz_overlap_area": 2.68
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_13",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_W4",
+        "xz_overlap_area": 27.32
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_0",
+        "b": "IlalimNgTulay/Dressing/BackgroundStreet/IntersectionShop_-1_-1_1",
+        "xz_overlap_area": 4.23
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_19",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E5",
+        "xz_overlap_area": 21.34
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_1",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_22",
+        "xz_overlap_area": 31.6
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_1",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_23",
+        "xz_overlap_area": 27.56
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_1",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 5.96
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_6",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_20",
+        "xz_overlap_area": 8.81
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-5",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E2",
+        "xz_overlap_area": 6.19
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-5",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 20.29
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/DistrictFar_39",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/Skyline_17",
+        "xz_overlap_area": 1.0
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_E_-21",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_E0",
+        "xz_overlap_area": 1.67
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/Shophouse_E2",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 21.43
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_22",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_23",
+        "xz_overlap_area": 3.52
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_0",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_2",
+        "xz_overlap_area": 33.43
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_0",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-11",
+        "xz_overlap_area": 13.1
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/Backlot_0",
+        "b": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_3",
+        "xz_overlap_area": 26.56
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_23",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_E_2",
+        "xz_overlap_area": 13.51
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/SkylineKit/Skyline_17",
+        "b": "IlalimNgTulay/Dressing/SkylineKit/DistrictOuter_8",
+        "xz_overlap_area": 3.15
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/Gilid/BackShop_W_20",
+        "b": "IlalimNgTulay/Dressing/Gilid/Shophouse_W4",
+        "xz_overlap_area": 2.9
+      },
+      {
+        "a": "IlalimNgTulay/Dressing/BacklotKit/DistrictInner_2",
+        "b": "IlalimNgTulay/Dressing/Gilid/BackShop_W_-11",
+        "xz_overlap_area": 3.31
+      }
+    ]
+  }
+}

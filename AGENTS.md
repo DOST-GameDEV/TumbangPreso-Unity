@@ -14,7 +14,8 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
    process IDs, plans and rejected studies are history, never live instructions.
    `docs/EXECUTION_PLAN.md` is the owner's requested compact action plan, current
    dirty-work/test state and next steps; read it alongside that pointer.
-3. For the current map revision read `docs/MAP_TRANSFORMATION_PLAN.md` first. The
+3. For post-map movement/throw/Pektus/equipment scope use `docs/PLAY_FEEL_REWORK_PLAN.md`.
+   For the current map revision read `docs/MAP_TRANSFORMATION_PLAN.md` first. The
    owner rejected V9 as barely changed and insufficiently Filipino: plain houses,
    empty Bayan paving/no wider town, implausible Ilalim pisonets, bad signs and
    oversized crossing bands. Substantial architecture/material/spatial changes
@@ -79,6 +80,12 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 - **Both Classic and Hero Strike ship as first-class modes.** Classic has no
   powers and four rounds; Hero Strike has six heroes and eight rounds. Do not
   treat one as the real game and neglect the other.
+- After the maps, the owner explicitly requests a movement/play-feel and equipment
+  pass: convincing physics/animation, visible windup lean shared with observers,
+  evaluated small aiming shake/error, and meaningful slipper AND can attributes
+  with reasons/tradeoffs beyond appearance. Plan from actual mechanics; preserve
+  IDs, both modes, simple controls and the approved blocky people. Do not equate
+  skill with arbitrary random spread. EXECUTION_PLAN.md carries full requirements.
 - The owner permits improving/replacing boring abilities within existing slots.
   Plan each whole kit and all existing alternatives: purpose, role-specific use,
   cost, tradeoff, counterplay, tell, interruption, authority and truthful copy.
@@ -146,6 +153,16 @@ Model changes need multiple angles and a cast comparison. A 1.65 m witness camer
 is not the real FPP rig; stills are not a complete action or human feel approval.
 Use source authors for maps/assets and verify a semantic two-run comparison;
 random Unity object IDs alone are not a geometry change.
+
+## Criticize each batch before accepting it
+
+Owner requirement: thoroughly examine whether every finished visual/play-feel
+batch looks and feels right. Record weaknesses and revisions, not just strengths.
+Judge style fit, Filipino place identity, spatial logic, human scale/materials,
+composition/world depth, gameplay readability/physical routes and measured cost.
+Use actual player views, awkward side/back angles and ordinary-speed motion.
+Tests/imports/isolated renders do not establish artistic success. Revise obvious
+failures proactively. MAP_TRANSFORMATION_PLAN.md carries the full critique rubric.
 
 ## Unity, tests and builds
 

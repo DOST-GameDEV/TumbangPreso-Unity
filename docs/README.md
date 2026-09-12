@@ -139,3 +139,5 @@ anyway, and the folder's own `README.md`, which this file replaces.
   A document that needs a "where I left off" section is a `TODO.md` entry wearing a disguise.
 
 - [Substantial map transformation plan](MAP_TRANSFORMATION_PLAN.md): active owner-feedback revision after V9, including nostalgic Filipino architecture, coherent shops/signs, paving and broader town context.
+
+- [Play-feel/equipment plan](PLAY_FEEL_REWORK_PLAN.md): post-map movement, throw/Pektus, slipper/can identity and full action verification.

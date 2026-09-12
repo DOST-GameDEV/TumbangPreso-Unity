@@ -285,6 +285,20 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Owner continuation order:** after maps and play-feel/equipment work, resume all
+remaining actionable TODO work. No stop/handoff is requested. The broader goal
+remains open; EXECUTION_PLAN.md records the current sequence and boundaries.
+
+**Further owner scope,2026-09-12, after maps:** improve movement/play feel and
+physics/animation, including a throw-windup lean visible to others. Evaluate
+small readable aiming shake/error for skillful control. Thoroughly differentiate
+or revamp slipper AND can attributes so each has a purpose beyond looks. Trace
+current mechanics, plan meaningful tradeoffs, preserve IDs/both modes/simple
+controls and verify owner/remote motion. Details are in EXECUTION_PLAN.md.
+Pektus specifically needs distinct forearm/wrist windup, spin release and
+follow-through matching the actual curve, in FPP and on observers. Proactively
+find other actions whose mechanical result lacks convincing body/hand motion.
+
 **Owner assessment,2026-09-12: the V9 images barely look improved, do not feel
 more Filipino, and Bayan's floor is empty.** A substantial map review/plan and
 implementation take priority again. Closed152.7 records technical/spatial work,

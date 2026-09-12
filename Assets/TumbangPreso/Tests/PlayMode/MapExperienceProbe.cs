@@ -236,6 +236,53 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest, Timeout(600000)]
+        public IEnumerator ArchitectureAndStreetContinuity()
+        {
+            var metadata = new StringBuilder("map,view,camera_x,camera_y,camera_z,target_x,target_y,target_z,fov\n");
+            try
+            {
+                foreach (string map in ReviewMaps())
+                {
+                    Time.timeScale = 1;
+                    yield return MapRetrievalProbe.Load(map);
+                    GraphicsProfiles.Apply(GraphicsProfiles.Default);
+                    Time.timeScale = 0;
+                    var camera = new GameObject("Architecture review witness").AddComponent<Camera>();
+                    camera.enabled = false;
+                    camera.fieldOfView = 65;
+                    camera.nearClipPlane = .05f;
+                    camera.farClipPlane = 400;
+                    camera.allowHDR = true;
+                    camera.cullingMask &= ~(1 << 5);
+                    camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                    camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled = true;
+                    try
+                    {
+                        var shots = new System.Collections.Generic.List<(string name, Vector3 at, Vector3 target)>();
+                        foreach (float x in new[] { -1f, 1f })
+                        foreach (float z in new[] { -1f, 1f })
+                        {
+                            shots.Add(($"district-{x}-{z}",new Vector3(x*30,26,z*30),new Vector3(0,1,0)));
+                            shots.Add(($"corner-{x}-{z}",new Vector3(x*6,1.65f,z*14),new Vector3(x*14,2,z*23)));
+                            shots.Add(($"frontage-{x}-{z}",new Vector3(x*6,1.65f,z*5),new Vector3(x*14,2,z*5)));
+                        }
+                        foreach(float end in new[]{-1f,1f})
+                            shots.Add(($"street-end-{end}",new Vector3(0,1.65f,end*15),new Vector3(0,2,end*55)));
+                        foreach(var shot in shots)
+                        {
+                            camera.transform.position = shot.at;
+                            camera.transform.rotation = Quaternion.LookRotation(shot.target-shot.at);
+                            yield return GameplayShots.Render(camera,map+"-"+shot.name,false,Output);
+                            metadata.AppendLine(FormattableString.Invariant($"{map},{shot.name},{shot.at.x:F3},{shot.at.y:F3},{shot.at.z:F3},{shot.target.x:F3},{shot.target.y:F3},{shot.target.z:F3},{camera.fieldOfView:F2}"));
+                        }
+                    }
+                    finally { Object.Destroy(camera.gameObject); }
+                }
+            }
+            finally { File.WriteAllText(Path.Combine(Output,"architecture-views.csv"),metadata.ToString()); }
+        }
+
         // Input producers run before Carrier.Update. A coroutine writes after
         // Update; the next motor FixedUpdate can commit away its pickup edge before
         // Carrier ever sees it. Match the real input phase instead of repeatedly
