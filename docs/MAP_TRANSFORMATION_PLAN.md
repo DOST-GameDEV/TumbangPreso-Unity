@@ -93,7 +93,7 @@ broad design sections remain requirements; this table makes the next work concre
 | Order | Work | Review/acceptance before moving on |
 |---|---|---|
 | M01 | Author Ilalim's actual road/pavement/shop cross-section and plot shop/stall/door/pole footprints from measured bounds. Keep roughly2m of continuous pedestrian route where feasible, distinct from the shop activity zone. | A labeled local/district plan, no blocked entrances or isolated furniture; actual court/physical limits retained. |
-| M02 | Build native shop-house/computer-shop fronts with real depth; review the four prepared building studies in Unity beside an approved person. Revise the roof/wall/opening/material design as needed. | Front/side/back and ordinary-distance views, correct scale, openings and supported roofs; no style verdict from Blender alone. |
+| M02 | Keep retained chunky shop/house bodies; build substantial shop fronts and integrated local construction details. The four thin V1-V5 studies are rejected. Compare retained-body work in Unity beside the original and an approved person. | Front/side/back and ordinary-distance views, correct scale, openings and supported roofs; no style verdict from Blender alone. |
 | M03 | Integrate the pisonets indoors/recessed with chairs, power source, service space and legible shop sign. Move or retire its old cosmetic collision effects and relocate the single cord risk only if its new physical source makes sense. | No outdoor computer row blocking a pavement; no stranded cord or misleading coin/time popup. Trace and preserve necessary runtime ownership before edits. |
 | M04 | Rebuild ALL poor Ilalim signs with proper typography, face separation, supports, size and business relationship. Include natural Bawal umihi dito notices and selective original graffiti. | Readable head-on/oblique, no backwards faces, overlapping letters or giant floating text. Gameplay/UI descriptions remain English; local environmental Filipino text is explicitly authorized. |
 | M05 | Author original food-frying/pares, fruit-display and clothing/accessory stalls from the owner's references; distribute them in sheltered customer pockets. Add visible stock, tools and storage at their point of use. | Each stall reads by silhouette/use without a paragraph; clear road and continuous through-pavement; stools/umbrellas/colliders do not block retrieval. No copied photo/brand art. |
@@ -436,3 +436,14 @@ frames. The next study must be compared directly beside a retained old house AND
 an approved person in Unity before broad placement. Existing map houses have not
 yet been replaced, so their source/direction remains intact. The broader map
 transformation and all later play-feel/TODO scope remain open.
+
+
+### Owner intersection receipts,2026-09-12
+
+Bakery and pares screenshots expose signs/roof slabs passing through the old
+utility poles. This is a placement failure, not acceptable detail. Check every
+sign and canopy against shaft-height geometry, roof surfaces, wires and neighbors.
+V3 moves the utility row to its own pavement strip and rebuilds its conductors;
+signs occupy measured clear spans. Required follow-up: actual FPP/oblique review,
+mesh overlap checks and updated retrieval/footpath clearance. Do not claim success
+from a picture showing only the sign face.

@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "map": "IlalimNgTulay",
+  "status": "Draft in progress; retained chunky commercial bodies, not rejected native houses",
+  "roadHalfWidth": 7,
+  "pavementOuterEdge": 11,
+  "pavementY": 0.212,
+  "playWallInnerX": 11,
+  "playWallInnerZ": 16.5,
+  "pedestrianClearBand": [
+    7.25,
+    9.3
+  ],
+  "privateFrontages": "Closed service/shutter/glazed edges aligned with the existing play boundary; no apparent walk-through doors into invisible walls.",
+  "shops": [
+    {
+      "id": "Laundry",
+      "side": -1,
+      "facadeX": -11.05,
+      "z": -14.5,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 0
+    },
+    {
+      "id": "Print",
+      "side": -1,
+      "facadeX": -11.05,
+      "z": -7.3,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 1
+    },
+    {
+      "id": "Repair",
+      "side": -1,
+      "facadeX": -11.05,
+      "z": 0,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 2
+    },
+    {
+      "id": "PC_Express",
+      "side": -1,
+      "facadeX": -11.05,
+      "z": 7.3,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 0
+    },
+    {
+      "id": "Load",
+      "side": -1,
+      "facadeX": -11.05,
+      "z": 14.5,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 1
+    },
+    {
+      "id": "Clothing",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": -15.3,
+      "width": 5.4,
+      "depth": 4.8,
+      "palette": 0
+    },
+    {
+      "id": "Barber",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": -9.1,
+      "width": 5.4,
+      "depth": 4.8,
+      "palette": 1
+    },
+    {
+      "id": "Pares",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": -3,
+      "width": 5.4,
+      "depth": 4.8,
+      "palette": 2
+    },
+    {
+      "id": "Pisonet",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": 3.6,
+      "width": 6.2,
+      "depth": 4.8,
+      "palette": 0
+    },
+    {
+      "id": "Bakery",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": 10.2,
+      "width": 5.4,
+      "depth": 4.8,
+      "palette": 1
+    },
+    {
+      "id": "Hardware",
+      "side": 1,
+      "facadeX": 11.05,
+      "z": 16.0,
+      "width": 4.6,
+      "depth": 4.8,
+      "palette": 2
+    }
+  ],
+  "vendors": [
+    {
+      "id": "FishballCart",
+      "side": -1,
+      "x": -10.15,
+      "z": -11.8,
+      "width": 1.55,
+      "depth": 1.15,
+      "kind": "frying-cart"
+    },
+    {
+      "id": "FruitCart",
+      "side": -1,
+      "x": -10.15,
+      "z": 11.5,
+      "width": 1.55,
+      "depth": 1.15,
+      "kind": "fruit-cart"
+    },
+    {
+      "id": "ClothesAndCases",
+      "side": 1,
+      "x": 10.2,
+      "z": -15.3,
+      "width": 2.8,
+      "depth": 1.1,
+      "kind": "clothes-accessories"
+    },
+    {
+      "id": "ParesCounter",
+      "side": 1,
+      "x": 10.15,
+      "z": -3,
+      "width": 2.1,
+      "depth": 1.15,
+      "kind": "pares-cart"
+    }
+  ],
+  "crossingZ": [
+    -24.8,
+    24.8
+  ],
+  "crossingDesign": "Stripes run along traffic Z, repeated across X; connect to short pavement extensions before existing cross-streets near Z31.",
+  "pisonetDesign": "Two retained cabinet models inside Pisonet shop, with service floor and furniture behind the frontage. Retire extra outdoor unit, old awning and detached clutter. Trace cosmetic component/cord separately.",
+  "cordDesign": "Keep at most the existing one optional trip hazard, with a real repair-bay power source outside the through-band. No central fake manhole/trench hazards.",
+  "poleNote": "Do not infer density from count alone:28 pole renderers span the extended district. Preserve/reposition only after actual range/footprint review."
+}

@@ -1,0 +1,63 @@
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=152
+Eskinita: replaced 33 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 3 retained mountain paintings as distant landscape without altering their artwork.
+Eskinita: final-pass renderers=39
+Eskinita baseline-to-run1: 0 changed rows
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=152
+Eskinita: replaced 33 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 3 retained mountain paintings as distant landscape without altering their artwork.
+Eskinita: final-pass renderers=39
+Eskinita run1-to-run2: 0 changed rows; 2388 compared rows
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=2404
+  authored default mesh=default triangles=3232
+  finish renderers=44
+BayanPlaza: replaced 29 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+BayanPlaza: final-pass renderers=61
+BayanPlaza baseline-to-run1: 0 changed rows
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=2404
+  authored default mesh=default triangles=3232
+  finish renderers=44
+BayanPlaza: replaced 29 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+BayanPlaza: final-pass renderers=61
+BayanPlaza run1-to-run2: 0 changed rows; 3135 compared rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay baseline-to-run1: 0 changed rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay run1-to-run2: 0 changed rows; 13595 compared rows
+SEMANTIC REPEATABILITY PASS

@@ -283,6 +283,83 @@ namespace TumbangPreso.PlayTests
             finally { File.WriteAllText(Path.Combine(Output,"architecture-views.csv"),metadata.ToString()); }
         }
 
+        [UnityTest, Timeout(180000)]
+        public IEnumerator StreetFrontageClearanceReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Mouse);
+            GraphicsProfiles.Apply(GraphicsProfiles.Default);
+            var root=GameObject.Find("IlalimNgTulay/Dressing/PlaceRework");Assert.IsNotNull(root);
+            var poles=Object.FindObjectsByType<MeshCollider>(FindObjectsSortMode.None)
+                .Where(c=>c.name.StartsWith("SidewalkPole_")).ToArray();Assert.AreEqual(28,poles.Length);
+            var report=new StringBuilder("member,pole,penetrates,depth\n");int checks=0;
+            foreach(var renderer in root.GetComponentsInChildren<MeshRenderer>())
+            {
+                if(!renderer.name.StartsWith("Sign frame ")&&renderer.name!="Roof slab")continue;
+                var box=renderer.GetComponent<BoxCollider>();bool temporary=box==null;
+                if(temporary)box=renderer.gameObject.AddComponent<BoxCollider>();
+                try
+                {
+                    foreach(var pole in poles)
+                    {
+                        if(!renderer.bounds.Intersects(pole.bounds))continue;
+                        bool intersects=Physics.ComputePenetration(box,box.transform.position,box.transform.rotation,
+                            pole,pole.transform.position,pole.transform.rotation,out _,out float depth);
+                        checks++;
+                        report.AppendLine(FormattableString.Invariant($"{renderer.transform.parent.name}/{renderer.name},{pole.name},{intersects},{depth:F4}"));
+                        Assert.IsFalse(intersects&&depth>.002f,renderer.transform.parent.name+"/"+renderer.name+" intersects "+pole.name+" by "+depth);
+                    }
+                }
+                finally {if(temporary)Object.Destroy(box);}
+            }
+            File.WriteAllText(Path.Combine(Output,"pole-clearance.csv"),report.ToString());
+            Assert.Greater(checks,0,"The broadphase never exercised the nearby roof/pole pairs.");
+            var frontages=root.GetComponentsInChildren<Transform>().Where(t=>t.name.StartsWith("Frontage_")).OrderBy(t=>t.name).ToArray();
+            Assert.AreEqual(11,frontages.Length);
+            foreach(var frontage in frontages)
+            foreach(float offset in new[]{0f,1.5f})
+            {
+                Time.timeScale=1;
+                float side=Mathf.Sign(frontage.position.x);
+                var at=new Vector3(side*7.3f,0,Mathf.Clamp(frontage.position.z+offset,-15.7f,15.7f));
+                at.y=Slipper.GroundY(at);who.Teleport(at);
+                who.transform.rotation=Quaternion.LookRotation(new Vector3(frontage.position.x-at.x,0,frontage.position.z-at.z));
+                yield return new WaitForFixedUpdate();yield return null;Time.timeScale=0;yield return null;
+                yield return GameplayShots.Render(rig.Camera,frontage.name+(offset==0?"-front":"-oblique"),false,Output);
+            }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator DiagnoseStreetGlazing()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Mouse);
+            who.Teleport(new Vector3(6.4f,.212f,3.6f));who.transform.rotation=Quaternion.Euler(0,90,0);
+            yield return new WaitForFixedUpdate();yield return null;Time.timeScale=0;yield return null;
+            var glass=Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None)
+                .Where(r=>r.name=="Glazed private shop boundary").ToArray();
+            Assert.Greater(glass.Length,0);
+            var text=new StringBuilder();var block=new MaterialPropertyBlock();
+            foreach(var r in glass)
+            {
+                r.GetPropertyBlock(block);var m=r.sharedMaterial;
+                text.AppendLine(r.transform.parent.name+" shader="+m.shader.name+" color="+m.color+
+                    " queue="+m.renderQueue+" tag="+m.GetTag("RenderType",false)+" src="+(m.HasProperty("_SrcBlend")?m.GetFloat("_SrcBlend"):-1)+
+                    " dst="+(m.HasProperty("_DstBlend")?m.GetFloat("_DstBlend"):-1)+" keywords="+string.Join(";",m.shaderKeywords)+
+                    " blockEmpty="+block.isEmpty+" blockColor="+block.GetColor("_Color"));
+            }
+            File.WriteAllText(Path.Combine(Output,"glazing.txt"),text.ToString());
+            yield return GameplayShots.Render(rig.Camera,"glazing-normal",false,Output);
+            foreach(var r in glass)r.enabled=false;
+            yield return GameplayShots.Render(rig.Camera,"glazing-hidden",false,Output);
+            foreach(var r in glass)r.enabled=true;
+            var outline=rig.Camera.GetComponent<WorldOutline>();outline.enabled=false;
+            yield return GameplayShots.Render(rig.Camera,"glazing-without-outline",false,Output);
+            outline.enabled=true;
+        }
+
         // Input producers run before Carrier.Update. A coroutine writes after
         // Update; the next motor FixedUpdate can commit away its pickup edge before
         // Carrier ever sees it. Match the real input phase instead of repeatedly

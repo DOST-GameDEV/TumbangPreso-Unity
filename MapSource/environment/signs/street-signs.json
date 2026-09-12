@@ -1,0 +1,62 @@
+{
+  "Laundry": [
+    "LABADA",
+    "WASH / DRY / FOLD",
+    "#d6ceae",
+    "#3b4b3e"
+  ],
+  "Print": [
+    "PRINT & COPY",
+    "SCHOOL / OFFICE",
+    "#dbd7c6",
+    "#374e4a"
+  ],
+  "Repair": [
+    "COMPUTER REPAIR",
+    "PARTS / UPGRADES",
+    "#454c48",
+    "#e1dcc9"
+  ],
+  "Load": [
+    "TINDAHAN",
+    "LOAD / GENERAL GOODS",
+    "#d9c28a",
+    "#4e382a"
+  ],
+  "Clothing": [
+    "UKAY-UKAY",
+    "CLOTHES / ACCESSORIES",
+    "#635262",
+    "#e7dec7"
+  ],
+  "Barber": [
+    "BARBER SHOP",
+    "HAIRCUTS",
+    "#ddd7c5",
+    "#583634"
+  ],
+  "Pares": [
+    "PARES & MAMI",
+    "HOT MEALS",
+    "#e0cfaa",
+    "#633c2e"
+  ],
+  "Pisonet": [
+    "PISONET",
+    "COMPUTER RENTAL / PRINT / COPY",
+    "#ddd5bb",
+    "#414d40"
+  ],
+  "Bakery": [
+    "PANADERIA",
+    "PANDESAL / FRESH BREAD",
+    "#74533b",
+    "#e5d4ae"
+  ],
+  "Hardware": [
+    "VULCANIZING",
+    "TYRES / TOOLS / REPAIRS",
+    "#d9d3c0",
+    "#35433e"
+  ]
+}

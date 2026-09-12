@@ -285,6 +285,14 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Ilalim intermediate street batch,2026-09-12:** retained chunky shop bodies,
+indoor pisonets,4 original vendor pockets, revised signs/crossings, measured
+pole/sign/roof separation and grounded fixtures. V4 physical routes passed20/20
+real pickups; V5 checks8/8 and finalV7 semantic19118 rows pass; freshCore562/EditMode491
+and14 source audits pass. This is not complete visual acceptance. See
+[the draft/critique](reports/improvement-2026-09-12/ilalim-street-draft.md) and
+EXECUTION_PLAN.md for final batch evidence and the next substantial map work.
+
 House V1-V5 studies are rejected as flimsy; retain the old chunky building mass.
 NearFade alpha correction is closed in152.8 (13/13 focused tests and a fresh
 player-camera diagnostic). Current map drafts remain unaccepted.

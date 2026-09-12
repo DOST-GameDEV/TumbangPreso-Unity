@@ -1,15 +1,5 @@
 # Active TUMP rework ledger
 
-**Live run update:** no active Unity/Blender process. Author40128 completed V2,
-17 profiles restored,c11498d1631c. Glazing diagnostic15728 completed1/1 with3
-controls;17 profiles restored,c9547216d85f. Runtime glass remains Standard,
-Transparent,queue3000,alpha.12 and interiors are visible. Sign names clear roofs.
-Map V2 still needs critique/revision: overly uniform shop signs/frontages, oversized
-inherited roof attachments, fuller routes/world review. Evidence:
-Logs/map-glazing-diagnosis-v2 and Logs/map-place-draft-v2-author.log.
-
-
-
 **ACTIVE MAP PLAN: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md).**
 The owner rejected V9 as insufficient visually. Follow this substantial revision
 before the older incremental/graphics-first order; preserve all broader scope.
@@ -28,17 +18,26 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (continuation,2026-09-12)
+## Current execution pointer (2026-09-12)
 
-Read EXECUTION_PLAN.md for live state and MAP_TRANSFORMATION_PLAN.md for M01-M11.
-Fetched ASTRAReworks at38908619, no divergence. No active Unity/Blender process.
-NearFade glazing regression: before0/2, after13/13; actual player view pending.
-Logs/near-fade-alpha-{before,after}-v1.xml; latest profile83c9577d267a restored17.
-Ilalim draft V1 remains unaccepted. Sign-lip/roof-attachment corrections are in
-MapPlaceAuthor source awaiting regeneration. Four vendor V3 assets are copied,
-not imported/placed. Rejected V1-V5 houses remain unused. Preserve old chunky mass.
-Next integrate believable vendor/frontage use, regenerate, inspect real FPP and
-side/back views, critique and correct. All three maps and broader scope remain open.
+Read EXECUTION_PLAN.md for the only live state and MAP_TRANSFORMATION_PLAN.md for
+M01-M11. Pushed HEAD0611c6d4. No active Unity/Blender run. V7 semantic79898 completed19118 rows with zero drift. No C#/imported-asset edits until collected.
+All other Unity/Blender runs complete. Ilalim V7 and retained-house detail studies
+are uncommitted; maps remain UNACCEPTED. V4 routes1/1,20/20 actual pickups; V3
+sign/roof-pole clearance1/1,22 real owner views. New house details preserve old
+chunky bodies; thin replacements were rejected and quarantined after zero references.
+
+V5 checks passed8/8,17 profiles restored4d2829840d8d. V4 support findings
+were corrected by seating slabs on the actual ground and combining connected
+fixture meshes. V5 semantic19111 rows had zero drift;Core562/562 and14 source audits passed.
+V6 restores original timber/metal pole palette, varies signs and adds1 wall painting.
+Next collect author42684, renew material views and
+two-run authoring, then stable verified batches. Complete remaining Ilalim/Bayan/
+Eskinita transformation and broader play-feel/equipment/graphics/Sa Bubong/TODO.
+All exact paths, profile snapshots, limitations and rejected work are in the plan.
+Prior full pointers are preserved in reports/improvement-2026-09-12/
+execution-pointer-history-02/03/04.md. Historical wrap-up limits below are superseded
+by the owner's instruction to continue all required work, without a handoff stop.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 
@@ -2279,3 +2278,9 @@ creates an unsaved construction bench, compares4 building studies with approved
 Tikboy at CharacterVisual.PersonScale, and renders12 HDR-to-sRGB views. It is a
 construction/material preflight, not final FPP or normal-play evidence. Guarded
 run10020 active at this update. No map scene has been changed by the new author yet.
+
+Latest completed state:V7 final frontage12263 passed1/1,22 owner images and
+clearance; V7 semantic79898 passed19118 rows,zero drift,profilec65efd3d553b.
+All runs complete. Generated scene/arm/material dirt restored only after explicit
+semantic or byte/channel/whitespace verification. Save stable batch now; then
+implement M08 Bayan paving/connected town from its saved plan. Broader work remains.

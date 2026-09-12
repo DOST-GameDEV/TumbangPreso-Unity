@@ -32,6 +32,8 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void FinishLoadedScene(string map,StringBuilder report)
         {
+            MapPlaceAuthor.ClearPrevious(map);
+            MapPlaceAuthor.PrepareExistingPlacement(map);
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
             var old=GameObject.Find("MapFinalPass");if(old!=null)Object.DestroyImmediate(old);
             var root=new GameObject("MapFinalPass").transform;
@@ -40,8 +42,11 @@ namespace TumbangPreso.EditorTools.MapKit
             ReplaceTrees(map,root,report);ArrangeFurniture(map,report);
             ArrangeLooseDressing(map,report);SetPaintedDistance(map,report);FinishLight(map);
             if(map=="BayanPlaza"){CompleteCivicBuildings(root);PlazaPaving(root);FinishCivicUse(root,report);}
-            if(map=="IlalimNgTulay")UtilityConductors(root,report);
             if(map=="Eskinita")NeighborhoodPockets(root);
+            MapPlaceAuthor.FinishLoadedScene(map,report);
+            // Street placement owns the poles. Rebuild their connected conductors
+            // only after that placement has reached its final measured position.
+            if(map=="IlalimNgTulay")UtilityConductors(root,report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

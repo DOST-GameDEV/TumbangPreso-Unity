@@ -105,7 +105,9 @@ namespace TumbangPreso.PlayTests
                         var b = collider.bounds;
                         if (b.size.y < 1 || b.size.x > 7 || b.size.z > 7 || Mathf.Abs(b.center.x) >= hx || Mathf.Abs(b.center.z) >= hz) continue;
                         string path = PathOf(collider.transform);
-                        string kind = path.Contains("Broadleaf") ? "tree trunk" : path.Contains("Pillar") ? "guideway pillar" :
+                        string kind = path.Contains("Vendor_") ? path.Split('/').First(p=>p.StartsWith("Vendor_")) :
+                            path.Contains("SidewalkPole_") ? "utility pole" :
+                            path.Contains("Broadleaf") ? "tree trunk" : path.Contains("Pillar") ? "guideway pillar" :
                             path.Contains("Monument") ? "monument" : path.Contains("Kiosk") ? "kiosk" :
                             path.Contains("Cart") || path.Contains("Tricycle") ? "cart" : null;
                         if (kind == null || targets.ContainsKey(kind)) continue;
