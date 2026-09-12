@@ -222,7 +222,10 @@ namespace TumbangPreso.PlayTests
                             trace.AppendLine($"{t:F3},{who.transform.position:F3},{shoe.transform.position:F3},{shoe.State},{who.Intent.Pressed(Verb.Grab)},{who.HoldingSlipper}");
                         }
                     };
-                    yield return ImprovementEvidenceProbe.Record(witness, map + "-" + mode + "-controlled-sequence", 16, who);
+                    // The controlled sprint moves right. Keep its observer on
+                    // the court side, not behind the nearby residential fence.
+                    yield return ImprovementEvidenceProbe.Record(witness, map + "-" + mode + "-controlled-sequence", 16, who,
+                        witnessOffset:new Vector3(-3,1.5f,4));
                     Assert.IsTrue(released, map + " " + mode + " never released the throw through InputIntent.");
                     Assert.IsTrue(retrieved, map + " " + mode + " did not complete the controlled retrieval.");
                 }

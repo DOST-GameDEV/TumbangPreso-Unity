@@ -61,7 +61,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var humanBounds=BoundsOf(reference);
             reference.transform.position+=new Vector3(0,0,3.4f)-new Vector3(humanBounds.center.x,humanBounds.min.y,humanBounds.center.z);
             var report=new StringBuilder("model,width,height,depth,renderers,vertices,reference_height\n");
-            foreach(string kind in new[]{"a","c"})
+            foreach(string kind in new[]{"a","b","c","e","o"})
             {
                 var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/kits/city/building-type-"+kind+".glb");
                 var detailAsset=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/retained-house-details/retained-house-"+kind+"-details.glb");
@@ -87,7 +87,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 Object.DestroyImmediate(old);Object.DestroyImmediate(building);
             }
             File.WriteAllText(Path.Combine(output,"bounds.csv"),report.ToString());
-            Debug.Log("[Building review] 2 retained bodies with fitted details,8 paired/construction views. No map scene saved; scene/FPP acceptance remains open.");
+            Debug.Log("[Building review] 5 retained bodies with fitted details,20 paired/construction views. No map scene saved; scene/FPP acceptance remains open.");
             EditorApplication.Exit(0);
         }
 

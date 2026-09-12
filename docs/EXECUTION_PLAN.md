@@ -1,216 +1,212 @@
 # Active execution plan
 
 <!-- LIVE_STATE_START -->
-**Live now,2026-09-13:** no active Unity/Blender run. Bayan V7 checks8/8 and
-semantic19707 rows pass with zero baseline/run1/run2 drift. Profile2466329a74f8
-restored17 after final semantic. Fresh routes20/20,48 matched owner views and
-EditMode491/491 are recorded with their exact scope. Verified generated scene/
-arm/material/quality dirt was restored; actual Bayan changes remain. Save/push
-this stable intermediate batch now, then M09 Eskinita. Latest pushed1661cb2b.
+**Live now,2026-09-13:** all Unity/Blender/encoder runs complete. M09 owner48,
+EditMode491,all-map checks8,20 physical pickups and21275-row semantic comparison
+passed. Ordinary baselineV2 completed all6 map/mode sequences with clear court-side
+observer and owner records; encoded using measured timing. Verified generated
+dirt restored without touching actual map work. Commit/push M09 now,then M10
+coherence/current idle investigation and movement/Pektus/equipment. Pushed48372a85.
 <!-- LIVE_STATE_END -->
 
-**Latest state,2026-09-12:** pushed HEAD1661cb2b on ASTRAReworks. The Ilalim V7
-intermediate street batch is committed/pushed, with retained house-detail studies,
-source authors, research/critique and M08 preparation. It does not close the larger
-map/game improvement goal. The owner is sleeping and explicitly asks continued
-work with durable ledgers. No permission question or handoff stop is pending.
+## Standing scope and safe workflow
 
-M08 implementation is now dirty: CivicTownAuthor.cs plus MapFinalPassAuthor hooks
-and optional TUMP_MAP_AUTHOR filtering. New original paving albedo is copied to
-Art/CivicTown. The author rebuilds Bayan's ground with actual connected roads,
-40 retained chunky houses in frontage/back/corner blocks, fitted details on
-appropriate near homes,2 recessed vendors and composed garden trees. Old belt,
-road-overlapping trees and detached stalls are retained inactive. Plan:
-MapSource/environment/layouts/bayan-town-plan-v1.json. This is UNVERIFIED and
-UNACCEPTED until Unity authoring, all-direction/FPP review, spatial critique,
-routes and semantic checks. Do not claim it is implemented in the saved scene yet.
+Owner is sleeping and explicitly asks continued work and durable state across
+compactions. No handoff stop or approval question is pending. The larger goal is
+OPEN. Read AGENTS.md as the primary self-contained rules, then VISION/TODO152.4,
+latest ledger, MAP_TRANSFORMATION_PLAN M01-M11 and PLAY_FEEL_REWORK_PLAN.
 
-Guarded No Unity/Blender run active; V3 author and architecture completed as of2026-09-13: Logs/bayan-town-v3-architecture.xml/log/folder.
-No C#/imported-asset edits until collected. This author targets
-TUMP_MAP_AUTHOR=BayanPlaza, MapFinalPassAuthor.Run, then capture real FPP and district
-views. Keep Ilalim source/checkpoint intact. Every Unity launch uses the profile
-guard; no C#/imported-asset edits during a run, one Editor, no subagents/paid work.
+ONLY ASTRAReworks in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity.
+Fetch/inspect before stable commits; preserve newer work. Never reset, touch main
+or the separate Documents/GitHub checkout. No subagents, paid work or usage resets.
+Use tools/run_unity_guarded.py for EVERY Unity launch; preserve profiles/IDs,
+one Editor, no C#/imported-asset edits during a run. Controller ownership separate.
 
-Rendering finding for later graphics work: NearFade preserves source albedo but
-currently does not copy normal maps. The generated civic normal image remains in
-Logs/civic-paving-v2 and is deliberately not wired or claimed as visible. Finish
-that material contract during the graphics pass before claiming normal-map gains.
+Keep18 approved people/outfits at7c7fcb5, cute chunky forms, flat faces/simple hands.
+Thin house V1-V5 replacements are rejected. Preserve the old solid house mass and
+fit local construction/use into it. English gameplay/UI copy; Filipino environmental
+text permitted, proper names retained. Four players, rotating defender, can and
+slipper throwing/retrieval, Classic4 rounds and Hero Strike8 rounds remain.
 
-## Preserved scope and constraints
+Finish map transformation/coherence, then movement/throw/Pektus/equipment and
+all-context recovery mashing, then graphics scalability/settings and approved
+Sa Bubong (actual edge fall,mash get-up,about10s fallen-shoe penalty). Continue
+remaining actionable TODO: six whole kits/alternatives,same-hero build binding,
+Phaister/Kuro qualification,body/FPP/geometry/VFX/SFX,network transitions/reconnect/
+host loss and exact Windows release. UI art low priority; maker stays inaccessible.
+No new controls/systems that overcomplicate play. Final appropriate gates,isolated
+PlayMode gate twice,Windows build and THAT executable in both modes at ordinary
+speed and required separate-process network cases. No new Windows build yet.
 
-Use AGENTS.md as the primary self-contained instructions, then VISION/TODO152.4
-and the newest active ledger pointer. Only the authorized ok-x20 checkout and
-ASTRAReworks; no reset/main/separate GitHub checkout changes. Preserve newer work,
-profiles/IDs and18 approved people/outfits at7c7fcb5. Both modes, four players,
-rotating defender, can and slipper throwing/retrieval stay. Keep cute solid blocky
-forms, flat faces/simple hands. Thin V1-V5 replacement houses are rejected; old
-chunky bodies are the baseline. Environmental Filipino text is authorized;
-gameplay/UI copy English and proper names retained. Controller ownership separate.
+Criticize every batch for place/style,scale/mass/support/intersections,world depth,
+routes/readability/motion and cost. Tests and isolated renders cannot approve art.
+Keep known failed experiments and do not invent causes or profile/run IDs.
 
-Finish Ilalim/Bayan/Eskinita substantial map transformation (MAP_TRANSFORMATION_PLAN
-M01-M11), then movement/throw/Pektus/equipment and all-context recovery mashing
-(PLAY_FEEL_REWORK_PLAN), then graphics scalability/settings and approved Sa Bubong
-with actual ledge falls/mash get-up/about10s fallen-shoe penalty. Continue all
-remaining actionable TODO: six whole kits/alternatives, same-hero build binding,
-Phaister/Kuro qualification, body/FPP/geometry/VFX/SFX, broader networking and exact
-Windows release. No UI-art detour or character-maker reopening. No new controls/
-systems that overcomplicate play. Final isolated PlayMode gate twice when ready,
-Windows build and THAT executable in both modes at ordinary speed. No new build yet.
+## Stable checkpoints
 
-Criticize every batch for style/place identity, mass/scale/support/intersections,
-composition/world depth, routes/readability/motion and measured cost. Tests and
-isolated renders do not approve art. The owner's bakery/pares screenshots caught
-real intersections; the fix covered the related objects and clearance, not one view.
+-48372a85,pushed: Bayan M08 intermediate town/paving batch and M09 preparation.
+-1661cb2b,pushed: Ilalim V7 intermediate storefront/stall/utility-placement batch.
+-0611c6d4,pushed: NearFade preserves transparent/cutout materials,13/13 focused tests.
+-38908619: research,thorough map plan,self-critique and expanded play-feel scope.
+-97e61f92: V9 spatial batch, rejected by owner as visually insufficient.
+-8a22f8b9: isolated carrier/flight fixes,4/4 including raised slab/unreachable roof.
+Historical Ilalim48-idle cause remains unestablished. Never attribute it without trace.
 
-## Latest stable evidence,1661cb2b
+## Bayan48372a85 evidence and remaining review
 
-Ilalim retains11 chunky commercial bodies, builds substantial shop rooms and stock,
-2 indoor pisonets,4 original Blender street vendors with mesh collision, clear
-signs,1 wall painting, revised crossings, separate28-pole utility strip and78
-connected conductors. Old duplicate clutter/hazard-looking decoration is inactive.
-Roof laundry moves with the owning building, fits and has supports. The tree and
-planter are together at the street-end pavement. See ilalim-street-draft.md for
-portable images, sources, concrete self-critique and limitations.
+CivicTownAuthor.cs,hooked through MapFinalPassAuthor/NeighborhoodFinishAuthor.
+Original1.5m slab paving,connected4-street grid,40 retained chunky houses in
+front/back/corner blocks,2 recessed original vendors,garden trees,closed civic
+side/rear windows and stronger terminal shelter. Old belt/stalls/loose fences/
+conflicting trees/Slab/Apron groups remain inactive. Plan:
+MapSource/environment/layouts/bayan-town-plan-v1.json.
 
-- NearFade alpha fix0611c6d4:before0/2,after13/13; fresh glazing diagnostic1/1.
-- V4 routes:6994 connected nodes,7363 clear shoe samples,0 unreachable,20/20 actual
-  motor-driven pickups, including all4 vendors and utility pole; other seats isolated.
-- V5 checks8/8 after correcting23 support findings. Core562/562;14 gating source
-  audits passed,7 informational audio flags. V7 graphical EditMode491/491.
-- V7 frontages1/1,22 real owner images and actual roof/sign-pole penetration checks.
-  V5 main owner views48 across both modes/3qualities. These are still images.
-- V7 semantic19118 rows (2388/3135/13595),zero baseline/run1/run2 drift after reopen.
-- Every run restored/hash-verified17 profile files. FinalV7 snapshots:
-  authorfd3224687022,EditModec1b827143f2b,frontage7f554fb352a4,semanticc65efd3d553b.
-- Eskinita/Bayan ID churn matched pushed V9 semantic rows exactly and was restored.
-  Arm positions/normals/UVs/all other data were byte-verified before restoring only
-  generated tangent additions. QualitySettings changed only to known Balanced
-  values in Unity's Ultra slot during tests and was restored after exact diff proof.
--45 files then showed stat-only dirt; canonical Git blob hashes equaled HEAD and
-  git add refreshed them without changes. Tree was clean before M08 began.
+TownGround is at the map root,outside scenery fading. Road0,paving.102,closed
+kerbs/skirt/bottom to-.166,matching mesh collision; lower fallback floor remains.
+Base height uses authored box corners through TransformPoint,not stale physics
+bounds. Road paint is a terrain submesh. Do not revive V3's hidden-road surface,
+V5's cached-bounds floor toggle or separate floating ground/paint geometry.
 
-No complete map artistic acceptance, historical48-idle attribution, full live-AI
-or normal-speed multiplayer/build qualification is claimed. Bigger work stays open.
+- V4 real FPP:48 matched images,both modes/3profiles,1/1; road and paving restored.
+- V2/V3 architecture:14 witness/district views each,1/1 capture; V3's road appearance
+  was rejected despite capture passing. Corrected side/rear architecture remains.
+- Fresh routes:20/20 actual pickups across3 maps,6994 connected nodes,7363 clear
+  samples,0 unreachable. Bayan2359/2359,2470 clear samples. Other actors isolated.
+- Final V7 checks8/8,profile4406b8074854. EditMode491/491 on V6 code before the
+  final closed-ground/paint mesh refinement; refinement compiled in author/checks.
+- Final V7 semantic19707 rows (2388/3724/13595),zero baseline/run1/run2 differences.
+  Profile2466329a74f8 restored/hash-verified17 files. All runs restored17.
+- Unchanged Eskinita/Ilalim semantic rows matched1661cb2b and their ID churn was
+  restored. Arm positions/normals/UVs/non-vertex data verified before restoring
+  generated tangents. Known Balanced writes to Unity's Ultra slot were verified
+  and restored. Tree was clean immediately after commit.
 
-## House construction studies
+Report:docs/reports/improvement-2026-09-12/bayan-town-draft.md and portable images.
+M10 still owes wider material/light/atmosphere/boundary clarity/ordinary play and
+performance review; this batch does not declare full artistic/game acceptance.
 
-Art/models/retained-house-details and MapSource/environment/retained-house-details,
-authored by tools/author_retained_house_details.py. Existing licensed Kenney bodies
-a/c remain; exported details are new. Jalousies fit actual panes, low house has a
-service window, taller house has a supported entry shade. V1 low-house canopy
-covered its transom and was rejected; V2 omits it. Native sources include originals
-for comparison. Detail parented to original5x body uses scale0.2,position0; M08's
-separate detail root uses world scale1 and the exact body pose so EnvColourPass
-cannot overwrite its materials with the house roof atlas.
+## Ilalim1661cb2b preserved
 
-NeighborhoodBuildingReview produced8 paired/construction views with approved
-Tikboy, Logs/retained-house-unity-review-v1. It preserves original mass; actual
-map integration/review is now M08/M09. Rejected thin houses, native sources and old
-author/review are preserved under Logs/rejected-thin-house-studies after a zero
-serialized-reference check. Never revive them as approved direction.
+MapPlaceAuthor retains11 chunky commercial bodies,real shop rooms/stock,2 indoor
+pisonets,4 original Blender vendors with mesh collision,readable signs,1 original
+wall painting and sensible crossings. Separate28-pole stripatabsX9.80 and78
+connected thin conductors; roof attachments move with their buildings,laundry fits
+and has supports. Duplicate clutter/former-hazard-looking decoration inactive.
+Tree+planter together at street-end pavement. Poles use source timber/metal with
+subdued neutral tint. Owner bakery/pares sign/roof intersections were corrected.
 
-## Evidence and history locations
+Evidence:Core562,EditMode491,14source audits (7 informational audio flags),8checks,
+20 physical pickups,48 matched owner views and22 final frontage/clearance views;
+19118 semantic rows without drift. Full ordinary-play/wider-world/lighting/overlap
+and final release qualification remain open. See ilalim-street-draft.md.
 
-Reports:docs/reports/improvement-2026-09-12/ilalim-street-draft.md,
-near-fade-alpha.md,map-reference-research.md. Capture folders Logs/map-place-draft-v*
-and Logs/retained-house-unity-review-v1. Original/owner references are in
-Logs/reference-review and Logs/map-owner-references-2026-09-12/index.json.
+## Current M09 house and neighborhood work
 
-Prior execution plans are preserved whole in execution-plan-history-02/03/04.md;
-prior ledger pointers in execution-pointer-history-02/03/04.md. Do not rerun the
-old scene-restoration script after modifying Bayan: its proof belonged only to the
-Ilalim batch when Bayan/Eskinita were unchanged. Validate new dirty files afresh.
-Any real handoff belongs directly in chat; the owner has asked continued work.
+Measured proposal:MapSource/environment/layouts/eskinita-neighborhood-plan-v1.json.
+Every existing house/parking width is recorded. Proposed rows use.85m gaps,
+frontedgeabsX9.7 behind a legible private boundaryat8.1,cross-streetsZ+/-29.5 and
+corner fronts34.1. West total50.52m,east49.99m. Old Kanto/Bahay corners intersect;
+several source cars have buried wheel bounds. Fix placement by whole drawn bounds.
+Keep useful parking and source data. No Eskinita scene edit yet.
 
-Current M08 author4006 is the only active run. Inventory target:
-Logs/bayan-town-v1-inventory. Collect, inspect actual output, then FPP/district views.
+Next implementation after the current model review:
+1. Preserve original bodies/assets inactive; author coherent near rows/private plots
+   from measured slots. Use a/c/e/o family in old d/j near plots: their prominent
+   fireplace chimneys do not fit this tropical neighborhood. Keep b's broad body.
+2. Align gates/walls/entries/service frontage with the existing play boundaries;
+   maintain clear retrieval and avoid apparent open routes through solid barriers.
+3. Replace old thin ad-hoc facade additions with fitted details. Existing original
+   source house mass stays. Reconcile trees,poles,vehicles,roof utilities and lots.
+4. Move/rebuild corner and back layers around actual cross-streets/alleys; preserve
+   the original mountain paintings where spatially sensible. Inspect all sides.
+5. Real FPP/district critique,physical routes/checks/semantic,stable sole-author
+   commit-message file and push ASTRAReworks,then M10 and the remaining full scope.
 
-Bayan V1 author4006 completed;17 profiles restoredcf148e724e9a. Saved draft now contains40 town houses,
-roads and original paving. First matched real-owner capture is active; no code/
-asset edits until it exits. Examine actual appearance before choosing revisions.
+Detail author:tools/author_retained_house_details.py. a/c V2 already pushed.
+Dirty b/e/o GLBs in Art/models/retained-house-details and native sources in
+MapSource/environment/retained-house-details. Current study:
+Logs/retained-house-unity-review-v2,20 views pending. b has fitted jalousies;
+e/o add timber upper finishes derived from original wall polygons; o has a closed
+terrace door,upper-front window and supported laundry on its measured terrace.
+Cladding sits behind retained deep frames; original bodies/roof mass stay.
 
-Bayan V1 owner64526 completed1/1,48 matched FPP views,profile5103140b39f3
-restored17. Paving is legible and town depth visible. Critique found the moved
-centre tree pair intersects side basketball backboards; V2 removes that pair.
-V2 also strengthens terminal shelter posts/feet/beams and uses shared broadleaf
-materials for garden trees. Author4546 is ACTIVE,Logs/bayan-town-v2-author.log.
-Next collect and capture architecture/side-back/street-corner views. No code/assets
-edits during Unity. The Bayan draft is not yet accepted or fully verified.
+Source previews:Logs/retained-house-details-v4 (e/o) and-v4-extra(b/d/j). d/j detail
+studies are rejected for the near street and NOT imported. Thin replacement V1-V5
+studies were never placed and remain under Logs/rejected-thin-house-studies.
+Never revive them. No new model is accepted merely because Blender/import succeeded.
 
-V2 author4546 completed,profilef16f6a461a65 restored17. Architecture70147 is
-ACTIVE,Logs/bayan-town-v3-author.log. No C#/asset edits.
+Detail transform: source bodies at5x; exported details in metres. Under a5x body,
+localScale.2/localPosition0. A separate detail root uses world scale1 and the body's
+exact pose so EnvColourPass cannot overwrite its material with a roof atlas.
+Mounted-only b/e/o finishes need honest attachment ownership; do not blanket-exempt
+whole grounded houses or terrain. Preserve actual supports and physical boundaries.
 
-Bayan V2 architecture70147 completed1/1,14 witness/district views,profile
-ec7878d9ab85 restored17. It shows stronger town continuity but exposes4 old loose
-fences in new roads and very blank civic side/rear walls. Actual43 building
-footprints have0 pairwise AABB overlap candidates and0 road-corridor overlap;
-that did not prove prop clearance. Road-prop candidates are saved in
-Logs/bayan-town-v2-layout/road-prop-candidates.json.
+## Later rendering finding and history
 
-V3 source retires those4 fence placements, adds closed arched nave windows between
-buttresses and a rear window/footing, adds municipal rear shutters/service door,
-and gives roads a real10cm drop with closed kerb faces. The complete ground mesh
-now has collision. Court paving isy.102 versus the old.1, so fresh physical routes
-are required. Upper louver widths are solved against the arch at their top edge
-to avoid crossing stone frames. No V3 scene author run yet; launch next.
+NearFade does not currently copy normal maps. Generated civic normal study remains
+unwired in Logs/civic-paving-v2; no normal-map gain is claimed. Ground's own material
+now remains intact outside scenery fading. Finish broader material/scalability work
+in the graphics pass,with measured views/frame cost and gameplay tells on Low.
 
-V3 author76679 completed,profileee6e2394e656. V3 architecture57404 completed
-1/1,14 views,profileb3c59aff7ef8. All17 profile files restored on each. No active
-run now. Source now has dropped roads/closed kerbs and ground mesh collision,
-no old fences in roads, and closed civic side/rear windows. Inspect frames then
-run fresh routes/checks; this physical change is not qualified by older routes.
+Research:map-reference-research.md; Logs/reference-review and owner-reference index.
+Prior execution plans are preserved whole in execution-plan-history-02/03/04/05.md;
+prior pointers in execution-pointer-history-02/03/04/05.md under reports2026-09-12.
+Do not rerun old scene-restoration scripts after changing a map. Their semantic
+proof applied only to unchanged maps in their original batches. Verify new dirt
+against the current HEAD and intended work. Any actual handoff belongs in chat.
 
-Independent M09 prep: tools/author_retained_house_details.py now supports e/o
-variants with timber upper cladding fitted to actual retained wall polygons and
-jalousies. Outputs Logs/retained-house-details-v3 are Blender-only, NOT imported
-or placed. E reads well as masonry below/timber above without losing body mass;
-O still has an overly blank upper face/terrace access to examine. Do not treat
-those study previews as map acceptance. a/c current imported details unchanged.
+Model review54792 completed20 construction views,profile94ab01928e31 restored17.
+The O oblique view exposed an EXISTING terrace door beside the new extra one;
+the earlier no-access inference was wrong. V5 removes the duplicate new door and
+preserves the original. O's new upper-front window/timber/laundry remain. New O
+export is copied from Logs/retained-house-details-v5; recheck during map integration.
+No active Unity/Blender run now. No M09 scene edits yet.
 
-V3 visual failure isolated: dropped roads at0 were hidden by the retained Floor
-renderer (top.085) and collider (top.1). Inventory proves both. V4 lowers that
-base to a-.15 collision top, keeps it as fallback, and places the real terrain
-beside Floor at the map root. Ground no longer goes through scenery NearFade.
-The source texture/physics now belong to the same terrain; fresh views/routes
-are required. Do not count the V3 road change as visually successful.
+M09 first author draft is concrete:EskinitaNeighborhoodAuthor.cs. It keeps old
+source objects inactive,places10 homes/4 parking slots from measured widths,
+adds private yard/gate fronts aligned to8.1,uses a/c/e/o in chimney-heavy near
+plots,adds26 back/corner houses and cross-streets. Existing sari-sari stores are
+in reserved recessed corner pockets beyond the cross-street,not the carriageway.
+Old thin Frontage_Bahay additions are removed from the generated group.
+This is unverified until scoped author/FPP/district/physical/semantic review.
 
-Bayan V4 author62546 completed. Current owner capture is ACTIVE under
-Logs/bayan-town-v4-owner.xml/log/folder. Record its session ID from the tool result.
-No C#/imported-asset edits until it exits. V4 moves the retained fallback floor
-below the real terrain and keeps new ground outside scenery fading. This must
-be checked in actual images and fresh route tests. The dropped-road V3 images
-were rejected because the old floor hid the intended road and paint.
+M09 V1 owner15830 completed1/1,48 images,profiled1bab1d78799 restored17.
+Critique:stronger house mass but close fences too uniform/dominant; old shade
+frames and road-spanning laundry no longer fit the rebuilt street. V2 varies
+masonry/steel plot fronts,lowers/lightens rails,removes the old mid-street shade
+author call and retires cross-road laundry. West former-j plot uses retained-a
+for asymmetry. Private O-terrace laundry stays. V2 author/corner review next.
 
-M09 measured proposal saved:MapSource/environment/layouts/eskinita-neighborhood-plan-v1.json.
-It preserves actual native house widths and existing parking slots, proposes.85m
-lot gaps, house frontsatabsX9.7 behind a legible boundaryat8.1, and cross-streets
-atZ+/-29.5 with corner fronts34.1. Existing Kanto/Bahay corner overlaps are measured;
-source vehicles also have buried wheel bounds to correct. No Eskinita scene edit yet.
-Latest e/o studies:Logs/retained-house-details-v4. O now has a closed terrace door,
-upper-front jalousie and a supported clothesline/towels on its measured roof terrace.
-Those two new variants are not imported or Unity-reviewed yet.
+M09 V3 source reconciles remaining old dressing:3 atip-yero frames and central
+bollards retire; chairs/benches move to measured sari-sari customer pockets,
+plants to private house fronts. Stores move farther behind the cross-street
+footpath. The retained visual floor extends to600m so distant paintings no longer
+sit beyond its edge; playable collision is unchanged. This needs actual review.
 
-Checks9120 completed with276 old Slab/Apron findings,profile135b4bd5b52c restored17.
-No other scene finding appeared. Source V5 deactivates those replaced groups,
-retaining their data while the new terrain owns ground. Author run next.
+Historical Ilalim idle evidence limitation recovered from ledger: the committed
+six-seed report did NOT identify the48-penalty arm's individual seed; its raw JSON
+was not tracked. Seeds20260823,1,7,4242,20260904,99991. BotBehaviourProbe method
+HeroStrikeBotsPlayAWholeMatchUnderTheBridge accepts-tp-bot-seed and now records
+loose-shoe positions/owner state every5s. New runs can investigate current causes
+but cannot retroactively prove the missing historical arm. Preserve that distinction.
 
-V5 semantic failure receipt:Logs/bayan-town-v5-repeatability/BayanPlaza-differences.txt.
-One Floor transform toggled between-.2499994 andapproximately0; all other rows
-are unchanged (exact totals in report). Source fix reads local box corners, not
-cached physics bounds. Snapshotefe2f55dd4f2 restored17. Re-run author/semantic
-before accepting.
+Important gate finding:M09's previous8-check result did NOT gate Eskinita geometry;
+that map remained informational from old defects. V3 had5 vehicle-body/door rows.
+All4 wheels for each car sit at.1 and intersect their body. V4 verifies that
+explicitly and annotates only mounted parts,not the wheels/entire vehicle.
+After0 findings,move Eskinita into the gated set so future regressions fail.
+Checks95782 profile03eceb6a028b restored17.
 
-M09 study critique: b's fitted jalousies preserve a useful broad connected-house
-shape. d/j retain prominent fireplace chimneys, which are a poor fit for the
-intended tropical neighborhood. Keep their original assets and rejected-detail
-studies; choose the retained a/c/e/o family for those near plots, preserving lot
-space and chunky mass rather than publishing the chimney studies as Filipino
-architecture. No d/j detail assets imported. b/e/o still need Unity comparison.
+V4 semantic42334 completed,17 profiles restored49ae7429327c. Current owner
+capture26413 ACTIVE. Ordinary-speed carry/throw/retrieval across both modes and
+all3 maps is the next baseline; keep it distinct from still-image verification.
 
-V6 semantic44917 completed,17 profiles restoredcfc3dc069cd7. Current full
-graphical EditMode37750 ACTIVE; no C#/asset edits.
+M09 final owner26413 passed1/1,48 images;profilec9f1b9d16974 restored17.
+Current ordinary-speed baseline23596 is active across6 map/mode combinations.
 
-Final V6 checks33886 failed25 support findings,profile405a08238031 restored17.
-V7 gives terrain a closed skirt/bottom at-.166 against the fallback render top
--.165, and road markings are now one submesh of the road surface rather than
-24 freestanding paint objects. Renew checks and semantic comparison.
+Ordinary baselineV1 completed all6 map/mode sequences,1/1,profile2f61ceae9fc8.
+Observer footage in Eskinita was occluded by a fence; do not use it as body-motion
+approval. V2 corrects only this test's witness offset and is ACTIVE as8359.
+Logs/maps-ordinary-baseline-v2.xml/log/folder. No C#/asset edits. V1 timestamped
+MP4s are encoded; findings/source owners recorded in PLAY_FEEL_REWORK_PLAN.md.
+M09 EditMode97361 passed491/491,profile40ff882ca74e restored17.

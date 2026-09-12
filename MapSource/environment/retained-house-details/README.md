@@ -19,3 +19,10 @@ NeighborhoodBuildingReview compares retained and detailed forms with approved
 Tikboy. Its8 Editor construction views are not a complete FPP/ordinary-play or
 artistic acceptance. Thin replacement house V1-V5 studies are rejected separately
 and must not be revived; they are preserved locally under Logs/rejected-thin-house-studies.
+
+2026-09-13 extension: b/e/o details are now imported for M09. b retains its broad
+connected-house body; e/o add timber upper courses clipped to original wall
+polygons. O adds an upper-front window and supported laundry while preserving
+its EXISTING terrace door. A duplicate added door was caught in the Unity oblique
+review and removed in V5. The old no-access inference was wrong. d/j chimney-heavy
+studies remain in Logs only and are not the chosen near-street direction.

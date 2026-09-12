@@ -20,16 +20,16 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (2026-09-13, owner sleeping)
 
-Pushed1661cb2b. No active Unity/Blender run. Bayan V7 final checks8/8 and semantic
-19707 rows pass with zero drift; profile2466329a74f8 restored17. Fresh routes20/20,
-48 owner views and491 EditMode are recorded with exact scope in EXECUTION_PLAN.md
-and bayan-town-draft.md. Verified generated dirt was restored without discarding
-Bayan changes. Commit/push the stable intermediate batch next, then M09 Eskinita.
+Pushed48372a85;all runs complete. M09 current owner48,EditMode491,all-map checks8,
+20 physical pickups and21275-row semantic comparison passed. Ordinary baselineV2
+completed all6 map/mode sequences;both views encoded with actual timing. Verified
+generated scene/arm/material/quality dirt restored;actual map work preserved.
+Commit/push M09 next. Full details and remaining scope are in EXECUTION_PLAN.md.
 
-M09 measured lot/parking/corner plan and retained-house b/e/o studies are prepared;
-new studies remain Logs-only and need Unity review. The owner asks continued work
-while asleep and durable ledgers. All larger map/play-feel/equipment/graphics/
-Sa Bubong/kit/network/TODO scope remains open. No handoff stop or permission wait.
+M10 still owes map coherence/current idle investigation and ordinary-play critique;
+movement/Pektus/equipment,graphics,Sa Bubong,kits/network/TODO remain open. No
+handoff stop or approval wait. Owner asks continued work while asleep and durable
+ledgers;old process IDs are historical. Do not revive rejected model/camera studies.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

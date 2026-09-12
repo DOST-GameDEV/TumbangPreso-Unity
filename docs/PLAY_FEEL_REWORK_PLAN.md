@@ -86,3 +86,28 @@ after the targeted work. Graphics scalability, approved Sa Bubong, whole kits an
 alternatives, Phaister/Kuro qualification and remaining animation/network/release
 work stay open. No stop or handoff is requested. Preserve ownership and external
 approval boundaries, and verify the exact Windows executable when release-ready.
+
+## Source audit and ordinary-speed baseline,2026-09-13
+
+All six map/mode carry-throw-retrieval sequences completed atTime.timeScale1 in
+Logs/maps-ordinary-baseline-v1. Owner frames are usable; the observer offset put
+the Eskinita camera behind a fence and was rejected for body-motion assessment.
+V2 uses an explicit court-side witness offset, preserving other capture callers.
+Motion videos use actual recorded frame intervals (tools/encode_motion_review.py),
+not a fixed input rate that would speed up dropped-frame captures.
+
+Current code:CharacterAnimator's charge override affects one arm after graph
+evaluation; torso lean/weight transfer and Pektus-specific preparation are absent
+from that path. ViewmodelArms also uses a single-axis charge pose. Carrier stores
+CurrentPektusSpin locally, while ThrowCharge replicates only active/inactive;
+trace other pose/intent payloads before adding network data. ObservedChargePower
+and actual ChargeRatio intentionally differ, so distinguish timing from power.
+
+The baseline action logs show attack-melee-left during some Hero Strike pickup
+sequences versus pick-up elsewhere. Trace the selected rig and cue/fallback before
+calling it a bug; it is a concrete review lead, not a confirmed cause. Leg-angle
+CSV values wrap0..360 and must be normalized before reporting motion amplitudes.
+
+Relevant owners:Runtime/Carrier.cs,Runtime/Visual/CharacterAnimator.cs,
+Runtime/Camera/ViewmodelArms.cs,Runtime/Net/MatchRpc.cs,Core ThrowRules/Roster/Balance.
+No play-feel runtime changes have been made in this audit.

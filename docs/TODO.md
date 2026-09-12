@@ -285,6 +285,13 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**M09 Eskinita draft,2026-09-13:** retained solid house family with fitted local
+finishes,measured private plots/parking,corrected corner/back streets and assigned
+shop/household props. Fresh routes20/20 pass;all8 checks now gate all3 maps with
+zero geometry findings. Eskinita's old informational exclusion is removed. Final
+repeatability/current views are pending; see the execution plan and
+[eskinita-neighborhood-draft.md](reports/improvement-2026-09-12/eskinita-neighborhood-draft.md).
+
 **Bayan M08 draft,2026-09-13:** original slab paving, connected town roads/blocks,
 retained chunky houses, grounded kerbs, civic side/rear detail and corrected
 planting/fence placement. Fresh routes20/20,finalV7 checks8/8,finalV7 semantic19707 rows pass

@@ -40,6 +40,7 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void FinishLoadedScene(string map,StringBuilder report)
         {
             MapPlaceAuthor.ClearPrevious(map);
+            EskinitaNeighborhoodAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
             CivicTownAuthor.ClearPrevious(map);
             CivicTownAuthor.PrepareExistingPlacement(map);
@@ -51,9 +52,9 @@ namespace TumbangPreso.EditorTools.MapKit
             ReplaceTrees(map,root,report);ArrangeFurniture(map,report);
             ArrangeLooseDressing(map,report);SetPaintedDistance(map,report);FinishLight(map);
             if(map=="BayanPlaza"){CompleteCivicBuildings(root);PlazaPaving(root);FinishCivicUse(root,report);}
-            if(map=="Eskinita")NeighborhoodPockets(root);
             MapPlaceAuthor.FinishLoadedScene(map,report);
             CivicTownAuthor.FinishLoadedScene(map,report);
+            EskinitaNeighborhoodAuthor.FinishLoadedScene(map,report);
             // Street placement owns the poles. Rebuild their connected conductors
             // only after that placement has reached its final measured position.
             if(map=="IlalimNgTulay")UtilityConductors(root,report);

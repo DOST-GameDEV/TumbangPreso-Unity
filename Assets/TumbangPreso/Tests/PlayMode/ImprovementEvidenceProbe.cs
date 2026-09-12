@@ -390,7 +390,7 @@ namespace TumbangPreso.PlayTests
         }
 
         internal static IEnumerator Record(Camera camera, string name, float seconds,
-            CharacterMotor subject = null, Action<float> drive = null)
+            CharacterMotor subject = null, Action<float> drive = null, Vector3? witnessOffset = null)
         {
             string folder = Path.Combine(Output, name);
             Directory.CreateDirectory(folder);
@@ -416,7 +416,7 @@ namespace TumbangPreso.PlayTests
                     next = t + .05f;
                     if (subject != null)
                     {
-                        camera.transform.position = subject.transform.position + new Vector3(3, 1.5f, 4);
+                        camera.transform.position = subject.transform.position + (witnessOffset ?? new Vector3(3, 1.5f, 4));
                         camera.transform.LookAt(subject.transform.position + Vector3.up * .9f);
                         var familiar=subject.GetComponent<CharacterVisual>()?.Companion;
                         if (familiar!=null && Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1")

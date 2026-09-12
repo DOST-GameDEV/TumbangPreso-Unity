@@ -189,7 +189,7 @@
       ],
       "proposedZ": 0.667,
       "width": 6.85,
-      "retainedFamily": "c",
+      "retainedFamily": "a",
       "reason": "Use the retained solid family; d/j fireplace chimneys do not fit this street.",
       "boundary": "simple-steel-gate"
     },

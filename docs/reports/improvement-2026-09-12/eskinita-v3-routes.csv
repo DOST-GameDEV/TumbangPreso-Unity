@@ -1,0 +1,21 @@
+map,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up
+Eskinita,west wall,-7.840,0.192,-3.740,40,7.485,True
+Eskinita,east wall,7.660,0.192,-0.240,33,5.959,True
+Eskinita,south wall,-2.340,0.192,-17.240,57,10.800,True
+Eskinita,north wall,-0.840,0.192,17.260,20,3.022,True
+Eskinita,tree trunk,7.160,0.192,15.760,29,4.918,True
+BayanPlaza,west wall,-12.240,0.194,-0.240,42,7.852,True
+BayanPlaza,east wall,12.260,0.194,1.260,39,7.241,True
+BayanPlaza,south wall,-0.240,0.194,-12.240,42,7.920,True
+BayanPlaza,north wall,1.260,0.194,12.260,11,1.080,True
+BayanPlaza,monument,-8.240,0.194,-8.240,51,9.740,True
+IlalimNgTulay,west wall,-10.740,0.304,-3.240,46,8.683,True
+IlalimNgTulay,east wall,10.760,0.304,-0.240,39,7.240,True
+IlalimNgTulay,south wall,-0.240,0.092,-16.240,50,9.599,True
+IlalimNgTulay,north wall,-0.240,0.092,16.260,16,2.521,True
+IlalimNgTulay,guideway pillar,4.260,0.092,-11.240,50,9.320,True
+IlalimNgTulay,Vendor_ClothesAndCases,9.260,0.304,-16.240,68,13.280,True
+IlalimNgTulay,Vendor_FishballCart,-10.240,0.304,-13.240,64,12.440,True
+IlalimNgTulay,utility pole,9.760,0.304,-1.740,39,7.459,True
+IlalimNgTulay,Vendor_ParesCounter,10.260,0.304,-5.240,48,9.120,True
+IlalimNgTulay,Vendor_FruitCart,-10.240,0.304,10.260,23,4.180,True

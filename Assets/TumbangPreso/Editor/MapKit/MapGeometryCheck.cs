@@ -89,11 +89,8 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void RunReportOnly() => Execute(false);
 
         /// <summary>
-        /// ⚠️ ONLY ILALIM NG TULAY IS GATED. Eskinita and Bayan Plaza were imported from the
-        /// Godot `.tscn` files rather than built from code, so they are measured and printed
-        /// but a finding in them is a TODO entry, not a build failure. Gating them today would
-        /// mean either fixing two imported scenes in this pass or switching the gate off, and
-        /// the second of those is how a check dies.
+        /// All three maps are gated. Imported origins are not a reason to leave
+        /// completed map work informational; earlier exclusions are recorded below.
         /// </summary>
         private static readonly string[] Gated =
         {
@@ -107,15 +104,17 @@ namespace TumbangPreso.EditorTools.MapKit
             // face 0.05 m outside the chalk. An imported `.tscn` can be gated the moment it is
             // clean; what kept it out was the finding, not the file format.
             "Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity",
+            // Eskinita joins after its road-spanning laundry was retired and
+            // vehicle grounding was measured from all four wheels. Mounted car
+            // parts are annotated separately; wheels retain the ordinary check.
+            // The earlier informational state listed two suspended washing lines,
+            // four car bodies, one door and laundry close to the can. Keeping an
+            // exclusion after correcting that work would hide later regressions.
+            "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity",
         };
 
         private static readonly string[] Informational =
         {
-            // ⚠️ ESKINITA STAYS INFORMATIONAL AND ITS FINDINGS ARE REAL: seven floating props
-            // (two washing lines at 1.66 m and 2.47 m, four car bodies at 0.263 m, one car door)
-            // and a washing line 0.79 m from the can. They are written up as their own entry
-            // rather than silently tolerated here.
-            "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity",
         };
 
         public static bool Execute(bool gate)

@@ -113,13 +113,8 @@ for kind in args.kinds:
             else:o.rotation_euler.x=math.radians(16)*normal.y
     if kind=='o':
         # Measured retained terrace: X[-3.075,-1.075],Y[-2.28,1.72],Z2.
-        # The upper room previously had no visible access to that terrace.
+        # Preserve its existing terrace door, revealed in the Unity back view.
         trim=material('Substantial dark window trim',(.24,.26,.31))
-        box('Closed terrace door',(-1.16,-.28,2.88),(.08,1.0,1.72),wood,.025)
-        for y in [-.90,.34]:box('Terrace door jamb',(-1.18,y,2.94),(.20,.18,1.88),trim,.025)
-        box('Terrace door head',(-1.18,-.28,3.85),(.20,1.42,.18),trim,.025)
-        box('Terrace threshold',(-1.23,-.28,2.04),(.36,1.42,.08),trim,.015)
-        box('Terrace door handle',(-1.235,.09,2.9),(.045,.09,.09),cream,.009)
         box('Upper front window backing',(.925,-2.36,3.10),(1.25,.10,.94),trim,.025)
         for x in [.19,1.66]:box('Upper front jamb',(x,-2.40,3.10),(.20,.19,1.30),trim,.025)
         for z in [2.51,3.69]:box('Upper front head or sill',(.925,-2.40,z),(1.67,.19,.17),trim,.025)
