@@ -285,6 +285,17 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Bayan M08 draft,2026-09-13:** original slab paving, connected town roads/blocks,
+retained chunky houses, grounded kerbs, civic side/rear detail and corrected
+planting/fence placement. Fresh routes20/20,finalV7 checks8/8,finalV7 semantic19707 rows pass
+after a cached-bounds floor-toggle correction. Final batch evidence is in
+[bayan-town-draft.md](reports/improvement-2026-09-12/bayan-town-draft.md) and the
+execution plan. Larger map/art/ordinary-play and later scope remain open.
+
+M08 Bayan paving/connected-town implementation is underway after pushed1661cb2b.
+NearFade currently omits normal maps when copying materials; albedo paving is
+being authored now, normal-map preservation remains an explicit graphics task.
+
 **Ilalim intermediate street batch,2026-09-12:** retained chunky shop bodies,
 indoor pisonets,4 original vendor pockets, revised signs/crossings, measured
 pole/sign/roof separation and grounded fixtures. V4 physical routes passed20/20

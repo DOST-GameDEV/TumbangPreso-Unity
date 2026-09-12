@@ -447,3 +447,15 @@ V3 moves the utility row to its own pavement strip and rebuilds its conductors;
 signs occupy measured clear spans. Required follow-up: actual FPP/oblique review,
 mesh overlap checks and updated retrieval/footpath clearance. Do not claim success
 from a picture showing only the sign face.
+
+### M08 actual review findings,2026-09-13
+
+V1 player views show the new slab texture and town depth, but a tree pair
+intersected basketball backboards. V2 removed that pair and strengthened the
+terminal shelter. V2 district views found4 old fence objects in new roads; the
+43 active building footprints themselves had0 AABB overlap candidates and0 road
+corridor overlaps. Do not confuse a house-only audit with a complete spatial pass.
+V3 retires those fences, gives roads real kerb depth/collision and adds closed
+side/rear nave and municipal windows/service access. Court boundary clarity at
+open-looking path mouths remains part of M10, alongside every side/back, route,
+lighting and ordinary-play review. No full artistic acceptance is implied.

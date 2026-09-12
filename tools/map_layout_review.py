@@ -13,12 +13,13 @@ from PIL import Image, ImageDraw, ImageFont
 parser = argparse.ArgumentParser()
 parser.add_argument('--inventory', required=True)
 parser.add_argument('--out', required=True)
+parser.add_argument('--map', choices=['Eskinita','BayanPlaza','IlalimNgTulay'])
 args = parser.parse_args()
 out = Path(args.out)
 out.mkdir(parents=True, exist_ok=True)
 report = {}
 
-for name in ['Eskinita', 'BayanPlaza', 'IlalimNgTulay']:
+for name in ([args.map] if args.map else ['Eskinita', 'BayanPlaza', 'IlalimNgTulay']):
     data = json.loads((Path(args.inventory) / (name + '.json')).read_text())
     surfaces = [s for s in data['surfaces'] if s['enabled']]
     buildings = [s for s in surfaces if any(x in s['asset'] for x in
@@ -26,7 +27,7 @@ for name in ['Eskinita', 'BayanPlaza', 'IlalimNgTulay']:
                   'env_bell_tower', 'env_municipal_hall', 'env_sari_sari_store'])]
     solids = [s for s in data['solids'] if s['enabled'] and not s['trigger']
               and s['max']['y'] > .35 and s['min']['y'] < 2]
-    foliage = [s for s in surfaces if '/Broadleaf_' in s['path']]
+    foliage = [s for s in surfaces if '/Broadleaf_' in s['path'] or '/CivicGardenTree' in s['path']]
     signs = collections.Counter()
     for s in surfaces:
         if '/Karatula/' in s['path']:

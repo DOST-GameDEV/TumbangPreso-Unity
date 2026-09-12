@@ -1,0 +1,145 @@
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=152
+Eskinita: replaced 33 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 3 retained mountain paintings as distant landscape without altering their artwork.
+Eskinita: final-pass renderers=39
+Eskinita baseline-to-run1: 0 changed rows
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=152
+Eskinita: replaced 33 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 3 retained mountain paintings as distant landscape without altering their artwork.
+Eskinita: final-pass renderers=39
+Eskinita run1-to-run2: 0 changed rows; 2388 compared rows
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=3232
+  authored default mesh=default triangles=2404
+  finish renderers=44
+BayanPlaza: replaced 9 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+  town house 0 a Center: (-26.67, 2.18, -12.50), Extents: (2.57, 2.08, 3.25)
+  town house 1 e Center: (-36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 2 c Center: (-28.57, 2.68, -4.50), Extents: (2.57, 2.58, 3.22)
+  town house 3 o Center: (-36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 4 e Center: (-26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.25)
+  town house 5 c Center: (-36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 6 o Center: (-26.67, 2.94, 11.50), Extents: (2.57, 2.84, 3.18)
+  town house 7 a Center: (-36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 8 c Center: (-26.67, 2.68, 19.50), Extents: (2.57, 2.58, 3.22)
+  town house 9 c Center: (-36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 10 c Center: (26.67, 2.68, -12.50), Extents: (2.57, 2.58, 3.22)
+  town house 11 e Center: (36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 12 e Center: (26.67, 2.94, -4.50), Extents: (2.57, 2.84, 3.25)
+  town house 13 o Center: (36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 14 o Center: (26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.18)
+  town house 15 c Center: (36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 16 c Center: (28.57, 2.68, 11.50), Extents: (2.57, 2.58, 3.22)
+  town house 17 a Center: (36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 18 a Center: (26.67, 2.18, 19.50), Extents: (2.57, 2.08, 3.25)
+  town house 19 c Center: (36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 20 a Center: (-43.50, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 21 c Center: (-35.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 22 e Center: (-27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 23 o Center: (-10.80, 2.94, -28.67), Extents: (3.18, 2.84, 2.57)
+  town house 24 c Center: (-3.60, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 25 a Center: (3.60, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 26 c Center: (10.80, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 27 e Center: (27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 28 o Center: (35.50, 2.94, -28.67), Extents: (3.17, 2.84, 2.57)
+  town house 29 c Center: (43.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 30 a Center: (-43.50, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 31 c Center: (-35.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 32 e Center: (-27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 33 o Center: (-10.80, 2.94, 37.97), Extents: (3.18, 2.84, 2.57)
+  town house 34 c Center: (-3.60, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 35 a Center: (3.60, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 36 c Center: (10.80, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 37 e Center: (27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 38 o Center: (35.50, 2.94, 37.97), Extents: (3.17, 2.84, 2.57)
+  town house 39 c Center: (43.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+Bayan civic draft:6m texture repeat with1.5m slabs; connected four-street grid;40 retained chunky houses in frontage/back/corner blocks;2 recessed vendor pockets. Whole-place critique remains open.
+BayanPlaza: final-pass renderers=41
+BayanPlaza baseline-to-run1: 1 changed rows
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=2404
+  authored default mesh=default triangles=3232
+  finish renderers=44
+BayanPlaza: replaced 9 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+  town house 0 a Center: (-26.67, 2.18, -12.50), Extents: (2.57, 2.08, 3.25)
+  town house 1 e Center: (-36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 2 c Center: (-28.57, 2.68, -4.50), Extents: (2.57, 2.58, 3.22)
+  town house 3 o Center: (-36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 4 e Center: (-26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.25)
+  town house 5 c Center: (-36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 6 o Center: (-26.67, 2.94, 11.50), Extents: (2.57, 2.84, 3.18)
+  town house 7 a Center: (-36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 8 c Center: (-26.67, 2.68, 19.50), Extents: (2.57, 2.58, 3.22)
+  town house 9 c Center: (-36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 10 c Center: (26.67, 2.68, -12.50), Extents: (2.57, 2.58, 3.22)
+  town house 11 e Center: (36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 12 e Center: (26.67, 2.94, -4.50), Extents: (2.57, 2.84, 3.25)
+  town house 13 o Center: (36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 14 o Center: (26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.18)
+  town house 15 c Center: (36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 16 c Center: (28.57, 2.68, 11.50), Extents: (2.57, 2.58, 3.22)
+  town house 17 a Center: (36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 18 a Center: (26.67, 2.18, 19.50), Extents: (2.57, 2.08, 3.25)
+  town house 19 c Center: (36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 20 a Center: (-43.50, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 21 c Center: (-35.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 22 e Center: (-27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 23 o Center: (-10.80, 2.94, -28.67), Extents: (3.18, 2.84, 2.57)
+  town house 24 c Center: (-3.60, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 25 a Center: (3.60, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 26 c Center: (10.80, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 27 e Center: (27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 28 o Center: (35.50, 2.94, -28.67), Extents: (3.17, 2.84, 2.57)
+  town house 29 c Center: (43.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 30 a Center: (-43.50, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 31 c Center: (-35.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 32 e Center: (-27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 33 o Center: (-10.80, 2.94, 37.97), Extents: (3.18, 2.84, 2.57)
+  town house 34 c Center: (-3.60, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 35 a Center: (3.60, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 36 c Center: (10.80, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 37 e Center: (27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 38 o Center: (35.50, 2.94, 37.97), Extents: (3.17, 2.84, 2.57)
+  town house 39 c Center: (43.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+Bayan civic draft:6m texture repeat with1.5m slabs; connected four-street grid;40 retained chunky houses in frontage/back/corner blocks;2 recessed vendor pockets. Whole-place critique remains open.
+BayanPlaza: final-pass renderers=41
+BayanPlaza run1-to-run2: 0 changed rows; 3820 compared rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay baseline-to-run1: 0 changed rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay run1-to-run2: 0 changed rows; 13595 compared rows
+SEMANTIC REPEATABILITY PASS

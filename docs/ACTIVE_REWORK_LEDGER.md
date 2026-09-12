@@ -18,26 +18,18 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (2026-09-12)
+## Current execution pointer (2026-09-13, owner sleeping)
 
-Read EXECUTION_PLAN.md for the only live state and MAP_TRANSFORMATION_PLAN.md for
-M01-M11. Pushed HEAD0611c6d4. No active Unity/Blender run. V7 semantic79898 completed19118 rows with zero drift. No C#/imported-asset edits until collected.
-All other Unity/Blender runs complete. Ilalim V7 and retained-house detail studies
-are uncommitted; maps remain UNACCEPTED. V4 routes1/1,20/20 actual pickups; V3
-sign/roof-pole clearance1/1,22 real owner views. New house details preserve old
-chunky bodies; thin replacements were rejected and quarantined after zero references.
+Pushed1661cb2b. No active Unity/Blender run. Bayan V7 final checks8/8 and semantic
+19707 rows pass with zero drift; profile2466329a74f8 restored17. Fresh routes20/20,
+48 owner views and491 EditMode are recorded with exact scope in EXECUTION_PLAN.md
+and bayan-town-draft.md. Verified generated dirt was restored without discarding
+Bayan changes. Commit/push the stable intermediate batch next, then M09 Eskinita.
 
-V5 checks passed8/8,17 profiles restored4d2829840d8d. V4 support findings
-were corrected by seating slabs on the actual ground and combining connected
-fixture meshes. V5 semantic19111 rows had zero drift;Core562/562 and14 source audits passed.
-V6 restores original timber/metal pole palette, varies signs and adds1 wall painting.
-Next collect author42684, renew material views and
-two-run authoring, then stable verified batches. Complete remaining Ilalim/Bayan/
-Eskinita transformation and broader play-feel/equipment/graphics/Sa Bubong/TODO.
-All exact paths, profile snapshots, limitations and rejected work are in the plan.
-Prior full pointers are preserved in reports/improvement-2026-09-12/
-execution-pointer-history-02/03/04.md. Historical wrap-up limits below are superseded
-by the owner's instruction to continue all required work, without a handoff stop.
+M09 measured lot/parking/corner plan and retained-house b/e/o studies are prepared;
+new studies remain Logs-only and need Unity review. The owner asks continued work
+while asleep and durable ledgers. All larger map/play-feel/equipment/graphics/
+Sa Bubong/kit/network/TODO scope remains open. No handoff stop or permission wait.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

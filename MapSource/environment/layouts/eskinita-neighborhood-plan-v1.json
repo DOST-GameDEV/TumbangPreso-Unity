@@ -1,0 +1,304 @@
+{
+  "status": "M09 measured planning; not applied",
+  "source": "Logs/map-place-draft-v7-inventory/Eskinita.json",
+  "preserve": "Retain actual chunky house bodies/proportions and useful parking; repair native placement, not a thin replacement family.",
+  "proposedFacadeEdgeX": 9.7,
+  "frontBoundaryX": 8.1,
+  "gapBetweenLots": 0.85,
+  "crossStreetCentreZ": [
+    -29.5,
+    29.5
+  ],
+  "crossStreetWidth": 6,
+  "cornerFacadeEdgeZ": 34.1,
+  "slots": [
+    {
+      "id": "Sasakyan_0_E",
+      "min": {
+        "x": 8.600000381469727,
+        "y": -0.16249996423721313,
+        "z": 18.275001525878906
+      },
+      "max": {
+        "x": 11.225000381469727,
+        "y": 2.1999998092651367,
+        "z": 23.087501525878906
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/car/van.glb"
+      ],
+      "proposedZ": 22.588,
+      "width": 4.812,
+      "boundary": "closed-drive-gate"
+    },
+    {
+      "id": "Sasakyan_6_W",
+      "min": {
+        "x": -11.225000381469727,
+        "y": -0.16250008344650269,
+        "z": -24.43440055847168
+      },
+      "max": {
+        "x": -8.600000381469727,
+        "y": 2.112499952316284,
+        "z": -19.971899032592773
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/car/sedan.glb"
+      ],
+      "proposedZ": -23.03,
+      "width": 4.463,
+      "boundary": "closed-drive-gate"
+    },
+    {
+      "id": "Sasakyan_2_W",
+      "min": {
+        "x": -11.225000381469727,
+        "y": -0.16250008344650269,
+        "z": 3.7681000232696533
+      },
+      "max": {
+        "x": -8.600000381469727,
+        "y": 2.7249996662139893,
+        "z": 9.455599784851074
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/car/delivery.glb"
+      ],
+      "proposedZ": 7.785,
+      "width": 5.687,
+      "boundary": "closed-drive-gate"
+    },
+    {
+      "id": "Sasakyan_4_E",
+      "min": {
+        "x": 8.600000381469727,
+        "y": -0.16250008344650269,
+        "z": -8.0693998336792
+      },
+      "max": {
+        "x": 11.225000381469727,
+        "y": 2.112499952316284,
+        "z": -2.906900405883789
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/car/truck.glb"
+      ],
+      "proposedZ": -5.581,
+      "width": 5.162,
+      "boundary": "closed-drive-gate"
+    },
+    {
+      "id": "Bahay_6_E",
+      "min": {
+        "x": 8.59999942779541,
+        "y": 0.09999990463256836,
+        "z": -23.98885154724121
+      },
+      "max": {
+        "x": 13.74000072479248,
+        "y": 6.287500381469727,
+        "z": -15.206949234008789
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-d.glb"
+      ],
+      "proposedZ": -20.603,
+      "width": 8.782,
+      "retainedFamily": "e",
+      "reason": "Use the retained solid family; d/j fireplace chimneys do not fit this street.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_1_W",
+      "min": {
+        "x": -13.740644454956055,
+        "y": 0.09999990463256836,
+        "z": 9.718049049377441
+      },
+      "max": {
+        "x": -8.599954605102539,
+        "y": 5.267704486846924,
+        "z": 16.149951934814453
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-c.glb"
+      ],
+      "proposedZ": 14.695,
+      "width": 6.432,
+      "retainedFamily": "c",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_0_W",
+      "min": {
+        "x": -13.740644454956055,
+        "y": 0.09999990463256836,
+        "z": 16.5
+      },
+      "max": {
+        "x": -8.599954605102539,
+        "y": 4.267704963684082,
+        "z": 23.0
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-a.glb"
+      ],
+      "proposedZ": 22.011,
+      "width": 6.5,
+      "retainedFamily": "a",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "masonry-and-grille"
+    },
+    {
+      "id": "Bahay_4_W",
+      "min": {
+        "x": -14.300000190734863,
+        "y": 0.09999990463256836,
+        "z": -13.009401321411133
+      },
+      "max": {
+        "x": -8.59999942779541,
+        "y": 5.787499904632568,
+        "z": -3.869398593902588
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-b.glb"
+      ],
+      "proposedZ": -8.178,
+      "width": 9.14,
+      "retainedFamily": "b",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "masonry-and-grille"
+    },
+    {
+      "id": "Bahay_3_W",
+      "min": {
+        "x": -13.180001258850098,
+        "y": 0.09999990463256836,
+        "z": -3.5194005966186523
+      },
+      "max": {
+        "x": -8.59999942779541,
+        "y": 5.287499904632568,
+        "z": 3.3306007385253906
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-j.glb"
+      ],
+      "proposedZ": 0.667,
+      "width": 6.85,
+      "retainedFamily": "c",
+      "reason": "Use the retained solid family; d/j fireplace chimneys do not fit this street.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_2_E",
+      "min": {
+        "x": 8.59999942779541,
+        "y": 0.09999990463256836,
+        "z": 4.555599689483643
+      },
+      "max": {
+        "x": 13.74000072479248,
+        "y": 5.787499904632568,
+        "z": 11.055601119995117
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-e.glb"
+      ],
+      "proposedZ": 8.8,
+      "width": 6.5,
+      "retainedFamily": "e",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "masonry-and-grille"
+    },
+    {
+      "id": "Bahay_5_W",
+      "min": {
+        "x": -13.74000072479248,
+        "y": 0.09999990463256836,
+        "z": -19.709402084350586
+      },
+      "max": {
+        "x": -8.59999942779541,
+        "y": 5.787499904632568,
+        "z": -13.359400749206543
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-o.glb"
+      ],
+      "proposedZ": -16.773,
+      "width": 6.35,
+      "retainedFamily": "o",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_1_E",
+      "min": {
+        "x": 8.599954605102539,
+        "y": 0.09999990463256836,
+        "z": 11.405549049377441
+      },
+      "max": {
+        "x": 13.740644454956055,
+        "y": 5.267704486846924,
+        "z": 17.837451934814453
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-c.glb"
+      ],
+      "proposedZ": 16.116,
+      "width": 6.432,
+      "retainedFamily": "c",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_3_E",
+      "min": {
+        "x": 8.59999942779541,
+        "y": 0.09999990463256836,
+        "z": -2.6444005966186523
+      },
+      "max": {
+        "x": 13.180001258850098,
+        "y": 5.287499904632568,
+        "z": 4.205600738525391
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-j.glb"
+      ],
+      "proposedZ": 1.275,
+      "width": 6.85,
+      "retainedFamily": "c",
+      "reason": "Use the retained solid family; d/j fireplace chimneys do not fit this street.",
+      "boundary": "simple-steel-gate"
+    },
+    {
+      "id": "Bahay_5_E",
+      "min": {
+        "x": 8.59999942779541,
+        "y": 0.09999990463256836,
+        "z": -14.856900215148926
+      },
+      "max": {
+        "x": 13.74000072479248,
+        "y": 5.787499904632568,
+        "z": -8.5068998336792
+      },
+      "assets": [
+        "Assets/TumbangPreso/Art/models/kits/city/building-type-o.glb"
+      ],
+      "proposedZ": -12.188,
+      "width": 6.35,
+      "retainedFamily": "o",
+      "reason": "Preserve the existing solid body and add fitted local construction details.",
+      "boundary": "simple-steel-gate"
+    }
+  ],
+  "needs": "Review actual door/window/gate placement; reconcile original trees/poles/service props and corner/back belt overlaps. Place cars by whole drawn bounds so wheels do not remain buried. Do not treat the proposal as authored.",
+  "boundaryIntent": "Private plot fronts align with the existing absX8.1 play wall. Preserve house/carry routes; do not create apparent open doorways through a closed collision boundary."
+}

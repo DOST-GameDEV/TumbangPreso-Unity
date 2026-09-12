@@ -14,7 +14,8 @@ import bpy
 from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[1]
-parser=argparse.ArgumentParser();parser.add_argument('--out',default='Logs/retained-house-details-v1')
+parser=argparse.ArgumentParser();parser.add_argument('--out',default='Logs/retained-house-details-v3')
+parser.add_argument('--kinds',nargs='+',default=['a','c','e','o'])
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 out=ROOT/args.out;out.mkdir(parents=True,exist_ok=True)
 
@@ -49,7 +50,44 @@ def windows(model):
         unique[key]=(low,high,normal)
     return unique.values()
 
-for kind in ['a','c']:
+def clip_height(points,height,above):
+    result=[]
+    for a,b in zip(points,points[1:]+points[:1]):
+        a_inside=a.z>=height if above else a.z<=height
+        b_inside=b.z>=height if above else b.z<=height
+        if a_inside:result.append(a)
+        if a_inside!=b_inside:result.append(a+(b-a)*((height-a.z)/(b.z-a.z)))
+    return result
+
+def upper_cladding(model,backing,planks):
+    mesh=model.data;uv=mesh.uv_layers.active
+    image=next(n.image for n in mesh.materials[0].node_tree.nodes if n.type=='TEX_IMAGE')
+    pixels=list(image.pixels);w,h=image.size
+    vertices=[];faces=[];slots=[]
+    def polygon(points,normal,depth,slot):
+        start=len(vertices);vertices.extend([p+normal*depth for p in points]);faces.append(tuple(range(start,len(vertices))));slots.append(slot)
+    for face in mesh.polygons:
+        normal=(model.matrix_world.to_3x3()@face.normal).normalized()
+        if abs(normal.z)>.08:continue
+        coord=uv.data[face.loop_indices[0]].uv;x=min(w-1,int(coord.x*w));y=min(h-1,int(coord.y*h))
+        color=pixels[(y*w+x)*4:(y*w+x)*4+3]
+        if sum(color)/3<.63 or max(color)-min(color)>.12:continue
+        points=[model.matrix_world@mesh.vertices[i].co for i in face.vertices]
+        points=clip_height(points,2.17,True)
+        if len(points)<3:continue
+        # The actual solid wall remains. This is a fitted finish, set behind the
+        # retained projecting window frames/glazing, not a new thin house shell.
+        polygon(points,normal,.035,0)
+        for band in range(18):
+            low=2.17+band*.25;high=low+.238
+            strip=clip_height(clip_height(points,low,True),high,False)
+            if len(strip)>=3:polygon(strip,normal,.052,1+band%2)
+    m=bpy.data.meshes.new('Fitted timber upper courses');m.from_pydata(vertices,[],faces)
+    for mat in [backing,*planks]:m.materials.append(mat)
+    for polygon,slot in zip(m.polygons,slots):polygon.material_index=slot
+    o=bpy.data.objects.new('Fitted timber upper courses',m);bpy.context.collection.objects.link(o)
+
+for kind in args.kinds:
     bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
     source=ROOT/f'Assets/TumbangPreso/Art/models/kits/city/building-type-{kind}.glb'
     bpy.ops.import_scene.gltf(filepath=str(source))
@@ -60,6 +98,10 @@ for kind in ['a','c']:
     wood=material('Warm aged timber',(.34,.23,.14));steel=material('Dull painted steel',(.25,.33,.28))
     concrete=material('Warm concrete',(.52,.50,.43));roof=material('Galvanized shade roof',(.40,.44,.40))
     cream=material('Cream goods',(.72,.65,.47));red=material('Oxblood goods',(.48,.22,.23))
+    if kind in ['e','o']:
+        shadow=material('Timber course joints',(.24,.19,.13))
+        plank_a=material('Timber upper warm',(.43,.32,.21));plank_b=material('Timber upper quiet',(.40,.29,.19))
+        upper_cladding(original,shadow,[plank_a,plank_b])
     for low,high,normal in windows(original):
         center=(low+high)*.5;side=abs(normal.x)>.8;width=(high.y-low.y) if side else (high.x-low.x)
         count=max(3,round((high.z-low.z)/.16))
@@ -69,11 +111,30 @@ for kind in ['a','c']:
             o=box('Jalousie blade within retained deep frame',at,size,steel,.008)
             if side:o.rotation_euler.y=math.radians(-16)*normal.x
             else:o.rotation_euler.x=math.radians(16)*normal.y
+    if kind=='o':
+        # Measured retained terrace: X[-3.075,-1.075],Y[-2.28,1.72],Z2.
+        # The upper room previously had no visible access to that terrace.
+        trim=material('Substantial dark window trim',(.24,.26,.31))
+        box('Closed terrace door',(-1.16,-.28,2.88),(.08,1.0,1.72),wood,.025)
+        for y in [-.90,.34]:box('Terrace door jamb',(-1.18,y,2.94),(.20,.18,1.88),trim,.025)
+        box('Terrace door head',(-1.18,-.28,3.85),(.20,1.42,.18),trim,.025)
+        box('Terrace threshold',(-1.23,-.28,2.04),(.36,1.42,.08),trim,.015)
+        box('Terrace door handle',(-1.235,.09,2.9),(.045,.09,.09),cream,.009)
+        box('Upper front window backing',(.925,-2.36,3.10),(1.25,.10,.94),trim,.025)
+        for x in [.19,1.66]:box('Upper front jamb',(x,-2.40,3.10),(.20,.19,1.30),trim,.025)
+        for z in [2.51,3.69]:box('Upper front head or sill',(.925,-2.40,z),(1.67,.19,.17),trim,.025)
+        for i in range(5):box('Upper front jalousie',(.925,-2.425,2.73+i*.185),(1.25,.11,.08),steel,.008)
+        for y in [-1.7,1.10]:box('Terrace laundry post',(-2.70,y,2.67),(.075,.075,1.34),steel,.008)
+        box('Terrace clothesline',(-2.70,-.30,3.34),(.018,2.80,.018),steel,.003)
+        for i,y in enumerate([-.95,-.20,.55]):
+            box('Hanging household towel',(-2.70,y,2.99),(.026,.45,.57),cream if i!=1 else red,.003)
+            for peg in [-.16,.16]:box('Laundry peg',(-2.70,y+peg,3.30),(.045,.035,.12),wood,.004)
     # A solid threshold and paired substantial piers carry the entrance shade.
     # This projects into a private setback, which must be reserved during layout.
     door_x=0 if kind=='a' else -.03
-    box('Entry threshold',(door_x,-2.70,.075),(2.03,1.24,.15),concrete,.04)
-    box('Lower entry step',(door_x,-3.36,.0375),(2.11,.38,.075),concrete,.02)
+    if kind in ['a','c']:
+        box('Entry threshold',(door_x,-2.70,.075),(2.03,1.24,.15),concrete,.04)
+        box('Lower entry step',(door_x,-3.36,.0375),(2.11,.38,.075),concrete,.02)
     # The low house already has a deep eave. An extra entrance roof would cover
     # its transom, so reserve this portico for the taller retained body only.
     if kind=='c':

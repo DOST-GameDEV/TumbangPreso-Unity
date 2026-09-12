@@ -1,5 +1,5 @@
 {
-  "status": "M08 planning from current measured landmark and belt bounds; not yet authored in Unity",
+  "status": "M08 implementation draft; preserve native proportions and verify all resulting bounds",
   "paving": {
     "playHalfExtent": 12.5,
     "floorY": 0.1,
@@ -76,14 +76,15 @@
     "eastFacadeX": 24.1,
     "westFacadeX": -24.1,
     "proposedLotZ": [
-      -15,
-      -7,
-      1,
-      9,
-      17
+      -12.5,
+      -4.5,
+      3.5,
+      11.5,
+      19.5
     ],
-    "widthTarget": 6.4,
-    "types": "Retained chunky houses/shop bodies, roof and entry details from approved-style study where measured setbacks permit."
+    "widthTarget": 6.8,
+    "types": "Retained chunky houses/shop bodies, roof and entry details from approved-style study where measured setbacks permit.",
+    "vendorSetback": "West lot1 and east lot3 fronts move toabsX26; vendor centersabsX24.4 leave a through-pavement and keep umbrellas ahead of the roof."
   },
   "required": "Measured all-direction district plan; real streets, corners and entrances; reposition trees/kiosks/old belt conflicts rather than burying them beneath a new road. Retain primary civic identities and clear TUMP arena."
 }

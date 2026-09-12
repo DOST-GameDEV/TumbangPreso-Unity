@@ -19,7 +19,14 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void Run()
         {
             var report=new StringBuilder();
-            foreach(string map in new[]{"Eskinita","BayanPlaza","IlalimNgTulay"})
+            var maps=new[]{"Eskinita","BayanPlaza","IlalimNgTulay"};
+            string selected=Environment.GetEnvironmentVariable("TUMP_MAP_AUTHOR");
+            if(!string.IsNullOrEmpty(selected))
+            {
+                if(!maps.Contains(selected))throw new InvalidOperationException("Unknown map author target: "+selected);
+                maps=new[]{selected};
+            }
+            foreach(string map in maps)
             {
                 var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
                 NeighborhoodFinishAuthor.FinishLoadedScene(map,report);
@@ -34,6 +41,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             MapPlaceAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
+            CivicTownAuthor.ClearPrevious(map);
+            CivicTownAuthor.PrepareExistingPlacement(map);
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
             var old=GameObject.Find("MapFinalPass");if(old!=null)Object.DestroyImmediate(old);
             var root=new GameObject("MapFinalPass").transform;
@@ -44,6 +53,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="BayanPlaza"){CompleteCivicBuildings(root);PlazaPaving(root);FinishCivicUse(root,report);}
             if(map=="Eskinita")NeighborhoodPockets(root);
             MapPlaceAuthor.FinishLoadedScene(map,report);
+            CivicTownAuthor.FinishLoadedScene(map,report);
             // Street placement owns the poles. Rebuild their connected conductors
             // only after that placement has reached its final measured position.
             if(map=="IlalimNgTulay")UtilityConductors(root,report);
@@ -434,8 +444,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 PlaceByDrawnBase(parked.transform,new Vector3(-10+i*3.5f,.1f,-15.8f),0);
             }
             foreach(float x in new[]{-.8f,1.8f})foreach(float z in new[]{-17.2f,-14.4f})
-                Block(root,"WaitingShadePost",new Vector3(x,1.45f,z),new Vector3(.12f,2.7f,.12f),wood);
-            Block(root,"WaitingShadeRoof",new Vector3(.5f,2.86f,-15.8f),new Vector3(3.0f,.12f,3.25f),roofMat,true);
+            {
+                Block(root,"WaitingShadePost",new Vector3(x,1.45f,z),new Vector3(.22f,2.7f,.22f),wood);
+                Block(root,"WaitingShadePostFoot",new Vector3(x,.18f,z),new Vector3(.36f,.16f,.36f),stone);
+            }
+            foreach(float z in new[]{-17.2f,-14.4f})
+                Block(root,"WaitingShadeBeam",new Vector3(.5f,2.73f,z),new Vector3(2.82f,.18f,.24f),wood,true);
+            Block(root,"WaitingShadeRoof",new Vector3(.5f,2.89f,-15.8f),new Vector3(3.0f,.18f,3.25f),roofMat,true);
             var model=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/kits/town/stall-bench.glb");
             if(model==null)throw new InvalidOperationException("Missing retained terminal bench source.");
             var bench=(GameObject)PrefabUtility.InstantiatePrefab(model);bench.name="TerminalWaitingBench";
