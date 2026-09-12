@@ -743,9 +743,18 @@ namespace TumbangPreso.EditorTools
             using var process = System.Diagnostics.Process.Start(info);
             if (process == null) return "";
 
-            string output = process.StandardOutput.ReadToEnd();
+            // Drain both pipes while git runs. Reading stdout synchronously first
+            // deadlocked once LF warnings filled stderr's Windows pipe, before
+            // execution could ever reach the intended ten-second timeout.
+            var clock=System.Diagnostics.Stopwatch.StartNew();
+            var output=process.StandardOutput.ReadToEndAsync();
+            var errors=process.StandardError.ReadToEndAsync();
+            bool exited=process.WaitForExit(10000);
+            int remaining=System.Math.Max(0,10000-(int)clock.ElapsedMilliseconds);
+            bool drained=exited && System.Threading.Tasks.Task.WaitAll(
+                new System.Threading.Tasks.Task[]{output,errors},remaining);
 
-            if (!process.WaitForExit(10000))
+            if (!exited || !drained)
             {
                 try { process.Kill(); } catch { /* it is already going */ }
                 Debug.LogWarning($"[Build] `git {arguments}` did not answer in ten " +
@@ -757,7 +766,7 @@ namespace TumbangPreso.EditorTools
             if (process.ExitCode != 0) return "";
 
             ok = true;
-            return output;
+            return output.Result;
         }
 
         private static void EnsureRuntimeShaders()
