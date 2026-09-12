@@ -1,0 +1,137 @@
+using TumbangPreso.Settings;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// Draw the gameplay camera at a chosen pixel density and present it beneath
+    /// native UI. Native rendering has no target, canvas or additional copy.
+    /// External portrait/evidence targets retain their own size and ownership.
+    /// </summary>
+    [RequireComponent(typeof(Camera)), DisallowMultipleComponent, DefaultExecutionOrder(1000)]
+    public sealed class GameplayResolution : MonoBehaviour
+    {
+        private Camera _camera;
+        private RenderTexture _target;
+        private Canvas _canvas;
+        private RawImage _picture;
+        private Material _presentation;
+        private bool _reportedMissing;
+        public bool IsPresenting => _canvas != null && _canvas.enabled;
+        public RenderTexture WorldTarget => _target;
+        public bool OwnsTarget => _target != null && _camera != null && _camera.targetTexture == _target;
+
+        private void Awake() => _camera = GetComponent<Camera>();
+
+        private void LateUpdate()
+        {
+            if (_camera == null) return;
+            if (!_camera.enabled || Mathf.Approximately(ResolutionModes.Scale, 1f))
+            {
+                Release();
+                return;
+            }
+            if (_camera.targetTexture != null && _camera.targetTexture != _target)
+            {
+                // A capture can temporarily borrow the camera, then restore its
+                // previous target. Keep our allocation alive until that handback.
+                if (_canvas != null) _canvas.enabled = false;
+                return;
+            }
+            if (!EnsurePresentation()) return;
+
+            Rect viewport = _camera.rect;
+            int nativeWidth = Mathf.Max(1, Mathf.RoundToInt(Screen.width * viewport.width));
+            int nativeHeight = Mathf.Max(1, Mathf.RoundToInt(Screen.height * viewport.height));
+            float scale = Mathf.Min(ResolutionModes.Scale,
+                (float)SystemInfo.maxTextureSize / Mathf.Max(nativeWidth, nativeHeight));
+            int width = Mathf.Max(1, Mathf.RoundToInt(nativeWidth * scale));
+            int height = Mathf.Max(1, Mathf.RoundToInt(nativeHeight * scale));
+            var format = _camera.allowHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.ARGB32;
+            var descriptor = new RenderTextureDescriptor(width, height, format, 24)
+            {
+                msaaSamples = _camera.allowMSAA ? Mathf.Max(1, AntiAliasModes.RequestedSamples) : 1,
+                useMipMap = false, autoGenerateMips = false,
+            };
+            descriptor.msaaSamples = SystemInfo.GetRenderTextureSupportedMSAASampleCount(descriptor);
+            if (_target == null || _target.width != width || _target.height != height ||
+                _target.graphicsFormat != descriptor.graphicsFormat || _target.antiAliasing != descriptor.msaaSamples)
+            {
+                ReleaseTarget();
+                _target = new RenderTexture(descriptor)
+                {
+                    name = "Gameplay world resolution", filterMode = FilterMode.Bilinear,
+                    wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.DontSave,
+                };
+                if (!_target.Create())
+                {
+                    Release();
+                    return;
+                }
+                _picture.texture = _target;
+            }
+            _camera.targetTexture = _target;
+            // Rounded target dimensions must not change the aim projection.
+            _camera.aspect = (float)nativeWidth / nativeHeight;
+            _canvas.targetDisplay = _camera.targetDisplay;
+            _picture.rectTransform.anchorMin = viewport.min;
+            _picture.rectTransform.anchorMax = viewport.max;
+            _picture.rectTransform.offsetMin = _picture.rectTransform.offsetMax = Vector2.zero;
+            _canvas.enabled = true;
+        }
+
+        private bool EnsurePresentation()
+        {
+            if (_canvas != null) return true;
+            var shader = Shader.Find("TumbangPreso/WorldPresentation");
+            if (shader == null)
+            {
+                if (!_reportedMissing) Debug.LogWarning("[Graphics] World presentation shader missing; using native resolution.");
+                _reportedMissing = true;
+                return false;
+            }
+            _presentation = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            var root = new GameObject("World resolution presentation", typeof(RectTransform), typeof(Canvas));
+            root.transform.SetParent(transform, false);
+            root.hideFlags = HideFlags.DontSave;
+            _canvas = root.GetComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _canvas.sortingOrder = short.MinValue;
+            var image = new GameObject("World image", typeof(RectTransform), typeof(RawImage));
+            image.transform.SetParent(root.transform, false);
+            _picture = image.GetComponent<RawImage>();
+            _picture.raycastTarget = false;
+            _picture.material = _presentation;
+            return true;
+        }
+
+        private void ReleaseTarget()
+        {
+            if (_target == null) return;
+            if (OwnsTarget)
+            {
+                _camera.targetTexture = null;
+                _camera.ResetAspect();
+            }
+            if (_picture != null) _picture.texture = null;
+            _target.Release();
+            Destroy(_target);
+            _target = null;
+        }
+
+        private void Release()
+        {
+            ReleaseTarget();
+            if (_canvas != null) _canvas.enabled = false;
+        }
+
+        private void OnDisable() => Release();
+        private void OnDestroy()
+        {
+            Release();
+            if (_canvas != null) Destroy(_canvas.gameObject);
+            if (_presentation != null) Destroy(_presentation);
+        }
+    }
+}

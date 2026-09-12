@@ -1,0 +1,145 @@
+diff --git a/Assets/TumbangPreso/Editor/GameBuilder.cs b/Assets/TumbangPreso/Editor/GameBuilder.cs
+index f53754ab..fec9be0a 100644
+--- a/Assets/TumbangPreso/Editor/GameBuilder.cs
++++ b/Assets/TumbangPreso/Editor/GameBuilder.cs
+@@ -813,6 +813,7 @@ namespace TumbangPreso.EditorTools
+                 // nothing. `PostAntiAlias` logs a warning on the miss for that reason; this line
+                 // is what stops it being reached.
+                 "TumbangPreso/Fxaa",
++                "TumbangPreso/WorldPresentation",
+ 
+                 // ⚠️ § THE STUN FROST's SCREEN HALF, AND ITS MISS PATH IS THE QUIETEST OF THE
+                 // THREE. `Hud.BuildFrostVignette` returns without building anything when the
+diff --git a/Assets/TumbangPreso/Runtime/Camera/CameraRig.cs b/Assets/TumbangPreso/Runtime/Camera/CameraRig.cs
+index 60df21cb..23c17270 100644
+--- a/Assets/TumbangPreso/Runtime/Camera/CameraRig.cs
++++ b/Assets/TumbangPreso/Runtime/Camera/CameraRig.cs
+@@ -327,6 +327,8 @@ namespace TumbangPreso.CameraSystem
+             // soften a picture that is not aliased. See the class comment on `PostAntiAlias`.
+             if (gameObject.GetComponent<Visual.PostAntiAlias>() == null)
+                 gameObject.AddComponent<Visual.PostAntiAlias>();
++            if (GetComponent<Visual.GameplayResolution>() == null)
++                gameObject.AddComponent<Visual.GameplayResolution>();
+ 
+             // ⚠️⚠️ THE WORLD OUTLINE PROTOTYPE, AND IT IS ON SO IT CAN BE JUDGED. It shipped
+             // inert: nothing added the component and its own toggle defaulted false, which is a
+diff --git a/Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs b/Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs
+index 60528b79..92d72758 100644
+--- a/Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs
++++ b/Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs
+@@ -530,6 +530,8 @@ namespace TumbangPreso.CameraSystem
+             // jagged in exactly the footage this camera exists to produce.
+             if (GetComponent<Visual.PostAntiAlias>() == null)
+                 gameObject.AddComponent<Visual.PostAntiAlias>();
++            if (GetComponent<Visual.GameplayResolution>() == null)
++                gameObject.AddComponent<Visual.GameplayResolution>();
+ 
+             // ⚠️⚠️ THE INK PASS, AND WITHOUT IT THE SPECTATOR WAS WATCHING A DIFFERENT GAME.
+             // 🧑 2026-08-29, holding a spectator frame beside a first-person one: *"is it js me
+diff --git a/Assets/TumbangPreso/Runtime/Settings/GameSettings.cs b/Assets/TumbangPreso/Runtime/Settings/GameSettings.cs
+index 25228978..245d6b70 100644
+--- a/Assets/TumbangPreso/Runtime/Settings/GameSettings.cs
++++ b/Assets/TumbangPreso/Runtime/Settings/GameSettings.cs
+@@ -331,6 +331,8 @@ namespace TumbangPreso.Settings
+         public int AntiAliasMode = AntiAliasModes.Default;
+ 
+         public int GraphicsQuality = GraphicsProfiles.Default;
++        public int WorldResolution = ResolutionModes.Default;
++        public int FrameRateLimit = FrameRateLimits.Default;
+ 
+         /// <summary>
+         /// Whether the game waits for the display before showing a frame, as an index into
+@@ -506,6 +508,8 @@ namespace TumbangPreso.Settings
+         {
+             ApplyDisplay();
+             GraphicsProfiles.Apply(GraphicsQuality);
++            ResolutionModes.Apply(WorldResolution);
++            FrameRateLimits.Apply(FrameRateLimit);
+             AntiAliasModes.Apply(AntiAliasMode);
+             VSyncModes.Apply(VSyncMode);
+             RenderStyles.Apply(RenderStyle);
+@@ -570,6 +574,8 @@ namespace TumbangPreso.Settings
+             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
+             GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);
++            WorldResolution = Mathf.Clamp(WorldResolution, 0, ResolutionModes.Scales.Length - 1);
++            FrameRateLimit = Mathf.Clamp(FrameRateLimit, 0, FrameRateLimits.Rates.Length - 1);
+             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
+             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
+ 
+diff --git a/Assets/TumbangPreso/Runtime/UI/ConvertedSettingsPanel.cs b/Assets/TumbangPreso/Runtime/UI/ConvertedSettingsPanel.cs
+index 26781f4f..f52855fb 100644
+--- a/Assets/TumbangPreso/Runtime/UI/ConvertedSettingsPanel.cs
++++ b/Assets/TumbangPreso/Runtime/UI/ConvertedSettingsPanel.cs
+@@ -79,6 +79,8 @@ namespace TumbangPreso.UI
+             BuildVSyncRow();
+             BuildRenderStyleRow();
+             BuildGraphicsQualityRow();
++            BuildWorldResolutionRow();
++            BuildFrameRateLimitRow();
+             WireSliders();
+             WireChecks();
+             WireNameField();
+@@ -597,7 +599,7 @@ namespace TumbangPreso.UI
+                             "InvertYCheck"),
+             new SettingsTab("AUDIO", "MasterVolumeRow", "SfxVolumeRow", "MusicVolumeRow"),
+             new SettingsTab("VIDEO", "FullscreenCheck", "RenderStyleRow", "AntiAliasRow",
+-                            "VSyncRow", "GraphicsQualityRow"),
++                            "VSyncRow", "GraphicsQualityRow", "WorldResolutionRow", "FrameRateLimitRow"),
+             new SettingsTab("PLAYER", "PlayerNameRow", "SlipperHighlightRow", "TelemetryRow",
+                             "TelemetryNote"),
+         };
+@@ -1496,6 +1498,34 @@ namespace TumbangPreso.UI
+ 
+         private Dropdown _graphicsQuality;
+ 
++        private void BuildWorldResolutionRow()
++        {
++            var options = new List<SwatchDropdown.Option>();
++            foreach (string label in ResolutionModes.Labels)
++                options.Add(new SwatchDropdown.Option(label, null));
++            BuildDropdownRow("WorldResolutionRow", "3D resolution", options,
++                SettingsStore.Current.WorldResolution, index =>
++                {
++                    SettingsStore.Current.WorldResolution = Mathf.Clamp(index, 0, ResolutionModes.Scales.Length - 1);
++                    ResolutionModes.Apply(SettingsStore.Current.WorldResolution);
++                    RefreshApplyState();
++                });
++        }
++
++        private void BuildFrameRateLimitRow()
++        {
++            var options = new List<SwatchDropdown.Option>();
++            foreach (string label in FrameRateLimits.Labels)
++                options.Add(new SwatchDropdown.Option(label, null));
++            BuildDropdownRow("FrameRateLimitRow", "Frame limit (VSync off)", options,
++                SettingsStore.Current.FrameRateLimit, index =>
++                {
++                    SettingsStore.Current.FrameRateLimit = Mathf.Clamp(index, 0, FrameRateLimits.Rates.Length - 1);
++                    FrameRateLimits.Apply(SettingsStore.Current.FrameRateLimit);
++                    RefreshApplyState();
++                });
++        }
++
+         private void BuildGraphicsQualityRow()
+         {
+             var options = new List<SwatchDropdown.Option>();
+diff --git a/Assets/TumbangPreso/Runtime/UI/OffscreenIndicators.cs b/Assets/TumbangPreso/Runtime/UI/OffscreenIndicators.cs
+index 800fedd1..398bbe52 100644
+--- a/Assets/TumbangPreso/Runtime/UI/OffscreenIndicators.cs
++++ b/Assets/TumbangPreso/Runtime/UI/OffscreenIndicators.cs
+@@ -148,10 +148,12 @@ namespace TumbangPreso.UI
+             }
+ 
+             bool isBehind = forward < 0.0f;
+-            Vector3 screen = cam.WorldToScreenPoint(worldPos);
++            Vector3 projected = cam.WorldToViewportPoint(worldPos);
+ 
+             var viewport = new Vector2(Screen.width, Screen.height);
+-            var screenPos = new Vector2(screen.x, screen.y);
++            // The world can render below/above native resolution while the HUD
++            // remains on the display. Projection must use display coordinates.
++            var screenPos = new Vector2(projected.x * viewport.x, projected.y * viewport.y);
+ 
+             // ⚠️ A BEHIND-CAMERA POINT COMES BACK MIRRORED THROUGH THE FRAME CENTRE rather
+             // than flagged. Undo that, or the arrow points the long way around to the target.

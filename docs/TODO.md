@@ -285,6 +285,11 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Owner assessment,2026-09-12: the V9 images barely look improved, do not feel
+more Filipino, and Bayan's floor is empty.** A substantial map review/plan and
+implementation take priority again. Closed152.7 records technical/spatial work,
+not owner acceptance. See EXECUTION_PLAN.md for the current correction in scope.
+
 **Latest owner expansion, 2026-09-12:** maps may have anything added/removed to
 thoroughly improve their spatial logic and natural Filipino feel. Thorough graphics
 and graphics-settings improvements are required for lower-spec play and visible

@@ -1,5 +1,9 @@
 # Active TUMP rework ledger
 
+
+**ACTIVE MAP PLAN: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md).**
+The owner rejected V9 as insufficient visually. Follow this substantial revision
+before the older incremental/graphics-first order; preserve all broader scope.
 ## Standing requirement that must survive compaction
 
 The owner explicitly requested this in AGENTS.md and the main documents: **new
@@ -21,8 +25,40 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 [EXECUTION_PLAN.md](EXECUTION_PLAN.md), explicitly requested by the owner for
 compaction safety. It includes latest approved Sa Bubong mechanics, graphics/
 mashing scope, pushed HEAD, dirty files, evidence, next actions and boundaries.
-Checkpoint basis is5c0747dd (pushed working plan); inspect actual git HEAD/status
-before resuming. The V9 spatial batch is now verified and ready for commit/push.
+**OWNER VERDICT,2026-09-12: V9 is insufficient.** The owner says the plaza floor
+is empty, the pictures barely look improved, and the maps do not feel more Filipino.
+Substantial three-map review, a revised improvement plan and implementation take
+priority now. Technical passes/closed152.7 do not constitute visual acceptance.
+The uncompiled graphics experiment is preserved as non-compiled text/patch under
+reports/improvement-2026-09-12/graphics-prototype; compiled runtime was restored to
+97e61f92 before map work resumes. No Unity process is active. Begin with Bayan's
+surface/ground composition and audit architecture/materials/spatial relationships
+across all3 places against fitting real Philippine references. All broader
+requested graphics/mash/Sa Bubong/kit/network/animation scope remains open.
+
+
+### Further owner feedback,2026-09-12
+
+- Ilalim placement and ALL text/signage need rework. Pisonets standing out in the
+  road are not a believable place. Integrate them into actual shop interiors or
+  recessed sheltered storefronts, with a continuous pedestrian route.
+- The wide white crossing bands were explicitly rejected. Source:
+  IlalimNgTulayBuilder.BuildRoadSurfaceDetail creates6 bars per end atz10.8..15.7,
+  width12.6 decreasing to10.6m, depth.48m. These are scenery road markings,
+  separate from required TUMP chalk. Rebuild a believable crossing away from play.
+- Houses are plain color slabs and do not feel Filipino. Improve actual building
+  construction, openings, roofs, materials and lived-in use, not only repainting.
+- Bayan feels like there is no broader world beyond the court. Build connected
+  surrounding streets/blocks and layered architecture, not an isolated ring.
+- The owner reiterates freedom to thoroughly improve other problems found and
+  wants a nostalgic Filipino feeling. Keep stylized forms and simple gameplay.
+
+These explicit critiques override earlier preservation of poor placement/signage.
+Retain proper names where relevant, but correct sign design, geometry and location.
+Do not treat the approved tricycle or a technical route pass as completing this.
+
+Current verified/pushed spatial checkpoint is97e61f92; inspect actual git
+HEAD/status before resuming. V9 source, scenes, native model and evidence are committed.
 ALL Unity/Blender runs are COMPLETE; no Editor is active. Last sequence85437
 passed8/8 checks,489/489 graphical EditMode and MapRouteProbe1/1:7047 connected
 walk nodes,7420 clear resting samples,18/18 actual motor-driven pickups. Final
@@ -35,7 +71,7 @@ V9 clears civic frontage with inward-facing side hoops and adds3 original blocky
 passenger tricycles to the roadside bay. All144 camera metadata rows match the
 baseline;24 Balanced Classic directions reviewed. Report/images/route CSVs and
 native Blender source are durable. Closed152.7 records this measured batch only.
-Next: commit/push it, then rendering/frame-cost baseline and graphics settings,
+Next: rendering/frame-cost baseline and graphics settings,
 all-context recovery mashing, Sa Bubong and the remaining kits/network/animation.
 No graphics-runtime, new mash or fourth-map implementation exists yet.
 

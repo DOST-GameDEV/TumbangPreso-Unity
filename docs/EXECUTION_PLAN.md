@@ -1,5 +1,9 @@
 # Active execution plan
 
+
+**ACTIVE MAP PLAN: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md).**
+The owner rejected V9 as insufficient visually. Follow this substantial revision
+before the older incremental/graphics-first order; preserve all broader scope.
 Updated2026-09-12 at the owner's request so work survives compaction. This is the
 current action plan and working state, not a claim of completion. The whole
 improvement goal remains open. AGENTS.md is the primary self-contained rulebook;
@@ -10,7 +14,7 @@ ACTIVE_REWORK_LEDGER.md preserves detailed decisions and experiments.
 - Repository:DOST-GameDEV/TumbangPreso-Unity. Branch:ASTRAReworks ONLY.
 - Checkout:`C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity`.
 - Started after fetching clean local/remote0f08e992. Current pushed HEAD:
-  `5c0747dd01a0f8695a98d53fee31a85b4271175a`.
+  `97e61f92` (verified spatial batch; inspect git for its full hash).
 - No resets, main operations or changes to the separate Documents/GitHub checkout.
 - No subagents, paid work or usage resets. Preserve profiles and saved IDs.
 - Every Unity launch uses tools/run_unity_guarded.py. One Editor per checkout;
@@ -22,6 +26,46 @@ ACTIVE_REWORK_LEDGER.md preserves detailed decisions and experiments.
   V9 semantic comparison and all14 source audits passed too. Known test-generated
   arm tangents and quality-setting changes were verified/restored.
 
+
+## Latest owner verdict overrides the previous priority order
+
+2026-09-12: the owner says Bayan's center looks empty, the images barely look
+improved, and the maps do not feel more Filipino. **The V9 result is insufficient
+for the requested thorough visual/map transformation.** Its technical receipts
+remain valid; do not present the closed spatial batch as artistic acceptance.
+Substantial three-map review, revised improvement plan and implementation take
+priority over graphics, mashing and Sa Bubong for now. All original broader
+requirements remain open; the owner has not cancelled them.
+
+The just-written graphics prototype was never compiled or tested. It is preserved
+as non-compiled text under reports/improvement-2026-09-12/graphics-prototype,
+including an integration patch. Its exact changes were removed from compiled
+source so map review stays on the verified runtime. No Unity process is active.
+Next: inspect physical architecture, surfaces and sightlines; use fitting real
+Philippine place references; record a substantial plan per map and implement it.
+First concrete complaint to address: Bayan's large plain center needs intentional
+stone/concrete surfaces, joints and wear, while keeping chalk/slippers legible.
+
+
+### Further owner feedback,2026-09-12
+
+- Ilalim placement and ALL text/signage need rework. Pisonets standing out in the
+  road are not a believable place. Integrate them into actual shop interiors or
+  recessed sheltered storefronts, with a continuous pedestrian route.
+- The wide white crossing bands were explicitly rejected. Source:
+  IlalimNgTulayBuilder.BuildRoadSurfaceDetail creates6 bars per end atz10.8..15.7,
+  width12.6 decreasing to10.6m, depth.48m. These are scenery road markings,
+  separate from required TUMP chalk. Rebuild a believable crossing away from play.
+- Houses are plain color slabs and do not feel Filipino. Improve actual building
+  construction, openings, roofs, materials and lived-in use, not only repainting.
+- Bayan feels like there is no broader world beyond the court. Build connected
+  surrounding streets/blocks and layered architecture, not an isolated ring.
+- The owner reiterates freedom to thoroughly improve other problems found and
+  wants a nostalgic Filipino feeling. Keep stylized forms and simple gameplay.
+
+These explicit critiques override earlier preservation of poor placement/signage.
+Retain proper names where relevant, but correct sign design, geometry and location.
+Do not treat the approved tricycle or a technical route pass as completing this.
 
 ## Latest owner requirements
 
@@ -75,7 +119,7 @@ ACTIVE_REWORK_LEDGER.md preserves detailed decisions and experiments.
 Reports:reports/improvement-2026-09-12/map-retrieval.md and map-repeatability.md.
 The original unsuccessful flight experiment remains archived unchanged as text.
 
-## V9 map batch, verified and ready to commit
+## V9 map batch, verified and pushed at97e61f92
 
 **Map authoring:** MapFinalPassAuthor.cs and MapFinalInventory.cs, all3 map scenes,
 four new terminal materials/meta files under Art/MapFinalPass. Scene changes are
@@ -147,10 +191,10 @@ Do not rediscover these fixture errors as game bugs:
 
 ## Next actions, in order
 
-1. Commit/push the verified V9 spatial batch with its report and closed152.7.
+1. DONE: verified V9 spatial batch pushed at97e61f92 with report and closed152.7.
    Broader architecture/side-back/ordinary-player review remains open after this
    batch; do not call all maps complete. The source/scenes/model and evidence are
-   ready, and all current Unity runs have finished. No new graphics runtime,
+   committed, and all current Unity runs have finished. No new graphics runtime,
    mashing changes or fourth-map code has been implemented yet.
 2. Establish rendering/frame-cost baseline. Active pipeline is Built-in, despite
    URP being installed: ColourGrade/PostAntiAlias/WorldOutline use OnRenderImage.

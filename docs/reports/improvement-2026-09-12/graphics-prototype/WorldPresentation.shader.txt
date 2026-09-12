@@ -1,0 +1,34 @@
+Shader "TumbangPreso/WorldPresentation"
+{
+    Properties { _MainTex ("World", 2D) = "black" {} }
+    SubShader
+    {
+        Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Opaque" }
+        Cull Off ZWrite Off ZTest Always Blend Off
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            struct vertex { float4 position:POSITION; float2 uv:TEXCOORD0; };
+            struct varying { float4 position:SV_POSITION; float2 uv:TEXCOORD0; };
+            sampler2D _MainTex;
+            varying vert(vertex input)
+            {
+                varying output;
+                output.position = UnityObjectToClipPos(input.position);
+                output.uv = input.uv;
+                return output;
+            }
+            float4 frag(varying input):SV_Target
+            {
+                // The existing grade has already run. Normal render-target
+                // sampling/output transfer handles linear-to-display conversion.
+                // World alpha never hides sky pixels over an older backbuffer.
+                return float4(tex2D(_MainTex, input.uv).rgb, 1);
+            }
+            ENDCG
+        }
+    }
+}

@@ -1,0 +1,18 @@
+using UnityEngine;
+
+namespace TumbangPreso.Settings
+{
+    /// <summary>Optional desktop frame cap; display synchronization takes precedence.</summary>
+    public static class FrameRateLimits
+    {
+        public static readonly int[] Rates = { -1, 30, 60, 90, 120, 144, 165, 240 };
+        public static readonly string[] Labels = { "Unlimited", "30 FPS", "60 FPS", "90 FPS", "120 FPS", "144 FPS", "165 FPS", "240 FPS" };
+        public const int Default = 0;
+        public static int Current { get; private set; } = Default;
+        public static void Apply(int index)
+        {
+            Current = Mathf.Clamp(index, 0, Rates.Length - 1);
+            Application.targetFrameRate = Rates[Current];
+        }
+    }
+}

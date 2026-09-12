@@ -1,0 +1,173 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using TumbangPreso.CameraSystem;
+using TumbangPreso.Settings;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
+using UnityEngine;
+using UnityEngine.TestTools;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.PlayTests
+{
+    [Category("WallClock")]
+    public sealed class GraphicsResolutionProbe
+    {
+        private GameSettings _original;
+        private float _timeScale;
+        private GameObject _sentinel;
+        private static string Output => Environment.GetEnvironmentVariable("TUMP_GRAPHICS_EVIDENCE") ?? "Logs/graphics-resolution-v1";
+
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _original = JsonUtility.FromJson<GameSettings>(JsonUtility.ToJson(SettingsStore.Current));
+            _timeScale = Time.timeScale;
+            yield return PlayModeWorld.Reset();
+            Directory.CreateDirectory(Output);
+            ResolutionModes.Apply(ResolutionModes.Default);
+            AntiAliasModes.Apply(AntiAliasModes.Default);
+        }
+
+        [UnityTearDown] public IEnumerator After()
+        {
+            Time.timeScale = 1;
+            if (_sentinel != null) Object.Destroy(_sentinel);
+            yield return PlayModeWorld.Reset();
+            SettingsStore.Restore(_original);
+            Time.timeScale = _timeScale;
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator WorldDensityChangesWithoutMovingAimOrRescalingTheOverlay()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig = Object.FindFirstObjectByType<CameraRig>();
+            Assert.IsNotNull(rig);
+            var camera = rig.Camera;
+            var scaler = camera.GetComponent<GameplayResolution>();
+            Assert.IsNotNull(scaler);
+            Assert.AreSame(camera, Camera.main);
+            Time.timeScale = 0;
+            for (int i=0;i<4;i++) yield return null;
+
+            _sentinel = new GameObject("Native overlay test", typeof(Canvas));
+            var canvas = _sentinel.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 20000;
+            var square = new GameObject("Fixed native pixels", typeof(RectTransform), typeof(Image));
+            square.transform.SetParent(_sentinel.transform, false);
+            var rect = square.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
+            rect.anchoredPosition = new Vector2(12,12);
+            rect.sizeDelta = new Vector2(80,28);
+            square.GetComponent<Image>().color = new Color(.9f,.1f,.4f,1);
+            square.GetComponent<Image>().raycastTarget = false;
+            yield return null;
+            yield return new WaitForEndOfFrame();
+            var baseline = ScreenCapture.CaptureScreenshotAsTexture();
+            Assert.Greater(baseline.width, 100);
+            File.WriteAllBytes(Path.Combine(Output,"native.png"),baseline.EncodeToPNG());
+            var aim = camera.ViewportPointToRay(new Vector3(.5f,.5f,0));
+            var marker = baseline.GetPixel(40,24);
+            var report = new System.Text.StringBuilder("mode,native_width,native_height,world_width,world_height,tile_p95_error\n");
+            try
+            {
+                foreach(int mode in new[]{0,1,2,4,5})
+                {
+                    ResolutionModes.Apply(mode);
+                    for(int i=0;i<4;i++)yield return null;
+                    Assert.IsTrue(scaler.IsPresenting && scaler.OwnsTarget);
+                    Assert.AreEqual(Mathf.RoundToInt(Screen.width*ResolutionModes.Scale),scaler.WorldTarget.width);
+                    Assert.AreEqual(Mathf.RoundToInt(Screen.height*ResolutionModes.Scale),scaler.WorldTarget.height);
+                    var nextAim=camera.ViewportPointToRay(new Vector3(.5f,.5f,0));
+                    Assert.Less(Vector3.Distance(aim.origin,nextAim.origin),.001f);
+                    Assert.Less(Vector3.Angle(aim.direction,nextAim.direction),.001f);
+                    yield return new WaitForEndOfFrame();
+                    var delivered=ScreenCapture.CaptureScreenshotAsTexture();
+                    try
+                    {
+                        Assert.AreEqual(baseline.width,delivered.width);
+                        Assert.AreEqual(baseline.height,delivered.height);
+                        Assert.Less(ColorDistance(marker,delivered.GetPixel(40,24)),.01f,
+                            "The presentation covered or rescaled the native overlay.");
+                        float difference=TileDifference(baseline,delivered);
+                        report.AppendLine(FormattableString.Invariant($"{ResolutionModes.Labels[mode]},{Screen.width},{Screen.height},{scaler.WorldTarget.width},{scaler.WorldTarget.height},{difference:F5}"));
+                        File.WriteAllBytes(Path.Combine(Output,"scale-"+mode+".png"),delivered.EncodeToPNG());
+                        Assert.Less(difference,.065f,"Scaling changed broad image color/orientation, beyond edge resampling.");
+                    }
+                    finally { Object.Destroy(delivered); }
+                }
+                ResolutionModes.Apply(ResolutionModes.Default);
+                yield return null;
+                Assert.IsNull(camera.targetTexture);
+                Assert.IsNull(scaler.WorldTarget);
+                Assert.IsFalse(scaler.IsPresenting);
+            }
+            finally
+            {
+                Object.Destroy(baseline);
+                File.WriteAllText(Path.Combine(Output,"delivery.csv"),report.ToString());
+            }
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator ExternalCaptureAndCameraDisableKeepTargetOwnership()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var camera=Object.FindFirstObjectByType<CameraRig>().Camera;
+            var scaler=camera.GetComponent<GameplayResolution>();
+            ResolutionModes.Apply(1);
+            yield return null;
+            var borrowed=scaler.WorldTarget;
+            Assert.IsNotNull(borrowed);
+            var external=new RenderTexture(64,64,24);
+            external.Create();
+            try
+            {
+                camera.targetTexture=external;
+                yield return null;
+                Assert.AreSame(external,camera.targetTexture);
+                Assert.IsFalse(scaler.IsPresenting);
+                Assert.AreSame(borrowed,scaler.WorldTarget);
+                camera.targetTexture=borrowed;
+                yield return null;
+                Assert.IsTrue(scaler.IsPresenting);
+                camera.enabled=false;
+                yield return null;
+                Assert.IsNull(camera.targetTexture);
+                Assert.IsNull(scaler.WorldTarget);
+                Assert.IsFalse(scaler.IsPresenting);
+                camera.enabled=true;
+                yield return null;
+                Assert.IsTrue(scaler.IsPresenting);
+                scaler.enabled=false;
+                Assert.IsNull(camera.targetTexture);
+                Assert.IsFalse(scaler.IsPresenting);
+            }
+            finally { external.Release();Object.Destroy(external); }
+        }
+
+        private static float ColorDistance(Color a,Color b) => Mathf.Max(Mathf.Abs(a.r-b.r),Mathf.Abs(a.g-b.g),Mathf.Abs(a.b-b.b));
+        private static float TileDifference(Texture2D a,Texture2D b)
+        {
+            var aa=a.GetPixels32();var bb=b.GetPixels32();var errors=new float[16*9];
+            for(int y=0;y<9;y++)for(int x=0;x<16;x++)
+            {
+                Vector3 ca=Vector3.zero,cb=Vector3.zero;int count=0;
+                for(int py=y*a.height/9;py<(y+1)*a.height/9;py+=2)
+                for(int px=x*a.width/16;px<(x+1)*a.width/16;px+=2)
+                {
+                    int i=py*a.width+px;ca+=new Vector3(aa[i].r,aa[i].g,aa[i].b);
+                    cb+=new Vector3(bb[i].r,bb[i].g,bb[i].b);count++;
+                }
+                var d=(ca-cb)/(255*Mathf.Max(1,count));
+                errors[y*16+x]=Mathf.Max(Mathf.Abs(d.x),Mathf.Abs(d.y),Mathf.Abs(d.z));
+            }
+            Array.Sort(errors);return errors[Mathf.FloorToInt((errors.Length-1)*.95f)];
+        }
+    }
+}

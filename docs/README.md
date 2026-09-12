@@ -137,3 +137,5 @@ anyway, and the folder's own `README.md`, which this file replaces.
     already has a maintained one only produces arguments about which is right.
 - **Session-specific state belongs in `TODO.md`,** which is written to be ticked and added to.
   A document that needs a "where I left off" section is a `TODO.md` entry wearing a disguise.
+
+- [Substantial map transformation plan](MAP_TRANSFORMATION_PLAN.md): active owner-feedback revision after V9, including nostalgic Filipino architecture, coherent shops/signs, paving and broader town context.

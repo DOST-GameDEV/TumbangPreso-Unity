@@ -14,7 +14,12 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
    process IDs, plans and rejected studies are history, never live instructions.
    `docs/EXECUTION_PLAN.md` is the owner's requested compact action plan, current
    dirty-work/test state and next steps; read it alongside that pointer.
-3. For the current pass read `docs/MAP_FINAL_PASS.md` and
+3. For the current map revision read `docs/MAP_TRANSFORMATION_PLAN.md` first. The
+   owner rejected V9 as barely changed and insufficiently Filipino: plain houses,
+   empty Bayan paving/no wider town, implausible Ilalim pisonets, bad signs and
+   oversized crossing bands. Substantial architecture/material/spatial changes
+   take priority; technical passes are not visual acceptance. Also read
+   `docs/MAP_FINAL_PASS.md` and
    `docs/IMPROVEMENT_PLAN.md` (P1-P10). Ability work also requires
    `docs/ABILITY_REWORK_PLAN.md`, `docs/HERO_KIT_REWORK_DECISIONS.md` and
    `docs/PHILIPPINE_ABILITY_DIRECTION.md`.
