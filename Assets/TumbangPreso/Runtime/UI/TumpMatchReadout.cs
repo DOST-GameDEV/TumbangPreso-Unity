@@ -7,12 +7,15 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>New match presentation. Reads the existing referee, actors and resource state only.</summary>
+    [DefaultExecutionOrder(1200)]
     public sealed class TumpMatchReadout : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
         private Text _crosshair, _hit;
+        private CharacterMotor _aimOwner;
+        private Carrier _aimCarrier;
         private Image _stamina, _progress;
         private readonly Text[] _names = new Text[4], _scores = new Text[4], _roles = new Text[4];
         private readonly Image[] _portraits = new Image[4];
@@ -163,6 +166,7 @@ namespace TumbangPreso.UI
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
             Can(local, training); Personal(local, spectating);
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
+            if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
@@ -174,6 +178,19 @@ namespace TumbangPreso.UI
                     + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed";
             }
             Sandbox();
+        }
+
+        private void LateUpdate()
+        {
+            if(_crosshair==null || !_crosshair.enabled)return;
+            var anchor=new Vector2(.5f,.5f);
+            var view=UnityEngine.Camera.main;
+            if(_aimCarrier!=null && _aimCarrier.IsCharging && view!=null)
+            {
+                var point=view.WorldToViewportPoint(_aimCarrier.AimPoint());
+                if(point.z>0)anchor=view.rect.min+Vector2.Scale(new Vector2(point.x,point.y),view.rect.size);
+            }
+            _crosshair.rectTransform.anchorMin=_crosshair.rectTransform.anchorMax=anchor;
         }
         private void Scores(CharacterMotor local, bool spectating)
         {

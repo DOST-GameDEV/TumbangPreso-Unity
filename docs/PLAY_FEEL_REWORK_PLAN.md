@@ -295,3 +295,27 @@ Next focused design must compare normalized equipped build identity at the actua
 legal pick/round transition, preserve unchanged active kits, and prove defaults ->
 alternate -> defaults plus repeated sync, both local and remote seat ownership.
 Do not claim a fix until actual synchronization boundaries/state have been traced.
+
+
+## Current solo throwing pass,Sep14 after UI deferral
+
+Owner moved unfinished UI to LAST and forbids all further agents. Current
+implementation is the shared throw-aim drift, before body-pose refinement.
+ThrowAimRules defines smooth bounded angular movement: quick releases have more
+motion, holding settles toward small residual movement, and movement adds motion
+with a smooth rise/settle envelope. No extra randomized error is added at release.
+Carrier's effective aim feeds preview, muzzle direction and the actual existing
+throw request. Capture that aim BEFORE CancelCharge; otherwise releasing would
+silently remove the visible drift. No new network message fields or gameplay RNG.
+The main reticle follows effective aim in LateUpdate; right-hand preparation
+uses the same angles. This is functional aiming integration, not resuming the
+full deferred UI overhaul. Standalone/the host and client requests share the
+accepted endpoint; remote pose exact wobble phase/replay remains a later check.
+
+Core ThrowAimRulesTests6/6passed. Current Unity ThrowAimIntegrationProbe is being
+compiled/run; it compares actual released velocity to preview in Classic and
+boosted Hero Strike. A related existing preview discrepancy was corrected:
+Zack Snap Discharge/Sean Flare Shot preview now includes the same variant gain
+as HostThrowAt. Do not call this phase visually accepted yet. Next: check aim
+motion at normal speed, then refine full-body preparation/release/follow-through
+and signed Pektus against actual retained rig poses. Do not change the18people.

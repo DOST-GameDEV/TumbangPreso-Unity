@@ -118,6 +118,8 @@ namespace TumbangPreso
         private CharacterMotor _motor;
 
         private float _charge;
+        private float _aimHeldSeconds, _aimMovement;
+        private int _aimSequence;
         private bool _charging;
         private float _throwLockLeft;
         private float _channel;
@@ -142,6 +144,17 @@ namespace TumbangPreso
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
         /// YOU card's charge meter.</summary>
         public bool IsCharging => _charging;
+
+        public Vector2 AimAngularOffset
+        {
+            get
+            {
+                if (!_charging) return Vector2.zero;
+                var offset=ThrowAimRules.Sample(_aimHeldSeconds,_aimMovement,Time.time,
+                    _motor.PlayerSlot*.73f+(_aimSequence%4096)*.618034f);
+                return new Vector2(offset.Yaw,offset.Pitch);
+            }
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
@@ -405,6 +418,11 @@ namespace TumbangPreso
         private void Update()
         {
             float dt = Time.deltaTime;
+            var planar=_motor.Velocity;planar.y=0;
+            float moving=Mathf.Clamp(planar.magnitude/Balance.Speed,0,1.5f);
+            float settle=moving > _aimMovement ? .12f : .28f;
+            _aimMovement=Mathf.Lerp(_aimMovement,moving,1-Mathf.Exp(-Mathf.Max(0,dt)/settle));
+            if (_charging) _aimHeldSeconds+=dt;
 
             // ⚠️ CLEARED HERE, ONCE, BEFORE ANY BRANCH BELOW CAN SET IT. See _grabConsumedThisFrame.
             _grabConsumedThisFrame = false;
@@ -582,6 +600,7 @@ namespace TumbangPreso
 
                 _charging = true;
                 _charge = 0.0f;
+                _aimHeldSeconds=0;_aimSequence++;
                 _pektusSpin=Mathf.Clamp(intent.SpinInput,-Balance.MaxPektusSpin,Balance.MaxPektusSpin);
                 BroadcastCharge(true);
 
@@ -632,9 +651,11 @@ namespace TumbangPreso
             // Released.
             float power = ChargeRatio;
             float spin = _pektusSpin;
+            Vector3 aimedPoint=AimPoint();
+            Vector3 origin=ThrowOriginFor(aimedPoint);
             CancelCharge();
 
-            if (canThrow) Release(power, spin);
+            if (canThrow) ReleaseTo(power,spin,origin,aimedPoint);
         }
 
         /// <summary>
@@ -714,6 +735,20 @@ namespace TumbangPreso
         /// </summary>
         public Vector3 AimPoint()
         {
+            Vector3 target=RawAimPoint();
+            var offset=AimAngularOffset;
+            if(offset.sqrMagnitude<=0)return target;
+            Vector3 eye=AimEye();var direction=target-eye;float distance=direction.magnitude;
+            if(distance<.01f)return target;
+            direction=Quaternion.AngleAxis(offset.x,Vector3.up)*(direction/distance);
+            var right=Vector3.Cross(Vector3.up,direction);
+            if(right.sqrMagnitude<.0001f)right=transform.right;else right.Normalize();
+            direction=Quaternion.AngleAxis(-offset.y,right)*direction;
+            return eye+direction*distance;
+        }
+
+        private Vector3 RawAimPoint()
+        {
             if (_motor.Intent.HasAimPoint) return _motor.Intent.AimPoint;
 
             var rig = UnityEngine.Camera.main != null
@@ -733,6 +768,9 @@ namespace TumbangPreso
         /// to 0.043 m. The path was right; the starting height was not.
         /// </summary>
         public Vector3 ThrowOrigin()
+            =>ThrowOriginFor(AimPoint());
+
+        private Vector3 AimEye()
         {
             var rig = UnityEngine.Camera.main != null
                 ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
@@ -742,11 +780,15 @@ namespace TumbangPreso
             // NOT. A bot has no rig looking through it, and `throw_origin_for` uses exactly this
             // constant for that case rather than the FPP eye height, so a bot's throw and a
             // probe's throw leave from the same place.
-            Vector3 eye = rig != null && rig.IsFollowing(_motor)
+            return rig != null && rig.IsFollowing(_motor)
                 ? rig.transform.position
                 : transform.position + Vector3.up * 0.9f;
+        }
 
-            Vector3 toAim = AimPoint() - eye;
+        private Vector3 ThrowOriginFor(Vector3 aimPoint)
+        {
+            Vector3 eye=AimEye();
+            Vector3 toAim = aimPoint - eye;
             if (toAim.magnitude < 0.01f) return eye;
 
             return eye + toAim.normalized * Balance.MuzzleForward;
@@ -768,11 +810,11 @@ namespace TumbangPreso
             var ability = _motor.AbilitySystem;
             if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
             {
-                vel *= 1.6f;
+                vel *= 1.6f * ability.VariantGain("zack.2.discharge");
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {
-                vel *= 1.3f;
+                vel *= 1.3f * ability.VariantGain("sean.2.flare");
             }
             else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
             {
@@ -783,10 +825,13 @@ namespace TumbangPreso
 
         private void Release(float power, float spin = 0.0f)
         {
-            if (Held == null) return;
+            var aim=AimPoint();
+            ReleaseTo(power,spin,ThrowOriginFor(aim),aim);
+        }
 
-            Vector3 origin = ThrowOrigin();
-            Vector3 aimPoint = AimPoint();
+        private void ReleaseTo(float power,float spin,Vector3 origin,Vector3 aimPoint)
+        {
+            if (Held == null) return;
 
             if (NetAuthority.ShouldRequest())
             {

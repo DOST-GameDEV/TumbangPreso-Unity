@@ -1,5 +1,67 @@
 # Active execution plan
 
+## Current solo task,05:12 — body throw motion next
+
+Aim batch validated: Core6/6 and Unity integrationv4 1/1 across both modes,
+reticle projection correct and preview/released velocity errors0.000000. Evidence
+in reports/improvement-2026-09-14/throw-aim.md. No running Editor/player; all aim
+sessions retired. Commit this checkpoint, then refine body/FPP throw motion.
+
+Observed body baseline: old BayanClassic controlled-sequence frames58/82/89
+show slow gather at low charge and small follow-through; current action combines
+stock holding-right-shoot animation with procedural ThrowGesture offsets. Plan
+one coherent gesture: faster early gather, contact/through/recovery phases, keep
+walking legs active, blend upper body back to current locomotion. Avoid double
+motion from the stock shoot clip. Author/critique on actual rigs, all18retained.
+Do not change projectile timing/origin blindly; current authoritative aiming and
+new drift must remain consistent. Signed Pektus preparation/release must read.
+Normal-speed owner/body and movement/hold assessment still needed. No agents,
+no reset authority; inherited UI work remains LAST in UI_REMAINING_TODO.md.
+
+
+## Newest aim result,04:58
+
+Core6/6passed; ThrowAimIntegrationProbe v3 passed1case covering Classic and boosted
+HeroStrike, preview vs released velocity error0.000000 in both. Offset target
+shift.07361m/.11966m was preserved through charge cancellation. Fixture v2 was
+parked input and was corrected, not a gameplay repair. Its screenshots faced away
+from the staged aim target, so they are rejected for reticle visual acceptance.
+Fixture v4 now stages proper actor heading/camera pitch and asserts the reticle
+projects the same effective aim. Current Editor run must be collected before
+imported edits. All previous sessions45321/44391/40717retired. Next save validated
+aim batch, then improve body/Pektus preparation/follow-through; older body sequence
+BayanClassic frames58/82/89 shows slow initial gather and small hand travel.
+No agents, no reset authority, UI leftovers last. Do not repeat unrelated suites.
+
+
+## Latest throwing validation state,04:43
+
+Core6/6passed. First integration launch only found fixture compile issues
+(InputIntent.HasAimPoint is set by AimPoint setter; missing System import); these
+are corrected. Second focused ThrowAimIntegrationProbe launch is running; collect
+its session before editing imported scripts. Production now captures the effective
+aim before clearing charge, aligns native reticle late after the camera, and uses
+Zack/Sean variant multipliers in preview. No new network bytes, no agents, UI last,
+no reset authority. Do not repeat full suites. Actual integration/visual acceptance
+still pending; then normal-speed movement/holding and body/Pektus motion review.
+
+
+## Current solo task,Sep14 04:40
+
+No agents, no reset permission, remaining UI LAST. Throw aiming implementation
+is in progress: new ThrowAimRules + Carrier drift/aim capture before cancellation,
+matching FPP hand angles and late reticle placement. Core6/6passed. Boosted throw
+preview also uses the same Zack/Sean variant speed gain as actual release. Unity
+ThrowAimIntegrationProbe currently running session45321 -> Logs/throw-aim-
+integration-v1.xml/log. Collect before editing imported scripts. Check compile
+including missing System qualification in the new fixture if reported. Actual
+both-mode preview/released velocity + captures still pending. Body/throw/Pektus
+pose refinement follows, with normal-speed visual critique; existing cast retained.
+Latest committed task-order checkpoint0c542431. These aim files are dirty/WIP.
+All previous map/UI sessions retired; do not restart former UI agent. Deferred
+UI details, known pause failure and pendingf5b10commit are in UI_REMAINING_TODO.md.
+
+
 ## NEWEST ORDER,Sep14 04:10 — overrides older UI ordering
 
 No more subagents: do not restart the errored UI agent. Parent does all remaining

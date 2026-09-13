@@ -1047,6 +1047,11 @@ namespace TumbangPreso.CameraSystem
             {
                 _rightArm.localRotation = ChargeArmRotation;
                 if (_leftArm != null) _leftArm.localRotation = _carrying ? Quaternion.Euler(-12*_charge,0,4*_charge) : Quaternion.identity;
+                if(_carrying && _characterMotor!=null)
+                {
+                    var aim=_characterMotor.GetComponent<Carrier>()?.AimAngularOffset??Vector2.zero;
+                    _rightArm.localRotation=Quaternion.Euler(-aim.y,aim.x,0)*_rightArm.localRotation;
+                }
                 return;
             }
 
