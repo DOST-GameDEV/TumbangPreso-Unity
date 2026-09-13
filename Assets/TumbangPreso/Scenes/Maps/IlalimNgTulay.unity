@@ -35019,6 +35019,7 @@ Transform:
   - {fileID: 2985927}
   - {fileID: 485188535}
   - {fileID: 1279776441}
+  - {fileID: 552782469}
   m_Father: {fileID: 1221243745}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &197100659
@@ -96048,6 +96049,178 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3d68a4321205a6949bccddbd51604ee9, type: 3}
   m_PrefabInstance: {fileID: 551668843}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &552782468
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 552782469}
+  - component: {fileID: 552782470}
+  m_Layer: 0
+  m_Name: Neighborhood life
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &552782469
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552782468}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 195846269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &552782470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552782468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd71f9877e31ef419cdd4071543db64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AmbientLife
+  Animals:
+  - Id: aspin-patched
+    Model: {fileID: 8771091787928289351, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    Clips:
+    - {fileID: -3871982838639338190, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    - {fileID: -2474113961476506421, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    - {fileID: 8291298685565124274, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    - {fileID: -4832708865683171987, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    - {fileID: 1679186072779005002, guid: b3738a8ff2800c14597278e0ef60d4fc, type: 3}
+    Route:
+    - {x: -10, y: 0.21200001, z: -10}
+    - {x: -9.6, y: 0.21200001, z: -10}
+    - {x: -9.2, y: 0.21200001, z: -10}
+    - {x: -9.2, y: 0.21200001, z: -9.6}
+    - {x: -9.2, y: 0.21200001, z: -9.2}
+    - {x: -9.2, y: 0.21200001, z: -8.8}
+    - {x: -9.2, y: 0.21200001, z: -8.400001}
+    - {x: -9.2, y: 0.21200001, z: -8}
+    - {x: -9.2, y: 0.21200001, z: -7.6}
+    - {x: -9.2, y: 0.21200001, z: -7.2000003}
+    - {x: -9.2, y: 0.21200001, z: -6.8}
+    - {x: -9.2, y: 0.21200001, z: -6.4}
+    - {x: -9.2, y: 0.21200001, z: -6}
+    - {x: -9.2, y: 0.21200001, z: -5.6}
+    - {x: -9.2, y: 0.21200001, z: -5.2000003}
+    - {x: -9.2, y: 0.21200001, z: -4.8}
+    - {x: -9.2, y: 0.21200001, z: -4.4}
+    - {x: -9.2, y: 0.21200001, z: -4}
+    Bird: 0
+    WalkSpeed: 0.45
+    RunSpeed: 2.2
+    WalkCycleSpeed: 0.26804155
+    RunCycleSpeed: 0.8765667
+    PeeWaypoint: 16
+    PeeTarget: {x: -9.924999, y: 0.462, z: -4.4000025}
+  - Id: pusakal-tuxedo
+    Model: {fileID: 8771091787928289351, guid: 56a3979486a64bb489baad5904965063, type: 3}
+    Clips:
+    - {fileID: -3871982838639338190, guid: 56a3979486a64bb489baad5904965063, type: 3}
+    - {fileID: -2474113961476506421, guid: 56a3979486a64bb489baad5904965063, type: 3}
+    - {fileID: 8291298685565124274, guid: 56a3979486a64bb489baad5904965063, type: 3}
+    - {fileID: -4832708865683171987, guid: 56a3979486a64bb489baad5904965063, type: 3}
+    Route:
+    - {x: 9.2, y: 0.21200001, z: 0}
+    - {x: 9.2, y: 0.21200001, z: 0.4}
+    - {x: 9.2, y: 0.21200001, z: 0.8}
+    - {x: 9.2, y: 0.21200001, z: 1.2}
+    - {x: 9.2, y: 0.21200001, z: 1.6}
+    - {x: 9.2, y: 0.21200001, z: 2}
+    - {x: 9.2, y: 0.21200001, z: 2.4}
+    - {x: 9.6, y: 0.21200001, z: 2.4}
+    - {x: 10, y: 0.21200001, z: 2.4}
+    - {x: 10, y: 0.21200001, z: 2.8}
+    - {x: 10, y: 0.21200001, z: 3.2}
+    - {x: 10, y: 0.21200001, z: 3.6000001}
+    - {x: 10, y: 0.21200001, z: 4}
+    - {x: 10, y: 0.21200001, z: 4.4}
+    - {x: 10, y: 0.21200001, z: 4.8}
+    - {x: 10, y: 0.21200001, z: 5.2000003}
+    - {x: 10, y: 0.21200001, z: 5.6}
+    - {x: 10, y: 0.21200001, z: 6}
+    - {x: 10, y: 0.21200001, z: 6.4}
+    - {x: 10, y: 0.21200001, z: 6.8}
+    - {x: 10, y: 0.21200001, z: 7.2000003}
+    - {x: 10, y: 0.21200001, z: 7.6}
+    - {x: 10, y: 0.21200001, z: 8}
+    - {x: 10, y: 0.21200001, z: 8.400001}
+    - {x: 10, y: 0.21200001, z: 8.8}
+    - {x: 10, y: 0.21200001, z: 9.2}
+    - {x: 10, y: 0.21200001, z: 9.6}
+    Bird: 0
+    WalkSpeed: 0.32
+    RunSpeed: 1.8
+    WalkCycleSpeed: 0.11708909
+    RunCycleSpeed: 0.38291228
+    PeeWaypoint: -1
+    PeeTarget: {x: 0, y: 0, z: 0}
+  - Id: maya
+    Model: {fileID: 8771091787928289351, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
+    Clips:
+    - {fileID: -6934694729346333678, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
+    - {fileID: -2474113961476506421, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
+    - {fileID: -6280548411130719940, guid: bd71817a37a91f54bb702ae7393bdcaf, type: 3}
+    Route:
+    - {x: -3.0000012, y: 2.7010005, z: 7.999998}
+    - {x: -3.0000012, y: 0.0010004769, z: 3.9999979}
+    - {x: -3.0000012, y: 3.0010004, z: 7.999998}
+    Bird: 1
+    WalkSpeed: 0.45
+    RunSpeed: 2.2
+    WalkCycleSpeed: 0.4
+    RunCycleSpeed: 1.3
+    PeeWaypoint: -1
+    PeeTarget: {x: 0, y: 0, z: 0}
+  - Id: kalapati
+    Model: {fileID: 8771091787928289351, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
+    Clips:
+    - {fileID: -6934694729346333678, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
+    - {fileID: -2474113961476506421, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
+    - {fileID: -6280548411130719940, guid: 89871430be2577c4a9c9009c86adb490, type: 3}
+    Route:
+    - {x: 4.0000005, y: 2.7009995, z: 0.0000021457672}
+    - {x: 4.0000005, y: 0.0009995232, z: -3.9999979}
+    - {x: 4.0000005, y: 3.0009995, z: 0.0000021457672}
+    Bird: 1
+    WalkSpeed: 0.45
+    RunSpeed: 2.2
+    WalkCycleSpeed: 0.4
+    RunCycleSpeed: 1.3
+    PeeWaypoint: -1
+    PeeTarget: {x: 0, y: 0, z: 0}
+  - Id: fantail
+    Model: {fileID: 8771091787928289351, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
+    Clips:
+    - {fileID: -6934694729346333678, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
+    - {fileID: -2474113961476506421, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
+    - {fileID: -6280548411130719940, guid: 6f569a317f91a7b41a49ac9702a5c8a7, type: 3}
+    Route:
+    - {x: -0.00000020861633, y: 2.7010012, z: 13.999997}
+    - {x: -0.00000020861633, y: 0.0010011921, z: 9.999997}
+    - {x: -0.00000020861633, y: 3.0010011, z: 13.999997}
+    Bird: 1
+    WalkSpeed: 0.45
+    RunSpeed: 2.2
+    WalkCycleSpeed: 0.4
+    RunCycleSpeed: 1.3
+    PeeWaypoint: -1
+    PeeTarget: {x: 0, y: 0, z: 0}
 --- !u!1001 &552784940
 PrefabInstance:
   m_ObjectHideFlags: 0

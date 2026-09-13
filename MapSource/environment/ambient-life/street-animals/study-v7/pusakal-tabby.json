@@ -1,0 +1,34 @@
+{
+  "id": "pusakal-tabby",
+  "kind": "cat",
+  "coat": [
+    0.43,
+    0.39,
+    0.31
+  ],
+  "ears": "cat",
+  "tail": "up",
+  "scale": 0.65,
+  "walkCycleSpeed": 0.12275469620038017,
+  "runCycleSpeed": 0.4014402900620695,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "run",
+    "alert"
+  ],
+  "vertices": 532,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

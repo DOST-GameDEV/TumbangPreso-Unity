@@ -1,0 +1,34 @@
+{
+  "id": "pusakal-ginger",
+  "kind": "cat",
+  "coat": [
+    0.64,
+    0.38,
+    0.18
+  ],
+  "ears": "cat",
+  "tail": "up",
+  "scale": 0.67,
+  "walkCycleSpeed": 0.1265317637757765,
+  "runCycleSpeed": 0.4137922989870562,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "run",
+    "alert"
+  ],
+  "vertices": 532,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

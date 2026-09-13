@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.CameraSystem;
@@ -132,6 +133,79 @@ namespace TumbangPreso.PlayTests
                 }
                 finally{drive.enabled=false;Object.Destroy(drive);Object.Destroy(witness.gameObject);}
             }
+        }
+
+        [UnityTest,Timeout(240000)]
+        public IEnumerator EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery()
+        {
+            var report=new StringBuilder("mode,person,swim_phase_change,eye_y,recovery_min_gap,recovery_max_gap\n");
+            var mesh=new Mesh();var book=RosterBook.Load();
+            try
+            {
+                foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
+                {
+                    yield return MapRetrievalProbe.Load(SceneFlow.SaBubong,mode);Time.timeScale=1;GameServices.Round.BeginRound();
+                    var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
+                    _rig=Object.FindFirstObjectByType<CameraRig>();_rig.Follow(who);_rig.SetAimSource(AimSource.Movement);
+                    var witness=new GameObject("Whole roster water camera").AddComponent<Camera>();witness.enabled=false;witness.fieldOfView=52;
+                    witness.nearClipPlane=.04f;witness.farClipPlane=400;witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                    try
+                    {
+                        var people=Roster.GetPeople(mode);
+                        for(int i=0;i<people.Count;i++)
+                        {
+                            who.CharacterIndex=i;var art=book.FindPersonArt(people[i].Id);Assert.IsNotNull(art);
+                            var visual=who.GetComponent<CharacterVisual>();visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                            who.ClearTrip();who.Intent.Clear();who.Intent.Parked=false;
+                            who.Teleport(new Vector3(-13.2f,RooftopPool.SurfaceY-RooftopPool.FloatDepth,7));
+                            yield return new WaitForSeconds(.3f);
+                            var animator=who.GetComponent<CharacterAnimator>();float phase=animator.SwimmingPhase;
+                            yield return new WaitForSeconds(.35f);
+                            Assert.IsTrue(animator.SwimmingMotionPlaying,people[i].Id+" lacks its actual serialized swim motion");
+                            float phaseChange=Mathf.Abs(Mathf.DeltaAngle(phase*Mathf.Rad2Deg,animator.SwimmingPhase*Mathf.Rad2Deg));
+                            Assert.Greater(phaseChange,5,people[i].Id+" frozen swimming graph");
+                            float eye=_rig.Camera.transform.position.y;Assert.Greater(eye,RooftopPool.SurfaceY+.08f,people[i].Id+" settled eye is underwater");
+                            var at=who.transform.position+new Vector3(2.6f,2.3f,-2.8f);
+                            witness.transform.SetPositionAndRotation(at,Quaternion.LookRotation(who.transform.position+Vector3.up*.8f-at));
+                            yield return GameplayShots.Render(witness,people[i].Id+"-swimming-body",false,Output,who);
+                            yield return GameplayShots.Render(_rig.Camera,people[i].Id+"-swimming-owner",false,Output);
+                            // Physical rail descent is covered separately. Here the
+                            // real recovery state samples every approved serialized rig.
+                            who.Teleport(new Vector3(0,.1f,-10));yield return new WaitForSeconds(.2f);who.ApplyFallRecovery();
+                            float minimum=float.PositiveInfinity,maximum=float.NegativeInfinity;
+                            float end=Time.time+2.8f,nextMash=Time.time+.42f;bool captured=false;
+                            while(Time.time<end)
+                            {
+                                yield return null;
+                                // The game's down state deliberately waits for
+                                // accepted mash presses; duration is not a timer
+                                // that automatically stands the player at2.5s.
+                                if(Time.time>=nextMash&&who.CanMashUp){who.MashRecover();nextMash=Time.time+.18f;}
+                                float bottom=float.PositiveInfinity;
+                                foreach(var skin in visual.Model.GetComponentsInChildren<SkinnedMeshRenderer>())
+                                {
+                                    skin.BakeMesh(mesh);
+                                    foreach(var vertex in mesh.vertices)bottom=Mathf.Min(bottom,skin.transform.TransformPoint(vertex).y);
+                                }
+                                minimum=Mathf.Min(minimum,bottom-.1f);maximum=Mathf.Max(maximum,bottom-.1f);
+                                if(!captured&&who.TripLeft<1.5f)
+                                {
+                                    captured=true;at=who.transform.position+new Vector3(2.2f,1.1f,2.2f);
+                                    witness.transform.SetPositionAndRotation(at,Quaternion.LookRotation(who.transform.position+Vector3.up*.55f-at));
+                                    yield return GameplayShots.Render(witness,people[i].Id+"-recovery-brace",false,Output,who);
+                                }
+                            }
+                            Assert.IsFalse(who.IsTripped,people[i].Id+" failed to return to standing");
+                            Assert.That(minimum,Is.GreaterThan(-.045f),people[i].Id+" recovery sinks into the court");
+                            Assert.That(maximum,Is.LessThan(.08f),people[i].Id+" recovery floats above the court");
+                            report.AppendLine(FormattableString.Invariant($"{mode},{people[i].Id},{phaseChange:F2},{eye:F3},{minimum:F4},{maximum:F4}"));
+                        }
+                    }
+                    finally{Object.Destroy(witness.gameObject);}
+                    yield return PlayModeWorld.Reset();
+                }
+            }
+            finally{Object.Destroy(mesh);File.WriteAllText(Path.Combine(Output,"whole-cast-water-recovery.csv"),report.ToString());}
         }
 
         private IEnumerator WalkTo(CharacterMotor who,SwimmingInput drive,Vector2 target,GameMode mode,string stage)

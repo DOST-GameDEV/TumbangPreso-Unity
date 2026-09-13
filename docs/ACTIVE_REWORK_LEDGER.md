@@ -1,5 +1,91 @@
 # Active TUMP rework ledger
 
+## Current execution pointer,2026-09-13 evening
+
+**Checkpoint update:** no parent Editor/Blender/player remains running; all
+sessions below are retired. Whole-cast water/recoveryv3 passed1/1 with18people
+and both modes. Body/FPP/bracing images reviewed, exact contact/phase/eye CSV
+retained. V1 fixture wrongly expected automatic2.5s get-up; v2 fixed mash staging;
+v3 corrected witness-only FPP self-hide so it photographs bodies rather than
+private arms. No production recovery change was needed. Verified tangent-only
+test dirt restored with byte/vertex checks. Save/push parent stable map batch,
+then internal fresh Windows roof/pool networking qualification. UI agent is
+working on brand-new native views, not the explicitly rejected reskin approach.
+Portraitv2 assets await its own small commit; no Desktop replacement.
+
+**Current runtime window:** session41770 runs ONLY
+RooftopSwimmingProbe.EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery,
+Logs/whole-cast-water-recovery-v1.xml/.log, screenshots/CSV same folder. No C# or
+imported edits while running. All earlier parent sessions are collected/retired.
+HEADca36d14b includes UI source batches through8dbb03e (new palette originals,
+portrait author). Current34portraitv2 outputs are available to agent read-only;
+old reskin batches are explicitly superseded by its new native views. Parent
+does not accept them as the requested finished UI. Last pushed6ef38b02.
+
+NearFade was replacing PoolCeramic, erasing its procedural grout. Opt-out shader
+tag now retains it; focused NearFadeTests14/14 passed and fresh matched roof
+reviewv2 visibly shows tile joints beneath water. Resident authorv2 has0geometry
+findings across4maps. Seven potted plants, basins and flush leaf mural reviewed
+in shade/stairhouse/pool views. Source audits14/14 gating passed; cue-audio's
+7non-gating flags remain historical. No new Windows artifact yet.
+
+**Newest UI critique:** owner says the agent is using text for everything and
+wants icons for most suitable controls, specifically character selection. Sent
+to the agent: distinct actual character portraits, can/slipper thumbnails,
+recognizable action/category/HUD icons with short supporting names/tooltips where
+necessary. Generic person glyphs or text-only roster choices do not meet this.
+Agent must revise prior screens as well as remaining UI. Latest ready batch
+54cd678f pending integration; GuidedTrainingHud presentation class is reserved
+to UI agent, lesson triggers/physics/TrainingMarker and input mapping are not.
+
+Parent update: animalv7 focused3/3 passed, all4maps. Six animated ground animals
+show drawn minimum foot gaps[-.006,+.0023]m across sampled gaits; all3dogs face
+their lifted hind leg toward a surface, briefly pause and interrupt/flee when a
+person approaches.12staged bird flights still react. Native and live cat faces/
+size viewed: smaller compact cats distinguish from longer aspin muzzles. Old
+floating models are not the current asset. Evidence Logs/ambient-life-v7.
+Session46733 completed with profile restoration. New rooftop resident plants,
+basins and small flush leaf mural are authoring in guarded session7684,
+Logs/roof-residents-author-v1.log. No C#/imported edits until it exits.
+
+Primary ASTRAReworks HEAD3c835d05 after integrating UI agent commits a21b23b3,
+f3a7d359,dcbcbaac as537984f6,fd322c7b,3c835d05. Last pushed6ef38b02.
+Parent map/water/ambient source remains dirty and must be preserved. Sole agent
+`/root/ui_overhaul` continues in ../TumbangPreso-UI, no history fork/children,
+no Unity launches. It now owns the small GameSettings.ReducedUiMotion field
+addition as part of functional accessibility UI; parent reserves that file.
+
+Latest owner UI instructions reinforced: editable text/shapes/layout, quirky
+forms instead of only boxes, PDF39-49 inspiration only, Slay the Spire calm
+title/menu reference, all HUD/in-game states/icons covered. Parent continues maps.
+
+Street-animalv7 is imported in all three street maps; birdv5 across all four.
+Latest authorv5 succeeded. Native size comparison Logs/animal-scale-v7.png
+reviewed: lower/smaller feline face and body clearly distinct beside tan aspin
+and retained Maring. This is a scale study, not final in-engine acceptance.
+Rare dog surface pause/leg lift authored; raised-side direction now derived
+from the imported BackR bone rather than assumed handedness. Added focused
+surface-facing/interruption checks and actual skin contact checks; not yet run.
+
+Current guarded Editor session22404: BrandPreparationTests only,
+Logs/ui-preparation-agent-v2.xml/.log. No C#/imported edits until exit.
+V1 failed1/2 because the fixture selected Hero mode without adopting Hero rules;
+its capture actually showed Classic, so Hero-only LoadoutButton was absent.
+Agent corrected the fixture to use the real SetSelectedRules path. The early
+Back test passed; no claim that the historical intermittent issue is closed.
+Next: picker fixture separately, v7 animal/proximity/gait/surface review,
+modest rooftop resident details, focused combined map qualification.
+Older process IDs/"current" paragraphs below are historical and retired.
+
+**Current delegation pointer:** sole authorized `/root/ui_overhaul`, GPT-6 Astra
+HIGH, fork_turns=none. UI-only focused brief, no transcript/history copy and no
+children. Owns complete UI including HUD/in-game states. Isolated ASTRAReworks
+checkout at ../TumbangPreso-UI, based6ef38b02; push disabled. Parent coordinates
+Unity, integrates commits and continues maps/non-UI. Do not spawn another agent.
+Latest model task: smaller distinct cute cats/aspins (source study-v7 authored,
+not yet inspected/imported) and rare dog leg-lift behavior. All previous animal
+source styles remain rejected/unaccepted as final art. See AMBIENT_LIFE_PLAN.
+
 Owner is sleeping and explicitly requests continued work to completion, with
 MAPS still first. Added tournament spectator/cinematic improvement investigation
 to TODO152.4 and EXECUTION_PLAN; no earlier scope is cancelled. Preserve all

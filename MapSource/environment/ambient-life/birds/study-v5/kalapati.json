@@ -1,0 +1,15 @@
+{
+  "species": "kalapati",
+  "scale": 1,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "WingL",
+    "WingR",
+    "Tail"
+  ],
+  "vertices": 230,
+  "author": "tools/author_roof_birds.py",
+  "reference": "https://birdwatch.ph/2013/07/03/10-most-common-urban-birds/"
+}

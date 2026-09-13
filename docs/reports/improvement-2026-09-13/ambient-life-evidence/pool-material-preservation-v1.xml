@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.3201979">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="517" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.320198" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1590" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="517" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.308675" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1591" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="517" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.305072" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1592" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="517" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.301463" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1404" name="NearFadeTests" fullname="TumbangPreso.Tests.NearFadeTests" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.294206" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1418" name="BothMapsStillCarryThePolesTheReportWasAbout" fullname="TumbangPreso.Tests.NearFadeTests.BothMapsStillCarryThePolesTheReportWasAbout" methodname="BothMapsStillCarryThePolesTheReportWasAbout" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="574525870" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:44Z" duration="0.067984" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1417" name="EveryOccluderPrefixStillMatchesSomethingInAShippedScene" fullname="TumbangPreso.Tests.NearFadeTests.EveryOccluderPrefixStillMatchesSomethingInAShippedScene" methodname="EveryOccluderPrefixStillMatchesSomethingInAShippedScene" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="459691661" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:44Z" duration="0.163756" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1408" name="PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps" fullname="TumbangPreso.Tests.NearFadeTests.PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-13 13:00:44Z" end-time="2026-09-13 13:00:45Z" duration="0.033035" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1406" name="PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(3000,&quot;Transparent&quot;)" fullname="TumbangPreso.Tests.NearFadeTests.PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(3000,&quot;Transparent&quot;)" methodname="PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="1059592964" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.023558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[NearFade] 3 occluder nodes matched, 1 renderers moved onto TumbangPreso/NearFade.
+[NearFade] 3 occluder nodes matched, 0 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+              </test-case>
+              <test-case id="1407" name="PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(2450,&quot;TransparentCutout&quot;)" fullname="TumbangPreso.Tests.NearFadeTests.PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(2450,&quot;TransparentCutout&quot;)" methodname="PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="279964981" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001892" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[NearFade] 3 occluder nodes matched, 1 renderers moved onto TumbangPreso/NearFade.
+[NearFade] 3 occluder nodes matched, 0 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1405" name="ProceduralCeramicKeepsItsTileShaderThroughRepeatedScenerySetup" fullname="TumbangPreso.Tests.NearFadeTests.ProceduralCeramicKeepsItsTileShaderThroughRepeatedScenerySetup" methodname="ProceduralCeramicKeepsItsTileShaderThroughRepeatedScenerySetup" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="716104104" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.002342" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NearFade] 2 occluder nodes matched, 0 renderers moved onto TumbangPreso/NearFade.
+[NearFade] 2 occluder nodes matched, 0 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1412" name="TheBandIsOrderedAndClearsTheNearPlaneComfortably" fullname="TumbangPreso.Tests.NearFadeTests.TheBandIsOrderedAndClearsTheNearPlaneComfortably" methodname="TheBandIsOrderedAndClearsTheNearPlaneComfortably" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="141657889" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.003259" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1414" name="TheDitherIsIndexedInScreenSpace" fullname="TumbangPreso.Tests.NearFadeTests.TheDitherIsIndexedInScreenSpace" methodname="TheDitherIsIndexedInScreenSpace" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="909769784" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.002284" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1419" name="TheInstallerHandlesEverySubmeshRatherThanOnlyTheFirst" fullname="TumbangPreso.Tests.NearFadeTests.TheInstallerHandlesEverySubmeshRatherThanOnlyTheFirst" methodname="TheInstallerHandlesEverySubmeshRatherThanOnlyTheFirst" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="1041617807" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001871" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1411" name="TheInstallerIsActuallyReached" fullname="TumbangPreso.Tests.NearFadeTests.TheInstallerIsActuallyReached" methodname="TheInstallerIsActuallyReached" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="2133277751" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001208" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1416" name="TheRenderTypeStaysOpaqueSoTheDepthNormalsPrepassIsCorrect" fullname="TumbangPreso.Tests.NearFadeTests.TheRenderTypeStaysOpaqueSoTheDepthNormalsPrepassIsCorrect" methodname="TheRenderTypeStaysOpaqueSoTheDepthNormalsPrepassIsCorrect" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="2098497298" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.000553" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1409" name="TheShaderDeclaresTheNameTheInstallerLooksFor" fullname="TumbangPreso.Tests.NearFadeTests.TheShaderDeclaresTheNameTheInstallerLooksFor" methodname="TheShaderDeclaresTheNameTheInstallerLooksFor" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="1180523447" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.000347" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1413" name="TheShaderDefaultsAgreeWithTheInstaller" fullname="TumbangPreso.Tests.NearFadeTests.TheShaderDefaultsAgreeWithTheInstaller" methodname="TheShaderDefaultsAgreeWithTheInstaller" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="1763549799" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001185" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1410" name="TheShaderIsAlwaysIncludedSoItSurvivesAPlayerBuild" fullname="TumbangPreso.Tests.NearFadeTests.TheShaderIsAlwaysIncludedSoItSurvivesAPlayerBuild" methodname="TheShaderIsAlwaysIncludedSoItSurvivesAPlayerBuild" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="366585632" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001069" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1415" name="TheShadowCasterIsNotDithered" fullname="TumbangPreso.Tests.NearFadeTests.TheShadowCasterIsNotDithered" methodname="TheShadowCasterIsNotDithered" classname="TumbangPreso.Tests.NearFadeTests" runstate="Runnable" seed="744132384" result="Passed" start-time="2026-09-13 13:00:45Z" end-time="2026-09-13 13:00:45Z" duration="0.001047" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

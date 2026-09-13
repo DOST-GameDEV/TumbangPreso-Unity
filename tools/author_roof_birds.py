@@ -6,12 +6,17 @@ from pathlib import Path
 import bpy,bmesh
 from mathutils import Vector,Quaternion
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'tools'))
+from normalize_gltf_skin_primitives import normalize
 p=argparse.ArgumentParser();p.add_argument('--out',default='Logs/roof-birds-v1')
 a=p.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 out=ROOT/a.out;out.mkdir(parents=True,exist_ok=True)
 
 def mat(name,c):
- m=bpy.data.materials.new(name);m.diffuse_color=(*c,1);return m
+ m=bpy.data.materials.new(name);m.diffuse_color=(*c,1);m.use_nodes=True
+ shader=m.node_tree.nodes.get('Principled BSDF');shader.inputs['Base Color'].default_value=(*c,1)
+ shader.inputs['Roughness'].default_value=.72;shader.inputs['Metallic'].default_value=0
+ return m
 
 def weighted(obj,bone,material):
  obj.data.materials.append(material);g=obj.vertex_groups.new(name=bone);g.add(list(range(len(obj.data.vertices))),1,'REPLACE');return obj
@@ -31,8 +36,35 @@ def prism(name,points,bone,material,thickness=.016):
  bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(mesh);bm.free()
  o=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(o);return weighted(o,bone,material)
 
+def animate_bird(rig):
+ rig.animation_data_create();bpy.context.scene.render.fps=30
+ for name,duration in [('idle',1.8),('peck',.8),('fly',.30)]:
+  action=bpy.data.actions.new(name);action.use_fake_user=True;rig.animation_data.action=action
+  for sample in range(33):
+   phase=sample/32;frame=1+phase*duration*30
+   for bone in rig.pose.bones:
+    bone.rotation_mode='QUATERNION';bone.rotation_quaternion=Quaternion();bone.location=Vector((0,0,0))
+   for bone_name,side in [('WingL',-1),('WingR',1)]:
+    bone=rig.pose.bones[bone_name];base=bone.bone.matrix_local.to_quaternion()
+    rotation=Quaternion((0,0,1),math.radians(side*(12 if name=='fly' else 85)))
+    if name=='fly':rotation=Quaternion((0,1,0),math.radians(side*48*math.sin(phase*math.tau)))@rotation
+    bone.rotation_quaternion=base.inverted()@rotation@base
+   for bone_name,angle in [('Body',65*math.sin(math.pi*phase)**4 if name=='peck' else 0),('Head',18*math.sin(math.pi*phase)**4 if name=='peck' else 0)]:
+    bone=rig.pose.bones[bone_name];base=bone.bone.matrix_local.to_quaternion()
+    bone.rotation_quaternion=base.inverted()@Quaternion((1,0,0),math.radians(angle))@base
+   if name=='idle':
+    bone=rig.pose.bones['Head'];base=bone.bone.matrix_local.to_quaternion()
+    bone.rotation_quaternion=base.inverted()@Quaternion((0,0,1),math.radians(10*math.sin(phase*math.tau)))@base
+   for bone in rig.pose.bones:
+    bone.keyframe_insert(data_path='rotation_quaternion',frame=frame,group=bone.name)
+    bone.keyframe_insert(data_path='location',frame=frame,group=bone.name)
+ rig.animation_data.action=None
+ for bone in rig.pose.bones:bone.rotation_quaternion=Quaternion();bone.location=Vector((0,0,0))
+ bpy.context.view_layer.update()
+
 for species,scale in [('maya',.68),('kalapati',1),('fantail',.78)]:
  bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
+ for action in list(bpy.data.actions):bpy.data.actions.remove(action)
  brown=(.34,.23,.14);grey=(.43,.46,.44);black=(.12,.16,.14);cream=(.76,.70,.56)
  base=mat('Body',brown if species=='maya' else grey if species=='kalapati' else black)
  dark=mat('Wing',(.20,.15,.10) if species=='maya' else (.25,.29,.29) if species=='kalapati' else (.10,.13,.12))
@@ -78,9 +110,11 @@ for species,scale in [('maya',.68),('kalapati',1),('fantail',.78)]:
  bpy.ops.object.mode_set(mode='OBJECT');bird.parent=rig;mod=bird.modifiers.new('Bird motion','ARMATURE');mod.object=rig
  marker=bpy.data.objects.new('LookForward',None);bpy.context.collection.objects.link(marker);marker.parent=rig;marker.location=(0,-1,0)
  rig.scale=(scale,scale,scale)
+ animate_bird(rig)
  bpy.ops.object.select_all(action='SELECT');bpy.context.view_layer.objects.active=rig
  bpy.ops.wm.save_as_mainfile(filepath=str(out/(species+'.blend')))
- bpy.ops.export_scene.gltf(filepath=str(out/(species+'.glb')),export_format='GLB',use_selection=True,export_animations=False)
+ bpy.ops.export_scene.gltf(filepath=str(out/(species+'.glb')),export_format='GLB',use_selection=True,export_animations=True,export_animation_mode='ACTIONS')
+ normalize(out/(species+'.glb'))
  scene=bpy.context.scene;scene.render.engine='BLENDER_WORKBENCH';scene.view_settings.view_transform='Standard'
  scene.world.color=(.13,.14,.15);shade=scene.display.shading;shade.light='STUDIO';shade.color_type='MATERIAL';shade.show_shadows=True;shade.show_specular_highlight=False;shade.background_type='WORLD'
  camdata=bpy.data.cameras.new('Review');cam=bpy.data.objects.new('Review',camdata);bpy.context.collection.objects.link(cam);scene.camera=cam
@@ -88,7 +122,7 @@ for species,scale in [('maya',.68),('kalapati',1),('fantail',.78)]:
  scene.render.resolution_x=900;scene.render.resolution_y=900;scene.render.resolution_percentage=100
  for state in ['perched','flight']:
   for name,side in [('WingL',-1),('WingR',1)]:
-   bone=rig.pose.bones[name];q=bone.bone.matrix_local.to_quaternion();rotation=Quaternion((0,0,1),math.radians(side*70)) if state=='perched' else Quaternion((0,-1,0),math.radians(side*32))
+   bone=rig.pose.bones[name];q=bone.bone.matrix_local.to_quaternion();rotation=Quaternion((0,0,1),math.radians(side*85)) if state=='perched' else Quaternion((0,-1,0),math.radians(side*32))
    bone.rotation_mode='QUATERNION';bone.rotation_quaternion=q.inverted()@rotation@q
   scene.render.filepath=str(out/(species+'-'+state+'.png'));bpy.ops.render.render(write_still=True)
  (out/(species+'.json')).write_text(json.dumps({'species':species,'scale':scale,'bones':list(definitions),'vertices':len(bird.data.vertices),'author':'tools/author_roof_birds.py','reference':'https://birdwatch.ph/2013/07/03/10-most-common-urban-birds/'},indent=2))

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.3299499">
+  <test-suite type="TestSuite" id="1410" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="309" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.329950" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1404" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="309" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.319500" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="39232" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1405" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="309" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.315571" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1406" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="309" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.311786" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1321" name="RooftopSwimmingProbe" fullname="TumbangPreso.PlayTests.RooftopSwimmingProbe" classname="TumbangPreso.PlayTests.RooftopSwimmingProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.304028" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1324" name="EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery" fullname="TumbangPreso.PlayTests.RooftopSwimmingProbe.EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery" methodname="EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery" classname="TumbangPreso.PlayTests.RooftopSwimmingProbe" runstate="Runnable" seed="1139102434" result="Passed" start-time="2026-09-13 13:11:36Z" end-time="2026-09-13 13:12:48Z" duration="72.292039" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/whole-cast-water-recovery-v3/bayan-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/bayan-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/bayan-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/maring-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/maring-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/maring-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/totoy-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/totoy-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/totoy-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/inday-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/inday-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/inday-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/kuya_boy-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/kuya_boy-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/kuya_boy-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/ate_girlie-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/ate_girlie-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/ate_girlie-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/tikboy-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/tikboy-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/tikboy-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/bebang-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/bebang-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/bebang-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/jun_jun-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/jun_jun-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/jun_jun-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/lola_pacing-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/lola_pacing-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/lola_pacing-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/mang_kanor-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/mang_kanor-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/mang_kanor-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/aling_nena-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/aling_nena-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/aling_nena-recovery-brace.png
+[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/whole-cast-water-recovery-v3/dante-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/dante-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/dante-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/cheska-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/cheska-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/cheska-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/sean-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/sean-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/sean-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/zack-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/zack-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/zack-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/nemu-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/nemu-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/nemu-recovery-brace.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/phaister-swimming-body.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/phaister-swimming-owner.png
+[Play] wrote Logs/whole-cast-water-recovery-v3/phaister-recovery-brace.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

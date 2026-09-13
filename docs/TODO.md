@@ -297,6 +297,21 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+Newest UI ownership/quality contract: girlfriend will eventually replace this
+UI in the long term, NOT soon. Continue a polished complete overhaul now with
+easy-to-edit text, shapes, layouts, theme/source assets and separated domain
+logic. Owner explicitly forbids reusing old UI builders/reskinning old hierarchy;
+the UI agent is creating new native views/components from empty roots. Actual
+character portraits, equipment thumbnails and appropriate icons must replace
+text-heavy choices. Full logo/palette and quirky hand-drawn visual language are
+required. Old source stays inactive, not deleted. This future replacement is
+not authorization to ship placeholders or defer current quality.
+
+**Animal correction:** smaller unmistakably feline cats and friendlier distinct
+aspins; owner rejects current similarity/size/cuteness. Add rare brief dog pee/
+leg-lift at sensible trees/surfaces, long random intervals and interruption when
+approached. Current map work; keep native style and no new controls/rewards.
+
 **Tournament spectator direction, owner2026-09-13:** examine how spectating can
 be better and more cinematic for tournaments. Preserve free/follow/POV and caster
 control; review camera movement/collision/framing, action/ultimate coverage,

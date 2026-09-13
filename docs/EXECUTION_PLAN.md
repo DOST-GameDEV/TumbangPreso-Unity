@@ -1,5 +1,55 @@
 # Active execution plan
 
+**Latest UI correction:** owner explicitly prohibits reusing legacy UI builders.
+The single agent is replacing the conservative reskin with new TumpUiFactory,
+editable TumpUiTheme and new empty-root views, keeping old source inactive and
+reusing only nonvisual domain behavior. Portrait/icon-led choices and the full
+supplied logo/palette must be visibly expressed. Reskin batches are superseded;
+do not spend another acceptance pass on them. Girlfriend's eventual replacement
+UI is a long-term plan, not soon and not a reason to lower quality now. Preserve
+editable text/shapes/layout/source art and document how to change them. Agent
+may install relevant missing skills; no extra agents/history forks/paid work.
+
+**Current status overrides historical progress below:** primary3c835d05 contains
+three integrated UI-agent batches; last pushed6ef38b02. UI preparationv2 is the
+only running parent Editor (session22404). Parent dirty water/ambientv7 work
+remains separate. Streetv7 and birdv5 have been imported; their current visual,
+contact and rare-dog-pause qualification is next. Native cast/animal size study
+was reviewed and shows the intended smaller cat relationship. UI agent continues
+settings/profile/HUD in its isolated clone; GameSettings.ReducedUiMotion field
+addition is reserved to it. Details and exact logs: newest ACTIVE_REWORK_LEDGER.
+
+## Active UI subagent
+
+The single authorized agent is `/root/ui_overhaul`, GPT-6 Astra HIGH, spawned
+with fork_turns=none and only a focused UI brief. Isolated checkout:
+C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-UI,
+ASTRAReworks at6ef38b02 when cloned. Its push URL is deliberately disabled.
+Parent remains sole integrator/pusher, owns maps/non-UI, and coordinates Unity
+validation. No other agents or delegated tasks are authorized. Do not spawn a
+replacement after compaction; use the existing agent and read its messages.
+UI agent owns the full overhaul, explicitly including HUDs/in-game UI, all
+contexts/navigation/readability, Figma and source assets. It must not launch
+Unity uncoordinated or edit primary. Its status belongs in UI_EXECUTION_STATUS.md
+in its checkout. User wants intuitive, thorough, coherent UI without overload.
+
+**Newest parallel-work decision:** owner explicitly authorizes ONE GPT-6 Astra
+HIGH UI subagent, created with no history fork and a complete focused UI brief.
+No child/further subagents. It owns UI in an isolated ASTRAReworks checkout;
+parent continues maps/non-UI and integrates/pushes. Coordinate Unity access; no
+two tasks modifying this checkout. This supersedes serial UI preparation while
+preserving map priority here. Record the actual agent ID/workspace after spawn.
+
+**Newest animal direction:** owner rejects current cat/dog similarity, oversized
+cats and lack of cuteness. Redesign actual proportions/silhouettes, not just color.
+Add rare brief dog leg-lift/urination at trees/surfaces, long random cooldowns and
+player-proximity interruption. These are current map tasks. AMBIENT_LIFE_PLAN is
+the detailed source; current models are not accepted final art.
+
+**Latest bird clarification:** flight through scenery is allowed; prioritize
+appealing birds and reliable fleeing from nearby players. Do not block or prolong
+the map pass for exact bird obstacle avoidance. Ground pets still need sane routes.
+
 ## Current instruction and verification policy
 
 CONTINUE IN THIS CHAT. The owner cancelled the handoff, is sleeping, and asks for
@@ -172,3 +222,53 @@ arm tangents/Ultra recipe were byte-verified and backed up before restoration.
 
 Previous plan preserved whole in reports/improvement-2026-09-13/execution-plan-history-12.md.
 This plan is an execution record, not a handoff prompt or a declaration of completion.
+
+Current map batch after pushed6ef38b02: pool ceramic/world-scale joints, softer
+water and local swimmer wakes are implemented and authored. Focused normal-speed
+water review1/1 passed both modes, Logs/roof-water-detail-v1. No full suite run.
+Bird study-v3 exports exactly idle/peck/fly for3species. Street study-v4 has6models
+with exactly idle/walk/run/alert. Source IDs and earlier rejected studies retained.
+AmbientLife runtime and AmbientLifeAuthor now prepare real model/clip references,
+private-random visits, ground routes/fleeing and checked bird approach paths.
+Authorv1 is currently importing/placing; session48421. Do not claim animals
+validated or finished. Next inspect author result, batch any corrections, then
+focused in-engine model/path/animation review across maps. No subagents or Desktop
+update. Latest owner focused-test policy remains mandatory.
+
+Ambient importv1 hit the installed glTFast multi-primitive skin-buffer job conflict.
+No package/Library/quality-setting workaround was applied. Reused the repository's
+existing tools/normalize_gltf_skin_primitives.py, separating skinned primitive
+children without changing geometry/materials/animation data. New source versions:
+street-animals/study-v5 and birds/study-v4. Importv2 now running, session81551.
+The first attempted binary comparison incorrectly compared two independent Blender
+exports and failed. Same-input normalization proof now passes all9models: binary,
+accessors, animation/skin/material data and original node transforms unchanged.
+Proof: Logs/ambient-normalizer-proof/result.json. Ground route analysis now caches
+clear neighbor edges and uses component sweeps; runtime animals no longer stop at
+every tiny route sample, and bird fidgets use time intervals instead of per-frame
+probability. All are unreviewed runtime integrations until current author and
+focused in-engine review succeed. Keep maps first and focused-only validation.
+
+Ambient reviewv1 failed at Eskinita aspin approach (0movement). Cause not yet
+isolated; the probe now preserves actual player position and actor wait/panic/
+heading/target state before asserting, so a missed proximity trigger is distinct
+from broken fleeing. The image also exposed two concrete defects: every exported
+material had default(.8,.8,.8) despite colored Blender viewport previews, and the
+small route capsule admitted a dog's head into a tree. Source PBR nodes now carry
+the real palettes (nine GLBs verified3+distinct colors), and routes validate the
+full visible/turning envelope. New sources street-animals/study-v6, birds/study-v5.
+Authorv4 running. No package changes or broad tests. Bird flight through scenery
+is explicitly allowed; nearby-player fleeing remains required. Both grounded and
+approaching birds now respond to proximity, with editor-only staged review to
+verify that path without making shipped visits deterministic.
+
+UI agent a21b23b was integrated as primary537984f6. Only BrandPreparationTests is
+running now (Logs/ui-preparation-agent-v1.xml/.log). Agent continues other UI work
+in isolated clone, no Editor. No broad suite. Parent maps/models remain dirty
+outside that UI commit; do not mix their state into UI validation claims.
+Animal source study-v7 now gives smaller compact cats and friendlier distinct
+aspins, plus dog-only leg-lift clip. Authorv5 completed all4map placement. Runtime
+rare surface pauses use long private-random cooldowns and cancel on proximity;
+not yet behavior/visual-qualified. Default skin seating now measures the actual
+neutral mesh instead of animation bounds that left dogs5-7cm high. Next focused
+animal review should check smaller cats/front faces/contact and the rare pause.

@@ -1,5 +1,18 @@
 # Working instructions for ChatGPT / Codex
 
+**One-time delegation exception, latest owner instruction:** exactly ONE
+GPT-6 Astra HIGH subagent may own the entire UI overhaul, with no conversation
+history fork. Give it a focused complete brief and repository/reference pointers.
+It may not create agents/tasks or delegate. No further subagents are authorized.
+The parent continues maps and non-UI work. Use an isolated UI checkout, coordinate
+Unity validation, and keep the parent as the sole integrator/pusher to ASTRAReworks.
+
+**Newest bird scope clarification:** the owner permits birds to pass through
+scenery during flight. Prioritize appealing motion and reliably flying away when
+a player approaches. Do not spend time perfecting bird collision avoidance or
+block the map pass on it. This exception does not excuse floating/perched animals
+or ground cats/dogs walking through the scenery.
+
 **Newest verification instruction,2026-09-13:** use only tests/checks related to
 the current changes. Do not routinely run full EditMode or full PlayMode suites.
 The owner explicitly requested this to improve throughput without lowering
@@ -91,6 +104,29 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 ## Product and creative authority
 
 ### Newest owner UI direction, 2026-09-13
+
+**Latest explicit implementation constraint:** build genuinely NEW UI builders,
+screen layouts and native editable components. Do not reuse/reskin the old UI
+builders or mutate their old visual hierarchies as the overhaul. Preserve their
+source inactive and preserve functionality/data through nonvisual adapters to
+the existing gameplay/settings/network services. The owner rejected the first
+conservative reskin. Use actual character portraits/equipment thumbnails and
+recognizable icons for suitable controls; avoid text carrying every choice.
+Anchor the entire visual language to the supplied logo and full palette sheet:
+deep red, orange, peach/cream, yellow, yellow-green, olive and dark olive, with
+hand-drawn contours and restrained original pattern/impact/slipper motifs.
+Palette/shape source images are in the UI agent's owner-brand source folder.
+The supplied brand palette supersedes older UI colour prohibitions; gameplay
+role readability must still be explicit. Uniform boxes/legacy brown-amber
+buttons plus a new header do not satisfy this overhaul.
+
+**Future ownership, explicitly long-term:** the owner's girlfriend will eventually
+replace this UI with her own, but not soon. This does NOT reduce the current
+quality/completeness requirement. Build a polished genuinely good interface now.
+Keep text, shapes, layouts, theme and source art easy to edit, with clear
+view/domain boundaries and authoring documentation for her future replacement.
+Continue the UI overhaul. Relevant additional skills may be installed as needed;
+existing no-paid-work/no-additional-agent limits remain.
 
 The owner now authorizes a FULL UI/UX overhaul, before animations and skills.
 This supersedes earlier UI-art-low-priority and functional-only limits. Preserve

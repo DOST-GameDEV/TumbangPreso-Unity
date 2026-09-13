@@ -45,6 +45,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void Review()
         {
+            string output=Environment.GetEnvironmentVariable("TUMP_ROOF_REVIEW")??"Logs/sa-bubong-layout-v1";
             EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
             Object.FindFirstObjectByType<EnvColourPass>()?.Apply();
             TumbangPreso.Settings.GraphicsProfiles.Apply(1);
@@ -56,7 +57,11 @@ namespace TumbangPreso.EditorTools.MapKit
                 ("aerial",new Vector3(28,28,-33),new Vector3(0,0,2)),
                 ("court",new Vector3(0,1.65f,-12),new Vector3(0,1.65f,11)),
                 ("pool-and-shade",new Vector3(3,1.65f,0),new Vector3(-11,1.65f,0)),
-                ("open-edge",new Vector3(10,1.65f,-2),new Vector3(20,0,0))};
+                ("open-edge",new Vector3(10,1.65f,-2),new Vector3(20,0,0)),
+                ("residents-shade",new Vector3(-15.7f,1.55f,-12.7f),new Vector3(-11.6f,.75f,-8.4f)),
+                ("residents-stairhead",new Vector3(14,1.55f,14),new Vector3(9.8f,1.2f,18)),
+                ("water-and-tile",new Vector3(-8.2f,2.8f,7),new Vector3(-13,-.55f,7)),
+                ("laundry-corner",new Vector3(-7.3f,1.55f,16.7f),new Vector3(-5.8f,.7f,19.8f))};
             foreach(var shot in shots)
             {
                 camera.transform.SetPositionAndRotation(shot.Item2,Quaternion.LookRotation(shot.Item3-shot.Item2));
@@ -66,8 +71,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 bool write=GL.sRGBWrite;GL.sRGBWrite=QualitySettings.activeColorSpace==ColorSpace.Linear;
                 Graphics.Blit(rt,display);GL.sRGBWrite=write;RenderTexture.active=display;
                 var image=new Texture2D(1600,1000,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();
-                Directory.CreateDirectory("Logs/sa-bubong-layout-v1");
-                File.WriteAllBytes("Logs/sa-bubong-layout-v1/"+shot.Item1+".png",image.EncodeToPNG());
+                Directory.CreateDirectory(output);
+                File.WriteAllBytes(Path.Combine(output,shot.Item1+".png"),image.EncodeToPNG());
                 RenderTexture.active=previous;camera.targetTexture=null;RenderTexture.ReleaseTemporary(display);rt.Release();Object.DestroyImmediate(rt);Object.DestroyImmediate(image);
             }
             Object.DestroyImmediate(camera.gameObject);EditorApplication.Exit(0);
@@ -126,8 +131,10 @@ namespace TumbangPreso.EditorTools.MapKit
             // Parent the basin to the structure that supports it. The geometry
             // gate can then inspect that parent's actual lower support triangles.
             Pool(shell);Shade(dressing);Stairhead(dressing);Laundry(dressing);
+            RooftopResidentsAuthor.FinishLoadedScene();
             Skyline(dressing);
             Gameplay(root);
+            var lifeReport=new System.Text.StringBuilder();AmbientLifeAuthor.FinishLoadedScene("SaBubong",lifeReport);Debug.Log(lifeReport.ToString());
             var sun=new GameObject("Sun").AddComponent<Light>();sun.transform.SetParent(root,false);sun.type=LightType.Directional;
             MapAtmosphereAuthor.Apply("SaBubong");
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);AssetDatabase.SaveAssets();
@@ -208,17 +215,23 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void Pool(Transform root)
         {
             var group=Group(root,"Resident swimming pool");
+            var ceramic=Mat("Pool ceramic",new Color(.48f,.61f,.56f));
+            ceramic.shader=Shader.Find("TumbangPreso/PoolCeramic");
+            if(ceramic.shader==null)throw new InvalidOperationException("Missing pool ceramic shader");
+            ceramic.SetColor("_Color",new Color(.48f,.61f,.56f));
+            ceramic.SetColor("_Grout",new Color(.37f,.48f,.43f));
+            ceramic.SetFloat("_TileSize",.25f);ceramic.SetFloat("_Glossiness",.35f);EditorUtility.SetDirty(ceramic);
             float x=(RooftopPool.MinX+RooftopPool.MaxX)*.5f,z=(RooftopPool.MinZ+RooftopPool.MaxZ)*.5f;
             float width=RooftopPool.MaxX-RooftopPool.MinX,length=RooftopPool.MaxZ-RooftopPool.MinZ;
-            Box(group,"Pool floor",new Vector3(x,RooftopPool.FloorY-.1f,z),new Vector3(width,.2f,length),Tile,true);
+            Box(group,"Pool floor",new Vector3(x,RooftopPool.FloorY-.1f,z),new Vector3(width,.2f,length),ceramic,true);
             foreach(float edge in new[]{RooftopPool.MinX,RooftopPool.MaxX})
             {
-                Box(group,"Pool side wall",new Vector3(edge,-.75f,z),new Vector3(.20f,1.70f,length),Tile,true);
+                Box(group,"Pool side wall",new Vector3(edge,-.75f,z),new Vector3(.20f,1.70f,length),ceramic,true);
                 Box(group,"Pool coping",new Vector3(edge,.13f,z),new Vector3(.32f,.12f,length+.2f),Edge,true);
             }
             foreach(float edge in new[]{RooftopPool.MinZ,RooftopPool.MaxZ})
             {
-                Box(group,"Pool end wall",new Vector3(x,-.75f,edge),new Vector3(width,1.70f,.20f),Tile,true);
+                Box(group,"Pool end wall",new Vector3(x,-.75f,edge),new Vector3(width,1.70f,.20f),ceramic,true);
                 Box(group,"Pool coping",new Vector3(x,.13f,edge),new Vector3(width+.2f,.12f,.32f),Edge,true);
             }
             // Broad entry steps give swimmers a visible way back to the deck.
@@ -226,16 +239,17 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 float top=.10f-i*.24f;float depth=top-RooftopPool.FloorY;
                 Box(group,"Pool entry step "+i,new Vector3(RooftopPool.MaxX-1.4f,RooftopPool.FloorY+depth*.5f,RooftopPool.MinZ+.28f+i*.45f),
-                    new Vector3(2.4f,depth,.46f),i%2==0?Edge:Tile,true);
+                    new Vector3(2.4f,depth,.46f),i%2==0?Edge:ceramic,true);
             }
             var water=Mat("Pool water",new Color(.14f,.48f,.51f));
             water.shader=Shader.Find("TumbangPreso/RoofPoolWater");
             if(water.shader==null)throw new InvalidOperationException("Missing roof pool shader");
-            water.SetColor("_Color",new Color(.14f,.48f,.51f,.68f));water.SetFloat("_Glossiness",.64f);EditorUtility.SetDirty(water);
+            water.SetColor("_Color",new Color(.14f,.48f,.51f,.68f));water.SetFloat("_Glossiness",.46f);EditorUtility.SetDirty(water);
             var surface=GameObject.CreatePrimitive(PrimitiveType.Quad);surface.name="Water surface";surface.transform.SetParent(group,false);
             surface.transform.position=new Vector3(x,RooftopPool.SurfaceY,z);surface.transform.rotation=Quaternion.Euler(90,0,0);
             surface.transform.localScale=new Vector3(width-.2f,length-.2f,1);Object.DestroyImmediate(surface.GetComponent<Collider>());
             surface.GetComponent<Renderer>().sharedMaterial=water;surface.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;
+            root.GetComponentInParent<RooftopPool>().SetSurface(surface.GetComponent<Renderer>());
             AirborneByDesign.Attach(surface,"Water surface contained by the physical pool basin. Body buoyancy is handled by RooftopPool, not a solid water collider.");
         }
 

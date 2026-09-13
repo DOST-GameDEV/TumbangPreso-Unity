@@ -642,7 +642,7 @@ namespace TumbangPreso.PlayTests
         /// so every existing caller behaves exactly as it did.
         /// </summary>
         internal static IEnumerator Render(Camera cam, string name, bool flipCanvases,
-                                           string outDir = null)
+                                           string outDir = null,CharacterMotor observedSubject=null)
         {
             // ⚠️⚠️ AN HDR TARGET, AND THE LDR ONE MADE THESE SHOTS LIE ABOUT THE ONE THING THEY
             // WERE BEING USED TO JUDGE. `ColourGrade` runs an ACES roll-off in `OnRenderImage`,
@@ -748,7 +748,26 @@ namespace TumbangPreso.PlayTests
             yield return null;
 
             Canvas.ForceUpdateCanvases();
-            cam.Render();
+            // A witness must draw the body that the owner's FPP camera hides,
+            // and must not photograph that owner's private floating view arms.
+            // Change this only for the synchronous witness render, then restore.
+            var subjects=new System.Collections.Generic.List<Renderer>();
+            var shadows=new System.Collections.Generic.List<UnityEngine.Rendering.ShadowCastingMode>();
+            var arms=new System.Collections.Generic.List<Renderer>();var armEnabled=new System.Collections.Generic.List<bool>();
+            if(observedSubject!=null)
+            {
+                subjects.AddRange(observedSubject.GetComponentsInChildren<Renderer>());
+                var held=observedSubject.GetComponent<Carrier>()?.Held;if(held!=null)subjects.AddRange(held.GetComponentsInChildren<Renderer>());
+                foreach(var renderer in subjects){shadows.Add(renderer.shadowCastingMode);if(renderer.shadowCastingMode==UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.On;}
+                foreach(var view in Object.FindObjectsByType<CameraSystem.ViewmodelArms>(FindObjectsSortMode.None))arms.AddRange(view.GetComponentsInChildren<Renderer>());
+                foreach(var renderer in arms){armEnabled.Add(renderer.enabled);renderer.enabled=false;}
+            }
+            try{cam.Render();}
+            finally
+            {
+                for(int i=0;i<subjects.Count;i++)if(subjects[i]!=null)subjects[i].shadowCastingMode=shadows[i];
+                for(int i=0;i<arms.Count;i++)if(arms[i]!=null)arms[i].enabled=armEnabled[i];
+            }
 
             // ⚠️⚠️ THE HDR TARGET IS RESOLVED THROUGH AN sRGB ONE BEFORE IT IS READ, AND SKIPPING
             // THAT MAKES EVERY SHOT ROUGHLY A STOP AND A HALF TOO DARK. An HDR target is LINEAR;

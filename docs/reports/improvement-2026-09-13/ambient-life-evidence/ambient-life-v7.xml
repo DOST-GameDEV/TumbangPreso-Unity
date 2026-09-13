@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.8736647">
+  <test-suite type="TestSuite" id="1406" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="306" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.873665" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1400" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="306" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.866180" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="39544" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1401" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="306" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.865201" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1402" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="306" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.864607" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1013" name="AmbientLifeProbe" fullname="TumbangPreso.PlayTests.AmbientLifeProbe" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:43:30Z" duration="72.857819" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1016" name="DogSurfacePauseFacesRaisedLegAndInterruptsForPlayers" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.DogSurfacePauseFacesRaisedLegAndInterruptsForPlayers" methodname="DogSurfacePauseFacesRaisedLegAndInterruptsForPlayers" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="1901186723" result="Passed" start-time="2026-09-13 12:42:17Z" end-time="2026-09-13 12:42:29Z" duration="12.190297" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/Eskinita-dog-surface-pause.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-dog-surface-pause.png
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-dog-surface-pause.png
+]]></output>
+            </test-case>
+            <test-case id="1015" name="GroundAnimalGaitsAndStyleAtOrdinarySpeed" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.GroundAnimalGaitsAndStyleAtOrdinarySpeed" methodname="GroundAnimalGaitsAndStyleAtOrdinarySpeed" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="589649654" result="Passed" start-time="2026-09-13 12:42:29Z" end-time="2026-09-13 12:43:03Z" duration="33.647866" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1014" name="OriginalAnimalsRenderAnimateAndReactOnTheirMaps" fullname="TumbangPreso.PlayTests.AmbientLifeProbe.OriginalAnimalsRenderAnimateAndReactOnTheirMaps" methodname="OriginalAnimalsRenderAnimateAndReactOnTheirMaps" classname="TumbangPreso.PlayTests.AmbientLifeProbe" runstate="Runnable" seed="1238366014" result="Passed" start-time="2026-09-13 12:43:03Z" end-time="2026-09-13 12:43:30Z" duration="27.007355" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/Eskinita-aspin-tan-context.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-aspin-tan-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-pusakal-tabby-context.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-pusakal-tabby-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-maya-visit.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-kalapati-visit.png
+[Play] wrote Logs/ambient-life-v7/Eskinita-fantail-visit.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-aspin-cream-context.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-aspin-cream-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-pusakal-ginger-context.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-pusakal-ginger-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-maya-visit.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-kalapati-visit.png
+[Play] wrote Logs/ambient-life-v7/BayanPlaza-fantail-visit.png
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-aspin-patched-context.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-aspin-patched-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-pusakal-tuxedo-context.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-pusakal-tuxedo-owner-after-approach.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-maya-visit.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-kalapati-visit.png
+[Play] wrote Logs/ambient-life-v7/IlalimNgTulay-fantail-visit.png
+[Env] repainted 0 of 177 renderers, 0 with a roof variant.
+[NearFade] 795 occluder nodes matched, 176 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/ambient-life-v7/SaBubong-maya-visit.png
+[Play] wrote Logs/ambient-life-v7/SaBubong-kalapati-visit.png
+[Play] wrote Logs/ambient-life-v7/SaBubong-fantail-visit.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

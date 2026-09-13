@@ -24,6 +24,27 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class NearFadeTests
     {
+        [Test]
+        public void ProceduralCeramicKeepsItsTileShaderThroughRepeatedScenerySetup()
+        {
+            var root=new UnityEngine.GameObject("Dressing");
+            var material=new UnityEngine.Material(UnityEngine.Shader.Find("TumbangPreso/PoolCeramic"));
+            material.SetFloat("_TileSize",.25f);
+            var floor=UnityEngine.GameObject.CreatePrimitive(UnityEngine.PrimitiveType.Cube);floor.transform.SetParent(root.transform);
+            var renderer=floor.GetComponent<UnityEngine.Renderer>();renderer.sharedMaterial=material;
+            try
+            {
+                NearFade.Install(root.transform);NearFade.Install(root.transform);
+                Assert.AreSame(material,renderer.sharedMaterial,"Near-camera setup removed the ceramic's procedural grout/variation.");
+                Assert.AreEqual(.25f,renderer.sharedMaterial.GetFloat("_TileSize"));
+            }
+            finally
+            {
+                var assigned=renderer.sharedMaterial;UnityEngine.Object.DestroyImmediate(root);
+                if(assigned!=material)UnityEngine.Object.DestroyImmediate(assigned);
+                UnityEngine.Object.DestroyImmediate(material);
+            }
+        }
         [TestCase(3000,"Transparent")]
         [TestCase(2450,"TransparentCutout")]
         public void PreservesNonOpaqueSurfacesWhileInstallingOnSolidProps(int queue,string renderType)

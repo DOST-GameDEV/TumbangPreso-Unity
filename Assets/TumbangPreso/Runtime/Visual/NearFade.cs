@@ -304,6 +304,10 @@ namespace TumbangPreso.Visual
 
         private static Material Build(Material source, Shader shader)
         {
+            // World-space ceramic joints cannot be reconstructed by copying a
+            // tint/texture into this shader. Such surfaces opt out explicitly;
+            // the pool lies below the player and does not obstruct their view.
+            if(source.GetTag("NearFade",false)=="Preserve")return null;
             // This shader is opaque and does not implement source alpha blending
             // or texture cutout. Converting shop glass made entire interiors
             // disappear, despite the copied color retaining its original alpha.

@@ -1,0 +1,32 @@
+{
+  "id": "aspin-tan",
+  "kind": "dog",
+  "coat": [
+    0.58,
+    0.36,
+    0.19
+  ],
+  "ears": "upright",
+  "tail": "curled",
+  "scale": 1,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "run",
+    "alert"
+  ],
+  "vertices": 466,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

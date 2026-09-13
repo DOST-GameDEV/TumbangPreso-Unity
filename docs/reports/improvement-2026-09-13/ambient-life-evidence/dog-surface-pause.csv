@@ -1,0 +1,4 @@
+map,id,leg_rotation,surface_side_dot,state_after_approach
+Eskinita,aspin-tan,67.07,0.447,run|wait=0.00|panic=2.01|target=3|speed=2.20|near=True|yaw=0.0|peeing=False|peeCooldown=208.1
+BayanPlaza,aspin-cream,66.72,0.447,run|wait=0.00|panic=2.30|target=23|speed=2.20|near=True|yaw=180.0|peeing=False|peeCooldown=219.8
+IlalimNgTulay,aspin-patched,66.80,0.447,run|wait=0.00|panic=0.84|target=9|speed=2.20|near=True|yaw=180.0|peeing=False|peeCooldown=123.1
