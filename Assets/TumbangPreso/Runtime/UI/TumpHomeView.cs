@@ -29,6 +29,9 @@ namespace TumbangPreso.UI
             Link(root, "QuitButton", "Quit", 816, SceneFlow.Quit);
             var credit = TumpUiFactory.Button(root, "CreditsButton", "Credits", credits, TumpSurface.Form.Link, f.Cream, 30);
             TumpUiFactory.Place((RectTransform)credit.transform, 250, 956, 230, 76);
+            var version = TumpUiFactory.Text(root, "GameVersion", "", 22);
+            version.alignment = TextAnchor.MiddleCenter; version.color = f.Olive;
+            TumpUiFactory.Place(version.rectTransform, 160, 1034, 410, 34); GameVersion.ApplyTo(version);
             _canvas.GetComponent<ScreenFocus>().Rebuild();
         }
         private static void Link(Transform root, string name, string label, float y, Action click)

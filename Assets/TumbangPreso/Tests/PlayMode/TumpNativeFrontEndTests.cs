@@ -32,7 +32,14 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(CreditsContent.CcByCredits.Length + CreditsContent.CourtesyCredits.Length,
                 credits.GetComponentsInChildren<Text>().Count(t => t.name == "CreditBody"));
             yield return TumpUiCapture.Capture("NativeCredits-v1", credits, 1920, 1080);
-            credits.GetComponentInChildren<ScrollRect>().verticalNormalizedPosition = 0; yield return null;
+            var creditScroll = credits.GetComponentInChildren<ScrollRect>();
+            creditScroll.verticalNormalizedPosition = 0; yield return null; yield return null;
+            var lastCredit = credits.GetComponentsInChildren<Text>().Last(t => t.name == "CreditBody");
+            Assert.GreaterOrEqual(lastCredit.rectTransform.rect.height + 1, lastCredit.preferredHeight, "The complete licence body must fit its own text rect.");
+            var corners = new Vector3[4]; lastCredit.rectTransform.GetWorldCorners(corners);
+            Assert.GreaterOrEqual(creditScroll.viewport.InverseTransformPoint(corners[0]).y + 1, creditScroll.viewport.rect.yMin,
+                "The final licence must be reachable by scrolling to the end.");
+            Assert.That(creditScroll.verticalScrollbar.handleRect.rect.width, Is.LessThanOrEqualTo(12), "Scrollbar must stay inside its narrow track.");
             yield return TumpUiCapture.Capture("NativeCredits-licenses-v1", credits, 1280, 960);
             Press("CreditsBack"); yield return null;
             Assert.IsTrue(home.gameObject.activeSelf);

@@ -30,6 +30,7 @@ namespace TumbangPreso.UI
             var mark = TumpUiFactory.Art(root, "SlipperMark", f.SlipperMark != null ? f.SlipperMark : TumpUiFactory.Sprite("UI/brand/tsinelas_hit"));
             TumpUiFactory.Place(mark.rectTransform, 220, 796, 242, 206);
             var list = TumpUiFactory.Scroll(root, "Credits", out var scroll);
+            list.GetComponent<VerticalLayoutGroup>().padding.bottom = 72;
             TumpUiFactory.Place((RectTransform)scroll.transform, 650, 104, 1164, 910);
             Heading(list, "The team");
             foreach (var member in CreditsContent.TeamCredits)

@@ -190,7 +190,7 @@ namespace TumbangPreso.UI
             track.rectTransform.anchorMin = new Vector2(1, 0); track.rectTransform.anchorMax = Vector2.one;
             track.rectTransform.offsetMin = new Vector2(-10, 0); track.rectTransform.offsetMax = Vector2.zero;
             var handle = Rect(track.transform, "Handle").gameObject.AddComponent<Image>();
-            handle.color = Theme.Brick;
+            handle.color = Theme.Brick; Stretch(handle.rectTransform);
             var bar = track.gameObject.AddComponent<Scrollbar>();
             bar.direction = Scrollbar.Direction.BottomToTop; bar.handleRect = handle.rectTransform; bar.targetGraphic = handle;
             scroll.verticalScrollbar = bar; scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
