@@ -206,6 +206,17 @@ namespace TumbangPreso.InputLayer
 
         private CanvasGroup _group;
         private WoodCraft.Surface _surface;
+        private TumpSurface _nativeSurface;
+        private TumpVerbSymbol _nativeVerb;
+        private TumpAbilitySymbol _nativeAbility;
+
+        public void BindNative(VerbInput entry, CanvasGroup group, TumpSurface surface,
+            TumpVerbSymbol verb, TumpAbilitySymbol ability)
+        {
+            Entry = entry; _group = group; _nativeSurface = surface;
+            _nativeVerb = verb; _nativeAbility = ability;
+            Repaint();
+        }
 
         public void Bind(VerbInput entry, CanvasGroup group, WoodCraft.Surface surface)
         {
@@ -260,6 +271,23 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public void RefreshIcon(CharacterMotor local = null)
         {
+            if (_nativeSurface != null)
+            {
+                var current = AbilityForSlot(local);
+                if (_nativeVerb != null)
+                {
+                    _nativeVerb.gameObject.SetActive(current == null);
+                    bool defender = local != null && local.IsDefender;
+                    if (_nativeVerb.Defender != defender) { _nativeVerb.Defender = defender; _nativeVerb.SetVerticesDirty(); }
+                }
+                if (_nativeAbility != null)
+                {
+                    _nativeAbility.gameObject.SetActive(current != null);
+                    if (current != null && _nativeAbility.Glyph != current.Glyph)
+                    { _nativeAbility.Glyph = current.Glyph; _nativeAbility.SetVerticesDirty(); }
+                }
+                return;
+            }
             if (_icon == null) return;
 
             var ability = AbilityForSlot(local);
@@ -307,6 +335,13 @@ namespace TumbangPreso.InputLayer
 
         private void Repaint()
         {
+            if (_nativeSurface != null)
+            {
+                _nativeSurface.Selected = IsHeld;
+                _nativeSurface.SetVerticesDirty();
+                if (_group != null) _group.alpha = IsHeld ? Mathf.Max(.45f, _opacity) : _opacity;
+                return;
+            }
             // ⚠️⚠️ THE PRESS RE-APPLIES THE SKIN WITH AN AMBER TINT, which is how a control in
             // this front end says it is live. `WoodSkin.Apply` is idempotent and resets its own
             // build height, so calling it is what forces the rebuild; setting `Tint` alone would
@@ -394,6 +429,13 @@ namespace TumbangPreso.InputLayer
 
         private void Update()
         {
+            if (_nativeSurface != null && Settings.SettingsStore.Current.ReducedUiMotion)
+            {
+                transform.localScale = Vector3.one;
+                bool selected = IsHeld || _hinted;
+                if (_nativeSurface.Selected != selected) { _nativeSurface.Selected = selected; _nativeSurface.SetVerticesDirty(); }
+                return;
+            }
             // ⚠️ THE PHASE RUNS DOWN AS WELL AS UP, so the control eases back to its exact
             // authored size rather than snapping there the frame a prompt goes away. A control
             // that changes size in one frame reads as a layout bug.

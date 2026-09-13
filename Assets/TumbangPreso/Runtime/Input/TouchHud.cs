@@ -28,7 +28,7 @@ namespace TumbangPreso.InputLayer
     /// shown per match without touching the HUD's own lifetime.
     /// </summary>
     [DefaultExecutionOrder(-130)]
-    public sealed class TouchHud : MonoBehaviour
+    public sealed partial class TouchHud : MonoBehaviour
     {
         /// <summary>
         /// Force the layer on where the platform would not.
@@ -272,7 +272,9 @@ namespace TumbangPreso.InputLayer
             TouchInput.Active = false;
         }
 
-        private void Build()
+        private void Build() => BuildNative();
+
+        private void BuildLegacyReference()
         {
             // ⚠️ THROUGH `MenuKit.BuildCanvas` LIKE EVERY OTHER CODE-BUILT SCREEN, which is what
             // gets it the aspect-safe scaler, the raycaster, the EventSystem and the focus
@@ -590,7 +592,7 @@ namespace TumbangPreso.InputLayer
         }
 
         private bool VisibleInMode(VerbInput entry)
-            => entry.Zone != TouchZone.SkillRail
+            => TouchButton.Customising || entry.Zone != TouchZone.SkillRail
                || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
 
         private int _layoutRevision = -1;

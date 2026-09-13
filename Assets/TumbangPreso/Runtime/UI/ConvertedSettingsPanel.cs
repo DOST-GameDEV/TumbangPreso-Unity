@@ -44,7 +44,35 @@ namespace TumbangPreso.UI
         /// drift. It was reported once when they had.</summary>
         private static readonly Vector2 BindingControlSize = new Vector2(170.0f, 46.0f);
 
+        private TumpSettingsView _nativeSettings;
+        private TumpControllerView _nativeController;
+        private TumpTouchLayoutView _nativeTouch;
+
+        private void Awake()
+        {
+            foreach (Transform child in transform) child.gameObject.SetActive(false);
+            var entrance = GetComponent<PennantEntrance>(); if (entrance != null) entrance.enabled = false;
+        }
+        private void OnEnable() { if (_nativeSettings != null) OpenNativeSettings(); }
         protected override void Wire()
+        {
+            _nativeSettings = gameObject.AddComponent<TumpSettingsView>();
+            OpenNativeSettings();
+        }
+        private void OpenNativeSettings()
+        {
+            _nativeSettings.Open(transform, Close, () =>
+            {
+                if (_nativeController == null) _nativeController = gameObject.AddComponent<TumpControllerView>();
+                _nativeController.Open(transform, _nativeSettings.Session, _nativeSettings.Resume);
+            }, () =>
+            {
+                if (_nativeTouch == null) _nativeTouch = gameObject.AddComponent<TumpTouchLayoutView>();
+                _nativeTouch.Open(transform, _nativeSettings.Resume);
+            });
+        }
+
+        private void WireLegacyReference()
         {
             _actions = Resources.Load<InputActionAsset>("TumbangPreso");
 
@@ -808,6 +836,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ShowTab(int index)
         {
+            if (_nativeSettings != null)
+            {
+                if (index >= 0 && index < TumpSettingsView.Sections.Length) _nativeSettings.ShowSection(index);
+                return;
+            }
             if (index < 0 || index >= Tabs.Length) return;
 
             bool changed = _tab != index;
@@ -2233,6 +2266,7 @@ namespace TumbangPreso.UI
 
         protected override void Update()
         {
+            if (_nativeSettings != null) return;
             if (_discardDialog != null && _discardDialog.activeSelf)
             {
                 if (InputLayer.MenuNav.CancelPressed)

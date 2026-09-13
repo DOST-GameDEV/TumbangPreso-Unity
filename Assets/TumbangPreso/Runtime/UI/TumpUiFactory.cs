@@ -106,6 +106,7 @@ namespace TumbangPreso.UI
         public static Button BackButton(Transform parent, string name, Action action)
         {
             var button = Button(parent, name, "Back", action, TumpSurface.Form.Link, Theme.Cream, 30);
+            button.GetComponent<TumpSurface>().HasLeadingIcon = true;
             var icon = Rect(button.transform, "BackArrow").gameObject.AddComponent<TumpSymbol>();
             icon.Kind = TumpSymbol.Icon.Back; icon.color = Theme.Brick; icon.raycastTarget = false;
             Anchor(icon.rectTransform, new Vector2(0, .5f), new Vector2(25, 0), new Vector2(32, 32));

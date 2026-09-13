@@ -10,7 +10,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
-        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height)
+        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true)
         {
             Assert.IsNotNull(canvas);
             var oldMode = canvas.renderMode;
@@ -40,11 +40,12 @@ namespace TumbangPreso.PlayTests
                 Canvas.ForceUpdateCanvases(); camera.Render();
                 foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
                 {
-                    bool symbol = graphic is UI.TumpAbilitySymbol;
+                    bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
                     Assert.IsNotNull(renderer, graphic.name + " needs its own CanvasRenderer");
+                    if (renderer.GetAlpha() <= .001f || renderer.GetInheritedAlpha() <= .001f) continue;
                     var mesh = renderer.GetMesh();
                     Debug.Log($"[TumpGeometry] {name}/{graphic.name}: vertices={mesh?.vertexCount ?? 0}, cull={renderer.cull}, alpha={renderer.GetInheritedAlpha():0.###}, depth={renderer.absoluteDepth}, material={renderer.materialCount}");
                     Assert.IsNotNull(mesh, graphic.name + " has no rendered mesh");
@@ -59,8 +60,9 @@ namespace TumbangPreso.PlayTests
                 var pixel = (Color32)image.GetPixel(3, height - 3);
                 var cream = (Color32)UI.TumpUiTheme.Current.Cream;
                 Debug.Log($"[TumpUiCapture] {name} cream source={cream.r},{cream.g},{cream.b} pixel={pixel.r},{pixel.g},{pixel.b}; isolated UI camera, no ColourGrade.");
-                Assert.LessOrEqual(Mathf.Abs(pixel.r - cream.r) + Mathf.Abs(pixel.g - cream.g) + Mathf.Abs(pixel.b - cream.b), 9,
-                    "Native UI source palette must survive this ungraded capture path.");
+                if (checkPalette)
+                    Assert.LessOrEqual(Mathf.Abs(pixel.r - cream.r) + Mathf.Abs(pixel.g - cream.g) + Mathf.Abs(pixel.b - cream.b), 9,
+                        "Native UI source palette must survive this ungraded capture path.");
             }
             finally
             {

@@ -9,12 +9,13 @@ namespace TumbangPreso.UI
     public sealed class TumpSurface : MaskableGraphic, IPointerEnterHandler, IPointerExitHandler,
         IPointerDownHandler, IPointerUpHandler, ISelectHandler, IDeselectHandler
     {
-        public enum Form { Slap, Pebble, Portrait, Ticket, Tab, Link, WavePanel }
+        public enum Form { Slap, Pebble, Portrait, Ticket, Tab, Link, WavePanel, Disc }
         public Form Shape;
         public Color Face;
         public bool Selected;
         public bool Outline = true;
         public bool LightInk;
+        public bool HasLeadingIcon;
         private bool _hover, _focus, _pressed;
         private Selectable _control;
 
@@ -44,7 +45,7 @@ namespace TumbangPreso.UI
                     var band = new Rect(rect.xMin + 12, rect.yMin + 4, rect.width - 24, Selected ? 9 : 5);
                     Fill(vh, Wave(band, 0), LightInk ? theme.Lime : theme.Brick);
                 }
-                if (focus)
+                if (focus && !HasLeadingIcon)
                     Fill(vh, new[] { new Vector2(rect.xMin + 2, rect.center.y - 7),
                         new Vector2(rect.xMin + 13, rect.center.y), new Vector2(rect.xMin + 1, rect.center.y + 7) }, theme.Brick);
                 return;
@@ -66,6 +67,13 @@ namespace TumbangPreso.UI
 
         private Vector2[] Contour(Rect r, float inset)
         {
+            if (Shape == Form.Disc)
+            {
+                r = Inset(r, inset); var points = new Vector2[48];
+                for (int i = 0; i < points.Length; i++)
+                { float a = i * Mathf.PI * 2 / points.Length; points[i] = r.center + new Vector2(Mathf.Cos(a) * r.width * .5f, Mathf.Sin(a) * r.height * .5f); }
+                return points;
+            }
             if (Shape == Form.Pebble || Shape == Form.Portrait) return Pebble(r, inset);
             if (Shape == Form.WavePanel) return Wave(r, inset);
             r = Inset(r, inset);

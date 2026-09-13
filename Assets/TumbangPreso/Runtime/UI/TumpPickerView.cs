@@ -127,6 +127,7 @@ namespace TumbangPreso.UI
             _skills = TumpUiFactory.Button(detail.transform, "TumpSkills", "Skills", () => _openSkills?.Invoke(Entries[_picks[0]].Id),
                 TumpSurface.Form.Link, f.Cream, 30);
             _skills.GetComponent<TumpSurface>().LightInk = true;
+            _skills.GetComponent<TumpSurface>().HasLeadingIcon = true;
             _skills.GetComponentInChildren<Text>().color = f.Cream;
             TumpUiFactory.Anchor((RectTransform)_skills.transform, new Vector2(.18f, 0), new Vector2(0, 79), new Vector2(200, 100));
             var mark = TumpUiFactory.Art(_skills.transform, "SlipperMark", TumpUiFactory.Sprite("UI/brand/tsinelas_hit"));

@@ -345,6 +345,7 @@ namespace TumbangPreso.Settings
         /// having and the one people leave out.
         /// </summary>
         public int VSyncMode = VSyncModes.Default;
+        public int FrameRateLimit = FrameRateOptions.Default;
 
         /// <summary>
         /// Which look the game is drawn in, as an index into <see cref="RenderStyles.All"/>.
@@ -511,6 +512,7 @@ namespace TumbangPreso.Settings
             GraphicsProfiles.Apply(GraphicsQuality);
             AntiAliasModes.Apply(AntiAliasMode);
             VSyncModes.Apply(VSyncMode);
+            FrameRateOptions.Apply(FrameRateLimit);
             RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
 
@@ -568,6 +570,7 @@ namespace TumbangPreso.Settings
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
+            FrameRateLimit = FrameRateOptions.Normalize(FrameRateLimit);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
