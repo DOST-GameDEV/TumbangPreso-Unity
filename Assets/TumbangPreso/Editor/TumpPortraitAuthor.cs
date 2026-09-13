@@ -65,7 +65,9 @@ namespace TumbangPreso.EditorTools
                 preview.ShowingSlipper = category == 2;
                 preview.Show(art.Model, art.Clips, art.Palette, null);
                 preview.CentreSubject();
-                preview.LookAt(category == 0 ? .72f : .50f, category == 0 ? 1.55f : 1.20f);
+                // ModelPreview's zoom is a distance multiplier: smaller comes closer.
+                // Portraits favour the face/outfit; equipment uses its full silhouette.
+                preview.LookAt(category == 0 ? .72f : .50f, category == 0 ? .68f : .86f);
                 preview.StepForCapture();
                 if (preview.Target == null) throw new System.InvalidOperationException("Portrait render target missing: " + art.Id);
                 RenderTexture.active = preview.Target;
