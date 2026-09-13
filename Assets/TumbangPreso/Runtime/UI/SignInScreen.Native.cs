@@ -19,7 +19,7 @@ namespace TumbangPreso.UI
             var scene = TumpUiFactory.Rect(root, "StreetIllustration").gameObject.AddComponent<RawImage>();
             scene.rectTransform.anchorMin = new Vector2(.46f, 0); scene.rectTransform.anchorMax = Vector2.one;
             scene.rectTransform.offsetMin = scene.rectTransform.offsetMax = Vector2.zero;
-            scene.gameObject.AddComponent<TumpBackdrop>();
+            scene.gameObject.AddComponent<TumpBackdrop>().AlignCropRight = true;
             var paper = TumpUiFactory.Rect(root, "SignInPaper").gameObject.AddComponent<TumpPaperEdge>();
             paper.color = f.Cream; paper.raycastTarget = false;
             TumpUiFactory.Place(paper.rectTransform, 24, 18, 898, 1044);

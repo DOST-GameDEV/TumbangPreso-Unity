@@ -42,6 +42,10 @@ namespace TumbangPreso.UI
         public Sprite Logo;
         public Sprite SlipperMark;
         public Texture2D StreetBackground;
+        [Tooltip("Separate transparent physical props for the illustrated background, never UI controls.")]
+        public Texture2D StreetProps;
+        public Rect StreetCanRect = new Rect(235, 119, 455, 655);
+        public Rect StreetSlipperRect = new Rect(967, 107, 729, 621);
 
         private static TumpUiTheme _current;
         public static TumpUiTheme Current
