@@ -16,8 +16,30 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class TumpNativeSettingsTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private const string BindingKey = "tumbangpreso.bindings";
+        private const string TouchKey = "tumbangpreso.touchlayout";
+        private bool _hadBindings, _hadTouch;
+        private string _bindingPrefs, _touchPrefs;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _hadBindings = PlayerPrefs.HasKey(BindingKey); _bindingPrefs = PlayerPrefs.GetString(BindingKey, "");
+            _hadTouch = PlayerPrefs.HasKey(TouchKey); _touchPrefs = PlayerPrefs.GetString(TouchKey, "");
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            try { yield return PlayModeWorld.Reset(); }
+            finally
+            {
+                RestorePref(BindingKey, _hadBindings, _bindingPrefs); RestorePref(TouchKey, _hadTouch, _touchPrefs);
+                PlayerPrefs.Save();
+                var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+                asset.RemoveAllBindingOverrides(); Rebinding.Load(asset);
+                typeof(TouchLayoutStore).GetField("_file", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?.SetValue(null, null);
+            }
+        }
+        private static void RestorePref(string key, bool existed, string value)
+        { if (existed) PlayerPrefs.SetString(key, value); else PlayerPrefs.DeleteKey(key); }
         [UnityTest]
         public IEnumerator NativeSettingsPagesAndFramePacingHaveTruthfulStates()
         {
@@ -86,14 +108,20 @@ namespace TumbangPreso.PlayTests
             var view = Object.FindFirstObjectByType<TumpSettingsView>();
             var session = view.Session;
             string before = session.Actions.SaveBindingOverridesAsJson();
-            Assert.IsTrue(Rebinding.ResolveBindingIndexFor(session.Actions, "Jump", InputDeviceKind.KeyboardMouse, out var action, out int binding));
-            action.ApplyBindingOverride(binding, "<Keyboard>/f12");
-            Rebinding.Save(session.Actions);
-            Assert.IsTrue(session.Dirty);
-            session.Discard();
-            Assert.AreEqual(before, session.Actions.SaveBindingOverridesAsJson());
-            Rebinding.Load(session.Actions);
-            Assert.AreEqual(before, session.Actions.SaveBindingOverridesAsJson(), "Discard must restore persisted overrides too.");
+            try
+            {
+                Assert.IsTrue(Rebinding.ResolveBindingIndexFor(session.Actions, "Jump", InputDeviceKind.KeyboardMouse, out var action, out int binding));
+                action.ApplyBindingOverride(binding, "<Keyboard>/f12"); Rebinding.Save(session.Actions);
+                Assert.IsTrue(session.Dirty); session.Discard();
+                Assert.AreEqual(before, session.Actions.SaveBindingOverridesAsJson());
+                Rebinding.Load(session.Actions);
+                Assert.AreEqual(before, session.Actions.SaveBindingOverridesAsJson(), "Discard must restore persisted overrides too.");
+            }
+            finally
+            {
+                session.Actions.RemoveAllBindingOverrides(); session.Actions.LoadBindingOverridesFromJson(before);
+                Rebinding.Invalidate(); Rebinding.Save(session.Actions);
+            }
             yield return null;
         }
         private static IEnumerator Open()
