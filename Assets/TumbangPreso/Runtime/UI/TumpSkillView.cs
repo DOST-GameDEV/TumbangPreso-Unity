@@ -30,7 +30,7 @@ namespace TumbangPreso.UI
             var f = TumpUiTheme.Current;
             _content = TumpUiFactory.Rect(_canvas.transform, "SkillPage");
             TumpUiFactory.Stretch(_content); TumpUiFactory.Ground(_content, f.Cream);
-            var back = TumpUiFactory.Button(_content, "TumpSkillBack", "Back", Back, TumpSurface.Form.Link, f.Cream, 30);
+            var back = TumpUiFactory.BackButton(_content, "TumpSkillBack", Back);
             TumpUiFactory.Place((RectTransform)back.transform, 54, 24, 158, 72);
             var art = TumpUiFactory.Art(_content, "HeroPortrait", TumpUiFactory.Sprite("UI/portraits/" + _hero));
             TumpUiFactory.Place(art.rectTransform, 60, 104, 230, 230);

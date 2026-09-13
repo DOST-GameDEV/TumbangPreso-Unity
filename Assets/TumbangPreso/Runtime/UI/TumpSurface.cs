@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
         public Color Face;
         public bool Selected;
         public bool Outline = true;
+        public bool LightInk;
         private bool _hover, _focus, _pressed;
         private Selectable _control;
 
@@ -41,7 +42,7 @@ namespace TumbangPreso.UI
                 if (Selected || focus)
                 {
                     var band = new Rect(rect.xMin + 12, rect.yMin + 4, rect.width - 24, Selected ? 9 : 5);
-                    Fill(vh, Wave(band, 0), theme.Brick);
+                    Fill(vh, Wave(band, 0), LightInk ? theme.Lime : theme.Brick);
                 }
                 if (focus)
                     Fill(vh, new[] { new Vector2(rect.xMin + 2, rect.center.y - 7),

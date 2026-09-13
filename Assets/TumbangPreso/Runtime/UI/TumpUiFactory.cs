@@ -69,6 +69,7 @@ namespace TumbangPreso.UI
             text.fontStyle = FontStyle.Normal;
             text.color = Theme.DeepOlive;
             text.alignment = TextAnchor.MiddleLeft;
+            text.alignByGeometry = true;
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Truncate;
             text.raycastTarget = false;
@@ -97,6 +98,20 @@ namespace TumbangPreso.UI
             text.alignment = TextAnchor.MiddleCenter;
             if (fill.HasValue && fill.Value == Theme.Brick) text.color = Theme.Cream;
             Stretch(text.rectTransform, 16);
+            text.rectTransform.offsetMin = new Vector2(16, 3);
+            text.rectTransform.offsetMax = new Vector2(-16, -3);
+            return button;
+        }
+
+        public static Button BackButton(Transform parent, string name, Action action)
+        {
+            var button = Button(parent, name, "Back", action, TumpSurface.Form.Link, Theme.Cream, 30);
+            var icon = Rect(button.transform, "BackArrow").gameObject.AddComponent<TumpSymbol>();
+            icon.Kind = TumpSymbol.Icon.Back; icon.color = Theme.Brick; icon.raycastTarget = false;
+            Anchor(icon.rectTransform, new Vector2(0, .5f), new Vector2(25, 0), new Vector2(32, 32));
+            var label = button.GetComponentInChildren<Text>();
+            label.rectTransform.offsetMin = new Vector2(52, 3);
+            label.rectTransform.offsetMax = new Vector2(-8, -3);
             return button;
         }
 
@@ -126,12 +141,12 @@ namespace TumbangPreso.UI
             var button = Button(parent, "Portrait_" + id, "", select, TumpSurface.Form.Portrait, Theme.Apricot);
             button.GetComponent<TumpSurface>().Selected = selected;
             var art = Art(button.transform, "Portrait", Sprite("UI/portraits/" + id));
-            Stretch(art.rectTransform, 8); art.rectTransform.offsetMin = new Vector2(8, 70);
+            Stretch(art.rectTransform, 8); art.rectTransform.offsetMin = new Vector2(8, 104);
             var label = button.GetComponentInChildren<Text>();
             label.text = name; label.font = Theme.Display; label.fontSize = 28;
             label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = new Vector2(1, 0);
             label.rectTransform.pivot = new Vector2(.5f, 0);
-            label.rectTransform.offsetMin = new Vector2(8, 6); label.rectTransform.offsetMax = new Vector2(-8, 68);
+            label.rectTransform.offsetMin = new Vector2(24, 10); label.rectTransform.offsetMax = new Vector2(-24, 100);
             return button;
         }
 

@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
         private Text _name, _description, _stats, _state;
         private ModelPreview _preview;
         private Button _skills;
+        private Button _use;
         private readonly List<Button> _choices = new List<Button>();
         private readonly List<Button> _categories = new List<Button>();
         private readonly int[] _picks = new int[3];
@@ -59,7 +60,7 @@ namespace TumbangPreso.UI
             _root = (RectTransform)_canvas.transform;
             TumpUiFactory.Ground(_root, f.Cream);
 
-            var back = TumpUiFactory.Button(_root, "TumpBack", "Back", Back, TumpSurface.Form.Link, f.Cream, 30);
+            var back = TumpUiFactory.BackButton(_root, "TumpBack", Back);
             TumpUiFactory.Place((RectTransform)back.transform, 54, 24, 158, 72);
             var title = TumpUiFactory.Text(_root, "Heading", "Pick your style", 62, false, true);
             title.color = f.Brick;
@@ -86,16 +87,22 @@ namespace TumbangPreso.UI
             }
 
             _grid = TumpUiFactory.Rect(_root, "TumpRosterGrid");
-            TumpUiFactory.Place(_grid, 64, 324, 842, 652);
+            TumpUiFactory.Place(_grid, 64, 324, 842, 706);
             var grid = _grid.gameObject.AddComponent<GridLayoutGroup>();
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 4;
-            grid.cellSize = new Vector2(194, 204); grid.spacing = new Vector2(20, 20);
+            grid.cellSize = new Vector2(194, 222); grid.spacing = new Vector2(20, 20);
 
             _stage = TumpUiFactory.Rect(detail.transform, "ModelStage");
             _stage.anchorMin = new Vector2(0, .44f); _stage.anchorMax = Vector2.one;
             _stage.offsetMin = new Vector2(16, 0); _stage.offsetMax = new Vector2(-16, -18);
+            var spotlight = TumpUiFactory.Surface(_stage, "PrintedBackdrop", TumpSurface.Form.Pebble, f.Olive, false);
+            spotlight.rectTransform.anchorMin = new Vector2(.16f, .10f); spotlight.rectTransform.anchorMax = new Vector2(.84f, .91f);
+            spotlight.rectTransform.offsetMin = spotlight.rectTransform.offsetMax = Vector2.zero;
             _preview = _stage.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(_stage); _preview.CentreSubject();
+            var plinth = TumpUiFactory.Surface(_stage, "Grounding", TumpSurface.Form.Pebble, f.OliveSand, false);
+            plinth.transform.SetSiblingIndex(1);
+            _stage.gameObject.AddComponent<TumpPreviewPlinth>().Bind(_preview, plinth.rectTransform);
 
             _name = TumpUiFactory.Text(detail.transform, "SelectedName", "", 48, false, true);
             _name.color = f.Cream;
@@ -105,8 +112,9 @@ namespace TumbangPreso.UI
             _description.color = f.Cream; _description.alignment = TextAnchor.UpperLeft;
             _description.rectTransform.anchorMin = new Vector2(0, .20f); _description.rectTransform.anchorMax = new Vector2(1, .33f);
             _description.rectTransform.offsetMin = new Vector2(44, 0); _description.rectTransform.offsetMax = new Vector2(-44, 0);
-            _stats = TumpUiFactory.Text(_root, "Traits", "", 30, true);
-            TumpUiFactory.Place(_stats.rectTransform, 72, 992, 840, 46);
+            _stats = TumpUiFactory.Text(detail.transform, "Traits", "", 30, true);
+            _stats.color = f.Cream; _stats.alignment = TextAnchor.MiddleCenter;
+            TumpUiFactory.Anchor(_stats.rectTransform, new Vector2(.5f, 0), new Vector2(0, 150), new Vector2(760, 64));
 
             _state = TumpUiFactory.Text(detail.transform, "SelectionState", "", 24);
             _state.color = f.Cream;
@@ -114,10 +122,13 @@ namespace TumbangPreso.UI
             _state.alignment = TextAnchor.MiddleCenter;
             var use = TumpUiFactory.Button(detail.transform, "TumpUseLoadout", "Use loadout", () => _confirm?.Invoke((int[])_picks.Clone()),
                 TumpSurface.Form.Slap, f.Lime, 42);
+            _use = use;
             TumpUiFactory.Anchor((RectTransform)use.transform, new Vector2(.5f, 0), new Vector2(0, 79), new Vector2(550, 100));
-            _skills = TumpUiFactory.Button(_root, "TumpSkills", "Skills", () => _openSkills?.Invoke(Entries[_picks[0]].Id),
+            _skills = TumpUiFactory.Button(detail.transform, "TumpSkills", "Skills", () => _openSkills?.Invoke(Entries[_picks[0]].Id),
                 TumpSurface.Form.Link, f.Cream, 30);
-            TumpUiFactory.Place((RectTransform)_skills.transform, 66, 972, 250, 70);
+            _skills.GetComponent<TumpSurface>().LightInk = true;
+            _skills.GetComponentInChildren<Text>().color = f.Cream;
+            TumpUiFactory.Anchor((RectTransform)_skills.transform, new Vector2(.18f, 0), new Vector2(0, 79), new Vector2(200, 100));
             var mark = TumpUiFactory.Art(_skills.transform, "SlipperMark", TumpUiFactory.Sprite("UI/brand/tsinelas_hit"));
             TumpUiFactory.Place(mark.rectTransform, 8, 0, 68, 68);
             _skills.GetComponentInChildren<Text>().rectTransform.offsetMin = new Vector2(75, 10);
@@ -154,6 +165,9 @@ namespace TumbangPreso.UI
             _name.text = picked.Name; _description.text = _describe?.Invoke(picked.Id) ?? "";
             bool hero = _category == 0 && _mode == GameMode.HeroStrike;
             _skills.gameObject.SetActive(hero); _stats.gameObject.SetActive(!hero);
+            _state.gameObject.SetActive(hero);
+            TumpUiFactory.Anchor((RectTransform)_use.transform, new Vector2(hero ? .66f : .5f, 0),
+                new Vector2(0, 79), new Vector2(hero ? 520 : 550, 100));
             string[][] traits = { new[] { "Speed", "Power", "Grit" }, new[] { "Reset", "Rebound", "Stance" }, new[] { "Flight", "Impact", "Recovery" } };
             _stats.text = $"{traits[_category][0]} {picked.Bilis}/{Roster.TraitMax}    {traits[_category][1]} {picked.Lakas}/{Roster.TraitMax}    {traits[_category][2]} {picked.Tatag}/{Roster.TraitMax}";
             var saved = Settings.SettingsStore.Current;
