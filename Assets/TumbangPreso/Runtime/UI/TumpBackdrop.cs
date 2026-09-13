@@ -16,9 +16,6 @@ namespace TumbangPreso.UI
         private void Awake()
         {
             _base = GetComponent<RawImage>(); _base.raycastTarget = false;
-#if UNITY_EDITOR
-            gameObject.AddComponent<TumpMeshAudit>();
-#endif
             var custom = TumpUiTheme.Current.StreetBackground;
             _base.texture = custom != null ? custom : Resources.Load<Texture2D>("UI/illustrations/street_background");
             if (_base.texture == null) _base.texture = Resources.Load<Texture2D>("UI/illustrations/street_key_art");
@@ -30,18 +27,20 @@ namespace TumbangPreso.UI
             var theme = TumpUiTheme.Current;
             if (theme.StreetProps != null)
             {
-#if UNITY_EDITOR
-                Debug.Log($"[TumpBackdropSource] texture={theme.StreetProps.width}x{theme.StreetProps.height} can={theme.StreetCanRect} slipper={theme.StreetSlipperRect}");
-#endif
-                _canSprite = Sprite.Create(theme.StreetProps, theme.StreetCanRect, new Vector2(.5f, 0), 100, 0, SpriteMeshType.FullRect);
-                _slipperSprite = Sprite.Create(theme.StreetProps, theme.StreetSlipperRect, new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect);
+                _canSprite = PropSprite(theme.StreetProps, theme.StreetCanRect, new Vector2(.5f, 0));
+                _slipperSprite = PropSprite(theme.StreetProps, theme.StreetSlipperRect, new Vector2(.5f, .5f));
                 _can = TumpUiFactory.Art(transform, "IllustratedCan", _canSprite);
                 _slipper = TumpUiFactory.Art(transform, "IllustratedSlipper", _slipperSprite);
-#if UNITY_EDITOR
-                _can.gameObject.AddComponent<TumpMeshAudit>();
-                _slipper.gameObject.AddComponent<TumpMeshAudit>();
-#endif
             }
+        }
+        private static Sprite PropSprite(Texture2D texture, Rect crop, Vector2 pivot)
+        {
+            if (crop.width <= 0 || crop.height <= 0 || crop.xMin < 0 || crop.yMin < 0 || crop.xMax > texture.width || crop.yMax > texture.height)
+            {
+                Debug.LogError("[TUMP UI] Background prop crop must have positive dimensions inside its texture: " + crop);
+                return null;
+            }
+            return Sprite.Create(texture, crop, pivot, 100, 0, SpriteMeshType.FullRect);
         }
         private RawImage Layer(string name, Vector2 pivot)
         {
@@ -61,8 +60,8 @@ namespace TumbangPreso.UI
             // Mapping source coordinates through a zero-width crop would write infinity
             // into both foreground anchors, then CanvasRenderer rejects their bounds.
             bool laidOut = bounds.width > .01f && bounds.height > .01f;
-            if (_can != null) _can.enabled = laidOut;
-            if (_slipper != null) _slipper.enabled = laidOut;
+            if (_can != null) _can.enabled = laidOut && _can.sprite != null;
+            if (_slipper != null) _slipper.enabled = laidOut && _slipper.sprite != null;
             if (!laidOut) return;
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             if (Animate && _focused && !reduced) _phase = Mathf.Repeat(_phase + Time.unscaledDeltaTime, 14);

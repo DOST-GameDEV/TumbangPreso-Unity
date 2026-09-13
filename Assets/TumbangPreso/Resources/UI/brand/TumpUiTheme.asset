@@ -41,5 +41,15 @@ MonoBehaviour:
   SlipperMark: {fileID: 0}
   StreetBackground: {fileID: 2800000, guid: c23385efddee4b80a9eee91d3fae6919, type: 3}
   StreetProps: {fileID: 2800000, guid: 7692476361254f2589199b9915a7a1d0, type: 3}
-  StreetCanRect: {x: 235, y: 119, width: 455, height: 655}
-  StreetSlipperRect: {x: 967, y: 107, width: 729, height: 621}
+  StreetCanRect:
+    serializedVersion: 2
+    x: 235
+    y: 119
+    width: 455
+    height: 655
+  StreetSlipperRect:
+    serializedVersion: 2
+    x: 967
+    y: 107
+    width: 729
+    height: 621

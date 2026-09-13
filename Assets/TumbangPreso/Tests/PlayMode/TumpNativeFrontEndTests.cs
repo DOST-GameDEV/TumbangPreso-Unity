@@ -92,6 +92,18 @@ namespace TumbangPreso.PlayTests
             try
             {
                 var backdrop = go.AddComponent<TumpBackdrop>();
+                var props = go.GetComponentsInChildren<Image>();
+                Assert.AreEqual(2, props.Length);
+                foreach (var prop in props)
+                {
+                    Assert.IsNotNull(prop.sprite, "The configured prop must produce an actual sprite.");
+                    Assert.Greater(prop.sprite.rect.width, 0); Assert.Greater(prop.sprite.rect.height, 0);
+                    foreach (var vertex in prop.sprite.vertices)
+                    {
+                        Assert.IsFalse(float.IsNaN(vertex.x) || float.IsInfinity(vertex.x));
+                        Assert.IsFalse(float.IsNaN(vertex.y) || float.IsInfinity(vertex.y));
+                    }
+                }
                 backdrop.SendMessage("LateUpdate");
                 foreach (var prop in go.GetComponentsInChildren<Image>())
                 {
