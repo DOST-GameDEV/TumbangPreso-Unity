@@ -206,10 +206,34 @@ namespace TumbangPreso.EditorTools.MapKit
             // material contract instead of treating the floor as an occluding prop.
             terrain.transform.SetParent(root.parent.parent,true);
             terrain.AddComponent<MeshCollider>().sharedMesh=terrain.GetComponent<MeshFilter>().sharedMesh;
+            SeatCourtPaint(root.parent.parent);
             // Clear material approaches connect the actual civic doors to the plaza.
             var brick=Mat("civic_approach",new Color(.43f,.32f,.24f));
             Box(root,"Church entrance approach",new Vector3(-4.2f,.104f,13.1f),new Vector3(3,.006f,2.0f),brick);
             Box(root,"Hall entrance approach",new Vector3(7.8f,.104f,12.9f),new Vector3(4.0f,.006f,1.4f),brick);
+        }
+
+        public static int SeatCourtPaint(Transform map)
+        {
+            int count=0;
+            // The inherited marks topped out at .102m, exactly coplanar with the
+            // new paving. Their vanishing segments were depth fighting, not worn
+            // chalk. Keep the same court footprint, with a thin paint layer.
+            foreach(var mark in map.GetComponentsInChildren<Transform>(true))
+            {
+                if(!mark.name.StartsWith("Confinement",StringComparison.Ordinal) &&
+                   !mark.name.StartsWith("Boundary",StringComparison.Ordinal))continue;
+                var renderers=mark.GetComponentsInChildren<MeshRenderer>();
+                if(renderers.Length==0)continue;
+                var bounds=BoundsOf(mark.gameObject);
+                if(bounds.size.y<=0)throw new InvalidOperationException("Court mark has no measured thickness: "+mark.name);
+                var scale=mark.localScale;scale.y*=.002f/bounds.size.y;mark.localScale=scale;
+                bounds=BoundsOf(mark.gameObject);
+                mark.position+=Vector3.up*(.103f-bounds.min.y);
+                if(PrefabUtility.IsPartOfPrefabInstance(mark))PrefabUtility.RecordPrefabInstancePropertyModifications(mark);
+                count++;
+            }
+            return count;
         }
 
         private static void House(Transform houses,Transform root,string kind,int index,float yaw,Vector3 anchor,string side,bool details,StringBuilder report)
