@@ -11,6 +11,17 @@ Frontend-v4 now passed3/3, HUD-v1 passed2/2; retired54447/29825. One pause-child
 settings test pending for a later UI batch, not priority over map implementation.
 
 
+## Newest active direction,Sep14 04:10
+
+NO SUBAGENTS, including restarting the former UI agent. Its unfinished UI TODO
+is transferred to the parent for LAST, in UI_REMAINING_TODO.md. Parent continues
+throwing/animation/game improvements now. Reset permission revoked after owner
+manual reset. Latest integrated primaryea8975db; UI clonef5b10held-info correction
+not integrated. UI batch10/11passed (one pause-child Find failure), join gate3/3,
+loadout refresh19d19021 eight focused checks passed. No current Editor/player.
+Prior agent ownership/order/usage-threshold paragraphs below are historical.
+
+
 ## Current owner instruction,Sep14: reset permission REVOKED
 
 Owner manually used a reset and explicitly withdrew all assistant authorization.

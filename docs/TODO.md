@@ -1,4 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
+
+**Latest owner order,Sep14 04:10:** no more subagents or resuming the old UI agent.
+Parent continues other requested game work, then completes the remaining UI LAST.
+Full inherited UI checklist/source references/known failure/pending commit:
+[UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Prior UI-before-animation ordering
+is superseded for unfinished UI. All reset permission is revoked.
+
 **Latest owner playtest corrections are active:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
 Remove Street Hype and main RULES row; fix Ilalim floating/road continuity; redesign
 Eskinita sampayan/tighter feel; improve Bayan floor texture, varied trees and warm

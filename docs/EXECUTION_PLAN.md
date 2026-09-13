@@ -1,11 +1,23 @@
 # Active execution plan
 
+## NEWEST ORDER,Sep14 04:10 — overrides older UI ordering
+
+No more subagents: do not restart the errored UI agent. Parent does all remaining
+work. Move former agent's unfinished UI tasks to the END of the queue; exact list
+and f5b10pending commit are in UI_REMAINING_TODO.md. Current parent task is throwing
+accuracy/body/FPP animation and remaining game improvements. Preserve already
+implemented UI. No usage reset permission: owner manually reset and revoked it.
+Native UI batch11cases returned10pass/1pause-child failure; join gate3/3passed.
+No Unity/native processes currently running. HEAD ea8975db before this priority
+update. Known Inday arm tangent-only test noise remains; restore verified noise
+with Logs/restore_verified_throw_test_dirt.py. Commit/push first if later asked
+for a PC handoff; no handoff/new task/Desktop update now.
+
+
 ## Parent resume first — explicit owner correction Sep14
 
 Do not turn into a UI watcher after compaction. Parent actively implements maps/
-graphics, then its remaining gameplay/animation work. UI agent owns its design,
-implementation and critique; parent gives short coherent integration/validation
-windows, then resumes a NAMED parent task. No more agents ever in this task.
+graphics, then its remaining gameplay/animation work. The former UI agent is stopped; parent finishes deferred UI LAST. No more agents.
 
 Quality first, efficient execution: parallel independent reads/prep/tools, work
 while builds run, only related tests. NO routine full EditMode/PlayMode suites.

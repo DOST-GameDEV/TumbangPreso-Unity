@@ -5,27 +5,22 @@ revoked all assistant reset authorization on2026-09-14. Do not redeem any credit
 Previous conditional permission is cancelled, not waiting for a threshold. Do not
 restore it after compaction. The private Logs state records revocation.
 
-**One-time delegation exception, latest owner instruction:** exactly ONE
-GPT-6 Astra HIGH subagent may own the entire UI overhaul, with no conversation
-history fork. Give it a focused complete brief and repository/reference pointers.
-It may not create agents/tasks or delegate. No further subagents are authorized.
-The parent continues maps and non-UI work. Use an isolated UI checkout, coordinate
-Unity validation, and keep the parent as the sole integrator/pusher to ASTRAReworks.
+**No subagents:** the owner explicitly ended all delegation on2026-09-14. Do
+not spawn, fork, resume, or assign work to any agent, including the former UI
+agent. It stopped at the usage limit before finishing. Parent does the remainder.
+The previous one-agent exception is revoked. Preserve its existing work/source.
 
-**Parent work allocation, explicit owner correction Sep14:** do not let UI
-monitoring/integration take over the parent's task. Parent actively implements
-maps/graphics, then its remaining gameplay/animation work. Give UI validation
-short coherent batch windows and resume a named parent task immediately afterward.
-On compaction read the parent's concrete next action from EXECUTION_PLAN first;
-do not default to polling/reviewing the UI agent. Agent owns its own design,
-implementation and critique; parent provides bounded integration/qualification.
-Only a demonstrated shared blocker justifies interrupting parent implementation.
+**Latest priority:** the former UI agent's remaining TODO is now LAST in the
+parent's queue, after the other requested game work. This supersedes older UI-
+before-animation ordering for unfinished UI. See docs/UI_REMAINING_TODO.md for
+exact remaining screens, known failure and unintegrated commit. Parent continues
+its own gameplay/throwing/animation/skills work without watching or restarting UI.
 
-For rendering/performance work, capture a matched ORIGINAL player image and real
-render counters before changing the player path. Editor pictures alone are not
-a native baseline. Separate independent variables (e.g. batching flags vs material
-baking) and batch diagnostic variants into one run. Reject visual regressions and
-non-repeatable timing gains; do not keep an optimization because work went into it.
+**Efficient quality work:** prioritize visual/gameplay quality, parallelize
+independent tools/preparation, and do useful work while tests/builds run. Run only
+related focused checks, never routine full EditMode/PlayMode suites. For rendering,
+capture matched ORIGINAL player imagery and real counters before changing the
+path. Separate variables and batch diagnostics; reject ugly or unproven gains.
 
 **Newest bird scope clarification:** the owner permits birds to pass through
 scenery during flight. Prioritize appealing motion and reliably flying away when
@@ -46,8 +41,7 @@ The owner plans to move to another PC later and will explicitly ask for a handof
 WHEN asked: finish/save current runs, COMMIT AND PUSH to ASTRAReworks first, then
 provide the precise continuation prompt with exact commit, remaining work, source
 PDF/logo paths and current conditional reset state. Do not create a new task or
-handoff prematurely. Maps first, full UI second, animations/skills/play feel
-third. No Desktop rebuild now. See the newest active-ledger pointer and compact
+handoff prematurely. Finish remaining game work, then the deferred UI TODO last. No Desktop rebuild now. See the newest active-ledger pointer and compact
 EXECUTION_PLAN for actual implementation and validation state. Older process
 records and contradictory historical requests never replace that pointer.
 
