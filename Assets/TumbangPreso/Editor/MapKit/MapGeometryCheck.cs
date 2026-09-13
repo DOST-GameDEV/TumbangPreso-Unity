@@ -821,6 +821,13 @@ namespace TumbangPreso.EditorTools.MapKit
             // Only the ground stack counts as floor: a roof at 9 m is not something to stand on.
             var floor = new List<Bounds>();
             bool roof=UnityEngine.Object.FindFirstObjectByType<RooftopRecovery>()!=null;
+            if(roof){halfX=Mathf.Max(halfX,RooftopRecovery.HalfX);halfZ=Mathf.Max(halfZ,RooftopRecovery.HalfZ);}
+            var basins=new List<Bounds>();
+            if(roof)
+                foreach(var collider in UnityEngine.Object.FindObjectsByType<BoxCollider>(FindObjectsSortMode.None))
+                    if(collider.enabled&&!collider.isTrigger&&collider.name=="Pool floor"&&
+                        collider.GetComponentInParent<RooftopPool>()!=null&&Mathf.Abs(collider.bounds.max.y-RooftopPool.FloorY)<.04f)
+                        basins.Add(collider.bounds);
             foreach (var p in pieces)
                 if (p.World.min.y <= 0.35f && p.World.max.y <= 1.0f&&
                     (!roof||p.World.max.y>=RooftopRecovery.RoofY-.05f)) floor.Add(p.World);
@@ -838,7 +845,10 @@ namespace TumbangPreso.EditorTools.MapKit
                     // the city ground26m below cannot satisfy that requirement.
                     if(roof&&RooftopRecovery.OutsideDeck(new Vector3(x,0,z)))continue;
                     bool covered = false;
-                    foreach (var b in floor)
+                    // Water is not floor. Require the actual physical basin at
+                    // its authored depth; the distant city cannot mask a missing bottom.
+                    bool pool=roof&&RooftopPool.Contains(new Vector3(x,0,z));
+                    foreach (var b in pool?basins:floor)
                     {
                         if (x < b.min.x || x > b.max.x || z < b.min.z || z > b.max.z) continue;
                         covered = true;
@@ -860,7 +870,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 return 1;
             }
 
-            sb.AppendLine(roof?"   floor      roof interior covered; exterior fall space intentionally excluded":
+            sb.AppendLine(roof?"   floor      dry roof and physical pool basin covered; exterior fall space excluded":
                 $"   floor      solid across x +/-{halfX:F1}, z +/-{halfZ:F1}");
             return 0;
         }

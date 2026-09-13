@@ -1144,6 +1144,7 @@ namespace TumbangPreso.CameraSystem
 
         private void Build()
         {
+            _swimApplied=false;_swimBlend=0;
             var armMesh = Resources.Load<Mesh>("Models/viewmodel_arm");
 
             _rightPivot = BuildArm("RightPivot", RightBasisX, RightBasisY, RightBasisZ,
@@ -1318,6 +1319,7 @@ namespace TumbangPreso.CameraSystem
             EnsureBuilt();
             if (character == null) return;
 
+            if(_characterMotor!=character)_swimAnimator=null;
             _characterMotor = character;
             var body = character.GetComponent<Visual.CharacterVisual>()?.Model;
             if (body != _matchedBody) { _matchedBody=body; _heroInitialized=false; }
@@ -2544,8 +2546,42 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void LateUpdate() => StepVisuals(Time.deltaTime);
 
+        private Visual.CharacterAnimator _swimAnimator;
+        private bool _swimApplied;
+        private float _swimBlend;
+        private Quaternion _swimLeftBase,_swimRightBase;
+        private Vector3 _swimLeftPosition,_swimRightPosition;
+
+        private void RestoreSwimming()
+        {
+            if(!_swimApplied)return;
+            if(_leftPivot!=null){_leftPivot.localRotation=_swimLeftBase;_leftPivot.localPosition=_swimLeftPosition;}
+            if(_rightPivot!=null){_rightPivot.localRotation=_swimRightBase;_rightPivot.localPosition=_swimRightPosition;}
+            _swimApplied=false;
+        }
+
+        private void ApplySwimming(float dt)
+        {
+            bool active=_characterMotor!=null&&_characterMotor.IsSwimming&&_charge<0&&_clip==null&&_actionReturnLeft<=0&&string.IsNullOrEmpty(_aimPreview);
+            _swimBlend=Mathf.MoveTowards(_swimBlend,active?1:0,Mathf.Max(0,dt)*6);
+            if(_swimBlend<=0||_leftPivot==null||_rightPivot==null||_characterMotor==null)return;
+            if(_swimAnimator==null)_swimAnimator=_characterMotor.GetComponent<Visual.CharacterAnimator>();
+            float phase=_swimAnimator!=null?_swimAnimator.SwimmingPhase:0;
+            float effort=new Vector2(_characterMotor.Velocity.x,_characterMotor.Velocity.z).magnitude>.2f?1:.38f;
+            _swimLeftBase=_leftPivot.localRotation;_swimRightBase=_rightPivot.localRotation;
+            _swimLeftPosition=_leftPivot.localPosition;_swimRightPosition=_rightPivot.localPosition;_swimApplied=true;
+            float left=Mathf.Sin(phase),right=Mathf.Sin(phase+Mathf.PI);
+            var l=Quaternion.Euler(-14-left*26*effort,Mathf.Cos(phase)*8*effort,8+Mathf.Cos(phase)*10*effort);
+            var r=_carrying?Quaternion.Euler(0,0,right*2):Quaternion.Euler(-14-right*26*effort,-Mathf.Cos(phase+Mathf.PI)*8*effort,-8-Mathf.Cos(phase+Mathf.PI)*10*effort);
+            _leftPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,l,_swimBlend);
+            _rightPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,r,_swimBlend);
+            _leftPivot.localPosition+=new Vector3(0,Mathf.Cos(phase)*.035f,.05f*left)*effort*_swimBlend;
+            _rightPivot.localPosition+=new Vector3(0,Mathf.Cos(phase+Mathf.PI)*.035f,.05f*right)*effort*_swimBlend*(_carrying?.2f:1);
+        }
+
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestoreSwimming();
             _phase += dt;
 
             // § THE ACTION CLIPS, stepped before the pose below so a throw reads over whatever
@@ -2581,6 +2617,7 @@ namespace TumbangPreso.CameraSystem
                                                              t * 0.02f * Mathf.Rad2Deg),
                                _rightRestScale, dt);
                 }
+                ApplySwimming(dt);
                 return;
             }
 
@@ -2620,6 +2657,7 @@ namespace TumbangPreso.CameraSystem
             {
                 StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
             }
+            ApplySwimming(dt);
         }
 
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)

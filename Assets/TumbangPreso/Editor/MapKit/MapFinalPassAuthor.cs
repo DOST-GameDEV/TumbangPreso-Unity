@@ -124,34 +124,50 @@ namespace TumbangPreso.EditorTools.MapKit
                 if(Mathf.Abs(at.x)<7 && Mathf.Abs(at.z)<7)at.z=(at.z<0?-1:1)*(halfZ+2);
                 bool near=map=="BayanPlaza"?Hierarchy(r.transform).Contains("/TreesNear/"):Mathf.Abs(at.x)<25 && Mathf.Abs(at.z)<28;
                 if(map=="BayanPlaza" && !near && farPlaza++%2!=0)continue;
-                string kind=b.size.y<3.5f?"courtyard-tree":map=="BayanPlaza"&&near?"plaza-shade":"street-broadleaf";
-                var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/urban-trees/"+kind+".glb");
-                if(prefab==null)throw new InvalidOperationException("Missing authored tree: "+kind);
-                var tree=(GameObject)PrefabUtility.InstantiatePrefab(prefab);tree.name="Broadleaf_"+count;tree.transform.SetParent(root,false);
-                var raw=BoundsOf(tree);float height=Mathf.Clamp(b.size.y,1.8f,near?7.8f:8.6f);
-                float scale=height/Mathf.Max(.1f,raw.size.y);tree.transform.localScale=Vector3.one*scale;
-                tree.transform.rotation=Quaternion.Euler(0,(count*67)%360,0);
+                bool small=b.size.y<3.5f;
+                // Garden fruit trees, younger upright trees and a few mature shade
+                // crowns occupy different spaces. A large spreading tree does not
+                // belong beneath Eskinita's wires or in every narrow front yard.
+                string kind=small?"mango-yard":map=="BayanPlaza"?
+                    new[]{"narra-young","acacia-spread","mango-yard","narra-young","plaza-shade"}[count%5]:
+                    !near&&Mathf.Abs(at.x)>38&&count%4==0?"acacia-spread":
+                    new[]{"mango-yard","narra-young","street-broadleaf","mango-yard"}[count%4];
+                float height=small?Mathf.Clamp(b.size.y,1.8f,3.0f):
+                    kind=="mango-yard"?4.7f+(count%3)*.4f:
+                    kind=="acacia-spread"?6.1f+(count%3)*.35f:6.3f+(count%4)*.45f;
                 // Scene ground is flat here; retain authored scenery levels outside
                 // the court, but seat reachable trunks on the actual physical floor.
                 bool reachable=Mathf.Abs(at.x)<halfX-.5f && Mathf.Abs(at.z)<halfZ-.5f;
                 if(reachable)at.y=VfxShapes.GroundPoint(at+Vector3.up*1.5f).y;
-                tree.transform.position=at-Vector3.up*raw.min.y*scale;tree.isStatic=true;
-                foreach(var foliage in tree.GetComponentsInChildren<MeshRenderer>())
-                {
-                    foliage.sharedMaterials=foliage.sharedMaterials.Select(m=>m.name.Contains("bark")?
-                        Mat("tree_bark",new Color(.34f,.25f,.16f)):m.name.Contains("new growth")?
-                        Mat("tree_new_growth",new Color(.34f,.46f,.23f)):m.name.Contains("shaded foliage")?
-                        Mat("tree_shaded_foliage",new Color(.23f,.34f,.18f)):
-                        Mat("tree_foliage",new Color(.29f,.41f,.21f))).ToArray();
-                }
-                if(reachable)
-                {
-                    var trunk=tree.AddComponent<CapsuleCollider>();trunk.radius=.33f;trunk.height=3.1f;trunk.center=new Vector3(0,1.55f,0);solid++;
-                }
+                float crownWidth=map=="Eskinita"&&near?4.4f:map=="BayanPlaza"&&near?8.2f:9.2f;
+                var tree=PlaceTree(root,"Broadleaf_"+count,kind,at,height,crownWidth,(count*67)%360,reachable);
+                if(reachable)solid++;
                 else AirborneByDesign.Attach(tree,"Peripheral vegetation rooted on the existing scenery plate outside reachable play; original terrain elevation retained.");
                 count++;
             }
             report.AppendLine(map+": replaced "+count+" cone/conifer trees; "+solid+" reachable trunks have collision.");
+        }
+
+        internal static GameObject PlaceTree(Transform parent,string name,string kind,Vector3 at,float height,float crownWidth,float yaw,bool solid=false)
+        {
+            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/urban-trees/"+kind+".glb");
+            if(prefab==null)throw new InvalidOperationException("Missing authored tree: "+kind);
+            var tree=(GameObject)PrefabUtility.InstantiatePrefab(prefab);tree.name=name+"_"+kind;tree.transform.SetParent(parent,false);
+            tree.transform.localRotation=Quaternion.Euler(0,yaw,0);
+            var raw=BoundsOf(tree);float scale=Mathf.Min(height/Mathf.Max(.1f,raw.size.y),crownWidth/Mathf.Max(raw.size.x,raw.size.z));
+            tree.transform.localScale=Vector3.one*scale;tree.transform.position=at-Vector3.up*raw.min.y*scale;tree.isStatic=true;
+            foreach(var foliage in tree.GetComponentsInChildren<MeshRenderer>())
+                foliage.sharedMaterials=foliage.sharedMaterials.Select(m=>m.name.Contains("bark")?
+                    Mat("tree_bark",new Color(.34f,.25f,.16f)):m.name.Contains("new growth")?
+                    Mat("tree_new_growth",new Color(.34f,.46f,.23f)):m.name.Contains("shaded foliage")?
+                    Mat("tree_shaded_foliage",new Color(.23f,.34f,.18f)):
+                    Mat("tree_foliage",new Color(.29f,.41f,.21f))).ToArray();
+            if(solid)
+            {
+                var trunk=tree.AddComponent<CapsuleCollider>();trunk.radius=kind=="acacia-spread"?.45f:kind=="mango-yard"?.29f:.28f;
+                trunk.height=3.1f;trunk.center=new Vector3(0,1.55f,0);
+            }
+            return tree;
         }
 
         private static Transform FurnitureRoot(Transform t)

@@ -69,20 +69,18 @@ namespace TumbangPreso.UI
             ? _font
             : _font = Load("UI/fonts/DarumadropOne-Regular", "Darumadrop");
 
-        /// <summary>The supplied Lydian reading face. See <see cref="Face.Body"/>.</summary>
+        /// <summary>Work Sans keeps reading and navigation clear beside the drawn logo.</summary>
         public static Font BodyFont => _body != null
             ? _body
-            : _body = Load("UI/fonts/Lydian-Regular", "Lydian");
+            : _body = Load("UI/fonts/WorkSans-Regular", "Work Sans");
 
         /// <summary>
-        /// Lydian's supplied weight remains regular for compatibility with existing callers.
-        /// The earlier Work Sans pass supplied a separate bold file to avoid synthetic
-        /// emboldening. That reason still applies: emphasis now uses the display/accent
-        /// role or size, and Apply keeps FontStyle.Normal rather than inventing a weight.
+        /// A real bold reading face, without synthetic emboldening. The supplied
+        /// Lydian source remains retained; the owner's new brief permits font changes.
         /// </summary>
         public static Font BodyBoldFont => _bodyBold != null
             ? _bodyBold
-            : _bodyBold = BodyFont;
+            : _bodyBold = Load("UI/fonts/WorkSans-Bold", "Work Sans Bold");
 
         private static Font Load(string path, string human)
         {

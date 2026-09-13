@@ -1,5 +1,107 @@
 # Active TUMP rework ledger
 
+Owner is sleeping and explicitly requests continued work to completion, with
+MAPS still first. Added tournament spectator/cinematic improvement investigation
+to TODO152.4 and EXECUTION_PLAN; no earlier scope is cancelled. Preserve all
+existing spectator camera modes and caster control. No handoff/Desktop update.
+
+**Newest owner verification rule:** stop routine full EditMode/PlayMode suites.
+Run only related checks and focused regressions, batch coherent changes, preserve
+quality through actual behavior/visual review. Older blanket full-suite mandates
+are superseded. Current author repeatability is a related map check; finish it,
+then save the stable checkpoint and return to implementation. No further broad
+suite is queued. Current source swimv5 passed2/2; recoveryv3 floor trace is within
+-.0002 to+.011m. See EXECUTION_PLAN for remaining scope, not a completion claim.
+
+## Execution pointer: resumed here after cancelled handoff, 2026-09-13
+
+**Current run update:** water-inclusive routev4 passed1/1 in both modes,0unreachable
+samples and actual floating pickups. Recovery-authorv1 wrote60clips/20rigs;
+roof-recovery-motion-v1 passed6/6 including both-mode/all-fence mechanics and
+owner-camera return. Visual review still found weak palm bracing, so v2 aims
+arms using the actual measured palm vector and adds a rendered-contact trace.
+Authorv2 session32181 is current; no C#/imported edits until it exits. All earlier
+sessions in this file are retired.14gating source audits and Core562passed.
+No new Windows build; post-dbd2344f work still needs stable-batch commit/push.
+Details: reports/improvement-2026-09-13/roof-recovery-motion.md.
+
+Newest owner addition: roof-fall get-up must show believable struggle and effort
+within TUMP's style. Add bracing/push-up/contact and body/FPP/observer alignment
+to current map acceptance. Preserve mash/independent stun timing. Do not defer it
+behind UI. Swimmingv3 passed2/2; all-fence recoveryv1 passed5/5 across both modes.
+V4author currently rebakes improved swimming posture/raised held grip; session65521.
+Water-inclusive MapRouteProbe changes are authored but not yet run. Prior sessions
+63972/52667/63980/83559/57557/74614 have completed; none is a live Editor.
+
+Owner explicitly cancelled the handoff and resumed the complete work in this chat.
+Read [EXECUTION_PLAN.md](EXECUTION_PLAN.md) for the compact current plan. Maps FIRST,
+then full UI, then animations/skills/play feel. No Desktop update.
+Fetched ASTRAReworks: pushed dbd2344f, no divergence; post-checkpoint source remains
+dirty. No Editor/Blender/player active at preflight. Next is the accessible pool:
+v1 authored80swim clips but7/8checks, poolfloor support failure. Correct real shell
+join/hierarchy, re-author, update stale pool/edge tests and qualify swimming/FPP.
+Original PDF/JPG sources and Figma IDs are preserved in ArtSource/ui/owner-brand-2026-09-13.
+Bird studies preserved in MapSource/environment/ambient-life/birds/study-v1; not integrated.
+Older pointers/process IDs below are historical. Larger TODO152/152.4 stays OPEN.
+
+## Newest rooftop and throwing requirements, 2026-09-13
+
+The owner explicitly rejects the small closed/scenic pool. Enlarge it, REMOVE
+the pool fence, make it accessible, and implement actual swimming with a swimming
+animation. Swimming/body/FPP/observer support belongs to this MAP pass, not the
+later whole-roster animation pass. Pool geometry must have a real basin/opening,
+entry/exit and water interaction; standing on a solid blue block is not swimming.
+Pool slipper handling must be reconsidered because it is now accessible; the
+10second penalty is required for slippers falling OFF the roof, not automatically
+for all water contacts. Preserve retrievability and both modes.
+
+Fence ALL outer roof edges; retire the isolated east opening/paint stripe. Actual
+falls must be possible over any outer railing with existing controls. Keep mash
+get-up and the10second off-roof slipper penalty. Add reasonable pots/resident
+objects and several types of cosmetic birds that arrive/perch/peck/fly away.
+Avoid new controls/objectives and keep all shared gameplay random streams untouched.
+
+Throwing after maps+UI: movement worsens accuracy; standing still improves it;
+immediate releases are shakier/less accurate; holding longer settles and improves
+aim, with a small residual shake. The owner compares aiming behavior to PUBG sniper
+settling. Author visible body/FPP aiming/release to match actual authoritative
+trajectory, preserve Pektus signed arm action, and avoid invisible arbitrary misses.
+The order remains MAPS -> FULL UI -> ANIMATIONS/SKILLS/PLAY FEEL.
+
+## New rooftop correction, 2026-09-13
+
+Owner rejects the small pool and special unfenced/paint-line edge. Enlarge the
+pool with a sensible surround, fence the full perimeter, and permit actual falls
+over ANY outer railing with existing controls. Keep mash get-up and10s slipper
+loss. Give the roof individual resident character through plausible pots/details
+and multiple ambient bird types that arrive/perch/fly away. These are cosmetic,
+not new controls or objectives. The old single-open-east-edge design is superseded.
+Plan around actual pool/court/circulation dimensions; preserve the clear14m court.
+Map work stays FIRST, UI afterward, then animation/skills.
+
+
+## Current order clarified, 2026-09-13
+
+MAPS FIRST, then full UI overhaul, then animations and skills. The assistant
+started UI early after interpreting the new brief as immediate priority; the
+owner asked whether maps were done. They are NOT. Return to unfinished maps;
+keep partial UI work/Figma setup safely recorded. Do not discard any UI scope.
+No new approval needed. No Desktop update. Figma connection/file and imported
+original art are working; IDs under ArtSource/ui/owner-brand-2026-09-13.
+
+
+## NEW OWNER PRIORITY: UI/UX overhaul, 2026-09-13
+
+UI now comes before animation/skills. Full logo-led overhaul is authorized,
+superseding earlier low-priority/function-only UI limits. Read AGENTS newest UI
+section and the forthcoming UI_BRAND_REWORK_PLAN.md. Preserve remaining maps.
+Sources: Downloads/TUMP (1).pdf (49pages,39-49ideas only), four original JPGs copied
+unchanged under ArtSource/ui/owner-brand-2026-09-13. PDF rendering/text/contact
+sheets under Logs/ui-brand-review-2026-09-13. Research/plan first, then implement
+unified quirky/intuitive/low-overload UI and calm animated title scene. No question
+or approval pending. No Desktop update, subagents or paid work.
+
+
 **ACTIVE MAP PLAN: [MAP_TRANSFORMATION_PLAN.md](MAP_TRANSFORMATION_PLAN.md).**
 The owner rejected V9 as insufficient visually. Follow this substantial revision
 before the older incremental/graphics-first order; preserve all broader scope.
@@ -20,12 +122,17 @@ Art_Direction.md section0.1 records the owner's explicit clarification.
 
 ## Current execution pointer (2026-09-13, rooftop and recovery qualification)
 
-Pushed9ff95072 on ASTRAReworks. Current uncommitted rooftop/recovery work and all
+Pusheddbd2344f on ASTRAReworks. Current map refinement work and all
 remaining requirements are in [EXECUTION_PLAN.md](EXECUTION_PLAN.md). Read its
 live state first; execution-plan-history-09.md preserves the prior full record.
 
-Current execution: Sa Bubong support findings corrected and all4maps pass;
-all8checks pass, Sa two-run1597rows has0drift. Stable checkpoint commit is next. No Editor/process pointer from earlier builds
+Current execution: MAPS FIRST. Sa cityv5 guarded author/route chain79795.
+V4 added56mid-rises, but route grid found7unreachable samples at tables/behind
+stairhead. V5 placement correction and both-mode/tabletop pickup verification
+running; failure receipts retained. Source audits30655 run independently. No
+C#/imported edits until Editor exits. EXECUTION_PLAN.md has exact files/next steps.
+UI/Figma partial work saved; they do not mean maps are complete.
+No Editor/process pointer from earlier builds
 is live. Read EXECUTION_PLAN.md for exact latest commands/evidence. Owner withdrew
 the Desktop update request: leave current Desktop executable, continue development.
 
@@ -2304,3 +2411,20 @@ moment, citing Tekken and Genshin Impact as impact/timing references. Give each 
 distinct preparation, camera/body sequence, sound, imposing payoff and recovery;
 keep opponent tells/counterplay visible and the native blocky style. No copied
 characters/effects, forced long input locks or shared generic recolored cutscene.
+
+## First recovery implementation, awaiting review
+
+RecoveryAnimationAuthor now creates landing, bracing and stand resources for the
+retained rigs. Landing copies the existing fall; original assets remain intact.
+Bracing/standing explicitly animate root, torso/head/arms/legs, with rendered-mesh
+contact fitted per sample. CharacterAnimator selects resources for physical trip
+recovery, samples bracing from accepted trip progress, and standing from actual
+remaining MinTripDown. Physics/timers and independent tag clocks are unchanged.
+GameBuilder ensures resources are authored. Current author log:
+Logs/roof-recovery-author-v1.log; session36291 at launch. NOT visual acceptance.
+Next capture and inspect contact, posture, interruptions and owner camera return.
+
+Water-inclusive routev4 passed1/1 for both modes: each5976body nodes,5958connected,
+6285clear slipper rest samples,0unreachable. Actual pickups include floating pool
+stock and all outer edges/services. Logs/sa-bubong-water-routes-v4.xml and CSVs.
+No runtime geometry or pickup-radius changes were used to satisfy the audit.

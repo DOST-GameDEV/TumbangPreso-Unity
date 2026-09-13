@@ -1,0 +1,32 @@
+{
+  "id": "aspin-patched",
+  "kind": "dog",
+  "coat": [
+    0.17,
+    0.18,
+    0.17
+  ],
+  "ears": "floppy",
+  "tail": "straight",
+  "scale": 0.92,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "run",
+    "alert"
+  ],
+  "vertices": 460,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

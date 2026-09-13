@@ -9,8 +9,9 @@ namespace TumbangPreso.UI
     public sealed class StreetGraphic : MaskableGraphic, IPointerEnterHandler, IPointerExitHandler,
         ISelectHandler, IDeselectHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public enum Surface { Navigation, Action, Card, Weave, Fade }
+        public enum Surface { Navigation, Action, Card, Weave, Fade, TitleVeil, Option, Route }
         public Surface Style;
+        public bool Chosen;
         private bool _hovered, _selected, _pressed;
 
         public void OnPointerEnter(PointerEventData e) { _hovered = true; SetVerticesDirty(); }
@@ -25,6 +26,20 @@ namespace TumbangPreso.UI
             vh.Clear();
             var r = rectTransform.rect;
             bool live = _hovered || _selected;
+            if (Style == Surface.TitleVeil)
+            {
+                var solid=UiTheme.Paper; var clear=solid; clear.a=0;
+                float end=Mathf.Lerp(r.xMin,r.xMax,.66f);
+                vh.AddVert(new Vector3(r.xMin,r.yMin),solid,Vector2.zero);
+                vh.AddVert(new Vector3(end,r.yMin),solid,Vector2.zero);
+                vh.AddVert(new Vector3(end,r.yMax),solid,Vector2.zero);
+                vh.AddVert(new Vector3(r.xMin,r.yMax),solid,Vector2.zero);
+                vh.AddVert(new Vector3(r.xMax,r.yMin),clear,Vector2.zero);
+                vh.AddVert(new Vector3(r.xMax,r.yMax),clear,Vector2.zero);
+                vh.AddTriangle(0,1,2); vh.AddTriangle(0,2,3);
+                vh.AddTriangle(1,4,5); vh.AddTriangle(1,5,2);
+                return;
+            }
             if (Style == Surface.Fade)
             {
                 int n = vh.currentVertCount;
@@ -38,6 +53,28 @@ namespace TumbangPreso.UI
                 return;
             }
             if (Style == Surface.Weave) { Weave(vh, r); return; }
+            if(Style==Surface.Route)
+            {
+                if(live){var glow=UiTheme.BrandHoney;glow.a=.55f;Fill(vh,Shape(r,0),glow);}
+                Line(vh,new Vector2(r.xMin+12,r.yMin+1),new Vector2(r.xMax-12,r.yMin+1),
+                    live?3:1,live?UiTheme.BrandRed:UiTheme.PaperSunk);
+                float x=r.xMax-30,y=r.center.y;
+                Line(vh,new Vector2(x-12,y-9),new Vector2(x,y),3,UiTheme.BrandRed);
+                Line(vh,new Vector2(x,y),new Vector2(x-12,y+9),3,UiTheme.BrandRed);
+                return;
+            }
+            if(Style==Surface.Option)
+            {
+                var fill=Chosen?UiTheme.BrandHoney:UiTheme.Paper;
+                Fill(vh,Shape(r,0),Chosen||live?UiTheme.BrandRed:UiTheme.PaperEdge);
+                Fill(vh,Shape(r,Chosen?3:live?2:1),fill);
+                if(Chosen)
+                {
+                    Line(vh,new Vector2(r.xMax-33,r.yMax-24),new Vector2(r.xMax-25,r.yMax-32),3,UiTheme.BrandRed);
+                    Line(vh,new Vector2(r.xMax-25,r.yMax-32),new Vector2(r.xMax-13,r.yMax-16),3,UiTheme.BrandRed);
+                }
+                return;
+            }
             if (Style == Surface.Navigation)
             {
                 if (live)
@@ -45,7 +82,9 @@ namespace TumbangPreso.UI
                     var tint = UiTheme.BrandHoney; tint.a = 0.48f;
                     Fill(vh, Shape(r, 0), tint);
                     Line(vh, new Vector2(r.xMin + 16, r.yMin + 3),
-                         new Vector2(r.xMax - 16, r.yMin + 5), 2f, UiTheme.PaperInk);
+                         new Vector2(r.xMax - 16, r.yMin + 5), 3f, UiTheme.BrandRed);
+                    Fill(vh,new[]{new Vector2(r.xMin+8,r.center.y-6),new Vector2(r.xMin+17,r.center.y),
+                        new Vector2(r.xMin+8,r.center.y+6)},UiTheme.BrandRed);
                 }
                 return;
             }
@@ -53,11 +92,11 @@ namespace TumbangPreso.UI
             var shadow = UiTheme.Ink; shadow.a = Style == Surface.Action ? 0.22f : 0.08f;
             var shadowRect = new Rect(r.x, r.y - (_pressed ? 1 : 4), r.width, r.height);
             Fill(vh, Shape(shadowRect, 0), shadow);
-            Color edge = Style == Surface.Action ? UiTheme.PaperInk : UiTheme.PaperEdge;
+            Color edge = Style == Surface.Action ? UiTheme.BrandRed : UiTheme.PaperEdge;
             if (live) edge = UiTheme.PaperInk;
             Fill(vh, Shape(r, 0), edge);
             Color face = Style == Surface.Action
-                ? Color.Lerp(UiTheme.BrandGolden, UiTheme.BrandHoney, live ? 0.42f : 0.22f)
+                ? (live ? UiTheme.BrandRimRed : UiTheme.BrandRed)
                 : Color.Lerp(UiTheme.Paper, Color.white, live ? 0.32f : 0.14f);
             Fill(vh, Shape(r, Style == Surface.Action ? 2f : 1.5f), face);
 

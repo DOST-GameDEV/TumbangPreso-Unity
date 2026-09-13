@@ -244,3 +244,36 @@ moment, citing Tekken and Genshin Impact as impact/timing references. Give each 
 distinct preparation, camera/body sequence, sound, imposing payoff and recovery;
 keep opponent tells/counterplay visible and the native blocky style. No copied
 characters/effects, forced long input locks or shared generic recolored cutscene.
+
+## Newest rooftop and throwing requirements, 2026-09-13
+
+The owner explicitly rejects the small closed/scenic pool. Enlarge it, REMOVE
+the pool fence, make it accessible, and implement actual swimming with a swimming
+animation. Swimming/body/FPP/observer support belongs to this MAP pass, not the
+later whole-roster animation pass. Pool geometry must have a real basin/opening,
+entry/exit and water interaction; standing on a solid blue block is not swimming.
+Pool slipper handling must be reconsidered because it is now accessible; the
+10second penalty is required for slippers falling OFF the roof, not automatically
+for all water contacts. Preserve retrievability and both modes.
+
+Fence ALL outer roof edges; retire the isolated east opening/paint stripe. Actual
+falls must be possible over any outer railing with existing controls. Keep mash
+get-up and the10second off-roof slipper penalty. Add reasonable pots/resident
+objects and several types of cosmetic birds that arrive/perch/peck/fly away.
+Avoid new controls/objectives and keep all shared gameplay random streams untouched.
+
+Throwing after maps+UI: movement worsens accuracy; standing still improves it;
+immediate releases are shakier/less accurate; holding longer settles and improves
+aim, with a small residual shake. The owner compares aiming behavior to PUBG sniper
+settling. Author visible body/FPP aiming/release to match actual authoritative
+trajectory, preserve Pektus signed arm action, and avoid invisible arbitrary misses.
+The order remains MAPS -> FULL UI -> ANIMATIONS/SKILLS/PLAY FEEL.
+# Renewed owner throwing-animation feedback, 2026-09-13
+
+The visible character/model throwing animation still looks weird and weak to the
+owner. Do not treat existing throw engineering as accepted animation. Rework the
+full observer/body gesture and FPP together: pullback/lean, weight transfer, arm
+path, release and follow-through. Pektus has its own signed arm/wrist spin action.
+Retain moving/still and immediate/held aiming-accuracy requirements, simple
+controls and the18approved models. Maps and full UI remain earlier priorities;
+roof get-up and swimming animation are explicitly current-map work.

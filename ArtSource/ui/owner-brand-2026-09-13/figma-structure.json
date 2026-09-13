@@ -1,0 +1,21 @@
+{
+  "styles": {
+    "TUMP/Heading/Display": "S:6a003ed3250c1303bcdb6d1f8ed91dcf146598a8,",
+    "TUMP/Heading/Section": "S:e80f38a0f965cf3d81ae0a8eb0bf18d3f39d3f14,",
+    "TUMP/Text/Body": "S:4f9fd2686c1b43c2c2ad42bff56a8cd9431b909a,",
+    "TUMP/Text/Action": "S:d10184205eaa6dabf37356d70345f23810d0fa88,",
+    "TUMP/Text/Caption": "S:a7fd93e98f91889e8afb63967ade1d9f44ff77e4,"
+  },
+  "pages": {
+    "01 Brand and controls": "0:1",
+    "02 Screen designs": "5:7",
+    "03 Original art and Unity captures": "5:8"
+  },
+  "createdNodeIds": [
+    "5:7",
+    "5:8"
+  ],
+  "mutatedNodeIds": [
+    "0:1"
+  ]
+}

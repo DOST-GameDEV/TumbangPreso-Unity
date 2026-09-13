@@ -1,0 +1,38 @@
+[
+  {
+    "source": "Assets/TumbangPreso/Resources/UI/brand/tump_logo.png",
+    "targetNodeId": "6:5",
+    "status": 200,
+    "sourceSha256": "05070d45d8d95c55962a42a02e78243ee8ab7bbfea0baa0f1de15528c7b774a4",
+    "result": {
+      "success": true,
+      "imageHash": "643052b55934a49e5e456fdd6164875578bf5d0b",
+      "sizeBytes": 867509,
+      "contentType": "image/png"
+    }
+  },
+  {
+    "source": "Assets/TumbangPreso/Resources/UI/brand/tsinelas_hit.png",
+    "targetNodeId": "6:6",
+    "status": 200,
+    "sourceSha256": "52f61e73b94350844eda42dde0371b5515704141add4195932e3f18229c77c6d",
+    "result": {
+      "success": true,
+      "imageHash": "9eb2fd49a5d56d2a1399a59e4fabb5aac744f856",
+      "sizeBytes": 218990,
+      "contentType": "image/png"
+    }
+  },
+  {
+    "source": "Assets/TumbangPreso/Resources/UI/illustrations/street_key_art.png",
+    "targetNodeId": "6:7",
+    "status": 200,
+    "sourceSha256": "6649c4224f2bb252df811cd27f7656f3e9cee0bbd4d9465a512294d7293126ee",
+    "result": {
+      "success": true,
+      "imageHash": "e6267da5506775a47721a7bb9078c91f0a347d47",
+      "sizeBytes": 2434245,
+      "contentType": "image/png"
+    }
+  }
+]

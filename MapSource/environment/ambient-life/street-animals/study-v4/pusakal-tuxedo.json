@@ -1,0 +1,32 @@
+{
+  "id": "pusakal-tuxedo",
+  "kind": "cat",
+  "coat": [
+    0.13,
+    0.16,
+    0.16
+  ],
+  "ears": "cat",
+  "tail": "curled",
+  "scale": 0.72,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "run",
+    "alert"
+  ],
+  "vertices": 480,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

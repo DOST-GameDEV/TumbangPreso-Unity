@@ -1,0 +1,26 @@
+{
+  "id": "pusakal-tabby",
+  "kind": "cat",
+  "coat": [
+    0.43,
+    0.39,
+    0.31
+  ],
+  "ears": "cat",
+  "tail": "up",
+  "scale": 0.76,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "vertices": 496,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

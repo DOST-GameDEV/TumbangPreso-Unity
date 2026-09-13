@@ -191,3 +191,10 @@ V9 route evidence has7420 resting samples and18 real pickups; all8 editor checks
 and489 graphical EditMode tests pass. See reports/improvement-2026-09-12/map-composition.md. This is
 one stable spatial batch; graphics, broader architecture/ordinary-speed player
 review and the approved Sa Bubong map remain part of the open improvement goal.
+
+## Rooftop owner revision,2026-09-13
+
+Sa Bubong needs a larger believable pool, full perimeter fencing and falls over
+any outer railing. Retire the isolated paint stripe/open gap. Add restrained
+resident detail and several cosmetic bird types. Keep existing controls, mash
+get-up and10s lost-slipper penalty. Current exact state is EXECUTION_PLAN.md.

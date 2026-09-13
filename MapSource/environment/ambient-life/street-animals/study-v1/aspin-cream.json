@@ -1,0 +1,26 @@
+{
+  "id": "aspin-cream",
+  "kind": "dog",
+  "coat": [
+    0.72,
+    0.66,
+    0.49
+  ],
+  "ears": "one-flop",
+  "tail": "curled",
+  "scale": 1.07,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "vertices": 468,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

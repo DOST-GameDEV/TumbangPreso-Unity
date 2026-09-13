@@ -8,6 +8,10 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 
 # TODO: Tumbang Preso Unity
 
+**Current verification policy:** owner requests focused tests relevant to each
+change, not routine full PlayMode/EditMode suites. Batch implementation and retain
+strong behavioral/visual checks; old blanket full-suite mandates are superseded.
+
 **The open worklist. If it is not open, it is in [`TODO_Archive.md`](TODO_Archive.md).**
 
 Read [`../AGENTS.md`](../AGENTS.md) first and [`VISION.md`](VISION.md) second. Check this file
@@ -292,6 +296,60 @@ Full batch evidence and limitations are in TODO_Archive.md section 152.5. The
 broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
+
+**Tournament spectator direction, owner2026-09-13:** examine how spectating can
+be better and more cinematic for tournaments. Preserve free/follow/POV and caster
+control; review camera movement/collision/framing, action/ultimate coverage,
+replay/highlight presentation and useful uncluttered observer information.
+Plan from existing spectator/replay code and actual match captures; implement
+clear improvements without obscuring the can, players, tells or competition.
+Keep this in the broader queue; the owner explicitly says CONTINUE MAPS FIRST.
+
+**Renewed throwing-animation complaint,2026-09-13:** character/model throws still
+look weird/poor. Rework observer body and FPP preparation, weight transfer, arm
+path, release/follow-through and distinct Pektus spin. Existing implementation
+is not visual acceptance. Keep the exact accuracy/hold/movement brief below.
+
+**Newest roof recovery motion:** visibly struggle/brace while mashing after a
+roof fall, then push up with convincing weight/contact. Cute native style;
+body/FPP/observer timing matches accepted recovery and restored control. This
+belongs to current MAP work alongside swimming, not the later animation queue.
+
+**Current continuation:** owner cancelled handoff; continue this chat. Maps first,
+full UI next, animations/skills afterward. Accessible swimming source and80clips
+exist but are unqualified; pool support failed7/8checks. Repair actual shell join,
+then update stale closed-pool/single-edge tests, swimming/FPP/observer/route/network
+coverage. Current plan: [EXECUTION_PLAN.md](EXECUTION_PLAN.md). Larger scope open.
+
+**Ambient life expansion,2026-09-13 (OPEN):** add cute moving cats and dogs to the
+OTHER street maps, not the condo roof. Use local aspin/askal mixed-breed forms and
+varied cat coats/builds/ears/tails, with idle/walk/run-away motion and plausible
+homes/shade routes. No new pet-care system or gameplay collision/scoring. Birds
+can also visit the arena and other maps; vary species/chance/timing/targets and
+flee from nearby players using private cosmetic randomness. Ground animals and
+validate routes against actual props/walls; no floating animals or walk-throughs.
+Sa Bubong stays bird-focused. Filipino character must come through plausible
+resident/street life and a few original drawings, not random clutter.
+
+
+**Latest owner requests to retain,2026-09-13 (OPEN):**
+- Throw accuracy/play feel after maps+UI: moving worsens accuracy; standing still
+  improves it; releasing immediately is shakier/less accurate; a longer hold
+  settles aim and improves accuracy while retaining a small residual shake.
+  PUBG sniper aiming is the behavior reference. Implement actual physics/aim and
+  matching body/FPP motion, not only a visual shake overlay. Preserve signed Pektus.
+- Sa Bubong now needs an enlarged ACCESSIBLE pool, no pool fence, actual swimming
+  and swimming animation. Full outer fencing, falls over any outer rail, mash
+  get-up and10s off-roof slipper loss. The earlier closed-pool/single-gap plan is
+  superseded. Swimming belongs to map work despite general animation being later.
+- Several bird types may land in the arena as well as at roof edges/resident spots
+  and fly away when approached. Vary timing, chance of arrival, flock size, target
+  and behavior. Use a nondeterministically seeded PRIVATE cosmetic random stream;
+  never consume gameplay RNG or add controls/scoring/collision to ambient birds.
+- Make the condo feel Filipino through plausible resident life and selective
+  original drawings: drying/washing corner, household plants/pails/seating and
+  local hand-painted community character. Avoid generic scatter or copied motifs.
+
 
 **Newest2026-09-13 checkpoint:** Sa Bubong playable foundation, fall/mash/10s
 slipper recovery, quick touch press preservation, independent trip/stun clocks,

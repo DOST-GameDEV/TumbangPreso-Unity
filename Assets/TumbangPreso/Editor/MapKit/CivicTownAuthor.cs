@@ -110,9 +110,10 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach(float x in new[]{-43.5f,-35.5f,-27.5f,-10.8f,-3.6f,3.6f,10.8f,27.5f,35.5f,43.5f})
                 House(houses,root,kinds[index%kinds.Length],index++,side<0?0:180,
                     new Vector3(x,.1f,side<0?-26.1f:35.4f),side<0?"south":"north",false,report);
+            int treeIndex=0;
             foreach(var at in new[]{new Vector3(-11.8f,.1f,20.5f),new Vector3(8,.1f,23.5f),
                 new Vector3(-50,.1f,8),new Vector3(50,.1f,10),new Vector3(-49,.1f,-8),new Vector3(49,.1f,-8)})
-                Tree(root,at);
+                Tree(root,at,treeIndex++);
             report.AppendLine("Bayan civic draft:6m texture repeat with1.5m slabs; connected four-street grid;"+index+" retained chunky houses in frontage/back/corner blocks;2 recessed vendor pockets. Whole-place critique remains open.");
         }
 
@@ -242,22 +243,11 @@ namespace TumbangPreso.EditorTools.MapKit
             go.transform.SetPositionAndRotation(anchor,Quaternion.Euler(0,yaw,0));var b=BoundsOf(go);go.transform.position+=Vector3.up*(anchor.y-b.min.y);go.isStatic=true;
         }
 
-        private static void Tree(Transform root,Vector3 anchor)
+        private static void Tree(Transform root,Vector3 anchor,int index)
         {
-            var asset=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/urban-trees/plaza-shade.glb");
-            if(asset==null)throw new InvalidOperationException("Missing original broadleaf source.");
-            var go=(GameObject)PrefabUtility.InstantiatePrefab(asset);go.name="CivicGardenTree";go.transform.SetParent(root,false);
-            var b=BoundsOf(go);go.transform.localScale=Vector3.one*(6.2f/b.size.y);b=BoundsOf(go);
-            go.transform.position=anchor-new Vector3(b.center.x,b.min.y,b.center.z);go.isStatic=true;
-            foreach(var renderer in go.GetComponentsInChildren<MeshRenderer>())
-                renderer.sharedMaterials=renderer.sharedMaterials.Select(m=>
-                {
-                    string name=m.name.Contains("bark")?"tree_bark":m.name.Contains("new growth")?"tree_new_growth":
-                        m.name.Contains("shaded foliage")?"tree_shaded_foliage":"tree_foliage";
-                    var material=AssetDatabase.LoadAssetAtPath<Material>("Assets/TumbangPreso/Art/MapFinalPass/"+name+".mat");
-                    if(material==null)throw new InvalidOperationException("Missing shared broadleaf material: "+name);
-                    return material;
-                }).ToArray();
+            string kind=new[]{"acacia-spread","mango-yard","narra-young","mango-yard","narra-young","street-broadleaf"}[index];
+            float height=new[]{6.2f,5.1f,7.1f,4.9f,6.3f,6.8f}[index];
+            MapFinalPassAuthor.PlaceTree(root,"CivicGardenTree_"+index,kind,anchor,height,index==0?7.4f:5.1f,index*71);
         }
 
         private static void CivicArchitecture(Transform root)

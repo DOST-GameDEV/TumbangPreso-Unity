@@ -40,13 +40,17 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(600000)]
         public IEnumerator GroundGridAndRepresentativeObstacleRoutesRemainRetrievable()
         {
-            var report = new StringBuilder("map,walkable,connected,clear_shoe_samples,unreachable_samples\n");
-            var routes = new StringBuilder("map,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up\n");
+            var report = new StringBuilder("map,mode,walkable,connected,clear_shoe_samples,unreachable_samples\n");
+            var routes = new StringBuilder("map,mode,target,shoe_x,shoe_y,shoe_z,route_nodes,seconds,picked_up\n");
+            var maps=new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong};
+            string selected=Environment.GetEnvironmentVariable("TUMP_MAP_ROUTE_REVIEW");
+            if(!string.IsNullOrEmpty(selected)){CollectionAssert.Contains(maps,selected);maps=new[]{selected};}
             try
             {
-                foreach (string map in new[] { SceneFlow.Eskinita, SceneFlow.BayanPlaza, SceneFlow.IlalimNgTulay })
+                foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
+                foreach (string map in maps)
                 {
-                    yield return MapRetrievalProbe.Load(map);
+                    yield return MapRetrievalProbe.Load(map,mode);
                     var who = GameServices.Round.PlayerAt(1);
                     var cc = who.GetComponent<CharacterController>();
                     Object.FindFirstObjectByType<CameraRig>().SetAimSource(AimSource.Movement);
@@ -67,12 +71,16 @@ namespace TumbangPreso.PlayTests
                     for (int z = -izMax; z <= izMax; z++)
                     {
                         if (!Floor(new Vector2(x * Step, z * Step), out var feet)) continue;
+                        if(map==SceneFlow.SaBubong&&RooftopRecovery.OutsideDeck(feet))continue;
+                        SwimHeight(ref feet);
                         if (ClearBody(feet, cc)) nodes.Add(new Vector2Int(x, z), feet);
                     }
                     Assert.Greater(nodes.Count, 100, map + " has no useful walkable sample grid.");
                     Vector3 start = new Vector3(0, 0, 8.5f);
                     var startKey = nodes.OrderBy(p => (p.Value - start).sqrMagnitude).First().Key;
                     var parents = Flood(nodes, startKey, cc);
+                    File.WriteAllLines(Path.Combine(Output,map+"-"+mode+"-body-grid.csv"),
+                        new[]{"x,y,z,connected"}.Concat(nodes.Select(n=>FormattableString.Invariant($"{n.Value.x:F3},{n.Value.y:F3},{n.Value.z:F3},{parents.ContainsKey(n.Key)}"))));
                     var connected = parents.Keys.ToArray();
                     var samples = new List<Vector3>();
                     var bad = new List<string>();
@@ -80,6 +88,10 @@ namespace TumbangPreso.PlayTests
                     for (float z = -hz + Balance.SlipperHitRadius + .03f; z < hz - Balance.SlipperHitRadius; z += Step)
                     {
                         if (!Floor(new Vector2(x, z), out var floor)) continue;
+                        // Only off-roof stock incurs a delay. Accessible water is
+                        // a genuine floating-shoe rest site with a swim approach.
+                        if(map==SceneFlow.SaBubong&&RooftopRecovery.OutsideDeck(floor))continue;
+                        if(RooftopPool.TrySurface(floor,out float water))floor.y=Mathf.Max(floor.y,water);
                         if (Physics.OverlapSphere(floor + Vector3.up * .24f, Balance.SlipperHitRadius, ~0,
                             QueryTriggerInteraction.Ignore).Any(c => Blocks(c, floor.y + .025f))) continue;
                         var shoe = floor + Vector3.up * .1f;
@@ -88,8 +100,8 @@ namespace TumbangPreso.PlayTests
                         if (distance > Balance.PickupRadius * Balance.PickupRadius)
                             bad.Add(FormattableString.Invariant($"{x:F3},{shoe.y:F3},{z:F3},nearest={Mathf.Sqrt(distance):F3}"));
                     }
-                    report.AppendLine($"{map},{nodes.Count},{parents.Count},{samples.Count},{bad.Count}");
-                    File.WriteAllLines(Path.Combine(Output, map + "-unreachable.txt"), bad);
+                    report.AppendLine($"{map},{mode},{nodes.Count},{parents.Count},{samples.Count},{bad.Count}");
+                    File.WriteAllLines(Path.Combine(Output, map + "-"+mode+"-unreachable.txt"), bad);
                     Assert.IsEmpty(bad, map + " has clear resting samples without a connected pickup approach.");
 
                     var targets = new Dictionary<string, Vector3>
@@ -99,20 +111,29 @@ namespace TumbangPreso.PlayTests
                         ["south wall"] = samples.OrderBy(p => p.z).ThenBy(p => Mathf.Abs(p.x)).First(),
                         ["north wall"] = samples.OrderByDescending(p => p.z).ThenBy(p => Mathf.Abs(p.x)).First()
                     };
+                    if(map==SceneFlow.SaBubong)
+                    {
+                        foreach(var spot in new[]{new Vector3(-14,0,6),new Vector3(-15,0,12)})
+                            targets["floating pool stock "+spot.z]=samples.Where(RooftopRecovery.InPool)
+                                .OrderBy(p=>new Vector2(p.x-spot.x,p.z-spot.z).sqrMagnitude).First();
+                    }
                     foreach (var collider in Object.FindObjectsByType<Collider>(FindObjectsSortMode.None))
                     {
                         if (!collider.enabled || collider.isTrigger) continue;
                         var b = collider.bounds;
-                        if (b.size.y < 1 || b.size.x > 7 || b.size.z > 7 || Mathf.Abs(b.center.x) >= hx || Mathf.Abs(b.center.z) >= hz) continue;
                         string path = PathOf(collider.transform);
+                        bool table=path.Contains("Resident table");
+                        if ((!table&&b.size.y < 1) || b.size.x > 7 || b.size.z > 7 || Mathf.Abs(b.center.x) >= hx || Mathf.Abs(b.center.z) >= hz) continue;
                         string kind = path.Contains("Vendor_") ? path.Split('/').First(p=>p.StartsWith("Vendor_")) :
                             path.Contains("SidewalkPole_") ? "utility pole" :
                             path.Contains("Broadleaf") ? "tree trunk" : path.Contains("Pillar") ? "guideway pillar" :
                             path.Contains("Monument") ? "monument" : path.Contains("Kiosk") ? "kiosk" :
-                            path.Contains("Cart") || path.Contains("Tricycle") ? "cart" : null;
+                            path.Contains("Cart") || path.Contains("Tricycle") ? "cart" :
+                            table?"tabletop":path.Contains("Pool") ? "pool surround" : path.Contains("Residents shade") ? "shade supports" :
+                            path.Contains("stairhead") ? "stairhead" : path.Contains("water tank") ? "water tank" : null;
                         if (kind == null || targets.ContainsKey(kind)) continue;
                         Vector3 behind = new Vector3(b.center.x, 0, b.min.z - .3f);
-                        targets[kind] = samples.OrderBy(p => (p - behind).sqrMagnitude).First();
+                        targets[kind] = table?new Vector3(b.center.x,b.max.y+.1f,b.center.z):samples.OrderBy(p => (p - behind).sqrMagnitude).First();
                     }
                     foreach (var target in targets)
                     {
@@ -144,7 +165,7 @@ namespace TumbangPreso.PlayTests
                         {
                             while (who.GetComponent<Carrier>().Held != shoe && Time.realtimeSinceStartup - began < 28) yield return null;
                             bool picked = who.GetComponent<Carrier>().Held == shoe;
-                            routes.AppendLine(FormattableString.Invariant($"{map},{target.Key},{resting.x:F3},{resting.y:F3},{resting.z:F3},{path.Count},{Time.realtimeSinceStartup - began:F3},{picked}"));
+                            routes.AppendLine(FormattableString.Invariant($"{map},{mode},{target.Key},{resting.x:F3},{resting.y:F3},{resting.z:F3},{path.Count},{Time.realtimeSinceStartup - began:F3},{picked}"));
                             Assert.IsTrue(picked, $"{map}/{target.Key}: real motor stopped at {who.transform.position}, shoe={resting}, waypoint={waypoint}/{path.Count}.");
                         }
                         finally { driver.enabled = false; Object.Destroy(driver); who.Intent.Clear(); }
@@ -166,7 +187,7 @@ namespace TumbangPreso.PlayTests
                 c.GetComponentInParent<Lata>() == null && c.bounds.max.y > allowedTop;
         private static bool Floor(Vector2 at, out Vector3 floor)
         {
-            var hits = Physics.RaycastAll(new Vector3(at.x, 1.15f, at.y), Vector3.down, 2, ~0, QueryTriggerInteraction.Ignore)
+            var hits = Physics.RaycastAll(new Vector3(at.x, 1.15f, at.y), Vector3.down, 4, ~0, QueryTriggerInteraction.Ignore)
                 .Where(h => h.normal.y > .6f && Blocks(h.collider, -2)).OrderBy(h => h.distance).ToArray();
             floor = hits.Length == 0 ? Vector3.zero : hits[0].point;
             return hits.Length > 0;
@@ -175,6 +196,37 @@ namespace TumbangPreso.PlayTests
             => !Physics.OverlapCapsule(feet + Vector3.up * (cc.radius + .06f),
                 feet + Vector3.up * (cc.height - cc.radius + .06f), cc.radius + .02f, ~0, QueryTriggerInteraction.Ignore)
                 .Any(c => Blocks(c, feet.y + cc.stepOffset + .02f));
+
+        private static void SwimHeight(ref Vector3 feet)
+        {if(RooftopPool.TrySurface(feet,out float water))feet.y=Mathf.Max(feet.y,water-RooftopPool.FloatDepth);}
+
+        private static bool Traverse(Vector3 a,Vector3 b,CharacterController cc)
+        {
+            // A half-metre sample can span TWO valid .24m stair rises. Test the
+            // intermediate support instead of treating that interval as one wall.
+            // The actual motor's pool step route already passed independently.
+            int parts=Mathf.Abs(a.y-b.y)>cc.stepOffset?5:1;
+            var previous=a;
+            for(int part=1;part<=parts;part++)
+            {
+                var current=Vector3.Lerp(a,b,part/(float)parts);
+                if(parts>1)
+                {
+                    if(!Floor(new Vector2(current.x,current.z),out current))return false;
+                    SwimHeight(ref current);
+                    if(!ClearBody(current,cc))return false;
+                }
+                if(Mathf.Abs(previous.y-current.y)>cc.stepOffset+.001f)return false;
+                Vector3 delta=current-previous;
+                if(Physics.CapsuleCastAll(previous+Vector3.up*(cc.radius+.06f),previous+Vector3.up*(cc.height-cc.radius+.06f),
+                    cc.radius+.02f,delta.normalized,delta.magnitude,~0,QueryTriggerInteraction.Ignore)
+                    // On descent, the previous tread remains under the rear of
+                    // the capsule. It is support, not a newly encountered wall.
+                    .Any(h=>Blocks(h.collider,Mathf.Max(previous.y,current.y)+cc.stepOffset+.02f)))return false;
+                previous=current;
+            }
+            return true;
+        }
         private static Dictionary<Vector2Int, Vector2Int> Flood(Dictionary<Vector2Int, Vector3> nodes, Vector2Int start, CharacterController cc)
         {
             var parent = new Dictionary<Vector2Int, Vector2Int> { [start] = start };
@@ -185,11 +237,7 @@ namespace TumbangPreso.PlayTests
                 foreach (var offset in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
                 {
                     var next = key + offset;
-                    if (parent.ContainsKey(next) || !nodes.TryGetValue(next, out var b) || Mathf.Abs(a.y - b.y) > cc.stepOffset) continue;
-                    Vector3 delta = b - a;
-                    if (Physics.CapsuleCastAll(a + Vector3.up * (cc.radius + .06f), a + Vector3.up * (cc.height - cc.radius + .06f),
-                        cc.radius + .02f, delta.normalized, delta.magnitude, ~0, QueryTriggerInteraction.Ignore)
-                        .Any(h => Blocks(h.collider, Mathf.Min(a.y, b.y) + cc.stepOffset + .02f))) continue;
+                    if (parent.ContainsKey(next) || !nodes.TryGetValue(next, out var b) || !Traverse(a,b,cc)) continue;
                     parent[next] = key; queue.Enqueue(next);
                 }
             }

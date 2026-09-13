@@ -1,5 +1,29 @@
 # Owner playtest revision, 2026-09-13
 
+## Newest rooftop and throwing requirements, 2026-09-13
+
+The owner explicitly rejects the small closed/scenic pool. Enlarge it, REMOVE
+the pool fence, make it accessible, and implement actual swimming with a swimming
+animation. Swimming/body/FPP/observer support belongs to this MAP pass, not the
+later whole-roster animation pass. Pool geometry must have a real basin/opening,
+entry/exit and water interaction; standing on a solid blue block is not swimming.
+Pool slipper handling must be reconsidered because it is now accessible; the
+10second penalty is required for slippers falling OFF the roof, not automatically
+for all water contacts. Preserve retrievability and both modes.
+
+Fence ALL outer roof edges; retire the isolated east opening/paint stripe. Actual
+falls must be possible over any outer railing with existing controls. Keep mash
+get-up and the10second off-roof slipper penalty. Add reasonable pots/resident
+objects and several types of cosmetic birds that arrive/perch/peck/fly away.
+Avoid new controls/objectives and keep all shared gameplay random streams untouched.
+
+Throwing after maps+UI: movement worsens accuracy; standing still improves it;
+immediate releases are shakier/less accurate; holding longer settles and improves
+aim, with a small residual shake. The owner compares aiming behavior to PUBG sniper
+settling. Author visible body/FPP aiming/release to match actual authoritative
+trajectory, preserve Pektus signed arm action, and avoid invisible arbitrary misses.
+The order remains MAPS -> FULL UI -> ANIMATIONS/SKILLS/PLAY FEEL.
+
 This is an implementation contract, not a handoff. Keep the current Bayan layout;
 the owner explicitly retracted the earlier rejection. The wider goal stays open.
 
@@ -265,3 +289,14 @@ After ALL map work, work on ANIMATIONS AND SKILLS together next. Full body/FPP
 preparation, release, impact, interruption and recovery are part of the skill
 revamp, alongside distinct mechanics and special ultimate moments. Movement and
 equipment animation examples remain requirements, not deferred cosmetic extras.
+
+
+**Ambient life expansion,2026-09-13 (OPEN):** add cute moving cats and dogs to the
+OTHER street maps, not the condo roof. Use local aspin/askal mixed-breed forms and
+varied cat coats/builds/ears/tails, with idle/walk/run-away motion and plausible
+homes/shade routes. No new pet-care system or gameplay collision/scoring. Birds
+can also visit the arena and other maps; vary species/chance/timing/targets and
+flee from nearby players using private cosmetic randomness. Ground animals and
+validate routes against actual props/walls; no floating animals or walk-throughs.
+Sa Bubong stays bird-focused. Filipino character must come through plausible
+resident/street life and a few original drawings, not random clutter.

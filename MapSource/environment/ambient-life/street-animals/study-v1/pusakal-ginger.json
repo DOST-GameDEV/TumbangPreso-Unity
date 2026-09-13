@@ -1,0 +1,26 @@
+{
+  "id": "pusakal-ginger",
+  "kind": "cat",
+  "coat": [
+    0.64,
+    0.38,
+    0.18
+  ],
+  "ears": "cat",
+  "tail": "up",
+  "scale": 0.81,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontL",
+    "FrontR",
+    "BackL",
+    "BackR"
+  ],
+  "vertices": 544,
+  "author": "tools/author_street_animals.py",
+  "status": "unreviewed native study, not in game"
+}

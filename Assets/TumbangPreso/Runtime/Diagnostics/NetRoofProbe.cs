@@ -72,7 +72,7 @@ namespace TumbangPreso.Diagnostics
             if(NetAuthority.IsHost&&!_staged&&elapsed>.8f)
             {
                 _staged=true;_who.transform.rotation=Quaternion.Euler(0,90,0);
-                _who.Teleport(new Vector3(13,.1f,0));
+                _who.Teleport(new Vector3(RooftopRecovery.HalfX-1.2f,.1f,0));
                 Debug.Log($"[RoofProbe] stage scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name} bounds={AIController.PlayableHalfX}/{AIController.PlayableHalfZ} at={_who.transform.position}");
             }
             if(NetAuthority.LocalSlot==1)
@@ -80,8 +80,10 @@ namespace TumbangPreso.Diagnostics
                 _who.Intent.Parked=false;_who.Intent.ClearAim();_who.Intent.FaceAimPoint=false;
                 FindFirstObjectByType<CameraRig>()?.SetAimSource(AimSource.Movement);
                 if(_who.IsTripped){_sawTrip=true;if(_mashAt<0)_mashAt=now;}
-                _who.Intent.Move=!_sawTrip&&_who.transform.position.x>12.5f?Vector2.right:Vector2.zero;
-                _who.Intent.Set(Verb.Jump,_who.CanMashUp&&_mashAt>=0&&now-_mashAt>2&&(now-_mashAt)% .16<.065);
+                bool atFence=!_sawTrip&&_who.transform.position.x>RooftopRecovery.HalfX-1.4f;
+                _who.Intent.Move=atFence?Vector2.right:Vector2.zero;
+                _who.Intent.Set(Verb.Jump,(atFence&&_who.IsGrounded)||
+                    (_who.CanMashUp&&_mashAt>=0&&now-_mashAt>2&&(now-_mashAt)% .16<.065));
                 bool take=_sawTrip&&elapsed>16&&_shoe!=null&&_shoe.gameObject.activeSelf&&!_who.HoldingSlipper;
                 if(take)
                 {

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.4348337">
+  <test-suite type="TestSuite" id="1396" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.434834" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1390" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.425413" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1391" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.422468" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1392" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.419330" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1308" name="RooftopSwimmingProbe" fullname="TumbangPreso.PlayTests.RooftopSwimmingProbe" classname="TumbangPreso.PlayTests.RooftopSwimmingProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:04:37Z" duration="64.411330" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1310" name="BodyAndFirstPersonStrokesAtOrdinarySpeedInBothModes" fullname="TumbangPreso.PlayTests.RooftopSwimmingProbe.BodyAndFirstPersonStrokesAtOrdinarySpeedInBothModes" methodname="BodyAndFirstPersonStrokesAtOrdinarySpeedInBothModes" classname="TumbangPreso.PlayTests.RooftopSwimmingProbe" runstate="Runnable" seed="531755049" result="Passed" start-time="2026-09-13 10:03:32Z" end-time="2026-09-13 10:03:52Z" duration="19.422351" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1309" name="SwimFromStepsRetrieveFloatingSlipperAndWalkBackOutInBothModes" fullname="TumbangPreso.PlayTests.RooftopSwimmingProbe.SwimFromStepsRetrieveFloatingSlipperAndWalkBackOutInBothModes" methodname="SwimFromStepsRetrieveFloatingSlipperAndWalkBackOutInBothModes" classname="TumbangPreso.PlayTests.RooftopSwimmingProbe" runstate="Runnable" seed="539391003" result="Passed" start-time="2026-09-13 10:03:52Z" end-time="2026-09-13 10:04:37Z" duration="44.977718" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/roof-swimming-v5/Classic-tread-held-fpp.png
+[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/roof-swimming-v5/HeroStrike-tread-held-fpp.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

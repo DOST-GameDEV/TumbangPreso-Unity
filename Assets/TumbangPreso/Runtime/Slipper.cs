@@ -1489,6 +1489,7 @@ namespace TumbangPreso
                 if (hit.point.y > best) best = hit.point.y;
             }
 
+            if(RooftopPool.TrySurface(at,out float water))best=Mathf.Max(best,water);
             return float.IsNegativeInfinity(best) ? 0.0f : best;
         }
 

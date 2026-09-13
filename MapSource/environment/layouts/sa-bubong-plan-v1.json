@@ -45,14 +45,14 @@
     {
       "name": "Stairwell and noticeboard",
       "centre": [
-        7.8,
+        8,
         0.1,
-        15.2
+        14.5
       ],
       "size": [
-        4.8,
-        3.1,
-        4.2
+        4.6,
+        3.19,
+        4.4
       ],
       "access": "Readable resident entrance, solid stairhead"
     },
@@ -90,5 +90,31 @@
     "Fallen slippers genuinely unavailable for ten seconds and returned once to reachable ground",
     "Original sources, native style, supported props, first-person and aerial critique"
   ],
-  "surfaceDirection": "Faded green recreation court with warm neutral roof deck; existing civic paving is a draft placeholder"
+  "surfaceDirection": "Faded green recreation court with warm neutral roof deck; existing civic paving is a draft placeholder",
+  "cityPass": {
+    "source": "SaBubongBuilder.Skyline",
+    "retainedTowers": 14,
+    "measuredStreetFrontBuildings": 56,
+    "roadCentresX": [
+      -49,
+      -18,
+      18,
+      49
+    ],
+    "roadCentresZ": [
+      -49,
+      -22,
+      22,
+      49
+    ],
+    "roadWidth": 5.7,
+    "groundTop": -26.05,
+    "buildingBase": -26.049,
+    "rule": "Reject every new footprint that intersects a street or occupied building; attach narrow frontage footpaths",
+    "roofRecovery": "Unchanged"
+  },
+  "reviewHistory": {
+    "v4": "7unreachable loose-rest samples: table centres and .66m stairhead rear gap",
+    "v5": "Stairhead moved .5m south; shorter/offset tables and benches permit end approaches. Both modes0unreachable samples; real tabletop/fence/stairhead/shade/tank pickups pass."
+  }
 }

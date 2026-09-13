@@ -1,0 +1,33 @@
+[
+  {
+    "name": "TUMP (1).pdf",
+    "path": "C:\\Users\\Matthew\\Downloads\\TUMP (1).pdf",
+    "sha256": "2b2390838134883cbf8b63bff9cb94f6fece646c399f435a806a54623aa31e82",
+    "interpretation": "Historical moodboard; pages39-49 composition inspiration, not final layouts or instructions.",
+    "sourceCopy": "ArtSource/ui/owner-brand-2026-09-13/TUMP-moodboard-original.pdf"
+  },
+  {
+    "name": "new tump text.jpg",
+    "path": "C:\\Users\\Matthew\\Downloads\\claude\\new tump text.jpg",
+    "sourceCopy": "ArtSource\\ui\\owner-brand-2026-09-13\\new tump text.jpg",
+    "sha256": "5aca6bfe5e83613e2aa226710168d842a89e960ee5fdc5c7e4472dd54e80958f"
+  },
+  {
+    "name": "logo.jpg",
+    "path": "C:\\Users\\Matthew\\Downloads\\claude\\logo.jpg",
+    "sourceCopy": "ArtSource\\ui\\owner-brand-2026-09-13\\logo.jpg",
+    "sha256": "f14d3f33934a462cb091cbd7e921abec901c297e54e171f401ba580cd1bb4c41"
+  },
+  {
+    "name": "slipper with hit.jpg",
+    "path": "C:\\Users\\Matthew\\Downloads\\claude\\slipper with hit.jpg",
+    "sourceCopy": "ArtSource\\ui\\owner-brand-2026-09-13\\slipper with hit.jpg",
+    "sha256": "45379c67b09fe6db23eb0cd8994d9fb2b5376256f3fc8b40eeafaf4c0361bfdd"
+  },
+  {
+    "name": "new tump text with some  texture.jpg",
+    "path": "C:\\Users\\Matthew\\Downloads\\claude\\new tump text with some  texture.jpg",
+    "sourceCopy": "ArtSource\\ui\\owner-brand-2026-09-13\\new tump text with some  texture.jpg",
+    "sha256": "4ff6f39911bb0fe5a7620c370ec14a9f854fb4cd2ee8cb6768c93b665d0a3fc4"
+  }
+]

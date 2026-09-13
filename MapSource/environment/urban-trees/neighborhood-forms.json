@@ -1,0 +1,11 @@
+{
+  "author": "tools/author_urban_trees.py",
+  "command": "--only acacia-spread mango-yard narra-young",
+  "intent": "Stylized shade and garden silhouette references; not botanical reconstructions",
+  "reference": "https://up.edu.ph/ups-cultural-landscapes/",
+  "forms": [
+    "acacia-spread",
+    "mango-yard",
+    "narra-young"
+  ]
+}

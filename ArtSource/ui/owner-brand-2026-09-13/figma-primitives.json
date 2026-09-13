@@ -1,0 +1,20 @@
+{
+  "collection": {
+    "id": "VariableCollectionId:2:2",
+    "name": "TUMP primitives",
+    "modeId": "2:0"
+  },
+  "variables": {
+    "BrandRed": "VariableID:2:3",
+    "Paper": "VariableID:2:4",
+    "PaperInk": "VariableID:2:5",
+    "PaperInkSoft": "VariableID:2:6",
+    "BrandHoney": "VariableID:2:7",
+    "BrandGolden": "VariableID:2:8",
+    "BrandChartreuse": "VariableID:2:9",
+    "BrandPersimmon": "VariableID:2:10",
+    "PaperSunk": "VariableID:2:11"
+  },
+  "createdNodeIds": [],
+  "mutatedNodeIds": []
+}

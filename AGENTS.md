@@ -1,5 +1,43 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest verification instruction,2026-09-13:** use only tests/checks related to
+the current changes. Do not routinely run full EditMode or full PlayMode suites.
+The owner explicitly requested this to improve throughput without lowering
+quality. Batch coherent implementation, use focused behavioral regressions and
+targeted ordinary-speed visual review, and keep evidence/limitations truthful.
+This supersedes older blanket full-suite and repeated-suite mandates below and
+in historical documents. Do not automatically restore them for a checkpoint.
+
+**Current delivery instruction:** continue the full work in this chat. The owner
+cancelled the handoff. Maps first, full UI second, animations/skills/play feel
+third. No Desktop rebuild now. See the newest active-ledger pointer and compact
+EXECUTION_PLAN for actual implementation and validation state. Older process
+records and contradictory historical requests never replace that pointer.
+
+## Newest rooftop and throwing requirements, 2026-09-13
+
+The owner explicitly rejects the small closed/scenic pool. Enlarge it, REMOVE
+the pool fence, make it accessible, and implement actual swimming with a swimming
+animation. Swimming/body/FPP/observer support belongs to this MAP pass, not the
+later whole-roster animation pass. Pool geometry must have a real basin/opening,
+entry/exit and water interaction; standing on a solid blue block is not swimming.
+Pool slipper handling must be reconsidered because it is now accessible; the
+10second penalty is required for slippers falling OFF the roof, not automatically
+for all water contacts. Preserve retrievability and both modes.
+
+Fence ALL outer roof edges; retire the isolated east opening/paint stripe. Actual
+falls must be possible over any outer railing with existing controls. Keep mash
+get-up and the10second off-roof slipper penalty. Add reasonable pots/resident
+objects and several types of cosmetic birds that arrive/perch/peck/fly away.
+Avoid new controls/objectives and keep all shared gameplay random streams untouched.
+
+Throwing after maps+UI: movement worsens accuracy; standing still improves it;
+immediate releases are shakier/less accurate; holding longer settles and improves
+aim, with a small residual shake. The owner compares aiming behavior to PUBG sniper
+settling. Author visible body/FPP aiming/release to match actual authoritative
+trajectory, preserve Pektus signed arm action, and avoid invisible arbitrary misses.
+The order remains MAPS -> FULL UI -> ANIMATIONS/SKILLS/PLAY FEEL.
+
 This is the primary, self-contained repository instruction file, maintained at
 owner request on 2026-09-12. Start here. `CLAUDE.md` retains historical reasoning
 and incident receipts; it is no longer the entry point or a competing rulebook.
@@ -52,6 +90,28 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 
 ## Product and creative authority
 
+### Newest owner UI direction, 2026-09-13
+
+The owner now authorizes a FULL UI/UX overhaul, before animations and skills.
+This supersedes earlier UI-art-low-priority and functional-only limits. Preserve
+unfinished map work and the broader game scope. Use the supplied girlfriend's
+new TUMP logo and supporting marks as the brand anchor. Review the49-page
+TUMP (1).pdf moodboard; pages39-49 are composition ideas, not final layouts or
+instructions. Font choices are flexible. Research game UI/UX and write a durable
+screen-by-screen plan before implementation. Existing game-ui-design/Unity UI/PDF
+skills are installed; install more only if materially needed, no paid work.
+
+Target a unified, quirky, intuitive interface with low information overload.
+Main menu: game name, a few clear choices and a simple animated background that
+introduces the game. Slay the Spire is a restraint/composition reference, not
+art to copy. Do not paste one button treatment across every control. Keep coherent
+type/colour/spacing/focus rules while differentiating actions, tabs, cards, settings
+rows and transient HUD information. Preserve working navigation/input/save/net
+contracts and keep the character maker inaccessible. The new logo's own colours
+are approved. Critique actual task flows and every screen, not just a theme mockup.
+Source files and hashes: ArtSource/ui/owner-brand-2026-09-13/source-manifest.json.
+
+
 - Improve the existing game substantially. Four players, one rotating defender,
   the can, throwing and risky slipper retrieval remain its foundation.
 - The owner wants a fully realized game that surprises people through strong
@@ -63,15 +123,15 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   sense, with natural Filipino character. Thorough graphics and graphics-settings
   improvements are also required: lower-spec play and visible higher-end benefits.
   Measure frame cost and image/readability changes; retain gameplay tells on every
-  preset. Functional graphics UI is in scope, not a general UI-art remake.
+  preset. Full UI overhaul is separately authorized below the map priority.
   Preserve each place's intention: Eskinita's neighborhood street, Bayan's civic
   plaza and Ilalim's guideway/shop setting. Freedom to rebuild does not mean
   replacing their Filipino identity with an unrelated setting.
 - **Fourth map approved with changes, 2026-09-12: Sa Bubong.** The owner accepted
   the Metro Manila condo roofdeck concept after initially selecting 'Revise', and
-  requested a Filipino name. Keep an open court, fenced pool, shaded residents'
-  area and separate stairwell/utility/laundry corner. A clearly visible outer ledge
-  permits actual falls. **Players can button-mash to get back up. Fallen slippers
+  requested a Filipino name. Keep an open court, enlarged accessible swimming pool, shaded residents'
+  area and separate stairwell/utility/laundry corner. All outer edges have rails;
+  existing jump/movement permits actual falls over any rail. No pool fence. **Players can button-mash to get back up. Fallen slippers
   remain unavailable for about10 seconds before teleporting to a safe rooftop spot;
   that delay is an intentional penalty.** Preserve both modes and the core game.
   Also verify button mashing across ALL recovery contexts and keyboard/controller/
@@ -103,7 +163,7 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   is uniform trees across all maps. Inventory existing tree assets,then vary useful
   species/silhouettes/canopy shape/age/spacing while keeping the native style and
   clear routes. The framed Bawal plaque remains rejected;replace it with natural
-  surface-painted lettering. A current Desktop build is explicitly requested.
+  surface-painted lettering. The requested Desktop review was delivered; its replacement is now deferred.
 - **Latest owner playtest,2026-09-13:** delete Street Hype as a mechanic and all
   associated UI. Earlier Vision/archive claims that it is Classic's identity are
   superseded. Remove the duplicate main lobby RULES row, preserving Custom Game.
@@ -111,7 +171,7 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   retain its comparatively tight alley feeling; improve Bayan surface texture.
   Warm cream/terracotta/brown-grey palette is now requested over the neutral pass.
   Sa Bubong implementation moves ahead of the remaining abilities/equipment queue.
-  After maps, the newest owner priority is full ability implementation/mechanics
+  After maps and the full UI overhaul, continue ability implementation/mechanics
   and visual revamps, including distinct signature ultimate moments. All six kits
   and alternatives are covered; movement/equipment/network work remains open.
   The owner is playing the delivered Desktop build: never replace it while running
@@ -133,9 +193,9 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   sound. Keep English player-facing copy and proper names. No forced symbols,
   copied sacred writing or invented historical claims. This is extraordinary
   sport, without killing, guns or lasting destruction.
-- UI art is low priority. Fix documented navigation, focus, raycast, loading and
-  readability defects. Keep the character maker inaccessible while retaining its
-  implementation, assets and saved data. Do not open a new UI decoration project.
+- Full UI/UX overhaul is authorized after maps, using the supplied logo and
+  moodboard under the newest UI direction above. Keep the character maker
+  inaccessible while retaining its implementation, assets and saved data.
 - Can, chalk, loose slippers, defender and useful routes must remain readable
   during overlapping effects and Low graphics. More brightness/area is not polish.
 
@@ -202,16 +262,16 @@ failures proactively. MAP_TRANSFORMATION_PLAN.md carries the full critique rubri
   Start long runs in the background; read, review or update docs while they run.
   **Do not edit C# or imported assets during a Unity run.** Do not terminate an
   unrelated process. Diagnose a stale lock only after confirming its owner is gone.
-- Core: `dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj`.
-  Fresh EditMode: guarded `-batchmode -runTests -testPlatform EditMode`, explicit
-  `-buildTarget Win64`, unique XML/log paths. No bare `-batchmode -quit` compile claim.
+- Core: `dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj` when relevant.
+  Focused EditMode: guarded `-batchmode -runTests -testPlatform EditMode` with an
+  explicit related fixture filter, `-buildTarget Win64`, unique XML/log paths.
+  No bare `-batchmode -quit` compile claim and no routine full-suite run.
 - PlayMode: no `-nographics`. Require **fresh nonzero NUnit XML**, zero failures
   and expected fixture coverage, never just exit code or result='Passed'. Single
   fixture CLI filters worked; a semicolon-combined CLI filter produced zero tests.
-- The PlayMode gate is `python tools/playmode_suite.py --gate`; its discovered
-  partition must cover every fixture exactly once. Run `--gate --twice` for a
-  release candidate. A monolithic process is not a substitute. WallClock and
-  ThumbFloor exclusions do not constitute coverage; run relevant probes explicitly.
+- Run the specific PlayMode fixtures affected by the change. Existing full-suite
+  tooling remains available as historical infrastructure, but the newest owner
+  instruction supersedes automatically running it. Label uncovered areas honestly.
 - Run `Checks.RunAll` through the guard and all gating `tools/audit_*.py` source
   checks via the qualification script. Use `PYTHONIOENCODING=utf-8` as needed.
   `tools/qualify.py` records Core/EditMode/check/source stages. Inspect its actual
@@ -237,8 +297,8 @@ run IDs immediately. Compaction is continuation, not a fresh start or a stop.
 Keep TODO and the improvement plan current in the same commits as work. Move
 completed numbered entries and session reports whole to `TODO_Archive.md`, keep
 numbers and index pointers, and never delete the reasoning. Do not claim the larger
-goal complete from one verified batch. Latest owner permission allows unfinished
-maps in a handoff; disclose unfinished criteria and do not call them done.
+goal complete from one verified batch. Do not stop at a handoff: the owner
+cancelled it and asked to continue here. Disclose unfinished criteria honestly.
 
 ## Commit and delivery
 
@@ -251,3 +311,6 @@ pre-run values, never unrelated work. Do not stop to ask whether to continue
 already-authorized work. Give concise useful progress during execution, and report
 completion honestly with tests, artifacts and limitations. Any further handoff
 belongs directly in chat, never in a committed handoff-prompt file.
+
+Historical wording before this clarification is preserved whole in
+`docs/reports/improvement-2026-09-13/agents-history-before-swimming.md`.

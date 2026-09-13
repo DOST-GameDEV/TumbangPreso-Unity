@@ -303,6 +303,8 @@ namespace TumbangPreso
 
         public Vector3 Velocity => _velocity;
         public bool IsGrounded => _grounded;
+        public bool IsSwimming => RooftopPool.Swimming(transform.position);
+        private bool _swimLeap;
 
         /// <summary>Set false while the round is not live. Confinement and most verbs read it.</summary>
         public bool RoundActive { get; set; } = true;
@@ -876,7 +878,8 @@ namespace TumbangPreso
                           * sprint
                           * Stamina.SpeedZones.Value
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
-                          * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f);
+                          * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
+                          * RooftopPool.MovementScale(transform.position);
 
             if (canSteer)
             {
@@ -1273,6 +1276,28 @@ namespace TumbangPreso
 
         private void ApplyGravity(float dt)
         {
+            if(_swimLeap&&(_grounded||_velocity.y<=0))_swimLeap=false;
+            if(IsSwimming&&!_swimLeap)
+            {
+                if(Intent.JustPressed(Verb.Jump)&&CanMove())
+                {
+                    _swimLeap=true;
+                    _velocity.y=Balance.JumpVelocity;
+                }
+                else
+                {
+                    // Water absorbs the entry fall before applying buoyancy.
+                    // With only a gentle acceleration toward the float height,
+                    // a normal deck jump hit the1.6m basin floor and put the FPP
+                    // eye .27m underwater. Keep a short, visible settling descent
+                    // without carrying the dry-air terminal speed into the pool.
+                    _velocity.y=Mathf.Max(_velocity.y,-1.8f);
+                    float target=RooftopPool.SurfaceY-RooftopPool.FloatDepth;
+                    float rise=Mathf.Clamp((target-transform.position.y)*5,-1.8f,1.8f);
+                    _velocity.y=Mathf.MoveTowards(_velocity.y,rise,9*dt);
+                }
+                return;
+            }
             if (_grounded && _velocity.y <= 0.0f)
             {
                 // ⚠️ A SMALL CONSTANT DOWNWARD BIAS RATHER THAN ZERO. A CharacterController

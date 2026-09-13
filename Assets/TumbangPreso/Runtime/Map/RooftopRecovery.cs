@@ -7,7 +7,7 @@ namespace TumbangPreso
     /// <summary>Sa Bubong's actual edge fall and delayed return of lost slippers.</summary>
     public sealed class RooftopRecovery : MonoBehaviour
     {
-        public const float RoofY=.1f,HalfX=14,HalfZ=18,SlipperDelay=10;
+        public const float RoofY=.1f,HalfX=19,HalfZ=22,SlipperDelay=10;
         public static RooftopRecovery Instance { get; private set; }
         private readonly Dictionary<Slipper,float> _lost=new Dictionary<Slipper,float>();
         private readonly List<Slipper> _finished=new List<Slipper>();
@@ -19,7 +19,7 @@ namespace TumbangPreso
         private void OnDisable(){if(Instance==this)Instance=null;_lost.Clear();}
 
         public static bool OutsideDeck(Vector3 p)=>Mathf.Abs(p.x)>HalfX||Mathf.Abs(p.z)>HalfZ;
-        public static bool InPool(Vector3 p)=>p.x< -8.2f&&p.x> -13.8f&&p.z>1.55f&&p.z<11.85f;
+        public static bool InPool(Vector3 p)=>RooftopPool.Contains(p);
         public float SecondsUntilReturn(Slipper slipper)=>_lost.TryGetValue(slipper,out float end)?Mathf.Max(0,end-Time.time):0;
 
         public bool WaitingForReturnWithoutLooseStock()
@@ -52,8 +52,7 @@ namespace TumbangPreso
             if(!Live||!NetAuthority.ShouldResolve()||slipper==null||!slipper.gameObject.activeSelf)return false;
             var p=slipper.transform.position;
             bool pastEdge=OutsideDeck(p)&&p.y<=RoofY+slipper.RestHeight+.025f;
-            bool unreachable=InPool(p)&&(slipper.State==SlipperState.Loose||p.y<.82f+slipper.RestHeight);
-            if(!pastEdge&&!unreachable)return false;
+            if(!pastEdge)return false;
             Lose(slipper);return true;
         }
 

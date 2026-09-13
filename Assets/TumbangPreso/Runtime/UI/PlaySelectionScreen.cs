@@ -4,143 +4,146 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    /// <summary>Choose the game first, then how to gather. The lobby comes afterward.</summary>
+    /// <summary>Choose the game and how to join it in one place.</summary>
     public sealed class PlaySelectionScreen : MonoBehaviour
     {
         public static LobbyMode? RequestedLobbyMode;
         private Canvas _canvas;
-        private GameObject _choices;
-        private Text _heading;
-        private Text _subtitle;
-        private bool _routes;
+        private RectTransform _routes;
+        private GameObject _routeRows;
+        private StreetGraphic _classic, _hero;
+        private Sprite _generatedMark;
 
         public static void Install(ConvertedModeSelect owner)
         {
-            var screen = owner.gameObject.AddComponent<PlaySelectionScreen>();
+            var screen=owner.GetComponent<PlaySelectionScreen>();
+            if(screen==null)screen=owner.gameObject.AddComponent<PlaySelectionScreen>();
             screen.Build();
         }
 
         private void Build()
         {
-            foreach (Transform child in transform)
+            if(_canvas!=null)return;
+            foreach(Transform child in transform)
             {
                 child.gameObject.SetActive(false);
-                foreach (var button in child.GetComponentsInChildren<Button>(true))
-                    button.name = "Retired_" + button.name;
+                foreach(var button in child.GetComponentsInChildren<Button>(true))button.name="Retired_"+button.name;
             }
-            var entrance = GetComponent<PennantEntrance>();
-            if (entrance != null) entrance.enabled = false;
-            _canvas = MenuKit.BuildCanvas(transform, "PlayChoiceCanvas");
-            MenuKit.Backdrop(_canvas.transform, UiTheme.Paper);
-            var back = StreetUi.Button(_canvas.transform, "BackButton", "Back", 24, StreetGraphic.Surface.Navigation);
-            MenuKit.Place((RectTransform)back.transform, new Vector2(0, 1),
-                          new Vector2(116, -64), new Vector2(152, 52));
-            back.onClick.AddListener(() => { MenuSfx.Back(); Back(); });
-            _heading = Label("", 66, new Vector2(0.5f, 1), new Vector2(0, -148),
-                             new Vector2(1450, 90), true);
-            _subtitle = Label("", 24, new Vector2(0.5f, 1), new Vector2(0, -232),
-                              new Vector2(1400, 44));
-            ShowGames();
+            var entrance=GetComponent<PennantEntrance>();if(entrance!=null)entrance.enabled=false;
+            _canvas=MenuKit.BuildCanvas(transform,"PlayChoiceCanvas");
+            var root=(RectTransform)_canvas.transform;
+            MenuKit.Backdrop(root,UiTheme.Paper);
+            var back=StreetUi.Button(root,"BackButton","Back",26,StreetGraphic.Surface.Navigation);
+            MenuKit.Place((RectTransform)back.transform,new Vector2(0,1),new Vector2(116,-58),new Vector2(152,60));
+            back.onClick.AddListener(()=>{MenuSfx.Back();Back();});
+            var heading=MenuKit.Label(root,"Play",66,UiTheme.BrandRed,new Vector2(0,1),
+                new Vector2(190,-158),new Vector2(220,90));heading.alignment=TextAnchor.MiddleLeft;heading.raycastTarget=false;
+            var logo=new GameObject("TumpMark",typeof(RectTransform),typeof(Image)).GetComponent<Image>();
+            logo.transform.SetParent(root,false);logo.sprite=Resources.Load<Sprite>("UI/brand/tump_logo");
+            if(logo.sprite==null)
+            {
+                var texture=Resources.Load<Texture2D>("UI/brand/tump_logo");
+                if(texture!=null)logo.sprite=_generatedMark=Sprite.Create(texture,
+                    new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f));
+            }
+            logo.preserveAspect=true;logo.raycastTarget=false;
+            MenuKit.Place(logo.rectTransform,new Vector2(1,1),new Vector2(-188,-104),new Vector2(210,138));
+
+            var content=Rect(root,"PlayChoices",new Vector2(.07f,.16f),new Vector2(.93f,.78f));
+            var games=Rect(content,"GameChoice",Vector2.zero,new Vector2(.35f,1));
+            games.offsetMax=new Vector2(-28,0);
+            _routes=Rect(content,"AccessChoice",new Vector2(.35f,0),Vector2.one);
+            _routes.offsetMin=new Vector2(28,0);
+            Caption(games,"Game");Caption(_routes,"How would you like to play?");
+            _classic=GameChoice(games,"ClassicButton","Classic","Four rounds. No powers.",
+                StreetIcon.Glyph.Can,66,GameMode.Classic);
+            _hero=GameChoice(games,"HeroStrikeButton","Hero Strike","Eight rounds. Hero abilities.",
+                StreetIcon.Glyph.Star,244,GameMode.HeroStrike);
+            var tutorial=StreetUi.Button(root,"TutorialButton","Learn to play",26,StreetGraphic.Surface.Navigation);
+            MenuKit.Place((RectTransform)tutorial.transform,new Vector2(.5f,0),new Vector2(0,70),new Vector2(280,60));
+            tutorial.onClick.AddListener(()=>{MenuSfx.Click();SceneFlow.StartTraining();});
+            Choose(SceneFlow.SelectedMode,false);
         }
 
-        public void Back()
+        public void Back()=>SceneFlow.Go(SceneFlow.MainMenu);
+        private void OnDestroy(){if(_generatedMark!=null)Destroy(_generatedMark);}
+
+        private StreetGraphic GameChoice(Transform parent,string name,string title,string detail,
+            StreetIcon.Glyph icon,float top,GameMode mode)
         {
-            if (_routes) ShowGames();
-            else SceneFlow.Go(SceneFlow.MainMenu);
+            var button=StreetUi.Button(parent,name,"",30,StreetGraphic.Surface.Option);
+            Row((RectTransform)button.transform,top,154);
+            StreetUi.Icon(button.transform,icon,new Vector2(0,.5f),new Vector2(45,4),new Vector2(50,64));
+            RowText(button.transform,title,36,true,82,26);
+            RowText(button.transform,detail,24,false,82,-26);
+            button.onClick.AddListener(()=>Choose(mode,true));
+            return button.GetComponent<StreetGraphic>();
         }
 
-        private void ClearChoices()
+        private void Choose(GameMode mode,bool sound)
         {
-            if (_choices != null) { _choices.SetActive(false); Destroy(_choices); }
-            _choices = new GameObject("Choices", typeof(RectTransform));
-            _choices.transform.SetParent(_canvas.transform, false);
-            MenuKit.Stretch((RectTransform)_choices.transform);
-        }
-
-        private void ShowGames()
-        {
-            _routes = false;
-            ClearChoices();
-            _heading.text = "Make it a good game.";
-            _subtitle.text = "Choose your game. The street is yours.";
-            Card("ClassicButton", "CLASSIC", "One can. Four players.\nWin the run back for your slipper.",
-                 "avatar_lata", -350, 620, () => ShowRoutes(GameMode.Classic));
-            Card("HeroStrikeButton", "HERO STRIKE", "The same street rivalry.\nSix heroes. Six ways to make an opening.",
-                 "avatar_star", 350, 620, () => ShowRoutes(GameMode.HeroStrike));
-
-            var tutorial = StreetUi.Button(_choices.transform, "TutorialButton", "Learn to play", 26,
-                                           StreetGraphic.Surface.Navigation);
-            MenuKit.Place((RectTransform)tutorial.transform, new Vector2(0.5f, 0),
-                          new Vector2(0, 110), new Vector2(360, 68));
-            tutorial.onClick.AddListener(() => { MenuSfx.Click(); SceneFlow.StartTraining(); });
-            Footnote("A short hands-on tutorial. No account needed.", 54);
-            _canvas.GetComponent<InputLayer.ScreenFocus>()?.Rebuild();
-        }
-
-        private void ShowRoutes(GameMode mode)
-        {
-            MenuSfx.Click();
-            _routes = true;
-            SceneFlow.SelectedMode = mode;
+            if(sound)MenuSfx.Click();
+            SceneFlow.SelectedMode=mode;
             SceneFlow.SetSelectedRules(SceneFlow.SelectedRules);
-            ClearChoices();
-            _heading.text = mode == GameMode.Classic ? "Classic" : "Hero Strike";
-            _subtitle.text = "How do you want to play?";
-            bool hero = mode == GameMode.HeroStrike;
-            float width = hero ? 460 : 620;
-            Card("PracticeButton", "PRACTICE", "Play at your pace with bots.\nOffline, with room to try things.",
-                 "avatar_tsinelas", hero ? -510 : -350, width, () => Enter(LobbyMode.Practice));
-            if (hero)
-                Card("RankedButton", "RANKED", "Find a competitive match.\nSign in to play for your rank.",
-                     "avatar_star", 0, width, () => Enter(LobbyMode.Ranked));
-            Card("CustomButton", "CUSTOM ROOM", "Gather friends or join a room.\nYour map, your match settings.",
-                 "avatar_lata", hero ? 510 : 350, width, () => Enter(LobbyMode.Custom));
-            if (!hero) Footnote("Four players. No powers.", 104);
+            _classic.Chosen=mode==GameMode.Classic;_classic.SetVerticesDirty();
+            _hero.Chosen=mode==GameMode.HeroStrike;_hero.SetVerticesDirty();
+            if(_routeRows!=null){_routeRows.SetActive(false);Destroy(_routeRows);}
+            _routeRows=Rect(_routes,"Routes",Vector2.zero,Vector2.one).gameObject;
+            Route("PracticeButton","Play with bots","A full offline match with bot opponents.",
+                StreetIcon.Glyph.Slipper,66,LobbyMode.Practice);
+            Route("CustomButton","Play with friends","Create or join a custom room.",
+                StreetIcon.Glyph.Person,242,LobbyMode.Custom);
+            if(mode==GameMode.HeroStrike)
+                Route("RankedButton","Ranked","Online competitive play. Sign-in required.",
+                    StreetIcon.Glyph.Star,418,LobbyMode.Ranked);
             _canvas.GetComponent<InputLayer.ScreenFocus>()?.Rebuild();
         }
 
-        private void Enter(LobbyMode mode)
+        private void Route(string name,string title,string detail,StreetIcon.Glyph icon,float top,LobbyMode mode)
         {
-            RequestedLobbyMode = mode;
-            SceneFlow.Networked = mode != LobbyMode.Practice;
-            SceneFlow.Go(SceneFlow.MatchSetup);
+            var button=StreetUi.Button(_routeRows.transform,name,"",30,StreetGraphic.Surface.Route);
+            Row((RectTransform)button.transform,top,148);
+            StreetUi.Icon(button.transform,icon,new Vector2(0,.5f),new Vector2(60,0),new Vector2(68,68));
+            MenuKit.Read(RowText(button.transform,title,34,true,120,25),true);
+            RowText(button.transform,detail,25,false,120,-29);
+            button.onClick.AddListener(()=>
+            {
+                MenuSfx.Click();RequestedLobbyMode=mode;SceneFlow.Networked=mode!=LobbyMode.Practice;
+                SceneFlow.Go(SceneFlow.MatchSetup);
+            });
         }
 
-        private void Card(string name, string title, string detail, string avatar,
-                          float x, float width, UnityEngine.Events.UnityAction action)
+        private static void Caption(Transform parent,string words)
         {
-            var button = StreetUi.Button(_choices.transform, name, "", 28, StreetGraphic.Surface.Card);
-            MenuKit.Place((RectTransform)button.transform, new Vector2(0.5f, 0.5f),
-                          new Vector2(x, -18), new Vector2(width, 420));
-            var glyph = avatar == "avatar_lata" ? StreetIcon.Glyph.Can
-                      : avatar == "avatar_tsinelas" ? StreetIcon.Glyph.Slipper : StreetIcon.Glyph.Star;
-            StreetUi.Icon(button.transform, glyph, new Vector2(.5f, 1),
-                          new Vector2(0, -100), new Vector2(118, 118));
-            var label = MenuKit.Label(button.transform, title, 44, UiTheme.PaperInk,
-                new Vector2(0.5f, 0.5f), new Vector2(0, -10), new Vector2(width - 48, 70));
-            label.raycastTarget = false;
-            var body = MenuKit.Label(button.transform, detail, 26, UiTheme.PaperInkSoft,
-                new Vector2(0.5f, 0), new Vector2(0, 94), new Vector2(width - 56, 104));
-            MenuKit.Read(body);
-            body.lineSpacing = 1.14f;
-            body.horizontalOverflow = HorizontalWrapMode.Wrap;
-            body.raycastTarget = false;
-            button.onClick.AddListener(action);
+            var label=MenuKit.Label(parent,words,26,UiTheme.PaperInkSoft,new Vector2(.5f,1),
+                new Vector2(0,-22),new Vector2(0,44));MenuKit.Read(label,true);
+            label.rectTransform.anchorMin=new Vector2(0,1);label.rectTransform.anchorMax=new Vector2(1,1);
+            label.rectTransform.offsetMin=new Vector2(8,label.rectTransform.offsetMin.y);
+            label.rectTransform.offsetMax=new Vector2(-8,label.rectTransform.offsetMax.y);
+            label.alignment=TextAnchor.MiddleLeft;label.raycastTarget=false;
         }
-
-        private Text Label(string words, int size, Vector2 anchor, Vector2 pos, Vector2 bounds,
-                           bool display = false)
+        private static Text RowText(Transform parent,string words,int size,bool heading,float inset,float y)
         {
-            var label = MenuKit.Label(_canvas.transform, words, size, UiTheme.PaperInk, anchor, pos, bounds);
-            if (!display) MenuKit.Read(label);
-            label.raycastTarget = false;
+            var label=MenuKit.Label(parent,words,size,heading?UiTheme.BrandRed:UiTheme.PaperInk,
+                new Vector2(.5f,.5f),new Vector2(0,y),new Vector2(0,58));
+            if(!heading)MenuKit.Read(label);
+            label.rectTransform.anchorMin=new Vector2(0,.5f);label.rectTransform.anchorMax=new Vector2(1,.5f);
+            label.rectTransform.offsetMin=new Vector2(inset,y-29);
+            label.rectTransform.offsetMax=new Vector2(-24,y+29);
+            label.alignment=TextAnchor.MiddleLeft;label.horizontalOverflow=HorizontalWrapMode.Wrap;
+            label.raycastTarget=false;
             return label;
         }
-
-        private void Footnote(string words, float y)
+        private static void Row(RectTransform row,float top,float height)
         {
-            var label = Label(words, 20, new Vector2(0.5f, 0), new Vector2(0, y), new Vector2(1200, 34));
-            label.transform.SetParent(_choices.transform, false);
+            row.anchorMin=new Vector2(0,1);row.anchorMax=Vector2.one;row.pivot=new Vector2(.5f,1);
+            row.sizeDelta=new Vector2(0,height);row.anchoredPosition=new Vector2(0,-top);
+        }
+        private static RectTransform Rect(Transform parent,string name,Vector2 min,Vector2 max)
+        {
+            var rect=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>();
+            rect.SetParent(parent,false);rect.anchorMin=min;rect.anchorMax=max;rect.offsetMin=rect.offsetMax=Vector2.zero;
+            return rect;
         }
     }
 }

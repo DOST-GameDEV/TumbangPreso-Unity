@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.535604">
+  <test-suite type="TestSuite" id="1396" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.535604" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1390" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.526820" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32812" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1391" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.523738" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1392" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="299" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.520969" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1301" name="RooftopRecoveryProbe" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:39:05Z" duration="75.513897" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1302" name="ActualEdgeFallUsesMashAndDelaysSlipperReturnInBothModes" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.ActualEdgeFallUsesMashAndDelaysSlipperReturnInBothModes" methodname="ActualEdgeFallUsesMashAndDelaysSlipperReturnInBothModes" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="2024810829" result="Passed" start-time="2026-09-13 09:37:50Z" end-time="2026-09-13 09:38:17Z" duration="27.813479" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Roof recovery] Classic: actual descent -1.820,held input1press,9tap pulses,10s return and actual pickup
+[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Roof recovery] HeroStrike: actual descent -1.819,held input1press,9tap pulses,10s return and actual pickup
+]]></output>
+            </test-case>
+            <test-case id="1303" name="EveryOuterFenceStopsWalkingButAllowsJumpFallAndMashInBothModes" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.EveryOuterFenceStopsWalkingButAllowsJumpFallAndMashInBothModes" methodname="EveryOuterFenceStopsWalkingButAllowsJumpFallAndMashInBothModes" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="683192697" result="Passed" start-time="2026-09-13 09:38:17Z" end-time="2026-09-13 09:38:51Z" duration="33.141002" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Roof fence] Classic/side0: walk blocked, jump descent -1.820, mash returned control
+[Roof fence] Classic/side1: walk blocked, jump descent -1.820, mash returned control
+[Roof fence] Classic/side2: walk blocked, jump descent -1.820, mash returned control
+[Roof fence] Classic/side3: walk blocked, jump descent -1.820, mash returned control
+[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Roof fence] HeroStrike/side0: walk blocked, jump descent -1.819, mash returned control
+[Roof fence] HeroStrike/side1: walk blocked, jump descent -1.819, mash returned control
+[Roof fence] HeroStrike/side2: walk blocked, jump descent -1.819, mash returned control
+[Roof fence] HeroStrike/side3: walk blocked, jump descent -1.819, mash returned control
+]]></output>
+            </test-case>
+            <test-case id="1307" name="LaundryMovesBelowFixedPegs" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.LaundryMovesBelowFixedPegs" methodname="LaundryMovesBelowFixedPegs" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="2130232503" result="Passed" start-time="2026-09-13 09:38:51Z" end-time="2026-09-13 09:38:52Z" duration="1.779224" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1305" name="ObjectiveSnapshotsOnlyAnnounceRealTransitions" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.ObjectiveSnapshotsOnlyAnnounceRealTransitions" methodname="ObjectiveSnapshotsOnlyAnnounceRealTransitions" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="49351757" result="Passed" start-time="2026-09-13 09:38:52Z" end-time="2026-09-13 09:38:53Z" duration="0.959845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1306" name="OffRoofStockCannotBeGrabbedAndResetCancelsItsDeadline" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.OffRoofStockCannotBeGrabbedAndResetCancelsItsDeadline" methodname="OffRoofStockCannotBeGrabbedAndResetCancelsItsDeadline" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="1914278545" result="Passed" start-time="2026-09-13 09:38:53Z" end-time="2026-09-13 09:38:55Z" duration="1.519235" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1304" name="OrdinarySpeedFallStruggleAndReturnPresentation" fullname="TumbangPreso.PlayTests.RooftopRecoveryProbe.OrdinarySpeedFallStruggleAndReturnPresentation" methodname="OrdinarySpeedFallStruggleAndReturnPresentation" classname="TumbangPreso.PlayTests.RooftopRecoveryProbe" runstate="Runnable" seed="180887406" result="Passed" start-time="2026-09-13 09:38:55Z" end-time="2026-09-13 09:39:05Z" duration="10.288997" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 158 renderers, 0 with a roof variant.
+[NearFade] 742 occluder nodes matched, 157 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,17 @@
+{
+  "boardId": "6:2",
+  "assets": {
+    "Supplied logo - existing transparent import": "6:5",
+    "Supplied slipper-impact mark": "6:6",
+    "Existing illustrated street backdrop": "6:7"
+  },
+  "createdNodeIds": [
+    "6:2",
+    "6:3",
+    "6:4",
+    "6:5",
+    "6:6",
+    "6:7"
+  ],
+  "mutatedNodeIds": []
+}

@@ -18,7 +18,7 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void LydianLinesHaveRoomForTheirActualLetterforms()
+        public void ReadingLinesHaveRoomForTheirActualLetterforms()
         {
             var go = new GameObject("Typography sample", typeof(RectTransform), typeof(Text));
             try

@@ -13,9 +13,9 @@ namespace TumbangPreso.UI
             var surface=go.GetComponent<StreetGraphic>(); surface.Style=style;
             var button=go.GetComponent<Button>(); button.targetGraphic=surface;
             button.transition=Selectable.Transition.None;
-            var label=MenuKit.Label(go.transform,words,size,UiTheme.PaperInk,Vector2.zero,Vector2.zero,Vector2.zero);
+            var label=MenuKit.Label(go.transform,words,size,style==StreetGraphic.Surface.Action?UiTheme.Paper:UiTheme.PaperInk,Vector2.zero,Vector2.zero,Vector2.zero);
             label.name="Label"; label.raycastTarget=false;
-            MenuKit.Apply(label,MenuKit.Face.Accent);
+            MenuKit.Apply(label,style==StreetGraphic.Surface.Action?MenuKit.Face.Display:MenuKit.Face.Body,true);
             MenuKit.Stretch(label.rectTransform,-12);
             return button;
         }

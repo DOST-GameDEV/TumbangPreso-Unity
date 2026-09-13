@@ -9,6 +9,7 @@ from mathutils import Vector
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--out',default='Logs/urban-trees-v1')
 parser.add_argument('--publish',action='store_true')
+parser.add_argument('--only',nargs='+',help='Author selected forms without rewriting other source assets')
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 OUT=(ROOT/args.out).resolve();OUT.mkdir(parents=True,exist_ok=True)
 
@@ -41,13 +42,61 @@ def crown(name,center,size,mat,yaw=0):
  faces=[tuple(range(sides-1,-1,-1)),tuple(range(4*sides,5*sides))]
  for row in range(4):
   for i in range(sides):faces.append((row*sides+i,row*sides+(i+1)%sides,(row+1)*sides+(i+1)%sides,(row+1)*sides+i))
- return mesh(name,verts,faces,mat)
+ obj=mesh(name,verts,faces,mat)
+ for face in obj.data.polygons:face.use_smooth=True
+ return obj
 
-for name in ['street-broadleaf','plaza-shade','courtyard-tree']:
+def lobed_crown(name,center,size,mat,phase=0):
+ # Broad connected facets and an asymmetric outline, without per-leaf noise.
+ # Unequal ring radii keep neighbouring masses from reading as identical bowls.
+ verts=[];sides=11
+ for row,(height,radius) in enumerate([(-.78,.30),(-.40,.78),(.08,1),(.60,.75),(.96,.19)]):
+  for i in range(sides):
+   a=i*math.tau/sides+phase
+   rim=radius*(1+.11*math.sin(a*3+phase)+.055*math.cos(a*5-.8))
+   verts.append((center[0]+(math.cos(a)*rim+.10*height)*size[0],
+                 center[1]+(math.sin(a)*rim-.08*height)*size[1],
+                 center[2]+(height+.07*math.sin(a*2+phase)*radius)*size[2]))
+ faces=[tuple(range(sides-1,-1,-1)),tuple(range(4*sides,5*sides))]
+ for row in range(4):
+  for i in range(sides):faces.append((row*sides+i,row*sides+(i+1)%sides,(row+1)*sides+(i+1)%sides,(row+1)*sides+i))
+ obj=mesh(name,verts,faces,mat)
+ for face in obj.data.polygons:face.use_smooth=True
+ return obj
+
+forms=['street-broadleaf','plaza-shade','courtyard-tree','acacia-spread','mango-yard','narra-young']
+if args.only:
+ if any(n not in forms for n in args.only):raise ValueError('Unknown tree form')
+ forms=args.only
+for name in forms:
  bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
  bark=material(name+' bark',(.24,.155,.085));leaf=material(name+' foliage',(.20,.32,.12))
  light=material(name+' new growth',(.27,.39,.16));shade=material(name+' shaded foliage',(.17,.275,.115))
- if name=='street-broadleaf':
+ if name=='acacia-spread':
+  branch('Leaning mature trunk',[(0,0,0),(.08,.06,.8),(.28,.02,2.0),(.56,.16,3.1),(.4,.2,4.9)],[.43,.35,.30,.24,.09],bark)
+  branch('Long west bough',[(.30,.05,2.15),(-.70,.02,3.0),(-2,.13,3.95),(-3.30,.20,4.9)],[.26,.22,.15,.05],bark)
+  branch('Rising east bough',[(.50,.15,2.7),(1.5,.0,3.55),(2.80,-.1,4.25),(3.30,-.1,5.0)],[.23,.17,.12,.045],bark)
+  branch('Back fork',[(.5,.1,3.0),(.15,1.3,3.9),(-.30,2.15,4.9)],[.18,.12,.04],bark)
+  lobed_crown('West shade',(-2.55,.10,5.0),(2.28,1.95,.91),leaf,.4)
+  lobed_crown('East shade',(2.68,-.08,5.22),(2.15,1.82,.91),shade,1.8)
+  lobed_crown('Upper arch',(.45,-.12,5.75),(2.62,2.03,1.02),light,.8)
+  lobed_crown('Rear crown',(-.25,1.65,5.25),(2.06,1.75,.97),leaf,2.1)
+ elif name=='mango-yard':
+  branch('Garden trunk',[(0,0,0),(-.04,.03,1.05),(.17,.04,2.1),(.18,.08,3.65)],[.28,.22,.18,.07],bark)
+  branch('Low fork',[(.06,.02,1.55),(-.64,.0,2.35),(-1.10,.1,3.5)],[.17,.12,.045],bark)
+  branch('Garden shoulder',[(.13,.04,2.1),(.9,.12,2.9),(1.35,.12,3.55)],[.14,.09,.04],bark)
+  lobed_crown('Dense upper crown',(.05,.18,4.02),(1.60,1.42,1.40),leaf,.8)
+  lobed_crown('Drooping west',(-1.02,-.03,3.22),(1.10,1.18,1.24),shade,1.4)
+  lobed_crown('Drooping east',(1.13,-.12,3.45),(1.12,1.02,1.14),leaf,2.3)
+  lobed_crown('Front growth',(-.15,-.83,3.56),(.98,.80,1.20),light,.2)
+ elif name=='narra-young':
+  branch('Young upright trunk',[(0,0,0),(-.08,.02,1.5),(.13,.10,3.0),(.3,.05,4.35),(.10,.05,5.95)],[.25,.19,.15,.11,.04],bark)
+  branch('Left rising limb',[(.10,.10,2.65),(-.75,.12,3.35),(-1.10,.04,4.75)],[.14,.09,.025],bark)
+  branch('Right rising limb',[(.17,.09,3.35),(.9,-.12,4.2),(1.12,-.02,5.35)],[.115,.08,.025],bark)
+  lobed_crown('Higher leader',(.17,.03,5.85),(1.20,1.10,1.34),light,1.1)
+  lobed_crown('West branch leaves',(-.99,.13,4.58),(1.05,1.15,1.26),leaf,.3)
+  lobed_crown('East branch leaves',(.96,-.15,5.10),(.97,1.10,1.16),shade,2.4)
+ elif name=='street-broadleaf':
   branch('Bent trunk',[(0,0,0),(.06,.04,1.2),(-.10,.08,2.65),(.10,.04,4.7)],[.26,.22,.18,.07],bark)
   branch('Left fork',[(-.10,.08,2.4),(-.85,.03,3.4),(-1.35,.05,4.6)],[.15,.10,.035],bark)
   branch('Right fork',[(0,.07,3.0),(.8,.2,3.8),(1.4,.28,4.65)],[.13,.09,.03],bark)
@@ -63,7 +112,7 @@ for name in ['street-broadleaf','plaza-shade','courtyard-tree']:
   crown('East crown',(2.06,.13,4.94),(1.91,1.66,1.32),shade,.42)
   crown('Back crown',(-.32,1.51,5.06),(1.92,1.60,1.32),leaf,.23)
   crown('Front crown',(.05,-.82,5.49),(2.02,1.72,1.47),light,.05)
- else:
+ elif name=='courtyard-tree':
   branch('Garden trunk',[(0,0,0),(-.03,.02,.9),(.12,.04,2.05),(.1,0,3.3)],[.17,.14,.105,.04],bark)
   branch('Garden fork',[(.04,.04,1.6),(-.62,.08,2.45),(-.77,.03,3.03)],[.095,.06,.02],bark)
   crown('Garden lower',(-.49,.12,2.95),(1.03,.95,1.02),shade,.3)
@@ -81,7 +130,7 @@ for name in ['street-broadleaf','plaza-shade','courtyard-tree']:
  scene=bpy.context.scene;scene.render.engine='BLENDER_WORKBENCH';scene.view_settings.view_transform='Standard'
  scene.world.color=(.11,.13,.15);s=scene.display.shading;s.light='STUDIO';s.color_type='MATERIAL';s.show_shadows=True;s.show_specular_highlight=False;s.background_type='WORLD'
  data=bpy.data.cameras.new('Tree review');cam=bpy.data.objects.new('Tree review',data);bpy.context.collection.objects.link(cam);scene.camera=cam
- cam.location=(10,-18,7);cam.rotation_euler=(Vector((0,0,3.3))-cam.location).to_track_quat('-Z','Y').to_euler();data.type='ORTHO';data.ortho_scale=8.6
+ cam.location=(10,-18,7);cam.rotation_euler=(Vector((0,0,3.3))-cam.location).to_track_quat('-Z','Y').to_euler();data.type='ORTHO';data.ortho_scale=11 if name=='acacia-spread' else 8.6
  scene.render.resolution_x=950;scene.render.resolution_y=950;scene.render.resolution_percentage=100
  scene.render.filepath=str(OUT/(name+'.png'));bpy.ops.render.render(write_still=True)
  print(name,'vertices',len(tree.data.vertices),'polygons',len(tree.data.polygons))

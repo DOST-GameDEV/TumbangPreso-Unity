@@ -1,0 +1,18 @@
+{
+  "collection": {
+    "id": "VariableCollectionId:3:2",
+    "name": "TUMP roles",
+    "modeId": "3:0"
+  },
+  "variables": {
+    "surface/reading": "VariableID:3:3",
+    "text/primary": "VariableID:3:4",
+    "text/secondary": "VariableID:3:5",
+    "action/fill": "VariableID:3:6",
+    "action/text": "VariableID:3:7",
+    "choice/selected": "VariableID:3:8",
+    "border/quiet": "VariableID:3:9"
+  },
+  "createdNodeIds": [],
+  "mutatedNodeIds": []
+}

@@ -1,0 +1,79 @@
+{
+  "fileKey": "I1snFz26WypEywfWMhF9jq",
+  "url": "https://www.figma.com/design/I1snFz26WypEywfWMhF9jq",
+  "name": "TUMP - UI design and play flows",
+  "planKey": "team::1595631115617557450",
+  "pages": {
+    "initial": "0:1"
+  },
+  "phase": "discovery",
+  "fonts": {
+    "display": {
+      "family": "Darumadrop One",
+      "style": "Regular"
+    },
+    "body": {
+      "family": "Work Sans",
+      "style": "Regular"
+    },
+    "bodyBold": {
+      "family": "Work Sans",
+      "style": "Bold"
+    }
+  },
+  "localVariables": [],
+  "localTextStyles": [],
+  "existingScreens": [],
+  "codeConnect": "No .figma.* files found; source is Unity uGUI C#",
+  "ownerDirection": "Full UI overhaul with original logo, subtle Filipino hint, intuitive low-overload flows. Preserve UI functionality/source assets. No paid work.",
+  "libraryDiscovery": {
+    "added": "Generic Material/Simple/Apple community libraries only; no project-specific library returned",
+    "codeConnect": "None",
+    "existingScreens": "Empty file",
+    "componentSearch": "StreetUi empty; initial batch clamped to1, remaining colour/style queries separately requested"
+  },
+  "v1Scope": {
+    "primitives": [
+      "BrandRed",
+      "Paper",
+      "PaperInk",
+      "PaperInkSoft",
+      "BrandHoney",
+      "BrandGolden",
+      "BrandChartreuse",
+      "BrandPersimmon",
+      "PaperSunk"
+    ],
+    "semantics": [
+      "surface/reading",
+      "text/primary",
+      "text/secondary",
+      "action/fill",
+      "action/text",
+      "choice/selected",
+      "border/quiet"
+    ],
+    "styles": [
+      "Heading/Display",
+      "Heading/Section",
+      "Text/Body",
+      "Text/Action",
+      "Text/Caption"
+    ],
+    "components": [
+      "Primary action",
+      "Menu link",
+      "Game choice",
+      "Access route"
+    ],
+    "screens": [
+      "Main menu",
+      "Play",
+      "Lobby",
+      "Loadout",
+      "Settings",
+      "HUD"
+    ],
+    "interpretation": "New TUMP-specific system from approved logo and Unity tokens; unrelated OS/community styles do not fit. No fabricated C# Code Connect mapping."
+  }
+}

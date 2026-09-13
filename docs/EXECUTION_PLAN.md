@@ -1,177 +1,174 @@
 # Active execution plan
 
-## Live state, 2026-09-13
+## Current instruction and verification policy
 
-Branch ASTRAReworks only. Pushed HEAD is9ff95072. Authorized checkout:
+CONTINUE IN THIS CHAT. The owner cancelled the handoff, is sleeping, and asks for
+the full improvement scope to be completed. MAPS FIRST -> FULL UI/UX -> throwing,
+movement, all skills/effects/animation -> remaining graphics/network/TODO and
+tournament spectator improvements. Swimming and believable roof-fall recovery
+animation are explicitly part of current MAP work. The larger goal remains OPEN.
+
+Use focused tests/checks for the feature being changed. NO routine full EditMode
+or full PlayMode suites. This is the owner's newest explicit optimization and
+supersedes older blanket full-suite/twice mandates. Batch coherent implementation,
+review actual motion/appearance, run only related regressions, and avoid repeating
+passed checks without new changes/failures. Parallelize independent tools/model
+authoring/reads; never concurrent Editors or C#/imported edits during a Unity run.
+
+Only ASTRAReworks, authorized checkout:
 C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
-The current rooftop/recovery batch after that commit is uncommitted. Preserve it.
+This continuation started from pushed dbd2344f68b59750bc060a780e61830c0e8e8792;
+read actual git HEAD/status before resuming, preserve later work, never reset to
+that parent. No main or separate Documents/GitHub checkout, subagents, paid work
+or usage resets. Every Editor uses tools/run_unity_guarded.py with
+-tp-profile owner-review-editor. Preserve profiles/saves/IDs. Controller device
+ownership remains separate. Leave the current Desktop player alone.
 
-ACTIVE: all4map support checks now pass, Sa repeatability0/1597rows; all8checks
-pass. No Editor is running. Rooftop/recovery/laundry checkpoint is being committed.
-Read reports/improvement-2026-09-13/roofdeck-recovery.md for exact receipts/art critique.
+## Current checkpoint and immediate next steps
 
-Next implementation: tree variation, Sa backdrop density/resident detail, distinct
-map atmosphere and full-map spatial/ordinary-play critique. Existing11tree assets
-were compared in Unity (Logs/tree-comparison-existing); most stock alternatives
-are conifers/capsules. Search opened successfully in guarded batch resident using
-t:model tree; interactive resident had already closed and did not open Search.
-Sa aerial shows artificial empty city lots/even tower distribution: fix these,
-do not claim final art. Owner explicitly says leave Desktop as-is, keep working.
-Then ANIMATIONS AND SKILLS/effects together, all6kits/defaults/alts/ultimates; full
-movement/equipment/graphics/network/TODO remains open. No subagents/paid work.
+No Unity/Blender/player run remains active at this update. All prior session IDs
+are retired. Latest source and assets are being saved as a stable checkpoint;
+do not treat old live-process paragraphs in history as current work.
 
-Actual separate-process buildv4 is protocol30,base9ff95072+dirty, built12:22:41.
-RuntimeDLL SHA256 b771a18b36d6682da76e585fd77d523dfaad20a9cd742d8ebb7827c559ba76ff.
-Classic capturev2 passed host/owner/observer,10presses,~10s unavailable slipper,
-217owner+231observer frames. DelayedHero+rejoin+4s independent tag passed gameplay;
-result-reviewed.json handles intentionally split observer capture, original
-failed evaluator receipt retained. Tag3.97-4.09s;rejoined80unavailable/2trip samples.
-Measured-time owner/observer MP4s encoded, selected actual FPP/HUD frames reviewed.
-This build predates latest laundry/Lata/HUD/geometry edits; not final current source.
+Sa now has a38x44m roof,7.6x16m accessible pool, physical basin/opening/steps,
+continuous jumpable outer rails, swimming, floating stock and10s off-roof stock
+loss. Existing mash recovery controls remain. Recovery now has explicit landing,
+progressive bracing and standing instead of resetting the prone root into a
+pickup gesture. Original people/models and original action/emote assets retained.
 
-Fresh proof after those source changes: Core562/562, fullEdit516/516, device5/5
-(63synthetic-device/cadence/context combinations), rooftop3/3 plus can-snapshot
-transition1/1, Nemu33/33. Fourteen source audits passed including targeted updated
-tournament probe aliases. All8checks passed before Sa joined the geometry gate.
-Old3maps semantic repeatability0drift; Sa0drift/1649rows before latest support fix.
-Eskinita laundryv3 actualFPP1/1,48matched+2HUD images; imported negativeX corrected,
-15.5m line fitted between existing poles at4.45m, no low awning-crossing extra line.
+Verified current foundations:
+- Swimmingv5:2/2, both modes, ordinary entry, treading/holding, floating pickup,
+  stair exit, normal jump-in and paired body/owner motion. FloatDepth=.9m.
+ 80serialized swim clips/20rig hierarchies. Hand pose derives from measured palm;
+ feet now extend behind the swimming body. Full-roster/art/effect review remains.
+- Recovery: all-fence mechanics5/5, then6/6 including owner-camera return. Latest
+ contact-fit capturev3 passed1/1; drawn-bottom versus support[-.0002,+.011]m.60
+ clips/20rigs. Newly added grounded-contact assertions compile but have not yet
+ been rerun; the existing saved trace satisfies their thresholds. Actual capture
+ is one Classic body; all18/slow-no-mash/overlap/network review remains required.
+- Water-inclusive routesv4: both modes,5976nodes/5958connected,6285clear slipper
+ samples,0unreachable; actual floating-pool and edge/service pickups. Current
+ float height rose.1m afterward; final combined map review should include it.
+- Sa author repeatability:0changes/2049rows; all4maps pass geometry. Core562,
+ 14gating source audits and fullEdit516 passed (the fullEdit preceded final swim
+ pose adjustment and was before the new focused-only owner instruction).
 
-Full details and failed experiments: reports/improvement-2026-09-13/roofdeck-recovery.md.
-Older pointer/buildv4-in-progress state archived in execution-plan-history-10.md.
+Evidence: reports/improvement-2026-09-13/swimming-checkpoint.md,
+roof-recovery-motion.md and roof-swimming-evidence. Failed runs remain in Logs.
+Key logs: roof-swimming-v5.xml, roof-recovery-motion-v3.xml,
+sa-bubong-water-routes-v4.xml, roof-swim-checkpoint-repeat/report.txt.
+No exact new Windows executable or separate-process swimming proof yet.
 
-Every Editor run uses run_unity_guarded with -tp-profile owner-review-editor.
-That guard now snapshots/restores only the named profile, protecting concurrent
-Desktop saves. The new network runner also scopes preservation to its three
-named probe profiles. No subagents, paid work, usage resets or other checkout work.
+NEXT IMPLEMENTATION, not another blanket test sweep:
+1. Improve pool water appearance/local contact response and sensible rooftop
+ resident details. Preserve court, readable routes and swimming entry/exit.
+2. Import/review native animals beside the cast, then implement sparse ambient
+ visits/movement/fleeing using private cosmetic randomness and real clear routes.
+3. Complete all-map ordinary-play/architecture/placement/quality-cost critique;
+ address remaining weak details, contacts and inconsistent lighting/materials.
+4. Finish relevant whole-cast swimming/recovery and ability/interruption checks,
+ then current separate-process roof/water behavior in an internal Windows build.
+ The old NetRoofProbe staging was updated for the new rail, but is not reverified.
+5. Save/push stable batches and continue to full UI when maps are actually done.
 
-Desktop review remains d9c0314b, built2026-09-13 07:29:22, protocol29:
-C:/Users/Matthew/Desktop/TumbangPreso-Unity/TumbangPreso.exe.
-Its RuntimeDLL SHA256 is
-1ce3858fc9f59ffbc09df3aeceb5ab0c55d9f8275521952d4e3885b75abff7e1.
-Do not call it the new rooftop checkpoint or replace it while running.
+## Active map and ambient-life requirements
 
-## Pushed checkpoint9ff95072
+Sa: no pool fence; actual swimming seen in FPP and by others; every outer edge
+fenced but jumpable; real falls and visible struggle/mash get-up; about10s penalty
+for off-roof slippers, then safe retrievable return. Pool stock floats/retrieves.
+Modern Filipino condo identity through plausible resident plants/pails/seating,
+laundry/services and selective original drawings. No random clutter or new verbs.
 
-- Street Hype mechanic, meter, rewards, celebrations and PlayStyle message removed.
-  Actual scoring and highlight recording retained. Main RULES shortcut removed;
-  existing Custom Game editor's dead entry button repaired and raycast/click tested.
-- Distinct3-map daylight/sky author and original lightweight sky shader. Bayan
-  paving aggregate/normal/tangents; Ilalim continuous asphalt through visible roads.
-- Actual roof surface placement, billboard support endpoints, independently designed
-  shop signs and directly painted Bawal lettering. Optional unverified crane retired.
-- Proof: Core562, fullEdit510 plus focused2surface tests, lobby3, all8checks,
-  all14source audits, matched FPP150images and24Ilalim review views. Two saved
-  authoring runs have no semantic drift. See the portable report and images:
-  reports/improvement-2026-09-13/owner-map-review.md.
-- Original18 people and Kuro direction retained. No historical48-idle attribution.
+Eskinita: tighter neighborhood, supported redesigned sampayan, substantial houses.
+Bayan: KEEP current civic layout; owner retracted rollback. Varied trees, tangible
+paving, open civic identity and connected wider town. Ilalim: logical recessed
+pisonets/vendors, distinct well-made signage, naturally surface-painted Bawal
+lettering, continuous asphalt and physically supported objects. Inspect real FPP
+and side/back/roof views for floats/intersections; technical passes are not taste.
 
-## Implemented after9ff95072, still qualifying
+Birds may visit the actual arena. Vary types/chance/timing/groups/destinations;
+perch/peck/fly away from approaching players. No visibly fixed schedule and no
+gameplay RNG consumption. Cats/dogs go in the OTHER3maps, not roof: cute local
+aspin/askal mixed forms and varied cats, idle/walk/run-away motion, believable
+yards/shop shade routes. No collision/scoring/pet-care controls or wall crossings.
 
-Sa Bubong has an actual scene and is registered in SceneFlow/GameLaunch/build
-settings. Protocol30 rejects old peers which would choose a different map; the
-same protocol also carries the clarified separate normal-stun/trip timer semantics.
+Current original sources, not integrated or accepted in Unity:
+- MapSource/environment/ambient-life/birds/study-v2 and tools/author_roof_birds.py.
+  Maya/kalapati/fantail six-bone drafts; reduced bills/feet, folded wings need work.
+- MapSource/environment/ambient-life/street-animals/study-v4 and
+  tools/author_street_animals.py.6models,9bones, exactly idle/walk/run/alert each,
+  verified27channels per action. Cats now have distinct short muzzles; tails taper.
+  V3action accumulation bug fixed in v4; retain earlier studies as history only.
+Read AMBIENT_LIFE_PLAN. Need in-game materials, scale, gait/contact and path review.
 
-SaBubongBuilder owns the scene: roof court, real open edge, fenced pool, resident
-shade, stairhead, laundry, tank, thick condo shell and city below. V1's empty/blank
-box skyline was rejected in our own review. V3 replaces it with five retained
-commercial skyscraper families at measured uniform scales and connected streets,
-adds a faded green recreation-court coating and lower afternoon sun. V3 actual
-player-view critique is still due. Do not describe this map as finished.
+## UI work saved for after maps
 
-RooftopRecovery owns a real descent latch, prone safe return, and ten-second
-unavailable slipper return. Pool-stranded slippers also recover. Host owns state
-and time; existing inactive-slipper snapshots carry availability. Slipper's new
-begin/end map-recovery entry points release possession; inactive stock rejects
-all authoritative grabs. Generic GroundY and the other maps' recovery are unchanged.
+Full quirky unified logo-led overhaul is authorized, superseding old UI-art limits.
+Calm title, few choices, subtle animated street scene; intuitive progressive flows,
+different appropriate control treatments, consistent fonts/roles and Filipino hint.
+Preserve features/data and inaccessible maker. Keyboard/controller/touch/Back/focus.
 
-The owner wants all-context mashing. We reproduced two failures:
-- Quick TouchButton down/up could disappear before physics (0presses). TouchInput
-  now retains one recovery press until PlayerInputReader consumes it; holds do not
-  repeat, and chat discards queued recovery input.
-- Trip mash shortened an independent4s tag to3.78s. Normal stun and trip now keep
-  separate clocks; IsStunned includes either. Trip/prediction never spends tag or
-  elemental time. Physical roof falls use ApplyFallRecovery, so ordinary ability
-  immunity does not negate a physical get-up. Old explanations and failed XML stay
-  in the reports/Logs. Tolerances and the tag rule were not weakened.
+Original49-page PDF plus four JPGs copied unchanged to
+ArtSource/ui/owner-brand-2026-09-13. Five hashes reverified in source-manifest.json;
+original Downloads paths remain there. PDF39-49 are ideas, not final layouts or
+instructions. Existing transparent logo imports are Resources/UI/brand. Do not
+redraw the supplied logo. Read UI_BRAND_REWORK_PLAN and retained before-code.
 
-Native laundry: tools/author_resident_laundry.py, MapSource/environment/resident-
-laundry and Assets/.../models/resident-laundry.4.4m courtyard and18m alley versions
-have separate shirts/shorts/towels, pegs and fixed sagging rope. LaundryMotion
-billows below fixed top vertices. ResidentLaundryAuthor is hooked into the Eskinita
-source author, but that scene has not yet been re-authored/reviewed with it.
+Partial Home/Play/MenuKit/StreetUi/StreetGraphic exists. HomeFlow4/4 and screenshots
+Logs/shots-runtime/Home-brand-v1* and Play-brand-v2*. Lobby/settings/pickers/HUD/
+training/loading/pause/results and complete task-flow critique still unfinished.
+Early picker Back failure remains unisolated: scoped locator plus settle wait
+passed, but identical locator paths mean no proven production fix.
 
-## Evidence for the current batch
+Figma connected: https://www.figma.com/design/I1snFz26WypEywfWMhF9jq
+3pages, primitive/semantic colours,5text styles,3uploaded original assets.
+No screen components/prototypes completed. IDs/hashes in brand folder figma-*.json.
+Starter3page limit, no paid upgrade/Weave or additional tooling needed now.
 
-- Rooftop basic physics2/2, then expanded3/3: actual fall, hold vs taps,10s shoe loss,
-  returned pickup in both modes, pool/inactive grab, reset cancellation and laundry.
-  Logs/rooftop-recovery-v1.xml and rooftop-recovery-v2.xml.
-- Actual Sa FPP v2:1/1,48matched views plus2HUD images across both modes/3presets,
-  Logs/sa-bubong-fpp-v2. These predate v3 skyline/court art.
-- Laundry motion1/1 confirms moving cloth with fixed pegs.
-- FullEdit511/511 before the newest NetRoofProbe/guard-list addition and v3 art,
-  Logs/rooftop-edit-v2.xml. First run only failed the deliberately updated protocol
-  constant expectation (29 to30); failed XML is retained.
-- RecoveryDeviceProbe5/5:63trip/element/device/requested-cadence combinations plus
-  independent tag and delayed-snapshot regressions. Keyboard/gamepad use synthetic
-  devices through the real configured action asset/reader. Touch uses real button
-  callbacks/reader. Requested30/60/144 rates have observed frame timing logged;
-  this is not a handset or physical controller certification.
-- NemuKitContractProbe33/33 after recovery changes: nemu-after-recovery-v1.xml.
-- Last completed test guardc1c3b54d769d restored2named-profile files.
-- Current Core/source gates must be rerun after the NetRoofProbe modifier addition.
+## Later animation, skills, equipment, graphics, network and spectator scope
 
-## Next concrete actions
+Owner reaffirmed character/model throws look weird/poor. Rework visible body and
+FPP pullback/lean, weight transfer, arm path, release and follow-through. Moving
+throws less accurate, stationary more accurate, immediate releases shakier;
+holding settles aim with small residual shake. Match authoritative trajectory to
+readable motion; avoid invisible arbitrary misses. Distinct signed Pektus spin
+gesture. Carry/sprint/backward/turn cadence, foot contact/slide/interruption/FPP sync.
+Make all10slipper and6can choices useful beyond looks, with understandable tradeoffs.
 
-1. Collect build83324, verify exact executable/data/RuntimeDLL and build identity.
-2. Run tools/net_roof_matrix.py against THAT executable: Classic real3processes,
-   then Hero with150ms one-way delay and observer rejoin during lost stock. Read
-   actual descent, mash timing, ten-second absence, return and pickup on every peer.
-   NetRoofProbe is opt-in and blocked by the tournament guard/list/CLI filter.
-   The runner preserves only roof-review-host/owner/observer profiles, with an
-   on-disk manifest. Do not use the old net_throw_matrix broad main-profile restore
-   while the owner is playing.
-3. Fix observed network/physics/visual failures. Qualify roof recovery during skill
-   immunity/overlap, teleport/possession destinations and inaccessible amenities,
-   round/rematch, reconnect and host loss. Keep pending snapshot tests distinct
-   from genuine separate-process evidence. Capture ordinary-speed falling/get-up.
-4. Re-author/review Eskinita's new laundry and tighter residential enclosure. Keep
-   the current Bayan layout; the owner retracted the earlier rejection. Vary trees
-   across maps using existing assets/native alternatives, not scaled identical
-   crowns. Inventory is Logs/tree-source-inventory-2026-09-13.txt. Complete further
-   map placement, side/back architecture and retrieval-route critique.
-5. AFTER MAPS, the latest owner priority is full ability implementation/mechanics
-   and visual revamps across all6kits/defaults/alternatives. Distinct purposes,
-   tradeoffs/counterplay, complete body/FPP/casting/moving geometry/VFX/SFX, and a
-   signature moment for every ultimate (Tekken/Genshin impact as timing references,
-   not copied assets or lengthy mandatory lockouts). Phaister and Kuro's remaining
-   qualification and same-hero loadout binding stay explicit.
-6. Continue remaining movement/animation, meaningful slipper/can choices, graphics
-   settings/scalability, networking and actionable TODO work. Preserve the original
-   game,18people, both modes and simple controls. Maker stays inaccessible.
-7. Final release still needs appropriate gates, isolated PlayMode gate twice,
-   Windows build and that exact executable at ordinary speed in both modes.
+All6kits/default18slots plus alternatives need distinct purposes, implementation,
+tradeoffs/counterplay, body/FPP/moving geometry/VFX/SFX and truthful descriptions.
+Ultimates deserve individual special moments like Tekken/Genshin in buildup/payoff,
+within native style and readable counterplay. Phaister ritual/control timing,
+reach and11m moon versus8m guideway need work. Same-hero loadout rebinding must
+notice changed builds without resetting live state/doubling modifiers. Accepted
+purple Kuro still needs separate-process staged/yaw/rejoin, roster and overlap/
+owner-view review. Preserve all18people at7c7fcb5 direction; no redesign, rounded
+bodies/thumbs/realistic anatomy/noisy voxel studies. English functional copy,
+proper names, cultural specificity without forced/sacred copied decoration.
 
-## Durable references and cleanup
+Graphics/scalability: improve settings and measured Low through high-spec benefits,
+maintaining gameplay tells. Existing basic presets are not the complete pass;
+older resolution/frame-cap prototype is archived, not implemented.
+Network: active effects, alternatives, rounds/rematches, reconnect/host loss and
+both modes. Keep all-context mash/device/input coverage honest; prior63synthetic
+device/cadence/context combinations passed, not physical handset/pad certification.
+Remaining concrete TODO findings, including event/request/lookup/AI investigations,
+remain. Do not attribute historical Ilalim48-idle outlier without connecting evidence.
 
-Read AGENTS.md as primary instructions, OWNER_PLAYTEST_REVISION.md for all recent
-feedback, MAP_TRANSFORMATION_PLAN.md and PLAY_FEEL_REWORK_PLAN.md, plus the broader
-plans required by AGENTS. The larger improvement goal is OPEN. Do not stop at a
-handoff or ask again to continue work already authorized.
+Tournament spectator: review SpectatorCamera/Director/Interest and highlights.
+Preserve free/follow/POV/manual caster control; improve framing, smooth motion,
+collision, key-play/ultimate/replay coverage and uncluttered information. Plan from
+real match captures. This is later broader work, not permission to abandon maps.
 
-Keep genuine authored map assets. Restore only proven test-only arm tangents via
-Logs/restore_verified_throw_test_dirt.py and exact known QualitySettings Ultra
-noise (4/2/4/150/true became2/1/2/40/false). Preserve before bytes and compare the
-whole recognized diff. Never use old map cleanup scripts to restore newer scenes.
-Ordinary Unity serialization has trailing spaces; do not strip entire scene YAML.
-Use normal Git settings, sole-author message files and push ASTRAReworks only.
+## Delivery and preservation
 
-Previous execution plans are archived whole through execution-plan-history-09.md.
-All previous process IDs outside this live section are historical.
+Desktop remains d9c0314b protocol29. Internal RoofReview predates this source.
+Neither is current evidence; no Desktop replacement is requested. Verify an exact
+fresh internal Windows player when related map/network work is ready. Use only
+related tests per newest owner policy; do not restore blanket full-suite mandates.
+Commit with sole-author message files and push only ASTRAReworks. Preserve raw
+failed experiments and index pointers. Restore only proven test dirt; last known
+arm tangents/Ultra recipe were byte-verified and backed up before restoration.
 
-## Latest owner order, 2026-09-13
-
-After ALL map work, work on ANIMATIONS AND SKILLS together next. Full body/FPP
-preparation, release, impact, interruption and recovery are part of the skill
-revamp, alongside distinct mechanics and special ultimate moments. Movement and
-equipment animation examples remain requirements, not deferred cosmetic extras.
+Previous plan preserved whole in reports/improvement-2026-09-13/execution-plan-history-12.md.
+This plan is an execution record, not a handoff prompt or a declaration of completion.

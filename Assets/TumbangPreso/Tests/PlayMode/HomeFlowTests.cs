@@ -17,7 +17,7 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
         [UnityTest]
-        public IEnumerator HomePreparesItsLoopAndEveryPreparationDoorReturns()
+        public IEnumerator HomeKeepsTheTitleCalmAndSettingsReturn()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(0.5f);
@@ -43,30 +43,36 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.IsTrue(ActiveButton("StartButton").isActiveAndEnabled);
 
-            Press("ProfileButton");
-            yield return null;
+            CollectionAssert.AreEquivalent(new[]{"StartButton","TutorialButton","SettingsButton","QuitButton","CreditsButton"},
+                GameObject.Find("HomeCanvas").GetComponentsInChildren<Button>().Select(button=>button.name));
+            Assert.IsFalse(home.GetComponentsInChildren<Button>().Any(button=>button.name=="CustomDoor"));
+            yield return UiRuntimeShots.Capture("Home-brand-v1",1920,1080);
+            yield return UiRuntimeShots.Capture("Home-brand-v1-720p",1280,720);
+            yield return UiRuntimeShots.Capture("Home-brand-v1-shortwide",1920,820);
+        }
+
+        [UnityTest]
+        public IEnumerator PreparationRemainsReachableFromThePracticeLobby()
+        {
+            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
+            yield return new WaitForSecondsRealtime(.3f);
+            Press("StartButton");yield return new WaitForSecondsRealtime(.4f);
+            Press("ClassicButton");yield return null;
+            Press("PracticeButton");yield return new WaitForSecondsRealtime(.6f);
+            Assert.AreEqual(SceneFlow.MatchSetup,SceneManager.GetActiveScene().name);
+            Press("ProfileButton");yield return null;
             Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen);
-            Press("HubClose");
-            yield return null;
-            yield return null;
-            Assert.IsTrue(GameObject.Find("HomeCanvas").GetComponent<Canvas>().enabled);
-
-            Press("GearButton");
-            yield return null;
-            yield return null;
-            var picker = Object.FindFirstObjectByType<ConvertedCharacterSelect>();
-            Assert.IsNotNull(picker, "Gear must reach the actual equipment picker.");
-            yield return UiRuntimeShots.Capture("Gear-before-overhaul-v1", 1920, 1080);
-            Assert.IsFalse(picker.GetComponentsInChildren<Button>(true).Any(b => b.name == "CustomDoor"),
-                           "The withdrawn maker must not acquire a new door through Home.");
-            Press("BackButton");
-            yield return null;
-            Assert.IsFalse(picker.gameObject.activeSelf);
-            Assert.IsTrue(GameObject.Find("HomeCanvas").GetComponent<Canvas>().enabled);
-            Assert.IsNotNull(ActiveButton("StartButton"));
-
-            yield return UiRuntimeShots.Capture("Home-v4", 1920, 1080);
-            yield return UiRuntimeShots.Capture("Home-v4-shortwide", 1920, 820);
+            Press("HubClose");yield return null;yield return null;
+            Press("CharacterButton");yield return null;yield return null;
+            var picker=Object.FindFirstObjectByType<ConvertedCharacterSelect>();
+            Assert.IsNotNull(picker,"Preparation must still expose the real character/equipment picker.");
+            Assert.IsFalse(picker.GetComponentsInChildren<Button>(true).Any(button=>button.name=="CustomDoor"));
+            var pickerBack=picker.GetComponentsInChildren<Button>().Single(button=>button.name=="BackButton");
+            Debug.Log("[HomeFlow] First named Back="+Hierarchy(ActiveButton("BackButton").transform)+
+                "; actual picker Back="+Hierarchy(pickerBack.transform));
+            yield return UiRuntimeShots.Capture("Picker-from-lobby-brand-v1",1920,1080);
+            Press(pickerBack);yield return null;yield return null;
+            Assert.IsNotNull(ActiveButton("CharacterButton"));
         }
 
         [UnityTest]
@@ -84,12 +90,15 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(ActiveButton("CustomButton"));
             Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
                 .Any(b => b.name == "RankedButton" && b.isActiveAndEnabled));
-            Press("BackButton");
-            yield return null;
+            Assert.IsNotNull(ActiveButton("HeroStrikeButton"),"Game choice stays visible beside its access routes.");
             Press("HeroStrikeButton");
             yield return null;
             Assert.IsNotNull(ActiveButton("RankedButton"));
-            yield return UiRuntimeShots.Capture("Play-routes-v3", 1920, 1080);
+            Assert.IsNotNull(GameObject.Find("PlayChoiceCanvas/TumpMark").GetComponent<Image>().sprite,
+                "A texture imported as Default must not become a white logo rectangle.");
+            yield return UiRuntimeShots.Capture("Play-brand-v2",1920,1080);
+            yield return UiRuntimeShots.Capture("Play-brand-v2-720p",1280,720);
+            yield return UiRuntimeShots.Capture("Play-brand-v2-4by3",1200,900);
             Press("RankedButton");
             yield return new WaitForSecondsRealtime(2f);
             Assert.AreEqual(SceneFlow.MatchSetup, SceneManager.GetActiveScene().name);
@@ -103,10 +112,14 @@ namespace TumbangPreso.PlayTests
 
         // A callback can pass while artwork or another canvas consumes every real press.
         // Exercise the top raycast target before dispatching the pointer event to it.
-        private static void Press(string name)
+        private static string Hierarchy(Transform node)
+        { string path=node.name;while(node.parent!=null){node=node.parent;path=node.name+"/"+path;}return path; }
+
+        private static void Press(string name) => Press(ActiveButton(name));
+        private static void Press(Button button)
         {
             Canvas.ForceUpdateCanvases();
-            var button = ActiveButton(name);
+            string name=button.name;
             var rect = (RectTransform)button.transform;
             var canvas = button.GetComponentInParent<Canvas>();
             var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;

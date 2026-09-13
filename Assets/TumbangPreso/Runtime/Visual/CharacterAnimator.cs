@@ -243,6 +243,15 @@ namespace TumbangPreso.Visual
 #endif
 
         private string _current;
+        public bool SwimmingMotionPlaying=>_current!=null&&System.Array.IndexOf(SwimmingMotion.Names,_current)>=0;
+        public float SwimmingPhase
+        {
+            get
+            {
+                if(!SwimmingMotionPlaying||!_graph.IsValid())return 0;
+                var front=Front();return front.IsValid()?Mathf.Repeat((float)front.GetTime()/Mathf.Max(.01f,ClipLength(_current)),1)*Mathf.PI*2:0;
+            }
+        }
         private float _weight;
         private float _oneShotLeft;
         private float _transitionSeconds;
@@ -414,6 +423,12 @@ namespace TumbangPreso.Visual
                 foreach (var clip in baked.Clips)
                     if (clip != null) _clips[clip.name] = clip;
             }
+            var swimming=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(SwimmingMotion.Folder+"/"+rig);
+            if(swimming!=null&&swimming.Clips!=null)
+                foreach(var clip in swimming.Clips)if(clip!=null)_clips[clip.name]=clip;
+            var recovery=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(RecoveryMotion.Folder+"/"+rig);
+            if(recovery!=null&&recovery.Clips!=null)
+                foreach(var clip in recovery.Clips)if(clip!=null)_clips[clip.name]=clip;
 
 #if UNITY_EDITOR
             if (!_clips.ContainsKey(DanceClip.ClipName))
@@ -499,7 +514,7 @@ namespace TumbangPreso.Visual
             // jumping up and down the floor and lying down"*. Locomotion loops; an emote loops
             // only if EmoteLoops says so, and otherwise holds its last frame.
             bool emoting = _emote != null && _emote.IsEmoting;
-            bool tripped = _motor != null && _motor.IsTripped;
+            bool tripped = _motor != null && _motor.IsTripped && !_motor.IsSwimming;
             bool loop = (!emoting || !EmoteHoldsLastFrame(_emote.Current)) && !tripped;
 
             Play(Choose(), loop);
@@ -720,6 +735,8 @@ namespace TumbangPreso.Visual
             // winding up and act on it"*, and a wind-up nobody else can see deletes that window
             // while leaving the cost.
             if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
+
+            if(_motor.IsSwimming)return SwimmingMotion.Clip(FlatSpeed>.2f&&!_motor.IsTripped,_motor.HoldingSlipper);
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
@@ -1126,11 +1143,19 @@ namespace TumbangPreso.Visual
         /// </summary>
         private bool StepTripPose()
         {
+            if(_motor!=null&&_motor.IsSwimming)
+            {
+                if(_tripPhase!=0){_tripPhase=0;_oneShotLeft=0;_holdAtEnd=false;}
+                return false;
+            }
             if (_motor == null || !_motor.IsTripped)
             {
                 _tripPhase = 0;
                 return false;
             }
+
+            if(_clips.ContainsKey(RecoveryMotion.Brace)&&_clips.ContainsKey(RecoveryMotion.Stand))
+                return StepSupportedRecovery();
 
             if (_motor.TripLeft <= Core.Balance.MinTripDown)
             {
@@ -1165,6 +1190,35 @@ namespace TumbangPreso.Visual
             Blend();
             HoldLastFrame();
             return true;
+        }
+
+        private float _recoveryEntered,_recoveryProgress;
+        private bool StepSupportedRecovery()
+        {
+            if(_tripPhase==0)
+            {
+                _oneShotLeft=0;_recoveryProgress=0;_recoveryEntered=Time.time;_tripPhase=1;
+                CameraSystem.CameraRig.CancelViewmodelAction(_motor);
+                Play(RecoveryMotion.Land,false,true);
+            }
+            if(_motor.TripLeft<=Core.Balance.MinTripDown)
+            {
+                if(_tripPhase!=3){_tripPhase=3;Play(RecoveryMotion.Stand,false,true);}
+                var front=Front();front.SetSpeed(0);
+                front.SetTime(ClipLength(RecoveryMotion.Stand)*(1-Mathf.Clamp01(_motor.TripLeft/Core.Balance.MinTripDown)));
+            }
+            else if(Time.time-_recoveryEntered>=ClipLength(RecoveryMotion.Land))
+            {
+                if(_tripPhase!=2){_tripPhase=2;Play(RecoveryMotion.Brace,true,true);}
+                float progress=1-(_motor.TripLeft-Core.Balance.MinTripDown)/Mathf.Max(.01f,_motor.TripTotal-Core.Balance.MinTripDown);
+                _recoveryProgress=Mathf.MoveTowards(_recoveryProgress,Mathf.Clamp01(progress),Time.deltaTime*4);
+                // Small effort remains visible between accepted presses; it never
+                // spends recovery time or makes a rejected input advance the bar.
+                float effort=.014f*Mathf.Sin((Time.time-_recoveryEntered)*5);
+                var front=Front();front.SetSpeed(0);
+                front.SetTime(ClipLength(RecoveryMotion.Brace)*Mathf.Clamp01(_recoveryProgress+effort));
+            }
+            Blend();HoldLastFrame();return true;
         }
 
         private void Play(string clipName, bool loop, bool force = false)
