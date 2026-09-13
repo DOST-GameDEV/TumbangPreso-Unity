@@ -1,0 +1,76 @@
+using System.Collections;
+using System.Linq;
+using NUnit.Framework;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+using UnityEngine.UI;
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class TumpNativeHudTests
+    {
+        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
+        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        [UnityTest]
+        public IEnumerator ClassicHudReflectsTheRealRoundRoleAndRecoveryState()
+        {
+            yield return Open(GameMode.Classic);
+            var hud = Hud.Instance; var canvas = GameObject.Find("TumpMatchCanvas").GetComponent<Canvas>();
+            Assert.IsTrue(hud.NativePresentation); Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
+            Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>().Count(r => r.name.StartsWith("ScoreRow")));
+            Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
+            var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
+            yield return TumpUiCapture.Capture("NativeHud-Classic-v1", canvas, 1920, 1080, false, true);
+            bool before = local.IsDefender; local.IsDefender = true; yield return null;
+            Assert.AreEqual("Defender", canvas.GetComponentsInChildren<Text>().First(t => t.name == "LocalRole").text);
+            local.IsDefender = before;
+            local.ApplyFallRecovery(); yield return null;
+            var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
+            Assert.That(prompt.text.ToLowerInvariant(), Does.Contain("get up").Or.Contain("getting up"));
+            yield return TumpUiCapture.Capture("NativeHud-recovery-v1", canvas, 1280, 720, false, true);
+            local.ClearTrip();
+            hud.ShowToast("Slipper returning · 10.0s", 1); yield return null;
+            Assert.IsTrue(canvas.GetComponentsInChildren<Text>().First(t => t.name == "MatchToast").enabled);
+        }
+        [UnityTest]
+        public IEnumerator HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts()
+        {
+            yield return Open(GameMode.HeroStrike);
+            var hud = Hud.Instance; var canvas = GameObject.Find("TumpMatchCanvas").GetComponent<Canvas>();
+            var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
+            Assert.IsTrue(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
+            Assert.AreEqual(3, canvas.GetComponentsInChildren<TumpAbilityDial>().Length);
+            yield return TumpUiCapture.Capture("NativeHud-Hero-v1", canvas, 1920, 1080, false, true);
+            var readout = Object.FindFirstObjectByType<TumpPowerReadout>();
+            var kit = local.GetComponent<Abilities.HeroAbilitySystem>().Kit;
+            try
+            {
+                readout.OpenForCapture(kit); yield return null;
+                var names = canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("PowerName")).Select(t => t.text).ToArray();
+                CollectionAssert.AreEquivalent(new[] { kit.Skill1.EffectiveName, kit.Skill2.EffectiveName, kit.Ultimate.EffectiveName }, names);
+                yield return TumpUiCapture.Capture("NativeHud-held-skills-v1", canvas, 1280, 720, false, true);
+            }
+            finally { readout.CloseCapture(); }
+            hud.EnterSpectatorMode(); yield return null;
+            Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
+            Assert.IsFalse(canvas.transform.Find("LocalState").gameObject.activeSelf);
+            yield return TumpUiCapture.Capture("NativeHud-spectator-v1", canvas, 1280, 960, false, true);
+            hud.SetCleanFeed(true); Assert.IsFalse(canvas.gameObject.activeSelf);
+            hud.SetCleanFeed(false); Assert.IsTrue(canvas.gameObject.activeSelf);
+            hud.ExitSpectatorMode(); yield return null;
+            Assert.IsTrue(canvas.transform.Find("LocalState").gameObject.activeSelf);
+        }
+        private static IEnumerator Open(GameMode mode)
+        {
+            SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
+            yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSecondsRealtime(3.7f);
+            Assert.IsNotNull(Hud.Instance);
+        }
+    }
+}

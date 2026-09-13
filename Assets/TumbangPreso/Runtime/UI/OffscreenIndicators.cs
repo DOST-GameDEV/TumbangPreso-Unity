@@ -41,7 +41,27 @@ namespace TumbangPreso.UI
         private RectTransform _slipperArrow;
         private RectTransform _canArrow;
 
-        private void Awake() => Build();
+        private void Awake() => BuildNative();
+
+        private void BuildNative()
+        {
+            var canvas = TumpUiFactory.Canvas(transform, "TumpOffscreenCanvas", 110);
+            _canvasRect = (RectTransform)canvas.transform;
+            var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
+            _slipperArrow = NativeArrow(_canvasRect, "SlipperArrow", TumpUiTheme.Current.Cream, "UI/portraits/" + Core.Roster.Slippers[0].Id);
+            _canArrow = NativeArrow(_canvasRect, "CanArrow", TumpUiTheme.Current.Yellow, "UI/portraits/" + Core.Roster.Cans[0].Id);
+        }
+        private static RectTransform NativeArrow(Transform parent, string name, Color tint, string portrait)
+        {
+            var rect = TumpUiFactory.Rect(parent, name);
+            TumpUiFactory.Anchor(rect, new Vector2(.5f, .5f), Vector2.zero, new Vector2(58, 66));
+            var pointer = rect.gameObject.AddComponent<TumpTargetPointer>(); pointer.color = tint; pointer.raycastTarget = false;
+            var icon = TumpUiFactory.Art(rect, "TargetPortrait", TumpUiFactory.Sprite(portrait));
+            TumpUiFactory.Anchor(icon.rectTransform, new Vector2(.5f, .5f), new Vector2(0, -38), new Vector2(40, 40));
+            rect.gameObject.SetActive(false); return rect;
+        }
+        private void OnDisable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
+        private void OnEnable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(true); }
 
         private void Build()
         {
@@ -102,6 +122,8 @@ namespace TumbangPreso.UI
 
             var label = _canArrow.GetComponent<Text>();
             if (label != null) label.color = colour;
+            var pointer = _canArrow.GetComponent<TumpTargetPointer>();
+            if (pointer != null) pointer.color = colour;
         }
 
         /// <summary>Called once a frame by the HUD with the already-resolved local unit.</summary>

@@ -89,10 +89,11 @@ namespace TumbangPreso.UI
 
         public void Bind(CharacterMotor local) => _character = local;
 
-        private void Awake() => Build();
+        private void Awake() { if (Hud.Instance == null || !Hud.Instance.NativePresentation) Build(); }
 
         private void Update()
         {
+            if (Hud.Instance != null && Hud.Instance.NativePresentation) return;
             _refreshLeft -= Time.deltaTime;
             if (_refreshLeft <= 0.0f)
             {
@@ -107,6 +108,7 @@ namespace TumbangPreso.UI
 
         public void Refresh()
         {
+            if (Hud.Instance != null && Hud.Instance.NativePresentation) return;
             if (_character == null)
             {
                 _card.transform.parent.gameObject.SetActive(false);

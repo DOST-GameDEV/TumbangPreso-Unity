@@ -34,7 +34,7 @@ namespace TumbangPreso.UI
     /// wraps what arrives. Neither alone is enough: the cap bounds characters and the wrap bounds
     /// height.
     /// </summary>
-    public sealed class LobbyChat : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
+    public sealed partial class LobbyChat : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
     {
         /// <summary>
         /// ⚠️⚠️ THE LOBBY CHAT NEVER GROWS, AND CLICKING IT OPENS THE WHOLE LOG. 🧑 2026-08-28:
@@ -164,7 +164,9 @@ namespace TumbangPreso.UI
             return chat;
         }
 
-        private void Construct()
+        private void Construct() => ConstructNative();
+
+        private void ConstructLegacyReference()
         {
             var rect = gameObject.AddComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.0f, 0.0f);
@@ -634,6 +636,7 @@ namespace TumbangPreso.UI
 
         private void SetLines()
         {
+            if (_nativeChat) { SetNativeLines(); return; }
             if (!_inMatch)
             {
                 int first = Mathf.Max(0, _history.Count - LobbyVisibleLines);
@@ -1145,7 +1148,7 @@ namespace TumbangPreso.UI
 
                 float t = Mathf.Clamp01((age - MatchLineLife) / MatchFadeTime);
 
-                var colour = UiTheme.Cream;
+                var colour = _nativeChat ? TumpUiTheme.Current.Cream : UiTheme.Cream;
                 _lines[i].color = new Color(colour.r, colour.g, colour.b, 1.0f - t);
 
                 if (t >= 1.0f) _lines[i].text = "";

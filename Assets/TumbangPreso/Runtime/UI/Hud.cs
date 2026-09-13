@@ -32,7 +32,7 @@ namespace TumbangPreso.UI
     /// screen-edge arrows use, because an outlined glyph survives sky, asphalt and a lit orange
     /// arm without adding another rectangle to a screen that has enough of them.
     /// </summary>
-    public sealed class Hud : MonoBehaviour
+    public sealed partial class Hud : MonoBehaviour
     {
         /// <summary>INK outline on the free-floating lines. Heavy, because it has to carry
         /// role-orange text over a role-orange viewmodel arm.</summary>
@@ -503,6 +503,7 @@ namespace TumbangPreso.UI
 
         public void ShowReadyPrompt(bool show)
         {
+            if (_nativeReadout != null) { _readyWindowOpen = show; _nativeReadout.ReadyWindow = show; return; }
             // ⚠ RESET ON THE EDGE, NOT ON EVERY CALL. `ReadyGate` raises this once per phase
             // transition (`Open`, `OpenNetworked`, and the countdown's close), so the objective
             // gets its full window each time the gate opens and nothing restarts it in between.
@@ -630,6 +631,13 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ShowCountdownTick(string tick)
         {
+            if (_nativeReadout != null)
+            {
+                GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
+                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != "match")
+                    GameServices.Music.Play("match", GameServices.MatchTrack);
+                _nativeReadout.Countdown(tick); return;
+            }
             if (_countdown == null) return;
 
             // ⚠️ THE SOUND IS PLAYED FROM HERE, NOT FROM THE GATE, so every caller gets it for
@@ -667,6 +675,7 @@ namespace TumbangPreso.UI
 
         public void HideCountdown()
         {
+            if (_nativeReadout != null) { _nativeReadout.Countdown(""); return; }
             if (_countdown != null) _countdown.enabled = false;
             _countdownPop = 0.0f;
         }
@@ -675,6 +684,7 @@ namespace TumbangPreso.UI
         /// visible on the HUD.</summary>
         public void ShowToast(string text, float duration = 1.5f)
         {
+            if (_nativeReadout != null) { _nativeReadout.Toast(text, duration); return; }
             if (_toast == null) return;
 
             _toast.text = text;
@@ -690,6 +700,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void SetDownedFlash(bool active)
         {
+            if (_nativeReadout != null) { _nativeReadout.Flash(active); return; }
             if (_dangerFlash == null) return;
 
             if (!active)
@@ -726,6 +737,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void OnEnable()
         {
+            if (_nativeReadout != null && _canvas != null) _canvas.gameObject.SetActive(!_cleanFeed);
             if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
             Net.MatchRpc.TimeScaleChanged += OnBroadcastClock;
             TrySubscribeRound();
@@ -733,6 +745,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            if (_nativeReadout != null && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
             Net.MatchRpc.TimeScaleChanged -= OnBroadcastClock;
 
@@ -943,6 +956,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void EnterSpectatorMode()
         {
+            if (_nativeReadout != null) { NativeSpectator(true); return; }
             _spectating = true;
 
             // ⚠️⚠️ THE SCOREBOARD GROWS BY THE WIDTH OF THE CASTER CELL, AND THE FIRST CAPTURE IS
@@ -1071,6 +1085,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void ExitSpectatorMode()
         {
+            if (_nativeReadout != null) { NativeSpectator(false); return; }
             if (!_spectating) return;
 
             _spectating = false;
@@ -1189,6 +1204,7 @@ namespace TumbangPreso.UI
         public void SetSpectatorControlsVisible(bool visible)
         {
             _spectatorControlsVisible = visible;
+            if (_nativeReadout != null) return;
             if (_spectatorLegend != null) _spectatorLegend.gameObject.SetActive(visible);
             if (_spectatorStatus != null) _spectatorStatus.gameObject.SetActive(visible);
             if (_spectatorHint != null)
@@ -1352,6 +1368,7 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            if (_nativeReadout != null) { NativeTick(); return; }
             // ⚠️ READ BEFORE THE LOCAL-UNIT GUARD. A spectator has no character, so anything
             // below the guard never runs for them — and they are the only person this key is
             // for. The toggle also has to keep working while the canvas is hidden, which it
@@ -2722,7 +2739,9 @@ namespace TumbangPreso.UI
 
         private LobbyChat _chat;
 
-        private void Build()
+        private void Build() => BuildNative();
+
+        private void BuildLegacyReference()
         {
             var canvasGo = new GameObject("HudCanvas");
             canvasGo.transform.SetParent(transform, false);
@@ -4344,6 +4363,11 @@ namespace TumbangPreso.UI
         /// spectator hearing a penalty land on somebody else's seat is the same fault.
         public void PopHitmarker(Color color, string symbol = "💥")
         {
+            if (_nativeReadout != null)
+            {
+                if (!_spectating) { _nativeReadout.Hit(color); GameServices.Audio?.PlayUi("sfx_hitmarker"); }
+                return;
+            }
             if (_hitmarker == null || _spectating) return;
             _hitmarkerTimer = 0.28f;
             _hitmarker.text = symbol;

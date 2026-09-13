@@ -10,7 +10,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
-        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true)
+        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false)
         {
             Assert.IsNotNull(canvas);
             var oldMode = canvas.renderMode;
@@ -37,7 +37,17 @@ namespace TumbangPreso.PlayTests
                 yield return null;
                 yield return null;
                 foreach (var preview in canvas.GetComponentsInChildren<UI.ModelPreview>()) preview.StepForCapture();
-                Canvas.ForceUpdateCanvases(); camera.Render();
+                Canvas.ForceUpdateCanvases();
+                if (includeWorld && Camera.main != null)
+                {
+                    // Draw the actual arena through its own camera/post-processing first,
+                    // then composite this native UI in a separate ungraded pass.
+                    var world = Camera.main; var targetBefore = world.targetTexture; int maskBefore = world.cullingMask;
+                    try { world.targetTexture = rt; world.cullingMask &= ~(1 << 31); world.Render(); }
+                    finally { world.targetTexture = targetBefore; world.cullingMask = maskBefore; }
+                    camera.clearFlags = CameraClearFlags.Depth;
+                }
+                camera.Render();
                 foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol;
