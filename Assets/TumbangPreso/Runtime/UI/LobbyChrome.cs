@@ -314,7 +314,7 @@ namespace TumbangPreso.UI
         /// chevron gutter on the right, that is 228, and 340 leaves it room to breathe without the
         /// hole 🧑 photographed at 400.
         /// </summary>
-        private const float FighterColumnWidth = 320.0f;
+        private const float FighterColumnWidth = 420.0f;
 
         /// <summary>
         /// The right column of the bottom rail, whatever the mode puts in it.
@@ -354,7 +354,7 @@ namespace TumbangPreso.UI
 
         /// <summary>START MATCH / FIND A RANKED MATCH / START PRACTICE. The one control on this
         /// screen that ends the screen.</summary>
-        private const float ActionHeight = 132.0f;
+        private const float ActionHeight = 96.0f;
 
         /// <summary>
         /// How far the burst reaches past the primary, as a multiple of it.
@@ -401,10 +401,10 @@ namespace TumbangPreso.UI
         /// leading is 25, a 16-unit line is 20, the shadow is 6 and the two insets are 11. That is
         /// 62, and it is the first height at which neither line is drawing outside its own box.
         /// </summary>
-        private const float SettingsChipHeight = 62.0f;
+        private const float SettingsChipHeight = 88.0f;
 
         /// <summary>The FIGHTER row: a name over a loadout, so two lines.</summary>
-        private const float FighterRowHeight = 54.0f;
+        private const float FighterRowHeight = 88.0f;
 
         /// <summary>The SKILLS row: one line, and its caption BESIDE the value rather than at the
         /// far end of the row. ⚠️ It is a DIFFERENT SHAPE from the row above it on purpose
@@ -625,6 +625,8 @@ namespace TumbangPreso.UI
             BuildBottomRail(canvasRoot, find, left, right, parts);
             HangTheModeSlot(parts);
 
+            ApplyBrandComposition(canvasRoot, find, parts);
+
             // ⚠️⚠️ LAST, AND NOT INSIDE `BuildTabs`, BECAUSE THE RIGHT COLUMN DOES NOT EXIST YET
             // WHEN THE TABS ARE BUILT. `SetMode` is what swaps the whole right-hand side, and
             // `ConvertedMatchSetup.SelectMode` only runs when the player CHANGES tab: a screen
@@ -633,6 +635,117 @@ namespace TumbangPreso.UI
             parts.SetMode(mode);
 
             return parts;
+        }
+
+        /// <summary>The live preparation composition. Existing controls retain their wiring.</summary>
+        private static void ApplyBrandComposition(Transform root, Func<string, Transform> find, Parts parts)
+        {
+            var top = parts.TopRail as RectTransform;
+            top.sizeDelta = new Vector2(0, 170);
+            var topImage = top.GetComponent<Image>();
+            topImage.sprite = null;
+            topImage.color = UiTheme.Paper;
+            topImage.raycastTarget = false;
+            foreach (string name in new[] { "TarpTieLeft", "TarpTieRight", "SeatCount" })
+            {
+                var node = top.Find(name);
+                if (node != null) node.gameObject.SetActive(false);
+            }
+            foreach (string name in new[] { "ChalkLeft", "ChalkRight" })
+            {
+                var node = root.Find(name);
+                if (node != null) node.gameObject.SetActive(false);
+            }
+
+            var title = top.Find("ScreenName")?.GetComponent<Text>();
+            if (title != null)
+            {
+                title.text = "Get ready";
+                title.fontSize = 48;
+                title.color = UiTheme.BrandRed;
+                MenuKit.Apply(title, MenuKit.Face.Display);
+                TopLeft(title.rectTransform, 220, 25, 330, 64);
+            }
+            var back = Descend(top, "BackButton") as RectTransform;
+            if (back != null) TopLeft(back, 40, 30, 148, 64);
+
+            var tabs = top.Find("LobbyTabBar") as RectTransform;
+            TopLeft(tabs, 220, 100, 610, 60);
+            foreach (Transform child in tabs)
+                if (child.name.EndsWith("Cord", StringComparison.Ordinal)) child.gameObject.SetActive(false);
+            string[] labels = { "With bots", "Ranked", "With friends" };
+            for (int i = 0; i < parts.Tabs.Length; i++)
+            {
+                var button = parts.Tabs[i];
+                if (button == null) continue;
+                // The enum is Practice, Ranked, Custom, independent of hierarchy order.
+                TopLeft((RectTransform)button.transform, i * 200, 0, 192, 60);
+                button.GetComponentInChildren<Text>().text = labels[i];
+            }
+            TopRight((RectTransform)parts.ProfileButton.transform, 40, 28, 334, 104);
+            TopRight((RectTransform)parts.GameSettingsButton.transform, 394, 44, 166, 60);
+
+            var code = parts.CodeButton != null ? (RectTransform)parts.CodeButton.transform : null;
+            if (code != null)
+            {
+                MenuKit.Place(code, new Vector2(.5f, 1), new Vector2(30, -70), new Vector2(350, 102));
+                code.pivot = new Vector2(.5f, .5f);
+                parts.CodeValue.fontSize = 38;
+                parts.CodeHint.text = "Copy";
+            }
+
+            var bottom = root.Find("LobbyBottomRail") as RectTransform;
+            if (bottom != null)
+            {
+                bottom.anchoredPosition = new Vector2(0, 32);
+                bottom.GetComponent<Image>().color = UiTheme.Paper;
+                bottom.GetComponent<Image>().raycastTarget = false;
+                foreach (Transform burst in bottom.GetComponentsInChildren<Transform>(true))
+                    if (burst.name == "PrimaryBurst") burst.gameObject.SetActive(false);
+            }
+
+            foreach (var rail in new[] { top, bottom })
+            {
+                if (rail == null) continue;
+                foreach (var button in rail.GetComponentsInChildren<Button>(true))
+                {
+                    bool action = button.name == "StartButton" || button.name == "PrimaryButton";
+                    bool tab = Array.IndexOf(parts.Tabs, button) >= 0;
+                    bool choice = button.name == "CharacterButton" || button.name == "LoadoutButton"
+                        || button.name == "SettingsDrawerToggle" || button.name == "RoomCodeButton";
+                    StreetUi.Restyle(button, action ? StreetGraphic.Surface.Action : tab
+                        ? StreetGraphic.Surface.Tab : choice ? StreetGraphic.Surface.Route
+                        : StreetGraphic.Surface.Navigation);
+                    var label = button.transform.Find("Label")?.GetComponent<Text>();
+                    if (label != null && !action) label.fontSize = 26;
+                }
+            }
+            parts.CharacterName.fontSize = 30;
+            MenuKit.Read(parts.CharacterName, true);
+            parts.CharacterLoadout.fontSize = 22;
+            parts.LoadoutValue.fontSize = 28;
+            MenuKit.Read(parts.LoadoutValue, true);
+            parts.SettingsSummary.fontSize = 23;
+            if (parts.ProfileValue != null) { parts.ProfileValue.fontSize = 26; MenuKit.Read(parts.ProfileValue, true); }
+            if (parts.ProfileState != null) { parts.ProfileState.fontSize = 20; MenuKit.Read(parts.ProfileState); }
+        }
+
+        private static void TopLeft(RectTransform rect, float x, float y, float width, float height)
+        {
+            if (rect == null) return;
+            rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+            rect.pivot = new Vector2(0, 1);
+            rect.anchoredPosition = new Vector2(x, -y);
+            rect.sizeDelta = new Vector2(width, height);
+        }
+
+        private static void TopRight(RectTransform rect, float x, float y, float width, float height)
+        {
+            if (rect == null) return;
+            rect.anchorMin = rect.anchorMax = Vector2.one;
+            rect.pivot = Vector2.one;
+            rect.anchoredPosition = new Vector2(-x, -y);
+            rect.sizeDelta = new Vector2(width, height);
         }
 
         /// <summary>
@@ -1779,8 +1892,8 @@ namespace TumbangPreso.UI
                 summary.text = $"{Sentence(Value(find, "MapValueLabel"))}   ·   " +
                                $"{Sentence(Value(find, "ModeValueLabel"))}   ·   " +
                                $"{Sentence(Value(find, "DifficultyValueLabel"))}";
-                summary.fontSize = PaperKit.Caption;
-                MenuKit.Fit(summary, ActionWidth - 88.0f, 12);
+                summary.fontSize = 23;
+                MenuKit.Fit(summary, ActionWidth - 72.0f, 22);
             };
 
             return button;
@@ -3121,7 +3234,7 @@ namespace TumbangPreso.UI
                 // longer one running off the plaque.
                 MenuKit.Fit(CodeValue, RoomColumnWidth - (PaperKit.Pad * 2.0f));
 
-                if (CodeHint != null) CodeHint.text = "tap to copy";
+                if (CodeHint != null) CodeHint.text = "Copy";
             }
 
             /// <summary>
@@ -3162,7 +3275,8 @@ namespace TumbangPreso.UI
                     trimmed = trimmed.Substring(split + 1).Trim();
 
                 LoadoutValue.text = Sentence(trimmed);
-                LoadoutValue.fontSize = PaperKit.Title;
+                LoadoutValue.fontSize = 28;
+                MenuKit.Read(LoadoutValue, true);
                 MenuKit.Fit(LoadoutValue, FighterColumnWidth - 68.0f);
             }
 
@@ -3171,7 +3285,8 @@ namespace TumbangPreso.UI
                 if (CharacterName != null)
                 {
                     CharacterName.text = character;
-                    CharacterName.fontSize = PaperKit.Title;
+                    CharacterName.fontSize = 30;
+                    MenuKit.Read(CharacterName, true);
                     MenuKit.Fit(CharacterName, FighterColumnWidth - 60.0f);
                 }
 
@@ -3188,10 +3303,11 @@ namespace TumbangPreso.UI
                     // picker that the row above it is a FIGHTER or that pressing it changes one.
                     // The noun goes first for the same reason the BUILD row's does.
                     CharacterLoadout.text = string.IsNullOrWhiteSpace(loadout)
-                        ? "Fighter"
-                        : "Fighter  ·  " + Sentence(loadout);
-                    CharacterLoadout.fontSize = PaperKit.Caption;
-                    MenuKit.Fit(CharacterLoadout, FighterColumnWidth - 60.0f, 12);
+                        ? "Character & gear"
+                        : Sentence(loadout);
+                    CharacterLoadout.fontSize = 22;
+                    MenuKit.Read(CharacterLoadout);
+                    MenuKit.Fit(CharacterLoadout, FighterColumnWidth - 60.0f, 22);
                 }
             }
 
@@ -3274,6 +3390,16 @@ namespace TumbangPreso.UI
             private static void Paint(Button button, bool active)
             {
                 if (button == null) return;
+
+                var brand = button.transform.Find("BrandSurface")?.GetComponent<StreetGraphic>();
+                if (brand != null)
+                {
+                    brand.Chosen = active;
+                    brand.SetVerticesDirty();
+                    var words = button.transform.Find("Label")?.GetComponent<Text>();
+                    if (words != null) { MenuKit.Read(words, active); words.color = UiTheme.PaperInk; }
+                    return;
+                }
 
                 var skin = button.GetComponent<PaperSkin>();
                 if (skin != null)

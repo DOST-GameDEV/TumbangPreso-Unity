@@ -9,9 +9,10 @@ namespace TumbangPreso.UI
     public sealed class StreetGraphic : MaskableGraphic, IPointerEnterHandler, IPointerExitHandler,
         ISelectHandler, IDeselectHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public enum Surface { Navigation, Action, Card, Weave, Fade, TitleVeil, Option, Route }
+        public enum Surface { Navigation, Action, Card, Weave, Fade, TitleVeil, Option, Route, Tab }
         public Surface Style;
         public bool Chosen;
+        public bool Available = true;
         private bool _hovered, _selected, _pressed;
 
         public void OnPointerEnter(PointerEventData e) { _hovered = true; SetVerticesDirty(); }
@@ -25,7 +26,15 @@ namespace TumbangPreso.UI
         {
             vh.Clear();
             var r = rectTransform.rect;
-            bool live = _hovered || _selected;
+            bool live = Available && (_hovered || _selected);
+            if (Style == Surface.Tab)
+            {
+                if (live) Fill(vh, Shape(r, 0), UiTheme.BrandHoney);
+                if (Chosen || live)
+                    Line(vh, new Vector2(r.xMin + 12, r.yMin + 3),
+                        new Vector2(r.xMax - 12, r.yMin + 3), Chosen ? 5 : 2, UiTheme.BrandRed);
+                return;
+            }
             if (Style == Surface.TitleVeil)
             {
                 var solid=UiTheme.Paper; var clear=solid; clear.a=0;
@@ -95,7 +104,7 @@ namespace TumbangPreso.UI
             Color edge = Style == Surface.Action ? UiTheme.BrandRed : UiTheme.PaperEdge;
             if (live) edge = UiTheme.PaperInk;
             Fill(vh, Shape(r, 0), edge);
-            Color face = Style == Surface.Action
+            Color face = !Available ? UiTheme.PaperSunk : Style == Surface.Action
                 ? (live ? UiTheme.BrandRimRed : UiTheme.BrandRed)
                 : Color.Lerp(UiTheme.Paper, Color.white, live ? 0.32f : 0.14f);
             Fill(vh, Shape(r, Style == Surface.Action ? 2f : 1.5f), face);
