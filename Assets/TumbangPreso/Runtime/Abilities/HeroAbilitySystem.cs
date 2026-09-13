@@ -108,6 +108,27 @@ namespace TumbangPreso.Abilities
         {
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
+            ConfigureLoadout(build);
+        }
+
+        public bool UpdateLoadout(HeroBuild build)
+        {
+            if (Kit == null) return false;
+            var first = HeroBuildRules.Equipped(build, HeroId, 1, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
+            var second = HeroBuildRules.Equipped(build, HeroId, 2, null) ?? HeroLoadoutRules.DefaultFor(HeroId, 2);
+            if (_skill1Variant?.Id == first?.Id && _skill2Variant?.Id == second?.Id) return false;
+
+            // Preserve this kit and its running powers. Fresh authored tuning
+            // prevents alternate -> default -> alternate from stacking gains.
+            var authored = CreateKitFor(HeroId);
+            Kit.Skill1?.RestoreLoadoutTuning(authored?.Skill1);
+            Kit.Skill2?.RestoreLoadoutTuning(authored?.Skill2);
+            ConfigureLoadout(build);
+            return true;
+        }
+
+        private void ConfigureLoadout(HeroBuild build)
+        {
             _skill1Variant = HeroBuildRules.Equipped(build, HeroId, 1, null)
                              ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
             _skill2Variant = HeroBuildRules.Equipped(build, HeroId, 2, null)

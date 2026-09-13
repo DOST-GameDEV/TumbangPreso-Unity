@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.0665225">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="533" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.066523" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1611" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="533" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.055942" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29128" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1612" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="533" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.054129" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1613" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="533" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.052756" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1131" name="HeroLoadoutRefreshTests" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.045342" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1140" name="ClassicPickRefreshNeverCreatesPowers" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.ClassicPickRefreshNeverCreatesPowers" methodname="ClassicPickRefreshNeverCreatesPowers" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="1442447315" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.012877" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1139" name="RemotePickRefreshAppliesTheNewDefaultWithoutReplacingTheHero" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.RemotePickRefreshAppliesTheNewDefaultWithoutReplacingTheHero" methodname="RemotePickRefreshAppliesTheNewDefaultWithoutReplacingTheHero" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="18784757" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.011754" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1138" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.009164" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1132" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;dante&quot;,&quot;dante.1.tremor&quot;,&quot;dante.2.plating&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;dante&quot;,&quot;dante.1.tremor&quot;,&quot;dante.2.plating&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="993720162" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.002734" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1133" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;cheska&quot;,&quot;cheska.1.blackice&quot;,&quot;cheska.2.spires&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;cheska&quot;,&quot;cheska.1.blackice&quot;,&quot;cheska.2.spires&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="1493147536" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.000706" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1134" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;sean&quot;,&quot;sean.1.afterburn&quot;,&quot;sean.2.flare&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;sean&quot;,&quot;sean.1.afterburn&quot;,&quot;sean.2.flare&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="1733073285" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.000664" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1135" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;zack&quot;,&quot;zack.1.arcline&quot;,&quot;zack.2.discharge&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;zack&quot;,&quot;zack.1.arcline&quot;,&quot;zack.2.discharge&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="1813168790" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.000691" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1136" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;nemu&quot;,&quot;nemu.1.fade&quot;,&quot;nemu.2.leash&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;nemu&quot;,&quot;nemu.1.fade&quot;,&quot;nemu.2.leash&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="1001247786" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.000517" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1137" name="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;phaister&quot;,&quot;phaister.1.brand&quot;,&quot;phaister.2.stride&quot;)" fullname="TumbangPreso.Tests.HeroLoadoutRefreshTests.SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack(&quot;phaister&quot;,&quot;phaister.1.brand&quot;,&quot;phaister.2.stride&quot;)" methodname="SameHeroVariantRefreshPreservesLiveStateAndDoesNotStack" classname="TumbangPreso.Tests.HeroLoadoutRefreshTests" runstate="Runnable" seed="404400835" result="Passed" start-time="2026-09-13 17:30:57Z" end-time="2026-09-13 17:30:57Z" duration="0.000714" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

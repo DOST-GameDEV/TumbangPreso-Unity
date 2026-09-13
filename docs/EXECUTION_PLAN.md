@@ -22,13 +22,19 @@ commit/PDF/logo/source/remaining-work/reset-state prompt. Continue here until th
 
 ## Immediate parent task,01:19Manila
 
-Implement the documented SAME-HERO CHANGED-LOADOUT network defect; do not become
-UI monitor. Parent owns MatchRpc + HeroAbilitySystem/ability tuning helper. Agent
-owns NetSession join cancellation; do not edit NetSession. Preserve current Kit
-instance/readiness/ultimate/custom state for same-hero sidegrade refresh; reset
-only authored loadout tuning before applying the new variant, so repeated sync
-never stacks modifiers or resets live state. Trace actual SyncPicks and seat-build
-arrival order and cover both local/remote identities. UI must not compensate.
+Same-hero changed-loadout fix implemented in MatchRpc/HeroAbilitySystem/HeroAbility.
+Eight focused tests passed (Logs/hero-loadout-refresh-v2.xml): all6heroes retain
+live kit/ability objects, cooldowns, charge counts, active durations and banked
+ultimate while changing sidegrades; defaults/alternate round trips do not stack
+multipliers. Actual remote-default sync helper and Classic no-powers covered.
+Late roster build arrival refreshes only when hero pick matches current unit.
+Source/report checkpoint being saved; separate-process delayed/rejoin proof remains
+for the later coherent ability/network pass. Agent still owns NetSession.
+
+Next parent: after saving this result, one bounded UI integration/test batch for
+pending native HUD/front-end/results/pause-child flow. While that Editor runs,
+prepare the remaining parent correctness/play-feel work; do not repeatedly watch
+or redesign the agent's UI. No new subagents.
 
 Map graphics/court batch decision is SECURED: retain original rendering path.
 Bayan paint fix290f829e committed/native-visible: eight coplanar marks now
@@ -65,7 +71,7 @@ Private Logs/one-reset-authorization.json contains allowed earliest Oct4credit,
 forbidden Oct5credit, SINGLE stored idempotency key and spent/cancelled status.
 Never generate another attempt after success/alreadyRedeemed; ban every second
 redemption. Cancel unused authority if external reset refills allowance90-100%.
-Latest fresh core check2%remaining,2credits available. Spark/null not eligibility.
+Latest fresh core check1%remaining,2credits available. Spark/null not eligibility.
 Tool has no credit selector and earliest policy unverified. In-app ChatGPT usage
 page is logged out; async user question asks them to sign in for exact-credit UI
 selection. No answer yet. Browser tab8 in browser1/usageTab binding was logged out;

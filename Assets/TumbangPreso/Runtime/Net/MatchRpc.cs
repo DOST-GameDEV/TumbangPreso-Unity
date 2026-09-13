@@ -4211,7 +4211,13 @@ namespace TumbangPreso.Net
                 // departure, and only the host may decide that a chair was handed over
                 // (`HostPeerLeft`, which sets `HandedToBot`). A client inferring it from a roster
                 // packet would be a second writer of the fact `SeatHandover` reads.
-                if (human) unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
+                if (human)
+                {
+                    unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
+                    // Build data can arrive after the unchanged character pick.
+                    // Wait for the matching hero before applying its sidegrades.
+                    if (unit.CharacterIndex == info.CharacterPick) RebindKitIfHeroChanged(unit);
+                }
             }
         }
 
@@ -4367,18 +4373,9 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// Give this seat the kit its CURRENT `CharacterIndex` calls for, if it is not already
-        /// holding it.
-        ///
-        /// ⚠️⚠️ IT COMPARES THE KIT'S TYPE RATHER THAN REMEMBERING AN INDEX, so it cannot
-        /// drift out of step with the thing it is guarding. `HeroAbilitySystem` exposes the kit it
-        /// built and `CreateKitFor` is the one function that maps a hero id to a kit; asking
-        /// whether the built kit is the same TYPE the id would produce answers "is this the right
-        /// hero" without a second field for anybody to forget to write.
-        ///
-        /// ⚠️ CLASSIC HAS NO KITS AND MUST NOT GROW ONE HERE. `MatchInstaller` only adds the
-        /// component in Hero Strike (`CLAUDE.md` § 1: the two modes are not variants of each
-        /// other), so a null component is the correct state in Classic and not a seat to repair.
+        /// Reconcile the selected hero and sidegrades. Same-hero updates retain
+        /// active kit state; only a different hero needs a newly constructed kit.
+        /// Classic has no ability component and remains without powers.
         /// </summary>
         private static void RebindKitIfHeroChanged(CharacterMotor who)
         {
@@ -4392,14 +4389,13 @@ namespace TumbangPreso.Net
                 ? heroPeople[who.CharacterIndex].Id
                 : "dante";
 
-            var wanted = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
-            if (wanted == null) return;
-            if (abilities.Kit != null && abilities.Kit.GetType() == wanted.GetType()) return;
-
             HeroBuild build = who.PlayerSlot == NetAuthority.LocalSlot
                 ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
                 : HeroBuildRules.Decode(Instance?.GetSeatInfo(who.PlayerSlot)?.Build, heroId);
-            abilities.BindHero(heroId, build);
+            if (abilities.Kit != null && string.Equals(abilities.HeroId, heroId, StringComparison.OrdinalIgnoreCase))
+                abilities.UpdateLoadout(build);
+            else
+                abilities.BindHero(heroId, build);
         }
 
         public void BroadcastPicks()

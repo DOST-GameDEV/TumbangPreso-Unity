@@ -544,6 +544,18 @@ namespace TumbangPreso.Abilities
             AimRampSeconds *= Mathf.Max(0.05f, aimRamp);
         }
 
+        internal void RestoreLoadoutTuning(HeroAbility authored)
+        {
+            if (authored == null) return;
+            // Only authored tuning changes. Live durations own grants that must
+            // end normally; readiness and charges must not refresh on roster sync.
+            Duration = authored.Duration;
+            TelegraphRadius = authored.TelegraphRadius;
+            TelegraphRange = authored.TelegraphRange;
+            AimMaxRange = authored.AimMaxRange;
+            AimRampSeconds = authored.AimRampSeconds;
+        }
+
         // -------------------------------------------------------------------
         // § WHAT A REJOINING PLAYER GETS BACK
         //
