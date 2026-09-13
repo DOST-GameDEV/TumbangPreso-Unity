@@ -50,7 +50,23 @@ namespace TumbangPreso.EditorTools
             Debug.Log("[TumpPortraitAuthor] Baked " + written.Count + " real roster thumbnails to " + Output);
         }
 
-        private static void Capture(RosterEntryAsset art, int category, string path)
+        public static void ReviewSike()
+        {
+            var book = RosterBook.Load();
+            int index = -1;
+            for (int i = 0; i < Roster.Slippers.Count; i++) if (Roster.Slippers[i].Id == "sike") index = i;
+            if (index < 0) throw new System.InvalidOperationException("Sike roster row missing.");
+            const string folder = "Logs/ui-portrait-sike-review";
+            Directory.CreateDirectory(folder);
+            var art = book.SlipperArt(index);
+            Capture(art, 2, folder + "/above.png", new Vector2(0, -80));
+            Capture(art, 2, folder + "/below.png", new Vector2(0, 240));
+            Capture(art, 2, folder + "/side.png", new Vector2(225, 0));
+            Capture(art, 2, folder + "/reverse.png", new Vector2(450, 0));
+            Debug.Log("[TumpPortraitAuthor] Four Sike camera studies written; no roster assets changed.");
+        }
+
+        private static void Capture(RosterEntryAsset art, int category, string path, Vector2? orbit = null)
         {
             var host = new GameObject("PortraitBake_" + art.Id, typeof(RectTransform));
             var rect = (RectTransform)host.transform;
@@ -68,6 +84,7 @@ namespace TumbangPreso.EditorTools
                 // ModelPreview's zoom is a distance multiplier: smaller comes closer.
                 // Portraits favour the face/outfit; equipment uses its full silhouette.
                 preview.LookAt(category == 0 ? .72f : .50f, category == 0 ? .68f : .86f);
+                if (orbit.HasValue) preview.Orbit(orbit.Value);
                 preview.StepForCapture();
                 if (preview.Target == null) throw new System.InvalidOperationException("Portrait render target missing: " + art.Id);
                 RenderTexture.active = preview.Target;
