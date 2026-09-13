@@ -80,6 +80,7 @@ namespace TumbangPreso.PlayTests
             Press("CreateAccountTab"); yield return null;
             Assert.AreEqual("Create account", Find("SubmitAccount").GetComponentInChildren<Text>().text);
             yield return TumpUiCapture.Capture("NativeSignIn-create-v1", canvas, 1280, 720);
+            yield return TumpUiCapture.Capture("NativeSignIn-create-4by3-v1", canvas, 1280, 960);
             Press("SignInBack"); yield return null;
             Assert.IsFalse(account.IsOpen);
             Assert.IsNotNull(GameObject.Find("TumpHomeCanvas"));

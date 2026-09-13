@@ -31,7 +31,9 @@ namespace TumbangPreso.UI
             TumpUiFactory.Place(mark.rectTransform, 220, 796, 242, 206);
             var list = TumpUiFactory.Scroll(root, "Credits", out var scroll);
             list.GetComponent<VerticalLayoutGroup>().padding.bottom = 72;
-            TumpUiFactory.Place((RectTransform)scroll.transform, 650, 104, 1164, 910);
+            var viewport = (RectTransform)scroll.transform;
+            viewport.anchorMin = Vector2.zero; viewport.anchorMax = new Vector2(0, 1);
+            viewport.offsetMin = new Vector2(650, 66); viewport.offsetMax = new Vector2(1814, -104);
             Heading(list, "The team");
             foreach (var member in CreditsContent.TeamCredits)
             {
@@ -55,9 +57,7 @@ namespace TumbangPreso.UI
             var title = TumpUiFactory.Text(list, "CreditName", item.Chip, 32, true);
             TumpUiFactory.Height(title, 68);
             var body = TumpUiFactory.Text(list, "CreditBody", item.Body, 26);
-            var layout = body.gameObject.AddComponent<LayoutElement>(); layout.minHeight = 74;
-            // Text contributes its measured preferred height to the vertical layout.
-            layout.flexibleWidth = 1;
+            body.gameObject.AddComponent<TumpParagraph>();
         }
         private void Close() { _canvas.gameObject.SetActive(false); _back?.Invoke(); }
         private void OnDisable() { if (_canvas != null) _canvas.gameObject.SetActive(false); }

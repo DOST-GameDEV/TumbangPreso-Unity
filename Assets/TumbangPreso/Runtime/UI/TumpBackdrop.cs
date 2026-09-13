@@ -88,7 +88,7 @@ namespace TumbangPreso.UI
             float alpha = Mathf.Abs(restore * 2 - 1);
             if (restore >= .5f) { flight = 0; fall = 0; }
             float canX = .79f - fall * .006f;
-            PlaceProp(_can.rectTransform, new Vector2(canX, .15f), new Vector2(.10f, .15f) * unit, uv);
+            PlaceProp(_can.rectTransform, new Vector2(canX, .12f), new Vector2(.10f, .15f) * unit, uv);
             _can.rectTransform.pivot = new Vector2(.5f, .03f);
             _can.rectTransform.localRotation = Quaternion.Euler(0, 0, -fall * 78);
             float x = Mathf.Lerp(.58f, .77f, flight);

@@ -22,7 +22,9 @@ namespace TumbangPreso.UI
             scene.gameObject.AddComponent<TumpBackdrop>().AlignCropRight = true;
             var paper = TumpUiFactory.Rect(root, "SignInPaper").gameObject.AddComponent<TumpPaperEdge>();
             paper.color = f.Cream; paper.raycastTarget = false;
-            TumpUiFactory.Place(paper.rectTransform, 24, 18, 898, 1044);
+            paper.rectTransform.anchorMin = paper.rectTransform.anchorMax = new Vector2(0, .5f);
+            paper.rectTransform.pivot = new Vector2(0, .5f);
+            paper.rectTransform.anchoredPosition = new Vector2(24, 0); paper.rectTransform.sizeDelta = new Vector2(898, 1044);
             var logo = TumpUiFactory.Art(paper.transform, "OriginalLogo", TumpUiFactory.Sprite("UI/brand/tump_logo"));
             TumpUiFactory.Place(logo.rectTransform, 180, 34, 480, 250);
             var pieces = new List<GameObject>();
