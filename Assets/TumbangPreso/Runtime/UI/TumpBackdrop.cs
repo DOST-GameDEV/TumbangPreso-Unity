@@ -46,10 +46,18 @@ namespace TumbangPreso.UI
         private void LateUpdate()
         {
             if (_base == null || _base.texture == null) return;
+            var bounds = _base.rectTransform.rect;
+            // A Canvas has no usable rect before its first layout (and during teardown).
+            // Mapping source coordinates through a zero-width crop would write infinity
+            // into both foreground anchors, then CanvasRenderer rejects their bounds.
+            bool laidOut = bounds.width > .01f && bounds.height > .01f;
+            if (_can != null) _can.enabled = laidOut;
+            if (_slipper != null) _slipper.enabled = laidOut;
+            if (!laidOut) return;
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             if (Animate && _focused && !reduced) _phase = Mathf.Repeat(_phase + Time.unscaledDeltaTime, 14);
             float t = reduced ? 0 : _phase / 14 * Mathf.PI * 2;
-            float aspect = _base.rectTransform.rect.width / Mathf.Max(1, _base.rectTransform.rect.height);
+            float aspect = bounds.width / bounds.height;
             float source = (float)_base.texture.width / _base.texture.height;
             var uv = aspect < source ? new Rect((1 - aspect / source) * .5f, 0, aspect / source, 1)
                 : new Rect(0, (1 - source / aspect) * .5f, 1, source / aspect);

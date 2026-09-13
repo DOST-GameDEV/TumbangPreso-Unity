@@ -84,6 +84,32 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(account.IsOpen);
             Assert.IsNotNull(GameObject.Find("TumpHomeCanvas"));
         }
+        [UnityTest]
+        public IEnumerator IllustratedPropsWaitForRealLayoutBeforeMappingTheirAnchors()
+        {
+            var go = new GameObject("UnlaidOutBackdrop", typeof(RectTransform), typeof(RawImage));
+            var rect = (RectTransform)go.transform; rect.sizeDelta = Vector2.zero;
+            try
+            {
+                var backdrop = go.AddComponent<TumpBackdrop>();
+                backdrop.SendMessage("LateUpdate");
+                foreach (var prop in go.GetComponentsInChildren<Image>())
+                {
+                    Assert.IsFalse(prop.enabled, "Unlaid-out props must wait for positive dimensions.");
+                    Assert.IsFalse(float.IsNaN(prop.rectTransform.anchorMin.x) || float.IsInfinity(prop.rectTransform.anchorMin.x));
+                    Assert.IsFalse(float.IsNaN(prop.rectTransform.anchorMin.y) || float.IsInfinity(prop.rectTransform.anchorMin.y));
+                }
+                rect.sizeDelta = new Vector2(1920, 1080); backdrop.SendMessage("LateUpdate");
+                foreach (var prop in go.GetComponentsInChildren<Image>())
+                {
+                    Assert.IsTrue(prop.enabled);
+                    Assert.IsFalse(float.IsNaN(prop.rectTransform.anchorMin.x) || float.IsInfinity(prop.rectTransform.anchorMin.x));
+                    Assert.IsFalse(float.IsNaN(prop.rectTransform.anchorMin.y) || float.IsInfinity(prop.rectTransform.anchorMin.y));
+                }
+                yield return null;
+            }
+            finally { Object.DestroyImmediate(go); }
+        }
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
         private static void Press(string name)
         {
