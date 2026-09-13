@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import uuid
+import playerprefs_guard
 
 ROOT=Path(__file__).resolve().parents[1]
 UNITY=Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
@@ -52,6 +53,8 @@ def run(args):
             manifest[str(relative)]=digest(source)
     (backup/"manifest.json").write_text(json.dumps(manifest,indent=2))
     (backup/"scope.json").write_text(json.dumps({"profileRoot":str(profile)},indent=2))
+    editor_prefs=playerprefs_guard.read_editor()
+    (backup/"editor-input-prefs.json").write_text(json.dumps(editor_prefs,indent=2))
     result=1
     try:
         result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT).returncode
@@ -65,7 +68,8 @@ def run(args):
             shutil.copy2(backup/relative,destination)
             if digest(destination)!=expected:raise RuntimeError("Profile restore did not verify")
             restored+=1
-        print(f"Preserved {restored} existing profile files in {profile}; snapshot {backup.name}",flush=True)
+        playerprefs_guard.restore_editor(editor_prefs)
+        print(f"Preserved {restored} existing profile files in {profile} and {len(editor_prefs)} shared Editor input preferences; snapshot {backup.name}",flush=True)
     return result
 
 

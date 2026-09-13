@@ -9,6 +9,11 @@ import run_unity_guarded as guard
 
 
 class ProfileIsolationTests(unittest.TestCase):
+    def setUp(self):
+        reader=patch.object(guard.playerprefs_guard,'read_editor',return_value={})
+        writer=patch.object(guard.playerprefs_guard,'restore_editor')
+        reader.start();writer.start();self.addCleanup(reader.stop);self.addCleanup(writer.stop)
+
     def test_named_profile_uses_runtime_hash_and_trimming(self):
         expected=hashlib.sha256(b"map-review").hexdigest()
         self.assertEqual(guard.profile_root(["-TP-PROFILE"," map-review "]),

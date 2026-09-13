@@ -9,6 +9,15 @@ idempotency key for every retry. Never use a second credit. If the local state i
 missing/uncertain, do not invent a fresh authorization. This exception does not
 transfer to future tasks or authorize purchases. Consult the local state for
 redemption history. New explicit instructions/withdrawal take precedence.
+Use the earliest-expiring credit, explicitly NOT the October5credit. The allowed
+and forbidden credit IDs/expiries are in that private state file. Verify how the
+redemption tool selects a credit before spending; do not assume or silently use
+the other one. Immediately mark the authorization spent after successful reset
+or an already-redeemed response, and prohibit every later redemption.
+If the allowance unexpectedly refills to90-100%before this agent redeems (for
+example Tibo resets it), CANCEL the unused authorization. Do not spend another
+credit after an external reset. Record cancellation in the private state so a
+compaction cannot re-enable it. Parent alone handles this; UI agent never redeems.
 
 **One-time delegation exception, latest owner instruction:** exactly ONE
 GPT-6 Astra HIGH subagent may own the entire UI overhaul, with no conversation
@@ -16,6 +25,15 @@ history fork. Give it a focused complete brief and repository/reference pointers
 It may not create agents/tasks or delegate. No further subagents are authorized.
 The parent continues maps and non-UI work. Use an isolated UI checkout, coordinate
 Unity validation, and keep the parent as the sole integrator/pusher to ASTRAReworks.
+
+**Parent work allocation, explicit owner correction Sep14:** do not let UI
+monitoring/integration take over the parent's task. Parent actively implements
+maps/graphics, then its remaining gameplay/animation work. Give UI validation
+short coherent batch windows and resume a named parent task immediately afterward.
+On compaction read the parent's concrete next action from EXECUTION_PLAN first;
+do not default to polling/reviewing the UI agent. Agent owns its own design,
+implementation and critique; parent provides bounded integration/qualification.
+Only a demonstrated shared blocker justifies interrupting parent implementation.
 
 **Newest bird scope clarification:** the owner permits birds to pass through
 scenery during flight. Prioritize appealing motion and reliably flying away when
@@ -31,8 +49,12 @@ targeted ordinary-speed visual review, and keep evidence/limitations truthful.
 This supersedes older blanket full-suite and repeated-suite mandates below and
 in historical documents. Do not automatically restore them for a checkpoint.
 
-**Current delivery instruction:** continue the full work in this chat. The owner
-cancelled the handoff. Maps first, full UI second, animations/skills/play feel
+**Current delivery instruction:** continue the full work in this chat for now.
+The owner plans to move to another PC later and will explicitly ask for a handoff.
+WHEN asked: finish/save current runs, COMMIT AND PUSH to ASTRAReworks first, then
+provide the precise continuation prompt with exact commit, remaining work, source
+PDF/logo paths and current conditional reset state. Do not create a new task or
+handoff prematurely. Maps first, full UI second, animations/skills/play feel
 third. No Desktop rebuild now. See the newest active-ledger pointer and compact
 EXECUTION_PLAN for actual implementation and validation state. Older process
 records and contradictory historical requests never replace that pointer.
@@ -121,7 +143,28 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 
 ## Product and creative authority
 
+**Latest ability direction:** after current maps/UI work, audit every ability but
+preserve ones that are already polished. Improve or rebuild weak mechanics and
+presentation; the owner explicitly permits changing what skills do when it makes
+the game better. Image generation may help concepts, but critically reject ugly
+outputs instead of treating them as final direction. Ultimates must retain their
+individual special moments inspired by Tekken/Genshin. No automatic wholesale
+replacement of good work. Apply the same deliberate critique to all future art.
+
 ### Newest owner UI direction, 2026-09-13
+
+**Explicit controller exception:** the owner says the original controller screen
+already looked good and specifically wants its controller artwork, button
+callouts/buttons and connecting lines preserved/restored. Leave that presentation
+alone. This overrides the no-old-builders requirement for the approved controller
+screen only. It does not cancel the rest of the overhaul or change mapping logic.
+
+The owner specifically warns that the previous universal UI generator made
+everything look similar and ugly. Do not reproduce that with one new universal
+button/panel template. Use distinct compositions and component families for
+menus, portraits, settings, tabs, dialogs and HUD while sharing the brand system.
+Use image generation for stronger design direction or original loading/menu
+background artwork, as explicitly requested; keep logo and native UI editable.
 
 **Latest explicit implementation constraint:** build genuinely NEW UI builders,
 screen layouts and native editable components. Do not reuse/reskin the old UI
