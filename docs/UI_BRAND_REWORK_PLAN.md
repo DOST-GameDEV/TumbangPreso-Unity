@@ -217,3 +217,6 @@ source-manifest.json hashes were reverified, all five unchanged. Original Downlo
 paths remain in the manifest. PDF39-49 are layout ideas, not final instructions.
 Partial Home/Play UI is retained and tested; complete lobby/settings/pickers/HUD/
 loading/results/flow critique remains open. Read EXECUTION_PLAN for current work.
+
+## Latest UI ownership correction,2026-09-13
+The owner now authorizes ONE isolated UI subagent in parallel with parent map work. Older maps-first UI-pausing notes above are superseded. Full scope and current batch evidence live in UI_EXECUTION_STATUS.md. Overall composition inspiration remains her PDF (especially39-49 as ideas); the specific main-menu reference is Slay the Spire's calm restraint. Icons may be redesigned. Imagegen may create suitable original illustrated backgrounds with UI/text kept separate and original girlfriend logo preserved. Entire HUD/in-game UI, all menu/task flows and actual-screen iterative critique remain required.

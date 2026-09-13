@@ -18,7 +18,7 @@ namespace TumbangPreso.UI
     /// ⚠️ RECOVERY IS ON tatag AND RESET IS ON bilis. They read alike and sit on different
     /// keys. Check the key, never the word.
     /// </summary>
-    public sealed class ConvertedCharacterSelect : ConvertedScreen
+    public sealed partial class ConvertedCharacterSelect : ConvertedScreen
     {
         /// <summary>Raised when the panel closes, so the setup screen can re-read the picks.</summary>
         public event System.Action Closed;
@@ -103,7 +103,7 @@ namespace TumbangPreso.UI
             OnClick("ConfirmButton", Confirm);
             OnClick("BackButton", Dismiss);
 
-            WireTabs();
+            // The current brand composition below owns the category controls.
 
             // ⚠️⚠️⚠️ THIS SCREEN IS WOOD AGAIN AND IT IS THE ONLY ONE, ON HIS INSTRUCTION, WITH
             // A PICTURE OF THE VERSION HE WANTS BACK. 🧑 2026-09-02, sending a capture of the
@@ -140,13 +140,14 @@ namespace TumbangPreso.UI
             // lobby's whole scene and opens this panel through `CharacterButton`; it now skips
             // this subtree by name, with this quote in it. A gate that encodes a decision the
             // owner has reversed is a gate that has to be updated in the same commit, not muted.
-            PaperiseAuthoredBoard();
+            // Preserve the original board source and assets as a dormant reference.
 
             // ⚠️ AFTER THE BOARD AND BEFORE `Refresh`. These two chips are children of the panel
             // root rather than of any authored container, so they must not be built before the
             // restoration walks the tree, and `RefreshTabs` reads `_loadoutDoor` when it decides
             // whether the board's door is live.
             BuildStageDoors();
+            BuildBrandPicker();
 
             Refresh();
         }
@@ -700,8 +701,9 @@ namespace TumbangPreso.UI
                                         "›", false, 0.0f,
                                         () => CustomCharacterScreen.Ensure().Open());
 
-            if (heroes)
-                _loadoutDoor = StageDoor("LoadoutDoor", "LOADOUT", "your two skills",
+            // The same picker instance may be reopened after switching game mode.
+            // Visibility is owned by Refresh; retain the door for a later Hero selection.
+            _loadoutDoor = StageDoor("LoadoutDoor", "LOADOUT", "your two skills",
                                          "◆", true, StageDoorPitch,
                                          () => ToggleLoadoutBoard(true));
         }
@@ -903,7 +905,7 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            if (_loadoutBoard != null) Destroy(_loadoutBoard);
+            if (_loadoutBoard != null) { _loadoutBoard.SetActive(false); Destroy(_loadoutBoard); }
             BuildLoadoutBoard();
         }
 
@@ -946,6 +948,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildLoadoutBoard()
         {
+            if (_brandPicker != null) { BuildBrandAbilityBoard(); return; }
             string heroId = CurrentHeroId();
             if (string.IsNullOrEmpty(heroId)) return;
 
@@ -2387,6 +2390,7 @@ namespace TumbangPreso.UI
 
         private void Refresh()
         {
+            if (_brandPicker != null) { RefreshBrandPicker(); return; }
             int n = Entries.Count;
             if (n == 0) return;
             _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, n - 1);

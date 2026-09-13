@@ -25,32 +25,23 @@ namespace TumbangPreso.UI
 
         private void Build(Button button, StreetIcon.Glyph glyph)
         {
-            // Keep the original callback and target rectangle. Only its visual
-            // changes, so Back retains discard handling and controller semantics.
-            foreach (var image in button.GetComponentsInChildren<Graphic>(true)) image.enabled = false;
-            foreach (var skin in button.GetComponents<GodotButton>()) skin.enabled = false;
-            foreach (var skin in button.GetComponents<WoodSkin>()) skin.enabled = false;
-            foreach (var skin in button.GetComponents<PaperSkin>()) skin.enabled = false;
-            foreach (var skin in button.GetComponents<ArrowButtonView>()) skin.enabled = false;
-            _surface = button.GetComponent<StreetGraphic>();
-            if (_surface == null)
+            _surface = StreetUi.Restyle(button, StreetGraphic.Surface.Navigation);
+            var label = button.GetComponentInChildren<Text>(true);
+            bool wordsFit = ((RectTransform)button.transform).rect.width >= 120;
+            if (label != null)
             {
-                // Graphic permits only one instance per object. Keep the original
-                // image as an invisible hit area, and put the new drawing below it
-                // as a non-raycasting child. The original Button receives input.
-                var hit = button.GetComponent<Graphic>();
-                if (hit == null) hit = button.gameObject.AddComponent<Image>();
-                hit.enabled = true;
-                hit.color = Color.clear;
-                hit.raycastTarget = true;
-                button.targetGraphic = hit;
-                _surface = StreetUi.Detail(button.transform, "NavigationFace", StreetGraphic.Surface.Navigation);
-                MenuKit.Stretch(_surface.rectTransform);
+                label.enabled = wordsFit;
+                label.gameObject.SetActive(true);
+                label.text = glyph == StreetIcon.Glyph.Close ? "Close" : "Back";
+                label.fontSize = 26;
+                label.alignment = TextAnchor.MiddleCenter;
+                MenuKit.Read(label, true);
+                MenuKit.Stretch(label.rectTransform);
+                label.rectTransform.offsetMin = new Vector2(34, 4);
+                label.rectTransform.offsetMax = new Vector2(-8, -4);
             }
-            else { _surface.enabled = true; button.targetGraphic = _surface; }
-            _surface.Style = StreetGraphic.Surface.Navigation;
-            button.transition = Selectable.Transition.None;
-            StreetUi.Icon(button.transform, glyph, new Vector2(.5f,.5f), Vector2.zero, new Vector2(32,32));
+            StreetUi.Icon(button.transform, glyph, new Vector2(wordsFit ? 0 : .5f, .5f),
+                new Vector2(wordsFit ? 22 : 0, 0), new Vector2(24, 24));
         }
         public void OnPointerEnter(PointerEventData e) { if (_surface != null) _surface.OnPointerEnter(e); }
         public void OnPointerExit(PointerEventData e) { if (_surface != null) _surface.OnPointerExit(e); }

@@ -64,9 +64,9 @@ namespace TumbangPreso.UI
             if (Style == Surface.Weave) { Weave(vh, r); return; }
             if(Style==Surface.Route)
             {
-                if(live){var glow=UiTheme.BrandHoney;glow.a=.55f;Fill(vh,Shape(r,0),glow);}
+                if(live||Chosen){var glow=UiTheme.BrandHoney;glow.a=.55f;Fill(vh,Shape(r,0),glow);}
                 Line(vh,new Vector2(r.xMin+12,r.yMin+1),new Vector2(r.xMax-12,r.yMin+1),
-                    live?3:1,live?UiTheme.BrandRed:UiTheme.PaperSunk);
+                    live||Chosen?3:1,live||Chosen?UiTheme.BrandRed:UiTheme.PaperSunk);
                 float x=r.xMax-30,y=r.center.y;
                 Line(vh,new Vector2(x-12,y-9),new Vector2(x,y),3,UiTheme.BrandRed);
                 Line(vh,new Vector2(x,y),new Vector2(x-12,y+9),3,UiTheme.BrandRed);

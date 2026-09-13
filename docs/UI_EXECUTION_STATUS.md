@@ -19,3 +19,25 @@ The owner explicitly authorized this one UI subagent to overhaul the ENTIRE UI i
 
 ## Handoff receipts
 No implementation batch committed yet. No new Unity validation claimed. The original assets remain unchanged. Temporary comment-stripped lobby review text is disposable working analysis, not production source.
+
+## Brief audit, latest owner messages
+All earlier UI requirements are included:
+- OVERALL composition inspiration is the girlfriend's49-page TUMP PDF; pages39-49 are composition ideas, never final layouts. TITLE reference is specifically Slay the Spire's calm restraint: game name, few obvious choices, subtly animated background explaining the can/slipper street game. Do not copy its assets/layout.
+- Preserve the girlfriend's original coloured logo/marks unchanged and attributed accurately. Coherent quirky brand palette, warm print character, flexible two-family typography and a natural Filipino hint through street illustration/lettering, without flags or sacred-script decoration.
+- Distinguish primary actions, links, tabs, selectors, settings rows, cards, HUD and transient states. Progressive detail, concise English functional copy, proper names, few simultaneous choices, useful Back/focus and live binding glyphs.
+- Full scope: home/play; offline/online lobby, join/ready/custom; profile/account/friends/history; all18people/appearance; slippers/cans; hero builds/ability learning; graphics/audio/controls/accessibility and reversible previews; credits; training/tutorial; pause; loading/transitions; confirmations/errors; results/rematch; spectator/caster.
+- Full in-game UI: Classic/Hero distinctions, score/time/round/role, can/slipper state, stamina, pickup/throw/reset, cooldown/ultimate readiness, hold-to-read skill information, trip/stun mash/get-up and10second rooftop lost-stock feedback. Parent owns swimming/recovery/authority and later ability changes; coordinate semantic copy rather than inventing mechanics.
+- Redesign icons with consistent drawing language and distinguishable meanings/states. Original illustrated background generation is authorized via actual imagegen tool and skill when useful; no guessed model/version, no baked-in controls/text, no replacement/recreation of supplied logo.
+- Validate keyboard/mouse, controller and touch; relevant aspects/resolutions/scaling; long names, hitboxes, navigation, disabled/loading/error states. Review actual Unity screens and complete novice/returning task flows, criticize weaknesses and revise. Compilation/Figma alone cannot establish quality.
+- Preserve features/source art/saves/profile IDs. Character maker remains inaccessible with implementation/data retained. Street Hype stays removed. Custom Game retained; no redundant STANDARD RULES stepper. No independent controller bridge/MenuNav changes.
+
+## Batch1 receipt
+Committed a21b23b35cd0c9b6d3e19c38d4b891f8bd73e1f3: lobby composition and wired-control reskin,2focused BrandPreparationTests. Parent notified for isolated integration validation and captures. No Unity result yet. Early picker-back case deliberately has no capture/delay before hit; a failure is useful retained evidence, not a reason to add blind production delay.
+Figma Action component15:11, defaults15:7/focus15:9 and Label#15:0; spacing collection15:2 / variables15:3..6. Fonts read back match Darumadrop One and Work Sans. These represent design work, not final all-screen acceptance.
+
+## Editability and shape direction, newest owner clarification
+Keep functional text, shapes, layout and colours easy to edit. Figma uses native editable text/vector/components with named tokens; Unity retains structured UI source and shared theme/control factories. Keep generated art separate and replaceable; never bake text/buttons/icons into backgrounds. Quirky is required: purposeful angled print edges, expressive short headings and original drawn lines from the logo's character, not a generic rectangular dashboard or piles of decorative boxes. PDF layouts are inspiration only; improve them using judgment rather than copying. Current native Figma title18:6/actions and source-control components are editable; raster assets are only retained illustrations/logo.
+
+## Batch2 draft
+Visible roster/category selection replaces blind cycling. Existing indexed model preview, Confirm/Dismiss and saved IDs retained. Explicit Use this loadout action; current-versus-preview status. Hero skill board now shows one slot at a time with selectable alternatives, authoritative descriptions/gain/cost/challenge and a separate equip action. Classic has no skill door. Changing categories rebuilds visible choices, preserving focus integration.
+NavigationSymbol is presentation-only and now keeps a readable Back/Close label when the existing hit target has room; uses StreetUi factory instead of hiding all text. No ScreenFocus/MenuNav/device ownership code changed. New BrandPickerTests checks cancel/confirm and all hero slots with actual raycast targets and captures. Not compiled/visually accepted yet.

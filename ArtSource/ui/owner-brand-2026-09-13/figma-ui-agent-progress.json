@@ -1,0 +1,10 @@
+{
+  "fileKey": "I1snFz26WypEywfWMhF9jq",
+  "spacingCollection": "VariableCollectionId:15:2",
+  "spacingVariables": { "small": "VariableID:15:3", "medium": "VariableID:15:4", "large": "VariableID:15:5", "section": "VariableID:15:6" },
+  "action": { "set": "15:11", "default": "15:7", "focus": "15:9", "labelProperty": "Label#15:1" },
+  "navigation": { "component": "18:2", "labelProperty": "Label#18:0" },
+  "selectedTab": "18:4",
+  "title": { "frame": "18:6", "art": "18:7", "veil": "18:8", "column": "18:9", "logo": "18:10", "play": "18:13", "learn": "18:15", "settings": "18:17", "quit": "18:19", "credits": "18:21" },
+  "validation": "Title component instances rendered; Work Sans text family asserted. Original illustration/logo hashes reused. Variant combination changes Label#15:0 to Label#15:1; inspected after atomic failed write, corrected once. No Unity equivalence or whole-product completion claimed."
+}

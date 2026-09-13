@@ -24,7 +24,8 @@ namespace TumbangPreso.UI
                 var child = button.transform.Find(layer);
                 if (child != null) child.gameObject.SetActive(false);
             }
-            var surface = button.transform.Find("BrandSurface")?.GetComponent<StreetGraphic>();
+            var surface = button.GetComponent<StreetGraphic>()
+                ?? button.transform.Find("BrandSurface")?.GetComponent<StreetGraphic>();
             if (surface == null)
             {
                 surface = Detail(button.transform, "BrandSurface", style);
@@ -63,6 +64,7 @@ namespace TumbangPreso.UI
             label.name="Label"; label.raycastTarget=false;
             MenuKit.Apply(label,style==StreetGraphic.Surface.Action?MenuKit.Face.Display:MenuKit.Face.Body,true);
             MenuKit.Stretch(label.rectTransform,-12);
+            go.AddComponent<StreetControl>().Bind(button, surface);
             return button;
         }
         public static StreetIcon Icon(Transform parent, StreetIcon.Glyph kind, Vector2 anchor,
