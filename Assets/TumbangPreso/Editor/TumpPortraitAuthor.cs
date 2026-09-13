@@ -84,6 +84,9 @@ namespace TumbangPreso.EditorTools
                 // ModelPreview's zoom is a distance multiplier: smaller comes closer.
                 // Portraits favour the face/outfit; equipment uses its full silhouette.
                 preview.LookAt(category == 0 ? .72f : .50f, category == 0 ? .68f : .86f);
+                // This imported slide's identifying upper/decal faces the opposite
+                // direction. Camera-only correction, selected from four saved studies.
+                if (!orbit.HasValue && art.Id == "sike") orbit = new Vector2(450, 0);
                 if (orbit.HasValue) preview.Orbit(orbit.Value);
                 preview.StepForCapture();
                 if (preview.Target == null) throw new System.InvalidOperationException("Portrait render target missing: " + art.Id);
