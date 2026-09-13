@@ -16,6 +16,9 @@ namespace TumbangPreso.UI
         private void Awake()
         {
             _base = GetComponent<RawImage>(); _base.raycastTarget = false;
+#if UNITY_EDITOR
+            gameObject.AddComponent<TumpMeshAudit>();
+#endif
             var custom = TumpUiTheme.Current.StreetBackground;
             _base.texture = custom != null ? custom : Resources.Load<Texture2D>("UI/illustrations/street_background");
             if (_base.texture == null) _base.texture = Resources.Load<Texture2D>("UI/illustrations/street_key_art");
@@ -27,10 +30,17 @@ namespace TumbangPreso.UI
             var theme = TumpUiTheme.Current;
             if (theme.StreetProps != null)
             {
+#if UNITY_EDITOR
+                Debug.Log($"[TumpBackdropSource] texture={theme.StreetProps.width}x{theme.StreetProps.height} can={theme.StreetCanRect} slipper={theme.StreetSlipperRect}");
+#endif
                 _canSprite = Sprite.Create(theme.StreetProps, theme.StreetCanRect, new Vector2(.5f, 0), 100, 0, SpriteMeshType.FullRect);
                 _slipperSprite = Sprite.Create(theme.StreetProps, theme.StreetSlipperRect, new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect);
                 _can = TumpUiFactory.Art(transform, "IllustratedCan", _canSprite);
                 _slipper = TumpUiFactory.Art(transform, "IllustratedSlipper", _slipperSprite);
+#if UNITY_EDITOR
+                _can.gameObject.AddComponent<TumpMeshAudit>();
+                _slipper.gameObject.AddComponent<TumpMeshAudit>();
+#endif
             }
         }
         private RawImage Layer(string name, Vector2 pivot)
