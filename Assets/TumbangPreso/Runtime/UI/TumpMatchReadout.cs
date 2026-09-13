@@ -71,6 +71,7 @@ namespace TumbangPreso.UI
             {
                 var row = _scoreRows[i] = TumpUiFactory.Rect(_scoreRoot, "ScoreRow" + i);
                 TumpUiFactory.Place(row, 0, i * 70, 468, 66);
+                var strip = row.gameObject.AddComponent<TumpScoreStrip>(); strip.raycastTarget = false;
                 _portraits[i] = TumpUiFactory.Art(row, "PlayerPortrait", null);
                 TumpUiFactory.Place(_portraits[i].rectTransform, 0, 2, 62, 62);
                 _names[i] = Ink(row, "PlayerName", "", 32, true); _names[i].alignment = TextAnchor.MiddleLeft;
@@ -85,6 +86,8 @@ namespace TumbangPreso.UI
         {
             _clockRoot = TumpUiFactory.Rect(_root, "RoundClock");
             TumpUiFactory.Anchor(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -94), new Vector2(660, 170));
+            var face = TumpUiFactory.Surface(_clockRoot, "ClockFace", TumpSurface.Form.Disc, TumpUiTheme.Current.DeepOlive, false);
+            TumpUiFactory.Place(face.rectTransform, 154, -4, 352, 106);
             _clock = Ink(_clockRoot, "TimeLeft", "", 62, true); TumpUiFactory.Place(_clock.rectTransform, 174, 0, 312, 94);
             _round = Ink(_clockRoot, "RoundLabel", "", 28, true); TumpUiFactory.Place(_round.rectTransform, 0, 96, 660, 60);
         }
@@ -92,7 +95,10 @@ namespace TumbangPreso.UI
         {
             _canRoot = TumpUiFactory.Rect(_root, "CanReadout");
             TumpUiFactory.Anchor(_canRoot, new Vector2(1, 1), new Vector2(-252, -112), new Vector2(464, 176));
-            var can = TumpUiFactory.Art(_canRoot, "CanPortrait", TumpUiFactory.Sprite("UI/portraits/" + Roster.Cans[0].Id));
+            var can = TumpUiFactory.Rect(_canRoot, "CanStateIcon").gameObject.AddComponent<TumpSymbol>();
+            can.Kind = TumpSymbol.Icon.Can; can.color = TumpUiTheme.Current.Cream; can.raycastTarget = false;
+            var canOutline = can.gameObject.AddComponent<Outline>(); canOutline.effectColor = TumpUiTheme.Current.DeepOlive;
+            canOutline.effectDistance = new Vector2(2, -2);
             TumpUiFactory.Place(can.rectTransform, 0, 0, 92, 106);
             _canState = Ink(_canRoot, "CanState", "", 36, true); _canState.alignment = TextAnchor.MiddleLeft;
             TumpUiFactory.Place(_canState.rectTransform, 110, 12, 344, 74);
@@ -187,6 +193,10 @@ namespace TumbangPreso.UI
                 var portrait = actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
                     ? TumpUiFactory.Sprite("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
+                _portraits[i].enabled = portrait != null;
+                var strip = _scoreRows[i].GetComponent<TumpScoreStrip>();
+                bool mine = local != null && slot == local.PlayerSlot;
+                if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
             }
         }
         private void Can(CharacterMotor local, bool training)

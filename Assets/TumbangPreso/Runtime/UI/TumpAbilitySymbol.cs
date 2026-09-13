@@ -20,8 +20,9 @@ namespace TumbangPreso.UI
                     P(vh,0,.40f,.31f,.26f,.25f,-.13f,0,-.40f,-.25f,-.13f,-.31f,.26f,0,.40f);
                     P(vh,0,.25f,0,-.23f); break;
                 case AbilityGlyph.DanteFissure:
-                    P(vh,-.37f,.30f,-.12f,.11f,-.27f,-.03f,.06f,-.18f,-.11f,-.36f);
-                    P(vh,-.05f,.38f,.24f,.16f,.05f,.04f,.35f,-.13f,.19f,-.39f); break;
+                    P(vh,-.40f,-.25f,-.19f,.29f,.29f,.23f,.40f,-.31f,-.40f,-.25f);
+                    P(vh,.04f,.28f,-.09f,.11f,.08f,.04f,-.07f,-.11f,.10f,-.29f);
+                    P(vh,-.10f,.11f,-.30f,.04f);P(vh,.07f,-.01f,.33f,-.07f);break;
                 case AbilityGlyph.SeanRush: case AbilityGlyph.Dash:
                     P(vh,-.37f,.19f,.05f,.19f,.01f,.38f,.38f,0,.01f,-.33f,.05f,-.13f,-.37f,-.13f);
                     P(vh,-.40f,.36f,-.18f,.36f); break;
@@ -40,11 +41,15 @@ namespace TumbangPreso.UI
                     for(int i=0;i<3;i++){float a=i*Mathf.PI/3;V(vh,Dir(a)*.40f,Dir(a+Mathf.PI)*.40f);}
                     Ring(vh,0,0,.17f); break;
                 case AbilityGlyph.ZackSprint:
-                    Bolt(vh);P(vh,-.39f,.10f,-.21f,.10f);P(vh,-.38f,-.08f,-.24f,-.08f); break;
+                    P(vh,-.04f,.33f,-.10f,.02f,.18f,-.07f,.34f,-.26f,-.20f,-.26f,-.25f,-.14f,-.10f,.02f);
+                    P(vh,-.39f,.17f,-.20f,.17f);P(vh,-.42f,.02f,-.24f,.02f);P(vh,.08f,.35f,.01f,.18f,.17f,.18f,.08f,.03f);break;
                 case AbilityGlyph.ZackOvercharge: case AbilityGlyph.Empower:
-                    Ring(vh,0,0,.39f);Bolt(vh); break;
+                    P(vh,-.31f,.32f,-.31f,-.10f,-.19f,-.32f,.18f,-.32f,.31f,-.10f,.31f,.32f,.14f,.32f,.14f,-.06f,.07f,-.14f,-.07f,-.14f,-.14f,-.06f,-.14f,.32f,-.31f,.32f);
+                    P(vh,-.31f,.17f,-.14f,.17f);P(vh,.14f,.17f,.31f,.17f);break;
                 case AbilityGlyph.ZackThunderstrike:
-                    Bolt(vh);P(vh,-.36f,-.36f,0,-.25f,.36f,-.36f); break;
+                    P(vh,-.35f,.12f,-.37f,.24f,-.23f,.33f,-.08f,.29f,.02f,.41f,.21f,.36f,.30f,.24f,.38f,.21f,.36f,.11f,-.35f,.12f);
+                    P(vh,.03f,.10f,-.14f,-.13f,.03f,-.12f,-.04f,-.37f,.24f,-.03f,.08f,-.04f);
+                    P(vh,-.36f,-.37f,-.18f,-.31f);P(vh,.17f,-.31f,.36f,-.37f);break;
                 case AbilityGlyph.NemuPhase: case AbilityGlyph.Phase:
                     P(vh,-.30f,-.33f,-.30f,.16f,-.16f,.35f,.14f,.35f,.30f,.16f,.30f,-.33f,.14f,-.23f,0,-.36f,-.14f,-.23f,-.30f,-.33f);
                     Ring(vh,-.10f,.12f,.04f);Ring(vh,.10f,.12f,.04f); break;

@@ -13,6 +13,7 @@ namespace TumbangPreso.UI
         private readonly TumpAbilitySymbol[] _symbols = new TumpAbilitySymbol[3];
         private readonly Text[] _keys = new Text[3], _states = new Text[3], _names = new Text[3], _bodies = new Text[3], _timings = new Text[3];
         private readonly Image[] _keyGlyphs = new Image[3];
+        private readonly TumpSurface[] _keycaps = new TumpSurface[3];
         private readonly TumpAbilitySymbol[] _detailSymbols = new TumpAbilitySymbol[3];
         private RectTransform _deck, _detail;
         private Text _hint;
@@ -39,6 +40,10 @@ namespace TumbangPreso.UI
                 _keys[i] = TumpUiFactory.Text(_deck, "LiveBinding" + i, "", 28, true);
                 _keys[i].color = f.Cream; _keys[i].alignment = TextAnchor.MiddleCenter;
                 TumpUiFactory.Place(_keys[i].rectTransform, 16 + i * 144, 120, 132, 52);
+                _keys[i].font = f.Bold; _keys[i].fontSize = 30;
+                _keycaps[i] = TumpUiFactory.Surface(_deck, "KeyboardCap" + i, TumpSurface.Form.Ticket, f.Cream);
+                TumpUiFactory.Place(_keycaps[i].rectTransform, 52 + i * 144, 122, 60, 48);
+                _keycaps[i].transform.SetSiblingIndex(_keys[i].transform.GetSiblingIndex());
                 _keyGlyphs[i] = TumpUiFactory.Art(_keys[i].transform, "BindingGlyph", null);
                 TumpUiFactory.Stretch(_keyGlyphs[i].rectTransform, 5);
                 _states[i] = TumpUiFactory.Text(_dials[i].transform, "PowerState", "", 26);
@@ -112,9 +117,11 @@ namespace TumbangPreso.UI
                 _states[i].text = state;
                 _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : .25f);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
-                _keyGlyphs[i].sprite = Hud.OnTouch ? null : InputGlyphs.For(binding.ToUpperInvariant(), true);
+                bool gamepad = LastInputDevice.Current == InputDeviceKind.Gamepad;
+                _keyGlyphs[i].sprite = gamepad ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null;
                 _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
-                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : f.Cream;
+                _keycaps[i].gameObject.SetActive(!Hud.OnTouch && !gamepad && binding.Length <= 3);
+                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : _keycaps[i].gameObject.activeSelf ? f.DeepOlive : f.Cream;
             }
             if (kit.IsUltimateReady && !kit.PracticeMode && !_ultimateReady) GameServices.Audio?.PlayUi("sfx_super_ready");
             _ultimateReady = kit.IsUltimateReady && !kit.PracticeMode;

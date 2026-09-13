@@ -29,6 +29,10 @@ namespace TumbangPreso.UI
             _round.color = f.Brick; TumpUiFactory.Place(_round.rectTransform, 96, 54, 1700, 106);
             var next = TumpUiFactory.Text(root, "NextRole", "Next defender", 42, true);
             next.color = f.Brick; TumpUiFactory.Place(next.rectTransform, 120, 204, 700, 76);
+            var stage = TumpUiFactory.Surface(root, "DefenderSpotlight", TumpSurface.Form.Disc, f.Yellow, false);
+            TumpUiFactory.Place(stage.rectTransform, 92, 330, 646, 476);
+            var rim = TumpUiFactory.Surface(root, "DefenderSpotlightInner", TumpSurface.Form.Disc, f.Apricot, false);
+            TumpUiFactory.Place(rim.rectTransform, 142, 380, 546, 376);
             _portrait = TumpUiFactory.Art(root, "NextDefenderPortrait", null);
             TumpUiFactory.Place(_portrait.rectTransform, 124, 296, 540, 480);
             var floor = TumpUiFactory.Rect(root, "DefenderUnderline").gameObject.AddComponent<Image>();
@@ -50,8 +54,11 @@ namespace TumbangPreso.UI
                 _scores[i] = TumpUiFactory.Text(root, "StandingScore" + i, "", 46, true);
                 _scores[i].alignment = TextAnchor.MiddleRight;
                 TumpUiFactory.Place(_scores[i].rectTransform, 1608, y, 190, 90);
+                var rule = TumpUiFactory.Rect(root, "StandingRule" + i).gameObject.AddComponent<Image>();
+                rule.color = new Color(f.OliveSand.r, f.OliveSand.g, f.OliveSand.b, .55f); rule.raycastTarget = false;
+                TumpUiFactory.Place(rule.rectTransform, 922, y + 104, 872, 2);
             }
-            var go = TumpUiFactory.Button(root, "ContinueWarmup", "Continue warming up", dismiss, TumpSurface.Form.Link, f.Cream, 34);
+            var go = TumpUiFactory.Button(root, "ContinueWarmup", "Continue warming up", dismiss, TumpSurface.Form.Pebble, f.Lime, 34);
             TumpUiFactory.Anchor((RectTransform)go.transform, new Vector2(1, 0), new Vector2(-380, 90), new Vector2(580, 90));
             _buffer = TumpUiFactory.Text(root, "WarmupTime", "", 26);
             TumpUiFactory.Place(_buffer.rectTransform, 104, 960, 710, 66);

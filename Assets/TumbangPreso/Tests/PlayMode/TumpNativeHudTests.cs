@@ -21,6 +21,8 @@ namespace TumbangPreso.PlayTests
             var hud = Hud.Instance; var canvas = GameObject.Find("TumpMatchCanvas").GetComponent<Canvas>();
             Assert.IsTrue(hud.NativePresentation); Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>().Count(r => r.name.StartsWith("ScoreRow")));
+            Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name == "PlayerPortrait" && i.enabled && i.sprite != null),
+                "A sprite reference alone is not a visible portrait.");
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             yield return TumpUiCapture.Capture("NativeHud-Classic-v1", canvas, 1920, 1080, false, true);
