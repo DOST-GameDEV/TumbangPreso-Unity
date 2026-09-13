@@ -226,3 +226,6 @@ The owner explicitly requires COMPLETELY NEW UI builders and says "explicitly no
 
 ### Explicit approved-controller exception (latest owner instruction)
 Preserve Runtime/Input/ControllerMapScreen.cs with its original controller art, actual button callouts, connector lines and established layout/look. The owner expressly rejects its native list replacement. This screen alone may use its original builder; all other new-native requirements remain. TumpControllerView is only an entry/return adapter. Settings save/discard transactions remain active around controller edits. Do not alter mapping, bridge, MenuNav or input semantics.
+
+### Avoid the same-generator failure
+Owner explicitly warns that the previous universal generator made everything similar and ugly. Reusable raw primitives, palette, typography and focus behavior are acceptable; a universal panel/button composition is not. Audit distinct component families against purpose and rendered screens: calm title links; portrait roster tiles; separate mode-ensemble stamps; tabs; compact settings keys/toggles/sliders; real fields; dialogs; match HUD; transient alerts; ability readiness. Dedicated layout/shape components may share math without sharing one appearance. Preserve original approved controller diagram as its explicit exception.

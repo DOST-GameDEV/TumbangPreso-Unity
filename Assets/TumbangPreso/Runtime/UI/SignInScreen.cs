@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
     /// important thing about this flow: **never block a first-time player on a form.** This
     /// screen is only ever reached by pressing something.
     /// </summary>
-    public sealed class SignInScreen : MonoBehaviour
+    public sealed partial class SignInScreen : MonoBehaviour
     {
         /// <summary>
         /// The column's width in canvas UNITS, not as a fraction of the screen.
@@ -239,19 +239,18 @@ namespace TumbangPreso.UI
             // register is how a screen underneath finds out. See `ScreenTakeover.EscapeIsSpoken`.
             ScreenTakeover.Register(this, () => IsOpen);
 
-            _canvas = MenuKit.BuildCanvas(transform, "SignInCanvas");
+            _canvas = TumpUiFactory.Canvas(transform, "TumpSignInCanvas", 900);
 
             // ⚠️ ABOVE THE HUB'S 500. Signing in is reached FROM the hub and has to cover it; a
             // password field with a stats table showing through it is the thing this replaces.
             // See `PlayerHub.Install` for why both numbers are far above the converted screens.
-            _canvas.sortingOrder = 510;
+            _canvas.sortingOrder = 900;
 
             _root = new GameObject("SignInRoot", typeof(RectTransform));
             _root.transform.SetParent(_canvas.transform, false);
-            MenuKit.Stretch((RectTransform)_root.transform);
+            TumpUiFactory.Stretch((RectTransform)_root.transform);
 
-            BuildScrim();
-            BuildColumn();
+            BuildNativeSignIn();
 
             _root.SetActive(false);
         }
@@ -1711,6 +1710,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void SetMode(bool creating)
         {
+            if (_nativeForm) { SetNativeMode(creating); return; }
             _creating = creating;
 
             // ⚠️ THE PRIMARY IS THE ONLY LABEL THAT CHANGES WITH THE MODE NOW. This used to write
@@ -1857,6 +1857,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void Submit()
         {
+            if (_nativeBusy) return;
             string username = _username.text?.Trim() ?? "";
             string password = _password.text ?? "";
 
@@ -1866,9 +1867,10 @@ namespace TumbangPreso.UI
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
+            NativeBusy(true);
             try
             {
-                _error.color = UiTheme.PaperInkSoft;
+                _error.color = _nativeForm ? TumpUiTheme.Current.DeepOlive : UiTheme.PaperInkSoft;
                 _error.text = _creating ? "Creating your account..." : "Signing in...";
 
                 if (_creating) await account.UpgradeAsync(username, password);
@@ -1881,6 +1883,7 @@ namespace TumbangPreso.UI
             {
                 Fail(e.Message);
             }
+            finally { NativeBusy(false); }
         }
 
         /// <summary>
@@ -1897,14 +1900,16 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void GooglePressed()
         {
+            if (_nativeBusy) return;
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
             if (_googleButton != null) _googleButton.interactable = false;
+            NativeBusy(true);
 
             try
             {
-                _error.color = UiTheme.PaperInkSoft;
+                _error.color = _nativeForm ? TumpUiTheme.Current.DeepOlive : UiTheme.PaperInkSoft;
                 _error.text = "Finish signing in on the browser window.";
 
                 if (_creating) await account.LinkGoogleAsync();
@@ -1919,6 +1924,7 @@ namespace TumbangPreso.UI
             }
             finally
             {
+                NativeBusy(false);
                 if (_googleButton != null) _googleButton.interactable = true;
             }
         }
@@ -1967,7 +1973,7 @@ namespace TumbangPreso.UI
             // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
             // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.
             // It is also unreadably hot on cream.
-            _error.color = UiTheme.MenuRed;
+            _error.color = _nativeForm ? TumpUiTheme.Current.Brick : UiTheme.MenuRed;
             _error.text = message ?? "";
         }
     }

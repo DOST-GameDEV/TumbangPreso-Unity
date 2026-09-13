@@ -87,7 +87,7 @@ namespace TumbangPreso.UI
             new Credit("SLIPPER",
                 "Footwear combines credited sourced models and the project's authored prop work."),
             new Credit("MENU ARTWORK",
-                "TUMP logos and the UI direction are original team artwork. Additional illustrated layers were prepared for this placeholder UI pass; final interface artwork will be replaced by the team."),
+                "Original TUMP logos and brand direction supplied by the team. Additional illustrated background layers accompany the editable game interface."),
         };
 
         public readonly struct TeamMember

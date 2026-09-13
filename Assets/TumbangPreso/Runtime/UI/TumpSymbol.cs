@@ -6,7 +6,7 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TumpSymbol : MaskableGraphic
     {
-        public enum Icon { Back, Check, Close, Settings, Audio, Controller, Keyboard, Eye, Person, Exit, Book, Info }
+        public enum Icon { Back, Check, Close, Settings, Audio, Controller, Keyboard, Eye, Person, Exit, Book, Info, Bots, Friends, Trophy }
         public Icon Kind;
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -26,6 +26,9 @@ namespace TumbangPreso.UI
                 case Icon.Person:Ring(vh,0,.18f,.17f,.20f);P(vh,-.35f,-.35f,-.29f,-.14f,-.12f,-.06f,.13f,-.06f,.30f,-.15f,.35f,-.35f);break;
                 case Icon.Exit:P(vh,.06f,.37f,-.31f,.32f,-.31f,-.34f,.06f,-.38f);P(vh,-.02f,0,.39f,0,.20f,.18f);P(vh,.39f,0,.20f,-.18f);break;
                 case Icon.Book:P(vh,0,.26f,-.36f,.35f,-.36f,-.25f,0,-.34f,.36f,-.25f,.36f,.35f,0,.26f,0,-.34f);P(vh,-.26f,.16f,-.11f,.12f);P(vh,.10f,.12f,.27f,.17f);break;
+                case Icon.Bots:P(vh,-.29f,.25f,.29f,.25f,.32f,-.23f,-.31f,-.23f,-.29f,.25f);P(vh,0,.25f,0,.38f);Ring(vh,0,.40f,.035f,.035f);Ring(vh,-.13f,.06f,.045f,.045f);Ring(vh,.13f,.06f,.045f,.045f);P(vh,-.13f,-.13f,.13f,-.13f);break;
+                case Icon.Friends:Ring(vh,-.15f,.18f,.12f,.15f);Ring(vh,.22f,.20f,.10f,.13f);P(vh,-.39f,-.30f,-.33f,-.10f,-.14f,-.03f,.04f,-.10f,.10f,-.30f);P(vh,.10f,-.05f,.24f,-.01f,.37f,-.09f,.41f,-.27f);break;
+                case Icon.Trophy:P(vh,-.23f,.35f,.23f,.35f,.19f,-.04f,0,-.17f,-.19f,-.04f,-.23f,.35f);P(vh,-.24f,.25f,-.41f,.25f,-.37f,.02f,-.18f,-.08f);P(vh,.24f,.25f,.41f,.25f,.37f,.02f,.18f,-.08f);P(vh,0,-.16f,0,-.36f);P(vh,-.20f,-.36f,.20f,-.36f);break;
                 default:Ring(vh,0,0,.36f,.36f);P(vh,0,-.22f,0,.05f);Ring(vh,0,.20f,.02f,.02f);break;
             }
         }

@@ -30,7 +30,35 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class ConvertedMainMenu : ConvertedScreen
     {
+        private TumpHomeView _nativeHome;
+        private TumpCreditsView _nativeCredits;
+        private void Awake()
+        {
+            foreach (Transform child in transform) child.gameObject.SetActive(false);
+            var entrance = GetComponent<PennantEntrance>(); if (entrance != null) entrance.enabled = false;
+        }
         protected override void Wire()
+        {
+            _nativeHome = gameObject.AddComponent<TumpHomeView>();
+            var settingsOwner = new GameObject("NativeSettingsOwner");
+            settingsOwner.transform.SetParent(transform, false); settingsOwner.SetActive(false);
+            var settings = settingsOwner.AddComponent<ConvertedSettingsPanel>();
+            settings.BackPressed += _nativeHome.Resume;
+            _nativeHome.Build(transform, () => { _nativeHome.Suspend(); settingsOwner.SetActive(true); }, () =>
+            {
+                _nativeHome.Suspend();
+                if (_nativeCredits == null) _nativeCredits = gameObject.AddComponent<TumpCreditsView>();
+                _nativeCredits.Open(transform, _nativeHome.Resume);
+            });
+            var signIn = GetComponent<SignInScreen>();
+            if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
+            signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
+            Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            GameServices.Music?.Play("menu", GameServices.MenuTrack);
+            OfferTheLoginStep();
+        }
+
+        private void WireLegacyReference()
         {
             // ⚠️⚠️ PLAY LANDS ON THE LOBBY, NOT ON A SINGLE-PLAYER / MULTIPLAYER PICKER. 🧑
             // 2026-08-28: *"Rewire clicking play from main menu to directly the lobby bcz we dont

@@ -23,7 +23,17 @@ namespace TumbangPreso.UI
         /// <summary>`mode_select.gd` backs out to the title on Escape.</summary>
         protected override string CancelTarget => SceneFlow.MainMenu;
 
+        private void Awake()
+        {
+            foreach (Transform child in transform) child.gameObject.SetActive(false);
+            var entrance = GetComponent<PennantEntrance>(); if (entrance != null) entrance.enabled = false;
+        }
         protected override void Wire()
+        {
+            gameObject.AddComponent<TumpPlayView>().Build(transform);
+        }
+
+        private void WireLegacyReference()
         {
             OnClick("SoloButton", () =>
             {
@@ -55,7 +65,7 @@ namespace TumbangPreso.UI
 
         protected override bool Cancel()
         {
-            var screen = GetComponent<PlaySelectionScreen>();
+            var screen = GetComponent<TumpPlayView>();
             if (screen == null) return base.Cancel();
             screen.Back();
             return true;
