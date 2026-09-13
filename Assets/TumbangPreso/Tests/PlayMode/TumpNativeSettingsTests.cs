@@ -83,10 +83,13 @@ namespace TumbangPreso.PlayTests
             yield return Open();
             Press(Find("InputDeviceValue")); yield return null; Press(Find("Choice1")); yield return null;
             Press(Find("ControllerMapAction")); yield return null;
-            var controller = GameObject.Find("TumpControllerCanvas").GetComponent<Canvas>();
-            Assert.IsNotNull(GameObject.Find("ControllerDiagram").GetComponent<Image>().sprite);
-            yield return TumpUiCapture.Capture("NativeController-v1", controller, 1920, 1080);
-            Press(Find("TumpControllerBack")); yield return null;
+            var controller = GameObject.Find("ControllerMapCanvas").GetComponent<Canvas>();
+            Assert.IsNotNull(controller.transform.Find("Diagram").GetComponent<Image>().sprite);
+            Assert.AreEqual(18, controller.GetComponentsInChildren<Button>().Count(b => b.name.StartsWith("Callout_")));
+            Assert.GreaterOrEqual(controller.transform.Find("Leaders").childCount, 18, "Keep the approved connector lines.");
+            Assert.IsNull(GameObject.Find("TumpControllerCanvas"), "The rejected list presentation must stay inactive.");
+            yield return TumpUiCapture.Capture("ApprovedController-restored-v1", controller, 1920, 1080, false);
+            Press(Find("Done")); yield return null; yield return null;
             Press(Find("InputDeviceValue")); yield return null; Press(Find("Choice2")); yield return null;
             float scale = TouchLayoutStore.Scale;
             Press(Find("TouchLayoutAction")); yield return null;
