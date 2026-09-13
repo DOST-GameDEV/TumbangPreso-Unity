@@ -64,9 +64,17 @@ def evaluate_swim(folder,rejoin):
         if len(motion)<10:errors.append(name+' did not select its real serialized swimming animation')
         if any(not r['shoeActive'] or r['trip']>0 for r in records):errors.append(name+' treated accessible water as an off-roof loss/fall')
         if wet and min(r['y'] for r in wet)<-1.2:errors.append(name+' swimmer hit the basin floor')
-        if name=='owner' and wet and min(r['eyeY'] for r in wet)<.10:errors.append('Owner eye submerged during the swim')
+        if name=='owner' and wet:
+            # Sa surface is.04m and the actual camera near plane is.05m.
+            # The old absolute.10 test labelled an eye at.0972 "submerged"
+            # despite its entire near-plane clearance remaining above water.
+            entry_clearance=min(r['eyeY'] for r in wet)-.04
+            settled=[r for r in wet if r['time']>wet[0]['time']+1]
+            if entry_clearance<.05:errors.append('Owner camera lost its near-plane clearance above water during entry')
+            if not settled or min(r['eyeY'] for r in settled)<.04+.08:errors.append('Settled owner eye lacks the required above-water clearance')
         measurements[name]={'swimSamples':len(wet),'floatingSamples':len(floating),'animatedSamples':len(motion),
             'postFloatHeldSamples':len(held_after),'dryExitHeldSamples':len(exited),'minimumY':min(r['y'] for r in records)}
+        if name=='owner' and wet:measurements[name].update(minimumEyeY=min(r['eyeY'] for r in wet),minimumEyeClearance=entry_clearance,settledMinimumEyeY=min((r['eyeY'] for r in settled),default=None))
     if rejoin:
         joined=rows(folder/'rejoined.csv');wet=sum(r.get('swimming',0)>0 for r in joined)
         if wet<3:errors.append('Rejoined observer did not restore the active swimmer')

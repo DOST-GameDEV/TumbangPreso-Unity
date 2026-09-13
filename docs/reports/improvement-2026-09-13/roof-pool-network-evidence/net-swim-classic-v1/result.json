@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "swimSamples": 252,
+      "floatingSamples": 92,
+      "animatedSamples": 245,
+      "postFloatHeldSamples": 382,
+      "dryExitHeldSamples": 243,
+      "minimumY": -0.926
+    },
+    "owner": {
+      "swimSamples": 208,
+      "floatingSamples": 66,
+      "animatedSamples": 208,
+      "postFloatHeldSamples": 377,
+      "dryExitHeldSamples": 244,
+      "minimumY": -0.926,
+      "capturedFrames": 223,
+      "captureSegments": {
+        "owner": 223
+      }
+    },
+    "observer": {
+      "swimSamples": 215,
+      "floatingSamples": 67,
+      "animatedSamples": 215,
+      "postFloatHeldSamples": 380,
+      "dryExitHeldSamples": 245,
+      "minimumY": -0.9379,
+      "capturedFrames": 230,
+      "captureSegments": {
+        "observer": 230
+      }
+    }
+  },
+  "mode": "classic",
+  "case": "swim",
+  "delayOneWayMs": 0,
+  "runtimeSha256": "0ef9a459ca3525f7f1f356ba76ef26c3ce31ea564513734bda540e7bdad22d74",
+  "exe": "C:\\Users\\Matthew\\Documents\\Codex\\2026-09-09\\ok-x20\\work\\TumbangPreso-Unity\\Builds\\RoofReview\\TumbangPreso.exe"
+}

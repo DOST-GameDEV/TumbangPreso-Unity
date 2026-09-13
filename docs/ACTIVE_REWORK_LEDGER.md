@@ -2,6 +2,26 @@
 
 ## Current execution pointer,2026-09-13 evening
 
+**Latest proof, no active parent processes:** internal Windows30971b59 succeeded
+60s at21:54, Builds/RoofReview/TumbangPreso.exe; runtime SHA256
+0ef9a459ca3525f7f1f356ba76ef26c3ce31ea564513734bda540e7bdad22d74.
+Classic pool actual3process test passed; Hero pool150ms+observer rejoin passes
+with corrected clearance evaluator on the SAME saved trace (not rerun): minimum
+eye.0972m above water.04m plus near plane.05m, settled eye.3786m. Original false
+"submerged" result preserved. Current outer-rail Classic150ms+4s overlapping
+stun also passed:10acceptedmash,4.2s recovery,~10s stock return+pickup, independent
+tag clock intact. Reports/roof-pool-network.md and Logs/net-*-v1 hold exact proof.
+No Desktop changes. All sessions20860/43762/13670/24648 are collected/retired.
+
+Primary HEAD26a2a51d includes agent native UI3bc73746 beyond the internal build.
+Native picker v3 passed2/2; parent reviewed portrait names/Back/stage and skill
+icons. Agent continues new-native settings/title/play/HUD, polishing focus marker
+and signature symbols. CharacterNameplate world-ring water placement is reserved
+to the UI agent; parent found the old foot disc submerged/floating in pool views.
+Next parent: save current report/evaluator correction and continue remaining
+graphics/map-readability work while native UI completes, then full play-feel/
+equipment/skills/TODO. No additional agents ever without renewed authorization.
+
 **Current checkpoint/build preparation:** all parent sessions collected; none
 running. Forward breaststroke vs idle/strafe/back sculling passed1/1 focused
 both-mode body/FPP check (Logs/swim-breaststroke-motion-v1.xml). Authored80clips

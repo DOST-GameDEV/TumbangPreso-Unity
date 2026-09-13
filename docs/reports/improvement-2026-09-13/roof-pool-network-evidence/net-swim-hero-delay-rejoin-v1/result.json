@@ -1,0 +1,49 @@
+{
+  "ok": false,
+  "errors": [
+    "Owner eye submerged during the swim"
+  ],
+  "measurements": {
+    "host": {
+      "swimSamples": 259,
+      "floatingSamples": 97,
+      "animatedSamples": 252,
+      "postFloatHeldSamples": 375,
+      "dryExitHeldSamples": 231,
+      "minimumY": -1.1528
+    },
+    "owner": {
+      "swimSamples": 213,
+      "floatingSamples": 67,
+      "animatedSamples": 213,
+      "postFloatHeldSamples": 372,
+      "dryExitHeldSamples": 236,
+      "minimumY": -1.1528,
+      "capturedFrames": 223,
+      "captureSegments": {
+        "owner": 223
+      }
+    },
+    "observer": {
+      "swimSamples": 131,
+      "floatingSamples": 21,
+      "animatedSamples": 131,
+      "postFloatHeldSamples": 316,
+      "dryExitHeldSamples": 223,
+      "minimumY": -1.1583,
+      "capturedFrames": 274,
+      "captureSegments": {
+        "observer": 96,
+        "rejoined": 178
+      }
+    },
+    "rejoin": {
+      "swimmingSamples": 91
+    }
+  },
+  "mode": "hero",
+  "case": "swim",
+  "delayOneWayMs": 150.0,
+  "runtimeSha256": "0ef9a459ca3525f7f1f356ba76ef26c3ce31ea564513734bda540e7bdad22d74",
+  "exe": "C:\\Users\\Matthew\\Documents\\Codex\\2026-09-09\\ok-x20\\work\\TumbangPreso-Unity\\Builds\\RoofReview\\TumbangPreso.exe"
+}
