@@ -12,14 +12,8 @@ namespace TumbangPreso.Diagnostics
     /// arbitrary bonuses"*. This layer is a RECORD, and the value of a record is that it is
     /// trustworthy rather than that it is generous.
     ///
-    /// ⚠️⚠️ IT IS `Hud.ReportStyle`'S ARGUMENT ONE LEVEL UP, AND IT IS NOT A REPLACEMENT FOR IT.
-    /// Street Hype is Classic's bottom-of-screen identity and is deliberately cosmetic and
-    /// deliberately LOCAL: it names a curve or a bank while it is happening, for the player who
-    /// did it, and then it is gone. What nothing could answer afterwards is *what happened in
-    /// this match and when*, which is what a replay, a spectator ticker and a post-match summary
-    /// all need. `SpectatorCamera.QueueHighlight`'s own note records the shape of the gap: until
-    /// the marker was stamped onto a captured frame, *"nothing in the buffer knew WHEN the tag
-    /// was"*. This is that stamp, kept outside the ring so it outlives the ten seconds of pixels.
+    /// Markers record what happened and when for replay and post-match summaries.
+    /// They are independent of the retired Street Hype meter and award no currency.
     ///
     /// ⚠️⚠️ IT RECORDS ON EVERY PEER, FROM `MatchFlair.Play`, AND THAT IS DELIBERATE RATHER THAN
     /// CONVENIENT. `MatchFlair` already replicates the EVENT to every machine and each one draws

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.UI;
@@ -116,6 +117,33 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(overflowing,
                 "these labels draw outside the box they were given:\n  " +
                 string.Join("\n  ", overflowing));
+        }
+
+        [UnityTest]
+        public IEnumerator AdvancedRulesRemainReachableAfterRemovingTheMainFormatStepper()
+        {
+            Screen.SetResolution(Width,Height,false);
+            SceneFlow.Networked=false;
+            yield return ProbeWait.Done(SceneManager.LoadSceneAsync("MatchSetup",LoadSceneMode.Single),"scene load");
+            for(int i=0;i<SettleFrames;i++)yield return null;
+            Assert.IsNull(FindByName("FormatRow"),"The removed RULES shortcut is still installed");
+            var toggle=FindByName("SettingsDrawerToggle").GetComponent<Button>();
+            toggle.onClick.Invoke();
+            for(int i=0;i<10;i++)yield return null;
+            var buttons=Object.FindObjectsByType<Button>(FindObjectsSortMode.None);
+            var door=buttons.FirstOrDefault(b=>b.transform.parent.parent.GetComponentsInChildren<Text>()
+                .Any(t=>t.text=="CUSTOM GAME"));
+            Assert.IsNotNull(door,"Existing advanced rules editor has no live door");
+            Assert.IsTrue(door.interactable);
+            var pointer=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
+            {position=RectTransformUtility.WorldToScreenPoint(null,door.GetComponent<RectTransform>().TransformPoint(door.GetComponent<RectTransform>().rect.center))};
+            var hits=new List<UnityEngine.EventSystems.RaycastResult>();
+            UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointer,hits);
+            Assert.IsNotEmpty(hits);
+            Assert.AreSame(door,hits[0].gameObject.GetComponentInParent<Button>(),"A different surface covers the advanced rules button");
+            UnityEngine.EventSystems.ExecuteEvents.Execute(door.gameObject,pointer,UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+            yield return null;
+            Assert.IsTrue(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
         }
 
         /// <summary>

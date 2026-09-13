@@ -25,8 +25,8 @@ namespace TumbangPreso
     /// used to be three synthesised cues. See § THE PASS.
     ///
     /// ⚠️⚠️ AND THE TWO MODES ANSWER IT DIFFERENTLY. See `OverheadPassWindow`: Hero Strike gets
-    /// double cooldown rate while the consist is over the street, Classic gets Street Hype and
-    /// the spectacle. `docs/VISION.md` § 1.1 is why, and it is not negotiable: Classic does not
+    /// double cooldown rate while the consist is over the street. Classic keeps
+    /// the passing train and its sound. Classic does not
     /// receive powers, from a hero kit or from a map.
     /// </summary>
     public sealed class LrtTrainFlyby : MonoBehaviour
@@ -99,7 +99,6 @@ namespace TumbangPreso
         private bool _whooshPlayed;
         private bool _warned;
         private bool _windowOpen;
-        private bool _hypeAwarded;
 
         private void Start()
         {
@@ -128,7 +127,6 @@ namespace TumbangPreso
                 _whooshPlayed = false;
                 _warned = false;
                 _windowOpen = false;
-                _hypeAwarded = false;
                 return;
             }
 
@@ -406,21 +404,7 @@ namespace TumbangPreso
                 return;
             }
 
-            // Classic. Cosmetic only, and only for the local player, which is what ReportStyle
-            // already enforces.
-            if (_hypeAwarded) return;
 
-            _hypeAwarded = true;
-            var round = GameServices.Round;
-            if (round == null) return;
-
-            foreach (var seat in round.Players)
-            {
-                if (seat == null) continue;
-                // ⚠️ NOT RELAYED. The consist is simulated independently on every peer off the
-                // same `Interval`, so each screen reaches this line itself.
-                Hud.ReportStyle(seat.PlayerSlot, 4.0f, "ILALIM NG TULAY", relay: false);
-            }
         }
     }
 }

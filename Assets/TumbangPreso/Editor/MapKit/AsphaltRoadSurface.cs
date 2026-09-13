@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -322,6 +323,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 hidden++;
             }
 
+            if(map.Scene==IlalimNgTulayBuilder.ScenePath)CompleteIlalimStreetSurface();
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
 
@@ -334,6 +337,48 @@ namespace TumbangPreso.EditorTools.MapKit
                       $"removed {removedPatches} patch slabs.");
 
             return true;
+        }
+
+        // The old 37 m skin ended inside the visible road. Continue along the
+        // actual carriageway and its cross streets, without covering sidewalks or
+        // the lower surrounding ground. World-aligned UV offsets keep seams quiet.
+        internal static void CompleteIlalimStreetSurface()
+        {
+            var root=GameObject.Find("IlalimNgTulay");
+            if(root==null)return;
+            var surface=root.transform.Find(ObjectName);
+            var road=root.transform.Find("Dressing/Kalsada");
+            if(surface==null||road==null)return;
+            var roads=road.GetComponentsInChildren<MeshRenderer>();
+            var continuations=roads.Where(r=>r.name.StartsWith("RoadContinuation")).ToArray();
+            if(continuations.Length!=2)throw new System.InvalidOperationException("Expected both road continuations");
+            float minZ=continuations.Min(r=>r.bounds.min.z),maxZ=continuations.Max(r=>r.bounds.max.z);
+            ApplySurface(surface,new Bounds(new Vector3(0,0,(minZ+maxZ)*.5f),
+                new Vector3(IlalimNgTulayBuilder.RoadHalfX*2,0,maxZ-minZ)),IlalimMaterialPath);
+            var old=root.transform.Find("AsphaltCrossStreets");
+            if(old!=null)Object.DestroyImmediate(old.gameObject);
+            var group=new GameObject("AsphaltCrossStreets").transform;group.SetParent(root.transform,false);
+            foreach(var source in roads.Where(r=>r.name.StartsWith("BackgroundCrossroad_")))
+            {
+                var quad=GameObject.CreatePrimitive(PrimitiveType.Quad);
+                quad.name=source.name+"_Surface";quad.transform.SetParent(group,false);
+                Object.DestroyImmediate(quad.GetComponent<Collider>());
+                ApplySurface(quad.transform,source.bounds,MaterialDirectory+"/Asphalt_"+source.name+".mat");
+            }
+        }
+
+        private static void ApplySurface(Transform quad,Bounds bounds,string materialPath)
+        {
+            quad.position=new Vector3(bounds.center.x,IlalimNgTulayBuilder.RoadTop+LiftMetres,bounds.center.z);
+            quad.rotation=Quaternion.Euler(90,0,0);quad.localScale=new Vector3(bounds.size.x,bounds.size.z,1);
+            var material=BuildMaterial(bounds.size,materialPath);
+            // The rotated quad's V increases toward negative world Z.
+            material.mainTextureOffset=new Vector2(bounds.min.x/MetresPerTile,-bounds.max.z/MetresPerTile);
+            material.color=new Color(1,.94f,.86f);
+            var renderer=quad.GetComponent<MeshRenderer>();renderer.sharedMaterial=material;
+            renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows=true;quad.gameObject.isStatic=true;
+            EditorUtility.SetDirty(material);
         }
 
         /// <summary>

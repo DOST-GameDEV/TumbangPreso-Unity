@@ -238,3 +238,9 @@ modes,discarding analog magnitude. Even reviewinput .2 therefore moved atfullspe
 After grounding,assess preserving analog magnitude in the sharedmotor (including
 AI partial-intent consumers),alongside observed ratherthancommanded gait speed.
 This concerns motor/control feel,not separate-owned controller device mappings.
+
+Latest ultimate direction: the owner wants each ultimate to have its own special
+moment, citing Tekken and Genshin Impact as impact/timing references. Give each a
+distinct preparation, camera/body sequence, sound, imposing payoff and recovery;
+keep opponent tells/counterplay visible and the native blocky style. No copied
+characters/effects, forced long input locks or shared generic recolored cutscene.

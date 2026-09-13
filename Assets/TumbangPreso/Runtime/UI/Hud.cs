@@ -384,17 +384,6 @@ namespace TumbangPreso.UI
         /// <summary>How long a refused press ticks its tile red. Seconds.</summary>
         private const float RefusalFlashSeconds = AbilityDeckHud.RefusalFlashSeconds;
 
-        private GameObject _classicDeck;
-        private Text _classicTitle;
-        private Text _classicEvent;
-        private Image _classicFill;
-        private RectTransform _classicDeckRt;
-        private float _streetHype;
-        private float _streetHypeGrace;
-        private float _streetHypePunch;
-        private bool _streetHypeMaxCelebrated;
-        private int _streetHypeRound = -1;
-
         private readonly List<StatusRow> _rows = new List<StatusRow>();
         private readonly List<StatusRow> _states = new List<StatusRow>();
         private readonly List<StatusRow> _cooldowns = new List<StatusRow>();
@@ -1023,7 +1012,6 @@ namespace TumbangPreso.UI
             if (_stackRight != null) _stackRight.gameObject.SetActive(false);
             if (_indicators != null) _indicators.gameObject.SetActive(false);
             if (_heroDeck != null) _heroDeck.SetActive(false);
-            if (_classicDeck != null) _classicDeck.SetActive(false);
 
             // ⚠️⚠️ THE TWO CARDS THAT ARE NOT CHILDREN OF THIS HUD, SWEPT BY TYPE. 🧑 2026-08-27:
             // *"fix all these spectator hud problems wtf some shit dont hide"*, with a watcher's
@@ -1416,7 +1404,6 @@ namespace TumbangPreso.UI
             UpdateLataCard();
             UpdateStatus();
             UpdateHeroDeck();
-            UpdateClassicDeck(dt);
             UpdateDanger();
             UpdateToast(dt);
             UpdateCountdown(dt);
@@ -2791,7 +2778,6 @@ namespace TumbangPreso.UI
             BuildStatusStacks();
             BuildHeroDeck();
             _inspect = AbilityInspectPanel.Create(_root);
-            BuildClassicDeck();
             BuildFloatingText();
             BuildCrosshair();
 
@@ -2883,7 +2869,7 @@ namespace TumbangPreso.UI
         private void StripToTrainingChrome()
         {
             // ⚠️⚠️ THE FLAG IS THE FIX; THE FOUR `SetActive` CALLS ARE ONLY THE FIRST FRAME.
-            // `UpdateLataCard` and `UpdateClassicDeck` both decide their own visibility EVERY
+            // `UpdateLataCard` decides its own visibility EVERY
             // frame and would have switched two of these straight back on, so a build-time
             // deactivation on its own would have looked like it worked for exactly one frame.
             _trainingChrome = true;
@@ -2891,7 +2877,6 @@ namespace TumbangPreso.UI
             if (_topCentre != null) _topCentre.SetActive(false);
             if (_scoreboard != null) _scoreboard.gameObject.SetActive(false);
             if (_lataCard != null) _lataCard.gameObject.SetActive(false);
-            if (_classicDeck != null) _classicDeck.SetActive(false);
             if (_lataAlert != null) _lataAlert.enabled = false;
         }
 
@@ -4120,15 +4105,8 @@ namespace TumbangPreso.UI
             // from: the objective line was unreadable at 32 pt in the brightest colour available.
             // ⚠⚠ BOTH OF THESE SAT INSIDE THE ABILITY DECK, AND THE ARITHMETIC SAYS SO
             // RATHER THAN THE SCREENSHOT. The decks are bottom-anchored with a bottom pivot, so
-            // the hero row spans y 14 to 92 (`DeckBottomMargin` + `DeckHeight`) and the Classic
-            // row spans 24 to 124. The prompt plate was pinned at 92 with a bottom pivot, which
-            // is 92 to 126: flush with the top edge of the hero deck and **32 of its 34 px
-            // inside the Classic one**. The inspect hint at 78 was fully buried by both.
-            //
-            // ⚠ STACKED UPWARD FROM THE TALLER DECK, so one set of numbers is correct in both
-            // modes. Classic's 124 is the floor; the hint takes 132 to 150 and the prompt plate
-            // 156 to 190, which leaves 8 px over the deck and 6 px between the two lines.
-            const float DeckCeiling = 124.0f;   // Classic's deck top, the taller of the two
+            // Keep inspection prompts above the Hero Strike ability deck.
+            const float DeckCeiling = 124.0f;   // Reserved clearance above the ability deck
             const float HintY = DeckCeiling + 8.0f;
             const float PromptY = HintY + 18.0f + 6.0f;   // the hint's own height, then a gap
 
@@ -4558,198 +4536,6 @@ namespace TumbangPreso.UI
             _ultCard = BuildAbilityCard(deckGo.transform, "Ultimate", "Ultimate", UltimateCardWidth, true);
 
             _heroDeck.SetActive(false);
-        }
-
-        /// <summary>
-        /// Classic deliberately has no powers, but an empty bottom HUD made its mastery loop
-        /// feel less authored than Hero Strike. Street Hype is cosmetic: it names skilled
-        /// curves, banks, close calls, blocks and retrievals without changing a single point
-        /// or rule. It gives Classic its own identity instead of pretending it is Hero Strike
-        /// with three cards removed.
-        /// </summary>
-        private void BuildClassicDeck()
-        {
-            var go = new GameObject("ClassicStreetHype");
-            go.transform.SetParent(_root, false);
-            _classicDeck = go;
-
-            var bg = go.AddComponent<Image>();
-            bg.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.Amber,
-                                       GodotTheme.WoodBorderWidth, GodotTheme.WoodCornerRadius);
-            bg.type = Image.Type.Sliced;
-            bg.raycastTarget = false;
-
-            _classicDeckRt = go.GetComponent<RectTransform>();
-            Place(_classicDeckRt, new Vector2(0.5f, 0.0f), new Vector2(0, 24),
-                  new Vector2(520, 100));
-
-            var group = go.AddComponent<VerticalLayoutGroup>();
-            group.childControlHeight = true;
-            group.childControlWidth = true;
-            group.childForceExpandHeight = false;
-            group.childForceExpandWidth = true;
-            group.padding = new RectOffset(18, 18, 10, 10);
-            group.spacing = 4.0f;
-
-            _classicTitle = HudLabel(go.transform, "HypeTitle", 20, UiTheme.Highlight,
-                                     TextAnchor.MiddleCenter, 4);
-            _classicTitle.fontStyle = FontStyle.Bold;
-            _classicTitle.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
-
-            _classicEvent = HudLabel(go.transform, "HypeEvent", MenuKit.MinReadableUnits,
-                                     UiTheme.Cream, TextAnchor.MiddleCenter, 3);
-            _classicEvent.gameObject.AddComponent<LayoutElement>().minHeight = 24.0f;
-
-            var bar = new GameObject("HypeBar");
-            bar.transform.SetParent(go.transform, false);
-            var barBg = bar.AddComponent<Image>();
-            barBg.sprite = GodotTheme.Plain(3);
-            barBg.type = Image.Type.Sliced;
-            barBg.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.8f);
-            var barLayout = bar.AddComponent<LayoutElement>();
-            barLayout.minHeight = 9.0f;
-            barLayout.preferredHeight = 9.0f;
-
-            var fillGo = new GameObject("Fill");
-            fillGo.transform.SetParent(bar.transform, false);
-            _classicFill = fillGo.AddComponent<Image>();
-            _classicFill.sprite = GodotTheme.Plain(3);
-            _classicFill.type = Image.Type.Filled;
-            _classicFill.fillMethod = Image.FillMethod.Horizontal;
-            _classicFill.color = UiTheme.Highlight;
-            _classicFill.raycastTarget = false;
-            MenuKit.Stretch(_classicFill.rectTransform);
-
-            _classicDeck.SetActive(false);
-        }
-
-        /// <summary>Reports a local cosmetic style event; never awards score.</summary>
-        /// <summary>
-        /// Award Street Hype to one seat, wherever that seat is being played.
-        ///
-        /// ⚠️⚠️ STREET HYPE WAS DEAD ON EVERY CLIENT AND THE HOST COULD NOT SEE IT. This only
-        /// fires for the LOCAL slot (below), and every caller is host-side: `Carrier.HostThrowAt`,
-        /// `Lata.HostKnockDown`, the tag, the sabotage and the reset all sit behind
-        /// `NetAuthority.ShouldResolve()`. So on the host all four seats' events reached it and it
-        /// drew the host's own; on a client not one of them ran at all, and the bar that is
-        /// Classic's whole bottom-of-screen identity (`docs/VISION.md` § 1.1) never moved.
-        ///
-        /// ⚠️ THE HOST RELAYS IT TO THE SEAT'S OWNER, which is the same split `NetCue` makes for
-        /// a sound: only the host may DECIDE that something stylish happened, and announcing it is
-        /// a separate job. It is sent to ONE peer rather than broadcast, because hype is a
-        /// personal quantity and three of the four screens have nothing to do with it.
-        /// </summary>
-        /// <param name="relay">
-        /// ⚠️⚠️ FALSE FOR AN EVENT EVERY PEER ALREADY DECIDES FOR ITSELF, AND GETTING THIS WRONG
-        /// PAYS THE HYPE TWICE. Most callers sit behind `NetAuthority.ShouldResolve()`, so the
-        /// host is the only machine that reaches them and the relay is the only way the award
-        /// arrives anywhere else. Two do not: the LRT flyby and the bridge hoop run on every peer
-        /// from local state, so those award themselves locally and must not also be relayed.
-        /// </param>
-        public static void ReportStyle(int slot, float amount, string callout, bool relay = true)
-        {
-            if (relay && NetAuthority.IsNetworked && NetAuthority.IsHost)
-                Net.MatchRpc.Instance?.BroadcastStyle(slot, amount, callout);
-
-            ApplyStyle(slot, amount, callout);
-        }
-
-        /// <summary>The local half, with no relay. Called directly by the wire.</summary>
-        public static void ApplyStyle(int slot, float amount, string callout)
-        {
-            if (Instance == null || SceneFlow.SelectedMode != GameMode.Classic
-                || Instance._local == null || Instance._local.PlayerSlot != slot)
-                return;
-
-            Instance.AddStreetHype(amount, callout);
-        }
-
-        private void AddStreetHype(float amount, string callout)
-        {
-            int before = StreetTier(_streetHype);
-            _streetHype = Mathf.Clamp(_streetHype + Mathf.Max(0.0f, amount), 0.0f, 100.0f);
-            _streetHypeGrace = 3.0f;
-            _streetHypePunch = 0.38f;
-            _classicEvent.text = $"{callout}  ·  +{Mathf.RoundToInt(amount)} HYPE";
-
-            int after = StreetTier(_streetHype);
-            if (after > before && _local != null)
-            {
-                string tier = StreetTierName(after);
-                Visual.ComicPopup.Spawn(_local.transform.position + Vector3.up * 1.8f,
-                                        tier, UiTheme.Highlight, 1.05f);
-            }
-
-            if (_streetHype >= 100.0f && !_streetHypeMaxCelebrated)
-            {
-                _streetHypeMaxCelebrated = true;
-                // ⚠️ 2D: Street Hype is Classic's own bottom-of-screen readout and this is its
-                // ceiling being reached. Fired at `_local.transform.position` it was inaudibly
-                // different in FPP and quietly off-centre in TPP, where the camera sits behind
-                // the body. A HUD celebration has no place in the arena.
-                GameServices.Audio?.PlayUiVaried("sfx_super_ready", 1.02f, 1.10f, 0.9f);
-                ShowToast("HALIMAW HYPE  ·  KEEP THE RALLY ALIVE", 1.8f);
-            }
-        }
-
-        private void UpdateClassicDeck(float dt)
-        {
-            if (_classicDeck == null) return;
-
-            bool show = !_trainingChrome && !_spectating && _local != null
-                        && SceneFlow.SelectedMode == GameMode.Classic;
-            if (_classicDeck.activeSelf != show) _classicDeck.SetActive(show);
-            if (!show) return;
-
-            int round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
-            if (_streetHypeRound != round)
-            {
-                _streetHypeRound = round;
-                _streetHype = 0.0f;
-                _streetHypeGrace = 0.0f;
-                _streetHypeMaxCelebrated = false;
-                _classicEvent.text = "CURVE · BANK · BLOCK · SNATCH  (STYLE ONLY)";
-            }
-
-            if (GameServices.Round != null && GameServices.Round.RoundActive)
-            {
-                if (_streetHypeGrace > 0.0f) _streetHypeGrace -= dt;
-                else _streetHype = Mathf.Max(0.0f, _streetHype - 4.5f * dt);
-            }
-
-            if (_streetHype < 92.0f) _streetHypeMaxCelebrated = false;
-
-            int tier = StreetTier(_streetHype);
-            _classicTitle.text = $"STREET HYPE  ·  {StreetTierName(tier)}  ·  {Mathf.RoundToInt(_streetHype)}%";
-            // ⚠️⚠️ ONE COLOUR FOR THE TITLE AND ONE FOR THE BAR. Street hype drains on every
-            // frame of a live round, so a title that swapped hue at tier 3 and a fill that
-            // LERPED from orange to yellow across the range meant two things quietly changing
-            // colour at all times in the corner of a Classic match. The tier NAME ("MAINIT!",
-            // "ASTIG!") is the tier, in words, in the same string, and the bar's length is the
-            // number. Neither of them needed a colour to say it a second time.
-            _classicTitle.color = UiTheme.Amber;
-            _classicFill.fillAmount = _streetHype / 100.0f;
-            _classicFill.color = UiTheme.Highlight;
-
-            _streetHypePunch = Mathf.Max(0.0f, _streetHypePunch - dt);
-            float ratio = Mathf.Clamp01(_streetHypePunch / 0.38f);
-            float scale = 1.0f + Mathf.Sin(ratio * Mathf.PI) * 0.07f;
-            _classicDeckRt.localScale = Vector3.one * scale;
-        }
-
-        private static int StreetTier(float hype)
-            => hype >= 100.0f ? 4 : hype >= 72.0f ? 3 : hype >= 44.0f ? 2 : hype >= 20.0f ? 1 : 0;
-
-        private static string StreetTierName(int tier)
-        {
-            switch (tier)
-            {
-                case 4: return "UNSTOPPABLE!";
-                case 3: return "BRILLIANT!";
-                case 2: return "ON FIRE!";
-                case 1: return "WARMING UP!";
-                default: return "SIMULA";
-            }
         }
 
         /// <summary>

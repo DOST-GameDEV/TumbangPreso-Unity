@@ -18,7 +18,7 @@ image=Image.new('RGB',(size,size));draw=ImageDraw.Draw(image)
 height=Image.new('L',(size,size),128);hd=ImageDraw.Draw(height)
 for x in range(4):
     for y in range(4):
-        variation=rng.randrange(-5,6)
+        variation=rng.randrange(-8,9)
         base=(148+variation,144+variation,132+variation)
         left=x*panel;top=y*panel
         draw.rectangle((left,top,left+panel-1,top+panel-1),fill=base)
@@ -29,10 +29,12 @@ for x in range(4):
         hd.line((left,top,left,top+panel-1),fill=112,width=2)
         # Fine aggregate is deliberately low contrast and sparse, with one quiet
         # repair at the perimeter of the repeat rather than damage on every slab.
-        for i in range(2300):
+        for i in range(3000):
             px=left+rng.randrange(2,panel);py=top+rng.randrange(2,panel)
             delta=rng.choice([-12,-9,-6,6,9])
-            draw.point((px,py),fill=tuple(c+delta for c in base))
+            radius=rng.choice([1,1,2])
+            draw.ellipse((px,py,min(left+panel-1,px+radius),min(top+panel-1,py+radius)),fill=tuple(c+delta for c in base))
+            hd.ellipse((px,py,min(left+panel-1,px+radius),min(top+panel-1,py+radius)),fill=128+delta//2)
         if x==3 and y==0:
             repair=[(left+188,top+2),(left+253,top+2),(left+253,top+44),(left+226,top+35),(left+209,top+18)]
             draw.polygon(repair,fill=tuple(c-8 for c in base))
@@ -45,7 +47,7 @@ for y in range(size):
         fx=fx*fx*(3-2*fx);fy=fy*fy*(3-2*fy)
         lo=cloud[iy][ix]*(1-fx)+cloud[iy][(ix+1)%32]*fx
         hi=cloud[(iy+1)%32][ix]*(1-fx)+cloud[(iy+1)%32][(ix+1)%32]*fx
-        delta=round((lo*(1-fy)+hi*fy-128)*.35)
+        delta=round((lo*(1-fy)+hi*fy-128)*.85)
         pixels[x,y]=tuple(max(0,min(255,c+delta)) for c in pixels[x,y])
 image.save(out/'civic-concrete-albedo.png')
 # Derivatives wrap at the repeat edges, so the normal has no artificial seam.

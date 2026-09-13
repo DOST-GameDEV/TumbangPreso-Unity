@@ -10,8 +10,7 @@ namespace TumbangPreso
     /// A SHORTCUT. `docs/VISION.md` § 1.1: Classic is not Hero Strike with the powers off, so a
     /// map event may not hand Classic a power. Hero Strike gets a real one, `CooldownRate`,
     /// because a 24 s metronome that opens a power window every cycle is exactly the readable
-    /// counterplay that mode exists to add. Classic gets the spectacle and a Street Hype
-    /// callout, which is cosmetic by construction and cannot touch a single point.
+    /// counterplay that mode exists to add. Classic keeps the passing train and its sound; it awards no extra meter or points.
     ///
     /// ⚠️ IT IS A PLAIN STATIC AND IT IS RESET BY THE FLYBY THAT OWNS IT. There is one train on
     /// one map, so a service locator entry would be ceremony. What it must never become is

@@ -1,3 +1,6 @@
+**Newest owner playtest corrections:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
+Current implementation/run state is the newest active ledger pointer.
+
 # Final map improvement pass
 
 **2026-09-12 continuation:** the owner's current request resumes this open plan.

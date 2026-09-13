@@ -1,22 +1,64 @@
 # Active execution plan
 
 <!-- LIVE_STATE_START -->
-**Live now,2026-09-13:** Pushed4981c986. Groundcontact batch verified,readyforcommit;no processesactive.
-CharacterVisual compensates only renderedskin-gap,physics/geometryunchanged.
-All18/bothwidths36samples zero gap;actualkerb/jump/land/teleport/raised/supportloss
-and smoothingseam pass;6ordinarymap/mode sequences1/1,12videosencoded;fullEdit506,
-14audits. Exactevidence in ground-contact-review.md. Aftercommit:analogmagnitude
-(sharedSteer currentlynormalizes everynonzero stick),observedvscommanded gaitspeed,
-backward/strafe/turn andcarrying/impact/FPP sequences. Keep equipment/mashing and
-alllatergraphics/SaBubong/wholekit/network/release scope. Shadowcontact andunclear
-Bayan/Ilalim groundslatvisuals flaggedforgraphics/M10;no guessedmodel lowering.
-InternalThrowReview player is older than groundcontact;not a finalrelease.
+Pushed d9c0314b; fetch confirms origin/ASTRAReworks matches. Current Desktop review
+build DELIVERED at C:/Users/Matthew/Desktop/TumbangPreso-Unity/TumbangPreso.exe,
+built 2026-09-13 07:29:22, protocol29, RuntimeDLL SHA256
+1ce3858fc9f59ffbc09df3aeceb5ab0c55d9f8275521952d4e3885b75abff7e1.
+Bayan aerial delivered: Logs/bayan-owner-aerial-2026-09-13 (1/1,14 views).
+No Editor active at fresh preflight; user Desktop player PID23436 observed.
+NEVER stop/overwrite their player or restore a whole profile over concurrent saves.
+Implement explicit named-profile scope in run_unity_guarded before Editor tests.
+
+LATEST OWNER PLAYTEST FEEDBACK (see OWNER_PLAYTEST_REVISION.md for full contract):
+- KEEP current Bayan layout; earlier rejection/rollback explicitly retracted.
+- Remove Street Hype mechanic and ALL of its UI/callouts/rewards/network producers.
+- Remove duplicate main setup RULES selector; formats stay in Custom Game.
+- Ilalim: floating rooftop pieces, unclear hump/road seam, mismatched background
+  road. Trace actual mesh bounds, parents, materials and support; fix the source
+  authors, not just a camera angle. Natural wall-painted Bawal remains required.
+- Eskinita: tighter than other maps without blocking play. REDESIGN sampayan with
+  actual attachments and sagging lines/recognizable clothes; old version rejected.
+- Bayan: floor still feels flat/untextured. Give paving readable slab/grain/edge
+  response without bright joints, noisy contrast or clutter in the central court.
+- All maps: varied native trees, warm cream/terracotta/brown-grey road/soft sky
+  palette per latest old screenshot; no geometry rollback to that screenshot.
+- Sa Bubong is approved and NOT implemented. Owner asks why after10hours. Move its
+  playable layout and actual edge/mash/10s slipper recovery into next map batch,
+  ahead of the broader equipment/abilities backlog. Do not wait for approval again.
+
+Current stable batch ready to commit/push: StreetHype removed;mainRULES removed;
+existing Custom Game door repaired and raycast/click tested. Per-map atmosphere/
+original sky shader,realBayan paving normal/aggregate/tangents,Ilalim continuous
+asphalt,actualroof supports,billboard mast endpoints,independentbusiness signs
+and direct brush-painted warning. Optional unverifiedbackgroundcrane retired.
+Core562;Edit510;Lobby3;actualFPP1/1 (144matched+6HUD);Ilalim final24views1/1;
+all8checks;all14sourceaudits;all3maps semantic2run no drift. Final fascia contact test2/2 (all11signs). See portable report
+reports/improvement-2026-09-13/owner-map-review.md and adjacent receipts/images.
+Every Editor used the isolated owner-review-editor profile. Lastguardb2fdd910253d,
+2 existing named files restored. No Editor/player active at latestpreflight.
+Only proven test-only arm tangents/materialwhitespace and exact five Ultra quality
+values restored; no map rollback. No new Windows player since d9c0314b Desktop.
+New laundry source draft in tools/author_resident_laundry.py and Logs/resident-
+laundry-v1 (4.4m/18m Blender+GLB+PNG+JSON). Not imported/placed yet. Sa Bubong layout
+source exists at MapSource/environment/layouts/sa-bubong-plan-v1.json;no scene yet.
+NEXT IMPLEMENTATION: import/review/place redesignedEskinita laundry,begin actual
+Sa Bubong builder and edge/mash/10s shoe recovery,then variedtrees/remainingmap
+composition. Aftermaps the owner explicitly prioritizes full abilitymechanics,
+implementation/visuals and distinct ultimate moments across6kits+alternatives.
+Remainingmovement/equipment/graphicssettings/network/TODO+finalbuild stays OPEN.
+Do not stop at a handoff. Build current review only after freshprocess preflight;
+never replace a running Desktop player or restore over the owner's main saves.
+Next: guard isolation tests, requested removals, Ilalim support/road correction,
+Eskinita laundry/Bayan surface/warm lighting/trees, playable Sa Bubong and recovery.
+Then resume movement/equipment/graphics scalability/all-context mash and complete
+remaining whole-kit/network/TODO work. Larger improvement goal OPEN.
 <!-- LIVE_STATE_END -->
 
 ## Standing scope and safe workflow
 
-Owner is sleeping and explicitly asks continued work and durable state across
-compactions. No handoff stop or approval question is pending. The larger goal is
+Owner is awake and testing the Desktop build, and explicitly asks continued work
+and durable state across compactions. No handoff stop or approval question is pending. The larger goal is
 OPEN. Read AGENTS.md as the primary self-contained rules, then VISION/TODO152.4,
 latest ledger, MAP_TRANSFORMATION_PLAN M01-M11 and PLAY_FEEL_REWORK_PLAN.
 
@@ -40,7 +82,7 @@ Phaister/Kuro qualification,body/FPP/geometry/VFX/SFX,network transitions/reconn
 host loss and exact Windows release. UI art low priority; maker stays inaccessible.
 No new controls/systems that overcomplicate play. Final appropriate gates,isolated
 PlayMode gate twice,Windows build and THAT executable in both modes at ordinary
-speed and required separate-process network cases. No new Windows build yet.
+speed and required separate-process network cases. Desktop review build delivered as recorded above; final release remains open.
 
 Criticize every batch for place/style,scale/mass/support/intersections,world depth,
 routes/readability/motion and cost. Tests and isolated renders cannot approve art.
@@ -121,7 +163,8 @@ can needgitadd statrefresh;neverchangegitautocrlfconfig. No C#/asseteditsduringr
 
 ## Next concrete work
 
-1.Commit/pushthisverifiedbatch onASTRAReworks only,soleauthor messagefile.
+1.Follow the live owner-playtest revision above; old grounding steps below are
+ historical (d9c0314b already pushed). Commit stable batches on ASTRAReworks only.
 2.Measureactualdrawnfeet vsfloor/CCskinWidth atidle/carry/charge/move;currentbody
  rootsettles0.08mabove support. Distinguishcapsuleskin,meshbindbounds,authoredrootlift
  andshadowprojection beforechanging. Thenfixgrounding/cadence/backwards/strafe/turn,
@@ -138,8 +181,20 @@ can needgitadd statrefresh;neverchangegitautocrlfconfig. No C#/asseteditsduringr
  expressions/5.26mgiant/protocolstagedyawrejoin/rostersheet/overlapqualification.
 7.Broaderactiveeffects/builds/round/rematch/reconnect/hostloss bothmodes;remaining
  actions/UIfunctionalTODO. FinalisolatedPlayModegate twice,exactWindowsbuild and
- actualordinaryplay/separateprocessqualification. Desktopstillold;Androiddeferred.
+ actualordinaryplay/separateprocessqualification. Desktop review delivered;Androiddeferred.
 
 ReadPLAY_FEEL_REWORK_PLAN.md sourceaudit;allpriorrequirements remain. Full previous
 plansarchivedwholein improvement-2026-09-12/history02-05 and
 improvement-2026-09-13/execution-plan-history-06/07.md. OldprocessIDs arehistorical.
+
+Owner explicitly allows continued work while testing the Desktop player. Work on
+source/assets/research independently;do not overwrite the running build or restore
+a profile snapshot over saves the owner changes during play. Editor/test validation
+must account for that concurrent player rather than blindly restoring its profile.
+
+Latest owner ability feedback,2026-09-13: current abilities still look poor and
+feel too similar. AFTER MAPS, fully revamp and improve their implementation,
+mechanics/purposes and complete casting/body/FPP/moving geometry/VFX/impact/SFX.
+All six heroes/defaults/alternatives, within existing slots and simple controls.
+This is not a recolor pass. Existing map corrections remain first; the other
+movement/equipment/network/graphics/TODO scope remains open.

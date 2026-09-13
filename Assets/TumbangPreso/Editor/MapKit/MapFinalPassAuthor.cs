@@ -58,6 +58,8 @@ namespace TumbangPreso.EditorTools.MapKit
             // Street placement owns the poles. Rebuild their connected conductors
             // only after that placement has reached its final measured position.
             if(map=="IlalimNgTulay")UtilityConductors(root,report);
+            if(map=="IlalimNgTulay")AsphaltRoadSurface.CompleteIlalimStreetSurface();
+            if(map=="IlalimNgTulay")HoardingSupportsAuthor.RepairLoaded();
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 
@@ -205,16 +207,8 @@ namespace TumbangPreso.EditorTools.MapKit
             report.AppendLine(map+": grouped "+moved+" non-solid furniture pieces beyond the playable walls; excess seats retained inactive.");
         }
 
-        private static void FinishLight(string map)
-        {
-            RenderSettings.ambientMode=AmbientMode.Trilight;RenderSettings.ambientIntensity=1;
-            RenderSettings.ambientSkyColor=new Color(.64f,.69f,.72f);
-            RenderSettings.ambientEquatorColor=map=="IlalimNgTulay"?new Color(.49f,.52f,.52f):new Color(.48f,.47f,.42f);
-            RenderSettings.ambientGroundColor=new Color(.32f,.29f,.24f);
-            foreach(var sun in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
-                if(sun.type==LightType.Directional){sun.color=new Color(1,.95f,.86f);sun.intensity=map=="BayanPlaza"?1.03f:1.0f;}
-            Object.FindFirstObjectByType<MapGrade>()?.Set(1,1.02f,1,1,1.9f);
-        }
+        private static void FinishLight(string map) => MapAtmosphereAuthor.Apply(map);
+
 
         private static void PlaceByDrawnBase(Transform root, Vector3 at, float yaw)
         {

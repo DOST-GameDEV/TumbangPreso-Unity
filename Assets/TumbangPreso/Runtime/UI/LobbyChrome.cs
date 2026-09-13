@@ -494,15 +494,6 @@ namespace TumbangPreso.UI
         private const float SettingsArrowSize = 42.0f;
         private const float SettingsDetailHeight = 56.0f;
 
-        /// <summary>
-        /// How wide the value in a selector well actually is, for a caller that has to fit a string
-        /// into one. ⚠️ Arithmetic off the drawer and not a guess; `LAST TSINELAS STANDING` needs
-        /// it.
-        /// </summary>
-        public const float FormatValueWidth =
-            SettingsDrawerWidth - (PaperKit.Pad * 2.0f) - SettingsCaptionWidth - 14.0f
-            - (SettingsArrowSize * 2.0f) - 32.0f;
-
         /// <summary>The settings drawer is as wide as the primary it opens above, so the centre of
         /// the screen is one column rather than two things that happen to be near each other.
         /// </summary>
@@ -2433,15 +2424,13 @@ namespace TumbangPreso.UI
             // `RefreshSettingsDropdowns` is null-guarded on all four. Deleting a control he might
             // ask for again is the mistake this comment exists to stop repeating in reverse.
             var rows = Descend(config, "Rows");
+            parts.AdvancedRulesParent=body.transform;
             if (rows != null)
             {
                 rows.SetParent(body.transform, false);
                 rows.gameObject.SetActive(true);
 
-                // ⚠️ FOUR ROWS, NOT THREE. `BuildFormatRow` adds RULES under BOTS, and this height
-                // is what the rows container claims: left at three, the fourth row drew outside
-                // the sheet and over the cast's legs.
-                float rowsHeight = (SettingsRowHeight * 4.0f) + 16.0f;
+                float rowsHeight = (SettingsRowHeight * 3.0f) + 16.0f;
 
                 var rowsElement = rows.GetComponent<LayoutElement>();
                 if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
@@ -2462,7 +2451,6 @@ namespace TumbangPreso.UI
                                  "DifficultySelector", "DifficultyPrevButton",
                                  "DifficultyValueLabel", "DifficultyNextButton");
 
-                BuildFormatRow(rows, parts);
             }
 
             var detail = find("DetailBox");
@@ -2523,67 +2511,9 @@ namespace TumbangPreso.UI
             parts.SettingsBody = body;
         }
 
-        /// <summary>
-        /// The RULES row: STANDARD, LAST TSINELAS STANDING or MIRROR.
-        ///
-        /// ⚠️⚠️ IT IS A CLONE OF THE AUTHORED BOTS ROW RATHER THAN A ROW BUILT FROM SCRATCH, AND
-        /// THAT IS THE POINT. The three selector rows are authored nodes carrying his own arrow
-        /// TEXTURES, an authored well and an authored inner layout. A fourth row written in code
-        /// would be a fourth visual language on a rail whose whole redesign was about the first
-        /// three not lining up, and `docs/VISION.md` § 6 is the standing rule: **his UI art IS the
-        /// design system**. `Instantiate` gets all of it free and cannot drift from the other
-        /// three.
-        ///
-        /// ⚠️⚠️ AND THE BUTTONS COME BACK ON `Parts` RATHER THAN BEING FOUND BY NAME. Every other
-        /// control on this screen is wired with `OnClick("SomeButton", ...)`, which reads
-        /// `ConvertedScreen`'s name index, and **that index is built in `Start` before this method
-        /// runs**. A clone made afterwards is not in it, so a name lookup would answer null and the
-        /// row would be a stepper whose arrows do nothing: `docs/TODO.md` § 108's EQUIP button
-        /// exactly, in a place nobody would think to look for it.
-        /// </summary>
-        private static void BuildFormatRow(Transform rows, Parts parts)
-        {
-            var source = Descend(rows, "DifficultyRow");
-            if (source == null) return;
 
-            // ⚠️ NOT TWICE. This drawer is rebuilt whenever the lobby restyles, and a second clone
-            // would stack a duplicate RULES row under the first and push START MATCH off the rail.
-            var existing = Descend(rows, "FormatRow");
-            if (existing != null) UnityEngine.Object.Destroy(existing.gameObject);
 
-            var clone = UnityEngine.Object.Instantiate(source.gameObject, rows);
-            clone.name = "FormatRow";
-            clone.transform.SetAsLastSibling();
 
-            Rename(clone.transform, "DifficultyCaption", "FormatCaption");
-            Rename(clone.transform, "DifficultySelector", "FormatSelector");
-            Rename(clone.transform, "DifficultyPrevButton", "FormatPrevButton");
-            Rename(clone.transform, "DifficultyValueLabel", "FormatValueLabel");
-            Rename(clone.transform, "DifficultyNextButton", "FormatNextButton");
-
-            DressSelectorRow(rows, "FormatRow", "FormatCaption", "RULES",
-                             "FormatSelector", "FormatPrevButton",
-                             "FormatValueLabel", "FormatNextButton");
-
-            // ⚠️ THE CLONED LISTENERS GO. `Instantiate` copies a `Button`'s persistent `onClick`
-            // entries with it, so without this both arrows would still be cycling the BOT
-            // DIFFICULTY they were cloned from, on a row labelled RULES. Nothing would log.
-            var prev = Descend(clone.transform, "FormatPrevButton")?.GetComponent<Button>();
-            var next = Descend(clone.transform, "FormatNextButton")?.GetComponent<Button>();
-
-            if (prev != null) prev.onClick.RemoveAllListeners();
-            if (next != null) next.onClick.RemoveAllListeners();
-
-            parts.FormatPrev = prev;
-            parts.FormatNext = next;
-            parts.FormatValue = Descend(clone.transform, "FormatValueLabel")?.GetComponent<Text>();
-        }
-
-        private static void Rename(Transform root, string from, string to)
-        {
-            var node = Descend(root, from);
-            if (node != null) node.name = to;
-        }
 
         /// <summary>
         /// One selector row: caption on the left, stepper on the right.
@@ -3134,17 +3064,11 @@ namespace TumbangPreso.UI
             /// <summary>Where the match settings dropdowns are built, by the screen that owns the
             /// option tables.</summary>
             public Transform SettingsRows;
+            public Transform AdvancedRulesParent;
 
             /// <summary>Where the queue card docks: above the mode column, so it grows out of the
             /// button that opened it.</summary>
             public Transform QueueDock;
-
-            /// <summary>⚠️ PHASE 12'S RULES STEPPER, WHICH ONLY EXISTS UNDER `LobbyStyle.Classic`.
-            /// `Street` builds four `WoodDropdown` rows instead and these stay null, which is what
-            /// they have always done; they are kept so the two styles share one handle.</summary>
-            public Button FormatPrev;
-            public Button FormatNext;
-            public Text FormatValue;
 
             /// <summary>The door to `PlayerHub`, and the line on it.</summary>
             public Button ProfileButton;

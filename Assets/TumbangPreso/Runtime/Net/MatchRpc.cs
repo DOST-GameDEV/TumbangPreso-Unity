@@ -362,7 +362,6 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
-            cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
@@ -2410,7 +2409,6 @@ namespace TumbangPreso.Net
 
             _resetChannelStart.Remove(slot);
             lata.HostRestore();
-            UI.Hud.ReportStyle(slot, 24.0f, "BANGON!");
             BroadcastLataState();
         }
 
@@ -3242,33 +3240,7 @@ namespace TumbangPreso.Net
             Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
         }
 
-        /// <summary>
-        /// Street Hype for one seat, sent to the one peer playing it.
-        ///
-        /// ⚠️⚠️ IT IS SENT TO ONE PEER, NOT BROADCAST, and that is not an optimisation. Hype is a
-        /// personal quantity: `Hud.ApplyStyle` refuses any slot that is not the local one, so a
-        /// broadcast would be three messages that every recipient throws away. See
-        /// `Hud.ReportStyle` for why this exists at all, which is that Classic's entire
-        /// bottom-of-screen identity was host-only.
-        /// </summary>
-        public void BroadcastStyle(int slot, float amount, string callout)
-        {
-            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
-            if (!ValidSlot(slot)) return;
 
-            var peer = NetSession.Instance?.Lobby?.PeerInSeat(slot);
-            if (peer == null) return;
-
-            var clientId = (ulong)peer.PeerId;
-            if (clientId == _nm.LocalClientId) return;
-            if (!_nm.ConnectedClients.ContainsKey(clientId)) return;
-
-            using var writer = new FastBufferWriter(96, Allocator.Temp);
-            writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(amount);
-            writer.WriteValueSafe(callout ?? "");
-            _nm.CustomMessagingManager.SendNamedMessage("PlayStyle", clientId, writer);
-        }
 
         /// <summary>
         /// A point was awarded. Broadcast so every peer can react to it.
@@ -3279,16 +3251,7 @@ namespace TumbangPreso.Net
         /// What a client could not obtain was WHICH EVENT happened, and both the toast and the
         /// sting read exactly that: `MatchRules.PointsFor(e)` and the event's own label.
         ///
-        /// ⚠️ BROADCAST RATHER THAN SENT TO THE SEAT, unlike `BroadcastStyle` directly above.
-        /// Street Hype is a personal quantity and `Hud.ApplyStyle` refuses a slot that is not the
-        /// local one; a score is the MATCH reacting. `Hud.OnScored` plays the sting for anybody's
-        /// award on purpose and only the TOAST is filtered to the local seat, which is the
-        /// original's rule and is written out at that call site.
-        ///
-        /// ⚠️ `DefenseTick` AND THE TWO PENALTIES ARE SENT TOO, at roughly one a second while
-        /// they apply. `Hud.OnScored` discards the first outright and gives the other two a sound
-        /// and no words, so this is a few bytes a second to keep the event faithful rather than
-        /// to teach the receiver a rule the sender should not be making for it.
+        /// Broadcast so every peer hears the match react; only the toast is local.
         /// </summary>
         public void BroadcastScore(int slot, Core.ScoreEvent e)
         {
@@ -3449,17 +3412,7 @@ namespace TumbangPreso.Net
             GameServices.Tsinelas?.ApplyNetworkStocks(stocks, defenderSlot);
         }
 
-        private void OnPlayStyleMsg(ulong senderClientId, FastBufferReader reader)
-        {
-            if (!FromHost(senderClientId)) return;
 
-            reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out float amount);
-            reader.ReadValueSafe(out string callout);
-            if (!ValidSlot(slot) || !Finite(amount)) return;
-
-            UI.Hud.ApplyStyle(slot, Mathf.Clamp(amount, 0.0f, 100.0f), callout);
-        }
 
         /// <summary>The transport this seat is played on, or null for a bot or an empty chair.</summary>
         private ulong? SeatOwnerClientId(int slot)
@@ -3808,21 +3761,6 @@ namespace TumbangPreso.Net
         /// shipped together**, or they refuse each other correctly and it reads as a bug.
         /// </summary>
         public static event Action<string> OnRulesChanged;
-
-        /// <summary>
-        /// ⚠️ KEPT AS THE NAME EVERY CALLER ALREADY USES, and it now sends the whole set. The
-        /// lobby's RULES dropdown changes one field of a rule set that has eight others, and it
-        /// has no business knowing that the transport takes a string: it hands over the format it
-        /// picked and this builds the message from the live rule set.
-        /// </summary>
-        public void SelectFormatServerRpc(int format)
-        {
-            var rules = UI.SceneFlow.SelectedRules.Clone();
-            rules.Format = format >= 0 && format <= (int)MatchFormat.Mirror
-                ? (MatchFormat)format : MatchFormat.Standard;
-
-            SelectRulesServerRpc(Core.CustomGameRules.ToWire(rules));
-        }
 
         public void SelectRulesServerRpc(string wire)
         {

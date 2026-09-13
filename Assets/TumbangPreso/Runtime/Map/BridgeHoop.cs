@@ -12,8 +12,7 @@ namespace TumbangPreso
     /// ⚠️⚠️ IT AWARDS NOTHING AND MUST KEEP AWARDING NOTHING. `MatchDirector.AddScore` is the
     /// one function that creates a point in this game, host side, and that is what makes a
     /// point uncreatable on a client. A map prop that hands out score is a second path into the
-    /// scoreboard and it would be the only one. This fires a callout and, in Classic, Street
-    /// Hype, which is cosmetic by construction: `Hud.ReportStyle` cannot reach the score.
+    /// scoreboard and it would be the only one. This prop only reacts to a basket.
     ///
     /// ⚠️ THE CROSSING IS TESTED AGAINST THE PREVIOUS POSITION, NOT AGAINST AN OVERLAP. A
     /// tsinelas moves 24 m/s at a full throw and the ring is 0.04 m thick, so at 60 fps the
@@ -29,9 +28,6 @@ namespace TumbangPreso
 
         [Tooltip("Ring radius. The model's is 0.25; the catch is slightly generous.")]
         public float RingRadius = 0.30f;
-
-        [Tooltip("Street Hype awarded in Classic. Cosmetic; see the class note.")]
-        public float HypeReward = 12.0f;
 
         [Tooltip("Seconds before the same hoop can be scored again, so one rattle is one basket.")]
         public float Cooldown = 1.2f;
@@ -103,15 +99,7 @@ namespace TumbangPreso
                              ComicPopup.Weight.Cast);
             ImpactBurst.SpawnAt(centre);
 
-            // ⚠️ CREDIT GOES TO THE THROWER, NOT TO WHOEVER OWNS THE TSINELAS. A slipper that
-            // has been shoved, banked or knocked out of somebody's hand still belongs to its
-            // owner; the person who earned the shot is the one who threw it.
-            int slot = slipper.ThrowerSlot;
-            if (slot < 0) return;
 
-            // ⚠️ NOT RELAYED. Every peer runs this trigger from its own copy of the slipper, so
-            // the thrower's screen awards it directly; a relay on top would pay it twice.
-            Hud.ReportStyle(slot, HypeReward, "TRES SA ILALIM", relay: false);
         }
     }
 }

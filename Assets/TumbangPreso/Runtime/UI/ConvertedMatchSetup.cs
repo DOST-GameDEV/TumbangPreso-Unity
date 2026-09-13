@@ -371,15 +371,6 @@ namespace TumbangPreso.UI
             OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
             OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
 
-            // ⚠⚠ WIRED BY REFERENCE, NOT BY NAME, AND `LobbyChrome.BuildFormatRow` IS WHY: the
-            // RULES row is a clone made after `ConvertedScreen` built its name index, so
-            // `OnClick("FormatPrevButton", ...)` would find nothing and the arrows would be dead.
-            if (_chrome?.FormatPrev != null)
-                _chrome.FormatPrev.onClick.AddListener(() => OnFormatCycle(-1));
-
-            if (_chrome?.FormatNext != null)
-                _chrome.FormatNext.onClick.AddListener(() => OnFormatCycle(1));
-
             OnClick("CharacterButton", OpenCharacterSelect);
             OnClick("PrimaryButton", OnPrimaryPressed);
             OnClick("StartButton", OnStartPressed);
@@ -928,7 +919,11 @@ namespace TumbangPreso.UI
         private void BuildSettingsDropdowns()
         {
             var rows = _chrome?.SettingsRows;
-            if (rows == null) return;
+            if (rows == null)
+            {
+                if(_chrome?.AdvancedRulesParent!=null)BuildCustomGameDoor(_chrome.AdvancedRulesParent);
+                return;
+            }
 
             const float Caption = 96.0f;
 
@@ -947,42 +942,18 @@ namespace TumbangPreso.UI
             _botsDrop = WoodDropdown.Build(rows, "BOTS", Caption, Difficulties, _difficulty,
                                            v => OnDifficultyCycle(v - _difficulty));
 
-            var formats = new string[FormatOptionCount];
-            for (int i = 0; i < formats.Length; i++) formats[i] = FormatLabel(i);
-
-            _rulesDrop = WoodDropdown.Build(rows, "RULES", Caption, formats, _format,
-                                            v => OnFormatCycle(v - _format));
-
             BuildCustomGameDoor(rows);
         }
 
         /// <summary>
-        /// The door into CUSTOM GAME, and it is the fifth row of the same rail.
-        ///
-        /// ⚠️⚠️ ONE DOOR, WHERE THE PLAYER ALREADY IS, AND NOT A SECOND BUTTON SOMEWHERE ELSE.
-        /// `CLAUDE.md` § 6.3: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is
-        /// exactly how § 92's six-button panel happened: a button per feature, each in its own
-        /// visual language, each at its own hard-coded offset."* MAP, MODE, BOTS and RULES are
-        /// the four things a player already changes about a match, and the rest of the rule set
-        /// is the fifth: it belongs at the bottom of that list, in the same rail, in the same
-        /// visual language, and nowhere else.
-        ///
-        /// ⚠️⚠️ IT IS A ROW THAT SAYS WHAT IS BEHIND IT, NOT A BUTTON LABELLED "MORE". § 96 is
-        /// an entire entry about a door 🧑 could not find because it read as a status readout,
-        /// and the fix there was the same shape: a door is a thing that LOOKS pressable and says
-        /// where it goes. The value column carries a live summary (`8 rounds, 90s`) so the row is
-        /// also the answer to "what are the rules" for anybody who never opens it.
-        ///
-        /// ⚠️ THE ROW IS PRESENT FOR A CLIENT AND THE SCREEN IS READ-ONLY FOR THEM, rather than
-        /// the row being hidden. Hiding it would be § 96's fault aimed at the three people who
-        /// most need to know what they are about to play; `CustomGameScreen` greys every control
-        /// and says who owns them.
+        /// The fourth settings row opens the existing advanced rules editor.
+        /// Clients can inspect the host's rules there without changing them.
         /// </summary>
         private void BuildCustomGameDoor(Transform rows)
         {
             // ⚠️ THE RAIL IS A `Transform` AND `UiRows` TAKES A `RectTransform`.
             // `LobbyChrome.SettingsRows` is declared as a `Transform` because the chrome builds
-            // it and does not care what kind it is; the four rows above go through
+            // it and does not care what kind it is; the three rows above go through
             // `WoodDropdown.Build`, which takes the looser type. A row from `UiRows` needs the
             // rect, so the cast is here rather than widening a field other call sites read.
             //
@@ -1009,7 +980,9 @@ namespace TumbangPreso.UI
         private static string CustomDoorLabel()
         {
             var rules = SceneFlow.SelectedRules;
-            return rules.Rounds + " x " + rules.RoundSeconds + "s";
+            return rules.Format == MatchFormat.Standard
+                ? rules.Rounds + " x " + rules.RoundSeconds + "s"
+                : CustomGameRules.FormatName(rules.Format);
         }
 
         private void OpenCustomGame()
@@ -1018,7 +991,7 @@ namespace TumbangPreso.UI
             CustomGameScreen.Ensure().Open();
         }
 
-        private WoodDropdown _mapDrop, _modeDrop, _botsDrop, _rulesDrop;
+        private WoodDropdown _mapDrop, _modeDrop, _botsDrop;
 
         /// <summary>
         /// ⚠️ THE DROPDOWNS FOLLOW THE STATE RATHER THAN OWNING IT. In a networked lobby the host
@@ -1032,7 +1005,6 @@ namespace TumbangPreso.UI
 
             if (_mapDrop != null) { _mapDrop.SetIndex(_map); _mapDrop.SetInteractable(mayEdit); }
             if (_botsDrop != null) { _botsDrop.SetIndex(_difficulty); _botsDrop.SetInteractable(mayEdit); }
-            if (_rulesDrop != null) { _rulesDrop.SetIndex(_format); _rulesDrop.SetInteractable(mayEdit); }
 
             if (_modeDrop != null)
             {
@@ -2715,26 +2687,7 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
-        /// <summary>
-        /// PHASE 12: cycle the RULES row.
-        ///
-        /// ⚠️ ONLY THE HOST MAY CHANGE IT IN A NETWORKED ROOM, exactly like the map and the
-        /// mode. A format decides the win condition, so a peer that could set it could hand three
-        /// other people a different game between the lobby and the whistle.
-        /// </summary>
-        private void OnFormatCycle(int delta)
-        {
-            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
 
-            Cycle(ref _format, FormatOptionCount, delta);
-            ApplyFormat();
-
-            if (SceneFlow.Networked && NetAuthority.IsHost)
-                MatchRpc.Instance?.SelectFormatServerRpc(_format);
-
-            MenuSfx.Click();
-            Refresh();
-        }
 
         private void HandleFormatSynced(int format)
         {
@@ -3230,16 +3183,6 @@ namespace TumbangPreso.UI
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
             RefreshSettingsDropdowns();
 
-            if (_chrome?.FormatValue != null)
-            {
-                _chrome.FormatValue.text = FormatLabel(_format);
-
-                // ⚠️ FITTED, BECAUSE `LAST TSINELAS STANDING` IS 21 CHARACTERS IN A WELL SIZED
-                // FOR `ILALIM NG TULAY`. `MenuKit.Label` OVERFLOWS by default and the failure is
-                // silent: the value does not shrink, it draws over the arrow beside it.
-                // `CLAUDE.md` § 6.2c question 4.
-                MenuKit.Fit(_chrome.FormatValue, LobbyChrome.FormatValueWidth);
-            }
             SetText("DetailLabel", $"{mapName}   {tagline}");
 
             if (_preview != null)

@@ -68,7 +68,7 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach(var t in all)
             {
                 if(t==null)continue;
-                if(t.name=="Karatula" || t.name.StartsWith("Pisonet_Kiosk_") || t.name=="PC_Express_Store" ||
+                if(t.name=="Karatula" || t.name=="BacklotCrane" || t.name.StartsWith("Pisonet_Kiosk_") || t.name=="PC_Express_Store" ||
                    t.name=="Cargo_Tricycle_Boxes" || t.name=="Street_Pares_Cart" || t.name=="Pares_Parasol" ||
                    t.name=="Sari_Sari_Store" || t.name=="Parked_Tricycle" || t.name=="PavementHedge_E" ||
                    t.name=="ShopfrontDumpster" || t.name=="BridgeHoop" || t.name.StartsWith("DeliveryBox_") ||
@@ -88,6 +88,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void CarryBuildingAttachments(Transform[] all,Transform source,Transform body,string key)
         {
             var roofBounds=BoundsOf(body.gameObject);
+            using var roof=new RoofSurfaceSupport(body);
             foreach(var attachment in all)
             {
                 if(attachment.parent==null||attachment.parent.name!="Bubong")continue;
@@ -100,6 +101,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 var scale=source.lossyScale;var other=attachment.lossyScale;
                 carried.transform.localScale=new Vector3(other.x/scale.x,other.y/scale.y,other.z/scale.z);
                 attachment.gameObject.SetActive(false);
+                // Industrial flues had been used as generic shop decoration and
+                // rose several metres above small retail roofs. Keep their source
+                // inactive; this street's roof use is tanks, plant and laundry.
+                if(attachment.name.StartsWith("RoofStack_")){Object.DestroyImmediate(carried);continue;}
                 if(attachment.name.StartsWith("Sampay_Roof_"))
                 {
                     var before=BoundsOf(carried);
@@ -111,15 +116,18 @@ namespace TumbangPreso.EditorTools.MapKit
                     var after=BoundsOf(carried);
                     carried.transform.position+=new Vector3(roofBounds.center.x-after.center.x,0,roofBounds.center.z-after.center.z);
                     after=BoundsOf(carried);
-                    float baseY=roofBounds.max.y-.12f,top=after.max.y+.04f;
+                    float top=after.max.y;
                     var steel=Mat("roof_laundry_steel",new Color(.31f,.35f,.30f));
                     foreach(float z in new[]{after.min.z,after.max.z})
                     {
+                        if(!roof.Height(new Vector3(after.center.x,0,z),out float baseY))
+                            throw new InvalidOperationException("Laundry support misses the roof: "+key);
                         var post=Box(body,"Roof laundry support",Vector3.zero,Vector3.one,steel,false,"Laundry support is seated on this building's roof and reaches its line.");
                         post.transform.SetPositionAndRotation(new Vector3(after.center.x,(baseY+top)*.5f,z),Quaternion.identity);
                         post.transform.localScale=new Vector3(.12f/body.lossyScale.z,(top-baseY)/body.lossyScale.y,.12f/body.lossyScale.x);
                     }
                 }
+                else if(!roof.Seat(carried.transform))Object.DestroyImmediate(carried);
             }
         }
 
@@ -249,7 +257,8 @@ namespace TumbangPreso.EditorTools.MapKit
             if(width<1.65f)throw new InvalidOperationException("Sign requires a new frontage layout: "+shop.id);
             float center=Mathf.Clamp(shop.z,chosen.x+width*.5f,chosen.y-width*.5f);
             float localX=room.InverseTransformPoint(new Vector3(room.position.x,room.position.y,center)).x;
-            Sign(room,shop.id,texture,new Vector3(localX,2.92f,.65f),width,width*.25f);
+            float ratio=shop.id=="Hardware"?.21f:shop.id=="Clothing"?.28f:shop.id=="Laundry"?.27f:.25f;
+            Sign(room,shop.id,texture,new Vector3(localX,shop.id=="Laundry"?2.97f:2.92f,.555f),width,width*ratio);
         }
 
         private static Bounds HeightSlice(MeshRenderer renderer,float low,float high)
@@ -451,25 +460,74 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach(float side in new[]{-1f,1f})
             {
                 var mount=new GameObject("Column notice mount").transform;mount.SetParent(root,false);
-                mount.SetPositionAndRotation(new Vector3(side*3.72f,1.35f,side*10),Quaternion.Euler(0,side<0?90:270,0));
-                Sign(mount,"Bawal",Folder+"/Signs/Bawal.png",Vector3.zero,1.12f,.75f);
+                var column=GameObject.Find("IlalimNgTulay/Dressing/Tulay/LrtPillar_"+(side<0?"SouthWest":"NorthEast")+"_10");
+                if(column==null)throw new InvalidOperationException("Missing notice column");
+                var filter=column.GetComponent<MeshFilter>();
+                var collider=column.AddComponent<MeshCollider>();collider.sharedMesh=filter.sharedMesh;
+                Physics.SyncTransforms();bool mounted=false;
+                try
+                {
+                    foreach(float y in new[]{1.35f,1.65f,1.95f,2.25f,2.55f})
+                    {
+                        if(!collider.Raycast(new Ray(new Vector3(0,y,side*10),Vector3.right*side),out var centre,7))continue;
+                        if(Mathf.Abs(centre.normal.y)>.03f)continue;
+                        bool flat=true;
+                        foreach(float dz in new[]{-.44f,.44f})foreach(float dy in new[]{-.39f,.39f})
+                        {
+                            if(!collider.Raycast(new Ray(new Vector3(0,y+dy,side*10+dz),Vector3.right*side),out var corner,7)||
+                               Mathf.Abs(corner.point.x-centre.point.x)>.004f)flat=false;
+                        }
+                        if(!flat)continue;
+                        mount.SetPositionAndRotation(centre.point,Quaternion.LookRotation(centre.normal,Vector3.up));
+                        mounted=true;break;
+                    }
+                }
+                finally{Object.DestroyImmediate(collider);}
+                if(!mounted)throw new InvalidOperationException("No flat supported column face for warning");
+                WallPaint(mount,"Bawal",Folder+"/Signs/Bawal.png",.88f,.78f);
             }
+        }
+
+        private static void WallPaint(Transform parent,string id,string path,float width,float height)
+        {
+            var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if(texture==null)throw new InvalidOperationException("Missing wall lettering: "+path);
+            var material=Mat("wall_paint_"+id,Color.white);material.mainTexture=texture;
+            material.SetOverrideTag("RenderType","TransparentCutout");material.SetFloat("_Mode",1);
+            material.SetInt("_SrcBlend",(int)BlendMode.One);material.SetInt("_DstBlend",(int)BlendMode.Zero);
+            material.SetInt("_ZWrite",1);material.SetFloat("_Cutoff",.35f);material.EnableKeyword("_ALPHATEST_ON");
+            material.renderQueue=(int)RenderQueue.AlphaTest;material.SetFloat("_Glossiness",0);EditorUtility.SetDirty(material);
+            var face=GameObject.CreatePrimitive(PrimitiveType.Quad);face.name="Painted warning "+id;
+            face.transform.SetParent(parent,false);face.transform.localPosition=Vector3.forward*.003f;
+            face.transform.localRotation=Quaternion.Euler(0,180,0);face.transform.localScale=new Vector3(width,height,1);
+            Object.DestroyImmediate(face.GetComponent<Collider>());
+            var renderer=face.GetComponent<Renderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=ShadowCastingMode.Off;
+            face.isStatic=true;AirborneByDesign.Attach(face,"Painted directly on the column face with a3mm render offset.");
         }
 
         private static void Sign(Transform parent,string id,string texturePath,Vector3 at,float width,float height)
         {
             var tex=AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
             if(tex==null)throw new InvalidOperationException("Missing authored sign face: "+texturePath);
-            var backing=Mat("sign_backing",new Color(.25f,.27f,.24f));
-            Box(parent,"Sign frame "+id,at,new Vector3(width+.12f,height+.12f,.22f),backing,false,"Sign frame is fixed to the shop roof fascia or column mounting face.");
+            bool banner=id=="Laundry"||id=="Clothing";
+            bool timber=id=="Pares"||id=="Bakery"||id=="Load";
+            float depth=banner?.025f:timber?.085f:.05f;
+            // 'at' is the actual fascia face. Changing board thickness must not
+            // leave the thinner signs hanging at the old thick frame's centre.
+            at+=Vector3.forward*(depth*.5f+.003f);
+            var backing=Mat("sign_backing_"+id,timber?new Color(.38f,.27f,.17f):new Color(.62f,.63f,.58f));
+            Box(parent,(banner?"Banner backing ":"Shop sign backing ")+id,at,new Vector3(width+.025f,height+.025f,depth),backing,false,"Shop sign fixed to this frontage fascia.");
+            if(banner)
+                foreach(float side in new[]{-1f,1f})
+                    Box(parent,"Banner fixing "+id,at+new Vector3(side*(width*.5f+.015f),0,0),new Vector3(.055f,height+.1f,.07f),backing,false,"Tarpaulin edge fixed to the fascia.");
             var material=Mat("sign_face_"+id,Color.white);material.mainTexture=tex;material.SetFloat("_Glossiness",.08f);
             EditorUtility.SetDirty(material);
             var face=GameObject.CreatePrimitive(PrimitiveType.Quad);face.name="Sign face "+id;
-            face.transform.SetParent(parent,false);face.transform.localPosition=at+Vector3.forward*.117f;
+            face.transform.SetParent(parent,false);face.transform.localPosition=at+Vector3.forward*(depth*.5f+.004f);
             face.transform.localRotation=Quaternion.Euler(0,180,0);face.transform.localScale=new Vector3(width,height,1);
             Object.DestroyImmediate(face.GetComponent<Collider>());face.GetComponent<Renderer>().sharedMaterial=material;
             face.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;face.isStatic=true;
-            AirborneByDesign.Attach(face,"Lettering is fixed to its substantial shop/column sign frame.");
+            AirborneByDesign.Attach(face,"Printed or painted lettering lies on this shop's physical sign surface.");
         }
 
         private static Material Mat(string name,Color color)

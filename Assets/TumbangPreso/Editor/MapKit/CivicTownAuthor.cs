@@ -129,7 +129,17 @@ namespace TumbangPreso.EditorTools.MapKit
             var importer=(TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
             if(!importer.mipmapEnabled||importer.wrapMode!=TextureWrapMode.Repeat||importer.anisoLevel!=4)
             {importer.mipmapEnabled=true;importer.wrapMode=TextureWrapMode.Repeat;importer.anisoLevel=4;importer.filterMode=FilterMode.Trilinear;importer.SaveAndReimport();}
-            var paving=Mat("civic_paving",Color.white);paving.mainTexture=texture;paving.SetFloat("_Glossiness",.08f);EditorUtility.SetDirty(paving);
+            var paving=Mat("civic_paving",Color.white);paving.mainTexture=texture;paving.SetFloat("_Glossiness",.13f);
+            string normalPath=Folder+"/civic-concrete-normal.png";
+            var normalImporter=(TextureImporter)AssetImporter.GetAtPath(normalPath);
+            if(normalImporter==null)throw new InvalidOperationException("Missing civic paving normal map");
+            if(normalImporter.textureType!=TextureImporterType.NormalMap||normalImporter.wrapMode!=TextureWrapMode.Repeat||normalImporter.anisoLevel!=4)
+            {
+                normalImporter.textureType=TextureImporterType.NormalMap;normalImporter.wrapMode=TextureWrapMode.Repeat;
+                normalImporter.anisoLevel=4;normalImporter.mipmapEnabled=true;normalImporter.SaveAndReimport();
+            }
+            paving.SetTexture("_BumpMap",AssetDatabase.LoadAssetAtPath<Texture2D>(normalPath));
+            paving.SetFloat("_BumpScale",.8f);paving.EnableKeyword("_NORMALMAP");EditorUtility.SetDirty(paving);
             var road=Mat("town_asphalt",new Color(.55f,.53f,.48f));
             road.mainTexture=AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/TumbangPreso/Art/models/textures/asphalt.png");EditorUtility.SetDirty(road);
             var earth=Mat("town_yards",new Color(.46f,.47f,.38f));
@@ -339,7 +349,7 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var mesh=new Mesh{name=name};mesh.SetVertices(vertices);mesh.subMeshCount=indices.Length;
             for(int i=0;i<indices.Length;i++)mesh.SetTriangles(indices[i],i);
-            mesh.SetUVs(0,vertices.Select(v=>new Vector2(v.x/6f,v.z/6f)).ToList());mesh.RecalculateNormals();mesh.RecalculateBounds();
+            mesh.SetUVs(0,vertices.Select(v=>new Vector2(v.x/6f,v.z/6f)).ToList());mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();
             string path=Folder+"/"+name+".asset";var saved=AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if(saved==null)AssetDatabase.CreateAsset(mesh,path);else{EditorUtility.CopySerialized(mesh,saved);Object.DestroyImmediate(mesh);mesh=saved;EditorUtility.SetDirty(mesh);}
             var go=new GameObject(name);go.transform.SetParent(root,false);go.AddComponent<MeshFilter>().sharedMesh=mesh;

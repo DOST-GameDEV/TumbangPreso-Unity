@@ -153,11 +153,9 @@ namespace TumbangPreso.Visual
 
                 case Kind.BankShot:
                     ComicPopup.Spawn(at + Vector3.up * 0.35f, "BANK!", UI.UiTheme.Highlight, 1.0f);
-                    UI.Hud.ReportStyle(actor, 18.0f, "BANK SHOT");
                     break;
 
                 case Kind.NearMiss:
-                    UI.Hud.ReportStyle(actor, 10.0f, "SO CLOSE");
                     break;
 
                 case Kind.Zap:
@@ -165,12 +163,9 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.LataDown:
-                    UI.Hud.ReportStyle(actor, 42.0f, "TUMBA!");
                     break;
 
                 case Kind.Throw:
-                    UI.Hud.ReportStyle(actor, 5.0f + Mathf.Abs(strength) * 7.0f,
-                                       Mathf.Abs(strength) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
                     break;
 
                 case Kind.HeroHit:
@@ -380,7 +375,6 @@ namespace TumbangPreso.Visual
                 }
             }
 
-            if (taya != null) UI.Hud.ReportStyle(taya.PlayerSlot, 36.0f, "HULI!");
 
             // ⚠️ THE ANNOUNCER IS SPOKEN PER PEER RATHER THAN RELAYED, which is `NetCue`'s rule
             // for a commentary track: each machine says its own line off the event it has just
@@ -396,7 +390,6 @@ namespace TumbangPreso.Visual
                 blocker.GetComponentInChildren<CharacterSquashStretch>()?
                     .Impact((at - blocker.transform.position).normalized * alongSpeed, 0.22f);
 
-                UI.Hud.ReportStyle(blocker.PlayerSlot, 12.0f, "HARANG!");
             }
 
             ImpactBurst.SpawnAt(blocker != null ? blocker.transform.position : at);

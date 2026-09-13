@@ -96,6 +96,27 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   Do not restart redesign. Preserve cute blocky shapes, flat graphic faces, simple
   hands and recognizable identities. Rounded bodies, added thumbs, realistic
   anatomy and noisy reconstructed/voxel studies were rejected.
+- **Latest owner clarification,2026-09-13:** after initially rejecting the current
+  Bayan view,the owner said it is good and asked for modest further improvement
+  and an aerial view before choosing composition changes. Keep the current layout;
+  do not execute the earlier rollback proposal. Their specific current complaint
+  is uniform trees across all maps. Inventory existing tree assets,then vary useful
+  species/silhouettes/canopy shape/age/spacing while keeping the native style and
+  clear routes. The framed Bawal plaque remains rejected;replace it with natural
+  surface-painted lettering. A current Desktop build is explicitly requested.
+- **Latest owner playtest,2026-09-13:** delete Street Hype as a mechanic and all
+  associated UI. Earlier Vision/archive claims that it is Classic's identity are
+  superseded. Remove the duplicate main lobby RULES row, preserving Custom Game.
+  Fix Ilalim floating attachments/road continuity; redesign Eskinita sampayan and
+  retain its comparatively tight alley feeling; improve Bayan surface texture.
+  Warm cream/terracotta/brown-grey palette is now requested over the neutral pass.
+  Sa Bubong implementation moves ahead of the remaining abilities/equipment queue.
+  After maps, the newest owner priority is full ability implementation/mechanics
+  and visual revamps, including distinct signature ultimate moments. All six kits
+  and alternatives are covered; movement/equipment/network work remains open.
+  The owner is playing the delivered Desktop build: never replace it while running
+  or restore broad profile snapshots over their new saves. Use a separate named
+  Editor profile. Full current contract is docs/OWNER_PLAYTEST_REVISION.md.
 - House-model clarification,2026-09-12: the owner rejects the flimsy V1-V5 native
   house studies. Keep the old houses' solid chunky silhouettes/proportions and
   substantial walls/roof edges/frames/supports. Build Filipino details into that

@@ -1,3 +1,11 @@
+<!-- OWNER_PLAYTEST_20260913 -->
+**Latest owner playtest corrections are active:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
+Remove Street Hype and main RULES row; fix Ilalim floating/road continuity; redesign
+Eskinita sampayan/tighter feel; improve Bayan floor texture, varied trees and warm
+palette. Approved Sa Bubong must now enter implementation. Current Desktop build
+is delivered and in use. Preserve concurrent saves. Earlier Street Hype mandates
+are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
+
 # TODO: Tumbang Preso Unity
 
 **The open worklist. If it is not open, it is in [`TODO_Archive.md`](TODO_Archive.md).**
@@ -284,6 +292,12 @@ Full batch evidence and limitations are in TODO_Archive.md section 152.5. The
 broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
+
+**Latest owner clarification,2026-09-13:** currentBayan layout is retained after
+"oh wait nvm its good". Provide a currentaerial and Desktopbuild for review;then
+modestplaza refinement and variedtrees acrossallmaps. FramedBawal plaque still
+needs natural surface-paint correction. Earlierrollbackproposal is superseded.
+
 
 **Ground contact,2026-09-13:** bounded rendered compensation for controller skin
 space,with physics/meshes retained. All18/bothwidths zero plantedgap;kerb/jump/land/
@@ -11538,3 +11552,10 @@ repository still lands on something**: follow it here, find the number, read it 
 | - | Closed |
 
 - **152.8, CLOSED2026-09-12:** preserve transparent/cutout scenery during near-camera fading. Whole entry in [TODO_Archive.md](TODO_Archive.md); [evidence](reports/improvement-2026-09-12/near-fade-alpha.md).
+
+Latest owner ability feedback,2026-09-13: current abilities still look poor and
+feel too similar. AFTER MAPS, fully revamp and improve their implementation,
+mechanics/purposes and complete casting/body/FPP/moving geometry/VFX/impact/SFX.
+All six heroes/defaults/alternatives, within existing slots and simple controls.
+This is not a recolor pass. Existing map corrections remain first; the other
+movement/equipment/network/graphics/TODO scope remains open.

@@ -1,3 +1,6 @@
+**Newest owner playtest corrections:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
+Current implementation/run state is the newest active ledger pointer.
+
 # Substantial map transformation plan
 
 Owner-directed revision,2026-09-12. This is the active map plan. It supersedes the
@@ -473,3 +476,28 @@ views still suggest floating despite measured zero sole gap;review shadow contac
 bias and actual action root lift in the graphics pass rather than lowering models
 by eye. NeighborhoodFinishAuthor sets shadowBias.035/normalBias.25. No shadow fix
 has yet been tested from this observation.
+
+
+## Owner rejects current Bayan and warning plaque,2026-09-13
+
+The owner says Plaza Central looked much better before and rejects the current
+submitted gameplay view. Treat the CivicTown40-house composition/large repeated
+crowns as unaccepted;technical checks did not establish artistic success. Restore
+an earlier civic-plaza baseline,compare MATCHED directions,and retain church/hall/
+monument identity while making restrained paving/background improvements. Do not
+hide behind the submitted angle or claim landmarks were removed without checking.
+
+The owner also rejects the clean framed "BAWAL UMIHI DITO" sign. Replace it with
+surface-painted lettering,appropriate to an ordinary concrete wall/column and
+natural hand-brush construction. No tidy placard/frame or generic shop-sign layout.
+Current EXECUTION_PLAN.md records the correction sequence before implementation.
+
+
+### Superseding owner clarification
+
+The owner retracted the initial layout rejection: "oh wait nvm its good" and asks
+for an aerial view of currentBayan before selecting modest further improvements.
+Do not roll back CivicTown on the earlier statement. Their concrete vegetation
+feedback applies to allmaps:uniform trees look artificial;use suitable existing
+assets and improve variety/silhouettes. The warning-placard rejection still stands.
+A current Desktop build is requested for their own map playtest.

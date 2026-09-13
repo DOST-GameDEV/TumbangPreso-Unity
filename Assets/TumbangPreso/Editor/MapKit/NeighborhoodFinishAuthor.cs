@@ -111,27 +111,8 @@ namespace TumbangPreso.EditorTools.MapKit
             MapFinalPassAuthor.FinishLoadedScene(map,report);
         }
 
-        private static void SetLight(string map)
-        {
-            bool bridge = map == "IlalimNgTulay";
-            RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = bridge ? new Color(.62f,.65f,.62f) : new Color(.62f,.64f,.59f);
-            RenderSettings.ambientEquatorColor = bridge ? new Color(.47f,.49f,.46f) : new Color(.44f,.42f,.36f);
-            RenderSettings.ambientGroundColor = new Color(.25f,.23f,.20f);
-            RenderSettings.ambientIntensity = 1f;
-            foreach (var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
-            {
-                if (light.type != LightType.Directional) continue;
-                light.color = new Color(1f,.91f,.78f);
-                light.intensity = bridge ? 1.08f : 1.12f;
-                light.shadows = LightShadows.Soft;
-                light.shadowStrength = bridge ? .75f : .86f;
-                light.shadowBias = .035f;
-                light.shadowNormalBias = .25f;
-            }
-            var grade = Object.FindFirstObjectByType<MapGrade>();
-            if (grade != null) grade.Set(1f, 1.02f, 1f, 1f, 1.9f);
-        }
+        private static void SetLight(string map) => MapAtmosphereAuthor.Apply(map);
+
 
         private static Material Material(string name, Color color)
         {

@@ -15,8 +15,8 @@ namespace TumbangPreso.Diagnostics
     /// ⚠️⚠️ IT EXISTS BECAUSE "BOTH PROCESSES STAYED OPEN" IS NOT A NETWORK TEST, AND THAT IS
     /// THE ONLY TEST THIS PROJECT HAD. Every networking fault in `docs/TODO.md` §§ 32, 35, 36 and
     /// 38 shares one property: **the host cannot see it.** A joiner saw three statues (§ 36.1),
-    /// saw the wrong roster (§ 32.1), heard no abilities (§ 25.1) and earned no Street Hype
-    /// (§ 38.15), and in every case the person running the lobby had a perfectly normal match in
+    /// saw the wrong roster (§ 32.1), heard no abilities (§ 25.1)
+    /// and in every case the person running the lobby had a perfectly normal match in
     /// front of them. Two logs that both say "connected" prove none of it.
     ///
     /// ⚠️⚠️ SO IT REPORTS WHAT EACH PEER BELIEVES, NOT WHETHER IT SURVIVED. Per seat: which

@@ -331,7 +331,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var grade = mapRoot.AddComponent<MapGrade>();
             // Final map pass keeps neutral saturation and slightly softer contrast.
             // Match the post-authoring scene, which the regression reads directly.
-            grade.Set(1.00f, 1.02f, 1.00f, 1.00f, 1.90f);
+            grade.Set(1.00f, 1.025f, 1.045f, 1.00f, 1.90f);
 
             BuildLighting(mapRoot.transform);
             BuildGameplayRig(mapRoot.transform);
@@ -1176,8 +1176,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
             }
 
-            PlaceKit(backlot, "factory", "crane", "tumbang-warm-b",
-                     new Vector3(-33.0f, HazeTop, -30.0f), 34.0f, Vector3.one * 4.2f, "BacklotCrane");
+            // The optional old crane had an unconvincing unverified arm/tower join.
+            // Keep its model asset, but omit it from this street's backdrop.
 
             PlaceKit(backlot, "factory", "hopper-high-square", "tumbang-warm-a",
                      new Vector3(30.5f, HazeTop, -6.0f), -18.0f, Vector3.one * 4.0f, "BacklotHopper");
@@ -1225,6 +1225,8 @@ namespace TumbangPreso.EditorTools.MapKit
                     Object.DestroyImmediate(mast.GetComponent<Collider>());
                 }
             }
+
+            HoardingSupportsAuthor.RepairLoaded();
 
             // 4. Lamp columns down the two background pavements, which is what actually tells the
             //    eye that the road continues rather than stops at the intersection.

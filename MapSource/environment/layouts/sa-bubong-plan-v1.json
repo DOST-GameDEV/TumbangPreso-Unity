@@ -1,0 +1,33 @@
+{
+  "map": "SaBubong",
+  "displayName": "SA BUBONG",
+  "status": "Approved concept; implementation layout, not a finished playable scene",
+  "intention": "Metro Manila residential condo roofdeck used for a neighborhood game",
+  "court": {"halfX": 7, "halfZ": 7, "surfaceY": 0.1},
+  "deck": {"halfX": 14, "halfZ": 18, "slabThickness": 0.4},
+  "places": [
+    {"name": "Fenced resident pool", "centre": [-10.7, 0.1, 6.7], "size": [4.4, 0.8, 9], "access": "Scenic pool; visible fence keeps play on the deck"},
+    {"name": "Shaded tables", "centre": [-10.2, 0.1, -8.3], "size": [5.2, 3.3, 5.2], "access": "Outside the central retrieval lanes"},
+    {"name": "Stairwell and noticeboard", "centre": [7.8, 0.1, 15.2], "size": [4.8, 3.1, 4.2], "access": "Readable resident entrance, solid stairhead"},
+    {"name": "Laundry and service corner", "centre": [-5.9, 0.1, 15.1], "size": [7.2, 2.8, 4.8], "access": "Supported new courtyard-line asset, water tank and drying area"}
+  ],
+  "fallEdge": {
+    "side": "east",
+    "x": 14,
+    "zMin": -3.2,
+    "zMax": 3.2,
+    "intent": "Only the actual outer ledge permits a fall; clearly marked beforehand",
+    "recovery": "Existing mash input with authoritative recovery episode and a distinct get-back-up sequence",
+    "slipperUnavailableSeconds": 10,
+    "safeReturn": "Inside the roof, away from the can, railings, pool and other recovery bodies"
+  },
+  "validation": [
+    "Four players and both modes; central chalk box unobstructed",
+    "No inherited large floor beneath the intended fall gap",
+    "Walk, jump and push across the real edge; no early invisible fall trigger",
+    "Keyboard, controller, touch, quick taps versus holds, low and high frame rates",
+    "Actual host/client delayed mash and recovery snapshots; disconnect and next round",
+    "Fallen slippers genuinely unavailable for ten seconds and returned once to reachable ground",
+    "Original sources, native style, supported props, first-person and aerial critique"
+  ]
+}

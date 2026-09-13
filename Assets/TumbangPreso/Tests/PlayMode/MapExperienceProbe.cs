@@ -272,6 +272,29 @@ namespace TumbangPreso.PlayTests
                         }
                         foreach(float end in new[]{-1f,1f})
                             shots.Add(($"street-end-{end}",new Vector3(0,1.65f,end*15),new Vector3(0,2,end*55)));
+                        if(map==SceneFlow.IlalimNgTulay)
+                        {
+                            foreach(float side in new[]{-1f,1f})
+                                shots.Add(($"painted-notice-{side}",new Vector3(side*.6f,1.65f,side*10),new Vector3(side*4.4f,1.65f,side*10)));
+                            foreach(float side in new[]{-1f,1f})
+                            foreach(float end in new[]{-1f,1f})
+                            {
+                                shots.Add(($"roof-support-{side}-{end}",new Vector3(side*6,1.65f,end*12),new Vector3(side*17,9,end*16)));
+                                shots.Add(($"road-seam-{side}-{end}",new Vector3(side*2,1.65f,end*16),new Vector3(side*2,0,end*24)));
+                            }
+                            var support=new StringBuilder("name,parent,x,y,z,min_x,min_y,min_z,max_x,max_y,max_z,material\n");
+                            foreach(var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None))
+                            {
+                                string path=renderer.name;var parent=renderer.transform.parent;
+                                while(parent!=null){path=parent.name+"/"+path;parent=parent.parent;}
+                                if(!path.Contains("Bubong")&&!path.Contains("RetainedShop")&&
+                                   !path.Contains("Hoarding")&&!path.Contains("Kalsada")&&
+                                   !path.Contains("AsphaltSurface"))continue;
+                                var p=renderer.transform.position;var b=renderer.bounds;
+                                support.AppendLine(FormattableString.Invariant($"{renderer.name},{path},{p.x:F4},{p.y:F4},{p.z:F4},{b.min.x:F4},{b.min.y:F4},{b.min.z:F4},{b.max.x:F4},{b.max.y:F4},{b.max.z:F4},{renderer.sharedMaterial?.name}"));
+                            }
+                            File.WriteAllText(Path.Combine(Output,"ilalim-support.csv"),support.ToString());
+                        }
                         foreach(var shot in shots)
                         {
                             camera.transform.position = shot.at;

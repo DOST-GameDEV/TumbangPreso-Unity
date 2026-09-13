@@ -1,0 +1,58 @@
+[
+  {
+    "check": "ability authority",
+    "exitCode": 0
+  },
+  {
+    "check": "request call sites",
+    "exitCode": 0
+  },
+  {
+    "check": "wire payloads",
+    "exitCode": 0
+  },
+  {
+    "check": "audio reach",
+    "exitCode": 0
+  },
+  {
+    "check": "positional audio ownership",
+    "exitCode": 0
+  },
+  {
+    "check": "presentation reach",
+    "exitCode": 0
+  },
+  {
+    "check": "cue relay",
+    "exitCode": 0
+  },
+  {
+    "check": "shader stripping",
+    "exitCode": 0
+  },
+  {
+    "check": "ability stat drift",
+    "exitCode": 0
+  },
+  {
+    "check": "event subscriptions",
+    "exitCode": 0
+  },
+  {
+    "check": "tournament defaults",
+    "exitCode": 0
+  },
+  {
+    "check": "gameplay clocks",
+    "exitCode": 0
+  },
+  {
+    "check": "harness contracts",
+    "exitCode": 0
+  },
+  {
+    "check": "wire finite values",
+    "exitCode": 0
+  }
+]

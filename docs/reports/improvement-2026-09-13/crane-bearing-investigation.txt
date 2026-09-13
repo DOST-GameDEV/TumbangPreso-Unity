@@ -1,0 +1,30 @@
+Historical unsuccessful bearing verification. This did not establish a trustworthy physical join; do not turn it into an unchecked airborne exemption. The optional crane assembly is retired from this map. Original model asset is retained.
+
+        private static void VerifyCraneJib()
+        {
+            var crane=GameObject.Find("IlalimNgTulay/Dressing/BacklotKit/BacklotCrane");
+            var arm=crane!=null?crane.transform.Find("arm"):null;
+            if(arm==null)return;
+            var collider=crane.AddComponent<MeshCollider>();collider.sharedMesh=crane.GetComponent<MeshFilter>().sharedMesh;
+            var jib=arm.gameObject.AddComponent<MeshCollider>();jib.sharedMesh=arm.GetComponent<MeshFilter>().sharedMesh;
+            Physics.SyncTransforms();
+            try
+            {
+                // The tower is an open steel frame: a ray through the pivot's
+                // empty centre misses it. Find an actual touching steel face on
+                // both meshes around the bearing, without excusing a visual gap.
+                bool joined=false;
+                for(int x=-12;x<=12&&!joined;x++)for(int z=-12;z<=12&&!joined;z++)
+                {
+                    var point=arm.position+new Vector3(x*.08f,0,z*.08f);
+                    if(collider.Raycast(new Ray(point+Vector3.up*.08f,Vector3.down),out var towerHit,.16f)&&
+                       jib.Raycast(new Ray(point-Vector3.up*.08f,Vector3.up),out var jibHit,.16f)&&
+                       Mathf.Abs(towerHit.point.y-jibHit.point.y)<=.03f)joined=true;
+                }
+                if(!joined)
+                    throw new InvalidOperationException("Crane jib does not meet its tower bearing");
+                AirborneByDesign.Attach(arm.gameObject,
+                    "Cantilevered crane jib. Its pivot and underside meet the tower bearing, verified against the tower mesh within30mm.");
+            }
+            finally{Object.DestroyImmediate(collider);Object.DestroyImmediate(jib);}
+        }

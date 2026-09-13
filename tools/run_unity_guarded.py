@@ -3,6 +3,8 @@
 Editor tests use the real product/company persistentDataPath. UI tests can save
 preferences even when their in-memory teardown succeeds. Copy bytes before a run,
 restore them afterward and verify hashes. Never remove the user's profile folder.
+Use -tp-profile <name> during a concurrent Desktop playtest: only that named
+profile is snapshotted/restored, following Runtime/ProfilePaths.cs exactly.
 """
 import hashlib
 import json
@@ -21,32 +23,49 @@ PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Pre
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def profile_root(args):
+    """Mirror ProfilePaths.LaunchProfile/ForProfile; reject ambiguous input."""
+    names=[]
+    for index,arg in enumerate(args):
+        if arg.lower() not in ("-tp-profile","-profile"):continue
+        if index+1>=len(args) or not args[index+1].strip() or args[index+1].startswith("-"):
+            raise ValueError("A profile flag requires a nonempty profile name")
+        names.append(args[index+1].strip())
+    if len(names)>1:
+        raise ValueError("Use exactly one named profile flag")
+    if not names:return PROFILE
+    key=hashlib.sha256(names[0].encode("utf-8")).hexdigest()
+    return PROFILE/"profiles"/key
+
+
 def run(args):
+    profile=profile_root(args)
     backup=ROOT/"Logs"/("profile-preservation-"+uuid.uuid4().hex[:12])
     backup.mkdir(parents=True)
     manifest={}
-    if PROFILE.exists():
-        for source in PROFILE.rglob("*"):
+    if profile.exists():
+        for source in profile.rglob("*"):
             if not source.is_file() or source.suffix==".log" or source.name=="TestResults.xml":continue
-            relative=source.relative_to(PROFILE)
+            relative=source.relative_to(profile)
             target=backup/relative;target.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(source,target)
             manifest[str(relative)]=digest(source)
     (backup/"manifest.json").write_text(json.dumps(manifest,indent=2))
+    (backup/"scope.json").write_text(json.dumps({"profileRoot":str(profile)},indent=2))
     result=1
     try:
         result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT).returncode
     finally:
         restored=0
         for relative,expected in manifest.items():
-            destination=PROFILE/relative
-            if not destination.resolve().is_relative_to(PROFILE.resolve()):
+            destination=profile/relative
+            if not destination.resolve().is_relative_to(profile.resolve()):
                 raise ValueError("Profile destination escaped its root")
             destination.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(backup/relative,destination)
             if digest(destination)!=expected:raise RuntimeError("Profile restore did not verify")
             restored+=1
-        print(f"Preserved {restored} existing profile files; snapshot {backup.name}",flush=True)
+        print(f"Preserved {restored} existing profile files in {profile}; snapshot {backup.name}",flush=True)
     return result
 
 

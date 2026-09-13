@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,6 +18,31 @@ namespace TumbangPreso.Tests
     public sealed class MapSurfaceTests
     {
         private const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
+
+        [Test]
+        public void ShopSignBackingsActuallyMeetTheirOwnFascia()
+        {
+            var scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Additive);
+            try
+            {
+                int checkedSigns=0;
+                foreach(var root in scene.GetRootGameObjects())
+                foreach(var backing in root.GetComponentsInChildren<MeshRenderer>())
+                {
+                    if(!backing.name.StartsWith("Shop sign backing ")&&!backing.name.StartsWith("Banner backing "))continue;
+                    var frontage=backing.transform.parent;
+                    var fascia=frontage.Find("Roof slab").GetComponent<Renderer>();
+                    var direction=frontage.forward;
+                    var b=backing.bounds;var f=fascia.bounds;
+                    float back=Vector3.Dot(b.center,direction)-Mathf.Abs(direction.x)*b.extents.x-Mathf.Abs(direction.z)*b.extents.z;
+                    float front=Vector3.Dot(f.center,direction)+Mathf.Abs(direction.x)*f.extents.x+Mathf.Abs(direction.z)*f.extents.z;
+                    Assert.That(back-front,Is.EqualTo(.003f).Within(.001f),backing.name+" floats in front of its fascia");
+                    checkedSigns++;
+                }
+                Assert.AreEqual(11,checkedSigns);
+            }
+            finally{EditorSceneManager.CloseScene(scene,true);}
+        }
 
         [Test]
         public void IlalimUsesOneContinuousAsphaltSkinAndNoPatchSlabs()
@@ -56,7 +82,22 @@ namespace TumbangPreso.Tests
                 // z = +/-16.5 and the skin carries two metres beyond each, so its seam stays
                 // behind the wall without swallowing the 80 by 240 m backdrop again.
                 Assert.AreEqual(14.0f, bounds.size.x, 0.02f);
-                Assert.AreEqual(37.0f, bounds.size.z, 0.02f);
+                foreach(var continuation in all.Where(t=>t.name=="RoadContinuationNorth"||t.name=="RoadContinuationSouth"))
+                {
+                    var roadBounds=continuation.GetComponent<Renderer>().bounds;
+                    Assert.LessOrEqual(bounds.min.z,roadBounds.min.z+.02f,"Asphalt stops before the visible south road");
+                    Assert.GreaterOrEqual(bounds.max.z,roadBounds.max.z-.02f,"Asphalt stops before the visible north road");
+                }
+                var crosses=all.Where(t=>t.name.StartsWith("BackgroundCrossroad_")&&t.name.EndsWith("_Surface")).ToArray();
+                Assert.AreEqual(4,crosses.Length,"All four visible cross-street arms need the same road surface");
+                foreach(var part in crosses.Concat(surfaces))
+                {
+                    var r=part.GetComponent<Renderer>();var material=r.sharedMaterial;
+                    Assert.AreSame(renderer.sharedMaterial.mainTexture,material.mainTexture);
+                    Assert.AreEqual(r.bounds.size.x/4f,material.mainTextureScale.x,.01f);
+                    Assert.AreEqual(r.bounds.size.z/4f,material.mainTextureScale.y,.01f);
+                    Assert.AreEqual(bounds.max.y,r.bounds.max.y,.002f);
+                }
                 Assert.AreEqual(0.001f, bounds.min.y, 0.002f);
             }
             finally

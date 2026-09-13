@@ -65,3 +65,10 @@ image.save(OUT/'LaroGraffiti.png')
 source=ROOT/'MapSource/environment/signs';source.mkdir(parents=True,exist_ok=True)
 (source/'street-signs.json').write_text(json.dumps(signs,indent=2)+'\n',encoding='utf-8')
 print('Authored',len(signs)+2,'original sign faces.')
+
+# The owner rejected the repeated V1 shop-board template. Keep its source above
+# as history; the current independently designed businesses and wall lettering
+# are authoritative whenever this established authoring entry point runs.
+import subprocess,sys
+subprocess.run([sys.executable,str(ROOT/'tools/author_shopfront_signs_v2.py'),
+                '--out',str(OUT)],check=True)

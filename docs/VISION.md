@@ -51,9 +51,9 @@ gammeode with a lot of stuff."*
   and it is somebody's preferred way to play. Do not add a power to it, do not add a HUD
   element that only makes sense with a kit, and do not let a Hero Strike balance change reach
   into `Balance.cs` values Classic shares without saying so out loud.
-  *(Classic already has its own bottom-of-screen identity: Street Hype, which names skilled
-  curves, banks, close calls and blocks without changing a single point. That is the pattern.
-  Give Classic its own depth; do not give it powers.)*
+  The owner removed Street Hype on 2026-09-13. Classic's identity comes from the
+  street-game loop and its presentation; do not reintroduce a cosmetic points
+  meter or its UI. The historical rationale is preserved in the rework reports.
 
 - **HERO STRIKE IS WHERE THE CEILING GOES UP.** Combos, timing, counterplay, reading which
   ultimate is banked. If a change makes the game deeper for a player who has put fifty hours

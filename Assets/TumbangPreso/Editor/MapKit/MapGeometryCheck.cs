@@ -163,6 +163,8 @@ namespace TumbangPreso.EditorTools.MapKit
             public Bounds World;
             public bool Airborne;
             public string AirborneReason;
+            public MeshRenderer Renderer;
+            public MeshCollider Query;
         }
 
         private static int Inspect(string scenePath, StringBuilder sb, bool gated)
@@ -189,6 +191,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     Path = PathOf(r.transform),
                     World = r.bounds,
+                    Renderer = r,
                     Airborne = mark != null,
                     AirborneReason = mark != null ? mark.Reason : null,
                 };
@@ -211,7 +214,8 @@ namespace TumbangPreso.EditorTools.MapKit
                           $"z[{content.min.z:F2},{content.max.z:F2}]");
 
             int failures = 0;
-            failures += CheckResting(pieces, sb);
+            try { failures += CheckResting(pieces, sb); }
+            finally { ReleaseQueries(pieces); }
             failures += CheckBoxIsClear(sb);
             failures += CheckLataIsClear(pieces, sb);
             failures += CheckFloorCoversThePlayableArea(pieces, sb);
@@ -627,11 +631,30 @@ namespace TumbangPreso.EditorTools.MapKit
                     foreach (var q in pieces)
                     {
                         if (ReferenceEquals(p, q)) continue;
-                        if (q.World.max.y > ceiling || q.World.max.y <= top) continue;
+                        if (q.World.max.y <= top) continue;
                         if (x < q.World.min.x || x > q.World.max.x) continue;
                         if (z < q.World.min.z || z > q.World.max.z) continue;
 
-                        top = q.World.max.y;
+                        float surface=q.World.max.y;
+                        if(p.Renderer!=null&&q.Renderer!=null&&p.Renderer.transform.IsChildOf(q.Renderer.transform))
+                        {
+                            // A parent building can have a low roof beside a tall
+                            // tower. Its bounding-box top both approved floating
+                            // units and rejected correctly seated lower-wing units.
+                            if(q.Query==null)
+                            {
+                                var filter=q.Renderer.GetComponent<MeshFilter>();
+                                if(filter==null||filter.sharedMesh==null)continue;
+                                q.Query=q.Renderer.gameObject.AddComponent<MeshCollider>();
+                                q.Query.sharedMesh=filter.sharedMesh;Physics.SyncTransforms();
+                            }
+                            if(!q.Query.Raycast(new Ray(new Vector3(x,ceiling,z),Vector3.down),out var hit,
+                                Mathf.Max(1,ceiling-q.World.min.y+.1f))||hit.normal.y<.5f)continue;
+                            surface=hit.point.y;
+                        }
+                        else if(surface>ceiling)continue;
+                        if(surface<=top)continue;
+                        top = surface;
                         name = q.Path;
                     }
 
@@ -641,6 +664,18 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             return levels;
+        }
+
+        private static void ReleaseQueries(IEnumerable<Piece> pieces)
+        {foreach(var piece in pieces)if(piece.Query!=null)UnityEngine.Object.DestroyImmediate(piece.Query);}
+
+        public static float MeasureParentSupport(MeshRenderer prop,MeshRenderer building)
+        {
+            var p=new Piece{Path=PathOf(prop.transform),World=prop.bounds,Renderer=prop};
+            var q=new Piece{Path=PathOf(building.transform),World=building.bounds,Renderer=building};
+            var pieces=new List<Piece>{p,q};
+            try{return Support(pieces,p,out _);}
+            finally{ReleaseQueries(pieces);}
         }
 
         private static float Support(List<Piece> pieces, Piece p, out string bestName)

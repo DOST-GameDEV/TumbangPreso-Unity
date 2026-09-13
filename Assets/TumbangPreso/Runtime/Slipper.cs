@@ -1123,9 +1123,7 @@ namespace TumbangPreso
             // it went past. The word said nothing the frame did not, and it fired on a 1.35 m
             // threshold, which in Hero Strike is most misses of most throws.
             //
-            // ⚠️ THE CUE AND THE HYPE BOTH STAY. The whip-past sound is what sells the miss, and
-            // `ReportStyle` is Classic-only and pays 10 hype rather than printing anything on a
-            // Hero Strike screen.
+            // The whip-past sound communicates a near miss without a cosmetic reward.
             // ⚠️⚠️ THROUGH `NetCue`: `FixedUpdate` OPENS WITH `ShouldResolve()`, SO EVERY SOUND
             // BELOW IT WAS HOST-ONLY. 🧑 2026-08-29: *"non hosts dont have sfx in some plarts"*.
             // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
