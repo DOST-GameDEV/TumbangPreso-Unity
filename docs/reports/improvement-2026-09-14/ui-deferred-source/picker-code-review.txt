@@ -1,0 +1,1358 @@
+using System.Collections.Generic;
+using TumbangPreso.Abilities;
+using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class ConvertedCharacterSelect : ConvertedScreen
+    {
+        public event System.Action Closed;
+
+        private static readonly string[] TabNames = { "PERSON", "CAN", "SLIPPER" };
+
+        private static readonly string[][] MeterLabels =
+        {
+            new[] { "SPEED", "POWER", "GRIT" },
+            new[] { "RESET", "REBOUND", "STANCE" },
+            new[] { "FLIGHT", "IMPACT", "RECOVERY" },
+        };
+
+        private int _tab;
+
+        public void SelectCategory(int category)
+        {
+            _tab = Mathf.Clamp(category, 0, TabNames.Length - 1);
+            Refresh();
+        }
+        private readonly int[] _pick = new int[3];
+
+
+        private static readonly Color BoardInk = UiTheme.Cream;
+
+        private static readonly Color BoardInkSoft = UiTheme.CreamMuted;
+
+        private static readonly Color RowPlate = UiTheme.WoodSlot;
+
+        private static readonly Color RowRim = UiTheme.WoodEdge;
+
+        private Texture2D _backdropTexture;
+        private Texture2D _glowTexture;
+        private Texture2D _scrimTexture;
+        private Sprite _backdropSprite;
+        private Sprite _glowSprite;
+        private Sprite _scrimSprite;
+        private Image _glowImage;
+
+        protected override void Wire()
+        {
+            ConfigureGodotBackdrop();
+            SetHeadline("GameBannerLabel", SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? "CHOOSE YOUR HERO"
+                : "CHOOSE YOUR LOADOUT", 66);
+
+            var s = Settings.SettingsStore.Current;
+            _pick[0] = Mathf.Max(0, s.CharacterPick);
+            _pick[1] = Mathf.Max(0, s.CanPick);
+            _pick[2] = Mathf.Max(0, s.SlipperPick);
+
+            OnClick("CharPrevButton", () => CycleEntry(-1));
+            OnClick("CharNextButton", () => CycleEntry(1));
+            OnClick("ConfirmButton", Confirm);
+            OnClick("BackButton", Dismiss);
+
+            WireTabs();
+
+            PaperiseAuthoredBoard();
+
+            BuildStageDoors();
+
+            Refresh();
+        }
+
+        private void PaperiseAuthoredBoard()
+        {
+            RestoreAuthoredWood(Node("ConfigPanel"));
+            RestoreAuthoredWood(Node("CharSelector"));
+        }
+
+        private static void RestoreAuthoredWood(Transform node)
+        {
+            if (node == null) return;
+
+            var skin = node.GetComponent<PaperSkin>();
+            if (skin != null) Destroy(skin);
+
+            var panel = node.GetComponent<GodotPanel>();
+            if (panel != null) panel.enabled = true;
+
+            var wood = node.GetComponent<WoodSkin>();
+            if (wood != null) wood.enabled = true;
+
+            foreach (string layer in new[] { "Face", "Shadow" })
+            {
+                var child = node.Find(layer);
+                if (child != null) child.gameObject.SetActive(true);
+            }
+        }
+
+        private void ConfigureGodotBackdrop()
+        {
+            _backdropTexture = VerticalBackdrop();
+            _glowTexture = RadialGlow();
+            _scrimTexture = HorizontalScrim();
+
+            _backdropSprite = ApplyTexture("Backdrop", _backdropTexture);
+            _glowSprite = ApplyTexture("BackdropGlow", _glowTexture);
+            _scrimSprite = ApplyTexture("Scrim", _scrimTexture);
+            _glowImage = Node("BackdropGlow")?.GetComponent<Image>();
+        }
+
+        private Sprite ApplyTexture(string nodeName, Texture2D texture)
+        {
+            var node = Node(nodeName);
+            if (node == null || texture == null) return null;
+
+            var image = node.GetComponent<Image>();
+            if (image == null) return null;
+
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                                       new Vector2(0.5f, 0.5f), 100.0f);
+            sprite.name = $"CharacterSelect_{nodeName}";
+            image.sprite = sprite;
+            image.color = Color.white;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = false;
+            return sprite;
+        }
+
+        private static Texture2D VerticalBackdrop()
+        {
+            const int height = 256;
+            var texture = NewTexture(8, height, "CharacterSelect_Backdrop");
+            var pixels = new Color[texture.width * texture.height];
+
+            var top = new Color(0.150f, 0.140f, 0.125f);
+            var middle = new Color(0.098f, 0.091f, 0.080f);
+            var bottom = new Color(0.048f, 0.044f, 0.038f);
+
+            for (int y = 0; y < height; y++)
+            {
+                float t = 1.0f - y / (float)(height - 1);
+                Color colour = t <= 0.55f
+                    ? Color.Lerp(top, middle, t / 0.55f)
+                    : Color.Lerp(middle, bottom, (t - 0.55f) / 0.45f);
+
+                for (int x = 0; x < texture.width; x++)
+                    pixels[y * texture.width + x] = colour;
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D RadialGlow()
+        {
+            const int size = 256;
+            var texture = NewTexture(size, size, "CharacterSelect_Glow");
+            var pixels = new Color[size * size];
+            var centre = new Vector2(0.70f, 1.0f - 0.42f);
+
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                var uv = new Vector2(x / (float)(size - 1), y / (float)(size - 1));
+
+                float t = Mathf.Clamp01(Vector2.Distance(uv, centre) / 0.52f);
+
+                float alpha = t <= 0.30f
+                    ? 0.62f
+                    : 0.62f * Mathf.Pow(1.0f - ((t - 0.30f) / 0.70f), 3.0f);
+
+                pixels[y * size + x] = new Color(1.0f, 1.0f, 1.0f, alpha);
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D HorizontalScrim()
+        {
+            const int width = 256;
+            var texture = NewTexture(width, 8, "CharacterSelect_Scrim");
+            var pixels = new Color[texture.width * texture.height];
+            var ink = new Color(0.030f, 0.027f, 0.023f);
+
+            for (int x = 0; x < width; x++)
+            {
+                float t = x / (float)(width - 1);
+
+                float inward = Mathf.Clamp01(Mathf.Min(t, 1.0f - t) / 0.32f);
+
+                float alpha = 0.55f * (1.0f - inward) * (1.0f - inward);
+
+                for (int y = 0; y < texture.height; y++)
+                    pixels[y * texture.width + x] = new Color(ink.r, ink.g, ink.b, alpha);
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
+        }
+
+        private static Texture2D NewTexture(int width, int height, string name)
+        {
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
+            {
+                name = name,
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+                hideFlags = HideFlags.DontSave,
+            };
+            return texture;
+        }
+
+        private void OnDestroy()
+        {
+            Destroy(_backdropSprite);
+            Destroy(_glowSprite);
+            Destroy(_scrimSprite);
+            Destroy(_backdropTexture);
+            Destroy(_glowTexture);
+            Destroy(_scrimTexture);
+        }
+
+        private const int TabLabelSize = 22;
+
+        private static void FitTabLabel(Button button)
+        {
+            if (button == null) return;
+
+            var label = button.GetComponentInChildren<Text>(true);
+            if (label == null) return;
+
+            label.fontSize = TabLabelSize;
+
+            var rt = (RectTransform)button.transform;
+            var bar = rt.parent as RectTransform;
+            if (bar != null) LayoutRebuilder.ForceRebuildLayoutImmediate(bar);
+
+            float room = rt.rect.width - 24.0f;
+            if (room > 1.0f) MenuKit.Fit(label, room, 14);
+        }
+
+        private void WireTabs()
+        {
+            var bar = Node("TabBar");
+            if (bar == null) return;
+
+            for (int i = bar.childCount - 1; i >= 0; i--) Destroy(bar.GetChild(i).gameObject);
+
+            var barLayout = bar.GetComponent<HorizontalLayoutGroup>();
+            if (barLayout != null) barLayout.spacing = PaperKit.Gap;
+
+            _tabButtons.Clear();
+
+            for (int i = 0; i < TabNames.Length; i++)
+            {
+                int index = i;
+
+                string tabName = i == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike
+                    ? "HERO"
+                    : TabNames[i];
+                var button = MenuKit.WoodButton(bar, tabName, Vector2.zero, Vector2.zero,
+                                                new Vector2(180.0f, 56.0f), () =>
+                                                {
+                                                    _tab = index;
+                                                    MenuSfx.Click();
+                                                    Refresh();
+                                                });
+
+                var element = button.gameObject.AddComponent<LayoutElement>();
+                element.preferredHeight = 56.0f;
+                element.flexibleWidth = 1.0f;
+
+                var tabLabel = button.GetComponentInChildren<Text>(true);
+                if (tabLabel != null) tabLabel.fontSize = TabLabelSize;
+
+                _tabButtons.Add(button);
+            }
+        }
+
+        private void BuildStageDoors()
+        {
+            bool heroes = SceneFlow.SelectedMode == GameMode.HeroStrike;
+
+            if (CustomCharacterScreen.AvailableToPlayers)
+                _customDoor = StageDoor("CustomDoor", "MAKE YOUR OWN", "build a character",
+                                        "›", false, 0.0f,
+                                        () => CustomCharacterScreen.Ensure().Open());
+
+            if (heroes)
+                _loadoutDoor = StageDoor("LoadoutDoor", "LOADOUT", "your two skills",
+                                         "◆", true, StageDoorPitch,
+                                         () => ToggleLoadoutBoard(true));
+        }
+
+        private const float StageDoorPitch = StageDoorHeight + 14.0f;
+
+        private const float StageDoorWidth = 320.0f;
+
+        private const float StageDoorHeight = 68.0f;
+
+        private Button StageDoor(string name, string verb, string says, string mark, bool marker,
+                                 float lift, System.Action onPress)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(transform, false);
+
+            PaperSkin.Apply(go, marker ? PaperCraft.Surface.Live : PaperCraft.Surface.Token);
+
+            var button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = go.GetComponent<Image>();
+            button.onClick.AddListener(() => { MenuSfx.Click(); onPress(); });
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = new Vector2(1.0f, 0.0f);
+            rt.anchorMax = new Vector2(1.0f, 0.0f);
+            rt.pivot = new Vector2(1.0f, 0.5f);
+            rt.anchoredPosition = new Vector2(-96.0f, 104.0f + lift);
+            rt.sizeDelta = new Vector2(StageDoorWidth, StageDoorHeight);
+
+            bool dark = marker;
+
+            var label = PaperKit.Ink(go.transform, verb, PaperKit.Body, TextAnchor.LowerCenter);
+            label.name = "Label";
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+            label.color = dark ? UiTheme.Cream : UiTheme.PaperInk;
+            label.raycastTarget = false;
+            label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(30.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-30.0f, -4.0f);
+
+            var caption = PaperKit.Ink(go.transform, says, MenuKit.MinReadableUnits,
+                                       TextAnchor.UpperCenter, soft: true);
+            caption.name = "DoorCaption";
+            caption.color = dark ? UiTheme.CreamMuted : UiTheme.PaperInkSoft;
+            caption.raycastTarget = false;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.44f);
+            caption.rectTransform.offsetMin = new Vector2(30.0f, PaperCraft.Drop);
+            caption.rectTransform.offsetMax = new Vector2(-30.0f, 0.0f);
+
+            var glyph = PaperKit.Ink(go.transform, mark, PaperKit.Body, TextAnchor.MiddleCenter);
+            glyph.name = "DoorMark";
+            glyph.color = marker ? UiTheme.Amber : UiTheme.PaperInkSoft;
+            glyph.raycastTarget = false;
+            glyph.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            glyph.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
+            glyph.rectTransform.pivot = new Vector2(0.0f, 0.5f);
+            glyph.rectTransform.sizeDelta = new Vector2(30.0f, 0.0f);
+            glyph.rectTransform.anchoredPosition = new Vector2(10.0f, -(PaperCraft.Drop * 0.5f));
+
+            go.AddComponent<PaperButton>();
+            FocusRing.Attach(go, 4.0f);
+
+            return button;
+        }
+
+
+        private GameObject _loadoutBoard;
+
+        private void ToggleLoadoutBoard(bool open)
+        {
+            if (_customDoor != null) _customDoor.gameObject.SetActive(!open);
+            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab);
+
+            if (!open)
+            {
+                if (_loadoutBoard != null) _loadoutBoard.SetActive(false);
+                return;
+            }
+
+            if (_loadoutBoard != null) Destroy(_loadoutBoard);
+            BuildLoadoutBoard();
+        }
+
+        private bool LoadoutBoardOpen => _loadoutBoard != null && _loadoutBoard.activeSelf;
+
+        private bool OnHeroTab => _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
+
+        private void BuildLoadoutBoard()
+        {
+            string heroId = CurrentHeroId();
+            if (string.IsNullOrEmpty(heroId)) return;
+
+            var kit = HeroAbilitySystem.CreateKitFor(heroId);
+            Color accent = UiTheme.ColorForHero(heroId);
+
+            var go = new GameObject("LoadoutBoard", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(transform, false);
+            _loadoutBoard = go;
+
+            var plate = go.GetComponent<Image>();
+            plate.raycastTarget = true;
+            PaperSkin.Apply(go, PaperCraft.Surface.Sheet);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(StageCentre, 40.0f);
+            rt.sizeDelta = new Vector2(BoardWidth, BoardHeight);
+
+            float inner = BoardWidth - (BoardPad * 2.0f);
+
+            var header = MenuKit.Label(go.transform,
+                "LOADOUT   ·   " + HeroDisplayName(heroId), PaperKit.Title, UiTheme.PaperInk,
+                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -34.0f),
+                new Vector2(inner, 30.0f), TextAnchor.MiddleLeft);
+            MenuKit.Apply(header, PaperKit.FaceFor(header.fontSize), bold: true);
+            header.alignment = TextAnchor.MiddleLeft;
+            header.raycastTarget = false;
+
+            var close = PaperKit.Chip(go.transform, "LoadoutClose", "CLOSE");
+            close.onClick.AddListener(() => { MenuSfx.Back(); ToggleLoadoutBoard(false); });
+            MenuKit.Place((RectTransform)close.transform, new Vector2(0.5f, 1.0f),
+                          new Vector2((inner * 0.5f) - 70.0f, -34.0f),
+                          new Vector2(140.0f, 44.0f));
+
+            float y = -80.0f;
+
+            var abilities = new (HeroAbility ability, int slot, string action)[]
+            {
+                (kit.Skill1, 1, "Skill1"),
+                (kit.Skill2, 2, "Skill2"),
+            };
+
+            foreach (var (ability, slot, action) in abilities)
+            {
+                var options = HeroLoadoutRules.VariantsFor(heroId, slot);
+                if (options == null || options.Count == 0) continue;
+
+                BuildSlotHead(go.transform, ability, slot, action, accent, y);
+
+                float tileArea = inner - SlotHeadWidth - TileGap;
+                float tileWidth = (tileArea - (TileGap * (options.Count - 1))) / options.Count;
+
+                for (int i = 0; i < options.Count; i++)
+                {
+                    float x = -(inner * 0.5f) + SlotHeadWidth + TileGap
+                              + (i * (tileWidth + TileGap)) + (tileWidth * 0.5f);
+
+                    BuildVariantTile(go.transform, heroId, slot, options[i], accent,
+                                     x, y, tileWidth);
+                }
+
+                y -= TileHeight + SlotGap;
+            }
+
+            BuildUltimateRow(go.transform, kit.Ultimate, accent, y);
+        }
+
+        private void BuildUltimateRow(Transform board, HeroAbility ultimate, Color accent, float y)
+        {
+            if (ultimate == null) return;
+
+            float inner = BoardWidth - (BoardPad * 2.0f);
+
+            BuildSlotHead(board, ultimate, 0, "Ultimate", accent, y);
+
+            float textX = -(inner * 0.5f) + SlotHeadWidth + TileGap;
+            float textWidth = inner - SlotHeadWidth - TileGap;
+
+            var what = MenuKit.Label(board, ultimate.Summary, PaperKit.Body, UiTheme.PaperInk,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 30.0f),
+                new Vector2(textWidth, 24.0f), TextAnchor.MiddleLeft);
+            what.alignment = TextAnchor.MiddleLeft;
+            what.raycastTarget = false;
+            MenuKit.Fit(what, textWidth);
+
+            var why = MenuKit.Label(board,
+                "No alternates. Reading which ultimate somebody has banked is the skill.",
+                PaperKit.Caption, UiTheme.PaperInkSoft,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 54.0f),
+                new Vector2(textWidth, 20.0f), TextAnchor.MiddleLeft);
+            why.alignment = TextAnchor.MiddleLeft;
+            why.raycastTarget = false;
+        }
+
+        private const float BoardWidth = 1020.0f;
+        private const float UltimateRowHeight = 84.0f;
+        private const float BoardHeight = 388.0f + UltimateRowHeight + SlotGap;
+        private const float BoardPad = 28.0f;
+
+        private const float SlotHeadWidth = 250.0f;
+
+        private const float TileHeight = 124.0f;
+        private const float TileGap = 14.0f;
+        private const float SlotGap = 22.0f;
+
+        private const float StageCentre = 350.0f;
+
+        private void BuildSlotHead(Transform board, HeroAbility ability, int slot, string action,
+                                   Color accent, float y)
+        {
+            float inner = BoardWidth - (BoardPad * 2.0f);
+            float left = -(inner * 0.5f);
+            float textX = left + 150.0f;
+
+            var glyphGo = new GameObject("SlotGlyph", typeof(RectTransform), typeof(Image));
+            glyphGo.transform.SetParent(board, false);
+
+            var glyph = glyphGo.GetComponent<Image>();
+            glyph.sprite = ability != null ? AbilityIcons.For(ability.Glyph) : null;
+            glyph.color = accent;
+            glyph.preserveAspect = true;
+            glyph.raycastTarget = false;
+            MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
+                          new Vector2(left + 30.0f, y - 44.0f), new Vector2(48.0f, 48.0f));
+
+            var number = MenuKit.Label(board, slot > 0 ? "SKILL " + slot : "ULTIMATE",
+                PaperKit.Caption,
+                UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
+                new Vector2(textX, y - 24.0f),
+                new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
+            number.alignment = TextAnchor.MiddleLeft;
+            MenuKit.Apply(number, PaperKit.FaceFor(number.fontSize), bold: true);
+            number.raycastTarget = false;
+
+            const float glyphColumn = 60.0f;
+            const float rightMargin = 30.0f;
+            float nameWidth = inner - glyphColumn - rightMargin;
+            float nameX = left + glyphColumn + (nameWidth * 0.5f);
+
+            var name = MenuKit.Label(board, ability != null ? ability.Name : "", PaperKit.Body,
+                UiTheme.PaperInk, new Vector2(0.5f, 1.0f),
+                new Vector2(nameX, y - 50.0f),
+                new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
+            name.alignment = TextAnchor.MiddleLeft;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
+            name.raycastTarget = false;
+
+            MenuKit.Fit(name, nameWidth);
+
+            var key = MenuKit.Label(board, Hud.KeyLabelFor(action), PaperKit.Caption,
+                UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
+                new Vector2(textX, y - 74.0f),
+                new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
+            key.alignment = TextAnchor.MiddleLeft;
+            key.raycastTarget = false;
+        }
+
+        private void BuildVariantTile(Transform board, string heroId, int slot,
+                                      AbilityVariant option, Color accent,
+                                      float x, float y, float width)
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            var equippedVariant = HeroBuildRules.Equipped(build, heroId, slot,
+                                                          settings.AbilityChallenges);
+
+            bool equipped = equippedVariant != null && equippedVariant.Id == option.Id;
+            bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, option);
+            int progress = HeroBuildRules.ChallengeCount(settings.AbilityChallenges, option.Id);
+            int target = Mathf.Max(1, option.ChallengeTarget);
+
+            var tile = new GameObject("Variant_" + option.Id, typeof(RectTransform),
+                                      typeof(Image), typeof(Button));
+            tile.transform.SetParent(board, false);
+
+            var rt = (RectTransform)tile.transform;
+            rt.anchorMin = new Vector2(0.5f, 1.0f);
+            rt.anchorMax = new Vector2(0.5f, 1.0f);
+            rt.pivot = new Vector2(0.5f, 1.0f);
+            rt.anchoredPosition = new Vector2(x, y);
+            rt.sizeDelta = new Vector2(width, TileHeight);
+
+            var plate = tile.GetComponent<Image>();
+            plate.raycastTarget = true;
+            PaperSkin.Apply(tile, equipped ? PaperCraft.Surface.Sign
+                                : unlocked ? PaperCraft.Surface.Sheet
+                                : PaperCraft.Surface.Ghost);
+
+            var button = tile.GetComponent<Button>();
+            button.targetGraphic = plate;
+            button.transition = Selectable.Transition.None;
+            button.onClick.AddListener(() => EquipVariant(heroId, slot, option));
+
+            tile.AddComponent<PaperButton>();
+            FocusRing.Attach(tile, 3.0f);
+
+            Color ink = equipped ? UiTheme.Cream
+                : unlocked ? UiTheme.PaperInk
+                : UiTheme.PaperInkSoft;
+            Color inkSoft = equipped ? UiTheme.CreamMuted : UiTheme.PaperInkSoft;
+
+            const float pad = 16.0f;
+            float band = width - (pad * 2.0f);
+
+            float top = TileHeight * 0.5f;
+
+            var name = MenuKit.Label(tile.transform, option.Name, PaperKit.Body, ink,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                new Vector2(band, 24.0f), TextAnchor.MiddleLeft);
+            name.alignment = TextAnchor.MiddleLeft;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
+            name.raycastTarget = false;
+
+            const float equippedMarkRoom = 86.0f;
+            MenuKit.Fit(name, equipped ? band - equippedMarkRoom : band, 14);
+
+            if (equipped)
+            {
+                var mark = MenuKit.Label(tile.transform, "EQUIPPED", 13, UiTheme.Amber,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                    new Vector2(band, 24.0f), TextAnchor.MiddleRight);
+                mark.alignment = TextAnchor.MiddleRight;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
+                mark.raycastTarget = false;
+            }
+            else if (!unlocked)
+            {
+                var mark = MenuKit.Label(tile.transform, "LOCKED", 13, inkSoft,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                    new Vector2(band, 24.0f), TextAnchor.MiddleRight);
+                mark.alignment = TextAnchor.MiddleRight;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
+                mark.raycastTarget = false;
+            }
+
+            var body = MenuKit.Label(tile.transform,
+                unlocked ? option.Description : option.Challenge, PaperKit.Caption, ink,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 68.0f),
+                new Vector2(band, 52.0f), TextAnchor.UpperLeft);
+            body.alignment = TextAnchor.UpperLeft;
+            body.horizontalOverflow = HorizontalWrapMode.Wrap;
+            body.verticalOverflow = VerticalWrapMode.Truncate;
+            body.raycastTarget = false;
+
+            if (unlocked)
+            {
+                var trade = MenuKit.Label(tile.transform,
+                    option.GainLabel + "   ·   " + option.CostLabel, 13,
+                    equipped ? UiTheme.Amber : accent,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, -top + 18.0f),
+                    new Vector2(band, 18.0f), TextAnchor.MiddleLeft);
+                trade.alignment = TextAnchor.MiddleLeft;
+                trade.raycastTarget = false;
+                return;
+            }
+
+            BuildProgressBar(tile.transform, band, -top + 18.0f,
+                             progress / (float)target, inkSoft);
+
+            var count = MenuKit.Label(tile.transform, progress + " / " + target, 13, inkSoft,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, -top + 18.0f),
+                new Vector2(band, 18.0f), TextAnchor.MiddleRight);
+            count.alignment = TextAnchor.MiddleRight;
+            count.raycastTarget = false;
+        }
+
+        private static void BuildProgressBar(Transform tile, float width, float y,
+                                             float fraction, Color ink)
+        {
+            fraction = Mathf.Clamp01(fraction);
+
+            float barWidth = width * 0.62f;
+            float left = -(width * 0.5f) + (barWidth * 0.5f);
+
+            var grooveGo = new GameObject("Groove", typeof(RectTransform), typeof(Image));
+            grooveGo.transform.SetParent(tile, false);
+            var groove = grooveGo.GetComponent<Image>();
+            groove.color = new Color(ink.r, ink.g, ink.b, 0.30f);
+            groove.raycastTarget = false;
+            MenuKit.Place((RectTransform)grooveGo.transform, new Vector2(0.5f, 0.5f),
+                          new Vector2(left, y), new Vector2(barWidth, 6.0f));
+
+            if (fraction <= 0.0f) return;
+
+            var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
+            fillGo.transform.SetParent(tile, false);
+            var fill = fillGo.GetComponent<Image>();
+            fill.color = ink;
+            fill.raycastTarget = false;
+
+            var fillRt = (RectTransform)fillGo.transform;
+            fillRt.anchorMin = new Vector2(0.5f, 0.5f);
+            fillRt.anchorMax = new Vector2(0.5f, 0.5f);
+            fillRt.pivot = new Vector2(0.0f, 0.5f);
+            fillRt.anchoredPosition = new Vector2(left - (barWidth * 0.5f), y);
+            fillRt.sizeDelta = new Vector2(barWidth * fraction, 6.0f);
+        }
+
+        private void EquipVariant(string heroId, int slot, AbilityVariant option)
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            if (!HeroBuildRules.IsUnlocked(settings.AbilityChallenges, option))
+            {
+                MenuSfx.Error();
+                return;
+            }
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            if (slot == 1) build.Slot1VariantId = option.Id;
+            else build.Slot2VariantId = option.Id;
+
+            Settings.SettingsStore.Save();
+            MenuSfx.Click();
+
+            Refresh();
+            ToggleLoadoutBoard(true);
+        }
+
+        private string CurrentHeroId()
+        {
+            if (!OnHeroTab) return "";
+
+            var entries = Entries;
+            if (entries == null || entries.Count == 0) return "";
+
+            int index = Mathf.Clamp(_pick[0], 0, entries.Count - 1);
+            return entries[index].Id;
+        }
+
+        private string HeroDisplayName(string heroId)
+        {
+            foreach (var entry in Roster.HeroPeople)
+                if (entry.Id == heroId) return entry.Name;
+
+            return heroId;
+        }
+
+        private readonly List<Button> _tabButtons = new List<Button>();
+
+        private void RefreshTabs()
+        {
+            for (int i = 0; i < _tabButtons.Count; i++)
+            {
+                var button = _tabButtons[i];
+                if (button == null) continue;
+
+                bool active = i == _tab;
+                button.transition = Selectable.Transition.None;
+
+                button.interactable = true;
+
+                if (button.TryGetComponent<GodotButton>(out var skin))
+                {
+                    string wanted = active ? "WoodTabLiveButton" : "WoodTabIdleButton";
+                    if (skin.Variation != wanted)
+                    {
+                        skin.Variation = wanted;
+
+                        skin.Apply();
+                    }
+                }
+
+                bool paper = PaperKit.MarkLive(button, active);
+
+                if (!paper && button.targetGraphic is Image face)
+                {
+                    face.sprite = GodotTheme.Box(
+                        active ? UiTheme.Highlight : UiTheme.WoodDark,
+                        active ? UiTheme.Cream : UiTheme.WoodEdge,
+                        active ? 3 : 2, 6);
+                    face.type = Image.Type.Sliced;
+                }
+
+                FitTabLabel(button);
+
+                var label = button.GetComponentInChildren<Text>();
+                if (label != null)
+                {
+                    if (!paper) label.color = active ? UiTheme.Amber : UiTheme.Cream;
+                    MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+                }
+            }
+
+
+            bool heroTab = OnHeroTab;
+
+            if (_loadoutDoor != null && _loadoutDoor.gameObject.activeSelf != heroTab)
+            {
+                _loadoutDoor.gameObject.SetActive(heroTab);
+                if (!heroTab) ToggleLoadoutBoard(false);
+            }
+        }
+
+        private Button _customDoor;
+        private Button _loadoutDoor;
+
+        private void OnEnable()
+        {
+            var s = Settings.SettingsStore.Current;
+            if (s != null)
+            {
+                _pick[0] = Mathf.Max(0, s.CharacterPick);
+                _pick[1] = Mathf.Max(0, s.CanPick);
+                _pick[2] = Mathf.Max(0, s.SlipperPick);
+            }
+            if (_tabButtons.Count > 0)
+            {
+                int n = Entries.Count;
+                _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, Mathf.Max(0, n - 1));
+                Refresh();
+            }
+        }
+
+        private void RefreshTraits(RosterEntry entry)
+        {
+            var rows = Node("TraitRows");
+            if (rows == null) return;
+
+            for (int i = rows.childCount - 1; i >= 0; i--) Destroy(rows.GetChild(i).gameObject);
+
+
+            if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                RefreshHeroLoadout(rows, entry.Id);
+
+                float column = _heroLoadoutHeight;
+
+                if (rows.TryGetComponent<VerticalLayoutGroup>(out var heroColumn))
+                {
+                    column += heroColumn.spacing * 2.0f;
+                    column += heroColumn.padding.top + heroColumn.padding.bottom;
+                }
+
+                if (rows.TryGetComponent<LayoutElement>(out var heroRowsLayout))
+                    heroRowsLayout.preferredHeight = column;
+                return;
+            }
+
+            if (rows.TryGetComponent<LayoutElement>(out var classicRowsLayout))
+                classicRowsLayout.preferredHeight = 104.0f;
+
+            var labels = MeterLabels[_tab];
+            int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
+
+            for (int i = 0; i < labels.Length && i < points.Length; i++)
+                BuildTraitRow(rows, labels[i], points[i]);
+
+            var hint = MenuKit.Label(rows, "Drag to turn the view · scroll to zoom · right-click to reset",
+                                     MenuKit.MinReadableUnits,
+                                     new Color(0.961f, 0.902f, 0.784f, 0.65f),
+                                     Vector2.zero, Vector2.zero, Vector2.zero,
+                                     TextAnchor.MiddleLeft);
+
+            hint.raycastTarget = false;
+            hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
+        }
+
+        private float _heroLoadoutHeight;
+
+
+        private readonly struct SlotChoice
+        {
+            public readonly AbilityVariant Equipped;
+            public readonly AbilityVariant Next;
+            public readonly int Index, Total;
+            public readonly bool NextUnlocked;
+            public readonly int NextProgress;
+
+            public SlotChoice(AbilityVariant equipped, AbilityVariant next, int index, int total,
+                              bool nextUnlocked, int nextProgress)
+            {
+                Equipped = equipped;
+                Next = next;
+                Index = index;
+                Total = total;
+                NextUnlocked = nextUnlocked;
+                NextProgress = nextProgress;
+            }
+        }
+
+        private static SlotChoice SlotView(string heroId, int slot)
+        {
+            if (slot <= 0) return default;
+
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return default;
+
+            var options = HeroLoadoutRules.VariantsFor(heroId, slot);
+            if (options == null || options.Count < 2) return default;
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            var equipped = HeroBuildRules.Equipped(build, heroId, slot, settings.AbilityChallenges);
+
+            int index = 0;
+            for (int i = 0; i < options.Count; i++)
+                if (options[i].Id == equipped.Id) index = i;
+
+            var next = options[(index + 1) % options.Count];
+
+            return new SlotChoice(equipped, next, index, options.Count,
+                                  HeroBuildRules.IsUnlocked(settings.AbilityChallenges, next),
+                                  HeroBuildRules.ChallengeCount(settings.AbilityChallenges, next.Id));
+        }
+
+        private void CycleSlot(string heroId, int slot)
+        {
+            var view = SlotView(heroId, slot);
+            if (view.Total < 2) return;
+
+            if (!view.NextUnlocked)
+            {
+                MenuSfx.Error();
+                return;
+            }
+
+            var settings = Settings.SettingsStore.Current;
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+
+            if (slot == 1) build.Slot1VariantId = view.Next.Id;
+            else build.Slot2VariantId = view.Next.Id;
+
+            Settings.SettingsStore.Save();
+            MenuSfx.Click();
+            Refresh();
+        }
+
+        private void RefreshHeroLoadout(Transform rows, string heroId)
+        {
+            _heroLoadoutHeight = 0.0f;
+            var kit = HeroAbilitySystem.CreateKitFor(heroId);
+            Color accent = UiTheme.ColorForHero(heroId);
+
+            if (rows is RectTransform toLayOut) ForceLayoutFor(toLayOut);
+
+            var abilities = new (string action, HeroAbility ability, bool ult, int slot)[]
+            {
+                ("Skill1", kit.Skill1, false, 1),
+                ("Skill2", kit.Skill2, false, 2),
+                ("Ultimate", kit.Ultimate, true, 0),
+            };
+
+            for (int i = 0; i < abilities.Length; i++)
+            {
+                var item = abilities[i];
+                if (item.ability == null) continue;
+
+                var slotView = SlotView(heroId, item.slot);
+
+                var rowGo = new GameObject($"AbilityRow_{i}");
+                rowGo.AddComponent<RectTransform>();
+                rowGo.transform.SetParent(rows, false);
+
+                Color plate = item.ult
+                    ? Color.Lerp(RowPlate, accent, 0.14f)
+                    : RowPlate;
+
+                var rowBg = rowGo.AddComponent<Image>();
+                rowBg.sprite = GodotTheme.Box(
+                    plate,
+                    item.ult ? accent : RowRim,
+                    item.ult ? 2 : 1, 6);
+                rowBg.type = Image.Type.Sliced;
+
+                rowBg.raycastTarget = false;
+
+                var rowCol = rowGo.AddComponent<VerticalLayoutGroup>();
+                rowCol.childControlHeight = true;
+                rowCol.childControlWidth = true;
+                rowCol.childForceExpandHeight = false;
+                rowCol.childForceExpandWidth = true;
+                rowCol.spacing = 3.0f;
+                rowCol.padding = new RectOffset(10, 10, 5, 5);
+
+                var rowLe = rowGo.AddComponent<LayoutElement>();
+
+                var header = new GameObject("Header", typeof(RectTransform));
+                header.transform.SetParent(rowGo.transform, false);
+
+                var headerHlg = header.AddComponent<HorizontalLayoutGroup>();
+                headerHlg.childControlHeight = true;
+                headerHlg.childControlWidth = true;
+                headerHlg.childForceExpandHeight = true;
+                headerHlg.childForceExpandWidth = false;
+                headerHlg.childAlignment = TextAnchor.MiddleLeft;
+                headerHlg.spacing = 8.0f;
+                header.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+
+                var glyphGo = new GameObject("Glyph");
+                glyphGo.transform.SetParent(header.transform, false);
+                var glyph = glyphGo.AddComponent<Image>();
+                glyph.sprite = AbilityIcons.For(item.ability.Glyph);
+                glyph.color = BoardInk;
+                glyph.preserveAspect = true;
+                glyph.raycastTarget = false;
+
+                var glyphLe = glyphGo.AddComponent<LayoutElement>();
+                glyphLe.minWidth = 26;
+                glyphLe.preferredWidth = 26;
+                glyphLe.minHeight = 26;
+                glyphLe.preferredHeight = 26;
+
+                var chipGo = new GameObject("KeyChip");
+                chipGo.transform.SetParent(header.transform, false);
+                var chip = chipGo.AddComponent<Image>();
+                chip.sprite = GodotTheme.Box(UiTheme.WoodDark, new Color(0, 0, 0, 0), 0, 4);
+                chip.type = Image.Type.Sliced;
+                chip.raycastTarget = false;
+
+                var chipLe = chipGo.AddComponent<LayoutElement>();
+                chipLe.minWidth = 34;
+                chipLe.preferredWidth = 34;
+                chipLe.minHeight = 26;
+                chipLe.preferredHeight = 26;
+
+                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action),
+                    MenuKit.MinReadableUnits,
+                    accent,
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
+                MenuKit.Apply(keyLabel, PaperKit.FaceFor(keyLabel.fontSize), bold: true);
+                keyLabel.raycastTarget = false;
+                MenuKit.Stretch(keyLabel.rectTransform);
+
+                string abilityName = slotView.Total >= 2 && slotView.Equipped != null
+                    ? slotView.Equipped.Name
+                    : item.ability.Name;
+
+                var nameLbl = MenuKit.Label(header.transform, abilityName, MenuKit.MinReadableUnits,
+                    accent,
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+                MenuKit.Apply(nameLbl, PaperKit.FaceFor(nameLbl.fontSize), bold: true);
+                nameLbl.raycastTarget = false;
+                nameLbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+                string timing;
+
+                if (item.ult)
+                {
+                    timing = "ULTIMATE";
+                }
+                else if (item.ability.UsesCharges)
+                {
+                    int max = item.ability.MaxCharges;
+                    timing = max == 1 ? "1 USE" : $"{max} USES";
+                    if (item.ability.Duration > 0.0f) timing += $" · {item.ability.Duration:0.#}s";
+                }
+                else
+                {
+                    timing = $"{item.ability.Cooldown:0.#}s CD";
+                    if (item.ability.Duration > 0.0f) timing += $" · {item.ability.Duration:0.#}s";
+                }
+
+                var timingLbl = MenuKit.Label(header.transform, timing, MenuKit.MinReadableUnits,
+                    BoardInk,
+                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
+                MenuKit.Apply(timingLbl, PaperKit.FaceFor(timingLbl.fontSize), bold: true);
+                timingLbl.raycastTarget = false;
+
+                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 150.0f;
+
+
+                string summary = item.ability.Summary;
+
+                if (slotView.Total >= 2 && slotView.Equipped != null && !slotView.Equipped.IsDefault)
+                    summary = slotView.Equipped.Description;
+
+                var descLbl = MenuKit.Label(rowGo.transform, summary, MenuKit.MinReadableUnits,
+                    BoardInk, Vector2.zero, Vector2.zero, Vector2.zero,
+                    TextAnchor.UpperLeft);
+                descLbl.raycastTarget = false;
+                descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
+                descLbl.verticalOverflow = VerticalWrapMode.Overflow;
+                float rowRoom = rows is RectTransform rowsRect ? rowsRect.rect.width - 20.0f : 0.0f;
+                bool summaryWraps = rowRoom <= 1.0f || descLbl.preferredWidth > rowRoom;
+
+                if (rowRoom <= 1.0f) _refreshPending = true;
+
+                float descHeight = summaryWraps ? 44.0f : 22.0f;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = descHeight;
+
+                rowLe.preferredHeight = 26.0f + descHeight + 3.0f + 10.0f;
+                rowLe.minHeight = rowLe.preferredHeight;
+                _heroLoadoutHeight += rowLe.preferredHeight;
+            }
+
+        }
+
+        private static readonly Color PipFilled = UiTheme.Amber;
+        private static readonly Color PipEmpty = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g,
+                                                           UiTheme.WoodDark.b, 0.75f);
+
+        private const int GaugeSegments = Core.Roster.TraitMax;
+
+        private static void BuildTraitRow(Transform parent, string name, int points)
+        {
+            var rowGo = new GameObject($"{name}Row");
+            rowGo.AddComponent<RectTransform>();
+            rowGo.transform.SetParent(parent, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childControlHeight = true;
+            row.childControlWidth = true;
+            row.childForceExpandHeight = false;
+            row.childForceExpandWidth = false;
+            row.childAlignment = TextAnchor.MiddleLeft;
+            row.spacing = 10.0f;
+
+            rowGo.AddComponent<LayoutElement>().preferredHeight = 26.0f;
+
+            var label = MenuKit.Label(rowGo.transform, name, 19, PipFilled, Vector2.zero,
+                                      Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+
+            var labelElement = label.gameObject.AddComponent<LayoutElement>();
+            labelElement.preferredWidth = 110.0f;
+
+            var pipsGo = new GameObject("Pips");
+            pipsGo.AddComponent<RectTransform>();
+            pipsGo.transform.SetParent(rowGo.transform, false);
+
+            var pips = pipsGo.AddComponent<HorizontalLayoutGroup>();
+            pips.childControlHeight = true;
+            pips.childControlWidth = true;
+            pips.childForceExpandHeight = false;
+            pips.childForceExpandWidth = false;
+            pips.childAlignment = TextAnchor.MiddleLeft;
+            pips.spacing = 4.0f;
+
+            for (int i = 0; i < GaugeSegments; i++)
+            {
+                var pipGo = new GameObject($"Pip{i}");
+                pipGo.AddComponent<RectTransform>();
+                pipGo.transform.SetParent(pipsGo.transform, false);
+
+                var pip = pipGo.AddComponent<Image>();
+                pip.color = i < points ? PipFilled : PipEmpty;
+                pip.raycastTarget = false;
+
+                var element = pipGo.AddComponent<LayoutElement>();
+                element.preferredWidth = 28.0f;
+                element.preferredHeight = 12.0f;
+            }
+        }
+
+        private IReadOnlyList<RosterEntry> Entries =>
+            _tab == 0 ? Roster.GetPeople(SceneFlow.SelectedMode) : (_tab == 1 ? Roster.Cans : Roster.Slippers);
+
+        private void CycleEntry(int delta)
+        {
+            int n = Entries.Count;
+            _pick[_tab] = ((_pick[_tab] + delta) % n + n) % n;
+            Refresh();
+        }
+
+        private bool _refreshPending;
+
+        private void LateUpdate()
+        {
+            if (!_refreshPending) return;
+
+            _refreshPending = false;
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            int n = Entries.Count;
+            if (n == 0) return;
+            _pick[_tab] = Mathf.Clamp(_pick[_tab], 0, n - 1);
+            var entry = Entries[_pick[_tab]];
+
+            bool choosingHero = _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
+            SetText("CharValueLabel", entry.Name);
+            SetText("TaglineLabel", TaglineFor(entry.Id));
+
+            var caption = Node("NameCaption");
+            if (caption != null && caption.gameObject.activeSelf)
+                caption.gameObject.SetActive(false);
+
+            var nameRow = Node("NameRow")?.GetComponent<HorizontalLayoutGroup>();
+            if (nameRow != null) nameRow.childAlignment = TextAnchor.MiddleCenter;
+
+            var value = Node("CharValueLabel")?.GetComponent<Text>();
+            if (value != null)
+            {
+                value.fontSize = choosingHero ? 32 : 30;
+                MenuKit.Apply(value, PaperKit.FaceFor(value.fontSize), bold: true);
+                value.color = choosingHero
+                    ? UiTheme.ColorForHero(entry.Id) : BoardInk;
+            }
+
+            var tagline = Node("TaglineLabel")?.GetComponent<Text>();
+            if (tagline != null)
+            {
+                tagline.fontSize = choosingHero ? 18 : 19;
+                tagline.lineSpacing = 1.0f;
+
+                tagline.alignment = TextAnchor.UpperLeft;
+
+                float taglineBox = choosingHero ? HeroTaglineHeight(tagline) : 96.0f;
+
+                if (tagline.TryGetComponent<LayoutElement>(out var taglineLayout))
+                {
+                    taglineLayout.minHeight = taglineBox;
+                    taglineLayout.preferredHeight = taglineBox;
+
+                    taglineLayout.flexibleHeight = 0.0f;
+                }
+
+                if (tagline.TryGetComponent<ContentSizeFitter>(out var taglineFitter))
+                    taglineFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+            }
+
+            RefreshTabs();
+            RefreshTraits(entry);
+            RefreshBackdropAccent(entry);
+            ShowModel(entry);
+        }
+
+        private void RefreshBackdropAccent(RosterEntry entry)
+        {
+            if (_glowImage == null) return;
+
+            var neutralGlow = new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g,
+                                        UiTheme.WoodEdge.b, 1.0f);
+            if (entry != null && _tab == 0)
+                _glowImage.color = Color.Lerp(neutralGlow, UiTheme.ColorForHero(entry.Id), 0.16f);
+            else
+                _glowImage.color = neutralGlow;
+        }
+
+        private void ShowModel(RosterEntry entry)
+        {
+            if (!Application.isPlaying) return;
+
+            var stage = Node("CharacterPreview");
+            if (stage == null) return;
+
+            var preview = stage.GetComponent<ModelPreview>();
+
+            if (preview == null)
+            {
+                preview = stage.gameObject.AddComponent<ModelPreview>();
+                preview.Attach(stage.GetComponent<RectTransform>());
+            }
+
+            var book = RosterBook.Load();
+            if (book == null) return;
+
+            var art = _tab == 0 ? book.PersonArt(_pick[0], SceneFlow.SelectedMode)
+                    : (_tab == 1 ? book.CanArt(_pick[1]) : book.SlipperArt(_pick[2]));
+
+            preview.ShowingSlipper = _tab == 2;
+
+            var palette = art == null ? null : art.Palette;
+
+            if (_tab == 0 && art != null)
+                palette = PaletteVariants.For(art.Palette, Settings.SettingsStore.LookFor(
+                    Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0])));
+
+            preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
+                         palette, art == null ? null : art.PetModel);
+        }
+
+        private static float HeroTaglineHeight(Text tagline)
+        {
+            int lines = 1;
+            string body = tagline.text ?? "";
+
+            for (int i = 0; i < body.Length; i++)
+                if (body[i] == '\n') lines++;
+
+            return Mathf.Ceil(tagline.fontSize * 1.35f) * lines + 6.0f;
+        }
+
+        private static string TaglineFor(string id)
+        {
+            switch (id)
+            {
+                case "dante": return "EARTH JUGGERNAUT\nBreak formations with tremors, armor, and a map-splitting fissure.";
+                case "cheska": return "ICE CONTROLLER\nCreate slip zones and barricades, then lock the lane with Glacial Nova.";
+                case "sean": return "FIRE BRAWLER\nRush the lane, blast open space, and finish with Supernova.";
+                case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
+                case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
+                case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
+
+                case "bayan":
+                case "berto": return "The original defender. Immovable, unhurriable, and still standing exactly where you left him.";
+                case "maring": return "Quick hands, quicker mouth. She has talked her way out of more tags than she has dodged.";
+                case "totoy": return "Raised barefoot on this street. Nobody in this town has caught him twice.";
+                case "inday": return "Minds the corner stall and is afraid of absolutely nothing that walks past it.";
+                case "kuya_boy":
+                case "iggy": return "Eldest of seven. He has been the defender since before he could count, and both the arm and the footwork know it.";
+                case "ate_girlie": return "A champion of playground line games, trying a new court. The footwork came with her.";
+                case "tikboy": return "Always down to one slipper. Half the footwear, twice the throwing arm.";
+                case "bebang": return "Hits like a jeepney door closing, and moves about as easily. Do not tease her about it, and do not stand in front of her.";
+                case "jun_jun": return "The youngest on the street. Small, slippery, and impossible to corner. Also impossible to keep upright.";
+                case "lola_pacing": return "Watches from the window most afternoons. On the good ones she comes down to play, and she does not miss twice.";
+                case "mang_kanor": return "Tricycle driver. He knows every corner of this town by its potholes and he takes them at speed. Braking was never the strong suit.";
+                case "aling_nena": return "She owns the corner store, so she owns the rules. Nobody has ever argued a call twice.";
+
+                case "pasip": return "Definitely a different soft drink. Tall, thin and empty, it goes over if you look at it hard, and it is back up before you have turned around.";
+                case "boyben": return "Leftover fence paint, half set solid. Nothing on the mark stands its ground like it does, but righting it is a proper job.";
+                case "decades": return "Flakes in oil from Aling Nena's. Squat and low, so tipping it is the hard part, and setting it back up is barely a motion.";
+                case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the slipper across the street, and it is slow to stand back up.";
+                case "piyesta": return "Fruit cocktail, saved for a family feast and opened early anyway. The widest can on the mark and still full of syrup, so it plants itself and swallows the hit whole.";
+                case "karne": return "Corned beef, the tin that tapers. Top-heavy over a narrow lid so it tips at the first excuse, but it is packed solid and it kicks the slipper back at you.";
+
+                case "tsinelas": return "The street-game original. Thick layered sole, printed Y-strap, worn down at the heel. Balanced in flight, impact and recovery.";
+                case "crocs": return "Holes in the top, strap swung round the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
+                case "pantulog": return "Grandma's house slipper, fur worn flat and a bow hanging on by a thread. No weight behind it at all, but it is ready again before the defender has turned around.";
+                case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
+                case "spartan": return "Black rubber and a red Y-strap, straight from the corner shop. Hits harder than the basic pair, but takes longer to settle back into your hand.";
+                case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the defender turns.";
+                case "pambahay": return "The scuffed white slide that lives by the shower, somebody's toes moulded into the footbed. Light rubber that lands flat and soft, and you have it back before the puddle has dried.";
+                case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
+                case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";
+                case "loafers": return "Somebody's school shoe, buckle and all, still warm. Stiff leather with no give in it, so it does not sail, but it lands like a brick with homework in it.";
+
+                default: return "";
+            }
+        }
+
+        private void Confirm()
+        {
+            var s = Settings.SettingsStore.Current;
+            s.CharacterPick = _pick[0];
+            s.CanPick = _pick[1];
+            s.SlipperPick = _pick[2];
+            Settings.SettingsStore.Save();
+
+            Dismiss();
+        }
+
+        protected override bool Cancel()
+        {
+            Dismiss();
+            return true;
+        }
+
+        private void Dismiss()
+        {
+            if (LoadoutBoardOpen)
+            {
+                MenuSfx.Back();
+                ToggleLoadoutBoard(false);
+                return;
+            }
+
+            Closed?.Invoke();
+
+            if (transform.parent != null)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
+            SceneFlow.Go(SceneFlow.MatchSetup);
+        }
+    }
+
+}

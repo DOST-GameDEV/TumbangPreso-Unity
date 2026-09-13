@@ -1,0 +1,3197 @@
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class Hud : MonoBehaviour
+    {
+        public const int TextOutline = 8;
+
+        public const int CrosshairOutline = 5;
+
+        public const float DangerHoldAlpha = 0.55f;
+
+        public const float DownedFlashTime = 0.45f;
+        public const float DownedFlashPeak = 0.90f;
+
+        public const int StatusRowLimit = 4;
+        public const int StatusFontSize = 20;
+        public const int TayaBadgeFontSize = 15;
+        public const string TayaBadge = "DEFENDER";
+
+        public const int ScoreOutline = 5;
+
+        public const float TayaBadgeWidth = 132.0f;
+
+        public const float ScoreNameFloor = 132.0f;
+
+        private static readonly Vector2 StatusBarSize = new Vector2(190, 8);
+        private static readonly Vector2 StatusMargin = new Vector2(38, 150);
+        public const float StatusUnderBoardGap = 18.0f;
+
+        [SerializeField] private CharacterMotor _local;
+
+        private Canvas _canvas;
+        private RectTransform _root;
+
+        private Text _timer;
+        private Image _timerCard;
+        private RectTransform _timerCardRt;
+        private Text _round;
+        private Text _timerPressure;
+
+        private GameObject _topCentre;
+
+        private Image _scoreboard;
+        private Text _scoreTitle;
+        private readonly Text[] _scoreNames = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreMarks = new Text[Balance.PlayerCount];
+        private readonly Text[] _scoreValues = new Text[Balance.PlayerCount];
+        private readonly RectTransform[] _scoreRows = new RectTransform[Balance.PlayerCount];
+        private readonly Image[] _scoreRowPlates = new Image[Balance.PlayerCount];
+        private readonly Image[] _scoreRoleRails = new Image[Balance.PlayerCount];
+        private readonly float[] _scorePulses = new float[Balance.PlayerCount];
+        private readonly int[] _lastScoreBySlot = new int[Balance.PlayerCount];
+        private bool _scoresInitialised;
+        private RectTransform _scoreboardRt;
+
+        private Image _lataCard;
+        private Text _lataLabel;
+        private Text _lataHint;
+        private Text _lataAlert;
+
+        private Text _toast;
+        private float _toastLeft;
+
+        private Image _getUpCard;
+        private Text _getUpLabel;
+
+        private Image _getUpFill;
+        private RectTransform _getUpBarRt;
+
+        private const float MashPopSeconds = 0.14f;
+        private string _getUpShown = "";
+
+        private Image _stunCard;
+        private Text _stunLabel;
+        private readonly List<Image> _stunPips = new List<Image>();
+        private string _stunShown = "";
+
+        private Text _countdown;
+        private float _countdownPop;
+        private RectTransform _countdownRt;
+
+        private Text _readyPrompt;
+        private Text _sandboxToggle;
+        private Image _sandboxPlate;
+        private Text _readyObjective;
+        private Image _readyPromptPlate;
+        private Image _readyObjectivePlate;
+
+        private const float ObjectiveVisibleSeconds = 7.0f;
+
+        private float _objectiveAge;
+        private bool _readyWindowOpen;
+
+        private Image _dangerFlash;
+        private bool _dangerHeld;
+        private float _flashLeft;
+
+        private Image _frostVignette;
+        private Material _frostMaterial;
+        private float _frostCoverage;
+
+        public static Hud Instance { get; private set; }
+
+        private Text _vulnerable;
+        private Text _crosshair;
+        private Text _hitmarker;
+        private float _hitmarkerTimer;
+        private OffscreenIndicators _indicators;
+
+        private GameObject _heroDeck;
+        private AbilityCard _skill1Card, _skill2Card, _ultCard;
+        private bool _lastUltReady;
+        private AbilityInspectPanel _inspect;
+        private Text _inspectHint;
+        private string _inspectHintText;
+
+        private int _inspectHintDevice = -1;
+
+        private const int UltSegments = 10;
+
+        private sealed class AbilityCard
+        {
+            public RectTransform Rt;
+            public Image Plate;
+            public Image Rim;
+            public Image Glyph;
+            public Image CooldownSweep;
+            public Text Key;
+
+            public Image KeyGlyph;
+
+            public string KeyAction;
+
+            public Text State;
+            public Image Fill;
+            public Image[] Segments;
+
+            public Image[] Pips;
+
+            public int PipCount;
+
+            public float PipGrantLeft;
+
+            public int WasCharges = -1;
+
+            public float PopLeft;
+
+            public bool WasReady;
+        }
+
+
+        public const float DeckWidth = 214.0f;
+        public const float DeckHeight = 78.0f;
+        public const float DeckBottomMargin = 14.0f;
+        public const float DeckPadding = 0.0f;
+        public const float DeckSpacing = 11.0f;
+        public const float SkillCardWidth = 64.0f;
+        public const float UltimateCardWidth = 64.0f;
+        public const int DeckCardCount = 3;
+
+        public const float TileSize = 60.0f;
+
+        public const float KeyGap = 3.0f;
+
+        private const float ReadyPopSeconds = AbilityDeckHud.ReadyPopSeconds;
+
+        private const int StateFontSize = 22;
+
+        public const int RecastFontSize = 14;
+
+        private const float CastFlashSeconds = AbilityDeckHud.CastFlashSeconds;
+
+        private const float RefusalFlashSeconds = AbilityDeckHud.RefusalFlashSeconds;
+
+        private readonly List<StatusRow> _rows = new List<StatusRow>();
+        private readonly List<StatusRow> _states = new List<StatusRow>();
+        private readonly List<StatusRow> _cooldowns = new List<StatusRow>();
+
+        private RectTransform _stackLeft;
+        private RectTransform _stackRight;
+        private readonly List<StatusWidget> _rowsLeft = new List<StatusWidget>();
+        private readonly List<StatusWidget> _rowsRight = new List<StatusWidget>();
+
+        private struct StatusWidget
+        {
+            public GameObject Root;
+            public Text Label;
+            public Image Fill;
+            public Image Back;
+        }
+
+
+        public void Bind(CharacterMotor local) => _local = local;
+
+        private void UpdateSandboxToggle()
+        {
+            if (_sandboxToggle == null) return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+                PracticeSandbox.Toggle();
+
+            bool on = PracticeSandbox.Active;
+
+            bool show = PracticeSandbox.Allowed && !OnTouch && (on || _readyWindowOpen);
+
+            _sandboxToggle.enabled = show;
+            if (_sandboxPlate != null) _sandboxPlate.enabled = show;
+            if (!show) return;
+
+            _sandboxToggle.text = on ? "[F7]  NO COOLDOWNS: ON" : "[F7]  NO COOLDOWNS: OFF";
+
+            _sandboxToggle.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
+        }
+
+        public void ShowReadyPrompt(bool show)
+        {
+            if (show && !_readyWindowOpen) _objectiveAge = 0.0f;
+            _readyWindowOpen = show;
+
+            if (_readyPrompt != null)
+            {
+                string ready = OnTouch ? "READY" : "[" + KeyLabel("ReadyUp") + "]";
+
+                _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
+                    ? $"Warm up freely, powers start with the round. {(OnTouch ? "Tap" : "Press")} {ready} when ready."
+                    : $"Warm up freely, scores are paused. {(OnTouch ? "Tap" : "Press")} {ready} when ready.";
+                _readyPrompt.enabled = show;
+                if (_readyPromptPlate != null) _readyPromptPlate.enabled = show;
+            }
+            RefreshObjective(show);
+        }
+
+        private void RefreshObjective(bool active)
+        {
+            if (_readyObjective == null) return;
+
+            if (!active || _local == null)
+            {
+                _readyObjective.enabled = false;
+                if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+                return;
+            }
+
+            bool defending = _local.IsDefender;
+
+            if (SceneFlow.SelectedMode == GameMode.HeroStrike)
+            {
+                _readyObjective.text = defending
+                    ? "Hold the box with your powers, then tag the retriever."
+                    : "Open a gap with your powers, then make the retrieval run.";
+            }
+            else
+            {
+                _readyObjective.text = defending
+                    ? "Guard the can, block the shots, tag the retriever."
+                    : "Curve or bank the throw, then risk the retrieval.";
+            }
+
+            _readyObjective.color = UiTheme.Cream;
+
+            if (_objectiveAge >= ObjectiveVisibleSeconds)
+            {
+                _readyObjective.enabled = false;
+                if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+                return;
+            }
+
+            _readyObjective.enabled = true;
+
+            if (_readyObjectivePlate != null)
+            {
+                _readyObjectivePlate.sprite = GodotTheme.Box(
+                    UiTheme.HeroPlate, UiTheme.HeroRimLit, 2, 6);
+                _readyObjectivePlate.enabled = true;
+            }
+        }
+
+        private void UpdateReadyObjective(float dt)
+        {
+            if (!_readyWindowOpen || _readyObjective == null) return;
+            if (!_readyObjective.enabled) return;
+
+            _objectiveAge += dt;
+            if (_objectiveAge < ObjectiveVisibleSeconds) return;
+
+            _readyObjective.enabled = false;
+            if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+        }
+
+        public void ShowCountdownTick(string tick)
+        {
+            if (_countdown == null) return;
+
+            GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
+
+            if (tick != "GO!" && GameServices.Music != null
+                && GameServices.Music.Current != "match")
+            {
+                GameServices.Music.Play("match", GameServices.MatchTrack);
+            }
+
+            _countdown.enabled = true;
+            _countdown.text = tick;
+
+            _countdown.color = UiTheme.Highlight;
+            _countdownPop = 0.35f;
+        }
+
+        public void HideCountdown()
+        {
+            if (_countdown != null) _countdown.enabled = false;
+            _countdownPop = 0.0f;
+        }
+
+        public void ShowToast(string text, float duration = 1.5f)
+        {
+            if (_toast == null) return;
+
+            _toast.text = text;
+            _toast.enabled = true;
+            _toastLeft = duration;
+        }
+
+        public void SetDownedFlash(bool active)
+        {
+            if (_dangerFlash == null) return;
+
+            if (!active)
+            {
+                _flashLeft = 0.0f;
+                ApplyDangerHold();
+                return;
+            }
+
+            _flashLeft = DownedFlashTime;
+        }
+
+
+        private void Awake()
+        {
+            Instance = this;
+            Build();
+        }
+
+        private void OnEnable()
+        {
+            if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
+            Net.MatchRpc.TimeScaleChanged += OnBroadcastClock;
+            TrySubscribeRound();
+        }
+
+        private void OnDisable()
+        {
+            if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
+            Net.MatchRpc.TimeScaleChanged -= OnBroadcastClock;
+
+            if (_roundHooked && GameServices.Round != null)
+            {
+                GameServices.Round.Tagged -= OnTagged;
+            }
+
+            _roundHooked = false;
+        }
+
+        private void OnBroadcastClock(float scale)
+        {
+            if (scale <= 0.001f)
+            {
+                ShowToast("PAUSED BY A SPECTATOR", 2.0f);
+                return;
+            }
+
+            ShowToast(scale >= 0.999f
+                ? "BACK TO ACTION"
+                : $"SLOW MOTION  ·  {scale:0.##}x", 1.4f);
+        }
+
+        private bool _roundHooked;
+
+        private void TrySubscribeRound()
+        {
+            if (_roundHooked || GameServices.Round == null) return;
+
+            GameServices.Round.Tagged += OnTagged;
+            _roundHooked = true;
+        }
+
+        private void OnTagged(int _, int victimSlot)
+        {
+            if (_local == null) return;
+
+            if (_local.PlayerSlot != victimSlot) return;
+
+            InputLayer.Rumble.WasTagged();
+
+            ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+        }
+
+        private void OnScored(int slot, ScoreEvent e)
+        {
+            if (e == ScoreEvent.DefenseTick) return;
+
+            if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty)
+            {
+                GameServices.Audio?.PlayUiVaried("score_award", 0.78f, 0.86f, 0.65f);
+                return;
+            }
+
+            int points = MatchRules.PointsFor(e);
+            GameServices.Audio?.PlayUiVaried("score_award",
+                                             points < 0 ? 0.78f : 0.96f,
+                                             points < 0 ? 0.86f : 1.04f,
+                                             points < 0 ? 0.65f : 0.9f);
+
+            if (_local == null || _local.PlayerSlot != slot) return;
+
+            if (e == ScoreEvent.LataKnocked || e == ScoreEvent.LastTsinelasStanding)
+                InputLayer.Rumble.LataKnocked();
+            else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
+
+            ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
+        }
+
+        private static string LabelOf(ScoreEvent e)
+        {
+            switch (e)
+            {
+                case ScoreEvent.LataKnocked: return "CAN DOWN";
+                case ScoreEvent.Sabotage: return "SABOTAGE";
+                case ScoreEvent.Tag: return "TAG";
+                case ScoreEvent.TayaCampPenalty: return "CAMPING";
+                case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
+
+                case ScoreEvent.LastTsinelasStanding: return "LAST SLIPPER";
+
+                default: return "DEFENSE";
+            }
+        }
+
+        public void EnterSpectatorMode()
+        {
+            _spectating = true;
+
+            if (_scoreboardRt != null)
+            {
+                var size = _scoreboardRt.sizeDelta;
+                _scoreboardRt.sizeDelta =
+                    new Vector2(size.x + CasterStateWidth + ScoreRowSpacing, size.y);
+            }
+
+            _crosshair.enabled = false;
+            _vulnerable.enabled = false;
+
+            if (_hitmarker != null)
+            {
+                _hitmarker.enabled = false;
+                _hitmarkerTimer = 0.0f;
+            }
+
+            _readyPrompt.enabled = false;
+            _readyObjective.enabled = false;
+            if (_readyPromptPlate != null) _readyPromptPlate.enabled = false;
+            if (_readyObjectivePlate != null) _readyObjectivePlate.enabled = false;
+
+            _readyWindowOpen = false;
+            _dangerFlash.enabled = false;
+
+            ClearFrost();
+
+            if (_stackLeft != null) _stackLeft.gameObject.SetActive(false);
+            if (_stackRight != null) _stackRight.gameObject.SetActive(false);
+            if (_indicators != null) _indicators.gameObject.SetActive(false);
+            if (_heroDeck != null) _heroDeck.SetActive(false);
+
+            foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(false);
+            }
+
+            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include,
+                                                                 FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(false);
+            }
+
+            BuildSpectatorReadout();
+            SetSpectatorReadoutEnabled(true);
+        }
+
+        public void ExitSpectatorMode()
+        {
+            if (!_spectating) return;
+
+            _spectating = false;
+
+            if (_scoreboardRt != null)
+            {
+                var size = _scoreboardRt.sizeDelta;
+                _scoreboardRt.sizeDelta =
+                    new Vector2(size.x - CasterStateWidth - ScoreRowSpacing, size.y);
+            }
+
+            SetSpectatorReadoutEnabled(false);
+
+            if (_stackLeft != null) _stackLeft.gameObject.SetActive(true);
+            if (_stackRight != null) _stackRight.gameObject.SetActive(true);
+            if (_indicators != null) _indicators.gameObject.SetActive(true);
+
+            foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(true);
+            }
+
+        }
+
+        private void SetSpectatorReadoutEnabled(bool on)
+        {
+            if (_spectatorStatus != null) _spectatorStatus.enabled = on;
+            if (_spectatorLegend != null) _spectatorLegend.enabled = on;
+            if (_spectatorHint != null) _spectatorHint.enabled = on;
+
+            if (!on && _spectatorLiveBug != null) _spectatorLiveBug.enabled = false;
+        }
+
+        private Text _spectatorLegend;
+        private Text _spectatorStatus;
+        private Text _spectatorHint;
+        private Text _spectatorLiveBug;
+        private CameraSystem.SpectatorCamera _spectatorCamera;
+        private string _spectatorStatusShown = "";
+        private bool _spectatorControlsVisible = true;
+
+        private void BuildSpectatorReadout()
+        {
+            if (_spectatorLegend != null) return;
+
+            _spectatorStatus = HudLabel(_root, "SpectatorStatus", 22, UiTheme.Cream,
+                                        TextAnchor.MiddleCenter);
+            Place(_spectatorStatus.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 108),
+                  new Vector2(900, 32));
+
+            _spectatorLegend = HudLabel(_root, "SpectatorLegend", 18, UiTheme.Cream,
+                                        TextAnchor.MiddleCenter);
+            Place(_spectatorLegend.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 48),
+                  new Vector2(1700, 54));
+
+            _spectatorLegend.text = CameraSystem.SpectatorCamera.ControlsText();
+
+            _spectatorHint = HudLabel(_root, "SpectatorHint", MenuKit.MinReadableUnits, UiTheme.CreamMuted,
+                                      TextAnchor.LowerRight);
+            Place(_spectatorHint.rectTransform, new Vector2(1.0f, 0.0f), new Vector2(-24, 20),
+                  new Vector2(310, 28));
+            _spectatorHint.text = "[C] CONTROLS OVERLAY";
+            _spectatorHint.enabled = true;
+
+            _spectatorLiveBug = HudLabel(_root, "BroadcastBug", 20, UiTheme.Danger,
+                                          TextAnchor.MiddleRight, 4);
+            Place(_spectatorLiveBug.rectTransform, new Vector2(1.0f, 1.0f),
+                  new Vector2(-24, -24), new Vector2(260, 34));
+
+            _spectatorLiveBug.text = "";
+        }
+
+        public void SetSpectatorControlsVisible(bool visible)
+        {
+            _spectatorControlsVisible = visible;
+            if (_spectatorLegend != null) _spectatorLegend.gameObject.SetActive(visible);
+            if (_spectatorStatus != null) _spectatorStatus.gameObject.SetActive(visible);
+            if (_spectatorHint != null)
+            {
+                _spectatorHint.text = visible ? "[C] HIDE CONTROLS" : "[C] SHOW CONTROLS";
+            }
+        }
+
+        private void UpdateSpectatorReadout()
+        {
+            if (_spectatorStatus == null || !_spectatorControlsVisible) return;
+
+            if (_spectatorCamera == null)
+                _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+
+            string text = _spectatorCamera != null ? _spectatorCamera.StatusText() : "";
+
+            if (text == _spectatorStatusShown) return;
+
+            _spectatorStatusShown = text;
+            _spectatorStatus.text = text;
+
+            if (_spectatorLiveBug != null)
+            {
+                if (text.Contains("REPLAY"))
+                {
+                    _spectatorLiveBug.text = "⏪ INSTANT REPLAY";
+                    _spectatorLiveBug.color = UiTheme.Highlight;
+                }
+                else if (text.Contains("PAUSE"))
+                {
+                    _spectatorLiveBug.text = "⏸ TACTICAL PAUSE";
+                    _spectatorLiveBug.color = UiTheme.Amber;
+                }
+                else
+                {
+                    _spectatorLiveBug.text = "";
+                    _spectatorLiveBug.color = UiTheme.Danger;
+                }
+            }
+        }
+
+        public bool IsCleanFeed => _cleanFeed;
+
+        public Transform CleanFeedRoot => _canvas != null ? _canvas.transform : transform;
+
+        private bool _spectating;
+
+        public bool Spectating => _spectating;
+
+        private bool _cleanFeed;
+
+        public void SetCleanFeed(bool on)
+        {
+            if (on == _cleanFeed) return;
+            _cleanFeed = on;
+
+            foreach (var plate in FindObjectsByType<Visual.CharacterNameplate>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                plate.gameObject.SetActive(!on);
+            }
+
+            foreach (var card in FindObjectsByType<YouCard>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(!on && !_spectating);
+            }
+
+            if (_canvas != null) _canvas.gameObject.SetActive(!on);
+        }
+
+        private readonly Dictionary<string, InputAction> _spectatorActions
+            = new Dictionary<string, InputAction>();
+
+        private InputAction SpectatorAction(string name)
+        {
+            if (_spectatorActions.TryGetValue(name, out var cached)) return cached;
+
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            var map = asset != null ? asset.FindActionMap("Player", false) : null;
+            var action = map?.FindAction(name, false);
+
+            if (map != null && !map.enabled) map.Enable();
+
+            _spectatorActions[name] = action;
+            return action;
+        }
+
+        private static bool Fired(InputAction a) => a != null && a.WasPressedThisFrame();
+
+        private void Update()
+        {
+            if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
+            if (_spectating && Fired(SpectatorAction("SpectatorControls")))
+                SetSpectatorControlsVisible(!_spectatorControlsVisible);
+
+            UpdateSandboxToggle();
+
+            if (GameServices.Match == null || GameServices.Round == null) return;
+
+            float dt = Time.unscaledDeltaTime;
+
+            TrySubscribeRound();
+
+            if (_spectating)
+            {
+                UpdateTimer(dt);
+                UpdateScores();
+                UpdateScorePulses(dt);
+                UpdateLataCard();
+                UpdateToast(dt);
+                UpdateCountdown(dt);
+                UpdateSpectatorReadout();
+                return;
+            }
+
+            if (_local == null) return;
+
+            UpdateTimer(dt);
+            UpdateScores();
+            UpdateScorePulses(dt);
+            UpdateLataCard();
+            UpdateStatus();
+            UpdateHeroDeck();
+            UpdateDanger();
+            UpdateToast(dt);
+            UpdateCountdown(dt);
+            UpdateFrost(dt);
+            UpdateIndicators();
+            UpdateGetUpPrompt();
+            UpdateStunBreakPrompt();
+            UpdatePickupPrompt();
+            UpdateReadyObjective(dt);
+
+            var carrier = _local.GetComponent<Carrier>();
+
+            _crosshair.enabled = GameServices.Round.RoundActive;
+
+            Color role = _local.IsDefender ? UiTheme.Defense : UiTheme.Offense;
+            _crosshair.color = role;
+            _indicators?.SetCanArrowColour(role);
+
+            if (carrier != null && carrier.IsCharging)
+            {
+                _crosshair.fontSize = 22;
+                var lata = GameServices.Round.Lata;
+
+                if (lata != null && !lata.IsUpright)
+                {
+                    _crosshair.text = "HOLDING CHARGE";
+                    _crosshair.color = UiTheme.Offense;
+                }
+                else if (lata != null && lata.IsProtected)
+                {
+                    _crosshair.text = $"CAN PROTECTED\n{lata.ProtectionLeft:0.0}s";
+                    _crosshair.color = UiTheme.Defense;
+                }
+                else
+                {
+                    float spin = carrier.CurrentPektusSpin;
+                    float magnitude = Mathf.Abs(spin);
+                    if (magnitude > 0.08f)
+                    {
+                        string arrow = magnitude >= 0.85f ? "◀◀◀" : magnitude >= 0.45f ? "◀◀" : "◀";
+                        if (spin > 0.0f) arrow = arrow.Replace('◀', '▶');
+                        string bank = magnitude >= Balance.PektusBankSpinThreshold ? "\nBANK READY" : "";
+                        _crosshair.text = $"{arrow}  PEKTUS {Mathf.RoundToInt(magnitude * 100.0f)}%{bank}";
+                        _crosshair.color = UiTheme.Highlight;
+                    }
+                    else
+                    {
+                        _crosshair.text = "+\nPEKTUS 0%";
+                    }
+                }
+            }
+            else if (_local.IsDefender)
+            {
+                var lata = GameServices.Round.Lata;
+
+                if (lata != null && !lata.IsUpright)
+                {
+                    _crosshair.fontSize = 22;
+                    _crosshair.text = OnTouch
+                        ? "+\nHOLD AT THE CAN TO RESET"
+                        : "+\nHOLD " + KeyLabel("Grab") + " AT THE CAN";
+                    _crosshair.color = UiTheme.Defense;
+                }
+                else
+                {
+                    _crosshair.fontSize = 34;
+                    _crosshair.text = "+";
+                }
+            }
+            else
+            {
+                _crosshair.fontSize = 34;
+                _crosshair.text = "+";
+            }
+
+            _vulnerable.enabled = _local.IsTaggable();
+
+            if (_hitmarkerTimer > 0.0f)
+            {
+                _hitmarkerTimer -= dt;
+                float t = Mathf.Clamp01(_hitmarkerTimer / 0.28f);
+                _hitmarker.rectTransform.localScale = Vector3.one * (1.0f + 0.6f * t);
+                Color c = _hitmarker.color;
+                c.a = t;
+                _hitmarker.color = c;
+                if (_hitmarkerTimer <= 0.0f) _hitmarker.enabled = false;
+            }
+        }
+
+
+        private int _secondsShown = -1;
+        private int _urgent = -1;
+
+        private void UpdateTimer(float dt)
+        {
+            float left = Mathf.Max(0.0f, GameServices.Round.TimeLeft);
+
+            if (GameServices.Round.RoundActive && GameServices.Match != null &&
+                GameServices.Match.MatchInProgress)
+            {
+                GameServices.Voice?.TickClock(left);
+            }
+
+            int t = Mathf.CeilToInt(left);
+            if (t != _secondsShown)
+            {
+                _secondsShown = t;
+                _timer.text = $"{t / 60:00}:{t % 60:00}";
+            }
+
+            int want = left <= 10.0f ? 3
+                     : left <= 15.0f ? 2
+                     : left <= 30.0f ? 1
+                     : 0;
+
+            if (want != _urgent)
+            {
+                _urgent = want;
+
+                _timer.color = want >= 2 ? UiTheme.Highlight : UiTheme.Amber;
+                _timer.fontSize = want >= 3 ? 52 : 44;
+
+                if (_timerCard != null)
+                {
+                    Color rim = want >= 2 ? UiTheme.Highlight
+                              : want == 1 ? UiTheme.Amber
+                              : UiTheme.WoodEdge;
+                    _timerCard.sprite = GodotTheme.Box(UiTheme.WoodDark, rim,
+                                                       GodotTheme.WoodBorderWidth,
+                                                       GodotTheme.WoodCornerRadius);
+                }
+            }
+
+            if (_timerCardRt != null && _timerCardRt.localScale != Vector3.one)
+                _timerCardRt.localScale = Vector3.one;
+
+            int round = Mathf.Max(1, GameServices.Match.RoundNumber);
+
+            if (GameServices.Match.IsWarmupBuffer)
+            {
+                string skip = OnTouch ? "READY TO SKIP" : $"[{KeyLabel("ReadyUp")}] SKIP";
+
+                _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
+                    ? $"{WarmupLine}   ·   {skip}  " +
+                      $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
+                    : BufferSkipVote.Showing
+                        ? $"{WarmupLine}   ·   {skip}"
+                        : WarmupLine;
+
+                _roundLineReady = false;
+
+                FitTopCentre();
+                _timer.color = UiTheme.Highlight;
+                _urgent = -1;
+                if (_timerPressure != null) _timerPressure.enabled = false;
+            }
+            else
+            {
+                if (round != _roundLineShown)
+                {
+                    _roundLineShown = round;
+                    _roundLineFullLeft = RoundLineNamesTayaFor;
+                }
+
+                _roundLineFullLeft = Mathf.Max(0.0f, _roundLineFullLeft - dt);
+
+                bool namesTaya = _roundLineFullLeft > 0.0f;
+                int totalRounds = GameServices.Match.TotalRounds;
+                int defenderSlot = GameServices.Match.DefenderSlot;
+                string defenderName = namesTaya ? SeatName(defenderSlot) : null;
+
+                if (!_roundLineReady || namesTaya != _roundLineNamedTaya ||
+                    round != _roundLineRound || totalRounds != _roundLineTotal ||
+                    defenderName != _roundLineDefenderName)
+                {
+                    _roundLineReady = true;
+                    _roundLineNamedTaya = namesTaya;
+                    _roundLineRound = round;
+                    _roundLineTotal = totalRounds;
+                    _roundLineDefenderName = defenderName;
+
+                    _round.text = namesTaya
+                        ? RoundLine(round, totalRounds, defenderName)
+                        : ShortRoundLine(round, totalRounds);
+                }
+
+                FitTopCentre();
+
+                if (_timerPressure != null)
+                {
+                    bool livePressure = GameServices.Round.RoundActive && want >= 3;
+                    _timerPressure.enabled = livePressure;
+
+                    if (livePressure)
+                    {
+                        _timerPressure.text = _local == null
+                            ? "LAST 10"
+                            : _local.IsDefender ? "LAST 10  ·  DEFEND THE CAN"
+                                                : "LAST 10  ·  ATTACK NOW";
+                        _timerPressure.color = UiTheme.Highlight;
+
+                        if (_timerPressure.rectTransform.localScale != Vector3.one)
+                            _timerPressure.rectTransform.localScale = Vector3.one;
+                    }
+                }
+            }
+        }
+
+        private static string SeatName(int slot) => SeatLabel.Raw(slot);
+
+        private readonly int[] _scoreStampScores = new int[Balance.PlayerCount];
+        private readonly string[] _scoreStampNames = new string[Balance.PlayerCount];
+        private readonly bool[] _scoreStampOccupied = new bool[Balance.PlayerCount];
+        private bool _scoreStampReady;
+        private int _scoreStampDefender = int.MinValue;
+        private int _scoreStampLocal = int.MinValue;
+
+        private readonly List<CharacterMotor> _seatLabelBuffer = new List<CharacterMotor>(4);
+
+        private void ResolveSeatLabels()
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            _seatLabelBuffer.Clear();
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                _seatLabelBuffer.Add(round.PlayerAt(slot));
+
+            CharacterMotor.ResolveDuplicateLabels(_seatLabelBuffer);
+        }
+
+        private void UpdateScores()
+        {
+            if (_trainingChrome) return;
+
+            var m = GameServices.Match;
+
+            ResolveSeatLabels();
+
+            bool changed = !_scoreStampReady;
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int score = m.ScoreFor(slot);
+                var occupant = GameServices.Round?.PlayerAt(slot);
+                bool occupied = occupant != null;
+                string name = occupied ? occupant.DisplayName() : null;
+
+                if (_scoreStampScores[slot] != score ||
+                    _scoreStampOccupied[slot] != occupied ||
+                    _scoreStampNames[slot] != name)
+                    changed = true;
+
+                _scoreStampScores[slot] = score;
+                _scoreStampOccupied[slot] = occupied;
+                _scoreStampNames[slot] = name;
+            }
+
+            int localSlot = _local != null ? _local.PlayerSlot : -1;
+            if (_scoreStampDefender != m.DefenderSlot || _scoreStampLocal != localSlot)
+                changed = true;
+
+            _scoreStampDefender = m.DefenderSlot;
+            _scoreStampLocal = localSlot;
+            _scoreStampReady = true;
+
+            if (!changed) return;
+
+            int[] order = m.Ranking();
+            int mine = localSlot;
+
+            for (int i = 0; i < _scoreNames.Length; i++)
+            {
+                if (_scoreNames[i] == null) continue;
+
+                int slot = order[i];
+
+                var occupant = GameServices.Round?.PlayerAt(slot);
+                var rowObject = _scoreRows[i] != null ? _scoreRows[i].gameObject : null;
+
+                if (rowObject != null && rowObject.activeSelf != (occupant != null))
+                    rowObject.SetActive(occupant != null);
+
+                if (occupant == null) continue;
+
+                bool isTaya = slot == m.DefenderSlot;
+                int scoreNow = m.ScoreFor(slot);
+
+                if (_scoresInitialised)
+                {
+                    int delta = scoreNow - _lastScoreBySlot[slot];
+                    if (Mathf.Abs(delta) >= 20) _scorePulses[i] = 0.34f;
+                }
+                _lastScoreBySlot[slot] = scoreNow;
+
+                _scoreNames[i].text = SeatLabel.ForBoard(slot);
+                bool isMine = slot == mine;
+                _scoreMarks[i].text = isTaya ? "DEFENDER" : "ATTACKER";
+                _scoreValues[i].text = scoreNow.ToString();
+
+                if (_scoreStates[i] != null)
+                {
+                    bool show = _spectating;
+
+                    if (_scoreStates[i].enabled != show) _scoreStates[i].enabled = show;
+
+                    if (show && !ReplayCoveringScreen)
+                    {
+                        string state = CasterStateFor(occupant);
+                        if (_scoreStates[i].text != state) _scoreStates[i].text = state;
+                    }
+                }
+
+                Color colour = isTaya ? UiTheme.Defense : UiTheme.Offense;
+
+                Color textColour = isMine ? UiTheme.Cream : UiTheme.CreamMuted;
+
+                _scoreNames[i].color = textColour;
+                _scoreMarks[i].color = colour;
+                _scoreValues[i].color = textColour;
+
+                if (_scoreRoleRails[i] != null) _scoreRoleRails[i].color = colour;
+                if (_scoreRowPlates[i] != null)
+                {
+                    float alpha = isMine ? 0.22f : 0.10f;
+                    _scoreRowPlates[i].color = new Color(colour.r, colour.g, colour.b, alpha);
+                }
+            }
+
+            _scoresInitialised = true;
+        }
+
+        private void UpdateScorePulses(float dt)
+        {
+            for (int i = 0; i < _scoreRows.Length; i++)
+            {
+                var row = _scoreRows[i];
+                if (row == null) continue;
+
+                if (_scorePulses[i] <= 0.0f)
+                {
+                    if (row.localScale != Vector3.one) row.localScale = Vector3.one;
+                    continue;
+                }
+
+                _scorePulses[i] = Mathf.Max(0.0f, _scorePulses[i] - dt);
+                float ratio = Mathf.Clamp01(_scorePulses[i] / 0.34f);
+                float punch = Mathf.Sin(ratio * Mathf.PI) * 0.11f;
+                row.localScale = Vector3.one * (1.0f + punch);
+            }
+        }
+
+        private int _lataUprightShown = -1;
+        private string _lataHintShown = "￿";
+
+        private const float LataAlertSeconds = 2.2f;
+
+        private float _lataAlertLeft;
+
+        private bool? _lataDownShown;
+
+        private void UpdateLataCard()
+        {
+            var lata = GameServices.Round.Lata;
+
+            if (_trainingChrome || lata == null || !GameServices.Round.RoundActive)
+            {
+                _lataCard.gameObject.SetActive(false);
+                if (_lataAlert != null) _lataAlert.enabled = false;
+
+                _lataAlertLeft = 0.0f;
+                _lataDownShown = null;
+                return;
+            }
+
+            _lataCard.gameObject.SetActive(true);
+
+            FitLataCard();
+
+            if (_lataUprightShown != (lata.IsUpright ? 1 : 0))
+            {
+                _lataUprightShown = lata.IsUpright ? 1 : 0;
+                _lataLabel.text = lata.IsUpright ? "CAN  ·  UPRIGHT" : "CAN DOWN";
+                _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
+
+                FitLataCard();
+            }
+
+            bool down = !lata.IsUpright;
+            if (_lataCard.rectTransform.localScale != Vector3.one)
+                _lataCard.rectTransform.localScale = Vector3.one;
+
+            if (_lataAlert != null)
+            {
+                if (down && _lataDownShown != true)
+                {
+                    _lataAlertLeft = LataAlertSeconds;
+                    _lataAlert.text = _local == null
+                        ? "RETRIEVE OR RESET"
+                        : _local.IsDefender ? "RESET IT NOW" : "RETRIEVE NOW";
+
+                    if (_lataAlert.rectTransform.localScale != Vector3.one)
+                        _lataAlert.rectTransform.localScale = Vector3.one;
+                }
+
+                if (!down) _lataAlertLeft = 0.0f;
+                else _lataAlertLeft = Mathf.Max(0.0f, _lataAlertLeft - Time.unscaledDeltaTime);
+
+                _lataAlert.enabled = _lataAlertLeft > 0.0f;
+            }
+
+            _lataDownShown = down;
+
+            string line = "";
+
+            var tsinelas = GameServices.Tsinelas;
+            if (tsinelas != null && tsinelas.Live && _local != null && !_local.IsDefender)
+            {
+                int left = tsinelas.StockFor(_local.PlayerSlot);
+
+                if (left <= 0)
+                {
+                    line = "OUT  ·  NO SLIPPERS LEFT";
+                }
+                else
+                {
+                    line = left == 1
+                        ? "LAST SLIPPER  ·  DO NOT GET TAGGED"
+                        : $"{left} SLIPPERS LEFT";
+                }
+            }
+            else if (lata.IsProtected)
+            {
+                line = $"PROTECTED  {lata.ProtectionLeft:0.0}s";
+            }
+            else if (_local == null)
+            {
+                line = lata.IsUpright ? "DEFENDER MAY TAG" : "ATTACKERS MAY RETRIEVE";
+            }
+            else if (_local.IsDefender)
+            {
+                if (!lata.IsUpright)
+                {
+                    var carrier = _local.GetComponent<Carrier>();
+                    float progress = carrier != null ? carrier.ChannelRatio : 0.0f;
+
+                    line = progress > 0.0f
+                        ? $"RESETTING  {Mathf.RoundToInt(progress * 100.0f)}%"
+                        : (OnTouch?"HOLD GRAB IN THE RING":"HOLD "+KeyLabel("Grab")+" IN THE RING");
+                }
+                else if (GameServices.Round.IsTayaCampWarningActive)
+                {
+                    float left = Mathf.Max(0.0f, Balance.TayaCampGracePeriod
+                        - GameServices.Round.TayaCampSeconds);
+                    line = left > 0.0f
+                        ? $"LEAVE CAN RING  {left:0.0}s"
+                        : "CAMPING  ·  DEFENSE SCORE PAUSED";
+                }
+            }
+            else if (!_local.HoldingSlipper&&RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+            {
+                line="SLIPPER RETURNING";
+            }
+            else if (!_local.HoldingSlipper)
+            {
+                float idle = GameServices.Round.AttackerIdleSeconds(_local.PlayerSlot);
+                if (TournamentRules.IsSlipperWarning(idle))
+                {
+                    float left = Mathf.Max(0.0f, Balance.SlipperUnretrievedGracePeriod - idle);
+                    line = left > 0.0f
+                        ? $"FETCH SLIPPER  {left:0.0}s"
+                        : "FETCH SLIPPER  ·  -5 / SECOND";
+                }
+                else
+                {
+                    line = "RETRIEVE A SLIPPER";
+                }
+            }
+            else if (_local.IsInsideBox())
+            {
+                line = "GET OUT OF THE BOX TO THROW";
+            }
+
+            if (line == _lataHintShown) return;
+
+            _lataHintShown = line;
+            _lataHint.text = line;
+            _lataHint.enabled = line != "";
+
+            FitLataCard();
+        }
+
+        private void UpdateStatus()
+        {
+            StatusStack.Collect(_local, _local.GetComponent<Carrier>(),
+                                _local.GetComponent<CombatVerbs>(), _rows);
+
+            _states.Clear();
+            _cooldowns.Clear();
+
+            foreach (var row in _rows)
+            {
+                if (row.Label == "VULNERABLE") continue;
+
+                if (row.Label.EndsWith(" CD")) _cooldowns.Add(row);
+                else _states.Add(row);
+            }
+
+            FollowScoreboard();
+            Fill(_stackLeft, _rowsLeft, _states, false);
+            Fill(_stackRight, _rowsRight, _cooldowns, true);
+        }
+
+        private void FollowScoreboard()
+        {
+            if (_stackLeft == null) return;
+
+            float top = StatusMargin.y;
+
+            if (_scoreboardRt != null)
+                top = Mathf.Max(top, 28.0f + _scoreboardRt.rect.height + StatusUnderBoardGap);
+
+            _stackLeft.anchoredPosition = new Vector2(StatusMargin.x, -top);
+        }
+
+        private void Fill(RectTransform root, List<StatusWidget> widgets, List<StatusRow> effects,
+                          bool rightSide)
+        {
+            int wanted = Mathf.Min(effects.Count, StatusRowLimit);
+
+            while (widgets.Count < wanted) widgets.Add(BuildStatusRow(root, rightSide));
+
+            for (int i = 0; i < widgets.Count; i++)
+            {
+                var w = widgets[i];
+
+                if (i >= wanted)
+                {
+                    w.Root.transform.localScale = Vector3.one;
+                    w.Root.SetActive(false);
+                    continue;
+                }
+
+                var e = effects[i];
+                Color colour = ColourFor(e.Label);
+
+                w.Root.SetActive(true);
+
+                w.Label.text = e.Timed && e.Remaining > 0.0f
+                    ? $"{e.Label}  {e.Remaining:0.0}s"
+                    : e.Label;
+
+                w.Label.color = colour;
+                w.Fill.color = colour;
+                w.Fill.fillAmount = e.Timed && e.Remaining > 0.0f
+                    ? Mathf.Clamp01(e.Remaining / Mathf.Max(0.01f, e.Total))
+                    : 1.0f;
+
+                if (w.Root.transform.localScale != Vector3.one)
+                    w.Root.transform.localScale = Vector3.one;
+            }
+        }
+
+        private static Color ColourFor(string label)
+        {
+            switch (label)
+            {
+                case "STUNNED":
+                case "DOWNED":
+                case "VULNERABLE":
+                    return UiTheme.Danger;
+
+                case "FATIGUED":
+                    return UiTheme.Amber;
+
+                default:
+                    return UiTheme.Highlight;
+            }
+        }
+
+        private void UpdateDanger()
+        {
+            bool want;
+
+            if (_local.IsDefender)
+            {
+                var can = GameServices.Round.Lata;
+                want = can != null && !can.IsUpright && GameServices.Round.RoundActive;
+            }
+            else
+            {
+                want = _local.IsTaggable();
+            }
+
+            if (want != _dangerHeld)
+            {
+                _dangerHeld = want;
+                ApplyDangerHold();
+            }
+
+            if (_flashLeft <= 0.0f) return;
+
+            _flashLeft = Mathf.Max(0.0f, _flashLeft - Time.unscaledDeltaTime);
+
+            float a = Mathf.Lerp(0.0f, DownedFlashPeak, _flashLeft / DownedFlashTime);
+
+            _dangerFlash.enabled = true;
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b,
+                                           Mathf.Max(a, _dangerHeld ? DangerHoldAlpha : 0.0f));
+
+            if (_flashLeft <= 0.0f) ApplyDangerHold();
+        }
+
+
+        public const float FrostRampIn = 0.14f;
+        public const float FrostRampOut = 0.5f;
+
+        public const float FrostThawTime = 1.6f;
+
+        private static readonly int FrostCoverageId = Shader.PropertyToID("_Coverage");
+        private static readonly int FrostAspectId = Shader.PropertyToID("_Aspect");
+
+        private static readonly int FrostTintId = Shader.PropertyToID("_FrostTint");
+
+        private static readonly int CrackColourId = Shader.PropertyToID("_CrackColor");
+
+        private StunElement _vignetteElement = StunElement.None;
+
+        private void UpdateFrost(float dt)
+        {
+            if (_frostVignette == null) return;
+
+            float target = 0.0f;
+
+            if (_local != null && _local.IsStunned && !_local.IsTripped)
+            {
+                float left = _local.StunLeft;
+                target = left < FrostThawTime ? Mathf.Clamp01(left / FrostThawTime) : 1.0f;
+            }
+
+            float rate = target > _frostCoverage ? FrostRampIn : FrostRampOut;
+            _frostCoverage = Mathf.MoveTowards(_frostCoverage, target, dt / Mathf.Max(rate, 0.001f));
+
+            _frostVignette.enabled = _frostCoverage > 0.001f;
+            if (!_frostVignette.enabled) return;
+
+            _frostMaterial.SetFloat(FrostCoverageId, _frostCoverage);
+
+            var stunElement = _local != null ? _local.StunElement : StunElement.None;
+
+            if (stunElement != _vignetteElement)
+            {
+                _vignetteElement = stunElement;
+
+                if (stunElement == StunElement.None)
+                {
+                    _frostMaterial.SetColor(FrostTintId,
+                        new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 1.0f));
+                    _frostMaterial.SetColor(CrackColourId, UiTheme.Defense);
+                }
+                else
+                {
+                    var coat = Visual.StunCoat.For(stunElement);
+                    _frostMaterial.SetColor(FrostTintId, coat.Screen);
+                    _frostMaterial.SetColor(CrackColourId, coat.Rim);
+                }
+            }
+
+            var size = _frostVignette.rectTransform.rect.size;
+            if (size.y > 0.0f) _frostMaterial.SetFloat(FrostAspectId, size.x / size.y);
+        }
+
+        private void ClearFrost()
+        {
+            _frostCoverage = 0.0f;
+            if (_frostVignette != null) _frostVignette.enabled = false;
+        }
+
+        private void ApplyDangerHold()
+        {
+            if (_dangerFlash == null) return;
+
+            _dangerFlash.enabled = _dangerHeld;
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b,
+                                           _dangerHeld ? DangerHoldAlpha : 0.0f);
+        }
+
+        private void UpdateGetUpPrompt()
+        {
+            if (_getUpCard == null) return;
+
+            if (_local == null || !_local.IsTripped)
+            {
+                if (_getUpCard.gameObject.activeSelf)
+                {
+                    _getUpCard.gameObject.SetActive(false);
+                    _getUpShown = "";
+                    if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
+                }
+                return;
+            }
+
+            if (!_getUpCard.gameObject.activeSelf) _getUpCard.gameObject.SetActive(true);
+
+            bool buying = _local.CanMashUp;
+
+            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
+
+            string text = buying
+                ? MashVerb("Jump") + " TO GET UP"
+                : "GETTING UP";
+
+            if (text != _getUpShown)
+            {
+                _getUpShown = text;
+                _getUpLabel.text = text;
+                _getUpLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
+            }
+
+            float slack = Mathf.Max(0.01f, _local.TripTotal - Balance.MinTripDown);
+            _getUpFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / slack);
+
+            _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
+
+            if (_getUpBarRt != null)
+            {
+                float sincePress = Time.time - _local.LastMashAcceptedTime;
+                float pop = Mathf.Clamp01(1.0f - sincePress / MashPopSeconds);
+                _getUpBarRt.localScale = new Vector3(1.0f, 1.0f + 0.35f * pop * pop, 1.0f);
+            }
+        }
+
+        private void UpdateToast(float dt)
+        {
+            if (_toastLeft <= 0.0f) return;
+
+            _toastLeft -= dt;
+            if (_toastLeft <= 0.0f) _toast.enabled = false;
+        }
+
+        private void UpdateCountdown(float dt)
+        {
+            if (_countdownPop <= 0.0f || _countdownRt == null) return;
+
+            _countdownPop = Mathf.Max(0.0f, _countdownPop - dt);
+
+            float k = _countdownPop / 0.35f;
+            _countdownRt.localScale = Vector3.one * Mathf.Lerp(1.0f, 1.8f, k * k);
+        }
+
+        private Slipper _ownSlipper;
+
+        private void UpdateIndicators()
+        {
+            if (_indicators == null) return;
+
+            var carrier = _local.GetComponent<Carrier>();
+
+            if (_ownSlipper == null ||
+                !_ownSlipper.gameObject.activeInHierarchy ||
+                _ownSlipper.OwnerSlot != _local.PlayerSlot)
+            {
+                _ownSlipper = null;
+
+                foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
+                                                             FindObjectsSortMode.None))
+                {
+                    if (s.OwnerSlot != _local.PlayerSlot) continue;
+                    _ownSlipper = s;
+                    break;
+                }
+            }
+
+            Transform mine = _ownSlipper != null ? _ownSlipper.transform : null;
+
+            var lata = GameServices.Round?.Lata;
+            _indicators.UpdateArrows(_local, carrier, mine, lata != null ? lata.transform : null);
+        }
+
+
+        private void BuildChat()
+        {
+            if (!NetAuthority.IsNetworked) return;
+
+            _chat = LobbyChat.Attach(_root, inMatch: true);
+
+            _chat?.PlaceAt(new Vector2(40.0f, 240.0f), 560.0f);
+        }
+
+        private LobbyChat _chat;
+
+        private void Build()
+        {
+            var canvasGo = new GameObject("HudCanvas");
+            canvasGo.transform.SetParent(transform, false);
+
+            _canvas = canvasGo.AddComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            _canvas.pixelPerfect = true;
+
+            var scaler = canvasGo.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+
+            scaler.matchWidthOrHeight = 1.0f;
+            AspectSafeCanvas.Apply(scaler);
+
+            canvasGo.AddComponent<GraphicRaycaster>();
+
+            _root = canvasGo.GetComponent<RectTransform>();
+
+            GameVersion.AttachTo(_root, over3d: true);
+
+            BuildChat();
+
+            BuildDangerFlash();
+            BuildFrostVignette();
+            BuildScoreboard();
+            BuildClock();
+            BuildLataCard();
+            BuildGetUpCard();
+            BuildStunBreakCard();
+            BuildStatusStacks();
+            BuildHeroDeck();
+            _inspect = AbilityInspectPanel.Create(_root);
+            BuildFloatingText();
+            BuildCrosshair();
+
+            var indicatorGo = new GameObject("OffscreenIndicators");
+            indicatorGo.transform.SetParent(transform, false);
+            _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
+
+            InstallDeclutter();
+
+            if (GameLaunch.GuidedTutorial) StripToTrainingChrome();
+        }
+
+        private void InstallDeclutter()
+        {
+            var declutter = _root.gameObject.AddComponent<HudDeclutter>();
+
+            if (_getUpCard != null) declutter.Track(_getUpCard.rectTransform);
+            if (_stunCard != null) declutter.Track(_stunCard.rectTransform);
+
+            if (_vulnerable != null) declutter.Track(_vulnerable.rectTransform);
+            if (_readyPrompt != null) declutter.Track(_readyPrompt.rectTransform);
+            if (_inspectHint != null) declutter.Track(_inspectHint.rectTransform);
+        }
+
+        private void StripToTrainingChrome()
+        {
+            _trainingChrome = true;
+
+            if (_topCentre != null) _topCentre.SetActive(false);
+            if (_scoreboard != null) _scoreboard.gameObject.SetActive(false);
+            if (_lataCard != null) _lataCard.gameObject.SetActive(false);
+            if (_lataAlert != null) _lataAlert.enabled = false;
+        }
+
+        private bool _trainingChrome;
+
+        private bool _trainingDeckHidden;
+
+        public void SetTrainingDeckHidden(bool hidden)
+        {
+            _trainingDeckHidden = hidden;
+            if (hidden && _heroDeck != null) _heroDeck.SetActive(false);
+        }
+
+        private void BuildDangerFlash()
+        {
+            var go = new GameObject("DownedFlash");
+            go.transform.SetParent(_root, false);
+
+            _dangerFlash = go.AddComponent<Image>();
+            _dangerFlash.color = new Color(UiTheme.Danger.r, UiTheme.Danger.g, UiTheme.Danger.b, 0.0f);
+            _dangerFlash.raycastTarget = false;
+            _dangerFlash.enabled = false;
+
+            var shader = Shader.Find("TumbangPreso/DownedVignette");
+
+            if (shader != null)
+            {
+                _dangerMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+                _dangerFlash.material = _dangerMaterial;
+            }
+            else
+            {
+                Debug.LogWarning("[HUD] TumbangPreso/DownedVignette is missing, so the danger " +
+                                 "tint will draw as a flat full-screen rect.");
+            }
+
+            MenuKit.Stretch(_dangerFlash.rectTransform);
+        }
+
+        private Material _dangerMaterial;
+
+        private void BuildFrostVignette()
+        {
+            var shader = Shader.Find("TumbangPreso/FrostVignette");
+            if (shader == null) return;
+
+            var go = new GameObject("FrostVignette");
+            go.transform.SetParent(_root, false);
+
+            _frostMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+
+            _frostMaterial.SetColor(FrostTintId,
+                new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 1.0f));
+            _frostMaterial.SetColor(CrackColourId, UiTheme.Defense);
+
+            _frostVignette = go.AddComponent<Image>();
+            _frostVignette.material = _frostMaterial;
+            _frostVignette.raycastTarget = false;
+            _frostVignette.enabled = false;
+
+            MenuKit.Stretch(_frostVignette.rectTransform);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+            Dispose(_frostMaterial);
+            Dispose(_dangerMaterial);
+        }
+
+        private static void Dispose(Material m)
+        {
+            if (m == null) return;
+
+            if (Application.isPlaying) Destroy(m);
+            else DestroyImmediate(m);
+        }
+
+        private void BuildScoreboard()
+        {
+            var card = WoodCard("Scoreboard", new Vector2(0.0f, 1.0f), new Vector2(16, -28),
+                                520.0f, out _scoreboard, sink: false, border: UiTheme.Amber);
+
+            card.spacing = 4.0f;
+
+            _scoreboardRt = card.GetComponent<RectTransform>();
+
+            _scoreTitle = HudLabel(card.transform, "ScoreTitle", 22, UiTheme.Amber,
+                                   TextAnchor.MiddleLeft);
+            _scoreTitle.text = "SCORES";
+            _scoreTitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+
+            for (int i = 0; i < Balance.PlayerCount; i++)
+            {
+                var rowGo = new GameObject($"ScoreRow{i}");
+                rowGo.transform.SetParent(card.transform, false);
+
+                var rowPlate = rowGo.AddComponent<Image>();
+                rowPlate.raycastTarget = false;
+                _scoreRowPlates[i] = rowPlate;
+
+                var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+                row.childControlHeight = true;
+                row.childControlWidth = true;
+                row.childForceExpandHeight = false;
+                row.childForceExpandWidth = false;
+                row.childAlignment = TextAnchor.MiddleLeft;
+
+                row.spacing = ScoreRowSpacing;
+
+                rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
+                _scoreRows[i] = rowGo.GetComponent<RectTransform>();
+
+                var railGo = new GameObject("RoleRail");
+                railGo.transform.SetParent(rowGo.transform, false);
+                var rail = railGo.AddComponent<Image>();
+                rail.raycastTarget = false;
+                railGo.AddComponent<LayoutElement>().preferredWidth = 8.0f;
+                _scoreRoleRails[i] = rail;
+
+                var name = HudLabel(rowGo.transform, "Name", 20, UiTheme.Cream,
+                                    TextAnchor.MiddleLeft, ScoreOutline);
+
+                name.gameObject.AddComponent<LayoutElement>().preferredWidth =
+                    WorstCaseNameWidth(name);
+
+                var mark = HudLabel(rowGo.transform, "Role", TayaBadgeFontSize,
+                                    UiTheme.CreamMuted, TextAnchor.MiddleRight, ScoreOutline);
+                mark.gameObject.AddComponent<LayoutElement>().preferredWidth = TayaBadgeWidth;
+
+                var score = HudLabel(rowGo.transform, "Score", 20, UiTheme.Cream,
+                                     TextAnchor.MiddleRight, ScoreOutline);
+                score.gameObject.AddComponent<LayoutElement>().preferredWidth = 64.0f;
+
+                var state = HudLabel(rowGo.transform, "CasterState", 18,
+                                     UiTheme.CreamMuted, TextAnchor.MiddleRight, ScoreOutline);
+                state.gameObject.AddComponent<LayoutElement>().preferredWidth = CasterStateWidth;
+                state.enabled = false;
+                _scoreStates[i] = state;
+
+                _scoreNames[i] = name;
+                _scoreMarks[i] = mark;
+                _scoreValues[i] = score;
+            }
+        }
+
+        private const float CasterStateWidth = 44.0f;
+
+        private const float ScoreRowSpacing = 14.0f;
+
+        private readonly Text[] _scoreStates = new Text[Balance.PlayerCount];
+
+        private bool ReplayCoveringScreen
+        {
+            get
+            {
+                if (_spectatorCamera == null)
+                    _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+
+                return _spectatorCamera != null && _spectatorCamera.Replaying;
+            }
+        }
+
+        private static string CasterStateFor(CharacterMotor unit)
+        {
+            if (unit == null) return "   ";
+
+            char slipper = unit.HoldingSlipper ? 'T' : '·';
+
+            var kit = unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
+            char ultimate = kit != null && kit.IsUltimateReady ? 'U' : '·';
+
+            char down = unit.IsStunned || unit.IsTripped ? 'X' : '·';
+
+            return $"{slipper}{ultimate}{down}";
+        }
+
+        private void BuildClock()
+        {
+            var column = new GameObject("TopCentre");
+            column.transform.SetParent(_root, false);
+            _topCentre = column;
+
+            var group = column.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = false;
+            group.childAlignment = TextAnchor.UpperCenter;
+            group.spacing = 4.0f;
+
+            var rt = column.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 1.0f);
+            rt.anchorMax = new Vector2(0.5f, 1.0f);
+            rt.pivot = new Vector2(0.5f, 1.0f);
+            rt.anchoredPosition = new Vector2(0, -28);
+            rt.sizeDelta = new Vector2(240, 0);
+
+            var cardGo = new GameObject("TimerCard");
+            cardGo.transform.SetParent(column.transform, false);
+
+            _timerCard = cardGo.AddComponent<Image>();
+            _timerCard.sprite = GodotTheme.Box(UiTheme.WoodDark, UiTheme.WoodEdge,
+                                               GodotTheme.WoodBorderWidth,
+                                               GodotTheme.WoodCornerRadius);
+            _timerCard.type = Image.Type.Sliced;
+            _timerCard.raycastTarget = false;
+
+            _timerCardRt = cardGo.GetComponent<RectTransform>();
+
+            var cardGroup = cardGo.AddComponent<VerticalLayoutGroup>();
+            cardGroup.childControlHeight = true;
+            cardGroup.childControlWidth = true;
+            cardGroup.childForceExpandHeight = false;
+            cardGroup.childForceExpandWidth = true;
+
+            cardGroup.padding = new RectOffset(22, 22, 16, 16);
+
+            cardGo.AddComponent<LayoutElement>().preferredWidth = TopCentreFloor;
+
+            _timer = HudLabel(cardGo.transform, "TimerLabel", 44, UiTheme.Amber,
+                              TextAnchor.MiddleCenter);
+            _timer.text = "01:30";
+
+            var timerBox = _timer.gameObject.AddComponent<LayoutElement>();
+            timerBox.minHeight = 64.0f;
+            timerBox.preferredHeight = 64.0f;
+
+            _round = HudLabel(column.transform, "RoundLabel", 20, UiTheme.Cream,
+                              TextAnchor.MiddleCenter, 0);
+            _round.gameObject.AddComponent<LayoutElement>().minHeight = 34.0f;
+
+            _timerPressure = HudLabel(column.transform, "TimerPressure", 20, UiTheme.Highlight,
+                                      TextAnchor.MiddleCenter, 4);
+            _timerPressure.gameObject.AddComponent<LayoutElement>().minHeight = 32.0f;
+            _timerPressure.enabled = false;
+
+            rt.sizeDelta = new Vector2(TopCentreColumnWidth(_round), 0.0f);
+        }
+
+        public const string WarmupLine = "WARMUP / PRACTICE BUFFER   ·   SCORES PAUSED";
+
+        public static string RoundLine(int round, int total, string defender)
+            => $"ROUND {round} / {total}   ·   DEFENDER: {defender}";
+
+        public static string ShortRoundLine(int round, int total) => $"ROUND {round} / {total}";
+
+        private const float RoundLineNamesTayaFor = 6.0f;
+
+        private int _roundLineShown = -1;
+        private float _roundLineFullLeft;
+
+        private bool _roundLineReady;
+        private bool _roundLineNamedTaya;
+        private int _roundLineRound = int.MinValue;
+        private int _roundLineTotal = int.MinValue;
+        private string _roundLineDefenderName;
+
+        public static IEnumerable<string> TopCentreLines()
+        {
+            yield return WarmupLine;
+            yield return RoundLine(8, 8, new string('W', Balance.PlayerNameMax));
+        }
+
+        private static float TopCentreColumnWidth(Text probe)
+            => TopCentreColumnWidth(probe, TopCentreLines());
+
+        private static float TopCentreColumnWidth(Text probe, IEnumerable<string> lines)
+        {
+            if (probe == null) return TopCentreFloor;
+
+            string keep = probe.text;
+            float widest = 0.0f;
+
+            foreach (string line in lines)
+            {
+                probe.text = line;
+                widest = Mathf.Max(widest, probe.preferredWidth);
+            }
+
+            probe.text = keep;
+
+            return Mathf.Max(TopCentreFloor, Mathf.Ceil(widest) + 8.0f);
+        }
+
+        public const float TopCentreFloor = 240.0f;
+
+        private string _fittedLine;
+        private float _fittedScale = -1.0f;
+
+        private void FitTopCentre()
+        {
+            if (_round == null || _topCentre == null) return;
+
+            var canvas = _round.canvas;
+            float scale = canvas != null ? canvas.scaleFactor : 1.0f;
+
+            if (_round.text == _fittedLine && Mathf.Approximately(scale, _fittedScale)) return;
+
+            _fittedLine = _round.text;
+            _fittedScale = scale;
+
+            var rt = (RectTransform)_topCentre.transform;
+
+            float widest = TopCentreColumnWidth(_round);
+
+            if (_lataAlert != null)
+                widest = Mathf.Max(widest, TopCentreColumnWidth(_lataAlert, LataAlertLines));
+
+            rt.sizeDelta = new Vector2(widest, rt.sizeDelta.y);
+        }
+
+        public static readonly string[] LataAlertLines =
+        {
+            "CAN DOWN",
+            "CAN DOWN  ·  RESET IT NOW",
+            "CAN DOWN  ·  RETRIEVE NOW",
+        };
+
+        private void BuildLataCard()
+        {
+            var card = WoodCard("LataCard", new Vector2(1.0f, 0.0f), new Vector2(-16, 64),
+                                LataCardFloor, out _lataCard, sink: false);
+
+            _lataLabel = HudLabel(card.transform, "LataLabel", 32, UiTheme.Amber,
+                                  TextAnchor.MiddleLeft);
+            _lataLabel.text = "CAN";
+
+            _lataHint = HudLabel(card.transform, "LataHintLabel", 34, UiTheme.Cream,
+                                 TextAnchor.MiddleLeft);
+            _lataHint.enabled = false;
+
+            FitLataCard();
+
+            _lataCard.gameObject.SetActive(false);
+        }
+
+        public static readonly string[] LataTitleLines =
+        {
+            "CAN  ·  UPRIGHT",
+            "CAN DOWN",
+        };
+
+        public const float LataCardFloor = 380.0f;
+
+        private string _lataFittedLine;
+        private string _lataFittedHint;
+        private float _lataFittedScale = -1.0f;
+
+        private void FitLataCard()
+        {
+            if (_lataCard == null || _lataHint == null || _lataLabel == null) return;
+
+            var canvas = _lataHint.canvas;
+            float scale = canvas != null ? canvas.scaleFactor : 1.0f;
+
+            string title = _lataLabel.text ?? "";
+            string hint = _lataHint.enabled ? _lataHint.text ?? "" : "";
+
+            if (_lataFittedLine == title && _lataFittedHint == hint &&
+                Mathf.Approximately(scale, _lataFittedScale)) return;
+
+            _lataFittedLine = title;
+            _lataFittedHint = hint;
+            _lataFittedScale = scale;
+
+            float needed = Mathf.Max(LineWidth(_lataLabel, title), LineWidth(_lataHint, hint));
+
+            var rt = _lataCard.rectTransform;
+            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, needed), rt.sizeDelta.y);
+        }
+
+        private static float LineWidth(Text probe, string line)
+        {
+            if (string.IsNullOrEmpty(line)) return 0.0f;
+
+            string keep = probe.text;
+            probe.text = line;
+            float width = probe.preferredWidth;
+            probe.text = keep;
+
+            return Mathf.Ceil(width) + 45.0f;
+        }
+
+        public static readonly string[] LataHintLines =
+        {
+            "DEFENDER MAY TAG",
+            "ATTACKERS MAY RETRIEVE",
+            "RESETTING  100%",
+            "HOLD E IN THE RING",
+            "LEAVE CAN RING  9.9s",
+            "CAMPING  ·  DEFENSE SCORE PAUSED",
+            "FETCH SLIPPER  9.9s",
+            "FETCH SLIPPER  ·  -5 / SECOND",
+            "RETRIEVE A SLIPPER",
+            "GET OUT OF THE BOX TO THROW",
+            "PROTECTED  9.9s",
+        };
+
+
+        private void BuildGetUpCard()
+        {
+            var group = WoodCard("GetUpCard", new Vector2(0.5f, 0.0f), new Vector2(0.0f, 150.0f),
+                                 460.0f, out _getUpCard, sink: false, border: UiTheme.Offense);
+
+            group.childAlignment = TextAnchor.MiddleCenter;
+
+            _getUpLabel = HudLabel(group.transform, "GetUpLabel", 30, UiTheme.Cream,
+                                   TextAnchor.MiddleCenter);
+            _getUpLabel.text = "MASH TO GET UP";
+            _getUpLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
+
+            var backGo = new GameObject("GetUpBarBack");
+            backGo.transform.SetParent(group.transform, false);
+
+            var back = backGo.AddComponent<Image>();
+            back.sprite = GodotTheme.Plain(3);
+            back.type = Image.Type.Sliced;
+            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            back.raycastTarget = false;
+
+            var box = backGo.AddComponent<LayoutElement>();
+            box.minHeight = 22.0f;
+            box.preferredHeight = 22.0f;
+
+            var fillGo = new GameObject("GetUpBarFill");
+            fillGo.transform.SetParent(backGo.transform, false);
+
+            _getUpFill = fillGo.AddComponent<Image>();
+            _getUpFill.sprite = GodotTheme.Plain(3);
+            _getUpFill.type = Image.Type.Filled;
+            _getUpFill.fillMethod = Image.FillMethod.Horizontal;
+            _getUpFill.color = UiTheme.Offense;
+            _getUpFill.raycastTarget = false;
+            _getUpFill.fillAmount = 0.0f;
+
+            MenuKit.Stretch(_getUpFill.rectTransform);
+
+            _getUpBarRt = backGo.GetComponent<RectTransform>();
+
+            _getUpCard.gameObject.SetActive(false);
+        }
+
+        private void BuildStunBreakCard()
+        {
+            var group = WoodCard("StunBreakCard", new Vector2(0.5f, 0.0f),
+                                 new Vector2(0.0f, 300.0f), 520.0f, out _stunCard,
+                                 sink: false, border: UiTheme.Highlight);
+
+            group.childAlignment = TextAnchor.MiddleCenter;
+
+            _stunLabel = HudLabel(group.transform, "StunBreakLabel", 30, UiTheme.Cream,
+                                  TextAnchor.MiddleCenter);
+            _stunLabel.text = "BREAK FREE";
+            _stunLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
+
+            var rowGo = new GameObject("StunPipRow", typeof(RectTransform));
+            rowGo.transform.SetParent(group.transform, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childAlignment = TextAnchor.MiddleCenter;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = false;
+            row.spacing = 6.0f;
+
+            var rowBox = rowGo.AddComponent<LayoutElement>();
+            rowBox.minHeight = 26.0f;
+            rowBox.preferredHeight = 26.0f;
+
+            for (int i = 0; i < Balance.StunBreakPressesMax; i++)
+            {
+                var pipGo = new GameObject($"Pip{i}");
+                pipGo.transform.SetParent(rowGo.transform, false);
+
+                var pip = pipGo.AddComponent<Image>();
+                pip.sprite = GodotTheme.Plain(3);
+                pip.type = Image.Type.Sliced;
+                pip.raycastTarget = false;
+
+                var pipBox = pipGo.AddComponent<LayoutElement>();
+                pipBox.preferredWidth = 22.0f;
+                pipBox.minWidth = 22.0f;
+                pipBox.preferredHeight = 22.0f;
+                pipBox.minHeight = 22.0f;
+
+                _stunPips.Add(pip);
+            }
+
+            _stunCard.gameObject.SetActive(false);
+        }
+
+        private void UpdateStunBreakPrompt()
+        {
+            if (_stunCard == null) return;
+
+            var element = _local != null ? _local.StunElement : StunElement.None;
+
+            if (_local == null || element == StunElement.None)
+            {
+                if (_stunCard.gameObject.activeSelf)
+                {
+                    _stunCard.gameObject.SetActive(false);
+                    _stunShown = "";
+                }
+                return;
+            }
+
+            if (!_stunCard.gameObject.activeSelf) _stunCard.gameObject.SetActive(true);
+
+            var coat = Visual.StunCoat.For(element);
+            bool buying = _local.CanMashOutOfStun;
+
+            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
+
+            string text = buying
+                ? (OnTouch ? coat.Verb : coat.Verb + "  [" + KeyLabel("Jump") + "]")
+                : "BREAKING FREE";
+
+            if (text != _stunShown)
+            {
+                _stunShown = text;
+                _stunLabel.text = text;
+                _stunLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
+            }
+
+            int need = Mathf.Clamp(_local.StunBreakPresses,
+                                   Balance.StunBreakPressesMin, Balance.StunBreakPressesMax);
+            int done = Mathf.Clamp(_local.StunMashPresses, 0, need);
+
+            for (int i = 0; i < _stunPips.Count; i++)
+            {
+                var pip = _stunPips[i];
+                if (pip == null) continue;
+
+                bool used = i < need;
+                if (pip.gameObject.activeSelf != used) pip.gameObject.SetActive(used);
+                if (!used) continue;
+
+                pip.color = i < done
+                    ? coat.Rim
+                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            }
+        }
+
+        private void BuildStatusStacks()
+        {
+            _stackLeft = BuildStack("StatusStackLeft", false);
+            _stackRight = BuildStack("StatusStackRight", true);
+        }
+
+        private RectTransform BuildStack(string name, bool rightSide)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(_root, false);
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 6.0f;
+            group.childAlignment = rightSide ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(rightSide ? 1.0f : 0.0f, 1.0f);
+            rt.anchorMax = rt.anchorMin;
+            rt.pivot = new Vector2(rightSide ? 1.0f : 0.0f, 1.0f);
+            rt.anchoredPosition = new Vector2(rightSide ? -StatusMargin.x : StatusMargin.x,
+                                              -StatusMargin.y);
+            rt.sizeDelta = new Vector2(StatusBarSize.x, 0.0f);
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return rt;
+        }
+
+        private StatusWidget BuildStatusRow(RectTransform parent, bool rightSide)
+        {
+            var rowGo = new GameObject("StatusRow");
+            rowGo.transform.SetParent(parent, false);
+
+            var group = rowGo.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 2.0f;
+
+            var label = HudLabel(rowGo.transform, "Label", StatusFontSize, UiTheme.Cream,
+                                 rightSide ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft);
+
+            var labelBox = label.gameObject.AddComponent<LayoutElement>();
+            labelBox.minHeight = 26.0f;
+            labelBox.preferredHeight = 26.0f;
+
+            var backGo = new GameObject("Bar");
+            backGo.transform.SetParent(rowGo.transform, false);
+
+            var back = backGo.AddComponent<Image>();
+            back.sprite = GodotTheme.Plain(3);
+            back.type = Image.Type.Sliced;
+            back.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+            back.raycastTarget = false;
+
+            var barBox = backGo.AddComponent<LayoutElement>();
+            barBox.minHeight = StatusBarSize.y;
+            barBox.preferredHeight = StatusBarSize.y;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(backGo.transform, false);
+
+            var fill = fillGo.AddComponent<Image>();
+            fill.sprite = GodotTheme.Plain(3);
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.raycastTarget = false;
+
+            MenuKit.Stretch(fill.rectTransform);
+
+            return new StatusWidget { Root = rowGo, Label = label, Fill = fill, Back = back };
+        }
+
+        private Image BannerPlate(string name, Vector2 offset, Vector2 size, Color rim,
+                                  bool fromTop = false)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(_root, false);
+
+            var plate = go.AddComponent<Image>();
+            plate.sprite = GodotTheme.Box(UiTheme.HeroPlate, rim, 2, 6);
+            plate.type = Image.Type.Sliced;
+            plate.raycastTarget = false;
+
+            Place(plate.rectTransform, new Vector2(0.5f, fromTop ? 1.0f : 0.0f), offset, size);
+            plate.enabled = false;
+            return plate;
+        }
+
+        private void BuildFloatingText()
+        {
+            _toast = HudLabel(_topCentre.transform, "ToastLabel", 28, UiTheme.Amber,
+                              TextAnchor.MiddleCenter);
+            var toastBox = _toast.gameObject.AddComponent<LayoutElement>();
+            toastBox.minHeight = 44.0f;
+            toastBox.preferredHeight = 44.0f;
+            _toast.enabled = false;
+
+            _lataAlert = HudLabel(_topCentre.transform, "LataDownAlert", 42, UiTheme.Danger,
+                                  TextAnchor.MiddleCenter, 10);
+            var alertBox = _lataAlert.gameObject.AddComponent<LayoutElement>();
+            alertBox.minHeight = 70.0f;
+            alertBox.preferredHeight = 70.0f;
+            _lataAlert.enabled = false;
+
+            _countdown = HudLabel(_root, "CountdownLabel", 40, UiTheme.Highlight,
+                                  TextAnchor.MiddleCenter);
+            Place(_countdown.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(400, 160));
+            _countdown.enabled = false;
+            _countdownRt = _countdown.rectTransform;
+
+            const float DeckCeiling = 124.0f;   // Reserved clearance above the ability deck
+            const float HintY = DeckCeiling + 8.0f;
+            const float PromptY = HintY + 18.0f + 6.0f;   // the hint's own height, then a gap
+
+            _readyPromptPlate = BannerPlate("ReadyPromptPlate", new Vector2(0, PromptY),
+                                            new Vector2(520, 34), UiTheme.HeroRim);
+
+            _readyPrompt = HudLabel(_root, "ReadyPrompt", 17, UiTheme.Cream,
+                                    TextAnchor.MiddleCenter);
+            Place(_readyPrompt.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, PromptY),
+                  new Vector2(520, 30));
+            _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
+            _readyPrompt.enabled = false;
+
+            _sandboxPlate = BannerPlate("SandboxTogglePlate", new Vector2(0, PromptY + 38.0f),
+                                        new Vector2(260, 30), UiTheme.HeroRim);
+
+            _sandboxToggle = HudLabel(_root, "SandboxToggle", 15, UiTheme.CreamMuted,
+                                      TextAnchor.MiddleCenter);
+            Place(_sandboxToggle.rectTransform, new Vector2(0.5f, 0.0f),
+                  new Vector2(0, PromptY + 38.0f), new Vector2(260, 26));
+            _sandboxToggle.text = "[F7]  NO COOLDOWNS: OFF";
+            _sandboxToggle.enabled = false;
+
+            _inspectHint = HudLabel(_root, "InspectHint", 14,
+                                    UiTheme.CreamMuted, TextAnchor.MiddleCenter, 2);
+            Place(_inspectHint.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, HintY),
+                  new Vector2(400, 18));
+            _inspectHint.enabled = false;
+
+            const float ObjectiveY = -308.0f;
+
+            _readyObjectivePlate = BannerPlate("ReadyObjectivePlate", new Vector2(0, ObjectiveY),
+                                               new Vector2(620, 38), UiTheme.HeroRimLit,
+                                               fromTop: true);
+
+            _readyObjective = HudLabel(_root, "ReadyObjective", 20, UiTheme.Cream,
+                                       TextAnchor.MiddleCenter);
+            Place(_readyObjective.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, ObjectiveY), new Vector2(900, 44));
+            _readyObjective.enabled = false;
+
+            _vulnerable = HudLabel(_root, "VulnerableWarning", 22, UiTheme.Offense,
+                                   TextAnchor.MiddleCenter);
+            Place(_vulnerable.rectTransform, new Vector2(0.5f, 0.0f), new Vector2(0, 112),
+                  new Vector2(400, 40));
+            _vulnerable.text = "YOU ARE VULNERABLE";
+            _vulnerable.enabled = false;
+        }
+
+        private void BuildCrosshair()
+        {
+            _crosshair = HudLabel(_root, "CrosshairLabel", 34, UiTheme.Offense,
+                                  TextAnchor.MiddleCenter, CrosshairOutline);
+
+            Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(520, 72));
+
+            _crosshair.text = "+";
+            _crosshair.enabled = false;
+
+            _hitmarker = HudLabel(_root, "HitmarkerLabel", 42, UiTheme.Highlight,
+                                  TextAnchor.MiddleCenter, 5);
+            Place(_hitmarker.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                  new Vector2(64, 64));
+            _hitmarker.text = "💥";
+            _hitmarker.enabled = false;
+
+            _pickupPrompt = HudLabel(_root, "PickupPrompt", 26, UiTheme.Highlight,
+                                     TextAnchor.MiddleCenter, 5);
+            Place(_pickupPrompt.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0, -74),
+                  new Vector2(560, 40));
+            _pickupPrompt.enabled = false;
+        }
+
+        private Text _pickupPrompt;
+        private string _pickupPromptShown = "";
+
+        private void UpdatePickupPrompt()
+        {
+            if (_pickupPrompt == null) return;
+
+            bool eligible = !_spectating && _local != null && !_local.IsDefender
+                            && !_local.HoldingSlipper && _local.CanAct();
+
+            if (!eligible)
+            {
+                if (_pickupPrompt.enabled) _pickupPrompt.enabled = false;
+                return;
+            }
+
+            if (Time.time >= _pickupScanAt)
+            {
+                _pickupScanAt = Time.time + 0.20f;
+                _pickupCandidates = FindObjectsByType<Slipper>(
+                    FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            }
+
+            bool inReach = false;
+
+            if (_pickupCandidates != null)
+            {
+                foreach (var s in _pickupCandidates)
+                {
+                    if (s == null || !s.CanBeGrabbedBy(_local)) continue;
+                    inReach = true;
+                    break;
+                }
+            }
+
+            if (_pickupPrompt.enabled != inReach) _pickupPrompt.enabled = inReach;
+            if (!inReach) return;
+
+            if (OnTouch) InputLayer.TouchHud.Emphasise(Verb.Grab);
+
+            string text = PressCue("Grab") + "PICK UP";
+
+            if (text != _pickupPromptShown)
+            {
+                _pickupPromptShown = text;
+                _pickupPrompt.text = text;
+            }
+        }
+
+        private Slipper[] _pickupCandidates;
+        private float _pickupScanAt = -99.0f;
+
+        public void PopHitmarker(Color color, string symbol = "💥")
+        {
+            if (_hitmarker == null || _spectating) return;
+            _hitmarkerTimer = 0.28f;
+            _hitmarker.text = symbol;
+            _hitmarker.color = color;
+            _hitmarker.rectTransform.localScale = Vector3.one * 1.6f;
+            _hitmarker.enabled = true;
+            GameServices.Audio?.PlayUi("sfx_hitmarker");
+        }
+
+        public static void TriggerHitmarker(Color color, string symbol = "💥")
+        {
+            Instance?.PopHitmarker(color, symbol);
+        }
+
+
+        private VerticalLayoutGroup WoodCard(string name, Vector2 anchor, Vector2 offset,
+                                             float width, out Image face, bool sink,
+                                             Color? border = null)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(_root, false);
+
+            face = go.AddComponent<Image>();
+            face.sprite = GodotTheme.Box(sink ? UiTheme.WoodDark : UiTheme.WoodDeep,
+                                         border ?? UiTheme.WoodEdge,
+                                         GodotTheme.WoodBorderWidth,
+                                         GodotTheme.WoodCornerRadius);
+            face.type = Image.Type.Sliced;
+            face.raycastTarget = false;
+
+            var group = go.AddComponent<VerticalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = false;
+            group.childForceExpandWidth = true;
+            group.spacing = 2.0f;
+            group.padding = new RectOffset(22, 22, 16, 16);
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = anchor;
+            rt.anchorMax = anchor;
+            rt.pivot = anchor;
+            rt.anchoredPosition = offset;
+            rt.sizeDelta = new Vector2(width, 0.0f);
+
+            return group;
+        }
+
+        private static float WorstCaseNameWidth(Text probe)
+        {
+            string keep = probe.text;
+            probe.text = new string('W', Balance.PlayerNameMax);
+
+            float needed = Mathf.Ceil(probe.preferredWidth);
+
+            probe.text = keep;
+            return Mathf.Max(ScoreNameFloor, needed);
+        }
+
+        private static void Place(RectTransform rt, Vector2 anchor, Vector2 offset, Vector2 size)
+        {
+            rt.anchorMin = anchor;
+            rt.anchorMax = anchor;
+            rt.pivot = anchor;
+            rt.anchoredPosition = offset;
+            rt.sizeDelta = size;
+        }
+
+        private static Text HudLabel(Transform parent, string name, int size, Color colour,
+                                     TextAnchor align, int outline = TextOutline)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            var t = go.AddComponent<Text>();
+            t.font = MenuKit.Font;
+            t.fontSize = size;
+            t.color = colour;
+            t.alignment = align;
+            t.alignByGeometry = true;
+            t.raycastTarget = false;
+            t.horizontalOverflow = HorizontalWrapMode.Overflow;
+            t.verticalOverflow = VerticalWrapMode.Overflow;
+
+            if (outline > 0)
+            {
+                var ring = go.AddComponent<GodotOutline>();
+                ring.OutlineColour = UiTheme.Ink;
+                ring.Radius = Mathf.Max(1.0f, outline * 0.5f);
+            }
+
+            return t;
+        }
+
+        private void BuildHeroDeck()
+        {
+            var deckGo = new GameObject("HeroDeck", typeof(RectTransform));
+            deckGo.transform.SetParent(_root, false);
+            _heroDeck = deckGo;
+
+            var rt = deckGo.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(0, DeckBottomMargin);
+            rt.sizeDelta = new Vector2(DeckWidth, DeckHeight);
+
+            var hgroup = deckGo.AddComponent<HorizontalLayoutGroup>();
+            hgroup.childControlHeight = true;
+            hgroup.childControlWidth = true;
+            hgroup.childForceExpandHeight = true;
+            hgroup.childForceExpandWidth = false;
+            hgroup.childAlignment = TextAnchor.LowerCenter;
+            hgroup.spacing = DeckSpacing;
+            hgroup.padding = new RectOffset((int)DeckPadding, (int)DeckPadding, 0, 0);
+
+            _skill1Card = BuildAbilityCard(deckGo.transform, "Skill1", "Skill1", SkillCardWidth, false);
+            _skill2Card = BuildAbilityCard(deckGo.transform, "Skill2", "Skill2", SkillCardWidth, false);
+            _ultCard = BuildAbilityCard(deckGo.transform, "Ultimate", "Ultimate", UltimateCardWidth, true);
+
+            _heroDeck.SetActive(false);
+        }
+
+        private AbilityCard BuildAbilityCard(Transform parent, string name, string actionName,
+                                             float width, bool segmented)
+        {
+            var card = new AbilityCard();
+
+            var cardGo = new GameObject(name, typeof(RectTransform));
+            cardGo.transform.SetParent(parent, false);
+            card.Rt = cardGo.GetComponent<RectTransform>();
+
+            var le = cardGo.AddComponent<LayoutElement>();
+            le.preferredWidth = width;
+            le.minWidth = width;
+
+            var tileGo = new GameObject("Tile", typeof(RectTransform));
+            tileGo.transform.SetParent(cardGo.transform, false);
+
+            card.Plate = tileGo.AddComponent<Image>();
+            card.Plate.sprite = GodotTheme.Box(UiTheme.HeroPlateRaised, new Color(0, 0, 0, 0), 0, 8);
+            card.Plate.type = Image.Type.Sliced;
+            card.Plate.raycastTarget = false;
+
+            Place(card.Plate.rectTransform, new Vector2(0.5f, 1.0f), new Vector2(0, 0),
+                  new Vector2(TileSize, TileSize));
+
+            var rimGo = new GameObject("Rim", typeof(RectTransform));
+            rimGo.transform.SetParent(tileGo.transform, false);
+            card.Rim = rimGo.AddComponent<Image>();
+            card.Rim.sprite = GodotTheme.Box(new Color(0, 0, 0, 0), Color.white, 2, 8);
+            card.Rim.type = Image.Type.Sliced;
+            card.Rim.raycastTarget = false;
+            MenuKit.Stretch(card.Rim.rectTransform);
+
+            var glyphGo = new GameObject("Glyph");
+            glyphGo.transform.SetParent(tileGo.transform, false);
+            card.Glyph = glyphGo.AddComponent<Image>();
+            card.Glyph.sprite = AbilityIcons.For(AbilityGlyph.Burst);
+            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.preserveAspect = true;
+            card.Glyph.raycastTarget = false;
+            MenuKit.Stretch(card.Glyph.rectTransform);
+            card.Glyph.rectTransform.offsetMin = new Vector2(11, 13);
+            card.Glyph.rectTransform.offsetMax = new Vector2(-11, -11);
+
+            var sweepGo = new GameObject("CooldownSweep", typeof(RectTransform));
+            sweepGo.transform.SetParent(tileGo.transform, false);
+            card.CooldownSweep = sweepGo.AddComponent<Image>();
+            card.CooldownSweep.sprite = AbilityIcons.CooldownDisc();
+            card.CooldownSweep.type = Image.Type.Filled;
+            card.CooldownSweep.fillMethod = Image.FillMethod.Radial360;
+            card.CooldownSweep.fillOrigin = (int)Image.Origin360.Top;
+            card.CooldownSweep.fillClockwise = false;
+            card.CooldownSweep.fillAmount = 0.0f;
+            card.CooldownSweep.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.76f);
+            card.CooldownSweep.raycastTarget = false;
+            MenuKit.Stretch(card.CooldownSweep.rectTransform);
+            card.CooldownSweep.rectTransform.offsetMin = new Vector2(7, 7);
+            card.CooldownSweep.rectTransform.offsetMax = new Vector2(-7, -7);
+
+            card.State = HudLabel(tileGo.transform, "State", 22, UiTheme.HeroNumber,
+                                  TextAnchor.MiddleCenter, 2);
+            card.State.fontStyle = FontStyle.Bold;
+            card.State.text = "";
+            MenuKit.Stretch(card.State.rectTransform);
+
+            var groove = new GameObject("Groove", typeof(RectTransform));
+            groove.transform.SetParent(tileGo.transform, false);
+            var grooveImg = groove.AddComponent<Image>();
+            grooveImg.sprite = GodotTheme.Plain(2);
+            grooveImg.type = Image.Type.Sliced;
+            grooveImg.color = UiTheme.HeroPlateSunk;
+            grooveImg.raycastTarget = false;
+            var grooveRt = (RectTransform)groove.transform;
+            grooveRt.anchorMin = new Vector2(0.0f, 0.0f);
+            grooveRt.anchorMax = new Vector2(1.0f, 0.0f);
+            grooveRt.pivot = new Vector2(0.5f, 0.0f);
+            grooveRt.anchoredPosition = new Vector2(0, 6);
+            grooveRt.sizeDelta = new Vector2(-16, 3);
+
+            card.Key = HudLabel(cardGo.transform, "Key", 15,
+                                new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 0.90f),
+                                TextAnchor.MiddleCenter, 2);
+            card.Key.fontStyle = FontStyle.Bold;
+            card.KeyAction = actionName;
+            Place(card.Key.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, -(TileSize + KeyGap)), new Vector2(width, 15));
+
+            var keyGlyphGo = new GameObject("KeyGlyph", typeof(RectTransform), typeof(Image));
+            keyGlyphGo.transform.SetParent(cardGo.transform, false);
+
+            card.KeyGlyph = keyGlyphGo.GetComponent<Image>();
+            card.KeyGlyph.preserveAspect = true;
+            card.KeyGlyph.raycastTarget = false;
+
+            Place(card.KeyGlyph.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, -(TileSize + KeyGap) + 2.0f), new Vector2(20.0f, 20.0f));
+
+            PaintKeyCap(card);
+
+            if (segmented)
+            {
+                var segRow = new GameObject("Segments", typeof(RectTransform));
+                segRow.transform.SetParent(groove.transform, false);
+                MenuKit.Stretch((RectTransform)segRow.transform);
+
+                var segGroup = segRow.AddComponent<HorizontalLayoutGroup>();
+                segGroup.childControlHeight = true;
+                segGroup.childControlWidth = true;
+                segGroup.childForceExpandHeight = true;
+                segGroup.childForceExpandWidth = true;
+                segGroup.spacing = 1.0f;
+                segGroup.padding = new RectOffset(0, 0, 0, 0);
+
+                card.Segments = new Image[UltSegments];
+                for (int i = 0; i < UltSegments; i++)
+                {
+                    var segGo = new GameObject("Seg" + i);
+                    segGo.transform.SetParent(segRow.transform, false);
+                    var seg = segGo.AddComponent<Image>();
+                    seg.sprite = GodotTheme.Plain(1);
+                    seg.type = Image.Type.Sliced;
+                    seg.color = UiTheme.HeroRim;
+                    seg.raycastTarget = false;
+                    card.Segments[i] = seg;
+                }
+
+                return card;
+            }
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(groove.transform, false);
+            card.Fill = fillGo.AddComponent<Image>();
+            card.Fill.sprite = GodotTheme.Plain(1);
+            card.Fill.type = Image.Type.Filled;
+            card.Fill.fillMethod = Image.FillMethod.Horizontal;
+            card.Fill.color = UiTheme.HeroNumber;
+            card.Fill.raycastTarget = false;
+            MenuKit.Stretch(card.Fill.rectTransform);
+
+            return card;
+        }
+
+        public static string KeyLabelFor(string action) => KeyLabel(action);
+
+
+        public static bool OnTouch =>
+            InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+
+        public static string PressCue(string action)
+            => OnTouch ? string.Empty : "[" + KeyLabel(action) + "]  ";
+
+        public static string MashVerb(string action)
+            => OnTouch ? "TAP" : "MASH [" + KeyLabel(action) + "]";
+
+        private static readonly System.Collections.Generic.Dictionary<string, string> _keyLabels =
+            new System.Collections.Generic.Dictionary<string, string>();
+
+        private static int _keyLabelsRevision = -1;
+
+        private static int _keyLabelsDevice = -1;
+
+        private static string KeyLabel(string action)
+        {
+            if (_bindingAsset == null)
+            {
+                _bindingAsset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
+                if (_bindingAsset != null) Settings.Rebinding.Load(_bindingAsset);
+            }
+
+            if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            if (_keyLabelsRevision != Settings.Rebinding.Revision
+                || _keyLabelsDevice != InputLayer.LastInputDevice.Revision)
+            {
+                _keyLabelsRevision = Settings.Rebinding.Revision;
+                _keyLabelsDevice = InputLayer.LastInputDevice.Revision;
+                _keyLabels.Clear();
+            }
+
+            if (_keyLabels.TryGetValue(action, out string cached)) return cached;
+
+            string resolved = ResolveKeyLabel(action);
+            _keyLabels[action] = resolved;
+            return resolved;
+        }
+
+        private static string ResolveKeyLabel(string action)
+        {
+            var map = _bindingAsset.FindActionMap("Player");
+            var act = map?.FindAction(action);
+
+            if (act == null || act.bindings.Count == 0)
+                return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            if (InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Gamepad)
+            {
+                string pad = Settings.Rebinding.DisplayNameFor(
+                    _bindingAsset, action, Settings.Rebinding.GamepadDevice);
+
+                if (!string.IsNullOrEmpty(pad) && pad != "-") return pad.ToUpperInvariant();
+            }
+
+            if (act.bindings[0].isComposite) return CompositeLabel(act);
+
+            return SingleKeyLabel(act.bindings[0].effectivePath);
+        }
+
+        private static string CompositeLabel(UnityEngine.InputSystem.InputAction act)
+        {
+            string up = null, down = null, left = null, right = null;
+            var loose = new System.Collections.Generic.List<string>();
+
+            bool started = false;
+
+            foreach (var binding in act.bindings)
+            {
+                if (binding.isComposite)
+                {
+                    if (started) break;
+                    started = true;
+                    continue;
+                }
+
+                if (!started || !binding.isPartOfComposite) continue;
+
+                string label = SingleKeyLabel(binding.effectivePath);
+                if (string.IsNullOrEmpty(label)) continue;
+
+                string part = binding.name == null ? "" : binding.name.ToLowerInvariant();
+                if (part == "up") up = label;
+                else if (part == "down") down = label;
+                else if (part == "left") left = label;
+                else if (part == "right") right = label;
+                else loose.Add(label);
+            }
+
+            if (up != null && down != null && left != null && right != null)
+            {
+                bool tight = up.Length == 1 && left.Length == 1 && down.Length == 1 && right.Length == 1;
+                string join = tight ? "" : "/";
+                return up + join + left + join + down + join + right;
+            }
+
+            foreach (var extra in loose)
+                if (up == null) up = extra;
+
+            return up ?? "";
+        }
+
+        private static string SingleKeyLabel(string effectivePath)
+        {
+            if (string.IsNullOrEmpty(effectivePath)) return "";
+
+            string key = UnityEngine.InputSystem.InputControlPath.ToHumanReadableString(
+                effectivePath,
+                UnityEngine.InputSystem.InputControlPath.HumanReadableStringOptions.OmitDevice);
+
+            if (string.IsNullOrEmpty(key)) return "";
+
+            if (key == "Left Button" || key == "LeftButton") return "LMB";
+            if (key == "Right Button" || key == "RightButton") return "RMB";
+            if (key == "Middle Button" || key == "MiddleButton") return "MMB";
+
+            return key.ToUpperInvariant();
+        }
+
+        private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;
+
+        private static void PaintKeyCap(AbilityCard card)
+        {
+            if (card == null || card.Key == null) return;
+
+            if (OnTouch || string.IsNullOrEmpty(card.KeyAction))
+            {
+                card.Key.text = string.Empty;
+                if (card.KeyGlyph != null) card.KeyGlyph.enabled = false;
+                return;
+            }
+
+            string label = KeyLabel(card.KeyAction);
+
+            var sprite = InputGlyphs.For(label, onDark: true);
+
+            if (sprite != null && card.KeyGlyph != null)
+            {
+                card.KeyGlyph.sprite = sprite;
+                card.KeyGlyph.enabled = true;
+                card.Key.text = string.Empty;
+                return;
+            }
+
+            if (card.KeyGlyph != null) card.KeyGlyph.enabled = false;
+            card.Key.text = label;
+        }
+
+        private int _keyCapBindings = -1;
+        private int _keyCapDevice = -1;
+
+        private void RefreshKeyCaps()
+        {
+            if (_keyCapBindings == Settings.Rebinding.Revision
+                && _keyCapDevice == InputLayer.LastInputDevice.Revision)
+                return;
+
+            _keyCapBindings = Settings.Rebinding.Revision;
+            _keyCapDevice = InputLayer.LastInputDevice.Revision;
+
+            PaintKeyCap(_skill1Card);
+            PaintKeyCap(_skill2Card);
+            PaintKeyCap(_ultCard);
+        }
+
+        private void UpdateHeroDeck()
+        {
+            if (_heroDeck == null) return;
+
+            bool isHeroMode = SceneFlow.SelectedMode == GameMode.HeroStrike;
+            bool show = !_spectating && _local != null && isHeroMode && !_trainingDeckHidden;
+
+            if (_heroDeck.activeSelf != show) _heroDeck.SetActive(show);
+            if (!show) return;
+
+            var abilitySystem = _local.GetComponent<Abilities.HeroAbilitySystem>();
+            if (abilitySystem == null || abilitySystem.Kit == null)
+            {
+                _heroDeck.SetActive(false);
+                return;
+            }
+
+            RefreshKeyCaps();
+
+            if (_inspectHint != null)
+            {
+                if (_inspectHintText == null
+                    || _inspectHintDevice != InputLayer.LastInputDevice.Revision)
+                {
+                    _inspectHintDevice = InputLayer.LastInputDevice.Revision;
+                    _inspectHintText = OnTouch
+                        ? "HOLD THE INFO CHIP FOR POWER DETAILS"
+                        : "HOLD [" + KeyLabel("AbilityInfo") + "] FOR POWER DETAILS";
+                }
+
+                if (_inspectHint.text != _inspectHintText) _inspectHint.text = _inspectHintText;
+            }
+
+            if (!_heroDeck.activeSelf) _heroDeck.SetActive(true);
+
+            _inspect?.Tick(abilitySystem.Kit, Time.unscaledDeltaTime);
+
+            var kit = abilitySystem.Kit;
+            Color heroColor = UiTheme.ColorForHero(kit.HeroId);
+            float dt = Time.unscaledDeltaTime;
+
+            PaintSkillCard(_skill1Card, kit.Skill1, heroColor, abilitySystem,
+                           Abilities.HeroAbilitySystem.Slot.Skill1, dt, kit.PracticeMode);
+            PaintSkillCard(_skill2Card, kit.Skill2, heroColor, abilitySystem,
+                           Abilities.HeroAbilitySystem.Slot.Skill2, dt, kit.PracticeMode);
+            PaintUltimateCard(kit, heroColor, abilitySystem, dt);
+        }
+
+        private static void PaintSkillCard(AbilityCard card, Abilities.HeroAbility skill,
+                                           Color heroColor, Abilities.HeroAbilitySystem system,
+                                           Abilities.HeroAbilitySystem.Slot slot, float dt,
+                                           bool roundClockStopped)
+        {
+            if (card == null) return;
+
+            if (skill == null)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.HeroGlyphOff;
+                card.State.text = "";
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+                return;
+            }
+
+            PaintGlyph(card.Glyph, skill);
+            card.Plate.color = Color.white;
+
+            card.State.fontSize = StateFontSize;
+
+            bool ready = skill.IsReady;
+            if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
+            card.WasReady = ready;
+
+            PaintCharges(card, skill, heroColor, dt);
+
+            if (roundClockStopped && !skill.IsActive)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "WAIT";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            if (skill.UsesCharges && !skill.IsActive && skill.ChargesRemaining <= 0)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            if (skill.IsActive)
+            {
+                card.Rim.color = Color.Lerp(heroColor, Color.white, 0.30f);
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+
+                bool recastable = skill.CanReactivate;
+
+                card.State.fontSize = recastable ? RecastFontSize : StateFontSize;
+                card.State.text = recastable ? "RECAST" : $"{skill.DurationRemaining:0.0}";
+                card.State.color = recastable ? Color.Lerp(heroColor, Color.white, 0.35f) : heroColor;
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = skill.DurationRatio;
+                    card.Fill.color = heroColor;
+                }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+            }
+            else if (skill.CooldownRemaining > 0.0f)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+
+                card.State.text = AbilityDeckHud.CooldownLabel(skill.CooldownRemaining);
+                card.State.color = UiTheme.HeroNumber;
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = 1.0f - skill.CooldownRatio;
+                    card.Fill.color = UiTheme.HeroNumber;
+                }
+                if (card.CooldownSweep != null)
+                    card.CooldownSweep.fillAmount = AbilityDeckHud.CooldownSweep(
+                        skill.CooldownRemaining, skill.Cooldown);
+            }
+            else
+            {
+                card.Rim.color = UiTheme.HeroRimLit;
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+
+                card.State.text = "";
+
+                if (card.Fill != null)
+                {
+                    card.Fill.fillAmount = 0.0f;
+                }
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+            }
+
+            ApplyAnswer(card, system, slot, heroColor);
+            ApplyPop(card, dt);
+        }
+
+        private static void PaintCharges(AbilityCard card, Abilities.HeroAbility skill,
+                                         Color heroColor, float dt)
+        {
+            if (card == null || skill == null) return;
+
+            if (!skill.UsesCharges)
+            {
+                if (card.Pips != null)
+                    foreach (var p in card.Pips) if (p != null) p.enabled = false;
+
+                card.WasCharges = -1;
+                return;
+            }
+
+            if (skill.IsActive && skill.CanReactivate)
+            {
+                if (card.Pips != null)
+                    foreach (var p in card.Pips) if (p != null) p.enabled = false;
+
+                card.WasCharges = skill.ChargesRemaining;
+                return;
+            }
+
+            if (card.Pips == null || card.PipCount != skill.MaxCharges)
+                BuildPips(card, skill.MaxCharges);
+
+            if (card.Pips == null) return;
+
+            if (card.WasCharges >= 0 && skill.ChargesRemaining > card.WasCharges)
+                card.PipGrantLeft = 0.45f;
+
+            card.WasCharges = skill.ChargesRemaining;
+
+            if (card.PipGrantLeft > 0.0f) card.PipGrantLeft = Mathf.Max(0.0f, card.PipGrantLeft - dt);
+
+            float flash = card.PipGrantLeft > 0.0f
+                ? Mathf.Sin((1.0f - card.PipGrantLeft / 0.45f) * Mathf.PI)
+                : 0.0f;
+
+            for (int i = 0; i < card.Pips.Length; i++)
+            {
+                var pip = card.Pips[i];
+                if (pip == null) continue;
+
+                pip.enabled = true;
+
+                bool held = i < skill.ChargesRemaining;
+
+                pip.color = held
+                    ? Color.Lerp(heroColor, Color.white, flash * 0.75f)
+                    : UiTheme.HeroRim;
+            }
+        }
+
+        private static void BuildPips(AbilityCard card, int count)
+        {
+            if (card == null || card.Rt == null || count <= 0) return;
+
+            if (card.Pips != null)
+                foreach (var p in card.Pips)
+                    if (p != null) UnityEngine.Object.Destroy(p.gameObject);
+
+            var row = new GameObject("Pips", typeof(RectTransform));
+            row.transform.SetParent(card.Rt, false);
+
+            var rowRt = (RectTransform)row.transform;
+            rowRt.anchorMin = new Vector2(0.5f, 1.0f);
+            rowRt.anchorMax = new Vector2(0.5f, 1.0f);
+            rowRt.pivot = new Vector2(0.5f, 0.0f);
+            rowRt.anchoredPosition = new Vector2(0.0f, 3.0f);
+            rowRt.sizeDelta = new Vector2(count * 9.0f + (count - 1) * 3.0f, 5.0f);
+
+            var group = row.AddComponent<HorizontalLayoutGroup>();
+            group.childControlHeight = true;
+            group.childControlWidth = true;
+            group.childForceExpandHeight = true;
+            group.childForceExpandWidth = true;
+            group.childAlignment = TextAnchor.MiddleCenter;
+            group.spacing = 3.0f;
+            group.padding = new RectOffset(0, 0, 0, 0);
+
+            card.Pips = new Image[count];
+            for (int i = 0; i < count; i++)
+            {
+                var go = new GameObject("Pip" + i);
+                go.transform.SetParent(row.transform, false);
+
+                var img = go.AddComponent<Image>();
+                img.sprite = GodotTheme.Plain(1);
+                img.type = Image.Type.Sliced;
+                img.color = UiTheme.HeroRim;
+                img.raycastTarget = false;
+
+                card.Pips[i] = img;
+            }
+
+            card.PipCount = count;
+        }
+
+        private static void ApplyAnswer(AbilityCard card, Abilities.HeroAbilitySystem system,
+                                        Abilities.HeroAbilitySystem.Slot slot, Color heroColor)
+        {
+            if (system == null) return;
+
+            float since = system.SecondsSinceAnswer(slot);
+            var answer = system.LastAnswer(slot);
+
+            if (answer == Abilities.HeroKit.CastOutcome.Cast)
+            {
+                if (since > CastFlashSeconds) return;
+                float t = 1.0f - since / CastFlashSeconds;
+                card.Rim.color = Color.Lerp(card.Rim.color, UiTheme.Cream, t);
+                card.Plate.color = Color.Lerp(Color.white, heroColor, t * 0.55f);
+                return;
+            }
+
+            if (answer == Abilities.HeroKit.CastOutcome.Cooling ||
+                answer == Abilities.HeroKit.CastOutcome.NoCharge ||
+                answer == Abilities.HeroKit.CastOutcome.NotYet ||
+                answer == Abilities.HeroKit.CastOutcome.CannotAct)
+            {
+                if (since > RefusalFlashSeconds)
+                {
+                    card.Plate.color = Color.white;
+                    return;
+                }
+
+                float t = 1.0f - since / RefusalFlashSeconds;
+                card.Rim.color = Color.Lerp(card.Rim.color, UiTheme.Danger, t);
+                card.Plate.color = Color.Lerp(Color.white, UiTheme.Danger, t * 0.45f);
+                return;
+            }
+
+            card.Plate.color = Color.white;
+        }
+
+        private static void ApplyPop(AbilityCard card, float dt)
+        {
+            if (card.Rt == null) return;
+
+            if (card.PopLeft <= 0.0f)
+            {
+                if (card.Rt.localScale != Vector3.one) card.Rt.localScale = Vector3.one;
+                return;
+            }
+
+            card.PopLeft = Mathf.Max(0.0f, card.PopLeft - dt);
+
+            float t = 1.0f - card.PopLeft / ReadyPopSeconds;
+            card.Rt.localScale = Vector3.one * (1.0f + Mathf.Sin(t * Mathf.PI) * 0.12f);
+        }
+
+        private void PaintUltimateCard(Abilities.HeroKit kit, Color heroColor,
+                                       Abilities.HeroAbilitySystem system, float dt)
+        {
+            var card = _ultCard;
+            if (card == null || kit.Ultimate == null) return;
+
+            PaintGlyph(card.Glyph, kit.Ultimate);
+            card.Plate.color = Color.white;
+
+            float ratio = kit.UltimateRatio;
+
+            if (kit.PracticeMode)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+
+                card.State.text = "WAIT";
+
+                PaintUltSegments(card, ratio, UiTheme.HeroRim, UiTheme.HeroRim);
+
+                _lastUltReady = false;
+                ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            bool ready = kit.IsUltimateReady;
+            if (ready && !card.WasReady) card.PopLeft = ReadyPopSeconds;
+            card.WasReady = ready;
+
+            if (ready)
+            {
+                card.Rim.color = Color.Lerp(heroColor, Color.white, 0.55f);
+                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Key.color = UiTheme.Cream;
+                card.State.text = "";
+
+                PaintUltSegments(card, 1.0f, card.Rim.color, card.Rim.color);
+
+                if (!_lastUltReady)
+                {
+                    _lastUltReady = true;
+                    GameServices.Audio?.PlayUi("sfx_super_ready");
+                    if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
+                }
+
+                ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
+
+            _lastUltReady = false;
+
+            card.Rim.color = UiTheme.HeroRim;
+            card.Glyph.color = UiTheme.HeroGlyphOff;
+            card.Key.color = UiTheme.CreamMuted;
+
+            card.State.text = ratio >= 0.75f ? $"{Mathf.FloorToInt(ratio * 100f)}%" : "";
+            card.State.color = UiTheme.HeroNumber;
+
+            PaintUltSegments(card, ratio, heroColor, UiTheme.HeroRim);
+
+            ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);
+            ApplyPop(card, dt);
+        }
+
+        private static void PaintGlyph(Image target, Abilities.HeroAbility ability)
+        {
+            if (target == null || ability == null) return;
+
+            var want = AbilityIcons.For(ability.Glyph);
+            if (target.sprite != want) target.sprite = want;
+        }
+
+        private static void PaintUltSegments(AbilityCard card, float ratio, Color on, Color off)
+        {
+            if (card == null || card.Segments == null) return;
+
+            float exact = Mathf.Clamp01(ratio) * UltSegments;
+            int whole = Mathf.FloorToInt(exact);
+            float partial = exact - whole;
+
+            for (int i = 0; i < card.Segments.Length; i++)
+            {
+                if (card.Segments[i] == null) continue;
+
+                if (i < whole) card.Segments[i].color = on;
+                else if (i == whole && partial > 0.05f) card.Segments[i].color = Color.Lerp(off, on, partial);
+                else card.Segments[i].color = off;
+            }
+        }
+
+    }
+}

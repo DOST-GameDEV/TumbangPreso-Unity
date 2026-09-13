@@ -1,0 +1,380 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class RoleSwapCard : MonoBehaviour
+    {
+        public const float RevealDelay = 1.2f;
+        public const float FightDelay = 2.3f;
+        public const float RevealFade = 0.35f;
+        public const float FightHold = 0.4f;
+
+        private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
+
+        private Canvas _canvas;
+        private Text _title, _headline, _tayaName, _attackerNames, _fight, _bufferPrompt;
+        private CanvasGroup _swapPanel, _standingsPanel;
+        private readonly List<Text[]> _rows = new List<Text[]>();
+        private float _bufferRemaining;
+        private bool _isBufferActive;
+
+        private void Awake()
+        {
+            Build();
+            _canvas.gameObject.SetActive(false);
+        }
+
+        private void OnEnable()
+        {
+            if (GameServices.Match == null) return;
+            GameServices.Match.IntermissionStarted += OnIntermissionStarted;
+            GameServices.Match.RoundStarted += OnRoundStarted;
+        }
+
+        private void OnDisable()
+        {
+            if (GameServices.Match == null) return;
+            GameServices.Match.IntermissionStarted -= OnIntermissionStarted;
+            GameServices.Match.RoundStarted -= OnRoundStarted;
+        }
+
+        private void Update()
+        {
+            if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
+            {
+                _bufferRemaining = Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
+                if (_bufferPrompt != null)
+                {
+                    _bufferPrompt.text = $"WARMUP / PRACTICE BUFFER: {Mathf.CeilToInt(_bufferRemaining)}s\n[SPACE] / [CLICK] TO DISMISS SCORES & PRACTICE NOW";
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
+                    || InputLayer.MenuNav.PadSubmitPressed
+                    || InputLayer.MenuNav.CancelPressed)
+                {
+                    DismissAndPractice();
+                }
+            }
+        }
+
+        public void DismissAndPractice()
+        {
+            if (_canvas != null)
+            {
+                _canvas.gameObject.SetActive(false);
+            }
+        }
+
+        private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
+        {
+            _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";
+            _headline.text = HeadlineText();
+
+            _tayaName.text = NameOf(nextDefenderSlot);
+
+            var others = new List<string>();
+            for (int slot = 0; slot < Core.Balance.PlayerCount; slot++)
+                if (slot != nextDefenderSlot) others.Add(NameOf(slot));
+            _attackerNames.text = string.Join(" · ", others);
+
+            FillStandings(nextDefenderSlot);
+
+            _fight.enabled = false;
+            _canvas.gameObject.SetActive(true);
+            _swapPanel.alpha = 0.0f;
+            _standingsPanel.alpha = 0.0f;
+
+            _bufferRemaining = Core.Balance.WarmupBufferDuration;
+            _isBufferActive = true;
+
+            GameServices.Audio?.PlayUi("round_end");
+
+            StopAllCoroutines();
+            StartCoroutine(RunTimeline(nextRound));
+        }
+
+        public void ShowForShot(int nextRound, int nextDefenderSlot)
+            => OnIntermissionStarted(nextRound, nextDefenderSlot);
+
+        private IEnumerator RunTimeline(int nextRound)
+        {
+            yield return new WaitForSeconds(RevealDelay);
+            yield return StartCoroutine(RevealPanels());
+
+            float waitTime = Mathf.Max(1.0f, Core.Balance.WarmupBufferDuration - RevealDelay - RevealFade - 1.5f);
+            yield return new WaitForSeconds(waitTime);
+
+            _isBufferActive = false;
+            _fight.text = $"ROUND {nextRound} — FIGHT!";
+            _fight.enabled = true;
+
+            yield return new WaitForSeconds(1.5f);
+            _fight.enabled = false;
+        }
+
+        private IEnumerator RevealPanels()
+        {
+            float t = 0.0f;
+            while (t < RevealFade)
+            {
+                t += Time.deltaTime;
+                float k = Mathf.Clamp01(t / RevealFade);
+
+                _swapPanel.alpha = k;
+                _standingsPanel.alpha = k;
+
+                float scale = Mathf.LerpUnclamped(0.94f, 1.0f, 1.0f - Mathf.Pow(1.0f - k, 3.0f));
+                _swapPanel.transform.localScale = Vector3.one * scale;
+                _standingsPanel.transform.localScale = Vector3.one * scale;
+
+                yield return null;
+            }
+
+            _swapPanel.alpha = 1.0f;
+            _standingsPanel.alpha = 1.0f;
+        }
+
+        private void OnRoundStarted(int roundNumber, int defenderSlot)
+        {
+            StopAllCoroutines();
+            _canvas.gameObject.SetActive(false);
+        }
+
+        private static string HeadlineText()
+        {
+            var m = GameServices.Match;
+            if (m == null) return "";
+
+            int taya = m.DefenderSlot;
+            return $"{NameOf(taya)} HELD THE CAN FOR {m.ScoreFor(taya)} PTS";
+        }
+
+        private void FillStandings(int nextDefenderSlot)
+        {
+            var m = GameServices.Match;
+            int[] order = m.Ranking();
+
+            for (int i = 0; i < _rows.Count; i++)
+            {
+                var cells = _rows[i];
+
+                if (i >= order.Length)
+                {
+                    foreach (var c in cells) c.enabled = false;
+                    continue;
+                }
+
+                foreach (var c in cells) c.enabled = true;
+
+                int slot = order[i];
+
+                Color colour = slot == nextDefenderSlot ? UiTheme.Defense : UiTheme.Cream;
+
+                cells[0].text = $"{i + 1}";
+                cells[1].text = NameOf(slot);
+                cells[2].text = m.ScoreFor(slot).ToString();
+
+                foreach (var c in cells) c.color = colour;
+            }
+        }
+
+        private static string NameOf(int slot)
+        {
+            var who = GameServices.Round?.PlayerAt(slot);
+            return who != null ? who.DisplayName() : $"P{slot + 1}";
+        }
+
+        private void Build()
+        {
+            var canvasGo = new GameObject("RoleSwapCanvas");
+
+            var hud = UnityEngine.Object.FindFirstObjectByType<Hud>();
+            canvasGo.transform.SetParent(hud != null ? hud.CleanFeedRoot : transform, false);
+
+            var canvasRt = canvasGo.AddComponent<RectTransform>();
+            canvasRt.anchorMin = Vector2.zero;
+            canvasRt.anchorMax = Vector2.one;
+            canvasRt.offsetMin = Vector2.zero;
+            canvasRt.offsetMax = Vector2.zero;
+
+            _canvas = canvasGo.AddComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            _canvas.overrideSorting = true;
+            _canvas.sortingOrder = 90;
+
+            var scaler = canvasGo.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            AspectSafeCanvas.Apply(scaler);
+
+            MenuKit.Backdrop(canvasGo.transform, new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.82f));
+
+            var column = BuildColumn(canvasGo.transform);
+
+            _title = ColumnLabel(column, "TitleLabel", 34, UiTheme.CreamMuted, 46);
+            _headline = ColumnLabel(column, "HeadlineLabel", 36, UiTheme.Defense, 50);
+
+            var swapRows = BuildPanel(column.transform, "SwapPanel", 10.0f, out _swapPanel);
+
+            _tayaName = BuildSwapRow(swapRows, "NEXT DEFENDER", 32, UiTheme.Defense);
+            _attackerNames = BuildSwapRow(swapRows, "ATTACKERS", 24, UiTheme.Offense);
+
+            var standings = BuildPanel(column.transform, "StandingsPanel", 6.0f, out _standingsPanel);
+
+            for (int i = 0; i < Core.Balance.PlayerCount; i++) _rows.Add(BuildStandingsRow(standings));
+
+            _bufferPrompt = ColumnLabel(column, "BufferPrompt", 24, UiTheme.Amber, 52);
+
+            _fight = MenuKit.Label(canvasGo.transform, "", 48, UiTheme.Amber,
+                Centre, Vector2.zero, new Vector2(1200, 100));
+            _fight.enabled = false;
+        }
+
+        private const float ColumnWidth = 860.0f;
+
+        private const float CaptionWidth = 240.0f;
+
+        private static VerticalLayoutGroup BuildColumn(Transform parent)
+        {
+            var go = new GameObject("Column", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = Centre;
+            rt.anchorMax = Centre;
+            rt.pivot = Centre;
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(ColumnWidth, 0.0f);
+
+            var column = go.AddComponent<VerticalLayoutGroup>();
+            column.spacing = 16.0f;
+            column.childAlignment = TextAnchor.MiddleCenter;
+            column.childForceExpandHeight = false;
+            column.childForceExpandWidth = true;
+            column.childControlHeight = true;
+            column.childControlWidth = true;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            return column;
+        }
+
+        private static Text ColumnLabel(VerticalLayoutGroup column, string name, int size,
+                                        Color colour, float height)
+        {
+            var label = MenuKit.Label(column.transform, "", size, colour,
+                Centre, Vector2.zero, new Vector2(ColumnWidth, height));
+
+            label.gameObject.name = name;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+            var element = label.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = height;
+            element.preferredHeight = height;
+
+            return label;
+        }
+
+        private static Text BuildSwapRow(VerticalLayoutGroup rows, string caption, int valueSize,
+                                         Color valueColour)
+        {
+            var rowGo = new GameObject(caption, typeof(RectTransform));
+            rowGo.transform.SetParent(rows.transform, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.spacing = 22.0f;
+            row.childForceExpandWidth = false;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childAlignment = TextAnchor.MiddleLeft;
+
+            var captionLabel = MenuKit.Label(rowGo.transform, caption, 24, UiTheme.CreamMuted,
+                Centre, Vector2.zero, new Vector2(CaptionWidth, 40.0f), TextAnchor.MiddleLeft);
+            MenuKit.Read(captionLabel);
+
+            var captionElement = captionLabel.gameObject.AddComponent<LayoutElement>();
+            captionElement.minWidth = CaptionWidth;
+            captionElement.preferredWidth = CaptionWidth;
+            captionElement.minHeight = 40.0f;
+
+            var value = MenuKit.Label(rowGo.transform, "", valueSize, valueColour,
+                Centre, Vector2.zero, new Vector2(400.0f, 40.0f), TextAnchor.MiddleLeft);
+
+            value.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+            var valueElement = value.gameObject.AddComponent<LayoutElement>();
+            valueElement.flexibleWidth = 1.0f;
+            valueElement.minHeight = 40.0f;
+
+            return value;
+        }
+
+        private static Text[] BuildStandingsRow(VerticalLayoutGroup standings)
+        {
+            var rowGo = new GameObject("Row", typeof(RectTransform));
+            rowGo.transform.SetParent(standings.transform, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.spacing = 18.0f;
+            row.childForceExpandWidth = false;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childAlignment = TextAnchor.MiddleLeft;
+
+            var rank = Cell(rowGo.transform, "Rank", TextAnchor.MiddleLeft, 44.0f, 0.0f);
+            var who = Cell(rowGo.transform, "Name", TextAnchor.MiddleLeft, 0.0f, 1.0f);
+            var score = Cell(rowGo.transform, "Score", TextAnchor.MiddleRight, 120.0f, 0.0f);
+
+            return new[] { rank, who, score };
+        }
+
+        private static Text Cell(Transform parent, string name, TextAnchor align,
+                                 float width, float flexible)
+        {
+            var label = MenuKit.Label(parent, "", 26, UiTheme.Cream,
+                Centre, Vector2.zero, new Vector2(Mathf.Max(width, 200.0f), 36.0f), align);
+
+            label.gameObject.name = name;
+
+            var element = label.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = 36.0f;
+            element.flexibleWidth = flexible;
+
+            if (width > 0.0f) { element.minWidth = width; element.preferredWidth = width; }
+
+            return label;
+        }
+
+        private static VerticalLayoutGroup BuildPanel(Transform parent, string name,
+                                                      float spacing, out CanvasGroup group)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+
+            var img = go.AddComponent<Image>();
+            img.color = Color.white;
+            img.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+            img.type = Image.Type.Sliced;
+            img.raycastTarget = false;
+
+            var rows = go.AddComponent<VerticalLayoutGroup>();
+            rows.spacing = spacing;
+
+            rows.padding = new RectOffset(22, 22, 14, 14);
+            rows.childForceExpandHeight = false;
+            rows.childForceExpandWidth = true;
+            rows.childControlHeight = true;
+            rows.childControlWidth = true;
+
+            group = go.AddComponent<CanvasGroup>();
+            return rows;
+        }
+    }
+}

@@ -1,0 +1,1229 @@
+{
+  "date": "2026-09-14",
+  "purpose": "Portable reference instructions only; no tool access, credentials, agent authority or reset permission.",
+  "skills": [
+    {
+      "name": "game-ui-design",
+      "provenance": "user-installed game-ui-design",
+      "entry": "game-ui-design/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.agents\\skills\\game-ui-design"
+    },
+    {
+      "name": "imagegen",
+      "provenance": "bundled system imagegen",
+      "entry": "imagegen/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\skills\\.system\\imagegen"
+    },
+    {
+      "name": "pdf",
+      "provenance": "bundled pdf 26.909.12148",
+      "entry": "pdf/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-primary-runtime\\pdf\\26.909.12148\\skills\\pdf"
+    },
+    {
+      "name": "unity-bug-investigation",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-bug-investigation/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-bug-investigation"
+    },
+    {
+      "name": "unity-build-validation",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-build-validation/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-build-validation"
+    },
+    {
+      "name": "unity-feature-implementation",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-feature-implementation/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-feature-implementation"
+    },
+    {
+      "name": "unity-mcp-workflow",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-mcp-workflow/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-mcp-workflow"
+    },
+    {
+      "name": "unity-project-health-check",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-project-health-check/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-project-health-check"
+    },
+    {
+      "name": "unity-project-onboarding",
+      "provenance": "unity-workbench 0.1.3 / Unity Essentials",
+      "entry": "unity-project-onboarding/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity-workbench\\0.1.3\\skills\\unity-project-onboarding"
+    },
+    {
+      "name": "unity-ui",
+      "provenance": "Unity 0.1.5-beta",
+      "entry": "unity-ui/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity\\0.1.5-beta\\skills\\ui"
+    },
+    {
+      "name": "unity-ui-ugui",
+      "provenance": "Unity 0.1.5-beta",
+      "entry": "unity-ui-ugui/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity\\0.1.5-beta\\skills\\ui-ugui"
+    },
+    {
+      "name": "unity-unity-cli",
+      "provenance": "Unity 0.1.5-beta",
+      "entry": "unity-unity-cli/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\unity\\0.1.5-beta\\skills\\unity-cli"
+    },
+    {
+      "name": "figma-use",
+      "provenance": "Figma 2.0.21",
+      "entry": "figma-use/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\figma\\2.0.21\\skills\\figma-use"
+    },
+    {
+      "name": "figma-create-new-file",
+      "provenance": "Figma 2.0.21",
+      "entry": "figma-create-new-file/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\figma\\2.0.21\\skills\\figma-create-new-file"
+    },
+    {
+      "name": "figma-generate-design",
+      "provenance": "Figma 2.0.21",
+      "entry": "figma-generate-design/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\figma\\2.0.21\\skills\\figma-generate-design"
+    },
+    {
+      "name": "figma-generate-library",
+      "provenance": "Figma 2.0.21",
+      "entry": "figma-generate-library/SKILL.md",
+      "source": "C:\\Users\\Matthew\\.codex\\plugins\\cache\\openai-curated-remote\\figma\\2.0.21\\skills\\figma-generate-library"
+    }
+  ],
+  "files": [
+    {
+      "path": "game-ui-design/references/patterns.md",
+      "bytes": 18909,
+      "sha256": "7b9987b655814c7b47779c7b495251bc2e09628aa733e6fc85e6e471ae108a9f"
+    },
+    {
+      "path": "game-ui-design/references/sharp_edges.md",
+      "bytes": 23964,
+      "sha256": "47afdfcce86ee110287cab6842fd8187ed19477bb3aae1f493f158816771c75d"
+    },
+    {
+      "path": "game-ui-design/references/validations.md",
+      "bytes": 12020,
+      "sha256": "7a6b38fdd03cc14495167d9c712d3e41a585dc236e86b80ccfcaf33102aec324"
+    },
+    {
+      "path": "game-ui-design/SKILL.md",
+      "bytes": 3669,
+      "sha256": "24797d586cf7de743c930295a2be7356bda42031177f8de9d53855f99822a940"
+    },
+    {
+      "path": "imagegen/agents/openai.yaml",
+      "bytes": 281,
+      "sha256": "1797be4076717806df54aa9331c07ac8eebe32c69f32132d5858712b05406146"
+    },
+    {
+      "path": "imagegen/assets/imagegen-small.svg",
+      "bytes": 2894,
+      "sha256": "087c1632a3b8a2ed4d6218952e7ba7ae2221a979f84233667ed2c587998784da"
+    },
+    {
+      "path": "imagegen/assets/imagegen.png",
+      "bytes": 1711,
+      "sha256": "95952f644064eb9e890f98d8db07216347186526e4c41ad66d3420629eb86e20"
+    },
+    {
+      "path": "imagegen/LICENSE.txt",
+      "bytes": 10977,
+      "sha256": "44e03f7e263eb3ad256440c1eeab5e49168baff5a78ecef9a5447261cf3a91bc"
+    },
+    {
+      "path": "imagegen/references/cli.md",
+      "bytes": 9897,
+      "sha256": "29dc8c1e3e5d9a20aee587fedb46a464552b6ec118d93bbd90c8d86e30502c8c"
+    },
+    {
+      "path": "imagegen/references/codex-network.md",
+      "bytes": 1812,
+      "sha256": "cba3b4d24d30f38adf8021b6e9b49ec5261a9e45e7df31047ec451c916c99b0a"
+    },
+    {
+      "path": "imagegen/references/image-api.md",
+      "bytes": 6162,
+      "sha256": "695909437b792aff171477dba127476a11235c220beb06533cce7c1495a042c8"
+    },
+    {
+      "path": "imagegen/references/prompting.md",
+      "bytes": 8394,
+      "sha256": "d957a45cb24fe2cf1a85858674fc533f15a5f4621355f559a13a93168999c2dd"
+    },
+    {
+      "path": "imagegen/references/sample-prompts.md",
+      "bytes": 18039,
+      "sha256": "76cc8a2988efb6e844a99ff9908b2b11cc07467510fc909002abcc0ee3f0701b"
+    },
+    {
+      "path": "imagegen/scripts/image_gen.py",
+      "bytes": 35697,
+      "sha256": "3666b807de3f0a1d0a4a767b886d612c0b8f71025c500bba6693d1c6995a0873"
+    },
+    {
+      "path": "imagegen/scripts/remove_chroma_key.py",
+      "bytes": 14354,
+      "sha256": "fa2989807052b857bed08f7fee0caa2502b54c46afc0a6f28cd706c25f636630"
+    },
+    {
+      "path": "imagegen/SKILL.md",
+      "bytes": 19516,
+      "sha256": "706d4d96e1d5c9e6023fe3ccabba1bb34b364024d344fd25b8515ec7d28fe3c4"
+    },
+    {
+      "path": "pdf/agents/openai.yaml",
+      "bytes": 302,
+      "sha256": "5819dd168e544e3293d1501174130c56e139eb37c7d176884d8c6de4b9354f56"
+    },
+    {
+      "path": "pdf/assets/file-document.png",
+      "bytes": 1550,
+      "sha256": "bbb3c29874cb3bc706eef9ba4436c7ef8ef33462a173c4c3d4deeec774e4da79"
+    },
+    {
+      "path": "pdf/container_tools/mark_artifact_operation_started.mjs",
+      "bytes": 735,
+      "sha256": "968d66a7b491c7728f2ab009dcb54ac0025d6f474de6f3734f66b8809f6c18a8"
+    },
+    {
+      "path": "pdf/SKILL.md",
+      "bytes": 8076,
+      "sha256": "a13d2f878d6f79df9ebba91901c0b09bf799e83973b47ebba2104e385b6e4ede"
+    },
+    {
+      "path": "unity-bug-investigation/FILE-INVENTORY.md",
+      "bytes": 1220,
+      "sha256": "81e600fb238d8e91b749f1697c40a4cac4d1ec1d09c2d4bd5d38ce9ee014817a"
+    },
+    {
+      "path": "unity-bug-investigation/foundations/change-safety.md",
+      "bytes": 1014,
+      "sha256": "dd9b69dd8f10e347c049ddc432cb19147fd81409074ab857de995a1849988e7a"
+    },
+    {
+      "path": "unity-bug-investigation/foundations/evidence-first-debugging.md",
+      "bytes": 1474,
+      "sha256": "2c8948cb1884fd6e686cdd15d200994c66b4dbea4f623d68b520af0986eb1121"
+    },
+    {
+      "path": "unity-bug-investigation/foundations/hypothesis-management.md",
+      "bytes": 1411,
+      "sha256": "fcb99bbb84853982b67cc74b5f05b381f6eb15fe287792d5b18ce7db1e63ee7b"
+    },
+    {
+      "path": "unity-bug-investigation/foundations/instrumentation.md",
+      "bytes": 1097,
+      "sha256": "94b47a0cb42873e7371ffaea1138fac7e88a0529b14c362e7aea23c611ccb273"
+    },
+    {
+      "path": "unity-bug-investigation/foundations/reproduction-and-baselines.md",
+      "bytes": 1298,
+      "sha256": "6613d07920feaf6de84a70e5ea0a48dd5511fd5f503baf4ac2365199018545a2"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/networking/fishnet.md",
+      "bytes": 332,
+      "sha256": "c976d5703e5f149a0b3c27e386345684b6fed8eacbf73ce2a830ae941154dfe5"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/networking/fusion.md",
+      "bytes": 644,
+      "sha256": "3cc717500512f6c7d21310359653f7cdea31cbaeeb844ee5aaf7712864b34350"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/networking/mirror.md",
+      "bytes": 392,
+      "sha256": "21c4c73246e5eb90c6450ac8e06cc621c2368f6d49f5ce3fce9932c478c5a7ff"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/networking/netcode-for-gameobjects.md",
+      "bytes": 497,
+      "sha256": "a3671d973b0083c26824ef4f00a11992cc1f8222fc6f9e6bdb942d6d84284a60"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/rendering/hdrp.md",
+      "bytes": 395,
+      "sha256": "904c68afd13a77ebde3fe3f481a81a00deb2940da633ac0360745cee43ce398c"
+    },
+    {
+      "path": "unity-bug-investigation/frameworks/rendering/urp.md",
+      "bytes": 440,
+      "sha256": "e8026ef98b2ea29242e99f984317332ed9ac5ce83464484efbe658112318548c"
+    },
+    {
+      "path": "unity-bug-investigation/README.md",
+      "bytes": 681,
+      "sha256": "81d7cb2c9fa9f7a1f2c2454f76e466f1c8cea0bd57ccba16f1be644dff363e2b"
+    },
+    {
+      "path": "unity-bug-investigation/references/capability-requirements.md",
+      "bytes": 1014,
+      "sha256": "48bb4c85acfad43a20fca5a09a0e566162b3dd624877333364bbdc87c4d2e8b7"
+    },
+    {
+      "path": "unity-bug-investigation/references/hypothesis-log-template.md",
+      "bytes": 750,
+      "sha256": "2560a8e03547f0fb24d8f3351ce1ae7a01598ccd86a5708875606a84451bdbab"
+    },
+    {
+      "path": "unity-bug-investigation/references/reproduction-template.md",
+      "bytes": 328,
+      "sha256": "60bd6d2cf83161670ec3aea2244142732da45c295f30956073ad32f399e720b8"
+    },
+    {
+      "path": "unity-bug-investigation/references/root-cause-report-template.md",
+      "bytes": 388,
+      "sha256": "59351ccf4d87d706747782d6372ddaf9bfa44a3c3dc78e35e75e1ff96cb7f9a5"
+    },
+    {
+      "path": "unity-bug-investigation/references/validation-strategy.md",
+      "bytes": 1148,
+      "sha256": "f67aec9c5df63302e6b59c483571faffb986acb91c6376032ac76dc5d912a8da"
+    },
+    {
+      "path": "unity-bug-investigation/SKILL.md",
+      "bytes": 13104,
+      "sha256": "8098d796cfdb974c3835813cfd82f9a2bd494fed8e6763bf1cb1e7b60834b104"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/build-and-platform.md",
+      "bytes": 539,
+      "sha256": "e413c3805b644d9e46bef101783a888fd5fa124905aaa2d3fbe60803815739f3"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/editor-and-imports.md",
+      "bytes": 551,
+      "sha256": "c5444419d8b22b7af6fe37744433adbb1094557e2332031cf90148bde5add05f"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/exceptions-and-crashes.md",
+      "bytes": 698,
+      "sha256": "559b16be849ee2a818c1857a69020f4eb3a6e692e07f233d0ffdd9c21cffc3df"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/gameplay-and-state.md",
+      "bytes": 549,
+      "sha256": "386bdaf9a05cd5df0f23b9a04239877e6f4099355d13aa4004aaf36a2240b7ec"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/input.md",
+      "bytes": 506,
+      "sha256": "30132404a9fc382edd7e23399124c5879a4cdb276187fc5d7ef7228bff866c6e"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/intermittent-and-timing.md",
+      "bytes": 764,
+      "sha256": "aa8545a8dc8ef40bec2b98c7d45ffba00f1bc87c8d30b3a4f1b10e9a158527bb"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/multiplayer.md",
+      "bytes": 633,
+      "sha256": "9aeb3b17c2ef8b57af0a73834a950b9c19965e1778f6af24693b2ddefe286fe5"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/performance.md",
+      "bytes": 558,
+      "sha256": "afd41fa4a8c4a9f6277dfd9fda51c2cb445605a0cd5c0cc6166a678641253fce"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/physics-and-movement.md",
+      "bytes": 621,
+      "sha256": "a5a0c5d7f02dc73d297ad7f0da37693e4faf2b27f34104549f2e7422ef229e5c"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/rendering-and-vfx.md",
+      "bytes": 596,
+      "sha256": "1309cea20f02c2e31ef6553be24e9981af7e65a10312602c4323e7655a880ff8"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/save-and-persistence.md",
+      "bytes": 513,
+      "sha256": "4c3b3deb21942557e657a5a795db181c01dd12c34966e3928b51bcf5d0020dfb"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/scenes-prefabs-serialization.md",
+      "bytes": 554,
+      "sha256": "784136bbdf6237fceef83841ee9fae4dea111986746f7cfbaece6706497acd49"
+    },
+    {
+      "path": "unity-bug-investigation/specializations/ui-and-localization.md",
+      "bytes": 556,
+      "sha256": "63d5246726c15d4839bd0ea38681ea5cce3cf00e9814649732e3e5c5b54880d2"
+    },
+    {
+      "path": "unity-build-validation/checklists/builds-and-artifacts.md",
+      "bytes": 533,
+      "sha256": "62e6cfb587f750098d0237b831a7797175bcdfc896b4d20bd112dc56fd6a455c"
+    },
+    {
+      "path": "unity-build-validation/checklists/ci-and-reproducibility.md",
+      "bytes": 379,
+      "sha256": "fc4fe8f7c0364f2157fc6af4234ba76b1f75e2515e9f5b2aa9ffb932279ad3d4"
+    },
+    {
+      "path": "unity-build-validation/checklists/compilation-and-console.md",
+      "bytes": 561,
+      "sha256": "24309e8ddf891cabd9686233d285a3373f34c156c9f7a57d40f5b8d0d6dd5da5"
+    },
+    {
+      "path": "unity-build-validation/checklists/multiplayer.md",
+      "bytes": 452,
+      "sha256": "dba24724bc99cdbfb760d70509e0d82c98cf51f944f3bacb7b47c4cb0467a0a7"
+    },
+    {
+      "path": "unity-build-validation/checklists/packages-and-assemblies.md",
+      "bytes": 431,
+      "sha256": "b84ec74fbb7fe28b251572a55082bc163a5e00bf8c222d426e218d5624170927"
+    },
+    {
+      "path": "unity-build-validation/checklists/performance-budgets.md",
+      "bytes": 491,
+      "sha256": "dd314312f74136ef0681f6cf63972683d47e6e778a353d7c169712ce9c3492ba"
+    },
+    {
+      "path": "unity-build-validation/checklists/prefabs-and-serialization.md",
+      "bytes": 480,
+      "sha256": "f882d7cae1804596dbfaee9a925859d6ed3ffbc4a9f3e67abcc3d28f9cba9865"
+    },
+    {
+      "path": "unity-build-validation/checklists/release-candidate.md",
+      "bytes": 489,
+      "sha256": "e0dfae922b7dd11a8faa989c4ddbdf5ee88a8e62bb2ea2a1e37de7d55d37979d"
+    },
+    {
+      "path": "unity-build-validation/checklists/rendering-shaders-vfx.md",
+      "bytes": 361,
+      "sha256": "de92d3544f34ace8fcce72743c8abce52256c689aaf844a1d9f5f00cb79bca53"
+    },
+    {
+      "path": "unity-build-validation/checklists/runtime-smoke-tests.md",
+      "bytes": 431,
+      "sha256": "6636ba9450954cf37d6cf0fb2e754f7b3f9c4237a35e1d5a135f88eb079f7cad"
+    },
+    {
+      "path": "unity-build-validation/checklists/save-and-migration.md",
+      "bytes": 352,
+      "sha256": "861f208b7d6918d639024544baddb5289b6dfcef40bce8df97c8b0fbfd90bd68"
+    },
+    {
+      "path": "unity-build-validation/checklists/scenes-and-build-settings.md",
+      "bytes": 482,
+      "sha256": "811661c6a19fb22c33e5da527ac373effd8df961c8b22158f9d30dcad50eb1be"
+    },
+    {
+      "path": "unity-build-validation/checklists/tests.md",
+      "bytes": 519,
+      "sha256": "8fc8f57db274f629e9871546d9e3a67ba280ea9fbded95a0ab6b7aa6da3e45e3"
+    },
+    {
+      "path": "unity-build-validation/checklists/ui-localization-input.md",
+      "bytes": 434,
+      "sha256": "0fc9c90829223eba3d4c0fe821333d0387c19afc850734fca9aa65a599b45668"
+    },
+    {
+      "path": "unity-build-validation/checklists/xr-and-devices.md",
+      "bytes": 347,
+      "sha256": "61831591bb13e7a496f7c00af40ff4f7c2bb5d538fed5a3b785ddf058c4878de"
+    },
+    {
+      "path": "unity-build-validation/FILE-INVENTORY.md",
+      "bytes": 1463,
+      "sha256": "1cd94f60f35733adf059dc06b59f7c10fa9827cedfae166ccedff9716db127c6"
+    },
+    {
+      "path": "unity-build-validation/foundations/baseline-and-regression.md",
+      "bytes": 1033,
+      "sha256": "d3dd6f163869bfedf282819cd3a35966f42f8cbc8ce7f73cac45fb38c4abc8fa"
+    },
+    {
+      "path": "unity-build-validation/foundations/evidence-levels.md",
+      "bytes": 1475,
+      "sha256": "c3b1ae5270f42ead0a9699fd95ee54c9a8b4921d0815e9e2d779857572bcc246"
+    },
+    {
+      "path": "unity-build-validation/foundations/status-and-reporting.md",
+      "bytes": 1081,
+      "sha256": "6245ec25792a64a0e334acc75f653b67a12cdb62377ccd06e966263f23e523d0"
+    },
+    {
+      "path": "unity-build-validation/foundations/validation-safety.md",
+      "bytes": 1091,
+      "sha256": "144e8c731ae43fb29885bb8a7e18212d62cada7a271d2f68f4d3cccca705aedc"
+    },
+    {
+      "path": "unity-build-validation/frameworks/networking/fishnet.md",
+      "bytes": 194,
+      "sha256": "65d0aab236187cb1a45011314282470f2415d1f06040afc50d3a63ace67701ca"
+    },
+    {
+      "path": "unity-build-validation/frameworks/networking/fusion.md",
+      "bytes": 382,
+      "sha256": "a0784c6163cbd9db034ef3d4c805f8ee2d88648c3ef681f18d0446479965540e"
+    },
+    {
+      "path": "unity-build-validation/frameworks/networking/mirror.md",
+      "bytes": 223,
+      "sha256": "36cd7ea04fffdb2f3558dbdd7a1a2988e605e710b6a05ab5bcbfdc4c725d9952"
+    },
+    {
+      "path": "unity-build-validation/frameworks/networking/netcode-for-gameobjects.md",
+      "bytes": 320,
+      "sha256": "c472faf98f5751905744e07032ffa86fb503ef8791580fb90b0fd501ef289398"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/android.md",
+      "bytes": 319,
+      "sha256": "bc2ba52cafd430e17579ba6e5a01b2ee7e5d974b752b02bb170d9461b78ecdb4"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/dedicated-server.md",
+      "bytes": 334,
+      "sha256": "ef569636b33cd5eabba3c9c6aa4233c0ccc3cd23b3ff7e08093baff6b41cf381"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/ios.md",
+      "bytes": 253,
+      "sha256": "584cf2a99045857df4d5f5851566b63bf709c475580c37022c107518c733ab6f"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/linux.md",
+      "bytes": 217,
+      "sha256": "2e8a37776247920b0575a91d0bef8e033c60e2811e730985561b10859266bcd5"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/macos.md",
+      "bytes": 244,
+      "sha256": "798f181a0b6b2104bf7b088562de59bb74b11920aa341736cf37f0ce3f55de0d"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/webgl.md",
+      "bytes": 254,
+      "sha256": "b8c1d3bbc9a577eb430d2682cb1cab3f30d7b02cb6c9256f75ede4b650e722d8"
+    },
+    {
+      "path": "unity-build-validation/frameworks/platforms/windows.md",
+      "bytes": 270,
+      "sha256": "6fbc5f45512db287bdc8a3d892bd90a3a8ee1c886cf836666a0d2f3efe749e01"
+    },
+    {
+      "path": "unity-build-validation/frameworks/rendering/hdrp.md",
+      "bytes": 226,
+      "sha256": "38c4f461be8317d67b3e5475a405d1812726be02c4e86ba08ba364feb9ea9720"
+    },
+    {
+      "path": "unity-build-validation/frameworks/rendering/urp.md",
+      "bytes": 266,
+      "sha256": "7df6c1eeba7ad7e98caad734980dce539cdccfa11389249db621f24edcfbe9ce"
+    },
+    {
+      "path": "unity-build-validation/README.md",
+      "bytes": 857,
+      "sha256": "eb1a7d0630d26baf2e9b9c0a9d0fd01848ba74cb65bc9475b05b892e3bc5eaa3"
+    },
+    {
+      "path": "unity-build-validation/references/acceptance-matrix-template.md",
+      "bytes": 187,
+      "sha256": "ca388b9c2e5d042005de93141c0a8c36ccde0f22cbcb08b0b63fe82c814ca4ec"
+    },
+    {
+      "path": "unity-build-validation/references/capability-requirements.md",
+      "bytes": 932,
+      "sha256": "d11baa3870ed3950ed80a8be89a71df4c1dd4ae937a60b4842c321615a87079b"
+    },
+    {
+      "path": "unity-build-validation/references/status-summary-template.md",
+      "bytes": 206,
+      "sha256": "ffd234970c8bad65ecc8dd7d749168ff1c7183a6cc6c3d3bf29daa890c3c5bbd"
+    },
+    {
+      "path": "unity-build-validation/references/validation-plan-template.md",
+      "bytes": 508,
+      "sha256": "51dbc4d2cb3c5070be9358970c1885b8582dc44a71ea0c0a77237fd68e84f082"
+    },
+    {
+      "path": "unity-build-validation/references/validation-report-template.md",
+      "bytes": 542,
+      "sha256": "9cbb702640aa59e23d72f23e6095bc1807f02c0c5aca1b5738f4eb7c355e5f56"
+    },
+    {
+      "path": "unity-build-validation/SKILL.md",
+      "bytes": 13441,
+      "sha256": "5199138016d1a3aa02b7dbba22bcd77014531f6cb45cdb16f47370c6efb773c8"
+    },
+    {
+      "path": "unity-feature-implementation/FILE-INVENTORY.md",
+      "bytes": 1277,
+      "sha256": "6dc8bfaafccb2ec2bec706b9037709002d66c1f483e5f3dce7fe2a8bfdf7d41c"
+    },
+    {
+      "path": "unity-feature-implementation/foundations/architecture-and-clean-code.md",
+      "bytes": 6170,
+      "sha256": "2c45fb1a9ba463f2ccff355ca258a09204cea05adac86b9a6aface8f07025f35"
+    },
+    {
+      "path": "unity-feature-implementation/foundations/performance-basics.md",
+      "bytes": 1776,
+      "sha256": "3d533d09849c437921c56cdb70a1103517aef2dc036859d32048bd1caf7ad8b1"
+    },
+    {
+      "path": "unity-feature-implementation/foundations/serialization-safety.md",
+      "bytes": 2532,
+      "sha256": "1e0c703346c36481d359b16fe2abec6317b392b3e1054e4577250383c10494d3"
+    },
+    {
+      "path": "unity-feature-implementation/foundations/testing.md",
+      "bytes": 1697,
+      "sha256": "ecacd64e488dc18f7b1de423e3f3c7b549aebe739e6604db060187fe32b7cb6c"
+    },
+    {
+      "path": "unity-feature-implementation/foundations/unity-lifecycle.md",
+      "bytes": 2946,
+      "sha256": "5ea5d800d0b7c4f73a936861a2cc278e44baff2bcc564f9e107e6323152edcff"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/input/input-system.md",
+      "bytes": 491,
+      "sha256": "fe40a06a68121ffd59251e75e759cd707fba5fbc5004a197a67178980821d6cd"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/input/legacy-input.md",
+      "bytes": 369,
+      "sha256": "5d9eb2f6886ab37231925a497ee07c9eab9780d9bf6d60a51915e8544211f9ea"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/networking/fishnet.md",
+      "bytes": 526,
+      "sha256": "88d04a6431b5d603ab42085a7791aa1ec0799e93c37febf82e8c34f478e428bc"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/networking/fusion.md",
+      "bytes": 818,
+      "sha256": "f0be2e94410cb1c8b99dd2ef7e3f048bce4a44a76568091eb2e2e8a5eec41bd1"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/networking/mirror.md",
+      "bytes": 560,
+      "sha256": "a2cd0ece9a845d9f7230e1ffb2d8df54710b5ae66c9e364de7d8a9e281bfa26f"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/networking/netcode-for-gameobjects.md",
+      "bytes": 667,
+      "sha256": "e01867f317f0547202662e82477b73d034bfc370bdbd4b6d0b69c68e9f892eb5"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/rendering/built-in.md",
+      "bytes": 352,
+      "sha256": "db63ed581e1108a04f2c4fc39b010506e85fc82aa6e398edf33702424192746f"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/rendering/hdrp.md",
+      "bytes": 440,
+      "sha256": "b9a9752f2f2eac731bffcc6cb4bc45a3ab668caa1b0ce01f5e8360d046bc2744"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/rendering/urp.md",
+      "bytes": 446,
+      "sha256": "872aad34ac61a97f93e27fed44a9de558f60d4f0069d5d6098a12b4762cce4f1"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/ui/ugui.md",
+      "bytes": 460,
+      "sha256": "3c6ec3b7d9f49a6129167209b626bb82578dddb173fe584f2bc9f878960a4ab2"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/ui/ui-toolkit.md",
+      "bytes": 485,
+      "sha256": "e220f63a08184a85efd342ac4b6aef34b66be223153099b93d0b62bd1e34a29a"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/xr/openxr.md",
+      "bytes": 452,
+      "sha256": "02981fcd5d55527bffe4821a4769546b9fe4e17d5a382e8b7d17e1b91a266e86"
+    },
+    {
+      "path": "unity-feature-implementation/frameworks/xr/xr-interaction-toolkit.md",
+      "bytes": 566,
+      "sha256": "ae41c70d04a1f5619f6a58530d5834148da22d95e86abdfff450610ef89c73eb"
+    },
+    {
+      "path": "unity-feature-implementation/README.md",
+      "bytes": 899,
+      "sha256": "401fa7df6c282dbecf29265e65cf389f1d7e47d7be147eb78edc9479b872c7c2"
+    },
+    {
+      "path": "unity-feature-implementation/references/capability-requirements.md",
+      "bytes": 1519,
+      "sha256": "0fc0778f43ad6793158b7ebcaba3f6596d199e33d6802af72bc2201e170e1b35"
+    },
+    {
+      "path": "unity-feature-implementation/references/implementation-plan-template.md",
+      "bytes": 1085,
+      "sha256": "4eced65c297fec9848899eb612a54f9e2daa772e3ba6e99eb2cc92d9e2b3f13a"
+    },
+    {
+      "path": "unity-feature-implementation/references/unity-change-safety.md",
+      "bytes": 871,
+      "sha256": "488159e546857071fb7bd91de031757cf844149ac18defc9db539f498a8454af"
+    },
+    {
+      "path": "unity-feature-implementation/references/validation-strategy.md",
+      "bytes": 1246,
+      "sha256": "5a4ad3839fbfee1652709e3f012cf2c2b1888e548b0cf5b4c0cd174f242f8ff3"
+    },
+    {
+      "path": "unity-feature-implementation/SKILL.md",
+      "bytes": 10531,
+      "sha256": "9a68b0418da17eee36204a3046728700b01da379059a954311279893bcff356b"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/ai-navigation.md",
+      "bytes": 889,
+      "sha256": "3bb28decd16c4ad60cb271bd17d9633d3539de20aa90d4b30ab4c9fb5a993824"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/animation.md",
+      "bytes": 896,
+      "sha256": "125c072e554b51cc317211836f4ac46975c333cfc760a24005903f06a2a64f1c"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/audio.md",
+      "bytes": 785,
+      "sha256": "b3da8ddbd456a68df3ea996f5b625de13fcb3f38f659c202c86ff4e786738598"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/editor-tools.md",
+      "bytes": 965,
+      "sha256": "0833c0ee2501230939e1c4c3324de970982da941a5a1221fe069ce067aea38f9"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/gameplay.md",
+      "bytes": 1326,
+      "sha256": "58764872d132b872bf3a68977bd676147fe52a6d2506985a05af33c90a577131"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/input.md",
+      "bytes": 954,
+      "sha256": "a25567dee027e4f6105e3555151dc4218bf278832d3abdf74a04da9a57b24158"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/multiplayer.md",
+      "bytes": 1264,
+      "sha256": "42547c868f9f80b70a510e308b5ac86754e6785cd8094dc6d787a7f470305343"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/performance.md",
+      "bytes": 844,
+      "sha256": "373d1fc4153435af8b8906c346b48ed1cee4e225b2aa6e3e354b5b1fb2a31f39"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/save-systems.md",
+      "bytes": 956,
+      "sha256": "173c740e15ab82f2872de545174e67e423ad8fc7a2652249b4df36feb0d5f127"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/shaders.md",
+      "bytes": 970,
+      "sha256": "bae375a01d38f5e4881f160d81e61c80a22fe3a178b45af5d8d5600598c16293"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/ui.md",
+      "bytes": 950,
+      "sha256": "870a5041cacabcc5edcff9d28fd4b4c3bb0ba54fcd9d1b31f18656b06f955b57"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/vfx.md",
+      "bytes": 914,
+      "sha256": "7a8727bd6a35657f4c06c318781ac9e1801bdd7e92d640a61913a5436f69cd9f"
+    },
+    {
+      "path": "unity-feature-implementation/specializations/xr.md",
+      "bytes": 992,
+      "sha256": "ca2c15d7a6c7d99f026ac9e36004ce9d5c182e3c35c319b88f848fa6dec604c2"
+    },
+    {
+      "path": "unity-mcp-workflow/SKILL.md",
+      "bytes": 9986,
+      "sha256": "09a953a72a42b3c87e9699f1512fca28c17220b029a0740096e7514c1818d21e"
+    },
+    {
+      "path": "unity-project-health-check/checklists/architecture-and-maintainability.md",
+      "bytes": 586,
+      "sha256": "bf95b23658ebf49c41d19de434a056208f4f773686d47d72b716dfeabf68c4bc"
+    },
+    {
+      "path": "unity-project-health-check/checklists/assemblies-and-dependencies.md",
+      "bytes": 434,
+      "sha256": "bcf89be49b9c2f0b0712596b02129425563c3b6084212343d4909033599dfdc0"
+    },
+    {
+      "path": "unity-project-health-check/checklists/builds-platforms-ci.md",
+      "bytes": 440,
+      "sha256": "724d336d35e176eced4462b86658ac8fdcdc325006a4c463fb923ecdc61ec5ec"
+    },
+    {
+      "path": "unity-project-health-check/checklists/code-quality.md",
+      "bytes": 583,
+      "sha256": "a3bf567460481a1133d291195ce8b673c488a70d48f14c23850addc7006c252e"
+    },
+    {
+      "path": "unity-project-health-check/checklists/editor-tooling-and-imports.md",
+      "bytes": 425,
+      "sha256": "d33873b85b61aaf2008089ee13e765ad1487a5548b91d182f008610db434137f"
+    },
+    {
+      "path": "unity-project-health-check/checklists/input-and-device-support.md",
+      "bytes": 386,
+      "sha256": "21bd956e129b9bc026cdef8b7d4126fb81bbfeceacb4bbb10d41a9349f6b84c3"
+    },
+    {
+      "path": "unity-project-health-check/checklists/lifecycle-and-initialization.md",
+      "bytes": 471,
+      "sha256": "24f4538cc04a43302fc7c37f5faf15a0051e4f8f52d15c3ca1b0b91ce64ad5f8"
+    },
+    {
+      "path": "unity-project-health-check/checklists/memory-and-assets.md",
+      "bytes": 457,
+      "sha256": "2eb3abfb1289fc59773e4441135a995f9acb555b26447f8490f40c82be839128"
+    },
+    {
+      "path": "unity-project-health-check/checklists/multiplayer.md",
+      "bytes": 439,
+      "sha256": "ca4b7a982527bb131900b39053b709f0b9ecc7baff4f47c8bb53627256b26b01"
+    },
+    {
+      "path": "unity-project-health-check/checklists/packages-and-compatibility.md",
+      "bytes": 443,
+      "sha256": "f545d5755863dc649dd7a2ee0e1c6be4bee2f2347c33040e33071a29f36d6031"
+    },
+    {
+      "path": "unity-project-health-check/checklists/performance.md",
+      "bytes": 486,
+      "sha256": "1317606d4e9f68587cbd40bfd3eb8d9c188c4baba9e50d29a3a7e83fbb61e00d"
+    },
+    {
+      "path": "unity-project-health-check/checklists/project-hygiene.md",
+      "bytes": 436,
+      "sha256": "849e82462f033e8f76ed036aeb3ff428a6d158c5a4d1722a2d08d9b9f60ebc9d"
+    },
+    {
+      "path": "unity-project-health-check/checklists/rendering-and-vfx.md",
+      "bytes": 441,
+      "sha256": "ff6e4233ab150bbf08c01bc3cab4b858189aa6d0d493e3745c82551b23d93b21"
+    },
+    {
+      "path": "unity-project-health-check/checklists/save-and-persistence.md",
+      "bytes": 369,
+      "sha256": "0f3a261fdf70ee2f533a2ad4489452054275f828693536ed12a69c34a0dc2017"
+    },
+    {
+      "path": "unity-project-health-check/checklists/scenes-prefabs-serialization.md",
+      "bytes": 443,
+      "sha256": "f9f8b9903ca4cec1606b7832599ccc1433152ba1dec5eba975cda37c6310d673"
+    },
+    {
+      "path": "unity-project-health-check/checklists/security-and-secrets.md",
+      "bytes": 366,
+      "sha256": "ecec0bbdf5c732e15ebda78efb917bc8d635a352bb5d6883847a7427b53e17a6"
+    },
+    {
+      "path": "unity-project-health-check/checklists/testing-and-validation.md",
+      "bytes": 391,
+      "sha256": "cfbc86a48726067f226d391a41d517fcb311d006fb1c12579f110ab24451a925"
+    },
+    {
+      "path": "unity-project-health-check/checklists/ui-localization-accessibility.md",
+      "bytes": 504,
+      "sha256": "838273b287491735fc8e74bb37c7b71a942e58182af37e18e5dfd2c172f08514"
+    },
+    {
+      "path": "unity-project-health-check/FILE-INVENTORY.md",
+      "bytes": 1356,
+      "sha256": "2c83b3eba498ae1cf9a9528c674473303ec75a2075c928238115c3982eacf71c"
+    },
+    {
+      "path": "unity-project-health-check/foundations/evidence-and-confidence.md",
+      "bytes": 1085,
+      "sha256": "2f896c68980e38144ab9af41065ac7b5f6c31d15ff1c1c9cded82945c92ff0b2"
+    },
+    {
+      "path": "unity-project-health-check/foundations/read-only-audit-safety.md",
+      "bytes": 991,
+      "sha256": "0ae86f70743581c13db642b8a4f9b4a9dccc82f342c7633b4e912e25722f1af9"
+    },
+    {
+      "path": "unity-project-health-check/foundations/reporting-quality.md",
+      "bytes": 815,
+      "sha256": "c5e2f14054edb25732638d3a9953884a6bf404a0d86a2e3e661c9cf2d66ab94b"
+    },
+    {
+      "path": "unity-project-health-check/foundations/severity-and-prioritization.md",
+      "bytes": 956,
+      "sha256": "ad8540a1bcc616f2c2b29470c6aaa1f73c94af91373010a95b91b17ae3e22395"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/networking/fishnet.md",
+      "bytes": 330,
+      "sha256": "e6c8b2298a2cc9efbfbbe786e80112372f43a397876471245dd869f05ad5c60e"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/networking/fusion.md",
+      "bytes": 480,
+      "sha256": "c1c5334667ae00b10c89d3be3fb79e2cd14cb932d438e8c70eba3ae62ebc4ea5"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/networking/mirror.md",
+      "bytes": 339,
+      "sha256": "b4ad070507a28150429b0c7da8160c2429f8d51ed02c30d99219d5ce57c81a70"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/networking/netcode-for-gameobjects.md",
+      "bytes": 427,
+      "sha256": "024051b48df4b82d3224952abbb10d8326a246be4a42c147fc74a5ec1365857f"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/rendering/hdrp.md",
+      "bytes": 346,
+      "sha256": "56b5b1bf4437e1c623457a65226d32ed531eb5bfd9a8c730683c90450631c11c"
+    },
+    {
+      "path": "unity-project-health-check/frameworks/rendering/urp.md",
+      "bytes": 367,
+      "sha256": "e131ce25a9422930aa9ec5a1687803e401772e2f6a0ba644107bb354232512ac"
+    },
+    {
+      "path": "unity-project-health-check/README.md",
+      "bytes": 799,
+      "sha256": "efa5a58f886447ee4624f412c08ec53ed65037f495a42939b03b4382df13bd54"
+    },
+    {
+      "path": "unity-project-health-check/references/audit-plan-template.md",
+      "bytes": 620,
+      "sha256": "03d8e7ffa991d9069de71d1b9df85cc9aa415cce20bfaf45ad519c3c4f06f425"
+    },
+    {
+      "path": "unity-project-health-check/references/capability-requirements.md",
+      "bytes": 937,
+      "sha256": "4d9b4819e5dfc9816adfd2e683e837d1e97c07610504f7973da987be64c92b42"
+    },
+    {
+      "path": "unity-project-health-check/references/finding-template.md",
+      "bytes": 458,
+      "sha256": "97f2952e0950abf037bfe6ab6fdc89d3bc7e5bf6661fb4fcfb4c4c78d59a46bf"
+    },
+    {
+      "path": "unity-project-health-check/references/health-report-template.md",
+      "bytes": 631,
+      "sha256": "2cc23834c63a0494a12a1214558ad4433d6ebf841aa8e28c15d384f3af2d03d0"
+    },
+    {
+      "path": "unity-project-health-check/references/health-scoring.md",
+      "bytes": 747,
+      "sha256": "62b63178a51ab0fea6dc2c730605c5038d6a170161a559457b6faaf712528b99"
+    },
+    {
+      "path": "unity-project-health-check/SKILL.md",
+      "bytes": 11930,
+      "sha256": "c884000d3462dfcb9e949f14eda640a8cdae8451664cfcf753876a1d3b2933e3"
+    },
+    {
+      "path": "unity-project-onboarding/references/context-template.md",
+      "bytes": 1661,
+      "sha256": "f88d749c98a651969185c7e875d4043f0d8ad82a1a2af316120c883c3fac9361"
+    },
+    {
+      "path": "unity-project-onboarding/SKILL.md",
+      "bytes": 12138,
+      "sha256": "4c839bb5f43855b32b325ac59035307b24caf40e647d04ef98cc1f66520d5e76"
+    },
+    {
+      "path": "unity-ui/SKILL.md",
+      "bytes": 7181,
+      "sha256": "23474261e203d2c20b13426b6fc6bbf115cc2e43f4f3ffab9ae4d937dbaeb453"
+    },
+    {
+      "path": "unity-ui-ugui/references/scrollview-setup.md",
+      "bytes": 1576,
+      "sha256": "41d6a37cb5e78b632baea633583129e27b3bed353904ab6425cc954944873eaf"
+    },
+    {
+      "path": "unity-ui-ugui/SKILL.md",
+      "bytes": 12516,
+      "sha256": "eed41fdb4fb12fa268e1e7c0466d9ed67eaa9e7ba29b9d3549018aecf026078b"
+    },
+    {
+      "path": "unity-unity-cli/CHANGELOG.md",
+      "bytes": 36800,
+      "sha256": "860bec5f7a64621e1fa5da5e21c82529fc3591bc3c08a57156c6f3f29c022d94"
+    },
+    {
+      "path": "unity-unity-cli/references/auth-license-cloud.md",
+      "bytes": 12249,
+      "sha256": "da43ee2cdbb47158be97ce58ddebf3d2820ecd8a107103e2a463db515b0e986b"
+    },
+    {
+      "path": "unity-unity-cli/references/build-run-test.md",
+      "bytes": 34527,
+      "sha256": "e01af42e0e6421cfa7c247d61efc925dec67163392661cedf11126f019d161f3"
+    },
+    {
+      "path": "unity-unity-cli/references/collaboration.md",
+      "bytes": 28883,
+      "sha256": "d7af0b1189d5b1ba66f6dc5802b878dee47a0d0b224e25ef9d2d5af982c8a149"
+    },
+    {
+      "path": "unity-unity-cli/references/config-hub.md",
+      "bytes": 6151,
+      "sha256": "5b429e97678abecb25a960d4b2cb964fe388ce90b0489afacec8e4ffe081e596"
+    },
+    {
+      "path": "unity-unity-cli/references/diagnostics-maintenance.md",
+      "bytes": 24861,
+      "sha256": "e5fbc6867002875a92b4c724cc991be1a963476701f144a6754ce4f2b6367216"
+    },
+    {
+      "path": "unity-unity-cli/references/editors-install.md",
+      "bytes": 15324,
+      "sha256": "03553b5109d24b20310331a05324697d13061fed6a8b4c8a53ce034bc1ad0ad6"
+    },
+    {
+      "path": "unity-unity-cli/references/integration-advanced.md",
+      "bytes": 41036,
+      "sha256": "57a31d5ab9d888965c8d569948c64d5204fb8c025887e2d7267f42a76c362570"
+    },
+    {
+      "path": "unity-unity-cli/references/projects-templates.md",
+      "bytes": 44247,
+      "sha256": "9fdfd006f9e03d1db14e18a0443ba8ce97149e0dc51e0b5aae72de15f2c6b756"
+    },
+    {
+      "path": "unity-unity-cli/references/version-control.md",
+      "bytes": 22411,
+      "sha256": "6a2f16f3510b7ede8543109cec9b5991ca485459e6706c37ce59b0cf8859209f"
+    },
+    {
+      "path": "unity-unity-cli/SECURITY.md",
+      "bytes": 6142,
+      "sha256": "170517c59957d3615c14d15c66c058eebae484440048d93825f175ddff6166c9"
+    },
+    {
+      "path": "unity-unity-cli/SKILL.md",
+      "bytes": 35126,
+      "sha256": "3dbb1daaf0a6583677e947430b6ac0620292a927dccb043b42ded5fef23cccbf"
+    },
+    {
+      "path": "figma-use/references/api-reference.md",
+      "bytes": 16235,
+      "sha256": "04dcdf745a91963d19b66d6839f26d51ccafa04478e9f1ea8ed0d0b2dc08e97b"
+    },
+    {
+      "path": "figma-use/references/common-patterns.md",
+      "bytes": 14410,
+      "sha256": "0a7baa19a250964ddb8dd4716f9b70fc894c6e265947684486f3d2b4ff47eb2d"
+    },
+    {
+      "path": "figma-use/references/component-patterns.md",
+      "bytes": 24086,
+      "sha256": "e7c826c718e94356ded58c3be99264d114a2ccfc54851624075c4c1a3e1f04fc"
+    },
+    {
+      "path": "figma-use/references/effect-style-patterns.md",
+      "bytes": 3182,
+      "sha256": "9f960df3fcec1c0601e57db2f6506dde0ab524baeb462b01fb4f745972ffb2e7"
+    },
+    {
+      "path": "figma-use/references/gotchas.md",
+      "bytes": 53365,
+      "sha256": "82c1044e28647116459b7d7510facb9ff7eef2dc3d64d12e40f7808c2bb484af"
+    },
+    {
+      "path": "figma-use/references/plugin-api-patterns.md",
+      "bytes": 16249,
+      "sha256": "654026ebf2935958a7464a0d6c4ae4bd42668e1ddb43b4f29b7cb2652070768e"
+    },
+    {
+      "path": "figma-use/references/plugin-api-standalone.d.ts",
+      "bytes": 452454,
+      "sha256": "c1daccb23452281f75a02ac7f80e25348c8a80bbfd047a3d42e5cd4458134e0e"
+    },
+    {
+      "path": "figma-use/references/plugin-api-standalone.index.md",
+      "bytes": 29953,
+      "sha256": "cb01a403ff1acb5d7bb825135be6a3e427b782ccb4d2fe3baaa031790217742e"
+    },
+    {
+      "path": "figma-use/references/text-style-patterns.md",
+      "bytes": 6914,
+      "sha256": "0428e4cedfaf1336d544566a38c4ab6064f3ccdba014f21a4a0d450fba13077c"
+    },
+    {
+      "path": "figma-use/references/validation-and-recovery.md",
+      "bytes": 4553,
+      "sha256": "c917194630d37e62a2946c8a041765f7066654a7a50c907f293de7d1dec7399e"
+    },
+    {
+      "path": "figma-use/references/variable-patterns.md",
+      "bytes": 13928,
+      "sha256": "3e2a8ca142261b584576367716b963ce79ca55214265b17fe87a86fc5ac50f8a"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-components--creating.md",
+      "bytes": 2199,
+      "sha256": "f383ea109e48c335c5855a8c7be15402e0ba72d5313c34cde6cebf550a6443ff"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-components--using.md",
+      "bytes": 2420,
+      "sha256": "ffaf10a09ca7f773aa5a3f08397fdc18dc35f7c2ee9c1db1d917927056bc39f6"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-components.md",
+      "bytes": 4272,
+      "sha256": "a8f996f4cf0c3520d8c11639866dbc740bcad802a4f42453520c32412b53f825"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-effect-styles.md",
+      "bytes": 3268,
+      "sha256": "d0b9b409fda5e22a9095420c606224a2c9b166abbeda6e8b284a820b6d9d7907"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-text-styles.md",
+      "bytes": 5144,
+      "sha256": "0e3a259a2f2c3280bedac02e40b3a901d08e8c4cde45a90b4ca367da5c3ee40e"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-variables--creating.md",
+      "bytes": 1559,
+      "sha256": "3a2f9796aac9d419705ca02b9fab29a46282f0921c4c0a01704cec7e43d8ccf2"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-variables--using.md",
+      "bytes": 1908,
+      "sha256": "3a328d9f2a176a4086ee7c3e14ca83ee730f4d44b5c1b2276247481fdab6a5e7"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds-variables.md",
+      "bytes": 5186,
+      "sha256": "0d1d8145ce892ff782500581af3e368cbb6b41ac34e922429de0e05ef182174e"
+    },
+    {
+      "path": "figma-use/references/working-with-design-systems/wwds.md",
+      "bytes": 5220,
+      "sha256": "e514da78a7eed6a55c95d6b52a600bd38252bb28ad1dde689a7c72f30c99a9f8"
+    },
+    {
+      "path": "figma-use/SKILL.md",
+      "bytes": 35188,
+      "sha256": "7de62bb574c7acf3241643e0aafcea13e48ff06a12ef5203447eda3584e6ff4f"
+    },
+    {
+      "path": "figma-create-new-file/SKILL.md",
+      "bytes": 3946,
+      "sha256": "82e0a018692d3d009b5d2c83ecce9203a4ce7dfbdb98b7b13a4f7e5b11832bc2"
+    },
+    {
+      "path": "figma-generate-design/references/componentization.md",
+      "bytes": 1764,
+      "sha256": "20cb544a638c12723f653eda19de274cc713292a51c311e76cb9010271f666d7"
+    },
+    {
+      "path": "figma-generate-design/references/discover-product-font.md",
+      "bytes": 4699,
+      "sha256": "87858089c77f71d478d0233b89498e3589ff14556b0cd503f6a3faf5941f643a"
+    },
+    {
+      "path": "figma-generate-design/SKILL.md",
+      "bytes": 33620,
+      "sha256": "4585464c09bed50215151e468ab8476848adcf56da017811ddcbfff199ee0b56"
+    },
+    {
+      "path": "figma-generate-library/references/code-connect-setup.md",
+      "bytes": 12456,
+      "sha256": "6662c3f0d68e9b81bc2e8d766a40fc526a055b4c2acfaab36947a56c38f660fe"
+    },
+    {
+      "path": "figma-generate-library/references/component-creation.md",
+      "bytes": 37943,
+      "sha256": "abfeadf4f49a12a6efb7b62b7855e22c42eae041cce8b3fa07090480dfe6ae7d"
+    },
+    {
+      "path": "figma-generate-library/references/discovery-phase.md",
+      "bytes": 21372,
+      "sha256": "c92aa153e44d05bc301ae89f19a8921a5c2347ba8a4ae2f20b3a7b7b673a50d7"
+    },
+    {
+      "path": "figma-generate-library/references/documentation-creation.md",
+      "bytes": 29037,
+      "sha256": "16559b87b5922d249611087e3063f0e64c7b593e34d353f63979630f0bb5c932"
+    },
+    {
+      "path": "figma-generate-library/references/error-recovery.md",
+      "bytes": 18605,
+      "sha256": "9a9d9a31c7a22be4c714fc9fed24070ec6ded3172abf3c9f29a4b484e5d43999"
+    },
+    {
+      "path": "figma-generate-library/references/naming-conventions.md",
+      "bytes": 19003,
+      "sha256": "16810f87eab00ea93644035dca95e2d927b266b9fcbf5460c1712dab30638442"
+    },
+    {
+      "path": "figma-generate-library/references/token-creation.md",
+      "bytes": 32603,
+      "sha256": "123f2a95d6dffc6356eba036f188cf9034932e67a0ce7000abbf1d6ddb1bbb84"
+    },
+    {
+      "path": "figma-generate-library/scripts/bindVariablesToComponent.js",
+      "bytes": 4026,
+      "sha256": "f6492ad075b38bab0ae9a7a0dfb60c58e23a4258f67261f1b166098df58f115c"
+    },
+    {
+      "path": "figma-generate-library/scripts/cleanupOrphans.js",
+      "bytes": 2204,
+      "sha256": "525583dc4a560cfd7f725685140210e649dd1c73c7fd076a5ce03fe9e17fddaa"
+    },
+    {
+      "path": "figma-generate-library/scripts/createComponentWithVariants.js",
+      "bytes": 4679,
+      "sha256": "3a97251335e4bb5dd833acdd86c1a158d1e4ad2b6780587f1bc453d88aa53d31"
+    },
+    {
+      "path": "figma-generate-library/scripts/createDocumentationPage.js",
+      "bytes": 4738,
+      "sha256": "28cb9b86c2c26ed91b3fdb688d18e07928c7abc073e1b72dd6c0f0995225381d"
+    },
+    {
+      "path": "figma-generate-library/scripts/createSemanticTokens.js",
+      "bytes": 3651,
+      "sha256": "11d1e3c4b28e0408c9e7602719a8ec4675a6c24bd3033614855d90ad70e75ce2"
+    },
+    {
+      "path": "figma-generate-library/scripts/createVariableCollection.js",
+      "bytes": 1408,
+      "sha256": "7fed413cd2d09acdb80e9a92e20a9afd581aeba4d4754d605862926df8b146d0"
+    },
+    {
+      "path": "figma-generate-library/scripts/inspectFileStructure.js",
+      "bytes": 3718,
+      "sha256": "d4c73a074cfef2bfe6dc31998b3e9fb4861bfd4e0ae61bcda6165ab05c9f3118"
+    },
+    {
+      "path": "figma-generate-library/scripts/validateCreation.js",
+      "bytes": 2718,
+      "sha256": "dae970b4d80c4d0994f14c89ad01c04115604444b916a0b8fc342ed262fdfa97"
+    },
+    {
+      "path": "figma-generate-library/SKILL.md",
+      "bytes": 23717,
+      "sha256": "3c995d483bbf4761392ba0c2e00df2b1b1c632cc05c6e7df57a2e89c311f53b7"
+    }
+  ]
+}

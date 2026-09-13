@@ -1,0 +1,405 @@
+{
+  "purpose": "Transfer files, raw byte hashes before Git line-ending normalization. PDF/JPG/ZIP and PNG/MP4 remain byte-exact. Text may normalize line endings on checkout.",
+  "files": [
+    {
+      "path": "docs/reports/improvement-2026-09-14/equipment-audit.md",
+      "bytes": 1893,
+      "sha256": "29339591c11a313f04b7a02cb402537bb0074c29fc7655b292b7bfffc54c8bc6"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ledger-before-transfer.md",
+      "bytes": 177033,
+      "sha256": "0888387faf173fdc4cbef96781b7cc277f10227d35228e9c252be605cad8c5a6"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/classic-host.csv",
+      "bytes": 40147,
+      "sha256": "1281584ff1480165ff4f70d8e3c66fdb9f587486f08b58f65c4f3d771c669712"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/classic-observer.csv",
+      "bytes": 40014,
+      "sha256": "9819c1833469c16359c484be066d76ccb89b74e143084faeee63bb36bffe5e5a"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/classic-owner.csv",
+      "bytes": 39673,
+      "sha256": "59daaaee9e62352c3ed9a28657aa320b2076feffa6133f9e5c31c7ca85aeb6d3"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/classic-result.json",
+      "bytes": 1524,
+      "sha256": "fcd4c1fa8c2802b07070ad2e4ba72596ac2161f166db64d45601927161c21b51"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/hero-delay-host.csv",
+      "bytes": 39866,
+      "sha256": "3d0ca33f0c6806f2290e115b74c5cbabea994c2ddbeab19515712961dc695dc3"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/hero-delay-observer.csv",
+      "bytes": 7784,
+      "sha256": "eda69a24ad35be79fb6f57fbefa2f9902e8e96dfdb6de030c417c3459f017b7e"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/hero-delay-owner.csv",
+      "bytes": 39310,
+      "sha256": "954a1bb2a6937db043bc4b510d9d1d3ecdb78495746136f32486a8e7c64ed009"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/hero-delay-rejoined.csv",
+      "bytes": 25004,
+      "sha256": "2085934ffe28bd50b0ee3d2e7e3881df7d7302a8657b79210d35f779f81e2fb9"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network/hero-delay-result.json",
+      "bytes": 1562,
+      "sha256": "00ab0080264ea8ade67b76fb7fa43583f99a7d28639388dd12bc321d0cffd8b5"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/throw-network.md",
+      "bytes": 1073,
+      "sha256": "809e6c01d175ab6cf321795ed204fb78519402dd253d84212495cdc55cc12843"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-checkpoint.md",
+      "bytes": 12846,
+      "sha256": "8248f6196b5a2274362fbc2fd34a4ab25d364b89ed13468485ee53dadf90d22a"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/restore_verified_throw_test_dirt.py.txt",
+      "bytes": 2703,
+      "sha256": "488d5670305146f174d06ff87f46b3a01bf732c9d236b0b24cfa1447812d0435"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/throw-grip-review-v1.xml",
+      "bytes": 6606,
+      "sha256": "84634ac8ab44bc93e8127046336d5db88e2f6d3bb9dcc07de3cd2ca860f97fbf"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/throw-head-clearance-v3.xml",
+      "bytes": 4208,
+      "sha256": "506b31e8c14f4154f59b0ae70cbf7ba2b0f80d665abe8b2305d272166c0c1c41"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/throw-motion-final-contracts.xml",
+      "bytes": 13187,
+      "sha256": "72b1234c89351b2222b4271135d8863e0bf90eda94ea069c036a983b4e044a80"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-join-attempt-gate-v1.xml",
+      "bytes": 4851,
+      "sha256": "88a01f51b5b89f85aabbb7e2393ecaaafc62b84180ef7fe1d8d0dc559fd198c5"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-native-batch-v1.xml",
+      "bytes": 21946,
+      "sha256": "881516d1bbb0c38fcf3ca16a006da215bda1ac7354db7b70ffb61233449e537f"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/ApprovedController-restored-v1.png",
+      "bytes": 570547,
+      "sha256": "0818b5961ac525296ca0bb9d58aedaac5d6c907afc5090bee1b2aaef16893231"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeCredits-licenses-v1.png",
+      "bytes": 196112,
+      "sha256": "bb22ad3a715c46c9c91e3f57292e2802c6c1be92ced7d41cd704942dc8307fe7"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeCredits-v1.png",
+      "bytes": 220895,
+      "sha256": "119db497aeff84b29a77546f5108ada65d43398fd9c63bb6a77d43e2f5c1e26a"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHome-1280x720.png",
+      "bytes": 966897,
+      "sha256": "5836e051d6ab9e9493c5de16e7996badf7e433251b0c7f36b3bea48421f5bea4"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHome-1280x960.png",
+      "bytes": 1168993,
+      "sha256": "aa1a53f75b5a4cb677a5addd294e70e943d814ab177e128f952e45869db895a1"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHome-1920x1080.png",
+      "bytes": 1885238,
+      "sha256": "e65f72ddf0c8fb435a6852507bd2046eef13b95888d286992c51c644431e652a"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHud-Classic-v1.png",
+      "bytes": 1689874,
+      "sha256": "b7a0bd5f04b783c149fb86bfa2cc6083c197bffca03d3b0c55481c87306a66f7"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHud-held-skills-v1.png",
+      "bytes": 408252,
+      "sha256": "2ac3b2d29fddca86b8b3d7f6026d570c3e838d8ce91f3ea4109069c565bae89d"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHud-Hero-v1.png",
+      "bytes": 1688336,
+      "sha256": "12c59fdfaf29382dede5d9ddc0315e65d79bfa3d6a88121f4fe9a062291ef53e"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHud-recovery-v1.png",
+      "bytes": 789481,
+      "sha256": "e5ae0e4f0719be9062ee523bea1ae56c555255ca1a62802c107d8932ca0400cf"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeHud-spectator-v1.png",
+      "bytes": 896978,
+      "sha256": "105a374893fa8df0ffc6e04b0b81fc928e1dfa99a3ee3242a8863cb1e2542e8f"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeJoin-nearby-v1.png",
+      "bytes": 83823,
+      "sha256": "87a5db6f5a6baa9508b140dee1660c3889a91a8c36b84dceae841751db719052"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeJoin-online-v1.png",
+      "bytes": 51165,
+      "sha256": "40b436060e458a8c73205efca5a30c04903b117796dafb5efee29bf6361858aa"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePause-v1.png",
+      "bytes": 818356,
+      "sha256": "4f59c8435f1a342ddc4aa352d47d9b53f593fc959a90009e6fbcd1ff24439b29"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePicker-category1-v1.png",
+      "bytes": 147919,
+      "sha256": "55ed977f132b511824da647b739fdbf45fcd061eb4d4553dff46380bc22bb861"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePicker-category2-v1.png",
+      "bytes": 119857,
+      "sha256": "6fd8490e22071d8f89e746b179119de5d23e70bfcf63ba36f509c4841a4e1390"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePicker-heroes-v1.png",
+      "bytes": 212032,
+      "sha256": "90f3787e5a645b8b725c8330fdfb3a92ea0210ff978b37c50a6e2c777da1dd24"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePicker-people-v1.png",
+      "bytes": 232420,
+      "sha256": "ec7d7c6f77e1029ece7900b8e5d73d958827fc1c95387cbb8285a247c0e404ae"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePlay-Classic-v1.png",
+      "bytes": 180702,
+      "sha256": "73021798f98702c95d0687e19ee8a55a5a71b702a840b8c60813563d2dd61c79"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativePlay-Hero-v1.png",
+      "bytes": 110017,
+      "sha256": "c0da90bcf02bbae0237804534466a56ef2e1f2d0d58198a354a1269e0efd0cd1"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeQueue-v1.png",
+      "bytes": 66799,
+      "sha256": "5029291bcf280fbaea01488bddabd805b252b38c0dfb1a9ed261266d8983fc1c"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeRanks-v1.png",
+      "bytes": 73120,
+      "sha256": "e0df639c9a090a0608732c7c49bcc56f403d33c3a4988de670f620217f45eabb"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeResults-details-v1.png",
+      "bytes": 39262,
+      "sha256": "81c9e1474ce4ad2c6c5c273559b21918414a8624db9ef742b33e5533645ad7af"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeResults-players-v1.png",
+      "bytes": 62063,
+      "sha256": "77ea83c104069daccfe44cddb8c5c5b6643a283455c3a54c8e3c59e1fdd1e546"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeResults-standings-v1.png",
+      "bytes": 149341,
+      "sha256": "1974124448aba618401cfb60872e952c1a9162155f7d2e9edd81a38e8391902b"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeRoundSwap-v1.png",
+      "bytes": 158717,
+      "sha256": "ccfd67dbaf03133392410fdcd9f265c07bd08a794989f7196b5c8d79b4ec7c9d"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-Accessibility-v1.png",
+      "bytes": 129886,
+      "sha256": "2cd1e86651c69f000dd41c5c2d2e81d69b83c046decbddccf6a5bc1741ebfb08"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-Audio-v1.png",
+      "bytes": 123754,
+      "sha256": "447c93db055e3f99c3b8148d2af43ef4b92bc76207a0eac8086bcc1c90f223a2"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-Controls-v1.png",
+      "bytes": 135540,
+      "sha256": "3f5efa6aaced4a732c6e50d79b6506fc55ec53ca1670309d756ef294d789de32"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-Graphics-v1.png",
+      "bytes": 150325,
+      "sha256": "996ca837603926727f0680df2699a144eaa9f0c709476b335b5851d80dca91ec"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-Player-v1.png",
+      "bytes": 120177,
+      "sha256": "c76bc6e3732e704b2d524e40ee4f09d4b1ef439d8a9aeb74da94f57c595cf51b"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSettings-unsaved-v1.png",
+      "bytes": 74603,
+      "sha256": "38a0031dd0e919ca2c8d5060a06bfae67f5c511222f48bc77c7fe167112a0a20"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSignIn-create-4by3-v1.png",
+      "bytes": 1022074,
+      "sha256": "838a82edc408165764da0907d596e855cf174ce93583850ab109f7ccf217ceef"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSignIn-create-v1.png",
+      "bytes": 831753,
+      "sha256": "b4af13f90c701a2e27b458eae0366b93c73b7b5b19ac93b9358b36df9133f2f9"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSignIn-error-v1.png",
+      "bytes": 1625991,
+      "sha256": "feeb50178a57eff10c294f02accdcf720d5697b2a43bfc5bf4981e51b8c11e54"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSkills-slot1-v1.png",
+      "bytes": 123936,
+      "sha256": "120f11672f814bae2c8512db0bafc3013e7c15449fdf05473f77ad029ec4d6c2"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSkills-slot2-v1.png",
+      "bytes": 72822,
+      "sha256": "63caf2a02cd2194182efc7c854d30bb020888badcd1e4fded7c4b0cee2491515"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeSkills-ultimate-v1.png",
+      "bytes": 87764,
+      "sha256": "c4300fd69dcd196ae2156717719009b0ac8529780a470a6b1a29729b35d9ce9b"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/transfer-evidence/ui-screens/NativeTouchLayout-v2.png",
+      "bytes": 101190,
+      "sha256": "1d43c76682007b92845a39ccda3aa1af249c5c02d674c676eab7c690a0601cbb"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/chat-code-review.txt",
+      "bytes": 21142,
+      "sha256": "d249d79e95fff2a846d0f64940ea1a35942ef158518a451b696a74c8a0818bab"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/custom-code-review.txt",
+      "bytes": 16906,
+      "sha256": "e4c5a8e51fc67258c77481b12257b3e4381d739f3bbad3d73d9b6d779db1580c"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/hud-code-review.txt",
+      "bytes": 121689,
+      "sha256": "b034461726c3833d3641f4deedf2044d573fb66872ceff7efdc6236462932461"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/join-code-review.txt",
+      "bytes": 25079,
+      "sha256": "f2d1ce5e7056663b37d746e8dcf85c41d306ba4528e4d3430aec03c51e79edab"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/lobby-code-review.txt",
+      "bytes": 71682,
+      "sha256": "d0e0e479334d68733712111c832317c20bc8a0eefcd36c27ed03c1e54e58634e"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/pause-code-review.txt",
+      "bytes": 2719,
+      "sha256": "9e08e4b57f7fe3a2322daeb1b7d85b7cdf04ab87a8648022179ec27a33443c8c"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/pending-held-info.patch",
+      "bytes": 5528,
+      "sha256": "858749418cc315785b601609aa05dd93c522831178ef2f9764ae7fd695645f61"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/picker-code-review.txt",
+      "bytes": 58442,
+      "sha256": "2334cd83af2b909b3aeaa21a7fb8d1679dbaad9d19f6594a029a50bec2c137b6"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/portraits-contact-1.png",
+      "bytes": 132457,
+      "sha256": "ae0f770d8a2a51b7bf78f34b82b1e2c830d5dc325d21114561f98c39ee55d737"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/portraits-contact-2.png",
+      "bytes": 113585,
+      "sha256": "e494a2b6903acc05ce5384fd561ee10c378854dcaa63422f9b3aae92af33431f"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/portraits-v2-contact-1.png",
+      "bytes": 260457,
+      "sha256": "8ec652846509b54a16cbf54a35efc6d8dc6e9a0cbffc3cd9bb8f176ebd99d5c4"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/portraits-v2-contact-2.png",
+      "bytes": 222074,
+      "sha256": "3fa87bdb1813a889636b993c03e4bdbc52432bbee4c465529139057cca13e062"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/queue-code-review.txt",
+      "bytes": 12894,
+      "sha256": "93939c91c2aac4ac4466c39407e0c143b84685f6443e303ea430add2dc0a1c0f"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/result-code-review.txt",
+      "bytes": 35094,
+      "sha256": "3d8c5bf6c4229f39081af19dbf31334eed8b7cf7053040c2db62c4ba93bb8cde"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/setup-code-review.txt",
+      "bytes": 82494,
+      "sha256": "7ac4efdea09a04d14023677e6d5816dd76ccb6d2cab4fcab4d1b1c329ae94fbd"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/signin-code-review.txt",
+      "bytes": 25831,
+      "sha256": "864d008d9d4c053c40bd919f60ae330338677f6c560ddf99b1b38f5cdcc696e8"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/swap-code-review.txt",
+      "bytes": 14501,
+      "sha256": "3fc5a17b92c60634c7ac3e16516e699fdf6d7409bcc40f420662bd17f018761c"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/touch-code-review.txt",
+      "bytes": 16603,
+      "sha256": "ab6077c8c6e43ad821b24821f7b95a21423cfe61c313e9d6b26887543fdd57bf"
+    },
+    {
+      "path": "docs/reports/improvement-2026-09-14/ui-deferred-source/UI_EXECUTION_STATUS_ARCHIVE.md",
+      "bytes": 44080,
+      "sha256": "bd5de2a96de50528b5923d84135722b762d190fde03b025468f6a002d61f8d4f"
+    },
+    {
+      "path": "docs/tooling/skill-reference-bundle.zip",
+      "bytes": 608184,
+      "sha256": "66336a7c89085014b3d6eb8642548f956770075eb8b7964c6811017d8d59dd29"
+    },
+    {
+      "path": "docs/tooling/skill-reference-manifest.json",
+      "bytes": 47772,
+      "sha256": "3b62bd02d6c0c8a0e16cb28d4915f32ff81a6cf2968fa329f94be278677d5a85"
+    },
+    {
+      "path": "docs/WORKSTATION_SETUP.md",
+      "bytes": 13340,
+      "sha256": "f0c23fd6772f2ca66d0739931c4f99dc1b81d974fed9716a1e7769d68e253c81"
+    }
+  ]
+}

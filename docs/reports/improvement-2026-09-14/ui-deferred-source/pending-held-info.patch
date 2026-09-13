@@ -1,0 +1,61 @@
+From f5b10a368f0f73cd376d785ba486172cb11321d6 Mon Sep 17 00:00:00 2001
+From: "Matthew Emmanuel T. Labrador" <matthewtlabrador@gmail.com>
+Date: Mon, 14 Sep 2026 01:41:35 +0800
+Subject: [PATCH] Refresh held skill details when live kit tuning changes in
+ place
+
+---
+ Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs     |  4 +++-
+ .../TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs  | 10 ++++++++++
+ docs/UI_EXECUTION_STATUS.md                            |  2 ++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs b/Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs
+index 4aa01168..94b7ecb4 100644
+--- a/Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs
++++ b/Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.cs
+@@ -132,7 +132,9 @@ namespace TumbangPreso.UI
+         }
+         private void Describe(HeroKit kit, HeroAbility[] skills)
+         {
+-            string signature = string.Join("|", System.Array.ConvertAll(skills, a => a == null ? "" : a.Id + a.EffectiveName + a.EffectiveDescription));
++            string signature = string.Join("|", System.Array.ConvertAll(skills, a => a == null ? ""
++                : a.Id + a.EffectiveName + a.EffectiveDescription + "/" + a.Cooldown + "/" + a.Duration + "/" + a.MaxCharges + "/" + (int)a.Glyph))
++                + "/" + kit.UltimateCost;
+             if (_shownKit == kit && _shownSignature == signature) return;
+             _shownKit = kit; _shownSignature = signature;
+             for (int i = 0; i < 3; i++)
+diff --git a/Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs b/Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs
+index 45ae1792..12e30934 100644
+--- a/Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs
++++ b/Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs
+@@ -60,6 +60,16 @@ namespace TumbangPreso.PlayTests
+                 readout.OpenForCapture(kit); yield return null;
+                 var names = canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("PowerName")).Select(t => t.text).ToArray();
+                 CollectionAssert.AreEquivalent(new[] { kit.Skill1.EffectiveName, kit.Skill2.EffectiveName, kit.Ultimate.EffectiveName }, names);
++                float duration = kit.Skill1.Duration;
++                var durationSetter = typeof(Abilities.HeroAbility).GetProperty("Duration").GetSetMethod(true);
++                try
++                {
++                    durationSetter.Invoke(kit.Skill1, new object[] { duration + 1 }); yield return null;
++                    Assert.That(canvas.GetComponentsInChildren<Text>().First(t => t.name == "PowerTiming0").text,
++                        Does.Contain((duration + 1).ToString("0.#") + "s duration"), "Same live kit must refresh changed timing details.");
++                    Assert.AreSame(kit, local.GetComponent<Abilities.HeroAbilitySystem>().Kit);
++                }
++                finally { durationSetter.Invoke(kit.Skill1, new object[] { duration }); }
+                 yield return TumpUiCapture.Capture("NativeHud-held-skills-v1", canvas, 1280, 720, false, true);
+             }
+             finally { readout.CloseCapture(); }
+diff --git a/docs/UI_EXECUTION_STATUS.md b/docs/UI_EXECUTION_STATUS.md
+index 54f23fc3..a5dbec0e 100644
+--- a/docs/UI_EXECUTION_STATUS.md
++++ b/docs/UI_EXECUTION_STATUS.md
+@@ -152,3 +152,5 @@ Parent explicitly reserved/approved NetSession.StartClientAsync/StartRelayClient
+ ## Native room browser and nonmodal queue source batch
+ LobbyJoinPanel now constructs a new standalone native room browser with real code/address input, source tabs, readable two-line room rows and all discovered entries in a scroll. Existing discovery/address/code/Relay semantics remain. UI-owned cancellation tokens/generation use the approved backend contract; a delayed older operation cannot close or clear a newer view. Connection is an explicit injectable boundary for delayed tests; default uses the existing NetSession path. Back cancellation is normal status, not an error popup. NativeJoinTests uses no live connection for its delayed completion cases.
+ QueueCard now builds a compact native status ticket inside the owning lobby canvas, not a fullscreen modal. Reviewing old interaction requirements caught that a modal would remove the ability to use loadout/party while searching; the uncommitted full-page draft was discarded. Queue retains actual search range, wait time, party count, taya promise, bot-fill offer/caveat and Cancel, with no full-screen raycast blocker or competing focus canvas. Preparation Back cancels the active search first and changing route cancels it; higher settings/profile layers keep their own Cancel. Legacy builders retained uncalled. NativeJoinTests3cases cover source/empty/error/back, a canceled delayed attempt completing after a newer view starts, and underlying preparation control reachability while queueing. Pending coordinated runtime/capture review.
++
++Parent's same-hero loadout update preserves live Kit/ability instances. Native held reference already compares effective names/descriptions, but its cache omitted timing/charge/glyph values. Added cooldown/duration/maxcharges/glyph/ultimatecost to the signature so same-name tuning changes refresh without recreating any gameplay object. Focused existing HeroHUD case temporarily changes/restores one duration to assert refreshed reference text while the exact kit reference stays unchanged. No gameplay state reset or new ability mechanics.
+-- 
+2.55.0.windows.3
+

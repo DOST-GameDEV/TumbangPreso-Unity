@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.0676123">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="536" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.067612" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1615" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="536" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.056933" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36036" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1616" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="536" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.053500" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1617" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="536" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.049735" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1216" name="JoinAttemptGateTests" fullname="TumbangPreso.Tests.JoinAttemptGateTests" classname="TumbangPreso.Tests.JoinAttemptGateTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.039526" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1218" name="AlreadyCancelledRequestDoesNotSupersedeTheCurrentAttempt" fullname="TumbangPreso.Tests.JoinAttemptGateTests.AlreadyCancelledRequestDoesNotSupersedeTheCurrentAttempt" methodname="AlreadyCancelledRequestDoesNotSupersedeTheCurrentAttempt" classname="TumbangPreso.Tests.JoinAttemptGateTests" runstate="Runnable" seed="291878962" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.013918" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1217" name="DelayedCancelledAttemptCannotReplaceOrCleanUpNewerSession" fullname="TumbangPreso.Tests.JoinAttemptGateTests.DelayedCancelledAttemptCannotReplaceOrCleanUpNewerSession" methodname="DelayedCancelledAttemptCannotReplaceOrCleanUpNewerSession" classname="TumbangPreso.Tests.JoinAttemptGateTests" runstate="Runnable" seed="362057882" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.008325" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1219" name="ExplicitStopInvalidatesPendingContinuationWithoutCancellingTheNextAttempt" fullname="TumbangPreso.Tests.JoinAttemptGateTests.ExplicitStopInvalidatesPendingContinuationWithoutCancellingTheNextAttempt" methodname="ExplicitStopInvalidatesPendingContinuationWithoutCancellingTheNextAttempt" classname="TumbangPreso.Tests.JoinAttemptGateTests" runstate="Runnable" seed="297646198" result="Passed" start-time="2026-09-13 17:40:03Z" end-time="2026-09-13 17:40:03Z" duration="0.000351" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

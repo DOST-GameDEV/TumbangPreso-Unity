@@ -1,0 +1,40 @@
+from pathlib import Path
+import subprocess,re,json,hashlib,sys
+root=Path.cwd();apply='--apply' in sys.argv
+assert subprocess.check_output(['git','branch','--show-current']).decode().strip()=='ASTRAReworks'
+backup=root/'Logs/throw-test-dirt-backup-v1';backup.mkdir(exist_ok=True)
+def old(path):return subprocess.check_output(['git','show','HEAD:'+path])
+def normalized(text):return '\n'.join(line.rstrip() for line in text.splitlines())
+def restore(path,base,reason):
+ p=root/path;before=p.read_bytes();target=backup/path;target.parent.mkdir(parents=True,exist_ok=True)
+ if apply:
+  target.write_bytes(before);p.write_bytes(base)
+ print(('RESTORED' if apply else 'VERIFIED'),path,reason)
+paths=subprocess.check_output(['git','diff','--name-only','--','Assets/TumbangPreso/Resources/Models/RosterArms'],stderr=subprocess.DEVNULL).decode().splitlines()
+for path in paths:
+ base=old(path);a=base.decode();b=(root/path).read_text(encoding='utf-8')
+ if normalized(a)==normalized(b):restore(path,base,'whitespace only');continue
+ pattern=r'  m_VertexData:(.*?)  m_CompressedMesh:'
+ am=re.search(pattern,a,re.S);bm=re.search(pattern,b,re.S);assert am and bm,path
+ assert normalized(a[:am.start()]+a[am.end():])==normalized(b[:bm.start()]+b[bm.end():]),(path,'non-vertex change')
+ def data(block):
+  n=int(re.search(r'm_VertexCount: (\d+)',block).group(1))
+  raw=bytes.fromhex(re.search(r'_typelessdata: ([0-9a-f]+)',block).group(1))
+  ch=[tuple(map(int,m)) for m in re.findall(r'- stream: (\d+)\s+offset: (\d+)\s+format: (\d+)\s+dimension: (\d+)',block)]
+  assert len(raw)%n==0
+  return n,raw,ch,len(raw)//n
+ an,ad,ac,az=data(am.group(1));bn,bd,bc,bz=data(bm.group(1));assert an==bn and len(ac)==len(bc),path
+ for channel,(left,right) in enumerate(zip(ac,bc)):
+  if channel==2:
+   assert left[3] in [0,4] and right[3] in [0,4]
+   continue
+  assert left[0]==right[0]==0 and left[2:]==right[2:],(path,channel)
+  dimension=left[3]
+  if dimension==0:continue
+  assert left[2]==0,(path,'unsupported vertex format')
+  for i in range(an):assert ad[i*az+left[1]:i*az+left[1]+dimension*4]==bd[i*bz+right[1]:i*bz+right[1]+dimension*4],(path,'changed vertex',i,channel)
+ restore(path,base,'positions, normals, UVs and all other data identical; tangent channel only')
+for path in ['ProjectSettings/ProjectAuditorSettings.asset']+[str(p).replace('\\','/') for p in (root/'Assets/TumbangPreso/Art/MapFinalPass').glob('*.mat')]:
+ if Path(path).is_absolute():path=str(Path(path).relative_to(root)).replace('\\','/')
+ base=old(path)
+ if normalized(base.decode())==normalized((root/path).read_text(encoding='utf-8')) and base!=(root/path).read_bytes():restore(path,base,'whitespace only')

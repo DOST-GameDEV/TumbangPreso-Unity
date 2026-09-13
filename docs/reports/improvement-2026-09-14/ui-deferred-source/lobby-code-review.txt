@@ -1,0 +1,1704 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public enum LobbyStyle
+    {
+        Classic,
+
+        Street,
+    }
+
+    public enum LobbyMode
+    {
+        Practice,
+
+        Ranked,
+
+        Custom,
+    }
+
+    public static class LobbyChrome
+    {
+        public static LobbyStyle Style = LobbyStyle.Street;
+
+
+        private const float EdgeMargin = 40.0f;
+
+        private const float TopRailWidth =
+            (PaperKit.Pad * 2.0f) + 16.0f + BackWidth + PaperKit.Gap
+            + (TabWidth * 3.0f) + (PaperKit.Gap * 2.0f)
+            + PaperKit.Gap + SettingsWidth + PaperKit.Gap + ProfileWidth;
+
+        private const float BottomRailWidth =
+            (PaperKit.Pad * 2.0f) + FighterColumnWidth + PaperKit.Pad + ActionWidth
+            + PaperKit.Pad + RoomColumnWidth;
+
+        private const float TopRailHeight = 68.0f;
+
+        private const float TarpHeight = 196.0f;
+
+        private const float TarpOverhang = 90.0f;
+
+        private static readonly float[] TagDrop = { 30.0f, 14.0f, 38.0f };
+
+        private const float TagLift = 46.0f;
+
+        private const float BottomRailHeight =
+            SettingsChipHeight + PaperKit.Gap + ActionHeight + (PaperKit.Pad * 2.0f)
+            + PaperCraft.Drop;
+
+        private const float FighterColumnWidth = 320.0f;
+
+        private const float RoomColumnWidth = 380.0f;
+
+        private const float ActionWidth = 560.0f;
+
+        private const float ActionHeight = 132.0f;
+
+        private const float BurstReach = 1.9f;
+
+        private const float SettingsChipHeight = 62.0f;
+
+        private const float FighterRowHeight = 54.0f;
+
+        private const float SkillsRowHeight = FighterRowHeight;
+
+        private const float RoomSignHeight = 82.0f;
+
+        private const float RoomSlotHeight = 96.0f;
+
+        private const float RoomSlotWidth = 420.0f;
+
+        private const float RoomSlotTop = 46.0f;
+
+        private const float SettingsBodyHeight =
+            (SettingsRowHeight * 4.0f) + 18.0f + SettingsDetailHeight + (PaperKit.Pad * 2.0f)
+            + PaperCraft.Drop;
+
+        private const float SettingsRowHeight = 64.0f;
+        private const float SettingsCaptionWidth = 96.0f;
+        private const float SettingsArrowSize = 42.0f;
+        private const float SettingsDetailHeight = 56.0f;
+
+        private const float SettingsDrawerWidth = ActionWidth;
+
+        internal const int ValueSize = PaperKit.Title;
+
+        private const float BackWidth = 120.0f;
+
+        private const float TabWidth = 172.0f;
+
+        private const float ProfileWidth = 200.0f;
+
+        private const float IdentityWidth = 334.0f;
+
+        private const float IdentityHeight = 106.0f;
+
+        private const float IdentityFace = 72.0f;
+
+        private const float SettingsWidth = 148.0f;
+
+        private const float TopBandFraction = 0.20f;
+        private const float BottomBandFraction = 0.26f;
+
+        private const float TopBandAlpha = 0.34f;
+        private const float BottomBandAlpha = 0.20f;
+
+        public static Parts Apply(Transform root, Func<string, Transform> find,
+                                  bool isLobby, Action<LobbyMode> onMode)
+        {
+            if (Style != LobbyStyle.Street) return null;
+            if (root == null || find == null) return null;
+
+            SoftenScrim(root, find);
+            HideBanner(find);
+
+            var parts = new Parts();
+
+            var banner = find("Banner");
+            Transform canvasRoot = banner != null ? banner.parent : root;
+
+            var left = find("LeftColumn");
+            var right = find("RightColumn");
+            LooseTheColumns(find);
+
+            var mode = isLobby ? LobbyMode.Custom : LobbyMode.Practice;
+
+            BuildGroundMarks(canvasRoot);
+            BuildTopRail(canvasRoot, find, left, onMode, parts);
+            BuildBottomRail(canvasRoot, find, left, right, parts);
+            HangTheModeSlot(parts);
+
+            parts.SetMode(mode);
+
+            return parts;
+        }
+
+        private static void BuildGroundMarks(Transform canvasRoot)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject(i == 0 ? "ChalkLeft" : "ChalkRight",
+                                        typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(canvasRoot, false);
+
+                go.transform.SetAsLastSibling();
+
+                var image = go.GetComponent<Image>();
+                image.sprite = BrandMarks.Chalk(i);
+                image.type = Image.Type.Simple;
+                image.raycastTarget = false;
+                image.color = new Color(1.0f, 1.0f, 1.0f, 0.34f);
+
+                var rect = (RectTransform)go.transform;
+                rect.anchorMin = new Vector2(i == 0 ? 0.0f : 1.0f, 0.0f);
+                rect.anchorMax = rect.anchorMin;
+                rect.pivot = new Vector2(i == 0 ? 0.0f : 1.0f, 0.0f);
+                rect.anchoredPosition = new Vector2(i == 0 ? 24.0f : -24.0f, 24.0f);
+                rect.sizeDelta = new Vector2(300.0f, 150.0f);
+            }
+        }
+
+        private static void HangTheModeSlot(Parts parts)
+        {
+            var code = parts.CodeButton;
+            var rail = parts.TopRail;
+            if (code == null || rail == null) return;
+
+            var rect = (RectTransform)code.transform;
+            rect.SetParent(rail, false);
+
+            var element = rect.GetComponent<LayoutElement>();
+            if (element == null) element = rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+
+            rect.anchorMin = new Vector2(0.5f, 1.0f);
+            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 1.0f);
+            rect.anchoredPosition = new Vector2(0.0f, -RoomSlotTop);
+            rect.sizeDelta = new Vector2(RoomSlotWidth, RoomSlotHeight);
+
+            var skin = code.GetComponent<PaperSkin>();
+            if (skin != null) skin.Rebuild();
+        }
+
+        private static void LooseTheColumns(Func<string, Transform> find)
+        {
+            var columns = find("Columns");
+            if (columns == null) return;
+
+            var group = columns.GetComponent<LayoutGroup>();
+            if (group != null) group.enabled = false;
+
+            if (columns is RectTransform rect) MenuKit.Stretch(rect, 0.0f);
+        }
+
+
+        private static void BuildTopRail(Transform canvasRoot, Func<string, Transform> find,
+                                         Transform leftColumn, Action<LobbyMode> onMode,
+                                         Parts parts)
+        {
+            var railGo = new GameObject("LobbyTopRail", typeof(RectTransform), typeof(Image));
+            railGo.transform.SetParent(canvasRoot, false);
+
+            var rail = railGo.GetComponent<Image>();
+            rail.raycastTarget = true;
+            rail.sprite = BrandMarks.Tarpaulin();
+            rail.type = Image.Type.Simple;
+            rail.color = Color.white;
+
+            var rect = rail.rectTransform;
+            rect.anchorMin = new Vector2(0.0f, 1.0f);
+            rect.anchorMax = new Vector2(1.0f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 1.0f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(TarpOverhang * 2.0f, TarpHeight);
+
+            parts.TopRail = rail.transform;
+
+            BuildTies(rail.transform);
+            BuildScreenName(rail.transform);
+
+            LiftBack(rail.transform, leftColumn);
+            BuildTabs(rail.transform, onMode, parts);
+            BuildProfileButton(rail.transform, parts);
+            BuildSettingsButton(rail.transform, parts);
+            LiftVersionStamp(canvasRoot, rail.transform);
+        }
+
+        private static void BuildTies(Transform rail)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject(i == 0 ? "TarpTieLeft" : "TarpTieRight",
+                                        typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(rail, false);
+
+                var image = go.GetComponent<Image>();
+                image.sprite = BrandMarks.Tie();
+                image.type = Image.Type.Simple;
+                image.raycastTarget = false;
+
+                var r = (RectTransform)go.transform;
+                r.anchorMin = new Vector2(i == 0 ? 0.10f : 0.90f, 1.0f);
+                r.anchorMax = r.anchorMin;
+                r.pivot = new Vector2(0.5f, 1.0f);
+                r.anchoredPosition = new Vector2(0.0f, 6.0f);
+                r.sizeDelta = new Vector2(30.0f, 48.0f);
+            }
+        }
+
+        private static void BuildScreenName(Transform rail)
+        {
+            var name = PaperKit.Ink(rail, "LOBBY", PaperKit.Display, TextAnchor.UpperLeft);
+            name.name = "ScreenName";
+            name.raycastTarget = false;
+
+            var r = name.rectTransform;
+            r.anchorMin = new Vector2(0.0f, 1.0f);
+            r.anchorMax = new Vector2(0.0f, 1.0f);
+            r.pivot = new Vector2(0.0f, 1.0f);
+            r.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin, -26.0f);
+            r.sizeDelta = new Vector2(420.0f, 50.0f);
+
+            var seats = PaperKit.Ink(rail, "4 in the room", PaperKit.Caption,
+                                     TextAnchor.UpperLeft, soft: true);
+            seats.name = "SeatCount";
+            seats.raycastTarget = false;
+
+            var sr = seats.rectTransform;
+            sr.anchorMin = new Vector2(0.0f, 1.0f);
+            sr.anchorMax = new Vector2(0.0f, 1.0f);
+            sr.pivot = new Vector2(0.0f, 1.0f);
+            sr.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin + 2.0f, -78.0f);
+            sr.sizeDelta = new Vector2(420.0f, 24.0f);
+        }
+
+        private static void LiftBack(Transform rail, Transform leftColumn)
+        {
+            var back = Descend(leftColumn, "BackButton") as RectTransform;
+            if (back == null) return;
+
+            back.SetParent(rail, false);
+
+            back.anchorMin = new Vector2(0.0f, 1.0f);
+            back.anchorMax = new Vector2(0.0f, 1.0f);
+            back.pivot = new Vector2(0.0f, 1.0f);
+            back.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin, -104.0f);
+            back.sizeDelta = new Vector2(BackWidth, PaperKit.ChipHeight);
+
+            var element = back.GetComponent<LayoutElement>();
+            if (element != null) element.ignoreLayout = true;
+
+            PaperKit.Paperise(back.gameObject, PaperCraft.Surface.Token);
+
+            var label = back.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.text = "‹ BACK";
+                label.name = "Label";
+                label.fontSize = PaperKit.Body;
+                label.color = UiTheme.PaperInk;
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+                label.alignment = TextAnchor.MiddleCenter;
+
+                MenuKit.Stretch(label.rectTransform, 0.0f);
+                PaperKit.CentreOnFace(label);
+                MenuKit.Fit(label, BackWidth - 20.0f);
+            }
+
+            back.gameObject.AddComponent<PaperButton>();
+            FocusRing.Attach(back.gameObject, 4.0f);
+
+            var spacer = Descend(leftColumn, "Spacer");
+            if (spacer != null) spacer.gameObject.SetActive(false);
+        }
+
+        private static void BuildTabs(Transform rail, Action<LobbyMode> onMode, Parts parts)
+        {
+            var bar = new GameObject("LobbyTabBar", typeof(RectTransform));
+            bar.transform.SetParent(rail, false);
+
+            var barRect = (RectTransform)bar.transform;
+            barRect.anchorMin = new Vector2(0.0f, 0.0f);
+            barRect.anchorMax = new Vector2(0.0f, 0.0f);
+            barRect.pivot = new Vector2(0.0f, 1.0f);
+
+            barRect.anchoredPosition = new Vector2(
+                TarpOverhang + EdgeMargin + BackWidth + 44.0f, TagLift);
+            barRect.sizeDelta = new Vector2((TabWidth * 3.0f) + (PaperKit.Gap * 2.0f),
+                                            PaperKit.ChipHeight + 44.0f);
+
+            string[] names = { "PracticeTab", "RankedTab", "CustomTab" };
+            string[] words = { "PRACTICE", "RANKED", "CUSTOM" };
+            LobbyMode[] order = { LobbyMode.Practice, LobbyMode.Ranked, LobbyMode.Custom };
+
+            for (int i = 0; i < 3; i++)
+            {
+                float x = i * (TabWidth + PaperKit.Gap);
+                float drop = TagDrop[i];
+
+                var cord = new GameObject($"{names[i]}Cord", typeof(RectTransform), typeof(Image));
+                cord.transform.SetParent(bar.transform, false);
+                var cordImage = cord.GetComponent<Image>();
+                cordImage.color = UiTheme.BrandRed;
+                cordImage.raycastTarget = false;
+                var cr = (RectTransform)cord.transform;
+                cr.anchorMin = new Vector2(0.0f, 1.0f);
+                cr.anchorMax = new Vector2(0.0f, 1.0f);
+                cr.pivot = new Vector2(0.5f, 1.0f);
+                cr.anchoredPosition = new Vector2(x + (TabWidth * 0.5f), 4.0f);
+                cr.sizeDelta = new Vector2(4.0f, drop + 6.0f);
+
+                var chip = PaperKit.Chip(bar.transform, names[i], words[i]);
+                var rect = (RectTransform)chip.transform;
+                rect.anchorMin = new Vector2(0.0f, 1.0f);
+                rect.anchorMax = new Vector2(0.0f, 1.0f);
+                rect.pivot = new Vector2(0.0f, 1.0f);
+                rect.anchoredPosition = new Vector2(x, -drop);
+                rect.sizeDelta = new Vector2(TabWidth, PaperKit.ChipHeight);
+
+                var element = chip.GetComponent<LayoutElement>();
+                if (element != null) element.ignoreLayout = true;
+
+                parts.Tabs[(int)order[i]] = chip;
+
+                var chosen = order[i];
+                chip.onClick.AddListener(() => onMode?.Invoke(chosen));
+            }
+
+            parts.Practice = parts.Tabs[(int)LobbyMode.Practice];
+            parts.Multiplayer = parts.Tabs[(int)LobbyMode.Custom];
+        }
+
+
+        private static void BuildProfileButton(Transform rail, Parts parts)
+        {
+            var button = PaperKit.Chip(rail, "ProfileButton", "ACCOUNT");
+
+            var rect = (RectTransform)button.transform;
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 0.0f);
+            rect.pivot = new Vector2(1.0f, 0.5f);
+            rect.anchoredPosition = new Vector2(-(TarpOverhang + EdgeMargin), 6.0f);
+            rect.sizeDelta = new Vector2(IdentityWidth, IdentityHeight);
+
+            var face = Avatars.Frame(button.transform, "ProfileFace", null);
+            var fr = face.rectTransform;
+            fr.anchorMin = new Vector2(0.0f, 0.5f);
+            fr.anchorMax = new Vector2(0.0f, 0.5f);
+            fr.pivot = new Vector2(0.0f, 0.5f);
+            fr.anchoredPosition = new Vector2(PaperKit.Pad, PaperCraft.Drop * 0.5f);
+            fr.sizeDelta = new Vector2(IdentityFace, IdentityFace);
+            parts.ProfileFace = face;
+
+            var label = button.transform.Find("Label")?.GetComponent<Text>();
+            if (label != null)
+            {
+                label.name = "ProfileValue";
+                label.alignment = TextAnchor.LowerLeft;
+                label.fontSize = PaperKit.Title;
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize));
+                MenuKit.Stretch(label.rectTransform, 0.0f);
+                label.rectTransform.offsetMin =
+                    new Vector2(PaperKit.Pad + IdentityFace + 12.0f, IdentityHeight * 0.44f);
+                label.rectTransform.offsetMax = new Vector2(-34.0f, -PaperKit.Pad);
+                parts.ProfileValue = label;
+            }
+
+            var state = PaperKit.Ink(button.transform, "GUEST · SAVE PROGRESS", PaperKit.Caption,
+                                     TextAnchor.UpperLeft, soft: true);
+            state.name = "ProfileState";
+            state.raycastTarget = false;
+            MenuKit.Read(state, bold: true);
+            MenuKit.Stretch(state.rectTransform, 0.0f);
+            state.rectTransform.offsetMin =
+                new Vector2(PaperKit.Pad + IdentityFace + 12.0f, PaperCraft.Drop + 8.0f);
+            state.rectTransform.offsetMax =
+                new Vector2(-34.0f, -(IdentityHeight * 0.56f));
+            parts.ProfileState = state;
+
+            var chevron = PaperKit.Chevron(button.transform);
+            chevron.raycastTarget = false;
+
+            parts.ProfileButton = button;
+        }
+
+        private static void BuildSettingsButton(Transform rail, Parts parts)
+        {
+            var button = PaperKit.Chip(rail, "GameSettingsButton", "SETTINGS");
+
+            var rect = (RectTransform)button.transform;
+
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 0.0f);
+            rect.pivot = new Vector2(1.0f, 0.5f);
+            rect.anchoredPosition = new Vector2(
+                -(TarpOverhang + EdgeMargin + IdentityWidth + PaperKit.Gap), 6.0f);
+            rect.sizeDelta = new Vector2(SettingsWidth, PaperKit.ChipHeight + 12.0f);
+
+            parts.GameSettingsButton = button;
+        }
+
+        private static void LiftVersionStamp(Transform canvasRoot, Transform rail)
+        {
+            var stamp = canvasRoot.GetComponentInChildren<VersionStamp>(true);
+            if (stamp == null) return;
+
+            var rect = stamp.transform as RectTransform;
+            if (rect == null) return;
+
+            rect.SetParent(canvasRoot, false);
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 0.0f);
+            rect.pivot = new Vector2(1.0f, 0.0f);
+            rect.anchoredPosition = new Vector2(-EdgeMargin, EdgeMargin * 0.5f);
+            rect.sizeDelta = new Vector2(160.0f, 18.0f);
+
+            var text = stamp.GetComponent<Text>();
+            if (text == null) return;
+
+            text.fontSize = 13;
+            text.color = new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 0.75f);
+            text.alignment = TextAnchor.UpperRight;
+            text.raycastTarget = false;
+
+            var outline = text.GetComponent<GodotOutline>();
+            if (outline == null) outline = text.gameObject.AddComponent<GodotOutline>();
+            outline.enabled = true;
+            outline.Radius = 2.0f;
+            outline.OutlineColour = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.7f);
+        }
+
+
+        private static void BuildBottomRail(Transform canvasRoot, Func<string, Transform> find,
+                                            Transform leftColumn, Transform rightColumn,
+                                            Parts parts)
+        {
+            var railGo = new GameObject("LobbyBottomRail", typeof(RectTransform), typeof(Image));
+            railGo.transform.SetParent(canvasRoot, false);
+
+            var rail = railGo.GetComponent<Image>();
+
+            rail.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+            rail.raycastTarget = true;
+
+            var rect = rail.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.0f);
+            rect.anchorMax = new Vector2(0.5f, 0.0f);
+            rect.pivot = new Vector2(0.5f, 0.0f);
+            rect.anchoredPosition = new Vector2(0.0f, EdgeMargin);
+            rect.sizeDelta = new Vector2(BottomRailWidth, BottomRailHeight);
+
+            var fitter = rail.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            var layout = rail.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.padding = new RectOffset((int)PaperKit.Pad, (int)PaperKit.Pad,
+                                            (int)PaperKit.Pad,
+                                            (int)PaperKit.Pad + PaperCraft.Drop);
+            layout.spacing = PaperKit.Pad;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.LowerCenter;
+
+            BuildFighterColumn(rail.transform, find, parts);
+            BuildActionColumn(rail.transform, find, leftColumn, parts);
+            BuildModeColumn(rail.transform, rightColumn, parts);
+        }
+
+        private static void BuildFighterColumn(Transform rail, Func<string, Transform> find,
+                                               Parts parts)
+        {
+            var column = new GameObject("FighterColumn", typeof(RectTransform));
+            column.transform.SetParent(rail, false);
+
+            var element = column.AddComponent<LayoutElement>();
+            element.minWidth = FighterColumnWidth;
+            element.preferredWidth = FighterColumnWidth;
+            element.flexibleWidth = 0.0f;
+
+            var layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.padding = new RectOffset(0, 0, 0, 0);
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            BuildCharacterRow(column.transform, find, parts);
+            BuildSkillsRow(column.transform, parts);
+        }
+
+        private static void BuildCharacterRow(Transform column, Func<string, Transform> find,
+                                              Parts parts)
+        {
+            var node = find("CharacterButton") as RectTransform;
+            if (node == null) return;
+
+            var fighterRow = node.parent;
+            node.SetParent(column, false);
+            if (fighterRow != null && fighterRow.name == "FighterRow")
+                fighterRow.gameObject.SetActive(false);
+
+            var element = node.GetComponent<LayoutElement>();
+            if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = FighterRowHeight;
+            element.preferredHeight = FighterRowHeight;
+            element.flexibleHeight = 0.0f;
+            element.minWidth = 0.0f;
+            element.preferredWidth = -1.0f;
+            element.flexibleWidth = 1.0f;
+
+            PaperKit.Paperise(node.gameObject, PaperCraft.Surface.Tray);
+
+            var authored = node.GetComponentInChildren<Text>(true);
+            if (authored != null && authored.name == "Label") authored.gameObject.SetActive(false);
+
+            var name = PaperKit.Ink(node, "", PaperKit.Title, TextAnchor.LowerCenter);
+            name.name = "CharacterName";
+            name.raycastTarget = false;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
+            name.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
+            name.rectTransform.anchorMax = Vector2.one;
+            name.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
+            name.rectTransform.offsetMax = new Vector2(-34.0f, -4.0f);
+
+            var loadout = PaperKit.Ink(node, "", PaperKit.Caption, TextAnchor.UpperCenter,
+                                       soft: true);
+            loadout.name = "CharacterLoadout";
+            loadout.raycastTarget = false;
+            loadout.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            loadout.rectTransform.anchorMax = new Vector2(1.0f, 0.44f);
+            loadout.rectTransform.offsetMin = new Vector2(34.0f, PaperCraft.Drop);
+            loadout.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
+
+            PaperKit.Chevron(node);
+
+            node.gameObject.AddComponent<PaperButton>();
+            FocusRing.Attach(node.gameObject, 3.0f);
+
+            parts.CharacterName = name;
+            parts.CharacterLoadout = loadout;
+        }
+
+        private static void BuildSkillsRow(Transform column, Parts parts)
+        {
+            var go = new GameObject("LoadoutButton", typeof(RectTransform), typeof(Image),
+                                    typeof(Button));
+            go.transform.SetParent(column, false);
+
+            PaperSkin.Apply(go, PaperCraft.Surface.Tray);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = SkillsRowHeight;
+            element.preferredHeight = SkillsRowHeight;
+            element.flexibleHeight = 0.0f;
+
+            var button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = go.GetComponent<Image>();
+
+            var label = PaperKit.Ink(go.transform, "", PaperKit.Title, TextAnchor.LowerCenter);
+            label.name = "LoadoutValue";
+            label.raycastTarget = false;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+            label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-34.0f, -4.0f);
+
+            var caption = PaperKit.Ink(go.transform, "Skill loadout", PaperKit.Caption,
+                                       TextAnchor.UpperCenter, soft: true);
+            caption.name = "LoadoutCaption";
+            caption.raycastTarget = false;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.44f);
+            caption.rectTransform.offsetMin = new Vector2(34.0f, PaperCraft.Drop);
+            caption.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
+
+            PaperKit.Chevron(go.transform);
+
+            go.AddComponent<PaperButton>();
+            FocusRing.Attach(go, 3.0f);
+
+            parts.LoadoutButton = button;
+            parts.LoadoutValue = label;
+            parts.LoadoutCaption = caption.gameObject;
+        }
+
+        private static void BuildActionColumn(Transform rail, Func<string, Transform> find,
+                                              Transform leftColumn, Parts parts)
+        {
+            var column = new GameObject("ActionColumn", typeof(RectTransform));
+            column.transform.SetParent(rail, false);
+
+            var element = column.AddComponent<LayoutElement>();
+            element.minWidth = ActionWidth;
+            element.preferredWidth = ActionWidth;
+            element.flexibleWidth = 0.0f;
+
+            var layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            var chip = BuildSettingsChip(column.transform, find, parts);
+            BuildRankedRuleLine(column.transform, parts);
+            BuildActionSlot(column.transform, find, leftColumn, parts);
+
+            BuildSettingsDrawer(column.transform, find, chip, parts);
+        }
+
+        private static Button BuildSettingsChip(Transform column, Func<string, Transform> find,
+                                                Parts parts)
+        {
+            var go = new GameObject("SettingsDrawerToggle", typeof(RectTransform), typeof(Image),
+                                    typeof(Button));
+            go.transform.SetParent(column, false);
+
+            PaperSkin.Apply(go, PaperCraft.Surface.Token);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = SettingsChipHeight;
+            element.preferredHeight = SettingsChipHeight;
+            element.flexibleHeight = 0.0f;
+            element.minWidth = ActionWidth;
+            element.preferredWidth = ActionWidth;
+            element.flexibleWidth = 0.0f;
+
+            var button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = go.GetComponent<Image>();
+
+            var title = PaperKit.Ink(go.transform, "MATCH SETTINGS", PaperKit.Body,
+                                     TextAnchor.LowerCenter);
+            title.name = "Label";
+            title.raycastTarget = false;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
+            title.rectTransform.anchorMin = new Vector2(0.0f, 0.48f);
+            title.rectTransform.anchorMax = Vector2.one;
+            title.rectTransform.offsetMin = new Vector2(44.0f, 0.0f);
+            title.rectTransform.offsetMax = new Vector2(-44.0f, -6.0f);
+
+            var summary = PaperKit.Ink(go.transform, "", PaperKit.Caption, TextAnchor.UpperCenter,
+                                       soft: true);
+            summary.name = "SettingsSummary";
+            summary.raycastTarget = false;
+            summary.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            summary.rectTransform.anchorMax = new Vector2(1.0f, 0.48f);
+            summary.rectTransform.offsetMin = new Vector2(44.0f, PaperCraft.Drop + 2.0f);
+            summary.rectTransform.offsetMax = new Vector2(-44.0f, 0.0f);
+
+            var caret = PaperKit.Ink(go.transform, "▾", PaperKit.Body, TextAnchor.MiddleRight,
+                                     soft: true);
+            caret.name = "DrawerChevron";
+            caret.raycastTarget = false;
+            MenuKit.Stretch(caret.rectTransform, 0.0f);
+            caret.rectTransform.offsetMin = new Vector2(0.0f, PaperCraft.Drop);
+            caret.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
+
+            go.AddComponent<PaperButton>();
+            FocusRing.Attach(go, 3.0f);
+
+            parts.SettingsChip = go;
+            parts.SettingsSummary = summary;
+            parts.SettingsCaret = caret;
+
+            parts.RefreshSummary = () =>
+            {
+                if (summary == null) return;
+
+                summary.text = $"{Sentence(Value(find, "MapValueLabel"))}   ·   " +
+                               $"{Sentence(Value(find, "ModeValueLabel"))}   ·   " +
+                               $"{Sentence(Value(find, "DifficultyValueLabel"))}";
+                summary.fontSize = PaperKit.Caption;
+                MenuKit.Fit(summary, ActionWidth - 88.0f, 12);
+            };
+
+            return button;
+        }
+
+        private static void BuildRankedRuleLine(Transform column, Parts parts)
+        {
+            var go = new GameObject("RankedRuleLine", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(column, false);
+
+            PaperSkin.Apply(go, PaperCraft.Surface.Tray);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = SettingsChipHeight;
+            element.preferredHeight = SettingsChipHeight;
+            element.flexibleHeight = 0.0f;
+            element.minWidth = ActionWidth;
+            element.preferredWidth = ActionWidth;
+            element.flexibleWidth = 0.0f;
+
+            var title = PaperKit.Ink(go.transform, "HERO STRIKE  ·  LADDER RULES", PaperKit.Body,
+                                     TextAnchor.LowerCenter);
+            title.raycastTarget = false;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
+            title.rectTransform.anchorMin = new Vector2(0.0f, 0.48f);
+            title.rectTransform.anchorMax = Vector2.one;
+            title.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
+            title.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -4.0f);
+
+            var note = PaperKit.Ink(go.transform, "The ladder picks the map and the rules.",
+                                    PaperKit.Caption, TextAnchor.UpperCenter, soft: true);
+            note.raycastTarget = false;
+            note.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            note.rectTransform.anchorMax = new Vector2(1.0f, 0.48f);
+            note.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 4.0f);
+            note.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
+
+            go.SetActive(false);
+            parts.RankedRuleLine = go;
+        }
+
+        private static void BuildActionSlot(Transform column, Func<string, Transform> find,
+                                            Transform leftColumn, Parts parts)
+        {
+            var slot = new GameObject("ActionSlot", typeof(RectTransform));
+            slot.transform.SetParent(column, false);
+
+            var element = slot.AddComponent<LayoutElement>();
+            element.minHeight = ActionHeight;
+            element.preferredHeight = ActionHeight;
+            element.flexibleHeight = 0.0f;
+            element.minWidth = ActionWidth;
+            element.preferredWidth = ActionWidth;
+            element.flexibleWidth = 0.0f;
+
+            foreach (string name in new[] { "StartButton", "PrimaryButton" })
+            {
+                var node = Descend(leftColumn, name) as RectTransform;
+                if (node == null) node = find(name) as RectTransform;
+                if (node == null) continue;
+
+                node.SetParent(slot.transform, false);
+
+                var fitter = node.GetComponent<ContentSizeFitter>();
+                if (fitter != null) fitter.enabled = false;
+
+                var pennant = node.GetComponent<ArrowButtonView>();
+                if (pennant != null)
+                {
+                    pennant.enabled = false;
+                    node.localScale = Vector3.one;
+
+                    var group = node.GetComponent<CanvasGroup>();
+                    if (group != null) group.alpha = 1.0f;
+                }
+
+                MenuKit.Place(node, new Vector2(0.5f, 0.5f), Vector2.zero,
+                              new Vector2(ActionWidth, ActionHeight));
+
+                var nodeElement = node.GetComponent<LayoutElement>();
+                if (nodeElement != null) nodeElement.ignoreLayout = true;
+
+                PaperKit.MakeAction(node.gameObject, PaperCraft.Accent.Green);
+
+                var primaryLabel = node.GetComponentInChildren<Text>(true);
+                if (primaryLabel != null)
+                {
+                    primaryLabel.fontSize = PaperKit.Display;
+                    MenuKit.Apply(primaryLabel, PaperKit.FaceFor(primaryLabel.fontSize));
+                    MenuKit.Fit(primaryLabel, ActionWidth - 48.0f, PaperKit.Title);
+                }
+
+                BuildBurst(slot.transform, node);
+            }
+
+            var status = Descend(leftColumn, "StatusLabel");
+            if (status == null) status = find("StatusLabel");
+
+            if (status != null)
+            {
+                status.SetParent(column, false);
+
+                var statusElement = status.GetComponent<LayoutElement>();
+                if (statusElement == null)
+                    statusElement = status.gameObject.AddComponent<LayoutElement>();
+                statusElement.minHeight = 30.0f;
+                statusElement.preferredHeight = 30.0f;
+                statusElement.flexibleHeight = 0.0f;
+                statusElement.minWidth = ActionWidth;
+                statusElement.preferredWidth = ActionWidth;
+                statusElement.flexibleWidth = 0.0f;
+
+                var statusText = status.GetComponent<Text>();
+                if (statusText != null)
+                {
+                    statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
+                    statusText.alignment = TextAnchor.UpperCenter;
+                    statusText.fontSize = PaperKit.Caption;
+                    statusText.color = UiTheme.PaperInkSoft;
+                    statusText.raycastTarget = false;
+                }
+
+                status.gameObject.SetActive(false);
+            }
+
+            if (leftColumn != null) leftColumn.gameObject.SetActive(false);
+        }
+
+        private static void BuildBurst(Transform slot, RectTransform button)
+        {
+            var go = new GameObject("PrimaryBurst", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(slot, false);
+            go.transform.SetAsFirstSibling();
+
+            var image = go.GetComponent<Image>();
+            image.sprite = BrandMarks.Burst();
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
+
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = button != null ? button.anchoredPosition : Vector2.zero;
+            rect.sizeDelta = new Vector2(ActionWidth * BurstReach, ActionHeight * BurstReach);
+        }
+
+
+        private static void BuildModeColumn(Transform rail, Transform rightColumn, Parts parts)
+        {
+            var column = new GameObject("ModeColumn", typeof(RectTransform));
+            column.transform.SetParent(rail, false);
+
+            var element = column.AddComponent<LayoutElement>();
+            element.minWidth = RoomColumnWidth;
+            element.preferredWidth = RoomColumnWidth;
+            element.flexibleWidth = 0.0f;
+
+            var layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            BuildRoomSign(column.transform, parts);
+            BuildChipRow(column.transform, parts);
+            BuildTierPlate(column.transform, parts);
+            BuildRoomDrawer(column.transform, rightColumn, parts);
+
+            parts.ModeColumn = column;
+            parts.QueueDock = column.transform;
+        }
+
+        private static void BuildRoomSign(Transform column, Parts parts)
+        {
+            var go = new GameObject("RoomCodeButton", typeof(RectTransform), typeof(Image),
+                                    typeof(Button));
+            go.transform.SetParent(column, false);
+
+            PaperSkin.Apply(go, PaperCraft.Surface.Sign);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = RoomSignHeight;
+            element.preferredHeight = RoomSignHeight;
+            element.flexibleHeight = 0.0f;
+
+            var button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = go.GetComponent<Image>();
+
+            var caption = MenuKit.Label(go.transform, "ROOM CODE", PaperKit.Caption,
+                                        UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                        Vector2.zero, TextAnchor.UpperLeft);
+            caption.name = "RoomCodeCaption";
+            caption.raycastTarget = false;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.72f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            caption.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
+            caption.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
+
+            var hint = MenuKit.Label(go.transform, "tap to copy", PaperKit.Caption,
+                                     UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                     Vector2.zero, TextAnchor.UpperRight);
+            hint.name = "RoomCodeHint";
+            hint.raycastTarget = false;
+            hint.rectTransform.anchorMin = new Vector2(0.0f, 0.72f);
+            hint.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            hint.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
+            hint.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
+
+            var label = MenuKit.Label(go.transform, "", PaperKit.Display, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleCenter);
+            label.name = "Label";
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+            label.raycastTarget = false;
+            label.alignment = TextAnchor.MiddleCenter;
+            label.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            label.rectTransform.anchorMax = new Vector2(1.0f, 0.72f);
+            label.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop);
+            label.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
+
+            go.AddComponent<PaperButton>();
+            FocusRing.Attach(go, 3.0f);
+
+            parts.CodeButton = button;
+            parts.CodeValue = label;
+            parts.CodeHint = hint;
+            parts.CodeCaption = caption.gameObject;
+
+            button.onClick.AddListener(() => parts.CopyCode());
+        }
+
+        private static void BuildChipRow(Transform column, Parts parts)
+        {
+            var row = new GameObject("RoomChips", typeof(RectTransform));
+            row.transform.SetParent(column, false);
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = PaperKit.ChipHeight;
+            element.preferredHeight = PaperKit.ChipHeight;
+            element.flexibleHeight = 0.0f;
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            parts.JoinChip = PaperKit.Chip(row.transform, "JoinChip", "JOIN A GAME");
+            parts.ChatChip = PaperKit.Chip(row.transform, "ChatChip", "CHAT");
+
+            parts.ChipRow = row;
+        }
+
+        private static void BuildTierPlate(Transform column, Parts parts)
+        {
+            var go = PaperKit.Sheet(column, "TierPlate");
+            go.raycastTarget = false;
+
+            var element = go.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = RoomSignHeight + PaperKit.ChipHeight + PaperKit.Gap + 40.0f;
+            element.preferredHeight = element.minHeight;
+            element.flexibleHeight = 0.0f;
+
+            var caption = PaperKit.Ink(go.transform, "YOUR TIER", PaperKit.Caption,
+                                       TextAnchor.UpperCenter, soft: true);
+            caption.raycastTarget = false;
+            MenuKit.Stretch(caption.rectTransform, 0.0f);
+            caption.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
+            caption.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -PaperKit.Pad);
+
+            var tier = PaperKit.Marker(go.transform, "UNRANKED", PaperKit.Display,
+                                       TextAnchor.MiddleCenter);
+            tier.name = "TierValue";
+            tier.raycastTarget = false;
+            tier.rectTransform.anchorMin = new Vector2(0.0f, 0.42f);
+            tier.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            tier.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
+            tier.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -(PaperKit.Pad + 16.0f));
+
+            var note = PaperKit.Ink(go.transform, "", PaperKit.Caption, TextAnchor.LowerCenter,
+                                    soft: true);
+            note.name = "TierNote";
+            note.raycastTarget = false;
+            note.horizontalOverflow = HorizontalWrapMode.Wrap;
+            note.verticalOverflow = VerticalWrapMode.Truncate;
+            note.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            note.rectTransform.anchorMax = new Vector2(1.0f, 0.42f);
+            note.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop + 8.0f);
+            note.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
+
+            go.gameObject.SetActive(false);
+
+            parts.TierPlate = go.gameObject;
+            parts.TierValue = tier;
+            parts.TierNote = note;
+        }
+
+
+        private static GameObject Drawer(Transform column, string name, float width, float height)
+        {
+            var sheet = PaperKit.Sheet(column, name);
+            sheet.raycastTarget = true;
+
+            var rect = sheet.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 1.0f);
+            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 0.0f);
+            rect.anchoredPosition = new Vector2(0.0f, PaperKit.Gap);
+            rect.sizeDelta = new Vector2(width, height);
+
+            var element = sheet.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+
+            sheet.gameObject.SetActive(false);
+            return sheet.gameObject;
+        }
+
+        private static void BuildSettingsDrawer(Transform column, Func<string, Transform> find,
+                                                Button chip, Parts parts)
+        {
+            var body = Drawer(column, "SettingsBody", SettingsDrawerWidth, SettingsBodyHeight);
+
+            var layout = body.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset((int)PaperKit.Pad, (int)PaperKit.Pad,
+                                            (int)PaperKit.Pad,
+                                            (int)PaperKit.Pad + PaperCraft.Drop);
+            layout.spacing = 6.0f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var config = find("ConfigPanel");
+
+            var rows = Descend(config, "Rows");
+            parts.AdvancedRulesParent=body.transform;
+            if (rows != null)
+            {
+                rows.SetParent(body.transform, false);
+                rows.gameObject.SetActive(true);
+
+                float rowsHeight = (SettingsRowHeight * 3.0f) + 16.0f;
+
+                var rowsElement = rows.GetComponent<LayoutElement>();
+                if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
+                rowsElement.minHeight = rowsHeight;
+                rowsElement.preferredHeight = rowsHeight;
+                rowsElement.flexibleHeight = 0.0f;
+
+                var rowsLayout = rows.GetComponent<HorizontalOrVerticalLayoutGroup>();
+                if (rowsLayout != null) rowsLayout.spacing = 8.0f;
+
+                Narrow(rows as RectTransform, SettingsDrawerWidth - (PaperKit.Pad * 2.0f));
+
+                DressSelectorRow(rows, "MapRow", "MapCaption", "MAP", "MapSelector",
+                                 "MapPrevButton", "MapValueLabel", "MapNextButton");
+                DressSelectorRow(rows, "ModeRow", "ModeCaption", "MODE", "ModeSelector",
+                                 "ModePrevButton", "ModeValueLabel", "ModeNextButton");
+                DressSelectorRow(rows, "DifficultyRow", "DifficultyCaption", "BOTS",
+                                 "DifficultySelector", "DifficultyPrevButton",
+                                 "DifficultyValueLabel", "DifficultyNextButton");
+
+            }
+
+            var detail = find("DetailBox");
+            if (detail != null)
+            {
+                detail.SetParent(body.transform, false);
+
+                var detailElement = detail.GetComponent<LayoutElement>();
+                if (detailElement == null)
+                    detailElement = detail.gameObject.AddComponent<LayoutElement>();
+                detailElement.minHeight = SettingsDetailHeight;
+                detailElement.preferredHeight = SettingsDetailHeight;
+                detailElement.flexibleHeight = 0.0f;
+
+                PaperKit.Paperise(detail.gameObject, PaperCraft.Surface.Tray);
+
+                var detailLabel = Descend(detail, "DetailLabel")?.GetComponent<Text>();
+                if (detailLabel != null)
+                {
+                    var outline = detailLabel.GetComponent<GodotOutline>();
+                    if (outline != null) outline.enabled = false;
+
+                    detailLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+                    detailLabel.alignment = TextAnchor.UpperLeft;
+                    detailLabel.color = UiTheme.PaperInkSoft;
+                    detailLabel.fontSize = PaperKit.Caption;
+                    detailLabel.raycastTarget = false;
+
+                    var lrect = detailLabel.rectTransform;
+                    lrect.anchorMin = Vector2.zero;
+                    lrect.anchorMax = Vector2.one;
+                    lrect.offsetMin = new Vector2(14.0f, 8.0f);
+                    lrect.offsetMax = new Vector2(-14.0f, -8.0f);
+                }
+            }
+
+            if (config != null) config.gameObject.SetActive(false);
+
+            parts.RefreshSummary?.Invoke();
+
+            bool open = false;
+            chip.onClick.AddListener(() =>
+            {
+                open = !open;
+                body.SetActive(open);
+                if (parts.SettingsCaret != null) parts.SettingsCaret.text = open ? "▴" : "▾";
+                if (!open) parts.RefreshSummary?.Invoke();
+
+                Canvas.ForceUpdateCanvases();
+            });
+
+            parts.SettingsBody = body;
+        }
+
+
+
+
+
+        private static void DressSelectorRow(Transform rows, string row, string caption,
+                                             string word, string selector, string prev,
+                                             string value, string next)
+        {
+            var rowNode = Descend(rows, row) as RectTransform;
+            if (rowNode == null) return;
+
+            var rowElement = rowNode.GetComponent<LayoutElement>();
+            if (rowElement == null) rowElement = rowNode.gameObject.AddComponent<LayoutElement>();
+            rowElement.minHeight = SettingsRowHeight;
+            rowElement.preferredHeight = SettingsRowHeight;
+            rowElement.flexibleHeight = 0.0f;
+
+            var rowLayout = rowNode.GetComponent<HorizontalLayoutGroup>();
+            if (rowLayout != null)
+            {
+                rowLayout.padding = new RectOffset(0, 0, 0, 0);
+                rowLayout.spacing = 14.0f;
+                rowLayout.childControlWidth = true;
+                rowLayout.childControlHeight = true;
+                rowLayout.childForceExpandWidth = false;
+                rowLayout.childForceExpandHeight = true;
+                rowLayout.childAlignment = TextAnchor.MiddleLeft;
+            }
+
+            var captionNode = Descend(rowNode, caption);
+            var captionText = captionNode == null ? null : captionNode.GetComponent<Text>();
+
+            if (captionText != null)
+            {
+                captionText.text = word;
+                captionText.fontSize = PaperKit.Caption;
+                captionText.color = UiTheme.PaperInkSoft;
+                captionText.alignment = TextAnchor.MiddleLeft;
+                captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                captionText.verticalOverflow = VerticalWrapMode.Overflow;
+                captionText.raycastTarget = false;
+
+                var captionOutline = captionNode.GetComponent<GodotOutline>();
+                if (captionOutline != null) captionOutline.enabled = false;
+
+                var element = captionNode.GetComponent<LayoutElement>();
+                if (element == null) element = captionNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = SettingsCaptionWidth;
+                element.preferredWidth = SettingsCaptionWidth;
+                element.flexibleWidth = 0.0f;
+
+                MenuKit.Fit(captionText, SettingsCaptionWidth - 8.0f);
+            }
+
+            var selectorNode = Descend(rowNode, selector) as RectTransform;
+            if (selectorNode != null)
+            {
+                PaperSkin.Apply(selectorNode.gameObject, PaperCraft.Surface.Tray);
+
+                var plate = selectorNode.GetComponent<Image>();
+                if (plate != null)
+                {
+                    plate.type = Image.Type.Sliced;
+                    plate.color = Color.white;
+                    plate.raycastTarget = false;
+                }
+
+                var element = selectorNode.GetComponent<LayoutElement>();
+                if (element == null)
+                    element = selectorNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+                element.minHeight = SettingsRowHeight - 8.0f;
+                element.preferredHeight = SettingsRowHeight - 8.0f;
+
+                var inner = Descend(selectorNode, "Inner") as RectTransform;
+                if (inner != null)
+                {
+                    inner.anchorMin = Vector2.zero;
+                    inner.anchorMax = Vector2.one;
+                    inner.offsetMin = new Vector2(10.0f, 8.0f);
+                    inner.offsetMax = new Vector2(-10.0f, -8.0f);
+
+                    var innerLayout = inner.GetComponent<HorizontalLayoutGroup>();
+                    if (innerLayout != null)
+                    {
+                        innerLayout.padding = new RectOffset(0, 0, 0, 0);
+                        innerLayout.spacing = 6.0f;
+                        innerLayout.childControlWidth = true;
+                        innerLayout.childControlHeight = true;
+                        innerLayout.childForceExpandWidth = false;
+                        innerLayout.childForceExpandHeight = true;
+                        innerLayout.childAlignment = TextAnchor.MiddleCenter;
+                    }
+                }
+            }
+
+            Arrow(rowNode, prev);
+            Arrow(rowNode, next);
+
+            var valueNode = Descend(rowNode, value);
+            var valueText = valueNode == null ? null : valueNode.GetComponent<Text>();
+
+            if (valueText != null)
+            {
+                valueText.fontSize = PaperKit.Body;
+                valueText.color = UiTheme.PaperInk;
+                valueText.alignment = TextAnchor.MiddleCenter;
+                valueText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                valueText.verticalOverflow = VerticalWrapMode.Overflow;
+                valueText.raycastTarget = false;
+
+                var valueOutline = valueNode.GetComponent<GodotOutline>();
+                if (valueOutline != null) valueOutline.enabled = false;
+
+                var element = valueNode.GetComponent<LayoutElement>();
+                if (element == null) element = valueNode.gameObject.AddComponent<LayoutElement>();
+
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+            }
+        }
+
+        private static void Arrow(Transform row, string name)
+        {
+            var node = Descend(row, name);
+            if (node == null) return;
+
+            var element = node.GetComponent<LayoutElement>();
+            if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+
+            element.minWidth = SettingsArrowSize;
+            element.preferredWidth = SettingsArrowSize;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = SettingsArrowSize;
+            element.preferredHeight = SettingsArrowSize;
+            element.flexibleHeight = 0.0f;
+
+            var image = node.GetComponent<Image>();
+            if (image != null) image.preserveAspect = true;
+        }
+
+        private static void BuildRoomDrawer(Transform column, Transform rightColumn, Parts parts)
+        {
+            if (rightColumn is not RectTransform details) return;
+
+            details.SetParent(column, false);
+
+            details.anchorMin = new Vector2(0.5f, 1.0f);
+            details.anchorMax = new Vector2(0.5f, 1.0f);
+            details.pivot = new Vector2(0.5f, 0.0f);
+            details.anchoredPosition = new Vector2(0.0f, PaperKit.Gap);
+            details.sizeDelta = new Vector2(RoomColumnWidth, details.sizeDelta.y);
+            details.localScale = Vector3.one;
+
+            var element = details.GetComponent<LayoutElement>();
+            if (element == null) element = details.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+
+            var fitter = details.GetComponent<ContentSizeFitter>();
+            if (fitter == null) fitter = details.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            Narrow(details, RoomColumnWidth);
+            PaperDress.Screen(details);
+            PaperKit.Paperise(details.gameObject, PaperCraft.Surface.Sheet);
+
+            details.gameObject.SetActive(false);
+            parts.LobbyDetailsRect = details;
+            parts.LobbyDrawer = details.gameObject;
+        }
+
+
+        internal static string Sentence(string caps)
+        {
+            if (string.IsNullOrEmpty(caps)) return caps;
+
+            var sb = new System.Text.StringBuilder(caps.Length);
+            bool boundary = true;
+
+            foreach (char c in caps)
+            {
+                if (c == ' ' || c == '·' || c == '-')
+                {
+                    sb.Append(c);
+                    boundary = true;
+                    continue;
+                }
+
+                sb.Append(boundary ? char.ToUpperInvariant(c) : char.ToLowerInvariant(c));
+                boundary = false;
+            }
+
+            return sb.ToString();
+        }
+
+        private static string Value(Func<string, Transform> find, string name)
+        {
+            var node = find(name);
+            var label = node != null ? node.GetComponent<Text>() : null;
+            if (label == null && node != null) label = node.GetComponentInChildren<Text>();
+            return label != null ? label.text.Trim() : "?";
+        }
+
+        private static void HideBanner(Func<string, Transform> find)
+        {
+            var banner = find("Banner");
+            if (banner == null) return;
+
+            banner.gameObject.SetActive(false);
+        }
+
+        private static void SoftenScrim(Transform root, Func<string, Transform> find)
+        {
+            var scrim = find("Scrim");
+            if (scrim == null) return;
+
+            var image = scrim.GetComponent<Image>();
+            if (image == null) return;
+
+            Color authored = image.color;
+            image.color = new Color(authored.r, authored.g, authored.b, authored.a * 0.12f);
+            image.raycastTarget = false;
+
+            var band = new Color(0.11f, 0.06f, 0.03f, 1.0f);
+
+            Band(scrim, "ScrimTop", band, TopBandFraction, TopBandAlpha, fromTop: true);
+            Band(scrim, "ScrimBottom", band, BottomBandFraction, BottomBandAlpha, fromTop: false);
+        }
+
+        private static void Band(Transform sibling, string name, Color tint, float fraction,
+                                 float alpha, bool fromTop)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(sibling.parent, false);
+            go.transform.SetSiblingIndex(sibling.GetSiblingIndex() + 1);
+
+            var image = go.AddComponent<Image>();
+            image.sprite = Ramp(fromTop);
+            image.type = Image.Type.Simple;
+            image.color = new Color(tint.r, tint.g, tint.b, Mathf.Clamp01(alpha));
+            image.raycastTarget = false;
+
+            var rt = image.rectTransform;
+
+            if (fromTop)
+            {
+                rt.anchorMin = new Vector2(0.0f, 1.0f - fraction);
+                rt.anchorMax = new Vector2(1.0f, 1.0f);
+            }
+            else
+            {
+                rt.anchorMin = new Vector2(0.0f, 0.0f);
+                rt.anchorMax = new Vector2(1.0f, fraction);
+            }
+
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        private static Sprite _rampDown;
+        private static Sprite _rampUp;
+
+        private static Sprite Ramp(bool fromTop)
+        {
+            ref Sprite cached = ref fromTop ? ref _rampDown : ref _rampUp;
+            if (cached != null) return cached;
+
+            const int steps = 64;
+
+            var tex = new Texture2D(1, steps, TextureFormat.RGBA32, false)
+            {
+                name = fromTop ? "ScrimRampDown" : "ScrimRampUp",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+            };
+
+            for (int y = 0; y < steps; y++)
+            {
+                float v = y / (float)(steps - 1);
+                float toEdge = fromTop ? v : 1.0f - v;
+
+                float alpha = toEdge * toEdge;
+                tex.SetPixel(0, y, new Color(1.0f, 1.0f, 1.0f, alpha));
+            }
+
+            tex.Apply();
+
+            cached = Sprite.Create(tex, new Rect(0, 0, 1, steps), new Vector2(0.5f, 0.5f), 100.0f);
+            cached.name = tex.name;
+
+            return cached;
+        }
+
+        private static Transform Descend(Transform root, string name)
+        {
+            if (root == null) return null;
+            if (root.name == name) return root;
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                var hit = Descend(root.GetChild(i), name);
+                if (hit != null) return hit;
+            }
+
+            return null;
+        }
+
+        private static void Narrow(RectTransform column, float width)
+        {
+            if (column == null) return;
+
+            var group = column.GetComponent<HorizontalOrVerticalLayoutGroup>();
+
+            if (group != null)
+            {
+                group.childControlWidth = true;
+                group.childForceExpandWidth = true;
+            }
+
+            for (int i = 0; i < column.childCount; i++)
+            {
+                var child = column.GetChild(i) as RectTransform;
+                if (child == null) continue;
+
+                var element = child.GetComponent<LayoutElement>();
+
+                if (element != null)
+                {
+                    if (element.minWidth > 0.0f) element.minWidth = width;
+                    if (element.preferredWidth > 0.0f) element.preferredWidth = width;
+                }
+
+                var fitter = child.GetComponent<ContentSizeFitter>();
+                if (fitter != null) fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+                child.sizeDelta = new Vector2(width, child.sizeDelta.y);
+            }
+        }
+
+        public static void ReportColumns(Func<string, Transform> find)
+        {
+            if (find == null) return;
+
+            var root = find("Scrim")?.parent;
+            if (root == null) return;
+
+            foreach (string name in new[] { "LobbyTopRail", "LobbyBottomRail", "ActionSlot",
+                                            "ModeColumn", "FighterColumn" })
+            {
+                var node = Descend(root, name) as RectTransform;
+                if (node == null) continue;
+
+                var corners = new Vector3[4];
+                node.GetWorldCorners(corners);
+
+                Debug.Log($"[LobbyChrome] {name} rect {node.rect.width:F0}x{node.rect.height:F0} " +
+                          $"screen x {corners[0].x:F0}..{corners[2].x:F0} " +
+                          $"y {corners[0].y:F0}..{corners[2].y:F0}");
+            }
+        }
+
+
+        public sealed class Parts
+        {
+            public Transform TopRail;
+
+            public Image ProfileFace;
+
+            public Text ProfileState;
+
+            public readonly Button[] Tabs = new Button[3];
+
+            public Button Practice;
+            public Button Multiplayer;
+
+            public LobbyMode Mode { get; private set; } = LobbyMode.Custom;
+
+            public GameObject LobbyDrawer;
+            public RectTransform LobbyDetailsRect;
+
+            public GameObject ModeColumn;
+            public GameObject ChipRow;
+            public GameObject TierPlate;
+            public Text TierValue;
+            public Text TierNote;
+
+            public Button JoinChip;
+            public Button ChatChip;
+
+            public GameObject SettingsChip;
+            public GameObject RankedRuleLine;
+            public GameObject SettingsBody;
+
+            public Text CharacterName;
+
+            public Text CharacterLoadout;
+
+            public Button LoadoutButton;
+            public Text LoadoutValue;
+            public GameObject LoadoutCaption;
+
+            public Button CodeButton;
+            public Text CodeValue;
+            public Text CodeHint;
+            public GameObject CodeCaption;
+
+            public Text SettingsSummary;
+            public Text SettingsCaret;
+
+            public Transform SettingsRows;
+            public Transform AdvancedRulesParent;
+
+            public Transform QueueDock;
+
+            public Button ProfileButton;
+            public Text ProfileValue;
+
+            public Button GameSettingsButton;
+
+            public Action NameCommitted;
+
+            public Action RefreshSummary;
+
+            private string _code = "";
+            private float _copiedUntil;
+
+            public void SetCode(string code)
+            {
+                _code = code ?? "";
+                bool has = HasCode && Mode == LobbyMode.Custom;
+
+                if (CodeButton != null) CodeButton.gameObject.SetActive(has);
+                if (!has || CodeValue == null) return;
+
+                if (Time.unscaledTime < _copiedUntil) return;
+
+                CodeValue.text = _code;
+
+                MenuKit.Fit(CodeValue, RoomColumnWidth - (PaperKit.Pad * 2.0f));
+
+                if (CodeHint != null) CodeHint.text = "tap to copy";
+            }
+
+            public void CopyCode()
+            {
+                if (string.IsNullOrWhiteSpace(_code)) return;
+
+                GUIUtility.systemCopyBuffer = _code;
+                _copiedUntil = Time.unscaledTime + 1.6f;
+
+                if (CodeHint != null) CodeHint.text = "copied";
+                MenuSfx.Click();
+            }
+
+            public void SetSkills(bool shown, string summary)
+            {
+                if (LoadoutButton != null) LoadoutButton.gameObject.SetActive(shown);
+
+                if (!shown || LoadoutValue == null) return;
+
+                string trimmed = summary ?? "";
+                int split = trimmed.IndexOf('·');
+                if (split >= 0 && split + 1 < trimmed.Length)
+                    trimmed = trimmed.Substring(split + 1).Trim();
+
+                LoadoutValue.text = Sentence(trimmed);
+                LoadoutValue.fontSize = PaperKit.Title;
+                MenuKit.Fit(LoadoutValue, FighterColumnWidth - 68.0f);
+            }
+
+            public void SetLoadout(string character, string loadout)
+            {
+                if (CharacterName != null)
+                {
+                    CharacterName.text = character;
+                    CharacterName.fontSize = PaperKit.Title;
+                    MenuKit.Fit(CharacterName, FighterColumnWidth - 60.0f);
+                }
+
+                if (CharacterLoadout != null)
+                {
+                    CharacterLoadout.text = string.IsNullOrWhiteSpace(loadout)
+                        ? "Fighter"
+                        : "Fighter  ·  " + Sentence(loadout);
+                    CharacterLoadout.fontSize = PaperKit.Caption;
+                    MenuKit.Fit(CharacterLoadout, FighterColumnWidth - 60.0f, 12);
+                }
+            }
+
+            public void SetMode(LobbyMode mode)
+            {
+                Mode = mode;
+
+                for (int i = 0; i < Tabs.Length; i++) Paint(Tabs[i], i == (int)mode);
+
+                bool custom = mode == LobbyMode.Custom;
+                bool ranked = mode == LobbyMode.Ranked;
+
+                if (SettingsChip != null) SettingsChip.SetActive(!ranked);
+                if (RankedRuleLine != null) RankedRuleLine.SetActive(ranked);
+                if (SettingsBody != null && ranked) SettingsBody.SetActive(false);
+
+                if (ChipRow != null) ChipRow.SetActive(custom);
+                if (TierPlate != null) TierPlate.SetActive(ranked);
+
+                if (ModeColumn != null) ModeColumn.SetActive(mode != LobbyMode.Practice);
+                if (CodeButton != null) CodeButton.gameObject.SetActive(custom && HasCode);
+                if (LobbyDrawer != null && !custom) LobbyDrawer.SetActive(false);
+
+                if (SettingsCaret != null) SettingsCaret.text = "▾";
+            }
+
+            private bool HasCode => !string.IsNullOrWhiteSpace(_code);
+
+            public void SetActive(bool lobby)
+            {
+                if (!lobby) SetMode(LobbyMode.Practice);
+                else if (Mode == LobbyMode.Practice) SetMode(LobbyMode.Custom);
+                else SetMode(Mode);
+            }
+
+            public void SetTier(string tier, string note)
+            {
+                if (TierValue != null)
+                {
+                    TierValue.text = tier ?? "UNRANKED";
+                    MenuKit.Fit(TierValue, RoomColumnWidth - (PaperKit.Pad * 2.0f));
+                }
+
+                if (TierNote != null) TierNote.text = note ?? "";
+            }
+
+            private static void Paint(Button button, bool active)
+            {
+                if (button == null) return;
+
+                var skin = button.GetComponent<PaperSkin>();
+                if (skin != null)
+                {
+                    skin.Surface = active ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
+                    skin.Rebuild();
+                }
+
+                var label = button.transform.Find("Label")?.GetComponent<Text>();
+                if (label == null) return;
+
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+                label.color = active ? UiTheme.Cream : UiTheme.PaperInk;
+            }
+        }
+    }
+}

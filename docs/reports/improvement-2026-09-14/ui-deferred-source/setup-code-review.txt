@@ -1,0 +1,2260 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using TumbangPreso.Net;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class ConvertedMatchSetup : ConvertedScreen
+    {
+        private int _map;
+        private int _difficulty = 1;
+
+        protected override string CancelTarget => SceneFlow.MainMenu;
+
+        protected override bool Cancel()
+        {
+            if (_hub != null && _hub.IsOpen) return true;
+
+            if (_joinPanel != null && _joinPanel.IsOpen)
+            {
+                _joinPanel.Close();
+                return true;
+            }
+
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked) net.Stop();
+
+            return base.Cancel();
+        }
+
+        private const float CycleGuard = 0.12f;
+        private float _lastCycle = -1.0f;
+
+        private MapPreviewSurface _preview;
+        private Transform _characterPanel;
+        private Button _spectate;
+        private bool _localReady;
+        private int _readyCount;
+        private int _readyExpected;
+
+        private GameObject _addressRow;
+        private Text _addressText;
+        private Button _addressCopyBtn;
+        private Text _addressCopyBtnText;
+
+        private GameObject _codeRow;
+        private Text _codeText;
+        private Button _codeCopyBtn;
+        private Text _codeCopyBtnText;
+
+        private LobbyJoinPanel _joinPanel;
+
+        private QueueCard _queueCard;
+
+        private GameObject _lobbyEntryRow;
+        private Button _joinButton;
+        private Button _onlineButton;
+
+        private bool _switchingHost;
+
+        private LobbyCast _cast;
+        private LobbyNameplates _nameplates;
+
+        private LobbyChrome.Parts _chrome;
+
+        private LobbyChat _chat;
+
+        private PlayerHub _hub;
+
+        private readonly int[] _castPicks = new int[Balance.PlayerCount];
+
+        private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
+
+        private const string YouMark = "YOU";
+
+        private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD", "NONE" };
+
+        private static readonly string[] DifficultyDetails =
+        {
+            "EASY Slower reactions and looser angles. Good for learning the throw arc.",
+            "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the can, and blocks about 38% of what you throw.",
+            "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
+            "NONE No filler bots. Practice starts alone; multiplayer waits until all four human seats are filled."
+        };
+
+        private static int DifficultyOptionCount => Difficulties.Length;
+
+        private static string FormatLabel(int index)
+            => CustomGameRules.FormatName(FormatAt(index));
+
+        private static string FormatDetail(int index)
+            => CustomGameRules.FormatName(FormatAt(index)) + " " + CustomGameRules.FormatBlurb(FormatAt(index));
+
+        private static MatchFormat FormatAt(int index)
+        {
+            if (index <= 0) return MatchFormat.Standard;
+            if (index >= FormatOptionCount - 1) return MatchFormat.Mirror;
+            return MatchFormat.LastTsinelas;
+        }
+
+        private const int FormatOptionCount = 3;
+
+        private int _format;
+
+        private static bool IsLobby => SceneFlow.Networked;
+
+        private static bool IsLive
+        {
+            get
+            {
+                var net = NetSession.Instance;
+                return net != null && net.IsNetworked;
+            }
+        }
+
+        protected override void Wire()
+        {
+            for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
+
+            GameServices.Music?.Play("menu", GameServices.MenuTrack);
+
+            var net = IsLobby ? NetSession.Ensure() : NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            if (net != null)
+            {
+                net.Lobby.JoinCodeChanged += HandleJoinCodeChanged;
+
+                net.SeatingChanged += HandleSeatingChanged;
+
+                NetSession.ClientDisconnected += HandleClientDisconnected;
+
+                if (NetAuthority.IsHost && net.Lobby.MatchInProgress)
+                {
+                    net.Lobby.ReturnToLobby();
+                    MatchRpc.Instance?.BroadcastLobbyPicks();
+                }
+            }
+
+            _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
+            _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
+
+            if ((!SceneFlow.Networked || NetAuthority.IsHost) && !SceneFlow.RulesPinned)
+            {
+                SceneFlow.SetSelectedRules(CustomGameRules.Parse(
+                    Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));
+            }
+
+            _format = Mathf.Clamp((int)SceneFlow.SelectedFormat, 0, FormatOptionCount - 1);
+
+            var previewNode = Node("MapPreview");
+            if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
+
+            BuildCast(previewNode);
+
+            _characterPanel = Node("CharacterSelectPanel");
+            EnsureCharacterOverlayIsolation();
+
+            OnClick("MapPrevButton", () => OnMapCycle(-1));
+            OnClick("MapNextButton", () => OnMapCycle(1));
+
+            OnClick("ModePrevButton", () => OnModeCycle(-1));
+            OnClick("ModeNextButton", () => OnModeCycle(1));
+
+            OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
+            OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
+
+            OnClick("CharacterButton", OpenCharacterSelect);
+            OnClick("PrimaryButton", OnPrimaryPressed);
+            OnClick("StartButton", OnStartPressed);
+            OnClick("BackButton", () =>
+            {
+                if (_joinPanel != null && _joinPanel.IsOpen)
+                {
+                    _joinPanel.Close();
+                    return;
+                }
+
+                if (net != null && net.IsNetworked) net.Stop();
+
+                SceneFlow.Go(SceneFlow.MainMenu);
+            });
+
+            var modeRow = Node("ModeRow");
+            if (modeRow != null) modeRow.gameObject.SetActive(true);
+
+            BuildRightPanelNetwork();
+            BuildLobbyEntryControls(net);
+            WireSeats();
+
+            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectMode);
+
+            InstallQueueCard();
+            BuildSettingsDropdowns();
+
+            PaperiseWhatTheChromeLeaves();
+
+            var primary = Node("StartButton")?.GetComponent<Selectable>()
+                          ?? Node("PrimaryButton")?.GetComponent<Selectable>();
+            if (primary != null) KeyboardCursor.Install(gameObject, primary);
+
+            if (_chrome != null) _chrome.NameCommitted = PublishName;
+
+            InstallPlayerHub();
+
+            BuildChat();
+
+            RefreshQueueVisibility(_chrome != null ? _chrome.Mode
+                                   : (IsLobby ? LobbyMode.Custom : LobbyMode.Practice));
+
+            LobbyChrome.ReportColumns(Node);
+
+            MatchRpc.OnMapChanged += HandleMapSynced;
+            MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
+            MatchRpc.OnFormatChanged += HandleFormatSynced;
+            MatchRpc.OnRulesChanged += HandleRulesSynced;
+            MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
+            MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
+            MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
+            MatchRpc.OnModeChanged += HandleModeSynced;
+            MatchRpc.OnMatchStarted += HandleMatchStarted;
+
+            var s = Settings.SettingsStore.Current;
+            var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+            if (s.CharacterPick < 0 || s.CharacterPick >= modePeople.Count) s.CharacterPick = 0;
+            if (s.CanPick < 0 || s.CanPick >= Roster.Cans.Count) s.CanPick = 0;
+            if (s.SlipperPick < 0 || s.SlipperPick >= Roster.Slippers.Count) s.SlipperPick = 0;
+            Settings.SettingsStore.Save();
+
+            if (isNetworked)
+            {
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+            }
+
+            if (isNetworked && NetAuthority.IsHost)
+            {
+                SetStatus("You are now the lobby leader - you pick the map, the mode, and when to start.");
+            }
+
+            Refresh();
+
+            RejoinRunningMatch();
+
+            if (PlaySelectionScreen.RequestedLobbyMode.HasValue)
+            {
+                var requested = PlaySelectionScreen.RequestedLobbyMode.Value;
+                PlaySelectionScreen.RequestedLobbyMode = null;
+                SelectMode(requested);
+            }
+            AutoHost();
+        }
+
+        private async void AutoHost()
+        {
+            if (!IsLobby) return;
+            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked) return;
+
+            var net = NetSession.Instance;
+            if (net == null || net.IsNetworked) return;
+
+            SetStatus("Opening your lobby...");
+
+            int port = NetBootstrap.LobbyPort > 0 ? NetBootstrap.LobbyPort : LobbySession.DefaultPort;
+
+            bool ok = await net.StartHostAsync(port);
+
+            if (this == null) return;
+
+            if (ok)
+            {
+                SetStatus("Lobby open. Share the code, or press JOIN.");
+            }
+            else
+            {
+                string detail = string.IsNullOrWhiteSpace(net.Status) ? "" : $"  ({net.Status})";
+                SetAlert($"Could not open a lobby on port {port}. " +
+                          $"Another copy of the game may already have it. Press JOIN to enter " +
+                          $"somebody else's instead.{detail}");
+
+                OpenJoinPanel();
+            }
+
+            Refresh();
+
+            DriveAutomation();
+            DriveFriendJoin();
+        }
+
+        private async void DriveFriendJoin()
+        {
+            string code = SceneFlow.PendingJoinCode;
+            if (string.IsNullOrEmpty(code)) return;
+
+            SceneFlow.PendingJoinCode = "";
+
+            if (_joinPanel == null) return;
+
+            _joinPanel.Open();
+            bool joined = await _joinPanel.AutomationJoin(code);
+
+            if (this == null) return;
+
+            if (!joined) Debug.Log($"[Social] could not join {code} from the friends rail.");
+        }
+
+        private async void DriveAutomation()
+        {
+            if (string.IsNullOrEmpty(NetBootstrap.LobbyJoin) &&
+                string.IsNullOrEmpty(NetBootstrap.LobbyChat)) return;
+
+            if (!string.IsNullOrEmpty(NetBootstrap.LobbyJoin) && _joinPanel != null)
+            {
+                Debug.Log($"[LobbyAuto] joining {NetBootstrap.LobbyJoin}");
+
+                _joinPanel.Open();
+                bool joined = await _joinPanel.AutomationJoin(NetBootstrap.LobbyJoin);
+
+                if (this == null) return;
+
+                Debug.Log($"[LobbyAuto] join result {joined}");
+            }
+
+            if (string.IsNullOrEmpty(NetBootstrap.LobbyChat)) return;
+
+            await System.Threading.Tasks.Task.Delay(4000);
+
+            if (this == null) return;
+
+            bool sent = MatchRpc.Instance != null &&
+                        MatchRpc.Instance.SendChatServerRpc(NetBootstrap.LobbyChat);
+
+            Debug.Log($"[LobbyAuto] chat '{NetBootstrap.LobbyChat}' sent={sent}");
+        }
+
+        private void RejoinRunningMatch()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked) return;
+            if (NetAuthority.IsHost) return;
+            if (!net.Lobby.MatchInProgress) return;
+
+            SetStatus("Rejoining the match in progress...");
+            SceneFlow.StartMatch();
+        }
+
+        private const int LobbyHeadingSize = 28;
+
+        private void BuildRightPanelNetwork()
+        {
+            var heading = Node("SeatHeading");
+            if (heading == null || heading.parent == null) return;
+
+            Transform rows = heading.parent;
+            int headingIndex = heading.GetSiblingIndex();
+
+            var headerRow = new GameObject("HeaderRow");
+            headerRow.transform.SetParent(rows, false);
+            headerRow.transform.SetSiblingIndex(headingIndex);
+
+            var hLayout = headerRow.AddComponent<VerticalLayoutGroup>();
+            hLayout.spacing = 8;
+            hLayout.childControlWidth = true;
+            hLayout.childControlHeight = true;
+            hLayout.childForceExpandWidth = true;
+            hLayout.childForceExpandHeight = false;
+
+            var hElement = headerRow.AddComponent<LayoutElement>();
+            hElement.minHeight = 46 + 8 + 40;
+            hElement.preferredHeight = hElement.minHeight;
+            hElement.flexibleWidth = 1;
+
+            heading.SetParent(headerRow.transform, false);
+            var headElement = heading.GetComponent<LayoutElement>();
+            if (headElement == null) headElement = heading.gameObject.AddComponent<LayoutElement>();
+            headElement.flexibleWidth = 1;
+            headElement.minHeight = 46;
+
+            var headText = heading.GetComponent<Text>();
+            if (headText != null)
+            {
+                headText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                headText.verticalOverflow = VerticalWrapMode.Overflow;
+            }
+
+            _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
+                                           new Vector2(140.0f, 40.0f), ToggleSpectate);
+            _spectate.name = "SpectateButton";
+            Fixed(_spectate, 40.0f);
+
+            var label = _spectate.GetComponentInChildren<Text>();
+            if (label != null) label.fontSize = 18;
+
+            int insertIndex = headerRow.transform.GetSiblingIndex() + 1;
+
+            var shareHeading = MiniSection(rows, "SHARE THIS LOBBY");
+            shareHeading.SetSiblingIndex(insertIndex++);
+
+
+            _addressRow = new GameObject("AddressRow");
+            _addressRow.transform.SetParent(rows, false);
+            _addressRow.transform.SetSiblingIndex(insertIndex++);
+
+            var addrLayout = _addressRow.AddComponent<HorizontalLayoutGroup>();
+            addrLayout.spacing = 10;
+            addrLayout.childControlWidth = true;
+            addrLayout.childControlHeight = true;
+            addrLayout.childForceExpandWidth = false;
+            addrLayout.childForceExpandHeight = true;
+
+            var addrElement = _addressRow.AddComponent<LayoutElement>();
+            addrElement.minHeight = 44;
+            addrElement.preferredHeight = 44;
+            addrElement.flexibleWidth = 1;
+
+            ShareCaption(_addressRow.transform, "ADDRESS");
+
+            var addrBox = new GameObject("AddressBox");
+            addrBox.transform.SetParent(_addressRow.transform, false);
+            PaperSkin.Apply(addrBox, PaperCraft.Surface.Tray);
+            var addrBoxElement = addrBox.AddComponent<LayoutElement>();
+            addrBoxElement.flexibleWidth = 1;
+            addrBoxElement.minHeight = 44;
+
+            _addressText = MenuKit.Label(addrBox.transform, "", 20, UiTheme.Cream,
+                                         Vector2.zero, Vector2.zero, Vector2.zero,
+                                         TextAnchor.MiddleLeft);
+            _addressText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _addressText.verticalOverflow = VerticalWrapMode.Overflow;
+            _addressText.rectTransform.anchorMin = Vector2.zero;
+            _addressText.rectTransform.anchorMax = Vector2.one;
+            _addressText.rectTransform.offsetMin = new Vector2(16, 0);
+            _addressText.rectTransform.offsetMax = new Vector2(-16, 0);
+
+            _addressCopyBtn = MenuKit.WoodButton(_addressRow.transform, "COPY", Vector2.zero, Vector2.zero,
+                                                 new Vector2(84, 40), OnAddressCopyPressed);
+            var addrCopyElement = _addressCopyBtn.gameObject.AddComponent<LayoutElement>();
+            addrCopyElement.preferredWidth = 84;
+            addrCopyElement.preferredHeight = 40;
+            _addressCopyBtnText = _addressCopyBtn.GetComponentInChildren<Text>();
+
+            _codeRow = new GameObject("CodeRow");
+            _codeRow.transform.SetParent(rows, false);
+            _codeRow.transform.SetSiblingIndex(insertIndex++);
+
+            var codeLayout = _codeRow.AddComponent<HorizontalLayoutGroup>();
+            codeLayout.spacing = 10;
+            codeLayout.childControlWidth = true;
+            codeLayout.childControlHeight = true;
+            codeLayout.childForceExpandWidth = false;
+            codeLayout.childForceExpandHeight = true;
+
+            var codeElement = _codeRow.AddComponent<LayoutElement>();
+            codeElement.minHeight = 44;
+            codeElement.preferredHeight = 44;
+            codeElement.flexibleWidth = 1;
+
+            var codeCaption = new GameObject("CodeCaption");
+            codeCaption.transform.SetParent(_codeRow.transform, false);
+            var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
+
+            codeCaptionElement.preferredWidth = ShareCaptionWidth;
+            codeCaptionElement.minWidth = ShareCaptionWidth;
+            codeCaptionElement.flexibleWidth = 0.0f;
+            codeCaptionElement.minHeight = 44;
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", PaperKit.Caption,
+                                            UiTheme.PaperInkSoft,
+                                            Vector2.zero, Vector2.zero, Vector2.zero,
+                                            TextAnchor.MiddleLeft);
+            captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            MenuKit.Stretch(captionText.rectTransform, 0);
+
+            var codeBox = new GameObject("CodeBox");
+            codeBox.transform.SetParent(_codeRow.transform, false);
+            PaperSkin.Apply(codeBox, PaperCraft.Surface.Tray);
+            var codeBoxElement = codeBox.AddComponent<LayoutElement>();
+            codeBoxElement.flexibleWidth = 1;
+            codeBoxElement.minHeight = 44;
+
+            _codeText = MenuKit.Label(codeBox.transform, "", 20, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            _codeText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _codeText.verticalOverflow = VerticalWrapMode.Overflow;
+            _codeText.rectTransform.anchorMin = Vector2.zero;
+            _codeText.rectTransform.anchorMax = Vector2.one;
+            _codeText.rectTransform.offsetMin = new Vector2(16, 0);
+            _codeText.rectTransform.offsetMax = new Vector2(-16, 0);
+
+            _codeCopyBtn = MenuKit.WoodButton(_codeRow.transform, "COPY", Vector2.zero, Vector2.zero,
+                                              new Vector2(84, 40), OnCodeCopyPressed);
+            var codeCopyElement = _codeCopyBtn.gameObject.AddComponent<LayoutElement>();
+            codeCopyElement.preferredWidth = 84;
+            codeCopyElement.preferredHeight = 40;
+            _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
+        }
+        private void BuildSettingsDropdowns()
+        {
+            var rows = _chrome?.SettingsRows;
+            if (rows == null)
+            {
+                if(_chrome?.AdvancedRulesParent!=null)BuildCustomGameDoor(_chrome.AdvancedRulesParent);
+                return;
+            }
+
+            const float Caption = 96.0f;
+
+            var mapNames = new string[SceneFlow.Maps.Length];
+            for (int i = 0; i < mapNames.Length; i++)
+                mapNames[i] = SceneFlow.PreviewFor(SceneFlow.Maps[i]).Name;
+
+            _mapDrop = WoodDropdown.Build(rows, "MAP", Caption, mapNames, _map,
+                                          v => OnMapCycle(v - _map));
+
+            _modeDrop = WoodDropdown.Build(rows, "MODE", Caption,
+                                           new[] { "CLASSIC", "HERO STRIKE" },
+                                           SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0,
+                                           v => OnModeCycle(v - (SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0)));
+
+            _botsDrop = WoodDropdown.Build(rows, "BOTS", Caption, Difficulties, _difficulty,
+                                           v => OnDifficultyCycle(v - _difficulty));
+
+            BuildCustomGameDoor(rows);
+        }
+
+        private void BuildCustomGameDoor(Transform rows)
+        {
+            var rect = rows as RectTransform;
+            if (rect == null) return;
+
+            _customDoor = UiRows.ButtonRow(rect, "CUSTOM GAME", CustomDoorLabel(), OpenCustomGame,
+                "Round length, score target, slipper stock, bots and a private room.");
+        }
+
+        private Button _customDoor;
+
+        private static string CustomDoorLabel()
+        {
+            var rules = SceneFlow.SelectedRules;
+            return rules.Format == MatchFormat.Standard
+                ? rules.Rounds + " x " + rules.RoundSeconds + "s"
+                : CustomGameRules.FormatName(rules.Format);
+        }
+
+        private void OpenCustomGame()
+        {
+            MenuSfx.Click();
+            CustomGameScreen.Ensure().Open();
+        }
+
+        private WoodDropdown _mapDrop, _modeDrop, _botsDrop;
+
+        private void RefreshSettingsDropdowns()
+        {
+            bool mayEdit = !SceneFlow.Networked || NetAuthority.IsHost;
+
+            if (_mapDrop != null) { _mapDrop.SetIndex(_map); _mapDrop.SetInteractable(mayEdit); }
+            if (_botsDrop != null) { _botsDrop.SetIndex(_difficulty); _botsDrop.SetInteractable(mayEdit); }
+
+            if (_modeDrop != null)
+            {
+                _modeDrop.SetIndex(SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0);
+                _modeDrop.SetInteractable(mayEdit);
+            }
+
+            if (_customDoor != null)
+            {
+                var label = _customDoor.GetComponentInChildren<Text>();
+                if (label != null) label.text = CustomDoorLabel();
+            }
+        }
+
+        private void InstallQueueCard()
+        {
+            if (!IsLobby || _queueCard != null) return;
+
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            _queueCard = _chrome?.QueueDock != null
+                ? QueueCard.Dock(_chrome.QueueDock, null)
+                : QueueCard.Build(canvas.transform);
+
+            _queueCard.Stake = Core.QueueStake.Ranked;
+            _queueCard.Status += SetStatus;
+            _queueCard.Joined += HandleJoinedInPlace;
+
+            _queueCard.StartWithBots += StartAgainstBots;
+        }
+
+
+        private void BuildLobbyEntryControls(NetSession net)
+        {
+            if (net == null) net = NetSession.Ensure();
+            if (net == null) return;
+
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            net.BrowseLan();
+            net.Query?.StartBrowsing();
+
+
+
+            _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
+            _joinPanel.Status += SetStatus;
+            _joinPanel.Joined += HandleJoinedInPlace;
+            _joinPanel.Opened += () =>
+            {
+                if (_chat != null) _chat.gameObject.SetActive(false);
+                if (_chrome?.LobbyDrawer != null) _chrome.LobbyDrawer.SetActive(false);
+            };
+            _joinPanel.Closed += () =>
+            {
+                if (_chat != null) _chat.gameObject.SetActive(IsLobby);
+                if (_chrome?.LobbyDrawer != null) _chrome.LobbyDrawer.SetActive(IsLobby);
+            };
+
+            if (_codeRow == null || _codeRow.transform.parent == null) return;
+
+            var actionHeading = MiniSection(_codeRow.transform.parent, "FIND OR HOST A GAME");
+            actionHeading.SetSiblingIndex(_codeRow.transform.GetSiblingIndex() + 1);
+
+            var row = new GameObject("LobbyEntryRow");
+            row.transform.SetParent(_codeRow.transform.parent, false);
+            row.transform.SetSiblingIndex(actionHeading.GetSiblingIndex() + 1);
+
+            var layout = row.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = (44 * 2) + 8;
+            element.preferredHeight = element.minHeight;
+            element.flexibleWidth = 1;
+
+            _joinButton = MenuKit.WoodButton(row.transform, "JOIN A GAME", Vector2.zero,
+                                             Vector2.zero, new Vector2(0.0f, 44.0f),
+                                             OpenJoinPanel, "WoodPrimaryButton");
+            _joinButton.name = "OpenJoinButton";
+            Fixed(_joinButton, 44);
+
+            PaperKit.MakeAction(_joinButton.gameObject, PaperCraft.Accent.Green);
+
+            _onlineButton = MenuKit.WoodButton(row.transform, "START SERVER", Vector2.zero,
+                                               Vector2.zero, new Vector2(0.0f, 44.0f),
+                                               ToggleOnline);
+            _onlineButton.name = "GoOnlineButton";
+            Fixed(_onlineButton, 44);
+
+            _lobbyEntryRow = row;
+        }
+
+        private void InstallPlayerHub()
+        {
+            _hub = gameObject.GetComponent<PlayerHub>();
+            if (_hub == null) _hub = gameObject.AddComponent<PlayerHub>();
+
+            _hub.Install();
+
+            if (_chrome?.JoinChip != null)
+            {
+                _chrome.JoinChip.onClick.AddListener(() =>
+                {
+                    var drawer = _chrome.LobbyDrawer;
+                    if (drawer == null) return;
+
+                    bool open = !drawer.activeSelf;
+                    drawer.SetActive(open && IsLobby);
+                    if (open && _chat != null) _chat.gameObject.SetActive(false);
+
+                    if (open) Refresh();
+                });
+            }
+
+            if (_chrome?.ProfileButton != null)
+                _chrome.ProfileButton.onClick.AddListener(OpenPlayerHub);
+
+            if (_chrome?.LoadoutButton != null)
+                _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
+
+            if (_chrome?.GameSettingsButton != null)
+                _chrome.GameSettingsButton.onClick.AddListener(OpenGameSettings);
+
+            RefreshProfileDoor();
+            RefreshTier();
+        }
+
+        private void RefreshTier()
+        {
+            if (_chrome == null || _chrome.Mode != LobbyMode.Ranked) return;
+
+            var account = GameServices.Account;
+            bool signedIn = account != null && !account.IsGuest;
+
+            if (!signedIn)
+            {
+                _chrome.SetTier("SIGN IN",
+                    "The ladder keeps a rating, so it needs an account. "
+                    + "Practice and custom rooms never ask.");
+                return;
+            }
+
+            var rank = GameServices.Career?.Profile?.Rank;
+
+            if (rank == null || rank.MatchesThisSeason == 0)
+            {
+                _chrome.SetTier("UNRANKED",
+                    "Play one ladder match to be placed. Solo, or a party of up to three.");
+                return;
+            }
+
+            var tier = Core.RatingRules.TierFor(rank.Rating);
+            bool placing = rank.Deviation > Core.RatingRules.SettledDeviation;
+
+            _chrome.SetTier(Core.RatingRules.TierName(tier),
+                placing
+                    ? $"{rank.MatchesThisSeason} this season, still placing. "
+                      + "Solo, or a party of up to three."
+                    : $"{rank.Rating:0} rating, {rank.MatchesThisSeason} this season. "
+                      + "Solo, or a party of up to three.");
+        }
+
+        private static string EquippedBuildSummary()
+        {
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            var hero = Roster.At(people, Settings.SettingsStore.Current.CharacterPick);
+            if (hero == null) return "Pick a build";
+
+            var settings = Settings.SettingsStore.Current;
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+
+            int changed = 0;
+            for (int slot = 1; slot <= 2; slot++)
+            {
+                var equipped = HeroBuildRules.Equipped(build, hero.Id, slot, settings.AbilityChallenges);
+                if (equipped != null && !equipped.IsDefault) changed++;
+            }
+
+            return changed == 0
+                ? hero.Name + "  ·  standard build"
+                : hero.Name + $"  ·  {changed} of 2 changed";
+        }
+
+        private void OpenLoadout()
+        {
+            MenuSfx.Click();
+            OpenCharacterSelect();
+        }
+
+        private void OpenPlayerHub()
+        {
+            MenuSfx.Click();
+
+            _hub?.Open();
+        }
+
+        private void OpenGameSettings()
+        {
+            MenuSfx.Click();
+
+            var existing = GetComponentInChildren<ConvertedSettingsPanel>(true);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            var prefab = Resources.Load<GameObject>("UI/SettingsPanel");
+            if (prefab == null)
+            {
+                Debug.LogWarning("[Lobby] no SettingsPanel prefab in Resources/UI.");
+                return;
+            }
+
+            var panel = Instantiate(prefab, transform, false);
+            panel.name = "SettingsPanel";
+            panel.SetActive(true);
+        }
+
+        private void RefreshProfileDoor()
+        {
+            var label = _chrome?.ProfileValue;
+            if (label == null) return;
+
+            var account = GameServices.Account;
+
+            string who = LocalName();
+            Door(label, who);
+
+            if (_chrome.ProfileFace != null)
+            {
+                _chrome.ProfileFace.sprite = Avatars.Get(Avatars.DefaultFor(who));
+            }
+
+            var state = _chrome.ProfileState;
+            if (state == null) return;
+
+            if (account != null && account.ShouldOfferUpgrade)
+            {
+                state.text = "GUEST · SAVE PROGRESS";
+                return;
+            }
+
+            var profile = GameServices.Career?.Profile;
+            int xp = profile?.Xp ?? 0;
+
+            if (xp <= 0)
+            {
+                state.text = "YOUR PROFILE";
+                return;
+            }
+
+            string line = $"LV {ProgressionRules.LevelForXp(xp)}";
+
+            var rank = profile.Rank;
+            if (rank != null && rank.MatchesThisSeason > 0)
+            {
+                string tier = RatingRules.TierName(RatingRules.TierFor(rank.Rating));
+
+                if (rank.Deviation > RatingRules.SettledDeviation) tier += " ?";
+                line += $"   ·   {tier}";
+            }
+
+            state.text = line;
+        }
+
+        private static void Door(Text label, string text)
+        {
+            label.text = text;
+            label.color = UiTheme.PaperInk;
+
+            label.fontSize = PaperKit.Title;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize));
+            MenuKit.Fit(label, 202.0f, 15);
+        }
+
+        private void PaperiseWhatTheChromeLeaves()
+        {
+            foreach (var board in Nodes("ConfigPanel"))
+            {
+                if (IsInsidePicker(board)) continue;
+
+                var panel = board.GetComponent<GodotPanel>();
+                if (panel == null) continue;
+
+                PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
+            }
+        }
+
+        private static bool IsInsidePicker(Transform node)
+        {
+            for (var t = node; t != null; t = t.parent)
+                if (t.name == "CharacterSelectPanel") return true;
+
+            return false;
+        }
+
+        private static void Fixed(Component child, float height)
+        {
+            var element = child.gameObject.GetComponent<LayoutElement>();
+            if (element == null) element = child.gameObject.AddComponent<LayoutElement>();
+
+            element.minHeight = height;
+            element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
+        }
+
+        private const float ShareCaptionWidth = 76.0f;
+
+        private const float ShareCopyWidth = 84.0f;
+
+        private const float AddressRoom = 140.0f;
+
+        private static void ShareCaption(Transform row, string text)
+        {
+            var go = new GameObject($"{text}Caption");
+            go.transform.SetParent(row, false);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.preferredWidth = ShareCaptionWidth;
+            element.minWidth = ShareCaptionWidth;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = 44.0f;
+
+            var label = MenuKit.Label(go.transform, text, PaperKit.Caption, UiTheme.PaperInkSoft,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 0.0f);
+        }
+
+        private static Transform MiniSection(Transform parent, string text)
+        {
+            var holder = new GameObject($"Section_{text}");
+            holder.transform.SetParent(parent, false);
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = 28.0f;
+            element.preferredHeight = 28.0f;
+            element.flexibleHeight = 0.0f;
+
+            element.flexibleWidth = 1.0f;
+
+            var label = MenuKit.Label(holder.transform, text, 17, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 2.0f);
+            return holder.transform;
+        }
+
+        private void BuildCast(Transform previewNode)
+        {
+            if (_preview == null || previewNode == null) return;
+
+            _cast = LobbyCast.Attach(_preview);
+
+            var rect = previewNode as RectTransform;
+            if (rect != null && _cast != null)
+            {
+                _nameplates = LobbyNameplates.Attach(rect, _preview, _cast, TakeSeat);
+            }
+
+            ApplyCastVisibility();
+        }
+
+        private void ApplyCastVisibility()
+        {
+            if (_preview != null) _preview.LobbyShot = IsLobby;
+            if (_cast != null) _cast.SetVisible(IsLobby);
+
+            if (_nameplates != null) _nameplates.gameObject.SetActive(IsLobby);
+            if (_chat != null) _chat.gameObject.SetActive(IsLobby);
+
+            RefreshSeatRowVisibility();
+        }
+
+        private void RefreshSeatRowVisibility()
+        {
+            bool platesInstead = IsLobby && LobbyChrome.Style == LobbyStyle.Street && _nameplates != null;
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var node = Node($"SeatButton{seat}");
+                if (node != null) node.gameObject.SetActive(!platesInstead);
+            }
+
+            if (!platesInstead) return;
+
+            SetText("SeatHint", NetAuthority.IsHost
+                    ? "You pick the map and the mode. Click a free character to take that seat."
+                    : "The leader picks the map and the mode. Click a free character to move.");
+        }
+
+        private void SelectMode(LobbyMode mode)
+        {
+            if (_chrome != null && _chrome.Mode == mode) return;
+
+            bool lobby = mode != LobbyMode.Practice;
+
+            if (mode == LobbyMode.Ranked)
+            {
+                SceneFlow.SelectedMode = GameMode.HeroStrike;
+                _format = 0;
+            }
+
+            if (lobby == IsLobby)
+            {
+                MenuSfx.Click();
+                _chrome?.SetMode(mode);
+                Refresh();
+                RefreshQueueVisibility(mode);
+
+                if (mode == LobbyMode.Custom && !IsLive) AutoHost();
+                return;
+            }
+
+            SelectTab(lobby, mode);
+        }
+
+        private void SelectTab(bool lobby, LobbyMode mode)
+        {
+            MenuSfx.Click();
+
+            var net = NetSession.Instance;
+
+            SceneFlow.Networked = lobby;
+
+            if (!lobby)
+            {
+                if (net != null && net.IsNetworked) net.Stop();
+
+                _localReady = false;
+                _readyCount = 0;
+                _readyExpected = 0;
+
+                if (_joinPanel != null) _joinPanel.Close();
+
+                SetStatus("");
+            }
+
+            _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
+
+            ApplyCastVisibility();
+            _chrome?.SetMode(mode);
+
+            Refresh();
+            RefreshQueueVisibility(mode);
+
+            if (mode == LobbyMode.Custom) AutoHost();
+        }
+
+        private void RefreshQueueVisibility(LobbyMode mode)
+        {
+            if (_queueCard != null)
+                _queueCard.gameObject.SetActive(mode == LobbyMode.Ranked);
+        }
+
+
+        private void RefreshCast()
+        {
+            if (_cast == null) return;
+
+            var net = NetSession.Instance;
+            bool live = IsLive;
+            var settings = Settings.SettingsStore.Current;
+            var people = Roster.GetPeople(SceneFlow.SelectedMode);
+
+            int defender = MatchRules.DefenderSlotFor(1);
+
+            bool explained = false;
+
+            for (int seat = 0; seat < _castPicks.Length; seat++)
+            {
+                bool mine = !GameLaunch.Spectator &&
+                            (live ? (net != null && net.LocalSlot == seat) : (seat == GameLaunch.SoloSeat));
+
+                var info = live ? MatchRpc.Instance?.GetSeatInfo(seat) : null;
+                bool occupied = mine || (info != null && info.Occupied);
+
+                int pick = mine
+                    ? settings.CharacterPick
+                    : (info != null && info.CharacterPick >= 0 ? info.CharacterPick : seat);
+
+                if (people == null || people.Count == 0) pick = 0;
+                else pick = ((pick % people.Count) + people.Count) % people.Count;
+
+                _castPicks[seat] = pick;
+
+                if (_nameplates == null) continue;
+
+                string who = mine ? LocalName()
+                    : occupied ? PlayerLabel(info, seat)
+                    : AIController.BotsEnabled ? "BOT" : "OPEN SEAT";
+
+                var kind = mine || occupied ? LobbyNameplates.SeatKind.Person
+                    : AIController.BotsEnabled ? LobbyNameplates.SeatKind.Bot
+                    : LobbyNameplates.SeatKind.Open;
+
+                bool ready = (info != null && info.Ready) || (mine && _localReady);
+
+                bool occupiedByOther = live && !mine && info != null && info.Occupied;
+                bool matchRunning = live && net != null && net.Lobby.MatchInProgress;
+
+                bool canTake = live
+                    ? (!mine && !occupiedByOther && !matchRunning)
+                    : (!GameLaunch.Spectator && !mine);
+
+                string title = info != null
+                    ? ProgressionRules.LabelForRewardId(info.Banner?.TitleId)
+                    : "";
+
+                if (kind == LobbyNameplates.SeatKind.Bot)
+                    title = explained ? "" : "fills in if nobody joins";
+                else if (kind == LobbyNameplates.SeatKind.Open)
+                    title = explained ? "" : (canTake ? "tap to sit here" : "waiting for a player");
+
+                if (kind != LobbyNameplates.SeatKind.Person) explained = true;
+
+                if (SceneFlow.SelectedMode == GameMode.HeroStrike && info != null)
+                {
+                    string heroId = people[pick].Id;
+                    if (!string.IsNullOrEmpty(info.Custom))
+                        heroId = CustomCharacterRules.KitFor(
+                            CustomCharacterRules.DecodeWire(info.Custom).HeroKitId);
+                    var publicBuild = HeroBuildRules.Decode(info.Build, heroId);
+                    var first = HeroBuildRules.Equipped(publicBuild, heroId, 1, null);
+                    var second = HeroBuildRules.Equipped(publicBuild, heroId, 2, null);
+
+                    string buildLabel = "";
+                    if (first != null && !first.IsDefault) buildLabel = first.Name;
+                    if (second != null && !second.IsDefault)
+                        buildLabel = string.IsNullOrEmpty(buildLabel)
+                            ? second.Name : buildLabel + " / " + second.Name;
+
+                    if (!string.IsNullOrEmpty(buildLabel))
+                        title = string.IsNullOrEmpty(title)
+                            ? buildLabel : title + "  ·  " + buildLabel;
+                }
+
+                _nameplates.SetSeat(seat, who, title,
+                                    ready: ready,
+                                    taya: seat == defender,
+                                    you: mine,
+                                    canTake: canTake,
+                                    kind: kind);
+            }
+
+            int localSeat = GameLaunch.Spectator
+                ? -1
+                : (live ? (net != null ? net.LocalSlot : 0) : GameLaunch.SoloSeat);
+
+            _cast.SetLocalSeat(localSeat);
+            _cast.Show(_castPicks, SceneFlow.SelectedMode);
+        }
+
+        private void BuildChat()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            _chat = LobbyChat.Attach(canvas.transform, inMatch: false);
+            if (_chat == null) return;
+
+            _chat.PlaceBottomRight(40.0f, 40.0f + 192.0f + PaperKit.Gap, 460.0f);
+            _chat.gameObject.SetActive(false);
+
+            if (_chrome?.ChatChip != null)
+            {
+                _chrome.ChatChip.onClick.AddListener(() =>
+                {
+                    bool open = !_chat.gameObject.activeSelf;
+                    _chat.gameObject.SetActive(open && IsLobby);
+                });
+            }
+        }
+
+        private static string LocalName()
+        {
+            string name = Settings.GameSettings.SanitiseName(
+                GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName);
+
+            name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
+
+            bool anonymous = name.Length == 0 ||
+                             string.Equals(name, "Player", StringComparison.OrdinalIgnoreCase);
+
+            return anonymous ? "YOU" : name;
+        }
+
+        private static string PlayerLabel(LobbySeatInfo info, int seat)
+        {
+            string name = info == null ? null : info.Name;
+            name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
+
+            bool anonymous = name.Length == 0 ||
+                             string.Equals(name, "Player", StringComparison.OrdinalIgnoreCase);
+
+            return anonymous ? $"PLAYER {seat + 1}" : name;
+        }
+
+        private void PublishName()
+        {
+            Refresh();
+
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked) return;
+
+            var s = Settings.SettingsStore.Current;
+
+            var account = GameServices.Account;
+            MatchRpc.Instance?.IdentifyServerRpc(
+                account?.ConnectionToken ?? NetIdentity.Token,
+                account?.LobbyName ?? s.PlayerName,
+                account != null && account.IsSignedIn ? account.PlayerId : "",
+                account?.HandleProof ?? "",
+                Mathf.Max(0, s.CharacterPick),
+                Mathf.Max(0, s.CanPick),
+                Mathf.Max(0, s.SlipperPick));
+        }
+
+        private void OpenJoinPanel()
+        {
+            if (_joinPanel == null) return;
+
+            _joinPanel.Open();
+        }
+
+        private void HandleJoinedInPlace()
+        {
+            _localReady = false;
+            _readyCount = 0;
+            _readyExpected = 0;
+
+            var s = Settings.SettingsStore.Current;
+            MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+
+            Refresh();
+            RejoinRunningMatch();
+        }
+
+        private async void ToggleOnline()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !NetAuthority.IsHost) return;
+            if (_switchingHost) return;
+
+            _switchingHost = true;
+            RefreshEntryControls();
+
+            try
+            {
+                bool goingOnline = !net.IsRelay;
+
+                SetStatus(goingOnline
+                          ? "Opening an online room..."
+                          : "Moving your room back onto your network...");
+
+                bool ok = goingOnline
+                    ? await net.StartRelayHost()
+                    : await net.StartHostAsync();
+
+                if (this == null) return;
+
+                if (ok)
+                {
+                    SetStatus(goingOnline
+                              ? "Your room is online. Read the code out to anybody, anywhere."
+                              : "Your room is back on your own network.");
+                }
+                else
+                {
+                    SetAlert(ReasonFor(net, goingOnline
+                                       ? "Could not open an online room."
+                                       : "Could not reopen a room on your network."));
+                }
+            }
+            finally
+            {
+                _switchingHost = false;
+
+                if (this != null) Refresh();
+            }
+        }
+
+        private static string ReasonFor(NetSession net, string headline)
+        {
+            string detail = net != null ? net.Status : null;
+            return string.IsNullOrWhiteSpace(detail) ? headline : $"{headline}  ({detail})";
+        }
+
+        private void RefreshEntryControls()
+        {
+            if (_lobbyEntryRow == null) return;
+
+            bool live = IsLive;
+            bool host = NetAuthority.IsHost;
+
+            _lobbyEntryRow.SetActive(IsLobby);
+
+            if (_joinButton != null)
+            {
+                _joinButton.interactable = !_switchingHost;
+
+                var label = _joinButton.GetComponentInChildren<Text>();
+
+                if (label != null)
+                {
+                    int found = 0;
+
+                    var beacon = NetSession.Instance?.Beacon;
+                    if (beacon != null) found += beacon.SortedEntries.Count;
+
+                    var query = NetSession.Instance?.Query;
+                    if (query?.Servers != null)
+                    {
+                        foreach (var unused in query.Servers) found++;
+                    }
+
+                    string verb = live && !host ? "LEAVE AND JOIN" : "JOIN A GAME";
+                    label.text = found > 0 ? $"{verb}   ({found})" : verb;
+                }
+            }
+
+            if (_onlineButton != null)
+            {
+                _onlineButton.gameObject.SetActive(live && host);
+                _onlineButton.interactable = !_switchingHost;
+
+                var net = NetSession.Instance;
+                var label = _onlineButton.GetComponentInChildren<Text>();
+
+                if (label != null)
+                {
+                    label.text = _switchingHost
+                        ? "SWITCHING..."
+                        : (net != null && net.IsRelay ? "STOP SERVER" : "START SERVER");
+                }
+            }
+        }
+
+        private void OnAddressCopyPressed()
+        {
+            if (_addressText == null || string.IsNullOrEmpty(_addressText.text)) return;
+            GUIUtility.systemCopyBuffer = _addressText.text;
+            MenuSfx.Click();
+            StartCoroutine(FlashButtonText(_addressCopyBtnText, "COPIED", "COPY"));
+        }
+
+        private void OnCodeCopyPressed()
+        {
+            if (_codeText == null || string.IsNullOrEmpty(_codeText.text)) return;
+            GUIUtility.systemCopyBuffer = _codeText.text;
+            MenuSfx.Click();
+            StartCoroutine(FlashButtonText(_codeCopyBtnText, "COPIED", "COPY"));
+            SetStatus("Join code copied. Send it to whoever you want in the game.");
+        }
+
+        private IEnumerator FlashButtonText(Text targetText, string flashMessage, string originalText)
+        {
+            if (targetText == null) yield break;
+            targetText.text = flashMessage;
+            yield return new WaitForSecondsRealtime(1.2f);
+            if (targetText != null) targetText.text = originalText;
+        }
+
+        private void SetStatus(string message) => WriteStatus(message, alert: false);
+
+        private void SetAlert(string message) => WriteStatus(message, alert: true);
+
+        private void WriteStatus(string message, bool alert)
+        {
+            var label = Node("StatusLabel");
+            if (label == null) return;
+
+            var text = label.GetComponent<Text>();
+            if (text == null) return;
+
+            text.color = alert ? UiTheme.Impact : UiTheme.Cream;
+            text.text = message;
+
+            if (LobbyChrome.Style == LobbyStyle.Street)
+                label.gameObject.SetActive(alert && !string.IsNullOrWhiteSpace(message));
+        }
+
+        private void HandleMatchStarted()
+        {
+            SceneFlow.StartMatch();
+        }
+
+        private void OnPrimaryPressed()
+        {
+            var net = NetSession.Instance;
+            if (net == null || !net.IsNetworked)
+            {
+                SceneFlow.StartMatch();
+                return;
+            }
+
+            if (GameLaunch.Spectator) return;
+
+            if (IsLobby && GameLaunch.Spectator) return;
+
+            bool wanted = !_localReady;
+            bool delivered = MatchRpc.Instance != null &&
+                             MatchRpc.Instance.DeclareReadyServerRpc(wanted);
+
+            if (!delivered)
+            {
+                SetStatus("Still connecting. Press again in a moment.");
+                Refresh();
+                return;
+            }
+
+            _localReady = wanted;
+
+            if (_localReady)
+            {
+                SetStatus("Ready! Waiting for other players...");
+            }
+            else
+            {
+                SetStatus(NetAuthority.IsHost
+                    ? "You are now the lobby leader - you pick the map, the mode, and when to start."
+                    : "");
+            }
+
+            Refresh();
+        }
+
+        private void StartAgainstBots()
+        {
+            if (_difficulty == AIController.NoBotsIndex)
+            {
+                _difficulty = (int)Core.Difficulty.Normal;
+                Settings.SettingsStore.Current.AiDifficulty = _difficulty;
+                Settings.SettingsStore.Save();
+            }
+
+            AIController.ApplyDifficulty(_difficulty);
+            AIController.BotsEnabled = true;
+
+            Refresh();
+            OnPrimaryPressed();
+        }
+
+        private void OnStartPressed()
+        {
+            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked)
+            {
+                _queueCard?.StartRanked();
+                return;
+            }
+
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked && NetAuthority.IsHost)
+            {
+                if (!AIController.BotsEnabled &&
+                    net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
+                {
+                    SetAlert("Bots are off. Fill all four player seats before starting.");
+                    Refresh();
+                    return;
+                }
+
+                var readyGate = FindFirstObjectByType<ReadyGate>();
+                if (readyGate != null)
+                {
+                    MatchRpc.Instance?.DeclareReadyServerRpc();
+                }
+                else
+                {
+                    MatchRpc.Instance?.HostStartMatch();
+                }
+            }
+        }
+
+        private void OnMapCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _map, SceneFlow.Maps.Length, delta);
+            if (NetAuthority.IsHost && SceneFlow.Networked)
+            {
+                MatchRpc.Instance?.SelectMapServerRpc(_map);
+            }
+        }
+
+        private void OnModeCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            SceneFlow.SelectedMode = SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? GameMode.Classic
+                : GameMode.HeroStrike;
+
+            var s = Settings.SettingsStore.Current;
+            var list = Roster.GetPeople(SceneFlow.SelectedMode);
+            if (s.CharacterPick >= list.Count || s.CharacterPick < 0)
+            {
+                s.CharacterPick = 0;
+                Settings.SettingsStore.Save();
+            }
+
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                MatchRpc.Instance?.SelectModeServerRpc((int)SceneFlow.SelectedMode);
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+            }
+
+            Refresh();
+        }
+
+        private void OnDifficultyCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _difficulty, DifficultyOptionCount, delta);
+            AIController.ApplyDifficulty(_difficulty);
+            if (NetAuthority.IsHost && SceneFlow.Networked)
+            {
+                MatchRpc.Instance?.SelectDifficultyServerRpc(_difficulty);
+            }
+        }
+
+        private void HandleMapSynced(int mapIndex)
+        {
+            _map = Mathf.Clamp(mapIndex, 0, SceneFlow.Maps.Length - 1);
+            Refresh();
+        }
+
+
+
+        private void HandleFormatSynced(int format)
+        {
+            _format = Mathf.Clamp(format, 0, FormatOptionCount - 1);
+            ApplyFormat();
+            Refresh();
+        }
+
+        private void HandleRulesSynced(string wire)
+        {
+            var rules = CustomGameRules.Parse(wire, SceneFlow.SelectedMode);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) SceneFlow.AdoptRemoteRules(rules);
+            else SceneFlow.SetSelectedRules(rules);
+
+            _format = Mathf.Clamp((int)rules.Format, 0, FormatOptionCount - 1);
+            Refresh();
+        }
+
+        private void ApplyFormat()
+        {
+            SceneFlow.SelectedFormat = FormatAt(_format);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) return;
+
+            Settings.SettingsStore.Current.MatchFormat = _format;
+            Settings.SettingsStore.Save();
+        }
+
+        private void HandleDifficultySynced(int difficulty)
+        {
+            _difficulty = Mathf.Clamp(difficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
+            Refresh();
+        }
+
+        private void HandleSeatingChanged() => Refresh();
+
+        private void HandleClientDisconnected(string reason)
+        {
+            if (NetAuthority.IsHost) return;
+
+            string detail = !string.IsNullOrWhiteSpace(reason)
+                ? reason
+                : NetSession.LastDisconnectReason;
+
+            NetSession.LastDisconnectReason = "";
+
+            SetAlert(string.IsNullOrWhiteSpace(detail)
+                     ? "The connection to the host ended. Press JOIN to try again."
+                     : detail);
+
+            _localReady = false;
+            _readyCount = 0;
+            _readyExpected = 0;
+
+            var net = NetSession.Instance;
+            if (net != null) net.Stop();
+
+            OpenJoinPanel();
+            Refresh();
+        }
+
+        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats)
+        {
+            RefreshSeats();
+            RefreshActionButtons();
+        }
+
+        private void HandleModeSynced(int mode) => Refresh();
+
+        private void HandleLobbyReadyChanged(int ready, int expected)
+        {
+            _readyCount = ready;
+            _readyExpected = expected;
+
+            RefreshActionButtons();
+            RefreshSeats();
+        }
+
+        private void HandleLobbyPicksSynced(int[] table)
+        {
+            if (table == null) return;
+            for (int i = 0; i < Mathf.Min(table.Length, _replicatedPicks.Length); i++)
+            {
+                _replicatedPicks[i] = table[i];
+            }
+            RefreshSeats();
+        }
+
+        private void WireSeats()
+        {
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int seat = slot;
+                var node = Node($"SeatButton{slot}");
+                if (node == null) continue;
+
+                var button = node.GetComponent<Button>();
+                if (button == null) continue;
+
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => TakeSeat(seat));
+            }
+
+            RefreshSeats();
+        }
+
+        private void TakeSeat(int seat)
+        {
+            MenuSfx.Click();
+
+            var session = NetSession.Instance;
+            if (session != null && session.IsNetworked)
+            {
+                MatchRpc.Instance?.RequestSeatServerRpc(seat);
+                return;
+            }
+
+            GameLaunch.SoloSeat = seat;
+            GameLaunch.Spectator = false;
+            RefreshSeats();
+        }
+
+        private static string SeatName(int seat)
+        {
+            string label = $"P{seat + 1}";
+            if (seat == MatchRules.DefenderSlotFor(1)) label += "  ·  DEFENDER FIRST";
+            return label;
+        }
+
+        private void RefreshSeats()
+        {
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                bool mine = !GameLaunch.Spectator && (isNetworked ? (net.LocalSlot == seat) : (seat == GameLaunch.SoloSeat));
+
+                var seatInfo = isNetworked ? MatchRpc.Instance?.GetSeatInfo(seat) : null;
+                string characterName = "";
+                if (seatInfo != null && seatInfo.CharacterPick >= 0)
+                {
+                    var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                    characterName = Roster.At(modePeople, seatInfo.CharacterPick)?.Name ?? "";
+                }
+
+                string seatText;
+                if (mine)
+                {
+                    seatText = isNetworked && _localReady
+                        ? $"{SeatName(seat)}   {YouMark}   ···"
+                        : $"{SeatName(seat)}   {YouMark}";
+                }
+                else if (isNetworked)
+                {
+                    bool isOccupied = seatInfo != null && seatInfo.Occupied;
+                    if (isOccupied)
+                    {
+                        string displayName = !string.IsNullOrEmpty(seatInfo.Name) ? seatInfo.Name : $"PLAYER {seat + 1}";
+                        seatText = $"{SeatName(seat)}   · {displayName} {(string.IsNullOrEmpty(characterName) ? "" : $"({characterName})")}";
+                    }
+                    else
+                    {
+                        seatText = $"{SeatName(seat)}   · " +
+                                   (AIController.BotsEnabled ? "BOT" : "OPEN");
+                    }
+                }
+                else
+                {
+                    seatText = $"{SeatName(seat)}   · " +
+                               (AIController.BotsEnabled ? "BOT" : "OPEN");
+                }
+
+                SetText($"SeatButton{seat}", seatText);
+
+                var node = Node($"SeatButton{seat}");
+                var button = node == null ? null : node.GetComponent<Button>();
+
+                if (button != null)
+                {
+                    bool occupiedByOther = isNetworked
+                        ? (seatInfo != null && seatInfo.Occupied && !mine)
+                        : false;
+
+                    button.interactable = isNetworked
+                        ? (!mine && !occupiedByOther && !(net != null && net.Lobby.MatchInProgress))
+                        : !GameLaunch.Spectator;
+                }
+            }
+
+            RefreshSpectate();
+        }
+
+        private void ToggleSpectate()
+        {
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                if (GameLaunch.Spectator)
+                {
+                    int free = net.Lobby.FirstFreeSeat();
+                    if (free >= 0) MatchRpc.Instance?.RequestSeatServerRpc(free);
+                }
+                else
+                {
+                    MatchRpc.Instance?.RequestSeatServerRpc(-1);
+                }
+                return;
+            }
+
+            GameLaunch.Spectator = !GameLaunch.Spectator;
+            RefreshSeats();
+            Refresh();
+        }
+
+        private void RefreshSpectate()
+        {
+            if (_spectate == null) return;
+
+            var skin = _spectate.GetComponent<GodotButton>();
+            if (skin != null)
+            {
+                skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
+
+                var paper = _spectate.GetComponent<PaperSkin>();
+                if (paper != null)
+                {
+                    paper.Surface = GameLaunch.Spectator
+                        ? PaperCraft.Surface.Live : PaperCraft.Surface.Token;
+                    paper.Rebuild();
+
+                    var chip = _spectate.GetComponent<PaperButton>();
+                    if (chip != null) chip.Restyle();
+                }
+                else
+                {
+                    skin.Apply();
+                    skin.Refresh();
+                }
+            }
+
+            var label = _spectate.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                label.text = GameLaunch.Spectator ? "SPECTATING" : "SPECTATE";
+
+                label.fontSize = 18;
+                MenuKit.Fit(label, 140.0f - 20.0f);
+            }
+        }
+
+        private void Cycle(ref int index, int count, int delta)
+        {
+            if (count <= 0) return;
+            if (Time.unscaledTime - _lastCycle < CycleGuard) return;
+
+            _lastCycle = Time.unscaledTime;
+            index = ((index + delta) % count + count) % count;
+
+            MenuSfx.Click();
+            Refresh();
+        }
+
+        private void OpenCharacterSelect()
+        {
+            if (_characterPanel == null)
+            {
+                SceneFlow.Go(SceneFlow.CharacterSelect);
+                return;
+            }
+
+            if (_joinPanel != null && _joinPanel.IsOpen) _joinPanel.Close();
+
+            _characterPanel.SetAsLastSibling();
+            _characterPanel.gameObject.SetActive(true);
+
+            var select = _characterPanel.GetComponent<ConvertedCharacterSelect>();
+            if (select == null) return;
+
+            select.Closed -= OnCharacterChosen;
+            select.Closed += OnCharacterChosen;
+        }
+
+        private void EnsureCharacterOverlayIsolation()
+        {
+            if (_characterPanel == null) return;
+
+            var canvas = _characterPanel.GetComponent<Canvas>();
+            if (canvas == null) canvas = _characterPanel.gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
+
+            if (_characterPanel.GetComponent<GraphicRaycaster>() == null)
+                _characterPanel.gameObject.AddComponent<GraphicRaycaster>();
+
+            var rect = _characterPanel as RectTransform;
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
+        }
+
+        private void OnCharacterChosen()
+        {
+            var s = Settings.SettingsStore.Current;
+            var net = NetSession.Instance;
+            if (net != null && net.IsNetworked)
+            {
+                MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
+            }
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            var net = NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            RefreshProfileDoor();
+
+            RefreshTier();
+
+            SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
+
+            var mapEntry = SceneFlow.PreviewFor(SceneFlow.SelectedMap);
+            string mapName = mapEntry.Name;
+            string tagline = mapEntry.Tagline;
+
+            SetHeadline("BannerLabel", IsLobby ? "LOBBY" : "PRACTICE MODE",
+                        LobbyChrome.Style == LobbyStyle.Street ? 52 : 66);
+            SetText("MapValueLabel", mapName);
+
+            SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
+            SetText("DifficultyValueLabel", Difficulties[_difficulty]);
+            RefreshSettingsDropdowns();
+
+            SetText("DetailLabel", $"{mapName}   {tagline}");
+
+            if (_preview != null)
+            {
+                _preview.Show(SceneFlow.SelectedMap);
+                _preview.ReapplyEnvironment();
+            }
+
+            var s = Settings.SettingsStore.Current;
+            s.AiDifficulty = _difficulty;
+            AIController.ApplyDifficulty(_difficulty);
+
+            var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
+            string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "DANTE" : "BAYAN");
+            string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
+            string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "SLIPPER";
+
+            if (_chrome != null) _chrome.SetLoadout(person, $"{can}  ·  {slipper}");
+
+            if (_chrome != null)
+                _chrome.SetSkills(SceneFlow.SelectedMode == GameMode.HeroStrike, EquippedBuildSummary());
+            else SetText("CharacterButton", $"{person} · {can} · {slipper}  ›");
+
+            if (IsLobby && isNetworked)
+            {
+                int watching = MatchRpc.SpectatorsWatching;
+                string room = NetAuthority.IsHost ? "YOU ARE HOSTING" : "CONNECTED";
+                if (watching > 0)
+                    room += watching == 1 ? "  ·  1 WATCHING" : $"  ·  {watching} WATCHING";
+
+                SetHeadline("SeatHeading", room, LobbyHeadingSize);
+                SetText("SeatHint", NetAuthority.IsHost
+                        ? (AIController.BotsEnabled
+                            ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
+                            : "Bots are off. Fill all four seats with players before starting.")
+                        : GameLaunch.Spectator
+                            ? "You are watching. Click a free seat to join the match."
+                            : "The leader picks the map and the mode. Click a free seat to move.");
+
+                if (_addressRow != null)
+                {
+                    _addressRow.SetActive(true);
+
+                    if (_addressText != null)
+                    {
+                        _addressText.text = HostAddress();
+
+                        var addrRow = _addressRow.transform as RectTransform;
+                        if (addrRow != null) LayoutRebuilder.ForceRebuildLayoutImmediate(addrRow);
+
+                        _addressText.fontSize = PaperKit.Caption;
+                        MenuKit.Fit(_addressText, AddressRoom, 12);
+                    }
+                }
+
+                if (_codeRow != null)
+                {
+                    string code = net?.Lobby?.JoinCode ?? "";
+                    _codeRow.SetActive(!string.IsNullOrEmpty(code));
+                    if (_codeText != null) _codeText.text = code;
+                }
+
+                _chrome?.SetCode(net?.Lobby?.JoinCode ?? "");
+            }
+            else if (IsLobby)
+            {
+                SetText("SeatHeading", "LOBBY  ·  NOT CONNECTED");
+                SetText("SeatHint",
+                        "Opening a room on your network. If it does not, press JOIN.");
+
+                if (_addressRow != null) _addressRow.SetActive(false);
+                if (_codeRow != null) _codeRow.SetActive(false);
+
+                _chrome?.SetCode("");
+            }
+            else
+            {
+                SetText("SeatHeading", "YOUR CHARACTER");
+                SetText("SeatHint",
+                        "Four players, one defender. The defender rotates every round, so everyone defends "
+                        + "exactly once. Empty seats are bots, the kids from the street who fill in.");
+
+                if (_addressRow != null) _addressRow.SetActive(false);
+                if (_codeRow != null) _codeRow.SetActive(false);
+
+                _chrome?.SetCode("");
+            }
+
+            RefreshActionButtons();
+            RefreshLeaderControls();
+            RefreshEntryControls();
+            RefreshSeats();
+            RefreshCast();
+
+            RefreshSeatRowVisibility();
+
+            _chrome?.RefreshSummary?.Invoke();
+
+            if (isActiveAndEnabled) FitEverything();
+
+            _fitFrames = FitPasses;
+        }
+
+        private int _fitFrames;
+
+        private const int FitPasses = 3;
+
+        private void LateUpdate()
+        {
+
+            if (_refitPending)
+            {
+                _refitPending = false;
+                RefreshActionButtons();
+            }
+
+            if (_fitFrames <= 0) return;
+
+            _fitFrames--;
+            FitEverything();
+        }
+
+        private void FitEverything()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            var canvasRect = canvas == null ? null : canvas.transform as RectTransform;
+
+            if (canvasRect != null) LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRect);
+
+            Canvas.ForceUpdateCanvases();
+
+            foreach (string node in FitAsLine) FitLine(node);
+            foreach (string node in FitAsBlock) FitParagraph(node);
+
+            FitSelectorValuesTogether();
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++) FitLine($"SeatButton{seat}");
+        }
+
+        private static readonly string[] FitAsLine =
+        {
+            "CharacterButton", "PrimaryButton", "StartButton", "SeatHeading",
+        };
+
+        private static readonly string[] SelectorValues =
+        {
+            "MapValueLabel", "ModeValueLabel", "DifficultyValueLabel",
+        };
+
+        private void FitSelectorValuesTogether()
+        {
+            int size = LobbyChrome.ValueSize;
+            bool any = false;
+
+            foreach (string name in SelectorValues)
+            {
+                var node = Node(name);
+                var text = node == null ? null : node.GetComponent<Text>();
+                if (text == null) continue;
+
+                float room = text.rectTransform.rect.width;
+                if (room <= 1.0f) continue;
+
+                any = true;
+                text.fontSize = LobbyChrome.ValueSize;
+
+                while (text.fontSize > MenuKit.MinReadableUnits && text.preferredWidth > room)
+                    text.fontSize -= 1;
+
+                size = Mathf.Min(size, text.fontSize);
+            }
+
+            if (!any) return;
+
+            foreach (string name in SelectorValues)
+            {
+                var node = Node(name);
+                var text = node == null ? null : node.GetComponent<Text>();
+                if (text != null) text.fontSize = size;
+            }
+        }
+
+        private static readonly string[] FitAsBlock =
+        {
+            "SeatHint", "StatusLabel", "DetailLabel",
+        };
+
+        private void FitLine(string nodeName)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            MenuKit.FitBox(text);
+        }
+
+        private void FitParagraph(string nodeName)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            MenuKit.FitBlock(text);
+        }
+
+        private static string HostAddress()
+        {
+            int port = LobbySession.DefaultPort;
+
+            try
+            {
+                var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
+                foreach (var ip in ips)
+                {
+                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
+                        !System.Net.IPAddress.IsLoopback(ip))
+                    {
+                        return $"{ip}:{port}";
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"[Lobby] could not read this machine's address: {e.Message}");
+            }
+
+            return $"127.0.0.1:{port}";
+        }
+
+        private void SetFittedButtonLabel(string nodeName, string value, int maxSize)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            text.text = value;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+            text.fontSize = maxSize;
+
+            ForceLayoutFor(text.rectTransform);
+
+            float room = text.rectTransform.rect.width;
+
+            if (room <= 1.0f)
+            {
+                _refitPending = true;
+                return;
+            }
+
+            while (text.fontSize > MinButtonFontSize && text.preferredWidth > room)
+                text.fontSize -= 2;
+        }
+
+        private bool _refitPending;
+
+        private const int MinButtonFontSize = 18;
+
+        private const int MaxButtonFontSize = 40;
+
+        private void RefreshActionButtons()
+        {
+            var primNode = Node("PrimaryButton");
+            var startNode = Node("StartButton");
+
+            bool live = IsLive;
+            bool host = NetAuthority.IsHost;
+
+            bool ranked = _chrome != null && _chrome.Mode == LobbyMode.Ranked;
+
+            if (ranked)
+            {
+                if (primNode != null) primNode.gameObject.SetActive(false);
+                if (startNode == null) return;
+
+                startNode.gameObject.SetActive(true);
+
+                bool queueing = _queueCard != null && _queueCard.IsQueueing;
+                bool signedIn = GameServices.Account != null && !GameServices.Account.IsGuest;
+
+                SetFittedButtonLabel("StartButton",
+                    queueing ? "SEARCHING..." : "FIND A RANKED MATCH", MaxButtonFontSize);
+
+                var rankedButton = startNode.GetComponent<Button>();
+                if (rankedButton != null) rankedButton.interactable = signedIn && !queueing;
+
+                return;
+            }
+
+
+            if (IsLobby && live && host)
+            {
+                if (primNode != null) primNode.gameObject.SetActive(false);
+                if (startNode != null)
+                {
+                    startNode.gameObject.SetActive(true);
+                    bool fullWithoutBots = AIController.BotsEnabled ||
+                                           (NetSession.Instance != null &&
+                                            NetSession.Instance.Lobby.OccupiedSeatCount() >= Balance.PlayerCount);
+                    SetFittedButtonLabel("StartButton", fullWithoutBots
+                        ? "START MATCH"
+                        : "WAITING FOR 4 PLAYERS", MaxButtonFontSize);
+                    var btn = startNode.GetComponent<Button>();
+                    if (btn != null) btn.interactable = fullWithoutBots;
+                }
+                return;
+            }
+
+            if (startNode != null) startNode.gameObject.SetActive(false);
+            if (primNode == null) return;
+
+
+            primNode.gameObject.SetActive(true);
+            var prim = primNode.GetComponent<Button>();
+
+            if (!IsLobby)
+            {
+                SetText("PrimaryButton", "START MATCH");
+                if (prim != null) prim.interactable = true;
+                return;
+            }
+
+            if (!live)
+            {
+                SetText("PrimaryButton", "CONNECTING...");
+                if (prim != null) prim.interactable = false;
+                return;
+            }
+
+            string label = GameLaunch.Spectator
+                ? "SPECTATING"
+                : _localReady ? $"WAITING FOR {HostLabel()}" : "READY";
+
+            SetFittedButtonLabel("PrimaryButton", label, MaxButtonFontSize);
+            if (prim != null) prim.interactable = !GameLaunch.Spectator;
+        }
+
+        private static string HostLabel()
+        {
+            var net = NetSession.Instance;
+            int leader = net != null ? net.Lobby.LeaderPeerId : -1;
+            if (leader < 0) return "HOST";
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var info = MatchRpc.Instance?.GetSeatInfo(seat);
+                if (info != null && info.Occupied && info.PeerId == leader)
+                    return PlayerLabel(info, seat).ToUpperInvariant();
+            }
+
+            return "HOST";
+        }
+
+        private void RefreshLeaderControls()
+        {
+            bool allowed = !IsLobby || NetAuthority.IsHost;
+
+            foreach (string node in LeaderOnlyButtons)
+            {
+                foreach (var t in Nodes(node))
+                {
+                    var btn = t.GetComponent<Button>();
+                    if (btn != null) btn.interactable = allowed;
+                }
+            }
+        }
+
+        private static readonly string[] LeaderOnlyButtons =
+        {
+            "MapPrevButton", "MapNextButton",
+            "ModePrevButton", "ModeNextButton",
+            "DifficultyPrevButton", "DifficultyNextButton",
+        };
+
+        private void HandleJoinCodeChanged(string code)
+        {
+            if (_codeRow != null)
+            {
+                _codeRow.SetActive(!string.IsNullOrEmpty(code));
+                if (_codeText != null) _codeText.text = code;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            var net = NetSession.Instance;
+            if (net != null)
+            {
+                net.Lobby.JoinCodeChanged -= HandleJoinCodeChanged;
+                net.SeatingChanged -= HandleSeatingChanged;
+            }
+
+            if (_cast != null) Destroy(_cast.gameObject);
+
+            if (_joinPanel != null)
+            {
+                _joinPanel.Status -= SetStatus;
+                _joinPanel.Joined -= HandleJoinedInPlace;
+            }
+
+            MatchRpc.OnMapChanged -= HandleMapSynced;
+            MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
+            MatchRpc.OnFormatChanged -= HandleFormatSynced;
+            MatchRpc.OnRulesChanged -= HandleRulesSynced;
+            MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
+            MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
+            MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;
+            MatchRpc.OnModeChanged -= HandleModeSynced;
+            MatchRpc.OnMatchStarted -= HandleMatchStarted;
+            NetSession.ClientDisconnected -= HandleClientDisconnected;
+        }
+    }
+}

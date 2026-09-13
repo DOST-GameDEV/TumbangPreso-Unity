@@ -1,0 +1,603 @@
+using System.Collections;
+using System.Collections.Generic;
+using TumbangPreso.Net;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class LobbyChat : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
+    {
+        public const int LobbyVisibleLines = 2;
+
+        public const int MaxHistory = 100;
+
+        public const string EmptyLog = "No messages yet.";
+
+        public void OnPointerClick(UnityEngine.EventSystems.PointerEventData e)
+        {
+            if (_inMatch || _field == null) return;
+
+            if (_historyPanel != null && _historyPanel.activeSelf)
+            {
+                CloseHistory();
+                return;
+            }
+
+            OpenHistory();
+            _field.ActivateInputField();
+        }
+
+        public const int MaxLines = 6;
+
+        public const float MatchLineLife = 9.0f;
+        public const float MatchFadeTime = 1.4f;
+
+        private const float PanelWidth = 560.0f;
+        public const float LineHeight = 26.0f;
+        public const float FieldHeight = 56.0f;
+        private const int LineSize = 19;
+
+        private bool _inMatch;
+        private RectTransform _rect;
+        private InputField _field;
+        private GameObject _fieldRow;
+        private GameObject _historyPanel;
+        private Text _historyText;
+        private ScrollRect _historyScroll;
+        private readonly List<Text> _lines = new List<Text>();
+        private readonly List<float> _stamps = new List<float>();
+        private readonly List<string> _history = new List<string>();
+
+        public bool Typing => _field != null && _field.isFocused;
+
+        public static bool AnyTyping { get; private set; }
+
+        public static LobbyChat Attach(Transform parent, bool inMatch)
+        {
+            if (parent == null) return null;
+
+            var go = new GameObject("LobbyChat");
+            go.transform.SetParent(parent, false);
+
+            var chat = go.AddComponent<LobbyChat>();
+            chat._inMatch = inMatch;
+            chat.Construct();
+
+            return chat;
+        }
+
+        private void Construct()
+        {
+            var rect = gameObject.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.0f, 0.0f);
+            rect.anchorMax = new Vector2(0.0f, 0.0f);
+            rect.pivot = new Vector2(0.0f, 0.0f);
+            rect.anchoredPosition = new Vector2(48.0f, 48.0f);
+            rect.sizeDelta = new Vector2(PanelWidth,
+                                         ((LineHeight + 4.0f) * (_inMatch ? MaxLines : LobbyVisibleLines)) +
+                                         FieldHeight + 20.0f);
+
+            _rect = rect;
+
+            if (_inMatch)
+            {
+                var fitter = gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            }
+
+            var column = gameObject.AddComponent<VerticalLayoutGroup>();
+            column.spacing = 4;
+            column.padding = new RectOffset(12, 12, 10, 10);
+            column.childControlWidth = true;
+
+            column.childControlHeight = true;
+            column.childForceExpandWidth = true;
+            column.childForceExpandHeight = false;
+            column.childAlignment = TextAnchor.LowerLeft;
+
+            for (int i = 0; i < MaxLines; i++)
+            {
+                var line = MenuKit.Label(transform, "", LineSize,
+                                         _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
+                                         Vector2.zero, Vector2.zero, Vector2.zero,
+                                         TextAnchor.LowerLeft);
+
+                line.raycastTarget = false;
+                line.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+                var element = line.gameObject.AddComponent<LayoutElement>();
+                element.minHeight = LineHeight;
+                element.preferredHeight = LineHeight;
+
+                _lines.Add(line);
+                _stamps.Add(-999.0f);
+            }
+
+            BuildField();
+
+            if (!_inMatch)
+            {
+                var plate = gameObject.AddComponent<Image>();
+
+                plate.raycastTarget = true;
+                PaperSkin.Apply(gameObject, PaperCraft.Surface.Sheet);
+
+                plate.raycastTarget = true;
+
+                BuildHistoryPanel();
+            }
+
+            SetLines();
+        }
+
+        private void BuildField()
+        {
+            _fieldRow = new GameObject("ChatField");
+            _fieldRow.transform.SetParent(transform, false);
+
+            var image = _fieldRow.AddComponent<Image>();
+
+            if (_inMatch) WoodSkin.Apply(_fieldRow, WoodCraft.Surface.Field);
+            else PaperSkin.Apply(_fieldRow, PaperCraft.Surface.Tray);
+
+            var element = _fieldRow.AddComponent<LayoutElement>();
+            element.minHeight = FieldHeight;
+            element.preferredHeight = FieldHeight;
+
+            var placeholder = MenuKit.Label(_fieldRow.transform,
+                                            _inMatch ? "ENTER to talk" : "Say something",
+                                            LineSize,
+                                            _inMatch ? UiTheme.CreamMuted
+                                                     : UiTheme.PaperInkSoft,
+                                            Vector2.zero, Vector2.zero, Vector2.zero,
+                                            TextAnchor.MiddleLeft);
+            placeholder.raycastTarget = false;
+            Inset(placeholder.rectTransform);
+
+            var typed = MenuKit.Label(_fieldRow.transform, "", LineSize,
+                                      _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            typed.raycastTarget = false;
+            typed.supportRichText = false;
+            Inset(typed.rectTransform);
+
+            _field = _fieldRow.AddComponent<InputField>();
+            MenuKit.Dress(_field);
+            _field.textComponent = typed;
+            _field.placeholder = placeholder;
+            _field.targetGraphic = image;
+            _field.lineType = InputField.LineType.SingleLine;
+
+            _field.characterLimit = MatchRpc.MaxChatLength;
+
+            _field.onSubmit.AddListener(Submit);
+
+            if (_inMatch) _fieldRow.SetActive(false);
+        }
+
+        public void PlaceAt(Vector2 corner, float width)
+        {
+            if (_rect == null) return;
+
+            _rect.anchoredPosition = corner;
+            _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+        }
+
+        public void PlaceBelowTopRight(float rightMargin, float top, float width)
+        {
+            if (_rect == null) return;
+
+            _rect.anchorMin = Vector2.one;
+            _rect.anchorMax = Vector2.one;
+            _rect.pivot = Vector2.one;
+            _rect.anchoredPosition = new Vector2(-rightMargin, -top);
+            _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+        }
+
+        public float PanelHeight => _rect != null ? _rect.rect.height : 0.0f;
+
+        public void PlaceBottomRight(float rightMargin, float bottom, float width)
+        {
+            if (_rect == null) return;
+
+            _rect.anchorMin = new Vector2(1.0f, 0.0f);
+            _rect.anchorMax = new Vector2(1.0f, 0.0f);
+            _rect.pivot = new Vector2(1.0f, 0.0f);
+            _rect.anchoredPosition = new Vector2(-rightMargin, bottom);
+            _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+        }
+
+        private static void Inset(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(14.0f, 0.0f);
+            rt.offsetMax = new Vector2(-14.0f, 0.0f);
+        }
+
+        private void OnEnable() => MatchRpc.OnChatLine += Add;
+
+        private void OnDestroy()
+        {
+            if (_historyPanel != null) Destroy(_historyPanel);
+        }
+
+        private void OnDisable()
+        {
+            MatchRpc.OnChatLine -= Add;
+            CloseHistory();
+
+            AnyTyping = false;
+        }
+
+        private void Update()
+        {
+            AnyTyping = Typing;
+
+            if (!_inMatch)
+            {
+                if (_historyPanel != null && _historyPanel.activeSelf &&
+                    InputLayer.MenuNav.CancelPressed)
+                {
+                    _historyPanel.SetActive(false);
+                }
+                return;
+            }
+
+            if (Typing)
+            {
+                if (InputLayer.MenuNav.CancelPressed) Close();
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Open();
+
+            Fade();
+        }
+
+        private void Open()
+        {
+            if (_fieldRow == null || _field == null) return;
+
+            _fieldRow.SetActive(true);
+            _field.text = "";
+            _field.ActivateInputField();
+        }
+
+        private void Close()
+        {
+            if (_field != null)
+            {
+                _field.text = "";
+                _field.DeactivateInputField();
+            }
+
+            if (_inMatch && _fieldRow != null) _fieldRow.SetActive(false);
+        }
+
+        private void Submit(string text)
+        {
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                bool sent = MatchRpc.Instance != null && MatchRpc.Instance.SendChatServerRpc(text);
+
+                if (!sent) AddLocal("Not connected. That line was not sent.");
+            }
+
+            if (_inMatch)
+            {
+                Close();
+                return;
+            }
+
+            if (_field == null) return;
+
+            _field.text = "";
+
+            if (_refocus != null) StopCoroutine(_refocus);
+            _refocus = StartCoroutine(RefocusNextFrame());
+        }
+
+        private Coroutine _refocus;
+
+        private IEnumerator RefocusNextFrame()
+        {
+            yield return null;
+
+            _refocus = null;
+
+            if (_inMatch || _field == null || !_field.gameObject.activeInHierarchy) yield break;
+
+            _field.ActivateInputField();
+        }
+
+        private void Add(string who, string what)
+        {
+            Debug.Log($"[Chat] received from '{who}': {what}");
+            Push($"{who}:  {what}");
+        }
+
+        private void AddLocal(string note) => Push(note);
+
+        private void Push(string line)
+        {
+            _history.Add(line);
+            if (_history.Count > MaxHistory) _history.RemoveAt(0);
+
+            if (!_inMatch)
+            {
+                SetLines();
+                RefreshHistoryPanel();
+
+                if (_historyPanel != null && _historyPanel.activeSelf) _snapPending = true;
+                return;
+            }
+
+            for (int i = 0; i < _lines.Count - 1; i++)
+            {
+                _lines[i].text = _lines[i + 1].text;
+                _stamps[i] = _stamps[i + 1];
+            }
+
+            _lines[_lines.Count - 1].text = line;
+            _stamps[_stamps.Count - 1] = Time.unscaledTime;
+
+            SetLines();
+        }
+
+        private void SetLines()
+        {
+            if (!_inMatch)
+            {
+                int first = Mathf.Max(0, _history.Count - LobbyVisibleLines);
+                int target = MaxLines - Mathf.Min(LobbyVisibleLines, _history.Count);
+
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    _lines[i].text = i < target ? "" : _history[first + i - target];
+                }
+
+                if (_history.Count == 0) _lines[_lines.Count - 1].text = EmptyLog;
+            }
+
+            foreach (var line in _lines)
+            {
+                var element = line.GetComponent<LayoutElement>();
+
+                bool has = !string.IsNullOrEmpty(line.text);
+
+                if (line.gameObject.activeSelf != has) line.gameObject.SetActive(has);
+
+                if (!has) continue;
+
+                line.color = _inMatch
+                    ? (line.text == EmptyLog ? UiTheme.CreamMuted : UiTheme.Cream)
+                    : (line.text == EmptyLog ? UiTheme.PaperInkSoft : UiTheme.PaperInk);
+
+                if (element != null)
+                {
+                    element.minHeight = LineHeight;
+                    element.preferredHeight = LineHeight;
+                }
+
+                if (line.text == EmptyLog)
+                {
+                    line.fontSize = LineSize;
+                    line.verticalOverflow = VerticalWrapMode.Overflow;
+                    continue;
+                }
+
+                MenuKit.FitBlock(line, LineHeight);
+
+                line.verticalOverflow = VerticalWrapMode.Truncate;
+
+                Ellipsise(line, LineHeight);
+            }
+        }
+
+        private static void Ellipsise(Text line, float room)
+        {
+            if (line == null || string.IsNullOrEmpty(line.text)) return;
+            if (line.preferredHeight <= room + 0.5f) return;
+
+            string full = line.text;
+
+            int low = 4, high = full.Length;
+
+            while (high - low > 1)
+            {
+                int mid = (low + high) / 2;
+                line.text = full.Substring(0, mid) + "…";
+
+                if (line.preferredHeight <= room + 0.5f) low = mid;
+                else high = mid;
+            }
+
+            line.text = full.Substring(0, low) + "…";
+        }
+
+        private const float ExpandedHeight = 460.0f;
+
+        private void BuildHistoryPanel()
+        {
+            if (_rect == null) return;
+
+            _historyPanel = new GameObject("LobbyChatLog");
+            _historyPanel.transform.SetParent(_rect, false);
+
+            var layer = _historyPanel.AddComponent<RectTransform>();
+
+            _historyPanel.AddComponent<LayoutElement>().ignoreLayout = true;
+
+            layer.anchorMin = new Vector2(0.0f, 1.0f);
+            layer.anchorMax = new Vector2(1.0f, 1.0f);
+            layer.pivot = new Vector2(0.5f, 0.0f);
+            layer.offsetMin = Vector2.zero;
+            layer.offsetMax = new Vector2(0.0f, ExpandedHeight);
+
+            var ownCanvas = _historyPanel.AddComponent<Canvas>();
+            ownCanvas.overrideSorting = true;
+            ownCanvas.sortingOrder = 90;
+            _historyPanel.AddComponent<GraphicRaycaster>();
+
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(_historyPanel);
+
+            var box = new GameObject("Panel");
+            box.transform.SetParent(_historyPanel.transform, false);
+            var plate = box.AddComponent<Image>();
+
+            PaperSkin.Apply(box, PaperCraft.Surface.Sheet);
+
+            plate.raycastTarget = true;
+
+            var panelRect = plate.rectTransform;
+            MenuKit.Stretch(panelRect, 0.0f);
+
+            var title = MenuKit.Label(box.transform, "LOBBY CHAT", PaperKit.Title,
+                                      UiTheme.PaperInk,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            var titleRect = title.rectTransform;
+            titleRect.anchorMin = new Vector2(0.0f, 1.0f);
+            titleRect.anchorMax = new Vector2(1.0f, 1.0f);
+            titleRect.pivot = new Vector2(0.5f, 1.0f);
+            titleRect.offsetMin = new Vector2(24.0f, -66.0f);
+            titleRect.offsetMax = new Vector2(-170.0f, -14.0f);
+            title.raycastTarget = false;
+
+            var close = MenuKit.WoodButton(box.transform, "CLOSE", Vector2.one,
+                                           Vector2.zero, new Vector2(132.0f, 46.0f),
+                                           CloseHistory);
+            PaperKit.Paperise(close.gameObject, PaperCraft.Surface.Token);
+            if (close.GetComponent<PaperButton>() == null)
+                close.gameObject.AddComponent<PaperButton>();
+
+            var closeRect = close.transform as RectTransform;
+            closeRect.pivot = Vector2.one;
+            closeRect.anchoredPosition = new Vector2(-18.0f, -14.0f);
+
+            var viewportGo = new GameObject("Viewport");
+            viewportGo.transform.SetParent(box.transform, false);
+            var viewportImage = viewportGo.AddComponent<Image>();
+            PaperSkin.Apply(viewportGo, PaperCraft.Surface.Tray);
+            var viewportRect = viewportImage.rectTransform;
+            viewportRect.anchorMin = Vector2.zero;
+            viewportRect.anchorMax = Vector2.one;
+            viewportRect.offsetMin = new Vector2(22.0f, 22.0f);
+            viewportRect.offsetMax = new Vector2(-22.0f, -78.0f);
+
+            viewportGo.AddComponent<RectMask2D>();
+
+            var contentGo = new GameObject("ChatHistory");
+            contentGo.transform.SetParent(viewportGo.transform, false);
+
+            _historyText = contentGo.AddComponent<Text>();
+            _historyText.font = MenuKit.Font;
+            _historyText.fontSize = 22;
+            _historyText.color = UiTheme.PaperInk;
+            _historyText.alignment = TextAnchor.UpperLeft;
+            _historyText.alignByGeometry = true;
+            _historyText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _historyText.verticalOverflow = VerticalWrapMode.Overflow;
+            _historyText.raycastTarget = false;
+            _historyText.text = EmptyLog;
+
+            var contentRect = _historyText.rectTransform;
+            contentRect.anchorMin = new Vector2(0.0f, 1.0f);
+            contentRect.anchorMax = new Vector2(1.0f, 1.0f);
+            contentRect.pivot = new Vector2(0.5f, 1.0f);
+            contentRect.offsetMin = new Vector2(18.0f, 0.0f);
+            contentRect.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            var fitter = contentGo.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            _historyScroll = box.AddComponent<ScrollRect>();
+            _historyScroll.viewport = viewportRect;
+            _historyScroll.content = contentRect;
+            _historyScroll.horizontal = false;
+            _historyScroll.vertical = true;
+            _historyScroll.movementType = ScrollRect.MovementType.Clamped;
+            _historyScroll.scrollSensitivity = 28.0f;
+
+            _historyPanel.SetActive(false);
+        }
+
+        private void CloseHistory()
+        {
+            if (_historyPanel != null) _historyPanel.SetActive(false);
+        }
+
+        private void OpenHistory()
+        {
+            if (_historyPanel == null) return;
+
+            RefreshHistoryPanel();
+            _historyPanel.SetActive(true);
+            _historyPanel.transform.SetAsLastSibling();
+
+            Canvas.ForceUpdateCanvases();
+            SnapHistoryToNewest();
+
+            _snapPending = true;
+        }
+
+        private bool _snapPending;
+
+        private void LateUpdate()
+        {
+            if (!_snapPending) return;
+
+            _snapPending = false;
+            SnapHistoryToNewest();
+        }
+
+        private void SnapHistoryToNewest()
+        {
+            if (_historyScroll == null) return;
+
+            var content = _historyScroll.content;
+            var viewport = _historyScroll.viewport;
+            if (content == null || viewport == null) return;
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+
+            float overflow = content.rect.height - viewport.rect.height;
+
+            content.anchoredPosition = new Vector2(content.anchoredPosition.x,
+                                                   Mathf.Max(0.0f, overflow));
+        }
+
+        private void RefreshHistoryPanel()
+        {
+            if (_historyText == null) return;
+
+            _historyText.text = _history.Count == 0 ? EmptyLog : string.Join("\n", _history);
+        }
+
+        private void Fade()
+        {
+            float now = Time.unscaledTime;
+
+            for (int i = 0; i < _lines.Count; i++)
+            {
+                if (string.IsNullOrEmpty(_lines[i].text)) continue;
+
+                float age = now - _stamps[i];
+                if (age < MatchLineLife) continue;
+
+                float t = Mathf.Clamp01((age - MatchLineLife) / MatchFadeTime);
+
+                var colour = UiTheme.Cream;
+                _lines[i].color = new Color(colour.r, colour.g, colour.b, 1.0f - t);
+
+                if (t >= 1.0f) _lines[i].text = "";
+            }
+        }
+    }
+}

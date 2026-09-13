@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.6299974">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="541" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.629997" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1622" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="541" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.622799" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1623" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="541" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.621749" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1624" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="541" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.620981" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1043" name="CarrySupportExtentTests" fullname="TumbangPreso.Tests.CarrySupportExtentTests" classname="TumbangPreso.Tests.CarrySupportExtentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.046421" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1044" name="RotatingAFlatShoeDoesNotIncreaseItsPalmClearance" fullname="TumbangPreso.Tests.CarrySupportExtentTests.RotatingAFlatShoeDoesNotIncreaseItsPalmClearance" methodname="RotatingAFlatShoeDoesNotIncreaseItsPalmClearance" classname="TumbangPreso.Tests.CarrySupportExtentTests" runstate="Runnable" seed="592490556" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.024044" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="TheVisibleShoeCentreStaysAgainstTheTiltedPalmEvenWithAnOffsetMeshOrigin" fullname="TumbangPreso.Tests.CarrySupportExtentTests.TheVisibleShoeCentreStaysAgainstTheTiltedPalmEvenWithAnOffsetMeshOrigin" methodname="TheVisibleShoeCentreStaysAgainstTheTiltedPalmEvenWithAnOffsetMeshOrigin" classname="TumbangPreso.Tests.CarrySupportExtentTests" runstate="Runnable" seed="733692251" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.008335" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1565" name="ThrowGestureContinuityTests" fullname="TumbangPreso.Tests.ThrowGestureContinuityTests" classname="TumbangPreso.Tests.ThrowGestureContinuityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.005421" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1567" name="ContactAndFollowThroughHaveNoPoseDiscontinuity" fullname="TumbangPreso.Tests.ThrowGestureContinuityTests.ContactAndFollowThroughHaveNoPoseDiscontinuity" methodname="ContactAndFollowThroughHaveNoPoseDiscontinuity" classname="TumbangPreso.Tests.ThrowGestureContinuityTests" runstate="Runnable" seed="1234271953" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.002045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1568" name="LeftAndRightPektusHaveDistinctPreparationAndWristRelease" fullname="TumbangPreso.Tests.ThrowGestureContinuityTests.LeftAndRightPektusHaveDistinctPreparationAndWristRelease" methodname="LeftAndRightPektusHaveDistinctPreparationAndWristRelease" classname="TumbangPreso.Tests.ThrowGestureContinuityTests" runstate="Runnable" seed="850316780" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.001105" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1566" name="QuickPreparationIsVisibleAndReleaseReturnsToCurrentLocomotion" fullname="TumbangPreso.Tests.ThrowGestureContinuityTests.QuickPreparationIsVisibleAndReleaseReturnsToCurrentLocomotion" methodname="QuickPreparationIsVisibleAndReleaseReturnsToCurrentLocomotion" classname="TumbangPreso.Tests.ThrowGestureContinuityTests" runstate="Runnable" seed="556706063" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:49Z" duration="0.000870" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1569" name="ThrowMotionTests" fullname="TumbangPreso.Tests.ThrowMotionTests" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.557683" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1570" name="FullWindupMovesTheTorsoAndOffHandOnEveryRetainedPerson" fullname="TumbangPreso.Tests.ThrowMotionTests.FullWindupMovesTheTorsoAndOffHandOnEveryRetainedPerson" methodname="FullWindupMovesTheTorsoAndOffHandOnEveryRetainedPerson" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="827871464" result="Passed" start-time="2026-09-13 22:39:49Z" end-time="2026-09-13 22:39:50Z" duration="0.509146" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1574" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.038068" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1571" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(-1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(-1.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="2052075665" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.030570" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1572" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(0.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(0.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="335061814" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.000643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1573" name="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength(1.0f)" methodname="PreparingEitherCurveKeepsTheFirstPersonGripAtArmsLength" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="753076744" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.000473" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1578" name="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames" fullname="TumbangPreso.Tests.ThrowMotionTests.SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.009614" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1575" name="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(-1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(-1.0f)" methodname="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="2039507229" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.003966" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1576" name="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(0.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(0.0f)" methodname="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="16605414" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.001989" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1577" name="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(1.0f)" fullname="TumbangPreso.Tests.ThrowMotionTests.SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames(1.0f)" methodname="SignedReleaseAndInterruptionSettleAtThirtySixtyAnd144Frames" classname="TumbangPreso.Tests.ThrowMotionTests" runstate="Runnable" seed="25070645" result="Passed" start-time="2026-09-13 22:39:50Z" end-time="2026-09-13 22:39:50Z" duration="0.002101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

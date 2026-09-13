@@ -1,6 +1,7 @@
 """Verify signed windup/release in three actual player processes, with optional late rejoin."""
 import argparse,csv,hashlib,json,os,re,shutil,subprocess,sys,time,uuid
 from pathlib import Path
+from run_unity_guarded import profile_root
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
 def rows(path):
@@ -51,10 +52,15 @@ def main():
     ap.add_argument("--delay",type=float,default=0);ap.add_argument("--rejoin",action="store_true");ap.add_argument("--require-warmup-swap",action="store_true");ap.add_argument("--out",type=Path,required=True);a=ap.parse_args()
     folder=a.out.resolve();folder.mkdir(parents=True,exist_ok=False)
     backup=folder/"profiles";manifest={};processes=[];handles=[]
-    for source in PROFILE.rglob("*"):
-        if not source.is_file() or source.suffix==".log":continue
-        rel=source.relative_to(PROFILE);target=backup/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
-        manifest[str(rel)]=hashlib.sha256(source.read_bytes()).hexdigest()
+    # These processes use exactly three named profiles. Never restore main or
+    # unrelated profiles over changes made elsewhere while this review runs.
+    for name in ("throwhost","throwowner","throwobserver"):
+        scope=profile_root(["-tp-profile",name]).resolve()
+        if not scope.is_relative_to(PROFILE.resolve()):raise ValueError("Profile scope escaped player data")
+        for source in scope.rglob("*"):
+            if not source.is_file() or source.suffix==".log":continue
+            rel=source.relative_to(PROFILE);target=backup/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
+            manifest[str(rel)]=hashlib.sha256(source.read_bytes()).hexdigest()
     startup=None
     if os.name=="nt":
         startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0

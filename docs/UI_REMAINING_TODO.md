@@ -3,8 +3,10 @@
 Owner decision2026-09-14: no more subagents, including resuming the previous
 /root/ui_overhaul. Parent finishes this list LAST after the other game work.
 Do not discard existing implementations or claim this overhaul is finished.
-The sole former agent stopped at the usage limit; its checkout/source remains
-../TumbangPreso-UI, branchASTRAReworks, no pushing from that clone.
+The sole former agent stopped at the usage limit. For the new PC its exact pending
+patch and source record are preserved in
+docs/reports/improvement-2026-09-14/ui-deferred-source/. No clone or agent is needed.
+The source-PC ../TumbangPreso-UI checkout is historical, with no pushing from it.
 
 ## Saved implementation and exact pending change
 
@@ -17,7 +19,9 @@ lines are preserved; do not replace that screen again.
 Unintegrated commit in UI clone: f5b10a368f0f73cd376d785ba486172cb11321d6. It refreshes
 held skill-reference text when timing/charges/glyph/cost changes on the SAME kit
 instance. No gameplay reset. Parent19d19021 now preserves kit identity on sidegrade
-changes; incorporate this UI follow-up when resuming this final queue.
+changes; incorporate this UI follow-up when resuming this final queue. Portable
+pending-held-info.patch passed git apply --check at transfer, but is NOT applied.
+Recheck/review it against the then-current source before integration.
 
 Latest validation: primary Logs/ui-native-batch-v1.xml ran11targeted native cases,
 10passed,1failed. Failure is TumpNativeSettingsTests.
@@ -80,6 +84,8 @@ by the tool. Figma fileI1snFz26WypEywfWMhF9jq reached its free MCP allowance;
 no paid upgrades, quota bypass or unnecessary Figma work. Existing artifacts/
 IDs are references, not proof of final UI quality.
 
-More detail: docs/UI_EXECUTION_STATUS.md in the UI clone (latest throughf5b10),
-its docs/reports/ui-brand-2026-09-13 source reviews, and parent's active plan.
+More detail: archived UI_EXECUTION_STATUS_ARCHIVE.md (latest throughf5b10) and
+source reviews in the portable ui-deferred-source folder, plus the active plan.
+Selected real UI screenshots and the known failing XML are in the sibling
+transfer-evidence folder; old Logs paths do not exist on a fresh clone.
 No reset authority. No agents. No Desktop update unless newly requested.

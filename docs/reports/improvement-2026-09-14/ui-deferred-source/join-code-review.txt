@@ -1,0 +1,681 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TumbangPreso.Net;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class LobbyJoinPanel : MonoBehaviour
+    {
+        private const int RowCount = 4;
+
+        private const float CardWidth = 820.0f;
+        private const float CardHeight = 560.0f;
+        private const float RowHeight = 52.0f;
+        private const float Pad = 24.0f;
+
+        public event Action Joined;
+
+        public event Action Opened;
+        public event Action Closed;
+
+        public event Action<string> Status;
+
+        private NetSession _net;
+
+        private InputField _entry;
+
+        private readonly List<Button> _lanRows = new List<Button>();
+        private readonly List<Text> _lanRowLabels = new List<Text>();
+        private readonly List<string> _lanAddresses = new List<string>();
+
+        private readonly List<Button> _onlineRows = new List<Button>();
+        private readonly List<Text> _onlineRowLabels = new List<Text>();
+        private readonly List<string> _onlineCodes = new List<string>();
+
+        private bool _busy;
+
+        public bool IsOpen => gameObject.activeSelf;
+
+        public static LobbyJoinPanel Build(Transform parent, NetSession net)
+        {
+            var go = new GameObject("LobbyJoinPanel");
+            go.transform.SetParent(parent, false);
+
+            var panel = go.AddComponent<LobbyJoinPanel>();
+            panel._net = net;
+            panel.Construct();
+            go.SetActive(false);
+
+            return panel;
+        }
+
+        private void Construct()
+        {
+            var scrim = gameObject.AddComponent<Image>();
+
+            scrim.color = PaperCraft.Scrim;
+            scrim.raycastTarget = true;
+            MenuKit.Stretch(scrim.rectTransform, 0.0f);
+
+            var card = PaperKit.Sheet(transform, "JoinCard");
+            var cardGo = card.gameObject;
+            MenuKit.Place(card.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                          new Vector2(CardWidth, CardHeight));
+
+            var column = new GameObject("Column");
+            column.transform.SetParent(cardGo.transform, false);
+
+            var layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8;
+            layout.padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
+            layout.childControlWidth = true;
+
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
+
+            var title = Heading(column.transform, "JOIN A GAME", PaperKit.Title,
+                                UiTheme.PaperInk, 34);
+            title.alignment = TextAnchor.MiddleLeft;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
+
+            var hint = Heading(column.transform,
+                               "Type a four-character code or an address, or pick a game below.",
+                               PaperKit.Caption, UiTheme.PaperInkSoft, 24);
+            hint.alignment = TextAnchor.MiddleLeft;
+
+            BuildEntryRow(column.transform);
+
+            BuildSourceSwitch(column.transform);
+
+            _list = new GameObject("BrowserList", typeof(RectTransform));
+            _list.transform.SetParent(column.transform, false);
+
+            var listLayout = _list.AddComponent<VerticalLayoutGroup>();
+            listLayout.spacing = 6.0f;
+            listLayout.childControlWidth = true;
+            listLayout.childControlHeight = true;
+            listLayout.childForceExpandWidth = true;
+            listLayout.childForceExpandHeight = false;
+
+            var listElement = _list.AddComponent<LayoutElement>();
+            listElement.minHeight = (RowHeight * RowCount) + (6.0f * (RowCount - 1));
+            listElement.preferredHeight = listElement.minHeight;
+            listElement.flexibleHeight = 0.0f;
+
+            _lanGroup = Group(_list.transform, "NearbyGames");
+            BuildRows(_lanGroup.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
+                      "SEARCHING YOUR NETWORK…");
+
+            _onlineGroup = Group(_list.transform, "OnlineGames");
+            BuildRows(_onlineGroup.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
+                      "CHECKING ONLINE SERVERS…");
+
+            BuildFooter(column.transform);
+
+            SetSource(false);
+        }
+
+        private GameObject _list;
+        private GameObject _lanGroup;
+        private GameObject _onlineGroup;
+        private Button _nearbyChip;
+        private Button _onlineChip;
+
+        private bool _showOnline;
+
+        private static GameObject Group(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var layout = go.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 6.0f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return go;
+        }
+
+        private void BuildSourceSwitch(Transform parent)
+        {
+            var row = new GameObject("SourceSwitch", typeof(RectTransform));
+            row.transform.SetParent(parent, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = PaperKit.ChipHeight;
+            element.preferredHeight = PaperKit.ChipHeight;
+            element.flexibleHeight = 0.0f;
+
+            _nearbyChip = PaperKit.Chip(row.transform, "NearbyChip", "ON YOUR NETWORK");
+            _onlineChip = PaperKit.Chip(row.transform, "OnlineChip", "ONLINE");
+
+            _nearbyChip.onClick.AddListener(() => SetSource(false));
+            _onlineChip.onClick.AddListener(() => SetSource(true));
+        }
+
+        private void SetSource(bool online)
+        {
+            _showOnline = online;
+
+            if (_lanGroup != null) _lanGroup.SetActive(!online);
+            if (_onlineGroup != null) _onlineGroup.SetActive(online);
+
+            PaintChip(_nearbyChip, !online);
+            PaintChip(_onlineChip, online);
+        }
+
+        private static void PaintChip(Button chip, bool on)
+        {
+            if (chip == null) return;
+
+            PaperKit.MarkLive(chip, on);
+
+            var label = chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: on);
+        }
+
+        private static Text Heading(Transform parent, string text, int size, Color colour, float height)
+        {
+            var holder = new GameObject("Line");
+            holder.transform.SetParent(parent, false);
+
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = height;
+            element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
+
+            var label = MenuKit.Label(holder.transform, text, size, colour,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleCenter);
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 0);
+
+            return label;
+        }
+
+        private void BuildEntryRow(Transform parent)
+        {
+            var row = new GameObject("EntryRow");
+            row.transform.SetParent(parent, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 12;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = RowHeight;
+            element.preferredHeight = RowHeight;
+            element.flexibleHeight = 0.0f;
+
+            var fieldGo = new GameObject("JoinAddressEdit");
+            fieldGo.transform.SetParent(row.transform, false);
+
+            var fieldImg = fieldGo.AddComponent<Image>();
+            PaperSkin.Apply(fieldGo, PaperCraft.Surface.Tray);
+
+            var fieldElement = fieldGo.AddComponent<LayoutElement>();
+            fieldElement.flexibleWidth = 1;
+            fieldElement.minHeight = RowHeight;
+            fieldElement.preferredHeight = RowHeight;
+            fieldElement.flexibleHeight = 0.0f;
+
+            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS",
+                                            PaperKit.Body,
+                                            UiTheme.PaperInkSoft, Vector2.zero, Vector2.zero,
+                                            Vector2.zero, TextAnchor.MiddleLeft);
+            placeholder.raycastTarget = false;
+            Inset(placeholder.rectTransform);
+
+            var typed = MenuKit.Label(fieldGo.transform, "", PaperKit.Body, UiTheme.PaperInk,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            typed.raycastTarget = false;
+            typed.supportRichText = false;
+            Inset(typed.rectTransform);
+
+            _entry = fieldGo.AddComponent<InputField>();
+            MenuKit.Dress(_entry);
+            _entry.textComponent = typed;
+            _entry.placeholder = placeholder;
+            _entry.targetGraphic = fieldImg;
+
+            _entry.characterLimit = 64;
+            _entry.lineType = InputField.LineType.SingleLine;
+
+            _entry.onSubmit.AddListener(_ => Join());
+
+            var join = MenuKit.WoodButton(row.transform, "JOIN", Vector2.zero, Vector2.zero,
+                                          new Vector2(140.0f, RowHeight), Join,
+                                          "WoodPrimaryButton");
+            join.name = "JoinButton";
+
+            var joinElement = join.gameObject.AddComponent<LayoutElement>();
+            joinElement.preferredWidth = 140.0f;
+            joinElement.minWidth = 140.0f;
+            joinElement.minHeight = RowHeight;
+            joinElement.preferredHeight = RowHeight;
+            joinElement.flexibleHeight = 0.0f;
+        }
+
+        private void BuildRows(Transform parent, List<Button> rows, List<Text> labels,
+                               Action<int> onClick, string firstPlaceholder)
+        {
+            for (int i = 0; i < RowCount; i++)
+            {
+                int index = i;
+
+                var button = PaperKit.Chip(parent, $"BrowserRow{rows.Count}", "", PaperKit.Body);
+                button.onClick.AddListener(() => onClick(index));
+
+                var rowSkin = button.GetComponent<PaperSkin>();
+                if (rowSkin != null)
+                {
+                    rowSkin.Surface = PaperCraft.Surface.Tray;
+                    rowSkin.Rebuild();
+                }
+
+                var element = button.gameObject.AddComponent<LayoutElement>();
+                element.minHeight = RowHeight;
+                element.preferredHeight = RowHeight;
+                element.flexibleHeight = 0.0f;
+
+                var label = button.transform.Find("Label")?.GetComponent<Text>();
+                if (label != null)
+                {
+                    label.alignment = TextAnchor.MiddleLeft;
+                    label.fontSize = PaperKit.Body;
+                    label.text = i == 0 ? firstPlaceholder : "AVAILABLE GAMES APPEAR HERE";
+                    label.color = UiTheme.PaperInkSoft;
+                    Inset(label.rectTransform);
+                }
+
+                button.interactable = false;
+
+                rows.Add(button);
+                labels.Add(label);
+            }
+        }
+
+        private void BuildFooter(Transform parent)
+        {
+            var spacer = new GameObject("FooterSpacer");
+            spacer.transform.SetParent(parent, false);
+            var spacerElement = spacer.AddComponent<LayoutElement>();
+            spacerElement.flexibleHeight = 1.0f;
+
+            var row = new GameObject("FooterRow");
+            row.transform.SetParent(parent, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 12;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = RowHeight;
+            element.preferredHeight = RowHeight;
+            element.flexibleHeight = 0.0f;
+
+            var close = PaperKit.Chip(row.transform, "CloseJoinButton", "BACK TO LOBBY");
+            close.onClick.AddListener(Close);
+            var closeElement = close.gameObject.AddComponent<LayoutElement>();
+            closeElement.minHeight = RowHeight;
+            closeElement.preferredHeight = RowHeight;
+            closeElement.flexibleHeight = 0.0f;
+
+            _leave = MenuKit.WoodButton(row.transform, "LEAVE GAME", Vector2.zero,
+                                        Vector2.zero, new Vector2(0.0f, RowHeight), Leave,
+                                        "WoodDangerButton");
+            _leave.name = "LeaveGameButton";
+
+            PaperKit.Paperise(_leave.gameObject, PaperCraft.Surface.Token);
+
+            var leaveLabel = _leave.GetComponentInChildren<Text>(true);
+            if (leaveLabel != null)
+            {
+                leaveLabel.name = "Label";
+                leaveLabel.color = UiTheme.MenuRed;
+                MenuKit.Apply(leaveLabel, PaperKit.FaceFor(leaveLabel.fontSize), bold: true);
+            }
+
+            var leaveChip = _leave.GetComponent<PaperButton>();
+            if (leaveChip == null) leaveChip = _leave.gameObject.AddComponent<PaperButton>();
+            leaveChip.KeepLabelColour = true;
+
+            var leaveElement = _leave.gameObject.AddComponent<LayoutElement>();
+            leaveElement.minHeight = RowHeight;
+            leaveElement.preferredHeight = RowHeight;
+            leaveElement.flexibleHeight = 0.0f;
+            _leave.gameObject.SetActive(false);
+        }
+
+        private Button _leave;
+
+        private void Leave()
+        {
+            if (_net == null || !_net.IsNetworked)
+            {
+                Report("You are not in anybody's game.");
+                return;
+            }
+
+            bool wasHost = NetAuthority.IsHost;
+            _net.Stop();
+
+            Report(wasHost ? "Room closed. You can host again or join somebody."
+                           : "Left the game. You can host now, or join somebody else.");
+
+            Refresh();
+            Close();
+
+            Joined?.Invoke();
+        }
+
+        private static void Inset(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(18.0f, 0.0f);
+            rt.offsetMax = new Vector2(-18.0f, 0.0f);
+        }
+
+
+        public void Open()
+        {
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+
+            if (_net != null)
+            {
+                _net.BrowseLan();
+                _net.Query?.StartBrowsing();
+            }
+
+            Refresh();
+        }
+
+        public void Close()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void OnEnable()
+        {
+            Opened?.Invoke();
+            if (_net == null) return;
+
+            if (_net.Beacon != null) _net.Beacon.EntriesChanged += Refresh;
+            if (_net.Query != null) _net.Query.ServersChanged += Refresh;
+        }
+
+        private void OnDisable()
+        {
+            Closed?.Invoke();
+            if (_net == null) return;
+
+            if (_net.Beacon != null) _net.Beacon.EntriesChanged -= Refresh;
+            if (_net.Query != null) _net.Query.ServersChanged -= Refresh;
+        }
+
+        private void Refresh()
+        {
+            if (_leave != null) _leave.gameObject.SetActive(_net != null && _net.IsNetworked);
+
+            var lan = _net?.Beacon?.SortedEntries ?? new List<LanEntry>();
+
+            SetChipLabel(_nearbyChip, lan.Count > 0
+                ? $"ON YOUR NETWORK  ·  {lan.Count}"
+                : "ON YOUR NETWORK");
+
+            _lanAddresses.Clear();
+
+            for (int i = 0; i < _lanRows.Count; i++)
+            {
+                if (i >= lan.Count)
+                {
+                    if (i == 0)
+                        DrawEmpty(_lanRows[i], _lanRowLabels[i], "SEARCHING FOR LAN GAMES…");
+                    else
+                        _lanRows[i].gameObject.SetActive(false);
+                    continue;
+                }
+
+                var entry = lan[i];
+                string address = $"{entry.Address}:{entry.Port}";
+                _lanAddresses.Add(address);
+
+                string state = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
+                Draw(_lanRows[i], _lanRowLabels[i],
+                     $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {state}   ·   {address}");
+            }
+
+            string ownCode = _net != null && _net.IsNetworked && _net.IsHost
+                ? (_net.Lobby?.JoinCode ?? "")
+                : "";
+
+            var online = (_net?.Query?.Servers ?? Enumerable.Empty<ServerQuery.Entry>())
+                .Where(e => string.IsNullOrEmpty(ownCode)
+                            || !string.Equals(e.JoinCode, ownCode, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            SetChipLabel(_onlineChip, online.Count > 0 ? $"ONLINE  ·  {online.Count}"
+                                                        : "ONLINE");
+
+            _onlineCodes.Clear();
+
+            for (int i = 0; i < _onlineRows.Count; i++)
+            {
+                if (i >= online.Count)
+                {
+                    if (i == 0)
+                        DrawEmpty(_onlineRows[i], _onlineRowLabels[i], "CHECKING ONLINE SERVERS…");
+                    else
+                        _onlineRows[i].gameObject.SetActive(false);
+                    continue;
+                }
+
+                var entry = online[i];
+                string code = !string.IsNullOrEmpty(entry.JoinCode) ? entry.JoinCode : entry.Name;
+                _onlineCodes.Add(code);
+
+                string state = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
+                string map = string.IsNullOrEmpty(entry.Name) ? "ESKINITA" : entry.Name.ToUpperInvariant();
+
+                Draw(_onlineRows[i], _onlineRowLabels[i],
+                     $"{code}   ·   {entry.Players}/{entry.Capacity}   ·   {map}   ·   {state}");
+            }
+        }
+
+        private static void SetChipLabel(Button chip, string text)
+        {
+            var label = chip == null ? null : chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            label.text = text;
+            MenuKit.Fit(label, ((RectTransform)chip.transform).rect.width - 24.0f, 13);
+        }
+
+        private static void Draw(Button row, Text label, string text)
+        {
+            row.gameObject.SetActive(true);
+            row.interactable = true;
+
+            if (label == null) return;
+
+            label.text = text;
+            label.color = UiTheme.PaperInk;
+            label.fontSize = PaperKit.Body;
+
+            float room = label.rectTransform.rect.width;
+            if (room <= 1.0f) room = CardWidth - (Pad * 2.0f) - 36.0f;
+
+            MenuKit.Fit(label, room);
+        }
+
+        private static void DrawEmpty(Button row, Text label, string text)
+        {
+            Draw(row, label, text);
+            row.interactable = false;
+            if (label != null) label.color = UiTheme.PaperInkSoft;
+        }
+
+
+        private void OnLanRowClicked(int index)
+        {
+            if (index < 0 || index >= _lanAddresses.Count) return;
+
+            MenuSfx.Click();
+            if (_entry != null) _entry.text = _lanAddresses[index];
+            Report($"Picked {_lanAddresses[index]}. Press JOIN.");
+        }
+
+        private void OnOnlineRowClicked(int index)
+        {
+            if (index < 0 || index >= _onlineCodes.Count) return;
+
+            MenuSfx.Click();
+            if (_entry != null) _entry.text = _onlineCodes[index];
+            Report($"Picked code {_onlineCodes[index]}. Press JOIN.");
+        }
+
+        private string Reason(string headline)
+        {
+            string detail = _net != null ? _net.Status : null;
+            return string.IsNullOrWhiteSpace(detail) ? headline : $"{headline}  ({detail})";
+        }
+
+        private void Report(string message)
+        {
+            Status?.Invoke(message);
+        }
+
+        private async void Join()
+        {
+            if (_busy) return;
+
+            string typed = _entry == null || string.IsNullOrWhiteSpace(_entry.text)
+                ? ""
+                : _entry.text.Trim();
+
+            if (string.IsNullOrEmpty(typed))
+            {
+                Report("Enter a four-character join code or an IP address.");
+                return;
+            }
+
+            _busy = true;
+
+            try
+            {
+                bool joined = await Connect(typed);
+                if (this == null) return;
+
+                if (!joined) return;
+
+                Close();
+                Joined?.Invoke();
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+
+        public async System.Threading.Tasks.Task<bool> AutomationJoin(string typed)
+        {
+            if (_entry != null) _entry.text = typed;
+
+            bool joined = await Connect(typed);
+
+            if (this == null) return false;
+
+            if (!joined) return false;
+
+            Close();
+            Joined?.Invoke();
+            return true;
+        }
+
+        private async System.Threading.Tasks.Task<bool> Connect(string typed)
+        {
+            bool looksLikeAddress = typed.Contains(".") || typed.Contains(":") ||
+                                    typed.Equals("localhost", StringComparison.OrdinalIgnoreCase);
+
+            if (looksLikeAddress)
+            {
+                Report($"Connecting to {typed}...");
+
+                if (await _net.StartClientAsync(typed)) return true;
+
+                Report(Reason($"Could not reach {typed}."));
+                return false;
+            }
+
+            if (typed.Length < LobbySession.JoinCodeLength)
+            {
+                Report($"A join code is {LobbySession.JoinCodeLength} characters.");
+                return false;
+            }
+
+            string code = typed.ToUpperInvariant();
+            Report($"Looking up {code}...");
+
+            var resolved = await _net.Query.ResolveCodeAsync(code);
+
+            if (this == null) return false;
+
+            if (!resolved.HasValue || !resolved.Value.Found)
+            {
+                Report($"No game answered to '{code}'.");
+                return false;
+            }
+
+            var match = resolved.Value;
+
+            _net.Lobby.SetJoinCode(code);
+
+            if (match.IsLan)
+            {
+                Report($"Joining {match.HostName} at {match.Address}:{match.Port}...");
+
+                if (await _net.StartClientAsync(match.Address, match.Port)) return true;
+
+                Report(Reason($"Could not reach {match.HostName} at {match.Address}:{match.Port}."));
+                return false;
+            }
+
+            Report($"Joining {match.HostName} online...");
+
+            if (await _net.StartRelayClient(match.RelayCode)) return true;
+
+            Report(Reason("Could not join that online game. Its session may have ended."));
+            return false;
+        }
+    }
+}

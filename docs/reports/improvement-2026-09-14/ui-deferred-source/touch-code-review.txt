@@ -1,0 +1,468 @@
+using System.Collections.Generic;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace TumbangPreso.InputLayer
+{
+    [DefaultExecutionOrder(-130)]
+    public sealed class TouchHud : MonoBehaviour
+    {
+        public static bool ForceVisible;
+
+        public static TouchHud Instance { get; private set; }
+
+        public static bool ShouldShow
+        {
+            get
+            {
+                if (ForceVisible) return true;
+#if UNITY_ANDROID || UNITY_IOS
+                return true;
+#else
+                return UnityEngine.InputSystem.Touchscreen.current != null;
+#endif
+            }
+        }
+
+
+
+        private const float PivotX = 300.0f;
+        private const float PivotY = 260.0f;
+
+        private const float InnerRadius = 250.0f;
+
+        private const float OuterRadius = 460.0f;
+
+        private const float InnerArcFrom = 60.0f;
+        private const float InnerArcTo = 160.0f;
+        private const float OuterArcFrom = 75.0f;
+        private const float OuterArcTo = 149.0f;
+
+        private const float StickCentreX = 330.0f;
+        private const float StickCentreY = 330.0f;
+        private const float StickRadius = 190.0f;
+
+        private const float StickZoneRadius = 325.0f;
+        private const float StickZoneFirstAngle = 45.0f;
+        private const float StickZoneAngleStep = -40.0f;
+
+        private const float IconShare = 0.54f;
+
+        private const float ChipTopY = -120.0f;
+
+        private const float ChipStepY = -180.0f;
+        private const float ChipX = -160.0f;
+
+        private const float SandboxWidth = 236.0f;
+        private const float SandboxHeight = 148.0f;
+        private const float SandboxMargin = 26.0f;
+
+        private const float SandboxTopInset = 268.0f;
+        private const string SandboxOnText = "NO COOLDOWNS\nON";
+        private const string SandboxOffText = "NO COOLDOWNS\nOFF";
+
+        private GameObject _sandboxRoot;
+        private Text _sandboxLabel;
+
+        private Canvas _canvas;
+        private readonly List<TouchButton> _buttons = new List<TouchButton>();
+        private TouchStick _stick;
+        private RectTransform _lookArea;
+
+        public IReadOnlyList<TouchButton> Buttons => _buttons;
+
+        public TouchStick Stick => _stick;
+
+        public Canvas Canvas => _canvas;
+
+        public static TouchHud Install()
+        {
+            if (Instance != null) return Instance;
+            if (!ShouldShow) return null;
+
+            var go = new GameObject("TouchControls");
+            return Instance = go.AddComponent<TouchHud>();
+        }
+
+        private void Awake()
+        {
+            Instance = this;
+            Build();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+
+            TouchInput.ReleaseAll();
+            TouchInput.Active = false;
+        }
+
+        private void OnEnable() => TouchInput.Active = true;
+
+        private void OnDisable()
+        {
+            TouchInput.ReleaseAll();
+            TouchInput.Active = false;
+        }
+
+        private void Build()
+        {
+            _canvas = MenuKit.BuildCanvas(null, "TouchControlsCanvas");
+
+            _canvas.sortingOrder = 300;
+
+            var root = (RectTransform)_canvas.transform;
+
+            BuildLookArea(root);
+            BuildStick(root);
+            BuildSandboxToggle(root);
+
+            foreach (var entry in InputCatalogue.All) BuildButton(root, entry);
+
+            ApplyModeVisibility();
+
+            ApplyLayout();
+        }
+
+        private void BuildSandboxToggle(RectTransform root)
+        {
+            var go = new GameObject("SandboxToggle", typeof(RectTransform));
+            go.transform.SetParent(root, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.0f, 1.0f);
+            rt.pivot = new Vector2(0.0f, 1.0f);
+            rt.anchoredPosition = new Vector2(SandboxMargin, -SandboxTopInset);
+            rt.sizeDelta = new Vector2(SandboxWidth, SandboxHeight);
+
+            var image = go.AddComponent<Image>();
+            image.raycastTarget = true;
+
+            WoodSkin.Apply(go, WoodCraft.Surface.Button);
+
+            _sandboxLabel = MenuKit.Label(rt, SandboxOffText, 26, UiTheme.CreamMuted,
+                                          new Vector2(0.5f, 0.5f), Vector2.zero,
+                                          new Vector2(SandboxWidth - 24.0f, SandboxHeight - 24.0f));
+            _sandboxLabel.raycastTarget = false;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = image;
+
+            button.onClick.AddListener(() =>
+            {
+                PracticeSandbox.Toggle();
+                RefreshSandbox();
+            });
+
+            _sandboxRoot = go;
+            RefreshSandbox();
+        }
+
+        private void RefreshSandbox()
+        {
+            if (_sandboxRoot == null) return;
+
+            bool allowed = PracticeSandbox.Allowed;
+            if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
+
+            if (!allowed || _sandboxLabel == null) return;
+
+            bool on = PracticeSandbox.Active;
+            _sandboxLabel.text = on ? SandboxOnText : SandboxOffText;
+            _sandboxLabel.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
+        }
+
+        private void BuildLookArea(RectTransform root)
+        {
+            var go = new GameObject("LookArea", typeof(RectTransform));
+            go.transform.SetParent(root, false);
+            go.transform.SetAsFirstSibling();
+
+            _lookArea = (RectTransform)go.transform;
+            _lookArea.anchorMin = new Vector2(0.45f, 0.0f);
+            _lookArea.anchorMax = new Vector2(1.0f, 1.0f);
+            _lookArea.offsetMin = Vector2.zero;
+            _lookArea.offsetMax = Vector2.zero;
+
+            var image = go.AddComponent<Image>();
+            image.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            image.raycastTarget = true;
+
+            go.AddComponent<TouchLookArea>();
+        }
+
+        private void BuildStick(RectTransform root)
+        {
+            var go = new GameObject("MoveStick", typeof(RectTransform));
+            go.transform.SetParent(root, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = Vector2.zero;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = new Vector2(StickRadius * 2.0f, StickRadius * 2.0f);
+            rt.anchoredPosition = new Vector2(StickCentreX, StickCentreY);
+
+            var ring = go.AddComponent<Image>();
+            ring.sprite = TouchSkin.Ring();
+            ring.type = Image.Type.Simple;
+            ring.color = TouchSkin.Knob;
+            ring.raycastTarget = true;
+
+            var stickGroup = go.AddComponent<CanvasGroup>();
+
+            var knobGo = new GameObject("Knob", typeof(RectTransform));
+            knobGo.transform.SetParent(rt, false);
+
+            var knob = (RectTransform)knobGo.transform;
+            knob.anchorMin = knob.anchorMax = new Vector2(0.5f, 0.5f);
+            knob.pivot = new Vector2(0.5f, 0.5f);
+            knob.sizeDelta = new Vector2(StickRadius, StickRadius);
+            knob.anchoredPosition = Vector2.zero;
+
+            var knobImage = knobGo.AddComponent<Image>();
+            knobImage.sprite = TouchSkin.Disc();
+            knobImage.color = TouchSkin.Knob;
+            knobImage.raycastTarget = false;
+
+            _stick = go.AddComponent<TouchStick>();
+            _stick.Bind(rt, knob, StickRadius, stickGroup);
+        }
+
+        public void ApplyLayout()
+        {
+            _layoutRevision = TouchLayoutStore.Revision;
+
+            float opacity = TouchLayoutStore.Opacity;
+            float globalScale = TouchLayoutStore.Scale;
+
+            foreach (var button in _buttons)
+            {
+                if (button == null) continue;
+
+                var tweak = TouchLayoutStore.TweakFor(button.Entry.Verb);
+                var rt = (RectTransform)button.transform;
+
+                float size = TouchMetrics.UnitsFor(button.Entry.Size) * globalScale * tweak.Scale;
+                rt.sizeDelta = new Vector2(size, size);
+
+                Place(rt, button.Entry);
+                rt.anchoredPosition += new Vector2(tweak.OffsetX, tweak.OffsetY);
+
+                ClampIntoCanvas(rt);
+
+                button.SetOpacity(opacity);
+
+                bool visible = !tweak.Hidden && VisibleInMode(button.Entry);
+                button.gameObject.SetActive(visible);
+                if (!visible) TouchInput.Set(button.Entry.Verb, false);
+            }
+
+            if (_stick != null)
+            {
+                var stickRt = (RectTransform)_stick.transform;
+                float radius = StickRadius * globalScale;
+
+                stickRt.sizeDelta = new Vector2(radius * 2.0f, radius * 2.0f);
+                stickRt.anchoredPosition = new Vector2(StickCentreX, StickCentreY)
+                                           + StickOffset();
+
+                ClampIntoCanvas(stickRt);
+                _stick.Rescale(radius);
+                _stick.SetOpacity(opacity);
+            }
+        }
+
+        private static Vector2 StickOffset()
+        {
+            var zone = InputCatalogue.InZone(TouchZone.MoveStick);
+            if (zone.Count == 0) return Vector2.zero;
+
+            var tweak = TouchLayoutStore.TweakFor(zone[0].Verb);
+            return new Vector2(tweak.OffsetX, tweak.OffsetY);
+        }
+
+        private void ClampIntoCanvas(RectTransform rt)
+        {
+            if (_canvas == null) return;
+
+            var canvasRect = ((RectTransform)_canvas.transform).rect;
+
+            if (canvasRect.width < 1.0f || canvasRect.height < 1.0f) return;
+            Vector2 half = rt.sizeDelta * 0.5f;
+
+            Vector3 local = ((RectTransform)_canvas.transform)
+                .InverseTransformPoint(rt.TransformPoint(rt.rect.center));
+
+            float clampedX = Mathf.Clamp(local.x, canvasRect.xMin + half.x, canvasRect.xMax - half.x);
+            float clampedY = Mathf.Clamp(local.y, canvasRect.yMin + half.y, canvasRect.yMax - half.y);
+
+            rt.anchoredPosition += new Vector2(clampedX - local.x, clampedY - local.y);
+        }
+
+        private bool VisibleInMode(VerbInput entry)
+            => entry.Zone != TouchZone.SkillRail
+               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
+
+        private int _layoutRevision = -1;
+        private Vector2 _lastCanvasSize;
+        private CharacterMotor _local;
+
+        public void Bind(CharacterMotor local) => _local = local;
+
+        public static void Emphasise(Verb verb) => _hintVerb = verb;
+
+        private static Verb? _hintVerb;
+
+        public bool ShouldBeOnScreen
+            => ForceVisible || (_local != null && !_local.Intent.Parked);
+
+        private void Update()
+        {
+            if (_canvas != null && _canvas.enabled != ShouldBeOnScreen)
+                _canvas.enabled = ShouldBeOnScreen;
+
+            RefreshSandbox();
+
+            Verb? hint = _hintVerb;
+            _hintVerb = null;
+
+            foreach (var button in _buttons)
+                if (button != null)
+                    button.SetHinted(hint.HasValue && button.Entry.Verb == hint.Value);
+
+            foreach (var button in _buttons)
+                if (button != null) button.RefreshIcon(_local);
+
+            if (_layoutRevision != TouchLayoutStore.Revision)
+            {
+                ApplyLayout();
+                return;
+            }
+
+            if (_canvas == null) return;
+
+            var size = ((RectTransform)_canvas.transform).rect.size;
+
+            if ((size - _lastCanvasSize).sqrMagnitude < 0.01f) return;
+
+            _lastCanvasSize = size;
+            ApplyLayout();
+        }
+
+        private void BuildButton(RectTransform root, VerbInput entry)
+        {
+            float size = TouchMetrics.UnitsFor(entry.Size);
+
+            var go = new GameObject($"Touch_{entry.Verb}", typeof(RectTransform));
+            go.transform.SetParent(root, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = new Vector2(size, size);
+
+            Place(rt, entry);
+
+            var surface = Primary(entry) ? WoodCraft.Surface.Action : WoodCraft.Surface.Button;
+            WoodSkin.Apply(go, surface);
+
+            var image = go.GetComponent<Image>();
+            image.raycastTarget = true;
+
+            var group = go.AddComponent<CanvasGroup>();
+
+            var iconGo = new GameObject("Icon", typeof(RectTransform));
+            iconGo.transform.SetParent(rt, false);
+
+            var icon = iconGo.AddComponent<Image>();
+            icon.sprite = VerbIcons.For(entry.Glyph);
+            icon.color = TouchSkin.Ink;
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+
+            var iconRt = (RectTransform)iconGo.transform;
+            iconRt.anchorMin = iconRt.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRt.pivot = new Vector2(0.5f, 0.5f);
+            iconRt.anchoredPosition = Vector2.zero;
+            iconRt.sizeDelta = new Vector2(size * IconShare, size * IconShare);
+
+            var button = go.AddComponent<TouchButton>();
+            button.Bind(entry, group, surface);
+            button.BindIcon(icon);
+            _buttons.Add(button);
+        }
+
+        private static bool Primary(VerbInput entry)
+            => entry.Zone == TouchZone.ActionCluster && entry.Slot == 0;
+
+        private void Place(RectTransform rt, VerbInput entry)
+        {
+            switch (entry.Zone)
+            {
+                case TouchZone.MoveStick:
+                    rt.anchorMin = rt.anchorMax = Vector2.zero;
+                    rt.anchoredPosition = new Vector2(StickCentreX, StickCentreY)
+                        + OnArc(StickZoneRadius,
+                                StickZoneFirstAngle + entry.Slot * StickZoneAngleStep);
+                    break;
+
+                case TouchZone.ActionCluster:
+                    rt.anchorMin = rt.anchorMax = new Vector2(1.0f, 0.0f);
+                    rt.anchoredPosition = new Vector2(-PivotX, PivotY) + ClusterOffset(entry.Slot);
+                    break;
+
+                case TouchZone.SkillRail:
+                    rt.anchorMin = rt.anchorMax = new Vector2(1.0f, 0.0f);
+                    rt.anchoredPosition = new Vector2(-PivotX, PivotY)
+                        + OnArc(OuterRadius,
+                                Spread(entry.Slot,
+                                       InputCatalogue.InZone(TouchZone.SkillRail).Count,
+                                       OuterArcFrom, OuterArcTo));
+                    break;
+
+                default: // UtilityChip
+                    rt.anchorMin = rt.anchorMax = new Vector2(1.0f, 1.0f);
+                    rt.anchoredPosition = new Vector2(ChipX, ChipTopY + entry.Slot * ChipStepY);
+                    break;
+            }
+        }
+
+        private static Vector2 ClusterOffset(int slot)
+        {
+            if (slot == 0) return Vector2.zero;
+
+            int others = Mathf.Max(1, InputCatalogue.InZone(TouchZone.ActionCluster).Count - 1);
+            return OnArc(InnerRadius, Spread(slot - 1, others, InnerArcFrom, InnerArcTo));
+        }
+
+        private static float Spread(int index, int count, float from, float to)
+        {
+            if (count <= 1) return (from + to) * 0.5f;
+
+            return from + (to - from) * (index / (float)(count - 1));
+        }
+
+        private static Vector2 OnArc(float radius, float degrees)
+        {
+            float radians = degrees * Mathf.Deg2Rad;
+            return new Vector2(Mathf.Cos(radians) * radius, Mathf.Sin(radians) * radius);
+        }
+
+        public void ApplyModeVisibility()
+        {
+            bool hero = SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
+
+            foreach (var button in _buttons)
+            {
+                if (button == null) continue;
+                if (button.Entry.Zone != TouchZone.SkillRail) continue;
+
+                button.gameObject.SetActive(hero);
+
+                if (!hero) TouchInput.Set(button.Entry.Verb, false);
+            }
+        }
+    }
+}

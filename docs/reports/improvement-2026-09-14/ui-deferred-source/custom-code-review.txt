@@ -1,0 +1,436 @@
+using System;
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class CustomGameScreen : MonoBehaviour
+    {
+        private const int SortingOrder = 530;
+
+        private Canvas _canvas;
+        private GameObject _root;
+        private RectTransform _list;
+        private ScrollRect _scroll;
+        private Text _headline;
+        private Text _ranked;
+        private Text _refusal;
+        private Button _use;
+        private InputField _password;
+        private GameObject _passwordRow;
+
+        private CustomRules _editing;
+
+        private static bool MayEdit => !SceneFlow.Networked || NetAuthority.IsHost;
+
+        public bool IsOpen => _root != null && _root.activeSelf;
+
+        public static CustomGameScreen Ensure()
+        {
+            var found = UnityEngine.Object.FindAnyObjectByType<CustomGameScreen>();
+            if (found != null) return found;
+
+            var go = new GameObject("CustomGameScreen");
+            return go.AddComponent<CustomGameScreen>();
+        }
+
+        private void Awake() => ScreenTakeover.Register(this, () => IsOpen);
+
+        private void OnDestroy() => ScreenTakeover.Unregister(this);
+
+        private void Update()
+        {
+            if (!IsOpen) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
+
+            ScreenTakeover.ConsumeEscape();
+            MenuSfx.Back();
+            Close();
+        }
+
+        public void Open()
+        {
+            if (_root == null) Build();
+
+            _editing = SceneFlow.SelectedRules.Clone();
+
+            if (_password != null) _password.text = _editing.Password ?? "";
+
+            _root.SetActive(true);
+
+            CursorMode.Release();
+
+            Refresh();
+        }
+
+        public void Close()
+        {
+            if (_root == null) return;
+            _root.SetActive(false);
+        }
+
+
+        private void Build()
+        {
+            _canvas = MenuKit.BuildCanvas(transform, "CustomGameCanvas");
+            _canvas.sortingOrder = SortingOrder;
+
+            _root = new GameObject("CustomGameRoot", typeof(RectTransform));
+            _root.transform.SetParent(_canvas.transform, false);
+            MenuKit.Stretch((RectTransform)_root.transform);
+
+            MenuKit.Backdrop(_root.transform, UiTheme.Paper);
+
+            BuildHeader();
+            BuildList();
+            BuildFooter();
+
+            _root.SetActive(false);
+
+            PaperDress.Screen(_root.transform);
+        }
+
+        private void BuildHeader()
+        {
+            var head = MenuKit.Label(_root.transform, "CUSTOM GAME", UiRows.HeadingUnits + 8,
+                UiTheme.PaperInk, new Vector2(0.0f, 1.0f), new Vector2(80.0f, -70.0f),
+                new Vector2(700.0f, 56.0f), TextAnchor.MiddleLeft);
+            MenuKit.Apply(head, PaperKit.FaceFor(head.fontSize), bold: true);
+
+            _headline = MenuKit.Label(_root.transform, "", UiRows.LabelUnits,
+                UiTheme.PaperInkSoft, new Vector2(0.0f, 1.0f), new Vector2(80.0f, -118.0f),
+                new Vector2(900.0f, 30.0f), TextAnchor.MiddleLeft);
+
+            _passwordRow = new GameObject("PasswordRow", typeof(RectTransform));
+            _passwordRow.transform.SetParent(_root.transform, false);
+            MenuKit.Place((RectTransform)_passwordRow.transform, new Vector2(1.0f, 1.0f),
+                          new Vector2(-320.0f, -92.0f), new Vector2(420.0f, 52.0f));
+
+            var cap = MenuKit.Label(_passwordRow.transform, "PASSWORD", UiRows.HintUnits,
+                UiTheme.PaperInkSoft, new Vector2(0.0f, 1.0f), new Vector2(0.0f, 8.0f),
+                new Vector2(200.0f, 20.0f), TextAnchor.LowerLeft);
+            cap.raycastTarget = false;
+
+            _password = UiRows.Field(_passwordRow.transform, "four to sixteen characters",
+                                     CustomGameRules.MaxPasswordLength);
+            MenuKit.Place(_password.GetComponent<RectTransform>(), new Vector2(0.0f, 0.0f),
+                          new Vector2(210.0f, 18.0f), new Vector2(420.0f, 40.0f));
+
+            _password.onValueChanged.AddListener(text =>
+            {
+                if (_editing == null) return;
+                _editing.Password = text ?? "";
+                Apply();
+            });
+        }
+
+        private void BuildList()
+        {
+            var host = new GameObject("ListHost", typeof(RectTransform));
+            host.transform.SetParent(_root.transform, false);
+
+            var rect = (RectTransform)host.transform;
+            rect.anchorMin = new Vector2(0.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 1.0f);
+            rect.offsetMin = new Vector2(80.0f, 150.0f);
+            rect.offsetMax = new Vector2(-80.0f, -160.0f);
+
+            _list = UiRows.ScrollList(host.transform, "Rules", out _scroll);
+            MenuKit.Stretch(_scroll.viewport);
+        }
+
+        private void BuildFooter()
+        {
+            _ranked = MenuKit.Label(_root.transform, "", UiRows.HintUnits, UiTheme.PaperInkSoft,
+                new Vector2(0.0f, 0.0f), new Vector2(80.0f, 118.0f),
+                new Vector2(900.0f, 24.0f), TextAnchor.MiddleLeft);
+
+            _refusal = MenuKit.Label(_root.transform, "", UiRows.HintUnits, UiTheme.MenuRed,
+                new Vector2(0.0f, 0.0f), new Vector2(80.0f, 92.0f),
+                new Vector2(900.0f, 24.0f), TextAnchor.MiddleLeft);
+
+            _use = MenuKit.WoodButton(_root.transform, "USE THESE RULES", new Vector2(1.0f, 0.0f),
+                new Vector2(-260.0f, 78.0f), new Vector2(440.0f, 62.0f), OnUse);
+            PaperKit.MakeAction(_use.gameObject, PaperCraft.Accent.Green);
+
+            MenuKit.WoodButton(_root.transform, "RESET TO DEFAULTS", new Vector2(0.0f, 0.0f),
+                new Vector2(210.0f, 46.0f), new Vector2(300.0f, 44.0f), OnReset);
+        }
+
+
+        private bool _roomOpen;
+
+        private void Refresh()
+        {
+            if (_list == null || _editing == null) return;
+
+            for (int i = _list.childCount - 1; i >= 0; i--)
+                Destroy(_list.GetChild(i).gameObject);
+
+            bool editable = MayEdit;
+
+            UiRows.Section(_list, "THE MATCH",
+                "What is played, how long it lasts, and how it is won.");
+
+            UiRows.StepperRow(_list, "FORMAT",
+                CustomGameRules.FormatName(_editing.Format),
+                (int)_editing.Format, FormatCount,
+                v => { _editing.Format = (MatchFormat)Mathf.Clamp(v, 0, FormatCount - 1); Apply(); },
+                CustomGameRules.FormatBlurb(_editing.Format));
+
+            UiRows.StepperRow(_list, "MODE",
+                _editing.Mode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC",
+                _editing.Mode == GameMode.HeroStrike ? 1 : 0, 2,
+                v => { SetMode(v == 1 ? GameMode.HeroStrike : GameMode.Classic); },
+                _editing.Mode == GameMode.HeroStrike
+                    ? "Six heroes with two skills and an ultimate each. Eight rounds as it ships."
+                    : "The street game, twelve characters, no powers. Four rounds as it ships.");
+
+            UiRows.StepperRow(_list, "ROUNDS", _editing.Rounds.ToString(),
+                _editing.Rounds - CustomGameRules.MinRounds, RoundOptionCount,
+                v => { _editing.Rounds = CustomGameRules.MinRounds + v; Apply(); },
+                $"{CustomGameRules.MinRounds} to {CustomGameRules.MaxRounds}. " +
+                $"The shipped {(_editing.Mode == GameMode.HeroStrike ? "Hero Strike" : "Classic")} " +
+                $"match is {MatchRules.RoundCountFor(_editing.Mode)}.");
+
+            UiRows.StepperRow(_list, "ROUND LENGTH", _editing.RoundSeconds + "s",
+                SecondsIndex(_editing.RoundSeconds), SecondsOptions.Length,
+                v => { _editing.RoundSeconds = SecondsOptions[Mathf.Clamp(v, 0, SecondsOptions.Length - 1)]; Apply(); },
+                $"{CustomGameRules.MinRoundSeconds} to {CustomGameRules.MaxRoundSeconds} seconds. " +
+                $"The game ships at {(int)Balance.RoundTime}.");
+
+            UiRows.StepperRow(_list, "SCORE TARGET", ScoreTargetLabel(_editing.ScoreTarget),
+                TargetIndex(_editing.ScoreTarget), TargetOptions.Length,
+                v => { _editing.ScoreTarget = TargetOptions[Mathf.Clamp(v, 0, TargetOptions.Length - 1)]; Apply(); },
+                "Ends the match early when somebody reaches it. OFF plays every round.");
+
+            if (_editing.Format == MatchFormat.LastTsinelas)
+            {
+                UiRows.StepperRow(_list, "SLIPPERS EACH", _editing.Tsinelas.ToString(),
+                    _editing.Tsinelas - CustomGameRules.MinTsinelas, TsinelasOptionCount,
+                    v => { _editing.Tsinelas = CustomGameRules.MinTsinelas + v; Apply(); },
+                    "How many an attacker starts a round with. Lose them all and you are out " +
+                    $"for that round. The format ships at {CustomGameRules.StartingTsinelas}.");
+            }
+
+            UiRows.Gap(_list, 8.0f);
+
+            UiRows.Section(_list, "THE ROOM", RoomSummary(), _roomOpen,
+                () => { _roomOpen = !_roomOpen; MenuSfx.Click(); Refresh(); });
+
+            if (_roomOpen)
+            {
+                UiRows.StepperRow(_list, "BOTS", BotLabel(_editing),
+                    BotIndex(_editing), DifficultyCount + 1,
+                    SetBots,
+                    "Filler seats when there are not four people. NORMAL is the tier every " +
+                    "balance number in this project was measured at, and a match with a bot in " +
+                    "it never counts for your rank.");
+
+                UiRows.ButtonRow(_list, "PRIVATE ROOM", _editing.Private ? "ON" : "OFF",
+                    () => { _editing.Private = !_editing.Private; MenuSfx.Click(); Apply(); Refresh(); },
+                    "A private room is not published to the online pool. The join code still works.");
+
+                if (_editing.Private)
+                {
+                    UiRows.ValueRow(_list, "PASSWORD",
+                        string.IsNullOrEmpty(_editing.Password) ? "not set" : "set",
+                        "Typed in the box at the top right. It is compared on the host and never " +
+                        "travels on the wire.");
+                }
+            }
+
+            UiRows.Gap(_list, 10.0f);
+
+            RefreshHeadline();
+            RefreshInteractable(editable);
+
+            if (_scroll != null && _scroll.verticalNormalizedPosition > 0.99f)
+                _scroll.verticalNormalizedPosition = 1.0f;
+        }
+
+        private string RoomSummary()
+        {
+            string bots = _editing.Bots == 0
+                ? "No bots"
+                : "Bots on " + DifficultyName(_editing.BotDifficulty).ToLowerInvariant();
+
+            string door = _editing.Private
+                ? (string.IsNullOrEmpty(_editing.Password) ? "private, no password" : "private, password set")
+                : "open to anybody with the code";
+
+            return bots + " · " + door;
+        }
+
+        private void RefreshHeadline()
+        {
+            if (_headline != null)
+            {
+                string target = _editing.ScoreTarget > 0
+                    ? " · first to " + _editing.ScoreTarget
+                    : "";
+
+                string stock = _editing.Format == MatchFormat.LastTsinelas
+                    ? " · " + _editing.Tsinelas + " slippers"
+                    : "";
+
+                _headline.text =
+                    (_editing.Mode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC") +
+                    " · " + CustomGameRules.FormatName(_editing.Format) +
+                    " · " + _editing.Rounds + (_editing.Rounds == 1 ? " round" : " rounds") +
+                    " · " + _editing.RoundSeconds + "s" + target + stock;
+
+                if (!MayEdit)
+                    _headline.text += "   (the host sets these)";
+            }
+
+            if (_ranked != null)
+            {
+                _ranked.text = CustomGameRules.CanBeRanked(_editing)
+                    ? "These are the shipped rules, so this match counts for your rank."
+                    : "Custom rules. This match does not count for your rank.";
+            }
+
+            string refusal = CustomGameRules.Refusal(_editing);
+            if (_refusal != null) _refusal.text = refusal;
+            if (_use != null) _use.interactable = MayEdit && string.IsNullOrEmpty(refusal);
+
+            if (_passwordRow != null)
+                _passwordRow.SetActive(_editing.Private && MayEdit);
+        }
+
+        private void RefreshInteractable(bool editable)
+        {
+            if (_list == null) return;
+
+            foreach (var selectable in _list.GetComponentsInChildren<Selectable>(true))
+                selectable.interactable = editable;
+        }
+
+
+        private void Apply()
+        {
+            if (_editing == null) return;
+
+            SceneFlow.SetSelectedRules(_editing);
+
+            if (SceneFlow.Networked && NetAuthority.IsHost)
+                Net.MatchRpc.Instance?.SelectRulesServerRpc(CustomGameRules.ToWire(_editing));
+
+            RefreshHeadline();
+        }
+
+        private void SetMode(GameMode mode)
+        {
+            if (_editing.Mode == mode) return;
+
+            bool wasDefault = _editing.Rounds == MatchRules.RoundCountFor(_editing.Mode);
+
+            _editing.Mode = mode;
+            if (wasDefault) _editing.Rounds = MatchRules.RoundCountFor(mode);
+
+            Apply();
+            Refresh();
+        }
+
+        private void OnUse()
+        {
+            MenuSfx.Click();
+            Apply();
+            Close();
+        }
+
+        private void OnReset()
+        {
+            MenuSfx.Click();
+
+            _editing = CustomGameRules.Defaults(_editing.Mode);
+
+            if (_password != null) _password.text = "";
+
+            Apply();
+            Refresh();
+        }
+
+
+        private static int FormatCount => (int)MatchFormat.Mirror + 1;
+
+        private static int RoundOptionCount
+            => CustomGameRules.MaxRounds - CustomGameRules.MinRounds + 1;
+
+        private static int TsinelasOptionCount
+            => CustomGameRules.MaxTsinelas - CustomGameRules.MinTsinelas + 1;
+
+        private static int DifficultyCount => (int)Difficulty.Astig + 1;
+
+        private static string DifficultyName(int tier) => tier switch
+        {
+            (int)Difficulty.Bata => "EASY",
+            (int)Difficulty.Normal => "NORMAL",
+            _ => "HARD",
+        };
+
+        private static int BotIndex(CustomRules rules)
+            => rules.Bots <= 0 ? DifficultyCount
+             : Mathf.Clamp(rules.BotDifficulty, 0, DifficultyCount - 1);
+
+        private static string BotLabel(CustomRules rules)
+            => rules.Bots <= 0 ? "NONE" : DifficultyName(rules.BotDifficulty);
+
+        private void SetBots(int index)
+        {
+            int clamped = Mathf.Clamp(index, 0, DifficultyCount);
+            bool none = clamped >= DifficultyCount;
+
+            _editing.Bots = none ? 0 : CustomGameRules.MaxBots;
+            if (!none) _editing.BotDifficulty = clamped;
+
+            var settings = Settings.SettingsStore.Current;
+            if (settings != null)
+            {
+                settings.AiDifficulty = none ? AIController.NoBotsIndex : clamped;
+                Settings.SettingsStore.Save();
+            }
+
+            AIController.ApplyDifficulty(none ? AIController.NoBotsIndex : clamped);
+
+            Apply();
+            Refresh();
+        }
+
+        private static readonly int[] SecondsOptions =
+            { 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180 };
+
+        private static int SecondsIndex(int seconds)
+        {
+            int best = 0;
+            int gap = int.MaxValue;
+
+            for (int i = 0; i < SecondsOptions.Length; i++)
+            {
+                int d = Mathf.Abs(SecondsOptions[i] - seconds);
+                if (d >= gap) continue;
+                gap = d;
+                best = i;
+            }
+
+            return best;
+        }
+
+        private static readonly int[] TargetOptions =
+            { 0, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 };
+
+        private static int TargetIndex(int target)
+        {
+            for (int i = 0; i < TargetOptions.Length; i++)
+                if (TargetOptions[i] == target) return i;
+
+            return 0;
+        }
+
+        private static string ScoreTargetLabel(int target)
+            => target <= 0 ? "OFF" : target.ToString();
+    }
+}

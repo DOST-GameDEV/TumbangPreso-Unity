@@ -1,0 +1,729 @@
+using System;
+using TumbangPreso.Net;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class SignInScreen : MonoBehaviour
+    {
+        private const float ColumnUnits = 660.0f;
+
+        private const float ColumnBleed = 40.0f;
+
+        private const float CardHeight = 900.0f;
+
+        private const float CardMarginY = 56.0f;
+
+        private const float CardMargin = 96.0f;
+
+        private Canvas _canvas;
+        private GameObject _root;
+        private InputField _username, _password;
+        private Text _error, _primaryLabel;
+        private Button _signInTab, _createTab;
+        private Button _guest, _back;
+
+        private bool _atBoot;
+
+        private GameObject[] _formPieces = System.Array.Empty<GameObject>();
+
+        private GameObject _welcome;
+        private Text _welcomeName;
+        private Text _welcomeHint;
+
+        public const float WelcomeHold = 1.2f;
+
+        private float _autoPassAt = -1.0f;
+
+        public bool IsOpen => _root != null && _root.activeSelf;
+
+        private void Update()
+        {
+            if (!IsOpen) return;
+
+            if (_autoPassAt > 0.0f)
+            {
+                if (Input.anyKeyDown)
+                {
+                    _autoPassAt = -1.0f;
+                    if (_welcomeHint != null) _welcomeHint.text = "";
+                }
+                else if (Time.unscaledTime >= _autoPassAt)
+                {
+                    _autoPassAt = -1.0f;
+                    BootGuest();
+                    return;
+                }
+            }
+
+            if (_atBoot) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
+
+            ScreenTakeover.ConsumeEscape();
+            Close();
+            MenuSfx.Back();
+        }
+        private bool _creating;
+
+        private Button _googleButton;
+
+
+
+        public event Action Closed;
+
+        public event Action<bool> Opened;
+
+        private void OnDestroy() => ScreenTakeover.Unregister(this);
+
+        public void Install()
+        {
+            if (_canvas != null) return;
+
+            ScreenTakeover.Register(this, () => IsOpen);
+
+            _canvas = MenuKit.BuildCanvas(transform, "SignInCanvas");
+
+            _canvas.sortingOrder = 510;
+
+            _root = new GameObject("SignInRoot", typeof(RectTransform));
+            _root.transform.SetParent(_canvas.transform, false);
+            MenuKit.Stretch((RectTransform)_root.transform);
+
+            BuildScrim();
+            BuildColumn();
+
+            _root.SetActive(false);
+        }
+
+        private void BuildScrim()
+        {
+            BuildKeyArt();
+
+            if (HasKeyArt) return;
+
+            var scrim = MenuKit.Backdrop(_root.transform, new Color(0.0f, 0.0f, 0.0f, 0.72f));
+            scrim.gameObject.name = "Scrim";
+        }
+
+        private bool HasKeyArt;
+
+        private void BuildKeyArt()
+        {
+            var art = Resources.Load<Texture2D>("UI/illustrations/street_key_art")
+                      ?? Resources.Load<Texture2D>("UI/splash_art");
+            HasKeyArt = art != null;
+            if (art == null) return;
+
+            var side = new GameObject("ArtSide", typeof(RectTransform));
+            side.transform.SetParent(_root.transform, false);
+
+            var sideRt = (RectTransform)side.transform;
+            sideRt.anchorMin = Vector2.zero;
+            sideRt.anchorMax = Vector2.one;
+            sideRt.offsetMin = new Vector2(ColumnUnits - ColumnBleed, 0.0f);
+            sideRt.offsetMax = Vector2.zero;
+            side.AddComponent<RectMask2D>();
+
+            var go = new GameObject("KeyArt", typeof(RectTransform), typeof(RawImage));
+            go.transform.SetParent(side.transform, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = Centre;
+            rt.anchorMax = Centre;
+            rt.pivot = Centre;
+            rt.anchoredPosition = Vector2.zero;
+
+            var image = go.GetComponent<RawImage>();
+            image.texture = art;
+
+            image.raycastTarget = true;
+
+            var fitter = go.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = art.width / (float)art.height;
+        }
+
+        private void BuildColumn()
+        {
+            var columnGo = new GameObject("Column", typeof(RectTransform), typeof(Image));
+            columnGo.transform.SetParent(_root.transform, false);
+
+            var rt = (RectTransform)columnGo.transform;
+            rt.anchorMin = new Vector2(0.0f, 0.0f);
+            rt.anchorMax = new Vector2(0.0f, 1.0f);
+            rt.pivot = new Vector2(0.0f, 0.5f);
+            rt.anchoredPosition = new Vector2(-ColumnBleed, 0.0f);
+            rt.offsetMin = new Vector2(-ColumnBleed, -ColumnBleed);
+            rt.offsetMax = new Vector2(ColumnUnits - ColumnBleed, ColumnBleed);
+
+            var face = columnGo.GetComponent<Image>();
+            PaperSkin.Apply(columnGo, PaperCraft.Surface.Sheet);
+            face.raycastTarget = true;
+
+            var col = columnGo.transform;
+
+
+            const float Logo = 352.0f;
+            const float Tabs = 200.0f;
+            const float UserField = 30.0f;
+            const float PassField = -82.0f;
+            const float Hint = -152.0f;
+            const float Primary = -226.0f;
+
+            BuildLogo(col, Logo);
+
+            int formStart = col.childCount;
+
+
+
+            BuildTabs(col, Tabs);
+
+            _username = Field(col, "USERNAME", UserField, "your username", 64, false);
+            _password = Field(col, "PASSWORD", PassField, "your password", 128, true);
+
+            _error = MenuKit.Label(col, "", PaperKit.Caption, UiTheme.MenuRed,
+                Centre, new Vector2(0.0f, Hint), new Vector2(420.0f, 56.0f));
+            _error.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+            BuildPrimary(col, Primary);
+
+            bool google = GoogleSignIn.IsAvailable;
+            float guestY = google ? -364.0f : -298.0f;
+            float backY = google ? -428.0f : -362.0f;
+
+            if (google)
+            {
+                _googleButton = PaperKit.Chip(col, "GoogleButton", "CONTINUE WITH GOOGLE");
+                _googleButton.onClick.AddListener(GooglePressed);
+                MenuKit.Place((RectTransform)_googleButton.transform, Centre,
+                              new Vector2(0.0f, -298.0f), new Vector2(420.0f, 54.0f));
+            }
+
+            _guest = PaperKit.Chip(col, "GuestButton", "PLAY AS GUEST");
+            _guest.onClick.AddListener(GuestPressed);
+            MenuKit.Place((RectTransform)_guest.transform, Centre,
+                          new Vector2(0.0f, guestY), new Vector2(300.0f, 48.0f));
+
+            _back = PaperKit.Chip(col, "BackButton", "BACK");
+            _back.onClick.AddListener(Close);
+            MenuKit.Place((RectTransform)_back.transform, Centre,
+                          new Vector2(0.0f, backY), new Vector2(220.0f, 44.0f));
+
+            var backSkin = _back.GetComponent<PaperSkin>();
+            if (backSkin != null) backSkin.enabled = false;
+
+            var backPlate = _back.GetComponent<Image>();
+            if (backPlate != null) backPlate.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
+            var backLabel = _back.transform.Find("Label")?.GetComponent<Text>();
+            if (backLabel != null) backLabel.color = UiTheme.PaperInkSoft;
+
+
+            Chain(_signInTab, _createTab, _username, _password,
+                  _primaryLabel != null ? _primaryLabel.GetComponentInParent<Button>() : null,
+                  _googleButton, _guest, _back);
+
+            FocusRing.Attach(_guest.gameObject, 4.0f);
+            FocusRing.Attach(_back.gameObject, 4.0f);
+            if (_googleButton != null) FocusRing.Attach(_googleButton.gameObject, 4.0f);
+            if (_primaryLabel != null)
+            {
+                var primary = _primaryLabel.GetComponentInParent<Button>();
+                if (primary != null) FocusRing.Attach(primary.gameObject, 4.0f);
+            }
+
+            _formPieces = new GameObject[col.childCount - formStart];
+            for (int i = formStart; i < col.childCount; i++)
+                _formPieces[i - formStart] = col.GetChild(i).gameObject;
+
+            BuildWelcome(col);
+
+            FitCardToContent(rt, col);
+
+            BuildSeam(col, ColumnUnits);
+        }
+
+        private static void FitCardToContent(RectTransform card, Transform col)
+        {
+            float top = 0.0f;
+            float bottom = 0.0f;
+            bool any = false;
+
+            for (int i = 0; i < col.childCount; i++)
+            {
+                var child = col.GetChild(i) as RectTransform;
+                if (child == null) continue;
+
+                float height = child.sizeDelta.y;
+                float centre = child.anchoredPosition.y + ((0.5f - child.pivot.y) * height);
+
+                float childTop = centre + (height * 0.5f);
+                float childBottom = centre - (height * 0.5f);
+
+                if (!any)
+                {
+                    top = childTop;
+                    bottom = childBottom;
+                    any = true;
+                    continue;
+                }
+
+                if (childTop > top) top = childTop;
+                if (childBottom < bottom) bottom = childBottom;
+            }
+
+            if (!any) return;
+
+            float centreY = (top + bottom) * 0.5f;
+
+            for (int i = 0; i < col.childCount; i++)
+            {
+                if (col.GetChild(i) is not RectTransform child) continue;
+                child.anchoredPosition -= new Vector2(0.0f, centreY);
+            }
+        }
+
+        private void BuildSeam(Transform col, float columnWidth)
+        {
+            var edgeGo = new GameObject("ColumnSeam", typeof(RectTransform), typeof(Image));
+            edgeGo.transform.SetParent(col, false);
+
+            var edge = edgeGo.GetComponent<Image>();
+            edge.sprite = BrandMarks.ColumnEdge();
+            edge.type = Image.Type.Simple;
+            edge.raycastTarget = false;
+
+            var rect = edge.rectTransform;
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 1.0f);
+            rect.pivot = new Vector2(0.0f, 0.5f);
+            rect.offsetMin = new Vector2(-22.0f, 0.0f);
+            rect.offsetMax = new Vector2(154.0f, 0.0f);
+
+        }
+
+        private void BuildWelcome(Transform col)
+        {
+            _welcome = new GameObject("Welcome", typeof(RectTransform));
+            _welcome.transform.SetParent(col, false);
+            MenuKit.Stretch((RectTransform)_welcome.transform);
+
+            var root = _welcome.transform;
+
+            MenuKit.Label(root, "WELCOME BACK", 34, UiTheme.PaperInkSoft, Centre,
+                new Vector2(0.0f, 120.0f), new Vector2(460.0f, 54.0f));
+
+            _welcomeName = MenuKit.Label(root, "", PaperKit.Display, UiTheme.PaperInk, Centre,
+                new Vector2(0.0f, 46.0f), new Vector2(460.0f, 64.0f));
+
+            _welcomeHint = MenuKit.Label(root, "press anything to stay here",
+                PaperKit.Caption, UiTheme.PaperInkSoft, Centre,
+                new Vector2(0.0f, -6.0f), new Vector2(460.0f, 30.0f));
+
+            MenuKit.WoodButton(root, "CONTINUE", Centre,
+                new Vector2(0.0f, -80.0f), new Vector2(420.0f, 62.0f), BootGuest,
+                "WoodPrimaryButton");
+
+            var other = PaperKit.Chip(root, "OtherAccountButton", "SIGN IN AS SOMEBODY ELSE");
+            other.onClick.AddListener(LeaveWelcomeForTheForm);
+            MenuKit.Place((RectTransform)other.transform, Centre,
+                          new Vector2(0.0f, -156.0f), new Vector2(420.0f, 48.0f));
+
+            _welcome.SetActive(false);
+        }
+
+        private void ShowWelcome(bool welcome)
+        {
+            foreach (var piece in _formPieces)
+                if (piece != null) piece.SetActive(!welcome);
+
+            if (_welcome != null) _welcome.SetActive(welcome);
+        }
+
+        private void LeaveWelcomeForTheForm()
+        {
+            _autoPassAt = -1.0f;
+            ShowWelcome(false);
+            SetMode(false);
+        }
+
+        private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
+
+        private void BuildLogo(Transform col, float y)
+        {
+            var logo = Resources.Load<Texture2D>("UI/brand/tump_logo")
+                       ?? Resources.Load<Texture2D>("UI/main-menu/TUMP");
+
+            if (logo == null)
+            {
+                MenuKit.Label(col, "TUMP", 34, UiTheme.PaperInk, Centre,
+                    new Vector2(0.0f, y), new Vector2(360.0f, 44.0f));
+                return;
+            }
+
+            float aspect = logo.height > 0 ? (float)logo.width / logo.height : 1.0f;
+
+            var box = new GameObject("LogoBox", typeof(RectTransform));
+            box.transform.SetParent(col, false);
+            MenuKit.Place((RectTransform)box.transform, Centre,
+                new Vector2(0.0f, y), new Vector2(LogoMarkHeight * aspect, LogoMarkHeight));
+
+            var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
+            image.raycastTarget = false;
+        }
+
+        private const float LogoMarkHeight = 150.0f;
+
+
+
+        private static RawImage Engraved(Transform box, Texture2D logo, string name, float lift,
+                                         Color tint)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(RawImage));
+            go.transform.SetParent(box, false);
+            MenuKit.Stretch((RectTransform)go.transform);
+            ((RectTransform)go.transform).anchoredPosition = new Vector2(0.0f, lift);
+
+            var image = go.GetComponent<RawImage>();
+            image.texture = logo;
+            image.color = tint;
+            image.raycastTarget = false;
+
+            var fitter = go.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            fitter.aspectRatio = logo.width / (float)logo.height;
+
+            return image;
+        }
+
+        private void BuildTabs(Transform col, float y)
+        {
+
+            _signInTab = PaperKit.Chip(col, "SignInTab", "SIGN IN");
+            _createTab = PaperKit.Chip(col, "CreateTab", "CREATE");
+
+            _signInTab.onClick.AddListener(() => SetMode(false));
+            _createTab.onClick.AddListener(() => SetMode(true));
+
+            MenuKit.Place((RectTransform)_signInTab.transform, Centre,
+                          new Vector2(-105.0f, y), new Vector2(198.0f, LiveTabHeight));
+            MenuKit.Place((RectTransform)_createTab.transform, Centre,
+                          new Vector2(105.0f, y), new Vector2(198.0f, IdleTabHeight));
+
+            Hang(_signInTab, -105.0f, y);
+            Hang(_createTab, 105.0f, y);
+
+
+            FocusRing.Attach(_signInTab.gameObject, 4.0f);
+            FocusRing.Attach(_createTab.gameObject, 4.0f);
+        }
+
+        private const float LiveTabHeight = 60.0f;
+        private const float IdleTabHeight = 52.0f;
+
+        private float TabsY;
+
+        private void Hang(Button tab, float x, float y, bool live = false)
+        {
+            if (tab == null) return;
+
+            TabsY = y;
+
+            var rt = (RectTransform)tab.transform;
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(x, y - (IdleTabHeight * 0.5f));
+            rt.sizeDelta = new Vector2(198.0f, live ? LiveTabHeight : IdleTabHeight);
+        }
+
+        private void BuildPrimary(Transform col, float y)
+        {
+            var button = MenuKit.WoodButton(col, "SIGN IN", Centre,
+                new Vector2(0.0f, y), new Vector2(420.0f, 62.0f), Submit,
+                "WoodPrimaryButton");
+
+            PaperKit.MakeAction(button.gameObject, PaperCraft.Accent.Green);
+
+            _primaryLabel = button.GetComponentInChildren<Text>();
+        }
+
+        private InputField Field(Transform col, string caption, float y, string placeholder,
+                                 int limit, bool password)
+        {
+            var captionLabel = MenuKit.Label(col, caption, PaperKit.Caption,
+                UiTheme.PaperInkSoft,
+                Centre, new Vector2(0.0f, y + 44.0f), new Vector2(420.0f, 24.0f),
+                TextAnchor.MiddleLeft);
+            MenuKit.Apply(captionLabel, PaperKit.FaceFor(PaperKit.Caption), bold: true);
+            captionLabel.raycastTarget = false;
+
+            var go = new GameObject($"Field_{caption}", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(col, false);
+            MenuKit.Place((RectTransform)go.transform, Centre,
+                new Vector2(0.0f, y), new Vector2(420.0f, 58.0f));
+
+            var image = go.GetComponent<Image>();
+            PaperSkin.Apply(go, PaperCraft.Surface.Tray);
+
+            var input = go.AddComponent<InputField>();
+            MenuKit.Dress(input);
+            input.targetGraphic = image;
+            input.characterLimit = limit;
+            input.lineType = InputField.LineType.SingleLine;
+            if (password) input.contentType = InputField.ContentType.Password;
+
+            var text = MenuKit.Label(go.transform, "", PaperKit.Body, UiTheme.PaperInk,
+                new Vector2(0.5f, 0.5f),
+                Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+            MenuKit.Stretch(text.rectTransform, -16.0f);
+            text.alignment = TextAnchor.MiddleLeft;
+            input.textComponent = text;
+
+            var ghost = MenuKit.Label(go.transform, placeholder, PaperKit.Caption,
+                UiTheme.PaperInkSoft,
+                new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+            MenuKit.Stretch(ghost.rectTransform, -16.0f);
+            ghost.alignment = TextAnchor.MiddleLeft;
+            input.placeholder = ghost;
+
+            FocusRing.Attach(go, 4.0f);
+
+            input.onSubmit.AddListener(_ => Submit());
+
+            return input;
+        }
+
+        private static void Chain(params Selectable[] order)
+        {
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (order[i] == null) continue;
+
+                var nav = new Navigation { mode = Navigation.Mode.Explicit };
+
+                for (int back = i - 1; back >= 0; back--)
+                    if (order[back] != null) { nav.selectOnUp = order[back]; nav.selectOnLeft = order[back]; break; }
+
+                for (int forward = i + 1; forward < order.Length; forward++)
+                    if (order[forward] != null) { nav.selectOnDown = order[forward]; nav.selectOnRight = order[forward]; break; }
+
+                order[i].navigation = nav;
+            }
+        }
+
+
+        public void Open()
+        {
+            _username.text = GameServices.Account?.Username ?? "";
+            _password.text = "";
+            _error.text = "";
+
+            SetMode(GameServices.Account != null && !GameServices.Account.HasPassword);
+
+            ShowWelcome(false);
+            SetBootMode(false);
+            _autoPassAt = -1.0f;
+
+            _root.SetActive(true);
+            Opened?.Invoke(true);
+            FocusFirstField();
+        }
+
+        private void FocusFirstField()
+        {
+            var target = string.IsNullOrEmpty(_username.text) ? _username : _password;
+            target.Select();
+            target.ActivateInputField();
+        }
+
+        public void OpenForUpgrade()
+        {
+            Open();
+            SetMode(true);
+        }
+
+        public void OpenAtBoot()
+        {
+            _username.text = "";
+            _password.text = "";
+            _error.text = "";
+
+            SetMode(true);
+
+            var account = GameServices.Account;
+            bool attached = account != null && account.HasPassword &&
+                            !string.IsNullOrWhiteSpace(account.Username);
+
+            ShowWelcome(attached);
+            SetBootMode(true);
+
+            if (attached)
+            {
+                if (_welcomeName != null) _welcomeName.text = account.LobbyName;
+                if (_welcomeHint != null) _welcomeHint.text = "press anything to stay here";
+                _autoPassAt = Time.unscaledTime + WelcomeHold;
+            }
+            else
+            {
+                _autoPassAt = -1.0f;
+            }
+
+            _root.SetActive(true);
+            Opened?.Invoke(true);
+        }
+
+        private void SetBootMode(bool atBoot)
+        {
+            _atBoot = atBoot;
+
+            if (_back != null) _back.gameObject.SetActive(!atBoot);
+
+            var caption = _guest != null ? _guest.GetComponentInChildren<Text>(true) : null;
+            if (caption != null) caption.text = atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
+
+        }
+
+        private static void RememberTheChoiceWasMade()
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null || settings.AccountChoiceMade) return;
+
+            settings.AccountChoiceMade = true;
+            Settings.SettingsStore.Save();
+        }
+
+        private void Close()
+        {
+            _root.SetActive(false);
+            Opened?.Invoke(false);
+            Closed?.Invoke();
+        }
+
+        private void SetMode(bool creating)
+        {
+            _creating = creating;
+
+            if (_primaryLabel != null) _primaryLabel.text = creating ? "CREATE ACCOUNT" : "SIGN IN";
+            _error.text = "";
+            _error.color = UiTheme.MenuRed;
+
+            if (_googleButton != null)
+            {
+                var googleLabel = _googleButton.GetComponentInChildren<Text>();
+                if (googleLabel != null)
+                {
+                    googleLabel.text = creating ? "CONNECT A GOOGLE ACCOUNT" : "SIGN IN WITH GOOGLE";
+                    MenuKit.Fit(googleLabel, 420.0f - 32.0f);
+                }
+            }
+
+            SetTab(_signInTab, !creating);
+            SetTab(_createTab, creating);
+
+            Hang(_signInTab, -105.0f, TabsY, !creating);
+            Hang(_createTab, 105.0f, TabsY, creating);
+
+        }
+
+        private static void SetTab(Button button, bool on)
+        {
+            if (button == null) return;
+
+            var rect = (RectTransform)button.transform;
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, on ? LiveTabHeight : IdleTabHeight);
+
+            PaperKit.MarkLive(button, on);
+
+            var label = button.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
+            label.color = on ? UiTheme.Cream : UiTheme.PaperInk;
+        }
+
+        private async void Submit()
+        {
+            string username = _username.text?.Trim() ?? "";
+            string password = _password.text ?? "";
+
+            if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
+            if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
+
+            var account = GameServices.Account;
+            if (account == null) { Fail("Accounts are not available right now."); return; }
+
+            try
+            {
+                _error.color = UiTheme.PaperInkSoft;
+                _error.text = _creating ? "Creating your account..." : "Signing in...";
+
+                if (_creating) await account.UpgradeAsync(username, password);
+                else await account.SignInAsync(username, password);
+
+                RememberTheChoiceWasMade();
+                Close();
+            }
+            catch (Exception e)
+            {
+                Fail(e.Message);
+            }
+        }
+
+        private async void GooglePressed()
+        {
+            var account = GameServices.Account;
+            if (account == null) { Fail("Accounts are not available right now."); return; }
+
+            if (_googleButton != null) _googleButton.interactable = false;
+
+            try
+            {
+                _error.color = UiTheme.PaperInkSoft;
+                _error.text = "Finish signing in on the browser window.";
+
+                if (_creating) await account.LinkGoogleAsync();
+                else await account.SignInWithGoogleAsync();
+
+                RememberTheChoiceWasMade();
+                Close();
+            }
+            catch (Exception e)
+            {
+                Fail(e.Message);
+            }
+            finally
+            {
+                if (_googleButton != null) _googleButton.interactable = true;
+            }
+        }
+
+        private void GuestPressed()
+        {
+            if (_atBoot) BootGuest();
+            else Guest();
+        }
+
+        private void BootGuest()
+        {
+            RememberTheChoiceWasMade();
+            Close();
+        }
+
+        private void Guest()
+        {
+            try
+            {
+                GameServices.Account?.SignInAsGuest(GameServices.Account.DisplayName);
+                RememberTheChoiceWasMade();
+                Close();
+            }
+            catch (Exception e) { Fail(e.Message); }
+        }
+
+        private void Fail(string message)
+        {
+            _error.color = UiTheme.MenuRed;
+            _error.text = message ?? "";
+        }
+    }
+}

@@ -36,12 +36,14 @@ targeted ordinary-speed visual review, and keep evidence/limitations truthful.
 This supersedes older blanket full-suite and repeated-suite mandates below and
 in historical documents. Do not automatically restore them for a checkpoint.
 
-**Current delivery instruction:** continue the full work in this chat for now.
-The owner plans to move to another PC later and will explicitly ask for a handoff.
-WHEN asked: finish/save current runs, COMMIT AND PUSH to ASTRAReworks first, then
-provide the precise continuation prompt with exact commit, remaining work, source
-PDF/logo paths and current conditional reset state. Do not create a new task or
-handoff prematurely. Finish remaining game work, then the deferred UI TODO last. No Desktop rebuild now. See the newest active-ledger pointer and compact
+**Current delivery instruction,2026-09-14:** the owner has NOW requested the
+other-PC handoff. Save the current checkpoint, COMMIT AND PUSH to ASTRAReworks
+first, then deliver the detailed continuation prompt directly in chat. Include
+the exact pushed commit, remaining work, preserved PDF/logo files and replicated
+setup/skills. NO reset permission and NO agents. WORKSTATION_SETUP.md and the
+transfer-checkpoint report preserve setup/evidence; they are not a new task.
+On the next PC, continue remaining game work, then the deferred UI TODO LAST.
+No Desktop rebuild now. See the newest active-ledger pointer and compact
 EXECUTION_PLAN for actual implementation and validation state. Older process
 records and contradictory historical requests never replace that pointer.
 
@@ -75,7 +77,7 @@ immediate releases are shakier/less accurate; holding longer settles and improve
 aim, with a small residual shake. The owner compares aiming behavior to PUBG sniper
 settling. Author visible body/FPP aiming/release to match actual authoritative
 trajectory, preserve Pektus signed arm action, and avoid invisible arbitrary misses.
-The order remains MAPS -> FULL UI -> ANIMATIONS/SKILLS/PLAY FEEL.
+That original order is historical. Latest order above puts unfinished UI LAST.
 
 This is the primary, self-contained repository instruction file, maintained at
 owner request on 2026-09-12. Start here. `CLAUDE.md` retains historical reasoning
@@ -114,9 +116,11 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
 - Work and push on **ASTRAReworks only**. Fetch first; inspect actual branch,
   local/remote HEAD and dirty files. Preserve newer work. Never reset to a supplied
   checkpoint, switch to/merge into/push main, or touch another checkout.
-- Authorized checkout:
+- Source-PC authorized checkout:
   `C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity`.
-  The separate `Documents\GitHub` checkout is outside this task.
+  On the destination PC use its explicitly selected clone of ASTRAReworks;
+  do not assume this source-PC absolute path exists there. The separate source-PC
+  `Documents\GitHub` checkout is outside this task.
 - No subagents, other-task delegation, usage resets or paid work without explicit
   approval. Parallelize independent reads/preparation, not agent work.
 - Controller support has a separate owner: `GenericPadBridge`, CONTROLLER MAP,
@@ -181,7 +185,8 @@ The owner liked it and rejected how it looked when tiny. Use adequate size and
 spacing; reserve a supporting font for genuinely small/dense secondary details.
 Do not replace the main Darumadrop identity with a neutral font.
 
-The owner now authorizes a FULL UI/UX overhaul, before animations and skills.
+The owner authorizes a FULL UI/UX overhaul. Its original priority before
+animations/skills was superseded by the latest remaining-UI-LAST instruction.
 This supersedes earlier UI-art-low-priority and functional-only limits. Preserve
 unfinished map work and the broader game scope. Use the supplied girlfriend's
 new TUMP logo and supporting marks as the brand anchor. Review the49-page
@@ -361,10 +366,11 @@ failures proactively. MAP_TRANSFORMATION_PLAN.md carries the full critique rubri
 - Run the specific PlayMode fixtures affected by the change. Existing full-suite
   tooling remains available as historical infrastructure, but the newest owner
   instruction supersedes automatically running it. Label uncovered areas honestly.
-- Run `Checks.RunAll` through the guard and all gating `tools/audit_*.py` source
-  checks via the qualification script. Use `PYTHONIOENCODING=utf-8` as needed.
-  `tools/qualify.py` records Core/EditMode/check/source stages. Inspect its actual
-  stage options. Scene text and loaded-reference checks detect different defects.
+- Use only relevant checks and source audits for the changed surface. Broad
+  `Checks.RunAll` / `tools/qualify.py` infrastructure remains available for an
+  actual release qualification, not routine edits or handoff documentation.
+  Use `PYTHONIOENCODING=utf-8` as needed. Inspect stage options before launch.
+  Scene text and loaded-reference checks detect different defects.
 - Preserve failed logs and classify new, inherited, environment and unverified
   failures. Do not weaken tests, hide skips or modify production just to turn green.
 - When the selected work is ready, run guarded `GameBuilder.BuildWindows`. Its
@@ -386,8 +392,9 @@ run IDs immediately. Compaction is continuation, not a fresh start or a stop.
 Keep TODO and the improvement plan current in the same commits as work. Move
 completed numbered entries and session reports whole to `TODO_Archive.md`, keep
 numbers and index pointers, and never delete the reasoning. Do not claim the larger
-goal complete from one verified batch. Do not stop at a handoff: the owner
-cancelled it and asked to continue here. Disclose unfinished criteria honestly.
+goal complete from one verified batch. The owner NOW requested a PC-transfer
+handoff; deliver it after pushing. On the destination, resume the next concrete
+task instead of generating another handoff. Disclose unfinished criteria honestly.
 
 ## Commit and delivery
 

@@ -278,6 +278,15 @@ taht again"*.
 
 ## 152 · Coherent game improvement and release verification: IN PROGRESS, 2026-09-09
 
+**Newest continuation,2026-09-14 PC transfer:** use the current ASTRAReworks HEAD,
+never reset to the historical hash below. Maps/life/pool and current throw/body/
+grip work have focused evidence; graphics batching experiments were rejected.
+Next: meaningful equipment from equipment-audit.md, then remaining movement,
+abilities/effects/network/spectator and other game work; inherited UI LAST.
+No agents or usage resets. Only related tests. See ACTIVE_REWORK_LEDGER,
+WORKSTATION_SETUP.md and reports/improvement-2026-09-14/transfer-checkpoint.md.
+Older task ordering, agent ownership and minimum-UI language below is historical.
+
 The full scope, order, dependencies and acceptance checks are in
 [IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md). Start from checkpoint
 `0028b3a901b8c338538d31251380c6433a7f6aa6` on `ASTRAReworks` only. The current

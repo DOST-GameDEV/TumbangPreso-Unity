@@ -1,0 +1,377 @@
+using System;
+using TumbangPreso.Core;
+using TumbangPreso.Net;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TumbangPreso.UI
+{
+    public sealed class QueueCard : MonoBehaviour
+    {
+        private const float CardWidth = 560.0f;
+
+        private const float Pad = 24.0f;
+        private const float RowHeight = 34.0f;
+        private const float BarHeight = 12.0f;
+
+        private const float DoorCentreY = 96.0f;
+        private const float DoorHeight = 64.0f;
+
+        private const float CardHeight = 348.0f;
+
+        private const float CardCentreY = DoorCentreY - (DoorHeight * 0.5f) + (CardHeight * 0.5f);
+
+        private float InnerWidth
+        {
+            get
+            {
+                float width = CardWidth;
+
+                if (_docked && _card != null)
+                {
+                    float measured = ((RectTransform)_card.transform).rect.width;
+                    if (measured > 1.0f) width = measured;
+                }
+
+                return width - (Pad * 2.0f);
+            }
+        }
+
+        private Matchmaker _queue;
+
+        private GameObject _card;
+        private Text _headline;
+        private Text _band;
+        private Text _elapsed;
+        private Text _promise;
+        private Image _barFill;
+        private Button _cancel;
+        private Button _open;
+
+        private Button _fill;
+        private Text _fillLabel;
+        private Text _fillCaveat;
+
+        public event Action Joined;
+
+        public event Action StartWithBots;
+
+        public event Action<string> Status;
+
+        public bool IsQueueing => _queue != null && _queue.IsQueueing;
+
+        public void StartRanked() => OnQuickMatchPressed();
+
+        public QueueStake Stake = QueueStake.Casual;
+
+        public static QueueCard Dock(Transform column, Button door)
+        {
+            var go = new GameObject("QueueCard", typeof(RectTransform));
+            go.transform.SetParent(column, false);
+
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = new Vector2(0.5f, 1.0f);
+            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 0.0f);
+            rect.anchoredPosition = new Vector2(0.0f, PaperKit.Gap);
+            rect.sizeDelta = new Vector2(DockedWidth, CardHeight);
+
+            go.AddComponent<LayoutElement>().ignoreLayout = true;
+
+            var card = go.AddComponent<QueueCard>();
+            card._docked = true;
+            card._open = door;
+            card.Construct();
+            return card;
+        }
+
+        private const float DockedWidth = 460.0f;
+
+        private bool _docked;
+
+        public static QueueCard Build(Transform parent)
+        {
+            var go = new GameObject("QueueCard", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            MenuKit.Stretch((RectTransform)go.transform, 0.0f);
+
+            var card = go.AddComponent<QueueCard>();
+            card.Construct();
+            return card;
+        }
+
+        private void Construct()
+        {
+            _queue = Matchmaker.Ensure();
+            _queue.Changed += Refresh;
+            _queue.Joined += OnQueueJoined;
+
+            if (_docked)
+            {
+                if (_open != null) _open.onClick.AddListener(OnQuickMatchPressed);
+
+                BuildCard();
+                Refresh();
+                return;
+            }
+
+            _open = MenuKit.WoodButton(transform, "QUICK MATCH", new Vector2(0.5f, 0.0f),
+                                       new Vector2(0.0f, DoorCentreY),
+                                       new Vector2(CardWidth, DoorHeight),
+                                       OnQuickMatchPressed, "WoodAmberButton");
+            _open.name = "QuickMatchButton";
+
+            BuildCard();
+            Refresh();
+        }
+
+        private void BuildCard()
+        {
+            _card = new GameObject("QueueState");
+            _card.transform.SetParent(transform, false);
+
+            var plate = _card.AddComponent<Image>();
+
+            PaperSkin.Apply(_card, PaperCraft.Surface.Sheet);
+
+            plate.raycastTarget = true;
+
+            if (_docked)
+            {
+                MenuKit.Stretch(plate.rectTransform, 0.0f);
+            }
+            else
+            {
+                MenuKit.Place(plate.rectTransform, new Vector2(0.5f, 0.0f),
+                              new Vector2(0.0f, CardCentreY), new Vector2(CardWidth, CardHeight));
+            }
+
+            var column = new GameObject("Column");
+            column.transform.SetParent(_card.transform, false);
+
+            var layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8;
+            layout.padding = new RectOffset((int)Pad, (int)Pad, (int)Pad, (int)Pad);
+            layout.childControlWidth = true;
+
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
+
+            _headline = Row(column.transform, "SEARCHING FOR A MATCH", PaperKit.Title,
+                            UiTheme.PaperInk, 34);
+            MenuKit.Apply(_headline, PaperKit.FaceFor(_headline.fontSize), bold: true);
+
+            _band = Row(column.transform, "", PaperKit.Body, UiTheme.PaperInk, 26);
+
+            BuildBar(column.transform);
+
+            _elapsed = Row(column.transform, "", PaperKit.Caption, UiTheme.PaperInkSoft, 22);
+
+            _promise = Row(column.transform, MatchmakingRules.TayaRotationPromise,
+                           PaperKit.Caption, UiTheme.PaperInkSoft, 50);
+            _promise.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _promise.alignment = TextAnchor.UpperLeft;
+
+            _fill = MenuKit.WoodButton(column.transform, "START WITH 3 BOTS", Vector2.zero,
+                                       Vector2.zero, new Vector2(0.0f, 48.0f), OnFillPressed,
+                                       "WoodPrimaryButton");
+            _fill.name = "StartWithBotsButton";
+            _fillLabel = _fill.GetComponentInChildren<Text>();
+
+            var fillElement = _fill.gameObject.AddComponent<LayoutElement>();
+            fillElement.minHeight = 48.0f;
+            fillElement.preferredHeight = 48.0f;
+            fillElement.flexibleHeight = 0.0f;
+
+            _fillCaveat = Row(column.transform, "", PaperKit.Caption,
+                              UiTheme.PaperInkSoft, 20.0f);
+            _fillCaveat.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _fillCaveat.alignment = TextAnchor.UpperLeft;
+
+            var spacer = new GameObject("Spacer");
+            spacer.transform.SetParent(column.transform, false);
+            spacer.AddComponent<LayoutElement>().flexibleHeight = 1.0f;
+
+            _cancel = PaperKit.Chip(column.transform, "CancelQueueButton", "CANCEL");
+            _cancel.onClick.AddListener(OnCancelPressed);
+            var cancelElement = _cancel.gameObject.AddComponent<LayoutElement>();
+            cancelElement.minHeight = 48.0f;
+            cancelElement.preferredHeight = 48.0f;
+            cancelElement.flexibleHeight = 0.0f;
+
+            _card.SetActive(false);
+        }
+
+        private void BuildBar(Transform parent)
+        {
+            var holder = new GameObject("WideningBar");
+            holder.transform.SetParent(parent, false);
+
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = BarHeight;
+            element.preferredHeight = BarHeight;
+            element.flexibleHeight = 0.0f;
+
+            var track = holder.AddComponent<Image>();
+            track.color = UiTheme.PaperSunk;
+            track.raycastTarget = false;
+
+            var fillGo = new GameObject("Fill");
+            fillGo.transform.SetParent(holder.transform, false);
+
+            _barFill = fillGo.AddComponent<Image>();
+            _barFill.color = UiTheme.Amber;
+            _barFill.raycastTarget = false;
+
+            var rt = _barFill.rectTransform;
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = new Vector2(0.0f, 1.0f);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        private static Text Row(Transform parent, string text, int size, Color colour, float height)
+        {
+            var holder = new GameObject("Line");
+            holder.transform.SetParent(parent, false);
+
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = height;
+            element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
+
+            var label = MenuKit.Label(holder.transform, text, size, colour,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 0);
+
+            return label;
+        }
+
+
+        private void OnQuickMatchPressed()
+        {
+            MenuSfx.Click();
+
+            bool started = _queue.StartQueue(SceneFlow.SelectedMode, Stake, HumanSeatCount());
+
+            if (!started) Status?.Invoke(_queue.Refusal);
+            Refresh();
+        }
+
+        private static int HumanSeatCount()
+        {
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null) return 1;
+
+            int seated = lobby.SeatedPeerCount();
+            return seated < 1 ? 1 : seated;
+        }
+
+        private void OnFillPressed()
+        {
+            MenuSfx.Click();
+            _queue.Cancel();
+            Refresh();
+            StartWithBots?.Invoke();
+        }
+
+        private void OnCancelPressed()
+        {
+            MenuSfx.Click();
+            _queue.Cancel();
+            Status?.Invoke("Left the queue. You are still in your own room.");
+            Refresh();
+        }
+
+        private void OnQueueJoined()
+        {
+            Refresh();
+            Joined?.Invoke();
+        }
+
+
+        private void Refresh()
+        {
+            if (_queue == null) return;
+
+            bool queueing = _queue.IsQueueing;
+
+            if (_open != null) _open.interactable = !queueing;
+            if (_card != null) _card.SetActive(queueing);
+
+            if (!queueing)
+            {
+                return;
+            }
+
+            if (_headline != null)
+            {
+                _headline.text = _queue.State switch
+                {
+                    QueueState.Joining => "FOUND A MATCH",
+                    QueueState.Hosting => "OPENING A ROOM",
+                    _ => MatchmakingRules.TakesAnybody(_queue.Elapsed)
+                        ? "SEARCHING EVERYWHERE"
+                        : "SEARCHING FOR A MATCH",
+                };
+
+                MenuKit.Fit(_headline, InnerWidth);
+            }
+
+            if (_band != null)
+            {
+                _band.text = $"{MenuKit.ModeLabel(_queue.Mode)}  ·  {_queue.SearchLabel}";
+                MenuKit.Fit(_band, InnerWidth);
+            }
+
+            if (_barFill != null)
+            {
+                var rt = _barFill.rectTransform;
+                rt.anchorMax = new Vector2(Mathf.Clamp01(_queue.WideningProgress), 1.0f);
+            }
+
+            bool offering = _queue.OffersBotFill;
+            int bots = _queue.BotsToFill;
+
+            if (_fill != null) _fill.gameObject.SetActive(offering);
+            if (_fillCaveat != null) _fillCaveat.gameObject.SetActive(offering);
+
+            if (offering)
+            {
+                if (_fillLabel != null)
+                {
+                    _fillLabel.text = BotFillRules.FillOffer(bots);
+                    MenuKit.Fit(_fillLabel, InnerWidth - 32.0f);
+                }
+
+                if (_fillCaveat != null)
+                    _fillCaveat.text = BotFillRules.FillCaveat(
+                        _queue.Stake, _queue.PartySize, Balance.PlayerCount);
+            }
+
+            if (_elapsed != null)
+            {
+                int seconds = Mathf.FloorToInt(_queue.Elapsed);
+                string clock = seconds < 60
+                    ? $"{seconds}s"
+                    : $"{seconds / 60}m {seconds % 60:00}s";
+
+                _elapsed.text = _queue.PartySize > 1
+                    ? $"{clock} waiting  ·  {_queue.PartySize} of you"
+                    : $"{clock} waiting";
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_queue == null) return;
+
+            _queue.Changed -= Refresh;
+            _queue.Joined -= OnQueueJoined;
+        }
+    }
+}

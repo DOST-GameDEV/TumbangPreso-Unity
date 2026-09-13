@@ -1,5 +1,37 @@
 # Active execution plan
 
+## CURRENT: transfer requested,2026-09-14
+
+Stop expanding game work until the requested commit/push and chat handoff are
+delivered. fc92f800 body/grip plus fresh internal build and BOTH actual network
+throw matrices are complete. Equipment audit is next, no tuning implemented.
+No live Editor/player/test/build. No agents or usage reset authority. UI LAST.
+No Desktop update. reports/improvement-2026-09-14/transfer-checkpoint.md records
+all current implementation/evidence/remaining work; WORKSTATION_SETUP.md contains
+portable skills/tools/source assets. The pending f5b10 UI patch is preserved,
+NOT applied. After moving PC, start equipment and continue the complete queue.
+
+All dated entries below are chronological history. Older running processes, WIP
+labels and proposed experiments are NOT active. Never restart rejected batching
+or the former agent, and never revive reset permission from archived text.
+
+## Current equipment pass,06:52
+
+Body/grip fc92f800 saved. Fresh internal ThrowReview build succeeded and both
+actual3process throw checks passed: Classic and HeroStrike150msowner-link delay+
+observer rejoin. Rejoin recorded157active matching samples; no stale re-equipping.
+Reports/throw-network.md holds exact artifact/runtime hash and scope. No processes
+remain active. No Desktop update, no agents, no reset authority; UI remains LAST.
+
+Equipment audit: Loafers currently trait-dominate standard/Spartan, Pantulog
+outperforms Alpombra on every trait, Crocs dominate Heels. More importantly,
+CanReboundScale is never consumed by can-hit deflection, so listed Rebound is
+largely descriptive. Next connect it to real can recoil, define useful physical/
+settling/retrieval tradeoffs for existing10slippers/6cans, preserve IDs/both modes/
+core retrieval loop and truthful descriptions. See equipment-audit.md before
+choosing changes. Do not turn the can into an unrequested health system.
+
+
 ## Current verified body/aim batch,06:42
 
 Aim cfa36268: Core6/6 + both-mode trajectory/reticle1/1passed. Body/grip final:
