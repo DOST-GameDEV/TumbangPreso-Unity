@@ -1190,6 +1190,12 @@ namespace TumbangPreso.UI
 
         private void Animate()
         {
+            if (Settings.SettingsStore.Current.ReducedUiMotion)
+            {
+                _lift = _sink = 0;
+                Pose();
+                return;
+            }
             // ⚠️ FOCUS LIFTS THE SAME TWO UNITS A HOVER DOES, deliberately, because it IS the
             // focus indicator now. See `_focused`.
             float wantLift = (_hovered || _focused) && !_held && _wasInteractable ? 1.0f : 0.0f;

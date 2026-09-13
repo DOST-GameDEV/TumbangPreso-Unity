@@ -16,7 +16,14 @@ namespace TumbangPreso.UI
             var oldWood = button.GetComponent<GodotButton>();
             if (oldWood != null) oldWood.enabled = false;
             var oldArrow = button.GetComponent<ArrowButtonView>();
-            if (oldArrow != null) oldArrow.enabled = false;
+            if (oldArrow != null)
+            {
+                oldArrow.enabled = false;
+                // AnimateIn owns this alpha. Disabling the old animation mid-entrance
+                // must leave the replacement visible rather than frozen at alpha zero.
+                var entranceGroup = button.GetComponent<CanvasGroup>();
+                if (entranceGroup != null) entranceGroup.alpha = 1;
+            }
             var oldImage = button.GetComponent<Image>();
             if (oldImage != null) { oldImage.enabled = false; oldImage.raycastTarget = false; }
             foreach (string layer in new[] { "Face", "Shadow", "Chevron" })

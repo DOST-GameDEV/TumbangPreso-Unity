@@ -644,8 +644,10 @@ namespace TumbangPreso.UI
             top.sizeDelta = new Vector2(0, 170);
             var topImage = top.GetComponent<Image>();
             topImage.sprite = null;
-            topImage.color = UiTheme.Paper;
+            topImage.color = Color.clear;
             topImage.raycastTarget = false;
+            var headerPaper = StreetUi.Detail(top, "HeaderPaper", StreetGraphic.Surface.HeaderBand);
+            MenuKit.Stretch(headerPaper.rectTransform); headerPaper.transform.SetAsFirstSibling();
             foreach (string name in new[] { "TarpTieLeft", "TarpTieRight", "SeatCount" })
             {
                 var node = top.Find(name);
@@ -698,8 +700,12 @@ namespace TumbangPreso.UI
             if (bottom != null)
             {
                 bottom.anchoredPosition = new Vector2(0, 32);
-                bottom.GetComponent<Image>().color = UiTheme.Paper;
+                bottom.GetComponent<Image>().color = Color.clear;
                 bottom.GetComponent<Image>().raycastTarget = false;
+                var footerPaper = StreetUi.Detail(bottom, "PreparationPaper", StreetGraphic.Surface.PaperBand);
+                MenuKit.Stretch(footerPaper.rectTransform);
+                footerPaper.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+                footerPaper.transform.SetAsFirstSibling();
                 foreach (Transform burst in bottom.GetComponentsInChildren<Transform>(true))
                     if (burst.name == "PrimaryBurst") burst.gameObject.SetActive(false);
             }
@@ -726,6 +732,7 @@ namespace TumbangPreso.UI
             parts.LoadoutValue.fontSize = 28;
             MenuKit.Read(parts.LoadoutValue, true);
             parts.SettingsSummary.fontSize = 23;
+            if (parts.SettingsCaret != null) parts.SettingsCaret.gameObject.SetActive(false);
             if (parts.ProfileValue != null) { parts.ProfileValue.fontSize = 26; MenuKit.Read(parts.ProfileValue, true); }
             if (parts.ProfileState != null) { parts.ProfileState.fontSize = 20; MenuKit.Read(parts.ProfileState); }
         }

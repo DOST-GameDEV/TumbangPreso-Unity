@@ -49,8 +49,9 @@ namespace TumbangPreso.UI
         private void LateUpdate()
         {
             if (_base == null || _base.texture == null) return;
-            if (Animating) Phase = Mathf.Repeat(Phase + Time.unscaledDeltaTime, Period);
-            float t = Phase / Period * Mathf.PI * 2f;
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            if (Animating && !reduced) Phase = Mathf.Repeat(Phase + Time.unscaledDeltaTime, Period);
+            float t = reduced ? 0 : Phase / Period * Mathf.PI * 2f;
             float aspect = _base.rectTransform.rect.width / Mathf.Max(1, _base.rectTransform.rect.height);
             float source = _base.texture.width / (float)_base.texture.height;
             Rect uv = aspect < source

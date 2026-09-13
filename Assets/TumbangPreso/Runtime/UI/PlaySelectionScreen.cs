@@ -92,10 +92,10 @@ namespace TumbangPreso.UI
             Route("PracticeButton","Play with bots","A full offline match with bot opponents.",
                 StreetIcon.Glyph.Slipper,66,LobbyMode.Practice);
             Route("CustomButton","Play with friends","Create or join a custom room.",
-                StreetIcon.Glyph.Person,242,LobbyMode.Custom);
+                StreetIcon.Glyph.People,242,LobbyMode.Custom);
             if(mode==GameMode.HeroStrike)
                 Route("RankedButton","Ranked","Online competitive play. Sign-in required.",
-                    StreetIcon.Glyph.Star,418,LobbyMode.Ranked);
+                    StreetIcon.Glyph.Medal,418,LobbyMode.Ranked);
             _canvas.GetComponent<InputLayer.ScreenFocus>()?.Rebuild();
         }
 

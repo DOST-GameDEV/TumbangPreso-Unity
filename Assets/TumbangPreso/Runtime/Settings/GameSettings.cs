@@ -289,6 +289,9 @@ namespace TumbangPreso.Settings
         public float MouseSensitivity = 1.0f;
         public bool InvertY = false;
 
+        /// <summary>Stops decorative interface movement without changing gameplay animation.</summary>
+        public bool ReducedUiMotion = false;
+
         // -------------------------------------------------------------------
         // DISPLAY
         // -------------------------------------------------------------------

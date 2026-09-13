@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
     /// second press of the same button rather than a dialog, because this panel is instanced
     /// into the title screen and has no popup layer of its own.
     /// </summary>
-    public sealed class ConvertedSettingsPanel : ConvertedOverlay
+    public sealed partial class ConvertedSettingsPanel : ConvertedOverlay
     {
         private InputActionAsset _actions;
         private readonly Dictionary<string, Button> _rebindButtons = new Dictionary<string, Button>();
@@ -65,6 +65,7 @@ namespace TumbangPreso.UI
             // not read as one; it is the last row on the panel, under its own sentence.
             BuildTelemetryRow();
             BuildSlipperHighlightRow();
+            BuildReducedMotionRow();
 
             // ⚠️ THE BUILD ORDER IS THE DISPLAY ORDER, REVERSED. All three picker rows insert
             // themselves directly under `FullscreenCheck`, so the one built LAST ends up nearest
@@ -124,6 +125,7 @@ namespace TumbangPreso.UI
             ShowTab(0);
 
             FitFooterLabels();
+            BuildBrandSettings();
         }
 
         /// <summary>
@@ -598,8 +600,9 @@ namespace TumbangPreso.UI
             new SettingsTab("AUDIO", "MasterVolumeRow", "SfxVolumeRow", "MusicVolumeRow"),
             new SettingsTab("VIDEO", "FullscreenCheck", "RenderStyleRow", "AntiAliasRow",
                             "VSyncRow", "GraphicsQualityRow"),
-            new SettingsTab("PLAYER", "PlayerNameRow", "SlipperHighlightRow", "TelemetryRow",
+            new SettingsTab("PLAYER", "PlayerNameRow", "TelemetryRow",
                             "TelemetryNote"),
+            new SettingsTab("ACCESSIBILITY", "ReducedUiMotionRow", "SlipperHighlightRow"),
         };
 
         /// <summary>
@@ -693,10 +696,12 @@ namespace TumbangPreso.UI
                     return "Volume changes as you drag, so you can hear what you are setting.";
 
                 case "VIDEO":
-                    return "These apply as you pick them. Back puts them all back.";
+                    return "Changes preview immediately. Save them or discard them when you leave.";
 
                 case "PLAYER":
-                    return "Your name, your colours, and what leaves this machine.";
+                    return "Your player name and privacy preferences.";
+                case "ACCESSIBILITY":
+                    return "Reduce menu movement and make your slippers easier to spot.";
             }
 
             // ⚠️⚠️ AN UNUSABLE CONTROLLER IS SAID OUT LOUD HERE, AND IT OUTRANKS THE REBIND
@@ -882,6 +887,8 @@ namespace TumbangPreso.UI
                 if (button == null) continue;
 
                 bool live = pair.Key == _tab;
+
+                if (BrandTab(button, live)) continue;
 
                 // The same relief-not-hue inversion the device pair uses; see
                 // `RefreshDeviceTabs` for why a live tab is a raised surface rather than a
@@ -1088,6 +1095,8 @@ namespace TumbangPreso.UI
                 if (button == null) continue;
 
                 bool live = pair.Key == _bindingDevice;
+
+                if (BrandTab(button, live)) continue;
 
                 if (PaperKit.MarkLive(button, live)) continue;
 
@@ -2126,12 +2135,13 @@ namespace TumbangPreso.UI
 
             // ⚠️ RESET IS A STAGED EDIT LIKE ANY OTHER and the wording has to say so, or the
             // button promises something that has not happened until APPLY is pressed.
-            SetText("SettingsStatusLabel", "All controls reset. Press APPLY CHANGES to keep it.");
+            SetText("SettingsStatusLabel", "Controls reset. Save changes to keep them.");
             RefreshApplyState();
         }
 
         private void Back()
         {
+            if (_brandSettings != null && Dirty()) { OpenSettingsDiscard(); return; }
             if (Dirty() && !_backArmed)
             {
                 _backArmed = true;
@@ -2172,6 +2182,8 @@ namespace TumbangPreso.UI
             // edit and re-dirty the panel we are in the middle of cleaning up.
             if (_highlight != null)
                 _highlight.SetValueWithoutNotify(SettingsStore.Current.SlipperHighlight);
+            if (_reducedMotion != null)
+                _reducedMotion.SetIsOnWithoutNotify(SettingsStore.Current.ReducedUiMotion);
 
             // ⚠️ THE SAME FOR THE ANTI-ALIASING FACE, and it has the stronger claim of the two:
             // `Restore` re-applies the mode to the engine, so the frame behind this panel is
@@ -2221,6 +2233,16 @@ namespace TumbangPreso.UI
 
         protected override void Update()
         {
+            if (_discardDialog != null && _discardDialog.activeSelf)
+            {
+                if (InputLayer.MenuNav.CancelPressed)
+                {
+                    _discardDialog.SetActive(false);
+                    ScreenTakeover.ConsumeEscape();
+                    InputLayer.ScreenFocus.OwnerOf(this)?.Rebuild();
+                }
+                return;
+            }
             // ⚠️ BEFORE THE ESC GUARD BELOW, because that guard RETURNS on a listening rebind and
             // the keyboard scroll has its own refusal for exactly that case. Putting it after
             // would have made this work only when nothing else was going on.

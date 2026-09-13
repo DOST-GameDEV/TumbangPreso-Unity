@@ -9,7 +9,7 @@ namespace TumbangPreso.UI
     public sealed class StreetGraphic : MaskableGraphic, IPointerEnterHandler, IPointerExitHandler,
         ISelectHandler, IDeselectHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public enum Surface { Navigation, Action, Card, Weave, Fade, TitleVeil, Option, Route, Tab }
+        public enum Surface { Navigation, Action, Card, Weave, Fade, TitleVeil, Option, Route, Tab, HeaderBand, PaperBand }
         public Surface Style;
         public bool Chosen;
         public bool Available = true;
@@ -27,6 +27,22 @@ namespace TumbangPreso.UI
             vh.Clear();
             var r = rectTransform.rect;
             bool live = Available && (_hovered || _selected);
+            if (Style == Surface.HeaderBand)
+            {
+                Fill(vh, new[] { new Vector2(r.xMin, r.yMin + 16),
+                    new Vector2(Mathf.Lerp(r.xMin, r.xMax, .28f), r.yMin + 6),
+                    new Vector2(Mathf.Lerp(r.xMin, r.xMax, .68f), r.yMin + 18),
+                    new Vector2(r.xMax, r.yMin + 2), new Vector2(r.xMax, r.yMax),
+                    new Vector2(r.xMin, r.yMax) }, UiTheme.Paper);
+                return;
+            }
+            if (Style == Surface.PaperBand)
+            {
+                Fill(vh, new[] { new Vector2(r.xMin + 18, r.yMin), new Vector2(r.xMax - 8, r.yMin + 4),
+                    new Vector2(r.xMax, r.yMin + 18), new Vector2(r.xMax - 14, r.yMax),
+                    new Vector2(r.xMin + 5, r.yMax - 8), new Vector2(r.xMin, r.yMin + 18) }, UiTheme.Paper);
+                return;
+            }
             if (Style == Surface.Tab)
             {
                 if (live) Fill(vh, Shape(r, 0), UiTheme.BrandHoney);

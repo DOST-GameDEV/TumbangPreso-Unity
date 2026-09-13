@@ -15,6 +15,8 @@ namespace TumbangPreso.UI
 
         private void BuildBrandPicker()
         {
+            var entrance = GetComponent<PennantEntrance>();
+            if (entrance != null) entrance.enabled = false;
             _brandPicker = BrandRect(transform, "BrandCharacterPicker");
             MenuKit.Stretch(_brandPicker);
             MenuKit.Backdrop(_brandPicker, UiTheme.Paper);

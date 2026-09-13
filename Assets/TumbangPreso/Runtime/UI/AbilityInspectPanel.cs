@@ -499,7 +499,8 @@ namespace TumbangPreso.UI
 
             bool held = HoldPressed();
             float speed = held ? OpenSpeed : CloseSpeed;
-            _open = Mathf.MoveTowards(_open, held ? 1.0f : 0.0f, speed * dt);
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            _open = reduced ? (held ? 1 : 0) : Mathf.MoveTowards(_open, held ? 1.0f : 0.0f, speed * dt);
 
             if (_open <= 0.0f)
             {
