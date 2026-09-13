@@ -1,65 +1,114 @@
 # Active execution plan
 
-## Current solo task,05:12 — body throw motion next
+## Current verified body/aim batch,06:42
 
-Aim batch validated: Core6/6 and Unity integrationv4 1/1 across both modes,
-reticle projection correct and preview/released velocity errors0.000000. Evidence
-in reports/improvement-2026-09-14/throw-aim.md. No running Editor/player; all aim
-sessions retired. Commit this checkpoint, then refine body/FPP throw motion.
+Aim cfa36268: Core6/6 + both-mode trajectory/reticle1/1passed. Body/grip final:
+12focused rig/continuity/contact checks passed, two existing moving/static carry
+checks passed, and actual1xquick/full-held-left/full-held-moving-right review passed
+with zero shoe vertices inside the inset head over31/228/217samples. Final pose
+uses lower wider arm load; earlier head-intersecting candidates rejected. Body
+uses one absolute upper-body gesture returning to current locomotion, legs remain
+active; FPP phase timing matches. Tilted shoe contact now uses palm-normal extent,
+not world AABB height. Reports/body-throw.md and body-throw-evidence have videos/
+CSV/XML. Complete normal-speed and head-clearance receipts in Logs/throw-motion-
+review-v5 and throw-head-clearance-v3.xml. No live Editor/player processes.
 
-Observed body baseline: old BayanClassic controlled-sequence frames58/82/89
-show slow gather at low charge and small follow-through; current action combines
-stock holding-right-shoot animation with procedural ThrowGesture offsets. Plan
-one coherent gesture: faster early gather, contact/through/recovery phases, keep
-walking legs active, blend upper body back to current locomotion. Avoid double
-motion from the stock shoot clip. Author/critique on actual rigs, all18retained.
-Do not change projectile timing/origin blindly; current authoritative aiming and
-new drift must remain consistent. Signed Pektus preparation/release must read.
-Normal-speed owner/body and movement/hold assessment still needed. No agents,
-no reset authority; inherited UI work remains LAST in UI_REMAINING_TODO.md.
-
-
-## Newest aim result,04:58
-
-Core6/6passed; ThrowAimIntegrationProbe v3 passed1case covering Classic and boosted
-HeroStrike, preview vs released velocity error0.000000 in both. Offset target
-shift.07361m/.11966m was preserved through charge cancellation. Fixture v2 was
-parked input and was corrected, not a gameplay repair. Its screenshots faced away
-from the staged aim target, so they are rejected for reticle visual acceptance.
-Fixture v4 now stages proper actor heading/camera pitch and asserts the reticle
-projects the same effective aim. Current Editor run must be collected before
-imported edits. All previous sessions45321/44391/40717retired. Next save validated
-aim batch, then improve body/Pektus preparation/follow-through; older body sequence
-BayanClassic frames58/82/89 shows slow initial gather and small hand travel.
-No agents, no reset authority, UI leftovers last. Do not repeat unrelated suites.
+Next: save body/grip checkpoint, build a fresh INTERNAL Windows ThrowReview player,
+then targeted tools/net_throw_matrix.py Classic and delayed/rejoin Hero cases.
+Do not use older GraphicsReview/RoofReview binaries to claim current throw proof.
+No Desktop update. After network check continue movement/equipment/skills/spectator
+work. UI backlog remains LAST; no subagents or reset permission.
 
 
-## Latest throwing validation state,04:43
+## Latest measured pose correction,06:33
 
-Core6/6passed. First integration launch only found fixture compile issues
-(InputIntent.HasAimPoint is set by AimPoint setter; missing System import); these
-are corrected. Second focused ThrowAimIntegrationProbe launch is running; collect
-its session before editing imported scripts. Production now captures the effective
-aim before clearing charge, aligns native reticle late after the camera, and uses
-Zack/Sean variant multipliers in preview. No new network bytes, no agents, UI last,
-no reset authority. Do not repeat full suites. Actual integration/visual acceptance
-still pending; then normal-speed movement/holding and body/Pektus motion review.
+Head-volume sampling confirmed55/1117shoe vertices inside the head on held-left
+at the prior pose. Not merely a camera overlap; DO NOT mark that windup accepted.
+Moved arm to a lower wider side load (-26,35-22spin,-28-10spin) and extended BOTH
+Pektus review holds to2.8s to test full charge and residual aim drift. Probe now
+collects all3cases before failing on any overlap. Current head-clearance-v3 run
+active, images/traces output Logs/throw-motion-review-v5. Check per-case head
+metrics and actual poses; body/grip WIP not committed yet. cfa36268 aiming is safe
+checkpoint. No agents, no resets, deferred UI last; exact new status wins over
+all historical successful-but-visually-rejected candidate notes below.
 
 
-## Current solo task,Sep14 04:40
+## Current clearance measurement,06:29
 
-No agents, no reset permission, remaining UI LAST. Throw aiming implementation
-is in progress: new ThrowAimRules + Carrier drift/aim capture before cancellation,
-matching FPP hand angles and late reticle placement. Core6/6passed. Boosted throw
-preview also uses the same Zack/Sean variant speed gain as actual release. Unity
-ThrowAimIntegrationProbe currently running session45321 -> Logs/throw-aim-
-integration-v1.xml/log. Collect before editing imported scripts. Check compile
-including missing System qualification in the new fixture if reported. Actual
-both-mode preview/released velocity + captures still pending. Body/throw/Pektus
-pose refinement follows, with normal-speed visual critique; existing cast retained.
-Latest committed task-order checkpoint0c542431. These aim files are dirty/WIP.
-All previous map/UI sessions retired; do not restart former UI agent. Deferred
-UI details, known pause failure and pendingf5b10commit are in UI_REMAINING_TODO.md.
+Grip support fix passed12focused Edit cases and combined3Play cases (two moving/
+static carry contracts + actual quick/held/moving throws). Footage v3 shows a
+better seated shoe; checking actual head geometry to distinguish camera overlap
+from penetration. New review samples shoe vertices in the weighted head-bone
+bounds after pose updates. First attempt failed from a stale head Transform at
+model/scene teardown, not a game error. Probe now reacquires replaced head geometry
+and disables its callback before destruction, with required sample count. Focused
+head-clearance-v2 run active; read exact XML and *-head-clearance.txt results in
+Logs/throw-motion-review-v4. No geometry/animation acceptance until measured and
+visually reviewed. Body/grip batch still dirty, aim cfa36268 committed. No agents,
+no resets, full remaining UI last. Do not revive any old authorization/order.
+
+
+## Latest grip root cause and active run,06:11
+
+Lower/outward pose improved separation but the carried shoe still appeared too
+close to the head. Found actual grip-placement bug: Carrier used WORLD AABB
+RestHeight as lift along rotating hand.up; tipping a long shoe therefore inflated
+its apparent thickness and pushed it away from the palm. Slipper now has
+CarrySupportExtent(normal), projecting its oriented local mesh bounds onto palm
+normal; loose/floating RestHeight is unchanged. Carrier uses it for held support.
+Two targeted geometry cases plus gesture/rig checks passed12/12, Logs/throw-carry-
+support-v1.xml. Existing moving/static CarryTests now measure the drawn centre
+against that palm support, same tolerances. Combined3case PlayMode run active:
+those2carry cases + normal-speed throw review. Output Logs/throw-motion-review-v3,
+XML/log throw-grip-review-v1. Collect before imported edits. Gesture/grip changes
+remain dirty pending visual review; aim cfa36268 is verified. No agents/reset.
+
+
+## Latest motion critique,05:45
+
+Actual quick/held-left/moving-right input-path review passed1/1; timestamped owner/
+body MP4s encoded in Logs/throw-motion-review-v1. Motion has earlier preparation
+and stronger across-body follow-through, BUT held-left full windup intersects the
+slipper with hair (frame35). Not accepted. Lowered arm pullback from~58to40degrees
+and changed roll outward (-22-10spin) to clear the head. Early-readability bound
+remains6degrees at.1shold, far above old barely-visible gather. Moving case now
+continues walking through release +.65s instead of stopping exactly at release.
+Latest targeted review is running; output Logs/throw-motion-review-v2, XML/log
+throw-motion-review-v3. Collect before imported edits and critique actual frames.
+Do not claim the previous passing test was visual approval. No agents/reset use;
+UI overhaul last. Aim cfa36268 stays the verified checkpoint; body batch dirty.
+
+
+## Latest body review state,05:39
+
+Throw motion checks10/10passed. First visual fixture stopped before recording
+because Berto's STABLE ID is bayan, not berto. Fixed fixture lookup through the
+real Core roster and set CharacterIndex with the matching PersonArt so FPP/body
+use the same character. This is test staging only; no identifier was renamed.
+Second ThrowMotionReviewProbe run is active. Collect before imported edits,
+inspect quick/held-left/moving-right sequences in Logs/throw-motion-review-v1,
+encode timestamped owner/body frames with tools/encode_motion_evidence.py.
+Gesture changes remain dirty and visually unaccepted; preserve aim checkpoint
+cfa36268. Parent works alone; no reset authority; full UI TODO stays last.
+
+
+## Current body motion WIP,05:34
+
+Aim checkpoint cfa36268 committed (Core6/6, both-mode release/reticle1/1). New
+ThrowGesture/CharacterAnimator/ViewmodelArms body revision is DIRTY and not yet
+visually accepted: eager early gather,55mscontact/180msfollow/540msreturn; one
+absolute upper-body gesture blends back to the current locomotion pose, bypassing
+the stock shooting clip to avoid double motion. Leg gait continues. Signed Pektus
+has distinct shoulder/wrist paths. ThrowMotionTests + ThrowGestureContinuityTests
+passed10/10 (Logs/throw-gesture-v1.xml). Cached carry-base capture avoids overwriting
+rest rotations when existing pose offsets are applied.
+
+Current ThrowMotionReviewProbe Editor run records actual quick/held-left/moving-
+right throws on Bayan at1x, owner/body frames + CSV via existing Record helper.
+Output Logs/throw-motion-review-v1; collect current session before imported edits.
+Inspect real sequences, not only numerical tests; reject intersections/snaps or
+unbelievable contact. No physics origin/release timing changes in this pose batch.
+No agents, no reset authority. Full inherited UI leftovers remain LAST.
 
 
 ## NEWEST ORDER,Sep14 04:10 — overrides older UI ordering

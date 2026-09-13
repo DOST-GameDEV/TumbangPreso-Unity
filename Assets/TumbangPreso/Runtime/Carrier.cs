@@ -544,7 +544,7 @@ namespace TumbangPreso
                 // The float was never a violation of anything that was being measured.
                 Held.transform.rotation = hand.rotation * Slipper.CarryRotation;
                 Held.transform.position =
-                    hand.position + hand.up * Held.RestHeight - Held.DrawnCentreOffset;
+                    hand.position + hand.up * Held.CarrySupportExtent(hand.up) - Held.DrawnCentreOffset;
 
                 return;
             }

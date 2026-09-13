@@ -401,6 +401,23 @@ namespace TumbangPreso
             }
         }
 
+        public float CarrySupportExtent(Vector3 palmNormal)
+        {
+            var renderer=GetComponentInChildren<Renderer>();
+            if(renderer==null)return Balance.SlipperRestHeight;
+            var filter=renderer.GetComponent<MeshFilter>();
+            if(filter==null || filter.sharedMesh==null)return Balance.SlipperRestHeight;
+            var normal=palmNormal.sqrMagnitude>.0001f?palmNormal.normalized:Vector3.up;
+            var extents=filter.sharedMesh.bounds.extents;
+            var matrix=filter.transform.localToWorldMatrix;
+            // Project the oriented local bounds onto the palm normal. A world
+            // AABB grows as a flat shoe turns upright; it is not sole thickness.
+            float extent=Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.right)))*extents.x
+                +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.up)))*extents.y
+                +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.forward)))*extents.z;
+            return Mathf.Max(Balance.SlipperRestHeight,extent);
+        }
+
         public float RestHeight
         {
             get

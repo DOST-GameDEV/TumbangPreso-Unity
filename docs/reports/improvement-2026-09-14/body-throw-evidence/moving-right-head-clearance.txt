@@ -1,0 +1,1 @@
+Maximum shoe vertices inside the inset head volume: 0 / 1117; samples 217

@@ -175,7 +175,7 @@ namespace TumbangPreso.PlayTests
                 // `docs/TODO.md` § 93. This read `slipper.transform.position` and subtracted the
                 // lift alone, and `Carrier.RideAnchor` applies TWO terms:
                 //
-                //     position = hand.position + hand.up * RestHeight - DrawnCentreOffset
+                //     position = hand.position + hand.up * CarrySupportExtent(hand.up) - DrawnCentreOffset
                 //
                 // The second one landed in § 80.5, for 🧑's *"slipper floats for everyone
                 // including bots, it isnt on their arms"*: § 70.2 fixes every slipper mesh as
@@ -192,10 +192,10 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ THE BOUND IS UNCHANGED AT 0.05 m. This corrects WHICH POINT is measured, not
                 // how far it is allowed to be: `BotBehaviourProbe`'s standing rule about not
                 // moving a number to make a run pass applies with full force here.
-                float lift = slipper.RestHeight;
+                float lift = slipper.CarrySupportExtent(anchor.up);
                 Vector3 drawn = slipper.transform.position + slipper.DrawnCentreOffset;
 
-                float slack = Vector3.Distance(drawn, anchor.position) - lift;
+                float slack = Vector3.Distance(drawn, anchor.position + anchor.up * lift);
                 float originSlack =
                     Vector3.Distance(slipper.transform.position, anchor.position) - lift;
 
@@ -471,15 +471,15 @@ namespace TumbangPreso.PlayTests
             var anchor = visual.HandAnchor;
             Assert.IsNotNull(anchor);
 
-            float dist = Vector3.Distance(slipper.transform.position, anchor.position);
+            float lift = slipper.CarrySupportExtent(anchor.up);
+            Vector3 drawn = slipper.transform.position + slipper.DrawnCentreOffset;
+            float dist = Vector3.Distance(drawn, anchor.position + anchor.up * lift);
 
-            // The correct lift is RestHeight alone, no scale factor — see this test's own
-            // header. A tolerance of 0.03 m allows for the anchor's own small offsets (arm
-            // pose, HandTopLift) without allowing the 2.38x scale bug back in: that bug put the
-            // slipper 0.164 m out against a correct 0.071 m, a gap 20x this tolerance.
-            Assert.Less(dist, slipper.RestHeight + 0.03f,
-                $"a held slipper sits {dist:0.000} m from the hand anchor, whose own lift is " +
-                $"only {slipper.RestHeight:0.000} m. That gap is the shoe floating above the " +
+            // Measure the visible centre against support along the tilted palm,
+            // not the mesh origin or the world-space height of an upright shoe.
+            Assert.Less(dist, 0.03f,
+                $"a held slipper's visible centre misses its palm support by {dist:0.000} m, with lift " +
+                $"{lift:0.000} m. That gap is the shoe floating above the " +
                 "hand rather than resting on it — see whether RideAnchor is scaling the lift " +
                 "by the character's PersonScale a second time.");
         }

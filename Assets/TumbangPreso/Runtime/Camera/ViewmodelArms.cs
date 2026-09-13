@@ -1083,11 +1083,7 @@ namespace TumbangPreso.CameraSystem
             if(ReferenceEquals(_clip,ThrowClip))
             {
                 float spin=Visual.ThrowGesture.Spin(_actionName);
-                float contact=Mathf.Clamp01(_clipTime/Visual.ThrowGesture.ContactSeconds);
-                var hit=Visual.ThrowGesture.HandFollowThrough(spin);
-                _rightArm.localRotation=_clipTime<Visual.ThrowGesture.ContactSeconds
-                    ? Quaternion.Slerp(_clipFromRight,hit,contact)
-                    : Quaternion.Slerp(hit,Quaternion.identity,Visual.ThrowGesture.Recovery(_clipTime));
+                _rightArm.localRotation=Visual.ThrowGesture.ReleaseHand(_clipFromRight,_clipTime,spin);
                 if(_leftArm!=null)_leftArm.localRotation=Quaternion.Slerp(_clipFromLeft,Quaternion.identity,Visual.ThrowGesture.Recovery(_clipTime));
                 if(_clipTime>=Visual.ThrowGesture.ReleaseSeconds){_clip=null;_heroAction=false;}
                 return;

@@ -505,9 +505,12 @@ namespace TumbangPreso.Visual
             if (_oneShotLeft > 0.0f)
             {
                 _oneShotLeft -= Time.deltaTime;
-                Blend();
-                HoldLastFrame();
-                return;
+                if (_throwReleaseTime < 0)
+                {
+                    Blend();
+                    HoldLastFrame();
+                    return;
+                }
             }
 
             // ⚠️ NOT EVERYTHING LOOPS. Looping `die` is exactly the reported bug: the body
@@ -800,6 +803,7 @@ namespace TumbangPreso.Visual
         private Quaternion _torsoRest,_headRest,_offRest;
         private bool _chargeOffsetsApplied;
         private ThrowGesture.Pose _lastThrowPose=ThrowGesture.Rest,_throwReleaseFrom=ThrowGesture.Rest;
+        private ThrowGesture.Pose _throwCarryBasis=ThrowGesture.Rest;
         private float _throwReleaseTime=-1,_throwReleaseSpin;
 
         /// <summary>
@@ -853,14 +857,21 @@ namespace TumbangPreso.Visual
             if (!_chargePosing && _throwReleaseTime < 0) return;
             if (_chargeBone==null && !ResolveChargeBone()) return;
             bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
-            var pose=_throwReleaseTime>=0 ? ThrowGesture.Release(_throwReleaseFrom,_throwReleaseTime,_throwReleaseSpin)
-                : throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
+            var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
                 : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
             _chargeBoneRest=_chargeBone.localRotation;
-            _chargeBone.localRotation=_chargeBoneRest*pose.Right;
-            if(_chargeTorso!=null){_torsoRest=_chargeTorso.localRotation;_chargeTorso.localRotation=_torsoRest*pose.Torso;}
-            if(_chargeHead!=null){_headRest=_chargeHead.localRotation;_chargeHead.localRotation=_headRest*pose.Head;}
-            if(_chargeOff!=null){_offRest=_chargeOff.localRotation;_chargeOff.localRotation=_offRest*pose.Left;}
+            if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
+            if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
+            if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
+            var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
+            var drawn=_throwReleaseTime>=0
+                ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
+                : throwing ? ThrowGesture.Pose.Apply(basis,pose)
+                : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
+            _chargeBone.localRotation=drawn.Right;
+            if(_chargeTorso!=null)_chargeTorso.localRotation=drawn.Torso;
+            if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
+            if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
             _chargeOffsetsApplied=true;_lastThrowPose=pose;
         }
 
@@ -1001,14 +1012,27 @@ namespace TumbangPreso.Visual
             CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
 
             var releaseFrom=(_chargePosing || _chargeOffsetsApplied) ? _lastThrowPose : ThrowGesture.Rest;
-            string clip = ResolveChain(ActionClips, action);
-            if (clip != null) PlayOneShot(clip);
             if(ThrowGesture.IsThrow(action))
             {
-                _throwReleaseFrom=releaseFrom;_throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
+                bool hadPose=_chargeOffsetsApplied;
+                if(_chargeBone!=null || ResolveChargeBone())
+                {
+                    _throwCarryBasis=hadPose
+                        ? new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest)
+                        : new ThrowGesture.Pose(_chargeTorso!=null?_chargeTorso.localRotation:Quaternion.identity,
+                            _chargeHead!=null?_chargeHead.localRotation:Quaternion.identity,_chargeBone.localRotation,
+                            _chargeOff!=null?_chargeOff.localRotation:Quaternion.identity);
+                }
+                _throwReleaseFrom=ThrowGesture.Pose.Apply(_throwCarryBasis,releaseFrom);
+                _throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
                 _oneShotLeft=ThrowGesture.ReleaseSeconds;
             }
-            else _throwReleaseTime=-1;
+            else
+            {
+                string clip = ResolveChain(ActionClips, action);
+                if (clip != null) PlayOneShot(clip);
+                _throwReleaseTime=-1;
+            }
         }
 
         /// <summary>
