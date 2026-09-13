@@ -1,23 +1,9 @@
 # Working instructions for ChatGPT / Codex
 
-**Temporary reset authority, current overnight task only:** the owner explicitly
-authorized ONE existing usage-reset credit, only when core Codex allowance has
-1% or0% REMAINING, never earlier. Primary agent is sole redeemer; UI agent may
-not redeem. Before any attempt read Logs/one-reset-authorization.json, check
-fresh core usage (not the separate Spark bucket), and preserve the stored single
-idempotency key for every retry. Never use a second credit. If the local state is
-missing/uncertain, do not invent a fresh authorization. This exception does not
-transfer to future tasks or authorize purchases. Consult the local state for
-redemption history. New explicit instructions/withdrawal take precedence.
-Use the earliest-expiring credit, explicitly NOT the October5credit. The allowed
-and forbidden credit IDs/expiries are in that private state file. Verify how the
-redemption tool selects a credit before spending; do not assume or silently use
-the other one. Immediately mark the authorization spent after successful reset
-or an already-redeemed response, and prohibit every later redemption.
-If the allowance unexpectedly refills to90-100%before this agent redeems (for
-example Tibo resets it), CANCEL the unused authorization. Do not spend another
-credit after an external reset. Record cancellation in the private state so a
-compaction cannot re-enable it. Parent alone handles this; UI agent never redeems.
+**No usage-reset permission:** the owner manually redeemed a reset and explicitly
+revoked all assistant reset authorization on2026-09-14. Do not redeem any credit.
+Previous conditional permission is cancelled, not waiting for a threshold. Do not
+restore it after compaction. The private Logs state records revocation.
 
 **One-time delegation exception, latest owner instruction:** exactly ONE
 GPT-6 Astra HIGH subagent may own the entire UI overhaul, with no conversation

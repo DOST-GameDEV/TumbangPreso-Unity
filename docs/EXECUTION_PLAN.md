@@ -64,19 +64,13 @@ repair290f829e. Map implementations/swim/life/network evidence remains below.
 Future motion/skills makeover still follows full UI; this current loadout sync
 repair is correctness work on existing selection behavior.
 
-## Conditional single-reset authority — no redemption yet
+## No usage-reset permission
 
-Only parent may redeem ONE existing credit at0-1%remaining, NEVER earlier.
-Private Logs/one-reset-authorization.json contains allowed earliest Oct4credit,
-forbidden Oct5credit, SINGLE stored idempotency key and spent/cancelled status.
-Never generate another attempt after success/alreadyRedeemed; ban every second
-redemption. Cancel unused authority if external reset refills allowance90-100%.
-Latest fresh core check1%remaining,2credits available. Spark/null not eligibility.
-Tool has no credit selector and earliest policy unverified. In-app ChatGPT usage
-page is logged out; async user question asks them to sign in for exact-credit UI
-selection. No answer yet. Browser tab8 in browser1/usageTab binding was logged out;
-read documentation after compaction before browser use. No purchase, no guessed
-selection, no Oct5fallback. This issue must not stall independent game work.
+Owner manually redeemed a reset and explicitly revoked assistant permission on
+Sep14. No assistant redemption was performed. Private Logs/one-reset-authorization
+state is revoked_by_owner, authorized=false, redemptionAllowed=false. Do not use
+a reset, continue the selection investigation, or revive old threshold authority.
+The pending browser-login question is obsolete and answered by this withdrawal.
 
 ## Sole UI agent and newest creative requirements
 

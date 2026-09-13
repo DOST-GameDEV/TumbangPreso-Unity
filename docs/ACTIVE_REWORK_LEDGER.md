@@ -11,6 +11,17 @@ Frontend-v4 now passed3/3, HUD-v1 passed2/2; retired54447/29825. One pause-child
 settings test pending for a later UI batch, not priority over map implementation.
 
 
+## Current owner instruction,Sep14: reset permission REVOKED
+
+Owner manually used a reset and explicitly withdrew all assistant authorization.
+No assistant reset was redeemed. AGENTS and EXECUTION_PLAN now ban redemption;
+private authorization state is revoked. Any older unused/conditional permission
+below is historical, cancelled, and must never be revived by compaction.
+Continue this task here. Resume the SAME existing UI agent if its usage-limit
+failure needs continuation; never create a replacement or any additional agent.
+After that one UI agent finishes, stop it. Parent continues its own non-UI work.
+
+
 ## Current parent execution pointer,2026-09-14 01:08
 
 Read compact EXECUTION_PLAN.md first for live state and source ownership. Owner
