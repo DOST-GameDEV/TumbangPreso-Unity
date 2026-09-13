@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc50fe6e339479ba2c5c790bf4370a3, type: 3}
+  m_Name: TumpUiTheme
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.UI.TumpUiTheme
+  Brick: {r: 0.6392156862745098, g: 0.10196078431372549, b: 0.1411764705882353, a: 1}
+  Orange: {r: 0.9254901960784314, g: 0.3764705882352941, b: 0.08235294117647059, a: 1}
+  Apricot: {r: 0.9725490196078431, g: 0.7019607843137254, b: 0.4, a: 1}
+  Cream: {r: 0.9882352941176471, g: 0.8274509803921568, b: 0.6235294117647059, a: 1}
+  OliveSand: {r: 0.5686274509803921, g: 0.5176470588235295, b: 0.3137254901960784, a: 1}
+  Yellow: {r: 0.9686274509803922, g: 0.7176470588235294, b: 0.13333333333333333, a: 1}
+  Lime: {r: 0.8470588235294118, g: 0.8156862745098039, b: 0.00392156862745098, a: 1}
+  HotOrange: {r: 0.9529411764705882, g: 0.34901960784313724, b: 0.00392156862745098, a: 1}
+  Olive: {r: 0.42745098039215684, g: 0.4666666666666667, b: 0.2196078431372549, a: 1}
+  DeepOlive: {r: 0.25882352941176473, g: 0.25882352941176473, b: 0.11764705882352941, a: 1}
+  HeadingFont: {fileID: 12800000, guid: 56faabe7350be344d8d7382940d88e8d, type: 3}
+  ReadingFont: {fileID: 12800000, guid: 6029d0788b3b52b89f704f4d57405713, type: 3}
+  ReadingBoldFont: {fileID: 12800000, guid: b6dd1d000b52ee2b7d2ca138963a20fb, type: 3}
+  DisplaySize: 62
+  HeadingSize: 40
+  BodySize: 28
+  CaptionSize: 24
+  InkWidth: 4
+  PrintDrop: 6
+  ContourCharacter: 10
+  ScreenMargin: 64
+  Gap: 20
+  ControlHeight: 76
+  PrimaryHeight: 104
+  ReferenceResolution: {x: 1920, y: 1080}
+  Logo: {fileID: 0}
+  SlipperMark: {fileID: 0}
+  StreetBackground: {fileID: 0}

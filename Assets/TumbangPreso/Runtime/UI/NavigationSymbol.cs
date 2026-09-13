@@ -11,6 +11,9 @@ namespace TumbangPreso.UI
         private StreetGraphic _surface;
         public static void Apply(Button button)
         {
+            // New native views own their own complete visual language; navigation
+            // discovery must never invoke retired skin builders on those controls.
+            if (button != null && button.GetComponent<TumpSurface>() != null) return;
             if (button == null || button.GetComponent<NavigationSymbol>() != null) return;
             var label = button.GetComponentInChildren<Text>(true);
             string words = label != null ? label.text.Trim().ToUpperInvariant() : "";

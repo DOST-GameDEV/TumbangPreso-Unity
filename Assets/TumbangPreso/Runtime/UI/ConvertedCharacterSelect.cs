@@ -37,6 +37,7 @@ namespace TumbangPreso.UI
         public void SelectCategory(int category)
         {
             _tab = Mathf.Clamp(category, 0, TabNames.Length - 1);
+            if (_nativePicker != null) { _nativePicker.SelectCategory(_tab); return; }
             Refresh();
         }
         private readonly int[] _pick = new int[3];
@@ -83,7 +84,36 @@ namespace TumbangPreso.UI
         private Sprite _scrimSprite;
         private Image _glowImage;
 
+        private TumpPickerView _nativePicker;
+        private TumpSkillView _nativeSkills;
+
+        private void Awake()
+        {
+            // The authored hierarchy is retained as an inactive reference. The new
+            // view starts from an empty Canvas and never invokes the old builders.
+            foreach (Transform child in transform) child.gameObject.SetActive(false);
+            var entrance = GetComponent<PennantEntrance>();
+            if (entrance != null) entrance.enabled = false;
+        }
+
         protected override void Wire()
+        {
+            _nativePicker = gameObject.AddComponent<TumpPickerView>();
+            _nativePicker.Open(transform, TaglineFor, picks =>
+            {
+                for (int i = 0; i < _pick.Length; i++) _pick[i] = picks[i];
+                Confirm();
+            }, Dismiss, hero =>
+            {
+                if (_nativeSkills == null) _nativeSkills = gameObject.AddComponent<TumpSkillView>();
+                _nativePicker.Suspend();
+                _nativeSkills.Open(transform, hero, _nativePicker.Resume);
+            });
+            _nativePicker.SelectCategory(_tab);
+        }
+
+        // Preserved source reference only. No live caller invokes this builder.
+        private void WireLegacyReference()
         {
             ConfigureGodotBackdrop();
             // ⚠️ 66 IS THE SIZE THE SCENE AUTHORS IT AT, and it is passed in rather than read so
@@ -2759,6 +2789,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            if (_nativeSkills != null && _nativeSkills.IsOpen) { _nativeSkills.Back(); return true; }
             Dismiss();
             return true;
         }
