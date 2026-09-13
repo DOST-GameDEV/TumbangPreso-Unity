@@ -220,8 +220,14 @@ namespace TumbangPreso.UI
         }
         private Button ActionRow(string name, string title, string label, Action action)
         {
-            var button = TumpUiFactory.Button(Row(name, title), name + "Action", label, action, TumpSurface.Form.Ticket, TumpUiTheme.Current.Apricot, 30);
-            TumpUiFactory.Stretch((RectTransform)button.transform); return button;
+            bool binding = name.StartsWith("Binding_", StringComparison.Ordinal);
+            var button = TumpUiFactory.Button(Row(name, title), name + "Action", label, action,
+                binding ? TumpSurface.Form.Pebble : TumpSurface.Form.Link,
+                binding ? TumpUiTheme.Current.Cream : TumpUiTheme.Current.Apricot, binding && label.Length <= 3 ? 40 : 30);
+            var rect = (RectTransform)button.transform;
+            rect.anchorMin = new Vector2(0, 0); rect.anchorMax = new Vector2(0, 1); rect.pivot = new Vector2(0, .5f);
+            rect.offsetMin = Vector2.zero; rect.offsetMax = new Vector2(binding && label.Length <= 3 ? 150 : 380, 0);
+            return button;
         }
         private void Changed(string message)
         {

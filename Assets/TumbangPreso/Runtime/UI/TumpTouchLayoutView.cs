@@ -36,6 +36,8 @@ namespace TumbangPreso.UI
             TumpUiFactory.Ground(_canvas.transform, TumpUiTheme.Current.Cream);
             _previousParent = _hud.Canvas.transform.parent; _sortBefore = _hud.Canvas.sortingOrder;
             _hud.Canvas.transform.SetParent(_canvas.transform, false); _hud.Canvas.sortingOrder = 830;
+            TumpUiFactory.Stretch((RectTransform)_hud.Canvas.transform);
+            Canvas.ForceUpdateCanvases();
             var focus = _hud.Canvas.GetComponent<ScreenFocus>(); _focusBefore = focus != null && focus.enabled;
             if (focus != null) focus.enabled = false;
             _stickBefore = _hud.Stick.enabled; _hud.Stick.enabled = false;

@@ -41,7 +41,8 @@ namespace TumbangPreso.UI
             handles.anchorMin = new Vector2(0, .5f); handles.anchorMax = new Vector2(1, .5f);
             handles.offsetMin = new Vector2(24, -28); handles.offsetMax = new Vector2(-154, 28);
             var knob = TumpUiFactory.Surface(handles, "Handle", TumpSurface.Form.Pebble, f.Lime);
-            knob.rectTransform.sizeDelta = new Vector2(40, 56);
+            // Slider stretches the handle vertically within HandleArea.
+            knob.rectTransform.sizeDelta = new Vector2(40, 0);
             slider.handleRect = knob.rectTransform; slider.targetGraphic = knob;
             var label = TumpUiFactory.Text(root, "Value", format(value), 32, true);
             label.rectTransform.anchorMin = new Vector2(1, 0); label.rectTransform.anchorMax = Vector2.one;
@@ -72,7 +73,9 @@ namespace TumbangPreso.UI
         public static TumpChoice Choice(Transform parent, string name, string[] choices, int index, Action<int> changed)
         {
             var button = TumpUiFactory.Button(parent, name, "", null, TumpSurface.Form.Ticket, TumpUiTheme.Current.Apricot, 32);
-            TumpUiFactory.Stretch((RectTransform)button.transform);
+            var rect = (RectTransform)button.transform;
+            rect.anchorMin = new Vector2(0, 0); rect.anchorMax = new Vector2(0, 1); rect.pivot = new Vector2(0, .5f);
+            rect.offsetMin = Vector2.zero; rect.offsetMax = new Vector2(620, 0);
             var picker = button.gameObject.AddComponent<TumpChoice>();
             picker.Bind(choices, index, changed);
             return picker;

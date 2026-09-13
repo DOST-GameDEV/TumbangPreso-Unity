@@ -96,9 +96,12 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(TouchButton.Customising);
             var canvas = GameObject.Find("TumpTouchLayoutCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(TouchHud.Instance.Canvas.GetComponentsInChildren<WoodSkin>(true));
+            Press(Find("ResetTouchLayout")); yield return null;
             GameObject.Find("TouchSize").GetComponent<Slider>().value = Mathf.Min(TouchLayoutStore.MaxScale, scale + .15f);
             yield return null;
-            yield return TumpUiCapture.Capture("NativeTouchLayout-v1", canvas, 1920, 1080);
+            AssertTouchPositions(canvas);
+            yield return TumpUiCapture.Capture("NativeTouchLayout-v2", canvas, 1920, 1080);
+            AssertTouchPositions(canvas);
             Press(Find("CancelTouchLayout")); yield return null;
             Assert.IsFalse(TouchButton.Customising);
             Assert.That(TouchLayoutStore.Scale, Is.EqualTo(scale).Within(.001f));
@@ -126,6 +129,22 @@ namespace TumbangPreso.PlayTests
                 Rebinding.Invalidate(); Rebinding.Save(session.Actions);
             }
             yield return null;
+        }
+        private static void AssertTouchPositions(Canvas editor)
+        {
+            Canvas.ForceUpdateCanvases();
+            var root = (RectTransform)editor.transform;
+            var touch = (RectTransform)TouchHud.Instance.Canvas.transform;
+            Assert.That(touch.rect.width, Is.EqualTo(root.rect.width).Within(1), "Nested touch canvas must fill its editor.");
+            Assert.That(touch.rect.height, Is.EqualTo(root.rect.height).Within(1));
+            var stick = (RectTransform)TouchHud.Instance.Stick.transform;
+            float left = touch.InverseTransformPoint(stick.TransformPoint(stick.rect.center)).x;
+            Assert.Less(left, touch.rect.center.x, "Move stick stays on the left.");
+            var primary = TouchHud.Instance.Buttons.First(b => b.Entry.Zone == TouchZone.ActionCluster && b.Entry.Slot == 0);
+            var rect = (RectTransform)primary.transform;
+            float right = touch.InverseTransformPoint(rect.TransformPoint(rect.rect.center)).x;
+            Assert.Greater(right, touch.rect.center.x, "Throw cluster stays on the right, not piled onto the stick.");
+            Assert.Greater(right - left, touch.rect.width * .4f);
         }
         private static IEnumerator Open()
         {

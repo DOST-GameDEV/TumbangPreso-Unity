@@ -73,6 +73,7 @@ namespace TumbangPreso.UI
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Truncate;
             text.raycastTarget = false;
+            text.supportRichText = false;
             text.lineSpacing = 1.08f;
             return text;
         }
@@ -184,6 +185,16 @@ namespace TumbangPreso.UI
             scroll.horizontal = false; scroll.vertical = true;
             scroll.movementType = ScrollRect.MovementType.Clamped;
             scroll.scrollSensitivity = 48;
+            var track = Rect(root, "ScrollTrack").gameObject.AddComponent<Image>();
+            track.color = Theme.OliveSand;
+            track.rectTransform.anchorMin = new Vector2(1, 0); track.rectTransform.anchorMax = Vector2.one;
+            track.rectTransform.offsetMin = new Vector2(-10, 0); track.rectTransform.offsetMax = Vector2.zero;
+            var handle = Rect(track.transform, "Handle").gameObject.AddComponent<Image>();
+            handle.color = Theme.Brick;
+            var bar = track.gameObject.AddComponent<Scrollbar>();
+            bar.direction = Scrollbar.Direction.BottomToTop; bar.handleRect = handle.rectTransform; bar.targetGraphic = handle;
+            scroll.verticalScrollbar = bar; scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+            viewport.offsetMax = new Vector2(-24, 0);
             return content;
         }
 
