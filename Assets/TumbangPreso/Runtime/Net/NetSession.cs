@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Netcode;
@@ -523,14 +524,16 @@ namespace TumbangPreso.Net
         /// which is the very thing being waited out. `Awaitable.NextFrameAsync` is a real frame
         /// boundary, and `ShutdownInternal` has run by the next frame's Update.
         /// </summary>
-        private async Task EnsureStoppedAsync()
+        private async Task EnsureStoppedAsync(JoinAttemptGate.Attempt? joinAttempt = null)
         {
+            if (joinAttempt.HasValue && !joinAttempt.Value.CanContinue) return;
             if (_nm == null || !_nm.IsListening) return;
 
-            Stop();
+            StopCurrentTransport();
 
             for (int frame = 0; frame < ShutdownWaitFrames; frame++)
             {
+                if (joinAttempt.HasValue && !joinAttempt.Value.CanContinue) return;
                 if (this == null) return;
                 if (_nm == null || !_nm.IsListening) return;
 
@@ -547,6 +550,7 @@ namespace TumbangPreso.Net
             // ⚠️ SAID OUT LOUD RATHER THAN RETRIED FOREVER. If the transport is still up after
             // this long the start below will fail on its own and report why; a silent extra wait
             // would just move the same failure somewhere harder to find.
+            if (joinAttempt.HasValue && !joinAttempt.Value.CanContinue) return;
             if (_nm != null && _nm.IsListening)
             {
                 Debug.LogWarning($"[Net] the previous session was still listening after " +
@@ -556,6 +560,7 @@ namespace TumbangPreso.Net
 
         public async Task<bool> StartHostAsync(int port = DefaultPort, bool dedicated = false)
         {
+            _joinAttempts.Invalidate();
             await EnsureStoppedAsync();
 
             Configure("0.0.0.0", port);
@@ -845,9 +850,12 @@ namespace TumbangPreso.Net
         /// `fe80::1` into a host of `fe80:` and a port of `1`. Bracketed IPv6 with a port
         /// (`[::1]:8910`) is handled separately for the same reason.
         /// </summary>
-        public async Task<bool> StartClientAsync(string address, int port = DefaultPort)
+        public async Task<bool> StartClientAsync(string address, int port = DefaultPort, CancellationToken cancellationToken = default)
         {
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin(cancellationToken);
+            if (!CanContinueJoin(attempt)) return false;
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             address = SplitHostPort(address, ref port);
 
@@ -874,6 +882,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async Task<bool> StartRelayHost(int maxConnections = LobbySession.MaxConnections)
         {
+            _joinAttempts.Invalidate();
             await EnsureStoppedAsync();
 
             SetStatus("signing in to online services...");
@@ -967,9 +976,12 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Connects to a host through a UGS Relay join code.
         /// </summary>
-        public async Task<bool> StartRelayClient(string relayJoinCode)
+        public async Task<bool> StartRelayClient(string relayJoinCode, CancellationToken cancellationToken = default)
         {
-            await EnsureStoppedAsync();
+            var attempt = _joinAttempts.Begin(cancellationToken);
+            if (!CanContinueJoin(attempt)) return false;
+            await EnsureStoppedAsync(attempt);
+            if (!CanContinueJoin(attempt)) return false;
 
             if (string.IsNullOrWhiteSpace(relayJoinCode))
             {
@@ -984,6 +996,7 @@ namespace TumbangPreso.Net
             // relay. The status now carries which of the three situations stopped it rather
             // than the single "authentication failed" that covered all of them.
             bool authOk = await NetIdentity.EnsureSignedInAsync();
+            if (!CanContinueJoin(attempt)) return false;
             if (!authOk)
             {
                 SetStatus($"cannot go online: {NetIdentity.StateReason}");
@@ -994,6 +1007,7 @@ namespace TumbangPreso.Net
             try
             {
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
+                if (!CanContinueJoin(attempt)) return false;
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
                 ConfigureTimeouts();
@@ -1004,6 +1018,7 @@ namespace TumbangPreso.Net
                 // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
                 // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
                 await PrimeHandleProofAsync();
+                if (!CanContinueJoin(attempt)) return false;
                 ConfigureClientHello();
                 bool ok = _nm.StartClient();
                 if (ok) RegisterSeatHandler();
@@ -1017,6 +1032,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!CanContinueJoin(attempt)) return false;
                 IsRelay = false;
                 RelayJoinCode = null;
                 SetStatus($"relay connection failed: {e.Message}");
@@ -1053,6 +1069,27 @@ namespace TumbangPreso.Net
         private bool _everConnected;
 
         public void Stop()
+        {
+            _joinAttempts.Invalidate();
+            StopCurrentTransport();
+        }
+
+        private readonly JoinAttemptGate _joinAttempts = new JoinAttemptGate();
+        private bool CanContinueJoin(JoinAttemptGate.Attempt attempt)
+        {
+            if (this == null) return false;
+            if (attempt.CanContinue) return true;
+            // A canceled attempt owns cleanup only until another session operation starts.
+            // It must never clear metadata or stop a newer connection.
+            if (attempt.OwnsSession && (_nm == null || !_nm.IsListening))
+            {
+                IsRelay = false; RelayJoinCode = null;
+                SetStatus("Join cancelled.");
+            }
+            return false;
+        }
+
+        private void StopCurrentTransport()
         {
             _localShutdown = true;
             _everConnected = false;
