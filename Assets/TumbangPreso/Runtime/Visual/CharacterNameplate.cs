@@ -49,6 +49,11 @@ namespace TumbangPreso.Visual
         private MeshFilter _ringFilter;
         private Mesh _discMesh;
         private MaterialPropertyBlock _ringBlock;
+        private Vector3 _landRingPosition, _landLabelPosition;
+        private CharacterVisual _visual;
+        private GameObject _headModel;
+        private Transform _head;
+        private bool _placedOnWater;
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
@@ -218,9 +223,50 @@ namespace TumbangPreso.Visual
             _ring.localScale = new Vector3(ringRadius * _ringUnitSpan, 0.005f,
                                            ringRadius * _ringUnitSpan);
             _ring.localPosition = new Vector3(0.0f, feetY + RingFloorMargin, 0.0f);
+            _landRingPosition = _ring.localPosition;
 
             float labelMargin = LabelMarginAtPersonScale * (height / PersonCapsuleHeight);
             _labelTransform.localPosition = new Vector3(0.0f, headY + labelMargin, 0.0f);
+            _landLabelPosition = _labelTransform.localPosition;
+        }
+
+        private void PlaceForCurrentSurface()
+        {
+            if (_character == null || _ring == null || _labelTransform == null) return;
+            float surface = 0;
+            bool swimming = _character.IsSwimming && RooftopPool.TrySurface(_character.transform.position, out surface);
+            if (!swimming)
+            {
+                if (_placedOnWater)
+                {
+                    _ring.localPosition = _landRingPosition;
+                    _labelTransform.localPosition = _landLabelPosition;
+                    _placedOnWater = false;
+                }
+                return;
+            }
+            // The role cue represents the player's place on the court/water, not
+            // the submerged capsule floor. No collision or gameplay position changes.
+            var position = _ring.position;
+            position.y = surface + RingFloorMargin;
+            _ring.position = position;
+            _placedOnWater = true;
+            if (_visual == null) _visual = _character.GetComponent<CharacterVisual>();
+            var model = _visual != null ? _visual.Model : null;
+            if (model != _headModel)
+            {
+                _headModel = model; _head = null;
+                if (model != null)
+                    foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                        foreach (var bone in skin.bones)
+                            if (bone != null && bone.name == "head") { _head = bone; break; }
+            }
+            var cc = _character.GetComponent<CharacterController>();
+            float scale = cc != null ? cc.height / PersonCapsuleHeight : 1;
+            var label = _head != null ? _head.position + Vector3.up * (.55f * scale)
+                : _character.transform.position + Vector3.up * (PersonCapsuleHeight * scale);
+            label.y = Mathf.Max(label.y, surface + .25f);
+            _labelTransform.position = label;
         }
 
         /// <summary>Public so a late-joiner sync can force it, matching the HUD's own refresh.</summary>
@@ -313,6 +359,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void LateUpdate()
         {
+            PlaceForCurrentSurface();
             var cam = UnityEngine.Camera.main;
             if (cam == null || _label == null) return;
 
