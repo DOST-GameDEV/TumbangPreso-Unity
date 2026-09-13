@@ -99,6 +99,13 @@ namespace TumbangPreso.UI
 
         protected virtual void Start()
         {
+            Canvas = CreateCanvas();
+            Build();
+            Enter();
+        }
+
+        protected virtual Canvas CreateCanvas()
+        {
             Canvas = MenuKit.BuildCanvas(transform, name + "Canvas");
 
             // ⚠️ ABOVE THE SCREEN UNDERNEATH, and opaque enough to be readable over a running
@@ -111,11 +118,7 @@ namespace TumbangPreso.UI
 
             bg.raycastTarget = true; // swallow clicks meant for the screen below
 
-            Build();
-
-            // The first open. OnEnable already ran, before the canvas existed, so it returned
-            // without entering; this is the one that counts it.
-            Enter();
+            return Canvas;
         }
 
         protected abstract void Build();

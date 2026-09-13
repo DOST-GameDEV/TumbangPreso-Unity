@@ -34,6 +34,13 @@ namespace TumbangPreso.PlayTests
             local.ClearTrip();
             hud.ShowToast("Slipper returning · 10.0s", 1); yield return null;
             Assert.IsTrue(canvas.GetComponentsInChildren<Text>().First(t => t.name == "MatchToast").enabled);
+            var swap = Object.FindFirstObjectByType<RoleSwapCard>();
+            swap.ShowForShot(2, (GameServices.Match.DefenderSlot + 1) % 4); yield return null;
+            var intermission = GameObject.Find("TumpRoundSwapCanvas").GetComponent<Canvas>();
+            Assert.IsEmpty(intermission.GetComponentsInChildren<PaperSkin>(true));
+            Assert.IsNotNull(intermission.transform.Find("NextDefenderPortrait").GetComponent<Image>().sprite);
+            yield return TumpUiCapture.Capture("NativeRoundSwap-v1", intermission, 1920, 1080);
+            swap.DismissAndPractice(); Assert.IsFalse(intermission.gameObject.activeSelf);
         }
         [UnityTest]
         public IEnumerator HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts()

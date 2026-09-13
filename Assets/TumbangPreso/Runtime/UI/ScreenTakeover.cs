@@ -83,6 +83,18 @@ namespace TumbangPreso.UI
         /// </summary>
         public static bool EscapeIsSpoken => AnyOpen || _escapeFrame == Time.frameCount;
 
+        /// <summary>A registered layer may handle its own Cancel while respecting other layers and consumed presses.</summary>
+        public static bool EscapeIsSpokenExcept(MonoBehaviour owner)
+        {
+            if (_escapeFrame == Time.frameCount) return true;
+            for (int i = Registered.Count - 1; i >= 0; i--)
+            {
+                if (Registered[i].Owner == null) { Registered.RemoveAt(i); continue; }
+                if (!ReferenceEquals(Registered[i].Owner, owner) && Registered[i].IsOpen()) return true;
+            }
+            return false;
+        }
+
         /// <summary>True while any registered screen is covering the game.</summary>
         public static bool AnyOpen
         {

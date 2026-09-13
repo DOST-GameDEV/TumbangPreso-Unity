@@ -14,8 +14,40 @@ namespace TumbangPreso.UI
     {
         public CharacterMotor Local;
         private Text _title;
+        private GameObject _settingsOwner;
+        public bool HasNestedView => _settingsOwner != null && _settingsOwner.activeInHierarchy;
+
+        protected override Canvas CreateCanvas()
+        {
+            var canvas = TumpUiFactory.Canvas(transform, "TumpPauseCanvas", 500);
+            var f = TumpUiTheme.Current;
+            TumpUiFactory.Ground(canvas.transform, new Color(f.DeepOlive.r, f.DeepOlive.g, f.DeepOlive.b, .82f));
+            return canvas;
+        }
 
         protected override void Build()
+        {
+            var f = TumpUiTheme.Current;
+            var root = (RectTransform)Canvas.transform;
+            var column = TumpUiFactory.Rect(root, "PauseChoices");
+            TumpUiFactory.Anchor(column, new Vector2(.5f, .5f), Vector2.zero, new Vector2(700, 650));
+            _title = TumpUiFactory.Text(column, "PauseTitle", "Match menu", 62, true);
+            _title.color = f.Cream; _title.alignment = TextAnchor.MiddleCenter;
+            TumpUiFactory.Place(_title.rectTransform, 0, 12, 700, 110);
+            var note = TumpUiFactory.Text(column, "LiveNotice", "The match keeps playing while this menu is open.", 26);
+            note.color = f.Cream; note.alignment = TextAnchor.MiddleCenter;
+            TumpUiFactory.Place(note.rectTransform, 16, 134, 668, 86);
+            var resume = TumpUiFactory.Button(column, "ResumeMatch", "Resume", Resume, TumpSurface.Form.Slap, f.Lime, 50);
+            TumpUiFactory.Place((RectTransform)resume.transform, 100, 262, 500, 110);
+            var settings = TumpUiFactory.Button(column, "PauseSettings", "Settings", OpenSettings, TumpSurface.Form.Link, f.Cream, 40);
+            settings.GetComponent<TumpSurface>().LightInk = true; settings.GetComponentInChildren<Text>().color = f.Cream;
+            TumpUiFactory.Place((RectTransform)settings.transform, 140, 414, 420, 86);
+            var leave = TumpUiFactory.Button(column, "LeaveMatch", "Leave match", SceneFlow.LeaveMatchToMainMenu, TumpSurface.Form.Link, f.Cream, 34);
+            leave.GetComponent<TumpSurface>().LightInk = true; leave.GetComponentInChildren<Text>().color = f.Cream;
+            TumpUiFactory.Place((RectTransform)leave.transform, 140, 548, 420, 80);
+        }
+
+        private void BuildLegacyReference()
         {
             var card = MenuKit.WoodPanel(Canvas.transform, "Card");
             card.spacing = 14.0f;
@@ -53,10 +85,11 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnOpened()
         {
+            if (Canvas != null) Canvas.gameObject.SetActive(true);
             // This is a menu, not a time-control path. Only SpectatorCamera's broadcast keys
             // may pause or slow the match; opening settings as a player never stops the game.
             if (_title != null)
-                _title.text = GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU  ·  LIVE";
+                _title.text = GameLaunch.Spectator ? "Broadcast menu" : "Match menu";
 
             if (Local != null) Local.Intent.Parked = true;
 
@@ -70,6 +103,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnClosed()
         {
+            if (Canvas != null) Canvas.gameObject.SetActive(false);
             if (Local != null) Local.Intent.Parked = false;
 
             // Only the match wants the mouse back. A close on the way to the title screen has
@@ -94,6 +128,19 @@ namespace TumbangPreso.UI
         /// a row the other does not.
         /// </summary>
         private void OpenSettings()
+        {
+            Canvas.gameObject.SetActive(false);
+            if (_settingsOwner == null)
+            {
+                _settingsOwner = new GameObject("PauseSettingsOwner");
+                _settingsOwner.transform.SetParent(transform, false); _settingsOwner.SetActive(false);
+                var settings = _settingsOwner.AddComponent<ConvertedSettingsPanel>();
+                settings.BackPressed += () => { if (Canvas != null) Canvas.gameObject.SetActive(true); };
+            }
+            _settingsOwner.SetActive(true);
+        }
+
+        private void OpenSettingsLegacyReference()
         {
             var existing = GetComponentInChildren<ConvertedSettingsPanel>(true);
             if (existing != null)

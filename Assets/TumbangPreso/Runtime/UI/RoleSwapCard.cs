@@ -48,10 +48,12 @@ namespace TumbangPreso.UI
         private readonly List<Text[]> _rows = new List<Text[]>();
         private float _bufferRemaining;
         private bool _isBufferActive;
+        private TumpRoundSwapView _nativeSwap;
 
         private void Awake()
         {
-            Build();
+            _nativeSwap = gameObject.AddComponent<TumpRoundSwapView>();
+            _nativeSwap.Build(transform, DismissAndPractice); _canvas = _nativeSwap.Canvas;
             _canvas.gameObject.SetActive(false);
         }
 
@@ -64,6 +66,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            if (_canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match == null) return;
             GameServices.Match.IntermissionStarted -= OnIntermissionStarted;
             GameServices.Match.RoundStarted -= OnRoundStarted;
@@ -74,6 +77,7 @@ namespace TumbangPreso.UI
             if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
             {
                 _bufferRemaining = Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
+                _nativeSwap?.Remaining(_bufferRemaining);
                 if (_bufferPrompt != null)
                 {
                     _bufferPrompt.text = $"WARMUP / PRACTICE BUFFER: {Mathf.CeilToInt(_bufferRemaining)}s\n[SPACE] / [CLICK] TO DISMISS SCORES & PRACTICE NOW";
@@ -107,6 +111,12 @@ namespace TumbangPreso.UI
 
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
+            if (_nativeSwap != null)
+            {
+                _bufferRemaining = Core.Balance.WarmupBufferDuration; _isBufferActive = true;
+                _nativeSwap.Show(nextRound, nextDefenderSlot); _nativeSwap.Remaining(_bufferRemaining);
+                GameServices.Audio?.PlayUi("round_end"); return;
+            }
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";
             _headline.text = HeadlineText();
 

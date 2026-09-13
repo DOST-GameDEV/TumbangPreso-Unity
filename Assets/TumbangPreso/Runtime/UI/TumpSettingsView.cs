@@ -33,6 +33,7 @@ namespace TumbangPreso.UI
             if (_session != null) _session.Dispose();
             _session = new TumpSettingsSession(); _session.Changed += Changed;
             if (_canvas == null) Build(owner);
+            ScreenTakeover.Register(this, () => !_suspended && _canvas != null && _canvas.gameObject.activeInHierarchy);
             _suspended = false; _canvas.gameObject.SetActive(true); ShowSection(_tab);
         }
         public void Suspend() { _suspended = true; _canvas.gameObject.SetActive(false); }
@@ -45,13 +46,14 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (_suspended || _canvas == null || !_canvas.gameObject.activeSelf) return;
-            if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpoken) return;
+            if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (TumpChoice.OpenChoice != null) { TumpChoice.OpenChoice.Close(); return; }
             if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
             Back();
         }
+        private void OnDestroy() => ScreenTakeover.Unregister(this);
         private void Build(Transform owner)
         {
             var f = TumpUiTheme.Current;

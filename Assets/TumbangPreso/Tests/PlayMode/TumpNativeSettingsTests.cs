@@ -146,6 +146,44 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(right, touch.rect.center.x, "Throw cluster stays on the right, not piled onto the stick.");
             Assert.Greater(right - left, touch.rect.width * .4f);
         }
+        [UnityTest]
+        public IEnumerator PauseEscapeRespectsChildSettingsDiscardAndReturn()
+        {
+            SceneFlow.Networked = false;
+            yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
+            var actions = Resources.Load<InputActionAsset>("TumbangPreso");
+            string original = actions.SaveBindingOverridesAsJson();
+            var keyboard = InputSystem.AddDevice<Keyboard>();
+            try
+            {
+                Assert.IsTrue(Rebinding.ResolveBindingIndexFor(actions, "Pause", InputDeviceKind.KeyboardMouse, out var pauseAction, out int binding));
+                pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
+                var watcher = Object.FindFirstObjectByType<PauseWatcher>();
+                var pause = Panel.Open<PausePanel>(watcher); pause.Local = watcher.Local; yield return null;
+                Assert.IsTrue(pause.Local.Intent.Parked);
+                yield return TumpUiCapture.Capture("NativePause-v1", GameObject.Find("TumpPauseCanvas").GetComponent<Canvas>(), 1920, 1080, false, true);
+                Press(Find("PauseSettings")); yield return null;
+                var settings = Object.FindFirstObjectByType<TumpSettingsView>(); settings.ShowSection(4); yield return null;
+                pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
+                var motion = GameObject.Find("ReducedUiMotionValue").GetComponent<Toggle>(); motion.isOn = !motion.isOn;
+                InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.Escape)); yield return null;
+                Assert.IsTrue(pause.gameObject.activeInHierarchy, "Escape must not close the parent live menu.");
+                Assert.IsTrue(Find("DiscardAndBack").gameObject.activeInHierarchy, "Settings owns the unsaved decision.");
+                Assert.IsTrue(pause.Local.Intent.Parked);
+                InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState()); yield return null;
+                Press(Find("DiscardAndBack")); yield return null;
+                Assert.IsTrue(GameObject.Find("TumpPauseCanvas").activeSelf);
+                pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
+                InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.Escape)); yield return null;
+                Assert.IsFalse(pause.gameObject.activeSelf);
+                Assert.IsFalse(pause.Local.Intent.Parked);
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard);
+                actions.RemoveAllBindingOverrides(); actions.LoadBindingOverridesFromJson(original); Rebinding.Invalidate();
+            }
+        }
         private static IEnumerator Open()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
