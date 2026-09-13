@@ -1,0 +1,31 @@
+Historical coupled-clock rationale, superseded after a reproduced trip mash shortened an independent4s tag to3.78s. Current implementation retains separate trip/normal stun clocks and keeps movement blocked by either.
+
+        /// ⚠⚠️ THE STUN COMES DOWN WITH THE TRIP, AND FORGETTING THAT IS THE WHOLE BUG
+        /// WAITING TO HAPPEN HERE. `ApplyTrip` sets BOTH `_tripLeft` and, through
+        /// `ApplyStagger`, `_stunLeft` to the same duration. Shortening only the trip stands the
+        /// body up on schedule and leaves it unable to move, sprint, throw or grab for the rest
+        /// of the original 2.5 s: the player mashes, watches themselves get up, and then watches
+        /// themselves stand there, which reads as the mash having broken the character.
+        ///
+
+                // ⚠️⚠️ THE STAGGER IS HELD TO THE TRIP, AND WITHOUT THIS LINE A PLAYER GETS UP
+                // BEFORE THE FALL ENDS. 🧑, 2026-08-26, off the built player: *"if i dont mash,
+                // i get up in 2 seconds wtf"*. He was right and the arithmetic says why.
+                // `ApplyTrip` calls `ApplyStagger(duration)` once, with the trip's STARTING
+                // length, and the stun then ran down at real time while the trip ran down more
+                // slowly, so an unanswered 2.50 s trip lasted 3.22 s while the stun expired at
+                // 2.50: for the last 0.72 s the body could walk, aim and throw while `IsTripped`
+                // was still true, the camera was still in the fall view and the HUD still said
+                // GETTING UP. The gap is wider now, not narrower: an unanswered fall holds at
+                // `Balance.TripAutoRecoverSeconds`, twice the stun it was staggered with.
+                //
+                // ⚠️ IT IS `Max`, NEVER AN ASSIGNMENT. A tag landing on a player who is already
+                // on the floor must not have its 5 s stun cut short to the remaining trip, and
+                // `Combat.ApplyStagger`'s Max() rule is the entire bound on a stun chain in a
+                // 1-vs-3 game (`CLAUDE.md` § 4).
+                if (_stunLeft < _tripLeft)
+                {
+                    _stunLeft = _tripLeft;
+                    _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+                }
+

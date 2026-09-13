@@ -1,15 +1,75 @@
 {
   "map": "SaBubong",
   "displayName": "SA BUBONG",
-  "status": "Approved concept; implementation layout, not a finished playable scene",
+  "status": "Initial scene and recovery implemented; art, all-input and network qualification in progress",
   "intention": "Metro Manila residential condo roofdeck used for a neighborhood game",
-  "court": {"halfX": 7, "halfZ": 7, "surfaceY": 0.1},
-  "deck": {"halfX": 14, "halfZ": 18, "slabThickness": 0.4},
+  "court": {
+    "halfX": 7,
+    "halfZ": 7,
+    "surfaceY": 0.1
+  },
+  "deck": {
+    "halfX": 14,
+    "halfZ": 18,
+    "slabThickness": 0.4
+  },
   "places": [
-    {"name": "Fenced resident pool", "centre": [-10.7, 0.1, 6.7], "size": [4.4, 0.8, 9], "access": "Scenic pool; visible fence keeps play on the deck"},
-    {"name": "Shaded tables", "centre": [-10.2, 0.1, -8.3], "size": [5.2, 3.3, 5.2], "access": "Outside the central retrieval lanes"},
-    {"name": "Stairwell and noticeboard", "centre": [7.8, 0.1, 15.2], "size": [4.8, 3.1, 4.2], "access": "Readable resident entrance, solid stairhead"},
-    {"name": "Laundry and service corner", "centre": [-5.9, 0.1, 15.1], "size": [7.2, 2.8, 4.8], "access": "Supported new courtyard-line asset, water tank and drying area"}
+    {
+      "name": "Fenced resident pool",
+      "centre": [
+        -10.7,
+        0.1,
+        6.7
+      ],
+      "size": [
+        4.4,
+        0.8,
+        9
+      ],
+      "access": "Scenic pool; visible fence keeps play on the deck"
+    },
+    {
+      "name": "Shaded tables",
+      "centre": [
+        -10.2,
+        0.1,
+        -8.3
+      ],
+      "size": [
+        5.2,
+        3.3,
+        5.2
+      ],
+      "access": "Outside the central retrieval lanes"
+    },
+    {
+      "name": "Stairwell and noticeboard",
+      "centre": [
+        7.8,
+        0.1,
+        15.2
+      ],
+      "size": [
+        4.8,
+        3.1,
+        4.2
+      ],
+      "access": "Readable resident entrance, solid stairhead"
+    },
+    {
+      "name": "Laundry and service corner",
+      "centre": [
+        -5.9,
+        0.1,
+        15.1
+      ],
+      "size": [
+        7.2,
+        2.8,
+        4.8
+      ],
+      "access": "Supported new courtyard-line asset, water tank and drying area"
+    }
   ],
   "fallEdge": {
     "side": "east",
@@ -29,5 +89,6 @@
     "Actual host/client delayed mash and recovery snapshots; disconnect and next round",
     "Fallen slippers genuinely unavailable for ten seconds and returned once to reachable ground",
     "Original sources, native style, supported props, first-person and aerial critique"
-  ]
+  ],
+  "surfaceDirection": "Faded green recreation court with warm neutral roof deck; existing civic paving is a draft placeholder"
 }

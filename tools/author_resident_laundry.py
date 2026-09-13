@@ -56,7 +56,7 @@ def garment(kind,number,at,slope,mat):
     return obj
 
 specs=[('courtyard-line',4.4,.16,[(.65,'Tee',0),(1.62,'Shorts',1),(2.47,'Towel',2),(3.48,'Tee',3)]),
-       ('alley-line',18.0,.48,[(2.0,'Towel',2),(3.0,'Tee',0),(4.0,'Shorts',1),(5.0,'Tee',3),
+       ('alley-line',15.5,.48,[(2.0,'Towel',2),(3.0,'Tee',0),(4.0,'Shorts',1),(5.0,'Tee',3),
                               (11.4,'Tee',0),(12.45,'Towel',4),(13.4,'Shorts',1),(14.45,'Tee',2)])]
 for name,span,sag,clothes in specs:
     bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)

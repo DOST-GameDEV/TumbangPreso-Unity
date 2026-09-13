@@ -2154,7 +2154,7 @@ namespace TumbangPreso.UI
 
                     line = progress > 0.0f
                         ? $"RESETTING  {Mathf.RoundToInt(progress * 100.0f)}%"
-                        : "HOLD E IN THE RING";
+                        : (OnTouch?"HOLD GRAB IN THE RING":"HOLD "+KeyLabel("Grab")+" IN THE RING");
                 }
                 else if (GameServices.Round.IsTayaCampWarningActive)
                 {
@@ -2164,6 +2164,10 @@ namespace TumbangPreso.UI
                         ? $"LEAVE CAN RING  {left:0.0}s"
                         : "CAMPING  ·  DEFENSE SCORE PAUSED";
                 }
+            }
+            else if (!_local.HoldingSlipper&&RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+            {
+                line="SLIPPER RETURNING";
             }
             else if (!_local.HoldingSlipper)
             {

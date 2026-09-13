@@ -176,6 +176,7 @@ namespace TumbangPreso.Net
 
             if (isHost)
             {
+                map=AdoptLaunchMap(map);
                 int port = Port(args, isDedicated ? DedicatedSwitch : HostSwitch);
 
                 Requested = true;
@@ -227,6 +228,7 @@ namespace TumbangPreso.Net
 
             string address = Value(args, JoinSwitch);
             if (string.IsNullOrEmpty(address)) return;
+            map=AdoptLaunchMap(map);
 
             int joinPort = Port(args, JoinSwitch, 1);
 
@@ -241,8 +243,22 @@ namespace TumbangPreso.Net
                 Debug.Log($"[NetBoot] join requested to {address}:{joinPort}: " +
                           (ok ? "connecting" : "FAILED"));
 
-                if (ok) UI.SceneFlow.Go(map);
+                if (ok) UI.SceneFlow.Go(UI.SceneFlow.SelectedMap);
             });
+        }
+
+        // Command-line entry skips the lobby selector. Publish its choice before
+        // the transport accepts a peer,otherwise SyncMap announces the old menu
+        // selection while the host is already loading a different scene.
+        public static string AdoptLaunchMap(string requested)
+        {
+            foreach(var entry in GameLaunch.Maps)
+                if(string.Equals(entry.Scene,requested,StringComparison.OrdinalIgnoreCase)||
+                   string.Equals(entry.Id,requested,StringComparison.OrdinalIgnoreCase))
+                {
+                    UI.SceneFlow.SelectedMap=entry.Scene;GameLaunch.SelectedMap=entry.Id;return entry.Scene;
+                }
+            throw new ArgumentException("Unknown launch map: "+requested);
         }
 
         /// <summary>

@@ -161,7 +161,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() && (knockedOnThisPeer || restoredOnThisPeer))
                 AnnounceUprightChange(isUpright);
 
-            UprightChanged?.Invoke(isUpright);
+            if(knockedOnThisPeer||restoredOnThisPeer)UprightChanged?.Invoke(isUpright);
         }
 
         /// <summary>

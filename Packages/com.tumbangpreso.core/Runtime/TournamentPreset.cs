@@ -147,6 +147,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] Modifiers =
         {
+            new Modifier("NetRoofProbe.Active",
+                "A scripted network rooftop recovery fixture. Never a bracket match."),
             new Modifier("NetThrowProbe.Active",
                 "A scripted network throw fixture that parks bystanders and drives one player. Never a bracket match."),
             new Modifier("NetFamiliarProbe.Active",
@@ -347,6 +349,10 @@ namespace TumbangPreso.Core
             switch (switchName)
             {
                 case "-tp-throwtrace": return "NetThrowProbe.Active";
+                case "-tp-rooftrace": return "NetRoofProbe.Active";
+                case "-tp-roofmode": return "NetRoofProbe.Active";
+                case "-tp-roofshots": return "NetRoofProbe.Active";
+                case "-tp-rooftag": return "NetRoofProbe.Active";
                 case "-tp-familiartrace": return "NetFamiliarProbe.Active";
                 case "-tp-allbots": return "GameLaunch.AllBots";
                 case "-tp-botmatch": return "GameLaunch.AllBots";

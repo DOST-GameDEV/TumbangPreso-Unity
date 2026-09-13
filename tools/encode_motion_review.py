@@ -22,12 +22,13 @@ for timing in sorted(root.glob('*/frames.csv')):
     if len(rows)<2:raise ValueError('Nonzero motion coverage required: '+str(timing))
     times=[float(row['real_seconds']) for row in rows]
     if any(b<=a for a,b in zip(times,times[1:])):raise ValueError('Non-monotonic timestamps: '+str(timing))
-    for label,folder in [('observer',timing.parent),('owner',timing.parent/'owner')]:
+    for label,folder in [(timing.parent.name if timing.parent.name.endswith('-frames') else 'observer',timing.parent),('owner',timing.parent/'owner')]:
         if not folder.exists():continue
         listing=timing.parent/(label+'-timed-frames.txt')
         lines=[]
         for i,row in enumerate(rows):
             frame=folder/(f"{int(row['frame']):05d}.jpg")
+            if not frame.exists():frame=folder/(f"{int(row['frame']):05d}.png")
             if not frame.exists():raise FileNotFoundError(frame)
             path=frame.as_posix().replace("'","'\\''")
             duration=times[i+1]-times[i] if i+1<len(times) else times[-1]-times[-2]

@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "shoeDelay": 10.015500000000003,
+      "downSeconds": 4.273100000000003,
+      "acceptedPresses": 10.0,
+      "postReturnHeldSamples": 219,
+      "minimumY": -1.8652,
+      "independentTagSeconds": 3.9668000000000028
+    },
+    "owner": {
+      "shoeDelay": 9.994799999999998,
+      "downSeconds": 4.256899999999998,
+      "acceptedPresses": 10.0,
+      "postReturnHeldSamples": 220,
+      "minimumY": -2.8434,
+      "independentTagSeconds": 3.9696999999999996,
+      "capturedFrames": 199,
+      "captureSegments": {
+        "owner": 199
+      }
+    },
+    "observer": {
+      "shoeDelay": 9.997399999999999,
+      "downSeconds": 4.2026,
+      "acceptedPresses": 10.0,
+      "postReturnHeldSamples": 220,
+      "minimumY": -2.0468,
+      "independentTagSeconds": 4.089299999999998,
+      "capturedFrames": 207,
+      "captureSegments": {
+        "observer": 27,
+        "rejoined": 180
+      }
+    },
+    "rejoin": {
+      "unavailableSamples": 80,
+      "tripSamples": 2
+    }
+  },
+  "mode": "hero",
+  "delayOneWayMs": 150.0,
+  "runtimeSha256": "b771a18b36d6682da76e585fd77d523dfaad20a9cd742d8ebb7827c559ba76ff",
+  "exe": "C:\\Users\\Matthew\\Documents\\Codex\\2026-09-09\\ok-x20\\work\\TumbangPreso-Unity\\Builds\\RoofReview\\TumbangPreso.exe",
+  "reviewNote": "Re-evaluated unchanged raw data with intentional observer termination/rejoin treated as separate capture segments; not a continuous observer video."
+}

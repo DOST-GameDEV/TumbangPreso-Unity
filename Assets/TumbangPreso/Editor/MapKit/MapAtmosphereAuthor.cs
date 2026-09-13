@@ -12,7 +12,7 @@ namespace TumbangPreso.EditorTools.MapKit
     {
         public static void Apply(string map)
         {
-            bool alley=map=="Eskinita",bridge=map=="IlalimNgTulay";
+            bool alley=map=="Eskinita",bridge=map=="IlalimNgTulay",roof=map=="SaBubong";
             var sunColor=alley?new Color(1,.82f,.62f):bridge?new Color(1,.90f,.75f):new Color(1,.88f,.70f);
             RenderSettings.ambientMode=AmbientMode.Trilight;
             RenderSettings.ambientIntensity=1;
@@ -24,7 +24,7 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach(var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
             {
                 if(light.type!=LightType.Directional)continue;
-                light.transform.rotation=Quaternion.Euler(alley?34:bridge?38:46,alley?-38:bridge?-52:-28,0);
+                light.transform.rotation=Quaternion.Euler(roof?28:alley?34:bridge?38:46,alley?-38:bridge?-52:-28,0);
                 light.color=sunColor;light.intensity=alley?1.12f:bridge?1.05f:1.10f;
                 light.shadows=LightShadows.Soft;light.shadowStrength=bridge?.79f:.84f;
                 light.shadowBias=.025f;light.shadowNormalBias=.16f;
@@ -39,8 +39,8 @@ namespace TumbangPreso.EditorTools.MapKit
             if(shader==null)throw new System.InvalidOperationException("Missing neighbourhood sky shader");
             if(sky==null){sky=new Material(shader);AssetDatabase.CreateAsset(sky,path);}
             sky.shader=shader;
-            sky.SetColor("_Zenith",alley?new Color(.43f,.53f,.60f):bridge?new Color(.44f,.55f,.63f):new Color(.47f,.60f,.69f));
-            var horizon=alley?new Color(.80f,.73f,.62f):bridge?new Color(.76f,.75f,.69f):new Color(.80f,.79f,.71f);
+            sky.SetColor("_Zenith",roof?new Color(.45f,.52f,.64f):alley?new Color(.43f,.53f,.60f):bridge?new Color(.44f,.55f,.63f):new Color(.47f,.60f,.69f));
+            var horizon=roof?new Color(.82f,.74f,.65f):alley?new Color(.80f,.73f,.62f):bridge?new Color(.76f,.75f,.69f):new Color(.80f,.79f,.71f);
             sky.SetColor("_Horizon",horizon);sky.SetColor("_Ground",new Color(.40f,.37f,.31f));
             sky.SetColor("_SunColor",sunColor);sky.SetVector("_SunDirection",sunDirection);
             RenderSettings.skybox=sky;EditorUtility.SetDirty(sky);

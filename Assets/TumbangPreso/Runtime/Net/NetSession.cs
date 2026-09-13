@@ -343,7 +343,11 @@ namespace TumbangPreso.Net
         //28 includes accepted familiar facing, so late joins see the same giant
         //pose instead of reconstructing its yaw from a caster who already moved.
         //29 carries charge phase and signed Pektus preparation to host/observers/rejoin.
-        public const int ProtocolVersion = 29;
+        //30 adds Sa Bubong to the map registry. Older peers would clamp its map
+        //index to a different scene and must refuse the match instead.
+        //It also separates the already-transmitted normal stun and trip timers:
+        //trip recovery cannot shorten an overlapping tag or element hold.
+        public const int ProtocolVersion = 30;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

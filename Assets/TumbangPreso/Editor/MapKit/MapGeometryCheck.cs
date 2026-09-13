@@ -89,11 +89,12 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void RunReportOnly() => Execute(false);
 
         /// <summary>
-        /// All three maps are gated. Imported origins are not a reason to leave
+        /// All four maps are gated. Imported origins are not a reason to leave
         /// completed map work informational; earlier exclusions are recorded below.
         /// </summary>
         private static readonly string[] Gated =
         {
+            SaBubongBuilder.ScenePath,
             IlalimNgTulayBuilder.ScenePath,
 
             // ⚠️ BAYAN PLAZA JOINED THE GATE ON 2026-08-26, WHICH IS THE POINT OF FIXING A
@@ -819,8 +820,10 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // Only the ground stack counts as floor: a roof at 9 m is not something to stand on.
             var floor = new List<Bounds>();
+            bool roof=UnityEngine.Object.FindFirstObjectByType<RooftopRecovery>()!=null;
             foreach (var p in pieces)
-                if (p.World.min.y <= 0.35f && p.World.max.y <= 1.0f) floor.Add(p.World);
+                if (p.World.min.y <= 0.35f && p.World.max.y <= 1.0f&&
+                    (!roof||p.World.max.y>=RooftopRecovery.RoofY-.05f)) floor.Add(p.World);
 
             const float step = 0.5f;
             int holes = 0;
@@ -830,6 +833,10 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 for (float z = -halfZ + step * 0.5f; z < halfZ; z += step)
                 {
+                    // This map deliberately permits falling beyond its physical
+                    // slab. Still require floor at every point inside the roof;
+                    // the city ground26m below cannot satisfy that requirement.
+                    if(roof&&RooftopRecovery.OutsideDeck(new Vector3(x,0,z)))continue;
                     bool covered = false;
                     foreach (var b in floor)
                     {
@@ -853,7 +860,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 return 1;
             }
 
-            sb.AppendLine($"   floor      solid across x +/-{halfX:F1}, z +/-{halfZ:F1}");
+            sb.AppendLine(roof?"   floor      roof interior covered; exterior fall space intentionally excluded":
+                $"   floor      solid across x +/-{halfX:F1}, z +/-{halfZ:F1}");
             return 0;
         }
 

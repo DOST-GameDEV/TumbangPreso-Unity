@@ -100,7 +100,10 @@ namespace TumbangPreso
         public CharacterMotor PlayerAt(int slot)
         {
             for (int i = 0; i < _players.Count; i++)
-                if (_players[i].PlayerSlot == slot) return _players[i];
+            {
+                var player=_players[i];
+                if(player!=null&&player.PlayerSlot==slot)return player;
+            }
             return null;
         }
 

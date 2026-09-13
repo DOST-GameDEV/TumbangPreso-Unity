@@ -45,6 +45,8 @@ namespace TumbangPreso
                 "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
             new MapEntry("ilalim_ng_tulay", "ILALIM NG TULAY",
                 "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
+            new MapEntry("sa_bubong","SA BUBONG",
+                "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
         };
 
         public static string SelectedMap = "eskinita";

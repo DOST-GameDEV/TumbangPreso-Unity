@@ -64,16 +64,16 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorApplication.Exit(passed ? 0 : 1);
         }
 
-        private static List<string> Differences(SortedDictionary<string, string> a, SortedDictionary<string, string> b)
+        internal static List<string> Differences(SortedDictionary<string, string> a, SortedDictionary<string, string> b)
             => a.Keys.Union(b.Keys).OrderBy(k => k, StringComparer.Ordinal)
                 .Where(k => !a.TryGetValue(k, out var av) || !b.TryGetValue(k, out var bv) || av != bv)
                 .Select(k => k + "\n BEFORE " + (a.TryGetValue(k, out var av) ? av : "<absent>") +
                     "\n AFTER  " + (b.TryGetValue(k, out var bv) ? bv : "<absent>")).ToList();
 
-        private static void Write(string output, string map, string run, SortedDictionary<string, string> rows)
+        internal static void Write(string output, string map, string run, SortedDictionary<string, string> rows)
             => File.WriteAllLines(Path.Combine(output, map + "-" + run + ".txt"), rows.Select(p => p.Key + "=" + p.Value));
 
-        private static SortedDictionary<string, string> Capture(Scene scene)
+        internal static SortedDictionary<string, string> Capture(Scene scene)
         {
             var rows = new SortedDictionary<string, string>(StringComparer.Ordinal);
             var assets = new HashSet<Object>();

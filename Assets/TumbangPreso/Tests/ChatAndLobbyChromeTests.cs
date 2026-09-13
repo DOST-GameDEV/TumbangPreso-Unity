@@ -254,7 +254,7 @@ namespace TumbangPreso.Tests
             // tell which rule they got. `docs/TODO.md` § 144.7.
             //28 carries the accepted familiar facing through effect snapshots.
             //29 adds phase/spin to both throw-charge messages; old players are refused.
-            Assert.AreEqual(29, NetSession.ProtocolVersion,
+            Assert.AreEqual(30, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

@@ -5,6 +5,9 @@ namespace TumbangPreso.InputLayer
 {
     /// <summary>
     /// What the on-screen thumb layer is currently reporting, for the local seat.
+    /// Recovery retains a brief press edge until consumed, alongside the held
+    /// table. This explicit exception fixes rapid touches lost between physics
+    /// ticks; hold-to-release verbs continue to use their ordinary held state.
     ///
     /// ⚠️⚠️ IT IS A HELD TABLE AND NOT AN EVENT STREAM, WHICH IS WHAT MAKES TOUCH TESTABLE
     /// HEADLESSLY. `InputIntent`'s class note is the rule: *edges are derived, not reported*, and
@@ -30,6 +33,7 @@ namespace TumbangPreso.InputLayer
     public static class TouchInput
     {
         private static readonly HashSet<Verb> Held = new HashSet<Verb>();
+        private static bool _recoveryPressed;
 
         /// <summary>
         /// True while the on-screen layer is drawn. Everything below is inert when it is not, so
@@ -54,8 +58,18 @@ namespace TumbangPreso.InputLayer
 
         public static void Set(Verb verb, bool pressed)
         {
-            if (pressed) Held.Add(verb);
+            if (pressed)
+            {
+                if(Held.Add(verb)&&Active&&verb==Verb.Jump)_recoveryPressed=true;
+            }
             else Held.Remove(verb);
+        }
+
+        // Recovery is a press,not a hold-to-release action. Keep a brief touch
+        // until the same reader that handles keyboard/gamepad can buffer it.
+        public static bool ConsumeRecoveryPress()
+        {
+            bool pressed=Active&&_recoveryPressed;_recoveryPressed=false;return pressed;
         }
 
         /// <summary>
@@ -68,6 +82,7 @@ namespace TumbangPreso.InputLayer
         public static void ReleaseAll()
         {
             Held.Clear();
+            _recoveryPressed=false;
             Move = Vector2.zero;
             LookDelta = Vector2.zero;
         }

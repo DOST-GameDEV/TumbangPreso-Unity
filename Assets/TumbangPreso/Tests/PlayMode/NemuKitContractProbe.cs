@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -212,7 +212,7 @@ namespace TumbangPreso.PlayTests
         }
 
         private void RecoverySnapshot(int episode,int ack,float left=4,int presses=0,bool trip=false)
-            => _who.ApplyNetworkState(left,4,trip?StunElement.None:StunElement.Ice,6,trip?0:presses,
+            => _who.ApplyNetworkState(trip?0:left,trip?0:4,trip?StunElement.None:StunElement.Ice,6,trip?0:presses,
                 trip?left:0,trip?4:0,trip?presses:0,0,100,0,0,episode,ack);
 
         [UnityTest]

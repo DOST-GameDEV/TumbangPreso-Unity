@@ -80,7 +80,7 @@ namespace TumbangPreso
             // the only thing that ends it, and the original request this row was built for still
             // stands for that case: *"add visible UI timers for all stun durations and status
             // effects so players clearly know when they can move or act again"*.
-            if (m.IsStunned && m.StunElement == StunElement.None)
+            if (m.StunLeft > 0 && m.StunElement == StunElement.None)
                 into.Add(new StatusRow
                 {
                     Label = "STUNNED",

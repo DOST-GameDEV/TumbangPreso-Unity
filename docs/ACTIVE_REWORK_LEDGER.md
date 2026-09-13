@@ -18,60 +18,28 @@ release, impact, interruption and recovery belong to one authored sequence;
 Art_Direction.md section0.1 records the owner's explicit clarification.
 
 
-## Current execution pointer (2026-09-13, verified owner correction batch)
+## Current execution pointer (2026-09-13, rooftop and recovery qualification)
 
-Pushed d9c0314b; fetch confirms origin/ASTRAReworks matches. Current Desktop review
-build DELIVERED at C:/Users/Matthew/Desktop/TumbangPreso-Unity/TumbangPreso.exe,
-built 2026-09-13 07:29:22, protocol29, RuntimeDLL SHA256
-1ce3858fc9f59ffbc09df3aeceb5ab0c55d9f8275521952d4e3885b75abff7e1.
-Bayan aerial delivered: Logs/bayan-owner-aerial-2026-09-13 (1/1,14 views).
-No Editor active at fresh preflight; user Desktop player PID23436 observed.
-NEVER stop/overwrite their player or restore a whole profile over concurrent saves.
-Implement explicit named-profile scope in run_unity_guarded before Editor tests.
+Pushed9ff95072 on ASTRAReworks. Current uncommitted rooftop/recovery work and all
+remaining requirements are in [EXECUTION_PLAN.md](EXECUTION_PLAN.md). Read its
+live state first; execution-plan-history-09.md preserves the prior full record.
 
-LATEST OWNER PLAYTEST FEEDBACK (see OWNER_PLAYTEST_REVISION.md for full contract):
-- KEEP current Bayan layout; earlier rejection/rollback explicitly retracted.
-- Remove Street Hype mechanic and ALL of its UI/callouts/rewards/network producers.
-- Remove duplicate main setup RULES selector; formats stay in Custom Game.
-- Ilalim: floating rooftop pieces, unclear hump/road seam, mismatched background
-  road. Trace actual mesh bounds, parents, materials and support; fix the source
-  authors, not just a camera angle. Natural wall-painted Bawal remains required.
-- Eskinita: tighter than other maps without blocking play. REDESIGN sampayan with
-  actual attachments and sagging lines/recognizable clothes; old version rejected.
-- Bayan: floor still feels flat/untextured. Give paving readable slab/grain/edge
-  response without bright joints, noisy contrast or clutter in the central court.
-- All maps: varied native trees, warm cream/terracotta/brown-grey road/soft sky
-  palette per latest old screenshot; no geometry rollback to that screenshot.
-- Sa Bubong is approved and NOT implemented. Owner asks why after10hours. Move its
-  playable layout and actual edge/mash/10s slipper recovery into next map batch,
-  ahead of the broader equipment/abilities backlog. Do not wait for approval again.
+Current execution: Sa Bubong support findings corrected and all4maps pass;
+all8checks pass, Sa two-run1597rows has0drift. Stable checkpoint commit is next. No Editor/process pointer from earlier builds
+is live. Read EXECUTION_PLAN.md for exact latest commands/evidence. Owner withdrew
+the Desktop update request: leave current Desktop executable, continue development.
 
-Current stable batch ready to commit/push: StreetHype removed;mainRULES removed;
-existing Custom Game door repaired and raycast/click tested. Per-map atmosphere/
-original sky shader,realBayan paving normal/aggregate/tangents,Ilalim continuous
-asphalt,actualroof supports,billboard mast endpoints,independentbusiness signs
-and direct brush-painted warning. Optional unverifiedbackgroundcrane retired.
-Core562;Edit510;Lobby3;actualFPP1/1 (144matched+6HUD);Ilalim final24views1/1;
-all8checks;all14sourceaudits;all3maps semantic2run no drift. Final fascia contact test2/2 (all11signs). See portable report
-reports/improvement-2026-09-13/owner-map-review.md and adjacent receipts/images.
-Every Editor used the isolated owner-review-editor profile. Lastguardb2fdd910253d,
-2 existing named files restored. No Editor/player active at latestpreflight.
-Only proven test-only arm tangents/materialwhitespace and exact five Ultra quality
-values restored; no map rollback. No new Windows player since d9c0314b Desktop.
-New laundry source draft in tools/author_resident_laundry.py and Logs/resident-
-laundry-v1 (4.4m/18m Blender+GLB+PNG+JSON). Not imported/placed yet. Sa Bubong layout
-source exists at MapSource/environment/layouts/sa-bubong-plan-v1.json;no scene yet.
-NEXT IMPLEMENTATION: import/review/place redesignedEskinita laundry,begin actual
-Sa Bubong builder and edge/mash/10s shoe recovery,then variedtrees/remainingmap
-composition. Aftermaps the owner explicitly prioritizes full abilitymechanics,
-implementation/visuals and distinct ultimate moments across6kits+alternatives.
-Remainingmovement/equipment/graphicssettings/network/TODO+finalbuild stays OPEN.
-Do not stop at a handoff. Build current review only after freshprocess preflight;
-never replace a running Desktop player or restore over the owner's main saves.
-Next: guard isolation tests, requested removals, Ilalim support/road correction,
-Eskinita laundry/Bayan surface/warm lighting/trees, playable Sa Bubong and recovery.
-Then resume movement/equipment/graphics scalability/all-context mash and complete
-remaining whole-kit/network/TODO work. Larger improvement goal OPEN.
+Completed new work awaiting stable commit: rooftop scene/registry/protocol30,
+authoritative real-edge fall/mash/10s stock recovery, separate normal-stun/trip
+clocks, buffered touch presses, original animated resident laundry and corrected
+pole placement, map launch synchronization and objective notification/hint fixes.
+Current proof: fullEdit516,Core562,device5,Nemu33,roof3+snapshot1,3process Classic
+and delayedHero/rejoin/concurrent-tag evidence. Art/whole-game acceptance remains
+open. All18people/Kuro retained. No historical48-idle attribution.
+
+Next: close rooftop geometry batch, then varied trees/map visual critique, full
+ability mechanics/visuals/ultimate revamps, remaining playfeel/equipment/graphics/
+network/TODO. The broader goal remains OPEN; do not stop after a checkpoint.
 
 ## Previous execution pointer (wrap-up, 2026-09-10)
 

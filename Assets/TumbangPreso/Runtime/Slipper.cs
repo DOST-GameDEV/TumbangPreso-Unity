@@ -465,6 +465,7 @@ namespace TumbangPreso
         /// </summary>
         public bool IsGrabbableIgnoringReach(CharacterMotor who)
         {
+            if(!gameObject.activeInHierarchy)return false;
             if (State != SlipperState.Loose || who == null) return false;
             if (who.IsDefender) return false;   // the taya has the tag, not the ammunition
             // The same empty-hand rule as Carrier's local pickup route. A delayed
@@ -637,6 +638,20 @@ namespace TumbangPreso
         }
 
         public float PektusSpin { get; private set; }
+
+        public bool HostBeginMapRecovery()
+        {
+            if(!NetAuthority.ShouldResolve()||!gameObject.activeSelf)return false;
+            HostDisarm();Holder=null;SetState(SlipperState.Loose);
+            _velocity=Vector3.zero;SetLandedHighlight(false);gameObject.SetActive(false);return true;
+        }
+
+        public void HostFinishMapRecovery()
+        {
+            if(!NetAuthority.ShouldResolve())return;
+            transform.position=OwnerMark();gameObject.SetActive(true);
+            Land(false,FindGroundY(transform.position,Balance.SlipperRestHeight));
+        }
 
         /// <summary>
         /// Restores authoritative slipper state for a late join without firing pickup sounds,
@@ -1001,6 +1016,7 @@ namespace TumbangPreso
             BounceOffObstacles(prevPos, dt);
             BounceOffBounds();
             SpinInFlight(dt);
+            if(RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.TryLoseSlipper(this))return;
 
             // ⚠️ LOST BELOW THE WORLD IS A REAL CASE, NOT A SAFETY NET. A slipper that
             // clears the arena falls forever and the round quietly loses a piece of its

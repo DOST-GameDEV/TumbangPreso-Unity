@@ -23,13 +23,14 @@ namespace TumbangPreso.Tests
         private bool _familiar, _sandbox, _allBots, _spectator, _tutorial, _preview, _bots, _thumb, _replay;
         private CustomRules _rules;
 
-        private bool _throw;
+        private bool _throw, _roof;
 
         [SetUp]
         public void Remember()
         {
             _familiar=Diagnostics.NetFamiliarProbe.Active;
             _throw=Diagnostics.NetThrowProbe.Active;
+            _roof=Diagnostics.NetRoofProbe.Active;
             _sandbox = PracticeSandbox.Wanted;
             _allBots = GameLaunch.AllBots;
             _spectator = GameLaunch.Spectator;
@@ -46,6 +47,7 @@ namespace TumbangPreso.Tests
         {
             Diagnostics.NetFamiliarProbe.Active=_familiar;
             Diagnostics.NetThrowProbe.Active=_throw;
+            Diagnostics.NetRoofProbe.Active=_roof;
             PracticeSandbox.Wanted = _sandbox;
             GameLaunch.AllBots = _allBots;
             GameLaunch.Spectator = _spectator;
@@ -117,6 +119,7 @@ namespace TumbangPreso.Tests
         {
             Diagnostics.NetFamiliarProbe.Active=true;
             Diagnostics.NetThrowProbe.Active=true;
+            Diagnostics.NetRoofProbe.Active=true;
             PracticeSandbox.Wanted = true;
             GameLaunch.AllBots = true;
             GameLaunch.Spectator = true;
@@ -264,6 +267,7 @@ namespace TumbangPreso.Tests
         {
             Diagnostics.NetFamiliarProbe.Active=false;
             Diagnostics.NetThrowProbe.Active=false;
+            Diagnostics.NetRoofProbe.Active=false;
             PracticeSandbox.Wanted = false;
             GameLaunch.AllBots = false;
             GameLaunch.Spectator = false;
@@ -280,6 +284,7 @@ namespace TumbangPreso.Tests
             {
                 case "PracticeSandbox.Wanted": PracticeSandbox.Wanted = value; break;
                 case "NetThrowProbe.Active": Diagnostics.NetThrowProbe.Active=value; break;
+                case "NetRoofProbe.Active": Diagnostics.NetRoofProbe.Active=value; break;
                 case "NetFamiliarProbe.Active": Diagnostics.NetFamiliarProbe.Active=value; break;
                 case "GameLaunch.AllBots": GameLaunch.AllBots = value; break;
                 case "GameLaunch.Spectator": GameLaunch.Spectator = value; break;

@@ -50,6 +50,7 @@ namespace TumbangPreso.UI
         public const string Eskinita = "Eskinita";
         public const string BayanPlaza = "BayanPlaza";
         public const string IlalimNgTulay = "IlalimNgTulay";
+        public const string SaBubong = "SaBubong";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -143,9 +144,11 @@ namespace TumbangPreso.UI
 
             new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
                          "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
+            new MapEntry(SaBubong,"SA BUBONG",
+                         "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay };
+        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.

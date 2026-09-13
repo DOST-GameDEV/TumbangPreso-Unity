@@ -293,6 +293,17 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
+**Newest2026-09-13 checkpoint:** Sa Bubong playable foundation, fall/mash/10s
+slipper recovery, quick touch press preservation, independent trip/stun clocks,
+map launch synchronization and corrected resident laundry. FullEdit516,Core562,
+recovery device5,Nemu33,roof3+objective1;actual3process Classic/delayedHero/rejoin/
+concurrenttag evidence. All8checks include all4maps;Sa semantic1597rows,0drift.
+[Report and remaining visual critique](reports/improvement-2026-09-13/roofdeck-recovery.md).
+Maps remain OPEN. Owner now says leave Desktop unchanged and keep developing.
+After ALL map work, ANIMATIONS AND SKILLS/effects together are next, including
+special signature ultimate moments. This supersedes earlier delivery/order notes.
+
+
 **Latest owner clarification,2026-09-13:** currentBayan layout is retained after
 "oh wait nvm its good". Provide a currentaerial and Desktopbuild for review;then
 modestplaza refinement and variedtrees acrossallmaps. FramedBawal plaque still

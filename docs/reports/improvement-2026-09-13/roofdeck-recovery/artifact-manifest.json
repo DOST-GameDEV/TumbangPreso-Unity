@@ -1,0 +1,37 @@
+[
+  {
+    "file": "aerial-draft.png",
+    "source": "Logs/sa-bubong-layout-v1/aerial.png",
+    "sha256": "d6764733132d6fdedabb573e48c9b4f93ecd6bf7f445f0b038ece5489ae35171"
+  },
+  {
+    "file": "pool-shade-draft.png",
+    "source": "Logs/sa-bubong-layout-v1/pool-and-shade.png",
+    "sha256": "03610e61c98a0e4f1bc341f9b97f4a02a7c2aa79f3c6307b4cd5157d4dc30ea5"
+  },
+  {
+    "file": "checks.txt",
+    "source": "Logs/checks.txt",
+    "sha256": "b375f73f0f3377d7cce9ca2b2024c09de82a95922c055d83d05fe9d146845ba5"
+  },
+  {
+    "file": "geometry.txt",
+    "source": "Logs/map-geometry-check.txt",
+    "sha256": "334d2cfe9aa803fd2d4ad74f94a4662c2e74a6e2d89e15dddc5e750d0d4dba7f"
+  },
+  {
+    "file": "repeatability.txt",
+    "source": "Logs/sa-bubong-repeat-geometry-v3/report.txt",
+    "sha256": "775254d2007ccc234bbc43733b53e28f693b7d09d7127db9feaa593d28437694"
+  },
+  {
+    "file": "classic-network.json",
+    "source": "Logs/roof-network-classic-capture-v2/result.json",
+    "sha256": "f7e27bc3455f7a9f48aa3f0bbdf7b718ed84368386f63b57cb630313904a97a0"
+  },
+  {
+    "file": "hero-overlap-network-reviewed.json",
+    "source": "Logs/roof-network-hero-overlap-capture-v1/result-reviewed.json",
+    "sha256": "803ba26b5cf4fb7d9810f4eb24bade8ed4707f0b038f71a236dfe225173df138"
+  }
+]

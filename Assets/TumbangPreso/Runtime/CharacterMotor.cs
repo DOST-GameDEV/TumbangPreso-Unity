@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -1473,7 +1473,7 @@ namespace TumbangPreso
         /// </summary>
         public bool CanMove() => !IsStunned;
 
-        public bool IsStunned => _stunLeft > 0.0f;
+        public bool IsStunned => _stunLeft > 0.0f || _tripLeft > 0.0f;
         public bool HoldingSlipper { get; set; }
 
         public bool IsInsideBox() =>
@@ -1607,7 +1607,7 @@ namespace TumbangPreso
         public void ClearStun()
         {
             if (!MayMutateGameplayState()) return;
-            AdvanceRecoveryEpisode();
+            if(_tripLeft<=0)AdvanceRecoveryEpisode();
             _stunLeft = 0.0f;
             _stunTotal = 0.0f;
 
@@ -1638,15 +1638,21 @@ namespace TumbangPreso
         /// Trips the character, making them tumble flat onto the ground for a duration (e.g. 2.5s)
         /// before rising back up.
         /// </summary>
-        public void ApplyTrip(float duration = 2.5f)
+        public void ApplyTrip(float duration = 2.5f) => ApplyTripCore(duration,false);
+
+        // Gravity is not an enemy stun. A real roof fall still needs a physical
+        // get-up even when a hero currently resists ordinary crowd control.
+        public void ApplyFallRecovery() => ApplyTripCore(2.5f,true);
+
+        private void ApplyTripCore(float duration,bool physicalFall)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (!physicalFall && AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
 
             AdvanceRecoveryEpisode();
             _tripLeft = Mathf.Max(_tripLeft, duration);
             _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
-            ApplyStagger(duration);
+            ReleaseCommitment();
             _velocity.x = 0.0f;
             _velocity.z = 0.0f;
 
@@ -1664,12 +1670,9 @@ namespace TumbangPreso
         /// 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
         /// get back up"*.
         ///
-        /// ⚠⚠️ THE STUN COMES DOWN WITH THE TRIP, AND FORGETTING THAT IS THE WHOLE BUG
-        /// WAITING TO HAPPEN HERE. `ApplyTrip` sets BOTH `_tripLeft` and, through
-        /// `ApplyStagger`, `_stunLeft` to the same duration. Shortening only the trip stands the
-        /// body up on schedule and leaves it unable to move, sprint, throw or grab for the rest
-        /// of the original 2.5 s: the player mashes, watches themselves get up, and then watches
-        /// themselves stand there, which reads as the mash having broken the character.
+        /// Trip recovery never spends time from an overlapping tag or element
+        /// hold. IsStunned includes both independent timers, and the existing
+        /// snapshot already carries each timer separately (protocol30 semantics).
         ///
         /// ⚠️ THE RATE CAP LIVES IN `Combat.MashRecover`, NOT HERE. A bot presses the same
         /// buttons a human does, so both reach the cap through the same function rather than
@@ -1690,7 +1693,6 @@ namespace TumbangPreso
             float removed = before - after;
             _tripLeft = after;
             _mashRemoved += removed;
-            _stunLeft = Mathf.Max(0.0f, _stunLeft - removed);
 
             return removed > 0.0f;
         }
@@ -1815,7 +1817,6 @@ namespace TumbangPreso
                     if (!accepted) continue;
                     float removed=_tripLeft-after;
                     _tripLeft=after;_mashRemoved+=removed;_mashPresses++;
-                    _stunLeft=Mathf.Max(0,_stunLeft-removed);
                 }
                 else if (_stunElement!=StunElement.None)
                 {
@@ -2001,29 +2002,9 @@ namespace TumbangPreso
                     _tripLeft = Balance.MinTripDown;
                 }
 
-                // ⚠️⚠️ THE STAGGER IS HELD TO THE TRIP, AND WITHOUT THIS LINE A PLAYER GETS UP
-                // BEFORE THE FALL ENDS. 🧑, 2026-08-26, off the built player: *"if i dont mash,
-                // i get up in 2 seconds wtf"*. He was right and the arithmetic says why.
-                // `ApplyTrip` calls `ApplyStagger(duration)` once, with the trip's STARTING
-                // length, and the stun then ran down at real time while the trip ran down more
-                // slowly, so an unanswered 2.50 s trip lasted 3.22 s while the stun expired at
-                // 2.50: for the last 0.72 s the body could walk, aim and throw while `IsTripped`
-                // was still true, the camera was still in the fall view and the HUD still said
-                // GETTING UP. The gap is wider now, not narrower: an unanswered fall holds at
-                // `Balance.TripAutoRecoverSeconds`, twice the stun it was staggered with.
-                //
-                // ⚠️ IT IS `Max`, NEVER AN ASSIGNMENT. A tag landing on a player who is already
-                // on the floor must not have its 5 s stun cut short to the remaining trip, and
-                // `Combat.ApplyStagger`'s Max() rule is the entire bound on a stun chain in a
-                // 1-vs-3 game (`CLAUDE.md` § 4).
-                if (_stunLeft < _tripLeft)
-                {
-                    _stunLeft = _tripLeft;
-                    _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
-                }
-
                 if (_tripLeft <= 0.0f)
                 {
+                    AdvanceRecoveryEpisode();
                     _tripTotal = 0.0f;
 
                     // ⚠️ THE GRACE IS OPENED HERE, AT THE ONE PLACE A FALL ACTUALLY ENDS, so it

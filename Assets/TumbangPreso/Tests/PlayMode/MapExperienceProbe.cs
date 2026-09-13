@@ -25,7 +25,7 @@ namespace TumbangPreso.PlayTests
         private float _timeScale;
         private CustomRules _rules;
         private static string Output => Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/map-owner-review-v1";
-        private static readonly string[] Maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza, SceneFlow.IlalimNgTulay };
+        private static readonly string[] Maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza, SceneFlow.IlalimNgTulay,SceneFlow.SaBubong };
         private static string[] ReviewMaps()
         {
             string selected = Environment.GetEnvironmentVariable("TUMP_MAP_REVIEW");

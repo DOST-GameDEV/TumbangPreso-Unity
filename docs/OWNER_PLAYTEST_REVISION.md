@@ -205,3 +205,63 @@ presses and TripAutoRecoverSeconds5; reuse that input contract rather than addin
 a second mash verb. Slipper flight currently treats a missing ground ray asY0,
 so an open roof edge needs an explicit map-owned loss transition before ordinary
 landing; do not globally rewrite GroundY or resurrect the old flight guess.
+
+## New rooftop/recovery work after9ff95072
+
+Sa Bubong scene and initialphysics now exist and are registered in both map
+registries/build settings. Protocol30 prevents older peers clamping its index to
+another scene. Basic rooftopprobe2/2 passes: actualedgefall,prone return,hold1press
+versus taps,10s unavailable shoe,returned pickup bothmodes;pool loss,inactivegrab
+refusal andround reset cancellation. Logs/rooftop-recovery-v1.xml.
+ActualSa FPP1/1 with48matched+2HUD captures (Logs/sa-bubong-fpp-v2). Laundrymotion
+probe1/1 confirmsmovinglowercloth andfixedpegs. This is NOT allinput/network/kit
+qualification or finalart approval. Skyline/rooftopstillneedsstrongerplaceidentity.
+
+New reproduced touch failure: realTouchButton down/up andPlayerInputReader samples
+beforeonephysicsstep produced0mash presses. Logs/recovery-touch-baseline-v1.xml
+(0/1). TouchInput now retains a Jump press edge untilreaderconsumption,without
+turning release into hold orrepeat. Readerdiscardsitwhilechat ownsinput.
+Focused rerun plusa concurrenttag/trip regression isactive in
+Logs/recovery-touch-and-overlap-v1.xml/.log. Existingcoupled_stunLeft/_tripLeft
+looks capableoflettingtripmash shortenatag;isolatebeforechangingtimers.
+Controllerimplementationremainsownedelsewhere;noGenericPadBridge/MenuNav edits.
+
+Actual3-process roof v1 FAILED: host loadedSa but startupneverupdatedSelectedMap,
+so SyncMap announcedEskinita toclients. Ownerclampedteleport13 toitsneighborhood
+bounds andcouldnotfall. This is a bootstrap/map-selectionfault,notroofphysics.
+NetBootstrap nowadoptsregisteredmap+legacyID beforetransportstartup;joiningload
+usescurrentauthoritativeSelectedMap. Addedcatalog regression. That unwanted
+scene reload alsoexposedRoundDirector.PlayerAt returningdestroyedUnity wrappers
+toOnThrowChargeMsg;itnowskipsdestroyedentries,withfocusedlifecycle regression.
+CSV nowcarriesactualmapindex andevaluatorrejectswrongmap evidence. No passclaimed.
+
+Built-playercapturev1 gamechecks passed but ScreenCapture produced0images in
+batchmode. Markedthat receipt capture-failed ratherthan calling itvideoevidence.
+Recorder nowusesactualplayercamera HDR render+sRGBresolve andaseparateungraded
+UIcamera,restoringallcanvas/layer/targetstate afterward. Runnerrequires all
+recordedframes exist andnonzero60+coverage. Ordinaryplayback usesmeasuredtimes.
+
+Exact-playerframecritique: existingobjectivehint saidRETRIEVE A SLIPPER while
+allavailableloose stockwasgone for the10spenalty. It nowusesSLIPPER RETURNING
+whenreplicatedinactiveattackerstockexistsandthereisnoloosealternative. Itdoesnot
+inventaclientcountdown. AlsoreplacedstaleHOLD E resetcopy withliveGrabbinding
+(orHOLD GRAB fortouch). CapturesremainolderthantheseUIchanges.
+The repeatedLATA IS BACK UP defectwasconfirmedbyunconditionalUprightChanged
+snapshotnotification; nowonlytrueedgesannounce. ItsinitialEditModetesttriggered
+aruntimeDestroyinLataDownMark,so verificationmovedtoarealPlayModescene rather
+than changing productioncleanup. PlayModesnapshotregression1/1passes.
+SaBubongsemantic2-run comparisonpasses:0drift/1649rows. NewEskinita laundry
+isnowactuallyauthored;matchedFPP/checks areinprogress. Neitherartbatchisfinal.
+
+## Owner status clarification, 2026-09-13
+
+The owner withdrew the Desktop build update: leave it as-is and keep developing.
+After asking for a status report, they accepted continuing the rooftop placement
+fixes and then tree/map refinement. Provide clear progress updates while working.
+
+## Latest owner order, 2026-09-13
+
+After ALL map work, work on ANIMATIONS AND SKILLS together next. Full body/FPP
+preparation, release, impact, interruption and recovery are part of the skill
+revamp, alongside distinct mechanics and special ultimate moments. Movement and
+equipment animation examples remain requirements, not deferred cosmetic extras.

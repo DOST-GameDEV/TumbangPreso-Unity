@@ -74,6 +74,7 @@ namespace TumbangPreso
                 case "PracticeSandbox.Wanted": return PracticeSandbox.Wanted;
 
                 case "NetThrowProbe.Active": return Diagnostics.NetThrowProbe.Active;
+                case "NetRoofProbe.Active": return Diagnostics.NetRoofProbe.Active;
                 case "NetFamiliarProbe.Active": return Diagnostics.NetFamiliarProbe.Active;
                 case "GameLaunch.AllBots": return GameLaunch.AllBots;
                 case "GameLaunch.Spectator": return GameLaunch.Spectator;
@@ -95,6 +96,7 @@ namespace TumbangPreso
             {
                 case "PracticeSandbox.Wanted": PracticeSandbox.Wanted = value; break;
                 case "NetThrowProbe.Active": Diagnostics.NetThrowProbe.Active = value; break;
+                case "NetRoofProbe.Active": Diagnostics.NetRoofProbe.Active = value; break;
                 case "NetFamiliarProbe.Active": Diagnostics.NetFamiliarProbe.Active = value; break;
                 case "GameLaunch.AllBots": GameLaunch.AllBots = value; break;
                 case "GameLaunch.Spectator": GameLaunch.Spectator = value; break;

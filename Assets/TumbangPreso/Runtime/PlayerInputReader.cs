@@ -185,6 +185,7 @@ namespace TumbangPreso
             // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
             if (UI.LobbyChat.AnyTyping)
             {
+                InputLayer.TouchInput.ConsumeRecoveryPress();
                 intent.Clear();
                 intent.CommitFrame();
                 return;
@@ -193,7 +194,8 @@ namespace TumbangPreso
             // Recovery and hero controls still belong to the human while Kuro
             // owns movement. Preserve quick Jump taps until the physics consumer.
             intent.Set(Verb.Jump, _jump.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Jump));
-            if (_jump.WasPressedThisFrame()) intent.BufferPress(Verb.Jump);
+            bool touchRecovery=InputLayer.TouchInput.ConsumeRecoveryPress();
+            if (_jump.WasPressedThisFrame()||touchRecovery) intent.BufferPress(Verb.Jump);
             if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill1));
             if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
             if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Ultimate));
