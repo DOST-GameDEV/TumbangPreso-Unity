@@ -1,0 +1,85 @@
+{
+  "source": "ArtSource\\ui\\owner-brand-2026-09-13\\palette-sheet-owner-latest.png",
+  "colors": [
+    {
+      "name": "brick",
+      "hex": "#A31A24",
+      "sample": [
+        90,
+        144
+      ]
+    },
+    {
+      "name": "orange",
+      "hex": "#EC6015",
+      "sample": [
+        167,
+        144
+      ]
+    },
+    {
+      "name": "apricot",
+      "hex": "#F8B366",
+      "sample": [
+        244,
+        144
+      ]
+    },
+    {
+      "name": "cream",
+      "hex": "#FCD39F",
+      "sample": [
+        322,
+        144
+      ]
+    },
+    {
+      "name": "oliveSand",
+      "hex": "#918450",
+      "sample": [
+        400,
+        144
+      ]
+    },
+    {
+      "name": "yellow",
+      "hex": "#F7B722",
+      "sample": [
+        90,
+        216
+      ]
+    },
+    {
+      "name": "lime",
+      "hex": "#D8D001",
+      "sample": [
+        167,
+        216
+      ]
+    },
+    {
+      "name": "hotOrange",
+      "hex": "#F35901",
+      "sample": [
+        244,
+        216
+      ]
+    },
+    {
+      "name": "olive",
+      "hex": "#6D7738",
+      "sample": [
+        322,
+        216
+      ]
+    },
+    {
+      "name": "deepOlive",
+      "hex": "#42421E",
+      "sample": [
+        400,
+        216
+      ]
+    }
+  ]
+}
