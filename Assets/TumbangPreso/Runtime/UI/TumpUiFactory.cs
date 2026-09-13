@@ -65,7 +65,7 @@ namespace TumbangPreso.UI
             var rect = Rect(parent, name);
             var text = rect.gameObject.AddComponent<Text>();
             text.text = words; text.fontSize = size > 0 ? size : Theme.BodySize;
-            text.font = display ? Theme.Display : bold ? Theme.Bold : Theme.Body;
+            text.font = display || bold ? Theme.Display : Theme.Body;
             text.fontStyle = FontStyle.Normal;
             text.color = Theme.DeepOlive;
             text.alignment = TextAnchor.MiddleLeft;
@@ -93,8 +93,7 @@ namespace TumbangPreso.UI
             var button = surface.gameObject.AddComponent<TumpButton>();
             button.targetGraphic = surface; button.transition = Selectable.Transition.None;
             if (action != null) button.onClick.AddListener(() => { MenuSfx.Click(); action(); });
-            var text = Text(surface.transform, "Text", words, size > 0 ? size : Theme.HeadingSize, true,
-                form == TumpSurface.Form.Slap || form == TumpSurface.Form.Pebble);
+            var text = Text(surface.transform, "Text", words, size > 0 ? size : Theme.HeadingSize, true, true);
             text.alignment = TextAnchor.MiddleCenter;
             if (fill.HasValue && fill.Value == Theme.Brick) text.color = Theme.Cream;
             Stretch(text.rectTransform, 16);
@@ -127,12 +126,12 @@ namespace TumbangPreso.UI
             var button = Button(parent, "Portrait_" + id, "", select, TumpSurface.Form.Portrait, Theme.Apricot);
             button.GetComponent<TumpSurface>().Selected = selected;
             var art = Art(button.transform, "Portrait", Sprite("UI/portraits/" + id));
-            Stretch(art.rectTransform, 8); art.rectTransform.offsetMin = new Vector2(8, 46);
+            Stretch(art.rectTransform, 8); art.rectTransform.offsetMin = new Vector2(8, 70);
             var label = button.GetComponentInChildren<Text>();
-            label.text = name; label.font = Theme.Bold; label.fontSize = Theme.CaptionSize;
+            label.text = name; label.font = Theme.Display; label.fontSize = 28;
             label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = new Vector2(1, 0);
             label.rectTransform.pivot = new Vector2(.5f, 0);
-            label.rectTransform.offsetMin = new Vector2(8, 9); label.rectTransform.offsetMax = new Vector2(-8, 45);
+            label.rectTransform.offsetMin = new Vector2(8, 6); label.rectTransform.offsetMax = new Vector2(-8, 68);
             return button;
         }
 

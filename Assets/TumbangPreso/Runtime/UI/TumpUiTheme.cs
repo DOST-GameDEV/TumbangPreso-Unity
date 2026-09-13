@@ -17,8 +17,10 @@ namespace TumbangPreso.UI
         public Color Olive = new Color32(109, 119, 56, 255);
         public Color DeepOlive = new Color32(66, 66, 30, 255);
 
-        [Header("Typography")]
+        [Header("Typography · Darumadrop is the main game UI face")]
+        [Tooltip("Primary face for titles, controls, settings and scoreboard labels at generous sizes.")]
         public Font HeadingFont;
+        [Tooltip("Supporting face only for genuinely dense or small secondary descriptions.")]
         public Font ReadingFont;
         public Font ReadingBoldFont;
         public int DisplaySize = 62;

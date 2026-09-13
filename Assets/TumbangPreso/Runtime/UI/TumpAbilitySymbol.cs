@@ -4,6 +4,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>New editable pictograms. AbilityGlyph remains the semantic contract with gameplay.</summary>
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TumpAbilitySymbol : MaskableGraphic
     {
         public AbilityGlyph Glyph;

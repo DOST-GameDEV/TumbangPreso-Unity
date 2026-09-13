@@ -86,26 +86,26 @@ namespace TumbangPreso.UI
             }
 
             _grid = TumpUiFactory.Rect(_root, "TumpRosterGrid");
-            TumpUiFactory.Place(_grid, 64, 348, 842, 622);
+            TumpUiFactory.Place(_grid, 64, 324, 842, 652);
             var grid = _grid.gameObject.AddComponent<GridLayoutGroup>();
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 4;
-            grid.cellSize = new Vector2(194, 190); grid.spacing = new Vector2(20, 20);
+            grid.cellSize = new Vector2(194, 204); grid.spacing = new Vector2(20, 20);
 
             _stage = TumpUiFactory.Rect(detail.transform, "ModelStage");
-            _stage.anchorMin = new Vector2(0, .34f); _stage.anchorMax = Vector2.one;
+            _stage.anchorMin = new Vector2(0, .44f); _stage.anchorMax = Vector2.one;
             _stage.offsetMin = new Vector2(16, 0); _stage.offsetMax = new Vector2(-16, -18);
             _preview = _stage.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(_stage); _preview.CentreSubject();
 
             _name = TumpUiFactory.Text(detail.transform, "SelectedName", "", 48, false, true);
             _name.color = f.Cream;
-            _name.rectTransform.anchorMin = new Vector2(0, .30f); _name.rectTransform.anchorMax = new Vector2(1, .39f);
+            _name.rectTransform.anchorMin = new Vector2(0, .34f); _name.rectTransform.anchorMax = new Vector2(1, .43f);
             _name.rectTransform.offsetMin = new Vector2(44, 0); _name.rectTransform.offsetMax = new Vector2(-44, 0);
             _description = TumpUiFactory.Text(detail.transform, "Description", "", 28);
             _description.color = f.Cream; _description.alignment = TextAnchor.UpperLeft;
-            _description.rectTransform.anchorMin = new Vector2(0, .15f); _description.rectTransform.anchorMax = new Vector2(1, .29f);
+            _description.rectTransform.anchorMin = new Vector2(0, .20f); _description.rectTransform.anchorMax = new Vector2(1, .33f);
             _description.rectTransform.offsetMin = new Vector2(44, 0); _description.rectTransform.offsetMax = new Vector2(-44, 0);
-            _stats = TumpUiFactory.Text(_root, "Traits", "", 24, true);
+            _stats = TumpUiFactory.Text(_root, "Traits", "", 30, true);
             TumpUiFactory.Place(_stats.rectTransform, 72, 992, 840, 46);
 
             _state = TumpUiFactory.Text(detail.transform, "SelectionState", "", 24);
@@ -158,7 +158,7 @@ namespace TumbangPreso.UI
             _stats.text = $"{traits[_category][0]} {picked.Bilis}/{Roster.TraitMax}    {traits[_category][1]} {picked.Lakas}/{Roster.TraitMax}    {traits[_category][2]} {picked.Tatag}/{Roster.TraitMax}";
             var saved = Settings.SettingsStore.Current;
             _state.text = _picks[0] == saved.CharacterPick && _picks[1] == saved.CanPick && _picks[2] == saved.SlipperPick
-                ? "Current loadout" : "Use this loadout to keep your picks";
+                ? "Equipped" : "Preview";
             var book = RosterBook.Load();
             var art = _category == 0 ? book.PersonArt(_picks[0], _mode) : _category == 1 ? book.CanArt(_picks[1]) : book.SlipperArt(_picks[2]);
             _preview.ShowingSlipper = _category == 2;

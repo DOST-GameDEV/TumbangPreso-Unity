@@ -38,6 +38,18 @@ namespace TumbangPreso.PlayTests
                 yield return null;
                 foreach (var preview in canvas.GetComponentsInChildren<UI.ModelPreview>()) preview.StepForCapture();
                 Canvas.ForceUpdateCanvases(); camera.Render();
+                foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
+                {
+                    bool symbol = graphic is UI.TumpAbilitySymbol;
+                    bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
+                    if (!symbol && !portrait) continue;
+                    var renderer = graphic.GetComponent<CanvasRenderer>();
+                    Assert.IsNotNull(renderer, graphic.name + " needs its own CanvasRenderer");
+                    var mesh = renderer.GetMesh();
+                    Debug.Log($"[TumpGeometry] {name}/{graphic.name}: vertices={mesh?.vertexCount ?? 0}, cull={renderer.cull}, alpha={renderer.GetInheritedAlpha():0.###}, depth={renderer.absoluteDepth}, material={renderer.materialCount}");
+                    Assert.IsNotNull(mesh, graphic.name + " has no rendered mesh");
+                    Assert.Greater(mesh.vertexCount, 0, graphic.name + " has no visible geometry");
+                }
                 RenderTexture.active = rt;
                 image = new Texture2D(width, height, TextureFormat.RGB24, false);
                 image.ReadPixels(new Rect(0, 0, width, height), 0, 0); image.Apply();
