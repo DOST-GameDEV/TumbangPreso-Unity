@@ -1,5 +1,15 @@
 # Working instructions for ChatGPT / Codex
 
+**Temporary reset authority, current overnight task only:** the owner explicitly
+authorized ONE existing usage-reset credit, only when core Codex allowance has
+1% or0% REMAINING, never earlier. Primary agent is sole redeemer; UI agent may
+not redeem. Before any attempt read Logs/one-reset-authorization.json, check
+fresh core usage (not the separate Spark bucket), and preserve the stored single
+idempotency key for every retry. Never use a second credit. If the local state is
+missing/uncertain, do not invent a fresh authorization. This exception does not
+transfer to future tasks or authorize purchases. Consult the local state for
+redemption history. New explicit instructions/withdrawal take precedence.
+
 **One-time delegation exception, latest owner instruction:** exactly ONE
 GPT-6 Astra HIGH subagent may own the entire UI overhaul, with no conversation
 history fork. Give it a focused complete brief and repository/reference pointers.
