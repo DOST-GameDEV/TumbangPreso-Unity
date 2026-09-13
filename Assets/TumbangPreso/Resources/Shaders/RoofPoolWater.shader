@@ -37,7 +37,7 @@ Shader "TumbangPreso/RoofPoolWater"
                     float effort=.35+_Swimmers[i].z*.22;
                     float wave=distance*13-t*5+i*1.6;
                     slope+=delta/max(.1,distance)*sin(wave)*envelope*.11*effort;
-                    crest+=pow(saturate(cos(wave)),8)*envelope*.10*effort;
+                    crest+=pow(saturate(cos(wave)),8)*envelope*.18*effort;
                 }
             }
             o.Normal=normalize(float3(slope,1));

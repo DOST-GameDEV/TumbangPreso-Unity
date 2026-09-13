@@ -2549,6 +2549,7 @@ namespace TumbangPreso.CameraSystem
         private Visual.CharacterAnimator _swimAnimator;
         private bool _swimApplied;
         private float _swimBlend;
+        private float _swimForwardBlend;
         private Quaternion _swimLeftBase,_swimRightBase;
         private Vector3 _swimLeftPosition,_swimRightPosition;
 
@@ -2567,16 +2568,25 @@ namespace TumbangPreso.CameraSystem
             if(_swimBlend<=0||_leftPivot==null||_rightPivot==null||_characterMotor==null)return;
             if(_swimAnimator==null)_swimAnimator=_characterMotor.GetComponent<Visual.CharacterAnimator>();
             float phase=_swimAnimator!=null?_swimAnimator.SwimmingPhase:0;
-            float effort=new Vector2(_characterMotor.Velocity.x,_characterMotor.Velocity.z).magnitude>.2f?1:.38f;
+            bool forward=Visual.SwimmingMotion.ForwardStroke(_characterMotor);
+            _swimForwardBlend=Mathf.MoveTowards(_swimForwardBlend,forward?1:0,Mathf.Max(0,dt)/.24f);
+            float effort=.38f;
             _swimLeftBase=_leftPivot.localRotation;_swimRightBase=_rightPivot.localRotation;
             _swimLeftPosition=_leftPivot.localPosition;_swimRightPosition=_rightPivot.localPosition;_swimApplied=true;
             float left=Mathf.Sin(phase),right=Mathf.Sin(phase+Mathf.PI);
             var l=Quaternion.Euler(-14-left*26*effort,Mathf.Cos(phase)*8*effort,8+Mathf.Cos(phase)*10*effort);
             var r=_carrying?Quaternion.Euler(0,0,right*2):Quaternion.Euler(-14-right*26*effort,-Mathf.Cos(phase+Mathf.PI)*8*effort,-8-Mathf.Cos(phase+Mathf.PI)*10*effort);
+            var reach=Visual.SwimmingMotion.BreastReach(phase);
+            var strokeLeft=Quaternion.Euler(-22-reach.y*26,reach.x*20,10+reach.x*28);
+            var strokeRight=Quaternion.Euler(-22-reach.y*26,-reach.x*20,-10-reach.x*28);
+            l=Quaternion.Slerp(l,strokeLeft,_swimForwardBlend);r=Quaternion.Slerp(r,strokeRight,_swimForwardBlend);
             _leftPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,l,_swimBlend);
             _rightPivot.localRotation*=Quaternion.Slerp(Quaternion.identity,r,_swimBlend);
             _leftPivot.localPosition+=new Vector3(0,Mathf.Cos(phase)*.035f,.05f*left)*effort*_swimBlend;
             _rightPivot.localPosition+=new Vector3(0,Mathf.Cos(phase+Mathf.PI)*.035f,.05f*right)*effort*_swimBlend*(_carrying?.2f:1);
+            var reachOffset=new Vector3(reach.x*.12f,-.06f,reach.y*.12f)*_swimForwardBlend*_swimBlend;
+            _leftPivot.localPosition+=new Vector3(-reachOffset.x,reachOffset.y,reachOffset.z);
+            _rightPivot.localPosition+=reachOffset;
         }
 
         public void StepVisuals(float dt, bool snap = false)

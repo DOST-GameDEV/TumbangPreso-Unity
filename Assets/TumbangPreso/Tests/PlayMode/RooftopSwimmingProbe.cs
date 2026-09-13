@@ -208,6 +208,43 @@ namespace TumbangPreso.PlayTests
             finally{Object.Destroy(mesh);File.WriteAllText(Path.Combine(Output,"whole-cast-water-recovery.csv"),report.ToString());}
         }
 
+        [UnityTest,Timeout(180000)]
+        public IEnumerator ForwardBreaststrokeAndUprightScullingUseDifferentBodyAndOwnerMotion()
+        {
+            foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
+            {
+                yield return MapRetrievalProbe.Load(SceneFlow.SaBubong,mode);Time.timeScale=1;GameServices.Round.BeginRound();
+                var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
+                _rig=Object.FindFirstObjectByType<CameraRig>();_rig.Follow(who);_rig.SetAimSource(AimSource.Movement);
+                var drive=who.gameObject.AddComponent<SwimmingInput>();drive.FixForward=true;
+                who.Teleport(new Vector3(-13.2f,RooftopPool.SurfaceY-RooftopPool.FloatDepth,3));
+                var shoe=who.GetComponent<Carrier>().Held;
+                if(mode==GameMode.HeroStrike)shoe.HostThrow(who,new Vector3(-16,1,12),Vector3.down);
+                yield return new WaitForSeconds(.4f);
+                var animator=who.GetComponent<CharacterAnimator>();
+                var camera=new GameObject("Breaststroke and scull witness").AddComponent<Camera>();camera.enabled=false;
+                camera.fieldOfView=52;camera.nearClipPlane=.04f;camera.farClipPlane=400;camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                int forward=0,stationary=0,strafe=0,back=0;
+                try
+                {
+                    yield return ImprovementEvidenceProbe.Record(camera,mode+"-breaststroke-and-float",8,who,t=>
+                    {
+                        drive.Move=t<1?Vector2.zero:t<3?Vector2.up:t<4?Vector2.zero:t<5?Vector2.right:t<6.5f?Vector2.down:Vector2.zero;
+                        if(t>1.6f&&t<2.8f){Assert.IsTrue(animator.ForwardSwimmingMotionPlaying,"Forward input did not use breaststroke");forward++;}
+                        if(t>.4f&&t<.8f||t>3.55f&&t<3.85f){Assert.IsFalse(animator.ForwardSwimmingMotionPlaying,"Floating kept its horizontal forward stroke");stationary++;}
+                        if(t>4.55f&&t<4.85f){Assert.IsFalse(animator.ForwardSwimmingMotionPlaying,"Strafing used the forward-only stroke");strafe++;}
+                        if(t>5.6f&&t<6.3f){Assert.IsFalse(animator.ForwardSwimmingMotionPlaying,"Backing up used the forward-only stroke");back++;}
+                        Assert.IsTrue(who.IsSwimming,"Directional motion left the staged water route");
+                        Assert.Greater(_rig.Camera.transform.position.y,RooftopPool.SurfaceY+.08f,"Swimming animation submerged the owner camera");
+                        Trace(who,mode,"directional-motion");
+                    },new Vector3(3.6f,2,-3.6f));
+                    Assert.Greater(forward,3);Assert.Greater(stationary,3);Assert.Greater(strafe,3);Assert.Greater(back,3);
+                }
+                finally{drive.enabled=false;Object.Destroy(drive);Object.Destroy(camera.gameObject);}
+                yield return PlayModeWorld.Reset();
+            }
+        }
+
         private IEnumerator WalkTo(CharacterMotor who,SwimmingInput drive,Vector2 target,GameMode mode,string stage)
         {
             float until=Time.time+12;
@@ -235,8 +272,12 @@ namespace TumbangPreso.PlayTests
         [DefaultExecutionOrder(-300)]
         private sealed class SwimmingInput:MonoBehaviour
         {
-            public Vector2 Move;public bool Grab,Jump;
-            private void Update(){var who=GetComponent<CharacterMotor>();who.Intent.Move=Move;who.Intent.Set(Verb.Grab,Grab);who.Intent.Set(Verb.Jump,Jump);}
+            public Vector2 Move;public bool Grab,Jump,FixForward;
+            private void Update()
+            {
+                var who=GetComponent<CharacterMotor>();who.Intent.Move=Move;who.Intent.Set(Verb.Grab,Grab);who.Intent.Set(Verb.Jump,Jump);
+                if(FixForward){who.Intent.AimPoint=who.transform.position+Vector3.forward*20;who.Intent.FaceAimPoint=true;}
+            }
         }
     }
 }

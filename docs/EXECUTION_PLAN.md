@@ -1,5 +1,30 @@
 # Active execution plan
 
+Current source state,2026-09-13 late evening: maps/animals/resident/material
+checkpointc8ae2abe pushed. New native UI + accepted34portraits integrated through
+agent4817aceb (primaryc7f8189e), pending new-native icon/font rerun. First native
+picker run passed2/2 but exposed missing symbols in images; not final acceptance.
+Figma Starter MCP allowance exhausted; no paid upgrade/bypass. Agent continues
+native editable Unity UI. Figma20:2palette/21:2slap control remain saved, further
+Figma pages/imports are externally blocked, not a reason to stop game UI.
+
+Forward-only breaststroke source is authored on20rigs/80clips after fixing one
+C# multi-declarator compile error. Active parent session69026 runs only the new
+directional swim/scull body+FPP fixture, Logs/swim-breaststroke-motion-v1.xml/.log.
+No source/imported edits during it. NativeUI fixture rerun follows. Parent also
+prepared an opt-in real-process pool scenario in NetRoofProbe/net_roof_matrix;
+it has NOT run or been built. New --case swim needs fresh Windows internal build.
+Shoe floats/pickup/step exit/observer rejoin are acceptance criteria; old fall
+matrix remains separate. No Desktop update or new agents.
+
+**Newest active map task:** owner specifies breaststroke-style horizontal motion
+ONLY when moving forward, Minecraft-like distinction. Idle/strafe/backward use
+upright treading; body/FPP/held slipper/observer transitions must match. Current
+swim motion was driven by any planar speed, so revise selection and stroke.
+Reference C:/Users/Matthew/AppData/Local/Temp/codex-clipboard-203b4e93-d79c-4028-92d6-dafdb4676c85.png.
+The single UI agent remains the only exception; owner again forbids spawning
+any agents after it finishes. Parent continues non-UI alone.
+
 **Latest UI correction:** owner explicitly prohibits reusing legacy UI builders.
 The single agent is replacing the conservative reskin with new TumpUiFactory,
 editable TumpUiTheme and new empty-root views, keeping old source inactive and

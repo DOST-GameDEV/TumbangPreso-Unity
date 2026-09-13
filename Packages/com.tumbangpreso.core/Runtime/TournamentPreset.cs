@@ -351,6 +351,7 @@ namespace TumbangPreso.Core
                 case "-tp-throwtrace": return "NetThrowProbe.Active";
                 case "-tp-rooftrace": return "NetRoofProbe.Active";
                 case "-tp-roofmode": return "NetRoofProbe.Active";
+                case "-tp-roofcase": return "NetRoofProbe.Active";
                 case "-tp-roofshots": return "NetRoofProbe.Active";
                 case "-tp-rooftag": return "NetRoofProbe.Active";
                 case "-tp-familiartrace": return "NetFamiliarProbe.Active";

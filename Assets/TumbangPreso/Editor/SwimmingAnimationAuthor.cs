@@ -41,7 +41,8 @@ namespace TumbangPreso.EditorTools
                         string path=AnimationUtility.CalculateTransformPath(bone,root);
                         var grip=held&&name=="arm-right"&&hold!=null?HoldRotation(hold,path,bone.localRotation):bone.localRotation;
                         Vector3 palm=Vector3.zero;
-                        if(held&&name=="arm-right")
+                        bool arm=name=="arm-left"||name=="arm-right";
+                        if(arm)
                             foreach(var skin in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
                             {
                                 int index=Array.IndexOf(skin.bones,bone);
@@ -53,18 +54,15 @@ namespace TumbangPreso.EditorTools
                             float fraction=sample/32f;
                             float phase=fraction*Mathf.PI*2;
                             var rotation=bone.localRotation*Quaternion.Euler(SwimmingMotion.Rotation(name,phase,moving,held));
-                            if(held&&name=="arm-right"&&hold!=null)
+                            if(arm&&palm.sqrMagnitude>.00001f)
                             {
-                                // Aim the measured palm above its shoulder in the
-                                // authored torso frame. A guessed Euler lift made
-                                // the world slipper LOWER while FPP held it up.
+                                // Both arms share the breaststroke reach/sweep/
+                                // recovery cycle. Aim the actual palm, retaining
+                                // the approved grip/hand bindings when carrying.
                                 var parent=bone.parent.rotation*Quaternion.Euler(SwimmingMotion.Rotation("torso",phase,moving,held));
                                 var direction=parent*(grip*palm);
-                                var flat=Vector3.ProjectOnPlane(direction,Vector3.up).normalized;
-                                if(flat.sqrMagnitude<.01f)flat=root.forward;
-                                var desired=flat+Vector3.up*.55f;
-                                rotation=palm.sqrMagnitude>.00001f
-                                    ?Quaternion.Inverse(parent)*Quaternion.FromToRotation(direction,desired)*parent*grip:grip;
+                                var desired=root.TransformDirection(SwimmingMotion.HandDirection(name=="arm-left"?-1:1,phase,moving,held));
+                                rotation=Quaternion.Inverse(parent)*Quaternion.FromToRotation(direction,desired)*parent*grip;
                             }
                             for(int axis=0;axis<4;axis++)curves[axis].AddKey(fraction*duration,rotation[axis]);
                         }
@@ -76,14 +74,23 @@ namespace TumbangPreso.EditorTools
                             foreach(var binding in AnimationUtility.GetCurveBindings(hold).Where(b=>b.path==path||b.path.StartsWith(path+"/",StringComparison.Ordinal)))
                             {
                                 var curve=AnimationUtility.GetEditorCurve(hold,binding);if(curve==null)continue;
-                                // Raise the shoulder above water while preserving
-                                // the original hand/grip and descendant bindings.
+                                // The shoulder follows the stroke; its hand/grip
+                                // and descendant bindings retain the authored pose.
                                 if(binding.path==path&&IsRotation(binding.propertyName))continue;
                                 float value=curve.Evaluate(0);
                                 AnimationUtility.SetEditorCurve(clip,binding,AnimationCurve.Constant(0,duration,value));
                             }
                         }
                     }
+                    var rootBone=bones.FirstOrDefault(t=>t.name=="root");
+                    if(rootBone==null)throw new InvalidOperationException(entry.Id+" misses its swim root bone");
+                    var lift=new AnimationCurve();
+                    for(int sample=0;sample<=32;sample++)
+                    {
+                        float fraction=sample/32f;
+                        lift.AddKey(fraction*duration,rootBone.localPosition.y+SwimmingMotion.VisualLift(fraction*Mathf.PI*2,moving)/CharacterVisual.PersonScale);
+                    }
+                    clip.SetCurve(AnimationUtility.CalculateTransformPath(rootBone,root),typeof(Transform),"localPosition.y",lift);
                     clip.EnsureQuaternionContinuity();
                     var settings=AnimationUtility.GetAnimationClipSettings(clip);settings.loopTime=true;
                     AnimationUtility.SetAnimationClipSettings(clip,settings);clips.Add(clip);

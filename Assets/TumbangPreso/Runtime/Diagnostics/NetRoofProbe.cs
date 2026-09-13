@@ -22,6 +22,10 @@ namespace TumbangPreso.Diagnostics
         private double _began=-1,_next,_mashAt=-1;
         private bool _staged,_sawTrip;
         private bool _tagApplied;
+        private bool _swimDropSent,_swimSawLoose,_swimReturning;
+        private double _swimLooseAt=-1;
+        private int _swimExitStep;
+        private bool SwimCase=>Argument("-tp-roofcase")=="swim";
         private string _shots;
         private StreamWriter _frameTimes;
         private double _nextShot;
@@ -29,6 +33,7 @@ namespace TumbangPreso.Diagnostics
         private RenderTexture _worldFrame,_displayFrame;
         private Texture2D _pixels;
         private Camera _uiCamera;
+        private Camera _observerCamera;
         private static string Argument(string key)
         {var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:null;}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -45,7 +50,7 @@ namespace TumbangPreso.Diagnostics
             var probe=go.AddComponent<NetRoofProbe>();go.AddComponent<NetThrowLateSample>().Sample=probe.Record;
             var path=Path.GetFullPath(Argument("-tp-rooftrace"));Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer=new StreamWriter(path){AutoFlush=true};
-            probe._writer.WriteLine("time,elapsed,host,local,round,x,y,z,trip,stun,mash,holding,shoeActive,shoeState,shoeX,shoeY,shoeZ,episode,ack,map");
+            probe._writer.WriteLine("time,elapsed,host,local,round,x,y,z,trip,stun,mash,holding,shoeActive,shoeState,shoeX,shoeY,shoeZ,episode,ack,map,swimming,swimAnimation,floating,eyeY");
             var shots=Argument("-tp-roofshots");
             if(!string.IsNullOrEmpty(shots))
             {
@@ -69,6 +74,7 @@ namespace TumbangPreso.Diagnostics
                 if(other!=null&&other!=_who){other.Intent.Clear();other.Intent.Parked=true;}
             double now=NetworkManager.Singleton.ServerTime.Time;
             if(_began<0)_began=now;float elapsed=(float)(now-_began);
+            if(SwimCase){StepSwimming(now,elapsed);if(elapsed>28){_writer?.Dispose();_writer=null;Application.Quit();}return;}
             if(NetAuthority.IsHost&&!_staged&&elapsed>.8f)
             {
                 _staged=true;_who.transform.rotation=Quaternion.Euler(0,90,0);
@@ -97,6 +103,41 @@ namespace TumbangPreso.Diagnostics
             { _tagApplied=true;_who.ApplyStagger(4,StunElement.None,6); }
             if(elapsed>28){_writer?.Dispose();_writer=null;Application.Quit();}
         }
+        private void StepSwimming(double now,float elapsed)
+        {
+            if(NetAuthority.IsHost&&!_staged&&elapsed>.8f)
+            {
+                _staged=true;_who.transform.rotation=Quaternion.Euler(0,-90,0);
+                _who.Teleport(new Vector3(-8.4f,.1f,7));
+            }
+            if(NetAuthority.IsHost&&!_swimDropSent&&elapsed>3.8f&&_who.IsSwimming&&_shoe!=null)
+            {
+                _swimDropSent=true;_shoe.HostThrow(_who,new Vector3(-14.7f,1,7),Vector3.down*3);
+            }
+            if(NetAuthority.LocalSlot!=1)return;
+            _who.Intent.Parked=false;_who.Intent.ClearAim();_who.Intent.FaceAimPoint=false;
+            FindFirstObjectByType<CameraRig>()?.SetAimSource(AimSource.Movement);
+            if(_who.IsSwimming&&!_who.HoldingSlipper&&_shoe!=null&&_shoe.State==SlipperState.Loose)
+            {_swimSawLoose=true;if(_swimLooseAt<0)_swimLooseAt=now;}
+            if(_swimSawLoose&&_who.HoldingSlipper)_swimReturning=true;
+            Vector2 move=Vector2.zero;bool grab=false,jump=false;
+            if(_swimReturning)
+            {
+                var target=_swimExitStep==0?new Vector2(-10.8f,7):new Vector2(-10.8f,-2.5f);
+                var delta=target-new Vector2(_who.transform.position.x,_who.transform.position.z);
+                if(delta.magnitude<.2f)_swimExitStep++;
+                else if(_swimExitStep<2)move=delta.normalized;
+            }
+            else if(_swimSawLoose&&now-_swimLooseAt>4)
+            {
+                var delta=_shoe.transform.position-_who.transform.position;
+                move=new Vector2(delta.x,delta.z).magnitude>.35f?new Vector2(delta.x,delta.z).normalized:Vector2.zero;
+                grab=new Vector2(delta.x,delta.z).magnitude<Balance.PickupRadius*.75f;
+            }
+            else if(!_swimSawLoose&&_who.transform.position.x<-8&&_who.transform.position.x>-12.5f)
+            {move=Vector2.left;jump=_who.IsGrounded;}
+            _who.Intent.Move=move;_who.Intent.Set(Verb.Grab,grab);_who.Intent.Set(Verb.Jump,jump);
+        }
         private void Record()
         {
             if(!Active||_writer==null||_who==null||_began<0||NetworkManager.Singleton==null)return;
@@ -114,12 +155,30 @@ namespace TumbangPreso.Diagnostics
                 GameServices.Match.RoundNumber,F(p.x),F(p.y),F(p.z),F(_who.TripLeft),F(_who.StunLeft),_who.MashPresses,
                 _who.HoldingSlipper?1:0,_shoe!=null&&_shoe.gameObject.activeSelf?1:0,_shoe!=null?(int)_shoe.State:-1,
                 F(s.x),F(s.y),F(s.z),_who.RecoveryEpisode,_who.RecoveryAcknowledged,
-                Array.IndexOf(SceneFlow.Maps,UnityEngine.SceneManagement.SceneManager.GetActiveScene().name)}));
+                Array.IndexOf(SceneFlow.Maps,UnityEngine.SceneManagement.SceneManager.GetActiveScene().name),
+                _who.IsSwimming?1:0,_who.GetComponent<Visual.CharacterAnimator>().SwimmingMotionPlaying?1:0,
+                _shoe!=null&&_shoe.gameObject.activeSelf&&_shoe.State==SlipperState.Loose&&RooftopPool.TrySurface(s,out _)?1:0,
+                F(Camera.main!=null?Camera.main.transform.position.y:0)}));
         }
         private static string F(double v)=>v.ToString("F4",CultureInfo.InvariantCulture);
         private void CapturePlayerFrame(string path)
         {
             var camera=Camera.main;if(camera==null)throw new InvalidOperationException("No actual player camera for roof capture");
+            // The remote observer evidence deliberately frames the replicated
+            // swimmer. Owner evidence keeps the actual first-person camera.
+            bool framedObserver=SwimCase&&NetAuthority.LocalSlot==2&&_who!=null;
+            if(framedObserver)
+            {
+                if(_observerCamera==null)
+                {
+                    _observerCamera=new GameObject("~Network swimmer witness").AddComponent<Camera>();_observerCamera.transform.SetParent(transform,false);
+                    _observerCamera.CopyFrom(camera);_observerCamera.enabled=false;_observerCamera.nearClipPlane=.04f;
+                    _observerCamera.gameObject.AddComponent<Visual.ColourGrade>().AdoptFromScene();
+                }
+                camera=_observerCamera;
+                camera.transform.position=_who.transform.position+new Vector3(3.6f,2.1f,-3.6f);
+                camera.transform.LookAt(_who.transform.position+Vector3.up*.8f);
+            }
             if(_worldFrame==null)
             {
                 _worldFrame=new RenderTexture(1280,720,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear){antiAliasing=4};_worldFrame.Create();
@@ -132,8 +191,11 @@ namespace TumbangPreso.Diagnostics
             var canvases=FindObjectsByType<Canvas>(FindObjectsSortMode.None).Where(c=>c.renderMode==RenderMode.ScreenSpaceOverlay).ToArray();
             var saved=canvases.Select(c=>(c,c.worldCamera,c.planeDistance)).ToArray();
             var layers=new Dictionary<Transform,int>();var oldTarget=camera.targetTexture;var oldActive=RenderTexture.active;
+            var privateArms=framedObserver?FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None).SelectMany(a=>a.GetComponentsInChildren<Renderer>()).ToArray():Array.Empty<Renderer>();
+            var armEnabled=privateArms.Select(r=>r.enabled).ToArray();
             try
             {
+                foreach(var renderer in privateArms)renderer.enabled=false;
                 foreach(var canvas in canvases)
                 {
                     foreach(var t in canvas.GetComponentsInChildren<Transform>(true))
@@ -151,6 +213,7 @@ namespace TumbangPreso.Diagnostics
                 foreach(var entry in saved)
                 {if(entry.c==null)continue;entry.c.renderMode=RenderMode.ScreenSpaceOverlay;entry.c.worldCamera=entry.worldCamera;entry.c.planeDistance=entry.planeDistance;}
                 foreach(var entry in layers)if(entry.Key!=null)entry.Key.gameObject.layer=entry.Value;
+                for(int i=0;i<privateArms.Length;i++)if(privateArms[i]!=null)privateArms[i].enabled=armEnabled[i];
                 Canvas.ForceUpdateCanvases();
             }
         }
@@ -161,6 +224,7 @@ namespace TumbangPreso.Diagnostics
             if(_displayFrame!=null){_displayFrame.Release();Destroy(_displayFrame);}
             if(_pixels!=null)Destroy(_pixels);
             if(_uiCamera!=null)Destroy(_uiCamera.gameObject);
+            if(_observerCamera!=null)Destroy(_observerCamera.gameObject);
         }
     }
 }

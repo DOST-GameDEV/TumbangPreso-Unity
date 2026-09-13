@@ -43,6 +43,36 @@ def evaluate(folder,rejoin,overlap_tag=False):
         measurements['rejoin']={'unavailableSamples':len(hidden),'tripSamples':sum(r['trip']>0 for r in joined)}
     return {'ok':not errors,'errors':errors,'measurements':measurements}
 
+def evaluate_swim(folder,rejoin):
+    data={name:rows(folder/(name+'.csv')) for name in ['host','owner','observer']}
+    if rejoin:data['observer']+=rows(folder/'rejoined.csv')
+    errors=[];measurements={}
+    for name,records in data.items():
+        records.sort(key=lambda r:r['time'])
+        if len(records)<30 or any(r['local']!={'host':0,'owner':1,'observer':2}[name] for r in records):
+            errors.append(name+' lacks correctly seated swim samples');continue
+        if any(r.get('map')!=3 for r in records):errors.append(name+' loaded a different map')
+        wet=[r for r in records if r.get('swimming',0)]
+        floating=[r for r in records if r.get('floating',0)]
+        held_after=[r for r in records if floating and r['time']>floating[0]['time'] and r['holding']]
+        exited=[r for r in held_after if not r['swimming'] and r['z']<-1.5 and r['y']>0]
+        motion=[r for r in wet if r.get('swimAnimation',0)]
+        if len(wet)<20:errors.append(name+' never spent a sustained interval swimming')
+        if len(floating)<8:errors.append(name+' never saw the loose slipper float')
+        if len(held_after)<4:errors.append(name+' missed the actual floating pickup')
+        if len(exited)<4:errors.append(name+' never exited via the steps holding the retrieved slipper')
+        if len(motion)<10:errors.append(name+' did not select its real serialized swimming animation')
+        if any(not r['shoeActive'] or r['trip']>0 for r in records):errors.append(name+' treated accessible water as an off-roof loss/fall')
+        if wet and min(r['y'] for r in wet)<-1.2:errors.append(name+' swimmer hit the basin floor')
+        if name=='owner' and wet and min(r['eyeY'] for r in wet)<.10:errors.append('Owner eye submerged during the swim')
+        measurements[name]={'swimSamples':len(wet),'floatingSamples':len(floating),'animatedSamples':len(motion),
+            'postFloatHeldSamples':len(held_after),'dryExitHeldSamples':len(exited),'minimumY':min(r['y'] for r in records)}
+    if rejoin:
+        joined=rows(folder/'rejoined.csv');wet=sum(r.get('swimming',0)>0 for r in joined)
+        if wet<3:errors.append('Rejoined observer did not restore the active swimmer')
+        measurements['rejoin']={'swimmingSamples':wet}
+    return {'ok':not errors,'errors':errors,'measurements':measurements}
+
 def validate_capture(folder,rejoin,result):
     for role in ['owner','observer']:
         names=[role]+(['rejoined'] if rejoin and role=='observer' else [])
@@ -61,6 +91,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--mode',choices=['classic','hero'],default='classic')
     p.add_argument('--delay',type=float,default=0);p.add_argument('--rejoin',action='store_true');p.add_argument('--out',type=Path,required=True)
     p.add_argument('--capture',action='store_true');p.add_argument('--overlap-tag',action='store_true')
+    p.add_argument('--case',choices=['fall','swim'],default='fall')
     a=p.parse_args();exe=a.exe.resolve();assert exe.is_file(),exe
     folder=a.out.resolve();folder.mkdir(parents=True,exist_ok=False)
     profiles={name:'roof-review-'+name for name in ['host','owner','observer']}
@@ -79,7 +110,7 @@ def main():
     def launch(args,stdout=subprocess.DEVNULL):
         proc=subprocess.Popen(args,cwd=ROOT,stdout=stdout,stderr=subprocess.STDOUT,startupinfo=startup);processes.append(proc);return proc
     try:
-        common=[str(exe),'-batchmode','-screen-width','1280' if a.capture else '640','-screen-height','720' if a.capture else '360','-screen-fullscreen','0','-tp-map','SaBubong','-tp-autostart','3']
+        common=[str(exe),'-batchmode','-screen-width','1280' if a.capture else '640','-screen-height','720' if a.capture else '360','-screen-fullscreen','0','-tp-map','SaBubong','-tp-autostart','3','-tp-roofcase',a.case]
         if a.overlap_tag:common+=['-tp-rooftag']
         def peer(name,route,role=None):
             capture=['-tp-roofshots',str(folder/(name+'-frames'))] if a.capture and name!='host' else []
@@ -100,18 +131,18 @@ def main():
         rejoined=None;deadline=time.monotonic()+100
         while host.poll() is None and time.monotonic()<deadline:
             if a.rejoin and rejoined is None:
-                try:lost=any(not r['shoeActive'] for r in rows(folder/'owner.csv'))
+                try:lost=any(r.get('floating',0) if a.case=='swim' else not r['shoeActive'] for r in rows(folder/'owner.csv'))
                 except (OSError,ValueError,TypeError):lost=False
                 if lost:
                     observer.terminate();observer.wait(timeout=8)
                     rejoined=peer('rejoined',['-tp-join','127.0.0.1','8960'],'observer')
-                    print('Rejoining observer during the ten-second slipper loss',flush=True)
+                    print('Rejoining observer during '+('active swimming' if a.case=='swim' else 'the ten-second slipper loss'),flush=True)
             time.sleep(.5)
-        result=evaluate(folder,a.rejoin,a.overlap_tag)
+        result=evaluate_swim(folder,a.rejoin) if a.case=='swim' else evaluate(folder,a.rejoin,a.overlap_tag)
         if a.capture:
             validate_capture(folder,a.rejoin,result)
         dll=exe.parent/(exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll'
-        result.update(mode=a.mode,delayOneWayMs=a.delay,runtimeSha256=hashlib.sha256(dll.read_bytes()).hexdigest(),exe=str(exe))
+        result.update(mode=a.mode,case=a.case,delayOneWayMs=a.delay,runtimeSha256=hashlib.sha256(dll.read_bytes()).hexdigest(),exe=str(exe))
         (folder/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2),flush=True)
         return 0 if result['ok'] else 1
     finally:

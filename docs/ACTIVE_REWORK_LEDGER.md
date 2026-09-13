@@ -2,6 +2,38 @@
 
 ## Current execution pointer,2026-09-13 evening
 
+**Current checkpoint/build preparation:** all parent sessions collected; none
+running. Forward breaststroke vs idle/strafe/back sculling passed1/1 focused
+both-mode body/FPP check (Logs/swim-breaststroke-motion-v1.xml). Authored80clips
+for20rigs; held/empty recordings reviewed and timed MP4s encoded. Current UI
+native-picker-v2 passed2/2, source c7f8189e, new screenshots reviewed; agent still
+fixing Back visibility, long portrait labels and preview composition. Figma is
+at its free MCP allowance, so native UI continues with saved source/IDs.
+
+Net pool scenario is implemented but UNRUN. New -tp-roofcase maps to existing
+NetRoofProbe.Active tournament reset; targeted launch audit clean29switches and
+wire audit clean66messages. Next fresh internal Windows build, then actual
+tools/net_roof_matrix.py --case swim (both modes, then delayed/rejoin as needed)
+and current outer-rail fall path. Preserve named profiles. No Desktop update.
+
+**Newest live state:** pushed parent map checkpointc8ae2abe. Primary HEAD70586a8b
+now also includes native UI picker/theme source and34reviewed portraits, through
+agent80442a25; old reskin is superseded. Native picker tests passed2/2,
+Logs/ui-native-picker-v1.xml/.log, but agent found missing glyph rendering and
+is correcting it. Pending agent4817aceb includes main Darumadrop usage and mesh
+diagnostics; run only new native fixture, not old BrandPickerTests.
+
+Owner now explicitly requires forward-only breaststroke (Minecraft-like), with
+separate floating/treading scull/kicks/bob; proper body/FPP and transition.
+Parent has implemented new shared stroke curves, direction selection, palm-based
+arm path and synchronized FPP. SwimmingAnimationAuthor is currently guarded
+session3184, Logs/swim-breaststroke-author-v1.log. Do not edit C#/imported assets
+until it exits. No fresh internal build yet: qualify this new motion before build.
+Previous whole-castv3 coverage remains evidence for the earlier motion only.
+UI agent remains the ONLY agent; owner forbids any after it completes. GF future
+replacement is long-term, not a quality exception. Darumadrop stays main even in
+scoreboard/settings; small secondary details may use a readable supporting face.
+
 **Checkpoint update:** no parent Editor/Blender/player remains running; all
 sessions below are retired. Whole-cast water/recoveryv3 passed1/1 with18people
 and both modes. Body/FPP/bracing images reviewed, exact contact/phase/eye CSV

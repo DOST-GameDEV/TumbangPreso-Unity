@@ -244,6 +244,7 @@ namespace TumbangPreso.Visual
 
         private string _current;
         public bool SwimmingMotionPlaying=>_current!=null&&System.Array.IndexOf(SwimmingMotion.Names,_current)>=0;
+        public bool ForwardSwimmingMotionPlaying=>_current=="swim"||_current=="swim-holding";
         public float SwimmingPhase
         {
             get
@@ -736,7 +737,7 @@ namespace TumbangPreso.Visual
             // while leaving the cost.
             if (_chargePosing) return _motor.HoldingSlipper ? HoldingRight : Idle;
 
-            if(_motor.IsSwimming)return SwimmingMotion.Clip(FlatSpeed>.2f&&!_motor.IsTripped,_motor.HoldingSlipper);
+            if(_motor.IsSwimming)return SwimmingMotion.Clip(SwimmingMotion.ForwardStroke(_motor),_motor.HoldingSlipper);
 
             if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
 
@@ -1282,7 +1283,7 @@ namespace TumbangPreso.Visual
             _mixer.SetInputWeight(1, _weight);
             _current = clipName;
             _holdAtEnd = !loop;
-            _transitionSeconds = loop ? _blend : Mathf.Min(_blend,.07f);
+            _transitionSeconds = loop&&System.Array.IndexOf(SwimmingMotion.Names,clipName)>=0?.24f:loop ? _blend : Mathf.Min(_blend,.07f);
         }
 
         private void Blend()

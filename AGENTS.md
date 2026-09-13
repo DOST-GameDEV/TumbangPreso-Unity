@@ -29,6 +29,14 @@ records and contradictory historical requests never replace that pointer.
 
 ## Newest rooftop and throwing requirements, 2026-09-13
 
+**Newest swimming direction:** the owner wants a horizontal breaststroke-style
+body/arm sweep and kick ONLY when choosing to move forward, referencing Minecraft
+and the supplied swimming photo. Stopping, strafing and backward movement use
+upright treading/paddling. Match body and FPP, visible to observers, with smooth
+transitions and held-slipper handling. Do not apply the horizontal swim merely
+because there is any planar speed. Current upright screenshot was treading;
+forward-only breaststroke revision now takes priority before final pool signoff.
+
 The owner explicitly rejects the small closed/scenic pool. Enlarge it, REMOVE
 the pool fence, make it accessible, and implement actual swimming with a swimming
 animation. Swimming/body/FPP/observer support belongs to this MAP pass, not the
@@ -127,6 +135,12 @@ Keep text, shapes, layouts, theme and source art easy to edit, with clear
 view/domain boundaries and authoring documentation for her future replacement.
 Continue the UI overhaul. Relevant additional skills may be installed as needed;
 existing no-paid-work/no-additional-agent limits remain.
+
+**Newest typography clarification:** Darumadrop (Darumadrop One) remains the main
+font, including scoreboard, settings and primary controls, not only titles.
+The owner liked it and rejected how it looked when tiny. Use adequate size and
+spacing; reserve a supporting font for genuinely small/dense secondary details.
+Do not replace the main Darumadrop identity with a neutral font.
 
 The owner now authorizes a FULL UI/UX overhaul, before animations and skills.
 This supersedes earlier UI-art-low-priority and functional-only limits. Preserve
