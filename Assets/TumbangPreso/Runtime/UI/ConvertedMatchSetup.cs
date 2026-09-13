@@ -58,6 +58,11 @@ namespace TumbangPreso.UI
                 return true;
             }
 
+            if (_queueCard != null && _queueCard.IsQueueing)
+            {
+                ScreenTakeover.ConsumeEscape(); _queueCard.CancelSearch(); return true;
+            }
+
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked) net.Stop();
 
@@ -1849,6 +1854,7 @@ namespace TumbangPreso.UI
         private void SelectMode(LobbyMode mode)
         {
             if (_chrome != null && _chrome.Mode == mode) return;
+            if (_queueCard != null && _queueCard.IsQueueing) _queueCard.CancelSearch();
 
             bool lobby = mode != LobbyMode.Practice;
 

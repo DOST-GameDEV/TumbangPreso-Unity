@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,7 +38,7 @@ namespace TumbangPreso.UI
     /// online row carries a map name and a count; both are arbitrary width, and legacy `Text`
     /// either wraps them out of the row or draws them past it. See `MenuKit.Fit`.
     /// </summary>
-    public sealed class LobbyJoinPanel : MonoBehaviour
+    public sealed partial class LobbyJoinPanel : MonoBehaviour
     {
         /// <summary>How many rows each browser draws. Four is what the old screen drew and it is
         /// the number that fits the card without scrolling.</summary>
@@ -112,7 +113,9 @@ namespace TumbangPreso.UI
             return panel;
         }
 
-        private void Construct()
+        private void Construct() => ConstructNative();
+
+        private void ConstructLegacyReference()
         {
             var scrim = gameObject.AddComponent<Image>();
 
@@ -265,8 +268,8 @@ namespace TumbangPreso.UI
             if (_lanGroup != null) _lanGroup.SetActive(!online);
             if (_onlineGroup != null) _onlineGroup.SetActive(online);
 
-            PaintChip(_nearbyChip, !online);
-            PaintChip(_onlineChip, online);
+            if (_nativeJoin) { SelectNativeSource(_nearbyChip, !online); SelectNativeSource(_onlineChip, online); }
+            else { PaintChip(_nearbyChip, !online); PaintChip(_onlineChip, online); }
         }
 
         /// <summary>⚠️ SURFACE AND WEIGHT, NEVER HUE. The same rule the lobby tabs and the sign-in
@@ -604,11 +607,13 @@ namespace TumbangPreso.UI
 
         public void Close()
         {
+            if (_nativeJoin && !_nativeCompleting) CancelNativeAttempt(true);
             gameObject.SetActive(false);
         }
 
         private void OnEnable()
         {
+            if (_nativeJoinCanvas != null) _nativeJoinCanvas.gameObject.SetActive(true);
             Opened?.Invoke();
             if (_net == null) return;
 
@@ -618,6 +623,8 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            if (_nativeJoin && !_nativeCompleting) CancelNativeAttempt(false);
+            if (_nativeJoinCanvas != null) _nativeJoinCanvas.gameObject.SetActive(false);
             Closed?.Invoke();
             if (_net == null) return;
 
@@ -633,6 +640,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Refresh()
         {
+            if (_nativeJoin) { RefreshNative(); return; }
             // ⚠️ THE LEAVE CONTROL APPEARS ONLY WHEN THERE IS SOMETHING TO LEAVE. See `Leave`:
             // an offline player has no session, and this card is opened from the lobby in both
             // states.
@@ -785,6 +793,7 @@ namespace TumbangPreso.UI
 
         private void Report(string message)
         {
+            if (_nativeJoinStatus != null) _nativeJoinStatus.text = message;
             Status?.Invoke(message);
         }
 
@@ -803,6 +812,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void Join()
         {
+            if (_nativeJoin) { await NativeJoinAsync(_entry?.text); return; }
             if (_busy) return;
 
             string typed = _entry == null || string.IsNullOrWhiteSpace(_entry.text)
@@ -830,6 +840,7 @@ namespace TumbangPreso.UI
             finally
             {
                 _busy = false;
+                if (_nativeJoin && this != null) RefreshNative();
             }
         }
 
@@ -844,6 +855,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public async System.Threading.Tasks.Task<bool> AutomationJoin(string typed)
         {
+            if (_nativeJoin) return await NativeJoinAsync(typed);
             if (_entry != null) _entry.text = typed;
 
             bool joined = await Connect(typed);
@@ -857,8 +869,9 @@ namespace TumbangPreso.UI
             return true;
         }
 
-        private async System.Threading.Tasks.Task<bool> Connect(string typed)
+        private async System.Threading.Tasks.Task<bool> Connect(string typed, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             // ⚠️ AN ADDRESS IS ANYTHING THAT LOOKS LIKE ONE. A join code is four characters out
             // of `LobbySession.JoinCodeAlphabet`, which has no dot and no colon in it, so this
             // test cannot swallow a code. Transcribed from the old screen.
@@ -869,7 +882,9 @@ namespace TumbangPreso.UI
             {
                 Report($"Connecting to {typed}...");
 
-                if (await _net.StartClientAsync(typed)) return true;
+                bool connected = await _net.StartClientAsync(typed, cancellationToken: cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (connected) return true;
 
                 Report(Reason($"Could not reach {typed}."));
                 return false;
@@ -885,6 +900,7 @@ namespace TumbangPreso.UI
             Report($"Looking up {code}...");
 
             var resolved = await _net.Query.ResolveCodeAsync(code);
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (this == null) return false;
 
@@ -905,7 +921,9 @@ namespace TumbangPreso.UI
             {
                 Report($"Joining {match.HostName} at {match.Address}:{match.Port}...");
 
-                if (await _net.StartClientAsync(match.Address, match.Port)) return true;
+                bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (connected) return true;
 
                 Report(Reason($"Could not reach {match.HostName} at {match.Address}:{match.Port}."));
                 return false;
@@ -913,7 +931,9 @@ namespace TumbangPreso.UI
 
             Report($"Joining {match.HostName} online...");
 
-            if (await _net.StartRelayClient(match.RelayCode)) return true;
+            bool relayConnected = await _net.StartRelayClient(match.RelayCode, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (relayConnected) return true;
 
             // ⚠️ `docs/TODO.md` § 65.4 IS OPEN AND THIS IS WHERE IT SURFACES: the online browser
             // can offer a lobby whose Relay allocation is already gone. Moving the browser onto

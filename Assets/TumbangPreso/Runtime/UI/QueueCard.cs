@@ -36,7 +36,7 @@ namespace TumbangPreso.UI
     /// ROW kit and this is not a settings-shaped screen, so it uses the same discipline rather
     /// than the same file: one `VerticalLayoutGroup`, `LayoutElement` heights, no offsets.
     /// </summary>
-    public sealed class QueueCard : MonoBehaviour
+    public sealed partial class QueueCard : MonoBehaviour
     {
         /// <summary>
         /// ⚠️ 560 UNITS IS THE TAYA SENTENCE AT 18 UNITS OVER TWO LINES PLUS A 24-UNIT MARGIN
@@ -210,7 +210,7 @@ namespace TumbangPreso.UI
             rect.anchorMin = new Vector2(0.5f, 1.0f);
             rect.anchorMax = new Vector2(0.5f, 1.0f);
             rect.pivot = new Vector2(0.5f, 0.0f);
-            rect.anchoredPosition = new Vector2(0.0f, PaperKit.Gap);
+            rect.anchoredPosition = new Vector2(0.0f, TumpUiTheme.Current.Gap);
             rect.sizeDelta = new Vector2(DockedWidth, CardHeight);
 
             go.AddComponent<LayoutElement>().ignoreLayout = true;
@@ -255,14 +255,16 @@ namespace TumbangPreso.UI
             // wrong place on the screen, and no probe in this repository looks at that.
             var go = new GameObject("QueueCard", typeof(RectTransform));
             go.transform.SetParent(parent, false);
-            MenuKit.Stretch((RectTransform)go.transform, 0.0f);
+            TumpUiFactory.Stretch((RectTransform)go.transform);
 
             var card = go.AddComponent<QueueCard>();
             card.Construct();
             return card;
         }
 
-        private void Construct()
+        private void Construct() => ConstructNativeQueue();
+
+        private void ConstructLegacyReference()
         {
             _queue = Matchmaker.Ensure();
             _queue.Changed += Refresh;
@@ -576,6 +578,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Refresh()
         {
+            if (_nativeQueue) { RefreshNativeQueue(); return; }
             if (_queue == null) return;
 
             bool queueing = _queue.IsQueueing;
@@ -666,6 +669,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            ScreenTakeover.Unregister(this);
             if (_queue == null) return;
 
             _queue.Changed -= Refresh;
