@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
     /// no teams — four players, one taya per round — so the board ranks four seats, not two
     /// sides. The two pip rows the original had were deleted with the teams they counted.
     /// </summary>
-    public sealed class MatchResult : MonoBehaviour
+    public sealed partial class MatchResult : MonoBehaviour
     {
         private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
 
@@ -137,6 +137,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
 
@@ -150,7 +151,7 @@ namespace TumbangPreso.UI
             RestoreTime();
         }
 
-        private void OnDestroy() => RestoreTime();
+        private void OnDestroy() { RestoreTime(); ScreenTakeover.Unregister(this); }
 
         /// <summary>Undoes this board's own pause, and only its own.</summary>
         private void RestoreTime()
@@ -229,6 +230,7 @@ namespace TumbangPreso.UI
             }
 
             PlayTheWin();
+            if (_nativeResult) PresentNativeResult(winningSlot);
         }
 
         /// <summary>
@@ -315,7 +317,8 @@ namespace TumbangPreso.UI
                 int points = m.ScoreFor(slot);
                 bool tiedAtTop = points == topScore;
 
-                Color colour = tiedAtTop ? UiTheme.Highlight : UiTheme.Cream;
+                Color colour = _nativeResult ? (tiedAtTop ? TumpUiTheme.Current.Brick : TumpUiTheme.Current.DeepOlive)
+                    : tiedAtTop ? UiTheme.Highlight : UiTheme.Cream;
 
                 cells[0].text = drawn && tiedAtTop ? "=" : $"{i + 1}";
                 cells[1].text = NameFor(slot);
@@ -331,7 +334,7 @@ namespace TumbangPreso.UI
                 // the name string is a name that sorts, measures and truncates differently from
                 // the one above it, and `PlaceCell` sizes every column from a fixed width.
                 cells[3].text = TitleFor(slot);
-                cells[3].enabled = !string.IsNullOrEmpty(cells[3].text);
+                cells[3].enabled = !_nativeResult && !string.IsNullOrEmpty(cells[3].text);
 
                 foreach (var c in cells) c.color = colour;
             }
@@ -366,6 +369,7 @@ namespace TumbangPreso.UI
                 ? "  ·  SAVED ON THIS MACHINE, WILL UPLOAD"
                 : "";
 
+            _lastLine = line; _lastRecord = record;
             ShowProgression(career?.LastAward, career?.Profile);
 
             string clutch = Core.MatchRecordRules.IsClutch(record, line.Slot) ? "  ·  CLUTCH" : "";
@@ -398,6 +402,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void ShowProgression(Core.XpAward award, Core.PlayerProfile profile)
         {
+            if (_nativeResult) { NativeProgression(award, profile); return; }
             if (_xpHeadline == null) return;
 
             bool show = award != null && profile != null;
@@ -607,7 +612,9 @@ namespace TumbangPreso.UI
             return string.Join(" · ", names);
         }
 
-        private void Build()
+        private void Build() => BuildNativeResult();
+
+        private void BuildLegacyReference()
         {
             var canvasGo = new GameObject("ResultCanvas");
 
@@ -782,6 +789,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void RefreshAddFriends()
         {
+            if (_nativeResult) { NativeRecentPlayers(); return; }
             if (_addStack == null) return;
 
             for (int i = _addStack.transform.childCount - 1; i >= 0; i--)
