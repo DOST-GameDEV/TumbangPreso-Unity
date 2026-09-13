@@ -68530,7 +68530,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba385a2ef712dc4abab15f0bc5b882b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.EnvColourPass
-  _preparedForPlayer: 0
 --- !u!4 &2114035500
 Transform:
   m_ObjectHideFlags: 0

@@ -1,0 +1,75 @@
+using System;
+using TumbangPreso.Visual;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace TumbangPreso.EditorTools.MapKit
+{
+    /// <summary>Prepare only build-scene copies, before Unity's static batching.</summary>
+    public sealed class SceneryBatchPreparation : IProcessSceneWithReport
+    {
+        private static bool _baselineBuild;
+        public int callbackOrder => 0;
+
+        public static void BuildEvidenceBaseline()
+        {
+            // Separate process/output, used to compare the original player path
+            // with identical diagnostics. Does not alter saved scenes/settings.
+            _baselineBuild=true;
+            GameBuilder.BuildWindows();
+        }
+
+        public void OnProcessScene(Scene scene, BuildReport report)
+        {
+            if (_baselineBuild || report == null || !BuildPipeline.isBuildingPlayer) return;
+            foreach (var root in scene.GetRootGameObjects())
+                foreach (var palette in root.GetComponentsInChildren<EnvColourPass>(true))
+                    Prepare(palette);
+        }
+
+        public static int Prepare(EnvColourPass palette)
+        {
+            var dressing = palette.transform.Find("Dressing") ?? palette.transform;
+            int fixedMeshes = 0;
+            foreach (var renderer in dressing.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                var flags = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
+                bool fixedMesh = CanBatch(renderer, dressing);
+                GameObjectUtility.SetStaticEditorFlags(renderer.gameObject, fixedMesh
+                    ? flags | StaticEditorFlags.BatchingStatic
+                    : flags & ~StaticEditorFlags.BatchingStatic);
+                if (fixedMesh) fixedMeshes++;
+            }
+            Debug.Log($"[SceneryBatchPreparation] {palette.name}: {fixedMeshes} fixed meshes prepared before player batching.");
+            return fixedMeshes;
+        }
+
+        public static bool CanBatch(MeshRenderer renderer, Transform dressing)
+        {
+            if (!renderer.enabled || !renderer.gameObject.activeInHierarchy || renderer.HasPropertyBlock()) return false;
+            var mesh = renderer.GetComponent<MeshFilter>()?.sharedMesh;
+            if (mesh == null || mesh.vertexCount == 0) return false;
+            var materials = renderer.sharedMaterials;
+            if (materials.Length == 0) return false;
+            foreach (var material in materials)
+                if (material == null || material.renderQueue >= 3000 ||
+                    string.Equals(material.GetTag("DisableBatching", false), "true", StringComparison.OrdinalIgnoreCase)) return false;
+
+            // Static on an imported prefab root does not automatically mark its
+            // mesh children. Conversely, cloth/support groups must never freeze
+            // LaundryMotion's cloned/deformed meshes or the old Sampay sway.
+            for (var node = renderer.transform; node != null && node != dressing; node = node.parent)
+            {
+                if (node.name.StartsWith(EnvColourPass.WindPrefix, StringComparison.Ordinal) ||
+                    node.GetComponent<Animator>() != null || node.GetComponent<Animation>() != null ||
+                    node.GetComponent<Rigidbody>() != null) return false;
+                foreach (var behavior in node.GetComponents<MonoBehaviour>())
+                    if (behavior != null && !(behavior is AirborneByDesign) && !(behavior is EnvColourPass)) return false;
+            }
+            return true;
+        }
+    }
+}

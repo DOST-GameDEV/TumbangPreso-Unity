@@ -1,0 +1,2 @@
+Native player world-camera baseline1920x1080 HDR, four parked players. Not worst-case combat FPS. Ambient life stays active.
+NVIDIA GeForce RTX 4050 Laptop GPU / Direct3D12 / 13th Gen Intel(R) Core(TM) i5-13420H

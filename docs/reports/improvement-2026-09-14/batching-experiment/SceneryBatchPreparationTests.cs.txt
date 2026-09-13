@@ -1,0 +1,61 @@
+using NUnit.Framework;
+using TumbangPreso.EditorTools.MapKit;
+using TumbangPreso.Visual;
+using UnityEditor;
+using UnityEngine;
+
+namespace TumbangPreso.Tests
+{
+    public sealed class SceneryBatchPreparationTests
+    {
+        [Test]
+        public void ChildBatchFlagsPreserveOriginalMaterialsAndWorldGeometry()
+        {
+            var root = new GameObject("TestMap");
+            var dressing = new GameObject("Dressing"); dressing.transform.SetParent(root.transform);
+            var group = new GameObject("FixedFacade"); group.transform.SetParent(dressing.transform);
+            var solid = GameObject.CreatePrimitive(PrimitiveType.Cube); solid.transform.SetParent(group.transform);
+            solid.transform.localPosition = new Vector3(4, 2, 7);
+            var source = new Material(Shader.Find("Standard"));
+            var renderer = solid.GetComponent<MeshRenderer>(); renderer.sharedMaterial = source;
+            var palette = root.AddComponent<EnvColourPass>();
+            Material prepared = null;
+            try
+            {
+                var before = renderer.bounds; var collider = solid.GetComponent<Collider>();
+                Assert.AreEqual(1, SceneryBatchPreparation.Prepare(palette));
+                prepared = renderer.sharedMaterial;
+                Assert.AreSame(source,prepared,"Build preparation must preserve the original material/shader vertex contract.");
+                Assert.True(GameObjectUtility.AreStaticEditorFlagsSet(solid, StaticEditorFlags.BatchingStatic));
+                Assert.AreEqual(before, renderer.bounds); Assert.AreSame(collider, solid.GetComponent<Collider>());
+                SceneryBatchPreparation.Prepare(palette);
+                Assert.AreSame(prepared, renderer.sharedMaterial, "Repeated player preparation must not clone/repaint batch materials.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(root); Object.DestroyImmediate(source);
+                if (prepared != null && prepared != source) Object.DestroyImmediate(prepared);
+            }
+        }
+
+        [Test]
+        public void AnimatedClothAndPhysicsDescendantsStayOutsideFixedBatches()
+        {
+            var dressing = new GameObject("Dressing");
+            var parent = new GameObject("Resident laundry"); parent.transform.SetParent(dressing.transform);
+            var child = GameObject.CreatePrimitive(PrimitiveType.Cube); child.transform.SetParent(parent.transform);
+            var renderer = child.GetComponent<MeshRenderer>();
+            try
+            {
+                Assert.True(SceneryBatchPreparation.CanBatch(renderer, dressing.transform));
+                var motion = parent.AddComponent<LaundryMotion>();
+                Assert.False(SceneryBatchPreparation.CanBatch(renderer, dressing.transform));
+                Object.DestroyImmediate(motion); parent.name = "Sampay_test";
+                Assert.False(SceneryBatchPreparation.CanBatch(renderer, dressing.transform));
+                parent.name = "PhysicsProp"; parent.AddComponent<Rigidbody>();
+                Assert.False(SceneryBatchPreparation.CanBatch(renderer, dressing.transform));
+            }
+            finally { Object.DestroyImmediate(dressing); }
+        }
+    }
+}

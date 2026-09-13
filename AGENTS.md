@@ -35,6 +35,12 @@ do not default to polling/reviewing the UI agent. Agent owns its own design,
 implementation and critique; parent provides bounded integration/qualification.
 Only a demonstrated shared blocker justifies interrupting parent implementation.
 
+For rendering/performance work, capture a matched ORIGINAL player image and real
+render counters before changing the player path. Editor pictures alone are not
+a native baseline. Separate independent variables (e.g. batching flags vs material
+baking) and batch diagnostic variants into one run. Reject visual regressions and
+non-repeatable timing gains; do not keep an optimization because work went into it.
+
 **Newest bird scope clarification:** the owner permits birds to pass through
 scenery during flight. Prioritize appealing motion and reliably flying away when
 a player approaches. Do not spend time perfecting bird collision avoidance or

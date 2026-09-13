@@ -330,11 +330,15 @@ roof fall, then push up with convincing weight/contact. Cute native style;
 body/FPP/observer timing matches accepted recovery and restored control. This
 belongs to current MAP work alongside swimming, not the later animation queue.
 
-**Current continuation:** owner cancelled handoff; continue this chat. Maps first,
-full UI next, animations/skills afterward. Accessible swimming source and80clips
-exist but are unqualified; pool support failed7/8checks. Repair actual shell join,
-then update stale closed-pool/single-edge tests, swimming/FPP/observer/route/network
-coverage. Current plan: [EXECUTION_PLAN.md](EXECUTION_PLAN.md). Larger scope open.
+**Current continuation, Sep14:** maps/graphics first while the sole UI agent
+implements native UI independently. Parent must actively implement its own work,
+not become a UI monitor; integrate/test UI in bounded batches. Only related tests,
+never routine full suites. Pool/life/recovery now have completed focused and real
+network evidence; see newest EXECUTION_PLAN, not old failed counts below. Graphics
+batching/court readability are in progress, with a native outline/geometry visual
+artefact investigation open. Owner will request a later PC handoff; when asked,
+COMMIT AND PUSH FIRST, then provide full continuation/PDF/logo/current state.
+Continue here until that explicit request. No Desktop rebuild now.
 
 **Ambient life expansion,2026-09-13 (OPEN):** add cute moving cats and dogs to the
 OTHER street maps, not the condo roof. Use local aspin/askal mixed-breed forms and

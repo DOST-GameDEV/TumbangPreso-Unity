@@ -1,299 +1,227 @@
 # Active execution plan
 
-Current source state,2026-09-13 late evening: maps/animals/resident/material
-checkpointc8ae2abe pushed. New native UI + accepted34portraits integrated through
-agent4817aceb (primaryc7f8189e), pending new-native icon/font rerun. First native
-picker run passed2/2 but exposed missing symbols in images; not final acceptance.
-Figma Starter MCP allowance exhausted; no paid upgrade/bypass. Agent continues
-native editable Unity UI. Figma20:2palette/21:2slap control remain saved, further
-Figma pages/imports are externally blocked, not a reason to stop game UI.
+## Parent resume first — explicit owner correction Sep14
 
-Forward-only breaststroke source is authored on20rigs/80clips after fixing one
-C# multi-declarator compile error. Active parent session69026 runs only the new
-directional swim/scull body+FPP fixture, Logs/swim-breaststroke-motion-v1.xml/.log.
-No source/imported edits during it. NativeUI fixture rerun follows. Parent also
-prepared an opt-in real-process pool scenario in NetRoofProbe/net_roof_matrix;
-it has NOT run or been built. New --case swim needs fresh Windows internal build.
-Shoe floats/pickup/step exit/observer rejoin are acceptance criteria; old fall
-matrix remains separate. No Desktop update or new agents.
+Do not turn into a UI watcher after compaction. Parent actively implements maps/
+graphics, then its remaining gameplay/animation work. UI agent owns its design,
+implementation and critique; parent gives short coherent integration/validation
+windows, then resumes a NAMED parent task. No more agents ever in this task.
 
-**Newest active map task:** owner specifies breaststroke-style horizontal motion
-ONLY when moving forward, Minecraft-like distinction. Idle/strafe/backward use
-upright treading; body/FPP/held slipper/observer transitions must match. Current
-swim motion was driven by any planar speed, so revise selection and stroke.
-Reference C:/Users/Matthew/AppData/Local/Temp/codex-clipboard-203b4e93-d79c-4028-92d6-dafdb4676c85.png.
-The single UI agent remains the only exception; owner again forbids spawning
-any agents after it finishes. Parent continues non-UI alone.
+Quality first, efficient execution: parallel independent reads/prep/tools, work
+while builds run, only related tests. NO routine full EditMode/PlayMode suites.
+One Editor at a time, no C#/imported edits during its run. Every launch uses
+python tools/run_unity_guarded.py with -tp-profile owner-review-editor. Main
+profiles and exact shared Editor bindings/touch prefs are protected by the guard.
 
-**Latest UI correction:** owner explicitly prohibits reusing legacy UI builders.
-The single agent is replacing the conservative reskin with new TumpUiFactory,
-editable TumpUiTheme and new empty-root views, keeping old source inactive and
-reusing only nonvisual domain behavior. Portrait/icon-led choices and the full
-supplied logo/palette must be visibly expressed. Reskin batches are superseded;
-do not spend another acceptance pass on them. Girlfriend's eventual replacement
-UI is a long-term plan, not soon and not a reason to lower quality now. Preserve
-editable text/shapes/layout/source art and document how to change them. Agent
-may install relevant missing skills; no extra agents/history forks/paid work.
+Primary C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
+ASTRAReworks only; current HEAD290f829e, remote last074748c9 (fetch01:00 showed
+16ahead/0behind). Never reset to these hashes. Separate GitHub checkout/main off
+limits. Parent sole integrator/pusher. No Desktop update now. User will ask for
+a later PC handoff: COMMIT AND PUSH FIRST when asked, then exact continuation/
+commit/PDF/logo/source/remaining-work/reset-state prompt. Continue here until then.
 
-**Current status overrides historical progress below:** primary3c835d05 contains
-three integrated UI-agent batches; last pushed6ef38b02. UI preparationv2 is the
-only running parent Editor (session22404). Parent dirty water/ambientv7 work
-remains separate. Streetv7 and birdv5 have been imported; their current visual,
-contact and rare-dog-pause qualification is next. Native cast/animal size study
-was reviewed and shows the intended smaller cat relationship. UI agent continues
-settings/profile/HUD in its isolated clone; GameSettings.ReducedUiMotion field
-addition is reserved to it. Details and exact logs: newest ACTIVE_REWORK_LEDGER.
+## Immediate parent task,01:19Manila
 
-## Active UI subagent
+Implement the documented SAME-HERO CHANGED-LOADOUT network defect; do not become
+UI monitor. Parent owns MatchRpc + HeroAbilitySystem/ability tuning helper. Agent
+owns NetSession join cancellation; do not edit NetSession. Preserve current Kit
+instance/readiness/ultimate/custom state for same-hero sidegrade refresh; reset
+only authored loadout tuning before applying the new variant, so repeated sync
+never stacks modifiers or resets live state. Trace actual SyncPicks and seat-build
+arrival order and cover both local/remote identities. UI must not compensate.
 
-The single authorized agent is `/root/ui_overhaul`, GPT-6 Astra HIGH, spawned
-with fork_turns=none and only a focused UI brief. Isolated checkout:
-C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-UI,
-ASTRAReworks at6ef38b02 when cloned. Its push URL is deliberately disabled.
-Parent remains sole integrator/pusher, owns maps/non-UI, and coordinates Unity
-validation. No other agents or delegated tasks are authorized. Do not spawn a
-replacement after compaction; use the existing agent and read its messages.
-UI agent owns the full overhaul, explicitly including HUDs/in-game UI, all
-contexts/navigation/readability, Figma and source assets. It must not launch
-Unity uncoordinated or edit primary. Its status belongs in UI_EXECUTION_STATUS.md
-in its checkout. User wants intuitive, thorough, coherent UI without overload.
+Map graphics/court batch decision is SECURED: retain original rendering path.
+Bayan paint fix290f829e committed/native-visible: eight coplanar marks now
+.103-.105m above.102paving, same x/z footprints, stable repeated authoring.
+Baking final materials before player batching introduced ghost outlines; reverted.
+Flags-only preserved appearance but showed no consistent speed gain (Ilalim
+Balanced5.506ms vs repeat original4.970ms). New batching policy was ALSO REMOVED.
+Inert experiment source/evidence is in docs/reports/improvement-2026-09-14;
+SceneryBatchPreparation and its tests are NOT live code. EnvColourPass and
+WorldOutline exact originals. Do not resurrect experiments or claim18.5%gain.
+No current Unity/native process is running. All earlier sessions retired.
 
-**Newest parallel-work decision:** owner explicitly authorizes ONE GPT-6 Astra
-HIGH UI subagent, created with no history fork and a complete focused UI brief.
-No child/further subagents. It owns UI in an isolated ASTRAReworks checkout;
-parent continues maps/non-UI and integrates/pushes. Coordinate Unity access; no
-two tasks modifying this checkout. This supersedes serial UI preparation while
-preserving map priority here. Record the actual agent ID/workspace after spawn.
+Reusable WorldGraphicsProbe/graphics_review.py now provide four-map/preset native
+HDR->sRGB world captures and real SetPass/Triangles counters. Draw Calls unavailable
+in release; batchmode doesn't render, so runner uses a hidden normal player.
+Temporary outline/mask/MSAA isolation branches removed after diagnosis. Current
+original-path artifact Builds/GraphicsOriginalPath/TumbangPreso.exe + Logs/native-
+graphics-original-path-v1 contains approved render path and court fix; runtime hash
+76141431c997497cf1b3bca28c88e3e9cddad91e99e330ed9f5dcfad9b2d2433.
+Still no Desktop update. These fixed-view laptop measurements do not prove lower-
+spec or worst-case combat FPS. Keep baseline and exact limitations in report.
 
-**Newest animal direction:** owner rejects current cat/dog similarity, oversized
-cats and lack of cuteness. Redesign actual proportions/silhouettes, not just color.
-Add rare brief dog leg-lift/urination at trees/surfaces, long random cooldowns and
-player-proximity interruption. These are current map tasks. AMBIENT_LIFE_PLAN is
-the detailed source; current models are not accepted final art.
+Parent pending checkpoint includes native probe/runner, tournament opt-in
+registration, Editor map graphics baseline, source/pref guard docs/evidence.
+Guard already31e02e4c and frame pacing15a76b5a validated8/8+settings UI3/3; court
+repair290f829e. Map implementations/swim/life/network evidence remains below.
+Future motion/skills makeover still follows full UI; this current loadout sync
+repair is correctness work on existing selection behavior.
 
-**Latest bird clarification:** flight through scenery is allowed; prioritize
-appealing birds and reliable fleeing from nearby players. Do not block or prolong
-the map pass for exact bird obstacle avoidance. Ground pets still need sane routes.
+## Conditional single-reset authority — no redemption yet
 
-## Current instruction and verification policy
+Only parent may redeem ONE existing credit at0-1%remaining, NEVER earlier.
+Private Logs/one-reset-authorization.json contains allowed earliest Oct4credit,
+forbidden Oct5credit, SINGLE stored idempotency key and spent/cancelled status.
+Never generate another attempt after success/alreadyRedeemed; ban every second
+redemption. Cancel unused authority if external reset refills allowance90-100%.
+Latest fresh core check2%remaining,2credits available. Spark/null not eligibility.
+Tool has no credit selector and earliest policy unverified. In-app ChatGPT usage
+page is logged out; async user question asks them to sign in for exact-credit UI
+selection. No answer yet. Browser tab8 in browser1/usageTab binding was logged out;
+read documentation after compaction before browser use. No purchase, no guessed
+selection, no Oct5fallback. This issue must not stall independent game work.
 
-CONTINUE IN THIS CHAT. The owner cancelled the handoff, is sleeping, and asks for
-the full improvement scope to be completed. MAPS FIRST -> FULL UI/UX -> throwing,
-movement, all skills/effects/animation -> remaining graphics/network/TODO and
-tournament spectator improvements. Swimming and believable roof-fall recovery
-animation are explicitly part of current MAP work. The larger goal remains OPEN.
+## Sole UI agent and newest creative requirements
 
-Use focused tests/checks for the feature being changed. NO routine full EditMode
-or full PlayMode suites. This is the owner's newest explicit optimization and
-supersedes older blanket full-suite/twice mandates. Batch coherent implementation,
-review actual motion/appearance, run only related regressions, and avoid repeating
-passed checks without new changes/failures. Parallelize independent tools/model
-authoring/reads; never concurrent Editors or C#/imported edits during a Unity run.
+Exactly one agent: /root/ui_overhaul, GPT-6 Astra HIGH, fork_turns=none. It received
+a focused complete brief, never the entire chat. No child agents or more agents
+after it finishes. Its isolated checkout is ../TumbangPreso-UI, ASTRAReworks,
+local origin with push disabled. It does not launch Unity; parent integrates
+specific commits and runs targeted tests. Do not spawn a replacement after compaction.
+Its status: docs/UI_EXECUTION_STATUS.md in that checkout.
 
-Only ASTRAReworks, authorized checkout:
-C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
-This continuation started from pushed dbd2344f68b59750bc060a780e61830c0e8e8792;
-read actual git HEAD/status before resuming, preserve later work, never reset to
-that parent. No main or separate Documents/GitHub checkout, subagents, paid work
-or usage resets. Every Editor uses tools/run_unity_guarded.py with
--tp-profile owner-review-editor. Preserve profiles/saves/IDs. Controller device
-ownership remains separate. Leave the current Desktop player alone.
+The owner REJECTED the conservative reskin. All UI must use NEW native builders,
+empty-root views and editable components. No reuse/reskin of old UI builders or
+visual hierarchies. Old source stays inactive, functionality/data preserved through
+nonvisual adapters. New TumpUiFactory/TumpSurface/TumpUiTheme and views are underway.
+The complete UI includes menus, settings, profile, join/lobby, loadouts, skills,
+HUD, training, prompts, pause/results, touch/controller presentation, nameplates,
+icons and spectator information. Do not settle for only a title/picker theme.
 
-## Current checkpoint and immediate next steps
+NEW CONTROLLER EXCEPTION: owner explicitly likes the original controller view.
+Restore/preserve its artwork, actual button callouts and connecting lines/look.
+That approved controller screen may retain its original builder; the exception
+does not apply to other UI or permit changing controller mapping behavior.
 
-No Unity/Blender/player run remains active at this update. All prior session IDs
-are retired. Latest source and assets are being saved as a stable checkpoint;
-do not treat old live-process paragraphs in history as current work.
+Use the supplied logo and FULL palette: deep red, orange, peach/cream, yellow,
+yellow-green, olive/dark olive. Quirky hand-drawn contours, slipper/impact motifs,
+restrained waves/patterns; not generic boxes/old brown-amber controls. Actual
+character portraits and equipment thumbnails, suitable icons rather than text
+for everything, concise supporting labels/tooltips. Readability and navigation
+matter more than accumulating decoration or text. Darumadrop remains MAIN font,
+including scoreboard/settings/buttons. Give it enough size/space; supporting
+font only for truly small/dense secondary details.
 
-Sa now has a38x44m roof,7.6x16m accessible pool, physical basin/opening/steps,
-continuous jumpable outer rails, swimming, floating stock and10s off-roof stock
-loss. Existing mash recovery controls remain. Recovery now has explicit landing,
-progressive bracing and standing instead of resetting the prone root into a
-pickup gesture. Original people/models and original action/emote assets retained.
+Main menu reference: Slay the Spire's restraint, few choices, game name and a
+simple animated background showing what TUMP is. Overall layout inspiration:
+girlfriend's49-pagePDF, pages39-49 are IDEAS, not final layouts to copy. Font
+choice flexibility is now limited by explicit main-Darumadrop clarification.
+Girlfriend will eventually replace the UI, but far in the future/not soon. This
+is not a quality exception: build polished complete UI now, easy-to-edit text,
+shapes/layout/theme/art, separated domain logic and authoring docs for later use.
 
-Verified current foundations:
-- Swimmingv5:2/2, both modes, ordinary entry, treading/holding, floating pickup,
-  stair exit, normal jump-in and paired body/owner motion. FloatDepth=.9m.
- 80serialized swim clips/20rig hierarchies. Hand pose derives from measured palm;
- feet now extend behind the swimming body. Full-roster/art/effect review remains.
-- Recovery: all-fence mechanics5/5, then6/6 including owner-camera return. Latest
- contact-fit capturev3 passed1/1; drawn-bottom versus support[-.0002,+.011]m.60
- clips/20rigs. Newly added grounded-contact assertions compile but have not yet
- been rerun; the existing saved trace satisfies their thresholds. Actual capture
- is one Classic body; all18/slow-no-mash/overlap/network review remains required.
-- Water-inclusive routesv4: both modes,5976nodes/5958connected,6285clear slipper
- samples,0unreachable; actual floating-pool and edge/service pickups. Current
- float height rose.1m afterward; final combined map review should include it.
-- Sa author repeatability:0changes/2049rows; all4maps pass geometry. Core562,
- 14gating source audits and fullEdit516 passed (the fullEdit preceded final swim
- pose adjustment and was before the new focused-only owner instruction).
+Original sources, unchanged+hash manifests: ArtSource/ui/owner-brand-2026-09-13.
+Includes TUMP-moodboard-original.pdf, logo.jpg, new tump text.jpg,
+new tump text with some  texture.jpg, slipper with hit.jpg and newest exact
+palette/logo sheets. Original Downloads paths remain in source-manifest.json.
+PDF renders/contact sheets: Logs/ui-brand-review-2026-09-13. Transparent logo
+assets: Resources/UI/brand.34approved-model portrait assets now imported/reviewed;
+Sike uses its identifying upper/reverse view, no underlying model edits.
 
-Evidence: reports/improvement-2026-09-13/swimming-checkpoint.md,
-roof-recovery-motion.md and roof-swimming-evidence. Failed runs remain in Logs.
-Key logs: roof-swimming-v5.xml, roof-recovery-motion-v3.xml,
-sa-bubong-water-routes-v4.xml, roof-swim-checkpoint-repeat/report.txt.
-No exact new Windows executable or separate-process swimming proof yet.
+Figma: https://www.figma.com/design/I1snFz26WypEywfWMhF9jq.
+Starter MCP allowance is exhausted: no paid upgrade/reset/bypass. Further Figma
+screens/uploads externally blocked; native Unity work continues. Latest palette
+collection20:2/slap component21:2 and earlier IDs retained in source JSON. Do not
+call old rectangular Figma studies the final new direction. Relevant skills may
+be installed as needed, no extra agents/paid work. Image generation is allowed
+for suitable original backgrounds; preserve original logo and editable UI content.
 
-NEXT IMPLEMENTATION, not another blanket test sweep:
-1. Improve pool water appearance/local contact response and sensible rooftop
- resident details. Preserve court, readable routes and swimming entry/exit.
-2. Import/review native animals beside the cast, then implement sparse ambient
- visits/movement/fleeing using private cosmetic randomness and real clear routes.
-3. Complete all-map ordinary-play/architecture/placement/quality-cost critique;
- address remaining weak details, contacts and inconsistent lighting/materials.
-4. Finish relevant whole-cast swimming/recovery and ability/interruption checks,
- then current separate-process roof/water behavior in an internal Windows build.
- The old NetRoofProbe staging was updated for the new rail, but is not reverified.
-5. Save/push stable batches and continue to full UI when maps are actually done.
+## Current map, animation and network evidence
 
-## Active map and ambient-life requirements
+Pushed map/life/material checkpointc8ae2abe and forward swimming30971b59.
+Bayan retains accepted civic layout, varied trees, textured paving and town depth.
+Eskinita has tighter substantial homes/supported redesigned sampayan. Ilalim
+has grounded logical shop/stall placements, different sign treatments/painted
+Bawal, road continuity. Sa is38x44m, pool7.6x16m, real basin/steps, no pool fence,
+all outer rails jumpable. Resident pots/pails/basins/laundry/flush painting; birds
+on all4maps, cats/aspins on the3street maps only. StreetHype and pointless main
+STANDARD RULES control removed; Custom Game retained. No other gameplay deletion.
 
-Sa: no pool fence; actual swimming seen in FPP and by others; every outer edge
-fenced but jumpable; real falls and visible struggle/mash get-up; about10s penalty
-for off-roof slippers, then safe retrievable return. Pool stock floats/retrieves.
-Modern Filipino condo identity through plausible resident plants/pails/seating,
-laundry/services and selective original drawings. No random clutter or new verbs.
+Animal source streetstudy-v7/birdstudy-v5: smaller compact cats, distinct aspin
+faces/ears, all original editable rigs. Real idle/walk/run/peck/fly, private random
+visits, reliable approach fleeing. Birds may pass scenery during flight. Ground
+routes have full-body clearance. Rare dog leg-lift surface pause,90-180s initial
+wait/120-240s cooldown, interrupted by player. Ambientv7 passed3/3, all4maps,
+6groundanimals/12stagedbirdapproaches/3dogpauses. Gait gaps[-.006,+.0023]m.
+Resident authorv2/all-map geometry0findings. PoolCeramic preserved from NearFade
+replacement;14/14focused tests and actual water tiles now visible.
 
-Eskinita: tighter neighborhood, supported redesigned sampayan, substantial houses.
-Bayan: KEEP current civic layout; owner retracted rollback. Varied trees, tangible
-paving, open civic identity and connected wider town. Ilalim: logical recessed
-pisonets/vendors, distinct well-made signage, naturally surface-painted Bawal
-lettering, continuous asphalt and physically supported objects. Inspect real FPP
-and side/back/roof views for floats/intersections; technical passes are not taste.
+Forward swimming ONLY for forward travel, including forward diagonals. Sideways,
+backwards and idle use upright sculling/kicks/bob. New synchronized arm sweep,
+grouped kick and horizontal body/head compensation; held grip preserved. Body/FPP
+share phase, no physics/eye change.80clips/20rigs baked, directional both-mode
+probe1/1 and actual timed recordings passed. Earlier all18rig swim/recoveryv3
+passed1/1, but those captures precede this new stroke. Keep distinction truthful.
 
-Birds may visit the actual arena. Vary types/chance/timing/groups/destinations;
-perch/peck/fly away from approaching players. No visibly fixed schedule and no
-gameplay RNG consumption. Cats/dogs go in the OTHER3maps, not roof: cute local
-aspin/askal mixed forms and varied cats, idle/walk/run-away motion, believable
-yards/shop shade routes. No collision/scoring/pet-care controls or wall crossings.
+Fresh internal Windows30971b59 built21:54,60s, Builds/RoofReview/TumbangPreso.exe.
+Runtime DLL SHA2560ef9a459ca3525f7f1f356ba76ef26c3ce31ea564513734bda540e7bdad22d74.
+Classic3processpool passed. Hero150ms+observerrejoin passed on corrected evaluator
+of same saved trace: original falsely called eye.0972m submerged despite water.04
+and nearplane.05. Settled eye.3786m. Original failure result preserved, no runtime
+camera fix or rerun claimed. Allpeers see float/pickup/dry exit; rejoined91wet samples.
+Current railfallClassic150ms+4sstun passed:10mashes,4.2s recovery,~10s shoe return+
+pickup and independent tag timer. Named profiles restored; Desktop untouched.
+Docs/reports/improvement-2026-09-13/{ambient-life-and-residents,forward-swimming,
+roof-pool-network}.md and adjacent portable evidence hold logs/results/limits.
 
-Current original sources, not integrated or accepted in Unity:
-- MapSource/environment/ambient-life/birds/study-v2 and tools/author_roof_birds.py.
-  Maya/kalapati/fantail six-bone drafts; reduced bills/feet, folded wings need work.
-- MapSource/environment/ambient-life/street-animals/study-v4 and
-  tools/author_street_animals.py.6models,9bones, exactly idle/walk/run/alert each,
-  verified27channels per action. Cats now have distinct short muzzles; tails taper.
-  V3action accumulation bug fixed in v4; retain earlier studies as history only.
-Read AMBIENT_LIFE_PLAN. Need in-game materials, scale, gait/contact and path review.
+## UI integration state (bounded windows, not parent priority)
 
-## UI work saved for after maps
+Integrated UI through primary6bd3099d (agent80aef53d). Native pickerv3 passed2/2,
+settingsv2 passed3/3 with approved original controller restored, nameplate1/1,
+frame pacing8/8, nativeHUDv1 passed2/2, frontendv4 passed3/3. Earlier frontend
+InvalidAABB failures were zero deserialized Rects; versioned Rect YAML fixed it.
+No suppression. Old reskin/BrandPicker tests are superseded by new native views.
 
-Full quirky unified logo-led overhaul is authorized, superseding old UI-art limits.
-Calm title, few choices, subtle animated street scene; intuitive progressive flows,
-different appropriate control treatments, consistent fonts/roles and Filipino hint.
-Preserve features/data and inaccessible maker. Keyboard/controller/touch/Back/focus.
+PENDING agent commits, not yet integrated:
+- cd49e21e14850c45b95cf6d22e344125faa520fb: visible HUD portraits, grouped scores,
+  correct readable Q glyph, new can/skill icons, intermission visual refinements.
+- e1fff9165a51528edee135b2694a6972cfbc4ec8: front-end4:3layout, credits, art placement.
+- 3aaea90b63965b518361ee5d6ee97ee3ff92b600: new results/rank views/icons,2new tests.
+Later coherent UI batch: newHUD2, front-end3, results2 and one specific
+TumpNativeSettingsTests.PauseEscapeRespectsChildSettingsDiscardAndReturn case.
+Do not independently run every prior UI fixture again.
 
-Original49-page PDF plus four JPGs copied unchanged to
-ArtSource/ui/owner-brand-2026-09-13. Five hashes reverified in source-manifest.json;
-original Downloads paths remain there. PDF39-49 are ideas, not final layouts or
-instructions. Existing transparent logo imports are Resources/UI/brand. Do not
-redraw the supplied logo. Read UI_BRAND_REWORK_PLAN and retained before-code.
+Agent continues prep/lobby/join/profile/custom/queue/loading/tutorial/icons.
+Parent approved narrow optional CancellationToken plumbing in NetSession
+StartClientAsync/StartRelayClient for Back during await; agent owns those files.
+Older canceled attempt must not start transport/close a newer view/stop a newer
+connection. Default callers/topology/wire/device semantics unchanged. Parent's
+separate future MatchRpc same-hero changed-build defect is NOT agent-owned.
 
-Partial Home/Play/MenuKit/StreetUi/StreetGraphic exists. HomeFlow4/4 and screenshots
-Logs/shots-runtime/Home-brand-v1* and Play-brand-v2*. Lobby/settings/pickers/HUD/
-training/loading/pause/results and complete task-flow critique still unfinished.
-Early picker Back failure remains unisolated: scoped locator plus settle wait
-passed, but identical locator paths mean no proven production fix.
+## Remaining full game scope, not cancelled
 
-Figma connected: https://www.figma.com/design/I1snFz26WypEywfWMhF9jq
-3pages, primitive/semantic colours,5text styles,3uploaded original assets.
-No screen components/prototypes completed. IDs/hashes in brand folder figma-*.json.
-Starter3page limit, no paid upgrade/Weave or additional tooling needed now.
+- Finish graphics/scalability/settings with measured Low/High differences and
+  clear gameplay tells; map ordinary-play/visibility/effect overlaps still need
+  broader review. Keep exact artifact vs newer source distinction.
+- Full throwing/body/FPP lean, weight transfer, pullback/release/follow-through,
+  visible to peers. Signed Pektus preparation and spin-imparting release. Immediate
+  or moving shots shaky/less accurate; held/still shots settle with residual shake.
+  Reticle/motion/authoritative trajectory agree, no invisible arbitrary misses.
+- Movement/carry/sprint/backpedal/turning/foot contact/interruption and recovery
+  animation.18approved people/outfits at7c7fcb5 style retained: no rounded anatomy,
+  added thumbs, noisy voxel redesign. Read PLAY_FEEL_REWORK_PLAN/Art_Direction/ASTRA.
+- All10slippers/6cans get distinct useful roles/tradeoffs beyond looks. Stable IDs,
+  saves and first-class Classic4rounds/HeroStrike8rounds remain.
+- Audit all6hero kits,18default slots+alternatives; preserve already-polished
+  abilities, improve weak ones, change mechanics where it improves the game.
+  Imagegen may help concepts but critique/discard ugly outputs. Seek distinct mechanics, counterplay,
+  body/FPP/moving VFX/SFX, honest descriptions. Ultimates have individual special
+  moments like Tekken/Genshin, within native style and clear counterplay. No new
+  confusing controls/meters. Read ABILITY_REWORK_PLAN/HERO_KIT_REWORK_DECISIONS.
+- Phaister ritual/tells before curse,10.5mreach/11mmoon under8mguideway/unbinding;
+  accepted purple Kuro needs staged/yaw/rejoin/roster/overlap/owner review.
+- Parent owns MatchRpc same-hero changed-build rebinding defect, preserve live
+  state/no double modifiers. UI must not compensate by resetting gameplay kits.
+- Relevant separate-process effects/alts/round/rematch/reconnect/host loss across
+  both modes. Button mash across contexts/input paths, no physical-controller
+  qualification claims from simulation. Controller mapping/bridge/MenuNav separate
+  owner; UI may replace presentation via public APIs, not mapping semantics.
+- Tournament spectator/free/follow/POV/manual caster control, cinematic framing,
+  collision/key plays/ultimate moments/highlights/replays/readable information.
+- Remaining actionable TODO152/152.4/request-event-lookup/AIretrieval/lunge items.
+  Historical Ilalim48idle cause is unproven. Android/deferred future scope stays
+  deferred; do not expand into paid services, new agents or unrelated projects.
 
-## Later animation, skills, equipment, graphics, network and spectator scope
-
-Owner reaffirmed character/model throws look weird/poor. Rework visible body and
-FPP pullback/lean, weight transfer, arm path, release and follow-through. Moving
-throws less accurate, stationary more accurate, immediate releases shakier;
-holding settles aim with small residual shake. Match authoritative trajectory to
-readable motion; avoid invisible arbitrary misses. Distinct signed Pektus spin
-gesture. Carry/sprint/backward/turn cadence, foot contact/slide/interruption/FPP sync.
-Make all10slipper and6can choices useful beyond looks, with understandable tradeoffs.
-
-All6kits/default18slots plus alternatives need distinct purposes, implementation,
-tradeoffs/counterplay, body/FPP/moving geometry/VFX/SFX and truthful descriptions.
-Ultimates deserve individual special moments like Tekken/Genshin in buildup/payoff,
-within native style and readable counterplay. Phaister ritual/control timing,
-reach and11m moon versus8m guideway need work. Same-hero loadout rebinding must
-notice changed builds without resetting live state/doubling modifiers. Accepted
-purple Kuro still needs separate-process staged/yaw/rejoin, roster and overlap/
-owner-view review. Preserve all18people at7c7fcb5 direction; no redesign, rounded
-bodies/thumbs/realistic anatomy/noisy voxel studies. English functional copy,
-proper names, cultural specificity without forced/sacred copied decoration.
-
-Graphics/scalability: improve settings and measured Low through high-spec benefits,
-maintaining gameplay tells. Existing basic presets are not the complete pass;
-older resolution/frame-cap prototype is archived, not implemented.
-Network: active effects, alternatives, rounds/rematches, reconnect/host loss and
-both modes. Keep all-context mash/device/input coverage honest; prior63synthetic
-device/cadence/context combinations passed, not physical handset/pad certification.
-Remaining concrete TODO findings, including event/request/lookup/AI investigations,
-remain. Do not attribute historical Ilalim48-idle outlier without connecting evidence.
-
-Tournament spectator: review SpectatorCamera/Director/Interest and highlights.
-Preserve free/follow/POV/manual caster control; improve framing, smooth motion,
-collision, key-play/ultimate/replay coverage and uncluttered information. Plan from
-real match captures. This is later broader work, not permission to abandon maps.
-
-## Delivery and preservation
-
-Desktop remains d9c0314b protocol29. Internal RoofReview predates this source.
-Neither is current evidence; no Desktop replacement is requested. Verify an exact
-fresh internal Windows player when related map/network work is ready. Use only
-related tests per newest owner policy; do not restore blanket full-suite mandates.
-Commit with sole-author message files and push only ASTRAReworks. Preserve raw
-failed experiments and index pointers. Restore only proven test dirt; last known
-arm tangents/Ultra recipe were byte-verified and backed up before restoration.
-
-Previous plan preserved whole in reports/improvement-2026-09-13/execution-plan-history-12.md.
-This plan is an execution record, not a handoff prompt or a declaration of completion.
-
-Current map batch after pushed6ef38b02: pool ceramic/world-scale joints, softer
-water and local swimmer wakes are implemented and authored. Focused normal-speed
-water review1/1 passed both modes, Logs/roof-water-detail-v1. No full suite run.
-Bird study-v3 exports exactly idle/peck/fly for3species. Street study-v4 has6models
-with exactly idle/walk/run/alert. Source IDs and earlier rejected studies retained.
-AmbientLife runtime and AmbientLifeAuthor now prepare real model/clip references,
-private-random visits, ground routes/fleeing and checked bird approach paths.
-Authorv1 is currently importing/placing; session48421. Do not claim animals
-validated or finished. Next inspect author result, batch any corrections, then
-focused in-engine model/path/animation review across maps. No subagents or Desktop
-update. Latest owner focused-test policy remains mandatory.
-
-Ambient importv1 hit the installed glTFast multi-primitive skin-buffer job conflict.
-No package/Library/quality-setting workaround was applied. Reused the repository's
-existing tools/normalize_gltf_skin_primitives.py, separating skinned primitive
-children without changing geometry/materials/animation data. New source versions:
-street-animals/study-v5 and birds/study-v4. Importv2 now running, session81551.
-The first attempted binary comparison incorrectly compared two independent Blender
-exports and failed. Same-input normalization proof now passes all9models: binary,
-accessors, animation/skin/material data and original node transforms unchanged.
-Proof: Logs/ambient-normalizer-proof/result.json. Ground route analysis now caches
-clear neighbor edges and uses component sweeps; runtime animals no longer stop at
-every tiny route sample, and bird fidgets use time intervals instead of per-frame
-probability. All are unreviewed runtime integrations until current author and
-focused in-engine review succeed. Keep maps first and focused-only validation.
-
-Ambient reviewv1 failed at Eskinita aspin approach (0movement). Cause not yet
-isolated; the probe now preserves actual player position and actor wait/panic/
-heading/target state before asserting, so a missed proximity trigger is distinct
-from broken fleeing. The image also exposed two concrete defects: every exported
-material had default(.8,.8,.8) despite colored Blender viewport previews, and the
-small route capsule admitted a dog's head into a tree. Source PBR nodes now carry
-the real palettes (nine GLBs verified3+distinct colors), and routes validate the
-full visible/turning envelope. New sources street-animals/study-v6, birds/study-v5.
-Authorv4 running. No package changes or broad tests. Bird flight through scenery
-is explicitly allowed; nearby-player fleeing remains required. Both grounded and
-approaching birds now respond to proximity, with editor-only staged review to
-verify that path without making shipped visits deterministic.
-
-UI agent a21b23b was integrated as primary537984f6. Only BrandPreparationTests is
-running now (Logs/ui-preparation-agent-v1.xml/.log). Agent continues other UI work
-in isolated clone, no Editor. No broad suite. Parent maps/models remain dirty
-outside that UI commit; do not mix their state into UI validation claims.
-Animal source study-v7 now gives smaller compact cats and friendlier distinct
-aspins, plus dog-only leg-lift clip. Authorv5 completed all4map placement. Runtime
-rare surface pauses use long private-random cooldowns and cancel on proximity;
-not yet behavior/visual-qualified. Default skin seating now measures the actual
-neutral mesh instead of animation bounds that left dogs5-7cm high. Next focused
-animal review should check smaller cats/front faces/contact and the rare pause.
+The full preceding plan is preserved in execution-plan-history-13.md. Older
+process IDs and contradictory prior current-status paragraphs are historical.

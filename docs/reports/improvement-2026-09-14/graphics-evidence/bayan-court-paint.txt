@@ -1,0 +1,8 @@
+BoundaryEast position=(12.50000, 0.10300, 0.00000) scale=(4.18887, 0.10000, 1.00000)
+BoundaryNorth position=(0.00000, 0.10300, 12.50000) scale=(4.18887, 0.10000, 1.00000)
+BoundarySouth position=(0.00000, 0.10300, -12.50000) scale=(4.18887, 0.10000, 1.00000)
+BoundaryWest position=(-12.50000, 0.10300, 0.00000) scale=(4.18887, 0.10000, 1.00000)
+ConfinementEast position=(7.00000, 0.10300, 0.00000) scale=(2.35554, 0.10000, 1.00000)
+ConfinementNorth position=(0.00000, 0.10300, 7.00000) scale=(2.35554, 0.10000, 1.00000)
+ConfinementSouth position=(0.00000, 0.10300, -7.00000) scale=(2.35554, 0.10000, 1.00000)
+ConfinementWest position=(-7.00000, 0.10300, 0.00000) scale=(2.35554, 0.10000, 1.00000)

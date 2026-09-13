@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.0928278">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.092828" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1604" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.082517" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="39800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1605" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.078346" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1606" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.073585" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1519" name="SceneryBatchPreparationTests" fullname="TumbangPreso.Tests.SceneryBatchPreparationTests" classname="TumbangPreso.Tests.SceneryBatchPreparationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.064141" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1521" name="AnimatedClothAndPhysicsDescendantsStayOutsideFixedBatches" fullname="TumbangPreso.Tests.SceneryBatchPreparationTests.AnimatedClothAndPhysicsDescendantsStayOutsideFixedBatches" methodname="AnimatedClothAndPhysicsDescendantsStayOutsideFixedBatches" classname="TumbangPreso.Tests.SceneryBatchPreparationTests" runstate="Runnable" seed="2013426875" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.026946" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1520" name="FinalSharedMaterialsAndChildBatchFlagsArePreparedWithoutMovingTheWorld" fullname="TumbangPreso.Tests.SceneryBatchPreparationTests.FinalSharedMaterialsAndChildBatchFlagsArePreparedWithoutMovingTheWorld" methodname="FinalSharedMaterialsAndChildBatchFlagsArePreparedWithoutMovingTheWorld" classname="TumbangPreso.Tests.SceneryBatchPreparationTests" runstate="Runnable" seed="774192142" result="Passed" start-time="2026-09-13 16:29:55Z" end-time="2026-09-13 16:29:55Z" duration="0.022924" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 1 renderers, 0 with a roof variant.
+[NearFade] 3 occluder nodes matched, 1 renderers moved onto TumbangPreso/NearFade.
+[SceneryBatchPreparation] TestMap: 1 fixed meshes prepared before player batching.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

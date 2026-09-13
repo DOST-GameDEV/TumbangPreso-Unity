@@ -277,3 +277,21 @@ path, release and follow-through. Pektus has its own signed arm/wrist spin actio
 Retain moving/still and immediate/held aiming-accuracy requirements, simple
 controls and the18approved models. Maps and full UI remain earlier priorities;
 roof get-up and swimming animation are explicitly current-map work.
+
+
+## Parent source audit during graphics build,2026-09-14
+
+This is preparation, NOT implemented animation/skill work. Current maps/graphics
+remain the parent priority; UI agent independently finishes native views.
+
+The same-hero changed-loadout defect is visible at MatchRpc.RebindKitIfHeroChanged:
+it returns when current/wanted Kit types match, before decoding the newly received
+HeroBuild. Consequently a changed sidegrade on the same hero can retain the old
+realized ability while the selection/profile UI shows the new choice. Do not fix
+this in UI. HeroAbilitySystem.BindHero creates a new Kit and applies multiplicative
+ScaleLoadout changes, so blindly calling it on every network update would reset
+live state; applying its modifiers repeatedly to an existing kit would stack them.
+Next focused design must compare normalized equipped build identity at the actual
+legal pick/round transition, preserve unchanged active kits, and prove defaults ->
+alternate -> defaults plus repeated sync, both local and remote seat ownership.
+Do not claim a fix until actual synchronization boundaries/state have been traced.

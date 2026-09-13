@@ -1,5 +1,57 @@
 # Active TUMP rework ledger
 
+**PARENT RESUME FIRST (explicit owner Sep14 correction):** Continue native map
+rendering-cost work. Build/run WorldGraphicsProbe, measure Ilalim batching and
+material changes, implement the justified optimization and compare same views.
+Do not become a UI watcher after compaction. UI integrates/validates in bounded
+batches only; the agent owns its design/implementation/critique. Parent's next
+phase is remaining gameplay/animation after maps and UI, not endless UI review.
+Current native graphics build session92620 is active; collect before C# edits.
+Frontend-v4 now passed3/3, HUD-v1 passed2/2; retired54447/29825. One pause-child
+settings test pending for a later UI batch, not priority over map implementation.
+
+
+## Current parent execution pointer,2026-09-14 01:08
+
+Read compact EXECUTION_PLAN.md first for live state and source ownership. Owner
+explicitly forbids parent becoming a UI watcher; advance named parent map task.
+Bayan court paint fix290f829e committed and native-visible. Full material-baking
+optimization REJECTED: introduced ghost outlines, apparent18.5%gain not repeatable.
+EnvColourPass/WorldOutline restored exactly; only fixed-mesh batch flags candidate
+remains under targeted test52659. Next separate FlagsOnly native comparison; reject
+if it harms visuals or has no useful gain. Original-path player renders correctly.
+No active prior native players. Shared input-prefs guard/parent-allocation31e02e4c.
+UI agent has3pending batches and approved narrow join cancellation ownership;
+parent validates these in one later bounded window, not at expense of map work.
+Remote074748c9, current290f829e. Commit/push FIRST when owner asks later PC handoff.
+Conditional reset UNUSED,latest4%; exact Oct4selection unresolved/logged-outbrowser,
+async login question pending. Strict0-1%, never second/Oct5, cancel external refill.
+
+
+## Current execution pointer,2026-09-14 after midnight
+
+Current code05c6322f, last pushed074748c9. Full active state and exact next actions
+are in EXECUTION_PLAN.md. Older pointers below are historical and may contradict
+current source/results. Native HUD focused test session29825 active; diagnostic
+81322 collected/retired. UI background error is now localized to zero-sized
+sprite regions yielding NaN vertices; agent is correcting it. New HUD/pause/
+round-swap integrated, pending targeted qualification. Original controller view
+restored; settings v2 passed3/3. Map Editor graphics baseline12views complete;
+Ilalim draw-call outlier needs native player measurement, not a guessed fix.
+Fresh native benchmark build pending startup asset correction. Guard now protects
+both exact shared Editor binding/touch PlayerPrefs values as well as profiles.
+
+Owner will ask for a PC handoff later: COMMIT AND PUSH FIRST when asked, then
+provide exact continuation/source PDF/logo/current state. Continue here until
+then. One existing UI agent only; no new agents. Ability audit later preserves
+polished skills and improves weak mechanics/presentation with critical art review.
+One-reset permission remains unused, latest5%remaining. Strict0-1%threshold,
+earliest Oct4 credit only, never Oct5; selection not yet verified. Cancel unused
+authority after unexpected external refill90-100%. See private Logs state before
+any attempt; never expose private credit IDs/key in tracked documentation.
+
+## Historical execution pointers (not active commands)
+
 ## Current execution pointer,2026-09-13 evening
 
 **Latest proof, no active parent processes:** internal Windows30971b59 succeeded

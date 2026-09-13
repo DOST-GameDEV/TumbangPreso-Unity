@@ -1,0 +1,13 @@
+map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,mean_draw_calls,mean_triangles,mean_setpass,mesh_renderers,static_batched_renderers,unique_materials,world_width,world_height
+Eskinita,Low,120,3.407,4.483,-1.0,754102,1317.0,644,619,92,1920,1080
+Eskinita,Balanced,120,3.711,4.687,-1.0,819782,1280.2,644,619,92,1920,1080
+Eskinita,High,120,4.015,7.990,-1.0,1024147,1296.1,644,619,92,1920,1080
+BayanPlaza,Low,120,3.079,4.082,-1.0,626789,729.9,222,221,99,1920,1080
+BayanPlaza,Balanced,120,3.203,4.669,-1.0,673260,741.4,222,221,99,1920,1080
+BayanPlaza,High,120,3.091,4.398,-1.0,813585,749.9,222,221,99,1920,1080
+IlalimNgTulay,Low,120,4.581,5.846,-1.0,1216980,3261.0,1416,1369,380,1920,1080
+IlalimNgTulay,Balanced,120,5.063,6.144,-1.0,1462974,3397.4,1416,1369,380,1920,1080
+IlalimNgTulay,High,120,5.517,6.846,-1.0,1703416,3434.7,1416,1369,380,1920,1080
+SaBubong,Low,120,2.642,3.722,-1.0,631565,477.0,171,157,56,1920,1080
+SaBubong,Balanced,120,2.910,4.517,-1.0,652697,472.1,171,157,56,1920,1080
+SaBubong,High,120,3.057,4.595,-1.0,789288,494.4,171,157,56,1920,1080

@@ -147,6 +147,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] Modifiers =
         {
+            new Modifier("WorldGraphicsProbe.Active",
+                "A scripted rendering benchmark that parks players. Never a bracket match."),
             new Modifier("NetRoofProbe.Active",
                 "A scripted network rooftop recovery fixture. Never a bracket match."),
             new Modifier("NetThrowProbe.Active",
@@ -352,6 +354,7 @@ namespace TumbangPreso.Core
                 case "-tp-rooftrace": return "NetRoofProbe.Active";
                 case "-tp-roofmode": return "NetRoofProbe.Active";
                 case "-tp-roofcase": return "NetRoofProbe.Active";
+                case "-tp-graphicsreport": return "WorldGraphicsProbe.Active";
                 case "-tp-roofshots": return "NetRoofProbe.Active";
                 case "-tp-rooftag": return "NetRoofProbe.Active";
                 case "-tp-familiartrace": return "NetFamiliarProbe.Active";
