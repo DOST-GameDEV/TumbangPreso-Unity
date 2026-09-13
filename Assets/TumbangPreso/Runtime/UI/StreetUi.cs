@@ -19,7 +19,7 @@ namespace TumbangPreso.UI
             if (oldArrow != null) oldArrow.enabled = false;
             var oldImage = button.GetComponent<Image>();
             if (oldImage != null) { oldImage.enabled = false; oldImage.raycastTarget = false; }
-            foreach (string layer in new[] { "Face", "Shadow" })
+            foreach (string layer in new[] { "Face", "Shadow", "Chevron" })
             {
                 var child = button.transform.Find(layer);
                 if (child != null) child.gameObject.SetActive(false);

@@ -21,10 +21,12 @@ namespace TumbangPreso.PlayTests
         public IEnumerator PreparationKeepsWiredControlsReachableAtReviewSizes()
         {
             SceneFlow.SelectedMode = GameMode.HeroStrike;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             SceneFlow.Networked = false;
             PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
             yield return new WaitForSecondsRealtime(.6f);
+            Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode, "Preparation should restore the deliberately selected rules.");
             foreach (var size in new[] { new Vector2Int(1920,1080), new Vector2Int(1280,720), new Vector2Int(1200,900) })
             {
                 yield return UiRuntimeShots.Capture($"Preparation-brand-v3-{size.x}x{size.y}", size.x, size.y);
@@ -50,6 +52,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator PickerBackCanBePressedImmediatelyAfterOpening()
         {
             SceneFlow.SelectedMode = GameMode.Classic;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             SceneFlow.Networked = false;
             PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
@@ -66,8 +69,14 @@ namespace TumbangPreso.PlayTests
             Hit(Button("CharacterButton"));
         }
 
-        private static Button Button(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-            .First(b => b.name == name && b.isActiveAndEnabled);
+        private static Button Button(string name)
+        {
+            var buttons = Object.FindObjectsByType<Button>(FindObjectsSortMode.None);
+            var found = buttons.FirstOrDefault(b => b.name == name && b.isActiveAndEnabled);
+            Assert.IsNotNull(found, "Missing active control: " + name + "; active: " +
+                string.Join(", ", buttons.Where(b => b.isActiveAndEnabled).Select(b => b.name)));
+            return found;
+        }
 
         private static PointerEventData Hit(Button button)
         {

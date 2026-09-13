@@ -73,10 +73,12 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Open(GameMode mode)
         {
             SceneFlow.SelectedMode = mode;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
             SceneFlow.Networked = false;
             PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
             yield return new WaitForSecondsRealtime(.6f);
+            Assert.AreEqual(mode, SceneFlow.SelectedMode);
             Press(Find("CharacterButton"));
             yield return null;
         }
