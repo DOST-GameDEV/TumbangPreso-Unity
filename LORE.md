@@ -1,5 +1,18 @@
 # TUMP: the game that grew from the street
 
+**Character origins, 2026-09-14:** [Character origins and court stories](docs/CHARACTER_ORIGINS.md)
+contains the six hometowns, short selection lines and longer introduction copy.
+Zack grew up at the Pasig condo behind Sa Bubong; Cheska comes from La Trinidad,
+Benguet. Sean's Eskinita and Dante's Bayan Plaza are fictional home courts in
+San Fernando and Montalban. Phaister grew up on Capul and now plays at Ilalim
+near Gilmore; Nemu comes from Dumaguete. These are fictional sporting lives.
+Longer lore now belongs in the optional introduction/unlock presentation, while
+selection keeps a short line. This extends the earlier short-copy guidance below.
+
+The [seventh hero and water-village expansion](docs/BADJAO_EXPANSION.md) is a
+deferred concept. Rafi is a working name, not a seventh shipped roster entry.
+Research and visual alternatives are allowed now; implementation is LAST LAST.
+
 **Visual expression:** this lore belongs to TUMP's existing cute blocky world.
 New creatures, skill models and places must look native to that game, with
 purposeful restrained detail. Cultural or dramatic ambition is not permission to
@@ -81,6 +94,7 @@ The maps are places with a court in them, not corridors decorated with flags.
 | Eskinita | The neighborhood court where everyone already knows who likes to throw from which side | A sari-sari frontage, homes, laundry, plants, worn street surfaces and roadside seating. Close human scale, a clear lane and warm domestic life |
 | Bayan Plaza | A public square used for local matches and community gatherings | Civic space, shade trees, a monument, familiar church/basketball vocabulary and places for a crowd to stand. More open and composed than Eskinita |
 | Ilalim ng Tulay | A marked urban court under the rail guideway, drawing on the team's Gilmore/LRT reference | The weight of the viaduct, electronics shops, pisonet, pares and the jeepney. Selective shop light, real urban depth and the occasional train overhead |
+| Sa Bubong | Zack's fictional condo roofdeck in Pasig, Metro Manila | A shared residents' court, accessible pool, shade, laundry and the city beyond. A lived-in home court rather than a professional stadium |
 
 Eskinita and Bayan Plaza are composites of recognizable Philippine places, not
 claims to be exact surveyed streets. Ilalim uses its existing real-place reference;

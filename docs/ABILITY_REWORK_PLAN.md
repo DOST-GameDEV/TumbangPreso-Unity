@@ -1,5 +1,13 @@
 # Ability rework plan
 
+**Latest casting rule, 2026-09-14:** every hero performs distinct ability casts,
+especially ultimates. Do not reuse one movement with different coloured effects.
+Design and review preparation, weight transfer, hand/torso path, contact and
+recovery in body and first-person views. Shared rigs/playback code stay reusable.
+The seventh water hero's proposed three powers and unique cast language are in
+BADJAO_EXPANSION.md. His entire implementation is LAST LAST; the six-kit rework
+remains the current scope. CHARACTER_ORIGINS.md supplies the hometown/lore context.
+
 **Latest shield permission:** the owner allows visual refinement of Dante's
 orbiting shields if it clearly improves them. The approved current design remains
 the baseline; do not change it gratuitously. Fitted armor's repeated markings are

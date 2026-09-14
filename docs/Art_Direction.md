@@ -65,6 +65,13 @@ within the owner's authorization without creating a new approval gate.
 
 ### 0.1 · Animation includes the whole action, not only the body clip
 
+**Explicit owner clarification, 2026-09-14:** no identical casting movements
+across different heroes, especially ultimates. Each needs recognisable weight
+transfer, hand/torso path, release and recovery even with VFX hidden. Shared rigs,
+playback code and ordinary movement do not justify duplicated performed casts.
+Check first-person hands with the actual held prop as well as the full body.
+The deferred seventh hero's casts are specified separately in BADJAO_EXPANSION.md.
+
 **Owner clarification, 2026-09-10:** better animation also means better skill VFX,
 better casting, and separate/authored animation for different actions. Do not
 repeat animations unless reuse is necessary.

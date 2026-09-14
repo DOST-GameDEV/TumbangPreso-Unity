@@ -1,5 +1,28 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest origins and expansion direction, 2026-09-14:** research believable
+Philippine hometowns and original sporting biographies. Zack belongs to the
+Metro Manila condo map, Sa Bubong; Cheska comes from Benguet. Show short lore in
+character selection and longer lore in the character introduction/unlock flow.
+Keep stable save/roster IDs. Names may change only when the result is natural.
+The seventh hero is a male Sama-Bajau water user with individual fantasy gills.
+His hero kit and stilt-water-village map are LAST LAST, after the entire existing
+queue including UI and deferred Inday work. Research, abilities and concept art
+may be prepared now; do not add a seventh runtime character or build the map yet.
+See docs/CHARACTER_ORIGINS.md and docs/BADJAO_EXPANSION.md.
+
+**Distinct casting, explicit owner rule:** different heroes must not share the
+same ability cast or ultimate movement with only the effect recoloured. Design
+different preparation, weight transfer, release and recovery silhouettes. Shared
+rigs and playback infrastructure are fine; identical performed hero casts are not.
+Judge body and first-person movement together, including moving casts and props.
+
+**Image ideation permission:** the owner explicitly authorizes the built-in image
+generator for different concepts to choose together. This is a bounded exception
+to older paid-work wording, not permission for unrelated API work or usage resets.
+The tool does not expose exact image model version. Do not promise version 2.5.
+Generated studies are proposals, not approved production assets or runtime proof.
+
 **Latest shield permission:** the owner allows visual refinement of Dante's
 orbiting shields if it clearly improves them. The approved current design remains
 the baseline; do not change it gratuitously. Fitted armor's repeated markings are

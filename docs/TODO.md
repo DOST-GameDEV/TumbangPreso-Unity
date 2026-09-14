@@ -15,6 +15,21 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 
 # TODO: Tumbang Preso Unity
 
+**Newest origin/expansion tasks, 2026-09-14:**
+
+- [ ] Wire the six researched fictional origins and short lore into character
+  selection, and longer stories into the character introduction/unlock surface.
+  Copy and source limits: [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md). Keep the
+  six currently available heroes available; do not invent paid locks.
+- [ ] Review every hero cast for its own preparation, weight transfer, release
+  and recovery. No identical ult movement across heroes with recoloured effects.
+- [ ] **LAST LAST, after the full existing queue including UI and deferred Inday:**
+  implement the seventh male Sama Dilaut water hero and his stilt-village map.
+  Working name Rafi; proposed Crosscurrent, Mirrorwake and Breakwater abilities.
+  [BADJAO_EXPANSION.md](BADJAO_EXPANSION.md) records research, cast distinctions,
+  mechanics/counterplay and map choices. Concept art may be discussed now;
+  runtime roster, hero model, abilities and map implementation are deferred.
+
 **Current verification policy:** owner requests focused tests relevant to each
 change, not routine full PlayMode/EditMode suites. Batch implementation and retain
 strong behavioral/visual checks; old blanket full-suite mandates are superseded.
