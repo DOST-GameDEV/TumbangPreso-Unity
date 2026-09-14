@@ -5,10 +5,10 @@ namespace TumbangPreso.UI
 {
     /// <summary>Five editable rank silhouettes, indexed by the existing RatingRules tier order.</summary>
     [RequireComponent(typeof(CanvasRenderer))]
-    public sealed class TumpRankBadge : MaskableGraphic
+    public sealed partial class TumpRankBadge : MaskableGraphic
     {
         [Range(0, 4)] public int Tier;
-        protected override void OnPopulateMesh(VertexHelper vh)
+        private void PopulatePrevious(VertexHelper vh)
         {
             vh.Clear(); var f = TumpUiTheme.Current;
             var outline = Shape(Tier); Fill(vh, outline, f.Brick, 1);

@@ -168,9 +168,11 @@ critical HUD changes without delaying their information or shaking stable anchor
   spectator readouts, pause and results. Keep both modes and world readability.
   Scoped cases and original captures: reports/owner-ui-u6.md. All-kit/17lesson/
   real-device and complete online/native-player qualification remain in U8.
-- [ ] U7: profile/career/progression, match history, rankings/emblems/rewards,
+- [x] U7 first implementation: profile/career/progression, match history, rankings/emblems/rewards,
   introductions/lore and existing social/account contexts. No invented paid
   locks, compulsory lore delay or lost routes. Keep character maker inaccessible.
+  Native hub, profile drafts, scorecards, rank art and optional six-hero story
+  wiring: reports/owner-ui-u7.md. Live service/action edges remain U8.
 - [ ] U8: remaining dialogs/tooltips/empty states and complete end-to-end critique.
   Ship editable asset/layout guidance and record exact implementation evidence.
   Add persistent per-screen text/layout/per-piece art overrides; the initial views

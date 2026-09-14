@@ -51,7 +51,21 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open(GameMode.HeroStrike);
             var picker = GameObject.Find("OwnerLoadoutCanvas").GetComponent<Canvas>();
+            foreach(var person in Roster.HeroPeople)
+            {
+                var story=OwnerCharacterStories.For(person.Id);Assert.IsNotNull(story,person.Id);
+                Assert.IsNotEmpty(story.origin);Assert.IsNotEmpty(story.introduction);
+            }
             yield return TumpUiCapture.Capture("OwnerPicker-heroes-v1", picker, 1920, 1080,false);
+            int originalPick=Settings.SettingsStore.Current.CharacterPick;
+            Press(Find("MeetCharacter"));yield return null;
+            var storyCanvas=GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
+            Assert.IsFalse(picker.gameObject.activeSelf);
+            var selectedStory=OwnerCharacterStories.For(Roster.HeroPeople[originalPick].Id);
+            Assert.AreEqual(selectedStory.origin,storyCanvas.GetComponentsInChildren<Text>().First(t=>t.name=="StoryOrigin").text);
+            yield return TumpUiCapture.Capture("OwnerCharacter-story-v1",storyCanvas,1920,1080,false);
+            Press(Find("CloseCharacterStory"));yield return null;
+            Assert.IsTrue(picker.gameObject.activeSelf);Assert.AreEqual(originalPick,Settings.SettingsStore.Current.CharacterPick);
             Press(Find("TumpSkills")); yield return null;
             var skills = GameObject.Find("OwnerSkillsCanvas").GetComponent<Canvas>();
             Assert.Greater(skills.GetComponentsInChildren<TumpAbilitySymbol>().Length, 3);

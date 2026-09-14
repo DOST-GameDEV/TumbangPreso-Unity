@@ -1,0 +1,46 @@
+{
+  "stories": [
+    {
+      "id": "sean",
+      "origin": "San Fernando, Pampanga",
+      "homeCourt": "Eskinita",
+      "shortLine": "Waits for one opening. Makes it count.",
+      "introduction": "Sean grew up playing between the houses of San Fernando, where an afternoon match could hold up the walk home for hours. He helped assemble lantern frames after school and learned to notice the small mistake that throws a whole shape off. On court he is just as particular: one chosen angle, one committed run. Zack calls him slow. Sean keeps the score. His fire gets the crowd's attention, but the clean retrieval afterward is the part he wants them to remember."
+    },
+    {
+      "id": "zack",
+      "origin": "Pasig, Metro Manila",
+      "homeCourt": "Sa Bubong",
+      "shortLine": "Finds the angle before you see the opening.",
+      "introduction": "Zack learned tumbang preso on the roofdeck of his family's condo in Pasig. The court changed with laundry days, resident gatherings and whoever had claimed the shade, so he got good at finding an angle before anyone else settled in. Now he makes difficult plays look casual and casual plays unnecessarily difficult. Sean is usually the first to call him on it. Zack wants a national title, partly for himself and partly so the neighbours can say they used to beat him upstairs."
+    },
+    {
+      "id": "dante",
+      "origin": "Montalban, Rizal",
+      "homeCourt": "Bayan Plaza",
+      "shortLine": "Holds the difficult space. Refuses to be rushed.",
+      "introduction": "In Montalban, Dante was the player trusted to keep a crowded game fair: settle the argument, straighten the can, give the youngest player another try. He still arrives early to mark out the plaza court. That patience becomes stubbornness when a rival tries to move him. His stone armour and shaking faults make the mountain stories he grew up hearing feel close enough to touch. Cheska admires his discipline. She also knows exactly how long he will defend a bad position."
+    },
+    {
+      "id": "cheska",
+      "origin": "La Trinidad, Benguet",
+      "homeCourt": "La Trinidad neighbourhood court",
+      "shortLine": "Reads the space. Leaves you the harder route.",
+      "introduction": "Cheska grew up in La Trinidad and prefers the court before it gets noisy. She walks its edges, tests the footing and remembers where everyone likes to run. Friends mistake her quietness for caution until their easiest route freezes shut. Away from competition she is the practical one who remembered the water and checked the ride home. Losing bothers her more than she admits, especially when an untidy play works. Dante can make her wait; Zack can make her improvise. She is learning to enjoy both problems."
+    },
+    {
+      "id": "nemu",
+      "origin": "Dumaguete, Negros Oriental",
+      "homeCourt": "Dumaguete neighbourhood court",
+      "shortLine": "Looks distracted. Already knows your next move.",
+      "introduction": "Nemu grew up in Dumaguete, taking the long way home along the waterfront and stopping whenever a game had one place left. She seems to miss half the conversation, then remembers the detail everyone else forgot. Kuro has always been part of that routine: a curious little shadow at her shoulder, an alarming presence when a match turns serious. She refuses to explain him the same way twice. Phaister keeps trying to catch her by surprise. Nemu quietly saves those attempts for the walk home."
+    },
+    {
+      "id": "phaister",
+      "origin": "Capul, Northern Samar",
+      "homeCourt": "Ilalim ng Tulay, Quezon City",
+      "shortLine": "Sets the stage. Lets you discover the trick.",
+      "introduction": "Phaister grew up on Capul listening to stories about a moon that could disappear into a serpent's mouth. When she moved to Quezon City, she found a regular game beneath the rail line and an audience that was difficult to impress. That only made her more ambitious. She treats a match like a carefully timed reveal: invite a chase, leave a false opening, close the circle. The trouble is that she occasionally enjoys the setup more than winning. Nemu notices. Phaister wishes she would at least look surprised."
+    }
+  ]
+}

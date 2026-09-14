@@ -190,7 +190,7 @@ namespace TumbangPreso.UI
             else
             {
                 view.RankedTitle.text=RatingRules.TierName(RatingRules.TierFor(rank.Rating));
-                view.RankedDetail.text=(rank.Deviation>RatingRules.SettledDeviation?"Still placing":$"{rank.Rating:0} rating")+
+                view.RankedDetail.text=(rank.Deviation>RatingRules.SettledDeviation?"Still placing":"Rank established")+
                     $" · {rank.MatchesThisSeason} this season. Solo, or a party of up to three.";
             }
         }

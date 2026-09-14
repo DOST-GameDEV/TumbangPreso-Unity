@@ -32,7 +32,7 @@ namespace TumbangPreso.UI
     /// PLAY AS GUEST and CLOSE at the same size. It is now the last row of the account tab, under
     /// its own header, and it still takes two presses.
     /// </summary>
-    public sealed class PlayerHub : MonoBehaviour
+    public sealed partial class PlayerHub : MonoBehaviour
     {
         /// <summary>
         /// ⚠️ `Loadout` IS GONE. It moved to the fighter picker on 2026-09-02
@@ -263,7 +263,7 @@ namespace TumbangPreso.UI
         {
             if (_root == null || !_root.activeSelf) return;
             if (_signIn != null && _signIn.IsOpen) return;
-            if (!InputLayer.MenuNav.CancelPressed) return;
+            if (!InputLayer.MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
 
             // ⚠️ THE PRESS IS SPENT BEFORE ANYTHING UNDER THIS SCREEN CAN READ IT. See
             // `ScreenTakeover.ConsumeEscape`: `Input.GetKeyDown` is a fact about the frame, so
@@ -285,7 +285,7 @@ namespace TumbangPreso.UI
         // § CHROME
         // -------------------------------------------------------------------
 
-        public void Install()
+        public void InstallPrevious()
         {
             if (_canvas != null) return;
 
@@ -825,7 +825,7 @@ namespace TumbangPreso.UI
             _detail.SetActive(false);
         }
 
-        private void OpenDetail(MatchRecord record)
+        private void OpenDetailPrevious(MatchRecord record)
         {
             if (record?.Players == null) return;
 
@@ -931,7 +931,7 @@ namespace TumbangPreso.UI
         /// already cost this project an eighth of a probe's frames. A tab switch is a rare event;
         /// paying for it there is free and paying for it every frame is not.
         /// </summary>
-        private void Show(Tab tab)
+        private void ShowPrevious(Tab tab)
         {
             bool arriving = _tab != tab;
 
@@ -1035,7 +1035,7 @@ namespace TumbangPreso.UI
         /// "closed" costs nothing to honour and the scroll height stays honest about what is
         /// actually on screen. See `UiRows.Section`.
         /// </summary>
-        private bool Group(string title, string subtitle, bool openByDefault = true)
+        private bool GroupPrevious(string title, string subtitle, bool openByDefault = true)
         {
             string key = _tab + "/" + title;
             if (!_groups.TryGetValue(key, out bool open)) open = openByDefault;
@@ -1050,7 +1050,7 @@ namespace TumbangPreso.UI
             return now;
         }
 
-        private void RefreshHeader()
+        private void RefreshHeaderPrevious()
         {
             var account = GameServices.Account;
             var profile = GameServices.Career?.Profile;
@@ -1137,7 +1137,7 @@ namespace TumbangPreso.UI
         // § PROFILE
         // -------------------------------------------------------------------
 
-        private void BuildProfileTab()
+        private void BuildProfileTabPrevious()
         {
             var account = GameServices.Account;
 
@@ -1226,7 +1226,7 @@ namespace TumbangPreso.UI
         /// `BannerRules.Normalise` answers an empty selection rather than null for the same
         /// reason.
         /// </summary>
-        private void BuildBannerGroup()
+        private void BuildBannerGroupPrevious()
         {
             var profile = GameServices.Career?.Profile;
             var earned = BannerRules.Earned(profile);
@@ -1272,7 +1272,7 @@ namespace TumbangPreso.UI
         /// reworded; its id crosses the wire and never changes. `FUTURE.md` PHASE 5's string-id
         /// rule is about exactly this pair being kept apart.
         /// </summary>
-        private void BannerSlot(string label, RewardKind kind, List<Reward> earned,
+        private void BannerSlotPrevious(string label, RewardKind kind, List<Reward> earned,
                                 string current, Action<string> choose)
         {
             var options = new List<string> { "NONE" };
@@ -1318,6 +1318,8 @@ namespace TumbangPreso.UI
 
         private async void SaveProfile()
         {
+            if(_ownerSaving)return;
+            OwnerProfileSaving(true);
             try
             {
                 SetFooter("SAVE", "Saving...");
@@ -1327,7 +1329,7 @@ namespace TumbangPreso.UI
                 // destroyed `InputField` would throw, and defaulting one to "" would silently
                 // WIPE a bio the player had written just because they had the group shut.
                 var a = GameServices.Account;
-                string name = _displayName != null ? _displayName.text : a?.DisplayName ?? "";
+                string name = OwnerDraftValue("PlayerNameEdit",_displayName != null ? _displayName.text : a?.DisplayName ?? "");
 
                 // ⚠️⚠️ SIGNED OUT, THE NAME STILL SAVES. Without this the whole method threw a
                 // null reference on `a.Bio` and the one control a tournament machine needs was
@@ -1341,23 +1343,24 @@ namespace TumbangPreso.UI
                     Settings.SettingsStore.Save();
 
                     _notice = "Saved on this machine.";
-                    Show(Tab.Profile);
+                    OwnerProfileSaved();
                     return;
                 }
 
-                string bio = _bio != null ? _bio.text : a.Bio;
-                string country = _country != null ? _country.text : a.Country;
-                string pronouns = _pronouns != null ? _pronouns.text : a.Pronouns;
+                string bio = OwnerDraftValue("ProfileBio",_bio != null ? _bio.text : a.Bio);
+                string country = OwnerDraftValue("ProfileCountry",_country != null ? _country.text : a.Country);
+                string pronouns = OwnerDraftValue("ProfilePronouns",_pronouns != null ? _pronouns.text : a.Pronouns);
 
                 await a.SetProfileAsync(name, bio, country, pronouns);
                 _notice = "Saved.";
-                Show(Tab.Profile);
+                OwnerProfileSaved();
             }
             catch (Exception e)
             {
                 _notice = e.Message;
-                SetFooter("SAVE", _notice);
+                if(_tab==Tab.Profile && IsOpen)SetFooter("SAVE", _notice);
             }
+            finally{OwnerProfileSaving(false);}
         }
 
         // -------------------------------------------------------------------
@@ -1377,7 +1380,7 @@ namespace TumbangPreso.UI
         /// half of it: it withheld the NUMBER and still drew the row, so a new account saw eight
         /// rows of `0/0 (needs 10 throws)`. Withholding a row is what that rule meant.
         /// </summary>
-        private void BuildCareerTab()
+        private void BuildCareerTabPrevious()
         {
             var profile = GameServices.Career?.Profile;
             if (profile == null) { EmptyCareer(); return; }
@@ -1516,7 +1519,7 @@ namespace TumbangPreso.UI
         /// other twelve keep a played count and appear in the same list without a level, which is
         /// what makes the difference between the two groups visible rather than confusing.
         /// </summary>
-        private void BuildMasteryRows(PlayerProfile profile)
+        private void BuildMasteryRowsPrevious(PlayerProfile profile)
         {
             if (!Group("Hero mastery",
                        "Playing a hero levels that hero. Only the six heroes have a path.",
@@ -1599,7 +1602,7 @@ namespace TumbangPreso.UI
         /// Gold is amber, silver is the highlight, bronze is plain cream, which is the escalation
         /// `docs/Art_Direction.md` 9.1 already describes for the badge art.
         /// </summary>
-        private void BuildAchievementsRows(PlayerProfile profile)
+        private void BuildAchievementsRowsPrevious(PlayerProfile profile)
         {
             int earned = 0;
             foreach (var entry in AchievementRules.Catalog)
@@ -1663,7 +1666,7 @@ namespace TumbangPreso.UI
         /// show an achievement shelf and silently no builds, which reads as a missing feature
         /// rather than as a mode that does not have one.
         /// </summary>
-        private void EmptyCareer(PlayerProfile profile = null)
+        private void EmptyCareerPrevious(PlayerProfile profile = null)
         {
             UiRows.Section(_list, "No matches yet",
                 "Finish a match and everything you did in it lands here.");
@@ -1714,7 +1717,7 @@ namespace TumbangPreso.UI
         /// end-of-match screen, **none online** is not an error and does not read as one, and
         /// **not signed in** is the guest's state and the only one with an action attached.
         /// </summary>
-        private void BuildFriendsTab()
+        private void BuildFriendsTabPrevious()
         {
             var social = GameServices.Social;
             var list = social?.List;
@@ -1750,7 +1753,7 @@ namespace TumbangPreso.UI
             SetFooter("REFRESH", "Presence updates about once a minute while the game is open.");
         }
 
-        private void BuildRequestRows(Net.SocialStore social, SocialList list)
+        private void BuildRequestRowsPrevious(Net.SocialStore social, SocialList list)
         {
             int pending = list?.Incoming?.Count ?? 0;
             if (pending == 0) return;
@@ -1785,7 +1788,7 @@ namespace TumbangPreso.UI
             }
         }
 
-        private void BuildFindFriendRows(Net.SocialStore social)
+        private void BuildFindFriendRowsPrevious(Net.SocialStore social)
         {
             if (!Group("Find a friend", "Add somebody by their exact NAME#TAG.", false)) return;
 
@@ -1803,7 +1806,7 @@ namespace TumbangPreso.UI
                 UiRows.ValueRow(_list, "Search", social.SearchStatus, "");
         }
 
-        private void BuildFriendRows(Net.SocialStore social, SocialList list, DateTime now)
+        private void BuildFriendRowsPrevious(Net.SocialStore social, SocialList list, DateTime now)
         {
             var friends = SocialRules.Sorted(list?.Friends, now);
 
@@ -1864,7 +1867,7 @@ namespace TumbangPreso.UI
             }
         }
 
-        private void BuildBlockedRows(Net.SocialStore social, SocialList list)
+        private void BuildBlockedRowsPrevious(Net.SocialStore social, SocialList list)
         {
             int blocked = list?.Blocked?.Count ?? 0;
             if (blocked == 0) return;
@@ -1916,7 +1919,7 @@ namespace TumbangPreso.UI
         // § MATCHES
         // -------------------------------------------------------------------
 
-        private void BuildMatchesTab()
+        private void BuildMatchesTabPrevious()
         {
             UiRows.Section(_list, "Recent matches",
                 "The last twenty, newest first. The colour on the left is where you placed.");
@@ -2009,7 +2012,7 @@ namespace TumbangPreso.UI
         /// once, you sign in when you move machine, and you delete an account never. The row that
         /// matters on any given day is the first one, which just says what state you are in.
         /// </summary>
-        private void BuildAccountTab()
+        private void BuildAccountTabPrevious()
         {
             var account = GameServices.Account;
 

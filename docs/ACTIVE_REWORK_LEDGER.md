@@ -1,5 +1,81 @@
 # Active TUMP rework ledger
 
+## CURRENT U7 scoped checks complete; save then finish U8
+
+62933passed1/1, guardaeacefe0e778. Rookie icon looked like a ladder; replaced
+straight body/rungs with curved can rims and restrained curved bands. Original
+final five-rank native PNG inspected.23798passed2/2, guardd8f9627c7d1d, real
+column scorecard now shows all four players plus four-round defender history.
+U7hub/lore earlier cases passed; all tools retired, imagegen cell460 complete.
+Report owner-ui-u7.md and evidence ready. Current latest pushed82a33aa6 until U7
+saved. No live account/friend/report/delete submissions were made in tests;
+seeded profile/history data was in-memory and restored, not awarded/saved.
+U8 is now the remaining UI phase, NOT optional. Plan Logs/U8-review-plan.md.
+Drafts Logs/OwnerUiOverrideBook.cs.draft and Logs/OwnerUiOverrides.cs.draft are
+NOT imported. Need review baseline/motion/layout conflicts, create editable book
+via Editor API, hook owner canvases and export named defaults for authoring.
+OwnerUiPaper still repeated beveled geometry; replace with distinct reading,
+note and modal treatments, carefully preserving all supplied PNG pixels. Use
+image study only for contour reference, not bitmap production. Major screen
+routes U1-U7 are implemented but none of the stage reports claim final art.
+Investigate actual brighter 3D picker model vs portrait; complete ordinary-speed
+motion/reduced motion, sensitive async account/settings edge tests, UI-specific
+full routes and internal Windows player build (explicit Builds/... output, not
+Desktop). Training v2 had XMLPASS/Unity requested0/native exit1: keep limitation
+until native qualification. At115%touch scale some rendered controls overlap;
+check defaults and saved-layout ergonomics without silently replacing offsets.
+After U8, resume full GAMEPLAY_RESUME_AFTER_UI.md including deferred Inday and
+seventh hero/map LAST LAST. No agents/reset/Figma/Desktop. Keep going after save.
+
+## CURRENT U7 hub/lore passed; rank graphics and scorecard refinement under next check
+
+17507hub v1passed1/1, guard18e77d6311cd.28018hub v2passed2/2,
+guardc689618d58af. Native five tabs/draft-preserving redraw/navigation, seeded
+career/history and actual column scorecard passed. Removed redundant Identity/
+fixed-tag rows (tag already in header), hid empty Page1 indicator and translated
+batch UGS diagnostic into a plain online-unavailable message. Profile scoped
+renders inspected. Scorecard originally showed only3of4rows; tightened row/heading
+heights and list spacing so four-player result fits before optional round history.
+15278storypassed1/1, guardfcd7f2e0f454. Six hero biographies imported from approved
+docs/CHARACTER_ORIGINS.md to editable Resources/UI/character-stories.json. Optional
+Meet hero view, origin/short line in chooser, existing skill access and preserved
+selected loadout. No invented hero unlocks or seventh runtime hero.
+Imagegen study completed cell460, keyowner_ui_companion_study. Copy and exact
+prompt/critique under ArtSource/ui/owner-handdrawn-2026-09-15/studies. Reject bitmap
+as production: washed-out background/repeated circular badges/decorative leaves.
+Useful soft contour and clear tsinelas ideas only. Original owner art untouched.
+New TumpRankBadge.OwnerPainted applied; old mesh builder inactive. Five distinct
+unframed can/slippers/pennant/cup/star silhouettes, actual existing tier IDs/names.
+Career rank row uses new graphic; raw rating removed from preparation description.
+Next focused rank-review + populated hub check Logs/owner-rank-scorecard-u7-v1.
+All earlier tools retired; no Unity currently at this pointer. U7dirty, latest
+pushed82a33aa6. Need actual five-rank/scorecard renders and account/banner/save
+edge checks before saving U7. U8 full art/overrides/motion/input/native qualification
+then GAMEPLAY_RESUME_AFTER_UI.md still assigned. No agents/reset/Figma/Desktop.
+
+## CURRENT U6 pushed82a33aa6; U7 new player hub first implementation
+
+No running tools. New PlayerHub partials OwnerPainted/OwnerCareer/OwnerFriends/
+OwnerHistory applied. Original Install/Show/tab visual methods renamed Previous;
+new header/tabs/content/profile/source fields/scroll and actual scorecard table.
+Existing account/career/social functions preserved. Draft dictionary stores only
+edited profile values across group/tab/service redraw; clear on identity change
+or successful save. Saves lock profile inputs and footer while pending, preserve
+hidden optional drafts, do not jump the user back from another tab when complete.
+Friend search input survives presence refresh. History now has actual older/newer
+controls on existing HistoryPageAsync, clears shown page on account change.
+New detail rows are real columns rather than space-padded text in proportional
+font. Preserve all groups/achievements/mastery/banner/account safeguards. No real
+friend/report/delete/account operations should be submitted in tests.
+Current source UNVERIFIED; next create focused OwnerPlayerHubTests for five-page
+navigation, no old visual builders, draft-preserving refresh, optional groups,
+no-data states and real close. Then test seeded career/history/rank art separately.
+Old PlayerHubLayoutProbe is a nine-resolution legacy geometry probe; don't run
+that wholesale or force old rail dimensions into new layout. Actual source
+stripped copy Logs/PlayerHub-stripped.txt (pre-edit) is reference, not active code.
+Next rank icons and character-lore integration still U7; U8 full art/motion/input/
+complete native player build then gameplay. No agents/reset/Figma/Desktop.
+
 ## CURRENT U6 scoped source qualified; save then U7 player hub
 
 31303passed2/2, guard9f8458e1aacf. New result empty-state/TIE labels and actual

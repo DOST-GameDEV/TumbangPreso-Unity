@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.2738835">
+  <test-suite type="TestSuite" id="1524" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="399" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.273884" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1518" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="399" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.263822" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46888" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1519" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="399" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.259722" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1520" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="399" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.255403" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1466" name="TumpNativeResultTests" fullname="TumbangPreso.PlayTests.TumpNativeResultTests" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.246374" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1468" name="AllExistingRankTiersHaveEditableVisibleEmblems" fullname="TumbangPreso.PlayTests.TumpNativeResultTests.AllExistingRankTiersHaveEditableVisibleEmblems" methodname="AllExistingRankTiersHaveEditableVisibleEmblems" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" seed="441284657" result="Passed" start-time="2026-09-14 22:26:39Z" end-time="2026-09-14 22:26:39Z" duration="0.234522" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerRanks-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

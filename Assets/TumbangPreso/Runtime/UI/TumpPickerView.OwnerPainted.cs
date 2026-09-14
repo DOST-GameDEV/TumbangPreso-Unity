@@ -7,6 +7,9 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpPickerView
     {
+        private Text _ownerOrigin,_ownerStoryLine;
+        private Button _ownerMeet;
+        private OwnerCharacterStoryView _ownerStoryView;
         private void Build(Transform owner)
         {
             _canvas=OwnerUiLayout.Canvas(owner,"OwnerLoadoutCanvas",700);OwnerUiBackdrop.Build(_canvas.transform);
@@ -51,6 +54,18 @@ namespace TumbangPreso.UI
             _use=OwnerPaintedAction.Create(_root,"TumpUseLoadout","USE LOADOUT",()=>_confirm?.Invoke((int[])_picks.Clone()),false,42);
             OwnerUiLayout.Place((RectTransform)_use.transform,1393,955,413,91);
             _skills=OwnerTextAction.Create(_root,"TumpSkills","SKILLS",()=>_openSkills?.Invoke(Entries[_picks[0]].Id),1027,965,290,72,36);
+            _ownerOrigin=OwnerUiLayout.Text(_root,"CharacterOrigin","",26);_ownerOrigin.color=OwnerUiTheme.Current.EnteredInk;
+            OwnerUiLayout.Place(_ownerOrigin.rectTransform,1025,273,786,32);_ownerOrigin.alignment=TextAnchor.MiddleCenter;
+            _ownerStoryLine=OwnerUiLayout.Text(_root,"CharacterPersonality","",30);_ownerStoryLine.color=OwnerUiTheme.Current.EnteredInk;
+            OwnerUiLayout.Place(_ownerStoryLine.rectTransform,94,849,827,92);
+            _ownerMeet=OwnerTextAction.Create(_root,"MeetCharacter","MEET YOUR HERO",OpenOwnerStory,94,958,730,76,32);
+        }
+        private void OpenOwnerStory()
+        {
+            if(_category!=0 || _mode!=GameMode.HeroStrike)return;
+            var hero=Roster.HeroPeople[_picks[0]];if(OwnerCharacterStories.For(hero.Id)==null)return;
+            if(_ownerStoryView==null)_ownerStoryView=gameObject.AddComponent<OwnerCharacterStoryView>();
+            Suspend();_ownerStoryView.Open(hero.Id,hero.Name,Resume);
         }
         private void Refresh()
         {
@@ -91,6 +106,14 @@ namespace TumbangPreso.UI
             _categories[0].GetComponentInChildren<Text>().text=_mode==GameMode.HeroStrike?"HEROES":"PEOPLE";
             var picked=entries[_picks[_category]];_name.text=picked.Name;_description.text=_describe?.Invoke(picked.Id)??"";
             bool hero=_category==0 && _mode==GameMode.HeroStrike;_skills.gameObject.SetActive(hero);_stats.gameObject.SetActive(!hero);
+            var story=hero?OwnerCharacterStories.For(picked.Id):null;
+            _ownerOrigin.gameObject.SetActive(story!=null);_ownerStoryLine.gameObject.SetActive(story!=null);_ownerMeet.gameObject.SetActive(story!=null);
+            OwnerUiLayout.Place(_name.rectTransform,1025,story!=null?189:216,786,story!=null?78:86);
+            if(story!=null)
+            {
+                _ownerOrigin.text=story.origin;_ownerStoryLine.text=story.shortLine;
+                _ownerMeet.GetComponentInChildren<Text>().text="MEET "+picked.Name;
+            }
             string[][] traits={new[]{"Speed","Power","Grit"},new[]{"Reset","Rebound","Stance"},new[]{"Flight","Impact","Recovery"}};
             _stats.text=$"{traits[_category][0]} {picked.Bilis}/{Roster.TraitMax}   {traits[_category][1]} {picked.Lakas}/{Roster.TraitMax}   {traits[_category][2]} {picked.Tatag}/{Roster.TraitMax}";
             var saved=Settings.SettingsStore.Current;

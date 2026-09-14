@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="3.0138821">
+  <test-suite type="TestSuite" id="1523" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="3.013882" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1517" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="3.004971" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50704" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1518" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="3.001731" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1519" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="398" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="2.999368" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1300" name="OwnerPlayerHubTests" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="2.990993" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1301" name="HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" fullname="TumbangPreso.PlayTests.OwnerPlayerHubTests.HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" methodname="HubPagesKeepProfileDraftsAcrossNavigationAndServiceRefresh" classname="TumbangPreso.PlayTests.OwnerPlayerHubTests" runstate="Runnable" seed="926049531" result="Passed" start-time="2026-09-14 22:01:27Z" end-time="2026-09-14 22:01:30Z" duration="2.980644" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerHub-profile-v1/TabIcon: vertices=116, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHub-profile-v1/TabIcon: vertices=220, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerHub-profile-v1/TabIcon: vertices=52, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerHub-profile-v1/TabIcon: vertices=36, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHub-profile-v1/TabIcon: vertices=192, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHub-profile-v1/HubPagePaper: vertices=18, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] OwnerHub-profile-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[TumpGeometry] OwnerHub-Friends-v1/TabIcon: vertices=116, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHub-Friends-v1/TabIcon: vertices=220, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] OwnerHub-Friends-v1/TabIcon: vertices=52, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerHub-Friends-v1/TabIcon: vertices=36, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHub-Friends-v1/TabIcon: vertices=192, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHub-Friends-v1/HubPagePaper: vertices=18, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] OwnerHub-Friends-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHub-Career-v1/TabIcon: vertices=116, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHub-Career-v1/TabIcon: vertices=220, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] OwnerHub-Career-v1/TabIcon: vertices=52, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] OwnerHub-Career-v1/TabIcon: vertices=36, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHub-Career-v1/TabIcon: vertices=192, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHub-Career-v1/HubPagePaper: vertices=18, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] OwnerHub-Career-v1/Expand: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpUiCapture] OwnerHub-Career-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHub-Matches-v1/TabIcon: vertices=116, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHub-Matches-v1/TabIcon: vertices=220, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] OwnerHub-Matches-v1/TabIcon: vertices=52, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] OwnerHub-Matches-v1/TabIcon: vertices=36, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerHub-Matches-v1/TabIcon: vertices=192, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHub-Matches-v1/HubPagePaper: vertices=18, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] OwnerHub-Matches-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHub-Account-v1/TabIcon: vertices=116, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHub-Account-v1/TabIcon: vertices=220, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] OwnerHub-Account-v1/TabIcon: vertices=52, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] OwnerHub-Account-v1/TabIcon: vertices=36, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerHub-Account-v1/TabIcon: vertices=192, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] OwnerHub-Account-v1/HubPagePaper: vertices=18, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] OwnerHub-Account-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

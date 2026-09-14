@@ -49,19 +49,19 @@ namespace TumbangPreso.PlayTests
             var owner = new GameObject("RankDesignReview");
             try
             {
-                var canvas = TumpUiFactory.Canvas(owner.transform, "RankReviewCanvas", 100);
-                TumpUiFactory.Ground(canvas.transform, TumpUiTheme.Current.Cream);
-                var title = TumpUiFactory.Text(canvas.transform, "Heading", "Rank emblem review", 62, true);
-                TumpUiFactory.Place(title.rectTransform, 104, 92, 1680, 110);
+                var canvas = OwnerUiLayout.Canvas(owner.transform, "RankReviewCanvas", 100);
+                OwnerUiBackdrop.Build(canvas.transform);
+                var title = OwnerUiLayout.Text(canvas.transform, "Heading", "RANK EMBLEMS", 62,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Place(title.rectTransform, 104, 92, 1680, 110);
                 for (int i = 0; i < RatingRules.TierNames.Length; i++)
                 {
-                    var badge = TumpUiFactory.Rect(canvas.transform, "Rank" + i).gameObject.AddComponent<TumpRankBadge>();
+                    var badge = OwnerUiLayout.Rect(canvas.transform, "Rank" + i).gameObject.AddComponent<TumpRankBadge>();
                     badge.Tier = i; badge.raycastTarget = false;
-                    TumpUiFactory.Place(badge.rectTransform, 104 + i * 348, 348, 270, 270);
-                    var label = TumpUiFactory.Text(canvas.transform, "TierName" + i, RatingRules.TierName((RankTier)i), 36, true);
-                    label.alignment = TextAnchor.MiddleCenter; TumpUiFactory.Place(label.rectTransform, 72 + i * 348, 678, 338, 86);
+                    OwnerUiLayout.Place(badge.rectTransform, 104 + i * 348, 348, 270, 270);
+                    var label = OwnerUiLayout.Text(canvas.transform, "TierName" + i, RatingRules.TierName((RankTier)i), 36,OwnerUiLayout.TypeRole.Display);
+                    label.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(label.rectTransform, 72 + i * 348, 678, 338, 86);
                 }
-                yield return TumpUiCapture.Capture("NativeRanks-v1", canvas, 1920, 1080,false);
+                yield return TumpUiCapture.Capture("OwnerRanks-v1", canvas, 1920, 1080,false);
                 var counts = canvas.GetComponentsInChildren<TumpRankBadge>().Select(b => b.canvasRenderer.GetMesh().vertexCount).ToArray();
                 Assert.IsTrue(counts.All(c => c > 0), "Each rank must produce actual rendered geometry; visual distinction is reviewed in the capture.");
             }
