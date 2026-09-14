@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.150377">
+  <test-suite type="TestSuite" id="1490" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="371" result="Failed" site="Child" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.150377" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1484" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="371" result="Failed" site="Child" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.138500" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17188" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1485" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="371" result="Failed" site="Child" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.134070" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1486" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="371" result="Failed" site="Child" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.130148" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1474" name="ZackKitAcceptanceProbe" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:12:03Z" duration="47.122354" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1476" name="ArcLinePunishesTheInnerLaneWhileLeavingItsOuterEdgeClear" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe.ArcLinePunishesTheInnerLaneWhileLeavingItsOuterEdgeClear" methodname="ArcLinePunishesTheInnerLaneWhileLeavingItsOuterEdgeClear" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" seed="314363632" result="Passed" start-time="2026-09-14 14:11:15Z" end-time="2026-09-14 14:11:33Z" duration="17.420106" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1477" name="MagnetEndsItsChargeOnExpiryRefusalAndHeroReplacement" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe.MagnetEndsItsChargeOnExpiryRefusalAndHeroReplacement" methodname="MagnetEndsItsChargeOnExpiryRefusalAndHeroReplacement" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" seed="316985967" result="Failed" start-time="2026-09-14 14:11:33Z" end-time="2026-09-14 14:11:48Z" duration="15.466279" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: <empty>
+  But was:  < <MagnetRecallTrace (TumbangPreso.Visual.MagnetRecallTrace)> >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackKitAcceptanceProbe+<MagnetEndsItsChargeOnExpiryRefusalAndHeroReplacement>d__14.MoveNext () [0x00218] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\ZackKitAcceptanceProbe.cs:161
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1478" name="RefusedSprintRemovesItsPredictedWakeImmediately" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe.RefusedSprintRemovesItsPredictedWakeImmediately" methodname="RefusedSprintRemovesItsPredictedWakeImmediately" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" seed="759443436" result="Failed" start-time="2026-09-14 14:11:48Z" end-time="2026-09-14 14:11:53Z" duration="4.800353" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An unaccepted sprint left its predicted chase hazard running.
+  Expected: <empty>
+  But was:  < <ShockTrailZone (TumbangPreso.Abilities.HeroHazards/ShockTrailComponent)> >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackKitAcceptanceProbe+<RefusedSprintRemovesItsPredictedWakeImmediately>d__15.MoveNext () [0x0015f] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\ZackKitAcceptanceProbe.cs:180
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1475" name="SnapDischargeTradesArmingTimeForActualFasterFlight" fullname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe.SnapDischargeTradesArmingTimeForActualFasterFlight" methodname="SnapDischargeTradesArmingTimeForActualFasterFlight" classname="TumbangPreso.PlayTests.ZackKitAcceptanceProbe" runstate="Runnable" seed="1517369644" result="Passed" start-time="2026-09-14 14:11:53Z" end-time="2026-09-14 14:12:03Z" duration="9.422405" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

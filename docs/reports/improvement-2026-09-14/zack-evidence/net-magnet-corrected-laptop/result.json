@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 376,
+      "loaded_samples": 10,
+      "charged_flight_samples": 4,
+      "late_charged": 0.0,
+      "late_held": 0.0,
+      "late_charge_visuals": 0.0
+    },
+    "owner": {
+      "samples": 400,
+      "loaded_samples": 10,
+      "charged_flight_samples": 5,
+      "late_charged": 0.0,
+      "late_held": 0.0,
+      "late_charge_visuals": 0.0
+    },
+    "observer": {
+      "samples": 386,
+      "loaded_samples": 9,
+      "charged_flight_samples": 4,
+      "late_charged": 0.0,
+      "late_held": 0.0,
+      "late_charge_visuals": 0.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "8e40773292d9c32092443b3e425ec803dc68e5b037b616caaa408764406cac91"
+}

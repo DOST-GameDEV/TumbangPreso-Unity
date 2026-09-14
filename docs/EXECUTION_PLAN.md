@@ -1,5 +1,18 @@
 # Active execution plan
 
+**LATEST:** Zack corrected delayed Magnet/Thunderstrike-followup now pass. ArcLine
+and Snap tradeoffs measured. Refused sprint and outgoing hero cleanup fixed;
+3focused Play checks +8same-hero refresh checks passed. No active sessions.
+Continue Nemu familiar/remaining kit review after saving this stable batch.
+Exact receipts and limits: zack-skills.md and newest ACTIVE_REWORK_LEDGER.
+
+**CURRENT returned laptop:** owner requested pulling and continuing. c664a7b9
+fast-forward verified with no local conflicts. Zack internal build now resumes
+through guard/profile equipment-destination-review into Builds/ZackSkillReview;
+Logs/zack-laptop-build-v1.log. Next corrected Magnet and Thunderstrike follow-up
+150ms actual-peer checks. Earlier source-PC no-build/stop directions are retired.
+Do not redo completed equipment/Dante/Phaister/Sean from stale older TODOs.
+
 **PC transfer, 2026-09-14:** owner requests ALL WIP committed/pushed and a handoff.
 Pull ASTRAReworks first on the destination and follow the newest ledger section.
 Zack's final source passed focused local checks; its internal build was interrupted

@@ -1,5 +1,33 @@
 # Zack presentation and charged recall review
 
+## Latest laptop result: peer charge proof and lifecycle fixes
+
+The interrupted transfer checks are now complete on a fresh internal player.
+Magnet and Thunderstrike follow-up pass on three real peers at150ms owner-link
+delay; exact build identity and raw results are recorded below. No Desktop update.
+
+Four additional behavioral cases first passed2/4. Snap Discharge produced
+22.066m/s actual flight versus15.325m/s, with5s versus10s arming. Arc Line narrowed
+the sampled trail radius from1m to.55m, raised inner-lane shock from.25s to.3625s,
+and left a defender at the .78m outer edge unshocked. Default hit that edge.
+These are concrete conversion/lane tradeoffs, not a complete balance judgment.
+
+Failures exposed actual lifecycle gaps: refusing an already predicted sprint
+left one active chase patch plus its aura; replacing a hero discarded its kit
+without ending its recall trace. Sprint now separately cancels its owned patches
+and aura, while normally completed trails retain their intended lifetime.
+BindHero cleans the outgoing kit and buffered intent before replacing it.
+Same-hero UpdateLoadout does not enter that path or reset the live kit.
+
+The two failed cases plus existing Sean ember expiry/refusal/replacement now
+pass3/3; the six-hero loadout refresh fixture passes8/8. Profile guards restored
+and verified both files and shared input preferences (b1b70093cb05/2b2ed3078147).
+Authority audit:0 ungated other-body effects; stat audit:0 drift findings.
+Before/after CSVs and exact NUnit receipts are in zack-evidence. The successful
+peer traces precede this additional lifecycle fix; a subsequent internal player
+must be rebuilt to include it. Broader overlap, human-feel and platform/input
+qualification remain distinct from these focused checks.
+
 **Transfer boundary:** latest source passes charge-sync-v6, 4/4. The owner asked
 to commit/push unfinished work and stop heavy work for a PC move. Internal buildv2
 was deliberately interrupted; its guard restored/hash-verified the profile,
@@ -110,3 +138,15 @@ retained fire snapshot behavior, and fresh moving/full-throw footage. Electric
 flight now has narrow twin traces and limited light; owner footage was inspected
 and encoded at recorded timestamps. The corrected delayed-player rerun still
 requires the new internal build. No protocol fields or version changed.
+
+## Returned laptop: corrected actual-player checks passed
+
+Pulled c664a7b9 and rebuilt a fresh INTERNAL player, guard6f1cbf90de32.
+Runtime SHA2568e40773292d9c32092443b3e425ec803dc68e5b037b616caaa408764406cac91.
+Magnet150ms: host/owner/observer376/400/386samples; charged flight visible on
+all three and no late charge, possession or carried poles. Thunderstrike150ms:
+373/380/384samples,three strike channels on each, actual charged follow-up throw,
+resolved~2s target shock/knockback and clean bolt/window expiry. RawCSV/results
+are preserved under zack-evidence/net-*-laptop. These verify the corrected build
+and close the two interrupted transfer checks; alternatives/counterplay remain
+under focused review. No Desktop update or new protocol change.

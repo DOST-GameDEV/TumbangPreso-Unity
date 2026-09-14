@@ -1,5 +1,13 @@
 # Working instructions for ChatGPT / Codex
 
+**Returned to original laptop,2026-09-14:** owner explicitly requested pulling
+the other PC's latest work and CONTINUING here. Fast-forward to c664a7b9 verified.
+The source-PC stop/build prohibition below is retired, not a ban on work here.
+Current checkout is C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
+Resume Zack's corrected internal build and delayed peer checks, then the complete
+remaining queue. No agents, other chats, Figma or reset credits. UI late, deferred
+Inday afterward, selected seventh hero/map LAST LAST. No Desktop update.
+
 **Newest PC-transfer instruction, 2026-09-14:** owner is studying on this PC and
 explicitly requests committing/pushing ALL unfinished work and a complete handoff
 in this chat. This overrides the earlier no-stop rule for THIS PC. No more builds

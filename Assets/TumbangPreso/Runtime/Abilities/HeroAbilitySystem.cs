@@ -107,6 +107,10 @@ namespace TumbangPreso.Abilities
 
         public void BindHero(string heroId, HeroBuild build = null)
         {
+            // This path replaces the kit. Release its owned effects, grants and
+            // buffered input before losing the only object that can cancel them.
+            // Same-hero sidegrade refreshes use UpdateLoadout and retain live state.
+            if (Kit != null) ResetKitForMatch();
             _pendingUltimateSky = false;
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);

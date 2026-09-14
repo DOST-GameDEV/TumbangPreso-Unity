@@ -4,3 +4,5 @@ ArtSource/ui/**/*.pdf binary
 # Preserve raw transfer receipts and format-patch bytes, including native trace whitespace.
 docs/reports/improvement-2026-09-14/transfer-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/ui-deferred-source/*.patch -text -whitespace
+# Raw NUnit receipts retain native diagnostic whitespace.
+docs/reports/improvement-2026-09-14/zack-evidence/*.xml -text -whitespace

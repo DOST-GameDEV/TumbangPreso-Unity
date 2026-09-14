@@ -45,6 +45,7 @@ namespace TumbangPreso.Abilities
         {
             private readonly ZackHeroKit _kit;
             private float _trailDropTimer;
+            private GameObject _sprintAura;
 
             /// <summary>
             /// ⚠️⚠️ 1.0 m, DOWN FROM 1.8, AND THE PER-DISC NUMBER WAS NEVER THE PROBLEM.
@@ -151,7 +152,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ THE SPARKS GO ON ZACK, NOT ON THE TRAIL DISCS. One dash drops up to thirty
                 // of those, and thirty looping emitters is a different bug from the one this is
                 // for. One aura on the body reads as speed and costs one system.
-                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                _sprintAura = Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
                                              Visual.AbilityVfx.Aura.ElectricSpark, Duration);
             }
 
@@ -204,6 +205,25 @@ namespace TumbangPreso.Abilities
             {
                 _wake.Clear();
                 _live.Clear();
+                _sprintAura = null;
+            }
+
+            protected override void OnCancelled(AbilityContext ctx)
+            {
+                // Accepted trails may outlive a completed sprint. A refused or
+                // reset cast must remove its own predicted wake immediately.
+                foreach (var patch in _live)
+                {
+                    if (patch == null) continue;
+                    patch.SetActive(false);
+                    UnityEngine.Object.Destroy(patch);
+                }
+                if (_sprintAura != null)
+                {
+                    _sprintAura.SetActive(false);
+                    UnityEngine.Object.Destroy(_sprintAura);
+                }
+                OnEnd(ctx);
             }
         }
 

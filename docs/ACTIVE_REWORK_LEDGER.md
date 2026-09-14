@@ -1,5 +1,73 @@
 # Active TUMP rework ledger
 
+## CURRENT: Zack verified batch, proceeding to Nemu
+
+Latest laptop checks complete: corrected native Magnet and Thunderstrike-followup
+150ms runs passed; alternate tradeoffs passed; two reproduced cleanup defects
+fixed and3focused Play checks passed;8same-hero loadout Edit checks passed.
+All sessions85689/82935/51103/22551/30693/6228 retired. Last guard2b2ed3078147.
+No Editor/player active. Source/audit/evidence in zack-skills.md and zack-evidence.
+Next commit/push this stable batch, then use a fresh internal player including the
+lifecycle correction for Nemu current familiar control/rejoin/transform review.
+Keep restored small ghost/current monster; no model redesign. Remaining six-kit
+alternatives/counterplay, other fields/rejoin, movement/network/spectator/UI/Inday/
+selected expansion order remains intact. No agents/Figma/usage resets.
+
+## CURRENT Zack cleanup verified; related loadout check
+
+Cleanup run30693 completed3/3passed, receiptb1b70093cb05. Refused sprint now
+leaves0patches/noaura; Magnet expiry/refusal/hero replacement and existing Sean
+ember cleanup pass. Before/after + XML preserved in zack-evidence. Running only
+HeroLoadoutRefreshTests eight cases next, Logs/zack-laptop-loadout-v1.xml/.log,
+to confirm six same-hero sidegrades still retain active state. Collect before
+C#/asset edits. Next save verified batch, continue Nemu current familiar proof
+and remaining kit/alternate/counterplay work. No agents/Figma/resets.
+
+## CURRENT Zack cancellation correction
+
+Focused acceptance baseline22551 completed2/4, guard receipt a9541a0c0a84.
+Snap actual flight15.325->22.066m/s and10->5sarming; ArcLine radius1->.55m,
+inner shock.25->.3625s and safe .78mouter lane passed. Failed: refused sprint
+left1active patch + aura; hero replacement dropped the old kit without cleanup,
+leaving Magnet recall trace. Both failures preserved in zack-evidence.
+Fix: owned sprint patches/aura are cancelled separately from normal trail expiry;
+BindHero resets the outgoing kit before replacement. UpdateLoadout is unchanged.
+Next focused2failed cases plus existing Sean cleanup and same-hero8case check.
+No blanket tests. Native corrected Magnet/Thunderstrike already passed; production
+now differs only by this lifecycle correction, to qualify before commit.
+
+## CURRENT Zack laptop verification
+
+Internal build succeeded from c664a7b9. Runtime SHA256
+8e40773292d9c32092443b3e425ec803dc68e5b037b616caaa408764406cac91.
+Guard85689 completed, shared input preferences restored, receipt6f1cbf90de32.
+Magnet150ms host/owner/observer passed with376/400/386samples and no stale
+charge/held/poles after release. net-zack-laptop-magnet-v1 contains full receipts.
+Thunderstrike150ms follow-up also PASSED:373/380/384samples,3bolts each,
+actual empowered follow-up and clean expiry. Session51103 retired. Both receipts
+are copied into zack-evidence. New4case local acceptance run is active:
+Logs/zack-laptop-acceptance-v1.xml/.log; collect before C#/imported edits.
+Four new focused acceptance cases prepared in ZackKitAcceptanceProbe for alternate
+tradeoffs and refusal/expiry cleanup. Production source unchanged since pull.
+26 generated recovery/swim assets differed only in CRLF bytes and were verified,
+backed up and restored exactly. No other import dirt restored.
+
+## NEWEST: returned laptop, pulled and resumed
+
+Owner requested return to this laptop and immediate continuation. Clean checkout
+fast-forwarded from986542f4 to c664a7b971ebf8c6d69ee848ce4194b53630a6ab; checkpoint
+ancestry verified. No competing Editor/player was running. Current checkout:
+C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
+Prior source-machine stopping instruction/process IDs are retired.
+
+Starting guarded INTERNAL Builds/ZackSkillReview/TumbangPreso.exe with profile
+equipment-destination-review, log Logs/zack-laptop-build-v1.log. No Desktop update.
+Source is the pulled correction already locally checked4/4 on the other PC.
+Next run net_zack_review.py magnet and thunderstrike with150ms delay sequentially
+against this exact rebuilt executable. Review variants/counterplay source while
+the build runs; no imported/C# edits during the Editor. Full saved queue continues
+after Zack. No agents/other chats/Figma/resets; UI late, Inday after, expansion last.
+
 ## NEWEST: second PC transfer, source machine stopped
 
 Owner explicitly requested all unfinished work committed/pushed and a complete
