@@ -348,7 +348,9 @@ namespace TumbangPreso.Net
         //index to a different scene and must refuse the match instead.
         //It also separates the already-transmitted normal stun and trip timers:
         //trip recovery cannot shorten an overlapping tag or element hold.
-        public const int ProtocolVersion = 30;
+        // 31 restores the live Coven and current ultimate sky when a peer rejoins.
+        // Older players lack those required tells and must refuse this version.
+        public const int ProtocolVersion = 31;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

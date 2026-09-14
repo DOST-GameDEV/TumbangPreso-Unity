@@ -334,6 +334,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SubmitFamiliar", OnSubmitFamiliarMsg);
             cm.RegisterNamedMessageHandler("SyncFamiliar", OnSyncFamiliarMsg);
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
+            cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
+            cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
@@ -1787,6 +1789,69 @@ namespace TumbangPreso.Net
             float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
             if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
                 kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
+        }
+
+        private void SendCovenSnapshot(int slot, ulong peer)
+        {
+            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId ||
+                !(Unit(slot)?.AbilitySystem?.Kit is Abilities.PhaisterHeroKit kit) ||
+                !kit.CaptureCoven(out var centre, out float preparation, out float remaining)) return;
+            float now = (float)_nm.ServerTime.Time;
+            float contactAt = preparation > 0 ? now + preparation : now - (kit.Ultimate.Duration - remaining);
+            using var writer = new FastBufferWriter(48, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(GameServices.Match.RoundNumber);
+            writer.WriteValueSafe(centre);
+            writer.WriteValueSafe(contactAt);
+            writer.WriteValueSafe(contactAt + kit.Ultimate.Duration);
+            _nm.CustomMessagingManager.SendNamedMessage("CovenEffect", peer, writer);
+        }
+
+        private void OnCovenEffectMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out Vector3 centre);
+            reader.ReadValueSafe(out float contactAt);
+            reader.ReadValueSafe(out float endsAt);
+            if (!ValidSlot(slot) || !Finite(centre) || !Finite(contactAt) || !Finite(endsAt) ||
+                GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
+            var motor = Unit(slot);
+            if (!(motor?.AbilitySystem?.Kit is Abilities.PhaisterHeroKit kit) ||
+                Mathf.Abs(endsAt - contactAt - kit.Ultimate.Duration) > .1f) return;
+            float now = (float)_nm.ServerTime.Time;
+            if (endsAt <= now) return;
+            kit.RestoreCoven(motor, centre, Mathf.Clamp(contactAt - now, 0, kit.Ultimate.Windup),
+                Mathf.Clamp(endsAt - now, 0, kit.Ultimate.Duration));
+        }
+
+        private void SendSkySnapshot(ulong peer)
+        {
+            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId ||
+                !Visual.SkyEvent.CaptureTimeline(out var look, out float age, out float lifetime)) return;
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(GameServices.Match.RoundNumber);
+            writer.WriteValueSafe((int)look);
+            writer.WriteValueSafe(age);
+            writer.WriteValueSafe(lifetime);
+            writer.WriteValueSafe((float)_nm.ServerTime.Time);
+            _nm.CustomMessagingManager.SendNamedMessage("SkyEffect", peer, writer);
+        }
+
+        private void OnSkyEffectMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out int look);
+            reader.ReadValueSafe(out float age);
+            reader.ReadValueSafe(out float lifetime);
+            reader.ReadValueSafe(out float sentAt);
+            if (GameServices.Match == null || GameServices.Match.RoundNumber != round ||
+                !Enum.IsDefined(typeof(Visual.SkyEvent.Look), look) || !Finite(age) || !Finite(lifetime) ||
+                !Finite(sentAt) || age < 0 || lifetime <= 0 || lifetime > 120) return;
+            age += Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
+            Visual.SkyEvent.RestoreTimeline((Visual.SkyEvent.Look)look, age, lifetime);
         }
 
         private void OnSyncFamiliarMsg(ulong senderClientId,FastBufferReader reader)
@@ -5466,7 +5531,11 @@ namespace TumbangPreso.Net
             // Only the synchronizing peer needs to reconstruct live familiar
             // state; broadcasting it would rewind somebody else's predicted input.
             for(int slot=0;slot<Balance.PlayerCount;slot++)
+            {
                 BroadcastFamiliarEffect(slot,(ulong)peerId);
+                SendCovenSnapshot(slot, (ulong)peerId);
+            }
+            SendSkySnapshot((ulong)peerId);
         }
 
         /// <summary>

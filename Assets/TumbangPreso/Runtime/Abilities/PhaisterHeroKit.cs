@@ -13,6 +13,20 @@ namespace TumbangPreso.Abilities
         public bool IsWitchfireInfused { get; set; } = true;
         public bool IsEclipseActive => Ultimate != null && Ultimate.IsActive;
 
+        public bool CaptureCoven(out Vector3 centre, out float preparation, out float remaining)
+            => ((GrandCovenEclipseAbility)Ultimate).Capture(out centre, out preparation, out remaining);
+
+        public void RestoreCoven(CharacterMotor motor, Vector3 centre, float preparation, float remaining)
+        {
+            if (motor == null || NetAuthority.ShouldResolve() ||
+                float.IsNaN(preparation) || float.IsInfinity(preparation) ||
+                float.IsNaN(remaining) || float.IsInfinity(remaining)) return;
+            var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>(),
+                centre, motor.transform.forward, centre);
+            using (NetCue.SuppressRelay())
+                ((GrandCovenEclipseAbility)Ultimate).Restore(context, centre, preparation, remaining);
+        }
+
         public PhaisterHeroKit() : base("phaister", "PHAISTER")
         {
             Skill1 = new HexSigilAbility();
@@ -489,10 +503,39 @@ namespace TumbangPreso.Abilities
             {
                 base.Activate(ctx);
                 if(!IsWindingUp||ctx?.Motor==null)return;
+                _centre = ctx.Position;
                 if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
                 _ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration,Windup);
                 var circle=_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
                 circle.Owner=ctx.Motor;circle.OwnerCast=this;
+            }
+
+            public bool Capture(out Vector3 centre, out float preparation, out float remaining)
+            {
+                centre = _centre;
+                preparation = WindupRemaining;
+                remaining = DurationRemaining;
+                return IsWindingUp || IsActive;
+            }
+
+            public void Restore(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            {
+                // The reliable snapshot targets the returning peer. A duplicate
+                // must not restart an already running cast or replay its hits.
+                if (IsWindingUp || IsActive || (preparation <= 0 && remaining <= 0)) return;
+                _centre = centre;
+                preparation = Mathf.Clamp(preparation, 0, Windup);
+                remaining = Mathf.Clamp(remaining, 0, Duration);
+                if (preparation > 0) RestoreWindupClock(ctx, preparation);
+                else RestoreLiveClock(remaining);
+                _sinceCurse = preparation > 0 ? 0 : (Duration - remaining) % RecurseEvery;
+
+                _ritual = HeroHazards.SpawnGrandCovenEclipse(centre, Reach, Duration, Windup);
+                var circle = _ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
+                circle.Owner = ctx.Motor; circle.OwnerCast = this;
+                float age = preparation > 0 ? Windup - preparation : Windup + Duration - remaining;
+                circle.StepTo(age);
+                _ritual.GetComponent<HeroHazards.EclipseFall>().StepTo(age);
             }
 
             public override void Reset()

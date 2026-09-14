@@ -151,15 +151,38 @@ namespace TumbangPreso.Visual
         {
             if (seconds <= 0.05f) return;
 
+            EnsureLive().Begin(look, seconds);
+            Announce(look);
+        }
+
+        private static SkyEvent EnsureLive()
+        {
             if (_live == null)
             {
                 var go = new GameObject("~SkyEvent");
                 _live = go.AddComponent<SkyEvent>();
                 _live.Capture();
             }
+            return _live;
+        }
 
-            _live.Begin(look, seconds);
-            Announce(look);
+        public static bool CaptureTimeline(out Look look, out float age, out float lifetime)
+        {
+            look = _live != null ? _live._look : default;
+            age = _live != null ? _live._elapsed : 0;
+            lifetime = _live != null ? _live.LifeSeconds : 0;
+            return _live != null && age < lifetime;
+        }
+
+        // Rejoin resumes the current winning weather without announcing a new
+        // ultimate or recapturing already altered lighting as the normal street.
+        public static void RestoreTimeline(Look look, float age, float lifetime)
+        {
+            if (float.IsNaN(age) || float.IsInfinity(age) || float.IsNaN(lifetime) ||
+                float.IsInfinity(lifetime) || age < 0 || age >= lifetime || lifetime <= RiseSeconds) return;
+            var live = EnsureLive();
+            live.Begin(look, lifetime - RiseSeconds);
+            live.StepTo(age);
         }
 
         /// <summary>
@@ -311,6 +334,7 @@ namespace TumbangPreso.Visual
         // ------------------------------------------------------------------ the curve
 
         private Profile _profile;
+        private Look _look;
         private float _elapsed;
         private float _hold;
         private Light _fill;
@@ -361,6 +385,7 @@ namespace TumbangPreso.Visual
 
         private void Begin(Look look, float seconds)
         {
+            _look = look;
             // ⚠️ THE CURVE RESTARTS FROM THE TOP, WHICH IS DELIBERATE AND IS WHY `_elapsed` IS
             // ZEROED. A second cast should look like a second event: the sky swings toward the
             // new weather over the same 0.45 s rise, from whatever the old one was showing.

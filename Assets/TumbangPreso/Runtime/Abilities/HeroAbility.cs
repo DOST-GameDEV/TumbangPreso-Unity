@@ -896,6 +896,22 @@ namespace TumbangPreso.Abilities
             DurationRemaining=Mathf.Clamp(remaining,0,Duration);
         }
 
+        // Restore an accepted preparation without spending resources or invoking
+        // its activation callback. Normal completion still releases the root.
+        protected void RestoreWindupClock(AbilityContext ctx, float remaining)
+        {
+            ReleaseRoot();
+            DurationRemaining = 0;
+            WindupRemaining = Mathf.Clamp(remaining, 0, Windup);
+            _committedContext = new AbilityContext(ctx.Motor, ctx.Carrier, ctx.Verbs,
+                ctx.Position, ctx.Forward, ctx.AimPoint);
+            if (WindupRemaining > 0 && ctx.Motor != null)
+            {
+                _rooted = ctx.Motor;
+                _rooted.EnterSpeedZone(RootSpeed);
+            }
+        }
+
         protected virtual void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
 
         protected virtual void OnActivate(AbilityContext ctx) { }

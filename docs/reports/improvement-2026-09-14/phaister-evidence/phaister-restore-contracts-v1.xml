@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.9453903">
+  <test-suite type="TestSuite" id="1469" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="354" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.945390" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1463" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="354" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.927495" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7364" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1464" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="354" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.920338" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1465" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="354" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.913880" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1288" name="PhaisterRitualContractProbe" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.895499" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1295" name="RestoredCovenKeepsItsClockWithoutSpendingOrResolvingHits" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe.RestoredCovenKeepsItsClockWithoutSpendingOrResolvingHits" methodname="RestoredCovenKeepsItsClockWithoutSpendingOrResolvingHits" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" seed="2090196178" result="Passed" start-time="2026-09-14 10:37:52Z" end-time="2026-09-14 10:38:00Z" duration="7.787062" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1296" name="SkySnapshotResumesTheLatestLookAndItsExistingAge" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe.SkySnapshotResumesTheLatestLookAndItsExistingAge" methodname="SkySnapshotResumesTheLatestLookAndItsExistingAge" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" seed="1977544928" result="Passed" start-time="2026-09-14 10:38:00Z" end-time="2026-09-14 10:38:00Z" duration="0.087822" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

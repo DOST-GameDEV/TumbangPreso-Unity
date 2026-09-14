@@ -21954,3 +21954,19 @@ No global lighting, controller or gameplay state was changed.
 Transparent surfaces retain their original material behavior, so this change does
 not add dither to transparent/cutout surfaces. Broader release gates and the exact
 Windows player remain due with the larger work.
+
+
+## 2026-09-14: Phaister ritual and sky on rejoin
+
+Completed request: restore the active Phaister ritual, remaining clock and current
+ultimate sky for a returning peer. Corrected three-player baseline contained 20
+samples where the host ritual was active and the correctly selected returning
+observer saw none. Preserve charge, root/expiry and host-only curse authority.
+Earlier fixture-only pick mismatches were resolved separately.
+
+Implemented targeted reliable CovenEffect/SkyEffect snapshots under protocol31.
+Local lifecycle/authority checks2/2, protocol checks2/2, wire audit68/0mismatches,
+actual rejoin-v6 PASS and actual protocol30client refusal PASS. Reconstructed in
+135.94ms,25active returned samples, correct expiry. Full evidence and limitations:
+reports/improvement-2026-09-14/phaister-rejoin-state.md. This closes that specific
+request, not other persistent hazards or the broader networking queue.

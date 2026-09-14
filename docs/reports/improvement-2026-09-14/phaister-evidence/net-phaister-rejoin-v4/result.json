@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "errors": [
+    "owner: incorrect warning-to-contact duration",
+    "observer: rejoin missed the live ritual, clock or sky"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 508,
+      "warning_samples": 26,
+      "active_samples": 133,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.4024684948980024,
+      "accepted_sky_samples": 103,
+      "first_curse_after_warning": 1.4024684948980024
+    },
+    "owner": {
+      "samples": 497,
+      "warning_samples": 24,
+      "active_samples": 133,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.2917714994331,
+      "accepted_sky_samples": 102,
+      "first_curse_after_warning": 1.9629303996599
+    },
+    "observer": {
+      "samples": 134,
+      "warning_samples": 0,
+      "active_samples": 22,
+      "maximum_circles": 1.0,
+      "rejoined_during_active_samples": 19
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "b89326e7c303277ed8bac28b60fad4b4f14082d1654019de363f9281a9fdaa75"
+}

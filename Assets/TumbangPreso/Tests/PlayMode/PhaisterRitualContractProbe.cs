@@ -227,6 +227,85 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        private sealed class ReturningClient : INetProvider
+        {
+            public bool IsHost => false;
+            public bool IsNetworked => true;
+            public int LocalSlot => 1;
+            public int LocalPeerId => 1;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RestoredCovenKeepsItsClockWithoutSpendingOrResolvingHits()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(3.6f);
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
+            foreach (var player in GameServices.Round.Players) { player.Intent.Clear(); player.Intent.Parked = true; }
+            var caster = GameServices.Round.PlayerAt(1);
+            var victim = GameServices.Round.PlayerAt(2);
+            caster.Teleport(new Vector3(0, .12f, -8));
+            victim.Teleport(new Vector3(1, .12f, -8));
+            victim.ClearStun(); victim.ClearTrip();
+            caster.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "phaister");
+            caster.AbilitySystem.BindHero("phaister");
+            var kit = (PhaisterHeroKit)caster.AbilitySystem.Kit;
+            kit.AddUltimateCharge(3.25f);
+            NetAuthority.Provider = new ReturningClient();
+            float movement = caster.Stamina.SpeedZones.Value;
+
+            kit.RestoreCoven(caster, new Vector3(0, 0, -8), 0, .6f);
+            kit.RestoreCoven(caster, new Vector3(0, 0, -8), 0, .55f);
+            Assert.True(kit.Ultimate.IsActive);
+            Assert.AreEqual(.6f, kit.Ultimate.DurationRemaining, .001f);
+            Assert.AreEqual(3.25f, kit.UltimateCharge, .001f);
+            Assert.AreEqual(1, Object.FindObjectsByType<HeroHazards.CovenCircleBuild>(FindObjectsSortMode.None).Length);
+            yield return new WaitForSeconds(.8f);
+            Assert.False(kit.Ultimate.IsActive);
+            Assert.IsNull(GameObject.Find("GrandCovenEclipseEffect"));
+            Assert.False(victim.IsStunned, "A returning client resolved a curse outcome.");
+
+            kit.RestoreCoven(caster, new Vector3(0, 0, -8), .3f, 7);
+            Assert.True(kit.Ultimate.IsWindingUp);
+            Assert.AreEqual(0, caster.Stamina.SpeedZones.Value, .001f);
+            yield return new WaitForSeconds(.45f);
+            Assert.True(kit.Ultimate.IsActive);
+            Assert.AreEqual(movement, caster.Stamina.SpeedZones.Value, .001f);
+            Assert.AreEqual(3.25f, kit.UltimateCharge, .001f);
+            Assert.False(victim.IsStunned, "Resumed preparation resolved a hit on its client.");
+            caster.AbilitySystem.ResetKit();
+            yield return null;
+            Assert.IsNull(GameObject.Find("GrandCovenEclipseEffect"));
+            Assert.AreEqual(movement, caster.Stamina.SpeedZones.Value, .001f);
+        }
+
+        [UnityTest]
+        public IEnumerator SkySnapshotResumesTheLatestLookAndItsExistingAge()
+        {
+            SkyEvent.Play(SkyEvent.Look.Eclipse, 10);
+            SkyEvent.Play(SkyEvent.Look.Stormfront, 7);
+            var live = Object.FindFirstObjectByType<SkyEvent>();
+            live.StepTo(2);
+            var ambient = RenderSettings.ambientSkyColor;
+            Assert.True(SkyEvent.CaptureTimeline(out var look, out float age, out float lifetime));
+            Assert.AreEqual(SkyEvent.Look.Stormfront, look);
+            SkyEvent.StopAll();
+            yield return null;
+            SkyEvent.RestoreTimeline(look, age, lifetime);
+            Assert.AreEqual(1, Object.FindObjectsByType<SkyEvent>(FindObjectsSortMode.None).Length);
+            Assert.True(SkyEvent.CaptureTimeline(out var restoredLook, out float restoredAge, out float restoredLife));
+            Assert.AreEqual(look, restoredLook);
+            Assert.AreEqual(age, restoredAge, .001f);
+            Assert.AreEqual(lifetime, restoredLife, .001f);
+            Assert.Less(Vector4.Distance(ambient, RenderSettings.ambientSkyColor), .001f);
+            Object.FindFirstObjectByType<SkyEvent>().StepTo(lifetime + .01f);
+            yield return null;
+            Assert.False(SkyEvent.CaptureTimeline(out _, out _, out _));
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator RecordRitualConstructionAndFirstFrameCosts()
         {

@@ -17,12 +17,6 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 
 **Newest origin/expansion tasks, 2026-09-14:**
 
-- [ ] Restore the active Phaister ritual, remaining clock and current ultimate
-  sky for a returning peer. Corrected three-player rejoin evidence contains 20
-  samples where the host's ritual is active but the correctly selected returning
-  observer sees none. Preserve charge, root/expiry and host-only curse authority.
-  See phaister-skills.md in reports/improvement-2026-09-14. Earlier fixture-only
-  pick mismatches are resolved and must not be mistaken for this defect.
 
 - [ ] Wire the six researched fictional origins and short lore into character
   selection, and longer stories into the character introduction/unlock surface.

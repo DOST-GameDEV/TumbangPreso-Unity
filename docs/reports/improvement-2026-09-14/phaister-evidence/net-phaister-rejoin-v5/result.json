@@ -1,0 +1,40 @@
+{
+  "ok": false,
+  "errors": [
+    "host: active phase does not follow the accepted cast's 1.55-second preparation",
+    "host: curse contact preceded the accepted preparation"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 513,
+      "warning_samples": 26,
+      "active_samples": 133,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.4034196995464967,
+      "accepted_cast_to_active": -1.0,
+      "accepted_sky_samples": 103,
+      "first_curse_after_warning": 1.4034196995464967
+    },
+    "owner": {
+      "samples": 500,
+      "warning_samples": 26,
+      "active_samples": 134,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.359764498299299,
+      "accepted_cast_to_active": 1.602644,
+      "accepted_sky_samples": 104,
+      "first_curse_after_warning": 1.993864498299299
+    },
+    "observer": {
+      "samples": 133,
+      "warning_samples": 0,
+      "active_samples": 19,
+      "maximum_circles": 1.0,
+      "rejoined_during_active_samples": 16,
+      "reconstruction_seconds": 0.07345374830060081
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "dc0753a9a383c8aa46a9f5a8b9460542e2ccc2aca241d678a1000db1d3b0f76a"
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.0898623">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="550" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.089862" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1637" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="550" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.075333" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19716" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1638" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="550" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.072816" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1639" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="550" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.070570" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1049" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.041626" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1055" name="TheProtocolCarriesEveryRosterBump" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump" methodname="TheProtocolCarriesEveryRosterBump" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="123146247" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.020634" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1360" name="MatchmakingWireTests" fullname="TumbangPreso.Tests.MatchmakingWireTests" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.006372" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1367" name="TheQueueNeverOffersAMatchConnectionApprovalWouldRefuse" fullname="TumbangPreso.Tests.MatchmakingWireTests.TheQueueNeverOffersAMatchConnectionApprovalWouldRefuse" methodname="TheQueueNeverOffersAMatchConnectionApprovalWouldRefuse" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="1648074823" result="Passed" start-time="2026-09-14 10:43:12Z" end-time="2026-09-14 10:43:12Z" duration="0.004509" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

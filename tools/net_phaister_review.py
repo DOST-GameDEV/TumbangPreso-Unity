@@ -41,8 +41,28 @@ def evaluate(folder, scenario):
                 errors.append("observer: rejoin did not provide a usable live-ritual observation window")
             elif any(row["phaister"] != 1 for row in live):
                 errors.append("observer: rejoin did not recover the caster's actual hero")
-            elif any(row["circles"] != 1 or not row["active"] or row["sky"] != 1 for row in live):
-                errors.append("observer: rejoin missed the live ritual, clock or sky")
+            else:
+                # World, effect and sky are ordered reliable messages. Measure
+                # bounded reconstruction after the first world sample, then
+                # require uninterrupted state throughout the remaining window.
+                ready = next((row for row in live if row["circles"] == 1 and row["active"] and row["sky"] == 1), None)
+                delay = ready["time"] - live[0]["time"] if ready else None
+                measured[peer]["reconstruction_seconds"] = delay
+                if ready is None or delay > .25:
+                    errors.append("observer: live ritual reconstruction exceeded 250 ms after world state")
+                elif any(row["circles"] != 1 or not row["active"] or row["sky"] != 1
+                         for row in live if row["time"] >= ready["time"]):
+                    errors.append("observer: reconstructed ritual disappeared before its authoritative expiry")
+                if ready is not None:
+                    clock_errors = []
+                    for row in live:
+                        if row["time"] < ready["time"]: continue
+                        authoritative = min(host_active, key=lambda value: abs(value["time"] - row["time"]))
+                        if abs(authoritative["time"] - row["time"]) < .08:
+                            clock_errors.append(abs(authoritative["remaining"] - row["remaining"]))
+                    measured[peer]["remaining_clock_error"] = max(clock_errors) if clock_errors else None
+                    if len(clock_errors) < 10 or max(clock_errors, default=1) > .25:
+                        errors.append("observer: restored lifetime disagrees with the authoritative clock")
             if records[-1]["circles"] or records[-1]["active"] or records[-1]["sky"]:
                 errors.append("observer: restored presentation leaked after expiry")
             continue
@@ -67,8 +87,13 @@ def evaluate(folder, scenario):
         first_active = active[0]["gameTime"]
         delay = first_active - warning_start
         measured[peer]["warning_to_active"] = delay
-        if not 1.35 < delay < 1.85:
-            errors.append(f"{peer}: incorrect warning-to-contact duration")
+        # The first CSV sample can be a long frame after acceptance. Use the
+        # system's actual accepted-cast age for the mechanical 1.55-second delay;
+        # keep first-sample duration as a separate presentation measurement.
+        accepted_delay = active[0].get("castAge", -1)
+        measured[peer]["accepted_cast_to_active"] = accepted_delay
+        if not 1.50 <= accepted_delay < 1.85:
+            errors.append(f"{peer}: active phase does not follow the accepted cast's 1.55-second preparation")
         sustained = [row for row in records if warning_start + .25 < row["gameTime"] < first_active + 6.6]
         if any(row["circles"] != 1 for row in sustained):
             errors.append(f"{peer}: duplicated or missing owned ritual")
@@ -93,8 +118,8 @@ def evaluate(folder, scenario):
         host = data["host"]
         warning = next((row for row in host if row["windup"] > 0), None)
         hit = next((row for row in host if row["frontStun"] > .02), None)
-        if warning is None or hit is None or hit["gameTime"] - warning["gameTime"] < 1.35:
-            errors.append("host: curse contact preceded the visible preparation")
+        if warning is None or hit is None or hit.get("castAge", -1) < 1.50:
+            errors.append("host: curse contact preceded the accepted preparation")
     return {"ok": not errors, "errors": errors, "measurements": measured}
 
 

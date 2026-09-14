@@ -4,10 +4,67 @@
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Branch ASTRAReworks. Latest COMMITTED AND PUSHED HEAD
-6a1811c743f062b5be8f2c9698ed51cbc870165e saves Phaister's verified checkpoint.
+06b5447010363d8735d642459105fc7f85412b23 saves measured construction improvements
+and the corrected selected-character peer fixture. Earlier
+6a1811c743f062b5be8f2c9698ed51cbc870165e saves timing/forms/rejection behavior.
 Earlier c59cef8f29975be65bcd2f374cd9f913e255c17f saves origins/concepts/owner rules.
 Dante e6237a0d and bc8a5f00/b106c6ac remain preserved. No completion claim for
 the whole kit/project. No image/player jobs or browser tabs remain.
+
+CURRENT IMPLEMENTATION: late-join Coven and current-sky restoration, UNCOMMITTED.
+HeroAbility.RestoreWindupClock restores accepted preparation/root without spend.
+Phaister captures its fixed centre and remaining phase; a client can reconstruct
+the full ritual at its existing age, ignore duplicate live restoration and expire
+normally. No historical cast/hit is replayed; curse authority stays on the host.
+SkyEvent captures/restores the actual latest look and age silently, not a new
+Phaister eclipse regardless of which hero currently owns the sky.
+MatchRpc.HostSyncPeer sends targeted reliable CovenEffect and SkyEffect AFTER
+picks/rebind/world state, following the existing FamiliarEffect ordering. Finite,
+hero, round and expiry guards apply; server timestamps subtract transport age.
+Protocol31 is required; older protocol30 players must refuse the connection.
+Desktop/Android binaries are not updated. Report phaister-rejoin-state.md.
+
+Validation: phaister-restore-contracts-v1.xml PASSED2/2, receiptb2146266f552.
+Restored active/preparing clocks preserve charge/root/expiry and do no client hit;
+sky resumes latest Stormfront over an earlier eclipse at its existing age.
+phaister-protocol-v31.xml PASSED2/2, receipt4441748062df (protocol pin and queue
+separation). tools/audit_wire_payloads.py:68messages,0mismatches; new pairs5/5fields.
+
+Buildv7 FINISHED1057MB/44s, receipt75765457b610. Protocol refusal PASS against
+retained Dante player: host31, legacy30, explicit mismatch received. Logs/net-protocol-v31-vs-v30.
+Rejoin-v4 reconstructed22active samples and expired, but evaluator failed its
+first world sample (effect/sky arrive86.6ms later), plus owner timing measured
+from the first sample rather than actual acceptance. No production rollback.
+CSV proves every later live sample has circle+clock+sky. Earlier no-state baseline
+still fails the revised contract: reconstruction must complete within250ms of
+world state and remain continuous until authoritative expiry.
+
+Diagnostic now records public SecondsSinceAnswer as castAge; require mechanical
+contact at least1.50s after accepted cast. Keep first-sampled warning-to-contact
+as a SEPARATE presentation measurement, not a claim of full visible1.55s warning.
+This corrects measurement boundaries; do not silently lower the original numbers.
+
+Buildv8 FINISHED1057MB/45s, receipt66f12d77bbba. Rejoin-v5 restored the returned
+observer in73.5ms, stayed present and expired; only host timing assertion failed
+because SecondsSinceAnswer belongs to local UI answers and was absent on the
+host's remote cast. Session21427 ended and profiles restored. No production fix
+was made for this diagnostic limitation.
+
+Probe now timestamps the existing UltimateStarted event on ALL peers, with
+balanced enable/disable subscriptions. Restoration itself does not replay that
+event. Strong mechanical threshold remains1.50-1.85s; sampled presentation time
+is still reported separately. Production restoration unchanged sincev7.
+Buildv9 FINISHED1057MB/62s, receiptd95ddb75293b, Logs/phaister-build-v9.log.
+FINAL rejoin-v6 PASS:511host/503owner/139returning samples;25active returned
+samples,22inside the shared host-live window. Reconstruction135.94ms; sustained
+circle/clock/sky then proper expiry. Cast-event-to-active1.618656host/1.570118owner.
+All tool sessions41580/21427/51012 and owned players/proxies are finished.
+Runtimev9 SHAaa79cdc4fb45da2dbb70b15d23fc93a112c506f4c4b3bdeee6830944ca1dd231.
+No active Editor or helper. Same explicit PhaisterSkillReview output; Desktop
+unchanged. State restoration can now be saved/pushed as a verified checkpoint.
+Next: actual Hex/Slow Brand and Blink/Long Stride functional/counterplay review,
+truthful copy, then remaining six-kit and broader project queue. Other persistent
+hazards' late-join state remains separate work; do not call all networking done.
 
 Initial construction recording FINISHED1/1PASS, receipt38ee5f037b23. Factory
 cost84.1528ms cold,46.4237/43.3319ms warm,139renderers/20705vertices. First frame
@@ -126,10 +183,9 @@ but no active clock, circle or sky in20samples during the host's active window.
 No kit reset on continuing peers now. All sessions59155/94640/98990 and processes
 ended, named profiles restored. No active Editor/player/helper.
 
-NEXT: save/push the measured construction-cost checkpoint, then add targeted
-late-join ritual and current-sky state restoration following the existing reliable
-FamiliarEffect snapshot pattern. No late-join production fix yet. Protocol is30;
-inspect/version any new required messages and test current/old compatibility.
+The measured cost checkpoint above was saved as06b54470. The missing-state
+restoration that follows this baseline is now the active protocol31 work at the
+top of this ledger; do not mistake this historical baseline for its result.
 Dirty: test, VfxShapes.cs, VfxMaterial.cs (marker), HeroHazards.cs,
 NetPhaisterProbe.cs, tools/net_phaister_review.py, ledger and phaister report.
 Do not edit C#/imported assets until Editor exits.

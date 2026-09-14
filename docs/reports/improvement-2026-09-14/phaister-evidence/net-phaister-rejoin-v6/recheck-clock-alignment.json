@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 511,
+      "warning_samples": 25,
+      "active_samples": 133,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3323062003968005,
+      "accepted_cast_to_active": 1.618656,
+      "accepted_sky_samples": 103,
+      "first_curse_after_warning": 1.3323062003968005
+    },
+    "owner": {
+      "samples": 503,
+      "warning_samples": 26,
+      "active_samples": 134,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3594259991496003,
+      "accepted_cast_to_active": 1.570118,
+      "accepted_sky_samples": 104,
+      "first_curse_after_warning": 1.9664042020975003
+    },
+    "observer": {
+      "samples": 139,
+      "warning_samples": 0,
+      "active_samples": 25,
+      "maximum_circles": 1.0,
+      "rejoined_during_active_samples": 22,
+      "reconstruction_seconds": 0.13593649998309587,
+      "remaining_clock_error": 0.126166
+    }
+  }
+}

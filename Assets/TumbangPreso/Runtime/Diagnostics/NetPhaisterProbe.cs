@@ -20,6 +20,15 @@ namespace TumbangPreso.Diagnostics
         private StreamWriter _writer;
         private bool _prepared, _armed, _observeExisting, _pickSent, _seededArenaPick;
         private double _next;
+        private float _castStartedAt = -1;
+
+        private void OnEnable() => HeroAbilitySystem.UltimateStarted += OnUltimateStarted;
+        private void OnDisable() => HeroAbilitySystem.UltimateStarted -= OnUltimateStarted;
+        private void OnUltimateStarted(CharacterMotor caster, HeroKit kit, HeroAbility ability)
+        {
+            if (caster != null && caster.PlayerSlot == 1 && kit.HeroId == "phaister")
+                _castStartedAt = Time.time;
+        }
 
         private static string Argument(string key)
         {
@@ -50,7 +59,7 @@ namespace TumbangPreso.Diagnostics
             string path = Path.GetFullPath(Argument("-tp-phaistertrace"));
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,charge,windup,active,remaining,circles,sky,frontStun,rearStun,casterStun,frontElement,centreX,centreZ,casterX,casterZ,gameTime,realTime,frameDelta,frontX,frontZ,rearX,rearZ,phaister,charIndex,heroMode,roomPick");
+            probe._writer.WriteLine("time,elapsed,local,host,charge,windup,active,remaining,circles,sky,frontStun,rearStun,casterStun,frontElement,centreX,centreZ,casterX,casterZ,gameTime,realTime,frameDelta,frontX,frontZ,rearX,rearZ,phaister,charIndex,heroMode,roomPick,castAge");
         }
 
         private void Update()
@@ -156,7 +165,8 @@ namespace TumbangPreso.Diagnostics
                     rear.transform.position.x, rear.transform.position.z,
                     caster.AbilitySystem.Kit.HeroId == "phaister" ? 1 : 0,
                     caster.CharacterIndex, UI.SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0,
-                    MatchRpc.Instance?.GetSeatInfo(1)?.CharacterPick ?? -1 };
+                    MatchRpc.Instance?.GetSeatInfo(1)?.CharacterPick ?? -1,
+                    _castStartedAt >= 0 ? Time.time - _castStartedAt : -1 };
                 _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
             }
             if (elapsed > 27) { _writer.Flush(); Application.Quit(); }
