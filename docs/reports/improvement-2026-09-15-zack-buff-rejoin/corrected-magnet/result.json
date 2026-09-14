@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 368,
+      "live_samples": 92,
+      "active_samples": 92,
+      "visual_samples": 92,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    },
+    "owner": {
+      "samples": 391,
+      "live_samples": 103,
+      "active_samples": 103,
+      "visual_samples": 103,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    },
+    "observer": {
+      "samples": 152,
+      "join_to_buff_seconds": 0.04610443115234375,
+      "live_samples": 89,
+      "active_samples": 89,
+      "visual_samples": 89,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    }
+  },
+  "rejoined_seat": "observer",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "99958c1251710c8c7797c04ff70fd2bf086bfb3cf6f9c16b32d08bb32f0145e7"
+}

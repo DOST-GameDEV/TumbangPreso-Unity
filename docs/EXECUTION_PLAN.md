@@ -1,5 +1,13 @@
 # Active execution plan
 
+**LATEST2026-09-15:** Zack initial Magnet/active-ultimate window restoration
+passes4 focused local cases, real observer Magnet/ultimate and owner Magnet
+reconnects with150ms delay, and protocol35vs34 refusal. Spent charges stay spent,
+independent windows expire without recall/lightning replay. Exact report:
+reports/improvement-2026-09-15-zack-buff-rejoin/README.md. All runs retired.
+Next batch: remaining Dante/Nemu personal buffs, then persistent fields and
+the remaining movement/spectator/game queue. UI remains cancelled.
+
 **LATEST2026-09-15:** Sean initial held-fire-charge restoration now passes local
 remaining/resource/stale-record checks and actual observer/owner reconnect.
 Protocol34required; old33refusal verified. Owner hydration331ms is within

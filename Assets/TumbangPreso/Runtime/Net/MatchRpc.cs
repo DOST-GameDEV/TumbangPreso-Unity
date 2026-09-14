@@ -1800,13 +1800,23 @@ namespace TumbangPreso.Net
 
         private void SendHeldChargeSnapshot(int slot, ulong peer)
         {
-            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId
-                || !(Unit(slot)?.AbilitySystem?.Kit is Abilities.SeanHeroKit kit)) return;
+            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            var kit = Unit(slot)?.AbilitySystem?.Kit;
+            float chargeRemaining, ultimateRemaining = 0;
+            if (kit is Abilities.SeanHeroKit sean)
+                chargeRemaining = sean.IsIgnitionCannonActive ? kit.Skill2.DurationRemaining : 0;
+            else if (kit is Abilities.ZackHeroKit zack)
+            {
+                chargeRemaining = zack.IsOverchargeThrowActive ? kit.Skill2.DurationRemaining : 0;
+                ultimateRemaining = zack.IsThunderstrikeActive ? kit.Ultimate.DurationRemaining : 0;
+            }
+            else return;
             using var writer = new FastBufferWriter(64, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(GameServices.Match.RoundNumber);
             writer.WriteValueSafe(kit.HeroId);
-            writer.WriteValueSafe(kit.IsIgnitionCannonActive ? kit.Skill2.DurationRemaining : 0f);
+            writer.WriteValueSafe(chargeRemaining);
+            writer.WriteValueSafe(ultimateRemaining);
             writer.WriteValueSafe((float)_nm.ServerTime.Time);
             _nm.CustomMessagingManager.SendNamedMessage("HeldCharge", peer, writer);
         }
@@ -1818,13 +1828,22 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out string hero);
             reader.ReadValueSafe(out float remaining);
+            reader.ReadValueSafe(out float ultimateRemaining);
             reader.ReadValueSafe(out float sentAt);
-            if (!ValidSlot(slot) || !Finite(remaining) || !Finite(sentAt) || remaining < 0 || remaining > 10.1f
-                || GameServices.Match == null || GameServices.Match.RoundNumber != round || hero != "sean") return;
+            if (!ValidSlot(slot) || !Finite(remaining) || !Finite(ultimateRemaining) || !Finite(sentAt)
+                || remaining < 0 || remaining > 10.1f || ultimateRemaining < 0 || ultimateRemaining > 7.1f
+                || GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
             var motor = Unit(slot);
-            if (!(motor?.AbilitySystem?.Kit is Abilities.SeanHeroKit kit)) return;
-            remaining = Mathf.Clamp(remaining - Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt), 0, kit.Skill2.Duration);
-            using (NetCue.SuppressRelay()) kit.RestoreJoiningIgnition(motor, remaining);
+            var kit = motor?.AbilitySystem?.Kit;
+            if (kit == null || kit.HeroId != hero) return;
+            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
+            remaining = Mathf.Clamp(remaining - elapsed, 0, kit.Skill2.Duration);
+            ultimateRemaining = Mathf.Max(0, ultimateRemaining - elapsed);
+            using (NetCue.SuppressRelay())
+            {
+                if (kit is Abilities.SeanHeroKit sean && ultimateRemaining <= 0) sean.RestoreJoiningIgnition(motor, remaining);
+                else if (kit is Abilities.ZackHeroKit zack) zack.RestoreJoiningCharges(motor, remaining, ultimateRemaining);
+            }
         }
 
         private int _iceGeneration, _lastIceGeneration, _iceRound;

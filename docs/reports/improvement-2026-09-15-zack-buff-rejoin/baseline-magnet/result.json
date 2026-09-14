@@ -1,0 +1,44 @@
+{
+  "ok": false,
+  "errors": [
+    "observer did not restore the buff in its joining reply window",
+    "observer lost the active charge/window or its carried visual"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 367,
+      "live_samples": 93,
+      "active_samples": 93,
+      "visual_samples": 93,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    },
+    "owner": {
+      "samples": 375,
+      "live_samples": 101,
+      "active_samples": 101,
+      "visual_samples": 101,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    },
+    "observer": {
+      "samples": 154,
+      "join_to_buff_seconds": null,
+      "live_samples": 92,
+      "active_samples": 0,
+      "visual_samples": 0,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 0.0,
+      "final_ultimate_bank": 20.0
+    }
+  },
+  "rejoined_seat": "observer",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "25fc67586c748a7375ecf6c82abf79ba4fa548885796a6df46c3e724744bf1c9"
+}

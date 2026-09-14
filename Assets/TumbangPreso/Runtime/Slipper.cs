@@ -689,7 +689,7 @@ namespace TumbangPreso
                 if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                     sean.ConsumeIgnition();
                 else if (affinity == SlipperAffinity.ElectricZap && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
-                    zack.IsOverchargeThrowActive = false;
+                    zack.ConsumeMagnetCharge();
             }
             ReleasePreviousHolder(holder);
 

@@ -258,7 +258,8 @@ namespace TumbangPreso.Tests
             //32 requires owner confirmation before instant ice-world effects spawn.
             //33 adds the atomic IceBegin/IceItem/IceEnd world snapshot.
             //34 restores the joining world's held fire-charge state.
-            Assert.AreEqual(34, NetSession.ProtocolVersion,
+            //35 extends HeldCharge with the separate ultimate charged-throw window.
+            Assert.AreEqual(35, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

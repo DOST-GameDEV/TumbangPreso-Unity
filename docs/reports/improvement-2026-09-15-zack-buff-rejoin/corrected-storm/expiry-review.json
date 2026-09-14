@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 364,
+      "live_samples": 60,
+      "active_samples": 60,
+      "visual_samples": 60,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 1.0,
+      "final_ultimate_bank": 0.0,
+      "expiry_offset_from_host_seconds": 0.0
+    },
+    "owner": {
+      "samples": 372,
+      "live_samples": 66,
+      "active_samples": 66,
+      "visual_samples": 66,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 1.0,
+      "final_ultimate_bank": 0.0,
+      "expiry_offset_from_host_seconds": -0.16829681396484375
+    },
+    "observer": {
+      "samples": 126,
+      "join_to_buff_seconds": 0.05770111083984375,
+      "live_samples": 47,
+      "active_samples": 47,
+      "visual_samples": 47,
+      "final_active": 0.0,
+      "final_visuals": 0.0,
+      "final_skill_charges": 1.0,
+      "final_ultimate_bank": 0.0,
+      "expiry_offset_from_host_seconds": 0.01720428466796875
+    }
+  },
+  "runtime_sha256": "99958c1251710c8c7797c04ff70fd2bf086bfb3cf6f9c16b32d08bb32f0145e7"
+}

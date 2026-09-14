@@ -10,6 +10,33 @@ namespace TumbangPreso.Abilities
     public sealed class ZackHeroKit : HeroKit
     {
         public bool IsOverchargeThrowActive { get; set; }
+        private bool _joinMagnetSettled, _joinThunderSettled;
+
+        public void ConsumeMagnetCharge()
+        {
+            _joinMagnetSettled = true;
+            IsOverchargeThrowActive = false;
+        }
+
+        public bool RestoreJoiningCharges(CharacterMotor motor, float magnetRemaining, float thunderRemaining)
+        {
+            if (motor == null) return false;
+            var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
+            bool restored = false;
+            if (!_joinMagnetSettled && !IsOverchargeThrowActive && !Skill2.IsActive)
+            {
+                _joinMagnetSettled = true;
+                ((MagnetRecallAbility)Skill2).RestoreCharge(context, magnetRemaining);
+                restored = true;
+            }
+            if (!_joinThunderSettled && !Ultimate.IsActive && !Ultimate.IsWindingUp)
+            {
+                _joinThunderSettled = true;
+                ((ThunderstrikeOverdriveAbility)Ultimate).RestoreChargeWindow(context, thunderRemaining);
+                restored = true;
+            }
+            return restored;
+        }
         public bool IsThunderstrikeActive => Ultimate != null && Ultimate.IsActive;
         public override float MovementSpeedScale => Skill1 != null && Skill1.IsActive
             ? Balance.ZackSprintSpeedScale : 1.0f;
@@ -377,8 +404,17 @@ namespace TumbangPreso.Abilities
                 // ⚠️ THE SHOE ARRIVES LIVE. See `ChargeSeconds`: this flag is what
                 // `Carrier.HostThrowAt` reads to stamp `SlipperAffinity.ElectricStun` onto the
                 // launch, and `Carrier` clears it on the throw, so one recall charges one throw.
+                _kit._joinMagnetSettled = true;
                 _kit.IsOverchargeThrowActive = true;
                 _kit.RefreshChargeVisual(ctx);
+            }
+
+            public void RestoreCharge(AbilityContext context, float remaining)
+            {
+                if (remaining <= 0) { EndEarly(context); _kit.IsOverchargeThrowActive = false; return; }
+                RestoreLiveClock(remaining);
+                _kit.IsOverchargeThrowActive = true;
+                _kit.RefreshChargeVisual(context);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -453,6 +489,7 @@ namespace TumbangPreso.Abilities
                 // places now, and `AudioDirector` parks a pooled voice at the point it is given:
                 // a thunderclap fired at the caster while the lightning hits seven metres away
                 // is the fault `LrtTrainFlyby` records about a moving train.
+                _kit._joinThunderSettled = true;
                 Vector3 at = AimedDestination(ctx);
 
                 NetCue.Play("hero_zack_ult", ctx.Position);
@@ -463,6 +500,13 @@ namespace TumbangPreso.Abilities
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.05f);
+            }
+
+            public void RestoreChargeWindow(AbilityContext context, float remaining)
+            {
+                if (remaining <= 0) { EndEarly(context); return; }
+                RestoreLiveClock(remaining);
+                _kit.RefreshChargeVisual(context);
             }
 
             // No per-tick self impulse: Thunderstrike is an aimed strike, not the

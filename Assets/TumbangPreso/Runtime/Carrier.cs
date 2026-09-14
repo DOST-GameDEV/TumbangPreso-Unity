@@ -282,7 +282,7 @@ namespace TumbangPreso
                 // player reads and the shoe they throw are two different numbers.
                 velocity *= 1.6f * ability.VariantGain("zack.2.discharge");
                 affinity = SlipperAffinity.ElectricZap;
-                zack.IsOverchargeThrowActive = false;
+                zack.ConsumeMagnetCharge();
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {

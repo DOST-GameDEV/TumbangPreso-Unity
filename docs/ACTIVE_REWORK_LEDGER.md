@@ -1,5 +1,93 @@
 # Active TUMP rework ledger
 
+## CURRENT Zack joining windows qualified; save batch then Dante/Nemu
+
+All tools retired:51289build,89421Magnet observer,60733storm observer,29001Magnet
+owner. Protocol35vs34 actual refusal passed. Three native results plus exact
+expiry rechecks all PASS. Report/CSV/XML in improvement-2026-09-15-zack-buff-rejoin.
+Returning owner332ms initial hydration then74/74 live/visual; returned observers
+89/89 and47/47. Maximum absolute peer expiry offset184ms at150ms one-way link.
+Source reviewed; latest pushed165ac7bf until this batch is saved. No other Unity
+or native run active. Next diff/stage/commit/push, then Dante/Nemu remaining
+personal buffs from reviewed Logs draft, focused grant/pickup/cleanup checks.
+No UI, agents, Figma, reset credits or Desktop update. Full non-UI queue continues.
+
+## CURRENT Zack native Magnet restore passed; storm reconnect running
+
+Latest stable pushed HEAD165ac7bf, ASTRAReworks on the Matthew laptop checkout.
+Protocol35 focused assertion passed1/1, session58694 retired, guard9efe8bd5657d.
+Corrected internal ZackBuffRejoinReview build completed, session51289 retired,
+guard1e3906dbc930; Runtime SHA99958c1251710c8c7797c04ff70fd2bf086bfb3cf6f9c16b32d08bb32f0145e7.
+Magnet actual observer reconnect150ms passed: returned89/89 live/visual samples,
+46ms initial hydration, no extra resource or effect after expiry. Session89421
+retired. Running storm equivalent60733, Logs/net-zack-buff-storm-corrected-v1.
+Next read result, protocol35vs34 refusal using preserved BuffRejoinReview, save
+scoped receipts/commit/push. Active source remains Zack joining state only.
+Drafted Dante/Nemu restore and focused contracts outside Assets in
+Logs/PersonalBuffRestore.draft.cs.txt during build/native waits. These are NOT
+implemented. Never extend short real buff durations to make a reconnect test pass.
+UI cancelled; no agents/Figma/reset/Desktop. Continue full non-UI queue afterward.
+
+## CURRENT Zack windows local4/4pass, protocol35check
+
+43467completed4/4: independent remainingE/ult clocks, no recall/strike/spend,
+consumedEcannotrearm or suppress restoredultimate, existingelectric consumption
+andSean staleguard remainvalid. XMLpreservedin zack-buff-rejoin.
+Running protocol35assert, Logs/zack-buff-protocol35-v1.xml/.log, then fresh
+ZackBuffRejoinReview35build and two actualdelayedwindowrejoins.
+No C#/imported edits while Editoractive; noUI/agents/Figma/reset/Desktop.
+
+
+## CURRENT Zack independent joining-window restore under local test
+
+Both realbaselines failed: returned Magnet0/92active/visual; returnedStorm0/54,
+while host/owner windows intact. Implemented reviewed separate joining guards
+and clock-only E/ultimate restore, no recall/strike/cost. ConsumeMagnetCharge
+settles only E. HeldCharge packet now includes separateultimate remaining and
+Sean remains supported; protocol35required.
+Running4focused cases: two independent/stale window tests, existing electric
+consumption/ult separation, existing Sean stale/newcastguard.
+Logs/zack-joining-windows-v1.xml/.log. After localpass, protocolassert/new35
+player and actualtwo windowrejoins plus34-vs35refusal. Sourceuncommitted,
+latestpushed165ac7bf. No UI/agents/Figma/reset/Desktop.
+
+
+## CURRENT Zack two-window baselines collected
+
+Magnet observerrejoin baseline failed: returning observer0/92active/visual
+samples while host/owner retainedcharge. Both baseline cases are preserved in
+improvement-2026-09-15-zack-buff-rejoin; inspect storm result before acceptance.
+59931/67929retired. Now apply independently guarded Magnet and activeThunderstrike
+window restore from reviewed draft; no recall/strike replay, no resource spend.
+Add remaining-storm field toheldstate schema, require newprotocol35, preserve
+Sean currentbehavior and captured scopes. Localstale/expiry/independence then
+newnativebaselines beforepush. Latestpushed165ac7bf.
+
+
+## CURRENT Zack Magnet held-state baseline running
+
+Baseline34ZackBuffRejoinReview built,10686retired guard825383e8c731. Running
+net-zack-buff-magnet-baseline-v1 with held charge + observerreconnect150ms.
+Next Thunderstrike held-window baseline. Drafted actual independent E/ultimate
+restore methods in Logs/ZackJoiningCharges.draft.cs.txt while native tools run.
+No production change yet. Consume E must not cancel/block independent ultimate
+tail; no recall or lightning replay. Pending ultimate windup is distinct from
+the active tail and not claimed covered. Latestpushed165ac7bf.
+
+
+## CURRENT Zack joining-charge/window baseline preparation
+
+Sean fix committed/pushed165ac7bffbde17dd20b3e1938e4deac87993fb7e, protocol34.
+Extended only Zack diagnostics/harness: hold charge/window without throwing,
+shared wall clock, reconnect same owner/observer profile with observe-existing
+(no meter/position/pick/input reseeding). Cases magnet and thunderstrike.
+Building INTERNAL ZackBuffRejoinReview baseline34,
+Logs/zack-buff-baseline-build-v1.log. No production Zack restore yet.
+After build actualmagnet/ult-windowrejoin baselines sequential on8990/8991.
+Draft restore-only separate E/ultimate clocks while build runs; never recall
+or replay lightning when hydrating. NoUI/agents/Figma/reset/Desktop.
+
+
 ## CURRENT Sean owner hydration verified with explicit reply window
 
 60202owner run restored charge at331ms afterarena-ready, then84/84subsequent

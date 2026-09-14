@@ -64,6 +64,45 @@ namespace TumbangPreso.PlayTests
 
         private AbilityContext Context() => new AbilityContext(_caster, _caster.GetComponent<Carrier>(), _caster.GetComponent<CombatVerbs>());
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator JoiningChargeWindowsKeepSeparateClocksWithoutRecallOrStrike()
+        {
+            var kit=(ZackHeroKit)_caster.AbilitySystem.Kit;
+            var carrier=_caster.GetComponent<Carrier>();var held=carrier.Held;
+            kit.Skill2.ApplyNetworkSnapshot(0,0);
+            float bank=kit.UltimateCharge;Vector3 position=_caster.transform.position;
+            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,1.1f,2.5f));
+            yield return null;yield return null;
+            Assert.IsTrue(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.AreSame(held,carrier.Held);Assert.Zero(kit.Skill2.ChargesRemaining);Assert.AreEqual(bank,kit.UltimateCharge);
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.MagnetRecallTrace>(FindObjectsSortMode.None));
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
+            Assert.Less(Vector3.Distance(position,_caster.transform.position),.05f);
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
+            yield return new WaitForSeconds(1.25f);
+            Assert.IsFalse(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsThunderstrikeActive,
+                "Magnet expiry incorrectly ended the independent ultimate window.");
+            yield return new WaitForSeconds(1.4f);
+            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsNull(held.GetComponentInChildren<Visual.ZackMagnetCharge>());
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator AConsumedMagnetCannotRearmButDoesNotBlockJoiningThunderstrike()
+        {
+            var kit=(ZackHeroKit)_caster.AbilitySystem.Kit;
+            var shoe=_caster.GetComponent<Carrier>().Held;
+            shoe.ApplySnapshotState(SlipperState.InFlight,null,new Vector3(0,1,-5),Quaternion.identity,
+                Vector3.forward*8,0,SlipperAffinity.ElectricZap,_caster.PlayerSlot);
+            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,5,1.2f));
+            Assert.IsFalse(kit.IsOverchargeThrowActive,"A late joining record rearmed a consumed Magnet.");
+            Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
+            yield return new WaitForSeconds(1.35f);
+            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator SnapDischargeTradesArmingTimeForActualFasterFlight()
         {
