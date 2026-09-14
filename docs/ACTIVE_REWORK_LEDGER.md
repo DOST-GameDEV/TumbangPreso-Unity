@@ -4,17 +4,57 @@
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Branch ASTRAReworks, latest COMMITTED AND PUSHED HEAD:
-5cfb04b3c44e9a14368a0afeb390c7696144a06f, restoring live Coven/current sky on rejoin.
+36805af4ddd38bec84029c3e6514b0e0c5e57553, Phaister placement/alternate checks and truthful copy.
+Earlier5cfb04b3c44e9a14368a0afeb390c7696144a06f restores live Coven/current sky on rejoin.
 Prior pushed checkpoints: 06b54470 construction cost; 6a1811c7 Phaister timing/forms/
 rejection; c59cef8f origins/concepts; e6237a0d Dante; bc8a5f00 and b106c6ac preserved.
 
-Placement run FINISHED2/2PASS, receipt e2c9bcbde50e. Logs/phaister-placement-variants-v1
+CURRENT: Cheska Nova loose-slipper investigation. Her prior deep ice art/animation
+pass is already committed and should be preserved; reports/improvement-2026-09-10/
+cheska-kit.md and earlier ledger record6/6collision/cast checks,4/4traction and
+matching native wall/prison meshes. Those screenshots predate current maps/hands.
+No new Cheska art redesign is justified from stale screenshots.
+
+Source hypothesis: Nova calls Slipper.Deflect for every nearby slipper; Deflect
+changes velocity but never changes Loose->InFlight. A grounded slipper therefore
+may not move despite the skill's copy. Existing Dante correction handles this by
+HostThrow(null,...) for Loose and Deflect only for InFlight. Do not change the
+shared Deflect contract blindly or affect held/returning equipment.
+
+New CheskaNovaSlipperProbe.cs/meta drives real Nova input and checks nearby loose
+flight/outward movement, retained held shoe and an outside loose shoe. Initial
+run compiled no tests because the fixture omitted using System for FormattableString;
+fixed the import, no production code changed. That run is NOT a gameplay baseline.
+Actual baseline-v2 FINISHED1failed, profilec00f86bc88a9. accepted=True,
+launched=False,outward0,held_same=True,outside_move0. CSV preserved as
+Logs/cheska-nova-slippers-before.csv. This confirms the state-transition defect.
+Nova now uses HostThrow(null,...) for Loose and Deflect only for InFlight;
+held/returning equipment untouched. Preserves speed19 and effective lift1.1;
+zero planar distance falls back to caster forward. No shared Deflect change.
+
+Correction/capture run FINISHED2/2PASS, receipt63cbbe13f33c. Python828 exited.
+Logs/cheska-nova-flight-v1(.pid/.stdout/.stderr/.log/.xml).
+Two tests: NovaLaunchesNearbyLooseSlippersAndKeepsHeldAndOutsideOnesSafe and
+EveryHeroActionThroughTheRealPressAndRelease, filtered to Cheska via child env.
+TUMP_EVIDENCE=Logs/cheska-current-kit-v1, TUMP_REVIEW_ISOLATED=1.
+CSV: acceptedTrue,launchedTrue,outward10.26m,heldsameTrue,outside0.
+Fresh owner sheets for all3actions inspected; retain existing distinct ice art
+and current hand poses. Videos encoded at recorded times under the evidence path.
+INTERNAL build FINISHED1057MB/50s, receiptad0a4e72b9e3:
+Logs/cheska-flight-build-v1 (.pid/.stdout/.stderr/.log),
+explicit Builds/CheskaSkillReview/TumbangPreso.exe. Read pid file for active helper.
+All Editor/test helpers exited. Preserve prior good ice art. Save this scoped
+correction, then review Sean's current three actions and actual empowered throw.
+Sean still has45%stretch/40%squash and possible timeout-driven airborne impact;
+gather current ordinary-speed evidence before changing those paths.
+Report reports/improvement-2026-09-14/cheska-nova-flight.md.
+
+Prior placement run FINISHED2/2PASS, receipt e2c9bcbde50e. Logs/phaister-placement-variants-v1
 (.pid/.stdout/.stderr/.log/.xml). Two new actual-input PlayMode checks:
 HexAndSlowBrandApplyTheirActualFootprintsAndPulseRates and
 BothBlinkVariantsWaitForReleaseAndShoveOnlyAtDeparture.
-No active Editor/player/helper. Source copy now corrected in PhaisterHeroKit and
-core HeroLoadout descriptions; no Q/E mechanics changed. Tests/evidence/report
-and this consolidated ledger are pending a checkpoint.
+Source copy corrected in PhaisterHeroKit and core HeroLoadout descriptions;
+no Q/E mechanics changed. That checkpoint is already pushed as36805af4.
 
 Expected evidence: Logs/phaister-hex-variants.csv and phaister-blink-variants.csv.
 Check fresh nonzero XML, exact tests and actual values. The tests unlock only
@@ -30,8 +70,7 @@ Blink travels5.5/7.15m, departure target moves.573869m, arrival target0;
 both wait for release and retain51.7s cooldown. Copy no longer says one stumble
 or an impassable ward. Long Stride ramp.55/.7=.785714s vs default.55s.
 Blink shove is at DEPARTURE; cultural draft corrected too.
-Next: save this small checkpoint, then the remaining full-kit review beginning
-with Cheska. Broader overlap/defender counterplay and other persistent fields'
+Next is the focused Cheska investigation above. Broader overlap/defender counterplay and other persistent fields'
 rejoin behavior remain open; do not claim all game networking or all art done.
 Do not add speculative collider deduplication without a real duplicate-hit case.
 

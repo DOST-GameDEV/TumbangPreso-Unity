@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.863365">
+  <test-suite type="TestSuite" id="1473" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="357" result="Failed" site="Child" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.863365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1467" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="357" result="Failed" site="Child" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.850196" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14212" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1468" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="357" result="Failed" site="Child" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.847760" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1469" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="357" result="Failed" site="Child" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.845761" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1061" name="CheskaNovaSlipperProbe" fullname="TumbangPreso.PlayTests.CheskaNovaSlipperProbe" classname="TumbangPreso.PlayTests.CheskaNovaSlipperProbe" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.826530" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1062" name="NovaLaunchesNearbyLooseSlippersAndKeepsHeldAndOutsideOnesSafe" fullname="TumbangPreso.PlayTests.CheskaNovaSlipperProbe.NovaLaunchesNearbyLooseSlippersAndKeepsHeldAndOutsideOnesSafe" methodname="NovaLaunchesNearbyLooseSlippersAndKeepsHeldAndOutsideOnesSafe" classname="TumbangPreso.PlayTests.CheskaNovaSlipperProbe" runstate="Runnable" seed="1761781788" result="Failed" start-time="2026-09-14 11:36:18Z" end-time="2026-09-14 11:36:26Z" duration="7.807147" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Nova changed a loose slipper's velocity without starting its flight.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaNovaSlipperProbe+<NovaLaunchesNearbyLooseSlippersAndKeepsHeldAndOutsideOnesSafe>d__8.MoveNext () [0x004a5] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\CheskaNovaSlipperProbe.cs:80
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

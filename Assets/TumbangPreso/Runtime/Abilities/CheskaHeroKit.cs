@@ -266,7 +266,20 @@ namespace TumbangPreso.Abilities
                             away.y = 0.0f;
                             if (away.magnitude <= 4.8f)
                             {
-                                s.Deflect(away.normalized * 19.0f + Vector3.up * 4.5f, 1.1f);
+                                if (away.sqrMagnitude < .001f)
+                                {
+                                    away = ctx.Forward; away.y = 0;
+                                    if (away.sqrMagnitude < .001f) away = Vector3.forward;
+                                }
+                                var outward = away.normalized * 19.0f;
+                                // Deflection changes an existing flight's velocity;
+                                // a loose slipper needs the normal flight transition.
+                                // Neither path may detach somebody's held equipment.
+                                if (s.State == SlipperState.Loose)
+                                    s.HostThrow(null, s.transform.position,
+                                        outward + Vector3.up * (Balance.DeflectLift * 1.1f));
+                                else if (s.State == SlipperState.InFlight)
+                                    s.Deflect(outward, 1.1f);
                             }
                         }
                     }
