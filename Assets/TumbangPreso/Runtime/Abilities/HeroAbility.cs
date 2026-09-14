@@ -46,6 +46,20 @@ namespace TumbangPreso.Abilities
         public float Cooldown { get; protected set; }
         public float Duration { get; protected set; }
 
+        // Instant world effects can opt out of local prediction without delaying
+        // their input, resource feedback or cast animation.
+        public virtual bool DefersPredictedEffect => false;
+
+        public void ApplyConfirmedEffect(AbilityContext ctx, float heldSeconds)
+        {
+            if (!DefersPredictedEffect || ctx?.Motor == null || NetAuthority.IsHost
+                || ctx.Motor.PlayerSlot != NetAuthority.LocalSlot) return;
+            float previousHold = HeldSecondsOnCast;
+            HeldSecondsOnCast = Mathf.Max(0, heldSeconds);
+            try { OnActivate(ctx); }
+            finally { HeldSecondsOnCast = previousHold; }
+        }
+
         public float CooldownRemaining { get; protected set; }
         public float DurationRemaining { get; protected set; }
         public bool IsActive => DurationRemaining > 0.0f;
@@ -368,10 +382,7 @@ namespace TumbangPreso.Abilities
         {
             if (ctx == null) return Vector3.zero;
 
-            var system = ctx.Motor != null ? ctx.Motor.AbilitySystem : null;
-            return system != null
-                ? system.AimDestination(this)
-                : ctx.Position + ctx.Forward * AimRangeFor(HeldSecondsOnCast);
+            return HeroAbilitySystem.AimDestination(this, ctx);
         }
 
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
@@ -708,6 +719,8 @@ namespace TumbangPreso.Abilities
             }
 
             DurationRemaining = Duration;
+            if (DefersPredictedEffect && NetAuthority.IsNetworked && !NetAuthority.IsHost
+                && ctx?.Motor != null && ctx.Motor.PlayerSlot == NetAuthority.LocalSlot) return;
             OnActivate(ctx);
         }
 

@@ -1,5 +1,13 @@
 # Active execution plan
 
+**LATEST verified:** Zack and Nemu batches pushed. Cheska instant ice now waits
+for accepted host payload; captured-pose error fixed; protocol32 required and
+old31refusal verified. SplitSpires real centre passage fixed, BlackIce tradeoff
+measured/copy corrected. Full scoped receipts: cheska-network-review.md. Save
+batch then continue persistent effects/rejoin and remaining non-UI game work.
+UI is removed, Inday later, selected expansion LAST LAST. No active processes.
+
+
 **NEWEST scope:** owner removed the remaining UI work from the to-do list.
 Keep current UI/source/art/patch saved; do not perform the former UI-LAST phase.
 Continue non-UI game work, then deferred Inday, then the selected expansion last.

@@ -383,7 +383,12 @@ namespace TumbangPreso.PlayTests
                 var entry = RosterBook.Load().People.First(p => p.Id == hero);
                 who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
                 var abilities = who.AbilitySystem;
-                abilities.BindHero(hero);
+                string firstVariant=Environment.GetEnvironmentVariable("TUMP_REVIEW_SLOT1_VARIANT");
+                string secondVariant=Environment.GetEnvironmentVariable("TUMP_REVIEW_SLOT2_VARIANT");
+                abilities.BindHero(hero,new HeroBuild{HeroId=hero,
+                    Slot1VariantId=firstVariant,Slot2VariantId=secondVariant});
+                if(!string.IsNullOrEmpty(firstVariant))Assert.IsTrue(abilities.HasVariant(firstVariant));
+                if(!string.IsNullOrEmpty(secondVariant))Assert.IsTrue(abilities.HasVariant(secondVariant));
                 if (hero=="nemu") Assert.IsNotNull(who.GetComponent<CharacterVisual>().Companion,
                     "The real Nemu cast is missing its familiar; a fallback is not this review.");
                 var witness = MakeWitness();

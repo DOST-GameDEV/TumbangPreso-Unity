@@ -1,5 +1,13 @@
 # Working instructions for ChatGPT / Codex
 
+**Efficiency reaffirmed by owner,2026-09-14:** while builds/tests run, actively
+draft the next change or investigate another independent issue. Put draft C#
+outside imported Assets (for example ignored Logs), then review/apply it after
+the Editor exits. Do not spend those waits merely polling or watching. Parallelize
+independent work, retain focused tests, and never trade visual/gameplay quality
+for speed. Continue the full remaining non-UI queue while the owner sleeps.
+
+
 **NEWEST scope change,2026-09-14: UI REMOVED from the active to-do list.**
 The owner explicitly cancelled the remaining UI work in this queue. Do not finish
 its overhaul, remaining screens or planned UI/lore integration unless requested

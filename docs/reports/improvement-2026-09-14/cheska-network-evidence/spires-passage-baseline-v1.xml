@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.1968592">
+  <test-suite type="TestSuite" id="1499" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="379" result="Failed" site="Child" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.196859" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1493" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="379" result="Failed" site="Child" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.187624" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48700" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1494" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="379" result="Failed" site="Child" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.183431" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1495" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="379" result="Failed" site="Child" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.179753" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1403" name="SplitSpiresPassageProbe" fullname="TumbangPreso.PlayTests.SplitSpiresPassageProbe" classname="TumbangPreso.PlayTests.SplitSpiresPassageProbe" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.172204" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1404" name="SplitSpiresLeavesItsPromisedBodyAndSlipperPassage" fullname="TumbangPreso.PlayTests.SplitSpiresPassageProbe.SplitSpiresLeavesItsPromisedBodyAndSlipperPassage" methodname="SplitSpiresLeavesItsPromisedBodyAndSlipperPassage" classname="TumbangPreso.PlayTests.SplitSpiresPassageProbe" runstate="Runnable" seed="392758388" result="Failed" start-time="2026-09-14 15:20:05Z" end-time="2026-09-14 15:20:05Z" duration="0.161394" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Split Spires still constructs the default centre slab.
+  Expected: 2
+  But was:  3
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SplitSpiresPassageProbe+<SplitSpiresLeavesItsPromisedBodyAndSlipperPassage>d__2.MoveNext () [0x00339] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\SplitSpiresPassageProbe.cs:47
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

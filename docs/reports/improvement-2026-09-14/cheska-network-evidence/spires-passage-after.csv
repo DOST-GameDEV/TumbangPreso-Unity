@@ -1,0 +1,3 @@
+variant,slabs,body_blocked,slipper_blocked
+barricade,3,True,True
+spires,2,False,False

@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 380,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 26.1302330389433,
+      "sheet_last": 31.0546810557134,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 29.0865021201596,
+      "wall_last": 34.9927135440707,
+      "sheet_expiry_spread": 0.03828592139610265,
+      "wall_expiry_spread": 0.007449798782694472
+    },
+    "owner": {
+      "samples": 395,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 26.1135623432261,
+      "sheet_last": 31.0929669771095,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 29.0500243117784,
+      "wall_last": 35.0001357567248,
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    },
+    "observer": {
+      "samples": 389,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 26.0835432109547,
+      "sheet_last": 31.0616465872092,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 29.033401500949,
+      "wall_last": 35.0001633428534,
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    }
+  },
+  "case": "both",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "a256b551c230052bbe4b29e1f1bb4714d3f07785de89628ec33b6f3bcbed0752"
+}

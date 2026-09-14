@@ -22,11 +22,12 @@ namespace TumbangPreso.Visual
             return go;
         }
 
-        public static void BuildWall(Transform parent, float span, float thickness)
+        public static void BuildWall(Transform parent, float span, float thickness, bool split = false)
         {
             string[] meshes = { "wall_left", "wall_center", "wall_right" };
             for (int i=0;i<3;i++)
             {
+                if (split && i == 1) continue;
                 var slab = Piece(parent,"IcePillar_" + (i-1),meshes[i],Ice);
                 slab.transform.localPosition = new Vector3((i-1)*.75f*span,0,0);
                 slab.transform.localScale = new Vector3(1,1,thickness);

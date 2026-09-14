@@ -1,5 +1,13 @@
 # Ability rework plan
 
+**Newest scoped results,2026-09-14:** see zack-skills.md, nemu-laptop-review.md
+and cheska-network-review.md under reports/improvement-2026-09-14. Current
+Cheska confirmation/pose and actual SplitSpires passage are corrected and
+qualified for their reported scope. Preserve these changes; older OPEN labels
+below are historical. Continue remaining persistent-field/rejoin and mixed-kit
+counterplay work. UI was removed from the active queue by the owner.
+
+
 **Latest casting rule, 2026-09-14:** every hero performs distinct ability casts,
 especially ultimates. Do not reuse one movement with different coloured effects.
 Design and review preparation, weight transfer, hand/torso path, contact and

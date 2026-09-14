@@ -212,8 +212,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "Covers a doorway", "They can still cross"),
 
             new AbilityVariant("cheska.1.blackice", "cheska", 1, "PERMAFROST SHEET", "CheskaFrostSheet",
-                "BLACK ICE", "Half the patch, and nobody keeps their feet on it.",
-                0.35f, -0.35f, "Nobody crosses it", "Covers a doorway",
+                "BLACK ICE", "A tighter, slicker patch. Rivals lose more speed and steering.",
+                0.35f, -0.35f, "Stronger drag", "Smaller patch",
                 "Use Permafrost Sheet eight times", true, 8),
 
             new AbilityVariant("cheska.2.barricade", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",

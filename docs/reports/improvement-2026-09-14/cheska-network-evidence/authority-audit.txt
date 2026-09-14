@@ -1,0 +1,53 @@
+           self   Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:163  EnterSpeedZone   protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:164  ClearStun        protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:171  ClearStun        protected override void OnTick(AbilityContext ctx,float dt)
+           self   Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:180  ExitSpeedZone    protected override void OnEnd(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs:717  EnterSpeedZone   public virtual void Activate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs:740  ExitSpeedZone    private void ReleaseRoot()
+           self   Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs:924  EnterSpeedZone   protected void RestoreWindupClock(AbilityContext ctx, float rema
+           self   Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:90  EnterSpeedZone   protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:94  ApplyImpulse     protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:110  ExitSpeedZone    protected override void OnEnd(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:215  Teleport         private void FinishProjection(AbilityContext ctx,bool relocate)
+           self   Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:258  Teleport         protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:88  ApplyImpulse     protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:336  ApplyImpulse     protected override void OnActivate(AbilityContext ctx)
+           self   Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:356  ApplyImpulse     protected override void OnTick(AbilityContext ctx, float dt)
+           self   Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:135  ApplyImpulse     protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs:249  ApplyStagger     protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs:250  ApplyResolvedImpact protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:112  ApplyTrip        protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:237  ApplyResolvedImpact protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:241  ApplyStagger     protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:161  SetIceSurface    private void OnDestroy()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:177  ExitSpeedZone    private void OnDestroy()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:268  SetIceSurface    private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:273  EnterSpeedZone   private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:278  ExitSpeedZone    private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:279  SetIceSurface    private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:409  ApplyImpulse     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:442  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:506  ApplyImpulse     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:510  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:667  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:668  ApplyResolvedImpact private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1361  ApplyImpulse     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1399  ApplyImpulse     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1410  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1760  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3386  ApplyImpulse     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3396  ApplyStagger     private void Update()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3590  ApplyStagger     public static void CreateThunderstrike(Vector3 position, float r
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3591  ApplyResolvedImpact public static void CreateThunderstrike(Vector3 position, float r
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3890  ApplyResolvedImpact public static void CreateExplosion(Vector3 center, float radius,
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3901  ApplyStagger     public static void CreateExplosion(Vector3 center, float radius,
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:328  ApplyResolvedImpact public static void ResolveShove(int casterSlot, Vector3 at, Vect
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:329  ApplyStagger     public static void ResolveShove(int casterSlot, Vector3 at, Vect
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:627  ApplyStagger     private void Curse(Vector3 at, int mySlot)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:175  ApplyResolvedImpact protected override void OnTick(AbilityContext ctx, float dt)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:191  ApplyStagger     protected override void OnTick(AbilityContext ctx, float dt)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Visual/GhostPetCompanion.cs:1083  Teleport         public void EndPossession(bool teleportNemu)
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Visual/GhostPetCompanion.cs:1679  ApplyStagger     private void ResolvePossessionContacts()
+HOST-ONLY  other  Assets/TumbangPreso/Runtime/Visual/GhostPetCompanion.cs:1680  ApplyResolvedImpact private void ResolvePossessionContacts()
+
+51 effect call sites, 35 host-gated, 0 ungated on another body, 16 ungated on the caster

@@ -1,5 +1,260 @@
 # Active TUMP rework ledger
 
+## CURRENT Cheska qualified batch ready to save
+
+BlackIceFooting1/1pass,48384retired guard0345c0672f7c. Radius/edge and stronger
+actual movement penalty verified; no compulsory trip, clean cleanup. Applied
+truthful gameplay copy; Core build0warnings/errors. Full result and exact
+receipts in cheska-network-review.md. Seven ice contracts, protocol1, related
+Phaister2, spires/defaultwall2, spiresarena1, footing1 allpass. Actual delayed
+accepted/denied/pair and32-vs31refusalpass. Sharedclockdiagnostic repaired with
+fresh runs; previous failure preserved. All old native/Editor sessions retired.
+Next commit/push coherent batch, then persistent fields/rejoin (ice and other
+nonfamiliar effects), broader mixed-kit/state/input/movement/match/spectator/
+engineering, deferredInday, expansionlast. UI remains REMOVED. No agents/resets.
+Native09ca7b6a includes final physics/geometry; later wording-only Core change
+not rebuilt into it. No Desktop update.
+
+
+## CURRENT final Black Ice footing check
+
+Both shared-clock99128completed; exact result copied to net-both-shared-clock.
+Pair shared-clock alreadyPASS. Native jobs retired. Running only drafted
+BlackIceFootingProbe, Logs/black-ice-footing-v1.xml/.log. It measures actual
+outer-lane/slow tradeoff and releases traction/slow on field removal.
+Need check result then apply drafted truthful Black Ice copy if confirmed.
+After this, summarize/commit/push the qualified Cheska world confirmation/pose/
+SplitSpires/clock diagnostic batch, then continue persistent fields/rejoin and
+remaining non-UI game queue. No Editor-source edits while current test runs.
+
+
+## CURRENT pair shared-clock PASS; both timing rerun
+
+56648pair shared-clock runPASS on runtime09ca7b6a497a7d27e7153e9b8500cd6006b69de1f5db855ae020ff4e89a804e6.
+392/410/399samples, earlier sheet preserved through later refusal, position
+agrees, no preacceptance field, all expire; sharedwallclockexpiry spread214ms
+with150msonewayowner link. Old buffered-clock falsefailure stays archived.
+Now net-ice-both-wallclock-v2 validates fresh shared-clock sheet+wall.
+Drafted BlackIceFootingProbe now installed (not run), copy candidate outside
+imported folders. Run only that footing check after native peers finish.
+No current Editor; no agents/UI/Figma/usage resets/Desktop.
+
+
+## CURRENT fresh shared-clock pair run
+
+IceNetworkReviewv2 build SUCCESS;99040retired. Running sheet-then-denied at150ms
+with new shared UTCwallTime, Logs/net-ice-pair-wallclock-v2. Then both case for
+new timing evidence. Prior refused-both/native protocol mismatch proofs retained.
+Spires accepted owner screenshot/timed video and2casephysics proof copied into
+cheska-network-evidence. OBJ bases are exactlyY0; retained grounding is intact.
+BlackIceFooting draft ready to install after native checks; no Editor currently.
+
+
+## CURRENT spires visible/physical accepted; rebuild with shared clock
+
+Spires2/2pass: default3slabs blocks body/shoe, alternate2slabs passes both;
+sidefaces still block.76657retired guard3fa9af22ecdc. Actual arena selected
+variant capture1/1pass,66017retired guard4fe0eca46985; owner00023.jpg shows the
+clear gap using retained ice art. New optional review variant args do not change
+normal gameplay. Current99040build is IceNetworkReviewv2 with shared-clock
+NetIceProbe and split geometry; Logs/ice-network-build-v2.log.
+BlackIceFootingProbe drafted outsideAssets while build runs. It checks outer
+lane sacrifice, actual stronger slow, clean exit and absence of compulsory trip.
+Current Black Ice copy overclaims nobody can keep their feet; correct only if
+verified, as gameplay copy, not a UI overhaul. Next pair/both shared-clock runs
+then targeted footing and final batch save. Keep full non-UI queue active.
+
+
+## CURRENT Split Spires drafted fix applied after reproduced failure
+
+33400baseline failed: default3slabs blocks body/shoe; alternate ALSO3slabs blocks
+both. Guard4503c157cc03 restored. Applied exactly the3externally drafted source
+changes (verified byte-normalized equality): explicit split flag through kit and
+factory, omits centre slab only for alternate. Default retained. Added side-face
+blocking assertions. Running ONLY passage + original wall/thaw2cases:
+Logs/spires-passage-v2.xml/.log. No C#/asset edits until finished.
+Next actual arena visual review of two slabs, fresh IceNetworkReview build with
+shared clock, rerun accepted/pair timing cases. Actual32-vs31refusal alreadypass.
+Source still uncommitted; code checkpoint only after qualified. UI removed.
+
+
+## CURRENT Split Spires baseline while ice timing probe compiles
+
+Actual32host/31clientrefusal PASSED, receipt protocol32-vs31.json copied.
+No native jobs remain. Installed drafted SplitSpiresPassageProbe and running
+ONLY that baseline, Logs/spires-passage-baseline-v1.xml/.log. Current production
+still3slabs for both variants; candidate correction remains outsideAssets.
+This Editor also compiles NetIceProbe shared-clock trace addition. After baseline
+observe/repair the gap and relevant wall regression, then build one internal
+player for fresh shared-clock accepted/pair checks plus current alternate render.
+No patch accepted merely because drafted; preserve default art/body collision.
+
+
+## CURRENT ice timing-diagnostic correction, not a gameplay failure
+
+55112pair ended with one evaluator failure: owner first buffered ServerTime
+sample75msbefore host first. Actual counts/positions/late-denial/expiry all correct.
+Each peer ServerTime has buffering, and first observed presence is only an interval
+bound. Preserve failure/rawCSV in net-pair-network-clock; do not claim timing pass.
+NetIceProbe now adds same-PC UTCwallTime; evaluator requires fresh traces and
+compares owner presence to host last-absence bound. No gameplay edit for this.
+Need rebuilt IceNetworkReview and rerun pair (and fresh timing evidence both).
+Current protocol32vs31native refusal running Logs/ice-protocol32-vs31-v1.
+Split Spires correction+passage regression drafted outsideAssets, not applied.
+Latest user says keepcoding/drafting while tools run, qualityfirst, entire
+remaining non-UI queue while asleep. Saved in AGENTS. No agents/resets/Figma.
+
+
+## CURRENT ice denial passed; pair case running; next change drafted
+
+14867denied both PASS:381/396/392samples, owner predicted then received denial,
+zero sheets/walls on all3peers throughout; resources ended0.7profiles preserved.
+Now Logs/net-ice-pair-v1 checks accepted sheet followed by denied second sheet.
+While native tools run, Split Spires correction is drafted outside Assets using
+Logs/draft_split_spires.py, producing three *.split-candidate.cs.txt files. They
+are NOT applied; reproduce the currently blocked promised passage first.
+User explicitly reaffirmed useful parallel drafting while tools run, quality
+first, continue entire remaining non-UI queue while asleep. No agents/resets.
+
+
+## CURRENT accepted ice peers passed; denial running
+
+1101finished PASS: protocol32runtimea256b551c230052bbe4b29e1f1bb4714d3f07785de89628ec33b6f3bcbed0752.
+Host/owner/observer380/395/389samples, accepted sheet+physical wall exactly once,
+zero position disagreement despite moving owner, no extra charge spent, clean
+expiry. Sampled network-clock expiry spread38ms/7ms, not external wall-clock proof.
+Raw evidence copied to cheska-network-evidence/net-both. Guard7fe7b22f69c9 belongs
+to successful IceNetworkReview build. Now net-ice-denied-v1 runs both refusals at
+150ms, then sheet-then-denied and32-vs31refusal. No Editor active.
+Additional source finding for later alternate pass: BuildWall always makes3slabs
+even for Split Spires, whose copy promises2and a passage. Reproduce gap before
+changing native art; retain default wall. No UI work reactivated.
+
+
+## CURRENT actual protocol32 ice peers
+
+IceNetworkReview build SUCCESS;18015 retired (guard receipt in tool result).
+Now tools/net_ice_review.py case both,150ms, Logs/net-ice-both-v1. Three peers
+use9010/9011and icehost/iceowner/iceobserver; keep exclusive. Next denied then
+sheet-then-denied, and net_protocol_refusal.py new32host vs FamiliarLaptopReview31.
+No current Editor; source/fixtures still uncommitted. No production acceptance
+from the seven local tests alone. UI remains removed; c6a59400last pushed.
+
+
+## CURRENT IceNetworkReview32 build
+
+Phaister Hex/SlowBrand + Blink/LongStride2/2pass;84472retired, guard605ccfc24fbb.
+Protocol32assert1/1andCheska7/7already pass. Wire audit passed. Added grounded
+cast-confirm flash using the same accepted pose; predicted ice no longer flashes
+a false landing confirmation before host acceptance. No UI overhaul resumed.
+Now guarded INTERNAL Builds/IceNetworkReview/TumbangPreso.exe build32,
+Logs/ice-network-build-v1.log. Keep31FamiliarLaptopReview. NetIceProbe compiles
+from prior test run; harness cases both/denied/sheet-then-denied at150ms ready.
+Run them sequentially after exact new build identity is verified, plus real
+32host/31clientrefusal. Do not commit production until this qualification.
+No C#/imported edits during build; docs/probe evaluation prep can continue.
+
+
+## CURRENT shared-aim regression; NetIceProbe installed
+
+Protocol32focused Edit1/1passed, session66961 retired, guardf1ac0256dedc restored.
+NetIceProbe now installed from draft with generated32hexmeta; tools/net_ice_review.py
+prepared/syntax checked. Explicit cases both/denied/sheet-then-denied,9010/9011,
+icehost/iceowner/iceobserver profiles; run sequentially. Denial fixtures deliberately
+seed only the owner stale charge estimate while host keeps0. No real peer pass yet.
+Now running ONLY Phaister Hex/SlowBrand and Blink/LongStride existing2cases because
+shared AimedDestination changed. Logs/ice-shared-aim-regression-v1.xml/.log.
+Then build INTERNAL IceNetworkReview32; keep FamiliarLaptopReview31 untouched
+for mixed-version test. Current code uncommitted; newest pushed c6a59400UI removal.
+UI remains removed; no agents/other chats/Figma/resets/Desktop.
+
+
+## CURRENT ice protocol check and real-peer probe preparation
+
+UI removal committed/pushed c6a59400; UI work stays CANCELLED. Cheska world/
+captured-pose fix remains uncommitted, local7/7pass. Running ONE related Edit
+case TheProtocolCarriesEveryRosterBump, Logs/ice-protocol32-v1.xml/.log.
+Prepare NetIceProbe outside imported Assets while Editor runs. Need actual
+accepted sheet+wall, denied both, and accepted-sheet/later-denied-sheet cases
+at150ms; preserve earlier accepted fields, exact accepted positions, charges,
+colliders/expiry. New32host vs retained31FamiliarLaptopReview refusal also needed.
+No new packet fields, but old-host owner-confirm behavior is incompatible.
+No agents/Figma/resets/Desktop. Continue the main non-UI queue.
+
+
+## NEWEST owner scope: remove UI; continue Cheska
+
+Owner explicitly removed remaining UI from the active to-do list. Full brief
+archived in ui-queue-removed-by-owner.md; UI_REMAINING_TODO now states cancelled.
+Do not execute older UI-LAST reminders. Preserve implementation and source.
+Gameplay/skills/network/movement/spectator continue, Inday later, expansion last.
+Cheska new confirmation/pose7case run69493 PASSED7/7; session retired, profile
+guard46e0a494dcc8 restored files/preferences. Current code is still DIRTY and
+not qualified in real peers. Next protocol/aimfocused checks, add NetIceProbe,
+build internalprotocol32and actual accepted/denied owner ice plus31-vs32refusal.
+No live Editor/player. Do not end the main task after this scope update.
+
+
+## CURRENT Cheska confirmed-world implementation under test
+
+Baseline33519 completed0/2: both rejected fields survived, real ice placement
+missed captured pose by19.698m. Guard5e1840da0ea5 restored; failures preserved.
+Now implemented DIRTY/unaccepted: instant ice effects opt out of local world
+prediction, owner receives existing PlayAbility confirmation and creates payload
+without spending/replaying cast. Earlier accepted fields are not erased by denial.
+Shared AimedDestination uses captured context. Protocol32 plus focused assertion
+updated because old hosts omit required owner confirmation. Phaister sky path
+retained. No new packet fields; actual version/refusal/peer qualification pending.
+Running7focused CheskaIceContractProbe cases (original wall/thaw and mash, two
+reproduced failures, accepted independent sheets/wall collision, delayed lightning
+pose). Logs/cheska-confirmation-v1.xml/.log. No edits while Editor active.
+Next inspect result, then protocol/aim regressions, fresh internal player, actual
+delayed ice accepted/denied and31-vs32refusal. Retain FamiliarLaptopReview31.
+Latest pushed safe source remains a029f96e; do not mark this batch complete yet.
+
+
+## CURRENT Cheska baseline fixture correction
+
+43925 exited at compilation, no XML: fixture tried to assign internal-only
+HeldSecondsOnCast. No production compile defect. Guard17b90caba518 restored.
+Fixture now uses real ApplyNetworkCast(...heldSeconds:.55,authoritative:false)
+for the captured-pose case, no reflection/access-level production change.
+Running same2targeted baselines under Logs/cheska-refusal-pose-baseline-v3.
+Collect new run before source edits; confirmation/pose design remains unapplied.
+
+
+## CURRENT Cheska second baseline and saved correction design
+
+First refusal regression failed as expected: sheet1/wall1 survived callback.
+Session12357 retired; guard81e5613fb0ec restored files/preferences. Now43925 runs
+explicit predicting-owner refusal plus actual moved-caster ice placement,
+Logs/cheska-refusal-pose-baseline-v2.xml/.log. Collect this session before C#/
+imported edits. No production change or protocol bump yet.
+Detailed proposed safe confirmation design, implications and exact next tests
+are saved in cheska-network-review.md. Prefer accepted-world-effect opt-in over
+fragile newest-object deletion. Requires owner PlayAbility acknowledgement and
+Protocol32 because old hosts omit it; preserve Phaister sky confirmation.
+AimedDestination also needs to consume captured context rather than live body.
+Keep protocol31 native FamiliarLaptopReview for actual mixed-version refusal.
+Continue all work here; no handoff/agents/Figma/reset/Desktop.
+
+
+## CURRENT Cheska instant-field refusal reproduction
+
+Nemu batch a029f96ed37b4fcc7d4a09e56d43347882ee94a7 committed/pushed, clean
+before this fixture addition. Now one targeted regression in CheskaIceContractProbe:
+RefusedInstantIceCastsRemoveTheirPredictedWorldEffects. It directly exercises
+activation/refusal callbacks for zero-duration skills with separately timed world
+effects, not network packets. Logs/cheska-refusal-baseline-v1.xml/.log plus
+cheska-denied-ice.csv. No production changes for Cheska yet; observe first.
+Hypothesis: HeroAbility.CancelActive returns on DurationRemaining0, so no cleanup
+for sheet/wall. Ice casts have no owned references/cancellation override.
+Network messages currently lack per-cast identity; do not naively destroy an
+earlier accepted field or a newer prediction on a late refusal. Inspect actual
+request/confirmation/denial path before selecting a safe minimal design.
+One Editor active, no C#/imported edits until complete. Continue full queue.
+
+
 ## CURRENT Nemu verified; next Cheska remaining acceptance
 
 Nemu local7/7 and corrected-light/alternate3/3pass; delayed staged and owner

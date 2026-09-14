@@ -350,7 +350,9 @@ namespace TumbangPreso.Net
         //trip recovery cannot shorten an overlapping tag or element hold.
         // 31 restores the live Coven and current ultimate sky when a peer rejoins.
         // Older players lack those required tells and must refuse this version.
-        public const int ProtocolVersion = 31;
+        // 32 requires accepted ice-world effects to be acknowledged to their owner.
+        // Older hosts omit that acknowledgement, so mixed peers cannot play safely.
+        public const int ProtocolVersion = 32;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

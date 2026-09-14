@@ -2936,10 +2936,12 @@ namespace TumbangPreso.Net
 
             bool confirmRitualOwner = abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate &&
                 Unit(slot)?.AbilitySystem?.HeroId == "phaister";
+            bool confirmWorldOwner = Unit(slot)?.AbilitySystem?.NeedsOwnerEffectConfirmation(
+                (Abilities.HeroAbilitySystem.Slot)abilitySlot) == true;
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId ||
-                    (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner))
+                    (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner && !confirmWorldOwner))
                     continue;
 
                 using var writer = new FastBufferWriter(128, Allocator.Temp);
@@ -2979,9 +2981,12 @@ namespace TumbangPreso.Net
 
             if (slot == NetAuthority.LocalSlot)
             {
-                // This owner already performed the cast. Acceptance only releases
-                // presentation that must not replace the sky for a denied ritual.
-                Unit(slot)?.AbilitySystem?.ConfirmPredictedCastPresentation(
+                // This owner already performed and paid for the cast. Only release
+                // the world payload/sky that deliberately awaited host acceptance.
+                var system = Unit(slot)?.AbilitySystem;
+                system?.ConfirmPredictedWorldEffect((Abilities.HeroAbilitySystem.Slot)abilitySlot,
+                    position, forward, aimPoint, heldSeconds);
+                system?.ConfirmPredictedCastPresentation(
                     (Abilities.HeroAbilitySystem.Slot)abilitySlot);
                 return;
             }

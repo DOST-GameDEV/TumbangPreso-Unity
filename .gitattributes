@@ -7,3 +7,4 @@ docs/reports/improvement-2026-09-14/ui-deferred-source/*.patch -text -whitespace
 # Raw NUnit receipts retain native diagnostic whitespace.
 docs/reports/improvement-2026-09-14/zack-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/nemu-laptop-evidence/*.xml -text -whitespace
+docs/reports/improvement-2026-09-14/cheska-network-evidence/*.xml -text -whitespace

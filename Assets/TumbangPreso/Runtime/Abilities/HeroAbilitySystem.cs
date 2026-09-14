@@ -686,11 +686,11 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            if (outcome == HeroKit.CastOutcome.Cast) PlayCastConfirm(slot);
+            if (outcome == HeroKit.CastOutcome.Cast) PlayCastConfirm(slot, context);
             return outcome;
         }
 
-        private void PlayCastConfirm(Slot slot)
+        private void PlayCastConfirm(Slot slot, AbilityContext acceptedContext = null)
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
@@ -773,8 +773,8 @@ namespace TumbangPreso.Abilities
             // the cast turns it into what it should have been all along: the answer to "where
             // did that land", which is the question a player actually has.
             if (_reticle == null || ability == null || !ability.HasTelegraph) return;
-
-            _reticle.SetStyle(ability.TelegraphStyle);
+            if (ability.DefersPredictedEffect && NetAuthority.IsNetworked && !NetAuthority.IsHost
+                && _motor != null && _motor.PlayerSlot == NetAuthority.LocalSlot) return;
 
             // ⚠️⚠️ A HOLD-TO-AIM POWER'S CONFIRM GOES WHERE IT WAS AIMED, NOT AT ITS MAXIMUM
             // REACH. `TelegraphCentre` is `Position + Forward * TelegraphRange`, and
@@ -784,11 +784,17 @@ namespace TumbangPreso.Abilities
             // name: a telegraph that lies is worse than no telegraph, because a player believes
             // it once and then stops believing all of them. `AimDestination` reads the same
             // `HeldSecondsOnCast` the kit read when it spawned the thing.
-            Vector3 landed = ability.HoldToAim
-                ? AimDestination(ability)
-                : TelegraphCentre(ability);
+            FlashCastTarget(ability, acceptedContext ?? _context, ability.HeldSecondsOnCast);
+        }
 
-            _reticle.Flash(landed, ability.TelegraphRadius, AccentColour(), 0.35f);
+        private void FlashCastTarget(HeroAbility ability, AbilityContext context, float heldSeconds)
+        {
+            if (_reticle == null || ability == null || !ability.HasTelegraph) return;
+            _reticle.SetStyle(ability.TelegraphStyle);
+            Vector3 landed = ability.HoldToAim
+                ? AimPoint(ability, ability.AimRangeFor(heldSeconds), context)
+                : ability.TelegraphCentre(context);
+            _reticle.Flash(landed, ability.TelegraphRadius, AccentColour(), .35f);
         }
 
         /// <summary>
@@ -1210,8 +1216,12 @@ namespace TumbangPreso.Abilities
         /// ring and the landing cannot drift apart when one of them is retuned.
         /// </summary>
         private Vector3 AimPoint(HeroAbility ability, float range)
+            => AimPoint(ability, range, _context);
+
+        private static Vector3 AimPoint(HeroAbility ability, float range, AbilityContext context)
         {
-            Vector3 at = _context.Position + _context.Forward * range;
+            if (context == null) return Vector3.zero;
+            Vector3 at = context.Position + context.Forward * range;
 
             if (!ability.HoldToAim) return at;
 
@@ -1223,6 +1233,9 @@ namespace TumbangPreso.Abilities
         /// <summary>Where a hold-to-aim power aimed by the live hold would land. For a kit.</summary>
         public Vector3 AimDestination(HeroAbility ability)
             => AimPoint(ability, ability.AimRangeFor(ability.HeldSecondsOnCast));
+
+        public static Vector3 AimDestination(HeroAbility ability, AbilityContext context)
+            => AimPoint(ability, ability.AimRangeFor(ability.HeldSecondsOnCast), context);
 
         /// <summary>
         /// ⚠️ THE THREE OBJECTIVE AWARDS ARE GATED ON PRACTICE TOO. They are already unlikely to
@@ -1275,6 +1288,22 @@ namespace TumbangPreso.Abilities
             if (Kit == null || Kit.PracticeMode) return;
 
             Kit.OnRechargeEvent(what);
+        }
+
+        public bool NeedsOwnerEffectConfirmation(Slot slot)
+            => AbilityFor(slot)?.DefersPredictedEffect == true;
+
+        public void ConfirmPredictedWorldEffect(Slot slot, Vector3 position, Vector3 forward,
+                                               Vector3 aimPoint, float heldSeconds)
+        {
+            if (_motor == null || NetAuthority.IsHost || _motor.PlayerSlot != NetAuthority.LocalSlot) return;
+            var ability = AbilityFor(slot);
+            if (ability?.DefersPredictedEffect != true) return;
+            var context = new AbilityContext(_motor, _carrier, _verbs, position, forward, aimPoint);
+            // The host already accepted the cast. Do not spend another charge or
+            // restart its animation, and do not relay its payload cues back out.
+            using (NetCue.SuppressRelay()) ability.ApplyConfirmedEffect(context, heldSeconds);
+            FlashCastTarget(ability, context, heldSeconds);
         }
 
         /// <summary>Release deferred sky presentation without replaying the owner's cast.</summary>

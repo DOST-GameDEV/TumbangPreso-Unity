@@ -32,6 +32,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class PermafrostSheetAbility : HeroAbility
         {
+            public override bool DefersPredictedEffect => true;
             /// <summary>Nearest she may freeze. Closer and she is standing on it.</summary>
             private const float MinRange = 1.8f;
 
@@ -113,6 +114,7 @@ namespace TumbangPreso.Abilities
 
         private sealed class IceBarricadeAbility : HeroAbility
         {
+            public override bool DefersPredictedEffect => true;
             /// <summary>Nearest she may raise it. Closer than this and it is her own wall.</summary>
             private const float WallMinRange = 1.8f;
 
@@ -185,7 +187,8 @@ namespace TumbangPreso.Abilities
                 // 2026-08-23. `docs/Hero_Strike_Balance.md` § 3.2.
                 HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f,
                     spanScale: ctx.GainScale("cheska.2.spires"),
-                    thicknessScale: ctx.CostScale("cheska.2.spires"));
+                    thicknessScale: ctx.CostScale("cheska.2.spires"),
+                    split: ctx.HasVariant("cheska.2.spires"));
             }
         }
 

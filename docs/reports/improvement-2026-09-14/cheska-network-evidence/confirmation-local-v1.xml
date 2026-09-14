@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.5008132">
+  <test-suite type="TestSuite" id="1497" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="378" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.500813" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1491" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="378" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.494207" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1492" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="378" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.493002" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1493" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="378" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.492234" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1058" name="CheskaIceContractProbe" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:11Z" duration="3.484349" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1062" name="ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" methodname="ConfirmedBarricadeGetsPhysicalFacesWithoutAnotherCharge" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="73993666" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:07Z" duration="0.095408" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1061" name="ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" methodname="ConfirmedIceDoesNotSpendAgainOrDisappearWithALaterRefusal" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="1924172646" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:07Z" duration="0.053337" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1063" name="DelayedLightningAlsoUsesItsAcceptedPose" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.DelayedLightningAlsoUsesItsAcceptedPose" methodname="DelayedLightningAlsoUsesItsAcceptedPose" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="2064279350" result="Passed" start-time="2026-09-14 14:54:07Z" end-time="2026-09-14 14:54:08Z" duration="0.210601" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1065" name="EscapingIceReleasesTheRestraintBeforeItsOriginalTimer" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.EscapingIceReleasesTheRestraintBeforeItsOriginalTimer" methodname="EscapingIceReleasesTheRestraintBeforeItsOriginalTimer" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="2042408248" result="Passed" start-time="2026-09-14 14:54:08Z" end-time="2026-09-14 14:54:10Z" duration="2.204399" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1064" name="FracturedWallBlocksItsVisibleFaceAndReleasesWithoutPhysicalDebris" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.FracturedWallBlocksItsVisibleFaceAndReleasesWithoutPhysicalDebris" methodname="FracturedWallBlocksItsVisibleFaceAndReleasesWithoutPhysicalDebris" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="1972673933" result="Passed" start-time="2026-09-14 14:54:10Z" end-time="2026-09-14 14:54:11Z" duration="0.848686" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1060" name="IcePlacementUsesItsCapturedPoseAfterTheCasterMoves" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.IcePlacementUsesItsCapturedPoseAfterTheCasterMoves" methodname="IcePlacementUsesItsCapturedPoseAfterTheCasterMoves" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="1788592149" result="Passed" start-time="2026-09-14 14:54:11Z" end-time="2026-09-14 14:54:11Z" duration="0.032750" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="RefusedInstantIceCastsRemoveTheirPredictedWorldEffects" fullname="TumbangPreso.PlayTests.CheskaIceContractProbe.RefusedInstantIceCastsRemoveTheirPredictedWorldEffects" methodname="RefusedInstantIceCastsRemoveTheirPredictedWorldEffects" classname="TumbangPreso.PlayTests.CheskaIceContractProbe" runstate="Runnable" seed="1230957684" result="Passed" start-time="2026-09-14 14:54:11Z" end-time="2026-09-14 14:54:11Z" duration="0.027447" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

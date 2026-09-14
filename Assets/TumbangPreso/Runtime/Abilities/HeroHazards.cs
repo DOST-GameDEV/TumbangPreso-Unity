@@ -28,7 +28,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
                                                    float duration = 6.0f,
                                                    float spanScale = 1.0f,
-                                                   float thicknessScale = 1.0f)
+                                                   float thicknessScale = 1.0f, bool split = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceBarricade");
@@ -37,7 +37,7 @@ namespace TumbangPreso.Abilities
 
             // Authored fractured slabs replace the rotated cubes, disconnected
             // diamond toppers, rigidbody chips and persistent cyan point light.
-            CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale);
+            CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
 
             GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
 

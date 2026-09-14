@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 391,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924996835.0678,
+      "sheet_last": 63924996839.9879,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 63924996838.0874,
+      "wall_last": 63924996843.989,
+      "sheet_expiry_spread": 0.17479705810546875,
+      "wall_expiry_spread": 0.1768035888671875
+    },
+    "owner": {
+      "samples": 402,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924996835.221,
+      "sheet_last": 63924996840.1627,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 63924996838.2164,
+      "wall_last": 63924996844.1658,
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    },
+    "observer": {
+      "samples": 398,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924996835.0893,
+      "sheet_last": 63924996840.0279,
+      "wall_position": [
+        -1.922799,
+        -4.0
+      ],
+      "wall_first": 63924996838.1084,
+      "wall_last": 63924996844.0281,
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    }
+  },
+  "case": "both",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "09ca7b6a497a7d27e7153e9b8500cd6006b69de1f5db855ae020ff4e89a804e6"
+}
