@@ -21,7 +21,7 @@ def rows(path):
         return [{key: float(value) for key, value in row.items()} for row in csv.DictReader(handle)]
 
 
-def evaluate(folder):
+def evaluate(folder, rejoin=False):
     data={name:rows(folder/(name+'.csv')) for name in ('host','owner','observer')}
     errors=[];measurements={};host=data['host']
     expected={kind:next((row for row in host if row['kind']==kind),None) for kind in range(1,8)}
@@ -37,7 +37,14 @@ def evaluate(folder):
         measurements[name]=result
         if seen!=set(range(1,8)) or result['max_fields']!=7 or result['final_fields']!=0:
             errors.append(name+' omitted, duplicated or leaked fields')
-        if name!='host' and not any(row['repeated'] and row['count']==7 for row in trace):
+        if rejoin and name=='owner':
+            if not any(row['cycle']==0 for row in trace) or not any(row['cycle']==2 and row['count']==7 for row in trace):
+                errors.append('Owner did not restore all fields after the actual transport restart')
+            if len({row['process'] for row in trace})!=1:
+                errors.append('The purported same-process rejoin changed native process')
+            if any(row['requested'] or row['repeated'] for row in trace):
+                errors.append('A diagnostic snapshot request masked the normal rejoin recovery path')
+        elif name!='host' and not any(row['repeated'] and row['count']==7 for row in trace):
             errors.append(name+' did not repeat a complete live snapshot')
         for kind,reference in expected.items():
             samples=[row for row in trace if row['kind']==kind]
@@ -59,6 +66,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('exe', type=Path)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--rejoin', action='store_true')
     args = parser.parse_args()
     folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
     backups, processes, handles = [], [], []
@@ -78,7 +86,8 @@ def main():
     def peer(name, route):
         return launch([str(args.exe.resolve()), '-batchmode', '-screen-width', '640', '-screen-height', '360',
                        '-screen-fullscreen', '0', '-tp-framecap', '60', '-tp-autostart', '3',
-                       '-tp-profile', 'worldfield'+name, '-tp-worldfieldtrace', str(folder / (name+'.csv')), '-logFile', str(folder / (name+'.log'))]+route)
+                       '-tp-profile', 'worldfield'+name, '-tp-worldfieldtrace', str(folder / (name+'.csv')), '-logFile', str(folder / (name+'.log'))]
+                      +(['-tp-field-rejoin'] if args.rejoin else [])+route)
     def wait_seat(name, process, seat):
         deadline = time.monotonic()+45
         while time.monotonic() < deadline:
@@ -99,11 +108,12 @@ def main():
         peer('observer', ['-tp-join', '127.0.0.1', '8960'])
         print('Tracing seven persistent field kinds: '+str(folder), flush=True)
         host.wait(timeout=80); time.sleep(.5)
-        result = evaluate(folder)
+        result = evaluate(folder,args.rejoin)
         runtime = args.exe.parent / (args.exe.stem+'_Data') / 'Managed/TumbangPreso.Runtime.dll'
         result['runtime_sha256'] = hashlib.sha256(runtime.read_bytes()).hexdigest()
         result['owner_link_one_way_ms'] = 150
-        result['scope'] = 'Host-created field fixture; two real clients request and repeat complete snapshots, not skill-cast or process-restart proof'
+        result['scope'] = ('Controlling client restarts transport and reloads arena in the same native process; only normal game code requests its world'
+                           if args.rejoin else 'Host-created field fixture; two real clients request and repeat complete snapshots, not skill-cast or process-restart proof')
         (folder/'result.json').write_text(json.dumps(result, indent=2)+'\n')
         print(json.dumps(result, indent=2), flush=True)
         return 0 if result['ok'] else 1

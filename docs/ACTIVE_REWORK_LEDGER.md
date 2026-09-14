@@ -1,5 +1,45 @@
 # Active TUMP rework ledger
 
+## CURRENT previous task finished; new owner-art UI analysis/planning is next
+
+Same-process HeroStrike arena-rejoin qualification PASSED. Normal MatchInstaller
+world request restored all seven types; no production lifecycle patch needed.
+Native57270 retired; build68123 retired; no active Editor/native tools. Report:
+improvement-2026-09-15-session-cycle.md. Gameplay unfinished/partly verified work
+is explicitly preserved in GAMEPLAY_RESUME_AFTER_UI.md at the owner's request.
+Latest pushed478f4c99 until this diagnostic/documentation checkpoint is saved.
+
+NEXT: thoroughly inspect the new TUMP(3)/(5)/(6) PNGs, archive byte-exact sources
+and manifest, identify typography and sprite bounds/alpha, then write the complete
+UI/button replacement plan. Use her actual art; do not redraw, stretch or blindly
+reuse the previous generic builders. Real controls, coherent animation, usable
+keyboard/controller/touch and editable text. Runtime is uGUI. UI/game-UI skills
+read; specialized uGUI/references still to load. No UI implementation edits yet.
+Resume gameplay ONLY after this new UI overhaul. No agents/Figma/reset/Desktop.
+
+## CURRENT finish the in-progress lifecycle check, THEN new owner-art UI overhaul
+
+Owner reopened UI on2026-09-15 using Downloads/TUMP (3).png background,
+TUMP (5).png separated hand-drawn assets, TUMP (6).png composed account/main-menu
+reference. Latest explicit clarification: FINISH CURRENT WORK FIRST. Wrap only
+the already-started same-process reconnect check; then analyze her artwork and
+thoroughly plan all UI replacement before implementing it. Resume the rest of
+gameplay after UI. Preserve provided artwork and proportions, follow typography,
+animate and make working clickable controls, choose email/password icons. No
+agents/Figma/reset/Desktop. Older UI-cancelled scope is superseded by this request.
+
+Latest pushed478f4c99 includes complete world fields. Current dirty files are
+NetWorldFieldProbe.cs and tools/net_world_field_review.py adding actual same-process
+transport restart/reload, no production lifecycle fix. Build68123 completed
+SUCCESS, guardbc5324a9102c, internal RejoinLifecycleReview. Now running actual
+three-player --rejoin fixture at Logs/net-world-rejoin-lifecycle-v1.
+It disables diagnostic snapshot requests for the returning owner, so only the
+normal recovery path can repopulate its fields. MatchInstaller already requests
+world state after every arena build, which may cover the suspected lifetime flag.
+Read actual result before changing production; retire tool, save scoped result,
+commit/push, then start new UI analysis. Do not continue the entire old gameplay
+queue ahead of this newly requested UI overhaul.
+
 ## CURRENT complete ground-field batch qualified; save then lifecycle work
 
 Native55605 completed PASS: seven kinds on host and both clients, repeat without

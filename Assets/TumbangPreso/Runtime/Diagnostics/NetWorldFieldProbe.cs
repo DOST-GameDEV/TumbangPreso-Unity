@@ -18,6 +18,8 @@ namespace TumbangPreso.Diagnostics
         private static string _path;
         private StreamWriter _writer;
         private bool _prepared, _created, _requested, _repeated, _captured;
+        private bool _cycleStarted, _cycleReturned;
+        private bool _cycleMode;
         private float _next;
         private static string Argument(string key)
         {
@@ -36,9 +38,10 @@ namespace TumbangPreso.Diagnostics
             if(_path==null)return;
             var root=new GameObject("~NetWorldFieldProbe");DontDestroyOnLoad(root);
             var probe=root.AddComponent<NetWorldFieldProbe>();
+            probe._cycleMode=Environment.GetCommandLineArgs().Contains("-tp-field-rejoin");
             string path=Path.GetFullPath(_path);Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer=new StreamWriter(path){AutoFlush=true};
-            probe._writer.WriteLine("wallTime,elapsed,local,requested,repeated,count,kind,x,y,z,fx,fy,fz,duration,remaining,radius,owner,first,second,split");
+            probe._writer.WriteLine("wallTime,elapsed,local,requested,repeated,count,kind,x,y,z,fx,fy,fz,duration,remaining,radius,owner,first,second,split,cycle,process");
         }
         private void Update()
         {
@@ -69,7 +72,11 @@ namespace TumbangPreso.Diagnostics
                 HeroHazards.SpawnHexSigil(new Vector3(6,0,0),1.44f,6,3,1.4f);
                 DanteFissurePillar.Create(new Vector3(-6,0,6),Vector3.right,-1,5);
             }
-            if(!NetAuthority.IsHost)
+            if(_cycleMode && NetAuthority.LocalSlot==1)
+            {
+                if(!_cycleStarted && elapsed>=11){_cycleStarted=true;RejoinSameProcess();return;}
+            }
+            else if(!NetAuthority.IsHost)
             {
                 if(!_requested && elapsed>=10.4f){_requested=true;MatchRpc.Instance.RequestWorldSnapshot();}
                 if(!_repeated && elapsed>=11.1f){_repeated=true;MatchRpc.Instance.RequestWorldSnapshot();}
@@ -85,10 +92,25 @@ namespace TumbangPreso.Diagnostics
             object[] row={DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond,elapsed,NetAuthority.LocalSlot,
                 _requested?1:0,_repeated?1:0,count,(int)field.Type,field.Position.x,field.Position.y,field.Position.z,
                 field.Forward.x,field.Forward.y,field.Forward.z,field.Duration,field.Remaining,field.Radius,
-                field.Owner,field.FirstScale,field.SecondScale,field.Split?1:0};
+                field.Owner,field.FirstScale,field.SecondScale,field.Split?1:0,
+                _cycleReturned?2:_cycleStarted?1:0,System.Diagnostics.Process.GetCurrentProcess().Id};
             _writer.WriteLine(string.Join(",",row.Select(value=>Convert.ToString(value,CultureInfo.InvariantCulture))));
         }
         private void OnDestroy()=>_writer?.Dispose();
+        private async void RejoinSameProcess()
+        {
+            try
+            {
+                int port=int.Parse(Argument("-tp-field-rejoin-port")??"8961",CultureInfo.InvariantCulture);
+                var selectedMap=UI.SceneFlow.SelectedMap;
+                Debug.Log("[WorldFieldProbe] starting same-process rejoin");
+                bool started=await NetSession.Instance.StartClientAsync("127.0.0.1",port);
+                if(!started){Debug.LogError("[WorldFieldProbe] rejoin transport refused to start");return;}
+                _cycleReturned=true;
+                UI.SceneFlow.Go(selectedMap);
+            }
+            catch(Exception exception){Debug.LogException(exception);}
+        }
         private void CaptureOverview()
         {
             var root=new GameObject("WorldFieldSnapshotWitness");var camera=root.AddComponent<Camera>();

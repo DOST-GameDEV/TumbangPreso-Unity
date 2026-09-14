@@ -1,5 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**NEWEST owner order,2026-09-15:** finish the currently running same-process
+reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
+UI theme. Resume all unfinished gameplay afterward using
+[GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
+older cancellation text below is historical. No extra agents or reset credits.
+
 **Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots
 are implemented and scoped checks pass; see [world-field report](reports/improvement-2026-09-15-world-fields.md).
 Pending windups and actual same-process reconnect/rematch/host loss remain open,

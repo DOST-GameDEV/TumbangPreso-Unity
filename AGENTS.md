@@ -1,5 +1,17 @@
 # Working instructions for ChatGPT / Codex
 
+**NEWEST priority,2026-09-15:** the owner has reopened UI with new hand-drawn
+assets. Finish the CURRENT reconnect/lifecycle check already underway first,
+then thoroughly analyze and plan replacement of ALL UI/buttons toward her new
+theme, implement the overhaul, and return to the remaining gameplay queue.
+This supersedes UI-cancelled instructions below. Main-menu/account composition:
+C:/Users/Matthew/Downloads/TUMP (6).png; background TUMP (3).png; separated
+artwork sheet TUMP (5).png. Preserve the actual provided pixels and aspect ratios,
+follow her typography, do not redraw/regenerate supplied assets or stretch them.
+Make real clickable controls and animate the interface with coherent restrained
+motion. Choose appropriate email/password icons. Analyze before implementation.
+No agents, Figma, reset credits or Desktop update are reauthorized.
+
 **Efficiency reaffirmed by owner,2026-09-14:** while builds/tests run, actively
 draft the next change or investigate another independent issue. Put draft C#
 outside imported Assets (for example ignored Logs), then review/apply it after

@@ -1,5 +1,16 @@
 # Active execution plan
 
+**Gameplay interruption bookmark:** [GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md)
+separates saved work, partial verification and untouched tasks. The owner explicitly
+requested this so the gameplay queue can resume after the new UI overhaul.
+
+**NEWEST priority,2026-09-15:** owner reopened an immediate full UI overhaul using
+her new three PNGs, then explicitly said to finish the current work first. Wrap
+the in-progress same-process reconnect qualification, then analyze the artwork,
+plan every UI/button replacement and implement her theme without redrawing or
+stretching supplied assets. Gameplay queue resumes afterward. See newest AGENTS
+and ledger; old UI cancellation is superseded. No new delegation/reset permission.
+
 **LATEST2026-09-15:** seven persistent ground-field kinds now restore atomically
 with remaining life and original parameters.3focused Play+5Edit cases pass,
 actual three-player repeated snapshot and37vs36 refusal pass. Exact evidence and

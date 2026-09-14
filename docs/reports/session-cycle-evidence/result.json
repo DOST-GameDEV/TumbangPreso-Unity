@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 744,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.20391845703125
+    },
+    "owner": {
+      "samples": 496,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.37131500244140625
+    },
+    "observer": {
+      "samples": 700,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.20825958251953125
+    }
+  },
+  "runtime_sha256": "efb9425612d04080060885e7bf8f50b4e0ba7f45cb1bca7af22345ece6ddcfaf",
+  "owner_link_one_way_ms": 150,
+  "scope": "Controlling client restarts transport and reloads arena in the same native process; only normal game code requests its world"
+}
