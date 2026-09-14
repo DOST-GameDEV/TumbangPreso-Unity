@@ -1,5 +1,110 @@
 # Active TUMP rework ledger
 
+## CURRENT U6 scoped source qualified; save then U7 player hub
+
+31303passed2/2, guard9f8458e1aacf. New result empty-state/TIE labels and actual
+rematch/map-choice behavior passed; owner TouchHud renderer appears in editor,
+old TumpSurface absent, all button entries retained, controller18callouts/leader
+lines unchanged and touch cancel preserved offsets/scale. Only graphical binding
+added to TouchButton; SetHeld/OnPointerDown/OnDrag/TouchStick algorithms untouched.
+Original final results/touch views inspected. At115%user scale some touch shapes
+approach/overlap; preserve saved coordinates and evaluate defaults/ergonomics atU8.
+Training v2 XML1/1passed with Unitylog exit0 but native process1 after shutdown;
+recorded discrepancy, no fatal trace. MainHUD Hero/Classic/recovery/round, pause
+and result processes otherwise passed. Report owner-ui-u6.md and evidence folder.
+Two deferred Inday arm assets again reserialized whitespace-only; git diff -w
+empty, restored only those files before staging. No model geometry changes.
+U6ready to save; latest pushed54f35bac until nextcommit. No active tools.
+Next U7: only PlayerHub.cs (no Native partial). Stripped source saved to
+Logs/PlayerHub-stripped.txt (1020lines) for focused reading. Install owns service
+subscriptions/SignInScreen (opened callback hides hub), old visual rail/page/rows.
+Five tabs Profile/Friends/Career/Matches/Account; preserve all actions, profile
+fields/drafts, history pagination/detail, achievements/mastery/banner and account
+sign-in/out/delete safeguards. Fresh OwnerHub composition/rows, not UiRows/PaperKit
+builders. TumpRankBadge art still old palette in result details; migrate/refine
+rank icons in U7, keeping RatingRules IDs. Review actual methods before editing;
+no U7code or draft applied. Need avoid credentials/friend/report submissions in
+tests. U8all-screen visual/motion/input/native build, then full gameplay bookmark.
+No agents/reset/Figma/Desktop. Do not stop at commit or compaction; keep working.
+
+## CURRENT U6 training behavior passed; results first check next
+
+51924 complete, guard266f470bf220: fresh training v2 XML1/1PASS and Unitylog
+requests exit0, but native process returned1 after shutdown. No crash/fatal trace;
+log ends normal InputSystem shutdown/Cleanup mono. Record this discrepancy for
+final U8/native qualification, do not claim clean process exit. Actual Look/Move
+native images inspected: pixelPerfect and modest font increases fixed soft
+small lettering. Skip/quit real callbacks and direct progress renderer setter
+pass; prior failing assertion waited for controller to legitimately overwrite it.
+Not a test of all17lessons/hardware inputs. No training gameplay gates changed.
+Applied reviewed MatchResult.OwnerPainted draft: new owner source-art result
+pages, actual portraits, native tabs, real rematch/map/social callbacks. Old
+visual functions inactive. PresentNativeResult/FillRows/progression color writers
+now use owner palette. Existing TumpRankBadge art is temporary until U7rank/icon
+migration; do not mistake its inclusion for a completed rank-art redesign.
+Next focused result case Logs/owner-results-u6-v1.xml/.log. U6dirty, latest pushed
+54f35bac. No Assets edits while Editor runs. Next remaining U6gameplay TouchHud
+renderer must replace old TumpSurface, preserving all placement/TouchButton input
+algorithms. Native binding carries TumpSurface now; add owner graphical binding
+only, no input-device refactor. U7/U8 then gameplay still assigned. No agents/
+reset/Figma/Desktop. All earlier IDsretired; continue independently.
+
+## CURRENT U6 HUD/round passed; training render/callback follow-up
+
+13182 finished1/2 (guard6be5746849d4); Hero live/held/spectator passed, Classic
+only failed old ScoreRow name expectation. Preserved established ScoreRow naming
+in new builder. 45862 then passed1/1 Classic/realrole/recovery/round portrait/
+dismissal, guardb24d7fc13666. Original Hero/held/spectator/RoundSwap inspected.
+New GuidedTrainingHud.OwnerPainted and real SkipFromUi/QuitFromUi adapters applied;
+old visual BuildUi/KeyCap/Chip retained inactive. Original parser/lesson controller
+still owns lesson logic. New counter/progress/header/fonts and clickable footer.
+87806failed only progress test: its direct .5 setter was overwritten by the real
+Move lesson's0 on next frame. Test now checks setter synchronously, without
+changing production progression. Real skip counter change already passed; Quit
+still must qualify. Header/footer type looked too soft/small; increased modestly
+and enabled pixelPerfect like other owner canvases. Next focused training v2.
+Unity reserialized two deferred Inday arm assets with trailing spaces only:
+git diff -w empty, raw patch Logs/inday-arm-ui-serialization.patch, restored only
+those two files to exact clean pre-run contents. No model geometry edits.
+U6dirty, latest pushed54f35bac. No tools running at this pointer. Next test
+Logs/owner-training-u6-v2.xml/.log; while waiting draft results owner view from
+MatchResult.Native. Read FillRows too: it writes legacy colors after build and
+needs owner palette for native branch. U6 results/touch then U7/U8/gameplay remain.
+No agents/reset/Figma/Desktop; keep going independently.
+
+## CURRENT U6 pause passed; main HUD and power deck first check next
+
+91843passed1/1, guard919690e1d759. Original OwnerPause-v1 inspected; source Resume
+artwork, fonts/colors and existing child-settings/park/return behavior intact.
+Applied reviewed TumpMatchReadout.OwnerPainted and OwnerScoreStrip drafts plus
+new OwnerAbilitySeal/TumpPowerReadout.OwnerDeck. New OwnerMatchCanvas has no
+wallpaper over gameplay, new compact red score strips/actual portraits, pale
+clock tag/red digits, local/prompt/status and distinct skill/ultimate meters.
+Former readout/deck builders remain inactive. Runtime color writers explicitly
+use owner palette; gameplay StunCoat effects keep element-specific colors.
+Effect material/image setup now uses owner layout and palette, same existing
+vignette shaders/data. U4held reference retained. Nothing in cast/score authority
+changed. Next focused TumpNativeHudTests ONLY: Logs/owner-hud-u6-v1.xml/.log.
+No Assets edits while running; draft GuidedTraining/round/results next from actual
+source. Main HUD captures still unverified, do not call U6done. Latest pushed
+54f35bac; U6dirty. All earlier runs retired. No agents/reset/Figma/Desktop.
+U6remaining training/round/results/touch, U7profile, U8full art/integration then
+GAMEPLAY_RESUME_AFTER_UI.md still assigned. Continue independently.
+
+## CURRENT U5 pushed54f35bac; U6 pause first implementation running
+
+U5 source/report/evidence saved and pushed. Git whitespace check only identified
+trailing spaces in preserved raw failure XML stack traces, not source files.
+Applied reviewed PausePanel.OwnerPainted draft. Old CreateCanvas/Build retained
+inactive as Previous. New OwnerPauseCanvas uses source Resume action, font/color
+roles and simple settings/leave links; existing domain parking/cleanup/child
+settings and spectator behavior retained. OnOpened title case follows new theme.
+Running ONLY related pause/settings/return test Logs/owner-pause-u6-v1.xml/.log.
+No imported edits during Editor run. Next read actual result/render; continue main
+HUD from Logs/U6-next-implementation.md, OwnerScoreStrip draft still not imported.
+Full U6remaining HUD/training/round/result/touch, U7profile, U8art/integration, then
+GAMEPLAY_RESUME_AFTER_UI.md all remain. No agents/reset/Figma/Desktop. Do not stop.
+
 ## CURRENT U5 scoped checks passed; save then U6 HUD and pause
 
 11091completed2/2 PASS, guardeb87b252edac. Fresh receipt owner-settings-pause-u5-v5.

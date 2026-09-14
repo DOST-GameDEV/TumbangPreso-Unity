@@ -207,8 +207,15 @@ namespace TumbangPreso.InputLayer
         private CanvasGroup _group;
         private WoodCraft.Surface _surface;
         private TumpSurface _nativeSurface;
+        private OwnerTouchSurface _ownerSurface;
         private TumpVerbSymbol _nativeVerb;
         private TumpAbilitySymbol _nativeAbility;
+
+        public void BindOwnerPresentation(VerbInput entry,CanvasGroup group,OwnerTouchSurface surface,
+            TumpVerbSymbol verb,TumpAbilitySymbol ability)
+        {
+            Entry=entry;_group=group;_ownerSurface=surface;_nativeVerb=verb;_nativeAbility=ability;Repaint();
+        }
 
         public void BindNative(VerbInput entry, CanvasGroup group, TumpSurface surface,
             TumpVerbSymbol verb, TumpAbilitySymbol ability)
@@ -271,7 +278,7 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         public void RefreshIcon(CharacterMotor local = null)
         {
-            if (_nativeSurface != null)
+            if (_nativeSurface != null || _ownerSurface != null)
             {
                 var current = AbilityForSlot(local);
                 if (_nativeVerb != null)
@@ -335,6 +342,12 @@ namespace TumbangPreso.InputLayer
 
         private void Repaint()
         {
+            if(_ownerSurface!=null)
+            {
+                if(_ownerSurface.Selected!=IsHeld){_ownerSurface.Selected=IsHeld;_ownerSurface.SetVerticesDirty();}
+                if(_group!=null)_group.alpha=IsHeld?Mathf.Max(.45f,_opacity):_opacity;
+                return;
+            }
             if (_nativeSurface != null)
             {
                 _nativeSurface.Selected = IsHeld;
@@ -429,11 +442,15 @@ namespace TumbangPreso.InputLayer
 
         private void Update()
         {
-            if (_nativeSurface != null && Settings.SettingsStore.Current.ReducedUiMotion)
+            if ((_nativeSurface != null || _ownerSurface != null) && Settings.SettingsStore.Current.ReducedUiMotion)
             {
                 transform.localScale = Vector3.one;
                 bool selected = IsHeld || _hinted;
-                if (_nativeSurface.Selected != selected) { _nativeSurface.Selected = selected; _nativeSurface.SetVerticesDirty(); }
+                if(_ownerSurface!=null)
+                {
+                    if(_ownerSurface.Selected!=selected){_ownerSurface.Selected=selected;_ownerSurface.SetVerticesDirty();}
+                }
+                else if (_nativeSurface.Selected != selected) { _nativeSurface.Selected = selected; _nativeSurface.SetVerticesDirty(); }
                 return;
             }
             // ⚠️ THE PHASE RUNS DOWN AS WELL AS UP, so the control eases back to its exact

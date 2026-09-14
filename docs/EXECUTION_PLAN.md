@@ -1,8 +1,8 @@
 # Active execution plan
 
-**CURRENT UI,2026-09-15:** U1-U4 saved; U5 settings/controller/touch scoped
-implementation qualified. Continue U6 HUD/pause, then U7/U8 before the gameplay
-bookmark. Reports owner-ui-u1/u2/u3/u4/u5 carry exact
+**CURRENT UI,2026-09-15:** U1-U5 saved; U6 HUD/pause/training/results/touch
+scoped implementation qualified. Continue U7 player hub/rank then U8 before the
+gameplay bookmark. Reports owner-ui-u1/u2/u3/u4/u5/u6 carry exact
 qualification and limits. Latest ACTIVE_REWORK_LEDGER owns the next concrete step.
 
 **Gameplay interruption bookmark:** [GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md)

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.8094861">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.809486" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.797740" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44224" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.792332" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.788723" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1451" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:19Z" duration="10.779852" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1452" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1901896142" result="Failed" start-time="2026-09-14 21:12:09Z" end-time="2026-09-14 21:12:14Z" duration="5.779691" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 4
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<ClassicHudReflectsTheRealRoundRoleAndRecoveryState>d__2.MoveNext () [0x00097] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:23
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1453" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="104151744" result="Passed" start-time="2026-09-14 21:12:14Z" end-time="2026-09-14 21:12:19Z" duration="4.987299" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] OwnerHud-Hero-v1/ClockFace: vertices=18, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHud-Hero-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] OwnerHud-Hero-v1 cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHud-held-skills-v1/ClockFace: vertices=18, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/ReferencePaper: vertices=18, cull=False, alpha=1, depth=58, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] OwnerHud-held-skills-v1 cream source=252,211,159 pixel=75,37,8; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHud-spectator-v1/ClockFace: vertices=18, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerHud-spectator-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerHud-spectator-v1 cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

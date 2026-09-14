@@ -187,6 +187,13 @@ namespace TumbangPreso
             EnterLesson(Lesson.Look);
         }
 
+        public void SkipFromUi()
+        {
+            if(!_ready || _local==null || _advancing)return;
+            if(_lesson==Lesson.Complete)ExitTraining();else CompleteLesson();
+        }
+        public void QuitFromUi()=>ExitTraining();
+
         private void Update()
         {
             if (!_ready || _local == null) return;
@@ -1231,7 +1238,7 @@ namespace TumbangPreso
     /// mock photographs whatever the probe author believed the layout was, which is the one thing
     /// a screenshot is supposed to rule out. This card has now been rejected twice on its
     /// layout.</remarks>
-    public sealed class GuidedTrainingHud : MonoBehaviour
+    public sealed partial class GuidedTrainingHud : MonoBehaviour
     {
         private const float CardWidth = 690.0f;
         private const float Pad = 26.0f;
@@ -1259,7 +1266,7 @@ namespace TumbangPreso
             return hud;
         }
 
-        private void BuildUi()
+        private void BuildPreviousUi()
         {
             var canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -1611,14 +1618,15 @@ namespace TumbangPreso
                 : $"{lesson + 1:00} / {total:00}";
 
             _title.text = title;
+            if(_ownerSkipLabel!=null)_ownerSkipLabel.text=lesson>=total?"ENTER · FINISH":"N · SKIP LESSON";
             _body.text = body;
 
             for (int i = 0; i < _pips.Count; i++)
             {
                 if (_pips[i] == null) continue;
-                _pips[i].color = i < lesson ? UiTheme.Amber
-                               : i == lesson ? UiTheme.Highlight
-                               : RailDim;
+                _pips[i].color = i < lesson ? UI.OwnerUiTheme.Current.Green
+                               : i == lesson ? UI.OwnerUiTheme.Current.Orange
+                               : UI.OwnerUiTheme.Current.Peach;
             }
 
             RebuildKeys(action, role);
@@ -1701,7 +1709,7 @@ namespace TumbangPreso
         /// its edge entirely, which is `CLAUDE.md` § 6.2b's *"over the real background, never an
         /// empty scene"* arriving as a parameter rather than as a review note.
         /// </summary>
-        private static void KeyCap(Transform parent, string key)
+        private static void KeyCapPrevious(Transform parent, string key)
         {
             var go = new GameObject($"Key_{key}");
             go.transform.SetParent(parent, false);
@@ -1754,7 +1762,7 @@ namespace TumbangPreso
             box.minHeight = 34.0f;
         }
 
-        private static void Chip(Transform parent, string words, Color? colour = null)
+        private static void ChipPrevious(Transform parent, string words, Color? colour = null)
         {
             var go = new GameObject("Words");
             go.transform.SetParent(parent, false);
@@ -1780,14 +1788,18 @@ namespace TumbangPreso
 
         public void SetProgress(float ratio)
         {
-            if (_fill != null) _fill.fillAmount = Mathf.Clamp01(ratio);
+            if (_fill != null)
+            {
+                _fill.fillAmount = Mathf.Clamp01(ratio);
+                _fill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(ratio),1);
+            }
         }
 
         public void FlashComplete()
         {
             _completeLeft = 0.70f;
             _complete.enabled = true;
-            _complete.rectTransform.localScale = Vector3.one * 1.22f;
+            _complete.rectTransform.localScale = Vector3.one * (Settings.SettingsStore.Current.ReducedUiMotion?1:1.22f);
         }
 
         private void Update()
@@ -1795,7 +1807,7 @@ namespace TumbangPreso
             if (_completeLeft <= 0.0f) return;
             _completeLeft = Mathf.Max(0.0f, _completeLeft - Time.unscaledDeltaTime);
             float t = 1.0f - _completeLeft / 0.70f;
-            _complete.rectTransform.localScale = Vector3.one * Mathf.Lerp(1.22f, 1.0f, t);
+            _complete.rectTransform.localScale = Vector3.one * (Settings.SettingsStore.Current.ReducedUiMotion?1:Mathf.Lerp(1.22f, 1.0f, t));
             if (_completeLeft <= 0.0f) _complete.enabled = false;
         }
 

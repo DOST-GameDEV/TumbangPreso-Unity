@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
         private RectTransform _nativePeople;
         private TumpRankBadge _nativeRank;
         private bool NativeVisible => _canvas != null && _canvas.gameObject.activeInHierarchy;
-        private void BuildNativeResult()
+        private void BuildPreviousNativeResult()
         {
             _nativeResult = true;
             _canvas = TumpUiFactory.Canvas(transform, "TumpResultCanvas", 400);
@@ -70,7 +70,7 @@ namespace TumbangPreso.UI
             NativePage(0); NativeProgression(null, null);
             ScreenTakeover.Register(this, () => NativeVisible);
         }
-        private void BuildNativeStandings(Transform root)
+        private void BuildPreviousNativeStandings(Transform root)
         {
             var page = TumpUiFactory.Rect(root, "PortraitStandings"); _nativePages[0] = page.gameObject;
             TumpUiFactory.Place(page, 58, 302, 1804, 518);
@@ -93,7 +93,7 @@ namespace TumbangPreso.UI
                 _rows.Add(new[] { place, name, score, title });
             }
         }
-        private void NativePage(int page)
+        private void PreviousNativePage(int page)
         {
             for(int i=0;i<3;i++)
             {
@@ -105,9 +105,9 @@ namespace TumbangPreso.UI
         }
         private void PresentNativeResult(int winner)
         {
-            _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = TumpUiTheme.Current.Brick;
+            _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = OwnerUiTheme.Current.ActionInk;
             _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + GameServices.Match.TotalRounds + " rounds";
-            _broadcastLine.color = TumpUiTheme.Current.DeepOlive;
+            _broadcastLine.color = OwnerUiTheme.Current.EnteredInk;
             var order = GameServices.Match.Ranking();
             for(int i=0;i<4;i++)
             {
@@ -115,7 +115,7 @@ namespace TumbangPreso.UI
                 if (actor != null)
                 {
                     var people=Roster.GetPeople(actor.Mode);
-                    if(actor.CharacterIndex>=0&&actor.CharacterIndex<people.Count)portrait=TumpUiFactory.Sprite("UI/portraits/"+people[actor.CharacterIndex].Id);
+                    if(actor.CharacterIndex>=0&&actor.CharacterIndex<people.Count)portrait=OwnerPortraitArt.Get("UI/portraits/"+people[actor.CharacterIndex].Id);
                 }
                 _nativePortraits[i].sprite=portrait;_nativePortraits[i].enabled=portrait!=null;
             }
@@ -125,20 +125,21 @@ namespace TumbangPreso.UI
         {
             bool show = award != null && profile != null && !IsSpectator;
             _xpHeadline.gameObject.SetActive(show); _xpBarTrack.gameObject.SetActive(show); _xpDetail.gameObject.SetActive(show);
-            _nativeRank.gameObject.SetActive(false); if(!show)return;
+            _nativeRank.gameObject.SetActive(false); if(!show){RefreshOwnerResultEmptyState();return;}
             int level=ProgressionRules.LevelForXp(profile.Xp);
             _xpHeadline.text=award.Afk||award.Suspended ? "Level "+level+" · No XP this match"
                 : award.LevelAfter>award.LevelBefore ? "Level "+award.LevelAfter+" · Level up! +"+award.MatchXp+" XP"
                 : "Level "+level+" · +"+award.MatchXp+" XP";
             float ratio=ProgressionRules.XpIntoLevel(profile.Xp)/(float)ProgressionRules.XpPerLevel;
             _xpBarFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(ratio),1);
-            _xpDetail.text=DetailFor(award)+RankLine(profile); _xpDetail.color=TumpUiTheme.Current.DeepOlive;
+            _xpDetail.text=DetailFor(award)+RankLine(profile); _xpDetail.color=OwnerUiTheme.Current.EnteredInk;
             if(profile.Rank!=null&&profile.Rank.MatchesThisSeason>0)
             {
                 _nativeRank.Tier=(int)RatingRules.TierFor(profile.Rank.Rating);_nativeRank.SetVerticesDirty();_nativeRank.gameObject.SetActive(true);
             }
+            RefreshOwnerResultEmptyState();
         }
-        private void NativeRecentPlayers()
+        private void PreviousNativeRecentPlayers()
         {
             if(_nativePeople==null)return;
             foreach(Transform child in _nativePeople){child.gameObject.SetActive(false);Destroy(child.gameObject);}

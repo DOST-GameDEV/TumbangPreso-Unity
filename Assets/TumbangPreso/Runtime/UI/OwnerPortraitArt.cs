@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
         }
         public static Sprite Get(string resource)
         {
+            if(string.IsNullOrEmpty(resource))return null;
             if(!Cache.TryGetValue(resource,out var sprite) || sprite==null)
             {
                 sprite=Resources.Load<Sprite>(resource);

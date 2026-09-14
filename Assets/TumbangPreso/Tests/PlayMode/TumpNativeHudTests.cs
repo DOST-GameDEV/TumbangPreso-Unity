@@ -18,41 +18,41 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ClassicHudReflectsTheRealRoundRoleAndRecoveryState()
         {
             yield return Open(GameMode.Classic);
-            var hud = Hud.Instance; var canvas = GameObject.Find("TumpMatchCanvas").GetComponent<Canvas>();
+            var hud = Hud.Instance; var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             Assert.IsTrue(hud.NativePresentation); Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<RectTransform>().Count(r => r.name.StartsWith("ScoreRow")));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name == "PlayerPortrait" && i.enabled && i.sprite != null),
                 "A sprite reference alone is not a visible portrait.");
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
-            yield return TumpUiCapture.Capture("NativeHud-Classic-v1", canvas, 1920, 1080, false, true);
+            yield return TumpUiCapture.Capture("OwnerHud-Classic-v1", canvas, 1920, 1080, false, true);
             bool before = local.IsDefender; local.IsDefender = true; yield return null;
             Assert.AreEqual("Defender", canvas.GetComponentsInChildren<Text>().First(t => t.name == "LocalRole").text);
             local.IsDefender = before;
             local.ApplyFallRecovery(); yield return null;
             var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
             Assert.That(prompt.text.ToLowerInvariant(), Does.Contain("get up").Or.Contain("getting up"));
-            yield return TumpUiCapture.Capture("NativeHud-recovery-v1", canvas, 1280, 720, false, true);
+            yield return TumpUiCapture.Capture("OwnerHud-recovery-v1", canvas, 1280, 720, false, true);
             local.ClearTrip();
             hud.ShowToast("Slipper returning · 10.0s", 1); yield return null;
             Assert.IsTrue(canvas.GetComponentsInChildren<Text>().First(t => t.name == "MatchToast").enabled);
             var swap = Object.FindFirstObjectByType<RoleSwapCard>();
             swap.ShowForShot(2, (GameServices.Match.DefenderSlot + 1) % 4); yield return null;
-            var intermission = GameObject.Find("TumpRoundSwapCanvas").GetComponent<Canvas>();
+            var intermission = GameObject.Find("OwnerRoundSwapCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(intermission.GetComponentsInChildren<PaperSkin>(true));
-            Assert.IsNotNull(intermission.transform.Find("NextDefenderPortrait").GetComponent<Image>().sprite);
-            yield return TumpUiCapture.Capture("NativeRoundSwap-v1", intermission, 1920, 1080);
+            Assert.IsNotNull(intermission.GetComponentsInChildren<Image>().First(i=>i.name=="NextDefenderPortrait").sprite);
+            yield return TumpUiCapture.Capture("OwnerRoundSwap-v1", intermission, 1920, 1080,false);
             swap.DismissAndPractice(); Assert.IsFalse(intermission.gameObject.activeSelf);
         }
         [UnityTest]
         public IEnumerator HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts()
         {
             yield return Open(GameMode.HeroStrike);
-            var hud = Hud.Instance; var canvas = GameObject.Find("TumpMatchCanvas").GetComponent<Canvas>();
+            var hud = Hud.Instance; var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             Assert.IsTrue(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
-            Assert.AreEqual(3, canvas.GetComponentsInChildren<TumpAbilityDial>().Length);
-            yield return TumpUiCapture.Capture("NativeHud-Hero-v1", canvas, 1920, 1080, false, true);
+            Assert.AreEqual(3, canvas.GetComponentsInChildren<OwnerAbilitySeal>().Length);
+            yield return TumpUiCapture.Capture("OwnerHud-Hero-v1", canvas, 1920, 1080, false, true);
             var readout = Object.FindFirstObjectByType<TumpPowerReadout>();
             var kit = local.GetComponent<Abilities.HeroAbilitySystem>().Kit;
             try
@@ -76,7 +76,7 @@ namespace TumbangPreso.PlayTests
             hud.EnterSpectatorMode(); yield return null;
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
             Assert.IsFalse(canvas.transform.Find("LocalState").gameObject.activeSelf);
-            yield return TumpUiCapture.Capture("NativeHud-spectator-v1", canvas, 1280, 960, false, true);
+            yield return TumpUiCapture.Capture("OwnerHud-spectator-v1", canvas, 1280, 960, false, true);
             hud.SetCleanFeed(true); Assert.IsFalse(canvas.gameObject.activeSelf);
             hud.SetCleanFeed(false); Assert.IsTrue(canvas.gameObject.activeSelf);
             hud.ExitSpectatorMode(); yield return null;

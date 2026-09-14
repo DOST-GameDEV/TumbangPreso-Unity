@@ -407,7 +407,7 @@ namespace TumbangPreso.InputLayer
 
             bool on = PracticeSandbox.Active;
             _sandboxLabel.text = on ? SandboxOnText : SandboxOffText;
-            _sandboxLabel.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
+            _sandboxLabel.color = on ? OwnerUiTheme.Current.Green : OwnerUiTheme.Current.ActionInk;
         }
 
         /// <summary>

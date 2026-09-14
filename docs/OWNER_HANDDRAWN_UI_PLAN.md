@@ -163,9 +163,11 @@ critical HUD changes without delaying their information or shaking stable anchor
   and connecting lines. Adapt surrounding theme only if it retains that design.
   Scoped native settings/controller/touch/transaction checks: reports/owner-ui-u5.md.
   Pause shell and actual gameplay touch-button surfaces migrate with U6.
-- [ ] U6: in-game HUD, scoreboard/timer, reticle prompts, ability cooldown/state,
+- [x] U6 first implementation: in-game HUD, scoreboard/timer, reticle prompts, ability cooldown/state,
   training steps, contextual interaction, chat, round change/recovery prompts,
   spectator readouts, pause and results. Keep both modes and world readability.
+  Scoped cases and original captures: reports/owner-ui-u6.md. All-kit/17lesson/
+  real-device and complete online/native-player qualification remain in U8.
 - [ ] U7: profile/career/progression, match history, rankings/emblems/rewards,
   introductions/lore and existing social/account contexts. No invented paid
   locks, compulsory lore delay or lost routes. Keep character maker inaccessible.

@@ -19,8 +19,8 @@ namespace TumbangPreso.UI
         {
             var shader = Shader.Find(shaderName); material = null;
             if (shader == null) return null;
-            var image = TumpUiFactory.Rect(root, name).gameObject.AddComponent<Image>();
-            TumpUiFactory.Stretch(image.rectTransform); image.raycastTarget = false; image.enabled = false;
+            var image = OwnerUiLayout.Rect(root, name).gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(image.rectTransform); image.raycastTarget = false; image.enabled = false;
             material = new Material(shader) { hideFlags = HideFlags.DontSave }; image.material = material;
             return image;
         }
@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
         public void Tick(CharacterMotor local, bool spectator)
         {
             float dt = Time.unscaledDeltaTime;
-            var f = TumpUiTheme.Current;
+            var f = OwnerUiTheme.Current;
             bool held = !spectator && local != null && (local.IsDefender
                 ? GameServices.Round != null && GameServices.Round.RoundActive && GameServices.Round.Lata != null && !GameServices.Round.Lata.IsUpright
                 : local.IsTaggable());
@@ -37,7 +37,7 @@ namespace TumbangPreso.UI
             {
                 float alpha = spectator ? 0 : Mathf.Max(held ? Hud.DangerHoldAlpha : 0,
                     Settings.SettingsStore.Current.ReducedUiMotion ? 0 : _flash / Hud.DownedFlashTime * Hud.DownedFlashPeak);
-                _danger.enabled = alpha > .001f; _danger.color = new Color(f.Brick.r, f.Brick.g, f.Brick.b, alpha);
+                _danger.enabled = alpha > .001f; _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
             }
             float target = !spectator && local != null && local.IsStunned && !local.IsTripped
                 ? Mathf.Clamp01(local.StunLeft / Hud.FrostThawTime) : 0;
@@ -47,8 +47,8 @@ namespace TumbangPreso.UI
             _caughtMaterial.SetFloat("_Coverage", _coverage);
             var element = local != null ? local.StunElement : StunElement.None;
             var coat = Visual.StunCoat.For(element);
-            _caughtMaterial.SetColor("_FrostTint", element == StunElement.None ? f.DeepOlive : coat.Screen);
-            _caughtMaterial.SetColor("_CrackColor", element == StunElement.None ? f.Yellow : coat.Rim);
+            _caughtMaterial.SetColor("_FrostTint", element == StunElement.None ? f.DeepInk : coat.Screen);
+            _caughtMaterial.SetColor("_CrackColor", element == StunElement.None ? f.Lime : coat.Rim);
             var size = _caught.rectTransform.rect.size;
             if (size.y > 0) _caughtMaterial.SetFloat("_Aspect", size.x / size.y);
         }

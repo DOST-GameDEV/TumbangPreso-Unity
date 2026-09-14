@@ -96,6 +96,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(TouchButton.Customising);
             var canvas = GameObject.Find("OwnerTouchLayoutCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(TouchHud.Instance.Canvas.GetComponentsInChildren<WoodSkin>(true));
+            Assert.IsEmpty(TouchHud.Instance.Canvas.GetComponentsInChildren<TumpSurface>(true));
+            Assert.AreEqual(TouchHud.Instance.Buttons.Count,TouchHud.Instance.Canvas.GetComponentsInChildren<OwnerTouchSurface>(true).Length);
             Press(Find("ResetTouchLayout")); yield return null;
             Press(Find("TouchAdjustments"));yield return null;
             GameObject.Find("TouchSize").GetComponent<Slider>().value = Mathf.Min(TouchLayoutStore.MaxScale, scale + .15f);
@@ -170,7 +172,7 @@ namespace TumbangPreso.PlayTests
                 var watcher = Object.FindFirstObjectByType<PauseWatcher>();
                 var pause = Panel.Open<PausePanel>(watcher); pause.Local = watcher.Local; yield return null;
                 Assert.IsTrue(pause.Local.Intent.Parked);
-                yield return TumpUiCapture.Capture("NativePause-v1", GameObject.Find("TumpPauseCanvas").GetComponent<Canvas>(), 1920, 1080, false, true);
+                yield return TumpUiCapture.Capture("OwnerPause-v1", GameObject.Find("OwnerPauseCanvas").GetComponent<Canvas>(), 1920, 1080, false, true);
                 Press(Find("PauseSettings")); yield return null;
                 var settings = Object.FindFirstObjectByType<TumpSettingsView>(); settings.ShowSection(4); yield return null;
                 pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
@@ -187,7 +189,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(pause.Local.Intent.Parked);
                 InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState()); yield return null;
                 Press(Find("DiscardAndBack")); yield return null;
-                Assert.IsTrue(GameObject.Find("TumpPauseCanvas").activeSelf);
+                Assert.IsTrue(GameObject.Find("OwnerPauseCanvas").activeSelf);
                 pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
                 InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.Escape)); yield return null;
                 Assert.IsFalse(pause.gameObject.activeSelf);

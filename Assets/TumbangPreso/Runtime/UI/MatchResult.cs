@@ -317,10 +317,10 @@ namespace TumbangPreso.UI
                 int points = m.ScoreFor(slot);
                 bool tiedAtTop = points == topScore;
 
-                Color colour = _nativeResult ? (tiedAtTop ? TumpUiTheme.Current.Brick : TumpUiTheme.Current.DeepOlive)
+                Color colour = _nativeResult ? (tiedAtTop ? OwnerUiTheme.Current.ActionInk : OwnerUiTheme.Current.EnteredInk)
                     : tiedAtTop ? UiTheme.Highlight : UiTheme.Cream;
 
-                cells[0].text = drawn && tiedAtTop ? "=" : $"{i + 1}";
+                cells[0].text = drawn && tiedAtTop ? (_nativeResult ? "TIE" : "=") : $"{i + 1}";
                 cells[1].text = NameFor(slot);
                 cells[2].text = $"{points} PTS";
 

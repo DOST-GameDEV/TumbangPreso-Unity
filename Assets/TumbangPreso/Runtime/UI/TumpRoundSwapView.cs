@@ -6,14 +6,14 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>One new defender portrait and the actual cumulative standings between rounds.</summary>
-    public sealed class TumpRoundSwapView : MonoBehaviour
+    public sealed partial class TumpRoundSwapView : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
         private Text _round, _name, _buffer;
         private Image _portrait;
         private readonly Text[] _names = new Text[4], _scores = new Text[4];
         private readonly Image[] _portraits = new Image[4];
-        public void Build(Transform owner, Action dismiss)
+        private void BuildPrevious(Transform owner, Action dismiss)
         {
             var f = TumpUiTheme.Current;
             Canvas = TumpUiFactory.Canvas(owner, "TumpRoundSwapCanvas", 220);
@@ -89,7 +89,7 @@ namespace TumbangPreso.UI
             if (actor == null) return null;
             var people = Roster.GetPeople(actor.Mode);
             return actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
-                ? TumpUiFactory.Sprite("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
+                ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
         }
     }
 }

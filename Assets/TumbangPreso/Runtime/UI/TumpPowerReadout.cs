@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
         private bool _captureReference;
         private readonly HeroAbility[] _skills = new HeroAbility[3];
         private static readonly string[] Actions = { "Skill1", "Skill2", "Ultimate" };
-        public void Build(Transform root)
+        private void BuildPreviousDeck(Transform root)
         {
             var f = TumpUiTheme.Current;
             _deck = TumpUiFactory.Rect(root, "PowerSeals");
@@ -86,7 +86,7 @@ namespace TumbangPreso.UI
             }
             _detail.gameObject.SetActive(false);
         }
-        public void Tick(HeroAbilitySystem system, bool visible)
+        private void TickPreviousDeck(HeroAbilitySystem system, bool visible)
         {
             var kit = system != null ? system.Kit : null;
             visible &= kit != null;

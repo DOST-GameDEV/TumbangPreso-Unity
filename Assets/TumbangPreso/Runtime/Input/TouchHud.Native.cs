@@ -6,7 +6,7 @@ namespace TumbangPreso.InputLayer
 {
     public sealed partial class TouchHud
     {
-        private void BuildNative()
+        private void BuildPreviousNative()
         {
             var f = TumpUiTheme.Current;
             _canvas = TumpUiFactory.Canvas(transform, "TumpTouchCanvas", 300);

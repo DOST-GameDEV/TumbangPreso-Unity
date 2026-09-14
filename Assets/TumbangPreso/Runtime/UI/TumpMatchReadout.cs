@@ -8,7 +8,7 @@ namespace TumbangPreso.UI
 {
     /// <summary>New match presentation. Reads the existing referee, actors and resource state only.</summary>
     [DefaultExecutionOrder(1200)]
-    public sealed class TumpMatchReadout : MonoBehaviour
+    public sealed partial class TumpMatchReadout : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
@@ -31,7 +31,7 @@ namespace TumbangPreso.UI
         private CameraSystem.SpectatorCamera _spectatorCamera;
         public bool ReadyWindow;
 
-        public void Build(Transform owner)
+        public void BuildPrevious(Transform owner)
         {
             Canvas = TumpUiFactory.Canvas(owner, "TumpMatchCanvas", 100);
             // The game owns mouse/controller navigation. This is a readout, not menu focus.
@@ -58,7 +58,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(version.rectTransform, new Vector2(1, 0), new Vector2(-230, 14), new Vector2(420, 28));
             GameVersion.ApplyTo(version);
         }
-        private static Text Ink(Transform root, string name, string words, int size, bool main)
+        private static Text InkPrevious(Transform root, string name, string words, int size, bool main)
         {
             var text = TumpUiFactory.Text(root, name, words, size, main);
             text.color = TumpUiTheme.Current.Cream; text.alignment = TextAnchor.MiddleCenter;
@@ -66,7 +66,7 @@ namespace TumbangPreso.UI
             outline.effectColor = new Color(.10f, .08f, .035f, .95f); outline.effectDistance = new Vector2(2, -2);
             return text;
         }
-        private void BuildScores()
+        private void BuildScoresPrevious()
         {
             _scoreRoot = TumpUiFactory.Rect(_root, "FourPlayerScoreboard");
             TumpUiFactory.Place(_scoreRoot, 30, 28, 468, 280);
@@ -85,7 +85,7 @@ namespace TumbangPreso.UI
                 TumpUiFactory.Place(_roles[i].rectTransform, 78, 44, 366, 28);
             }
         }
-        private void BuildClock()
+        private void BuildClockPrevious()
         {
             _clockRoot = TumpUiFactory.Rect(_root, "RoundClock");
             TumpUiFactory.Anchor(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -94), new Vector2(660, 170));
@@ -94,7 +94,7 @@ namespace TumbangPreso.UI
             _clock = Ink(_clockRoot, "TimeLeft", "", 62, true); TumpUiFactory.Place(_clock.rectTransform, 174, 0, 312, 94);
             _round = Ink(_clockRoot, "RoundLabel", "", 28, true); TumpUiFactory.Place(_round.rectTransform, 0, 96, 660, 60);
         }
-        private void BuildCan()
+        private void BuildCanPrevious()
         {
             _canRoot = TumpUiFactory.Rect(_root, "CanReadout");
             TumpUiFactory.Anchor(_canRoot, new Vector2(1, 1), new Vector2(-252, -112), new Vector2(464, 176));
@@ -108,7 +108,7 @@ namespace TumbangPreso.UI
             _canHint = Ink(_canRoot, "CanHint", "", 26, false); _canHint.alignment = TextAnchor.UpperRight;
             TumpUiFactory.Place(_canHint.rectTransform, 0, 112, 454, 64);
         }
-        private void BuildPersonal()
+        private void BuildPersonalPrevious()
         {
             _personalRoot = TumpUiFactory.Rect(_root, "LocalState");
             TumpUiFactory.Anchor(_personalRoot, new Vector2(0, 0), new Vector2(264, 110), new Vector2(464, 174));
@@ -129,7 +129,7 @@ namespace TumbangPreso.UI
                 TumpUiFactory.Place(_status[i].rectTransform, 38, 332 + i * 46, 450, 44);
             }
         }
-        private void BuildPrompts()
+        private void BuildPromptsPrevious()
         {
             _promptRoot = TumpUiFactory.Rect(_root, "ContextualAction");
             TumpUiFactory.Anchor(_promptRoot, new Vector2(.5f, .32f), Vector2.zero, new Vector2(1100, 176));
@@ -160,7 +160,7 @@ namespace TumbangPreso.UI
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _clock.color = time <= 10 && round.RoundActive ? TumpUiTheme.Current.Yellow : TumpUiTheme.Current.Cream;
+            _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.HintInk : OwnerUiTheme.Current.ActionInk;
             _round.text = match.IsWarmupBuffer ? "Warm up · Scores paused" : $"Round {Mathf.Max(1, match.RoundNumber)} / {match.TotalRounds}";
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
@@ -205,13 +205,13 @@ namespace TumbangPreso.UI
                 if (local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";
                 if (spectating) state += (state.Length > 0 ? " · " : "") + (actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" : actor.HoldingSlipper ? "Holding" : "Retrieving");
                 _roles[i].text = state;
-                _roles[i].color = defender ? TumpUiTheme.Current.Yellow : TumpUiTheme.Current.Cream;
+                _roles[i].color = defender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
                 var people = Roster.GetPeople(actor.Mode);
                 var portrait = actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
-                    ? TumpUiFactory.Sprite("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
+                    ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
                 _portraits[i].enabled = portrait != null;
-                var strip = _scoreRows[i].GetComponent<TumpScoreStrip>();
+                var strip = _scoreRows[i].GetComponent<OwnerScoreStrip>();
                 bool mine = local != null && slot == local.PlayerSlot;
                 if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
             }
@@ -224,7 +224,7 @@ namespace TumbangPreso.UI
             _canHint.text = lata.IsProtected ? $"Protected · {lata.ProtectionLeft:0.0}s" : local == null
                 ? lata.IsUpright ? "Defender may tag" : "Retrieve or reset"
                 : !lata.IsUpright ? local.IsDefender ? "Reset the can" : "Retrieve your slipper" : "";
-            _canState.color = lata.IsUpright ? TumpUiTheme.Current.Cream : TumpUiTheme.Current.Yellow;
+            _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : OwnerUiTheme.Current.Lime;
         }
         private void Personal(CharacterMotor local, bool spectating)
         {
@@ -233,13 +233,13 @@ namespace TumbangPreso.UI
             foreach (var text in _status) text.enabled = false;
             if (!show) return;
             _role.text = local.IsDefender ? "Defender" : "Attacker";
-            _role.color = local.IsDefender ? TumpUiTheme.Current.Yellow : TumpUiTheme.Current.Cream;
+            _role.color = local.IsDefender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
             _stock.text = local.HoldingSlipper ? "Slipper in hand" : local.IsDefender ? "Guard the can" : "Slipper away";
             var stock = GameServices.Tsinelas;
             if (stock != null && stock.Live && !local.IsDefender) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
             _stamina.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(local.Stamina.Ratio), 1);
             _stamina.enabled = local.Stamina.Ratio > .001f;
-            _stamina.color = local.Stamina.IsFatigued ? TumpUiTheme.Current.HotOrange : TumpUiTheme.Current.Lime;
+            _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Lime;
             StatusStack.Collect(local, local.GetComponent<Carrier>(), local.GetComponent<CombatVerbs>(), _statusRows);
             int index = 0;
             foreach (var row in _statusRows)
@@ -253,7 +253,7 @@ namespace TumbangPreso.UI
             _promptRoot.gameObject.SetActive(local != null && !spectating);
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
-            _prompt.color = TumpUiTheme.Current.Cream;
+            _prompt.color = OwnerUiTheme.Current.Pale;
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {
@@ -289,8 +289,8 @@ namespace TumbangPreso.UI
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
-            if (local.IsTaggable()) { _prompt.text = "You can be tagged"; _prompt.color = TumpUiTheme.Current.Yellow; }
-            else _prompt.color = TumpUiTheme.Current.Cream;
+            if (local.IsTaggable()) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Lime; }
+            else _prompt.color = OwnerUiTheme.Current.Pale;
             if (!local.IsDefender && !local.HoldingSlipper)
             {
                 if (Time.time >= _scanAt) { _scanAt = Time.time + .2f; _slippers = FindObjectsByType<Slipper>(FindObjectsInactive.Include, FindObjectsSortMode.None); }

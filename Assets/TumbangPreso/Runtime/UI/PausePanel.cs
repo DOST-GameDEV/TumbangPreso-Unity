@@ -10,14 +10,14 @@ namespace TumbangPreso.UI
     /// would stay held in the intent table, and the player walks out of the menu already
     /// sprinting or mid-throw-charge.
     /// </summary>
-    public sealed class PausePanel : Panel
+    public sealed partial class PausePanel : Panel
     {
         public CharacterMotor Local;
         private Text _title;
         private GameObject _settingsOwner;
         public bool HasNestedView => _settingsOwner != null && _settingsOwner.activeInHierarchy;
 
-        protected override Canvas CreateCanvas()
+        private Canvas CreatePreviousCanvas()
         {
             var canvas = TumpUiFactory.Canvas(transform, "TumpPauseCanvas", 500);
             var f = TumpUiTheme.Current;
@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
             return canvas;
         }
 
-        protected override void Build()
+        private void BuildPrevious()
         {
             var f = TumpUiTheme.Current;
             var root = (RectTransform)Canvas.transform;
@@ -89,7 +89,7 @@ namespace TumbangPreso.UI
             // This is a menu, not a time-control path. Only SpectatorCamera's broadcast keys
             // may pause or slow the match; opening settings as a player never stops the game.
             if (_title != null)
-                _title.text = GameLaunch.Spectator ? "Broadcast menu" : "Match menu";
+                _title.text = GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
 
             if (Local != null) Local.Intent.Parked = true;
 

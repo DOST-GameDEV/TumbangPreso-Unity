@@ -23,16 +23,19 @@ namespace TumbangPreso.PlayTests
             yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
             var result = Object.FindFirstObjectByType<MatchResult>(); Assert.IsNotNull(result);
             result.OnMatchWon(-1); yield return null;
-            var canvas = GameObject.Find("TumpResultCanvas").GetComponent<Canvas>();
+            var canvas = GameObject.Find("OwnerResultCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(4, canvas.GetComponentsInChildren<Image>().Count(i => i.name.StartsWith("FinisherPortrait") && i.enabled && i.sprite != null));
             Assert.That(canvas.GetComponentsInChildren<Text>().First(t => t.name == "ResultHeadline").text, Does.Contain("draw"));
-            yield return TumpUiCapture.Capture("NativeResults-standings-v1", canvas, 1920, 1080);
+            yield return TumpUiCapture.Capture("OwnerResults-standings-v1", canvas, 1920, 1080,false);
             Press("ResultTab2"); yield return null;
             Assert.AreEqual(4, canvas.GetComponentsInChildren<Text>().Count(t => t.name == "RecentPlayerName"));
-            yield return TumpUiCapture.Capture("NativeResults-players-v1", canvas, 1280, 960);
+            yield return TumpUiCapture.Capture("OwnerResults-players-v1", canvas, 1280, 960,false);
             Press("ResultTab1"); yield return null;
-            yield return TumpUiCapture.Capture("NativeResults-details-v1", canvas, 1280, 720);
+            Assert.IsTrue(canvas.GetComponentsInChildren<Text>().Any(t=>
+                (t.name=="EmptyMatchDetails" || t.name=="YourMatchSummary" || t.name=="EarnedXp" || t.name=="MatchHighlight")
+                && !string.IsNullOrWhiteSpace(t.text)),"Details needs a report or a clear empty state.");
+            yield return TumpUiCapture.Capture("OwnerResults-details-v1", canvas, 1280, 720,false);
             int next = (System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap) + 1) % SceneFlow.Maps.Length;
             result.HostReceiveMapVote(GameLaunch.SoloSeat, next); yield return null;
             Assert.That(Find("ResultNextMap").GetComponentInChildren<Text>().text, Does.Contain(SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name));
@@ -58,7 +61,7 @@ namespace TumbangPreso.PlayTests
                     var label = TumpUiFactory.Text(canvas.transform, "TierName" + i, RatingRules.TierName((RankTier)i), 36, true);
                     label.alignment = TextAnchor.MiddleCenter; TumpUiFactory.Place(label.rectTransform, 72 + i * 348, 678, 338, 86);
                 }
-                yield return TumpUiCapture.Capture("NativeRanks-v1", canvas, 1920, 1080);
+                yield return TumpUiCapture.Capture("NativeRanks-v1", canvas, 1920, 1080,false);
                 var counts = canvas.GetComponentsInChildren<TumpRankBadge>().Select(b => b.canvasRenderer.GetMesh().vertexCount).ToArray();
                 Assert.IsTrue(counts.All(c => c > 0), "Each rank must produce actual rendered geometry; visual distinction is reviewed in the capture.");
             }
