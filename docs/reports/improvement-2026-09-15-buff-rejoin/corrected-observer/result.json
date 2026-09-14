@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 366,
+      "live_window_samples": 76,
+      "charged_samples": 76,
+      "ember_samples": 76,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "owner": {
+      "samples": 375,
+      "live_window_samples": 76,
+      "charged_samples": 76,
+      "ember_samples": 76,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "observer": {
+      "samples": 153,
+      "live_window_samples": 94,
+      "charged_samples": 94,
+      "ember_samples": 94,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    }
+  },
+  "observer_reconnected": true,
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "49aa89a46a2f78e3ee2957e4470b4a135f48829d2ac98cd17a9cb0209d5d60ff"
+}

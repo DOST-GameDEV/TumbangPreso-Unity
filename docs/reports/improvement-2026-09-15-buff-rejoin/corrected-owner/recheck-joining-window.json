@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 368,
+      "live_window_samples": 78,
+      "charged_samples": 78,
+      "ember_samples": 78,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "owner": {
+      "samples": 147,
+      "live_window_samples": 79,
+      "charged_samples": 79,
+      "ember_samples": 79,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0,
+      "join_to_charge_seconds": 0.33100128173828125,
+      "joining_reply_budget_seconds": 0.55
+    },
+    "observer": {
+      "samples": 371,
+      "live_window_samples": 78,
+      "charged_samples": 78,
+      "ember_samples": 78,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    }
+  },
+  "note": "Recheck of the original trace with an explicit configured joining reply window; no production change or rerun."
+}

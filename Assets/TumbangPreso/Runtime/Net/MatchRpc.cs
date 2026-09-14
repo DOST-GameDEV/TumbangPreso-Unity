@@ -339,6 +339,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
             cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
+            cm.RegisterNamedMessageHandler("HeldCharge", OnHeldChargeMsg);
             cm.RegisterNamedMessageHandler("IceBegin", OnIceBeginMsg);
             cm.RegisterNamedMessageHandler("IceItem", OnIceItemMsg);
             cm.RegisterNamedMessageHandler("IceEnd", OnIceEndMsg);
@@ -1795,6 +1796,35 @@ namespace TumbangPreso.Net
             float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
             if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
                 kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
+        }
+
+        private void SendHeldChargeSnapshot(int slot, ulong peer)
+        {
+            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId
+                || !(Unit(slot)?.AbilitySystem?.Kit is Abilities.SeanHeroKit kit)) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(GameServices.Match.RoundNumber);
+            writer.WriteValueSafe(kit.HeroId);
+            writer.WriteValueSafe(kit.IsIgnitionCannonActive ? kit.Skill2.DurationRemaining : 0f);
+            writer.WriteValueSafe((float)_nm.ServerTime.Time);
+            _nm.CustomMessagingManager.SendNamedMessage("HeldCharge", peer, writer);
+        }
+
+        private void OnHeldChargeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out string hero);
+            reader.ReadValueSafe(out float remaining);
+            reader.ReadValueSafe(out float sentAt);
+            if (!ValidSlot(slot) || !Finite(remaining) || !Finite(sentAt) || remaining < 0 || remaining > 10.1f
+                || GameServices.Match == null || GameServices.Match.RoundNumber != round || hero != "sean") return;
+            var motor = Unit(slot);
+            if (!(motor?.AbilitySystem?.Kit is Abilities.SeanHeroKit kit)) return;
+            remaining = Mathf.Clamp(remaining - Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt), 0, kit.Skill2.Duration);
+            using (NetCue.SuppressRelay()) kit.RestoreJoiningIgnition(motor, remaining);
         }
 
         private int _iceGeneration, _lastIceGeneration, _iceRound;
@@ -5643,6 +5673,7 @@ namespace TumbangPreso.Net
             {
                 BroadcastFamiliarEffect(slot,(ulong)peerId);
                 SendCovenSnapshot(slot, (ulong)peerId);
+                SendHeldChargeSnapshot(slot, (ulong)peerId);
             }
             SendSkySnapshot((ulong)peerId);
             SendIceSnapshot((ulong)peerId);

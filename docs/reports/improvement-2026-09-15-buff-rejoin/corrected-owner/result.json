@@ -1,0 +1,41 @@
+{
+  "ok": false,
+  "errors": [
+    "owner failed to retain or reconstruct the active held charge"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 368,
+      "live_window_samples": 78,
+      "charged_samples": 78,
+      "ember_samples": 78,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "owner": {
+      "samples": 147,
+      "live_window_samples": 88,
+      "charged_samples": 84,
+      "ember_samples": 84,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "observer": {
+      "samples": 371,
+      "live_window_samples": 78,
+      "charged_samples": 78,
+      "ember_samples": 78,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    }
+  },
+  "observer_reconnected": false,
+  "owner_reconnected": true,
+  "rejoined_seat": "owner",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "09c8aa4aef075b7679e5beeaab4f49b652bda000b4af5afe2a160ff67d1d8b60"
+}

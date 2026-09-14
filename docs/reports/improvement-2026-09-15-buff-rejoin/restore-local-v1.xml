@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.2870125">
+  <test-suite type="TestSuite" id="1506" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="384" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.287013" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1500" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="384" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.276755" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46096" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1501" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="384" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.271734" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1502" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="384" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.265471" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1382" name="SeanSkillTimingProbe" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:51Z" duration="17.253494" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1383" name="JoiningIgnitionRestoresOnlyItsRemainingWindowWithoutSpending" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.JoiningIgnitionRestoresOnlyItsRemainingWindowWithoutSpending" methodname="JoiningIgnitionRestoresOnlyItsRemainingWindowWithoutSpending" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="812205244" result="Passed" start-time="2026-09-14 16:39:33Z" end-time="2026-09-14 16:39:41Z" duration="7.242892" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1384" name="LateJoiningChargeCannotOverwriteAConsumedShotOrANewerCast" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.LateJoiningChargeCannotOverwriteAConsumedShotOrANewerCast" methodname="LateJoiningChargeCannotOverwriteAConsumedShotOrANewerCast" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="1586012951" result="Passed" start-time="2026-09-14 16:39:41Z" end-time="2026-09-14 16:39:46Z" duration="4.991544" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1388" name="ReplicatedFireReleaseConsumesOnceAndCleansItsFlightEffect" fullname="TumbangPreso.PlayTests.SeanSkillTimingProbe.ReplicatedFireReleaseConsumesOnceAndCleansItsFlightEffect" methodname="ReplicatedFireReleaseConsumesOnceAndCleansItsFlightEffect" classname="TumbangPreso.PlayTests.SeanSkillTimingProbe" runstate="Runnable" seed="1925427439" result="Passed" start-time="2026-09-14 16:39:46Z" end-time="2026-09-14 16:39:51Z" duration="5.004934" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

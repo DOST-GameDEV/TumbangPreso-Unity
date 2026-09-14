@@ -18,6 +18,8 @@ namespace TumbangPreso.Diagnostics
         private string _scenario;
         private StreamWriter _writer;
         private bool _pickSent, _seededArenaPick, _prepared, _armed;
+        private bool _holdCharge;
+        private bool _observeExisting;
         private double _next;
         private Slipper _shoe;
         private static string Argument(string key)
@@ -39,14 +41,16 @@ namespace TumbangPreso.Diagnostics
             if (!_enabled) return;
             var root = new GameObject("~NetSeanProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetSeanProbe>(); probe._scenario = Argument("-tp-seancase") ?? "ignite";
+            probe._holdCharge = Environment.GetCommandLineArgs().Contains("-tp-holdcharge");
+            probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-sean-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-seantrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun");
+            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime");
         }
         private void Update()
         {
             int pick = Roster.IndexIn(Roster.HeroPeople, "sean");
-            if (!_pickSent && NetAuthority.IsNetworked && NetAuthority.LocalSlot == 1 && MatchRpc.Instance != null)
+            if (!_observeExisting && !_pickSent && NetAuthority.IsNetworked && NetAuthority.LocalSlot == 1 && MatchRpc.Instance != null)
             {
                 var settings = Settings.SettingsStore.Current; settings.CharacterPick = pick;
                 MatchRpc.Instance.SelectLobbyPickServerRpc(pick, settings.CanPick, settings.SlipperPick); _pickSent = true;
@@ -69,6 +73,11 @@ namespace TumbangPreso.Diagnostics
                 if (player != null) { player.Intent.Clear(); player.Intent.Parked = player != caster; }
             float elapsed = UI.SceneFlow.SelectedRoundSeconds - round.TimeLeft;
             if (elapsed > 24) { _writer.Flush(); Application.Quit(); return; }
+            if (!_prepared && _observeExisting)
+            {
+                _prepared = true;
+                Debug.Log("[SeanProbe] observing the restored world local=" + NetAuthority.LocalSlot);
+            }
             if (!_prepared)
             {
                 if (caster.CharacterIndex != pick) return;
@@ -86,13 +95,13 @@ namespace TumbangPreso.Diagnostics
                 }
                 Debug.Log("[SeanProbe] prepared " + _scenario + " local=" + NetAuthority.LocalSlot);
             }
-            if (NetAuthority.LocalSlot == 1)
+            if (NetAuthority.LocalSlot == 1 && !_observeExisting)
             {
                 if (!_armed && elapsed >= 12) { kit.AddUltimateCharge(100); _armed = true; }
                 caster.Intent.Parked = false; caster.Intent.AimPoint = new Vector3(0, .15f, -2);
                 caster.Intent.FaceAimPoint = true;
                 caster.Intent.Set(_scenario == "ignite" ? Verb.Skill2 : Verb.Ultimate, elapsed >= 12 && elapsed < 12.3f);
-                if (_scenario == "ignite") caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
+                if (_scenario == "ignite" && !_holdCharge) caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
             }
             var carrier = caster.GetComponent<Carrier>(); if (_shoe == null) _shoe = carrier.Held;
             double now = NetworkManager.Singleton.ServerTime.Time;
@@ -106,7 +115,8 @@ namespace TumbangPreso.Diagnostics
                 caster.IsGrounded ? 1 : 0, caster.transform.position.y, kit.SupernovaPoseTime,
                 craters.Length, crater.x, crater.z, FindObjectsByType<SeanIgnitionVisual>(FindObjectsSortMode.None).Length,
                 _shoe != null && _shoe.State == SlipperState.InFlight && _shoe.Affinity == SlipperAffinity.FireExplosive ? 1 : 0,
-                _shoe != null ? (int)_shoe.State : -1, shoePosition.x, shoePosition.y, shoePosition.z, front.StunLeft };
+                _shoe != null ? (int)_shoe.State : -1, shoePosition.x, shoePosition.y, shoePosition.z, front.StunLeft,
+                kit.Skill2.DurationRemaining, DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond };
             _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
         }
         private void OnDestroy() => _writer?.Dispose();

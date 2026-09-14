@@ -21,13 +21,46 @@ def rows(path):
         return [{key: float(value) for key, value in row.items()} for row in csv.DictReader(handle)]
 
 
-def evaluate(folder, case):
+def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
     errors, measurements = [], {}
     host = data["host"]
     cast = next((row["time"] for row in host if row["charged"] == 1), None) if case == "ignite" else next((row["time"] for row in host if row["ultcharge"] < 1), None)
     if cast is None:
         return {"ok": False, "errors": ["The authoritative real skill never activated"], "measurements": {}}
+    if hold_charge:
+        live_start = next(row["wallTime"] for row in host if row["charged"] == 1)
+        for name, records in data.items():
+            expected = {"host": 0, "owner": 1, "observer": 2}[name]
+            if len(records) < 100 or any(row["local"] != expected for row in records):
+                errors.append(name + " lacks continuous held-charge evidence"); continue
+            ready_at = records[0]["wallTime"]
+            sync_budget = (2 * delay / 1000 if name == "owner" else 0) + .25
+            compare_from = live_start + 3
+            first_charge = next((row["wallTime"] for row in records if row["charged"]), None)
+            if name == rejoined_seat:
+                # Arena presence precedes the requested world reply. Account for
+                # its configured round trip, then require continuous restored state.
+                compare_from = max(compare_from, ready_at + sync_budget)
+                if first_charge is None or first_charge > ready_at + sync_budget:
+                    errors.append(name + " did not hydrate within the bounded joining reply window")
+            late = [row for row in records if compare_from < row["wallTime"] < live_start + 8]
+            result = {"samples": len(records), "live_window_samples": len(late),
+                      "charged_samples": sum(row["charged"] == 1 for row in late),
+                      "ember_samples": sum(row["embers"] > 0 for row in late),
+                      "final_charged": records[-1]["charged"], "final_embers": records[-1]["embers"],
+                      "final_skill_charges": records[-1]["s2charges"]}
+            if name == rejoined_seat:
+                result["join_to_charge_seconds"] = first_charge - ready_at if first_charge is not None else None
+                result["joining_reply_budget_seconds"] = sync_budget
+            measurements[name] = result
+            if len(late) < 10 or result["charged_samples"] < len(late) - 3 or result["ember_samples"] < len(late) - 3:
+                errors.append(name + " failed to retain or reconstruct the active held charge")
+            if result["final_charged"] or result["final_embers"]:
+                errors.append(name + " restarted or leaked the charge after its original expiry")
+            if records[-1]["s2charges"] != host[-1]["s2charges"]:
+                errors.append(name + " changed the spent skill resource")
+        return {"ok": not errors, "errors": errors, "measurements": measurements}
     for name, records in data.items():
         expected = {"host": 0, "owner": 1, "observer": 2}[name]
         if len(records) < 100 or any(row["local"] != expected or row["sean"] != 1 for row in records):
@@ -69,7 +102,12 @@ def main():
     parser.add_argument("--case", choices=["ignite", "supernova"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--hold-charge", action="store_true")
+    parser.add_argument("--reconnect", action="store_true")
+    parser.add_argument("--rejoin-seat", choices=["owner", "observer"], default="observer")
     args = parser.parse_args()
+    if args.hold_charge and args.case != "ignite": parser.error("Held charge uses the ignite case")
+    if args.reconnect and not args.hold_charge: parser.error("Reconnect qualification requires a held charge")
     folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
     backups = []
     for name in ("seanhost", "seanowner", "seanobserver"):
@@ -87,11 +125,12 @@ def main():
         process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startup)
         processes.append(process); return process
     try:
-        def peer(name, route):
+        def peer(name, route, observe_existing=False):
             return launch([str(args.exe.resolve()), "-batchmode", "-screen-width", "640", "-screen-height", "360",
-                           "-screen-fullscreen", "0", "-tp-autostart", "3", "-tp-profile", "sean" + name,
+                           "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "3", "-tp-profile", "sean" + name,
                            "-tp-seancase", args.case, "-tp-seantrace", str(folder / (name + ".csv")),
-                           "-logFile", str(folder / (name + ".log"))] + route)
+                           "-logFile", str(folder / (name + ".log"))] + (["-tp-holdcharge"] if args.hold_charge else [])
+                          + (["-tp-sean-observe-existing"] if observe_existing else []) + route)
         host = peer("host", ["-tp-host", "8980"]); time.sleep(7)
         port = "8980"
         if args.delay:
@@ -115,9 +154,30 @@ def main():
         observer = peer("observer", ["-tp-join", "127.0.0.1", "8980"])
         print("Tracing " + args.case + " from three actual players: " + str(folder), flush=True)
         deadline = time.monotonic() + 90
-        while time.monotonic() < deadline and any(process.poll() is None for process in (host, owner, observer)):
-            time.sleep(.5)
-        result = evaluate(folder, args.case)
+        rejoined = False
+        while time.monotonic() < deadline and host.poll() is None:
+            if args.reconnect and not rejoined:
+                name = args.rejoin_seat
+                try: active = any(row["charged"] for row in rows(folder / (name + ".csv")))
+                except (OSError, ValueError, TypeError): active = False
+                if active:
+                    previous = owner if name == "owner" else observer
+                    previous.terminate(); previous.wait(timeout=8)
+                    (folder / (name + ".csv")).rename(folder / (name + "-before.csv"))
+                    (folder / (name + ".log")).rename(folder / (name + "-before.log"))
+                    returned = peer(name, ["-tp-join", "127.0.0.1", port if name == "owner" else "8980"], observe_existing=True)
+                    if name == "owner": owner = returned
+                    else: observer = returned
+                    rejoined = True
+                    print("Reconnecting the " + name + " during the held fire charge", flush=True)
+            time.sleep(.25)
+        time.sleep(.5)
+        result = evaluate(folder, args.case, args.hold_charge, args.rejoin_seat if rejoined else None, args.delay)
+        if args.reconnect and not rejoined:
+            result["ok"] = False; result["errors"].append("The requested observer reconnect was not exercised")
+        result["observer_reconnected"] = rejoined and args.rejoin_seat == "observer"
+        result["owner_reconnected"] = rejoined and args.rejoin_seat == "owner"
+        result["rejoined_seat"] = args.rejoin_seat if rejoined else None
         result["delay_one_way_ms"] = args.delay
         result["exe_sha256"] = hashlib.sha256(args.exe.read_bytes()).hexdigest()
         runtime = args.exe.parent / (args.exe.stem + "_Data") / "Managed/TumbangPreso.Runtime.dll"

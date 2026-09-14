@@ -1,0 +1,39 @@
+{
+  "ok": false,
+  "errors": [
+    "observer failed to retain or reconstruct the active held charge"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 369,
+      "live_window_samples": 77,
+      "charged_samples": 77,
+      "ember_samples": 77,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "owner": {
+      "samples": 385,
+      "live_window_samples": 76,
+      "charged_samples": 76,
+      "ember_samples": 76,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    },
+    "observer": {
+      "samples": 151,
+      "live_window_samples": 92,
+      "charged_samples": 0,
+      "ember_samples": 0,
+      "final_charged": 0.0,
+      "final_embers": 0.0,
+      "final_skill_charges": 1.0
+    }
+  },
+  "observer_reconnected": true,
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "0f52958ed52b467a283925dc2020dcfdf6cfc1f3c0bc71771852553c7e028a18"
+}

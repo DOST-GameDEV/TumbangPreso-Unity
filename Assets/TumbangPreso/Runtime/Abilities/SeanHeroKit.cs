@@ -10,6 +10,30 @@ namespace TumbangPreso.Abilities
     public sealed class SeanHeroKit : HeroKit
     {
         public bool IsIgnitionCannonActive { get; set; }
+        private bool _joinChargeStateSettled;
+
+        public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
+        {
+            // Initial hydration cannot overwrite a newer cast or resurrect a
+            // charge already consumed while the joining snapshot was in flight.
+            if (motor == null || _joinChargeStateSettled || IsIgnitionCannonActive || Skill2.IsActive) return false;
+            _joinChargeStateSettled = true;
+            RestoreIgnition(motor, remaining);
+            return true;
+        }
+
+        public void ConsumeIgnition()
+        {
+            _joinChargeStateSettled = true;
+            IsIgnitionCannonActive = false;
+        }
+
+        public void RestoreIgnition(CharacterMotor motor, float remaining)
+        {
+            if (motor == null) return;
+            var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
+            ((IgnitionCannonAbility)Skill2).RestoreCharge(context, remaining);
+        }
         private float _supernovaPoseTime = -1;
         public float SupernovaPoseTime => Ultimate.IsWindingUp
             ? Mathf.Lerp(0, .20f, 1 - Ultimate.WindupRemaining / Mathf.Max(.01f, Ultimate.Windup))
@@ -263,6 +287,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit._joinChargeStateSettled = true;
                 _kit.IsIgnitionCannonActive = true;
                 RefreshEmber(ctx);
             }
@@ -271,6 +296,19 @@ namespace TumbangPreso.Abilities
             {
                 var shoe = ctx.Carrier != null ? ctx.Carrier.Held : null;
                 if (shoe != null) SeanIgnitionVisual.Ensure(shoe.GetComponentInChildren<MeshFilter>(), shoe, _kit);
+            }
+
+            public void RestoreCharge(AbilityContext ctx, float remaining)
+            {
+                if (remaining <= 0)
+                {
+                    EndEarly(ctx);
+                    _kit.IsIgnitionCannonActive = false;
+                    return;
+                }
+                RestoreLiveClock(remaining);
+                _kit.IsIgnitionCannonActive = true;
+                RefreshEmber(ctx);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)

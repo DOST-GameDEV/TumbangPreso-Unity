@@ -56,6 +56,45 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
+        public IEnumerator JoiningIgnitionRestoresOnlyItsRemainingWindowWithoutSpending()
+        {
+            var kit=(SeanHeroKit)_caster.AbilitySystem.Kit;
+            kit.Skill2.ApplyNetworkSnapshot(0,1);
+            float bank=kit.UltimateCharge;
+            Assert.IsTrue(kit.RestoreJoiningIgnition(_caster,1.2f));
+            yield return null;yield return null;
+            Assert.IsTrue(kit.IsIgnitionCannonActive);
+            Assert.AreEqual(1,kit.Skill2.ChargesRemaining);Assert.AreEqual(bank,kit.UltimateCharge);
+            Assert.IsNotNull(_caster.GetComponent<Carrier>().Held.GetComponentInChildren<Visual.SeanIgnitionVisual>());
+            float remaining=kit.Skill2.DurationRemaining;
+            Assert.IsFalse(kit.RestoreJoiningIgnition(_caster,10));
+            Assert.AreEqual(remaining,kit.Skill2.DurationRemaining,.001f);
+            yield return new WaitForSeconds(1.3f);
+            Assert.IsFalse(kit.IsIgnitionCannonActive);
+            Assert.IsNull(_caster.GetComponent<Carrier>().Held.GetComponentInChildren<Visual.SeanIgnitionVisual>());
+            Assert.IsFalse(kit.RestoreJoiningIgnition(_caster,10),"A duplicate joining record rearmed an expired charge.");
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator LateJoiningChargeCannotOverwriteAConsumedShotOrANewerCast()
+        {
+            var shoe=_caster.GetComponent<Carrier>().Held;
+            var kit=(SeanHeroKit)_caster.AbilitySystem.Kit;
+            shoe.ApplySnapshotState(SlipperState.InFlight,null,new Vector3(0,1,-5),Quaternion.identity,
+                Vector3.forward*8,0,SlipperAffinity.FireExplosive,_caster.PlayerSlot);
+            Assert.IsFalse(kit.RestoreJoiningIgnition(_caster,5),"A stale initial record rearmed an accepted fire release.");
+            Assert.IsFalse(kit.IsIgnitionCannonActive);
+            _caster.AbilitySystem.BindHero("sean");kit=(SeanHeroKit)_caster.AbilitySystem.Kit;
+            Assert.IsTrue(shoe.HostForceEquip(_caster));
+            _caster.Intent.Set(Verb.Skill2,true);yield return new WaitForSeconds(.2f);
+            _caster.Intent.Set(Verb.Skill2,false);
+            Assert.IsTrue(kit.IsIgnitionCannonActive);
+            float remaining=kit.Skill2.DurationRemaining;
+            Assert.IsFalse(kit.RestoreJoiningIgnition(_caster,.5f));
+            Assert.AreEqual(remaining,kit.Skill2.DurationRemaining,.001f,"An older record shortened the new cast.");
+        }
+
+        [UnityTest, Timeout(60000)]
         public IEnumerator IgnitionLeavesTheHandWhenTheEmpoweredThrowIsReleased()
         {
             var carrier = _caster.GetComponent<Carrier>(); var shoe = carrier.Held;

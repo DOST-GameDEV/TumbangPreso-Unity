@@ -1,5 +1,131 @@
 # Active TUMP rework ledger
 
+## CURRENT Sean owner hydration verified with explicit reply window
+
+60202owner run restored charge at331ms afterarena-ready, then84/84subsequent
+live samplescorrect; resources/expirycorrect. Originalevaluator wronglyallowed
+only3missing samples (~150ms), below configured300msrequestroundtrip. Updated
+check allows configured2*delay+.25s onlyforrejoinedseat, then requirescontinuous
+state. Same trace recheckPASS, originalfailure retained. No production workaround
+or rerun. Evidence corrected-owner includesbothreports/rawCSV.
+Next finaldiff andsaveSean joiningbuffbatch; all toolsretired. Then remaining
+Zack/Dante/Nemu timedstate and othernon-UI queue. Latestpushedc6b86a1f.
+
+
+## CURRENT Sean controlling-owner reconnect
+
+Owner-observation diagnostic buildSUCCESS;53895retired. Protocol44143completed
+PASS and closed its native processes before player export. Now same held fire
+charge scenario reconnects OWNER with observe-existing enabled:
+Logs/net-held-buff-owner-v1. It must retain charge/ember and spent resource
+without fixture reseeding/recasting. Production remains same locallychecked
+Sean restore path; source stilluncommitted pendingthisactualcase.
+No current Editor; no UI/agents/Figma/reset/Desktop.
+
+
+## CURRENT Sean observerrejoinPASS, owner scenario prepared
+
+77673observerrejoinPASS: returned client94/94live-window charge/ember samples,
+correctspentresource1andexpiry. Runtime49aa89a46a2f78e3ee2957e4470b4a135f48829d2ac98cd17a9cb0209d5d60ff.
+Actual34host/33clientrefusal alsoPASS. Preparing ownerrejoin with explicit
+observe-existing flag so restarted owner cannot reseed meter/position/picks or
+driveanothercast. Harness supports --rejoin-seat owner. Newinternalbuild is
+Logs/buff-rejoin-owner-build-v1.log, same production code plus diagnosticflag.
+Next runheld-chargeownerrejoin150ms, preserve resource/remainingstate. No source
+edits while Editor runs; noUI/agents/Figma/reset/Desktop.
+
+
+## CURRENT actual corrected held-charge observer reconnect
+
+Corrected34BuffRejoinReview buildSUCCESS;16780retired. Now exact original
+held-charge+observerrestart150ms scenario in Logs/net-held-buff-corrected-v1.
+Need live charge/ember after rejoin, originalexpiry and no extra resource spend.
+No Editor active. After passing, run34host/33clientrefusal and save batch.
+Scope remains Sean initial hydration; other buff/world states stillopen.
+No UI/agents/Figma/reset/Desktop.
+
+
+## CURRENT corrected34 BuffRejoinReview build
+
+Protocol34assert1/1pass;5135retired. Building corrected INTERNAL BuffRejoinReview,
+Logs/buff-rejoin-corrected-build-v1.log. Then same held-chargeobserverrestart
+150ms case and actual34-vs33refusal using preserved IceRejoinReview33.
+Sean initial hydration settles once; real activation or first accepted fire
+release also settles it, so late joining records cannot overwrite newer actions.
+Local3cases cover this, but realcorrectedpeerproof stillpending.
+Dante/Nemu/Zack restore paths inspected independently while tools ran; do not
+claim them implemented. No C#/imported edits during currentbuild.
+
+
+## CURRENT Sean joining-charge local3/3passed
+
+63844completed3/3: remainingwindow/ember/resources restored, duplicates cannot
+extend/rearm, accepted fire consumption/newer real cast blocks stale hydration,
+existing repeated fire-snapshot consumption remainscorrect. No activation replay.
+Running protocol34assertion, Logs/held-charge-protocol34-v1.xml/.log; then
+newinternal BuffRejoinReview build and held-chargeobserverreconnect150ms rerun.
+This is initial joining Sean-state hydration only; other buffs remain separate.
+No Editor-source edits while tests run. Latestpushedc6b86a1f; noUI/agents/resets.
+
+
+## CURRENT Sean held-charge restore implementation under test
+
+Added restore-only clock/flag/ember hydration for a freshly joining Sean kit.
+One-time settling prevents a duplicate/stale joining record rearming a consumed
+shot or overriding a newer real cast; Carrier and first replicated fire release
+mark consumption explicitly. No resource spend/cast replay. New HeldCharge
+message targeted from HostSyncPeer, round/hero/finite/remaining validation.
+Protocol34required; other timed buffs still NOT handled by this message.
+Running only3Sean tests: remainingwindow/resources/duplicateexpiry, consumed/new
+cast protection, existing replicated fire consumption/cleanup.
+Logs/held-charge-restore-v1.xml/.log. No imported edits during Editor.
+Next protocolassert, newinternal34player, actualheld-chargeobserverrejoin and
+33-vs34refusal. Latestpushedstablec6b86a1f; noUI/agents/Figma/reset/Desktop.
+
+
+## CURRENT held-charge reconnect failure confirmed, no live tools
+
+29839baseline completed FAIL: host77/77 and owner76/76live-window charge/ember
+samples, returned observer0/92. Resources stillcorrect1, effect missing until
+originalexpiry. RawCSV/result preserved under improvement-2026-09-15-buff-rejoin.
+Baseline runtime0f52958ed52b467a283925dc2020dcfdf6cfc1f3c0bc71771852553c7e028a18,
+BuffRejoinReview. Guard01790cb3aa43 protectedbuildprofile. No active Editor/player.
+Current uncommitted changes ONLY NetSeanProbe held-charge diagnostic, its Python
+runner reconnect support and this ledger. No production buff restoration yet.
+Next add restore-only Sean charge clock/flag/ember path without Activate or
+resource/animation replay, related local restoration/expiry/consumption tests,
+then targeted initial-world state message and actual reconnect. Consider stale
+state vs a newly consumed/reloaded charge; never blindly replay OnActivate for
+other heroes or claim all buff cases fixed. Dante/Nemu/Zack and other worldfields
+remain in the queue. Latest pushedstablec6b86a1f; protocol33currently.
+Full non-UIqueue continues; no agents/Figma/resets/Desktop.
+
+
+## CURRENT held fire charge observer reconnect baseline
+
+BuffRejoinReview baseline buildSUCCESS;8150retired. Running NetSean held charge
+(no throw) plus actual observer restart,150ms owner link:
+Logs/net-held-buff-baseline-v1. Need host still charged during returned observer
+window, visible ember, same charges and original expiry. No production buff
+restore change yet. A restore-only Sean draft is in Logs/held-charge-restore-draft.txt
+while tool runs; correct inner class confirmed IgnitionCannonAbility.
+Other timed buffs need explicit grants/clock restoration, not replaying casts.
+Keep all localprofiles protected, noUI/agents/Figma/resets/Desktop.
+
+
+## CURRENT active-buff reconnect baseline after pushed c6b86a1f
+
+Ice world snapshot committed/pushed c6b86a1f4a39a70c3cc5c0efaddcf92da5a75534.
+Current work: NetSeanProbe optional hold-charge flag and shared-clock/remaining
+columns; net_sean_review.py supports held charge + observer reconnect. No active
+buff production fix yet. Building INTERNAL BuffRejoinReview baseline33 from
+current code, Logs/buff-rejoin-baseline-build-v1.log. After build run
+net_sean_review.py --case ignite --hold-charge --reconnect --delay150.
+Source SyncAbility omits active duration/flags; expect returning peer may miss
+loaded ember. Reproduce first; draft restore-only state paths while build runs.
+No C#/imported edits while Editor active; noUI/agents/Figma/resets/Desktop.
+
+
 ## CURRENT live ice rejoin PASS; saving qualified batch
 
 81701corrected native rejoinPASS on33runtimecacf88c25a636cd20dd9cecd2a5ab1a81954c24c350ca85da7330e4d216ec95b.

@@ -687,7 +687,7 @@ namespace TumbangPreso
             if (enteringEmpoweredFlight && Holder != null && Holder.PlayerSlot == throwerSlot)
             {
                 if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
-                    sean.IsIgnitionCannonActive = false;
+                    sean.ConsumeIgnition();
                 else if (affinity == SlipperAffinity.ElectricZap && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
                     zack.IsOverchargeThrowActive = false;
             }

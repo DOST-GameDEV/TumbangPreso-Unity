@@ -1,5 +1,14 @@
 # Active execution plan
 
+**LATEST2026-09-15:** Sean initial held-fire-charge restoration now passes local
+remaining/resource/stale-record checks and actual observer/owner reconnect.
+Protocol34required; old33refusal verified. Owner hydration331ms is within
+configured300msroundtrip+.25sbudget, then continuousstate. Raw initial timing
+misclassification retained beside recheck. See buff-rejoin/README report.
+Next remaining Zack/Dante/Nemu timedstate and other worldfields; fullnon-UI
+queuecontinues, Indaylater/expansionlast. No activeprocesses.
+
+
 **LATEST2026-09-15:** live ice snapshot now qualified locally and through actual
 observer reconnect at150ms. Protocol33required;32clientsrefused. Restored fields
 retain life/shape/strength without cast/resource replay. Report:

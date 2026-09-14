@@ -288,7 +288,7 @@ namespace TumbangPreso
             {
                 velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
-                sean.IsIgnitionCannonActive = false;
+                sean.ConsumeIgnition();
             }
             else if (ability != null && ability.Kit is PhaisterHeroKit phaister &&
                      (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
