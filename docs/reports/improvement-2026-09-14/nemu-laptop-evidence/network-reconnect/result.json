@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "flight_span": 6.1162,
+      "rows": 470,
+      "model_error": 0.0,
+      "field": [
+        1.1682,
+        -1.539
+      ],
+      "ends": 30.214,
+      "pet_yaw": 190.2486
+    },
+    "owner": {
+      "flight_span": 6.1162,
+      "rows": 121,
+      "field": [
+        1.1682,
+        -1.539
+      ],
+      "ends": 23.1839,
+      "pet_yaw": 190.2486,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    },
+    "observer": {
+      "flight_span": 6.116245146329568,
+      "rows": 394,
+      "model_error": 0.0,
+      "field": [
+        1.1682,
+        -1.539
+      ],
+      "ends": 30.2066,
+      "pet_yaw": 190.2486,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    },
+    "rejoin_window": {
+      "first_sample": 27.1559,
+      "host_field_last_sample": 30.214,
+      "active_samples": 56
+    },
+    "rejoined": {
+      "field": [
+        1.1682,
+        -1.539
+      ],
+      "rows": 264,
+      "ends": 30.2674,
+      "s2charges": 0.0,
+      "ultcharge": 0.0
+    }
+  },
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "a1f37b4ebf74dbfaa2e7b599bf524c442ee5ddcd4b65cefbe0bd0e17c96cca6e",
+  "delay_one_way_ms": 150.0,
+  "loss": 0
+}

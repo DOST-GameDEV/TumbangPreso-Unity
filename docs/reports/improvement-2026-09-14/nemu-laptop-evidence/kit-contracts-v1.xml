@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:36Z" duration="36.4517219">
+  <test-suite type="TestSuite" id="1490" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="371" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:36Z" duration="36.451722" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1484" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="371" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:36Z" duration="36.442338" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17432" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1485" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="371" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:36Z" duration="36.439403" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1486" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="371" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:36Z" duration="36.436346" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1138" name="ImprovementEvidenceProbe" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:26Z" duration="26.263337" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1145" name="EveryHeroActionThroughTheRealPressAndRelease" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe.EveryHeroActionThroughTheRealPressAndRelease" methodname="EveryHeroActionThroughTheRealPressAndRelease" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" seed="73875184" result="Passed" start-time="2026-09-14 14:21:59Z" end-time="2026-09-14 14:22:26Z" duration="26.251896" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1243" name="NemuKitContractProbe" fullname="TumbangPreso.PlayTests.NemuKitContractProbe" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" testcasecount="33" result="Passed" start-time="2026-09-14 14:22:26Z" end-time="2026-09-14 14:22:36Z" duration="10.157889" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1260" name="FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" methodname="FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="918396625" result="Passed" start-time="2026-09-14 14:22:26Z" end-time="2026-09-14 14:22:28Z" duration="1.892909" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1244" name="FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" methodname="FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="610757640" result="Passed" start-time="2026-09-14 14:22:28Z" end-time="2026-09-14 14:22:30Z" duration="2.101160" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1272" name="NormalProjectionRecastStillTeleports" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.NormalProjectionRecastStillTeleports" methodname="NormalProjectionRecastStillTeleports" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="383285435" result="Passed" start-time="2026-09-14 14:22:30Z" end-time="2026-09-14 14:22:31Z" duration="1.200518" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1248" name="PossessedFamiliarCanDevourThroughTheKeyboardReader" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.PossessedFamiliarCanDevourThroughTheKeyboardReader" methodname="PossessedFamiliarCanDevourThroughTheKeyboardReader" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1052055783" result="Passed" start-time="2026-09-14 14:22:31Z" end-time="2026-09-14 14:22:33Z" duration="1.673047" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1270" name="ResetProjectionDoesNotTeleport" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ResetProjectionDoesNotTeleport" methodname="ResetProjectionDoesNotTeleport" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="583306579" result="Passed" start-time="2026-09-14 14:22:33Z" end-time="2026-09-14 14:22:34Z" duration="1.076135" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1267" name="SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" methodname="SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="457512783" result="Passed" start-time="2026-09-14 14:22:34Z" end-time="2026-09-14 14:22:36Z" duration="2.208565" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

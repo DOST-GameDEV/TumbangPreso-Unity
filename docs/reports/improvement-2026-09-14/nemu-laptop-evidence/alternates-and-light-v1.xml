@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:29Z" duration="38.6112405">
+  <test-suite type="TestSuite" id="1492" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="373" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:29Z" duration="38.611241" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1486" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="373" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:29Z" duration="38.603191" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="39820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1487" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="373" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:29Z" duration="38.600248" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1488" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="373" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:29Z" duration="38.598072" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1138" name="ImprovementEvidenceProbe" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:03Z" duration="13.236052" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1145" name="EveryHeroActionThroughTheRealPressAndRelease" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe.EveryHeroActionThroughTheRealPressAndRelease" methodname="EveryHeroActionThroughTheRealPressAndRelease" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" seed="1798466917" result="Passed" start-time="2026-09-14 14:31:50Z" end-time="2026-09-14 14:32:03Z" duration="13.224505" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1243" name="NemuKitContractProbe" fullname="TumbangPreso.PlayTests.NemuKitContractProbe" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" testcasecount="35" result="Passed" start-time="2026-09-14 14:32:03Z" end-time="2026-09-14 14:32:29Z" duration="25.350042" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1244" name="LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" methodname="LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="348768082" result="Passed" start-time="2026-09-14 14:32:03Z" end-time="2026-09-14 14:32:14Z" duration="10.790917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1245" name="ShortLeashTradesScoutTimeForFasterControlledTravel" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ShortLeashTradesScoutTimeForFasterControlledTravel" methodname="ShortLeashTradesScoutTimeForFasterControlledTravel" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1889385610" result="Passed" start-time="2026-09-14 14:32:14Z" end-time="2026-09-14 14:32:29Z" duration="14.554560" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

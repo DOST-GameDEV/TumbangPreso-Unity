@@ -56,6 +56,91 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow()
+        {
+            var progress=Settings.SettingsStore.Current.AbilityChallenges;
+            var saved=progress.ToArray();
+            var speeds=new float[2];var windows=new float[2];
+            var shoe=_who.GetComponent<Carrier>().Held;
+            if(shoe!=null)shoe.HostDisarm();
+            try
+            {
+                progress.RemoveAll(row=>row.VariantId=="nemu.1.fade");
+                progress.Add(new AbilityChallengeProgress{VariantId="nemu.1.fade",Count=999});
+                for(int variant=0;variant<2;variant++)
+                {
+                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",
+                        Slot1VariantId=variant==0?"nemu.1.veil":"nemu.1.fade"});
+                    _who.Teleport(new Vector3(0,.12f,-6));_who.Intent.Clear();_who.Intent.Parked=false;
+                    _who.Intent.Move=Vector2.up;
+                    yield return new WaitForSeconds(.4f);
+                    float ordinary=Vector3.ProjectOnPlane(_who.Velocity,Vector3.up).magnitude;
+                    yield return Press(Verb.Skill1);
+                    var skill=_who.AbilitySystem.Kit.Skill1;
+                    Assert.IsTrue(skill.IsActive);Assert.IsTrue(_who.AbilitySystem.IsImmuneToTags);
+                    windows[variant]=skill.Duration;
+                    yield return new WaitForSeconds(.6f);
+                    Vector3 from=_who.transform.position;float start=Time.time;
+                    yield return new WaitForSeconds(.3f);
+                    speeds[variant]=Vector3.ProjectOnPlane(_who.transform.position-from,Vector3.up).magnitude/(Time.time-start);
+                    _who.Intent.Move=Vector2.zero;
+                    yield return new WaitForSeconds(skill.Duration+.2f);
+                    Assert.IsFalse(skill.IsActive);Assert.IsFalse(_who.AbilitySystem.IsImmuneToTags);
+                    _who.Intent.Move=Vector2.up;yield return new WaitForSeconds(.35f);
+                    Assert.AreEqual(ordinary,Vector3.ProjectOnPlane(_who.Velocity,Vector3.up).magnitude,.12f,
+                        "The ended veil left its alternate's movement penalty behind.");
+                    _who.Intent.Move=Vector2.zero;
+                }
+                File.WriteAllText("Logs/nemu-long-fade-comparison.csv",System.FormattableString.Invariant(
+                    $"variant,actual_speed,active_window\nveil,{speeds[0]},{windows[0]}\nlongfade,{speeds[1]},{windows[1]}\n"));
+                Assert.Greater(speeds[0],1);Assert.Greater(speeds[1],1);
+                Assert.Less(speeds[1],speeds[0]*.8f);Assert.Greater(windows[1],windows[0]+.6f);
+            }
+            finally{progress.Clear();progress.AddRange(saved);}
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ShortLeashTradesScoutTimeForFasterControlledTravel()
+        {
+            var progress=Settings.SettingsStore.Current.AbilityChallenges;
+            var saved=progress.ToArray();var speeds=new float[2];var windows=new float[2];
+            try
+            {
+                progress.RemoveAll(row=>row.VariantId=="nemu.2.leash");
+                progress.Add(new AbilityChallengeProgress{VariantId="nemu.2.leash",Count=999});
+                for(int variant=0;variant<2;variant++)
+                {
+                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",
+                        Slot2VariantId=variant==0?"nemu.2.hijack":"nemu.2.leash"});
+                    _who.Teleport(new Vector3(0,.12f,-8));_who.Intent.Clear();_who.Intent.Parked=false;
+                    yield return new WaitForSeconds(.4f);
+                    var pet=_who.GetComponent<CharacterVisual>().Companion;
+                    yield return Press(Verb.Skill2);
+                    Assert.IsTrue(pet.IsPossessed);
+                    windows[variant]=_who.AbilitySystem.Kit.Skill2.Duration;
+                    pet.transform.rotation=Quaternion.identity;
+                    Vector3 from=pet.transform.position;float start=Time.time;
+                    while(Time.time-start<.65f)
+                    {
+                        pet.SetPlayerInput(Vector2.up);
+                        yield return null;
+                    }
+                    speeds[variant]=Vector3.ProjectOnPlane(pet.transform.position-from,Vector3.up).magnitude/(Time.time-start);
+                    pet.SetPlayerInput(Vector2.zero);
+                    yield return new WaitForSeconds(windows[variant]+.8f);
+                    Assert.IsFalse(pet.IsPossessed);Assert.IsFalse(pet.IsDevouring);
+                    Assert.Zero(_who.AbilitySystem.Kit.Skill2.ChargesRemaining,
+                        "Ending the scout trip must not refund its spent charge.");
+                }
+                File.WriteAllText("Logs/nemu-short-leash-comparison.csv",System.FormattableString.Invariant(
+                    $"variant,actual_flight_speed,scout_window\nhijack,{speeds[0]},{windows[0]}\nleash,{speeds[1]},{windows[1]}\n"));
+                Assert.Greater(speeds[0],2);Assert.Greater(speeds[1],speeds[0]*1.2f);
+                Assert.Less(windows[1],windows[0]-1.5f);
+            }
+            finally{progress.Clear();progress.AddRange(saved);}
+        }
+
         [UnityTest]
         public IEnumerator FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor()
         {

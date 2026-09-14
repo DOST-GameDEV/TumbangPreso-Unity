@@ -1,5 +1,75 @@
 # Active TUMP rework ledger
 
+## CURRENT Nemu verified; next Cheska remaining acceptance
+
+Nemu local7/7 and corrected-light/alternate3/3pass; delayed staged and owner
+reconnect both pass.60138/57837/20472/35384/76350 all retired. Last profile guard
+72de2ebbf5f2. Source change only possession point light7m/4 ->1.25m/.55.
+LongFade movement/time and ShortLeash flight/time tradeoffs verified; mini and
+monster retained. Full evidence/critique/limits in nemu-laptop-review.md.
+Save this stable batch, then continue remaining Cheska alternate/counterplay and
+instant field refusal/expiry checks. Source inspection suggests predicted ice
+wall/sheet may survive a denied zero-duration cast; reproduce before changing.
+Preserve existing ice art and Nova loose-shoe fix. Then wider mixed-kit/state/
+movement/network/spectator/UI/Inday/last-last expansion queue; no agents/resets.
+
+
+## CURRENT Nemu delayed peers pass; local alternate/light check
+
+Staged57837 and owner-reconnect20472 both complete/PASS on runtime a1f37b4e.
+Rejoined owner produced56livefield samples, matching position and spent charges,
+then clean expiry.8namedprofilefiles preserved perrun. Full records copied into
+nemu-laptop-evidence/network-staged and network-reconnect. No native jobs remain.
+Now running2new alternate motion/expiry tests + only Nemu E actual capture.
+Logs/nemu-laptop-alternates-v1.xml/.log; images Logs/nemu-possession-light-v2.
+Possession light change1.25m/.55 is the only production delta since867f7fc0.
+No Editor-source edits until completion. Need inspect outputs before accepting.
+Full remaining queue continues; no agents/other chats/Figma/reset/Desktop.
+
+
+## CURRENT Nemu light/alternate review and native staged check
+
+867f7fc0 INTERNAL FamiliarLaptopReview built successfully, guard0e76334a68c7;
+build session35384 retired. Actual delayed staged familiar check currently
+session57837 completed PASS, Logs/familiar-laptop-staged-v1:468/391/393samples,
+zero model/anchor/yaw disagreement,~54msfield expiry spread. Guard preserved8
+profile files. Runtime a1f37b4ebf74dbfaa2e7b599bf524c442ee5ddcd4b65cefbe0bd0e17c96cca6e.
+Now actual150ms owner reconnect during ultimate, Logs/familiar-laptop-reconnect-v1.
+These built checks use original possession lighting; local light change pending.
+Nemu7/7local and ordinary captures passed. Visual critique: retained giant reads
+clearly in real owner view; possession bathes cars/paving in purple from a7m,
+intensity4point light. Reducing only that light to1.25m/.55; native mesh retained.
+Two real movement/expiry alternate tests added (LongFade/ShortLeash). Do NOT
+claim light/alternate acceptance yet. Need selected E recapture and2tests after
+current native peers finish. No Editor active; no agents/Figma/resets/Desktop.
+
+
+## CURRENT Nemu local checks complete, native build
+
+Nemu7/7 passed, session76350 retired, guard96b83b186ef9 restored files/input prefs.
+Actual3slot capture accepted every cast; Logs/nemu-laptop-kit-v1 contains owner/
+observer frames and measured timing. Selected six familiar contracts also passed.
+Now guarded INTERNAL Builds/FamiliarLaptopReview/TumbangPreso.exe build from
+867f7fc0; Logs/familiar-laptop-build-v1.log. Encode/review captures concurrently
+without C#/imported edits. Next exact new player for delayed staged/controlled
+familiar and ultimate owner reconnect; then Nemu alternate behavior/remaining
+kit/counterplay. Old small ghost/current monster retained.
+
+
+## CURRENT Nemu review after pushed Zack checkpoint
+
+867f7fc0f862b24b6214f76d91eadc44af2e528f committed and pushed, clean source tree
+before this ledger update. It includes Zack/lifecycle fixes and exact focused
+proof. Now running7related Nemu Play cases: six existing familiar action/ground/
+recall/reconstruction/pull checks + three-slot actual owner/body capture selected
+with TUMP_REVIEW_HERO=nemu. Logs/nemu-laptop-kit-v1.xml/.log and image folder of
+same stem. No C#/imported edits while Editor runs.
+Next inspect original captured motion; preserve restored mini and current giant.
+Then fresh INTERNAL build includes outgoing-kit cleanup, and actual familiar
+delayed control/reconnect proof. Continue alternatives/counterplay and full queue.
+No agents/other chats/Figma/reset credits/Desktop update.
+
+
 ## CURRENT: Zack verified batch, proceeding to Nemu
 
 Latest laptop checks complete: corrected native Magnet and Thunderstrike-followup

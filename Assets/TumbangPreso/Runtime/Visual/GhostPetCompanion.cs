@@ -1042,8 +1042,10 @@ namespace TumbangPreso.Visual
                 var l = _possessLightGo.AddComponent<Light>();
                 l.type = LightType.Point;
                 l.color = new Color(0.85f, 0.35f, 1.0f);
-                l.range = 7.0f;
-                l.intensity = 4.0f;
+                // Keep the familiar's nearby contact glow without repainting
+                // a street-wide area purple during the possession camera view.
+                l.range = 1.25f;
+                l.intensity = 0.55f;
             }
 
             // ⚠️⚠️ HER BODY IS DRIVEN BY A BOT WHILE SHE IS ELSEWHERE, AND IT MAY NOT PRESS HER
