@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>Entirely new portrait-led loadout view. It owns no save or roster identifiers.</summary>
-    public sealed class TumpPickerView : MonoBehaviour
+    public sealed partial class TumpPickerView : MonoBehaviour
     {
         private Canvas _canvas;
         private RectTransform _root, _grid, _stage;
@@ -53,7 +53,7 @@ namespace TumbangPreso.UI
         public void Back() => _back?.Invoke();
         private IReadOnlyList<RosterEntry> Entries => _category == 0 ? Roster.GetPeople(_mode) : _category == 1 ? Roster.Cans : Roster.Slippers;
 
-        private void Build(Transform owner)
+        private void BuildPrevious(Transform owner)
         {
             var f = TumpUiTheme.Current;
             _canvas = TumpUiFactory.Canvas(owner, "TumpLoadoutCanvas", 700);
@@ -135,7 +135,7 @@ namespace TumbangPreso.UI
             _skills.GetComponentInChildren<Text>().rectTransform.offsetMin = new Vector2(75, 10);
         }
 
-        private void Refresh()
+        private void RefreshPrevious()
         {
             var entries = Entries;
             _picks[_category] = Mathf.Clamp(_picks[_category], 0, Mathf.Max(0, entries.Count - 1));

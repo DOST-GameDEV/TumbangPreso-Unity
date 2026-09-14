@@ -152,10 +152,12 @@ critical HUD changes without delaying their information or shaking stable anchor
   Fresh owner-art views and focused offline/host/authority/queue checks are recorded
   in reports/owner-ui-u3.md. External relay and complete multi-peer route coverage
   remain in U8, along with full composition/motion review.
-- [ ] U4: character/equipment/skill pickers and held skill reference. Preserve
+- [x] U4 first implementation: character/equipment/skill pickers and held skill reference. Preserve
   portraits, meaningful concise comparisons, selected-state clarity and stable
   loadout behavior. Review the old pending-held-info.patch against current code;
   port its needed behavior, do not blindly apply its old visual implementation.
+  Completed first views and cache-invalidation port: reports/owner-ui-u4.md.
+  Final all-kit/input/motion and preview-color review remains in U8.
 - [ ] U5: settings and pause/settings nesting, input rebinding, touch editor.
   Preserve the explicitly approved original controller artwork,18button callouts
   and connecting lines. Adapt surrounding theme only if it retains that design.

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>Compact live power seals and a hold-to-read reference, with no gameplay authority.</summary>
-    public sealed class TumpPowerReadout : MonoBehaviour
+    public sealed partial class TumpPowerReadout : MonoBehaviour
     {
         private readonly TumpAbilityDial[] _dials = new TumpAbilityDial[3];
         private readonly TumpAbilitySymbol[] _symbols = new TumpAbilitySymbol[3];
@@ -58,7 +58,7 @@ namespace TumbangPreso.UI
             _inspect = asset?.FindActionMap("Player", false)?.FindAction("AbilityInfo", false);
             _inspect?.Enable();
         }
-        private void BuildDetails(Transform root)
+        private void BuildPreviousDetails(Transform root)
         {
             var f = TumpUiTheme.Current;
             _detail = TumpUiFactory.Rect(root, "HeldPowerReference");
@@ -132,7 +132,9 @@ namespace TumbangPreso.UI
         }
         private void Describe(HeroKit kit, HeroAbility[] skills)
         {
-            string signature = string.Join("|", System.Array.ConvertAll(skills, a => a == null ? "" : a.Id + a.EffectiveName + a.EffectiveDescription));
+            string signature = string.Join("|", System.Array.ConvertAll(skills, a => a == null ? ""
+                : a.Id + a.EffectiveName + a.EffectiveDescription + "/" + a.Cooldown + "/" + a.Duration + "/" + a.MaxCharges + "/" + (int)a.Glyph))
+                + "/" + kit.UltimateCost;
             if (_shownKit == kit && _shownSignature == signature) return;
             _shownKit = kit; _shownSignature = signature;
             for (int i = 0; i < 3; i++)

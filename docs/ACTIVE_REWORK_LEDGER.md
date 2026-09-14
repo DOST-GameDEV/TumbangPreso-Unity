@@ -1,5 +1,63 @@
 # Active TUMP rework ledger
 
+## CURRENT U4 scoped qualification passed; save then U5 settings
+
+42170 passed2/2, guarddab1ea06ae87. 67082passed1/1, guard09a57861487e;
+15795passed1/1, guard6f65cdc29655. All tools retired. Original classic12portrait,
+cans/slippers, six-hero chooser, Dante skill1/2/ultimate/locked variant and Zack
+held-reference renders inspected. New picker uses actual art/new portrait-only
+cutouts, native model previews, selection and explicit confirmation. Quiet oval
+mat and projected-foot shadow improve grounding without modifying model source.
+Body preview remains warmer/brighter than static portrait; record for matching
+preview/environment check at U8, do not casually recolor approved models.
+New skill page keeps options/native icons and existing unlock/equip data, updates
+without rebuilding whole page. Locked variant preview leaves build unchanged;
+challenge/explanation/disabled equip verified. Held reference is owner-native,
+old builder inactive. Ported exact relevant stale timing cache fix from archived
+patch, plus duration mutation check. Full HUD shell is still U6. Report owner-ui-u4.md.
+Latest pusheda122cf9b until U4save. Next U5 settings: TumpSettingsSession owns
+save/discard/preview/rebinding; preserve it and approved controller artwork/lines.
+Fresh top-category composition (not prior olive sidebar) with owner field art,
+new toggle/slider/choice/native binding rows and unsaved-choice dialog required.
+TumpSettingsView methods inspected. Existing TumpFormWidgets/TumpChoice are visual
+builders and must be replaced, not reskinned. Audio/Graphics/Player/Accessibility/
+Controls services and every setting stay. OwnerOption popup should replace
+TumpChoice.OpenChoice handling; old methods remain Previous inactive. No U5code
+or draft exists yet. Use focused TumpNativeSettingsTests when ready; preserve
+separate input/controller ownership. Finish U5-U8 then gameplay bookmark.
+No agents/reset/Figma/Desktop. Continue independently, never stop at this save.
+
+## CURRENT U4 portraits passed; skill page first check running
+
+U3 pusheda122cf9b.15795 completed1/1 PASS, guard6f65cdc29655. Actual original
+people/cans/slippers views inspected; source colors/portrait clarity good, but
+unbacked model looked afloat against pattern. Added quiet OwnerPreviewMat and
+projected-foot shadow using existing placement logic; no model/material changes.
+New TumpSkillView.OwnerPainted applied from reviewed draft. Old builder inactive;
+new fixed composition and only changing variant rows rebuilt. Existing kit, unlock,
+challenge and equip services remain. Explicit SetVerticesDirty after changed glyph
+prevents reused icon meshes from retaining previous slots. Running67082 ONLY hero
+skill/return case: Logs/owner-picker-skills-u4-v1.xml/.log. No Assets edits until
+Editor exit. New held-reference view draft is Logs/TumpPowerReadout.OwnerPainted.cs.draft,
+not imported. Old pending-held-info.patch inspected: retain its timing/cost/charge/
+glyph cache invalidation fix and related mutation assertion when migrating details;
+do not apply stale old visual/docs patch blindly. HUD compact deck remains U6.
+Next read67082, critique original hero/skill/ultimate captures, fix; apply held
+reference and focused all-kit check. U5-U8 and full gameplay bookmark remain open.
+No agents/reset/Figma/Desktop. Continue, not a stopping checkpoint.
+
+## CURRENT U3 pushed a122cf9b; U4 picker first implementation under check
+
+U3 stable pushed. Applied reviewed draft OwnerRosterTile and
+TumpPickerView.OwnerPainted; former Build/Refresh retained inactive as Previous.
+New owner-art category/portrait layout, existing model preview and save/confirm
+callbacks. Supplied logo/actions stay aspect-correct. Focused picker case next:
+Logs/owner-picker-u4-v1.xml/.log. Actual grounding, long names/descriptions and
+selection still need original render critique. Do not edit Assets during run;
+draft new skill view outside Assets while compiling. No new skill view applied yet.
+U3 report/evidence committed; remaining U4-U8 then gameplay, no agents/reset/Figma/
+Desktop. Current process ID is returned by the guard tool after this pointer.
+
 ## CURRENT U3 scoped qualification passed; save then U4 pickers
 
 All tools retired. 99210 passed3/3, guard964935b5fa0e; 85330 final focused chat

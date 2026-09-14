@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 20:34:17Z" end-time="2026-09-14 20:34:20Z" duration="2.7779579">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:34:17Z" end-time="2026-09-14 20:34:20Z" duration="2.777958" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:34:18Z" end-time="2026-09-14 20:34:20Z" duration="2.765302" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:34:18Z" end-time="2026-09-14 20:34:20Z" duration="2.757609" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:34:18Z" end-time="2026-09-14 20:34:20Z" duration="2.751199" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1458" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 20:34:18Z" end-time="2026-09-14 20:34:20Z" duration="2.738262" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1459" name="RealPortraitsDriveSelectionAndPreviewDoesNotSave" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.RealPortraitsDriveSelectionAndPreviewDoesNotSave" methodname="RealPortraitsDriveSelectionAndPreviewDoesNotSave" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="512387408" result="Passed" start-time="2026-09-14 20:34:18Z" end-time="2026-09-14 20:34:20Z" duration="2.722272" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerPicker-people-v1/SelectedCheck: vertices=8, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] OwnerPicker-people-v1/LoadoutNotes: vertices=18, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] OwnerPicker-people-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPicker-category1-v1/SelectedCheck: vertices=8, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPicker-category1-v1/LoadoutNotes: vertices=18, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] OwnerPicker-category1-v1 cream source=252,211,159 pixel=237,115,78; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPicker-category2-v1/SelectedCheck: vertices=8, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPicker-category2-v1/LoadoutNotes: vertices=18, cull=False, alpha=1, depth=59, material=1
+[TumpUiCapture] OwnerPicker-category2-v1 cream source=252,211,159 pixel=237,115,78; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:39Z" duration="8.2372946">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:39Z" duration="8.237295" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:39Z" duration="8.224968" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50068" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:39Z" duration="8.218165" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:39Z" duration="8.210482" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1451" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:37Z" duration="5.855297" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1453" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1775756006" result="Passed" start-time="2026-09-14 20:41:31Z" end-time="2026-09-14 20:41:37Z" duration="5.844159" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] NativeHud-Hero-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] NativeHud-Hero-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] NativeHud-Hero-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] NativeHud-Hero-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] NativeHud-Hero-v1 cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerHud-held-skills-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/ReferencePaper: vertices=18, cull=False, alpha=1, depth=58, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] OwnerHud-held-skills-v1/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] OwnerHud-held-skills-v1 cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHud-spectator-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] NativeHud-spectator-v1 cream source=252,211,159 pixel=0,0,0; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1458" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 20:41:37Z" end-time="2026-09-14 20:41:39Z" duration="2.344002" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1460" name="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" methodname="NativeHeroSkillsHaveDistinctSymbolsAndAnActualReturnPath" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="954442996" result="Passed" start-time="2026-09-14 20:41:37Z" end-time="2026-09-14 20:41:39Z" duration="2.342278" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerPicker-heroes-v1/SelectedCheck: vertices=8, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPicker-heroes-v1/LoadoutNotes: vertices=18, cull=False, alpha=1, depth=45, material=1
+[TumpUiCapture] OwnerPicker-heroes-v1 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSkills-slot1-v1/Symbol: vertices=28, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/SkillNotes: vertices=18, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] OwnerSkills-slot1-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerSkills-slot1-v1 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSkills-variant-v1/Symbol: vertices=28, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSkills-variant-v1/Symbol: vertices=28, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerSkills-variant-v1/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerSkills-variant-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSkills-variant-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSkills-variant-v1/SkillNotes: vertices=18, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] OwnerSkills-variant-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerSkills-variant-v1 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSkills-slot2-v1/Symbol: vertices=28, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/Symbol: vertices=28, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/Symbol: vertices=40, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/SkillNotes: vertices=18, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] OwnerSkills-slot2-v1/AbilityPicture: vertices=28, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerSkills-slot2-v1 cream source=252,211,159 pixel=236,121,81; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSkills-ultimate-v1/Symbol: vertices=28, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSkills-ultimate-v1/Symbol: vertices=28, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSkills-ultimate-v1/Symbol: vertices=40, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerSkills-ultimate-v1/SkillNotes: vertices=18, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerSkills-ultimate-v1/AbilityPicture: vertices=40, cull=False, alpha=1, depth=17, material=1
+[TumpUiCapture] OwnerSkills-ultimate-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

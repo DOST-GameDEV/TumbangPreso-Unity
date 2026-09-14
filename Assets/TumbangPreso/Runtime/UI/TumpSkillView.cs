@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    public sealed class TumpSkillView : MonoBehaviour
+    public sealed partial class TumpSkillView : MonoBehaviour
     {
         private Canvas _canvas;
         private RectTransform _content;
@@ -18,13 +18,13 @@ namespace TumbangPreso.UI
         public void Open(Transform owner, string hero, Action back)
         {
             _hero = hero; _selected = null; _back = back;
-            if (_canvas == null) _canvas = TumpUiFactory.Canvas(owner, "TumpSkillsCanvas", 720);
+            if (_canvas == null) _canvas = OwnerUiLayout.Canvas(owner, "OwnerSkillsCanvas", 720);
             _canvas.gameObject.SetActive(true); Build();
         }
         private void OnDisable() { if (_canvas != null) _canvas.gameObject.SetActive(false); }
         public void Back() { if (_canvas != null) _canvas.gameObject.SetActive(false); _back?.Invoke(); }
 
-        private void Build()
+        private void BuildPrevious()
         {
             if (_content != null) { _content.gameObject.SetActive(false); Destroy(_content.gameObject); }
             var f = TumpUiTheme.Current;

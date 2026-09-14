@@ -60,7 +60,17 @@ namespace TumbangPreso.PlayTests
                 readout.OpenForCapture(kit); yield return null;
                 var names = canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("PowerName")).Select(t => t.text).ToArray();
                 CollectionAssert.AreEquivalent(new[] { kit.Skill1.EffectiveName, kit.Skill2.EffectiveName, kit.Ultimate.EffectiveName }, names);
-                yield return TumpUiCapture.Capture("NativeHud-held-skills-v1", canvas, 1280, 720, false, true);
+                float duration=kit.Skill1.Duration;
+                var setter=typeof(Abilities.HeroAbility).GetProperty("Duration").GetSetMethod(true);
+                try
+                {
+                    setter.Invoke(kit.Skill1,new object[]{duration+1});yield return null;
+                    Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="PowerTiming0").text,
+                        Does.Contain((duration+1).ToString("0.#")+"s duration"),"A live kit must refresh changed timing details.");
+                }
+                finally{setter.Invoke(kit.Skill1,new object[]{duration});}
+                yield return null;
+                yield return TumpUiCapture.Capture("OwnerHud-held-skills-v1", canvas, 1280, 720, false, true);
             }
             finally { readout.CloseCapture(); }
             hud.EnterSpectatorMode(); yield return null;
