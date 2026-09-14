@@ -1,5 +1,52 @@
 # Workstation setup and reproducible workflow
 
+## Latest transfer update: 2026-09-15
+
+Every absolute path and installed-tool location below is historical environment
+evidence, NOT a required destination layout. Discover the actual checkout and
+tools on the new laptop. Preserve local changes, fetch and safely pull
+ASTRAReworks first. Do not reset/clean or copy an old user's profile. The current
+resume point is ACTIVE_REWORK_LEDGER and reports/owner-ui-u8-checkpoint.md.
+
+The newest owner UI originals are tracked under
+ArtSource/ui/owner-handdrawn-2026-09-15: TUMP (3).png (background), TUMP (5).png
+(separated art), TUMP (6).png (composition reference), plus measured palette,
+regions, font colours and SHA manifests. They supersede the old theme below.
+Runtime originals are in Assets/TumbangPreso/Resources/UI/owner-painted.
+OWNER_UI_AUTHORING.md describes the new editable Inspector overrides and named
+element export. The original older PDF and all four logo JPGs remain under
+ArtSource/ui/owner-brand-2026-09-13; do not require Downloads on the new PC.
+
+U8 introduced tools/run_ui_player_review.py and the opt-in runtime
+OwnerUiPlayerReview. They are review tooling, not ordinary startup behavior.
+Use an INTERNAL Builds/... executable, a NEW Logs output and isolated profile.
+The runner deliberately DOES NOT pass -batchmode: NetBootstrap interprets that
+as a dedicated server, so batch launch cannot qualify the menu. It starts a
+hidden normal player with -tp-uireview, which disables online sign-in for this
+non-tournament diagnostic. It preserves existing named-profile files and checks
+shared standalone input preferences remain unchanged. Do not call this physical
+mouse/controller certification. Read the latest checkpoint's actual result;
+the driver itself is not proof that every planned route was exercised.
+
+The source internal build and ignored Logs do not arrive via Git. Rebuild on the
+destination only when needed, with explicit -buildOutput Builds/<chosen-folder>/
+TumbangPreso.exe and the guarded Editor runner. Record the new Runtime.dll hash;
+the executable stub hash alone cannot establish freshness. Any process/session
+IDs in older entries belong to their original laptop, not the destination.
+
+Current UI workflow used game-ui-design, unity-ui, unity-ui-ugui,
+unity-unity-cli, unity-sprite-editor and relevant workbench feature/bug/build
+skills. Existing portable bundle includes the main workflow/reference skills;
+install/read an available current official sprite-editor skill when sprite
+import authoring is actually needed. No Figma, agents or reset credits are
+authorized. Built-in imagegen was used once for a critiqued companion study,
+not for redrawing the owner's art or manufacturing runtime evidence.
+The supplemental docs/tooling/ui-sprite-skill-reference.zip now preserves that
+sprite-editor skill and all 13 instruction/example files with a SHA manifest.
+The old PDF remains available; the owner's latest rejection requires revisiting
+its layout ideas and using built-in image generation for NEW complementary
+screen art/backgrounds. Do not spread the orange pattern across the whole game.
+
 Recorded 2026-09-14 for continuing this project on another PC. This is an
 environment guide, not a claim that the whole game is finished. The continuation
 prompt is delivered directly in chat. Start with AGENTS.md and the newest
@@ -120,7 +167,7 @@ game-ui-design was installed under the user's .agents/skills.
 
 Relevant destination capabilities: shell/file editing, image viewing, web search,
 built-in image generation, document runtime discovery, optionally official Unity
-CLI/Pipeline and Figma. Check actual available tools; do not invent tool names.
+CLI/Pipeline. Figma is not authorized. Check actual tools; do not invent tool names.
 The latest primary passes used guarded Unity batch processes and repository
 probes, so lack of a live Unity MCP bridge is not a reason to halt independent
 work. Figma reached the free MCP allowance here; local source assets are complete.

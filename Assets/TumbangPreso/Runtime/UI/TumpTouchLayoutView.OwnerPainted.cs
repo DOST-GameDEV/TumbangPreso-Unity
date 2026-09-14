@@ -9,7 +9,7 @@ namespace TumbangPreso.UI
         private void BuildToolbar()
         {
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"TouchEditorComposition");
-            var bar=OwnerUiLayout.Rect(design,"LayoutToolbar").gameObject.AddComponent<OwnerUiPaper>();
+            var bar=OwnerUiLayout.Rect(design,"LayoutToolbar").gameObject.AddComponent<OwnerUiPaper>();bar.Style=OwnerUiPaper.Treatment.Note;
             OwnerUiLayout.Place(bar.rectTransform,97,28,1726,181);bar.raycastTarget=true;
             var layer=bar.gameObject.AddComponent<Canvas>();layer.overrideSorting=true;layer.sortingOrder=850;layer.vertexColorAlwaysGammaSpace=true;
             bar.gameObject.AddComponent<GraphicRaycaster>();

@@ -1,0 +1,13 @@
+{
+  "result": "Build succeeded; native UI qualification failed separately",
+  "log": "Logs/owner-ui-final-build-u8-v2.log",
+  "artifact": "Builds/owner-ui-final-review/TumbangPreso.exe",
+  "runtimeDllSha256": "e8c548461afa7ba870b0fad7c5a2b692a6807facc5e9b57c30efc85fb5276d85",
+  "buildLines": [
+    "Build Finished, Result: Success.",
+    "[Build] SUCCEEDED. 1071 MB, 36s -> Builds/owner-ui-final-review/TumbangPreso.exe"
+  ],
+  "sourceState": "6e7a2b13ad737421eed1a0cda141846b552e7430 plus U8 checkpoint changes; internal stamp 6e7a2b13ad73+dirty",
+  "platform": "StandaloneWindows64",
+  "protocol": 37
+}

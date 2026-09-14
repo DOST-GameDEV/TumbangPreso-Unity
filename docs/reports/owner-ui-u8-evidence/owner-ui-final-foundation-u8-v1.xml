@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:47Z" duration="4.8653984">
+  <test-suite type="TestSuite" id="1527" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="401" result="Failed" site="Child" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:47Z" duration="4.865398" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1521" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="401" result="Failed" site="Child" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:47Z" duration="4.853981" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43864" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1522" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="401" result="Failed" site="Child" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:47Z" duration="4.848783" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1523" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="401" result="Failed" site="Child" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:47Z" duration="4.843815" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1310" name="OwnerUiAuthoringTests" fullname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" classname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:44Z" duration="2.222654" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1311" name="OverridesMatchSourceTextAndDoNotAccumulateOffsets" fullname="TumbangPreso.PlayTests.OwnerUiAuthoringTests.OverridesMatchSourceTextAndDoNotAccumulateOffsets" methodname="OverridesMatchSourceTextAndDoNotAccumulateOffsets" classname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" runstate="Runnable" seed="39478940" result="Passed" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:42Z" duration="0.146125" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1312" name="RealPickerReportsItsOwnLightingAfterArenaLoad" fullname="TumbangPreso.PlayTests.OwnerUiAuthoringTests.RealPickerReportsItsOwnLightingAfterArenaLoad" methodname="RealPickerReportsItsOwnLightingAfterArenaLoad" classname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" runstate="Runnable" seed="151897211" result="Passed" start-time="2026-09-14 22:41:42Z" end-time="2026-09-14 22:41:44Z" duration="2.064210" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[OwnerPreviewLighting] ambient=RGBA(0.568, 0.504, 0.425, 0.878) expected=RGBA(0.568, 0.504, 0.425, 0.878) mode=Flat
+[OwnerPreviewLighting] light=PreviewFill energy=0.29295 colour=RGBA(1.000, 1.000, 1.000, 1.000)
+[OwnerPreviewLighting] light=PreviewKey energy=0.87885 colour=RGBA(1.000, 1.000, 1.000, 1.000)
+[OwnerPreviewLighting] paletteCount=16
+[TumpGeometry] OwnerPicker-lighting-baseline-u8/SelectedCheck: vertices=8, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPicker-lighting-baseline-u8/LoadoutNotes: vertices=110, cull=False, alpha=1, depth=45, material=1
+[TumpUiCapture] OwnerPicker-lighting-baseline-u8 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1453" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-14 22:41:44Z" end-time="2026-09-14 22:41:47Z" duration="2.606735" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1457" name="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" methodname="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="1455620552" result="Passed" start-time="2026-09-14 22:41:44Z" end-time="2026-09-14 22:41:46Z" duration="1.359772" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=24, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/Eye: vertices=20, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerStartupSignUp-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-v1/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-v1 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupSignIn-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerStartupSignIn-v1/Eye: vertices=20, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] OwnerStartupSignIn-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1454" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="2056301855" result="Failed" start-time="2026-09-14 22:41:46Z" end-time="2026-09-14 22:41:47Z" duration="1.241986" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeFrontEndTests+<TitlePlayCreditsAndSettingsReturnThroughNativeViews>d__2.MoveNext () [0x00800] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\TumpNativeFrontEndTests.cs:55
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=236,116,78; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerCredits-v1/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-v1 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[OwnerCreditScroll] normalized=0 content=3266 viewport=824 lastHeight=106 preferred=78
+[OwnerCreditLayout] actualChildren=3266 preferred=3266 padding=56 contentPos=(0.00, 2442.00) lastPos=(517.00, -3157.00)
+[TumpGeometry] OwnerCredits-bottom-diagnostic-v2/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-bottom-diagnostic-v2 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[OwnerCreditCoordinates] contentRect=(x:-521.00, y:-3266.00, width:1042.00, height:3266.00) pivot=(0.50, 1.00) anchors=(0.00, 1.00)/(1.00, 1.00) contentScale=(1.00, 1.00, 1.00) lastScale=(1.00, 1.00, 1.00) lastPivot=(0.50, 0.50) contentBottom=(-521.00, -412.00, 0.00) lastBottom=(-521.00, -356.00, 0.00) finalNormalized=0 finalContent=3266 finalPos=(0.00, 2442.00) finalLast=(517.00, -3157.00)/(x:-517.00, y:-53.00, width:1034.00, height:106.00)
+[TumpGeometry] OwnerCredits-licenses-v1/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-licenses-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

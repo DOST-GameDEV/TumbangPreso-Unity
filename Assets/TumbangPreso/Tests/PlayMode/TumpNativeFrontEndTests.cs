@@ -52,7 +52,7 @@ namespace TumbangPreso.PlayTests
             Press("CreditsBack"); yield return null;
             Assert.IsTrue(home.gameObject.activeSelf);
             Press("SettingsButton"); yield return null;
-            Assert.IsNotNull(GameObject.Find("TumpSettingsCanvas"));
+            Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"));
             Press("TumpSettingsBack"); yield return null;
             Assert.IsTrue(home.gameObject.activeSelf);
             Press("StartButton"); yield return null; yield return null;

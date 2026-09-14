@@ -44,7 +44,7 @@ namespace TumbangPreso.UI
                 var cover=OwnerUiLayout.Rect(_root.transform,"MatchDetail");OwnerUiLayout.Fill(cover);_detail=cover.gameObject;
                 var dim=cover.gameObject.AddComponent<Image>();var ink=OwnerUiTheme.Current.DeepInk;dim.color=new Color(ink.r,ink.g,ink.b,.82f);
                 var design=OwnerUiLayout.DesignArea(cover,"MatchDetailComposition");
-                var sheet=OwnerUiLayout.Rect(design,"ScorecardPaper").gameObject.AddComponent<OwnerUiPaper>();
+                var sheet=OwnerUiLayout.Rect(design,"ScorecardPaper").gameObject.AddComponent<OwnerUiPaper>();sheet.Style=OwnerUiPaper.Treatment.Dialog;
                 OwnerUiLayout.Place(sheet.rectTransform,132,156,1656,749);sheet.raycastTarget=true;
                 _detailTitle=OwnerUiLayout.Text(design,"MatchDetailTitle","",39,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Place(_detailTitle.rectTransform,175,193,1554,113);

@@ -50,7 +50,7 @@ namespace TumbangPreso.UI
         private void BuildClock()
         {
             _clockRoot=OwnerUiLayout.Rect(_root,"RoundClock");Pin(_clockRoot,new Vector2(.5f,1),new Vector2(0,-93),new Vector2(620,164));
-            var face=OwnerUiLayout.Rect(_clockRoot,"ClockFace").gameObject.AddComponent<OwnerUiPaper>();
+            var face=OwnerUiLayout.Rect(_clockRoot,"ClockFace").gameObject.AddComponent<OwnerUiPaper>();face.Style=OwnerUiPaper.Treatment.Note;
             OwnerUiLayout.Place(face.rectTransform,151,0,318,102);face.raycastTarget=false;
             _clock=OwnerUiLayout.Text(_clockRoot,"TimeLeft","",61,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_clock.rectTransform,166,2,288,95);_clock.alignment=TextAnchor.MiddleCenter;_clock.verticalOverflow=VerticalWrapMode.Overflow;

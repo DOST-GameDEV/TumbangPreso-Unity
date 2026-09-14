@@ -1,5 +1,23 @@
 # Active execution plan
 
+**LATEST owner rejection, 2026-09-15:** current UI overuses main-menu assets and
+does not satisfy the requested creative overhaul. Before declaring U8 finished,
+re-study the old PDF's layout ideas (slides 39-49 are inspiration, not finals),
+design new complementary assets in the newer hand-drawn language and distinct
+compositions for the screens. Do not just reuse/recolour the same controls or
+preserve the current visual shell because tests pass. Keep original source art
+intact, all functional routes and the approved controller diagram. See AGENTS.
+
+**LATEST transfer, 2026-09-15:** source laptop is closing the U8 checkpoint for
+commit/push and a direct chat handoff. Destination must discover its actual paths,
+preserve local changes, pull ASTRAReworks safely and resume from the newest
+ACTIVE_REWORK_LEDGER and reports/owner-ui-u8-checkpoint.md. U8 is NOT complete.
+Finish its remaining qualification/refinement, then the ENTIRE gameplay bookmark
+through deferred Inday and the seventh hero/map LAST LAST. Keep working across
+stable batches and compactions until the queue is genuinely complete. No agents,
+Figma, reset credits or Desktop build permission. Prior cancelled UI entries are
+historical; the new owner PNG overhaul remains the immediate priority.
+
 **CURRENT UI,2026-09-15:** U1-U6 saved; U7 hub/rank/character stories scoped
 implementation qualified. Finish U8 whole-interface art, editability, motion,
 input/routes and internal-player validation before the gameplay bookmark.

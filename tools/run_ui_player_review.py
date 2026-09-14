@@ -1,0 +1,73 @@
+"""Run the opt-in native UI review in a named profile without desktop input automation."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import winreg
+import playerprefs_guard
+from run_unity_guarded import unity_environment
+
+ROOT=Path(__file__).resolve().parents[1]
+PLAYER_KEY=r'Software\BH Studios\Tumbang Preso'
+
+
+def read_input_preferences():
+    values={}
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,PLAYER_KEY) as key:
+            for index in range(winreg.QueryInfoKey(key)[1]):
+                name,value,kind=winreg.EnumValue(key,index)
+                if playerprefs_guard.allowed(name):values[name]=playerprefs_guard.encode(value,kind)
+    except FileNotFoundError:
+        pass
+    return values
+
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--exe',required=True)
+    parser.add_argument('--out',required=True)
+    parser.add_argument('--profile',required=True)
+    args=parser.parse_args()
+    exe=Path(args.exe).resolve();out=Path(args.out).resolve()
+    if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
+        raise SystemExit('Use an existing internal Builds/... player, never the Desktop build.')
+    if not out.is_relative_to(ROOT/'Logs'):
+        raise SystemExit('Review output must be inside this workspace Logs directory.')
+    out.mkdir(parents=True,exist_ok=True)
+    profile=Path(os.environ['USERPROFILE'])/'AppData/LocalLow/BH Studios/Tumbang Preso/profiles'/hashlib.sha256(args.profile.encode()).hexdigest()
+    backup=out/'private-profile-backup';manifest={}
+    if profile.exists():
+        for source in profile.rglob('*'):
+            if not source.is_file():continue
+            relative=source.relative_to(profile);destination=backup/relative;destination.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(source,destination);manifest[str(relative)]=hashlib.sha256(source.read_bytes()).hexdigest()
+    before=read_input_preferences()
+    (out/'native-input-before.json').write_text(json.dumps(before,indent=2))
+    startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
+    command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
+             '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
+    print('Started internal UI review, process',process.pid,flush=True)
+    try:
+        code=process.wait(timeout=420)
+    except subprocess.TimeoutExpired:
+        process.terminate();process.wait(timeout=15);code=1
+    finally:
+        for relative,expected in manifest.items():
+            target=profile/relative;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(backup/relative,target)
+            if hashlib.sha256(target.read_bytes()).hexdigest()!=expected:raise RuntimeError('Named profile restore failed.')
+    after=read_input_preferences();unchanged=before==after
+    result_path=out/'result.json';result=json.loads(result_path.read_text()) if result_path.exists() else {'passed':False,'error':'No review receipt.'}
+    receipt={'exitCode':code,'sharedInputUnchanged':unchanged,'profile':args.profile,'existingFilesRestored':len(manifest),
+             'reviewPassed':result.get('passed',False),'error':result.get('error','')}
+    (out/'runner-result.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt),flush=True)
+    if not unchanged:print('Shared standalone input preferences changed; retained for investigation, not overwritten.',flush=True)
+    return 0 if code==0 and unchanged and result.get('passed') else 1
+
+
+if __name__=='__main__':
+    raise SystemExit(main())

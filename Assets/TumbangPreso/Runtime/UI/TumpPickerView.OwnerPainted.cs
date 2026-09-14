@@ -43,7 +43,7 @@ namespace TumbangPreso.UI
             _stage.gameObject.AddComponent<TumpPreviewPlinth>().Bind(_preview,shadow.rectTransform);
             var instructions=OwnerUiLayout.Text(_root,"RotateHint","Drag to turn",24,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place(instructions.rectTransform,1575,669,208,45);instructions.alignment=TextAnchor.MiddleRight;
-            var sheet=OwnerUiLayout.Rect(_root,"LoadoutNotes").gameObject.AddComponent<OwnerUiPaper>();
+            var sheet=OwnerUiLayout.Rect(_root,"LoadoutNotes").gameObject.AddComponent<OwnerUiPaper>();sheet.Style=OwnerUiPaper.Treatment.Note;
             OwnerUiLayout.Place(sheet.rectTransform,1015,728,807,156);sheet.raycastTarget=false;
             _description=OwnerUiLayout.Text(_root,"Description","",29);_description.color=OwnerUiTheme.Current.EnteredInk;
             _description.alignment=TextAnchor.UpperLeft;OwnerUiLayout.Place(_description.rectTransform,1046,751,749,105);

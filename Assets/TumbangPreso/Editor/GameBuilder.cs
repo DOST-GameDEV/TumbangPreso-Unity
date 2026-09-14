@@ -381,7 +381,7 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static void ConfigureIcon()
         {
-            const string path = "Assets/TumbangPreso/Art/ui/brand/app_icon.png";
+            const string path = "Assets/TumbangPreso/Art/ui/brand/owner_app_icon.png";
 
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 

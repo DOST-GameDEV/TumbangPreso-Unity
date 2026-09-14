@@ -135,6 +135,18 @@ during transition where appropriate. Honor existing ReducedUiMotion: retain clea
 state changes with brief fades and stop decorative looping movement. Animate
 critical HUD changes without delaying their information or shaking stable anchors.
 
+## Latest critique and correction: 2026-09-15
+
+Owner explicitly rejects the last UI batch for repeating the same main-menu art
+everywhere. Existing assets should inspire NEW artwork, not be spammed across the
+interface. The U1-U7 checkmarks below mean first functional implementation only,
+NOT accepted final visuals. Return to the old PDF's layout ideas, especially
+slides 39-49, and design distinct screen compositions in the new hand-drawn style.
+Make purpose-specific artwork/controls where needed instead of a universal skin.
+Keep original files and useful services/actions, but the current visual builders
+have no protection from redesign. Older preservation rules protect supplied
+source pixels; they do not require reusing one sprite on every type of control.
+
 ## Complete migration order and screen inventory
 
 - [x] U0: source preservation, measured palette/bounds and verified typefaces.
@@ -175,8 +187,10 @@ critical HUD changes without delaying their information or shaking stable anchor
   wiring: reports/owner-ui-u7.md. Live service/action edges remain U8.
 - [ ] U8: remaining dialogs/tooltips/empty states and complete end-to-end critique.
   Ship editable asset/layout guidance and record exact implementation evidence.
-  Add persistent per-screen text/layout/per-piece art overrides; the initial views
-  currently have code layout defaults alongside editable font/color/art assets.
+  Curved Reading/Note/Dialog treatments, persistent per-screen text/layout/art
+  overrides, Editor path export, authoring guide and original-pixel app icon are
+  now implemented. Scoped checks/build passed; full qualification remains open.
+  See reports/owner-ui-u8-checkpoint.md for transfer evidence and exact next work.
 
 Relevant active source: SignInScreen + .Native, TumpHomeView, TumpPlayView,
 TumpPickerView, TumpSkillView, TumpSettingsView, TumpControllerView,

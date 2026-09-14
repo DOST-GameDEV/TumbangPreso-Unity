@@ -262,7 +262,9 @@ namespace TumbangPreso.Net
 
             // ⚠️ IN BATCH MODE, UGS network sign-in is bypassed. Headless test runs and probes
             // run without a display or interactive session and operate on offline tokens.
-            if (Application.isBatchMode)
+            var launchArguments=Environment.GetCommandLineArgs();
+            bool localUiReview=Array.IndexOf(launchArguments,"-tp-uireview")>=0 && Array.IndexOf(launchArguments,"-tp-tournament")<0;
+            if (Application.isBatchMode || localUiReview)
             {
                 // ⚠️ RECORDED RATHER THAN RE-ASKED. This is a property of the build, so it joins
                 // `NotLinked` on the permanent side of the retry split above: retrying a headless
@@ -270,6 +272,7 @@ namespace TumbangPreso.Net
                 // the fault the cache was originally added to stop.
                 _buildCannotSignIn = true;
                 Settle(OnlineState.Unreachable,
+                    localUiReview ? "Online sign-in is disabled for this local UI review." :
                     "UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.");
                 return false;
             }

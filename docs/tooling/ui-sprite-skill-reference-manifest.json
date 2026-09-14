@@ -1,0 +1,72 @@
+{
+  "purpose": "Portable skill instructions and examples only; no tool installation, credentials or delegated authority. Source paths are provenance only.",
+  "provenance": "Official Unity plugin 0.1.5-beta sprite-editor skill",
+  "entry": "unity-sprite-editor/SKILL.md",
+  "files": [
+    {
+      "path": "unity-sprite-editor/references/api_reference.md",
+      "bytes": 6019,
+      "sha256": "3e8491dd8d5dbf3df9c77eca5a16b8b278cb25c3a88460fbc5d6bfc1b31edc20"
+    },
+    {
+      "path": "unity-sprite-editor/references/background.md",
+      "bytes": 4146,
+      "sha256": "c3433c455de83705092e81a8e878f1762923957ad423a446a57018818a8e79c8"
+    },
+    {
+      "path": "unity-sprite-editor/references/templates.md",
+      "bytes": 2877,
+      "sha256": "51cc41a67648b3b0098340b8ded360dc4286ff38caecaf2513e45c7f070eb030"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/AutomaticSliceTexture.cs",
+      "bytes": 2262,
+      "sha256": "d6d9339b2c8360761390e822dfbf859ea9f9df113bf1c060a12613e90fd54583"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/GenerateNewSpriteRects.cs",
+      "bytes": 8814,
+      "sha256": "2f575abd7aace6ebd2b6507b17f5553006c6966f7d1ed86d15c1e05bb4495e64"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/GetTextureSourceImageSize.cs",
+      "bytes": 1344,
+      "sha256": "ae43201540dc294a03bc5689e701ea8a2dccc4392556fd749762b0248e31ad95"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/GetTextureToSlice.cs",
+      "bytes": 2631,
+      "sha256": "bf738f184df9409406bcbea9ae4a155e7a0150456e1b165d5c9eba7af4a5f4f8"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/GridSliceTexture.cs",
+      "bytes": 2485,
+      "sha256": "51adb2ca240a4adc0b8b211a87581c86241c04cfe90d7d18eeaefc0f33609733"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/IsometricSliceTexture.cs",
+      "bytes": 6962,
+      "sha256": "4c129b2d2fcd17fdfbe760a8f0e2dd501fa0ab6642bd9ff1ae17a3d29e59824b"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/README.md",
+      "bytes": 4766,
+      "sha256": "18add5e698b039f864a1290f35718978e1b98bf89107447401c80dec3e2f6f29"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/SetPivotExample.cs",
+      "bytes": 2528,
+      "sha256": "04d9d686492619362aac464ecca81b41e00d448046d449d7baa1dcefa56e4ca6"
+    },
+    {
+      "path": "unity-sprite-editor/scripts/SpriteToPng.cs",
+      "bytes": 3025,
+      "sha256": "c6b6e3d31aeabc8140f9192f71bb7d310e40793da70fea07dffaa324454b7d37"
+    },
+    {
+      "path": "unity-sprite-editor/SKILL.md",
+      "bytes": 3680,
+      "sha256": "4aa1057f1dc587b1544fc298eaa01dbab171db04e6c6442ddf9c640d3625ad1b"
+    }
+  ]
+}

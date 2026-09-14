@@ -1,5 +1,21 @@
 # UI reopened: owner hand-drawn theme
 
+**LATEST 2026-09-15: current last UI batch visually REJECTED.** Owner says it
+spams the same main-menu assets and failed to use the old PDF's layout direction
+creatively. Existing artwork must inspire NEW designs, not be pasted everywhere.
+Re-read the preserved old PDF, especially slides 39-49 as ideas, then create
+distinct screen compositions and new complementary art in the new theme. Keep
+original files unchanged; do not interpret that as mandatory reuse on every page.
+Do not mark U1-U7 visuals accepted just because their functional paths passed.
+Finish this redesign and remaining U8 qualification, then the full gameplay queue.
+Transfer checkpoint: reports/owner-ui-u8-checkpoint.md.
+
+Owner's final clarification: do not spam the orange patterned background either.
+Use built-in GPT image generation for new screen-specific artwork/backgrounds
+informed by the old PDF layouts. Keep editable text and clickable controls native;
+critique generated art instead of accepting generic output. The PDF is preserved
+at ArtSource/ui/owner-brand-2026-09-13/TUMP-moodboard-original.pdf.
+
 NEWEST owner request,2026-09-15: finish the current reconnect check (now completed
 and pushed9faf6ba6), then overhaul ALL UI using her new hand-drawn PNGs. Thoroughly
 analyze/plan first, preserve her real artwork/aspect ratios/typography and animate

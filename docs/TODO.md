@@ -1,5 +1,26 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**LATEST transfer and UI rejection,2026-09-15:** save/push this checkpoint for
+another laptop, which must continue the FULL queue until done. U1-U7 first
+functional implementations are retained, but the owner rejects their repeated
+main-menu art and orange background. Existing assets are inspiration for NEW
+designs. Re-study the old PDF's layout ideas, especially slides39-49, and use
+built-in GPT image generation for new screen-specific art/backgrounds. Do not
+copy one layout literally or spam one universal button/panel. Preserve original
+source files, editable controls and the approved controller diagram.
+
+- [ ] Redesign the rejected UI creatively, then finish U8's actual art/motion/
+  input/async/native-route qualification. The current native run failed a
+  reduced-motion settling assertion before matches; it is NOT a pass.
+- [ ] Resume every remaining item in GAMEPLAY_RESUME_AFTER_UI.md afterward,
+  including deferred Inday and the selected seventh hero/map LAST LAST.
+
+Current checkpoint/evidence: reports/owner-ui-u8-checkpoint.md and newest
+ACTIVE_REWORK_LEDGER. PDF/new PNGs/skill references are in Git. On destination,
+discover actual paths/tools, preserve local work and safely pull ASTRAReworks.
+No agents, Figma, reset credits or Desktop build update. Source stops at handoff;
+destination continues across batch boundaries, commits and compactions.
+
 **NEWEST owner order,2026-09-15:** finish the currently running same-process
 reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
 UI theme. Resume all unfinished gameplay afterward using

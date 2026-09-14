@@ -1,5 +1,128 @@
 # Active TUMP rework ledger
 
+## CURRENT TRANSFER CHECKPOINT: UI visually rejected; continue redesign on destination
+
+2026-09-15 owner requests finish this checkpoint, commit/push and direct chat
+handoff to another laptop. This source laptop stops after transfer; no owned
+Unity Editor/player remains active. Destination must continue the ENTIRE queue
+until done, not stop at one batch. Discover real local paths/tools/processes;
+old paths/PIDs/session IDs are historical. Preserve local changes and safely pull
+ASTRAReworks first. No agents/forks, Figma, reset credits or Desktop update.
+
+LATEST OWNER CRITIQUE: the last UI batch is hideous because it reuses main-menu
+assets and spams the orange background throughout. Assets were intended as
+INSPIRATION FOR NEW DESIGNS. Re-study the old PDF's layout ideas, especially
+slides39-49 as inspiration rather than final compositions. Use built-in GPT
+image generation for new screen-specific art/backgrounds in the newer hand-drawn
+style; critique and improve outputs, keep editable text and controls native.
+Make distinct compositions, not another universal control/panel reskin. Original
+files remain intact; this does not mean repeating them everywhere. PDF still at
+ArtSource/ui/owner-brand-2026-09-13/TUMP-moodboard-original.pdf. New PNGs and
+measured palette/type at ArtSource/ui/owner-handdrawn-2026-09-15. U1-U7 functional
+implementation is saved but current visuals are NOT accepted. This is the first
+creative task on the destination, ahead of gameplay.
+
+U8 source checkpoint: curved paper treatments, Inspector overrides/path export/
+authoring guide, original-pixel square app icon and opt-in native UI runner.
+See reports/owner-ui-u8-checkpoint.md for full details and durable remaining U8
+plan; do not depend on ignored Logs/U8-review-plan.md. New source hashes verified.
+Foundation v1=3pass/1stale canvas-name fail; targeted v2=2/2pass. Internal Win64
+v2 build SUCCEEDED1071MB/36s. Runtime.dll SHA256
+E8C548461AFA7BA870B0FAD7C5A2B692A6807FACC5E9B57C30EFC85FB5276D85.
+Builds/owner-ui-final-review/TumbangPreso.exe is source-laptop-only and stamped
+6e7a2b13ad73+dirty; source comes with this checkpoint, rebuild later as needed.
+
+Native reviewv1 failed dedicated-server launch caused by runner-batchmode; fixed
+by normal-window launch. Nativev2/session78097/process15116 finished FAIL on
+reduced-motion scale assertion, sharedInputUnchanged=true. Actual startup/Guest/
+home/settings reached, then motion assertion stopped the rest. No two-mode native
+match/pause/result/rematch qualification yet. Reduced CSV1.019501->1 and stable
+there suggests pre-existing hover-scale settling after enabling the setting;
+diagnose transition vs steady state rather than blindly loosen assertion. Raw
+startup PNG also caught entry before labels/logo appeared; do not call it final
+startup art. Screens are1920x1080 despite launch1280 arguments. Receipts/stills/
+timestamped MP4s/CSVs/XML/build-summary committed under owner-ui-u8-evidence.
+
+Next: redesign in response to latest critique, fix/qualify actual motion and
+remaining U8 input/async/routes/art criteria, then GAMEPLAY_RESUME_AFTER_UI.md
+through movement/skills/network/recovery/spectator/performance, deferred Inday
+and selected seventh hero/map LAST LAST. Completed checks must not be restarted
+without a relevant change. WORKSTATION_SETUP includes portable skill bundles
+(main16 plus supplemental sprite-editor), source references and guarded recipes.
+Keep the ledger/TODO fresh, use focused tests and independent parallel work.
+
+Entries below this line are historical snapshots, not active processes or
+completion claims. Newest visual rejection and transfer instructions win.
+
+## CURRENT U8 native launch mistake corrected; rebuilding normal-window review
+
+4809native process50268 finishedFAIL, input prefs unchanged. Reviewv1 used
+-batchmode, which NetBootstrap intentionally treats as dedicated server without
+an explicit host/join. It hosted8910 and never displayed menus; not evidence of
+a menu defect. Failed receipt/log retained Logs/owner-ui-native-v1. Processended.
+Runner now omits-batchmode and keeps window hidden via startupinfo. NetIdentity
+only bypasses online sign-in for explicit non-tournament -tp-uireview, so this
+normal-window diagnostic does not create online accounts; ordinary launches
+unchanged. Rebuilding same internal path with no player active: guarded
+Logs/owner-ui-final-build-u8-v2.log. Do not edit Assets during build.
+Next run tools/run_ui_player_review.py with outLogs/owner-ui-native-v2 and new
+profileowner-ui-native-20260915-v2. Watch actual receipt/screens and motion CSV,
+not launch success. First buildRuntime.dll hashECCD1253A10B38DF8AD27A8F62BF099715BA51CBFD4DC059ADFDA2671A6B4EE3
+is stale after rebuild. No Desktop update, no agents/reset/Figma.
+U8 authored source/curves/overrides/icons still uncommitted; latest6e7a2b13.
+Full UI/native validation then GAMEPLAY_RESUME_AFTER_UI.md; keep going.
+
+## CURRENT U8 internal player built; native UI review active
+
+94109foundation rerun2/2passed, guard56f0d7ca2286: native title/play/credits/
+settings return and override exact-text/no-drift/native-shape replacement. New
+curved Note/Reading/Dialog renders inspected. Authoring guide and named export
+implemented; input field contents omitted from export. Empty override book ready.
+38147icon authoring exit0, guardd5f6bf3a0b9a: original logo407x273 pixels copied
+into transparent407square, no redraw/stretch. Builder now uses owner_app_icon.
+64176internal Windows build SUCCEEDED1071MB/56s, guard08cdd6574c78. Explicit
+Builds/owner-ui-final-review/TumbangPreso.exe; Desktop untouched. Source includes
+opt-in OwnerUiPlayerReview disabled for normal/tournament launches.
+Native review RUNNING via session4809, owned process50268, command recorded in
+native runner. Logs/owner-ui-native-v1, named profileowner-ui-native-20260915-v1.
+Checks built startup/noBack/Guest, real UI raycast callbacks, normal/reduced motion
+with measured timestamps/scale, both modes with real UI-selected1round30s rules,
+pause/results and Classic rematch. Reduced flag changed only in memory, no shared
+binding writes; runner checks standalone input preferences unchanged and preserves
+pre-existing named-profile files. No Desktop input automation or other process
+control. Need actual result.json/runner-result.json and original screenshots/video,
+not only build success. Do not replace artifact while its process is active.
+Next encode normal/reduced frames with tools/encode_motion_review.py (imageio_ffmpeg
+installed), inspect footage/screens, fix proven failures and qualify. U8still open:
+remaining active dialogs/async edges/art review and honest native result report,
+then save/push and only then resume GAMEPLAY_RESUME_AFTER_UI.md. No agents/reset/
+Figma/Desktop. Keep useful doc/source review outside imported Assets while running.
+
+## CURRENT U8 curved surfaces/authoring running; lighting baseline understood
+
+U7pushed6e7a2b13. New OwnerUiPaper curved Reading/Note/Dialog treatments replace
+shared beveled corners; supplied PNGs untouched. OwnerUiOverrideBook + controller
+and Editor menu/export implemented; asset created by guarded Editor API44380
+exit0, guardd314a0744216. Exact-match text replacements preserve live values,
+offsets do not accumulate, font/ink/size/art/paper treatment configurable. Native
+shape replacement now supports Sprite layer behind editable labels; no input-field
+text exported. Guide docs/OWNER_UI_AUTHORING.md. Empty book costs no traversal.
+37096foundation4cases:3pass, guardbb8750990b94. Override contract, actual picker
+lighting and actual startup/noBack/terms passed. Frontend flow only failed stale
+TumpSettingsCanvas expectedname; updated to OwnerSettingsCanvas. Next rerun only
+that flow plus extended override shape contract. Original new terms/note panels
+inspected; Play image from prior filename was stale because test failed earlier,
+so do not cite that old image as curved-surface proof.
+Actual picker after real arena load: ambient(0.568,.504,.425) exactly matches
+ModelPreview.PreviewAmbient; only own PreviewKey .87885 and PreviewFill .29295
+influence layer30; paletteCount16. No foreign-light leak reproduced. Preview's
+warmth is authored and was requested earlier; do not recolor approved models to
+match flat portrait imagery. Keep further native-player comparison in U8.
+Native authoring drafts now applied; Logs/U8-review-plan.md remains full final
+scope. Still need ordinary-speed/reduced motion, active leftover UI inventory,
+async/account edges and internal Windows player/UI routes. No activeprocess at
+this pointer. No agents/reset/Figma/Desktop. After U8 full gameplay bookmark.
+
 ## CURRENT U7 scoped checks complete; save then finish U8
 
 62933passed1/1, guardaeacefe0e778. Rookie icon looked like a ladder; replaced

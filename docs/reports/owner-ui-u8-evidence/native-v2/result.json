@@ -1,0 +1,9 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Reduced UI motion still changes action scale.\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Motion>d__15.MoveNext () [0x00317] in <1ceb280743084aa79d94a744abfc1b5a>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__6.MoveNext () [0x00054] in <1ceb280743084aa79d94a744abfc1b5a>:0 ",
+    "stages": [
+        "cold boot",
+        "normal-motion recorded",
+        "settings and reduced motion"
+    ]
+}

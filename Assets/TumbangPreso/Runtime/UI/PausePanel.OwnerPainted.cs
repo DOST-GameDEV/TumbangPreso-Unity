@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
         }
         protected override void Build()
         {
-            var sheet=OwnerUiLayout.Rect(Canvas.transform,"MatchMenuPaper").gameObject.AddComponent<OwnerUiPaper>();
+            var sheet=OwnerUiLayout.Rect(Canvas.transform,"MatchMenuPaper").gameObject.AddComponent<OwnerUiPaper>();sheet.Style=OwnerUiPaper.Treatment.Dialog;
             sheet.rectTransform.anchorMin=sheet.rectTransform.anchorMax=sheet.rectTransform.pivot=new Vector2(.5f,.5f);
             sheet.rectTransform.sizeDelta=new Vector2(944,744);sheet.raycastTarget=true;
             _title=OwnerUiLayout.Text(sheet.transform,"PauseTitle","MATCH MENU",58,OwnerUiLayout.TypeRole.Display);

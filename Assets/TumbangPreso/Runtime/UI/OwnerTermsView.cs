@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
             var scrim=OwnerUiLayout.Rect(_canvas.transform,"ModalBlocker").gameObject.AddComponent<UnityEngine.UI.Image>();
             OwnerUiLayout.Fill(scrim.rectTransform);scrim.color=new Color(0,0,0,.24f);scrim.raycastTarget=true;
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"TermsComposition");
-            var paper=OwnerUiLayout.Rect(design,"ReadingSheet").gameObject.AddComponent<OwnerUiPaper>();
+            var paper=OwnerUiLayout.Rect(design,"ReadingSheet").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Dialog;
             OwnerUiLayout.Place(paper.rectTransform,510,95,900,890);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(design,"Title","Terms & Conditions",46,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place(title.rectTransform,565,140,790,70);title.alignment=TextAnchor.MiddleCenter;title.color=OwnerUiTheme.Current.ActionInk;

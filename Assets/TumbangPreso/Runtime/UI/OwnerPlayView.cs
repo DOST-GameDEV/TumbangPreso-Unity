@@ -34,7 +34,7 @@ namespace TumbangPreso.UI
             var hit=root.gameObject.AddComponent<UnityEngine.UI.Image>();hit.color=Color.clear;
             var button=root.gameObject.AddComponent<OwnerTextAction>();button.targetGraphic=hit;button.transition=UnityEngine.UI.Selectable.Transition.None;
             button.onClick.AddListener(()=>{MenuSfx.Click();Select(mode);});
-            var paper=OwnerUiLayout.Rect(root,"ModeSheet").gameObject.AddComponent<OwnerUiPaper>();OwnerUiLayout.Fill(paper.rectTransform);paper.raycastTarget=false;
+            var paper=OwnerUiLayout.Rect(root,"ModeSheet").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Note;OwnerUiLayout.Fill(paper.rectTransform);paper.raycastTarget=false;
             paper.gameObject.AddComponent<OwnerUiMotion>();
             var label=OwnerUiLayout.Text(paper.transform,"ModeName",title,42,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place(label.rectTransform,35,38,470,62);

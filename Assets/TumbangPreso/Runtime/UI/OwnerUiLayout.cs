@@ -37,6 +37,7 @@ namespace TumbangPreso.UI
             // gamma-to-linear conversion belongs in the shader, after 8-bit vertex storage.
             canvas.vertexColorAlwaysGammaSpace=true;
             root.gameObject.AddComponent<OwnerUiCanvas>();
+            root.gameObject.AddComponent<OwnerUiOverrides>();
             canvas.overrideSorting=true;canvas.sortingOrder=order;canvas.pixelPerfect=true;
             var scaler=root.gameObject.AddComponent<UnityEngine.UI.CanvasScaler>();
             scaler.uiScaleMode=UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;

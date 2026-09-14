@@ -1,5 +1,40 @@
 # Working instructions for ChatGPT / Codex
 
+**LATEST visual rejection during transfer, 2026-09-15:** the owner calls the last
+UI batch hideous because the main-menu assets were reused everywhere. Existing
+assets are INSPIRATION for new designs, not a kit to spam across every screen.
+Re-study the OLD moodboard PDF, especially slides 39-49, for layout ideas; they
+are not final compositions to copy literally. Combine that layout inspiration
+with the newer hand-drawn theme/typography/colours and create genuinely new,
+purpose-built complementary art and distinct screen compositions. No universal
+button/panel generator that makes every screen look the same. Preserving the
+owner's original files does NOT mean reusing their buttons/background everywhere.
+The latest UI batch is NOT visually accepted. Technical passes do not override
+this rejection. This redesign is the destination's first creative priority.
+The owner further explicitly says the orange background texture must NOT be
+spammed everywhere, and requests GPT image generation for new screen-specific
+art/backgrounds based on the old PDF layout ideas. The PDF was not lost:
+ArtSource/ui/owner-brand-2026-09-13/TUMP-moodboard-original.pdf. Use the built-in
+image generator, critique its output and revise/discard weak work; do not just
+produce another unused generic study or bake all editable UI into an image.
+
+**LATEST transfer instruction, 2026-09-15:** owner requests finishing this bounded
+checkpoint, committing/pushing it and giving a detailed continuation prompt for
+another laptop. The source laptop stops after that transfer. On the destination,
+continue the ENTIRE authorized queue until done: finish remaining U8 UI work,
+then GAMEPLAY_RESUME_AFTER_UI.md through the seventh hero/map LAST LAST. A passed
+test, stable commit, batch boundary or compaction is not a reason to stop there.
+Preserve the ledger continuously and park optional questions while the owner is
+away. Do not spawn/resume any agents, use reset credits, use Figma or update the
+Desktop build. These permissions were NOT renewed by the transfer.
+
+**Paths are examples, not requirements.** Discover the destination's actual
+checkout, username, tools, installed skills and process ownership. Use repo-relative
+paths after locating the repository. Inspect local changes and branch divergence,
+then safely pull ASTRAReworks first; never reset or clean work to force a match.
+Historical paths, PIDs, session IDs and old completion claims below are not live
+state on the new laptop. Read the newest ledger entry and checkpoint report.
+
 **Latest login correction,2026-09-15:** owner rejects BACK on the login screen.
 The supplied reference is the startup account entrance, not an account-management
 subpage. No Back control on startup login; GUEST is its entry into the game.

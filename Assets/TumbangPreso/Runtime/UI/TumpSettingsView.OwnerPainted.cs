@@ -157,7 +157,7 @@ namespace TumbangPreso.UI
             if(_decision!=null){_decision.SetActive(true);return;}
             var root=OwnerUiLayout.Rect(_canvas.transform,"UnsavedDecision");OwnerUiLayout.Fill(root);_decision=root.gameObject;
             var dim=root.gameObject.AddComponent<Image>();var ink=OwnerUiTheme.Current.DeepInk;dim.color=new Color(ink.r,ink.g,ink.b,.8f);
-            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<OwnerUiPaper>();
+            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Dialog;
             paper.rectTransform.anchorMin=paper.rectTransform.anchorMax=paper.rectTransform.pivot=new Vector2(.5f,.5f);
             paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
