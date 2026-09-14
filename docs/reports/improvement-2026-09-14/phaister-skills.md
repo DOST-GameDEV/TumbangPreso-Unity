@@ -174,7 +174,21 @@ same-hero UpdateLoadout path. The current observed missing effect is distinct.
 
 ## Remaining qualification
 
-Finish actual delayed peer cases, rejection cleanup and late-join state. Review
-the complete Hex/Slow Brand and Blink/Long Stride mechanics and counterplay.
-Check confined defender behavior and ordinary-speed full cast motion. Preserve
-the rest of the project queue, no-thumb cast, retained outfits and saved profiles.
+Placement and sidegrade checks now pass 2/2 in
+Logs/phaister-placement-variants-v1.xml, receipt e2c9bcbde50e. Actual held/released
+inputs, not direct effect helpers: Hex radius2.4, two pulses in the observation
+window, peak stagger0.35; Slow Brand radius1.44, three pulses, peak0.49. The edge
+target is hit only by the larger ward, the caster is excluded and one charge is
+spent in both cases. Both Blink variants wait for release, travel5.5/7.15metres,
+move the departure target0.573869metres, leave the arrival target unmoved, and
+retain approximately51.7seconds cooldown after the measured release.
+
+Copy now describes repeated stumbles and the smaller/stronger tradeoff. The
+former "One stumble each" and "One person cannot cross it" claims were not the
+actual behavior. The cultural draft also now locates Blink's shove at departure.
+No mechanics were changed to make those sentences true.
+
+The recorded cast, placement, sidegrade and ultimate-rejoin paths are validated.
+Overlapping skills, confined-defender counterplay, physical-device feel and other
+persistent hazard restoration remain part of the broader game pass. Preserve
+the current native forms, no-thumb cast, retained outfits and saved profiles.

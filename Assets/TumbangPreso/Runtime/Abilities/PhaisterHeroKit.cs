@@ -98,9 +98,9 @@ namespace TumbangPreso.Abilities
 
             public HexSigilAbility()
                 : base("phaister_skill1", "HEX",
-                       "Hold to place a hex circle on the road, then let go to chalk it. Anyone who walks into it loses their footing.",
+                       "Hold to place a binding on the road, then release. Opponents who stay inside suffer repeated stumbles.",
                        0.0f, SigilLifetime, AbilityGlyph.PhaisterHexSigil,
-                       summary: "Hold to aim, release to chalk. Walk in and you stumble.",
+                       summary: "Hold to place a binding. Stay inside and stumble again.",
                        telegraphRadius: HexRadius,
                        telegraphRange: MaxRange,
                        castAction: "hero-phaister-hex",

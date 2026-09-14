@@ -324,8 +324,8 @@ namespace TumbangPreso.Core
             // ---------------------------------------------------------------
             new AbilityVariant("phaister.1.hex", "phaister", 1, "HEX", "PhaisterHexSigil",
                 "HEX",
-                "A 2.4 m ward chalked where you aim. Walk into it and you stumble.",
-                0.0f, 0.0f, "Holds a whole lane", "One stumble each"),
+                "Place a broad binding. Opponents who remain inside suffer repeated stumbles.",
+                0.0f, 0.0f, "Covers more space", "Lighter, slower pulses"),
 
             // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
             // 40 per cent gain on a 0.35 s stagger alone is a tenth of a second and reads as
@@ -333,8 +333,8 @@ namespace TumbangPreso.Core
             // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
             // version of the same puddle.
             new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "SLOW BRAND", "A tight ward that holds hard. One person cannot cross it.",
-                0.40f, -0.40f, "They are stuck", "Easy to walk round",
+                "SLOW BRAND", "A smaller binding with stronger, more frequent stumbles. Go around it or push through between pulses.",
+                0.40f, -0.40f, "Stronger, quicker pulses", "Smaller reach",
                 "Use Hex eight times", true, 8),
 
             new AbilityVariant("phaister.2.blink", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",

@@ -262,7 +262,7 @@ the constructors. None requires Tagalog on the player-facing surface.
 | Astral Hijack | Send your ghost ahead, then exchange places with it. Make your departure and return difficult to predict. |
 | Devouring Seance | Your cute ghost swells into a raging giant and drags nearby opponents inward. The familiar face hides a ravenous presence. |
 | Hex | Write a binding mark on the street. Opponents who remain inside its reach are cursed. |
-| Shadow Blink | Tear open a shadow passage to your chosen spot. Reappear with a shove that clears the space around you. |
+| Shadow Blink | Tear open a passage to your chosen spot. The closing shadow shoves opponents you left behind. |
 | Grand Coven | Trace a grand lunar seal. An eclipse gathers, then curses opponents who stay within the circle. |
 
 Particular checks before using these drafts: Carapace's claimed shove/slip immunity,

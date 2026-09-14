@@ -17,7 +17,9 @@ The distinct-skill/part-design rule and rejection of noisy textures still apply.
 
 Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Checkpointsbc8a5f00 and b106c6ac are pushed. Fresh internal player and focused network checks passed.
-Dante checkpoint e6237a0d is saved and pushed. Current work is Phaister ritual/kit design. Inday FPP is deferred.
+Dante e6237a0d and Phaister timing/performance/rejoin checkpoints through5cfb04b3
+are pushed. Phaister placement/alternate behavior now passes; copy is corrected.
+Continue the remaining whole-kit reviews, beginning with Cheska. Inday FPP stays deferred.
 Read ACTIVE_REWORK_LEDGER.md for exact latest process, evidence and next action.
 Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-restored-hands.md.
 
@@ -37,9 +39,12 @@ Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-r
    checks pass. The later distinct Hex/Blink and FPP hold refinement pass2/2;
    moving-caster warning check passes1/1. Actual delayed accepted and rejected
    three-peer ritual paths now pass. Rejection no longer leaks owner sky.
-   Current internal build v3 is validated for those paths. Profile creation-frame
-   cost/visible warning timing, complete late-join and kit/alternate review, then remaining6kit/
-   18skill/alternate queue. Preserve accepted work and distinct per-skill design.
+   Construction cost reduced without changing geometry/phase colours. Ultimate
+   rejoin and protocol31 compatibility are validated in current internal v9.
+   Hex/Slow Brand and Blink/Long Stride actual placement/behavior pass2/2.
+   Continue the remaining6kit/18skill/alternate queue with Cheska, preserving good
+   work. Broader overlap/counterplay, other persistent fields and visible-frame
+   performance remain separate checks, not claims from those passing contracts.
 5. Actual separate-process rematch/reconnect/host loss/interruption/rebinding,
    recovery input paths; preserve controller/MenuNav ownership and saved profiles.
 6. Tournament spectator free/follow/POV manual authority, collision/framing,

@@ -236,6 +236,134 @@ namespace TumbangPreso.PlayTests
             public bool IsSeatlessReferee => false;
         }
 
+        private static IEnumerator PreparePlacementCourt()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(3.6f);
+            NetAuthority.Provider = new SoloProvider();
+            foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
+            foreach (var player in GameServices.Round.Players)
+            {
+                player.Intent.Clear(); player.Intent.Parked = true;
+                player.ClearStun(); player.ClearTrip();
+            }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator HexAndSlowBrandApplyTheirActualFootprintsAndPulseRates()
+        {
+            yield return PreparePlacementCourt();
+            var caster = GameServices.Round.PlayerAt(1);
+            var near = GameServices.Round.PlayerAt(2);
+            var edge = GameServices.Round.PlayerAt(3);
+            var challenges = Settings.SettingsStore.Current.AbilityChallenges;
+            var saved = challenges.ToArray();
+            var output = new System.Text.StringBuilder("brand,radius,pulses,peak_stagger,edge_hit,caster_hit,charges\n");
+            var pulseCounts = new List<int>();
+            var holds = new List<float>();
+            try
+            {
+                challenges.RemoveAll(row => row.VariantId == "phaister.1.brand");
+                challenges.Add(new AbilityChallengeProgress { VariantId = "phaister.1.brand", Count = 999 });
+                foreach (bool brand in new[] { false, true })
+                {
+                    caster.Intent.Clear(); caster.Intent.Parked = false;
+                    caster.Teleport(new Vector3(0, .12f, -8)); caster.transform.rotation = Quaternion.identity;
+                    near.Teleport(new Vector3(.7f, .12f, -2.5f)); edge.Teleport(new Vector3(1.9f, .12f, -2.5f));
+                    near.ClearStun(); edge.ClearStun(); caster.ClearStun();
+                    caster.AbilitySystem.BindHero("phaister", new HeroBuild { HeroId = "phaister",
+                        Slot1VariantId = brand ? "phaister.1.brand" : "phaister.1.hex" });
+                    Assert.AreEqual(brand, caster.AbilitySystem.HasVariant("phaister.1.brand"));
+                    caster.Intent.AimPoint = new Vector3(0, .12f, 6); caster.Intent.FaceAimPoint = true;
+                    caster.Intent.Set(Verb.Skill1, true);
+                    yield return new WaitForSeconds(.7f);
+                    Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.HexSigilComponent>(FindObjectsSortMode.None),
+                        "Holding Hex cast it before release.");
+                    caster.Intent.Set(Verb.Skill1, false);
+                    float start = Time.time, previous = 0, peak = 0;
+                    int pulses = 0; bool edgeHit = false, casterHit = false;
+                    HeroHazards.HexSigilComponent zone = null;
+                    while (Time.time - start < 2.15f)
+                    {
+                        if (zone == null) zone = Object.FindFirstObjectByType<HeroHazards.HexSigilComponent>();
+                        float left = near.StunLeft;
+                        if (left > previous + .08f) pulses++;
+                        previous = left; peak = Mathf.Max(peak, left);
+                        edgeHit |= edge.IsStunned; casterHit |= caster.IsStunned;
+                        yield return null;
+                    }
+                    Assert.IsNotNull(zone, "The released Hex did not create its real field.");
+                    Assert.AreEqual(brand ? 1.44f : 2.4f, zone.Radius, .001f);
+                    Assert.AreEqual(!brand, edgeHit, "The variant's actual affected area is wrong.");
+                    Assert.False(casterHit);
+                    Assert.AreEqual(1, caster.AbilitySystem.Kit.Skill1.ChargesRemaining);
+                    output.AppendLine(FormattableString.Invariant($"{brand},{zone.Radius},{pulses},{peak},{edgeHit},{casterHit},{caster.AbilitySystem.Kit.Skill1.ChargesRemaining}"));
+                    pulseCounts.Add(pulses); holds.Add(peak);
+                    Object.Destroy(zone.gameObject); caster.AbilitySystem.ResetKit();
+                    yield return new WaitForSeconds(.6f);
+                }
+                File.WriteAllText("Logs/phaister-hex-variants.csv", output.ToString());
+                Assert.GreaterOrEqual(pulseCounts[0], 2, "Default Hex did not repeat while a target stayed inside.");
+                Assert.Greater(pulseCounts[1], pulseCounts[0], "Slow Brand did not pulse more often.");
+                Assert.Greater(holds[1], holds[0] + .08f, "Slow Brand did not strengthen the stumble.");
+            }
+            finally { challenges.Clear(); challenges.AddRange(saved); }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator BothBlinkVariantsWaitForReleaseAndShoveOnlyAtDeparture()
+        {
+            yield return PreparePlacementCourt();
+            var caster = GameServices.Round.PlayerAt(1);
+            var near = GameServices.Round.PlayerAt(2);
+            var arrival = GameServices.Round.PlayerAt(3);
+            var challenges = Settings.SettingsStore.Current.AbilityChallenges;
+            var saved = challenges.ToArray();
+            var output = new System.Text.StringBuilder("stride,travel,departure_travel,arrival_travel,cooldown\n");
+            try
+            {
+                challenges.RemoveAll(row => row.VariantId == "phaister.2.stride");
+                challenges.Add(new AbilityChallengeProgress { VariantId = "phaister.2.stride", Count = 999 });
+                foreach (bool stride in new[] { false, true })
+                {
+                    float distance = stride ? 7.15f : 5.5f;
+                    var start = new Vector3(0, .12f, -8);
+                    var nearStart = start + Vector3.right;
+                    var arrivalStart = start + Vector3.forward * distance + Vector3.right;
+                    caster.Teleport(start); caster.transform.rotation = Quaternion.identity;
+                    near.Teleport(nearStart); arrival.Teleport(arrivalStart);
+                    foreach (var player in new[] { caster, near, arrival }) { player.ClearStun(); player.ClearTrip(); }
+                    caster.AbilitySystem.BindHero("phaister", new HeroBuild { HeroId = "phaister",
+                        Slot2VariantId = stride ? "phaister.2.stride" : "phaister.2.blink" });
+                    Assert.AreEqual(stride, caster.AbilitySystem.HasVariant("phaister.2.stride"));
+                    caster.Intent.Clear(); caster.Intent.Parked = false;
+                    caster.Intent.AimPoint = start + Vector3.forward * 20; caster.Intent.FaceAimPoint = true;
+                    caster.Intent.Set(Verb.Skill2, true);
+                    yield return new WaitForSeconds(1);
+                    Assert.Less(Mathf.Abs(caster.transform.position.z - start.z), .03f, "Blink teleported before release.");
+                    caster.Intent.Set(Verb.Skill2, false);
+                    yield return new WaitForSeconds(.3f);
+                    float travel = caster.transform.position.z - start.z;
+                    float departureTravel = Vector2.Distance(new Vector2(nearStart.x, nearStart.z),
+                        new Vector2(near.transform.position.x, near.transform.position.z));
+                    float arrivalTravel = Vector2.Distance(new Vector2(arrivalStart.x, arrivalStart.z),
+                        new Vector2(arrival.transform.position.x, arrival.transform.position.z));
+                    Assert.AreEqual(distance, travel, .15f, "Actual Blink reach differs from its equipped variant.");
+                    Assert.Greater(departureTravel, .25f, "Blink did not shove the person left behind.");
+                    Assert.Less(arrivalTravel, .05f, "Blink incorrectly shoved a person at arrival.");
+                    Assert.False(arrival.IsStunned);
+                    Assert.Greater(caster.AbilitySystem.Kit.Skill2.CooldownRemaining, 50);
+                    output.AppendLine(FormattableString.Invariant($"{stride},{travel},{departureTravel},{arrivalTravel},{caster.AbilitySystem.Kit.Skill2.CooldownRemaining}"));
+                    caster.AbilitySystem.ResetKit();
+                    yield return new WaitForSeconds(.6f);
+                }
+                File.WriteAllText("Logs/phaister-blink-variants.csv", output.ToString());
+            }
+            finally { challenges.Clear(); challenges.AddRange(saved); }
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator RestoredCovenKeepsItsClockWithoutSpendingOrResolvingHits()
         {
