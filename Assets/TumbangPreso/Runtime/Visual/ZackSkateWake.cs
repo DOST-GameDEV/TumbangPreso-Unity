@@ -34,9 +34,10 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private void Update()
+        private void Update() => StepTo(_age + Time.deltaTime);
+        public void StepTo(float seconds)
         {
-            _age += Time.deltaTime;
+            _age = Mathf.Max(0, seconds);
             float fade = Mathf.Clamp01((_duration - _age) / .45f);
             for (int i = 0; i < _lines.Length; i++)
             {

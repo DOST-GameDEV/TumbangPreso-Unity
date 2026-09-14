@@ -1,5 +1,51 @@
 # Active TUMP rework ledger
 
+## CURRENT complete ground-field batch qualified; save then lifecycle work
+
+Native55605 completed PASS: seven kinds on host and both clients, repeat without
+duplicates, original parameters, final zero.37vs36 refusal PASS. Original
+host/observer overview PNGs inspected: visible sheet/spires/crater/Hex match;
+wide view occludes portions of other effects, no all-angle visual claim. Raw
+timing maximum445ms within predefined550ms tolerance, not frame-identical proof.
+All tools retired. Report improvement-2026-09-15-world-fields.md and receipts
+world-field-evidence. Latest pushed2363065e until this world batch is saved.
+Next final diff/stage/commit/push; investigate actual same-process reconnect
+alongside pending windup state. Source hypothesis: MatchRpc._snapshotRequestStarted
+is lifetime-scoped while messaging managers change per transport. Need actual
+StartClientAsync rejoin reproduction before editing; do not assume a failure.
+Reviewed source/fixture direction in Logs/same-process-rejoin-investigation.md.
+No UI/agents/Figma/reset/Desktop. Continue full remaining queue, not a handoff.
+
+## CURRENT mixed persistent-field native run and visual review
+
+Source37 passed3focused Play checks (mixed seven types, prior ice and invalid/
+expired replacement) plus5focused Edit checks (batch contracts, new-kind bounds,
+protocol assertion). Sessions40526/38773 retired; guards3ed5618534a9/2c7719e018bb.
+Internal WorldFieldReview build SUCCESS,49s build pipeline, guard03ee3aa4401a,
+session40339 retired. Running55605 tools/net_world_field_review.py, output
+Logs/net-world-fields-v1. Two native clients request/repeat the seven host-created
+field types, with delayed owner link and original overview PNGs for inspection.
+Next inspect JSON/PNGs,37vs36 refusal using PersonalBuffReview, record/commit/push.
+Latest pushed2363065e. No production change to same-process lifecycle yet: source
+hypothesis and planned reproduction in Logs/same-process-rejoin-investigation.md.
+No UI/agents/Figma/reset/Desktop. Full non-UI scope remains active after this batch.
+
+## CURRENT seven persistent field types under focused local test
+
+Personal-effect checkpoint2363065e pushed. Baseline mixed-world test reproduced
+the gap: seven live types, only two captured. XML Logs/mixed-world-baseline-v1.xml,
+session26421 retired, guard13d58b64ea87. Extended existing atomic batch as
+WorldEffectSnapshot (same meta GUID) with Fire/Shock/Crater/Hex/Fissure in addition
+to Sheet/Barricade. Protocol37, WorldFieldBegin/Item/End,72 messages/0 mismatch.
+Remaining clocks now survive Start on five components; fire/shock retain facing;
+heat/wake/Hex/pillar art seeks mature age; Hex hydration is silent. No impact/cast
+or resource replay and no host pulse-state reset. Current source is uncommitted.
+Running ONLY IceWorldSnapshotProbe3 related Play checks, including new mixed
+roundtrip/form/expiry and previous ice/invalidation. Logs/mixed-world-restore-v1.
+Next inspect result, add focused new-kind validation, compile native field snapshot
+fixture and verify one mixed live batch + old36 refusal. Do useful draft work
+outside Assets during Editor run. No UI/agents/Figma/reset/Desktop. Queue continues.
+
 ## CURRENT personal-effect batch qualified; save then extend world snapshot
 
 All runs retired:56473build,32262ward,31440plating,80873veil,26826fade.4native

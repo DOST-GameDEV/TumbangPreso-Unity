@@ -12,6 +12,8 @@ namespace TumbangPreso.Visual
         private Transform _stone;
         private Material _seam;
         public float LifeSeconds => _duration;
+        public float Remaining => Mathf.Max(0, _duration - _age);
+        public int Side => _side;
 
         public static DanteFissurePillar Create(Vector3 position, Vector3 forward, int side, float duration)
         {

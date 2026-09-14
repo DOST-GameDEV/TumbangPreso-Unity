@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 745,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.1928863525390625
+    },
+    "owner": {
+      "samples": 667,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.4445037841796875
+    },
+    "observer": {
+      "samples": 680,
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "max_fields": 7.0,
+      "final_fields": 0.0,
+      "largest_expiry_offset": 0.3635406494140625
+    }
+  },
+  "runtime_sha256": "0a32ea0cc286134fc71f2997f72ed9efa04f66d2aeeb91d12f6f9a8a3b676dec",
+  "owner_link_one_way_ms": 150,
+  "scope": "Host-created field fixture; two real clients request and repeat complete snapshots, not skill-cast or process-restart proof"
+}

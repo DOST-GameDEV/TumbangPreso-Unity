@@ -106,9 +106,10 @@ namespace TumbangPreso.Visual
             mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
         }
 
-        private void Update()
+        private void Update() => StepTo(_age + Time.deltaTime);
+        public void StepTo(float seconds)
         {
-            _age += Time.deltaTime;
+            _age = Mathf.Max(0, seconds);
             float cooling = Mathf.Clamp01(_age / Mathf.Max(.01f, _duration));
             float fade = Mathf.Clamp01((_duration - _age) / .55f);
             for (int i = 0; i < _parts.Count; i++)

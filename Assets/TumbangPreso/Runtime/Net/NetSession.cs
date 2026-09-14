@@ -354,8 +354,8 @@ namespace TumbangPreso.Net
         // Older hosts omit that acknowledgement, so mixed peers cannot play safely.
         // 33 restores live ice collision/traction fields when a peer synchronizes.
         // 34 includes existing held fire-charge state in the joining world.
-        // 36 generalizes joining personal effects to include armor and veil.
-        public const int ProtocolVersion = 36;
+        // 37 restores the complete persistent ground-field batch for joining peers.
+        public const int ProtocolVersion = 37;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

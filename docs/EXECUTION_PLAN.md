@@ -1,5 +1,11 @@
 # Active execution plan
 
+**LATEST2026-09-15:** seven persistent ground-field kinds now restore atomically
+with remaining life and original parameters.3focused Play+5Edit cases pass,
+actual three-player repeated snapshot and37vs36 refusal pass. Exact evidence and
+visual/timing limits: reports/improvement-2026-09-15-world-fields.md. Next pending
+cast state and real same-process lifecycle, then movement/spectator/engineering.
+
 **LATEST2026-09-15:** Dante/Nemu initial personal-effect restoration qualified
 with3 focused local contracts and4 actual three-player snapshot cases, including
 both sidegrades;36vs35 refusal passed. Details and honest fixture limits:

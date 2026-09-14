@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -328,12 +328,15 @@ namespace TumbangPreso.Abilities
                                                  float duration = 3.0f, int ownerSlot = -1,
                                                  float effectScale = 1.0f, Vector3 forward = default)
         {
+            forward.y = 0;
+            forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
             var go = new GameObject("ShockTrailZone");
             go.transform.position = VfxShapes.GroundPoint(position);
             ZackSkateWake.Build(go.transform, radius, duration, forward);
             var comp = go.AddComponent<ShockTrailComponent>();
             comp.Radius = radius; comp.Duration = duration;
             comp.OwnerSlot = ownerSlot; comp.EffectScale = effectScale;
+            comp.Forward = forward;
             return go;
         }
 
@@ -350,11 +353,15 @@ namespace TumbangPreso.Abilities
             public float Radius = 2.0f;
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
+            public Vector3 Forward = Vector3.forward;
             public float EffectScale = 1.0f;
             private float _left;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
             private readonly Dictionary<int, float> _nextStaggerBySlot = new Dictionary<int, float>();
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) { _left = Duration; _started = true; } }
 
             private void Update()
             {
@@ -472,12 +479,15 @@ namespace TumbangPreso.Abilities
                                                float duration = 3.0f, int ownerSlot = -1,
                                                Vector3 forward = default)
         {
+            forward.y = 0;
+            forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("FireTrailZone");
             go.transform.position = position;
             SeanHeatGround.Build(go.transform, radius, duration, forward, false);
             var comp = go.AddComponent<FireTrailComponent>();
             comp.Radius = radius; comp.Duration = duration; comp.OwnerSlot = ownerSlot;
+            comp.Forward = forward;
             return go;
         }
 
@@ -486,10 +496,14 @@ namespace TumbangPreso.Abilities
             public float Radius = 1.8f;
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
+            public Vector3 Forward = Vector3.forward;
             private float _left;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
             private readonly Dictionary<int, float> _nextBurnBySlot = new Dictionary<int, float>();
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) { _left = Duration; _started = true; } }
 
             private void Update()
             {
@@ -783,8 +797,11 @@ namespace TumbangPreso.Abilities
         {
             public float Duration = 6.0f;
             private float _left;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) { _left = Duration; _started = true; } }
 
             private void Update()
             {
@@ -1728,12 +1745,15 @@ namespace TumbangPreso.Abilities
             private const float SingeHold = 0.30f;
 
             private float _left;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
             private float _next;
             private float _glowRest = 1.5f;
 
             private void Start()
             {
-                _left = Duration;
+                if (!_started) { _left = Duration; _started = true; }
                 if (Glow != null) _glowRest = Glow.intensity;
             }
 
@@ -1741,6 +1761,7 @@ namespace TumbangPreso.Abilities
             {
                 float dt = Time.deltaTime;
                 _left -= dt;
+                if (_left <= 0) { Object.Destroy(gameObject); return; }
 
                 // The heat going out of it, so the last second is visibly cooling rather than
                 // the whole thing vanishing on one frame.
@@ -2114,7 +2135,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
                                                float duration = 6.0f, int ownerSlot = -1,
-                                               float effectScale = 1.0f)
+                                               float effectScale = 1.0f, bool silent = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("HexWardZone");
@@ -2169,7 +2190,7 @@ namespace TumbangPreso.Abilities
 
 
 
-            GameServices.Audio?.PlayAt("sfx_hex_cast", position);
+            if (!silent) GameServices.Audio?.PlayAt("sfx_hex_cast", position);
 
             var comp = go.AddComponent<HexSigilComponent>();
             comp.Radius = radius;
@@ -3365,9 +3386,12 @@ namespace TumbangPreso.Abilities
             public int OwnerSlot = -1;
             public float EffectScale = 1.0f;
             private float _left;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
             private readonly Dictionary<int, float> _nextHexBySlot = new Dictionary<int, float>();
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) { _left = Duration; _started = true; } }
 
             private void Update()
             {

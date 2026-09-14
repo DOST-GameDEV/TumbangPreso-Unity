@@ -1,5 +1,10 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots
+are implemented and scoped checks pass; see [world-field report](reports/improvement-2026-09-15-world-fields.md).
+Pending windups and actual same-process reconnect/rematch/host loss remain open,
+alongside movement/spectator/engineering, deferred Inday and final expansion.
+
 **Verified progress,2026-09-15:** live ice and Sean/Zack joining charges are
 qualified and pushed. Dante/Nemu initial personal-effect state now passes scoped
 local and native snapshot checks, including both sidegrades. See
