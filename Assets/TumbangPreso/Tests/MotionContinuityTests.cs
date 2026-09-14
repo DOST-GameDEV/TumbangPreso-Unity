@@ -89,6 +89,26 @@ namespace TumbangPreso.Tests
 
         [TestCase(true)]
         [TestCase(false)]
+        public void MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(bool holding)
+        {
+            var art=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="dante");
+            var old=_model;_model=Object.Instantiate(art.Model,_seat.transform);_driver.Bind(_model,art.Clips);Object.DestroyImmediate(old);
+            var graph=Get<PlayableGraph>(_driver,"_graph");graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+            Set(_motor,"_grounded",true);Set(_motor,"_velocity",new Vector3(0,0,2.4f));_motor.HoldingSlipper=holding;
+            _driver.PlayOneShot("hero-dante-roar");Assert.True(_driver.IsPlayingAction,"The actual guard cast did not bind.");
+            Set(_driver,"_weight",1f);Invoke(_driver,"Blend");
+            var front=(AnimationClipPlayable)Invoke(_driver,"Front");front.SetSpeed(0);front.SetTime(.18f);
+            var leg=_model.GetComponentsInChildren<Transform>().First(t=>t.name=="leg-right");
+            var arm=_model.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-right");
+            Set(_driver,"_gaitPhase",.25f);Invoke(_driver,"AdvanceGait",.1f);graph.Evaluate(0);
+            var first=leg.localRotation;var upper=arm.localRotation;
+            Set(_driver,"_gaitPhase",.75f);Invoke(_driver,"AdvanceGait",.1f);graph.Evaluate(0);
+            Assert.Greater(Quaternion.Angle(first,leg.localRotation),10f,"A mobile armor cast froze both feet while the motor kept moving.");
+            Assert.Less(Quaternion.Angle(upper,arm.localRotation),.1f,"Walking replaced the guard's upper-body cast.");
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
         public void BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(bool holding)
         {
             Set(_motor,"_grounded",true);_motor.HoldingSlipper=holding;

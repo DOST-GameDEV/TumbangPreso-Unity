@@ -1275,13 +1275,40 @@ namespace TumbangPreso
                 if (hit.collider.GetComponentInParent<Slipper>() != null) continue;
                 if (hit.collider.name.StartsWith("Floor", StringComparison.OrdinalIgnoreCase)) continue;
 
-                // Vertical / obstacle hits (ground hits are handled by Land)
-                if (Vector3.Dot(hit.normal, Vector3.up) > 0.6f) continue;
-
-                if (hit.distance < closestDist)
+                var contact=hit;
+                if(hit.distance<=.0001f)
                 {
-                    closestDist = hit.distance;
-                    closest = hit;
+                    // An initial sphere overlap reports a synthetic reverse normal
+                    // and point (0,0,0). It is not a contact at the court origin.
+                    // Resolve a local surface before classifying ground versus wall.
+                    var meshCollider=hit.collider as MeshCollider;
+                    if(meshCollider==null||meshCollider.convex)
+                    {
+                        var point=hit.collider.ClosestPoint(previousPos);
+                        var outward=previousPos-point;
+                        if(outward.sqrMagnitude>.000001f)
+                        {
+                            contact.point=point;contact.normal=outward.normalized;
+                            if(Vector3.Dot(contact.normal,disp)>=0)continue;
+                        }
+                        else
+                        {
+                            // A deeply embedded launch stays local and rebounds out.
+                            contact.point=previousPos;
+                        }
+                    }
+                    else if(hit.collider.Raycast(new Ray(previousPos,disp.normalized),out var local,dist+Balance.SlipperHitRadius))
+                        contact=local;
+                    else continue;
+                }
+
+                // Vertical / obstacle hits (ground hits are handled by Land)
+                if (Vector3.Dot(contact.normal, Vector3.up) > 0.6f) continue;
+
+                if (contact.distance < closestDist)
+                {
+                    closestDist = contact.distance;
+                    closest = contact;
                     hitFound = true;
                 }
             }

@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 461,
+      "caster_rise": 0.06,
+      "front_travel": 0.047082589999999994,
+      "rear_travel": 0.0,
+      "shoe_travel": 0.0,
+      "pillars": 0.0,
+      "active_samples": 67,
+      "active_stun": 0.0,
+      "guard_travel": 7.1968289,
+      "late_stun": 0.7696357
+    },
+    "owner": {
+      "samples": 454,
+      "caster_rise": 0.06,
+      "front_travel": 0.0,
+      "rear_travel": 0.0,
+      "shoe_travel": 0.0,
+      "pillars": 0.0,
+      "active_samples": 58,
+      "active_stun": 0.0,
+      "guard_travel": 7.1725466,
+      "late_stun": 0.7508504,
+      "settled_error": 0.110000002
+    },
+    "observer": {
+      "samples": 454,
+      "caster_rise": 0.060000012000000005,
+      "front_travel": 0.0,
+      "rear_travel": 0.0,
+      "shoe_travel": 0.0,
+      "pillars": 0.0,
+      "active_samples": 67,
+      "active_stun": 0.0,
+      "guard_travel": 7.211619,
+      "late_stun": 0.7466381,
+      "settled_error": 0.110000002
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "88f1cae6fca88b4ae23966da6af2ac8c2778981356afce1cddf44cc632f9d11f"
+}

@@ -4269,7 +4269,8 @@ namespace TumbangPreso.Abilities
         /// </param>
         public static void CreateExplosion(Vector3 center, float radius, float knockback, float stunTime,
             int sourceSlot, string comicText = "KABOOM!", ISet<int> excludedSlots = null,
-            ExplosionStyle style = ExplosionStyle.Fire, Vector3 facing = default)
+            ExplosionStyle style = ExplosionStyle.Fire, Vector3 facing = default,
+            System.Predicate<Vector3> affectsPoint = null, bool includeVisuals = true)
         {
             // ⚠️⚠️ THE PICTURE IS DRAWN BEFORE THE ROUND IS ASKED FOR, AND THAT ORDER IS THE
             // POINT. This function opened with `if (round == null) return;`, so an explosion
@@ -4279,7 +4280,7 @@ namespace TumbangPreso.Abilities
             // item 2. Splitting the visual out costs one call and makes the whole § 8 pass
             // reviewable against pictures instead of against prose. In play nothing changes:
             // a live match always has a round.
-            CreateExplosionVisual(center, radius, comicText, style, facing);
+            if(includeVisuals)CreateExplosionVisual(center, radius, comicText, style, facing);
 
             if (!NetAuthority.ShouldResolve()) return;
             var round = GameServices.Round;
@@ -4290,6 +4291,7 @@ namespace TumbangPreso.Abilities
             {
                 if (p == null) continue;
                 if (excludedSlots != null && excludedSlots.Contains(p.PlayerSlot)) continue;
+                if (affectsPoint != null && !affectsPoint(p.transform.position)) continue;
                 Vector3 to = p.transform.position - center;
                 to.y = 0.0f;
                 float d = to.magnitude;
@@ -4352,7 +4354,8 @@ namespace TumbangPreso.Abilities
                 var caster = sourceSlot >= 0 ? round.PlayerAt(sourceSlot) : null;
                 bool castersOwnCan = caster != null && caster.IsDefender;
 
-                if (canDiff.magnitude <= radius && !castersOwnCan)
+                if (canDiff.magnitude <= radius && !castersOwnCan
+                    && (affectsPoint == null || affectsPoint(round.Lata.transform.position)))
                 {
                     round.Lata.HostKnockDown(sourceSlot);
                 }

@@ -454,3 +454,18 @@ are derived from these existing roster models, not separately sourced art.
 `step_rubber` and `slide_scrape` derive from retained project recordings plus generated
 filtered noise; their reproducible recipe is `tools/author_motion_foley.py`. Existing
 recording licences and attribution continue to apply. No paid assets were acquired.
+
+
+### Dante contact timing, 2026-09-14
+
+`tools/refine_dante_audio.py` derives seven Dante cues from the existing baked WAVs
+at `b106c6ac`. It preserves their recorded-source attribution and does not download
+new material. The normal/Long Tremor pressure cues last0.30seconds, Fissure pressure
+lasts0.40, and the armor lock cues close in0.52/0.64seconds. The contact slam retains
+its short mining transient and lower stone body. Theme/pressure layers are quieter
+so contact and objective sounds have room. Signal checks cover clipping, endpoints,
+finite samples and level limits; they do not establish listening approval.
+
+Default execution writes review files to Logs. Use `--write-assets` as the final
+Dante step after a broad source-audio rebuild, with Unity closed. Inputs are pinned,
+so repeated execution cannot compound gain/filtering. No can or UI cue is changed.

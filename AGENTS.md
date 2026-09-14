@@ -1,5 +1,60 @@
 # Working instructions for ChatGPT / Codex
 
+**Latest shield permission:** the owner allows visual refinement of Dante's
+orbiting shields if it clearly improves them. The approved current design remains
+the baseline; do not change it gratuitously. Fitted armor's repeated markings are
+the active correction. This supersedes older absolute shield-lock language below.
+The distinct-skill/part-design rule and rejection of noisy textures still apply.
+
+**Standing kit-art rule, saved at owner request:** abilities may share their hero's
+theme, but each ability must have its own silhouette, form, motion, staging and
+visual details. Do not make a kit look like repeated versions of one effect, and
+do not copy a single texture or drawing across all its skills. The owner explicitly
+rejected that approach on Dante. This complements distinct per-part markings and
+does not authorize changing his approved orbiting shields.
+
+**Newest armor correction and general design rule:** do not reuse one pattern,
+symbol, crack drawing or scaled motif across every surface and call it polish.
+Design each part deliberately; vary structure, placement and detail density, and
+leave some surfaces plain when that improves the whole. This applies across the
+game's skill art. Owner now asks to change ONLY the repeated markings on Dante's
+FITTED ARMOR. The ORBITING SHIELDS remain approved and must stay exactly unchanged.
+This narrows the older broad shield-lock wording below: fitted armor markings are
+explicitly reopened; orbiting shield geometry, markings, materials and motion are
+locked. Do not reintroduce noisy texture or redesign the retained body/outfit.
+
+**SHIELDS APPROVED AND LOCKED:** owner says "the shields are good u dont have to
+touch them anymore". Preserve the three ORBITING carved protectors exactly as reviewed in Logs/dante-clean-orbit-ward and the clean orbit
+motion capture. Do not redesign, retexture, resize or reanimate these orbiting shields. The owner
+has subsequently reopened only the repetitive markings on the fitted armor.
+Continue earthquake, functional/network validation and the remaining project queue.
+
+**Newest explicit texture rejection:** owner rejects the noisy basalt-grain layer
+on Dante's new armor/pillars and prefers the preceding clean dark shapes. REMOVE
+DanteStoneSurface overlays; do not reapply them or treat texture as a quality fix.
+Improve silhouette, carved form, selective glowing seams and motion. Titan Fissure
+should feel like an earthquake to nearby players, with restrained shake/aftershocks
+and small environmental stone reactions that keep aiming readable.
+
+**Newest Carapace direction:** owner wants Dante's stone plates to be more obvious.
+KEEP the current fitted armor and ADD carved floating protectors that visibly
+orbit him. This explicitly supersedes avoiding all orbiting elements; the former
+plain cubes remain rejected. Give the orbiting stones deliberate protective shape,
+motion, glow and expiry. Preserve his face, first-person clarity and actual immunity.
+
+**Latest Dante direction:** owner permits more demonic skills and a fitting Filipino
+cultural connection. Use original basalt, molten cracks and horn/claw silhouettes
+with the mountain-struggle/earthquake motif of Bernardo Carpio. The demonic design
+belongs to fictional Dante; do not describe the folk hero as a demon or copy modern
+artwork. Preserve the character, readable court and proven skill mechanics.
+
+**Latest skill-quality instruction:** owner reiterates that skills must feel like
+real powers and look good, not plain blocks or placeholders. Treat every skill
+as an intentional sequence of casting, authored form, motion, impact, sound and
+recovery, with a readable gameplay purpose. Current repeated-hex Carapace is a
+functional prototype, not accepted final art. Technical passes do not satisfy
+the visual quality requirement. Keep the full six-kit scope and native TUMP style.
+
 **Newest priority change:** owner explicitly parks Inday FPP work for LATER in
 TODO.md and asks to do other project work now. Preserve the in-progress actual
 source-arm copy; do not continue its visual iteration as the immediate task.

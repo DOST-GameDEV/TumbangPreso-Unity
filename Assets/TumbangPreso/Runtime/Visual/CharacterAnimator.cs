@@ -614,15 +614,17 @@ namespace TumbangPreso.Visual
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
-            bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || _throwReleaseTime >= 0)
+            bool mobileGuard = _current == "hero-dante-roar";
+            bool movingAction = _throwReleaseTime >= 0 || mobileGuard;
+            bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)
                 && (_carrier == null || _carrier.ChannelRatio <= 0)
-                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || _throwReleaseTime >= 0);
+                && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || movingAction);
             float target = layered && speed > WalkSpeedThreshold ? 1f : 0f;
             _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, dt / .08f);
             // Accepted actions immediately own every bone. A leg layer lingering over a
             // slide or stomp would erase its support pose at the moment of commitment.
-            if ((_oneShotLeft > 0 && _throwReleaseTime < 0) || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
+            if ((_oneShotLeft > 0 && !movingAction) || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
             _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, dt / .10f);
             float reference = Mathf.Lerp(_walkReference, _runReference, _runWeight);
             float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);

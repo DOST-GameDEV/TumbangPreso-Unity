@@ -366,10 +366,19 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForSecondsRealtime(.5f);
                 Object.FindFirstObjectByType<SliceRunner>().Begin();
                 yield return new WaitForSecondsRealtime(.3f);
+                var ready=Object.FindFirstObjectByType<ReadyGate>();
+                if(ready!=null){ready.StartLocalCountdown();yield return new WaitForSeconds(3.6f);}
                 foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
                 foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
+                foreach(var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>(FindObjectsSortMode.None))switcher.enabled=false;
                 var who = GameServices.Round.PlayerAt(1);
                 who.IsBot = true; // A review cast must never write a player's unlock history.
+                foreach(var other in GameServices.Round.Players)
+                {
+                    if(other==who)continue;
+                    other.Intent.Clear();other.Intent.Parked=true;
+                    other.Teleport(new Vector3(-9,other.transform.position.y,5+other.PlayerSlot*3));
+                }
                 who.CharacterIndex = Roster.GetPeople(GameMode.HeroStrike).Select((p,i) => (p,i)).First(p => p.p.Id == hero).i;
                 var entry = RosterBook.Load().People.First(p => p.Id == hero);
                 who.GetComponent<CharacterVisual>().ApplyModel(entry.Model, entry.Tint, entry.Clips, entry.Palette, entry.PetModel);
@@ -380,6 +389,8 @@ namespace TumbangPreso.PlayTests
                 var witness = MakeWitness();
                 for (int slot = 0; slot < 3; slot++)
                 {
+                    string selectedSlot=Environment.GetEnvironmentVariable("TUMP_REVIEW_SKILL_SLOT");
+                    if(!string.IsNullOrEmpty(selectedSlot)&&selectedSlot!=(slot+1).ToString())continue;
                     abilities.ResetKit();
                     abilities.Kit.AddUltimateCharge(100);
                     who.ClearStun(); who.ClearTrip();
@@ -402,13 +413,17 @@ namespace TumbangPreso.PlayTests
                     Verb verb = slot == 0 ? Verb.Skill1 : slot == 1 ? Verb.Skill2 : Verb.Ultimate;
                     var answerSlot = (HeroAbilitySystem.Slot)slot;
                     bool accepted = false;
+                    bool movingGuard=hero=="dante"&&slot==1&&Environment.GetEnvironmentVariable("TUMP_REVIEW_MOVING_GUARD")=="1";
                     float captureSeconds=Mathf.Max(3.2f,ability.Duration+ability.Windup+1.5f);
+                    if(hero=="dante")captureSeconds=Mathf.Max(captureSeconds,slot==2?6.5f:4.3f);
                     yield return Record(witness, hero + "-" + (slot+1), captureSeconds, who, t =>
                     {
                         who.Intent.Set(verb, t >= .25f && t < .65f);
+                        if(movingGuard)who.Intent.Move=t>=.1f&&t<4.5f?new Vector2(.25f,.45f):Vector2.zero;
                         if (t > .25f && abilities.LastAnswer(answerSlot) == HeroKit.CastOutcome.Cast
                             && abilities.SecondsSinceAnswer(answerSlot) < 2.8f) accepted = true;
-                    });
+                    },witnessOffset:hero=="dante"&&slot==2?new Vector3(-4,4,-6):null,
+                        witnessLookHeight:hero=="dante"&&slot==2?2.2f:.9f);
                     who.Intent.Set(verb, false);
                     coverage.AppendLine($"{hero},{slot+1},{ability.CastAction},{ability.ViewmodelAction},{accepted}");
                     File.WriteAllText(Path.Combine(Output,"hero-coverage.csv"), coverage.ToString());
@@ -438,7 +453,8 @@ namespace TumbangPreso.PlayTests
         }
 
         internal static IEnumerator Record(Camera camera, string name, float seconds,
-            CharacterMotor subject = null, Action<float> drive = null, Vector3? witnessOffset = null)
+            CharacterMotor subject = null, Action<float> drive = null, Vector3? witnessOffset = null,
+            float witnessLookHeight = .9f)
         {
             string folder = Path.Combine(Output, name);
             Directory.CreateDirectory(folder);
@@ -471,7 +487,7 @@ namespace TumbangPreso.PlayTests
                             if (subject != null)
                             {
                                 camera.transform.position = subject.transform.position + (witnessOffset ?? new Vector3(3, 1.5f, 4));
-                                camera.transform.LookAt(subject.transform.position + Vector3.up * .9f);
+                                camera.transform.LookAt(subject.transform.position + Vector3.up * witnessLookHeight);
                                 var familiar=subject.GetComponent<CharacterVisual>()?.Companion;
                                 if (familiar!=null && Environment.GetEnvironmentVariable("TUMP_REVIEW_FAMILIAR")=="1")
                                 {
@@ -491,6 +507,7 @@ namespace TumbangPreso.PlayTests
                             {
                                 var target = owner.targetTexture;
                                 owner.targetTexture = rt;
+                                ComicPopup.PrepareView(owner);
                                 owner.Render();
                                 owner.targetTexture = target;
                                 SaveFrame(rt,ldr,pixels,Path.Combine(ownerFolder,$"{frame:D5}.jpg"));
@@ -515,6 +532,7 @@ namespace TumbangPreso.PlayTests
                             try
                             {
                                 camera.targetTexture = rt;
+                                ComicPopup.PrepareView(camera);
                                 camera.Render();
                             }
                             finally

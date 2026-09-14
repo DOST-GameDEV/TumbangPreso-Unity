@@ -184,6 +184,8 @@ namespace TumbangPreso.CameraSystem
 
         private float _shakeStrength;
         private float _shakeLeft;
+        private float _groundRumbleAge=3, _groundRumbleStrength;
+        public Vector3 GroundRumbleOffset { get; private set; }
         private float _vmKickLeft;
         private Vector3 _vmKickOffset;
 
@@ -458,6 +460,7 @@ namespace TumbangPreso.CameraSystem
             _impactPunchLeft = 0.0f;
             _shakeLeft = 0.0f;
             _shakeStrength = 0.0f;
+            _groundRumbleAge=3;_groundRumbleStrength=0;GroundRumbleOffset=Vector3.zero;
 
             _character = character;
             _mode = CameraMode.Fpp;
@@ -1109,6 +1112,36 @@ namespace TumbangPreso.CameraSystem
             _shakeLeft = Mathf.Max(_shakeLeft, duration);
         }
 
+        public void BeginGroundRumble(float strength)
+        {
+            if(strength<=0)return;
+            if(_groundRumbleAge>=2.4f)_groundRumbleStrength=0;
+            _groundRumbleStrength=Mathf.Clamp01(Mathf.Max(_groundRumbleStrength,strength));
+            _groundRumbleAge=0;
+        }
+
+        public static float GroundRumbleEnvelope(float seconds)
+        {
+            if(seconds<0||seconds>=2.4f)return 0;
+            float primary=.82f*Mathf.Exp(-seconds*2.6f);
+            float first=.26f*Mathf.Exp(-Mathf.Pow((seconds-.95f)/.11f,2));
+            float second=.16f*Mathf.Exp(-Mathf.Pow((seconds-1.65f)/.13f,2));
+            return Mathf.Clamp01(primary+first+second)*Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.06f))
+                *Mathf.Clamp01((2.4f-seconds)/.3f);
+        }
+
+        private void StepGroundRumble()
+        {
+            GroundRumbleOffset=Vector3.zero;
+            if(_groundRumbleAge>=2.4f){_groundRumbleStrength=0;return;}
+            _groundRumbleAge+=Time.deltaTime;
+            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength;
+            // Small smooth translation, no aim rotation, time scaling or gameplay RNG.
+            GroundRumbleOffset=transform.right*(Mathf.Sin(_groundRumbleAge*50.27f)*.010f*amount)
+                +Vector3.up*(Mathf.Sin(_groundRumbleAge*73.8f+.8f)*.004f*amount);
+            transform.position+=GroundRumbleOffset;
+        }
+
         // ------------------------------------------------------------------ hitstop
 
         /// <summary>
@@ -1197,6 +1230,7 @@ namespace TumbangPreso.CameraSystem
 
         private void StepShake()
         {
+            StepGroundRumble();
             if (_impactPunchLeft > 0.0f)
             {
                 _impactPunchLeft -= Time.deltaTime;

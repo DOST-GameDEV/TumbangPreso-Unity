@@ -123,6 +123,7 @@ namespace TumbangPreso.Visual
         private Text _text;
         private CanvasGroup _group;
         private Transform _cameraTransform;
+        private static bool _preparingCamera;
         private float _elapsed;
         private float _tiltAngle;
         private float _baseScale;
@@ -206,9 +207,30 @@ namespace TumbangPreso.Visual
         }
 
         private void OnDestroy() => Live.Remove(this);
+        public static void PrepareView(UnityEngine.Camera camera)
+        {
+            if(camera==null||_preparingCamera||Live.Count==0)return;
+            bool changed=false;
+            foreach(var popup in Live)
+            {
+                if(popup==null||!popup.isActiveAndEnabled)continue;
+                var rotation=camera.transform.rotation*Quaternion.Euler(0,0,popup._tiltAngle);
+                if(Mathf.Abs(Quaternion.Dot(popup.transform.rotation,rotation))>=.999999f)continue;
+                popup.transform.rotation=rotation;changed=true;
+            }
+            if(!changed)return;
+            // World-space UI batches can retain the previous camera's transform.
+            // Rebuild once for a changed view, not once per caption every frame.
+            _preparingCamera=true;
+            try{Canvas.ForceUpdateCanvases();}
+            finally{_preparingCamera=false;}
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => Live.Clear();
+        private static void ResetStatics()
+        {
+            Live.Clear();_preparingCamera=false;
+        }
 
         // ------------------------------------------------------------------ the named callouts
 
@@ -302,9 +324,9 @@ namespace TumbangPreso.Visual
             ink.Radius = 6.0f;
 
             transform.localScale = Vector3.zero;
-
             if (UnityEngine.Camera.main != null)
                 _cameraTransform = UnityEngine.Camera.main.transform;
+
         }
 
         /// <summary>A duplicate arriving: refresh the life and give it a visible bump.</summary>
@@ -330,6 +352,7 @@ namespace TumbangPreso.Visual
 
             if (_cameraTransform != null)
                 transform.rotation = _cameraTransform.rotation * Quaternion.Euler(0, 0, _tiltAngle);
+
 
             // Rises fast and slows, so the eye is pulled up to it and then let go.
             transform.position += Vector3.up * (FloatSpeed * (1.0f - t * 0.55f) * Time.deltaTime);

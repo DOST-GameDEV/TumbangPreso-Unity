@@ -1,251 +1,134 @@
 # Active TUMP rework ledger
 
-## NEWEST PRIORITY: Inday deferred by owner
+## Current work and exact process
 
-The owner explicitly says park Inday FPP in TODO and do other work NOW. It is
-recorded at the top of TODO.md and AGENTS.md. Do not keep iterating those arms.
-Direct-source copy v1 passed2/2 character switching + actual quick/held/moving
-throws. Uniform full-reach source copy v2 authored successfully, scale2.961006;
-its framing is not visually reviewed, and remains deferred. Author has exited,
-profile receipt7e665ccf9969. All Inday guard reconstructions below are superseded.
+Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
+Branch ASTRAReworks. Earlier saved checkpointsbc8a5f00 and b106c6ac remain intact.
+Dante source/evidence is ready for the bounded checkpoint commit. Origin was
+fetched and matched b106c6ac before this commit; inspect Git for current exact HEAD.
+INTERNAL v4 build SUCCEEDED1057MB/42s, guard248e7d906c1d; all owned processes exited.
+Output Builds/DanteSkillReview/TumbangPreso.exe, runtimeSHA
+e1ef74a15c6db59c25406391d11c1ca86c0da7ffc51fb1c229a4bf959841a4c6.
+Fitted armor front/back/side review PASSED1/1, guard6fef8d86e5d1; images inspected.
+Only verified whitespace-only Inday import dirt was restored, with backup.
+Next: commit/push Dante checkpoint, then Phaister warning/curse/ceiling issues and
+remaining full queue. No unused task-owned browser tabs/previews/helpers.
 
-CURRENT: backpedal correction implemented and verified; saving its bounded checkpoint.
-Baseline2/2 failed with identical -0.02793851m foot sweep in both travel directions.
-CharacterAnimator now eases signed gait direction over.12seconds and explicitly
-shares the base walk/sprint phase with the masked carrying legs. No physical
-movement/control changes. New graph binds initialize from observed direction.
-Six focused gait cases pass; ordinary directional carrying/empty motion passes
-1/1 with216/219samples. Normal-speed owner/body MP4s inspected and saved under
-Logs/directional-locomotion-backpedal-v2; report/evidence in reports/improvement-
-2026-09-14/backpedal-motion.md and backpedal-evidence. No active Editor/player/helper.
-Next continue the concrete Dante/Phaister
-kit work and remaining strafe/turning/recovery review. Do not call the full motion
-or whole-kit queue complete. Inday remains explicitly deferred.
-The internal DestinationEquipmentReview binary predates this gait correction.
+## Latest owner art direction, authoritative
 
-Baseline directional-locomotion-baseline-v1 passed1/1, profile5ae0402d61c2.
-Berto carry/empty forward,backward,strafe,sprint,turn/start-stop each212frames,
-normal-speed owner/body MP4s and pose sheets in corresponding Logs folder.
+- Skills must be thoughtfully authored powers, not plain blocks/placeholders.
+- A hero's kit may share a coherent theme, but every skill needs its own form,
+  silhouette, motion, staging and visual details. Never copy one texture/drawing
+  over all skills or every component. Some plain surfaces improve composition.
+- Owner REJECTS the noisy texture put on Dante's new armor/pillars. Helper
+  DanteStoneSurface.cs/meta and all calls were deleted. NEVER restore that layer.
+- Owner approved the three orbiting shields, then allowed optional visual
+  improvements if useful. Preserve the approved baseline; no gratuitous changes.
+- Owner specifically reopened fitted armor's repeated markings. They now have
+  distinct keystone/left-wing/right-wing/back/flank fractures and plain shoulders.
+  Orbiting shield geometry, drawing, materials and motion remain unchanged.
+- User asked these rules in AGENTS/all relevant docs and persistent memory.
+  Saved update notes under C:/Users/matth/.codex/memories/extensions/ad_hoc/notes:
+  2026-09-14-distinct-tump-skill-art.md and2026-09-14-tump-shield-permission-update.md.
+  These memory files were used; when eventually writing a final reply, append one
+  memory citation block, using their actual line ranges. No final/handoff requested.
+- Inday FPP is explicitly DEFERRED. Preserve actual-source copy v2, unaccepted
+  framing. No more Inday iteration now. Details are in the archived ledger below.
 
-SAVED AND PUSHED checkpointbc8a5f00ed88ffc8284673ed48c24cf78002d350 on ASTRAReworks,
-Improve throw handling and preserve requested character restorations. Origin is
-current with this checkpoint; main and other checkouts untouched. This includes
-all prior source and evidence plus the explicitly DEFERRED Inday source-copy WIP.
-Do not mark Inday framing accepted. No new Desktop build/update.
+## Dante implemented and validated
 
-Throw/equipment/ghost checkpoint is now qualified for its tested scope:
-- final-carry-clearance1/1 passed all18x10x6x3 actual head-surface samples.
-- Fresh INTERNAL DestinationEquipmentReview build succeeded1057MB/132seconds.
-  EXE6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8.
-  Runtimec49a540168f800fcde948114e9d9f3b1fc208379be0d815091d1fbfbded82b17.
-- Classic3process throw and normal staged familiar matrices pass.
-- Hero150msone-way delay+observer rejoin passes133active rejoined samples.
-- Familiar150ms+owner reconnect passes24active field samples, matchingfield/yaw,
-  normalexpiry/no charge refund. First parallel6player run loaded after expiry;
-  isolated repeat fits actual7secondfield. No production rejoin change was needed.
-- net_familiar_matrix now restores only3namedprofiles. Both helpers corrected
-  narrow observation-window bugs; no relaxed matching/field assertions.
-- No leftover Editor/player/network helper from completed matrices.
-- Evidence/report: reports/improvement-2026-09-14/destination-validation.md and
-  destination-evidence. Only test/helper/report edits follow that binary so far.
+- Q contact0.30s shared with retained body/FPP; caster excluded. Default shoves
+  rivals and kicks Loose shoes into actual flight; Long Tremor trips and keeps
+  targets/shoes nearby. Warning uses equipped radius once, not double gain.
+- Fixed ground initial-overlap collision bug: SphereCastAll's synthetic point0
+  was treated as a real wall contact. Slipper now resolves local contacts and
+  preserves wall rebounds/escaping motion. Earlier8.13m shoe movement was a
+  TELEPORT, not successful flight. Never reuse that result as kick proof.
+- Actual corrected Q: caster0, rival.848m, shoe10.79999m OUTWARD, contact.30364s;
+  Long Tremor target/shoe0, triptrue, contact.30481s. Dedicated overlap/wall test passes.
+- Carapace: fitted8piece armor +3closed carved orbiting protectors, custom fracture
+  marks, clean material, opening/closing, no colliders, hidden only from wearer
+  FPP. Moving upper-body cast keeps masked leg gait. Immunity/Heavy Plating kept.
+- R: forward-clipped hit excludes caster/rear; two hewn/hooked solid faces rise,
+  separate.28m, leave central gap and expire5s. Fixed ground fractures/cooling.
+  Removes duplicate magma eruptions/cube sparks/green flash-column/reticle.
+- Requested earthquake:2.4s bounded translation, two decaying aftershocks, no aim
+  rotation/timescale change; nearby players feel it. Pillars and low fault stones
+  rattle slightly. No existing character/environment geometry was redesigned.
+- Seven existing Dante WAV cues refined from pinned b106c6ac material with
+  tools/refine_dante_audio.py. Signal checks pass; no auditory approval claimed.
+- ComicPopup.PrepareView fixes manual opposing-camera captures before Camera.Render.
+  Camera callbacks FAILED and were removed; normal Update facing remains.
 
-Next collect directional baseline, inspect owner/body ordinary motion, make only
-justified movement corrections and targeted tests. Continue bounded validated checkpoints on ASTRAReworks; latest pushed is bc8a5f00. No Desktop update, agents, other chats, Figma, paid calls or resets.
+Validation: clean-orbit-earthquake-v1 PASSED7/7, profile59e73222ceaa.
+Distinct fitted markings PASSED1/1 in dante-distinct-armor-v1 (c92092c0fb7d) and
+front-left review dante-distinct-armor-front-v2 (6fef8d86e5d1). Images inspected.
+Prior contact/reset/forward-hit/caption/mobile-gait/ground tests recorded in report.
 
-## Prior Inday implementation checkpoint, now deferred
+Five actual3process v3 cases PASS with150ms EACH direction: Stomp, Long Tremor,
+Carapace, Heavy Plating, Fissure. Tests check selected variants, charges, proper
+outward flight, trip, immunity/own movement/expiry,3orbiters,2pillars and local quake.
+Ground rumble peaks3.49mm host/6.84mm owner/4.74mm observer. Rear stays still.
+Settled peer positions agree within0.11m. Both ward variants block a real hit and
+allow stun again after expiry. Source/CSV/JSON in dante-evidence. Runtime v3SHA:
+88f1cae6fca88b4ae23966da6af2ac8c2778981356afce1cddf44cc632f9d11f.
+The later fitted marking change is cosmetic; do not repeat all5mechanical matrices
+merely for marks. Current v4 build includes those marks and unchanged mechanics.
 
-Owner rejected guard-reconstruction v6 and explicitly said to copy her actual
-restored arms into FPP. This supersedes the generic block-hand frame for INDAY.
-Use source left/right sleeve+hand+guard meshes/material/palette; only rigid frame
-rotation, translation and ONE uniform scale for camera fit. No clamping, axis
-stretching, reconstructed coral details or replacement hands. Existing actions stay.
-Source's long built-in pink held object is separated from clothing; don't duplicate
-it into FPP. Original restored body is unchanged. AGENTS.md top holds this request.
+Earlier failed peer fixtures: origin0 has no host defender shoe; local countdowns
+are not a shared timebase; observer's owning motor overwrote host-only target pose.
+Fixture now uses actual player3 shoe, shared host-cast clock and target-owner init.
+Do not weaken assertions or diagnose those resolved fixture faults as gameplay.
 
-ACTIVE: IndayFppArmAuthor v1, Python PID18968, log/stdout/stderr/pid at
-Logs/inday-source-arm-author-v1. No imported/C# edits until exit. New author copies
-all rigid arm triangles except connected long prop, keeps original normals/UVs,
-uniformly frames at .40m cross-section, tip at .84m animation reach. Runtime
-UseIndaySourceArms uses those whole arms and returns before generic reconstruction.
-Resources/Models/FppDetails/inday_{left,right}_arm.asset are the new outputs.
-Old FppGuardAuthor and guard assets/build method are still present but superseded;
-archive is Logs/rejected-inday-guard-reconstruction. Remove their inactive path
-once the direct source mesh is verified so it cannot reappear.
+Report: docs/reports/improvement-2026-09-14/dante-skills.md; dante-evidence includes
+current clean recordings and final armor images. No rejected texture is final art.
+Approved/preferred owner photos: ArtSource/dante/owner-feedback-2026-09-14.
 
-Newest completed hands-guide-final-v4 passed2/2 (profile f89e9af7468e): all18 FPP/
-body captures and direction guide through real ReadyGate countdown in all3maps.
-Images Logs/fpp-restored-guard-v6 are REJECTED for Inday, other characters useful.
-Nemu cuff overlap corrected; Phaister stripe gold, matching body, not red.
-Guide visible contributes562..672 changed pixels at1280x720; actual on/off files
-and active-match HUD in Logs/aim-guide-active-v3. No endpoint landing square.
+## Earlier completed checkpoints to preserve
 
-Nemu carry solved: lowering -22/-32 failed. Explicit original-clip orientation
-sweep found outward Y+20 clears all10gear/charge/spin samples. Baked author v4
-(profile f0ec72c9bec8). Runtime quick/held-left/moving-right pass with zero actual
-head-surface penetrations (6/82/78 held samples) in hands-guide-carry-v3.xml.
-Logs/nemu-outward-carry-motion-v1 includes timestamped owner/body MP4s. Still run
-normal all180 surface regression once against final bake, not the removed sweep.
-Diagnostic source/results preserved at Logs/nemu-carry-orientation-*.
+bc8a5f00: equipment9point/no-domination rows, real can rebound/pickup settle, nominal
+short general-direction aim guide with movement/early-hold error, carry clearance,
+old Inday body and old expressive mini Nemu restored, current monster unchanged,
+Zack thicker thumb-free hands, matching FPP details and hue-preserving colour grade.
+All18x10x6x3 actual head-surface carry samples passed. Focused actual throws passed.
+The floating capture shoes were fixture HostDisarm placement, not a proven old
+production defect. The NEW ground-overlap kick bug above is separately reproduced.
+Old ghost all11expressions +mini->current monster->mini motion inspected.
+b106c6ac: backpedal foot reversal/shared gait phase,6focused contracts and ordinary
+movement pass. Strafe/turning/other movement polish remains open.
+DestinationEquipmentReview binary predates backpedal and Dante. Its4network throw/
+familiar checks passed, including150ms delay/rejoin and profile preservation.
+Same-hero loadout refresh ALREADY exists in MatchRpc.UpdateLoadout; do not redo it.
 
-Ghost KuroIdleReviewProbe passed: all11fidgets, current-monster portrait, full old
-mini -> retained current monster -> mini ordinary-speed sequence6.945seconds.
-Logs/restored-kuro-motion-v1 has frames/CSV/MP4s. Inspected transition and idle
-frames; palette helper shared with actual CharacterVisual. Earlier five targeted
-mechanics checks passed. Real-process familiar cases remain before final signoff.
+## Remaining work, keep going
 
-Latest owner model question answered from current turn_context record: model
-GPT-6 Astra, effort xhigh. No configuration changes. Current session continues.
+1. Finish saving Dante v4 checkpoint, then Phaister warning-before-curse and moon
+   under Ilalim ceiling. Current ult has no windup, curses before1.55s drawing,
+   and moon at11m despite8m soffit. Q/blink/alts need authored quality too.
+2. Whole6kits/18skills+alts, preserving successful Sean/Zack/Cheska/Nemu work;
+   each skill distinct inside its theme. Body/FPP/SFX/counterplay must agree.
+3. Strafe/turn/start-stop/foot contact/recovery/mash/action interruptions and
+   remaining throwing/Pektus/input paths. No physical-device certification claims.
+4. Actual rematch/reconnect/host loss/interruption/loadout validation; spectator
+   free/follow/POV authority, collision/framing, highlights/replays.
+5. Relevant TODO152/152.4 engineering/performance/request-event/AI retrieval/lunge.
+6. UI LAST: docs/UI_REMAINING_TODO.md, preserve pending-held-info.patch and original
+   logo/full palette/Darumadrop/controller18callouts. Known pause-child-settings
+   discard/return failure remains. Inday FPP stays deferred until later.
 
-This ledger is authoritative for compaction. Continue the whole queue in this
-conversation; owner repeatedly says finish. No new commit/push/build this PC yet.
+## Operational rules and archives
 
-### Workspace and strict boundaries
+No agents/subagents/other chats, Figma, paid calls, usage resets or Desktop update.
+Only necessary related tests, no routine full suites. Parallel independent work.
+One Editor at a time; tools/run_unity_guarded.py, profile equipment-destination-review,
+Unity6000.5.8f1 installed at C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe.
+Use explicit INTERNAL buildOutput. Guard repairs missing ALLUSERSPROFILE only in
+child env, snapshots/restores named profiles. No C#/imported edits while Editor runs.
+Other main checkout is unrelated/dirty and untouched. Commit via message file,
+no AI attribution/coauthor trailers, no new em dashes. Fetch/inspect before push.
+Import dirt: only restore byte-proven whitespace/tangent-only changes, with backup.
+Raw Inday arms in FppDetails must be verified whitespace-only before restoring.
 
-- Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
-- Branch/push target: ASTRAReworks only. Remote DOST-GameDEV/TumbangPreso-Unity.
-- Clean destination0028b3a9 was fetched/fast-forwarded84commits to transfer
-  986542f42a2129126508b20877d55d4ff35c6cec. No new commit/push yet this run.
-- Other checkouts, including dirty main, remain untouched. No branch reset.
-- NO agents, other conversations, usage resets, Figma, paid calls, Desktop update.
-- Only tests necessary for changed behavior. Parallelize independent tools/read/
-  preparation and do useful work during long runs. One Editor at a time; no C#
-  or imported-asset edits during it. Every launch uses tools/run_unity_guarded.py
-  with named profile equipment-destination-review. Explicit INTERNAL buildOutput.
-- Preserve controller-mapping/MenuNav ownership, both first-class modes, saves,
-  stable IDs, simple controls and all retained faces/outfits except specific
-  owner restoration/correction requests below. No fingers or thumbs on body/FPP.
-
-### Latest owner requests and immediate priority
-
-1. Restore OLD Inday model from backup files. This supersedes preserving the
-   newer Inday or our interim hand pilot. Preserve current animations.
-2. Restore OLD Nemu SMALL ghost from backups, improve expressions and bugs, and
-   transition it into the CURRENT monster. Keep the current monster design.
-3. Fix both FPP hands for ALL18people to the owner's clean solid block-hand
-   reference, while matching each character's skin/sleeves/details. Preserve ALL
-   existing hand animations/pivots/action IDs. User also reported Inday's body
-   arms broken, Zack's arms skinny and apparent thumbs in game. Fix real defects
-   without redesigning the cast. Reference pictures are permanently copied to
-   ArtSource/fpp/owner-hands-2026-09-14 (approved basis and two rejected captures).
-4. Fix the THROW TRAJECTORY LINE, not black world/character edges (explicitly
-   clarified). Show general direction, NOT an exact landing prediction. Stationary
-   full hold may converge closely; early hold/movement should have meaningful
-   bounded error and small shaking. This supersedes the transfer's exact guide.
-5. Investigate floating slippers; do not infer a clipping failure from screenshots.
-6. Then continue equipment/movement/kits/network/spectator/engineering; UI LAST.
-
-### Setup solved on this PC
-
-Unity6000.5.8f1/5cb7df797b7d and .NET9.0.317 match. Python3.12.8, Blender5.2.0
-are installed (source PC had3.12.10/5.2.1). Needed Pillow/numpy/imageio_ffmpeg/
-requests/pypdf imports exist. Official Unity CLI beta.5 is checksum-installed at
-C:/Users/matth/AppData/Local/Unity/bin/unity.exe. Bare unity.cmd is an old Editor
-wrapper, not the CLI. All16 portable skills extracted to Logs/portable-skills-
-2026-09-14 and all225 file hashes/sizes match manifest; current equivalents already
-installed. No newer skills overwritten and no Figma calls.
-
-Unity UPM failed before compilation because this task shell lacks ALLUSERSPROFILE.
-Supplying existing local ProgramData fixed it with the original cache. Cache move
-did not help and was reversed. Guard now repairs that alias only in child env;
-6focused runner/profile-preservation tests pass. Manifest/lock/local core+transport
-packages unchanged. WORKSTATION_SETUP.md records actual paths.
-
-### Current implemented source, still under verification
-
-Restorations: tools/restore_backup_characters.py reads backup4 pinned82524c7537fc5fcff00ebb845ee4c360acd468cb.
-Live backup/backup-2/backup-3/backup4 refs all contain identical chosen assets.
-Inday old mesh geometry is restored with current33animation clips, identical
-nodes/skins/bind matrices/palette. Digest46c7921d3937b14cf6ebf9c8c714de9660e11d75ae729046bf5c799aa4b71050.
-Metadata preserveOwnerBackupGeometry prevents the two rework authors from
-changing her back. Full originals are backed up in Logs/before-owner-backup-restoration.
-
-Old small ghost408vertices/204triangles restored at original rest positions,
-split into its original17named boxes for expressions. RestoredCalm lives below
-CalmForm in the CURRENT combined pet GLB. Eyes parent glints/pupils for complete
-blinks; existing expression overlays repositioned. CharacterVisual applies the
-old Nemu palette to this atlas-based calm form. Entire current RageForm subtree,
-geometry/materials/skin preserved: ef5a0d18520256b81d287bd191c6bda64f945e9c86c51b71b00fbd957fc44373.
-Rage animation/source clip unchanged. Do NOT replace whole pet GLB with old file.
-Logs/owner-backup-restoration.json contains exact receipts.
-
-FPP candidate: ApplyCharacterStyle now uses retained Models/viewmodel_arm clean
-two-block frame and existing character-specific skin/sleeve/accessory builders,
-not raw extracted body gauntlets. Extra Sean muscular mesh and duplicate
-Nemu/Phaister hand blocks disabled. Pivots/actions/.84m reach unchanged. Actual
-body identity still resolves in MatchCharacter. This needs fresh visual approval;
-no quality claim yet. Raw UseRosterArms/ApplyRosterArm private methods and derived
-assets remain retained but inactive; clean unused code after accepting new route.
-
-Zack body hand-depth pilot retained: tools/author_hand_volume.py increases
-depth/width .47 to .84, refits existing wristband, preserves all animation bytes.
-Only Zack remains changed by this pilot; Inday pilot is superseded by restoration.
-Hand source backups/receipts in Logs/hand-volume-source-backup and hand-volume-applied.json.
-Other18inspection is a dry-run, not a mandate to rewrite other bodies. Sean hand
-selection was corrected to avoid a thin skin-colored inset masquerading as hand.
-
-Equipment WIP: stable10IDs; Alpombra2/2/5, Heels3/5/1, Loafers2/4/3 remove
-dominance. All rows total9; other slipper rows unchanged, standard3/3/3. Recovery
-.18/point now shortens pickup lock and visible aim settle time; flight stays5%.
-Can rebound .22/point now reaches actual host can-hit return velocity/lift,
-including protected bounce without score. Reset/stance/person tuning unchanged.
-Descriptions corrected. Core15/15 and original Unity equipment3/3 passed.
-
-New aim WIP: fresh drift1.45degrees, movement2.4/unit, residual.07, equipment
-settling retained. Nominal guide separated from actual release aim. Reticle shows
-nominal aim. New short .24..74second guide removes landing square, uses real scene
-segment hits, ignores disabled bot brains, and has fine dark-edged warm stroke
-with a Resources/UI/AimGuide.shader. Core13/13, PlayMode4/4 passed, but captured
-guide was visually weak/almost invisible. Need actual on/off rendered evidence,
-post-render enabled-state checks and genuine active-match capture before acceptance.
-
-Body motion WIP: lowered/wider preparation(-16,38-22spin,-44-10spin) replaces
-original(-26,35-22spin,-28-10spin). Original actual-surface test found Maring's
-full-left shoe intersections; candidate removes them. Nemu neutral hold had8shoe
-intersections, so new CarryPoseAuthor bakes isolated holding-right correction at
-Resources/CarryMotion/team-nemu.asset; CharacterAnimator loads it. Still unverified.
-Earlier AABB tests falsely counted air inside hats/hair. Actual HeadSurfaceVolume
-test helper has a known separated-cubes inside/outside/gap regression passing.
-Tests/Support test-only assembly is shared by Edit/Play; motion probe now uses
-actual rigid surfaces. Remove unused old HeadVolume helper methods after acceptance.
-
-Floating slipper finding: FppHandsReviewProbe called HostDisarm directly, which
-clears possession/velocity but intentionally does not land. Its own capture left
-the shoe at hand height. Fixture now places it on nearby ground. Production
-HostForceEquip already grounds displaced shoes; round reset owns its own placement.
-Do not patch flight clipping to cure a test-created hover. Actual drop/retrieval
-checks and ordinary play remain required.
-
-### Active processes and exact next step
-
-1. Collect IndayFppArmAuthor v1 (PID18968). Inspect real whole-arm FPP/body capture.
-2. Preserve source correspondence and existing actions, remove rejected guard
-   reconstruction fallback. Run narrow all180gear/head and roster/action contracts.
-3. Build fresh INTERNAL Windows player with explicit -buildOutput, then targeted
-   real-process throw/equipment/ghost/drop-retrieval in both modes. No Desktop update.
-4. Clean only verified test dirt, save bounded validated source/evidence commits
-   on ASTRAReworks, fetch/review remote before push. No branch reset.
-5. Continue movement/kits/network/spectator/engineering and UI last, below.
-
-Prepared Logs/clean_destination_test_dirt.py is DRY RUN only. It excludes changed
-Inday/Zack baked meshes, verifies all non-tangent channels, and normalizes only
-byte-proven line endings. Apply only outside Editor runs. Never blanket-restore.
-
-### Remaining work after immediate art/aim/equipment batch
-
-Remaining movement/carry/sprint/backpedal/turning/foot/recovery/interruptions;
-all6hero kits+alternatives (preserve polished work, distinct ultimate moments);
-actual multiplayer/loadout/reconnect/rematch/host-loss and recovery input paths;
-Phaister warning/curse/unbinding/11m moon under8m guideway, restored-mini/Kuro
-staging/visibility; tournament free/follow/POV and replays; relevant TODO152/152.4
-request/event/lookup/AI retrieval/lunge/performance. Then finish inherited UI LAST.
-UI pending f5b10 patch still unapplied; PauseEscape child-settings flow still
-uninvestigated. Transfer-checkpoint.md and UI_REMAINING_TODO.md retain full scope.
-No routine full suites and no new Desktop build. A fresh INTERNAL build with
-explicit buildOutput is required for new real-process claims. No new player
-build/commit/push yet; commit/push stable verified batches to ASTRAReworks.
-
-Other evidence: rejected FPP baseline all18 in Logs/fpp-hands-review-v1;
-roster-arm-audit.csv/material diagnostics; source-PC bad Inday/Zack FPP images
-also exist in throw-aim-evidence, so the rendering defect predates this PC.
-Pure tangents-only import dirt in RosterArms must be byte/semantic-verified and
-backed up before restoring; never blanket-reset generated assets or package data.
+Historical details: reports/improvement-2026-09-14/ledger-before-dante-checkpoint.md,
+destination-validation.md, backpedal-motion.md, destination-progress-history.md.
+All portable225skill-file hashes verified; current skills already installed.

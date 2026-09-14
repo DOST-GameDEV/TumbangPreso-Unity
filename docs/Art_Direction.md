@@ -1,5 +1,29 @@
 # Art Direction — the laws
 
+**Latest shield permission:** the owner allows visual refinement of Dante's
+orbiting shields if it clearly improves them. The approved current design remains
+the baseline; do not change it gratuitously. Fitted armor's repeated markings are
+the active correction. This supersedes older absolute shield-lock language below.
+The distinct-skill/part-design rule and rejection of noisy textures still apply.
+
+**Standing kit-art rule, saved at owner request:** abilities may share their hero's
+theme, but each ability must have its own silhouette, form, motion, staging and
+visual details. Do not make a kit look like repeated versions of one effect, and
+do not copy a single texture or drawing across all its skills. The owner explicitly
+rejected that approach on Dante. This complements distinct per-part markings and
+does not authorize changing his approved orbiting shields.
+
+**Owner rule, 2026-09-14: do not stamp one drawing, symbol, fracture pattern or
+texture across every part.** Design visible parts deliberately for their place
+and purpose. Vary structure, placement and detail density; let some surfaces remain
+plain. Shared code and construction tools are fine, but repeating the same visual
+pattern is not a substitute for authored design. Applied detail must belong to the
+form. Do not add a noisy texture layer to hide weak shape or composition.
+
+Dante's three orbiting carved shields are approved and locked. His fitted armor's
+repeated markings are specifically reopened: distinct fractures on the individual
+plates, with quieter plain areas. Preserve the shields and retained body/outfit.
+
 ## 0 · New models must belong to TUMP
 
 **Standing owner instruction, 2026-09-10: every new, replacement or reworked model

@@ -1,8 +1,14 @@
 # Active execution plan
 
+**Latest shield permission:** the owner allows visual refinement of Dante's
+orbiting shields if it clearly improves them. The approved current design remains
+the baseline; do not change it gratuitously. Fitted armor's repeated markings are
+the active correction. This supersedes older absolute shield-lock language below.
+The distinct-skill/part-design rule and rejection of noisy textures still apply.
+
 Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
-Checkpointbc8a5f00 is pushed. Fresh internal player and focused network checks passed.
-Current work is directional locomotion; Inday FPP is explicitly deferred.
+Checkpointsbc8a5f00 and b106c6ac are pushed. Fresh internal player and focused network checks passed.
+Current work is Dante demonic mountain/stone skill design, contact and alternate behavior. Inday FPP is deferred.
 Read ACTIVE_REWORK_LEDGER.md for exact latest process, evidence and next action.
 Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-restored-hands.md.
 
@@ -11,13 +17,15 @@ Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-r
 2. Preserve checkpointbc8a5f00: equipment roles, actual can rebound, settling/
    general-direction guide, carry clearance, requested body/ghost restorations.
    Fresh internal player and targeted both-mode throw/familiar peer checks passed.
-3. Current backpedal reversal/shared gait phase:6focused contracts and ordinary
-   directional playback pass. Save this bounded batch. Strafe/turning/foot contact,
+3. Backpedal reversal/shared gait phase is saved and pushed in b106c6ac;6focused
+   contracts and ordinary directional playback pass. Strafe/turning/foot contact,
    sprint/carry/interruptions/recovery and remaining Pektus review stay open.
-4. Next concrete kit issues: Dante self-bounce and Long Tremor displacement,
-   Carapace presentation; Phaister warning-before-curse and low-ceiling moon.
-   Audit all6kits,18default abilities and alternatives, preserving polished parts.
-   Keep body/FPP/SFX, counterplay, descriptions and distinct ultimate staging coherent.
+4. Dante skill/physics checkpoint complete for its recorded scope: clean distinct
+   skills, approved orbiting shields, distinct fitted markings, restrained quake,
+   proper outward loose-shoe flight, focused7/7+armor checks and5actual delayed
+   three-peer cases. INTERNAL v4 includes final marks. Save/push this checkpoint.
+   NEXT: Phaister warning-before-curse and low-ceiling moon, then remaining6kit/
+   18skill/alternate queue. Preserve accepted work and distinct per-skill design.
 5. Actual separate-process rematch/reconnect/host loss/interruption/rebinding,
    recovery input paths; preserve controller/MenuNav ownership and saved profiles.
 6. Tournament spectator free/follow/POV manual authority, collision/framing,

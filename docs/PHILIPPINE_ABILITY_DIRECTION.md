@@ -1,5 +1,18 @@
 # Philippine direction for all six hero kits
 
+**Latest shield permission:** the owner allows visual refinement of Dante's
+orbiting shields if it clearly improves them. The approved current design remains
+the baseline; do not change it gratuitously. Fitted armor's repeated markings are
+the active correction. This supersedes older absolute shield-lock language below.
+The distinct-skill/part-design rule and rejection of noisy textures still apply.
+
+**Standing kit-art rule, saved at owner request:** abilities may share their hero's
+theme, but each ability must have its own silhouette, form, motion, staging and
+visual details. Do not make a kit look like repeated versions of one effect, and
+do not copy a single texture or drawing across all its skills. The owner explicitly
+rejected that approach on Dante. This complements distinct per-part markings and
+does not authorize changing his approved orbiting shields.
+
 **Cultural direction stays inside TUMP's visual identity.** New folklore-inspired
 models and effects must use the existing cute blocky language and restrained
 detail, rather than realistic monsters/anatomy or ornamental overload. See the
@@ -140,19 +153,29 @@ continuous colored lighting that erases the retained face and clothes.
 
 ### Dante
 
-- **Seismic Stomp:** a planted support foot, a compact downward action and a fracture
-  that visibly starts at contact. Use a few layered stone pieces with meaningful
-  scale and a low dust front. The visual should communicate weight, not confetti.
-- **Demonic Carapace:** interlocking stone ward plates close to the body, with a
-  coherent protective silhouette. A measured lock/strain/release sound follows the
-  actual immunity period. Keep the caster's hands and first-person view usable.
-- **Titan Fissure:** brace as though resisting mountains, then release force into a
-  deliberate forward split. Pillars should be carved, irregular masses rising
-  from the fracture and grounded at their bases. The giant-struggle inspiration
-  belongs in movement and the separation of stone, not a new giant summon.
+Owner explicitly permits a stronger demonic skill design on 2026-09-14. Bernardo
+Carpio's mountain-struggle and earthquake connection was rechecked in the CCP
+source above. This is a motif for Dante's grounded strength, not a claim that
+Bernardo Carpio is demonic. The stone horns, magma and ward are original fiction.
 
-Retain the existing earth/magma identity and gameplay contracts. The ward geometry
-is original fiction; it is not an authentic amulet replica or copied prayer.
+- **Seismic Stomp:** pressure hairlines mark the impending break. A planted foot
+  makes six raking fractures open at contact, with tapered molten seams, a few
+  weighty stone chips and low dust. Long Tremor stays lower and trips nearby rivals
+  without launching bodies or kicking their loose slippers away.
+- **Demonic Carapace:** a fitted, carved keystone, hooked breastplate wings and
+  wrapping flank stones lock around the retained outfit. Branching heat seams
+  cool through the immunity period. Owner now requests three obvious carved stone
+  protectors orbiting this fitted armor. Keep clean shading; added noisy texture
+  was explicitly rejected. The wearer can move and see normally.
+- **Titan Fissure:** brace, show the forward ground pressure, then split a jagged
+  fault between two hewn mountain faces with hooked crests. Keep a usable central
+  gap, real pillar collision and a short recovery. No cylinder towers, sphere
+  caps, plain orbiting cubes, giant summon or green fullscreen light column. Add
+  restrained earthquake rumble and stone aftershocks, preserving readable aim.
+
+Movement and separation of stone carry the mountain-struggle reference. Do not
+copy the modern artwork, sacred inscriptions or talisman prayers. Retain the
+existing earth/magma identity, outfit and verified gameplay rules.
 
 ### Cheska
 
@@ -278,3 +301,13 @@ Finish this planned direction in the durable ledgers, then resolve the prototype
 verification, inspect its real appearance, and complete Cheska's three actions.
 Continue the full all-eighteen plan autonomously. No new task, agent, automation,
 paid tool or external approval is needed for the currently authorized work.
+
+
+## Owner correction: authored marks rather than repeated stamps
+
+The owner explicitly rejects reusing one pattern/drawing on every surface. A
+cultural motif must shape the action and form; it is not a stamp to paste onto
+armor, shields and pillars. Use deliberate variation, distinct stress fractures
+and plain areas. Dante's orbiting shields are specifically approved and unchanged;
+only the repeated markings on his fitted armor are reopened. The noisy texture
+experiment stays rejected.

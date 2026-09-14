@@ -747,6 +747,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             yield return null;
 
+            Visual.ComicPopup.PrepareView(cam);
             Canvas.ForceUpdateCanvases();
             // A witness must draw the body that the owner's FPP camera hides,
             // and must not photograph that owner's private floating view arms.

@@ -1,0 +1,112 @@
+{
+  "source_commit": "b106c6ac",
+  "auditory_approval": false,
+  "assets_written": true,
+  "cues": [
+    {
+      "cue": "sfx_cast_dante_stomp",
+      "before": {
+        "seconds": 0.8059,
+        "peak": 0.79968,
+        "rms": 0.19439,
+        "peak_seconds": 0.0011
+      },
+      "after": {
+        "seconds": 0.3,
+        "peak": 0.47981,
+        "rms": 0.11137,
+        "peak_seconds": 0.2209
+      }
+    },
+    {
+      "cue": "sfx_cast_dante_fissure",
+      "before": {
+        "seconds": 1.5,
+        "peak": 0.78796,
+        "rms": 0.0497,
+        "peak_seconds": 0.6262
+      },
+      "after": {
+        "seconds": 0.4,
+        "peak": 0.40156,
+        "rms": 0.02982,
+        "peak_seconds": 0.1989
+      }
+    },
+    {
+      "cue": "sfx_var_dante_tremor",
+      "before": {
+        "seconds": 1.1,
+        "peak": 0.64795,
+        "rms": 0.07363,
+        "peak_seconds": 0.2351
+      },
+      "after": {
+        "seconds": 0.3,
+        "peak": 0.35171,
+        "rms": 0.04418,
+        "peak_seconds": 0.2614
+      }
+    },
+    {
+      "cue": "sfx_cast_dante_carapace",
+      "before": {
+        "seconds": 1.0,
+        "peak": 0.55289,
+        "rms": 0.14284,
+        "peak_seconds": 0.2521
+      },
+      "after": {
+        "seconds": 0.52,
+        "peak": 0.33173,
+        "rms": 0.06916,
+        "peak_seconds": 0.272
+      }
+    },
+    {
+      "cue": "sfx_var_dante_plating",
+      "before": {
+        "seconds": 1.1,
+        "peak": 0.55823,
+        "rms": 0.04274,
+        "peak_seconds": 0.2927
+      },
+      "after": {
+        "seconds": 0.64,
+        "peak": 0.40739,
+        "rms": 0.03847,
+        "peak_seconds": 0.2671
+      }
+    },
+    {
+      "cue": "sfx_quake_slam",
+      "before": {
+        "seconds": 0.8059,
+        "peak": 0.87994,
+        "rms": 0.17797,
+        "peak_seconds": 0.0011
+      },
+      "after": {
+        "seconds": 0.72,
+        "peak": 0.744,
+        "rms": 0.16017,
+        "peak_seconds": 0.0141
+      }
+    },
+    {
+      "cue": "sfx_ult_theme_dante",
+      "before": {
+        "seconds": 3.0,
+        "peak": 0.87994,
+        "rms": 0.22273,
+        "peak_seconds": 0.9999
+      },
+      "after": {
+        "seconds": 1.8,
+        "peak": 0.65116,
+        "rms": 0.06775,
+        "peak_seconds": 0.6166
+      }
+    }
+  ]
+}

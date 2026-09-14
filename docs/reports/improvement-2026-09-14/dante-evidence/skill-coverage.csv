@@ -1,0 +1,4 @@
+hero,slot,body,first_person,accepted
+dante,1,hero-dante-stomp,stomp-heavy,True
+dante,2,hero-dante-roar,carapace-guard,True
+dante,3,hero-dante-fissure,fissure-slam,True

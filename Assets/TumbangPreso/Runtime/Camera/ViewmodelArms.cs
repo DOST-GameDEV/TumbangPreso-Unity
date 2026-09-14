@@ -703,9 +703,9 @@ namespace TumbangPreso.CameraSystem
         private static readonly Key[] StompHeavyClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.045f, 0.350f, 0.100f, -0.080f, 0.300f, -0.100f, 0.080f),
-            new Key(0.100f, -0.800f, -0.100f, 0.060f, -0.700f, 0.120f, -0.060f, true),
-            new Key(0.240f, -0.270f, -0.040f, 0.030f, -0.230f, 0.050f, -0.030f),
+            new Key(0.180f, 0.350f, 0.100f, -0.080f, 0.300f, -0.100f, 0.080f),
+            new Key(Abilities.DanteHeroKit.StompContactSeconds, -0.800f, -0.100f, 0.060f, -0.700f, 0.120f, -0.060f, true),
+            new Key(0.420f, -0.270f, -0.040f, 0.030f, -0.230f, 0.050f, -0.030f),
             new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 

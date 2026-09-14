@@ -1,0 +1,7 @@
+{
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "e1ef74a15c6db59c25406391d11c1ca86c0da7ffc51fb1c229a4bf959841a4c6",
+  "build_log": "Logs/dante-skill-build-v4.log",
+  "network_proof_runtime": "88f1cae6fca88b4ae23966da6af2ac8c2778981356afce1cddf44cc632f9d11f",
+  "difference_after_network_proof": "Fitted armor marking layouts and comment formatting only; shield and gameplay behavior unchanged."
+}

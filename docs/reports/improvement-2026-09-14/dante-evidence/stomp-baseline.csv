@@ -1,0 +1,3 @@
+variant,caster_rise,victim_distance,shoe_distance,first_impact,tripped,charges
+default,2.618687,0.8482294,0,0.001958847,False,1
+long-tremor,2.434956,0.6353947,0,0.001890182,True,1

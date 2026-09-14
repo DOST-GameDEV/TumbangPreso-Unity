@@ -62,6 +62,35 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator GroundOverlapKickStaysLocalAndNearbyWallsStillRebound()
+        {
+            yield return Load(SceneFlow.BayanPlaza);
+            var shoe=GameServices.Round.PlayerAt(3).GetComponent<Carrier>().Held;
+            Assert.IsNotNull(shoe);shoe.HostDisarm();
+            var platform=GameObject.CreatePrimitive(PrimitiveType.Cube);platform.name="KickSupport";
+            platform.transform.position=new Vector3(4,-.1f,-5);platform.transform.localScale=new Vector3(4,.2f,4);
+            Physics.SyncTransforms();
+            var origin=new Vector3(3,shoe.RestHeight,-5);
+            shoe.HostThrow(null,origin,Vector3.left*18+Vector3.up*3);
+            for(int i=0;i<3;i++)
+            {
+                yield return new WaitForFixedUpdate();
+                Assert.Less(Mathf.Abs(shoe.transform.position.z-origin.z),.02f,"Initial ground overlap teleported the slipper to a fabricated contact.");
+                Assert.Less(shoe.transform.position.x,origin.x,"A kick did not travel away along its launch direction.");
+            }
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.name="KickWall";
+            wall.transform.position=new Vector3(4.1f,.5f,-5);wall.transform.localScale=new Vector3(.2f,1,1);
+            Physics.SyncTransforms();origin=new Vector3(3.9f,.55f,-5);
+            shoe.HostThrow(null,origin,Vector3.right*10);
+            yield return new WaitForFixedUpdate();
+            Assert.Less(shoe.Velocity.x,0,"Resolving an overlap allowed a real wall to be crossed.");
+            Assert.Less(Vector3.Distance(shoe.transform.position,origin),.5f,"A wall overlap used the world origin as its contact.");
+            shoe.HostThrow(null,origin,Vector3.left*10);
+            yield return new WaitForFixedUpdate();
+            Assert.Less(shoe.Velocity.x,0,"A slipper escaping a wall was bounced back into it.");
+        }
+
+        [UnityTest]
         public IEnumerator DirectThrowDetachesThePreviousCarriersReference()
         {
             yield return Load(SceneFlow.IlalimNgTulay);

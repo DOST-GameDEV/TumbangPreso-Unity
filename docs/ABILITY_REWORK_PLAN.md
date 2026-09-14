@@ -1,5 +1,18 @@
 # Ability rework plan
 
+**Latest shield permission:** the owner allows visual refinement of Dante's
+orbiting shields if it clearly improves them. The approved current design remains
+the baseline; do not change it gratuitously. Fitted armor's repeated markings are
+the active correction. This supersedes older absolute shield-lock language below.
+The distinct-skill/part-design rule and rejection of noisy textures still apply.
+
+**Standing kit-art rule, saved at owner request:** abilities may share their hero's
+theme, but each ability must have its own silhouette, form, motion, staging and
+visual details. Do not make a kit look like repeated versions of one effect, and
+do not copy a single texture or drawing across all its skills. The owner explicitly
+rejected that approach on Dante. This complements distinct per-part markings and
+does not authorize changing his approved orbiting shields.
+
 **Standing model-style rule:** all reworked skill models, summons, pets and FPP
 assets must look native to TUMP's cute blocky world and avoid unnecessary detail.
 Use clean chunky forms and purposeful effects; scale, pose, timing and sound make
@@ -41,9 +54,10 @@ layers must not subsequently rotate/scale off their sampled floor. Keep the
 fictional lunar/eclipse grammar in PHILIPPINE_ABILITY_DIRECTION.md, and inspect
 the whole Q/E/ultimate kit and loadout alternatives rather than only adding rings.
 
-Before alternate-ability comparisons, fix the reproduced same-hero build-binding
-gap in MatchRpc.RebindKitIfHeroChanged without resetting active kit state or
-applying variant multipliers twice. This remains open, not implemented here.
+Current source inspection on2026-09-14 confirms MatchRpc.RebindKitIfHeroChanged
+already calls UpdateLoadout(build); HeroLoadoutRefreshTests cover preserving live
+state and preventing stacked tuning. Retain this implementation. Actual scenario
+qualification remains part of the network queue, not a reason to reset live kits.
 
 ## Current owner instructions
 
@@ -282,45 +296,51 @@ Gate: body and FPP contact/recovery follow the actual landing, no recovery in mi
 no full-frame red/pink wash, 5.4 m footprint truthful, crater grounded and cancellable
 at lifecycle boundaries. Review owner, witness and actual network observer.
 
-## Dante: weight, fractured stone and defensive armor
+## Dante: demonic stone and mountain-struggle strength
 
-### Seismic Stomp / dante_skill1: OPEN
+### Seismic Stomp / dante_skill1: implemented; final peer qualification in progress
 
-Path: `CreateExplosion`, `SpawnCrackedLavaDecal`, `SpawnVolcanicRockDebris`.
-Body `hero-dante-stomp`, FPP/cue from inventory.
-Finding: many large debris pieces and labels obscure the actual body contact in
-v5 evidence. Direction: visible support-foot transfer and heel contact, a short
-fracture through the ground and sparse asymmetric stone slabs. Lower dust should
-locate the impact, not become a wall in the caster's face.
-Gate: contact precedes debris, footprint remains clear, decorative debris has no
-colliders, and recovery preserves control/authority rules.
+DanteSeismicVisual now owns the ground-pressure/fracture/cooling sequence. Q has
+0.30second contact shared with the body/FPP. The caster remains grounded; ordinary
+Stomp shoves rivals and launches Loose slippers into actual flight. Long Tremor
+trips rivals and keeps bodies/slippers nearby. Tests reproduce the old self-bounce
+and inert-loose-shoe defects, then verify the corrected behavior and cancellation.
+The equipped warning radius is measured in the actual cast; it must not apply the
+Long Tremor gain a second time after loadout scaling. No repeated eruption/cube
+sparks or green held-key overlay. Existing objective rules remain.
 
-### Demonic Carapace / dante_skill2: OPEN
+### Demonic Carapace / dante_skill2: SHIELD DESIGN APPROVED; peer qualification in progress
 
-Current model path is inline in `DemonicCarapaceAbility`: a 1.85 m sphere and three
-0.5 x 0.7 x 0.15 m cubes orbiting at 1.25 m radius. Evidence shows large orange
-rectangles in FPP. This is a confirmed source/model problem, not an inference.
+Owner approves the current shields and explicitly says not to touch them anymore.
+The approved ORBITING shields keep their exact form, markings, materials and
+motion. Owner now asks to replace only the repeated drawing on the fitted armor.
+Give the keystone, paired wings, flanks and back distinct fracture layouts; leave
+shoulder plates quiet rather than printing the same symbol on them.
+DanteCarapaceVisual replaces the former sphere/orbiting rectangles. Eight carved
+pieces form a keystone, hooked wings/shoulders, back ridge and wrapping flanks,
+with branching molten seams. Owner rejects the added texture; retain clean shading. They assemble against the
+actual torso, hide only from their wearer's FPP and release on expiry/reset.
+The tight shoulder fit passed both variants, owner/observer rendering and
+slowdown cleanup. Owner now adds three carved orbiting stone protectors around
+the fitted armor; their motion, visibility and cleanup are under focused review. Moving casts retain the masked leg gait. Heavy Plating's longer
+duration and0.70speed modifier remain; no new damage or shield meter is introduced.
 
-Direction: close-fitting fractured basalt armor plates or a restrained protective
-shell that expresses the actual temporary immunity. It must look attached to
-Dante's protection, with hands still usable and the view clear. Tension/locking
-stone at start, readable protected state, and a distinct release. Keep heavy-plating
-modifier and immunity cleanup; do not introduce damage or a new shield resource.
-Gate: both owner and opponents can read armor without cubes sweeping through the
-camera; every owned piece/aura and any slow are removed on end/reset/refusal.
+### Titan Fissure / dante_ultimate: implemented; final peer qualification in progress
 
-### Titan Fissure / dante_ultimate: OPEN
+The forward pressure line leads into a jagged ground break. Two hewn, hooked rock
+faces rise and move slightly apart while leaving the central route clear. They
+retain actual convex collision and five-second expiry, with terrain-snapped bases
+and cooling seams. The forward blast excludes caster and rear; mechanical and
+physical-gap/expiry checks pass. Camera kick now happens at contact, without the
+old early green column and chromatic wash. Owner rejected the noisy texture layer. Keep the clean dark forms, improve the
+silhouette/motion, and add restrained earthquake rumble/aftershocks and small
+stone reactions. Current camera shake never rotates aim or changes simulation time.
 
-Path: forward impact, `SpawnEarthPillar`, volcanic debris and eruption.
-Body `hero-dante-fissure`, FPP/cue from inventory.
-Finding: long columns and debris can occlude the whole witness/owner view; v5 uses
-a green-tinted common ultimate pulse despite the rock/fire payload.
-Direction: a heavy two-stage brace and ground strike, a directional rupture with
-purposeful fractured pillars and a brief low dust front. The fissure's path should
-lead the eye toward the actual impact and leave playable gaps visible.
-Gate: preserve forward offset and actual contacts/obstacle behavior; pillars stand
-on the floor, not the caster's airborne height. Sound must have distinct stone
-fracture and settling mass without constant rumble masking pursuit.
+The seven existing sound cues have contact-aligned pressure, lock and settling
+phases. No can/UI cue or source attribution changes. Signal checks are not auditory
+approval. See reports/improvement-2026-09-14/dante-skills.md for exact evidence,
+failed candidates, active network qualification and remaining limits. Owner's
+Bernardo Carpio/demonic direction is recorded in PHILIPPINE_ABILITY_DIRECTION.md.
 
 ## Zack: skating momentum, a magnetic return and a sky strike
 
@@ -559,3 +579,12 @@ Dante holds difficult space, Cheska shapes useful routes. Reworks should strengt
 those differences, not turn all six into generic destructive spellcasters.
 
 The whole-kit/default-alternative review is now in [HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md). It records all twelve choice pairs, source contradictions, candidate replacements, lore boundaries and actual-play acceptance. Candidates are not marked implemented or balanced.
+
+
+### Standing part-design rule, 2026-09-14
+
+Do not reuse one drawing/pattern across every piece of a skill or character.
+Author the form and its marks for their particular role, with varied detail
+placement and plain areas. Do not substitute a noisy texture pass for this work.
+Existing specifically approved elements remain locked, including Dante's orbiting
+shields. Fitted armor markings are the currently authorized correction.

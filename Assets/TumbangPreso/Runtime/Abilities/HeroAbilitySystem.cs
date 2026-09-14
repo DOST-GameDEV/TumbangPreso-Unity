@@ -747,8 +747,15 @@ namespace TumbangPreso.Abilities
             }
 
             // Visual feedback: momentary cast flash
-            Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(),
-                .55f);
+            if (Kit != null && Kit.HeroId == "dante")
+            {
+                // Ground pressure belongs to the actual windup, including prediction rollback.
+                if (ability != null && ability.Windup > 0)
+                    Visual.DanteSeismicVisual.Warn(_motor, ability, _context.Position, _context.Forward,
+                        ability.TelegraphRadius, slot == Slot.Ultimate);
+                return;
+            }
+            Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
             // TAP. Every one of these powers fires on the press edge and resolves instantly, so
@@ -991,7 +998,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || Kit.HeroId != "nemu")
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
@@ -1041,6 +1048,10 @@ namespace TumbangPreso.Abilities
             {
                 GameServices.Audio?.PlayAt(theme, _context.Position);
             }
+
+            // Dante's pressure cue precedes the hit. The camera kick belongs to
+            // the actual ground contact, not a long chromatic blast on keypress.
+            if (Kit != null && Kit.HeroId == "dante") return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;
@@ -1118,6 +1129,10 @@ namespace TumbangPreso.Abilities
         private void UpdateReticle(InputIntent intent)
         {
             if (_reticle == null || Kit == null) return;
+
+            // These instant casts have their own grounded windup warning. Keeping
+            // the generic held-key decal draws a second green fracture on top.
+            if (Kit.HeroId == "dante") { _reticle.Hide(); return; }
 
             if (Aiming(intent, Verb.Ultimate, Kit.Ultimate, Kit.IsUltimateReady)) return;
             if (Aiming(intent, Verb.Skill1, Kit.Skill1, Kit.Skill1 != null && Kit.Skill1.IsReady)) return;
