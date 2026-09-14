@@ -116,7 +116,63 @@ An exported-rotation audit covered all 18 named hero casts and found no exact
 cross-hero channel duplicates. Different hashes do not establish good choreography;
 the owner's distinct body/FPP cast requirement still needs visual review per kit.
 
-## Open qualification
+## Construction cost follow-up
+
+Profiling found measurable synchronous setup cost. An isolated Ilalim factory
+recording took 84.15 ms on first use and 46.42/43.33 ms on repeats, creating 139
+renderers and 20,705 vertices. This is Editor CPU evidence, not a player FPS claim.
+
+Two independent changes preserve the authored geometry:
+
+- Ground projection caches collider classification only for a single synchronous
+  projection. It still performs the same rays, exact-coordinate height caching,
+  surface precedence and rise limit. Repeated projection time fell from a mean
+  12.10 ms to 5.20 ms. Three checks pass, including changed court ownership and
+  a newly attached rigidbody between calls, so classification cannot remain stale.
+- Ink with the same colour, emission and reveal phase shares one material inside
+  that ritual instance. Different phases remain independent. The first renderer
+  owns its layer's material; every piece ends with the same ritual root. This
+  lowers repeated material creation and colour writes without replacing glyphs.
+  Measured material setup fell from 18.27 ms to 6.63 ms; total repeated construction
+  fell from 41.66 ms to 32.12 ms in this comparison. Three focused phase/contact/
+  reset checks pass. No global shared material or cross-skill art reuse was added.
+
+All generated mesh/topology fingerprints remain
+`53f1bb05633930e13090246a1f02d03e5524ce2066bfba79050a0df4766db4c7`.
+Every renderer's colour and emission across six sampled reveal/fade phases remains
+`0076df0d32edd13eaaac6649672dd97cec96349a7ec9ebcbb88d1eed95fe39ef`.
+This verifies the measured data, not a blanket claim about every rendered frame.
+
+Receipts: construction 38ee5f037b23; projection baseline db95614c8dec;
+projection cache 6c161f7a80bb; setup profile 4691e03564ea;
+material phase baseline 68254c38fc2b; shared stage materials 5242019c1b56.
+The cache/material multi-test runs had already warmed the effect before their
+first recorded sample. Do not cite those first samples as cold-start improvements.
+
+Standard profiler markers record projection, ghost material setup, script arcs
+and tick arcs. Arc measurements contain material time, so they cannot be added
+as independent costs. Exact CSV paths and the current internal build are in the
+active ledger. A fresh player and reconnect investigation follow this batch.
+
+The fresh v6 player passed the regular three-peer cast check with the caster's
+actual CharacterIndex, kit ID and authoritative room pick all agreeing. The
+fixture selects through the room API and initializes that accepted selection in
+its preloaded arena using normal SyncPicks reconciliation before the timed cast.
+This follows the established familiar fixture and avoids a kit-only substitution.
+Build v6: 1057 MB/44 seconds, receipt e37fcedc3f2d; Runtime SHA
+`47515c0cad199fa199bdec89fffef524f409e5da7f494b015520ac6548fd71ab`.
+
+The corrected rejoin case, `net-phaister-rejoin-v3`, isolates an actual missing
+state restoration: host and owner keep their ritual, while the returning observer
+has the correct Phaister character but no circle, active clock or sky during 20
+samples in the host's still-active window. This is OPEN, not a passing reconnect.
+Earlier rejoin v1 changed away from Phaister because the fixture had only bound
+her kit, leaving the arena's actual pick inconsistent. v5's room request alone
+did not update the already preloaded test arena and timed out without a cast.
+Those failures were fixture limitations, not evidence to rewrite the working
+same-hero UpdateLoadout path. The current observed missing effect is distinct.
+
+## Remaining qualification
 
 Finish actual delayed peer cases, rejection cleanup and late-join state. Review
 the complete Hex/Slow Brand and Blink/Long Stride mechanics and counterplay.

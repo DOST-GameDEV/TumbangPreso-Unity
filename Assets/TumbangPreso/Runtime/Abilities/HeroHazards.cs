@@ -3199,6 +3199,10 @@ namespace TumbangPreso.Abilities
 
         public sealed class CovenCircleBuild : MonoBehaviour, Visual.IVfxTimeline
         {
+            private static readonly Unity.Profiling.ProfilerMarker ScriptArcMarker =
+                new Unity.Profiling.ProfilerMarker("TUMP.CovenScriptArcs");
+            private static readonly Unity.Profiling.ProfilerMarker TickArcMarker =
+                new Unity.Profiling.ProfilerMarker("TUMP.CovenTickArcs");
             public float Duration = 7.0f;
             public float Radius = 6.4f;
             public Color Accent = Color.magenta;
@@ -3220,6 +3224,8 @@ namespace TumbangPreso.Abilities
             private readonly List<Vector3> _floatPosition = new List<Vector3>();
             private readonly Dictionary<Renderer,int> _stage = new Dictionary<Renderer,int>();
             private readonly HashSet<int> _pulseStages = new HashSet<int>();
+            private readonly Dictionary<(int stage, Color colour, float emission), Material> _stageMaterials =
+                new Dictionary<(int stage, Color colour, float emission), Material>();
             private float _lastPulse = -100;
             public void Pulse() => _lastPulse = _elapsed;
 
@@ -3399,6 +3405,7 @@ namespace TumbangPreso.Abilities
             /// <summary>Ticks across the band, over one arc only.</summary>
             private void AddTickArc(float fromDeg, float toDeg, int count, float inner, float outer)
             {
+                using var tickSample = TickArcMarker.Auto();
                 var holder = new GameObject("Ticks");
                 holder.transform.SetParent(transform, false);
 
@@ -3434,6 +3441,7 @@ namespace TumbangPreso.Abilities
             private void AddScriptArc(float fromDeg, float toDeg, int count, float at,
                                       float size, int seed)
             {
+                using var scriptSample = ScriptArcMarker.Auto();
                 var holder = new GameObject("Script");
                 holder.transform.SetParent(transform, false);
 
@@ -3485,8 +3493,23 @@ namespace TumbangPreso.Abilities
                 var r = go.GetComponent<Renderer>();
                 if (r == null) return;
 
-                VfxMaterial.Ghost(r, new Color(colour.r, colour.g, colour.b, alpha), emission);
+                var tint = new Color(colour.r, colour.g, colour.b, alpha);
+                var key = (_layers.Count, tint, emission);
+                if (_stageMaterials.TryGetValue(key, out var material) && material != null)
+                {
+                    // Pieces in this reveal layer have the same fade and lifetime.
+                    // Its first renderer owns the material; all pieces die together
+                    // with the ritual root. Different stages never share this ink.
+                    r.sharedMaterial = material;
+                    VfxRenderTag.Attach(go);
+                    VfxMaterial.StripCollider(go);
+                    return;
+                }
+                VfxMaterial.Ghost(r, tint, emission);
+                _stageMaterials[key] = r.sharedMaterial;
                 VfxMaterial.StripCollider(go);
+                // One writer per material preserves the authored colour/fade
+                // without assigning it again for every glyph in the same arc.
                 _inks.Add(r);
                 _alpha.Add(alpha);
             }

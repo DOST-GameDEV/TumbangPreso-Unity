@@ -2457,7 +2457,21 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>Ground height excluding actors, loose objects, effects and generated barriers.</summary>
-        private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow)
+        private enum GroundSurfaceKind { Ignore, Fallback, Court }
+
+        private static GroundSurfaceKind ClassifyGroundSurface(Collider collider)
+        {
+            if (collider.GetComponentInParent<CharacterMotor>() != null ||
+                collider.GetComponentInParent<Slipper>() != null ||
+                collider.GetComponentInParent<Lata>() != null ||
+                collider.GetComponentInParent<Abilities.HazardVolume>() != null ||
+                collider.GetComponentInParent<VfxRenderTag>() != null ||
+                collider.attachedRigidbody != null) return GroundSurfaceKind.Ignore;
+            return IsCourtSurface(collider) ? GroundSurfaceKind.Court : GroundSurfaceKind.Fallback;
+        }
+
+        private static float GroundUnder(Vector3 at, float searchAbove, float searchBelow,
+            System.Collections.Generic.Dictionary<Collider, GroundSurfaceKind> surfaces = null)
         {
             var from = new Vector3(at.x, at.y + searchAbove, at.z);
             var hits = Physics.RaycastAll(from, Vector3.down, searchAbove + searchBelow, ~0,
@@ -2468,13 +2482,13 @@ namespace TumbangPreso.Visual
             {
                 var collider = hit.collider;
                 if (hit.normal.y < .65f) continue;
-                if (collider.GetComponentInParent<CharacterMotor>() != null) continue;
-                if (collider.GetComponentInParent<Slipper>() != null) continue;
-                if (collider.GetComponentInParent<Lata>() != null) continue;
-                if (collider.GetComponentInParent<Abilities.HazardVolume>() != null) continue;
-                if (collider.GetComponentInParent<VfxRenderTag>() != null) continue;
-                if (collider.attachedRigidbody != null) continue;
-                if (IsCourtSurface(collider)) court = Mathf.Max(court, hit.point.y);
+                if (surfaces == null || !surfaces.TryGetValue(collider, out var kind))
+                {
+                    kind = ClassifyGroundSurface(collider);
+                    if (surfaces != null) surfaces[collider] = kind;
+                }
+                if (kind == GroundSurfaceKind.Ignore) continue;
+                if (kind == GroundSurfaceKind.Court) court = Mathf.Max(court, hit.point.y);
                 else if (hit.point.y <= at.y + .60f) fallback = Mathf.Max(fallback, hit.point.y);
             }
             return float.IsNegativeInfinity(court) ? fallback : court;
@@ -2494,6 +2508,7 @@ namespace TumbangPreso.Visual
         public static void DrapeToGround(GameObject go, float clearance = 0.035f,
                                          float maxRise = 0.60f)
         {
+            using var projectionSample = DrapeGroundMarker.Auto();
             if (go == null) return;
 
             var filter = go.GetComponent<MeshFilter>();
@@ -2506,6 +2521,10 @@ namespace TumbangPreso.Visual
 
             var vertices = mesh.vertices;
             var cache = new System.Collections.Generic.Dictionary<Vector2, float>(vertices.Length);
+            // One synchronous projection sees each collider's same hierarchy many
+            // times. Cache its classification only for this call; later casts must
+            // observe changed scenery, rigidbodies and effect ownership afresh.
+            var surfaces = new System.Collections.Generic.Dictionary<Collider, GroundSurfaceKind>();
 
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -2515,7 +2534,7 @@ namespace TumbangPreso.Visual
 
                 if (!cache.TryGetValue(key, out float ground))
                 {
-                    ground = GroundUnder(world, 4.0f, 6.0f);
+                    ground = GroundUnder(world, 4.0f, 6.0f, surfaces);
                     cache[key] = ground;
                 }
 
@@ -2528,6 +2547,9 @@ namespace TumbangPreso.Visual
             mesh.vertices = vertices;
             mesh.RecalculateBounds();
         }
+
+        private static readonly Unity.Profiling.ProfilerMarker DrapeGroundMarker =
+            new Unity.Profiling.ProfilerMarker("TUMP.DrapeGround");
 
         /// <summary>Frees a generated mesh when the object that draws it goes away.</summary>
         [DisallowMultipleComponent]

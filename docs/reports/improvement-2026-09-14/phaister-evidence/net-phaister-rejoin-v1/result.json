@@ -1,0 +1,40 @@
+{
+  "ok": false,
+  "errors": [
+    "host: duplicated or missing owned ritual",
+    "host: ritual centre disagrees with accepted cast",
+    "owner: duplicated or missing owned ritual",
+    "owner: ritual centre disagrees with accepted cast",
+    "observer: rejoin did not provide a usable live-ritual observation window"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 511,
+      "warning_samples": 25,
+      "active_samples": 105,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3785104024942996,
+      "accepted_sky_samples": 93,
+      "first_curse_after_warning": 1.3785104024942996
+    },
+    "owner": {
+      "samples": 498,
+      "warning_samples": 26,
+      "active_samples": 116,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3647103954080997,
+      "accepted_sky_samples": 103,
+      "first_curse_after_warning": 2.0099332979024993
+    },
+    "observer": {
+      "samples": 141,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0,
+      "rejoined_during_active_samples": 0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "3f31088d81ad74f3e6e792289d9862c2b127e82912ac4958f626abfe5b8bf637"
+}

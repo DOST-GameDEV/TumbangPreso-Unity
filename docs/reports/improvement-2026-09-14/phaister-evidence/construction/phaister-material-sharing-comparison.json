@@ -1,0 +1,12 @@
+{
+  "meshes_equal": true,
+  "phase_materials_equal": true,
+  "construction_ms": {
+    "before_warm": 41.65935,
+    "after_warm": 32.12035
+  },
+  "materials_ms": {
+    "before_warm": 18.27445,
+    "after_warm": 6.62505
+  }
+}

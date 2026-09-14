@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
 using TumbangPreso.Visual;
 using Unity.Netcode;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace TumbangPreso.Diagnostics
         private static bool _enabled;
         private string _scenario;
         private StreamWriter _writer;
-        private bool _prepared, _armed;
+        private bool _prepared, _armed, _observeExisting, _pickSent, _seededArenaPick;
         private double _next;
 
         private static string Argument(string key)
@@ -45,15 +46,39 @@ namespace TumbangPreso.Diagnostics
             DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetPhaisterProbe>();
             probe._scenario = Argument("-tp-phaistercase") ?? "coven";
+            probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-phaister-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-phaistertrace"));
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,charge,windup,active,remaining,circles,sky,frontStun,rearStun,casterStun,frontElement,centreX,centreZ,casterX,casterZ,gameTime,realTime,frameDelta,frontX,frontZ,rearX,rearZ");
+            probe._writer.WriteLine("time,elapsed,local,host,charge,windup,active,remaining,circles,sky,frontStun,rearStun,casterStun,frontElement,centreX,centreZ,casterX,casterZ,gameTime,realTime,frameDelta,frontX,frontZ,rearX,rearZ,phaister,charIndex,heroMode,roomPick");
         }
 
         private void Update()
         {
+            int phaisterPick = Roster.IndexIn(Roster.HeroPeople, "phaister");
+            if (!_observeExisting && !_pickSent && NetAuthority.IsNetworked &&
+                NetAuthority.LocalSlot == 1 && MatchRpc.Instance != null)
+            {
+                // Select through the real room path. Binding a kit alone leaves
+                // the authoritative pick unchanged, so a later seating snapshot
+                // correctly replaces that mismatched fixture with the old hero.
+                var settings = Settings.SettingsStore.Current;
+                settings.CharacterPick = phaisterPick;
+                MatchRpc.Instance.SelectLobbyPickServerRpc(phaisterPick, settings.CanPick, settings.SlipperPick);
+                _pickSent = true;
+            }
             var round = GameServices.Round;
+            if (!_observeExisting && !_seededArenaPick && NetAuthority.IsHost && round != null &&
+                MatchRpc.Instance?.GetSeatInfo(1)?.CharacterPick == phaisterPick && round.PlayerAt(1) != null)
+            {
+                // CLI verification preloads the arena before the room fills. Apply
+                // its accepted pick once through normal model/kit reconciliation,
+                // as the established familiar fixture does, before timed actions.
+                _seededArenaPick = true;
+                MatchRpc.Instance.SyncPicksClientRpc(new[] { 1, phaisterPick, -1, -1 });
+                MatchRpc.Instance.BroadcastPicks();
+                Debug.Log("[PhaisterProbe] initialized accepted room pick in the preloaded arena");
+            }
             if (!_enabled || !NetAuthority.IsNetworked || round == null || !round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber < 1) return;
             var ready = FindFirstObjectByType<ReadyGate>();
@@ -70,10 +95,18 @@ namespace TumbangPreso.Diagnostics
                 player.Intent.Clear(); player.Intent.Parked = player != caster;
             }
             float elapsed = UI.SceneFlow.SelectedRoundSeconds - round.TimeLeft;
+            if (elapsed > 27) { _writer.Flush(); Application.Quit(); return; }
+            if (!_prepared && _observeExisting)
+            {
+                // A returning peer observes the real world snapshot. Rebinding a
+                // kit or relocating a target here would invalidate this evidence.
+                _prepared = true;
+                Debug.Log("[PhaisterProbe] observing existing match local=" + NetAuthority.LocalSlot);
+            }
             if (!_prepared)
             {
+                if (caster.CharacterIndex != phaisterPick || caster.AbilitySystem.Kit.HeroId != "phaister") return;
                 _prepared = true;
-                caster.AbilitySystem.BindHero("phaister");
                 if (_scenario != "rejected") caster.AbilitySystem.Kit.AddUltimateCharge(100);
                 if (NetAuthority.IsHost || NetAuthority.LocalSlot == 1)
                 {
@@ -90,7 +123,7 @@ namespace TumbangPreso.Diagnostics
                 }
                 Debug.Log("[PhaisterProbe] prepared " + _scenario + " local=" + NetAuthority.LocalSlot);
             }
-            if (NetAuthority.LocalSlot == 1)
+            if (NetAuthority.LocalSlot == 1 && !_observeExisting)
             {
                 if (!_armed && elapsed >= 12)
                 {
@@ -120,7 +153,10 @@ namespace TumbangPreso.Diagnostics
                     centre.x, centre.z, position.x, position.z,
                     Time.timeAsDouble, Time.realtimeSinceStartupAsDouble, Time.deltaTime,
                     front.transform.position.x, front.transform.position.z,
-                    rear.transform.position.x, rear.transform.position.z };
+                    rear.transform.position.x, rear.transform.position.z,
+                    caster.AbilitySystem.Kit.HeroId == "phaister" ? 1 : 0,
+                    caster.CharacterIndex, UI.SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0,
+                    MatchRpc.Instance?.GetSeatInfo(1)?.CharacterPick ?? -1 };
                 _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
             }
             if (elapsed > 27) { _writer.Flush(); Application.Quit(); }

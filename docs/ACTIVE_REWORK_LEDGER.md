@@ -3,15 +3,141 @@
 ## Exact continuation pointer
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
-Branch ASTRAReworks. Latest pushed checkpoint c59cef8f29975be65bcd2f374cd9f913e255c17f
-saves origins, concepts and standing owner rules. Dante e6237a0d and earlier
-bc8a5f00/b106c6ac remain preserved. Phaister source/report is ready for a scoped
-checkpoint, not completion of the whole kit/project. No active Editor, player,
-image job, Python helper or exec session. No browser tabs were opened.
+Branch ASTRAReworks. Latest COMMITTED AND PUSHED HEAD
+6a1811c743f062b5be8f2c9698ed51cbc870165e saves Phaister's verified checkpoint.
+Earlier c59cef8f29975be65bcd2f374cd9f913e255c17f saves origins/concepts/owner rules.
+Dante e6237a0d and bc8a5f00/b106c6ac remain preserved. No completion claim for
+the whole kit/project. No image/player jobs or browser tabs remain.
+
+Initial construction recording FINISHED1/1PASS, receipt38ee5f037b23. Factory
+cost84.1528ms cold,46.4237/43.3319ms warm,139renderers/20705vertices. First frame
+deltas89.68/49.28/46.14ms. Saved Logs/phaister-construction-cost-uninstrumented.csv.
+This measures geometry construction, not the whole input/audio/UI path.
+
+Projection baseline FINISHED1/1PASS, receiptdb95614c8dec. Factory77.1579ms cold,
+48.7099/45.0661ms warm; ground projection14.2939/12.6362/11.5626ms. All three
+generated mesh/topology hashes equal
+53f1bb05633930e13090246a1f02d03e5524ce2066bfba79050a0df4766db4c7.
+CSV preserved as Logs/phaister-construction-cost-projection-baseline.csv.
+TUMP.DrapeGround is a standard ProfilerMarker; no game-facing instrumentation.
+
+Projection cache experiment FINISHED3/3PASS, receipt6c161f7a80bb.
+Logs/phaister-projection-cache-v1.{pid,stdout,stderr,log,xml}. VfxShapes caches a
+collider's Ignore/Fallback/Court classification ONLY during one synchronous
+DrapeToGround call, avoiding repeated actor/effect/rigidbody/parent checks for
+every vertex. RaycastAll, exact-XZ height cache, surface precedence and max-rise
+rules unchanged. No global cache or geometry/material simplification.
+Three focused tests: RecordRitualConstructionAndFirstFrameCosts,
+GroundProjectionObservesChangedSurfaceOwnership, and
+EclipseAndItsGroundBoundaryStayInsideTheArenaSurfaces. New ownership test changes
+court naming and adds a kinematic rigidbody between projections to catch stale
+classification. Compare actual measured cost AND exact generated mesh SHA to
+baseline before retaining the optimization. Result: exact same generated mesh SHA
+53f1bb05633930e13090246a1f02d03e5524ce2066bfba79050a0df4766db4c7 in all samples.
+Warm projection mean12.0994->5.2042ms; total46.888->43.6895ms. Keep this measured
+improvement, but do not claim the remaining44ms construction stall is solved.
+The first cache sample is already warmed by another test; do not compare it to
+the earlier cold84ms as a cold-start improvement.
+CSV preserved Logs/phaister-construction-cost-cache-v1.csv.
+
+Setup-cost profile FINISHED1/1PASS, receipt4691e03564ea,
+Logs/phaister-setup-cost-v1.{pid,stdout,stderr,log,xml}. Only the existing recording
+test runs, now also collecting TUMP.VfxGhostMaterial, TUMP.CovenScriptArcs and
+TUMP.CovenTickArcs markers. Markers overlap by containment; do not sum them as
+independent costs. A marker first registered during sample0 may only be available
+in later samples; inspect validity/count if output is zero. No material or glyph
+optimization yet. Warm construction38.1122/41.9105ms; materials16.7318/18.3079ms,
+script arcs12.3847/13.691ms and tick arcs9.1846/9.7972ms. Projection4.7517/5.2416ms.
+Exact mesh SHA unchanged. Saved Logs/phaister-construction-cost-setup-v1.csv.
+
+Material-phase baseline FINISHED1/1PASS, receipt68254c38fc2b,
+Logs/phaister-material-phase-baseline.{pid,stdout,stderr,log,xml}. Recording test
+also fingerprints every circle renderer's colour/emission at0,.4,.9,1.55,2.2,8.2s
+BEFORE any material-sharing change. This guards phase order/fades, not just mesh.
+Every baseline phase fingerprint equals
+0076df0d32edd13eaaac6649672dd97cec96349a7ec9ebcbb88d1eed95fe39ef.
+Saved Logs/phaister-construction-cost-material-baseline.csv.
+
+Matching material experiment FINISHED3/3PASS, receipt5242019c1b56.
+Logs/phaister-stage-materials-v1.{pid,stdout,stderr,log,xml}.
+Share matching ink material only within a single
+CovenCircleBuild layer (stage+RGBA+emission), keeping all existing glyph geometry
+and separate phases. First renderer owns the material for that layer's lifetime;
+all pieces currently die with the same root. Avoid a global shared material.
+Only one representative renderer per shared material needs alpha writes.
+No renderer merging or glyph simplification. Three focused checks are recording,
+GrandCovenWarnsBeforeItsFirstCurse and reset/rollback cleanup. Compare exact mesh
+AND phase-material fingerprints before retaining it, plus measured costs.
+Result: EXACT same mesh and phase-material hashes. Material setup warm mean
+18.27445->6.62505ms; whole construction41.65935->32.12035ms. Renderer/vertex
+counts remain139/20705. Saved phaister-construction-cost-stage-materials-v1.csv
+and phaister-material-sharing-comparison.json. Keep the measured optimization.
+
+INTERNAL build v4 FINISHED1057MB/43s, receiptc236b527355d,
+Logs/phaister-build-v4.{pid,stdout,stderr,log}, same explicit PhaisterSkillReview
+output. Includes measured caches/material sharing and a new REJOIN diagnostic.
+NetPhaisterProbe observe-existing flag never rebinds a returning peer's kit or
+teleports its targets. tools/net_phaister_review.py --case rejoin connects all
+three players, restarts the observer's SAME named profile when the host ritual
+actually activates, and checks the live snapshot/clock/sky inside the host window.
+Initial observer trace is observer-before.csv; returning trace is observer.csv.
+v4 coven PASS, Logs/net-phaister-coven-v4:513/505/511samples; first sampled
+warning-to-active1.412/1.407/1.363s. Observer first curse1.256s after its first
+sampled warning, so measured construction improvement did not establish a fully
+synchronized visible warning. Runtimev4 SHA:
+3f31088d81ad74f3e6e792289d9862c2b127e82912ac4958f626abfe5b8bf637.
+
+Logs/net-phaister-rejoin-v1 FAILED. Importantly, host/owner phaister flag flips1->0
+at rejoin while ultimate still has1.48/.86s left, then the ritual disappears.
+Returning observer has no useful remaining active window. Source/fixture audit:
+the probe bound a Phai KIT directly but did not confirm the room's actual character
+pick. RebindKitIfHeroChanged correctly reconciles to the authoritative pick when
+seating updates. Do not turn this into a speculative production kit-reset fix.
+Same-hero UpdateLoadout already exists and is still the intended preservation path.
+
+Fixture corrected: owning client selects Phaister through the real
+SelectLobbyPickServerRpc, and preparation waits for CharacterIndex+HeroId to
+agree. No manual BindHero remains in the probe. CSV also records charIndex,
+heroMode and roomPick; evaluator requires them to agree with Phaister. Old peer
+passes prove the manually bound kit's cast paths, not normal selected-character
+rejoin. Their rejection-sky defect and verified fix remain valid for that path.
+
+Build v5 FINISHED, receipt6dad78c2a57e, but its two runs timed out with no prepared
+cast. The real room pick was5 in saved profiles, but selecting it alone does not
+change the already preloaded test arena. This is a CLI-fixture issue. Normal
+play obtains its picks before arena construction. Existing NetFamiliarProbe
+initializes CharacterIndex/art/kit and BroadcastPicks together for this reason.
+
+Fixture now initializes the accepted room pick ONCE on host via normal
+SyncPicksClientRpc then BroadcastPicks, before its timed actions. All peers must
+observe actual CharacterIndex, kit and room pick agreement; returning peers never
+seed or rebind anything. It now exits at27s even if preparation failed.
+
+INTERNAL build v6 FINISHED1057MB/44s, receipte37fcedc3f2d,
+Logs/phaister-build-v6.log. RuntimeSHA
+47515c0cad199fa199bdec89fffef524f409e5da7f494b015520ac6548fd71ab.
+Actual corrected coven-v6 PASS:510/497/510samples, real Phai/model/room agreement,
+one ritual, proper victims/expiry/sky. Observer first sampled warning to curse
+still1.287s, so do not claim transport/visual timeline synchronization solved.
+
+CORRECTED REJOIN net-phaister-rejoin-v3 reproduces a production missing-state bug:
+host/owner keep their active Phai ritual; returned observer has correct Phai/pick
+but no active clock, circle or sky in20samples during the host's active window.
+No kit reset on continuing peers now. All sessions59155/94640/98990 and processes
+ended, named profiles restored. No active Editor/player/helper.
+
+NEXT: save/push the measured construction-cost checkpoint, then add targeted
+late-join ritual and current-sky state restoration following the existing reliable
+FamiliarEffect snapshot pattern. No late-join production fix yet. Protocol is30;
+inspect/version any new required messages and test current/old compatibility.
+Dirty: test, VfxShapes.cs, VfxMaterial.cs (marker), HeroHazards.cs,
+NetPhaisterProbe.cs, tools/net_phaister_review.py, ledger and phaister report.
+Do not edit C#/imported assets until Editor exits.
 
 Next concrete actions:
-1. Inspect/stage/commit/push Phaister's verified timing/forms/rejection checkpoint.
-   Fetch/inspect origin first. Use Logs/commit-phaister.txt, no coauthor trailers.
+1. Read the running construction measurement after it exits; then isolate the
+   expensive part of the actual cast before editing production. Saved/pushed
+   Phaister checkpoint is already complete for its recorded scope, do not redo it.
 2. Profile actual Grand Coven creation-frame cost and visible warning timing.
    In the three-player capture, approximately0.20s frames occur around creation;
    first sampled warning to active is1.36-1.41s, observer first curse1.255s.

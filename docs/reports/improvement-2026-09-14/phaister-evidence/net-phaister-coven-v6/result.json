@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 510,
+      "warning_samples": 26,
+      "active_samples": 132,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.4204370039683027,
+      "accepted_sky_samples": 102,
+      "first_curse_after_warning": 1.4204370039683027
+    },
+    "owner": {
+      "samples": 497,
+      "warning_samples": 26,
+      "active_samples": 132,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3704683956916028,
+      "accepted_sky_samples": 102,
+      "first_curse_after_warning": 1.9864801941610004
+    },
+    "observer": {
+      "samples": 510,
+      "warning_samples": 26,
+      "active_samples": 136,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.390555498866199,
+      "accepted_sky_samples": 105,
+      "first_curse_after_warning": 1.286784098639501
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "47515c0cad199fa199bdec89fffef524f409e5da7f494b015520ac6548fd71ab"
+}

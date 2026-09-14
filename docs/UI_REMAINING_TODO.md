@@ -1,5 +1,16 @@
 # Remaining UI — last in the parent queue
 
+**New lore requirement, 2026-09-14:** wire the six origins and short personality
+lines from [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md) into the active native
+character picker, and provide the longer stories in character introduction/unlock
+presentation. The current route is TumpPickerView through ConvertedCharacterSelect.
+All six heroes are currently available; existing unlocks are variants/rewards.
+Preserve that access and saved IDs. Do not invent paid locks or a compulsory lore
+delay. Keep ability mechanics accessible and validate text fit and back/focus flow.
+The seventh hero's introduction can use this presentation later, but his hero,
+water map and unlock implementation are LAST LAST after this whole existing list
+and the deferred Inday work. See [BADJAO_EXPANSION.md](BADJAO_EXPANSION.md).
+
 Owner decision2026-09-14: no more subagents, including resuming the previous
 /root/ui_overhaul. Parent finishes this list LAST after the other game work.
 Do not discard existing implementations or claim this overhaul is finished.

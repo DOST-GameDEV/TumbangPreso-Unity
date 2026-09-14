@@ -193,5 +193,102 @@ namespace TumbangPreso.PlayTests
             File.WriteAllText("Logs/phaister-arena-surface.csv",FormattableString.Invariant($"ceiling,moon_top,boundary_radius,ground_drift\n{ceiling.point.y},{moon.bounds.max.y},{reach.bounds.extents.x},{drift}\n"));
             Assert.IsEmpty(errors,string.Join("\n",errors));
         }
+
+        [UnityTest]
+        public IEnumerator GroundProjectionObservesChangedSurfaceOwnership()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Ground"; floor.transform.position = new Vector3(0, -.1f, 0);
+            floor.transform.localScale = new Vector3(6, .2f, 6);
+            var platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            platform.name = "Platform"; platform.transform.position = new Vector3(0, .3f, 0);
+            platform.transform.localScale = new Vector3(4, .2f, 4);
+            var mark = new GameObject("ProjectionTest", typeof(MeshFilter));
+            var mesh = new Mesh { vertices = new[] { new Vector3(-.5f, 0, -.5f),
+                new Vector3(.5f, 0, -.5f), new Vector3(.5f, 0, .5f), new Vector3(-.5f, 0, .5f) },
+                triangles = new[] { 0, 2, 1, 0, 3, 2 } };
+            mark.GetComponent<MeshFilter>().sharedMesh = mesh;
+            VfxShapes.Own(mark, mesh);
+            var flat = mesh.vertices;
+            Physics.SyncTransforms();
+            VfxShapes.DrapeToGround(mark);
+            Assert.AreEqual(.035f, mesh.vertices[0].y, .001f, "Court precedence changed.");
+
+            floor.name = "OrdinarySlab";
+            mesh.vertices = flat;
+            VfxShapes.DrapeToGround(mark);
+            Assert.AreEqual(.435f, mesh.vertices[0].y, .001f, "A later projection reused the former court classification.");
+
+            platform.AddComponent<Rigidbody>().isKinematic = true;
+            mesh.vertices = flat;
+            Physics.SyncTransforms();
+            VfxShapes.DrapeToGround(mark);
+            Assert.AreEqual(.035f, mesh.vertices[0].y, .001f, "A later projection failed to exclude a now-moving prop.");
+            yield return null;
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator RecordRitualConstructionAndFirstFrameCosts()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay, GameMode.HeroStrike);
+            var output = new System.Text.StringBuilder("sample,construction_ms,first_frame_delta,renderers,vertices,projection_ms,mesh_sha256,materials_ms,script_arcs_ms,tick_arcs_ms,phase_material_sha256\n");
+            for (int sample = 0; sample < 3; sample++)
+            {
+                using var projection = Unity.Profiling.ProfilerRecorder.StartNew(
+                    Unity.Profiling.ProfilerCategory.Scripts, "TUMP.DrapeGround", 4);
+                using var materials = Unity.Profiling.ProfilerRecorder.StartNew(
+                    Unity.Profiling.ProfilerCategory.Scripts, "TUMP.VfxGhostMaterial", 4);
+                using var scripts = Unity.Profiling.ProfilerRecorder.StartNew(
+                    Unity.Profiling.ProfilerCategory.Scripts, "TUMP.CovenScriptArcs", 4);
+                using var ticks = Unity.Profiling.ProfilerRecorder.StartNew(
+                    Unity.Profiling.ProfilerCategory.Scripts, "TUMP.CovenTickArcs", 4);
+                var clock = System.Diagnostics.Stopwatch.StartNew();
+                var effect = HeroHazards.SpawnGrandCovenEclipse(Vector3.zero, 10.5f, 7,
+                    PhaisterHeroKit.RitualBuildSeconds);
+                clock.Stop();
+                int renderers = effect.GetComponentsInChildren<Renderer>().Length;
+                int vertices = 0;
+                foreach (var filter in effect.GetComponentsInChildren<MeshFilter>())
+                    if (filter.sharedMesh != null) vertices += filter.sharedMesh.vertexCount;
+                yield return null;
+                Assert.True(projection.Valid && projection.Count > 0, "The projection timer did not record.");
+                var geometry = new System.Text.StringBuilder();
+                foreach (var filter in effect.GetComponentsInChildren<MeshFilter>())
+                {
+                    if (filter.sharedMesh == null) continue;
+                    geometry.Append(filter.name);
+                    foreach (var vertex in filter.sharedMesh.vertices)
+                        geometry.Append(FormattableString.Invariant($"|{vertex.x:R},{vertex.y:R},{vertex.z:R}"));
+                    foreach (int index in filter.sharedMesh.triangles) geometry.Append('|').Append(index);
+                }
+                using var sha = System.Security.Cryptography.SHA256.Create();
+                string fingerprint = BitConverter.ToString(sha.ComputeHash(
+                    System.Text.Encoding.UTF8.GetBytes(geometry.ToString()))).Replace("-", "").ToLowerInvariant();
+                var phases = new System.Text.StringBuilder();
+                var circle = effect.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
+                foreach (float phase in new[] { 0f, .4f, .9f, 1.55f, 2.2f, 8.2f })
+                {
+                    circle.StepTo(phase);
+                    foreach (var renderer in circle.GetComponentsInChildren<Renderer>())
+                    {
+                        var color = renderer.sharedMaterial.color;
+                        var emission = renderer.sharedMaterial.GetColor("_EmissionColor");
+                        phases.Append(FormattableString.Invariant(
+                            $"|{phase}:{renderer.name}:{color.r:R},{color.g:R},{color.b:R},{color.a:R}:{emission.r:R},{emission.g:R},{emission.b:R}"));
+                    }
+                }
+                string materialFingerprint = BitConverter.ToString(sha.ComputeHash(
+                    System.Text.Encoding.UTF8.GetBytes(phases.ToString()))).Replace("-", "").ToLowerInvariant();
+                output.AppendLine(FormattableString.Invariant(
+                    $"{sample},{clock.Elapsed.TotalMilliseconds},{Time.deltaTime},{renderers},{vertices},{projection.LastValue / 1000000.0},{fingerprint},{materials.LastValue / 1000000.0},{scripts.LastValue / 1000000.0},{ticks.LastValue / 1000000.0},{materialFingerprint}"));
+                Assert.IsNotNull(effect.transform.Find("EclipseReach"));
+                Object.Destroy(effect);
+                yield return null;
+                Assert.IsNull(GameObject.Find("GrandCovenEclipseEffect"));
+                yield return new WaitForSeconds(.2f);
+            }
+            File.WriteAllText("Logs/phaister-construction-cost.csv", output.ToString());
+            Debug.Log(output.ToString());
+        }
     }
 }

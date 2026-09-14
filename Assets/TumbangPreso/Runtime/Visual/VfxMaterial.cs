@@ -37,6 +37,8 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class VfxMaterial
     {
+        private static readonly Unity.Profiling.ProfilerMarker GhostMaterialMarker =
+            new Unity.Profiling.ProfilerMarker("TUMP.VfxGhostMaterial");
         private static Material _template;
 
         /// <summary>
@@ -126,6 +128,7 @@ namespace TumbangPreso.Visual
         public static void Ghost(Renderer renderer, Color colour, float emission = 0.45f,
                                  bool stripCollider = true)
         {
+            using var materialSample = GhostMaterialMarker.Auto();
             if (renderer == null) return;
 
             Material owned = null;
