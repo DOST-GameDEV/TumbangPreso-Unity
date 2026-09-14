@@ -60,7 +60,7 @@ namespace TumbangPreso.UI
     /// destination with no visible door) applied to the four people who most need to know what
     /// they are about to play. Every control is uninteractable and the headline says who owns it.
     /// </summary>
-    public sealed class CustomGameScreen : MonoBehaviour
+    public sealed partial class CustomGameScreen : MonoBehaviour
     {
         /// <summary>
         /// ⚠️ 530, ABOVE `CustomCharacterScreen`'s 520, THE SIGN-IN SCREEN'S 510 AND THE HUB'S
@@ -160,7 +160,9 @@ namespace TumbangPreso.UI
         // § CHROME
         // -------------------------------------------------------------------
 
-        private void Build()
+        private void Build()=>BuildOwnerRules();
+
+        private void BuildPrevious()
         {
             _canvas = MenuKit.BuildCanvas(transform, "CustomGameCanvas");
             _canvas.sortingOrder = SortingOrder;
@@ -313,6 +315,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Refresh()
         {
+            if(_ownerRules){RefreshOwnerRules();return;}
             if (_list == null || _editing == null) return;
 
             for (int i = _list.childCount - 1; i >= 0; i--)
@@ -445,6 +448,7 @@ namespace TumbangPreso.UI
 
         private void RefreshHeadline()
         {
+            if(_ownerRules){RefreshOwnerRules();return;}
             if (_headline != null)
             {
                 string target = _editing.ScoreTarget > 0
@@ -507,7 +511,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Apply()
         {
-            if (_editing == null) return;
+            if (_editing == null || !MayEdit) return;
 
             SceneFlow.SetSelectedRules(_editing);
 
@@ -525,6 +529,7 @@ namespace TumbangPreso.UI
                 Net.MatchRpc.Instance?.SelectRulesServerRpc(CustomGameRules.ToWire(_editing));
 
             RefreshHeadline();
+            RulesChanged?.Invoke();
         }
 
         private void SetMode(GameMode mode)
@@ -556,6 +561,7 @@ namespace TumbangPreso.UI
 
         private void OnReset()
         {
+            if(!MayEdit)return;
             MenuSfx.Click();
 
             // ⚠️ THE MODE SURVIVES A RESET AND NOTHING ELSE DOES. `Defaults(mode)` takes the mode

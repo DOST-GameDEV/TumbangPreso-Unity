@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.8319041">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.831904" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.821751" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.816302" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.811457" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1300" name="OwnerPreparationTests" fullname="TumbangPreso.PlayTests.OwnerPreparationTests" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:54Z" duration="2.797789" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1304" name="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" methodname="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1021662394" result="Passed" start-time="2026-09-14 20:26:51Z" end-time="2026-09-14 20:26:53Z" duration="1.935079" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18658, join code 7N42
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerPreparation-friends-chat-v1/ArenaSheet: vertices=18, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/ChatPaper: vertices=18, cull=False, alpha=1, depth=78, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/HistoryPaper: vertices=18, cull=False, alpha=1, depth=0, material=1
+[TumpUiCapture] OwnerPreparation-friends-chat-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1302" name="RankedPreparationKeepsRankedStakeAndAccountState" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.RankedPreparationKeepsRankedStakeAndAccountState" methodname="RankedPreparationKeepsRankedStakeAndAccountState" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1031078417" result="Passed" start-time="2026-09-14 20:26:53Z" end-time="2026-09-14 20:26:54Z" duration="0.805758" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerPreparation-ranked-v2/ArenaSheet: vertices=18, cull=False, alpha=1, depth=15, material=1
+[TumpUiCapture] OwnerPreparation-ranked-v2 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1303" name="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" methodname="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1946642235" result="Passed" start-time="2026-09-14 20:26:54Z" end-time="2026-09-14 20:26:54Z" duration="0.044714" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

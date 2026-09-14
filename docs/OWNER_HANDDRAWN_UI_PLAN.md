@@ -147,8 +147,11 @@ critical HUD changes without delaying their information or shaking stable anchor
   supersedes the prior paper-left/street-right layouts.
   Scoped routes/loading controls pass; see reports/owner-ui-u2.md. Refine the
   mode-panel character and complete cold-launch/motion qualification in U8.
-- [ ] U3: preparation/lobby, map/mode/local/network/custom choices, readiness,
-  room browser, joining/queue/cancellation and their loading/empty/error states.
+- [x] U3 first implementation: preparation/lobby, map/mode/local/network/custom choices,
+  readiness, room browser, joining/queue/cancellation and loading/empty/error states.
+  Fresh owner-art views and focused offline/host/authority/queue checks are recorded
+  in reports/owner-ui-u3.md. External relay and complete multi-peer route coverage
+  remain in U8, along with full composition/motion review.
 - [ ] U4: character/equipment/skill pickers and held skill reference. Preserve
   portraits, meaningful concise comparisons, selected-state clarity and stable
   loadout behavior. Review the old pending-held-info.patch against current code;

@@ -1,5 +1,10 @@
 # Active execution plan
 
+**CURRENT UI,2026-09-15:** U1/U2 saved; U3 preparation/browser/queue/custom/chat
+scoped implementation qualified. Continue U4 character/equipment/skill pickers,
+then U5-U8 before the gameplay bookmark. Reports owner-ui-u1/u2/u3 carry exact
+qualification and limits. Latest ACTIVE_REWORK_LEDGER owns the next concrete step.
+
 **Gameplay interruption bookmark:** [GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md)
 separates saved work, partial verification and untouched tasks. The owner explicitly
 requested this so the gameplay queue can resume after the new UI overhaul.

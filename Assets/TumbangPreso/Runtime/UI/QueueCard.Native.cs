@@ -10,7 +10,7 @@ namespace TumbangPreso.UI
     {
         private bool _nativeQueue;
         private RectTransform _nativeQueueBounds;
-        private void ConstructNativeQueue()
+        private void ConstructPreviousNativeQueue()
         {
             _nativeQueue = true;
             var f = TumpUiTheme.Current;

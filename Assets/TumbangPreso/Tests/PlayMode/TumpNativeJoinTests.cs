@@ -25,14 +25,14 @@ namespace TumbangPreso.PlayTests
             try
             {
                 var panel = LobbyJoinPanel.Build(owner.transform, null); panel.Open(); yield return null;
-                var canvas = GameObject.Find("TumpJoinCanvas").GetComponent<Canvas>();
+                var canvas = GameObject.Find("OwnerJoinCanvas").GetComponent<Canvas>();
                 Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
                 Press("ConnectToRoom"); yield return null;
                 Assert.That(canvas.GetComponentsInChildren<Text>().First(t => t.name == "JoinStatus").text, Does.Contain("Enter"));
-                yield return TumpUiCapture.Capture("NativeJoin-nearby-v1", canvas, 1920, 1080);
+                yield return TumpUiCapture.Capture("OwnerJoin-nearby-v1", canvas, 1920, 1080, false);
                 Press("OnlineChip"); yield return null;
                 Assert.IsNotNull(GameObject.Find("OnlineRooms"));
-                yield return TumpUiCapture.Capture("NativeJoin-online-v1", canvas, 1280, 960);
+                yield return TumpUiCapture.Capture("OwnerJoin-online-v1", canvas, 1280, 960, false);
                 Press("CloseJoinButton"); yield return null;
                 Assert.IsFalse(panel.IsOpen); Assert.IsFalse(canvas.gameObject.activeSelf);
             }
@@ -68,11 +68,10 @@ namespace TumbangPreso.PlayTests
             var owner = new GameObject("QueueReviewOwner");
             try
             {
-                var canvas = TumpUiFactory.Canvas(owner.transform, "QueueReviewCanvas", 100);
-                TumpUiFactory.Ground(canvas.transform, TumpUiTheme.Current.Cream);
+                var canvas = OwnerUiLayout.Canvas(owner.transform, "QueueReviewCanvas", 100);
+                OwnerUiBackdrop.Build(canvas.transform);
                 bool underlyingUsed = false;
-                var loadout = TumpUiFactory.Button(canvas.transform, "UnderlyingLoadout", "Loadout", () => underlyingUsed = true, TumpSurface.Form.Link);
-                TumpUiFactory.Place((RectTransform)loadout.transform, 70, 100, 340, 94);
+                OwnerTextAction.Create(canvas.transform, "UnderlyingLoadout", "LOADOUT", () => underlyingUsed = true,70,100,340,94,30);
                 var card = QueueCard.Build(canvas.transform);
                 var queue = Matchmaker.Current; queue.enabled = false;
                 typeof(Matchmaker).GetProperty("State").GetSetMethod(true).Invoke(queue, new object[] { QueueState.Searching });
@@ -81,7 +80,7 @@ namespace TumbangPreso.PlayTests
                 typeof(QueueCard).GetMethod("Refresh", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(card, null);
                 yield return null;
                 Press("UnderlyingLoadout"); Assert.IsTrue(underlyingUsed, "Searching must not block the rest of preparation.");
-                yield return TumpUiCapture.Capture("NativeQueue-v1", canvas, 1920, 1080);
+                yield return TumpUiCapture.Capture("OwnerQueue-v1", canvas, 1920, 1080,false);
                 Press("CancelQueueButton"); yield return null;
                 Assert.IsFalse(card.IsQueueing); Assert.IsTrue(Find("QuickMatchButton").interactable);
             }

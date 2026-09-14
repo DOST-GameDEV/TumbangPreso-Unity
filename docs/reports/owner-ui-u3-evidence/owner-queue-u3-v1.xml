@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.4849996">
+  <test-suite type="TestSuite" id="1514" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="392" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.485000" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1508" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="392" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.474957" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49708" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1509" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="392" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.469190" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1510" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="392" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.463685" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1449" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.452512" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1452" name="QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" methodname="QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1429446306" result="Passed" start-time="2026-09-14 19:54:51Z" end-time="2026-09-14 19:54:52Z" duration="0.438908" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerQueue-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

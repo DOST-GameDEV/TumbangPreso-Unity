@@ -1,5 +1,69 @@
 # Active TUMP rework ledger
 
+## CURRENT U3 scoped qualification passed; save then U4 pickers
+
+All tools retired. 99210 passed3/3, guard964935b5fa0e; 85330 final focused chat
+passed1/1, guard56b06a5e9e2e. Earlier v2 passed5/6; the one failure was a test
+assuming a client from SceneFlow.Networked alone. NetAuthority defaults to host
+without a provider. Fixed test uses existing INetProvider boundary with a client
+fixture and restores it; no production permission weakening. Offline custom
+settings/map/loadout flow passed. Local real host verifies room controls, browser
+return, hidden chat remaining subscribed and history/composer. No message sent.
+Final original prep/custom/ranked/chat captures inspected; chat history overlays
+its compact copy rather than duplicating messages. Added ScreenTakeover escape
+ownership. Full remote services/multi-peer/fresh player qualification still U8.
+Report owner-ui-u3.md. U3 staged next; latest pushed512de6e7 until saved.
+Next U4: draft files Logs/OwnerRosterTile.cs.draft and
+Logs/TumpPickerView.OwnerPainted.cs.draft are NOT imported. Review/apply then
+replace TumpSkillView from empty owner-art composition, retaining variant unlock/
+equip services. Use existing picker tests adapted to new canvas and LoadoutButton.
+Old TumpPickerView Build/Refresh preserved as Previous when activating partial.
+Need inspect real preview grounding/long labels and no stretched art; no visual
+approval yet. Deferred held-skill-info patch remains to inspect in U4.
+Do not stop at commit. Full UI then GAMEPLAY_RESUME_AFTER_UI.md. No agents,
+Figma, reset credits or Desktop. Latest repeated login-Back complaint was answered
+with corrected actual startup source and image; do not revive management screenshot.
+
+## CURRENT U3 preparation first pass passed; visual and custom-rule corrections awaiting check
+
+83315 completed 1/1 PASS, guard4162beb63c3b. Offline actual map, mode, picker and
+return routes work. Original render exposed a 16:9 map stretched into 1028x405;
+changed its destination to 1028x578.25, with an explicit aspect assertion. Removed
+the generic second large panel in favor of supplied separate field artwork.
+Added selected route strokes, compact seat strip, rank state/explanation and
+explicit QueueStake.Ranked (old installer assigned this; new adapter initially
+omitted it). Queue search hides the overlapping primary action/loadout summary.
+New CustomGameScreen.OwnerPainted uses stable editable rows/native input and
+existing rule services; old visual builders retained inactive. Host-only controls,
+client read-only access and readable Close remain. Custom rule change callback
+keeps preparation from restoring a stale bot tier. Browser empty heading now
+retains reading contrast without disabled alpha. Portraits share cached sprites.
+Startup no-Back remains verified in b550958e; latest user complaint answered with
+correct actual OpenAtBoot capture, not the account-management one.
+Next: focused OwnerPreparationTests (3 cases) and existing join/queue regressions;
+inspect actual renders and correct failures, then U3 chat and actual room states.
+No running tools at this pointer. U3 dirty, latest pushed512de6e7. No agents/reset/
+Figma/Desktop. Keep finishing full UI then GAMEPLAY_RESUME_AFTER_UI.md.
+
+## CURRENT U3 browser passed; queue restyle under focused test
+
+U2pushed512de6e7. OwnerJoinCanvas rebuilt with actual unwarped entry/action art,
+font roles, new source tabs and existing LAN/online/join-cancellation behavior.
+95259completed3/3 (two join cases plus then-unchanged queue), guarde5daf9ae5658.
+Browser nearby/online views captured; nearby inspected. Current empty-state row
+is deliberately noninteractive but its disabled heading is too faint for a final
+design; refine during this U3pass. Main preparation controller still untouched.
+Added OwnerQueueTicket and QueueCard.OwnerPainted, prior queue builder retained
+inactive. Distinct deep-red nonmodal status ticket and real source-art bot-fill
+action. Running ONLY queue case Logs/owner-queue-u3-v1.xml/.log, owner-themed
+test canvas verifies underlying loadout remains clickable and Cancel restores
+start. No Assets/C# edits until Editor exits. U3browser/queue uncommitted.
+Next main preparation: nonvisual state/action adapters must preserve existing
+ConvertedMatchSetup net events/AutoHost/ready/seat/picker/custom/profile behavior.
+Read-only stripped method notes are Logs/read_preparation_logic.py and
+Logs/read_setup_methods.py; no production controller changes yet. No agents,
+Figma/reset/Desktop. Finish full UI then GAMEPLAY_RESUME_AFTER_UI.md.
+
 ## CURRENT U2 scoped checks passed; save then U3 preparation/lobby
 
 94686navigation completedPASS, guard225a8b97c006.60907loading/control casepassed;

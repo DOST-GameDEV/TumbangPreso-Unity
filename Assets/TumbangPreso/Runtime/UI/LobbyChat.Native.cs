@@ -7,7 +7,7 @@ namespace TumbangPreso.UI
     {
         private bool _nativeChat;
         private const float NativeLineHeight = 46;
-        private void ConstructNative()
+        private void ConstructPreviousNative()
         {
             _nativeChat = true;
             _rect = gameObject.AddComponent<RectTransform>();
@@ -41,7 +41,7 @@ namespace TumbangPreso.UI
             }
             SetNativeLines();
         }
-        private void SetNativeLines()
+        private void SetPreviousNativeLines()
         {
             if (!_inMatch)
             {
@@ -60,7 +60,7 @@ namespace TumbangPreso.UI
                 Ellipsise(line, NativeLineHeight);
             }
         }
-        private void BuildNativeHistory()
+        private void BuildPreviousNativeHistory()
         {
             var rect = TumpUiFactory.Rect(_rect, "NativeChatHistory"); _historyPanel = rect.gameObject;
             rect.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;

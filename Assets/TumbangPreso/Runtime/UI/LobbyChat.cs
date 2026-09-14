@@ -431,6 +431,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            ScreenTakeover.Unregister(this);
             // ⚠️ THE OVERLAY IS NOT A CHILD OF THIS COMPONENT (see `BuildHistoryPanel`), so
             // destroying the chat does not destroy it. Left behind, it is a wooden log panel
             // floating over the next screen with nothing driving it.
@@ -473,6 +474,7 @@ namespace TumbangPreso.UI
                 if (_historyPanel != null && _historyPanel.activeSelf &&
                     InputLayer.MenuNav.CancelPressed)
                 {
+                    ScreenTakeover.ConsumeEscape();
                     _historyPanel.SetActive(false);
                 }
                 return;

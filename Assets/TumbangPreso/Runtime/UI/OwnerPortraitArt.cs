@@ -8,6 +8,12 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<string,Sprite> Cache=new Dictionary<string,Sprite>();
         public static UnityEngine.UI.Image Create(Transform parent,string name,string resource)
         {
+            var image=OwnerUiLayout.Rect(parent,name).gameObject.AddComponent<UnityEngine.UI.Image>();
+            image.sprite=Get(resource);image.preserveAspect=true;image.raycastTarget=false;image.color=Color.white;
+            return image;
+        }
+        public static Sprite Get(string resource)
+        {
             if(!Cache.TryGetValue(resource,out var sprite) || sprite==null)
             {
                 sprite=Resources.Load<Sprite>(resource);
@@ -18,9 +24,7 @@ namespace TumbangPreso.UI
                 }
                 Cache[resource]=sprite;
             }
-            var image=OwnerUiLayout.Rect(parent,name).gameObject.AddComponent<UnityEngine.UI.Image>();
-            image.sprite=sprite;image.preserveAspect=true;image.raycastTarget=false;image.color=Color.white;
-            return image;
+            return sprite;
         }
     }
 }

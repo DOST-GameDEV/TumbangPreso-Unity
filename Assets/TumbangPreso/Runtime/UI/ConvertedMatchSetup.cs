@@ -16,7 +16,7 @@ namespace TumbangPreso.UI
     /// In multiplayer, the screen acts as the Lobby, showing join code, host address,
     /// and ready status controls.
     /// </summary>
-    public sealed class ConvertedMatchSetup : ConvertedScreen
+    public sealed partial class ConvertedMatchSetup : ConvertedScreen
     {
         private int _map;
         private int _difficulty = 1;
@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
         /// title they were actually trying to reach. See that scene constant's note in
         /// `SceneFlow` for why it is kept on disk regardless.
         /// </summary>
-        protected override string CancelTarget => SceneFlow.MainMenu;
+        protected override string CancelTarget => _ownerPreparation!=null?SceneFlow.ModeSelect:SceneFlow.MainMenu;
 
         /// <summary>
         /// ⚠️ ESCAPE CLOSES THE JOIN CARD FIRST AND LEAVES THE LOBBY SECOND. `ConvertedScreen`
@@ -44,6 +44,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            if(_ownerPreparation!=null && _chat!=null && _chat.IsPresented){_chat.SetPresented(false);return true;}
             // ⚠️⚠️ THE HUB ANSWERS ITS OWN ESCAPE AND THIS SCREEN MUST NOT ANSWER THE SAME ONE.
             // `ConvertedScreen.Update` and `PlayerHub.Update` both read `GetKeyDown` on the frame
             // the key goes down, so without this line one press closes the hub AND stops the
@@ -270,7 +271,8 @@ namespace TumbangPreso.UI
             }
         }
 
-        protected override void Wire()
+        protected override void Wire() => WireOwnerPreparation();
+        private void WirePrevious()
         {
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
@@ -515,7 +517,7 @@ namespace TumbangPreso.UI
         {
             if (!IsLobby) return;
             // Ranked is a queue destination, not a request to open a LAN room.
-            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked) return;
+            if (ActivePreparationRoute == LobbyMode.Ranked) return;
 
             var net = NetSession.Instance;
             if (net == null || net.IsNetworked) return;
@@ -1774,6 +1776,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void ApplyCastVisibility()
         {
+            if(_ownerPreparation!=null)return;
             if (_preview != null) _preview.LobbyShot = IsLobby;
             if (_cast != null) _cast.SetVisible(IsLobby);
 
@@ -1853,6 +1856,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void SelectMode(LobbyMode mode)
         {
+            if(_ownerPreparation!=null){SelectOwnerRoute(mode);return;}
             if (_chrome != null && _chrome.Mode == mode) return;
             if (_queueCard != null && _queueCard.IsQueueing) _queueCard.CancelSearch();
 
@@ -2356,6 +2360,7 @@ namespace TumbangPreso.UI
 
         private void RefreshEntryControls()
         {
+            if(_ownerPreparation!=null){RefreshOwnerPreparation();return;}
             if (_lobbyEntryRow == null) return;
 
             bool live = IsLive;
@@ -2461,6 +2466,7 @@ namespace TumbangPreso.UI
 
         private void WriteStatus(string message, bool alert)
         {
+            if(_ownerPreparation!=null){_ownerPreparation.Status.text=message;_ownerPreparation.Status.color=alert?OwnerUiTheme.Current.HintInk:OwnerUiTheme.Current.ActionInk;return;}
             var label = Node("StatusLabel");
             if (label == null) return;
 
@@ -2596,7 +2602,7 @@ namespace TumbangPreso.UI
             // one, and this is the branch that makes that true. A ranked press must never reach
             // `HostStartMatch`, which would load an arena with three bots and submit it to the
             // ladder.
-            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked)
+            if (ActivePreparationRoute == LobbyMode.Ranked)
             {
                 _queueCard?.StartRanked();
                 return;
@@ -2911,6 +2917,7 @@ namespace TumbangPreso.UI
 
         private void RefreshSeats()
         {
+            if(_ownerPreparation!=null){RefreshOwnerSeats();return;}
             var net = NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
 
@@ -3134,6 +3141,7 @@ namespace TumbangPreso.UI
 
         private void Refresh()
         {
+            if(_ownerPreparation!=null){RefreshOwnerPreparation();return;}
             var net = NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
 
@@ -3470,6 +3478,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void LateUpdate()
         {
+            if(_ownerPreparation!=null){if(Time.unscaledTime>=_ownerRefreshAt){_ownerRefreshAt=Time.unscaledTime+.5f;RefreshOwnerPreparation();}return;}
             // ⚠️⚠️ NOTHING IS RE-STACKED HERE ANY MORE AND THAT IS THE POINT OF THE 2026-09-01
             // REBUILD. The chat, the queue card and the settings body used to be three plates
             // anchored to canvas corners, so each had to be positioned against the MEASURED height
@@ -3775,6 +3784,7 @@ namespace TumbangPreso.UI
 
         private void RefreshActionButtons()
         {
+            if(_ownerPreparation!=null){RefreshOwnerActions();return;}
             var primNode = Node("PrimaryButton");
             var startNode = Node("StartButton");
 
@@ -3785,7 +3795,7 @@ namespace TumbangPreso.UI
             // and `LobbyChrome.BuildActionSlot`: one primary, always in the same place, and its
             // LABEL is what changes with the mode. A ranked player must not be able to reach
             // `OnPrimaryPressed`, which readies or starts a local match.
-            bool ranked = _chrome != null && _chrome.Mode == LobbyMode.Ranked;
+            bool ranked = ActivePreparationRoute == LobbyMode.Ranked;
 
             if (ranked)
             {
@@ -3978,6 +3988,7 @@ namespace TumbangPreso.UI
 
         private void HandleJoinCodeChanged(string code)
         {
+            if(_ownerPreparation!=null){RefreshOwnerPreparation();return;}
             if (_codeRow != null)
             {
                 _codeRow.SetActive(!string.IsNullOrEmpty(code));
@@ -3987,6 +3998,11 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            if(_ownerCustomRules!=null)_ownerCustomRules.RulesChanged-=OwnerRulesChanged;
+            if(_ownerPreparation!=null && _queueCard!=null)
+            {
+                _queueCard.Status-=SetStatus;_queueCard.Joined-=HandleJoinedInPlace;_queueCard.StartWithBots-=StartAgainstBots;
+            }
             var net = NetSession.Instance;
             if (net != null)
             {

@@ -21,7 +21,7 @@ namespace TumbangPreso.UI
         private bool _nativeCompleting;
         /// <summary>Connection boundary for alternate front ends and isolated delayed-operation tests.</summary>
         public Func<string, CancellationToken, Task<bool>> Connection { get; set; }
-        private void ConstructNative()
+        private void ConstructPreviousNative()
         {
             _nativeJoin = true; var f = TumpUiTheme.Current;
             _nativeJoinCanvas = TumpUiFactory.Canvas(transform, "TumpJoinCanvas", 830);
@@ -58,9 +58,9 @@ namespace TumbangPreso.UI
             ScreenTakeover.Register(this, () => _nativeJoinCanvas != null && _nativeJoinCanvas.gameObject.activeInHierarchy);
         }
         private RectTransform _nativeLanContent, _nativeOnlineContent;
-        private static void SelectNativeSource(Button button, bool selected)
+        private static void SelectPreviousNativeSource(Button button, bool selected)
         { var face = button.GetComponent<TumpSurface>(); face.Selected = selected; face.SetVerticesDirty(); }
-        private void EnsureNativeRows(RectTransform parent, List<Button> rows, List<Text> labels, int count, Action<int> selected)
+        private void EnsurePreviousNativeRows(RectTransform parent, List<Button> rows, List<Text> labels, int count, Action<int> selected)
         {
             while (rows.Count < Mathf.Max(1, count))
             {
@@ -116,7 +116,7 @@ namespace TumbangPreso.UI
         {
             if (!_nativeJoin || _nativeJoinCanvas == null || !_nativeJoinCanvas.gameObject.activeInHierarchy) return;
             _nativeConnect.interactable = !_busy; _entry.interactable = !_busy;
-            _nativeConnect.GetComponentInChildren<Text>().text = _busy ? "Joining..." : "Join";
+            _nativeConnect.GetComponentInChildren<Text>().text = _busy ? "JOINING..." : "JOIN";
             if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape(); Close();
         }
