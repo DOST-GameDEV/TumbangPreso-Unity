@@ -1,10 +1,10 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
-**Latest owner order,Sep14 04:10:** no more subagents or resuming the old UI agent.
-Parent continues other requested game work, then completes the remaining UI LAST.
-Full inherited UI checklist/source references/known failure/pending commit:
-[UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Prior UI-before-animation ordering
-is superseded for unfinished UI. All reset permission is revoked.
+**Latest owner scope,2026-09-14:** remaining UI work is REMOVED from this queue.
+Existing UI/source stays saved; archived checklist is linked from
+[UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Continue non-UI gameplay, skills,
+network, movement and spectator work; deferred Inday later; expansion LAST LAST.
+No agents or usage resets. Older UI-LAST instructions are superseded.
 
 **Latest owner playtest corrections are active:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
 Remove Street Hype and main RULES row; fix Ilalim floating/road continuity; redesign
@@ -18,7 +18,7 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 **Newest PC transfer, 2026-09-14:** all unfinished Zack work is saved for transfer.
 Pull ASTRAReworks first on the destination; follow ACTIVE_REWORK_LEDGER.md's newest
 section. Focused local tests pass. The final internal build and corrected delayed
-peer reruns remain unfinished. Continue the entire queue there, including UI,
+peer reruns remain unfinished. Continue the remaining non-UI queue,
 deferred Inday FPP and finally the selected B-hero/C-map expansion.
 
 **Current continuation, 2026-09-14:** keep working until the complete remaining
@@ -313,7 +313,7 @@ taht again"*.
 never reset to the historical hash below. Maps/life/pool and current throw/body/
 grip work have focused evidence; graphics batching experiments were rejected.
 Next: meaningful equipment from equipment-audit.md, then remaining movement,
-abilities/effects/network/spectator and other game work; inherited UI LAST.
+abilities/effects/network/spectator and other game work; UI removed by owner.
 No agents or usage resets. Only related tests. See ACTIVE_REWORK_LEDGER,
 WORKSTATION_SETUP.md and reports/improvement-2026-09-14/transfer-checkpoint.md.
 Older task ordering, agent ownership and minimum-UI language below is historical.
@@ -344,15 +344,7 @@ broader improvement and release scope below remains active.
 
 ### 152.4 Repeated play must feel substantially better: OPEN
 
-Newest UI ownership/quality contract: girlfriend will eventually replace this
-UI in the long term, NOT soon. Continue a polished complete overhaul now with
-easy-to-edit text, shapes, layouts, theme/source assets and separated domain
-logic. Owner explicitly forbids reusing old UI builders/reskinning old hierarchy;
-the UI agent is creating new native views/components from empty roots. Actual
-character portraits, equipment thumbnails and appropriate icons must replace
-text-heavy choices. Full logo/palette and quirky hand-drawn visual language are
-required. Old source stays inactive, not deleted. This future replacement is
-not authorization to ship placeholders or defer current quality.
+Remaining UI overhaul: removed from this queue by owner2026-09-14.
 
 **Animal correction:** smaller unmistakably feline cats and friendlier distinct
 aspins; owner rejects current similarity/size/cuteness. Add rare brief dog pee/

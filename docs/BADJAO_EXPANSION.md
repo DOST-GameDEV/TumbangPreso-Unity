@@ -1,5 +1,10 @@
 # Deferred seventh hero and water-village expansion
 
+**Current scope,2026-09-14:** owner removed the remaining UI work from this
+active queue. Earlier finish-UI ordering below is historical. Preserve UI source
+and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
+
+
 **SELECTED by the owner, 2026-09-14: character B + map C.** Use the tied-hair,
 rolled green shirt and practical boatcraft direction, with a central court
 surrounded by the lagoon village. Source sheets are in

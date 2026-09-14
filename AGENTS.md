@@ -1,12 +1,22 @@
 # Working instructions for ChatGPT / Codex
 
+**NEWEST scope change,2026-09-14: UI REMOVED from the active to-do list.**
+The owner explicitly cancelled the remaining UI work in this queue. Do not finish
+its overhaul, remaining screens or planned UI/lore integration unless requested
+again. Keep existing implementation, PDF/logo/art and pending source patch saved.
+UI_REMAINING_TODO.md now records cancellation and points to the archived brief.
+All older UI-LAST/finish-UI directions below or in historical plans are superseded.
+Continue gameplay/skills/network/movement/spectator work, deferred Inday later,
+then the selected seventh hero/map LAST LAST. No agents/Figma/reset permissions.
+
+
 **Returned to original laptop,2026-09-14:** owner explicitly requested pulling
 the other PC's latest work and CONTINUING here. Fast-forward to c664a7b9 verified.
 The source-PC stop/build prohibition below is retired, not a ban on work here.
 Current checkout is C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity.
 Resume Zack's corrected internal build and delayed peer checks, then the complete
-remaining queue. No agents, other chats, Figma or reset credits. UI late, deferred
-Inday afterward, selected seventh hero/map LAST LAST. No Desktop update.
+remaining queue. No agents, other chats, Figma or reset credits. Deferred
+Inday later, selected seventh hero/map LAST LAST. No Desktop update.
 
 **Newest PC-transfer instruction, 2026-09-14:** owner is studying on this PC and
 explicitly requests committing/pushing ALL unfinished work and a complete handoff
@@ -193,11 +203,8 @@ not spawn, fork, resume, or assign work to any agent, including the former UI
 agent. It stopped at the usage limit before finishing. Parent does the remainder.
 The previous one-agent exception is revoked. Preserve its existing work/source.
 
-**Latest priority:** the former UI agent's remaining TODO is now LAST in the
-parent's queue, after the other requested game work. This supersedes older UI-
-before-animation ordering for unfinished UI. See docs/UI_REMAINING_TODO.md for
-exact remaining screens, known failure and unintegrated commit. Parent continues
-its own gameplay/throwing/animation/skills work without watching or restarting UI.
+**Current priority:** continue the non-UI game queue. The former UI remainder is
+removed by the latest owner instruction above, not postponed to another phase.
 
 **Efficient quality work:** prioritize visual/gameplay quality, parallelize
 independent tools/preparation, and do useful work while tests/builds run. Run only

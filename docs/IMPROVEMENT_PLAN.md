@@ -1,5 +1,10 @@
 # Game improvement plan
 
+**Current scope,2026-09-14:** owner removed the remaining UI work from this
+active queue. Earlier finish-UI ordering below is historical. Preserve UI source
+and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
+
+
 **Standing art constraint, owner 2026-09-10:** every new model must look like it
 came from TUMP. Preserve the clean cute/blocky visual language; avoid overly
 detailed, realistic or noisy assets. This applies across all character, pet,

@@ -1,5 +1,11 @@
 # Active execution plan
 
+**NEWEST scope:** owner removed the remaining UI work from the to-do list.
+Keep current UI/source/art/patch saved; do not perform the former UI-LAST phase.
+Continue non-UI game work, then deferred Inday, then the selected expansion last.
+Cheska confirmation/pose batch passed7focused local checks; actual delayed-peer
+and protocol32qualification remains pending. See newest ledger.
+
 **LATEST:** Zack corrected delayed Magnet/Thunderstrike-followup now pass. ArcLine
 and Snap tradeoffs measured. Refused sprint and outgoing hero cleanup fixed;
 3focused Play checks +8same-hero refresh checks passed. No active sessions.
@@ -69,10 +75,7 @@ Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-r
    recovery input paths; preserve controller/MenuNav ownership and saved profiles.
 6. Tournament spectator free/follow/POV manual authority, collision/framing,
    highlights/replays. Complete remaining relevant TODO152/152.4 engineering.
-7. UI LAST, docs/UI_REMAINING_TODO.md. Preserve pending-held-info.patch, user logo,
-   full palette/Darumadrop and original controller diagram/callouts/mappings.
-   Investigate pending PauseEscapeRespectsChildSettingsDiscardAndReturn defect.
-8. Resume deferred Inday source-arm framing at its recorded point, without
+7. Resume deferred Inday source-arm framing at its recorded point, without
    restoring rejected reconstruction. The seventh hero/map expansion comes
    only after this and every existing task, not during the concept discussion.
 

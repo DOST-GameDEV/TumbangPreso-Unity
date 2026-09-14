@@ -1,5 +1,10 @@
 # Play-feel and equipment rework after the maps
 
+**Current scope,2026-09-14:** owner removed the remaining UI work from this
+active queue. Earlier finish-UI ordering below is historical. Preserve UI source
+and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
+
+
 Owner-authorized scope,2026-09-12. Begin this phase after the substantial map
 transformation. It is not implemented or qualified. Read the actual motor, throw,
 Pektus, can, equipment, animation/FPP and network owners before choosing changes.
