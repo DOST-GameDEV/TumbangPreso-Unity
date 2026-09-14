@@ -681,11 +681,16 @@ namespace TumbangPreso
                                        Vector3 velocity, float pektusSpin,
                                        SlipperAffinity affinity, int throwerSlot)
         {
-            bool enteringFireFlight = state == SlipperState.InFlight && affinity == SlipperAffinity.FireExplosive
+            bool enteringEmpoweredFlight = state == SlipperState.InFlight
+                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap)
                 && (State != SlipperState.InFlight || Affinity != affinity);
-            if (enteringFireFlight && Holder != null && Holder.PlayerSlot == throwerSlot
-                && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
-                sean.IsIgnitionCannonActive = false;
+            if (enteringEmpoweredFlight && Holder != null && Holder.PlayerSlot == throwerSlot)
+            {
+                if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
+                    sean.IsIgnitionCannonActive = false;
+                else if (affinity == SlipperAffinity.ElectricZap && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+                    zack.IsOverchargeThrowActive = false;
+            }
             ReleasePreviousHolder(holder);
 
             // ⚠️⚠️ A HELD SLIPPER IS PLACED BY THE HAND THAT HOLDS IT, NOT BY THE WIRE. `Carrier`
@@ -728,14 +733,15 @@ namespace TumbangPreso
                 : 0.0f;
             Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
-            if (enteringFireFlight)
+            if (enteringEmpoweredFlight)
             {
                 if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
-                CreateFireFlightVisual();
+                if (affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
+                else CreateZapFlightVisual();
             }
-            else if (state != SlipperState.InFlight || affinity != SlipperAffinity.FireExplosive)
+            else if (state != SlipperState.InFlight || affinity == SlipperAffinity.Normal)
             {
-                if (_affinityVfxGo != null && _affinityVfxGo.name == "FireSlipperVfx")
+                if (_affinityVfxGo != null && (_affinityVfxGo.name == "FireSlipperVfx" || _affinityVfxGo.name == "ZapSlipperVfx"))
                 {
                     Destroy(_affinityVfxGo); _affinityVfxGo = null;
                 }
@@ -849,27 +855,7 @@ namespace TumbangPreso
             if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
 
             if (Affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
-            else if (Affinity == SlipperAffinity.ElectricZap)
-            {
-                _affinityVfxGo = new GameObject("ZapSlipperVfx");
-                _affinityVfxGo.transform.SetParent(transform, false);
-                var l = _affinityVfxGo.AddComponent<Light>();
-                l.type = LightType.Point;
-                l.color = UI.UiTheme.HeroElectricBright;
-                l.range = 3.5f;
-                l.intensity = 3.0f;
-
-                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
-                trail.time = 0.35f;
-                trail.startWidth = 0.24f;
-                trail.endWidth = 0.0f;
-                var mat = new Material(Shader.Find("Sprites/Default")) { color = UI.UiTheme.HeroElectricBright };
-                trail.material = mat;
-                trail.startColor = mat.color;
-                trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
-
-                // ⚠️ NO WORD, for the reason on the fireball above.
-            }
+            else if (Affinity == SlipperAffinity.ElectricZap) CreateZapFlightVisual();
             else if (UI.SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
                 _affinityVfxGo = new GameObject("HeroSlipperTrail");
@@ -899,6 +885,28 @@ namespace TumbangPreso
             trail.sharedMaterial = material; Visual.VfxRenderTag.Own(_affinityVfxGo, material);
             trail.startColor = Visual.AbilityVfx.FireHotColour;
             trail.endColor = new Color(1, .22f, .015f, 0);
+        }
+
+        private void CreateZapFlightVisual()
+        {
+            _affinityVfxGo = new GameObject("ZapSlipperVfx");
+            _affinityVfxGo.transform.SetParent(transform, false);
+            var light = _affinityVfxGo.AddComponent<Light>();
+            light.color = UI.UiTheme.HeroElectricBright; light.range = 1.6f; light.intensity = .45f;
+            light.shadows = LightShadows.None;
+            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            Visual.VfxRenderTag.Own(_affinityVfxGo, material);
+            for (int i = 0; i < 2; i++)
+            {
+                var rail = new GameObject(i == 0 ? "PositiveTrace" : "ReturnTrace");
+                rail.transform.SetParent(_affinityVfxGo.transform, false);
+                rail.transform.localPosition = new Vector3(i == 0 ? -.035f : .035f, 0, 0);
+                var trail = rail.AddComponent<TrailRenderer>();
+                trail.time = i == 0 ? .16f : .11f; trail.startWidth = i == 0 ? .035f : .018f;
+                trail.endWidth = 0; trail.minVertexDistance = .035f; trail.sharedMaterial = material;
+                trail.startColor = i == 0 ? new Color(1, .9f, .25f) : new Color(1, .99f, .8f);
+                trail.endColor = new Color(1, .9f, .25f, 0);
+            }
         }
 
         private void TriggerAffinityImpact()

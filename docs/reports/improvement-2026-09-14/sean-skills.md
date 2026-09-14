@@ -105,3 +105,15 @@ complete six-kit review. Tests alone are not artistic or human play-feel approva
 The larger queue continues after this checkpoint. Inday FPP remains deferred;
 UI stays last within the existing work; the chosen seventh hero B and map C
 remain LAST LAST.
+
+
+## Variant comparison follow-up
+
+The two focused real-input comparisons pass alongside the Zack baseline capture
+in Logs/sean-variants-zack-baseline-v1.xml (3/3 total), profile9e538377979e.
+Afterburn traveled2.2599m versus4.0921m for Rush. Its observed whole wake lived
+4.3519s versus3.4527s, including the staggered patch emission. Each patch retained
+its1m gameplay radius and the new native heat presentation.
+Flare's sampled released speed was15.6634m/s versus13.0679m/s, with a7.5s arming
+window versus10s. Those are observed flight samples, not an exact input-speed
+ratio or an impact-radius/counterplay test. CSVs are in sean-evidence.

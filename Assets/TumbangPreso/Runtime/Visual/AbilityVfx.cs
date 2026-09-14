@@ -424,7 +424,9 @@ namespace TumbangPreso.Visual
         // what makes them different in MOTION and not only in hue.
         // -------------------------------------------------------------------
 
-        private static Mesh _chip, _grain, _flake;
+        private static Mesh _chip, _grain, _flake, _electricNeedle;
+        private static Mesh ElectricNeedle => _electricNeedle != null ? _electricNeedle
+            : (_electricNeedle = VfxShapes.Bolt(1, 3, .12f, .08f, 0, 715));
 
         /// <summary>
         /// Four written glyphs, for the witch. See <see cref="VfxShapes.Rune"/>.
@@ -954,12 +956,13 @@ namespace TumbangPreso.Visual
 
             var pRenderer = go.GetComponent<ParticleSystemRenderer>();
             pRenderer.material = GetParticleMaterial();
+            UseMesh(pRenderer, ElectricNeedle);
 
             var main = ps.main;
             main.duration = 0.6f;
             main.loop = false;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(0.2f, 0.45f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(radius * 2.0f, radius * 3.5f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.12f, 0.24f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(radius * .9f, radius * 1.6f);
             main.startSize = new ParticleSystem.MinMaxCurve(0.10f, 0.22f);
             main.startColor = new ParticleSystem.MinMaxGradient(
                 new Color(1.0f, 1.0f, 0.4f, 1.0f),
@@ -968,10 +971,11 @@ namespace TumbangPreso.Visual
             main.stopAction = ParticleSystemStopAction.Destroy;
 
             var emission = ps.emission;
+            emission.rateOverTime = 0;
             emission.SetBursts(new[]
             {
-                new ParticleSystem.Burst(0.0f, (short)(radius * 16)),
-                new ParticleSystem.Burst(0.12f, (short)(radius * 10))
+                new ParticleSystem.Burst(0.0f, (short)(radius * 7)),
+                new ParticleSystem.Burst(0.12f, (short)(radius * 4))
             });
 
             var shape = ps.shape;

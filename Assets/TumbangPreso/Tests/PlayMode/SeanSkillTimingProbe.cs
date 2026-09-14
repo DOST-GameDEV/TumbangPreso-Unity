@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
@@ -88,6 +89,100 @@ namespace TumbangPreso.PlayTests
             Assert.Zero(liveHandEmitters, "Ignition is still emitting on the empty hand after consumption.");
             Assert.IsNull(shoe.GetComponentInChildren<Visual.SeanIgnitionVisual>(),
                 "The carried ember survived its empowered release.");
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator AfterburnTradesTravelForAHeatWakeThatLastsLonger()
+        {
+            var challenges = Settings.SettingsStore.Current.AbilityChallenges;
+            var saved = challenges.ToArray();
+            var travel = new float[2]; var lives = new float[2];
+            try
+            {
+                challenges.RemoveAll(row => row.VariantId == "sean.1.afterburn");
+                challenges.Add(new AbilityChallengeProgress { VariantId = "sean.1.afterburn", Count = 999 });
+                for (int variant = 0; variant < 2; variant++)
+                {
+                    _caster.AbilitySystem.BindHero("sean", new HeroBuild { HeroId = "sean",
+                        Slot1VariantId = variant == 0 ? "sean.1.rush" : "sean.1.afterburn" });
+                    _caster.Teleport(new Vector3(0, .12f, -8));
+                    _caster.Intent.Clear(); _caster.Intent.Parked = false;
+                    float start = Time.time, firstHeat = -1, lastHeat = -1;
+                    bool accepted = false;
+                    while (Time.time - start < 4.8f)
+                    {
+                        _caster.Intent.Set(Verb.Skill1, Time.time - start < .2f);
+                        accepted |= _caster.AbilitySystem.LastAnswer(HeroAbilitySystem.Slot.Skill1) == HeroKit.CastOutcome.Cast;
+                        travel[variant] = Mathf.Max(travel[variant], _caster.transform.position.z + 8);
+                        var fields = Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None);
+                        if (fields.Length > 0)
+                        {
+                            if (firstHeat < 0) firstHeat = Time.time;
+                            lastHeat = Time.time;
+                            foreach (var field in fields)
+                            {
+                                Assert.AreEqual(1, field.Radius, .001f, "Afterburn changed the trail's reach.");
+                                Assert.IsNotNull(field.GetComponentInChildren<Visual.SeanHeatGround>());
+                            }
+                        }
+                        yield return null;
+                    }
+                    Assert.True(accepted); Assert.Greater(firstHeat, 0);
+                    lives[variant] = lastHeat - firstHeat;
+                }
+                File.WriteAllText("Logs/sean-afterburn-comparison.csv", FormattableString.Invariant(
+                    $"variant,travel,heat_life\nrush,{travel[0]},{lives[0]}\nafterburn,{travel[1]},{lives[1]}\n"));
+                Assert.Greater(travel[0], travel[1] + .8f);
+                Assert.Greater(lives[1], lives[0] + .6f);
+            }
+            finally { challenges.Clear(); challenges.AddRange(saved); }
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator FlareShotReleasesFasterWithAShorterArmingWindow()
+        {
+            var challenges = Settings.SettingsStore.Current.AbilityChallenges;
+            var saved = challenges.ToArray();
+            var speeds = new float[2]; var windows = new float[2];
+            var shoe = _caster.GetComponent<Carrier>().Held;
+            try
+            {
+                challenges.RemoveAll(row => row.VariantId == "sean.2.flare");
+                challenges.Add(new AbilityChallengeProgress { VariantId = "sean.2.flare", Count = 999 });
+                for (int variant = 0; variant < 2; variant++)
+                {
+                    _caster.AbilitySystem.BindHero("sean", new HeroBuild { HeroId = "sean",
+                        Slot2VariantId = variant == 0 ? "sean.2.cannon" : "sean.2.flare" });
+                    Assert.True(shoe.HostForceEquip(_caster));
+                    _caster.Teleport(new Vector3(0, .12f, -8)); _caster.Intent.Clear(); _caster.Intent.Parked = false;
+                    _caster.Intent.AimPoint = new Vector3(0, 1.2f, 7);
+                    yield return new WaitForSeconds(.3f);
+                    _caster.Intent.Set(Verb.Skill2, true);
+                    yield return new WaitForSeconds(.2f);
+                    _caster.Intent.Set(Verb.Skill2, false);
+                    var kit = (SeanHeroKit)_caster.AbilitySystem.Kit;
+                    Assert.True(kit.IsIgnitionCannonActive);
+                    windows[variant] = kit.Skill2.Duration;
+                    _caster.Intent.Set(Verb.SpecialAbility, true);
+                    yield return new WaitForSeconds(.5f);
+                    _caster.Intent.Set(Verb.SpecialAbility, false);
+                    float released = Time.time;
+                    while (Time.time - released < .3f)
+                    {
+                        if (shoe.State == SlipperState.InFlight && shoe.Affinity == SlipperAffinity.FireExplosive)
+                            speeds[variant] = Mathf.Max(speeds[variant], shoe.Velocity.magnitude);
+                        yield return null;
+                    }
+                    Assert.False(kit.IsIgnitionCannonActive);
+                    yield return new WaitForSeconds(1.2f);
+                }
+                File.WriteAllText("Logs/sean-flare-comparison.csv", FormattableString.Invariant(
+                    $"variant,flight_speed,arming_window\ncannon,{speeds[0]},{windows[0]}\nflare,{speeds[1]},{windows[1]}\n"));
+                Assert.Greater(speeds[0], 8);
+                Assert.Greater(speeds[1], speeds[0] * 1.18f);
+                Assert.Less(windows[1], windows[0] - 2);
+            }
+            finally { challenges.Clear(); challenges.AddRange(saved); }
         }
 
         [UnityTest, Timeout(60000)]

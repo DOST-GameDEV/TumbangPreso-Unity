@@ -1,5 +1,13 @@
 # Asset sourcing: ability VFX, SFX and later map art
 
+> Current implementation note, 2026-09-14: the source catalogue and composition
+> table below preserve earlier sourcing proposals. New native geometry and
+> direction in PHILIPPINE_ABILITY_DIRECTION.md and the current hero reports take
+> precedence. Dante, Cheska, Phaister, Sean and the active Zack pass no longer
+> use several of those proposed generic overlays. Do not restore shared texture
+> stamps or earlier primitive effects from this table. Zack's strike now uses
+> DirectedLightningBolt, with distinct skate-contact and magnetic-charge forms.
+
 Checked 2026-09-03 for Unity 6000.5.8f1 and URP 17.5.0.
 
 This is the licensed source list for the next art pass. **The existing Kenney characters are good

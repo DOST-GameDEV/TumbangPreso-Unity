@@ -15,6 +15,12 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 
 # TODO: Tumbang Preso Unity
 
+**Newest PC transfer, 2026-09-14:** all unfinished Zack work is saved for transfer.
+Pull ASTRAReworks first on the destination; follow ACTIVE_REWORK_LEDGER.md's newest
+section. Focused local tests pass. The final internal build and corrected delayed
+peer reruns remain unfinished. Continue the entire queue there, including UI,
+deferred Inday FPP and finally the selected B-hero/C-map expansion.
+
 **Current continuation, 2026-09-14:** keep working until the complete remaining
 queue is finished. Park optional questions for the owner's return. Sean's native
 heat/ignition/grounded landing and first-person release visibility are implemented;

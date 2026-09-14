@@ -1,5 +1,11 @@
 # Active execution plan
 
+**PC transfer, 2026-09-14:** owner requests ALL WIP committed/pushed and a handoff.
+Pull ASTRAReworks first on the destination and follow the newest ledger section.
+Zack's final source passed focused local checks; its internal build was interrupted
+for studying/transfer. Rebuild there and finish corrected delayed Magnet and
+Thunderstrike-with-follow-up checks. No more tests/builds on this source PC.
+
 **Newest additions:** origins and short/long story copy are in CHARACTER_ORIGINS.md;
 wire the existing six into selection/introduction during the UI work. Zack's
 condo is Sa Bubong, Pasig; Cheska is from La Trinidad, Benguet. Every hero needs

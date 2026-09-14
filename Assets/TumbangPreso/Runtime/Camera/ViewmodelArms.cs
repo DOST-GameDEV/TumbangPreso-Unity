@@ -315,6 +315,8 @@ namespace TumbangPreso.CameraSystem
             NormaliseHeldSize();
             if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                 Visual.SeanIgnitionVisual.Ensure(filter, held, sean);
+            else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+                Visual.ZackMagnetCharge.Ensure(filter, held, zack);
 
             // ⚠️⚠️⚠️ AND THE PLACEHOLDER TINT IS CLEARED OFF THE RENDERER, WHICH IS THE WHOLE
             // "EVERY TSINELAS IS BROWN IN FIRST PERSON" BUG AND IT SURVIVED THREE FIXES ABOVE.

@@ -315,137 +315,17 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static GameObject SpawnShockTrail(Vector3 position, float radius = 2.0f,
                                                  float duration = 3.0f, int ownerSlot = -1,
-                                                 float effectScale = 1.0f)
+                                                 float effectScale = 1.0f, Vector3 forward = default)
         {
-            position = VfxShapes.GroundPoint(position);
             var go = new GameObject("ShockTrailZone");
-            go.transform.position = position;
-
-            // ⚠️⚠️ A LIVE ANCHOR WITH AN ARC, NOT A YELLOW DISC. Same fault and same fix as the
-            // fire trail above, and the same measurement behind it: this is dropped once every
-            // 0.30 s of a 2.5 s sprint and every drop used to be one flat translucent cylinder,
-            // so a single dash laid a yellow carpet across a quarter of the arena.
-            //
-            // What it is made of now: a small dark scorch, a bright ring, and a CRACKLING
-            // VERTICAL ARC that snaps at knee height. The arc is the whole read. A wire on the
-            // ground is something you can see is live from the SIDE, which is exactly the
-            // information a player sprinting toward it needs and which a disc seen edge-on at
-            // eye height cannot give them.
-            //
-            // `SeanHeroKit`'s fire trail carries the full reasoning; this is its counterpart in
-            // Zack's palette, and the two are deliberately different SHAPES rather than the same
-            // shape in two colours. `docs/Hero_Strike_Balance.md` § 4.4.
-
-            // ⚠️⚠️ A JAGGED STAR, NOT A DISC. See the note on `SpawnFireTrail`: every floor
-            // effect in the game used to be the same cylinder and hue was doing all the work.
-            // Lightning arrives at a point and runs OUT along the ground, so its mark is a
-            // discharge pattern; that is a different silhouette from Sean's directional smear
-            // even before either of them is coloured, which is the point.
-            int seed = Mathf.RoundToInt((position.x - position.z) * 613.0f);
-
-            var visual = VfxShapes.Lay(go.transform, "ShockScorch",
-                                       VfxShapes.Star(7, 0.40f, seed),
-                                       radius * 0.72f, 0.015f);
-            // Opaque, for the reason written up on the fire trail's char: a burnt mark does not
-            // show the road through it, and an opaque surface cannot lose a sort to the bright
-            // rim standing on it.
-            VfxMaterial.Solid(visual.GetComponent<Renderer>(), new Color(0.14f, 0.12f, 0.03f), 0.0f);
-            VfxMaterial.StripCollider(visual);
-
-            // ⚠️⚠️ A BROKEN RIM, NOT A FULL BRIGHT PLATE, AND THE PLATE IS THE OTHER HALF OF
-            // THE CORRIDOR PROBLEM. This was a second `Star` fan at the FULL radius in near-white
-            // yellow at 0.55 alpha, drawn over the dark scorch. One of them is a hot discharge
-            // mark; six of them, which is what a 2.5 s sprint lays, is the yellow carpet
-            // `VISION.md` § 2 measures as 27.2 per cent of the box off a 6 s cooldown, and that
-            // is more floor than any ultimate in the game.
-            //
-            // ⚠️ THE DARK SCORCH ABOVE KEEPS THE STAR SILHOUETTE, so nothing about which ability
-            // this is changes: the outline work of `Hero_Strike_Balance.md` § 8.3 is carried by
-            // the mark, not by the glow. What goes is the bright FILL, replaced by twelve short
-            // plates at the rim. A player still sees a yellow discharge edge and the road
-            // underneath it survives.
-            //
-            // ⚠️ AND THE BRIGHTNESS MOVES TO THE ARC, WHICH IS WHERE IT BELONGS. `ArcFlicker`
-            // stands a live bolt at the anchor; that is a thing you can see is dangerous from the
-            // side, which a plate on the ground cannot be at eye height however bright it is.
-            var ring = VfxShapes.Lay(go.transform, "ShockRing",
-                                     VfxShapes.Wedges(12, 0.78f, 9.0f, 0.0f, 0.10f, seed + 2),
-                                     radius, 0.010f);
-            // Same clipping fault and same fix as the fire trail's rim: 1.15 emission wrote
-            // past white and `ability_shock_trail_v1.png` came back as one flat yellow coin with
-            // the arc invisible on top of it.
-            // ⚠️ DIMMED AGAIN AFTER THE CORRIDOR SHOT. `ability_corridors_v14.png` shows six of
-            // these along one dash and the rims read as a scatter of yellow confetti: at 0.55
-            // alpha and 0.32 emission a single rim is right and six overlapping ones are the
-            // carpet this pass exists to remove, one step less bright.
-            VfxMaterial.Ghost(ring.GetComponent<Renderer>(), new Color(1.0f, 0.90f, 0.20f, 0.40f), 0.22f);
-
-            // ⚠️ NO `HazardRimLife` HERE EITHER, and for the same reason as the fire trail: this
-            // is the other per-disc trail, and Zack's corridor is the widest in the game.
-            VfxMaterial.StripCollider(ring);
-
-            // ⚠️ THE ARC IS A JAGGED LINE THAT REBUILDS ITSELF ON A TIMER. A straight bolt reads
-            // as a post; the jitter is what makes it read as current.
-            var arcGo = new GameObject("ShockArc");
-            arcGo.transform.SetParent(go.transform, false);
-            arcGo.transform.localPosition = Vector3.zero;
-            arcGo.AddComponent<ArcFlicker>().Build(radius);
-
-            // Flashing electric sparks light
-            var lightGo = new GameObject("ShockLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 1.2f, 0);
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroElectricBright;
-            // Fixed rather than radius-scaled, and dimmed for the reason on the fire trail's
-            // light: at 3.5 it rendered its own scorch as flat yellow.
-            light.range = 3.0f;
-            light.intensity = 1.0f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
-            // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
-            // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
-            // whole dash and each lives 3 s, so a single dashing hero leaves up to THIRTY
-            // live discs and three of them fill a 14 by 14 box with a minefield. Registering
-            // them took `BotBehaviourProbe`'s Hero Strike run from 59 throws, 122 skill uses
-            // and 58 idle penalties down to **11 throws, 3 skill uses and 661 idle
-            // penalties**: every bot was surrounded by obstacles it was trying to respect and
-            // simply stopped playing. Trails are breadcrumbs to be run through, not terrain
-            // to be walked around.
-
+            go.transform.position = VfxShapes.GroundPoint(position);
+            ZackSkateWake.Build(go.transform, radius, duration, forward);
             var comp = go.AddComponent<ShockTrailComponent>();
-            comp.Radius = radius;
-            comp.Duration = duration;
-            comp.OwnerSlot = ownerSlot;
-            comp.EffectScale = effectScale;
-
-            VfxShapes.DrapeToGround(visual, .003f);
-            VfxShapes.DrapeToGround(ring, .003f);
+            comp.Radius = radius; comp.Duration = duration;
+            comp.OwnerSlot = ownerSlot; comp.EffectScale = effectScale;
             return go;
         }
 
-        /// <summary>
-        /// Shrink a trail mark toward its own end, so a corridor of them reads back in time.
-        ///
-        /// ⚠️⚠️ IT IS WHAT MAKES SIX DROPS STOP LOOKING LIKE ONE DROP SIX TIMES. Every mark in a
-        /// dash is built from the same call with the same constants, seeded off its position, so
-        /// the only difference between them is a few degrees of outline. `ability_corridors_v13`
-        /// and `_v14` both show that: a row of identical marks, which is the repetition 🧑 has
-        /// reported three separate times. Age is the one axis that differs between them for free,
-        /// and using it means the corridor POINTS: the small end is where the caster started.
-        ///
-        /// ⚠️⚠️ A SHRINK IS NOT THE PULSE THIS FILE ALREADY REFUSED, AND THE DIFFERENCE MATTERS.
-        /// `SpawnFireTrail` records why `HazardRimLife` was taken off the trails: thirty rims
-        /// throbbing out of phase along a corridor is visual noise, and thirty per-frame MATERIAL
-        /// writes on top of it. This is monotone and it is one transform write: no oscillation,
-        /// nothing to fall out of phase with, no allocation, and it is information rather than
-        /// decoration. The pulse stays on the zones.
-        ///
-        /// ⚠️ IT SHRINKS THE MARK, NOT THE HAZARD. `Radius` is untouched and every component here
-        /// resolves contact against that field, so what a player is standing in is exactly what
-        /// `Hero_Strike_Balance.md` § 1 measures. A telegraph that lies is worse than no
-        /// telegraph, so this only ever draws the mark SMALLER than the danger, never larger.
-        /// </summary>
         private static void Burn(Transform mark, float left, float duration)
         {
             if (mark == null || duration <= 0.0f) return;
@@ -475,7 +355,7 @@ namespace TumbangPreso.Abilities
                     return;
                 }
 
-                Burn(transform, _left, Duration);
+                // Fade the contact tracks while retaining the complete live footprint.
 
                 // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND ZACK'S OWN
                 // BOOST WAS THEREFORE INVISIBLE TO HIM ON EVERY MACHINE BUT THE HOST. Same shape
@@ -3641,20 +3521,7 @@ namespace TumbangPreso.Abilities
             // frame must still show the lata, the chalk and every player: a full-height pillar at
             // the strike point would hide a body in a 14 m box. 1.6 m is over head height for the
             // read and under the sightline that matters, and it lives 0.2 s.
-            var ionCore = new GameObject("ThunderIonCore");
-            ionCore.transform.position = position + Vector3.up * 0.045f;
-            ionCore.transform.localScale = new Vector3(radius * 0.34f, 1.6f, radius * 0.34f);
-            Mesh spire = VfxShapes.Spire(7, 0.20f, 0.34f, boltSeed);
-            ionCore.AddComponent<MeshFilter>().sharedMesh = spire;
-            ionCore.AddComponent<MeshRenderer>();
-            VfxShapes.Own(ionCore, spire);
-
-            // ⚠️ PULLED OFF WHITE, FOR THE REASON ON THE FLASH ABOVE. `(1, 1, 0.60)` at full
-            // emission is the brightest surface in the game, and it sat in the middle of the
-            // brightest light in the game. Keeping the hue and dropping the value leaves the
-            // ionisation reading as the hottest thing on screen without taking the frame with it.
-            VfxMaterial.Ghost(ionCore.GetComponent<Renderer>(), new Color(1.0f, 0.96f, 0.42f, 0.72f), 0.7f);
-            Object.Destroy(ionCore, 0.20f);
+            // The discharge meets the road directly; no solid cone obscures its target.
 
             var ringAnim = shockRing.AddComponent<ShockwaveRingAnim>();
             ringAnim.TargetRadius = radius * 1.5f;
@@ -4391,28 +4258,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnLightningBolt(Vector3 start, Vector3 end, Color color,
                                                     float duration = 0.25f)
         {
-            Vector3 dir = end - start;
-            float length = dir.magnitude;
-            if (length < 0.01f) return null;
-
-            // The quad is anchored at the bottom of its cell, so it is placed at the END of the
-            // stroke and grown upward. That is also the point a strike is about.
-            int cell = Mathf.Abs(Mathf.RoundToInt((end.x * 7.0f + end.z * 13.0f + start.y) * 31.0f))
-                       % VfxSheets.Bolt.Frames;
-
-            // ⚠️⚠️ THE WIDTH IS DERIVED FROM THE LENGTH AT THE SHEET'S OWN ASPECT, NOT PICKED.
-            // `VfxSheets.Bolt` is 64 x 512, so eight to one: a stroke drawn at any other ratio is
-            // a stretched or squashed drawing, and stretched is what
-            // `ability_blast_thunder_eye_v53.png` shows. Clamped at the bottom so a very short
-            // bolt does not become a thread, and at the top so a long one is still a stroke
-            // rather than a curtain in a fourteen metre box.
-            float width = Mathf.Clamp(length / VfxSheets.Bolt.Aspect, 0.55f, 1.6f);
-
-            var book = Visual.VfxFlipbook.Still(VfxSheets.Bolt, cell, end, width, duration,
-                                                Visual.VfxFlipbook.Facing.Upright, color,
-                                                height: length);
-
-            return book != null ? book.gameObject : null;
+            return DirectedLightningBolt.Create(start, end, color, duration);
         }
 
         // -------------------------------------------------------------------

@@ -1,5 +1,64 @@
 # Active TUMP rework ledger
 
+## NEWEST: second PC transfer, source machine stopped
+
+Owner explicitly requested all unfinished work committed/pushed and a complete
+handoff, because they are moving PCs and studying here. This overrides the prior
+no-stop instruction for THIS machine. No more builds/tests here. The destination
+must PULL FIRST, then continue the entire remaining queue without stopping at a
+batch, concept choice, test pass or compaction. Optional questions wait for them.
+
+Repository https://github.com/DOST-GameDEV/TumbangPreso-Unity.git, ASTRAReworks.
+This transfer checkpoint follows stable Sean7578820993b588759ea74f46537fecad73e3ff2a.
+Use git log for the transfer commit containing this file. All listed Zack WIP is
+saved with it. Verify the new PC's checkout/status, preserve uncommitted work,
+fetch origin and pull ASTRAReworks with --ff-only. Never reset/clean an old checkout
+or assume the old C:/Users/matth or C:/Users/Matthew paths still apply.
+
+THE LATEST BUILD WAS INTERRUPTED, not completed: Logs/zack-build-v2.log.
+Stopped only its verified owned Unity process tree to free this PC for studying.
+The guard restored/hash-verified two existing profile files and zero shared
+Editor input preferences: receipt3019f4db6f5b. Guard2044 and its Editor/workers have
+exited. There are NO active task-owned Editor/player/proxy/render jobs to resume.
+Older running-process entries below are historical and superseded by this section.
+Builds/ZackSkillReview may be partial because the builder purges its old output.
+Do not run it as a current finished build. Desktop was never updated.
+
+Latest source passed 4/4 focused charge-sync-v6 tests, receipt5b4df354a7e1:
+real Magnet recall/throw; repeated ElectricZap snapshots without ending the
+independent Thunderstrike window; preserved FireExplosive snapshot behavior;
+full moving/throw capture. The final corrected delayed-client reruns are NOT DONE.
+Latest internal build that finished was Zackv1, before that final correction,
+RuntimeSHA332b72510064f2a86699b6994c354ef5b89121ab6a6c8fa994dc3d9c5f0af7e2.
+Its older Magnet network baseline proved stale charge on both clients. Older
+Thunderstrike baseline passed but did not include a charged follow-up throw.
+
+FIRST WORK THERE: verify tools/idle Editor; rebuild an explicit INTERNAL Windows
+player through tools/run_unity_guarded.py and equipment-destination-review profile.
+Run tools/net_zack_review.py against that exact executable for --case magnet and
+--case thunderstrike, --delay150, distinct new --out directories. The current
+probe includes Thunderstrike's charged follow-up throw. Use exclusive8990/8991
+ports and named test profiles. The harness waits for actual host arena readiness,
+requests the existing60fps cap, and allows a brief flush after host completion.
+Prior startup failures had header-only traces; classify them as launch failures,
+not ability failures. No production network timeout was changed.
+
+Then finish Zack alternatives, refusal/expiry/interruption and overlapping role
+counterplay, followed by all remaining abilities/Nemu authority, persistent hazard
+rejoin, movement/recovery/Pektus, match/network flows, spectator/replays, performance
+and AI/TODO152/152.4. UI remains LAST in the main queue, then deferred Inday FPP,
+then seventh hero/map LAST LAST. Exact UI backlog and unapplied held-info patch:
+UI_REMAINING_TODO.md. Preserve the accepted character B + map C expansion choice.
+
+Builds/ and Logs/ are gitignored and DO NOT transfer by pull. Selected latest
+Zack XML, normal-speed videos, timing CSVs and images are committed in
+reports/improvement-2026-09-14/zack-evidence. Reports and lower chronology preserve
+completed work, failures and decisions. Portable225-file skill-reference-bundle.zip
+and manifest are under docs/tooling; references do not grant tools/credentials.
+No Figma, delegation/other chats, usage resets, paid APIs or Desktop update.
+Only necessary focused tests; no automatic full suites. One Editor; no C#/asset
+edits during runs. Verify new PC paths. Keep this ledger current across compaction.
+
 ## Standing AFK continuation contract, renewed 2026-09-14
 
 The owner explicitly requests continuous work until the whole authorized queue
@@ -18,7 +77,8 @@ already character B + map C and does not require reconfirmation.
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Branch ASTRAReworks, latest COMMITTED AND PUSHED HEAD:
-f653002f, Sean baseline/continuation docs. Previous95a70713 fixes Cheska Nova flight.
+7578820993b588759ea74f46537fecad73e3ff2a, Sean heat/contact/flight and saved owner decisions.
+Previous95a70713 fixes Cheska Nova flight; f653002f preserved Sean baseline.
 Earlier36805af4ddd38bec84029c3e6514b0e0c5e57553 saves Phaister placement/alternate checks and truthful copy.
 Earlier5cfb04b3c44e9a14368a0afeb390c7696144a06f restores live Coven/current sky on rejoin.
 Prior pushed checkpoints: 06b54470 construction cost; 6a1811c7 Phaister timing/forms/
@@ -116,9 +176,132 @@ firstcratergrounded,allcraters/posesexpired;8profilefilesrestored. Measured rise
 Results copied to report's sean-evidence. Allownedplayers/link helpers exited.
 No Editor/player/helper running. Inday arm asset and ProjectAuditor changes were
 verified whitespace-only againstHEAD and restored exactly. No body/FPPassetedit.
-Fetch originASTRAReworks confirmed0/0; stage/review/commit/push this batch now.
-Then continue Sean alternative/counterplay checks and Zack presentation baseline.
-Do not stop at the checkpoint; the whole remaining queue remains authorized.
+Sean batch was committed and pushed as75788209. No pending staged changes.
+Sean variants/Zack baseline FINISHED3/3PASS, profile9e538377979e,
+Python2640 exited. Afterburn travel2.2599 vsRush4.0921m; observed wholewake4.3519
+vs3.4527s, eachpatch1m radius. Flare observedflight15.6634vs13.0679m/s and arming
+window7.5vs10s. This does not independently measure alternate impact radius.
+Results copied to Sean report/evidence; new two tests remain uncommitted.
+
+Zack's actual3slot baseline is Logs/zack-current-kit-v1; owner/body sheets
+inspected, videos encoded. Q has repeated star floor patches; E has large square
+hand particles; R floods owner/body yellow before contact, from the shared
+UltimateColumn and early camera/chromatic/flash presentation. Existing sustained
+speed and host-authoritative instant Magnet remain valuable, preserve them.
+Zack uses30percentdash and40percentult stretch. No model/hand geometry changes.
+
+New ZackSkillPresentationProbe baseline FINISHED0/2 (expected failures),
+Logs/zack-presentation-baseline-v1.xml, profile7a541dedd0c8, Python1600 exited.
+Actual generated diagonal bolt misses start by3.076664m/end.5387341m; old function
+uses only segment length and places an upright billboard at end, ignoring start
+orientation. Real sprint input produced7live patches despite six-cap; initial
+patch was not enrolled in _live. Before CSVs preserved with -before suffix.
+
+Changes under test: DirectedLightningBolt native branched geometry connects
+requested endpoints; pulse/expiry preserved. Initial sprint patch enters the
+existing six-cap queue. Zack stretch now5percent forbothcasts. Generic ultimate
+column/early chromatic-camera blast removed, actual targeted strike preserved.
+E square-particle charge, targeted warning/strike readability and Q wake art still
+need their authored pass. Do not assume allZack work is complete from these fixes.
+
+Lightning-v2 FINISHED3/4PASS, profileb4aff216ccd8, Python7860 exited.
+Native endpoints now within.022/.0044m; body/FPP capture and sustained-speed/reset
+pass. Cap still briefly saw7because Destroy is deferred. Evicted patches now
+SetActive(false) beforeDestroy, preventing an extra active patch in that frame.
+R recordings show the early yellow wash gone; actual strike still has large
+square particles. Those are the next changed presentation path.
+
+Uncommitted authored additions: ZackSkateWake draws two ground contact tracks
+and an intermittent cross-discharge, replacing repeated star/disc patches.
+Direction follows the actual lagged travel. ZackMagnetCharge draws two opposed
+charge poles on the held shoe in body/FPP, matching source visibility; used by
+Magnet and the existing ultimate charged-throw window. Their primary casts remain
+different. Square hand aura removed. Strike particles use a small bent spark mesh
+with bounded burst count/life/travel. No model/outfit/hand geometry edits.
+
+Contact-v3 compiled no tests: new ZackMagnetCharge meta had a33character GUID,
+so Unity ignored its script. Generated a valid uuid4 hex GUID and checked every
+new untracked meta, allvalid. No existing GUID changed. Profilebafb9f5caea6,
+Python18536 exited. Preserve failed log; no runtime baseline claim for that run.
+
+Contact-v4 FINISHED4/4PASS, profile7628ff402dfe, Python7900 exited.
+Endpoint/cap/realMagnetrecall-throw-cleanup and3slotcapture pass. Maxpatches6.
+Owner/body sheets inspected. White charge/wake lines revealed the Standard-based
+VfxMaterial ignores LineRenderer vertex colours. They now write their owned
+material colour/alpha, matching the existing MagnetRecallTrace approach. Charge
+brackets shortened so they read as poles rather than a whole-shoe outline.
+The solid ThunderIonCore cone is removed; targeted native bolts, impact spark,
+shock outline and brief light remain. No gameplay hit/radius change.
+
+Added NetZackProbe.cs/meta and tools/net_zack_review.py for actual delayed
+Magnet and Thunderstrike. They use the accepted room pick/preloaded arena seed,
+then owner key intent; host disarms the owned shoe before Magnet. This is a new
+probe awaiting its first compiled player run. It has NOT proved peer correctness.
+Suspect stale electric charge after peer throw, by analogy with the reproduced
+Sean bug, but do not patch or claim that until the actual run establishes it.
+
+Moving/full-throw capturev5 FINISHED1/1PASS, profilef02f346c67cf, Python8392 exited.
+Owner/body sequences inspected and encoded at captured wall-clock times. Q has
+actualmovement; Erecallsandthrows; Remptyhand follows. Some metadata/log samples
+are retained in reports/improvement-2026-09-14/zack-evidence. Colour/alpha now
+comes from owned material, avoiding the prior ignored LineRenderer vertex colour.
+Magnet flight still uses its prior bright light/trail; inspect after peer baseline.
+
+INTERNAL Zack buildv1 FINISHEDSuccess, profile42d90b172667, Python13956 exited.
+Builds/ZackSkillReview/TumbangPreso.exe, protocol31, RuntimeSHA
+332b72510064f2a86699b6994c354ef5b89121ab6a6c8fa994dc3d9c5f0af7e2.
+No Desktop update. Runtime changes/Seanvariant tests remain uncommitted after75788209.
+
+Actual3peerMagnet baseline FAILED, session36001 completed, allownedplayers/proxy
+exited;0existingnamed-profilefiles. ResultLogs/zack-net-magnet-baseline-v1/result.json
+copied to Zack evidence. Host458/owner447/observer449samples;4/4/5charged-flight
+samples. Host charge0afterthrow, bothclientscharge1in post-throwwindow; held0,
+chargevisuals0onall. This is now proven, not merely analogous to Sean.
+
+Thunderstrikebaselinev1 did not reach gameplay: ownertransportclosedbefore
+seat1, no approval log/trace samples. Session17160 completed,7profilefilesrestored.
+Harness now waits for the host's actual arena-ready log instead of fixed7s sleep.
+Thunderstrikebaselinev2 also did not reach gameplay: ownerjoined, observertransport
+closedbeforeapproval, so3peerready gate neverstarted; CSVsheaderonly. Session68022
+completed;7profilefilesrestored. These are launch/connection failures, not ability
+failures. All ownedprocesses from bothattempts ended. Do not claim rootcause from
+logs alone. No production transport/timeouts were changed.
+
+Thunderstrikebaselinev3 FINISHEDPASS, session20385 completed and ownedplayers/proxy
+exited;7profilefilesrestored. Requested60fps/hostready setup.421/418/418samples,
+3strikechannels onall, targetshock2.0/1.9235/2.0s, targetrise.771/.801/.786m,
+no finalbolts orultimatewindow. No follow-upthrow in this baseline. Result copied
+toZack evidence. Thevictimwasactuallydisplaced; "stunnedwherethey stand" is false.
+
+Latestcorrectionunder test: firstElectricZap flight snapshot consumes previous
+holder's Magnetcharge, preserving the independent Thunderstrikeactivewindow.
+Repeated snapshots keep anotherloadedcharge and do not recreateflightvisuals.
+Electric flight uses two narrowtraces and a smalllight; replicas now create/clean
+its actualeffect. Fire path remainscoveredbyits existing snapshotregression.
+Thunderstrikecopy now says shock/knockback plus seven-second chargedthrows.
+NetZackProbe now also throws after Thunderstrike to test that follow-upwindow;
+CSVchargevisualcolumn renamed fromlegacyembers, driver accepts oldbaselineheader.
+
+Charge-sync-v6 FINISHED4/4PASS, profile5b4df354a7e1, Python23760 exited.
+ActualMagnetrecall/throw, independentult/repeatedZap snapshot, retainedFire snapshot,
+andmoving/fullthrowcapture pass. Ownerthrowsequence inspected: reduced twintrace/
+light spill, no carriedchargeafterrelease. Videosencoded at recordedtimestamps.
+EvidenceLogs/zack-charge-sync-v6. Internalv1 does NOT contain this correction.
+
+RUNNING guarded INTERNALZackbuildv2, Python2044:
+Logs/zack-build-v2(.pid/.stdout/.stderr/.log), same
+Builds/ZackSkillReview/TumbangPreso.exe. Do not edit C#/importedassets untilEditor
+exits. NextrequireSuccess/profile receipt andfreshRuntimeDLL, then actual3peer
+Magnet andThunderstrike withchargedfollow-up,150msownerlink,requested60fps.
+Helpercurrentwaitsforhostarena anduseshostcompletion/shortflushgrace. Diagnose
+connection/ready failures separately from abilityfailures. No final peerpassyet
+for chargecorrection. Allpreviousplayers/proxies exited.
+
+Owner asked overall progress at13:03UTC: reported a rough planning estimate of
+40percent completed in the past12hours /60percent remaining for this rework.
+This is NOT a measured task counter, release-readiness claim or acceptance gate.
+Full remaining requirements below still apply; do not turn that estimate into
+completed tasks or permission to stop.
 
 Completed Cheska Nova correction. Her prior deep ice art/animation
 pass is already committed and should be preserved; reports/improvement-2026-09-10/

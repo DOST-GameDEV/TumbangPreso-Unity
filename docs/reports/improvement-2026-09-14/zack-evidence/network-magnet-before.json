@@ -1,0 +1,36 @@
+{
+  "ok": false,
+  "errors": [
+    "owner retained charge, possession or carried embers after the real throw",
+    "observer retained charge, possession or carried embers after the real throw"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 458,
+      "loaded_samples": 12,
+      "charged_flight_samples": 4,
+      "late_charged": 0.0,
+      "late_held": 0.0,
+      "late_embers": 0.0
+    },
+    "owner": {
+      "samples": 447,
+      "loaded_samples": 11,
+      "charged_flight_samples": 4,
+      "late_charged": 1.0,
+      "late_held": 0.0,
+      "late_embers": 0.0
+    },
+    "observer": {
+      "samples": 449,
+      "loaded_samples": 11,
+      "charged_flight_samples": 5,
+      "late_charged": 1.0,
+      "late_held": 0.0,
+      "late_embers": 0.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "332b72510064f2a86699b6994c354ef5b89121ab6a6c8fa994dc3d9c5f0af7e2"
+}

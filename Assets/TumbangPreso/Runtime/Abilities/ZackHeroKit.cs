@@ -35,6 +35,12 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public override float UltimateCost => 20.0f;
 
+        private void RefreshChargeVisual(AbilityContext ctx)
+        {
+            var shoe = ctx.Carrier != null ? ctx.Carrier.Held : null;
+            if (shoe != null) ZackMagnetCharge.Ensure(shoe.GetComponentInChildren<MeshFilter>(), shoe, this);
+        }
+
         private sealed class StaticRailGrindAbility : HeroAbility
         {
             private readonly ZackHeroKit _kit;
@@ -123,7 +129,7 @@ namespace TumbangPreso.Abilities
                 forward.y = 0.0f;
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.DashStretch(forward, 0.3f);
+                if (squash != null) squash.DashStretch(forward, 0.05f);
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 12.0f);
 
@@ -135,9 +141,11 @@ namespace TumbangPreso.Abilities
 
                 _wake.Clear();
                 _wake.Enqueue(ctx.Position);
-                HeroHazards.SpawnShockTrail(ctx.Position,
+                _live.Clear();
+                var first = HeroHazards.SpawnShockTrail(ctx.Position,
                     TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
-                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"), ctx.Forward);
+                if (first != null) _live.Enqueue(first);
                 _trailDropTimer = 0.25f;
 
                 // ⚠️ THE SPARKS GO ON ZACK, NOT ON THE TRAIL DISCS. One dash drops up to thirty
@@ -167,7 +175,7 @@ namespace TumbangPreso.Abilities
 
                 var disc = HeroHazards.SpawnShockTrail(drop,
                     TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
-                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"), ctx.Position - drop);
                 if (disc == null) return;
 
                 _live.Enqueue(disc);
@@ -178,7 +186,11 @@ namespace TumbangPreso.Abilities
                 while (_live.Count > MaxLiveDiscs)
                 {
                     var oldest = _live.Dequeue();
-                    if (oldest != null) UnityEngine.Object.Destroy(oldest);
+                    if (oldest != null)
+                    {
+                        oldest.SetActive(false);
+                        UnityEngine.Object.Destroy(oldest);
+                    }
                 }
             }
 
@@ -260,7 +272,6 @@ namespace TumbangPreso.Abilities
 
             private readonly ZackHeroKit _kit;
             private GameObject _recallTrace;
-            private GameObject _handCharge;
 
             public MagnetRecallAbility(ZackHeroKit kit)
                 : base("zack_skill2", "MAGNET",
@@ -339,10 +350,7 @@ namespace TumbangPreso.Abilities
 
                 var hand = ctx.Motor.GetComponent<CharacterVisual>()?.HandAnchor;
                 if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
-                if (_handCharge != null) UnityEngine.Object.Destroy(_handCharge);
                 _recallTrace = MagnetRecallTrace.Spawn(from, hand, ctx.Position + Vector3.up * .95f);
-                _handCharge = Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform,
-                    Visual.AbilityVfx.Aura.ElectricSpark, ChargeSeconds);
 
                 mine.HostForceEquip(ctx.Motor);
 
@@ -350,20 +358,20 @@ namespace TumbangPreso.Abilities
                 // `Carrier.HostThrowAt` reads to stamp `SlipperAffinity.ElectricStun` onto the
                 // launch, and `Carrier` clears it on the throw, so one recall charges one throw.
                 _kit.IsOverchargeThrowActive = true;
+                _kit.RefreshChargeVisual(ctx);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 if (!_kit.IsOverchargeThrowActive) EndEarly(ctx);
+                else _kit.RefreshChargeVisual(ctx);
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
                 _kit.IsOverchargeThrowActive = false;
                 if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
-                if (_handCharge != null) UnityEngine.Object.Destroy(_handCharge);
                 _recallTrace = null;
-                _handCharge = null;
             }
         }
 
@@ -387,9 +395,9 @@ namespace TumbangPreso.Abilities
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
                 : base("zack_ultimate", "THUNDERSTRIKE",
-                       "Hold to pick a spot, let go and the sky opens on it. Everyone caught underneath is stunned where they stand.",
+                       "Hold to pick a spot, then release a lightning strike that shocks and knocks rivals back. Your throws stay electrically charged for seven seconds after the strike.",
                        0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.ZackThunderstrike,
-                       summary: "Hold to aim, release. Stuns everyone under the strike.",
+                       summary: "Aim and release lightning. Shocks rivals back and charges your throws.",
                        telegraphRadius: 4.5f, telegraphRange: MaxRange,
                        castAction: "hero-zack-summon",
                        viewmodelAction: "summon-lightning",
@@ -431,14 +439,16 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("sfx_lightning_strike", at);
                 HeroHazards.CreateThunderstrike(at, 4.5f, ctx.Motor.PlayerSlot);
                 Visual.AbilityVfx.SpawnElectricArcs(at, 4.5f);
+                _kit.RefreshChargeVisual(ctx);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.4f);
+                if (squash != null) squash.Stretch(0.05f);
             }
 
             // No per-tick self impulse: Thunderstrike is an aimed strike, not the
             // old forward overdrive. Its active tail still empowers throws through
             // IsThunderstrikeActive, but cannot redirect an incoming knockback.
+            protected override void OnTick(AbilityContext ctx, float dt) => _kit.RefreshChargeVisual(ctx);
         }
     }
 }

@@ -1,5 +1,14 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest PC-transfer instruction, 2026-09-14:** owner is studying on this PC and
+explicitly requests committing/pushing ALL unfinished work and a complete handoff
+in this chat. This overrides the earlier no-stop rule for THIS PC. No more builds
+or tests here. On the destination, PULL ASTRAReworks FIRST after checking the
+checkout and preserving local changes. Then read the latest ACTIVE_REWORK_LEDGER.
+Do not trust an older chat's HEAD, paths, process IDs or completion claims.
+Resume the full queue there until done; park optional questions for the owner's
+return. Never send the handoff to another chat yourself.
+
 **Newest AFK continuation instruction, 2026-09-14:** the owner explicitly says
 to keep running until the entire authorized queue is finished and to save this
 instruction here and in the ledger. Do not end at a concept sheet, a passed test,
