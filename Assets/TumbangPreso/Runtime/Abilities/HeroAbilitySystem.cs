@@ -20,6 +20,7 @@ namespace TumbangPreso.Abilities
         private Carrier _carrier;
         private CombatVerbs _verbs;
         private AbilityContext _context;
+        private bool _pendingUltimateSky;
 
         // Phantom Phase is an approach/escape tool, not a risk-free objective carry.
         // Picking up a slipper immediately restores tag vulnerability.
@@ -106,6 +107,7 @@ namespace TumbangPreso.Abilities
 
         public void BindHero(string heroId, HeroBuild build = null)
         {
+            _pendingUltimateSky = false;
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
             ConfigureLoadout(build);
@@ -755,6 +757,7 @@ namespace TumbangPreso.Abilities
                         ability.TelegraphRadius, slot == Slot.Ultimate);
                 return;
             }
+            if(Kit!=null&&Kit.HeroId=="phaister")return;
             Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
@@ -827,6 +830,7 @@ namespace TumbangPreso.Abilities
             // those outward would have a client asking the host to announce the end of an effect
             // the host never started.
             using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);
+            if (slot == Slot.Ultimate) _pendingUltimateSky = false;
             _motor.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction(ability.CastAction,ability.ViewmodelAction);
 
             _answer[(int)slot] = HeroKit.CastOutcome.Cooling;
@@ -998,7 +1002,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante"))
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
@@ -1021,11 +1025,12 @@ namespace TumbangPreso.Abilities
             // and the whole event including both ramps was 2.65 s. 🧑 2026-08-27: *"dude the
             // change in weather lasts liek 2 seconds,, u dont even notice it"*. That property
             // carries the new arithmetic and why the aftermath lives in the FALL.
-            var look = LookFor(Kit != null ? Kit.HeroId : null);
-            if (look.HasValue && Kit != null && Kit.Ultimate != null)
-            {
-                Visual.SkyEvent.Play(look.Value, Visual.SkyEvent.SecondsFor(Kit.Ultimate.Duration));
-            }
+            // A predicted ritual can be refused. Keep the immediate hand/circle
+            // preparation, but wait for host acceptance before replacing global
+            // weather. A refusal then cannot erase another hero's current sky.
+            _pendingUltimateSky = Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
+                !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot;
+            if (!_pendingUltimateSky) PlayUltimateSky();
 
             // ⚠️⚠️ AND THE HERO'S OWN THEME, WIRED HERE FOR THE REASON § 26 GIVES ABOUT THE SKY:
             // one call, at the single point every ultimate in the game passes through, so a new
@@ -1051,7 +1056,7 @@ namespace TumbangPreso.Abilities
 
             // Dante's pressure cue precedes the hit. The camera kick belongs to
             // the actual ground contact, not a long chromatic blast on keypress.
-            if (Kit != null && Kit.HeroId == "dante") return;
+            if (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister")) return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;
@@ -1267,6 +1272,29 @@ namespace TumbangPreso.Abilities
             Kit.OnRechargeEvent(what);
         }
 
+        /// <summary>Release deferred sky presentation without replaying the owner's cast.</summary>
+        public void ConfirmPredictedCastPresentation(Slot slot)
+        {
+            if (slot != Slot.Ultimate || !_pendingUltimateSky) return;
+            _pendingUltimateSky = false;
+            var ultimate = Kit?.Ultimate;
+            if (Kit?.HeroId != "phaister" || ultimate == null ||
+                (!ultimate.IsWindingUp && !ultimate.IsActive)) return;
+            float elapsed = ultimate.IsWindingUp
+                ? ultimate.Windup - ultimate.WindupRemaining
+                : ultimate.Windup + ultimate.Duration - ultimate.DurationRemaining;
+            PlayUltimateSky(elapsed);
+        }
+
+        private void PlayUltimateSky(float elapsed = 0)
+        {
+            var look = LookFor(Kit?.HeroId);
+            if (!look.HasValue || Kit?.Ultimate == null) return;
+            float preparation = Kit.HeroId == "phaister" ? Kit.Ultimate.Windup : 0;
+            Visual.SkyEvent.Play(look.Value,
+                Visual.SkyEvent.SecondsFor(Kit.Ultimate.Duration + preparation) - elapsed);
+        }
+
         /// <summary>
         /// Wipe the kit back to how it starts a round: no charge, no cooldowns, nothing active.
         ///
@@ -1300,6 +1328,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void ClearBuffers()
         {
+            _pendingUltimateSky = false;
             _skill1BufferedAt = float.NegativeInfinity;
             _skill2BufferedAt = float.NegativeInfinity;
             _ultimateBufferedAt = float.NegativeInfinity;

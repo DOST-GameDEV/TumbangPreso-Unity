@@ -1,0 +1,29 @@
+[
+  {
+    "file": "team-phaister.glb",
+    "seconds_before": 0.8500000238418579,
+    "seconds_after": 2.12,
+    "original_binary_sha256": "13ea48d2bf81974d41af01c445b7eb9facaa8ad1fca30e062d353645807c7b54",
+    "preserved_original_bytes": 4317496,
+    "changed_action": "hero-phaister-eclipse",
+    "unchanged_other_animations": 35
+  },
+  {
+    "file": "team-custom-base.glb",
+    "seconds_before": 0.8500000238418579,
+    "seconds_after": 2.12,
+    "original_binary_sha256": "4f6187abf67e4ca8879b71458acf4bd089bddd5a4c0a22af719531163cf57865",
+    "preserved_original_bytes": 395036,
+    "changed_action": "hero-phaister-eclipse",
+    "unchanged_other_animations": 50
+  },
+  {
+    "file": "team-custom.glb",
+    "seconds_before": 0.8500000238418579,
+    "seconds_after": 2.12,
+    "original_binary_sha256": "8fc52988b502812fbb62e5050aa292f31bd0100c872c02c0f520f878f00f2622",
+    "preserved_original_bytes": 866968,
+    "changed_action": "hero-phaister-eclipse",
+    "unchanged_other_animations": 50
+  }
+]

@@ -2531,7 +2531,7 @@ namespace TumbangPreso.Abilities
             // and every glyph into ONE triangle list, so there is no sort to lose and no second
             // wheel to turn.
             var ward = VfxShapes.Lay(go.transform, "Ward",
-                                     VfxShapes.WardCircle(12, 4, 0.030f, ownerSlot * 7 + 3),
+                                     VfxShapes.Collar(64,.035f,.987f),
                                      radius, 0.02f);
 
             // ⚠️ MAGENTA RULES. The lines of the diagram are hers; the WRITING is gold, and it
@@ -2539,16 +2539,16 @@ namespace TumbangPreso.Abilities
             // thing § 21.5 got right, and the way to spend it is on which PART of the mark is
             // which, not on a gradient nobody can point at.
             VfxMaterial.Ghost(ward.GetComponent<Renderer>(),
-                              Alpha(UiTheme.HeroWitch, 0.90f), 0.34f);
+                              new Color(.57f,.34f,.76f,.76f), .25f);
 
             // The gold overlay: the same builder at a different seed, so the strokes land in
             // different cells and the two do not simply double each other's lines. Slightly
             // higher and much thinner, so it reads as ink ON the rules rather than beside them.
             var written = VfxShapes.Lay(go.transform, "WardWriting",
-                                        VfxShapes.WardCircle(12, 4, 0.017f, ownerSlot * 7 + 41),
+                                        Visual.PhaisterSpellGeometry.Binding(effectScale>1.05f),
                                         radius * 0.995f, 0.032f);
             VfxMaterial.Ghost(written.GetComponent<Renderer>(),
-                              new Color(1.00f, 0.86f, 0.32f, 0.80f), 0.42f);
+                              new Color(.87f,.68f,.96f,.88f), .35f);
 
             // ⚠️ THE WARD FOLLOWS THE ROAD TOO, and it is 4.8 m across, which is wider than the
             // pavement it can be thrown onto. The ultimate's circle is where this was reported
@@ -2563,42 +2563,13 @@ namespace TumbangPreso.Abilities
             // points and a standing character on each is the same glyph twice, once flat and once
             // upright, which is what makes the mark look like it was drawn by somebody who then
             // stood things on it.
-            for (int n = 0; n < 4; n++)
-            {
-                float ang = (n * 90.0f + 45.0f) * Mathf.Deg2Rad;
-                float dist = radius * 0.845f;
-
-                // ⚠️ TWO-SIDED. Four marks at the compass points around a ward that four
-                // players stand around: there is no yaw at which all four face the camera, so a
-                // one-sided glyph is a mark that is missing from whichever side you approach.
-                var node = VfxShapes.Stand(go.transform, $"WardMark_{n}",
-                                           VfxShapes.TwoSided(VfxShapes.Rune(220 + n * 13)),
-                                           0.22f, heightScale: 0.44f);
-                node.transform.localPosition =
-                    new Vector3(Mathf.Sin(ang) * dist, 0.14f, Mathf.Cos(ang) * dist);
-                node.transform.localRotation =
-                    Quaternion.Euler(0.0f, n * 90.0f + 45.0f, 0.0f);
-
-                VfxMaterial.Ghost(node.GetComponent<Renderer>(),
-                                  new Color(1.00f, 0.80f, 0.30f, 0.85f), 0.50f);
-            }
-
-            var lightGo = new GameObject("WardLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0.0f, 1.7f, 0.0f);
-
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroWitchBright;
-            light.range = radius * 2.4f;
-            light.intensity = 1.1f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
             var inscribe = go.AddComponent<WardInscribe>();
             inscribe.Rules = ward.transform;
             inscribe.Writing = written.transform;
             inscribe.Duration = duration;
+            inscribe.Initialize();inscribe.StepTo(0);
 
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchSigil, duration);
+
 
             GameServices.Audio?.PlayAt("sfx_hex_cast", position);
 
@@ -2656,8 +2627,10 @@ namespace TumbangPreso.Abilities
 
             public float LifeSeconds => Mathf.Max(0.2f, Duration);
 
-            private void Awake()
+            private bool _initialized;
+            public void Initialize()
             {
+                if(_initialized)return;_initialized=true;
                 if (Rules != null)
                 {
                     _rulesScale = Rules.localScale;
@@ -2678,18 +2651,19 @@ namespace TumbangPreso.Abilities
 
             public void StepTo(float seconds)
             {
+                Initialize();
                 _elapsed = seconds;
 
                 // ⚠️ IT OPENS OUTWARD FROM 0.62, NOT FROM ZERO. A mark that grows from a point is
                 // a shockwave, and this game already has four of those. Starting most of the way
                 // out and snapping to full size reads as a stamp landing, which is the gesture.
                 float rules = Mathf.Clamp01(_elapsed / Inscribe);
-                Scale(Rules, _rulesScale, Mathf.Lerp(0.62f, 1.0f, Ease(rules)));
-                Fade(_rulesRenderer, _rulesAlpha * rules);
+                if(Rules!=null)Rules.localScale=_rulesScale;
+                Fade(_rulesRenderer, _rulesAlpha);
 
                 float writeStart = Inscribe * WritingLag;
                 float write = Mathf.Clamp01((_elapsed - writeStart) / (Inscribe * 0.9f));
-                Scale(Writing, _writingScale, Mathf.Lerp(0.74f, 1.0f, Ease(write)));
+                if(Writing!=null)Writing.localScale=_writingScale;
                 Fade(_writingRenderer, _writingAlpha * write);
 
                 float t = Mathf.Clamp01(_elapsed / LifeSeconds);
@@ -2759,8 +2733,7 @@ namespace TumbangPreso.Abilities
             // the entire audience for this mark, were on the culled side.
             // `ability_blink_rift_eye_v19.png` has the light on the road and no tear in it.
             var tear = VfxShapes.Stand(go.transform, "Tear",
-                                       VfxShapes.TwoSided(
-                                           VfxShapes.Rift(11, 0.40f, 0.46f, 0.055f, 5)),
+                                       Visual.PhaisterSpellGeometry.Passage(false),
                                        0.95f, heightScale: 1.05f);
 
             // ⚠️ NEAR-WHITE, AND IT IS THE ONLY THING IN HER KIT THAT IS NOT MAGENTA OR GOLD. A
@@ -2769,7 +2742,11 @@ namespace TumbangPreso.Abilities
             // that already has two. It is also the cheapest possible way for the blink to be
             // told from the hex at a glance across the arena.
             VfxMaterial.Ghost(tear.GetComponent<Renderer>(),
-                              new Color(0.94f, 0.88f, 1.00f, 0.95f), 1.05f);
+                              new Color(.06f,.035f,.11f,.94f), .03f);
+
+            var edge=VfxShapes.Stand(tear.transform,"PassageEdge",Visual.PhaisterSpellGeometry.Passage(true),1);
+            VfxMaterial.Ghost(edge.GetComponent<Renderer>(),new Color(.79f,.60f,.94f,.90f),.48f);
+            edge.GetComponent<Renderer>().sharedMaterial.renderQueue=3010;
 
             var lightGo = new GameObject("RiftLight");
             lightGo.transform.SetParent(go.transform, false);
@@ -2777,14 +2754,15 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = new Color(0.86f, 0.62f, 1.00f);
             light.range = 5.0f;
-            light.intensity = 2.2f * .40f; // Keep the effect readable without bleaching nearby bodies.
+            light.intensity = .18f; // Keep the effect readable without bleaching nearby bodies.
             light.shadows = LightShadows.None;
 
             var anim = go.AddComponent<RiftOpen>();
             anim.Tear = tear.transform;
             anim.Glow = light;
+            anim.Initialize();anim.StepTo(0);
 
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchScatter, 0.5f);
+
             return go;
         }
 
@@ -2818,7 +2796,7 @@ namespace TumbangPreso.Abilities
             private const float Life = 1.30f;
 
             /// <summary>Fraction of the life spent widening. The rest is the snap.</summary>
-            private const float OpenFraction = 0.34f;
+            private const float OpenFraction = .10f;
 
             private float _elapsed;
             private Vector3 _full = Vector3.one;
@@ -2826,8 +2804,10 @@ namespace TumbangPreso.Abilities
 
             public float LifeSeconds => Life;
 
-            private void Awake()
+            private bool _initialized;
+            public void Initialize()
             {
+                if(_initialized)return;_initialized=true;
                 if (Tear != null) _full = Tear.localScale;
                 if (Glow != null) _glow = Glow.intensity;
             }
@@ -2836,6 +2816,7 @@ namespace TumbangPreso.Abilities
 
             public void StepTo(float seconds)
             {
+                Initialize();
                 _elapsed = seconds;
 
                 float t = _elapsed / Life;
@@ -2852,7 +2833,7 @@ namespace TumbangPreso.Abilities
                 {
                     // Sqrt on the widen so it is quick off the mark, squared on the collapse so
                     // the last of it goes suddenly. Same reasoning `ExplosionVfxAnim` gives.
-                    float wide = Mathf.Sqrt(open) * (1.0f - shut * shut);
+                    float wide = Mathf.Lerp(.60f,1,Mathf.Sqrt(open)) * (1.0f - shut * shut);
                     float tall = 1.0f - shut * shut * shut;
 
                     Tear.localScale = new Vector3(_full.x * wide, _full.y * tall, _full.z * wide);
@@ -2998,7 +2979,7 @@ namespace TumbangPreso.Abilities
         /// them is a star polygon.
         /// </summary>
         public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f,
-                                                        float duration = 5.0f)
+                                                        float duration = 5.0f, float gatherSeconds = 0.0f)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("GrandCovenEclipseEffect");
@@ -3024,11 +3005,12 @@ namespace TumbangPreso.Abilities
             // deck over the street, so an eclipse at 40 m would be behind the map on the one arena
             // it was designed for. Low enough to be under the bridge and high enough that no
             // player, pillar or barricade can reach it.
-            const float Height = 11.0f;
+            float height = CovenHeight(position, radius * .62f);
+            float life = duration + gatherSeconds;
 
             var hung = new GameObject("Eclipse");
             hung.transform.SetParent(go.transform, false);
-            hung.transform.localPosition = new Vector3(0.0f, Height, 0.0f);
+            hung.transform.localPosition = new Vector3(0.0f, height, 0.0f);
 
             var corona = VfxShapes.Lay(hung.transform, "Corona",
                                        VfxShapes.Corona(24, 0.62f, 0.45f, 11),
@@ -3039,7 +3021,7 @@ namespace TumbangPreso.Abilities
             // again, which is the fault this whole pass exists to remove. A corona is the colour
             // of a sun's edge and hers is the one that burns.
             VfxMaterial.Ghost(corona.GetComponent<Renderer>(),
-                              new Color(1.00f, 0.78f, 0.26f, 0.95f), 1.30f);
+                              new Color(1.00f, 0.78f, 0.40f, 0.78f), .55f);
 
             // ⚠️ THE MOON IS OPAQUE AND IT IS THE ONLY OPAQUE THING IN THE EFFECT. `docs/TODO.md`
             // § 19.2a's rule: two coplanar translucent plates sort arbitrarily, and a dark disc
@@ -3076,7 +3058,7 @@ namespace TumbangPreso.Abilities
             // one is eleven metres away from everything it lights, so its falloff across the
             // court is nearly flat and it reads as a sky rather than as a lamp.
             light.range = 26.0f;
-            light.intensity = 2.4f * .40f; // Keep the effect readable without bleaching nearby bodies.
+            light.intensity = .38f; // Keep the effect readable without bleaching nearby bodies.
             light.shadows = LightShadows.None;
 
             // The reach, on the ground. An annulus, because `docs/TODO.md` § 19.2's rule is that
@@ -3090,8 +3072,7 @@ namespace TumbangPreso.Abilities
             // eleven metres up keeps its gold, so the sky and the ground are now different
             // colours, which is what stops the whole ultimate reading as one wash.
             VfxMaterial.Ghost(reach.GetComponent<Renderer>(),
-                              new Color(UiTheme.HeroWitchBright.r, UiTheme.HeroWitchBright.g,
-                                        UiTheme.HeroWitchBright.b, 0.70f), 0.75f);
+                              new Color(.68f, .43f, .86f, .62f), .35f);
             VfxMaterial.StripCollider(reach);
 
             // ⚠️ THE REACH IS A BOUNDARY, SO IT IS THE ONE PIECE THAT MUST NOT BREAK. It says how
@@ -3141,22 +3122,44 @@ namespace TumbangPreso.Abilities
             circle.transform.SetParent(go.transform, false);
 
             var build = circle.AddComponent<CovenCircleBuild>();
-            build.Duration = duration;
+            build.Duration = life;
+            build.BuildSeconds = gatherSeconds;
             build.Radius = radius;
-            build.Accent = UiTheme.HeroWitchBright;
+            build.Accent = new Color(.64f, .38f, .83f);
             build.BuildRings();
+            build.StepTo(0);
 
             var anim = go.AddComponent<EclipseFall>();
             anim.Hung = hung.transform;
             anim.Corona = corona.transform;
             anim.Reach = reach.transform;
             anim.Glow = light;
-            anim.Duration = duration;
-            anim.RestHeight = Height;
+            anim.Duration = life;
+            anim.GatherSeconds = gatherSeconds;
+            anim.RestHeight = height;
+            anim.Initialize();
+            anim.StepTo(0);
 
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.WitchEclipse, duration);
-            Object.Destroy(go, duration);
+            Object.Destroy(go, life);
             return go;
+        }
+
+        private static float CovenHeight(Vector3 ground,float radius)
+        {
+            float height=11;
+            for(int i=0;i<9;i++)
+            {
+                float angle=(i-1)*Mathf.PI/4;
+                var offset=i==0?Vector3.zero:new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle))*radius*.72f;
+                var origin=ground+offset+Vector3.up*2.8f;
+                foreach(var hit in Physics.RaycastAll(origin,Vector3.up,12,~0,QueryTriggerInteraction.Ignore))
+                {
+                    if(hit.collider.GetComponentInParent<CharacterMotor>()!=null||hit.collider.GetComponentInParent<Slipper>()!=null)continue;
+                    if(Vector3.Dot(hit.normal,Vector3.down)<.5f)continue;
+                    height=Mathf.Min(height,hit.point.y-ground.y-.65f);
+                }
+            }
+            return Mathf.Max(2.5f,height);
         }
 
         // -------------------------------------------------------------------
@@ -3201,7 +3204,9 @@ namespace TumbangPreso.Abilities
             public Color Accent = Color.magenta;
 
             /// <summary>How long the whole inscription takes to draw itself.</summary>
-            private const float BuildSeconds = 1.55f;
+            public float BuildSeconds = 1.55f;
+            public CharacterMotor Owner;
+            public HeroAbility OwnerCast;
 
             /// <summary>How long one layer takes to come in, once its turn arrives.</summary>
             private const float LayerFade = 0.30f;
@@ -3212,6 +3217,11 @@ namespace TumbangPreso.Abilities
             private readonly List<Transform> _floaters = new List<Transform>();
             private readonly List<float> _floatPhase = new List<float>();
             private readonly List<Quaternion> _floatRest = new List<Quaternion>();
+            private readonly List<Vector3> _floatPosition = new List<Vector3>();
+            private readonly Dictionary<Renderer,int> _stage = new Dictionary<Renderer,int>();
+            private readonly HashSet<int> _pulseStages = new HashSet<int>();
+            private float _lastPulse = -100;
+            public void Pulse() => _lastPulse = _elapsed;
 
             private float _elapsed;
 
@@ -3249,8 +3259,8 @@ namespace TumbangPreso.Abilities
             public void BuildRings()
             {
                 var ink = Accent;
-                var pale = new Color(1.00f, 0.72f, 0.99f);
-                var deep = new Color(0.80f, 0.32f, 0.94f);
+                var pale = new Color(.90f, .78f, .96f);
+                var deep = new Color(.42f, .27f, .64f);
 
                 // -------------------------------------------------------------------
                 // THE CONCENTRIC RULES. Hand-picked radii, deliberately unevenly spaced: two
@@ -3316,7 +3326,7 @@ namespace TumbangPreso.Abilities
                 AddFigure("Fig_Core", VfxShapes.Sigil(3, 1, 0.030f, 0.84f, 0, 36, 907),
                           0.212f, 63.0f, pale, 0.64f);
 
-                AddFloatingGlyphs(24);
+                AddFloatingGlyphs(6);
             }
 
             /// <summary>One medallion: a small ring with its own figure in it, or empty.</summary>
@@ -3443,7 +3453,7 @@ namespace TumbangPreso.Abilities
                                             + Vector3.up * 0.019f);
                     go.transform.rotation = Quaternion.Euler(90.0f, -deg + 90.0f, 0.0f);
 
-                    Ink(go, new Color(1.00f, 0.68f, 0.99f), 0.76f, 1.35f);
+                    Ink(go, new Color(.82f, .66f, .94f), .66f, .55f);
                 }
 
                 Register(holder.transform, null, 0.0f);
@@ -3464,7 +3474,8 @@ namespace TumbangPreso.Abilities
             /// </summary>
             private Vector3 OnGround(Vector3 flat)
             {
-                flat.y = VfxShapes.GroundAt(flat, flat.y);
+                float lift=Mathf.Max(.020f,flat.y-transform.position.y);
+                flat.y = VfxShapes.GroundAt(flat, transform.position.y)+lift;
                 return flat;
             }
 
@@ -3531,14 +3542,15 @@ namespace TumbangPreso.Abilities
                     // thing that survives their own weather. `docs/TODO.md` § 31.5 records the
                     // identical mistake on the pet, three hours earlier in the same session.
                     var r = go.GetComponent<Renderer>();
-                    VfxMaterial.Ghost(r, new Color(1.00f, 0.62f, 0.98f, 1.00f), 2.20f);
+                    VfxMaterial.Ghost(r, new Color(.84f, .67f, .96f, .82f), .65f);
                     VfxMaterial.StripCollider(go);
 
                     _inks.Add(r);
-                    _alpha.Add(1.00f);
+                    _alpha.Add(.82f);
                     _floaters.Add(go.transform);
                     _floatPhase.Add(i * 0.7f);
                     _floatRest.Add(go.transform.localRotation);
+                    _floatPosition.Add(go.transform.localPosition);
                 }
 
                 Register(holder.transform, null, 0.0f);
@@ -3554,13 +3566,13 @@ namespace TumbangPreso.Abilities
             /// of unscaled holders and keep their own placement) sat correctly out at 6 m with
             /// nothing joining them up.
             /// </summary>
-            private readonly List<Vector3> _layerFull = new List<Vector3>();
+
 
             private void Register(Transform layer, Renderer ink, float alpha)
             {
+                if(layer.name=="Fig_Core"||layer.name=="Rule_05"||layer.name=="Rule_06")_pulseStages.Add(_layers.Count);
+                foreach(var renderer in layer.GetComponentsInChildren<Renderer>())_stage[renderer]=_layers.Count;
                 _layers.Add(layer);
-                _layerFull.Add(layer.localScale);
-                layer.localScale = Vector3.zero;
 
                 if (ink != null)
                 {
@@ -3571,7 +3583,12 @@ namespace TumbangPreso.Abilities
 
             public float LifeSeconds => Mathf.Max(0.3f, Duration);
 
-            private void Update() => StepTo(_elapsed + Time.deltaTime);
+            private void Update()
+            {
+                if(OwnerCast!=null&&(Owner==null||Owner.AbilitySystem?.Kit?.Ultimate!=OwnerCast||(!OwnerCast.IsWindingUp&&!OwnerCast.IsActive)))
+                {Object.Destroy(transform.parent.gameObject);return;}
+                StepTo(_elapsed+Time.deltaTime);
+            }
 
             /// <summary>
             /// ⚠️⚠️ AN `IVfxTimeline`, AND THE FIRST RENDER OF THIS EFFECT IS WHY.
@@ -3589,66 +3606,29 @@ namespace TumbangPreso.Abilities
             /// </summary>
             public void StepTo(float seconds)
             {
-                _elapsed = seconds;
-
-                // ⚠️ THE LAYERS ARE SPACED ACROSS `BuildSeconds` RATHER THAN GIVEN A FIXED GAP,
-                // so adding a seventh ring re-times the whole sequence instead of making the
-                // build longer than the beat it is supposed to fit inside.
-                float step = _layers.Count > 0 ? BuildSeconds / _layers.Count : BuildSeconds;
-
-                for (int i = 0; i < _layers.Count; i++)
+                _elapsed=seconds;
+                float spacing=Mathf.Max(0,BuildSeconds-LayerFade)/Mathf.Max(1,_layers.Count-1);
+                float fade=Mathf.Clamp01((Duration-seconds)/.60f);
+                for(int i=0;i<_inks.Count;i++)
                 {
-                    if (_layers[i] == null) continue;
-
-                    float since = _elapsed - i * step;
-                    float k = Mathf.Clamp01(since / LayerFade);
-
-                    // Overshoot slightly and settle, so each ring lands rather than grows.
-                    float e = k < 1.0f ? 1.0f - Mathf.Pow(1.0f - k, 3.0f) : 1.0f;
-                    float pop = k < 1.0f ? 1.0f + Mathf.Sin(k * Mathf.PI) * 0.05f : 1.0f;
-
-                    _layers[i].localScale = _layerFull[i] * (e * pop);
+                    var ink=_inks[i];if(ink==null||ink.sharedMaterial==null)continue;
+                    int stage=_stage.TryGetValue(ink,out var index)?index:0;
+                    float written=BuildSeconds<=.001f?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((seconds-stage*spacing)/LayerFade));
+                    float pulse=_pulseStages.Contains(stage)&&seconds>=BuildSeconds
+                        ? .76f+.24f*Mathf.Exp(-Mathf.Max(0,seconds-_lastPulse)*9):1;
+                    var color=ink.sharedMaterial.color;color.a=_alpha[i]*written*fade*pulse;ink.sharedMaterial.color=color;
                 }
-
-                // ⚠️ THE WHOLE INSCRIPTION TURNS, SLOWLY, AND ONLY AFTER IT IS FINISHED. Turning
-                // it while it is still being drawn would make the stages look like one object
-                // spinning up rather than like separate rings arriving.
-                //
-                // ⚠️⚠️ IT IS SET FROM `_elapsed` RATHER THAN ACCUMULATED WITH `Rotate`, so a
-                // wound frame lands where a played one would. An incremental `Rotate` is
-                // invisible to `StepTo`: the probe would jump straight to the end time and the
-                // object would still be at its birth angle, which is the same class of fault as
-                // the zero-scale one this method's note records.
-                float spin = _elapsed > BuildSeconds ? (_elapsed - BuildSeconds) * 6.0f : 0.0f;
-                transform.localRotation = Quaternion.Euler(0.0f, spin, 0.0f);
-
-                for (int i = 0; i < _floaters.Count; i++)
+                // Ground vertices were sampled once. Only ink visibility changes;
+                // scaling/spinning their transforms moves them off the actual kerbs.
+                for(int i=0;i<_floaters.Count;i++)
                 {
-                    if (_floaters[i] == null) continue;
-
-                    float t = _elapsed * 1.6f + _floatPhase[i];
-                    var p = _floaters[i].localPosition;
-                    p.y = 0.35f + Mathf.Sin(t) * 0.16f + Mathf.Min(_elapsed, 2.0f) * 0.18f;
-                    _floaters[i].localPosition = p;
-
-                    _floaters[i].localRotation = _floatRest[i]
-                        * Quaternion.Euler(0.0f, _elapsed * 22.0f, 0.0f);
-                }
-
-                // The last half second dims the ink so the circle does not simply vanish.
-                float left = Duration - _elapsed;
-                if (left >= 0.6f) return;
-
-                float fade = Mathf.Clamp01(left / 0.6f);
-                for (int i = 0; i < _inks.Count; i++)
-                {
-                    if (_inks[i] == null || _inks[i].sharedMaterial == null) continue;
-
-                    var c = _inks[i].sharedMaterial.color;
-                    c.a = _alpha[i] * fade;
-                    _inks[i].sharedMaterial.color = c;
+                    if(_floaters[i]==null)continue;
+                    float settle=BuildSeconds<=.001f?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/BuildSeconds));
+                    _floaters[i].localPosition=_floatPosition[i]+Vector3.up*(settle*.20f+Mathf.Sin(seconds*1.4f+_floatPhase[i])*.045f);
+                    _floaters[i].localRotation=_floatRest[i]*Quaternion.Euler(0,(1-settle)*(i%2==0?25:-25),0);
                 }
             }
+
         }
 
         /// <summary>
@@ -3672,6 +3652,9 @@ namespace TumbangPreso.Abilities
             public Light Glow;
             public float Duration = 5.0f;
             public float RestHeight = 11.0f;
+            public float GatherSeconds;
+            private bool _initialized;
+            private Renderer[] _moonRenderers;
 
             /// <summary>How long it takes to arrive. Slower than a skill: it is an event.</summary>
             private const float Arrive = 0.75f;
@@ -3689,8 +3672,10 @@ namespace TumbangPreso.Abilities
 
             public float LifeSeconds => Mathf.Max(0.3f, Duration);
 
-            private void Awake()
+            public void Initialize()
             {
+                if(_initialized)return;_initialized=true;
+                _moonRenderers=Hung!=null?Hung.GetComponentsInChildren<Renderer>():System.Array.Empty<Renderer>();
                 if (Glow != null) _glow = Glow.intensity;
 
                 if (Reach != null)
@@ -3706,9 +3691,10 @@ namespace TumbangPreso.Abilities
 
             public void StepTo(float seconds)
             {
+                Initialize();
                 _elapsed = seconds;
 
-                float arrive = Mathf.Clamp01(_elapsed / Arrive);
+                float arrive = Mathf.Clamp01((_elapsed-GatherSeconds) / Arrive);
                 float eased = 1.0f - (1.0f - arrive) * (1.0f - arrive);
 
                 if (Hung != null)
@@ -3716,8 +3702,9 @@ namespace TumbangPreso.Abilities
                     // Down from twice the rest height, and it grows into place: something
                     // enormous coming closer, rather than something small being turned on.
                     Hung.localPosition = new Vector3(
-                        0.0f, Mathf.Lerp(RestHeight * 2.1f, RestHeight, eased), 0.0f);
-                    Hung.localScale = Vector3.one * Mathf.Lerp(0.45f, 1.0f, eased);
+                        0.0f, Mathf.Lerp(RestHeight + .35f, RestHeight, eased), 0.0f);
+                    Hung.localScale = Vector3.one * Mathf.Lerp(.68f, 1.0f, eased);
+                    foreach(var renderer in _moonRenderers)if(renderer!=null)renderer.enabled=_elapsed>=GatherSeconds;
                 }
 
                 if (Corona != null)
@@ -3725,11 +3712,12 @@ namespace TumbangPreso.Abilities
 
                 // The reach sweeps out under it as it lands, so the ground mark is caused by the
                 // thing in the sky rather than being a second, separate announcement.
-                if (Reach != null)
+                if(Reach!=null)Reach.localScale=_reachScale;
+                if(_reachRenderer!=null&&_reachRenderer.sharedMaterial!=null)
                 {
-                    float k = Mathf.Sqrt(arrive);
-                    Reach.localScale = new Vector3(_reachScale.x * k, _reachScale.y,
-                                                   _reachScale.z * k);
+                    var color=_reachRenderer.sharedMaterial.color;
+                    float prepared=GatherSeconds<=.001f?1:Mathf.Clamp01(seconds/GatherSeconds);
+                    color.a=_reachAlpha*Mathf.Lerp(.36f,1,prepared);_reachRenderer.sharedMaterial.color=color;
                 }
 
                 if (Glow != null) Glow.intensity = _glow * eased;
@@ -3770,7 +3758,7 @@ namespace TumbangPreso.Abilities
                 }
 
                 // Slow rotation on occult hex circle
-                transform.Rotate(Vector3.up, 18.0f * Time.deltaTime);
+                // The binding ink remains on its sampled ground surface.
 
                 if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;

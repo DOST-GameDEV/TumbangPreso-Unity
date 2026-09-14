@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:43Z" duration="58.7881554">
+  <test-suite type="TestSuite" id="1462" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="347" result="Failed" site="Child" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:43Z" duration="58.788155" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1456" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="347" result="Failed" site="Child" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:43Z" duration="58.774589" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13112" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1457" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="347" result="Failed" site="Child" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:43Z" duration="58.770637" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1458" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="347" result="Failed" site="Child" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:43Z" duration="58.767029" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1136" name="ImprovementEvidenceProbe" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:30Z" duration="46.528245" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1143" name="EveryHeroActionThroughTheRealPressAndRelease" fullname="TumbangPreso.PlayTests.ImprovementEvidenceProbe.EveryHeroActionThroughTheRealPressAndRelease" methodname="EveryHeroActionThroughTheRealPressAndRelease" classname="TumbangPreso.PlayTests.ImprovementEvidenceProbe" runstate="Runnable" seed="2096664323" result="Passed" start-time="2026-09-14 07:45:44Z" end-time="2026-09-14 07:46:30Z" duration="46.508695" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1288" name="PhaisterRitualContractProbe" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-14 07:46:30Z" end-time="2026-09-14 07:46:43Z" duration="12.220138" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1290" name="EclipseAndItsGroundBoundaryStayInsideTheArenaSurfaces" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe.EclipseAndItsGroundBoundaryStayInsideTheArenaSurfaces" methodname="EclipseAndItsGroundBoundaryStayInsideTheArenaSurfaces" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" seed="437507762" result="Failed" start-time="2026-09-14 07:46:30Z" end-time="2026-09-14 07:46:35Z" duration="4.622815" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The eclipse is above the bridge: moon=10.98, ceiling=8
+The real10.5m curse has a shrunken boundary radius=1
+Already drawn ground inscriptions rotate off their sampled surface by 0.3849199m.
+  Expected: <empty>
+  But was:  < "The eclipse is above the bridge: moon=10.98, ceiling=8", "The real10.5m curse has a shrunken boundary radius=1", "Already drawn ground inscriptions rotate off their sampled surface by 0.3849199m." >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PhaisterRitualContractProbe+<EclipseAndItsGroundBoundaryStayInsideTheArenaSurfaces>d__9.MoveNext () [0x0035d] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\PhaisterRitualContractProbe.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1289" name="GrandCovenWarnsBeforeItsFirstCurse" fullname="TumbangPreso.PlayTests.PhaisterRitualContractProbe.GrandCovenWarnsBeforeItsFirstCurse" methodname="GrandCovenWarnsBeforeItsFirstCurse" classname="TumbangPreso.PlayTests.PhaisterRitualContractProbe" runstate="Runnable" seed="216175587" result="Failed" start-time="2026-09-14 07:46:35Z" end-time="2026-09-14 07:46:43Z" duration="7.594729" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Grand Coven gives no committed ritual warning before its curse.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PhaisterRitualContractProbe+<GrandCovenWarnsBeforeItsFirstCurse>d__8.MoveNext () [0x00385] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\PhaisterRitualContractProbe.cs:60
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -2869,10 +2869,12 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
 
+            bool confirmRitualOwner = abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate &&
+                Unit(slot)?.AbilitySystem?.HeroId == "phaister";
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId ||
-                    (exceptClientId.HasValue && clientId == exceptClientId.Value))
+                    (exceptClientId.HasValue && clientId == exceptClientId.Value && !confirmRitualOwner))
                     continue;
 
                 using var writer = new FastBufferWriter(128, Allocator.Temp);
@@ -2909,6 +2911,15 @@ namespace TumbangPreso.Net
             // `Transform` through the zone it spawns. § 149.9.
             if (!Finite(position) || !Finite(forward) || !Finite(aimPoint) || !Finite(heldSeconds))
                 return;
+
+            if (slot == NetAuthority.LocalSlot)
+            {
+                // This owner already performed the cast. Acceptance only releases
+                // presentation that must not replace the sky for a denied ritual.
+                Unit(slot)?.AbilitySystem?.ConfirmPredictedCastPresentation(
+                    (Abilities.HeroAbilitySystem.Slot)abilitySlot);
+                return;
+            }
 
             if(hasFamiliar)
             {

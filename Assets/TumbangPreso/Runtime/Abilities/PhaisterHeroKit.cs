@@ -9,6 +9,7 @@ namespace TumbangPreso.Abilities
 {
     public sealed class PhaisterHeroKit : HeroKit
     {
+        public const float RitualBuildSeconds = 1.55f;
         public bool IsWitchfireInfused { get; set; } = true;
         public bool IsEclipseActive => Ultimate != null && Ultimate.IsActive;
 
@@ -120,7 +121,7 @@ namespace TumbangPreso.Abilities
                 HeroHazards.SpawnHexSigil(targetPos,
                     HexRadius * ctx.CostScale("phaister.1.brand"), SigilLifetime, slot,
                     ctx.GainScale("phaister.1.brand"));
-                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchSigil, 1.5f);
+
             }
         }
 
@@ -238,7 +239,7 @@ namespace TumbangPreso.Abilities
                 // They shared one `SpawnCastGlyph` call until 2026-08-26, which is most of why
                 // the blink read as "the hex again, twice".
                 HeroHazards.SpawnShadowRift(startPos, facing);
-                HeroHazards.SpawnShadowArrival(destination);
+                PhaisterArrivalSeal.Create(destination,facing);
 
                 ctx.Motor.Teleport(destination);
 
@@ -249,7 +250,7 @@ namespace TumbangPreso.Abilities
                 // is given, which is the same fault `LrtTrainFlyby` records about a moving train.
                 NetCue.Play("sfx_blink_arrive", destination);
 
-                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchScatter, 1.0f);
+
 
                 HostShove(ctx.Motor, startPos, facing);
             }
@@ -460,6 +461,7 @@ namespace TumbangPreso.Abilities
             private const float RecurseEvery = 1.85f;
 
             private float _sinceCurse;
+            private GameObject _ritual;
 
             public GrandCovenEclipseAbility()
                 // ⚠️⚠️ THE DURATION WENT FROM 5.0 s TO 7.0 s, AND IT IS THE ONE NUMBER HERE THAT
@@ -470,9 +472,9 @@ namespace TumbangPreso.Abilities
                 // longest, so the two most "lasting" ultimates in the game now read as the same
                 // KIND of power.
                 : base("phaister_ultimate", "GRAND COVEN",
-                       "Pulls an eclipse over the street. Anyone caught under it is cursed where they stand, again and again, until they get out.",
+                       "Draws a grand ritual, then calls an eclipse. Anyone caught inside is cursed repeatedly until they escape the circle.",
                        0.0f, 7.0f, AbilityGlyph.PhaisterEclipse,
-                       summary: "Night falls. Nobody can stand under it.",
+                       summary: "A visible ritual, then repeated curses inside its circle.",
                        telegraphRadius: Reach,
                        telegraphRange: 0.0f,
                        castAction: "hero-phaister-eclipse",
@@ -480,6 +482,29 @@ namespace TumbangPreso.Abilities
                        castCue: "sfx_cast_phaister_coven")
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Ward;
+                Windup = RitualBuildSeconds;
+            }
+
+            public override void Activate(AbilityContext ctx)
+            {
+                base.Activate(ctx);
+                if(!IsWindingUp||ctx?.Motor==null)return;
+                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
+                _ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration,Windup);
+                var circle=_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
+                circle.Owner=ctx.Motor;circle.OwnerCast=this;
+            }
+
+            public override void Reset()
+            {
+                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
+                _ritual=null;base.Reset();
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                if(_ritual!=null)UnityEngine.Object.Destroy(_ritual);
+                _ritual=null;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -492,8 +517,9 @@ namespace TumbangPreso.Abilities
                 NetCue.Play("hero_phaister_ult", ctx.Position);
                 NetCue.Play("sfx_eclipse_toll", ctx.Position);
 
-                HeroHazards.SpawnGrandCovenEclipse(ctx.Position, Reach, Duration);
-                AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchEclipse, Duration);
+                if(_ritual==null)_ritual=HeroHazards.SpawnGrandCovenEclipse(ctx.Position,Reach,Duration);
+                var circle=_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>();
+                circle.Owner=ctx.Motor;circle.OwnerCast=this;
 
                 var kit = ctx.Motor.AbilitySystem?.Kit as PhaisterHeroKit;
                 if (kit != null) kit.IsWitchfireInfused = true;
@@ -541,6 +567,7 @@ namespace TumbangPreso.Abilities
             /// </summary>
             private void Curse(Vector3 at, int mySlot)
             {
+                if(_ritual!=null)_ritual.GetComponentInChildren<HeroHazards.CovenCircleBuild>()?.Pulse();
                 if (!NetAuthority.ShouldResolve()) return;
 
                 var round = GameServices.Round;
@@ -559,7 +586,7 @@ namespace TumbangPreso.Abilities
                     // ⚠️ RELAYED. The stagger is a RULE and stays here behind the host gate;
                     // the aura and the CURSED! plate are what three other people could not see.
                     // See `Visual.MatchFlair`.
-                    Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroCursed,
+                    if(p.IsStunned&&p.StunElement==StunElement.Hex)Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroCursed,
                                                mySlot, p.PlayerSlot,
                                                p.transform.position, CurseHold);
                 }

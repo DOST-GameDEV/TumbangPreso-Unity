@@ -1,0 +1,30 @@
+{
+  "ok": false,
+  "errors": [
+    "owner: rejected cast left ritual, active clock or sky alive"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 518,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    },
+    "owner": {
+      "samples": 495,
+      "warning_samples": 6,
+      "active_samples": 0,
+      "maximum_circles": 1.0,
+      "late_sky_samples": 96
+    },
+    "observer": {
+      "samples": 514,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "6f8788910e6cebc63bba0fb7042db7bb7c71090a1c9030cdbab93236be871e72"
+}

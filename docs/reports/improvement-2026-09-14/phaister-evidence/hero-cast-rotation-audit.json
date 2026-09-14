@@ -1,0 +1,96 @@
+{
+  "clips": [
+    {
+      "hero": "sean",
+      "clip": "hero-sean-dash",
+      "rotation_sha256": "5c127ad5686b172d8e76c7eca0752771823208b07519d89d7ccc75c5be66d1ae"
+    },
+    {
+      "hero": "sean",
+      "clip": "hero-sean-ignite",
+      "rotation_sha256": "07e2bf2a68872713f5cdf4148c7797d7c3d810d990caefcd7b16f22c7a09e801"
+    },
+    {
+      "hero": "sean",
+      "clip": "hero-sean-supernova",
+      "rotation_sha256": "65c8538e4c4a3e2c09d325392f1ebf3b4ca1bcdec74163fe36e07ff2754bfd71"
+    },
+    {
+      "hero": "zack",
+      "clip": "hero-zack-sprint",
+      "rotation_sha256": "3b9486ee6102fdcb841e59c741fd0bd295cf19d6a35ee7c772270f5c541cee23"
+    },
+    {
+      "hero": "zack",
+      "clip": "hero-zack-charge",
+      "rotation_sha256": "51f01ebe2393f8851c6b3e3682fef3eff1a23173e57a2b8c653c39c74e618ae9"
+    },
+    {
+      "hero": "zack",
+      "clip": "hero-zack-summon",
+      "rotation_sha256": "1ed345273ad43ce1f86a00f02d82df9ca85cb0f0e30977baa29d363604741b93"
+    },
+    {
+      "hero": "dante",
+      "clip": "hero-dante-stomp",
+      "rotation_sha256": "211015529fd3b746429e81ed825fd10004281835c2319a62ff5eef28803e0104"
+    },
+    {
+      "hero": "dante",
+      "clip": "hero-dante-roar",
+      "rotation_sha256": "14e4d56a46cc811dd1692a04231e86c6509b32b1573625f121aa995a0fbce931"
+    },
+    {
+      "hero": "dante",
+      "clip": "hero-dante-fissure",
+      "rotation_sha256": "63d64ff7dbd58128b1e25181502123c4860e82c88cd099824769ba312edc1925"
+    },
+    {
+      "hero": "cheska",
+      "clip": "hero-cheska-frostwave",
+      "rotation_sha256": "b570795f6a22d77e80ed8c568d99aab881455d07350810af6268c6dc3170e3cc"
+    },
+    {
+      "hero": "cheska",
+      "clip": "hero-cheska-raise",
+      "rotation_sha256": "1394d8c1e945b7ea2dbbf1a063fa302e815120daf60f3796dc7775f79ee2db48"
+    },
+    {
+      "hero": "cheska",
+      "clip": "hero-cheska-nova",
+      "rotation_sha256": "cd2cd7a5ce9f7efc7586072acd77816a28ee8fafa622e84cbaf77675b2cbc03e"
+    },
+    {
+      "hero": "nemu",
+      "clip": "hero-nemu-project",
+      "rotation_sha256": "96db71e735eb36c1b14c7fb89bc29208d43c0f212cc8c624e40801b597716c32"
+    },
+    {
+      "hero": "nemu",
+      "clip": "hero-nemu-seance",
+      "rotation_sha256": "fb4b6535a04d3971eefd427b2f727f1815a2ae3284db48ffde9f26350b76009b"
+    },
+    {
+      "hero": "nemu",
+      "clip": "hero-nemu-ghoststep",
+      "rotation_sha256": "ec4f3e5f1a5533bbeaf08d8432e96bc9140e68ce0ca19e3e3ac9a8983c95e907"
+    },
+    {
+      "hero": "phaister",
+      "clip": "hero-phaister-hex",
+      "rotation_sha256": "dd6bfac8a6cf1c862b18304a9ec5491280122e5dac74720d24ea6b4410204368"
+    },
+    {
+      "hero": "phaister",
+      "clip": "hero-phaister-blink",
+      "rotation_sha256": "a6cb9e5b575bfd9bddf100a201baf0c1cbdf503534ead35b77e13fa19197cb1c"
+    },
+    {
+      "hero": "phaister",
+      "clip": "hero-phaister-eclipse",
+      "rotation_sha256": "67da72362659f2377d61570740e86ad0d22cd15905b9e42f6a0eb4ea69db7b17"
+    }
+  ],
+  "exact_cross_hero_rotation_duplicates": [],
+  "limit": "Exact exported channel comparison only. Different hashes do not prove distinct or good choreography."
+}

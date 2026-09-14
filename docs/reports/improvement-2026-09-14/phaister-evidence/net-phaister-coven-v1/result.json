@@ -1,0 +1,38 @@
+{
+  "ok": false,
+  "errors": [
+    "host: curse hit its caster or a player outside the circle",
+    "owner: incorrect warning-to-contact duration",
+    "owner: curse hit its caster or a player outside the circle",
+    "observer: curse hit its caster or a player outside the circle"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 509,
+      "warning_samples": 26,
+      "active_samples": 129,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.360855743845498,
+      "first_curse_after_warning": 1.360855743845498
+    },
+    "owner": {
+      "samples": 499,
+      "warning_samples": 25,
+      "active_samples": 132,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.294662719286297,
+      "first_curse_after_warning": 1.930923211994898
+    },
+    "observer": {
+      "samples": 507,
+      "warning_samples": 26,
+      "active_samples": 134,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3527211262424998,
+      "first_curse_after_warning": 1.190232378449199
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "6f8788910e6cebc63bba0fb7042db7bb7c71090a1c9030cdbab93236be871e72"
+}

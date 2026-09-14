@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 512,
+      "warning_samples": 26,
+      "active_samples": 132,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.4095236961450972,
+      "first_curse_after_warning": 1.4095236961450972
+    },
+    "owner": {
+      "samples": 501,
+      "warning_samples": 26,
+      "active_samples": 133,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3730067035147009,
+      "first_curse_after_warning": 1.9724521045918024
+    },
+    "observer": {
+      "samples": 509,
+      "warning_samples": 26,
+      "active_samples": 136,
+      "maximum_circles": 1.0,
+      "warning_to_active": 1.3628654974490004,
+      "first_curse_after_warning": 1.2551598993765012
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "14ef537590f74f0bdc317c77e351f62d5ad2446d1647e3291f9eccb5f09ac96e"
+}

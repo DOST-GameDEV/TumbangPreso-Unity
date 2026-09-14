@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 517,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    },
+    "owner": {
+      "samples": 505,
+      "warning_samples": 7,
+      "active_samples": 0,
+      "maximum_circles": 1.0,
+      "late_sky_samples": 0
+    },
+    "observer": {
+      "samples": 514,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "a7a07b259f443219658473777f381c307fa0debd23375ec40aeb7f4257da893e"
+}

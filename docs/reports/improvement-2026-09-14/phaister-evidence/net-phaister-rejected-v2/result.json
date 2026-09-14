@@ -1,0 +1,30 @@
+{
+  "ok": false,
+  "errors": [
+    "owner: no predicted cast to reject"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 518,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    },
+    "owner": {
+      "samples": 507,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0,
+      "late_sky_samples": 0
+    },
+    "observer": {
+      "samples": 514,
+      "warning_samples": 0,
+      "active_samples": 0,
+      "maximum_circles": 0.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "14ef537590f74f0bdc317c77e351f62d5ad2446d1647e3291f9eccb5f09ac96e"
+}

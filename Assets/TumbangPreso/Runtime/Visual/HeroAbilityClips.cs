@@ -407,56 +407,56 @@ namespace TumbangPreso.Visual
         private static AnimationClip BuildPhaisterEclipse(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-phaister-eclipse", paths);
-            // 0.95s Raise both arms to the sky, HOLD, then throw the eclipse down over the court.
+            // 2.12s Raise both arms to the sky, HOLD, then throw the eclipse down over the court.
             //
             // ⚠️ THE HOLD IS THE UPPER BODY AND IT IS THE POINT OF AN ULTIMATE.
             // `Hero_Strike_Balance.md` § 4.3 asks for a wind-up so the payoff has a moment; this
             // is the longest anticipation of the six kits, which is what an arena-wide power
             // should cost to cast.
-            b.PunchAt(0.62f);
+            b.PunchAt(1.55f);
 
             b.KeyPos(0.00f, 0, 0, 0);
             b.KeyPos(0.20f, 0, -0.08f, -0.03f);
-            b.KeyPos(0.44f, 0, 0.12f, 0);
-            b.KeyPos(0.62f, 0, -0.05f, 0.04f);
-            b.KeyPos(0.95f, 0, 0, 0);
+            b.KeyPos(0.82f, 0, 0.12f, 0);
+            b.KeyPos(1.55f, 0, -0.05f, 0.04f);
+            b.KeyPos(2.12f, 0, 0, 0);
 
             // Arches back for the call, then folds forward over the release.
             b.KeyRot("torso", 0.00f, 0, 0, 0);
             b.KeyRot("torso", 0.20f, 14.0f, 0, 0);
-            b.KeyRot("torso", 0.44f, -30.0f, 0, 0);
-            b.KeyRot("torso", 0.62f, 22.0f, 0, 0);
-            b.KeyRot("torso", 0.95f, 0, 0, 0);
+            b.KeyRot("torso", 0.82f, -30.0f, 0, 0);
+            b.KeyRot("torso", 1.55f, 22.0f, 0, 0);
+            b.KeyRot("torso", 2.12f, 0, 0, 0);
 
             b.KeyRot("head", 0.00f, 0, 0, 0);
             b.KeyRot("head", 0.20f, 8.0f, 0, 0);
-            b.KeyRot("head", 0.44f, -40.0f, 0, 0);
-            b.KeyRot("head", 0.62f, 18.0f, 0, 0);
-            b.KeyRot("head", 0.95f, 0, 0, 0);
+            b.KeyRot("head", 0.82f, -40.0f, 0, 0);
+            b.KeyRot("head", 1.55f, 18.0f, 0, 0);
+            b.KeyRot("head", 2.12f, 0, 0, 0);
 
             // Both arms go up together, which is the gesture that separates an ultimate from a
             // skill: a skill is one hand, a summons is two.
             b.KeyRot("arm-right", 0.00f, 0, 0, -15.0f);
             b.KeyRot("arm-right", 0.20f, 25.0f, 0, -30.0f);
-            b.KeyRot("arm-right", 0.44f, -155.0f, 0, -28.0f);
-            b.KeyRot("arm-right", 0.62f, -30.0f, 0, -60.0f);
-            b.KeyRot("arm-right", 0.95f, 0, 0, -15.0f);
+            b.KeyRot("arm-right", 0.82f, -155.0f, 0, -28.0f);
+            b.KeyRot("arm-right", 1.55f, -30.0f, 0, -60.0f);
+            b.KeyRot("arm-right", 2.12f, 0, 0, -15.0f);
 
             b.KeyRot("arm-left", 0.00f, 0, 0, 15.0f);
             b.KeyRot("arm-left", 0.20f, 25.0f, 0, 30.0f);
-            b.KeyRot("arm-left", 0.44f, -155.0f, 0, 28.0f);
-            b.KeyRot("arm-left", 0.62f, -30.0f, 0, 60.0f);
-            b.KeyRot("arm-left", 0.95f, 0, 0, 15.0f);
+            b.KeyRot("arm-left", 0.82f, -155.0f, 0, 28.0f);
+            b.KeyRot("arm-left", 1.55f, -30.0f, 0, 60.0f);
+            b.KeyRot("arm-left", 2.12f, 0, 0, 15.0f);
 
             b.KeyRot("leg-left", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-left", 0.44f, -10.0f, 0, 8.0f);
-            b.KeyRot("leg-left", 0.62f, -24.0f, 0, 8.0f);
-            b.KeyRot("leg-left", 0.95f, 0, 0, 0);
+            b.KeyRot("leg-left", 0.82f, -10.0f, 0, 8.0f);
+            b.KeyRot("leg-left", 1.55f, -24.0f, 0, 8.0f);
+            b.KeyRot("leg-left", 2.12f, 0, 0, 0);
 
             b.KeyRot("leg-right", 0.00f, 0, 0, 0);
-            b.KeyRot("leg-right", 0.44f, 10.0f, 0, -8.0f);
-            b.KeyRot("leg-right", 0.62f, 20.0f, 0, -8.0f);
-            b.KeyRot("leg-right", 0.95f, 0, 0, 0);
+            b.KeyRot("leg-right", 0.82f, 10.0f, 0, -8.0f);
+            b.KeyRot("leg-right", 1.55f, 20.0f, 0, -8.0f);
+            b.KeyRot("leg-right", 2.12f, 0, 0, 0);
 
             return b.Build();
         }

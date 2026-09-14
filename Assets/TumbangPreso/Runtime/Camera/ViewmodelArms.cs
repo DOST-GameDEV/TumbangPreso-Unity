@@ -839,19 +839,19 @@ namespace TumbangPreso.CameraSystem
         ///
         /// ⚠️ THE HOLD IS THE POINT. `Hero_Strike_Balance.md` § 4.3 asks an ultimate for a wind-up
         /// so the payoff has a moment, and this is the longest clip here: the arm is up and still
-        /// from 0.30 to 0.58, which is most of a second doing nothing, which is what makes the
+        /// from0.82 to1.22seconds, before the1.55second ritual release, which is what makes the
         /// throw land.
         /// </summary>
         private static readonly Key[] CovenEclipseClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.040f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
-            new Key(0.080f, 0.800f, 0.100f, -0.100f, 0.700f, -0.100f, 0.100f),
-            new Key(0.115f, 0.780f, 0.050f, -0.080f, 0.680f, -0.050f, 0.080f),
-            new Key(0.140f, 0.850f, -0.100f, -0.050f, 0.730f, 0.100f, 0.050f),
-            new Key(0.180f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
-            new Key(0.380f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
-            new Key(0.850f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.200f, 0.350f, 0.200f, 0.120f, 0.250f, -0.200f, -0.120f),
+            new Key(0.500f, 0.380f, 0.220f, -0.160f, 0.700f, -0.100f, 0.100f),
+            new Key(0.820f, 0.420f, 0.160f, -0.160f, 0.680f, -0.050f, 0.080f),
+            new Key(1.220f, 0.460f, 0.020f, -0.120f, 0.730f, 0.100f, 0.050f),
+            new Key(1.550f, -0.750f, -0.300f, 0.350f, -0.600f, 0.380f, -0.300f, true),
+            new Key(1.740f, -0.200f, -0.120f, 0.150f, -0.160f, 0.150f, -0.120f),
+            new Key(2.120f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
         private Key[] _clip;

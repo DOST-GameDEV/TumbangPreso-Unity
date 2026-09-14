@@ -583,7 +583,7 @@ CAST_PRESENTATION_TIMES = {
     "hero-nemu-seance": (0,.18,.31,.40,.57,.73,.95),
     "hero-phaister-hex": (0,.045,.085,.14,.30,.64),
     "hero-phaister-blink": (0,.04,.09,.22,.46),
-    "hero-phaister-eclipse": (0,.04,.08,.115,.14,.18,.38,.85),
+    "hero-phaister-eclipse": (0,.20,.50,.82,1.22,1.55,1.74,2.12),
 }
 for actions in HEROES.values():
     for name,spec in actions.items():
