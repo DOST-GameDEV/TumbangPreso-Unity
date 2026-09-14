@@ -87,6 +87,39 @@ namespace TumbangPreso.Tests
             Assert.Less(Quaternion.Angle(grip, arm.localRotation), .1f, "The gait mask reaches the carrying arm.");
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(bool holding)
+        {
+            Set(_motor,"_grounded",true);_motor.HoldingSlipper=holding;
+            var graph=Get<PlayableGraph>(_driver,"_graph");
+            var leg=_model.GetComponentsInChildren<Transform>().First(t=>t.name=="leg-right");
+            var arm=_model.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-right");
+            var skin=_model.GetComponentsInChildren<SkinnedMeshRenderer>().First(s=>s.bones.Contains(leg));
+            int index=System.Array.IndexOf(skin.bones,leg);var vertices=skin.sharedMesh.vertices;
+            var weights=skin.sharedMesh.boneWeights;var bind=skin.sharedMesh.bindposes[index];
+            var foot=Enumerable.Range(0,vertices.Length).Where(i=>weights[i].boneIndex0==index&&weights[i].weight0>.99f)
+                .Select(i=>bind.MultiplyPoint3x4(vertices[i])).ToArray();
+            float bottom=foot.Min(v=>v.y);var sole=foot.Where(v=>v.y<bottom+.01f).ToArray();
+            var point=sole.Aggregate(Vector3.zero,(sum,v)=>sum+v)/sole.Length;
+            float Travel(float direction)
+            {
+                Invoke(_driver,"Play",holding?"holding-right":"walk",true,true);
+                Set(_driver,"_weight",1f);Invoke(_driver,"Blend");
+                Set(_motor,"_velocity",new Vector3(0,0,2.4f*direction));
+                for(int i=0;i<30;i++){Invoke(_driver,"AdvanceGait",1f/60);graph.Evaluate(1f/60);}
+                Set(_driver,"_gaitPhase",.12f);Invoke(_driver,"AdvanceGait",0f);
+                var front=(AnimationClipPlayable)Invoke(_driver,"Front");front.SetTime(front.GetAnimationClip().length*.12f);
+                graph.Evaluate(0);var before=leg.TransformPoint(point);var grip=arm.localRotation;
+                Invoke(_driver,"AdvanceGait",.06f);graph.Evaluate(.06f);
+                if(holding)Assert.Less(Quaternion.Angle(grip,arm.localRotation),.1f,"Foot direction changed the held grip.");
+                return Vector3.Dot(leg.TransformPoint(point)-before,_model.transform.forward);
+            }
+            float forward=Travel(1),backward=Travel(-1);
+            Assert.Less(forward*backward,-.000001f,
+                "Backward travel uses the same foot sweep as forward travel: "+forward+", "+backward);
+        }
+
         [TestCase(false, 2.53f, 3.795f)]
         [TestCase(true, 5.06f, 7.59f)]
         public void GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey(bool defender, float walk, float sprint)

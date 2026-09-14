@@ -9,15 +9,29 @@ throws. Uniform full-reach source copy v2 authored successfully, scale2.961006;
 its framing is not visually reviewed, and remains deferred. Author has exited,
 profile receipt7e665ccf9969. All Inday guard reconstructions below are superseded.
 
-CURRENT: directional-locomotion-baseline-v1 completed1/1, profile preservation
-5ae0402d61c2. No Editor/player/helper remains active. Berto carrying/empty forward,
-backpedal, strafe, sprint and turning captured at normal speed, each212frames.
-Encoded observer+owner MP4s and pose sheets in Logs/directional-locomotion-baseline-v1.
-No locomotion change yet. StepGait currently advances the same positive clip clock
-regardless of travel direction. Next isolate backward-cycle response with an actual
-foot-motion regression, then correct only reproduced behavior and recapture.
-Saving the prior validated throwing/equipment/restoration checkpoint before that
-runtime movement change. Inday stays deferred in TODO.md.
+CURRENT: backpedal correction implemented and verified; saving its bounded checkpoint.
+Baseline2/2 failed with identical -0.02793851m foot sweep in both travel directions.
+CharacterAnimator now eases signed gait direction over.12seconds and explicitly
+shares the base walk/sprint phase with the masked carrying legs. No physical
+movement/control changes. New graph binds initialize from observed direction.
+Six focused gait cases pass; ordinary directional carrying/empty motion passes
+1/1 with216/219samples. Normal-speed owner/body MP4s inspected and saved under
+Logs/directional-locomotion-backpedal-v2; report/evidence in reports/improvement-
+2026-09-14/backpedal-motion.md and backpedal-evidence. No active Editor/player/helper.
+Next continue the concrete Dante/Phaister
+kit work and remaining strafe/turning/recovery review. Do not call the full motion
+or whole-kit queue complete. Inday remains explicitly deferred.
+The internal DestinationEquipmentReview binary predates this gait correction.
+
+Baseline directional-locomotion-baseline-v1 passed1/1, profile5ae0402d61c2.
+Berto carry/empty forward,backward,strafe,sprint,turn/start-stop each212frames,
+normal-speed owner/body MP4s and pose sheets in corresponding Logs folder.
+
+SAVED AND PUSHED checkpointbc8a5f00ed88ffc8284673ed48c24cf78002d350 on ASTRAReworks,
+Improve throw handling and preserve requested character restorations. Origin is
+current with this checkpoint; main and other checkouts untouched. This includes
+all prior source and evidence plus the explicitly DEFERRED Inday source-copy WIP.
+Do not mark Inday framing accepted. No new Desktop build/update.
 
 Throw/equipment/ghost checkpoint is now qualified for its tested scope:
 - final-carry-clearance1/1 passed all18x10x6x3 actual head-surface samples.
@@ -36,9 +50,7 @@ Throw/equipment/ghost checkpoint is now qualified for its tested scope:
   destination-evidence. Only test/helper/report edits follow that binary so far.
 
 Next collect directional baseline, inspect owner/body ordinary motion, make only
-justified movement corrections and targeted tests. Save validated checkpoint on
-ASTRAReworks after reviewing dirty files; no new commit/push yet. Remote fetched,
-no divergence. No Desktop update, agents, other chats, Figma, paid calls or resets.
+justified movement corrections and targeted tests. Continue bounded validated checkpoints on ASTRAReworks; latest pushed is bc8a5f00. No Desktop update, agents, other chats, Figma, paid calls or resets.
 
 ## Prior Inday implementation checkpoint, now deferred
 

@@ -537,6 +537,7 @@ namespace TumbangPreso.Visual
         {
             if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
             CalibrateGait(walk,run);
+            _gaitTravelDirection=Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
             _gait = AnimationMixerPlayable.Create(_graph, 2);
             _walkGait = AnimationClipPlayable.Create(_graph, walk);
             _runGait = AnimationClipPlayable.Create(_graph, run);
@@ -570,6 +571,7 @@ namespace TumbangPreso.Visual
         private float _runReference = 5.4f;
         private float _walkCycleMetres = .92f;
         private float _runCycleMetres = 1.12f;
+        private float _gaitTravelDirection = 1f;
         public float FootfallCycleMetres => Mathf.Lerp(_walkCycleMetres,_runCycleMetres,_runWeight);
 
         private void CalibrateGait(AnimationClip walk, AnimationClip run)
@@ -605,7 +607,9 @@ namespace TumbangPreso.Visual
             * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
             * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
 
-        private void StepGait()
+        private void StepGait()=>AdvanceGait(Time.deltaTime);
+
+        private void AdvanceGait(float dt)
         {
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
@@ -615,21 +619,34 @@ namespace TumbangPreso.Visual
                 && (_carrier == null || _carrier.ChannelRatio <= 0)
                 && (_motor.HoldingSlipper || _motor.Stamina.IsFatigued || _chargePosing || _throwReleaseTime >= 0);
             float target = layered && speed > WalkSpeedThreshold ? 1f : 0f;
-            _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, Time.deltaTime / .08f);
+            _gaitWeight = Mathf.MoveTowards(_gaitWeight, target, dt / .08f);
             // Accepted actions immediately own every bone. A leg layer lingering over a
             // slide or stomp would erase its support pose at the moment of commitment.
             if ((_oneShotLeft > 0 && _throwReleaseTime < 0) || _motor.IsTripped || !_motor.IsGrounded) _gaitWeight = 0;
-            _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, Time.deltaTime / .10f);
+            _runWeight = Mathf.MoveTowards(_runWeight, _running ? 1f : 0f, dt / .10f);
             float reference = Mathf.Lerp(_walkReference, _runReference, _runWeight);
             float length = Mathf.Lerp(_walkGait.GetAnimationClip().length, _runGait.GetAnimationClip().length, _runWeight);
-            _gaitPhase = (_gaitPhase + Time.deltaTime * Mathf.Clamp(speed / reference, .05f, 2.6f) / length) % 1f;
+            if(speed>WalkSpeedThreshold)
+            {
+                float along=Vector3.Dot(_motor.Velocity,transform.forward);
+                float direction=along<-.25f*speed?-1f:1f;
+                // Ease through a reversal without jumping to a different foot pose.
+                _gaitTravelDirection=Mathf.MoveTowards(_gaitTravelDirection,direction,dt*(2f/.12f));
+            }
+            _gaitPhase = Mathf.Repeat(_gaitPhase + dt * Mathf.Clamp(speed / reference, .05f, 2.6f)
+                * _gaitTravelDirection / length,1f);
             _walkGait.SetTime(_gaitPhase * _walkGait.GetAnimationClip().length);
             _runGait.SetTime(_gaitPhase * _runGait.GetAnimationClip().length);
             _gait.SetInputWeight(0, 1f - _runWeight); _gait.SetInputWeight(1, _runWeight);
             _layers.SetInputWeight(1, _gaitWeight);
             var front = Front();
             if (front.IsValid() && (_current == Walk || _current == Sprint))
-                front.SetSpeed(Mathf.Clamp(speed / (_current == Sprint ? _runReference : _walkReference), .05f, 2.6f));
+            {
+                // Share the masked carrying gait's phase, including reverse travel.
+                // Explicit sampling also avoids relying on negative-time clip wrapping.
+                front.SetSpeed(0);
+                front.SetTime(_gaitPhase*front.GetAnimationClip().length);
+            }
         }
 
         /// <summary>

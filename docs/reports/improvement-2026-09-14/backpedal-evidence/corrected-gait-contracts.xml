@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.9135756">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="548" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.913576" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1634" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="548" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.895708" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16620" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1635" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="548" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.888012" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1636" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="548" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.880440" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1372" name="MotionContinuityTests" fullname="TumbangPreso.Tests.MotionContinuityTests" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.861881" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1375" name="ACarryingWalkMovesBothLegsWithoutSwingingTheGrip" fullname="TumbangPreso.Tests.MotionContinuityTests.ACarryingWalkMovesBothLegsWithoutSwingingTheGrip" methodname="ACarryingWalkMovesBothLegsWithoutSwingingTheGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="631446621" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:19Z" duration="0.264033" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1378" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:19Z" duration="0.029768" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1376" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(True)" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(True)" methodname="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="258167317" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:19Z" duration="0.019318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1377" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(False)" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(False)" methodname="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="1453226340" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:19Z" duration="0.006736" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1383" name="GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig" fullname="TumbangPreso.Tests.MotionContinuityTests.GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig" methodname="GaitCadenceMatchesTheActualFootTravelOnEveryRosterRig" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="732258446" result="Passed" start-time="2026-09-14 03:25:19Z" end-time="2026-09-14 03:25:20Z" duration="0.535719" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1381" name="GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey" fullname="TumbangPreso.Tests.MotionContinuityTests.GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 03:25:20Z" end-time="2026-09-14 03:25:20Z" duration="0.012246" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1379" name="GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey(False,2.53f,3.795f)" fullname="TumbangPreso.Tests.MotionContinuityTests.GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey(False,2.53f,3.795f)" methodname="GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="1936690299" result="Passed" start-time="2026-09-14 03:25:20Z" end-time="2026-09-14 03:25:20Z" duration="0.005876" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1380" name="GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey(True,5.06f,7.59f)" fullname="TumbangPreso.Tests.MotionContinuityTests.GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey(True,5.06f,7.59f)" methodname="GaitFollowsObservedRoleSpeedRatherThanALocalSprintKey" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="606398357" result="Passed" start-time="2026-09-14 03:25:20Z" end-time="2026-09-14 03:25:20Z" duration="0.003710" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

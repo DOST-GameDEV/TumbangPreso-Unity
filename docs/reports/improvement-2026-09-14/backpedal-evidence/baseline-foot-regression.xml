@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.3899307">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="548" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.389931" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1634" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="548" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.368237" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8952" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1635" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="548" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.359278" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1636" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="548" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.351105" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1372" name="MotionContinuityTests" fullname="TumbangPreso.Tests.MotionContinuityTests" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.333015" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1378" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.326157" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1376" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(True)" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(True)" methodname="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="1247542119" result="Failed" start-time="2026-09-14 03:23:07Z" end-time="2026-09-14 03:23:08Z" duration="0.301348" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Backward travel uses the same foot sweep as forward travel: -0.02793851, -0.02793851
+  Expected: less than -9.99999997E-07f
+  But was:  0.0007805606f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip (System.Boolean holding) [0x001f9] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\MotionContinuityTests.cs:119
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1377" name="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(False)" fullname="TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip(False)" methodname="BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip" classname="TumbangPreso.Tests.MotionContinuityTests" runstate="Runnable" seed="1980336247" result="Failed" start-time="2026-09-14 03:23:08Z" end-time="2026-09-14 03:23:08Z" duration="0.006824" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Backward travel uses the same foot sweep as forward travel: -0.02793851, -0.02793851
+  Expected: less than -9.99999997E-07f
+  But was:  0.0007805606f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.MotionContinuityTests.BackpedalingReversesActualFootTravelWithoutDisturbingTheCarryGrip (System.Boolean holding) [0x001f9] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\MotionContinuityTests.cs:119
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
