@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.1127976">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.112798" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1641" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.098829" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1642" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.076894" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1643" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="553" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.066564" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1177" name="IceSnapshotBatchTests" fullname="TumbangPreso.Tests.IceSnapshotBatchTests" classname="TumbangPreso.Tests.IceSnapshotBatchTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.031301" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1180" name="ACompleteEmptySnapshotIsValidButCanOnlyApplyOnce" fullname="TumbangPreso.Tests.IceSnapshotBatchTests.ACompleteEmptySnapshotIsValidButCanOnlyApplyOnce" methodname="ACompleteEmptySnapshotIsValidButCanOnlyApplyOnce" classname="TumbangPreso.Tests.IceSnapshotBatchTests" runstate="Runnable" seed="1086377935" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.010385" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1178" name="IncompleteDuplicateAndOldItemsCannotCompleteABatch" fullname="TumbangPreso.Tests.IceSnapshotBatchTests.IncompleteDuplicateAndOldItemsCannotCompleteABatch" methodname="IncompleteDuplicateAndOldItemsCannotCompleteABatch" classname="TumbangPreso.Tests.IceSnapshotBatchTests" runstate="Runnable" seed="1250064873" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.004404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1179" name="MalformedFieldsCannotReplaceAValidSnapshot" fullname="TumbangPreso.Tests.IceSnapshotBatchTests.MalformedFieldsCannotReplaceAValidSnapshot" methodname="MalformedFieldsCannotReplaceAValidSnapshot" classname="TumbangPreso.Tests.IceSnapshotBatchTests" runstate="Runnable" seed="975516240" result="Passed" start-time="2026-09-14 16:12:05Z" end-time="2026-09-14 16:12:05Z" duration="0.002423" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -304,6 +304,9 @@ namespace TumbangPreso.Net
             if (ReferenceEquals(_handlersOn, _nm.CustomMessagingManager)) return;
 
             var cm = _nm.CustomMessagingManager;
+            // A new transport session owns a new snapshot sequence. Never reject
+            // its generation one because this process previously joined another host.
+            _iceBatch = null; _lastIceGeneration = 0; _iceGeneration = 0;
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
@@ -336,6 +339,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
             cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
+            cm.RegisterNamedMessageHandler("IceBegin", OnIceBeginMsg);
+            cm.RegisterNamedMessageHandler("IceItem", OnIceItemMsg);
+            cm.RegisterNamedMessageHandler("IceEnd", OnIceEndMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
@@ -1789,6 +1795,104 @@ namespace TumbangPreso.Net
             float remaining=Mathf.Clamp(expiresAt-(float)_nm.ServerTime.Time,0,7);
             if(unit?.AbilitySystem?.Kit is Abilities.NemuHeroKit kit)
                 kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
+        }
+
+        private int _iceGeneration, _lastIceGeneration, _iceRound;
+        private float _iceSentAt;
+        private string _iceScene;
+        private IceWorldSnapshot.Batch _iceBatch;
+
+        private void SendIceSnapshot(ulong peer)
+        {
+            if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            var fields = IceWorldSnapshot.Capture();
+            if (fields.Count > IceWorldSnapshot.MaxFields || fields.Exists(field => !IceWorldSnapshot.Valid(field)))
+            { Debug.LogWarning("[IceSnapshot] Live ice exceeds the valid bounded snapshot."); return; }
+            int generation = ++_iceGeneration;
+            using (var writer = new FastBufferWriter(160, Allocator.Temp))
+            {
+                writer.WriteValueSafe(generation);
+                writer.WriteValueSafe(GameServices.Match.RoundNumber);
+                writer.WriteValueSafe(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                writer.WriteValueSafe(fields.Count);
+                writer.WriteValueSafe((float)_nm.ServerTime.Time);
+                _nm.CustomMessagingManager.SendNamedMessage("IceBegin", peer, writer, NetworkDelivery.ReliableSequenced);
+            }
+            // Small packets keep the same reliable pipeline as PlayAbility. Do
+            // not use a different fragmented channel that could reorder a new cast
+            // around the completed snapshot and erase its newer world effect.
+            for (int index = 0; index < fields.Count; index++)
+            {
+                var field = fields[index];
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(generation);
+                writer.WriteValueSafe(index);
+                writer.WriteValueSafe((int)field.Type);
+                writer.WriteValueSafe(field.Position);
+                writer.WriteValueSafe(field.Forward);
+                writer.WriteValueSafe(field.Duration);
+                writer.WriteValueSafe(field.Remaining);
+                writer.WriteValueSafe(field.Radius);
+                writer.WriteValueSafe(field.Owner);
+                writer.WriteValueSafe(field.FirstScale);
+                writer.WriteValueSafe(field.SecondScale);
+                writer.WriteValueSafe(field.Split);
+                _nm.CustomMessagingManager.SendNamedMessage("IceItem", peer, writer, NetworkDelivery.ReliableSequenced);
+            }
+            using (var writer = new FastBufferWriter(8, Allocator.Temp))
+            {
+                writer.WriteValueSafe(generation);
+                _nm.CustomMessagingManager.SendNamedMessage("IceEnd", peer, writer, NetworkDelivery.ReliableSequenced);
+            }
+        }
+
+        private void OnIceBeginMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int generation);
+            reader.ReadValueSafe(out int round);
+            reader.ReadValueSafe(out string scene);
+            reader.ReadValueSafe(out int count);
+            reader.ReadValueSafe(out float sentAt);
+            if (generation <= _lastIceGeneration || (_iceBatch != null && generation <= _iceBatch.Generation)
+                || count < 0 || count > IceWorldSnapshot.MaxFields || !Finite(sentAt)
+                || GameServices.Match == null || GameServices.Match.RoundNumber != round
+                || scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
+            _iceBatch = new IceWorldSnapshot.Batch(generation, count);
+            _iceRound = round; _iceScene = scene; _iceSentAt = sentAt;
+        }
+
+        private void OnIceItemMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int generation);
+            reader.ReadValueSafe(out int index);
+            reader.ReadValueSafe(out int kind);
+            reader.ReadValueSafe(out Vector3 position);
+            reader.ReadValueSafe(out Vector3 forward);
+            reader.ReadValueSafe(out float duration);
+            reader.ReadValueSafe(out float remaining);
+            reader.ReadValueSafe(out float radius);
+            reader.ReadValueSafe(out int owner);
+            reader.ReadValueSafe(out float firstScale);
+            reader.ReadValueSafe(out float secondScale);
+            reader.ReadValueSafe(out bool split);
+            _iceBatch?.Add(generation, index, new IceWorldSnapshot.Field { Type = (IceWorldSnapshot.Kind)kind,
+                Position = position, Forward = forward, Duration = duration, Remaining = remaining,
+                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split });
+        }
+
+        private void OnIceEndMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            reader.ReadValueSafe(out int generation);
+            if (_iceBatch == null || _iceBatch.Generation != generation) return;
+            var batch = _iceBatch; _iceBatch = null;
+            if (!batch.Finish(generation, out var fields) || GameServices.Match == null || GameServices.Match.RoundNumber != _iceRound
+                || _iceScene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
+            _lastIceGeneration = generation;
+            float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - _iceSentAt);
+            using (NetCue.SuppressRelay()) IceWorldSnapshot.Apply(fields, elapsed);
         }
 
         private void SendCovenSnapshot(int slot, ulong peer)
@@ -5541,6 +5645,7 @@ namespace TumbangPreso.Net
                 SendCovenSnapshot(slot, (ulong)peerId);
             }
             SendSkySnapshot((ulong)peerId);
+            SendIceSnapshot((ulong)peerId);
         }
 
         /// <summary>

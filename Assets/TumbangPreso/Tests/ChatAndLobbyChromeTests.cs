@@ -256,7 +256,8 @@ namespace TumbangPreso.Tests
             //29 adds phase/spin to both throw-charge messages; old players are refused.
             //31 adds reliable CovenEffect and SkyEffect rejoin snapshots.
             //32 requires owner confirmation before instant ice-world effects spawn.
-            Assert.AreEqual(32, NetSession.ProtocolVersion,
+            //33 adds the atomic IceBegin/IceItem/IceEnd world snapshot.
+            Assert.AreEqual(33, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

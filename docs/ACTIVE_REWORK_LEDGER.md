@@ -1,5 +1,98 @@
 # Active TUMP rework ledger
 
+## CURRENT live ice rejoin PASS; saving qualified batch
+
+81701corrected native rejoinPASS on33runtimecacf88c25a636cd20dd9cecd2a5ab1a81954c24c350ca85da7330e4d216ec95b.
+Returned observer154samples sees both fields, matching positions/resources and
+expiry; host had31sheet/95wall samples after it was ready. Source missing-state
+failure was0/0fields, retained.8namedprofilefiles preserved. No native jobs
+remain after protocol33-vs32refusal tool completes. Localrestore3/batch3/
+protocol1allpass. Runtime buildguard2f6be9bb58a2. IndayFppDetails diffs verified
+whitespace-only, backed up/restored, no deferred geometry/framing change.
+Next save/push, then activebuff-state reconnect audit (cooldown-only SyncAbility
+misses active flags/durations), plus other persistent fields and entire non-UI
+queue. Do not claim those covered by current ice snapshot.
+
+
+## CURRENT actual protocol33 ice reconnect
+
+IceRejoinReview buildSUCCESS;60494retired. Running new33player both+150ms+
+observer reconnect in Logs/net-ice-rejoin-v2. Same profile, hostlivewindowchecked.
+Next actual33host/32clientrefusal if restored-world check passes.
+Build introduced Inday FppDetails mesh diffs; inspect/restore ONLY proven tangent
+import noise. Do not change deferred Inday framing or source geometry.
+No Editor active. New active-buff gap from cooldown-only SyncAbility recorded
+for next follow-up; do not mistake current ice snapshot for a buff fix.
+
+
+## CURRENT protocol33 IceRejoinReview build
+
+Batch3/3pass,41709retired; restore/traction3/3 andprotocol1/1already pass.
+Authority audit0ungated other-body effects, wire71messages0mismatches.
+Now guarded INTERNAL Builds/IceRejoinReview/TumbangPreso.exe,
+Logs/ice-rejoin-build-v1.log. Keep32IceNetworkReview for actual mismatch test.
+Next rerun exact both+150ms+observerreconnect using new33player and same named
+profiles; require host live window and matching restored fields/resources/expiry.
+No C#/imported edits during build. Draft/review remaining buff/field state paths
+while it runs. New report reports/improvement-2026-09-15-ice-rejoin.md records
+baseline/design/local scope, not a native success yet. Latestpushedced13a20.
+
+
+## CURRENT ice restore local3/3passed, batch assembler next
+
+27121completed3/3pass: remaining life/shape/resources and mature frost restored,
+no duplicates/revived expired state, invalid snapshots preserve world, old traction
+clears immediately. Source confirms SyncWorld and PlayAbility use default same
+ReliableSequenced channel as new batch. No cross-fragment-channel assumption.
+Running only3IceSnapshotBatchTests, Logs/ice-snapshot-batch-v1.xml/.log. Then
+fresh INTERNAL IceRejoinReview33build and actualcoldrejoin/32-vs33refusal.
+Latest pushedced13a20; snapshot code remains WIP until native proof.
+
+
+## CURRENT ice restore/traction focused tests
+
+Protocol33assert1/1passed,93120retired guard2e9d81073013. Snapshot/assembler
+tests were drafted outsideAssets while that compiled, then installed. New
+transport messaging registration resets ice generation tracking for another host.
+Now3Playcases: restore remaining ages/shape/no duplicate/resource change, invalid/
+expired snapshot safety, and existing traction with immediate deactivation release.
+Logs/ice-world-snapshot-v1.xml/.log. Pure3assembler Edit cases follow.
+No production acceptance yet; current namespace tests/realcoldrejoin/new33build
+and32-vs33refusal required. Latest pushed stableced13a20. No agents/UI/resets.
+
+
+## CURRENT 2026-09-15 persistent ice snapshot implementation WIP
+
+Rejoin baseline14560 FAILED as expected: returned observer saw0sheet/0wall
+while host retained18sheet and79wall samples after it was ready. Rawrecords
+preserved under ice-rejoin-evidence/baseline.8namedprofiles restored.
+Now added UNVALIDATED IceWorldSnapshot capture/bounded batch/atomic restore;
+remaining timers and mature frost appearance retained, silent restoration,
+immediate old traction release. HostSyncPeer sends IceBegin/IceItem/IceEnd
+small packets on same reliable channel as PlayAbility. No player/cast/resource
+replay. Round/scene/generation validation rejects stale/incomplete sets.
+Protocol33required (new live collision state); previous32IceNetworkReview retained.
+Wire audit71messages0mismatches. Running ONLY protocol assertion/compile,
+Logs/ice-snapshot-protocol33-v1.xml/.log. Prepare targeted snapshot/batch/expiry
+tests outsideAssets while this Editor runs. Need lifecycle reset inspection,
+local proofs, newinternal33build, actualrejoin and32-vs33refusal before commit.
+Latest pushed stable remains ced13a20. UIremoved/noagents/Figma/resets/Desktop.
+
+
+## CURRENT persistent ice reconnect baseline after pushed ced13a20
+
+ced13a20b8a2e114cf2f04a5acada74f19637f3d committed/pushed, clean before this
+new harness extension. net_ice_review.py now supports reconnecting observer2
+with the same named profile after seeing the first sheet. Keeps observer-before
+trace and checks host still had live ice after rejoined observer was ready.
+Running current32IceNetworkReview both+150ms+reconnect under
+Logs/net-ice-rejoin-baseline-v1. No production snapshot change yet.
+Source HostSyncPeer only restores familiar/Coven/sky, not static ice. Need actual
+missing-field proof before implementing bounded targeted world snapshots.
+Prepare design/code outsideAssets while this runs; no more agents/UI/Figma/resets.
+Full non-UI queue still active, Inday later, selected expansion last.
+
+
 ## CURRENT Cheska qualified batch ready to save
 
 BlackIceFooting1/1pass,48384retired guard0345c0672f7c. Radius/edge and stronger

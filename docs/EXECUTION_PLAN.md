@@ -1,5 +1,13 @@
 # Active execution plan
 
+**LATEST2026-09-15:** live ice snapshot now qualified locally and through actual
+observer reconnect at150ms. Protocol33required;32clientsrefused. Restored fields
+retain life/shape/strength without cast/resource replay. Report:
+reports/improvement-2026-09-15-ice-rejoin.md. Continue activebuff/rejoin gaps and
+other persistent effects next; SyncAbility currently carries cooldowns/charges
+but no active durations/flags. UIremoved, noagents/Figma/reset/Desktop.
+
+
 **LATEST verified:** Zack and Nemu batches pushed. Cheska instant ice now waits
 for accepted host payload; captured-pose error fixed; protocol32 required and
 old31refusal verified. SplitSpires real centre passage fixed, BlackIce tradeoff

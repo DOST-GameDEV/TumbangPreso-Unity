@@ -23,7 +23,7 @@ def read(path):
         return [{key: float(value) for key, value in row.items()} for row in csv.DictReader(handle)]
 
 
-def evaluate(folder, case):
+def evaluate(folder, case, reconnected=False):
     data = {name: read(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
     errors, details = [], {}
     # These peers run on the same PC. Unity's buffered ServerTime differs by peer;
@@ -52,13 +52,23 @@ def evaluate(folder, case):
             result[field + "_position"] = [statistics.median(row[field + axis] for row in active) for axis in ("X", "Z")]
             result[field + "_first"] = active[0]["wallTime"]
             result[field + "_last"] = active[-1]["wallTime"]
+        live_after_join = {}
+        if reconnected and name == "observer":
+            joined_at = rows[0]["wallTime"]
+            for count in ("sheets", "walls"):
+                live_after_join[count] = sum(r[count] > 0 and r["wallTime"] >= joined_at for r in data["host"])
+            result["host_live_samples_after_join"] = live_after_join
+            if max(live_after_join.values()) < 5:
+                errors.append("Rejoined observer did not reach a live host ice window")
         if case == "denied":
             if result["max_sheets"] or result["max_walls"]:
                 errors.append(name + " created a refused ice effect")
         else:
-            if result["max_sheets"] != 1:
+            expected_sheet = 1 if not live_after_join or live_after_join["sheets"] >= 5 else 0
+            if result["max_sheets"] != expected_sheet:
                 errors.append(name + " missed or duplicated the accepted sheet")
             expected_wall = 1 if case == "both" else 0
+            if live_after_join and live_after_join["walls"] < 5: expected_wall = 0
             if result["max_walls"] != expected_wall:
                 errors.append(name + " has the wrong barricade count")
             if expected_wall and max(row["colliders"] for row in rows) < 3:
@@ -105,7 +115,9 @@ def main():
     parser.add_argument("--case", choices=["both", "denied", "sheet-then-denied"], required=True)
     parser.add_argument("--delay", type=float, default=150)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--reconnect", action="store_true")
     args = parser.parse_args()
+    if args.reconnect and args.case != "both": parser.error("Reconnect qualification uses the both case")
     folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
     backups, processes, handles = [], [], []
     for name in ("icehost", "iceowner", "iceobserver"):
@@ -146,12 +158,27 @@ def main():
             processes.append(proxy); time.sleep(1)
         owner = peer("owner", ["-tp-join", "127.0.0.1", port])
         wait_log("owner", owner, r"(?:seat changed|arena installed): LocalSlot=1[^\n]*host=False", 35)
-        peer("observer", ["-tp-join", "127.0.0.1", "9010"])
+        observer = peer("observer", ["-tp-join", "127.0.0.1", "9010"])
         print("Tracing " + args.case + " in " + str(folder), flush=True)
         deadline = time.monotonic() + 90
-        while time.monotonic() < deadline and host.poll() is None: time.sleep(.5)
+        rejoined = False
+        while time.monotonic() < deadline and host.poll() is None:
+            if args.reconnect and not rejoined:
+                try: active = any(r["sheets"] > 0 for r in read(folder / "observer.csv"))
+                except (OSError, ValueError, TypeError): active = False
+                if active:
+                    observer.terminate(); observer.wait(timeout=8)
+                    (folder / "observer.csv").rename(folder / "observer-before.csv")
+                    (folder / "observer.log").rename(folder / "observer-before.log")
+                    observer = peer("observer", ["-tp-join", "127.0.0.1", "9010"])
+                    rejoined = True
+                    print("Reconnecting the same observer profile during active ice", flush=True)
+            time.sleep(.25)
         time.sleep(.5)
-        result = evaluate(folder, args.case)
+        result = evaluate(folder, args.case, rejoined)
+        if args.reconnect and not rejoined:
+            result["ok"] = False; result["errors"].append("The requested reconnect was never exercised")
+        result["observer_reconnected"] = rejoined
         result["case"] = args.case; result["delay_one_way_ms"] = args.delay
         result["exe_sha256"] = hashlib.sha256(args.exe.read_bytes()).hexdigest()
         runtime = args.exe.parent / (args.exe.stem + "_Data") / "Managed/TumbangPreso.Runtime.dll"

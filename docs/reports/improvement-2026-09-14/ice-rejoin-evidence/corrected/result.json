@@ -1,0 +1,84 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 392,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924999428.1622,
+      "sheet_last": 63924999433.1005,
+      "wall_position": [
+        -1.872199,
+        -4.0
+      ],
+      "wall_first": 63924999431.1511,
+      "wall_last": 63924999437.0553,
+      "sheet_expiry_spread": 0.1934967041015625,
+      "wall_expiry_spread": 0.19080352783203125
+    },
+    "owner": {
+      "samples": 402,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924999428.3329,
+      "sheet_last": 63924999433.294,
+      "wall_position": [
+        -1.872199,
+        -4.0
+      ],
+      "wall_first": 63924999431.2909,
+      "wall_last": 63924999437.2461,
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    },
+    "observer": {
+      "samples": 154,
+      "max_sheets": 1.0,
+      "max_walls": 1.0,
+      "final_sheets": 0.0,
+      "final_walls": 0.0,
+      "final_qcharges": 1.0,
+      "final_echarges": 0.0,
+      "sheet_position": [
+        0.0,
+        -3.0
+      ],
+      "sheet_first": 63924999431.202,
+      "sheet_last": 63924999433.1531,
+      "wall_position": [
+        -1.872199,
+        -4.0
+      ],
+      "wall_first": 63924999431.1679,
+      "wall_last": 63924999437.105,
+      "host_live_samples_after_join": {
+        "sheets": 31,
+        "walls": 95
+      },
+      "sheet_position_error": 0.0,
+      "wall_position_error": 0.0
+    }
+  },
+  "observer_reconnected": true,
+  "case": "both",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "cacf88c25a636cd20dd9cecd2a5ab1a81954c24c350ca85da7330e4d216ec95b"
+}

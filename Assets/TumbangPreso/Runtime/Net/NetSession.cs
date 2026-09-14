@@ -352,7 +352,8 @@ namespace TumbangPreso.Net
         // Older players lack those required tells and must refuse this version.
         // 32 requires accepted ice-world effects to be acknowledged to their owner.
         // Older hosts omit that acknowledgement, so mixed peers cannot play safely.
-        public const int ProtocolVersion = 32;
+        // 33 restores live ice collision/traction fields when a peer synchronizes.
+        public const int ProtocolVersion = 33;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -28,7 +28,7 @@ namespace TumbangPreso.Abilities
         public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
                                                    float duration = 6.0f,
                                                    float spanScale = 1.0f,
-                                                   float thicknessScale = 1.0f, bool split = false)
+                                                   float thicknessScale = 1.0f, bool split = false, bool silent = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceBarricade");
@@ -39,10 +39,11 @@ namespace TumbangPreso.Abilities
             // diamond toppers, rigidbody chips and persistent cyan point light.
             CheskaIceVisuals.BuildWall(go.transform,spanScale,thicknessScale,split);
 
-            GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
+            if (!silent) GameServices.Audio?.PlayAt("sfx_barricade_raise", position);
 
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
+            comp.SpanScale = spanScale; comp.ThicknessScale = thicknessScale; comp.Split = split;
 
             HazardVolume.Attach(go, 1.6f * spanScale, -1);
 
@@ -52,10 +53,15 @@ namespace TumbangPreso.Abilities
         public sealed class IceBarricadeComponent : MonoBehaviour
         {
             public float Duration = 6.0f;
+            public float SpanScale = 1, ThicknessScale = 1;
+            public bool Split;
             private float _left;
             private bool _shattered;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) _left = Duration; _started = true; }
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
 
             private void Update()
             {
@@ -86,7 +92,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f,
                                                 float duration = 5.0f, int ownerSlot = -1,
-                                                float effectScale = 1.0f)
+                                                float effectScale = 1.0f, bool silent = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("IceSheetZone");
@@ -97,7 +103,7 @@ namespace TumbangPreso.Abilities
             // not a solid barrier. The authored low surface keeps its danger edge
             // visible immediately and forms its inner fractures over a short beat.
             FrostSurfacePresentation.Build(go.transform, radius, duration);
-            GameServices.Audio?.PlayAt("sfx_ice_form", position);
+            if (!silent) GameServices.Audio?.PlayAt("sfx_ice_form", position);
             var comp = go.AddComponent<IceSheetComponent>();
             comp.Radius = radius;
             comp.Duration = duration;
@@ -128,6 +134,9 @@ namespace TumbangPreso.Abilities
 
             private float _left;
             private float _whoaCooldown;
+            private bool _started;
+            public float Remaining => Mathf.Max(0, _started ? _left : Duration);
+            public void RestoreRemaining(float remaining) { _left = Mathf.Clamp(remaining, 0, Duration); _started = true; }
 
             /// <summary>
             /// Whose speed this sheet is currently holding down.
@@ -142,7 +151,9 @@ namespace TumbangPreso.Abilities
             private readonly HashSet<int> _chilled = new HashSet<int>();
             private readonly HashSet<CharacterMotor> _tractionTargets = new HashSet<CharacterMotor>();
 
-            private void Start() => _left = Duration;
+            private void Start() { if (!_started) _left = Duration; _started = true; }
+            private void OnDisable() => ReleaseOccupants();
+            private void OnDestroy() => ReleaseOccupants();
 
             /// <summary>
             /// ⚠️⚠️ THE ICE THAWING MUST GIVE BACK EVERY SLOW IT IS STILL HOLDING, and this is
@@ -152,7 +163,7 @@ namespace TumbangPreso.Abilities
             /// standing on it more often than not, so this is the COMMON path rather than an
             /// edge case.
             /// </summary>
-            private void OnDestroy()
+            private void ReleaseOccupants()
             {
                 foreach (var target in _tractionTargets)
                 {

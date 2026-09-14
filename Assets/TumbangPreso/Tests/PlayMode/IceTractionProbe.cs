@@ -64,6 +64,9 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Object.Destroy(first);yield return null;yield return null;
             Assert.IsTrue(who.IsOnIce,"Leaving one sheet cleared another overlapping sheet.");
+            second.SetActive(false);
+            Assert.IsFalse(who.IsOnIce,"An atomic world replacement left traction active until deferred destruction.");
+            Assert.AreEqual(1,who.SpeedMultiplier,.001f);
             Object.Destroy(second);yield return null;yield return null;
             Assert.IsFalse(who.IsOnIce);
             Assert.AreEqual(1,who.SpeedMultiplier,.001f);
