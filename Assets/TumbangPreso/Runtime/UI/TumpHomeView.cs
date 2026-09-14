@@ -10,6 +10,9 @@ namespace TumbangPreso.UI
     {
         private Canvas _canvas;
         public void Build(Transform owner, Action settings, Action credits)
+            => _canvas=OwnerHomeView.Build(owner,settings,credits);
+
+        private void BuildPrevious(Transform owner, Action settings, Action credits)
         {
             var f = TumpUiTheme.Current;
             _canvas = TumpUiFactory.Canvas(owner, "TumpHomeCanvas", 100);

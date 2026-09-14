@@ -1,5 +1,11 @@
 # Working instructions for ChatGPT / Codex
 
+**Latest login correction,2026-09-15:** owner rejects BACK on the login screen.
+The supplied reference is the startup account entrance, not an account-management
+subpage. No Back control on startup login; GUEST is its entry into the game.
+Capture and qualify the actual OpenAtBoot route, not OpenForUpgrade. Do not
+present a profile/account-management capture as the startup screen again.
+
 **NEWEST priority,2026-09-15:** the owner has reopened UI with new hand-drawn
 assets. Finish the CURRENT reconnect/lifecycle check already underway first,
 then thoroughly analyze and plan replacement of ALL UI/buttons toward her new
@@ -11,6 +17,11 @@ follow her typography, do not redraw/regenerate supplied assets or stretch them.
 Make real clickable controls and animate the interface with coherent restrained
 motion. Choose appropriate email/password icons. Analyze before implementation.
 No agents, Figma, reset credits or Desktop update are reauthorized.
+
+**New UI typography detail:** match the text COLORS as well as the fonts, not a
+single default ink color everywhere. Source TUMP(6) uses red primary text, white
+guest text, green selected-tab text, ochre labels and dark typed/supporting text.
+Exact regional samples are preserved beside the new owner-art source manifest.
 
 **Efficiency reaffirmed by owner,2026-09-14:** while builds/tests run, actively
 draft the next change or investigate another independent issue. Put draft C#

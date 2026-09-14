@@ -10,7 +10,7 @@ namespace TumbangPreso.UI
         private bool _nativeBusy;
         private Button _nativeSubmit;
         private Text _nativeContext;
-        private void BuildNativeSignIn()
+        private void BuildPreviousNativeSignIn()
         {
             _nativeForm = true;
             var f = TumpUiTheme.Current;
@@ -71,7 +71,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Place((RectTransform)other.transform, 136, 826, 616, 82);
             _welcome.SetActive(false);
         }
-        private void SetNativeMode(bool creating)
+        private void SetPreviousNativeMode(bool creating)
         {
             _creating = creating;
             _nativeContext.text = creating ? "Keep this device's progress in a new account." : "Continue with an existing account.";
@@ -83,7 +83,7 @@ namespace TumbangPreso.UI
             _signInTab.GetComponent<TumpSurface>().SetVerticesDirty(); _createTab.GetComponent<TumpSurface>().SetVerticesDirty();
             _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }
-        private void NativeBusy(bool busy)
+        private void PreviousNativeBusy(bool busy)
         {
             if (!_nativeForm) return;
             _nativeBusy = busy;

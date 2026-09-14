@@ -148,6 +148,7 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (!IsOpen) return;
+            if (_nativeForm && ((_ownerTermsView!=null && _ownerTermsView.IsOpen) || _ownerTermsClosedFrame==Time.frameCount)) return;
 
             // ⚠️⚠️ THE HOLD IS ON UNSCALED TIME AND CANCELS ON ANY PRESS. `Time.time` would stop
             // with the clock, and this screen is the one place in the game where the clock's
@@ -239,7 +240,7 @@ namespace TumbangPreso.UI
             // register is how a screen underneath finds out. See `ScreenTakeover.EscapeIsSpoken`.
             ScreenTakeover.Register(this, () => IsOpen);
 
-            _canvas = TumpUiFactory.Canvas(transform, "TumpSignInCanvas", 900);
+            _canvas = OwnerUiLayout.Canvas(transform, "OwnerSignInCanvas", 900);
 
             // ⚠️ ABOVE THE HUB'S 500. Signing in is reached FROM the hub and has to cover it; a
             // password field with a stats table showing through it is the thing this replaces.
@@ -248,7 +249,7 @@ namespace TumbangPreso.UI
 
             _root = new GameObject("SignInRoot", typeof(RectTransform));
             _root.transform.SetParent(_canvas.transform, false);
-            TumpUiFactory.Stretch((RectTransform)_root.transform);
+            OwnerUiLayout.Fill((RectTransform)_root.transform);
 
             BuildNativeSignIn();
 
@@ -1667,11 +1668,12 @@ namespace TumbangPreso.UI
         private void SetBootMode(bool atBoot)
         {
             _atBoot = atBoot;
+            if(_nativeForm && !atBoot)EnsureOwnerAccountReturn();
 
             if (_back != null) _back.gameObject.SetActive(!atBoot);
 
             var caption = _guest != null ? _guest.GetComponentInChildren<Text>(true) : null;
-            if (caption != null) caption.text = atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
+            if (caption != null) caption.text = _nativeForm ? "GUEST" : atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
 
             // ⚠️ THE HINT THAT USED TO BE RE-ANCHORED AND RE-WORDED HERE IS DELETED, and with it
             // the last thing on this screen that had to know which of its two states it was in
@@ -1696,6 +1698,7 @@ namespace TumbangPreso.UI
         private void Close()
         {
             _root.SetActive(false);
+            if(_nativeForm){_password.text="";_ownerEmail.text="";}
             Opened?.Invoke(false);
             Closed?.Invoke();
         }
@@ -1863,6 +1866,7 @@ namespace TumbangPreso.UI
 
             if (string.IsNullOrEmpty(username)) { Fail("Enter a username."); return; }
             if (string.IsNullOrEmpty(password)) { Fail("Enter a password."); return; }
+            if(_nativeForm && !ValidateOwnerRegistration())return;
 
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
@@ -1870,12 +1874,17 @@ namespace TumbangPreso.UI
             NativeBusy(true);
             try
             {
-                _error.color = _nativeForm ? TumpUiTheme.Current.DeepOlive : UiTheme.PaperInkSoft;
+                _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = _creating ? "Creating your account..." : "Signing in...";
 
                 if (_creating) await account.UpgradeAsync(username, password);
                 else await account.SignInAsync(username, password);
 
+                if(_nativeForm && _creating)
+                {
+                    Settings.SettingsStore.Current.LocalContactEmail=_ownerEmail.text.Trim();
+                    Settings.SettingsStore.Save();
+                }
                 RememberTheChoiceWasMade();
                 Close();
             }
@@ -1909,7 +1918,7 @@ namespace TumbangPreso.UI
 
             try
             {
-                _error.color = _nativeForm ? TumpUiTheme.Current.DeepOlive : UiTheme.PaperInkSoft;
+                _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = "Finish signing in on the browser window.";
 
                 if (_creating) await account.LinkGoogleAsync();
@@ -1973,7 +1982,7 @@ namespace TumbangPreso.UI
             // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
             // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.
             // It is also unreadably hot on cream.
-            _error.color = _nativeForm ? TumpUiTheme.Current.Brick : UiTheme.MenuRed;
+            _error.color = _nativeForm ? OwnerUiTheme.Current.HintInk : UiTheme.MenuRed;
             _error.text = message ?? "";
         }
     }

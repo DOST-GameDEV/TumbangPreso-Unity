@@ -1,0 +1,211 @@
+{
+  "logo": {
+    "top_left_rect": [
+      760,
+      44,
+      407,
+      273
+    ],
+    "unity_rect": [
+      760,
+      763,
+      407,
+      273
+    ],
+    "aspect": 1.4908424908424909,
+    "native_size": [
+      407,
+      273
+    ]
+  },
+  "account_tabs": {
+    "top_left_rect": [
+      770,
+      337,
+      383,
+      88
+    ],
+    "unity_rect": [
+      770,
+      655,
+      383,
+      88
+    ],
+    "aspect": 4.3522727272727275,
+    "native_size": [
+      383,
+      88
+    ]
+  },
+  "username_icon": {
+    "top_left_rect": [
+      622,
+      475,
+      28,
+      29
+    ],
+    "unity_rect": [
+      622,
+      576,
+      28,
+      29
+    ],
+    "aspect": 0.9655172413793104,
+    "native_size": [
+      28,
+      29
+    ]
+  },
+  "input_first": {
+    "top_left_rect": [
+      695,
+      452,
+      533,
+      78
+    ],
+    "unity_rect": [
+      695,
+      550,
+      533,
+      78
+    ],
+    "aspect": 6.833333333333333,
+    "native_size": [
+      533,
+      78
+    ]
+  },
+  "input_second": {
+    "top_left_rect": [
+      695,
+      545,
+      533,
+      77
+    ],
+    "unity_rect": [
+      695,
+      458,
+      533,
+      77
+    ],
+    "aspect": 6.922077922077922,
+    "native_size": [
+      533,
+      77
+    ]
+  },
+  "input_third": {
+    "top_left_rect": [
+      695,
+      640,
+      533,
+      77
+    ],
+    "unity_rect": [
+      695,
+      363,
+      533,
+      77
+    ],
+    "aspect": 6.922077922077922,
+    "native_size": [
+      533,
+      77
+    ]
+  },
+  "checkbox": {
+    "top_left_rect": [
+      712,
+      725,
+      21,
+      24
+    ],
+    "unity_rect": [
+      712,
+      331,
+      21,
+      24
+    ],
+    "aspect": 0.875,
+    "native_size": [
+      21,
+      24
+    ]
+  },
+  "primary_lime": {
+    "top_left_rect": [
+      755,
+      796,
+      413,
+      91
+    ],
+    "unity_rect": [
+      755,
+      193,
+      413,
+      91
+    ],
+    "aspect": 4.538461538461538,
+    "native_size": [
+      413,
+      91
+    ]
+  },
+  "divider_left": {
+    "top_left_rect": [
+      705,
+      907,
+      242,
+      6
+    ],
+    "unity_rect": [
+      705,
+      167,
+      242,
+      6
+    ],
+    "aspect": 40.333333333333336,
+    "native_size": [
+      242,
+      6
+    ]
+  },
+  "divider_right": {
+    "top_left_rect": [
+      1025,
+      909,
+      242,
+      5
+    ],
+    "unity_rect": [
+      1025,
+      166,
+      242,
+      5
+    ],
+    "aspect": 48.4,
+    "native_size": [
+      242,
+      5
+    ]
+  },
+  "secondary_orange": {
+    "top_left_rect": [
+      755,
+      935,
+      413,
+      91
+    ],
+    "unity_rect": [
+      755,
+      54,
+      413,
+      91
+    ],
+    "aspect": 4.538461538461538,
+    "native_size": [
+      413,
+      91
+    ]
+  }
+}

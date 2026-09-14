@@ -1,5 +1,136 @@
 # Active TUMP rework ledger
 
+## CURRENT startup Back correction passed; save U1 then continue U2
+
+34618completed1/1, guard1e34ef47cef6. Actual OpenAtBoot signup PNG inspected:
+no Back control, original owner art and font/color roles intact. GUEST returns
+without replacing the saved player ID. All runs retired. Report owner-ui-u1.md
+now distinguishes old account-management shots from actual startup captures.
+Next commit/push U1 firstscope, then U2 drafts (OwnerPlayView,OwnerCreditsView,
+OwnerPortraitArt,OwnerScrollColumn under Logs) with text-action helper. Owner
+explicitly says keep working until finished; UIfirst then gameplay bookmark.
+No agents/Figma/reset/Desktop. Latest pushed9faf6ba6 before U1 save.
+
+## CURRENT urgent owner correction: no Back on startup login
+
+Owner rejected BACK in the shared picture. We had captured OpenForUpgrade,
+the account-management path, rather than the requested startup OpenAtBoot.
+This was a presentation/qualification mistake. New startup view no longer even
+constructs Back; only explicit nonboot profile management creates its separate
+return control on demand. Reference test now uses actual OpenAtBoot with a fresh
+account state, asserts no Back even in inactive descendants, and exits through
+GUEST while preserving the same player ID. Profile-management return semantics
+remain separate, not shown as startup login. New filenames OwnerStartupSignUp/
+OwnerStartupSignIn/OwnerStartupTerms-v1 distinguish the actual boot captures.
+Running one focused case: Logs/owner-startup-account-v1.xml/.log. No C#/imported
+edits during Editor run. Inspect corrected boot pictures before claiming fixed.
+UI batch still uncommitted, latest pushed9faf6ba6. U2drafts preserved in Logs;
+continue full UI afterward, then all gameplay bookmark. No agents/reset/Figma.
+
+## CURRENT U1 first scope qualified; save then U2 Play/Credits/Loading
+
+All Unity runs retired.5030author import success. v2basic account casepassed;
+v3corrected artwork/terms case1/1;40692entry-flow2/2;52744ink pass1/1. Original
+signup/signin/terms captures inspected after fixes. Match dark font colors via
+Canvas.vertexColorAlwaysGammaSpace (verified local Unity UIModule API); only
+new owner canvases affected. CREATE/GUEST enlarged to64matching source scale.
+One-channel raster rounding remains; do not pretend pixel equality at AA edges.
+Rejected v2 missing letters/renderers/legacy Back font fixed. Note the temporary
+Logs/owner-ui-rejected-u1-v2 copy was made AFTER v3had overwritten those PNGs;
+it actually contains v3 images and MUST NOT be labelled failed-v2 evidence.
+Failure XMLs remain intact; original v2was viewed in chat but no disk image
+archive was captured in time. Current report reports/owner-ui-u1.md is truthful.
+
+Next save substantial U1 source/assets/docs after diff/hash checks and push;
+then integrate reviewed Logs/OwnerPlayView.cs.draft and OwnerCreditsView.cs.draft.
+They need OwnerTextAction.Create, OwnerPortraitArt and OwnerScrollColumn helpers,
+then route adapters preserving prior code inactive. No more account-only broad
+reruns unless a new change/failure justifies them. Full U0-U8UI remains active.
+Latest pushed9faf6ba6 until this batch saved. No agents/Figma/reset/Desktop.
+After UI, resume GAMEPLAY_RESUME_AFTER_UI.md. Owner says continue autonomously.
+
+## CURRENT U1 render critique fixes under focused test
+
+v2ran2tests: basic sign-in validation/back PASS; owner-art terms case failed on
+ReadingSheet lacking CanvasRenderer. Actual signup/terms renders inspected:
+correct original pattern/logo/field/tab art and font roles, but CREATE/GUEST text
+truncated by Darumadrop line metrics, missing glyph/paper renderers, and old
+NavigationSymbol restyling BACK into brown WorkSans. These are NOT accepted.
+Added required CanvasRenderer to custom glyph/paper, single-line action text
+overflow (keeps actual glyph size), and OwnerUiCanvas marker to exclude these
+canvases from legacy navigation restyling. Strengthened capture checks for actual
+custom geometry and visible button character counts, added Back font assertion.
+v3 runs ONLY failed owner-art/terms case; Logs/owner-account-u1-v3.xml/.log.
+No C#/imported edits until Editor exits. U2 draft is Logs/OwnerPlayView.cs.draft
+and still needs OwnerPortraitArt + shared text-action helper integration. Do not
+accept U1 until the corrected original captures are inspected and checks pass.
+Source UI remains uncommitted; latest pushed9faf6ba6. Full plan/queue unchanged.
+
+## CURRENT owner account/home wired; first actual UI checks running
+
+U1 source now builds fresh owner-art account/home views through existing nonvisual
+controllers. Original prior builders retained inactive. Source PNGs untouched.
+Terms guidelines implemented/readable/scrollable with accept/back; owner authorized
+copy. Optional contact email is local-only Settings.LocalContactEmail, separate
+from public/cloud AccountProfile. Existing username/password/guest/Google callbacks
+retained; password cleared on form close. New matching icons, tab artwork states,
+source font/color roles, motion and reduced-motion support are wired.
+
+Focused run owner-account-u1-v1 stopped at a test compile typo (OpenCreate versus
+actual OpenForUpgrade), no runtime result. Corrected test to actual API and compare
+the actual font asset reference. No production workaround. Running v2 TWO related
+account cases: raycast/validation/back and original art/fonts/colors/terms/reveal.
+Logs/owner-account-u1-v2.xml/.log. First expected captures under Logs/shots-native-ui.
+No C#/imported edits during this Editor run; draft U2 Play/Credits/Loading outside
+Assets. U1 not visually accepted yet; inspect rendered screens and fix issues.
+Latest stable pushed9faf6ba6, UI source/art/docs still uncommitted. No agents,
+Figma/reset/Desktop. Continue UI U1-U8, then GAMEPLAY_RESUME_AFTER_UI.md.
+
+## CURRENT UI foundation compiled/imported; account/home implementation active
+
+Owner-authorized full UI overhaul remains immediate, all other gameplay afterward.
+Latest user: match font COLORS too; work autonomously until finished. Terms text
+question answered: write it ourselves, do not wait on owner. Use short editable
+fair-play/account guidelines grounded in real behavior, no fake service/legal promises.
+Source text-colours.json now records #0F5913 selected tab, #A12E34 inactive,
+#000000 typed/support, #BC8749 placeholders, #901219 CREATE/terms, #FFFFFF GUEST,
+#C81721 hints. New OwnerUiTheme uses separate roles. Three fonts visually matched.
+
+Added UNCOMMITTED OwnerUiTheme/Layout/Motion/PaintedAction/Backdrop/Glyph/Entry/
+AccountTabArt and explicit OwnerUiArtAuthor. Author import5030 completedSUCCESS,
+guard profile receipt collected; original PNGs imported unchanged/uncompressed and
+theme asset assigned actual fonts. No active Unity/native run. No UI screen wired yet.
+New account composition draft: Logs/SignInScreen.OwnerPainted.cs.draft. Must revise
+its temporary terms handler with the newly authorized content and add real optional
+email validation/storage without exposing it. Cloud account profile explicitly strips
+Email; current provider auth uses username/password. Do not invent email login/reset.
+Draft still needs active integration + Home replacement and actual visual/input checks.
+Old SignIn Native methods should be retained inactive while new methods take over;
+existing callbacks/domain/input contracts remain. SetBootMode currently overwrites
+guest caption; make the owner-art path retain GUEST. Fix stale legacy theme colors
+in account progress/error writers. Do not edit imported assets during Unity runs.
+Latest pushed9faf6ba6. Full plan OWNER_HANDDRAWN_UI_PLAN.md. U0done/U1in progress.
+
+## CURRENT owner-art UI U0 complete, U1 implementation next
+
+Previous task finished/pushed9faf6ba6. Entire paused gameplay scope bookmarked in
+GAMEPLAY_RESUME_AFTER_UI.md. Owner says work independently without stopping,
+finish UI first, then everything else. No agents/reset/Figma/Desktop changes.
+New authoritative assets preserved byte-exact under
+ArtSource/ui/owner-handdrawn-2026-09-15. Source-manifest and sprite-regions record
+PNG alpha/bounds/hash/palette. TUMP5 is transparent, not black. Native logo407x273,
+actions413x91, field frames533x78/77/77. Never stretch or redraw her original art.
+Font comparison visually matches KawitFreeExtItalic, Lydian and Darumadrop already
+in Resources/UI/fonts; no new font download needed. Preview Logs/owner-ui-font-comparison.png.
+OWNER_HANDDRAWN_UI_PLAN.md contains full source critique, implementation rules,
+distinct component families, motion and U0-U8 screen inventory. U0 done; U1next.
+UI/uGUI/game-ui skills and routed references read. Existing runtime uses legacy
+uGUI Text/InputField and established input/domain adapters. Build new owner-art
+views/components without reviving universal old visual builders; keep text editable.
+Inspect PlayerAccount.Email storage/cloud contract before wiring the mock email
+field; current username/password flow is functional, do not invent email auth or
+expose email in public profile. No UI runtime code changed yet. No active tools.
+
 ## CURRENT previous task finished; new owner-art UI analysis/planning is next
 
 Same-process HeroStrike arena-rejoin qualification PASSED. Normal MatchInstaller

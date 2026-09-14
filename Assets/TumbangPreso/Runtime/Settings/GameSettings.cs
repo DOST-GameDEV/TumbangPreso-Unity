@@ -54,6 +54,8 @@ namespace TumbangPreso.Settings
         public string AccountCountry = "";
         public string AccountPronouns = "";
         public string AccountEmail = "";
+        // Optional contact entered on this device; never part of public/cloud AccountProfile.
+        public string LocalContactEmail = "";
         public string AccountCreatedUtc = "";
         public bool AccountHasPassword = false;
         public bool AccountUpgradeOfferPending = false;

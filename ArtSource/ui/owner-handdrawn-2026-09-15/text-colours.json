@@ -1,0 +1,164 @@
+{
+  "selected_tab": [
+    {
+      "hex": "#0F5913",
+      "pixels": 595
+    },
+    {
+      "hex": "#105A12",
+      "pixels": 9
+    },
+    {
+      "hex": "#145D14",
+      "pixels": 8
+    },
+    {
+      "hex": "#1F6417",
+      "pixels": 7
+    }
+  ],
+  "inactive_tab": [
+    {
+      "hex": "#A12E34",
+      "pixels": 585
+    },
+    {
+      "hex": "#A02D33",
+      "pixels": 18
+    },
+    {
+      "hex": "#9A282F",
+      "pixels": 10
+    },
+    {
+      "hex": "#9D2B31",
+      "pixels": 10
+    }
+  ],
+  "entered_text": [
+    {
+      "hex": "#000000",
+      "pixels": 901
+    },
+    {
+      "hex": "#020202",
+      "pixels": 18
+    },
+    {
+      "hex": "#070707",
+      "pixels": 15
+    },
+    {
+      "hex": "#040404",
+      "pixels": 14
+    }
+  ],
+  "field_label": [
+    {
+      "hex": "#BC8749",
+      "pixels": 575
+    },
+    {
+      "hex": "#BD884C",
+      "pixels": 11
+    },
+    {
+      "hex": "#C49869",
+      "pixels": 9
+    },
+    {
+      "hex": "#BC894D",
+      "pixels": 8
+    }
+  ],
+  "primary_action": [
+    {
+      "hex": "#901219",
+      "pixels": 4233
+    },
+    {
+      "hex": "#973320",
+      "pixels": 10
+    },
+    {
+      "hex": "#962E1F",
+      "pixels": 10
+    },
+    {
+      "hex": "#983721",
+      "pixels": 8
+    }
+  ],
+  "secondary_action": [
+    {
+      "hex": "#FFFFFF",
+      "pixels": 3252
+    },
+    {
+      "hex": "#FFFDF9",
+      "pixels": 12
+    },
+    {
+      "hex": "#FFFDFA",
+      "pixels": 5
+    },
+    {
+      "hex": "#FFFCF9",
+      "pixels": 4
+    }
+  ],
+  "field_hint": [
+    {
+      "hex": "#C81721",
+      "pixels": 643
+    },
+    {
+      "hex": "#CD2728",
+      "pixels": 15
+    },
+    {
+      "hex": "#C81821",
+      "pixels": 13
+    },
+    {
+      "hex": "#CE2528",
+      "pixels": 12
+    }
+  ],
+  "terms_label": [
+    {
+      "hex": "#901219",
+      "pixels": 1410
+    },
+    {
+      "hex": "#A82F29",
+      "pixels": 12
+    },
+    {
+      "hex": "#A92A25",
+      "pixels": 12
+    },
+    {
+      "hex": "#911319",
+      "pixels": 11
+    }
+  ],
+  "supporting_text": [
+    {
+      "hex": "#000000",
+      "pixels": 858
+    },
+    {
+      "hex": "#32160F",
+      "pixels": 8
+    },
+    {
+      "hex": "#040201",
+      "pixels": 8
+    },
+    {
+      "hex": "#1D0D09",
+      "pixels": 8
+    }
+  ]
+}

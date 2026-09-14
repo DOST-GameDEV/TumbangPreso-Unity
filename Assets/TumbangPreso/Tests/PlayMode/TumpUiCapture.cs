@@ -10,13 +10,14 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
-        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false)
+        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null)
         {
             Assert.IsNotNull(canvas);
             var oldMode = canvas.renderMode;
             var oldCamera = canvas.worldCamera;
             float oldDistance = canvas.planeDistance;
             var layers = new Dictionary<GameObject, int>();
+            var beneath=new List<(Canvas canvas,RenderMode mode,Camera camera,float distance)>();
             var camGo = new GameObject("TumpUiCaptureCamera");
             var camera = camGo.AddComponent<Camera>();
             camera.enabled = false; camera.cullingMask = 1 << 31;
@@ -32,6 +33,14 @@ namespace TumbangPreso.PlayTests
                 { layers[item.gameObject] = item.gameObject.layer; item.gameObject.layer = 31; }
                 canvas.renderMode = RenderMode.ScreenSpaceCamera;
                 canvas.worldCamera = camera; canvas.planeDistance = 10;
+                if(underlays!=null)foreach(var underlay in underlays)
+                {
+                    if(underlay==null || underlay==canvas || !underlay.gameObject.activeSelf)continue;
+                    beneath.Add((underlay,underlay.renderMode,underlay.worldCamera,underlay.planeDistance));
+                    foreach(var item in underlay.GetComponentsInChildren<Transform>(true))
+                    {layers[item.gameObject]=item.gameObject.layer;item.gameObject.layer=31;}
+                    underlay.renderMode=RenderMode.ScreenSpaceCamera;underlay.worldCamera=camera;underlay.planeDistance=10.1f;
+                }
                 Canvas.ForceUpdateCanvases();
                 LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)canvas.transform);
                 yield return null;
@@ -50,7 +59,8 @@ namespace TumbangPreso.PlayTests
                 camera.Render();
                 foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
                 {
-                    bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol;
+                    bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
+                        || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
@@ -77,6 +87,8 @@ namespace TumbangPreso.PlayTests
             finally
             {
                 canvas.renderMode = oldMode; canvas.worldCamera = oldCamera; canvas.planeDistance = oldDistance;
+                foreach(var state in beneath)if(state.canvas!=null)
+                {state.canvas.renderMode=state.mode;state.canvas.worldCamera=state.camera;state.canvas.planeDistance=state.distance;}
                 foreach (var pair in layers) if (pair.Key != null) pair.Key.layer = pair.Value;
                 RenderTexture.active = oldTarget;
                 if (image != null) Object.DestroyImmediate(image);

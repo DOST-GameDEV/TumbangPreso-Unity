@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.3181111">
+  <test-suite type="TestSuite" id="1513" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="391" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.318111" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1507" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="391" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.304877" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50484" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1508" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="391" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.298692" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1509" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="391" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.292762" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1440" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:59Z" duration="3.280493" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1444" name="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" methodname="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="359994489" result="Passed" start-time="2026-09-14 18:46:56Z" end-time="2026-09-14 18:46:58Z" duration="1.827342" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] OwnerSignUp-reference-v1/FieldIcon: vertices=24, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSignUp-reference-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerSignUp-reference-v1/Eye: vertices=20, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerSignUp-reference-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerTerms-v1/ReadingSheet: vertices=18, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerTerms-v1 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSignIn-reference-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSignIn-reference-v1/Eye: vertices=20, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] OwnerSignIn-reference-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1441" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="485945888" result="Passed" start-time="2026-09-14 18:46:58Z" end-time="2026-09-14 18:46:59Z" duration="1.441475" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=237,115,78; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeCredits-v1/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeCredits-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeCredits-licenses-v1/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeCredits-licenses-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativePlay-Classic-v1/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] NativePlay-Classic-v1/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] NativePlay-Classic-v1/RouteIcon: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] NativePlay-Classic-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativePlay-Hero-v1/BackArrow: vertices=12, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] NativePlay-Hero-v1/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] NativePlay-Hero-v1/RouteIcon: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] NativePlay-Hero-v1/RouteIcon: vertices=52, cull=False, alpha=1, depth=30, material=1
+[TumpUiCapture] NativePlay-Hero-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
