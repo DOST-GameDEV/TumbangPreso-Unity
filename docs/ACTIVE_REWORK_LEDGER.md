@@ -4,12 +4,29 @@
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Branch ASTRAReworks, latest COMMITTED AND PUSHED HEAD:
-36805af4ddd38bec84029c3e6514b0e0c5e57553, Phaister placement/alternate checks and truthful copy.
+95a707131327d38fd451eee821955be23d393dba, Cheska Nova grounded-slipper flight.
+Earlier36805af4ddd38bec84029c3e6514b0e0c5e57553 saves Phaister placement/alternate checks and truthful copy.
 Earlier5cfb04b3c44e9a14368a0afeb390c7696144a06f restores live Coven/current sky on rejoin.
 Prior pushed checkpoints: 06b54470 construction cost; 6a1811c7 Phaister timing/forms/
 rejection; c59cef8f origins/concepts; e6237a0d Dante; bc8a5f00 and b106c6ac preserved.
 
-CURRENT: Cheska Nova loose-slipper investigation. Her prior deep ice art/animation
+NEXT WORK: Sean's current kit needs the authored pass. Baseline capture FINISHED
+1/1PASS, Logs/sean-current-kit-v1.xml, receipt007b8193637b. All3real presses accepted;
+that is functional coverage, not art approval. Source is unchanged for Sean.
+Current owner/body videos are encoded at recorded times; contact sheets inspected.
+Observed: Ignition has a pink BoltHead symbol and large square particles in FPP;
+Supernova floods the scene red with a generic column/early ground overlay; its
+body returns to holding pose while airborne. Rush repeats ornate floor marks.
+Source still uses35%dash stretch,45%launch stretch,40%landing squash; the existing
+art plan rejects that rubbery scaling. Ignition's hand aura has a fixed10s life
+and its handle is not stored; investigate actual throw consumption/cleanup, not
+only the buff press. Baseline capture did NOT throw the empowered slipper.
+Supernova has an.85s impact timeout after the.55s airborne phase; reproduce an
+airborne/low-ceiling case before changing landing logic.
+Preserve the retained Sean model/outfit and distinct leap/rush/empowered-throw jobs.
+No Sean production edits yet. No active Editor/player/helper or image job.
+
+Completed Cheska Nova correction. Her prior deep ice art/animation
 pass is already committed and should be preserved; reports/improvement-2026-09-10/
 cheska-kit.md and earlier ledger record6/6collision/cast checks,4/4traction and
 matching native wall/prison meshes. Those screenshots predate current maps/hands.
@@ -43,8 +60,8 @@ and current hand poses. Videos encoded at recorded times under the evidence path
 INTERNAL build FINISHED1057MB/50s, receiptad0a4e72b9e3:
 Logs/cheska-flight-build-v1 (.pid/.stdout/.stderr/.log),
 explicit Builds/CheskaSkillReview/TumbangPreso.exe. Read pid file for active helper.
-All Editor/test helpers exited. Preserve prior good ice art. Save this scoped
-correction, then review Sean's current three actions and actual empowered throw.
+All Editor/test helpers exited. Preserve prior good ice art. This scoped
+correction is pushed as95a70713. Review Sean's current three actions and actual empowered throw.
 Sean still has45%stretch/40%squash and possible timeout-driven airborne impact;
 gather current ordinary-speed evidence before changing those paths.
 Report reports/improvement-2026-09-14/cheska-nova-flight.md.
