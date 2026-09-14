@@ -10,12 +10,16 @@ namespace TumbangPreso.Abilities
     public sealed class SeanHeroKit : HeroKit
     {
         public bool IsIgnitionCannonActive { get; set; }
+        private float _supernovaPoseTime = -1;
+        public float SupernovaPoseTime => Ultimate.IsWindingUp
+            ? Mathf.Lerp(0, .20f, 1 - Ultimate.WindupRemaining / Mathf.Max(.01f, Ultimate.Windup))
+            : _supernovaPoseTime;
 
         public SeanHeroKit() : base("sean", "SEAN")
         {
             Skill1 = new RocketBurnDashAbility();
             Skill2 = new IgnitionCannonAbility(this);
-            Ultimate = new SupernovaSmashdownAbility();
+            Ultimate = new SupernovaSmashdownAbility(this);
         }
 
         /// <summary>
@@ -79,7 +83,7 @@ namespace TumbangPreso.Abilities
                 forward.y = 0.0f;
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.DashStretch(forward, 0.35f);
+                if (squash != null) squash.DashStretch(forward, 0.06f);
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 17.0f
                                        * ctx.CostScale("sean.1.afterburn")
@@ -132,6 +136,7 @@ namespace TumbangPreso.Abilities
                                         ctx.Position + Vector3.up * 0.95f + heading * 0.5f,
                                         2.0f,
                                         Visual.VfxFlipbook.Facing.Fixed,
+                                        tint: new Color(1, 1, .08f),
                                         rotation: Quaternion.LookRotation(heading, Vector3.up)
                                                   * Quaternion.Euler(0.0f, -90.0f, 0.0f));
 
@@ -259,27 +264,19 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.IsIgnitionCannonActive = true;
-                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
+                RefreshEmber(ctx);
+            }
 
-                // ⚠️⚠️ THE MOMENT IT IS LOADED, AND THIS ABILITY HAD NO CAST MOMENT AT ALL. It is
-                // the one power in the game whose whole effect happens LATER: nothing goes on the
-                // floor, nothing moves, and the only change is that Sean's next throw will
-                // explode. Until now the entire cast was an ember aura appearing on his hand, and
-                // the three people deciding whether to walk into his lane had nothing to read.
-                //
-                // ⚠️ `magical-projectile` ON HIS RAMP IS THE HEAD OF THE SHOT ITSELF, which is
-                // what `docs/Asset_Sourcing.md` § 3 maps Ignition Cannon to: *"a compact
-                // projectile head, a short ember tail and one small impact burst."* Playing it at
-                // the HAND is the honest half of that mapping: this is the round being chambered.
-                // The impact half already arrives through `ExplosionStyle.Slipper` in
-                // `Slipper.cs`, which is where the shoe actually lands.
-                //
-                // ⚠️ 1.1 m, AT HAND HEIGHT, IN WORLD SPACE. It is the smallest placement in the
-                // kit because it is a thing in a fist rather than an event on the street, and it
-                // must not read as a cast that has already gone off.
-                Visual.VfxFlipbook.Play(Visual.VfxSheets.BoltHead,
-                                        ctx.Position + Vector3.up * 1.15f + ctx.Forward * 0.35f,
-                                        1.1f);
+            private void RefreshEmber(AbilityContext ctx)
+            {
+                var shoe = ctx.Carrier != null ? ctx.Carrier.Held : null;
+                if (shoe != null) SeanIgnitionVisual.Ensure(shoe.GetComponentInChildren<MeshFilter>(), shoe, _kit);
+            }
+
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (!_kit.IsIgnitionCannonActive) { EndEarly(ctx); return; }
+                RefreshEmber(ctx);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -291,12 +288,13 @@ namespace TumbangPreso.Abilities
         private sealed class SupernovaSmashdownAbility : HeroAbility
         {
             private float _airTimer;
-            private float _impactTimeout;
+            private readonly SeanHeroKit _kit;
+            private float _landingAge;
             private bool _diving;
             private bool _hasLeftGround;
             private bool _smashed;
 
-            public SupernovaSmashdownAbility()
+            public SupernovaSmashdownAbility(SeanHeroKit kit)
                 // ⚠️⚠️ THE CARD USED TO SAY *"Knocks the lata over on impact"* AND 🧑 READ IT
                 // EXACTLY AS WRITTEN: *"this too it reads as unusable on defender"*. It was an
                 // honest description of an attacker-only power. Both halves are fixed rather than
@@ -317,6 +315,7 @@ namespace TumbangPreso.Abilities
                        viewmodelAction: "supernova-slam",
                        castCue: "sfx_cast_sean_supernova")
             {
+                _kit = kit;
                 TelegraphStyle = Visual.GroundReticle.Style.Ember;
                 Windup = UltimateWindup;
             }
@@ -324,13 +323,14 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _airTimer = 0.55f;
-                _impactTimeout = 0.85f;
+                _landingAge = 0;
+                _kit._supernovaPoseTime = .20f;
                 _diving = false;
                 _hasLeftGround = false;
                 _smashed = false;
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.Stretch(0.45f);
+                if (squash != null) squash.Stretch(0.06f);
 
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
@@ -339,6 +339,12 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                if (_smashed)
+                {
+                    _landingAge += dt;
+                    _kit._supernovaPoseTime = _landingAge < .43f ? 1.12f + _landingAge : -1;
+                    return;
+                }
                 if (!ctx.Motor.IsGrounded) _hasLeftGround = true;
                 _airTimer -= dt;
                 if (_airTimer <= 0.0f && !_diving)
@@ -350,15 +356,20 @@ namespace TumbangPreso.Abilities
                     ctx.Motor.ApplyImpulse(Vector3.down * 28.0f);
                 }
 
-                if (!_diving || _smashed) return;
+                _kit._supernovaPoseTime = !_diving
+                    ? Mathf.Lerp(.20f, .78f, 1 - Mathf.Clamp01(_airTimer / .55f))
+                    : Mathf.Lerp(.78f, 1.04f, Mathf.Clamp01(-_airTimer / .16f));
+                if (!_diving) return;
 
-                _impactTimeout -= dt;
-                if ((_hasLeftGround && ctx.Motor.IsGrounded) || _impactTimeout <= 0.0f)
+                // An interrupted leap under a low ceiling may never report an airborne
+                // frame. It may still impact while grounded, never from a timer in midair.
+                if (ctx.Motor.IsGrounded && (_hasLeftGround || _airTimer <= -.12f))
                 {
                     _smashed = true;
+                    _kit._supernovaPoseTime = 1.12f;
 
                     var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                    if (squash != null) squash.Squash(0.4f);
+                    if (squash != null) squash.Squash(0.08f);
 
                     NetCue.Play("sfx_explosion_heavy", ctx.Position);
 
@@ -387,6 +398,8 @@ namespace TumbangPreso.Abilities
                     // here is removed rather than recoloured: one blast, one set of particles.
                 }
             }
+
+            protected override void OnEnd(AbilityContext ctx) => _kit._supernovaPoseTime = -1;
         }
     }
 }

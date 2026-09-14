@@ -15,6 +15,15 @@ are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
 
 # TODO: Tumbang Preso Unity
 
+**Current continuation, 2026-09-14:** keep working until the complete remaining
+queue is finished. Park optional questions for the owner's return. Sean's native
+heat/ignition/grounded landing and first-person release visibility are implemented;
+focused local checks and actual delayed Ignition/Supernova clients pass. Exact
+scope and remaining variants/counterplay: [Sean review](reports/improvement-2026-09-14/sean-skills.md).
+Continue those remaining checks and Zack's presentation, then the full saved queue.
+The owner selected seventh-character B and map C; expansion implementation stays
+LAST LAST. See [the live ledger](ACTIVE_REWORK_LEDGER.md) before running tools.
+
 **Newest origin/expansion tasks, 2026-09-14:**
 
 

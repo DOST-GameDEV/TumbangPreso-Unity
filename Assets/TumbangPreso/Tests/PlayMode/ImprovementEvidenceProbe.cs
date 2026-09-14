@@ -419,6 +419,8 @@ namespace TumbangPreso.PlayTests
                     yield return Record(witness, hero + "-" + (slot+1), captureSeconds, who, t =>
                     {
                         who.Intent.Set(verb, t >= .25f && t < .65f);
+                        if (hero == "sean" && slot == 1 && Environment.GetEnvironmentVariable("TUMP_REVIEW_EMPOWERED_THROW") == "1")
+                            who.Intent.Set(Verb.SpecialAbility, t >= 1.25f && t < 1.9f);
                         if(movingGuard)who.Intent.Move=t>=.1f&&t<4.5f?new Vector2(.25f,.45f):Vector2.zero;
                         if (t > .25f && abilities.LastAnswer(answerSlot) == HeroKit.CastOutcome.Cast
                             && abilities.SecondsSinceAnswer(answerSlot) < 2.8f) accepted = true;

@@ -10,6 +10,10 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class AbilityVfx
     {
+        // World fire is amber/ember. The rose UI accent remains a roster colour.
+        public static readonly Color FireColour = new Color(1, .26f, .025f);
+        public static readonly Color FireHotColour = new Color(1, .65f, .09f);
+
         private static Material _particleMat;
 
         private static Material GetParticleMaterial()
@@ -246,13 +250,13 @@ namespace TumbangPreso.Visual
                     main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.18f);
                     main.gravityModifier = -0.5f;
                     main.startColor = new ParticleSystem.MinMaxGradient(
-                        new Color(1.0f, 0.86f, 0.35f, 1.0f), UiTheme.HeroFire);
+                        new Color(1.0f, 0.86f, 0.35f, 1.0f), FireColour);
                     emission.rateOverTime = 55.0f;
                     shape.shapeType = ParticleSystemShapeType.Sphere;
                     shape.radius = 0.5f;
                     grad.SetKeys(
                         new[] { new GradientColorKey(new Color(1.0f, 0.9f, 0.45f), 0.0f),
-                                new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                                new GradientColorKey(FireColour, 1.0f) },
                         new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
                     break;
 
@@ -790,8 +794,8 @@ namespace TumbangPreso.Visual
         ///   * magma has gravity 1.6 and ARCS: rock is thrown up and falls back;
         ///   * fire has gravity -0.7 and CLIMBS, because flame does not fall;
         ///   * magma is chunky (0.14 to 0.32) and fire is fine (0.07 to 0.19);
-        ///   * magma ends deep red, fire ends in `UiTheme.HeroFire`, which is Sean's own hue and
-        ///     is asserted 25 degrees clear of every other hero by `HeroPresentationTests`.
+        ///   * magma ends deep red; fire cools to a warm ember. These world effects
+        ///     use a separate palette from the roster UI's rose accent.
         /// </summary>
         public static GameObject SpawnFireBurst(Vector3 pos, float radius)
         {
@@ -811,7 +815,7 @@ namespace TumbangPreso.Visual
             main.startSpeed = new ParticleSystem.MinMaxCurve(radius * 2.0f, radius * 3.6f);
             main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.19f);
             main.startColor = new ParticleSystem.MinMaxGradient(
-                new Color(1.0f, 0.93f, 0.55f, 1.0f), UiTheme.HeroFireBright);
+                new Color(1.0f, 0.93f, 0.55f, 1.0f), FireHotColour);
 
             // ⚠️ NEGATIVE, AND THIS IS THE WHOLE SEPARATION FROM DANTE. Heat climbs.
             main.gravityModifier = -0.7f;
@@ -837,7 +841,7 @@ namespace TumbangPreso.Visual
             var grad = new Gradient();
             grad.SetKeys(
                 new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.6f), 0.0f),
-                        new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                        new GradientColorKey(FireColour, 1.0f) },
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.9f, 0.35f),
                         new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
@@ -1104,12 +1108,12 @@ namespace TumbangPreso.Visual
                     main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 1.6f);
                     main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.14f);
                     main.gravityModifier = -0.4f;
-                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(1.0f, 0.9f, 0.4f), UiTheme.HeroFireBright);
+                    main.startColor = new ParticleSystem.MinMaxGradient(new Color(1.0f, 0.9f, 0.4f), FireHotColour);
                     emission.rateOverTime = 42.0f;
                     shape.shapeType = ParticleSystemShapeType.Sphere;
                     shape.radius = 0.25f;
                     grad.SetKeys(
-                        new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.5f), 0.0f), new GradientColorKey(UiTheme.HeroFire, 1.0f) },
+                        new[] { new GradientColorKey(new Color(1.0f, 0.95f, 0.5f), 0.0f), new GradientColorKey(FireColour, 1.0f) },
                         new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
                     break;
             }

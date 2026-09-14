@@ -1,5 +1,26 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest AFK continuation instruction, 2026-09-14:** the owner explicitly says
+to keep running until the entire authorized queue is finished and to save this
+instruction here and in the ledger. Do not end at a concept sheet, a passed test,
+a stable commit, a completed batch, or compaction. Continue the next concrete
+task in this same conversation. Park optional questions and design choices for
+when the owner is present, record them with context, and keep doing independent
+authorized work. Make routine implementation decisions using the accepted
+direction. A decision needing owner input blocks only the dependent action,
+not the rest of the queue. Existing no-credit-reset, no-delegation, no-Figma and
+profile/checkout protections still apply. Do not pretend work is complete or
+claim an unattended continuation is running when no work is actually executing.
+The owner reaffirmed that stopping is authorized only when everything in the
+remaining queue is done. A checkpoint report is a progress update, not a final
+handoff or a reason to yield the task. Continue through the saved ordering.
+
+**Owner concept selection, 2026-09-14:** character B and map C are chosen from
+ArtSource/badjao/concepts-2026-09-14: tied hair, green boatcraft outfit, and the
+court surrounded by a lagoon village. Preserve this direction across compaction.
+Native TUMP mesh/material/animation authoring is still required. The seventh hero
+and water map remain LAST LAST; this choice does not reorder the current work.
+
 **Newest origins and expansion direction, 2026-09-14:** research believable
 Philippine hometowns and original sporting biographies. Zack belongs to the
 Metro Manila condo map, Sa Bubong; Cheska comes from Benguet. Show short lore in

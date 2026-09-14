@@ -263,7 +263,14 @@ mash/deflect/authority rules remain. Review the prison on all relevant body size
 
 ## Sean: directed heat, ignition and a committed landing
 
-### Flame Rush / sean_skill1: OPEN
+Current implementation and before/after evidence are in
+reports/improvement-2026-09-14/sean-skills.md. Real input, expiry/refusal/replacement,
+raised floors, both-mode release and delayed three-client Ignition/Supernova pass.
+The old findings below explain the direction; they are not claims that the removed
+hand aura, pink flight, repeated floor badges or airborne detonation remain live.
+Variant and overlapping counterplay review remains in the full queue.
+
+### Flame Rush / sean_skill1: native heat wake implemented; variant review remains
 
 Path: `RocketBurnDashAbility` -> accepted dash/contact, `SpawnFireTrail`, fire aura.
 Body `hero-sean-dash`, FPP `thrust-fire`, cue `sfx_cast_sean_rush`.
@@ -278,7 +285,7 @@ at push-off, ground-contact rhythm and a clearly relaxing finish.
 Gate: no floating trail, honest swept contact, no fake hits, stable grip and readable
 retrieval route. Do not enlarge reach merely to match a noisy effect.
 
-### Ignition Cannon / sean_skill2: OPEN
+### Ignition Cannon / sean_skill2: charge/throw/peer correction verified
 
 Path: `IgnitionCannonAbility` -> hand charge; actual throw in `Carrier` and actual
 fire affinity impact in `Slipper`. Body `hero-sean-ignite`, FPP `ignite`, cue
@@ -291,7 +298,7 @@ slipper silhouette and distinguish arming, launch, hit and consumption sounds.
 Gate: carried charge belongs to the actual grip; refusal/expiry/throw remove it;
 impact VFX match the real collision and do not pretend an airborne hit is a floor hit.
 
-### Supernova / sean_ultimate: OPEN
+### Supernova / sean_ultimate: grounded contact and native aftermath verified
 
 Path: `SupernovaSmashdownAbility` -> leap/dive, `CreateExplosion`,
 `SpawnSupernovaCrater`. Body `hero-sean-supernova`, FPP `supernova-slam`.

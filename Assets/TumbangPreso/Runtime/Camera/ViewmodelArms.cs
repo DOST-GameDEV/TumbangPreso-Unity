@@ -313,6 +313,8 @@ namespace TumbangPreso.CameraSystem
 
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
+            if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
+                Visual.SeanIgnitionVisual.Ensure(filter, held, sean);
 
             // ⚠️⚠️⚠️ AND THE PLACEHOLDER TINT IS CLEARED OFF THE RENDERER, WHICH IS THE WHOLE
             // "EVERY TSINELAS IS BROWN IN FIRST PERSON" BUG AND IT SURVIVED THREE FIXES ABOVE.
@@ -1077,7 +1079,10 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            _clipTime += dt;
+            float seanTime = _actionName == "supernova-slam"
+                && _characterMotor?.AbilitySystem?.Kit is Abilities.SeanHeroKit sean
+                ? sean.SupernovaPoseTime : -1;
+            _clipTime = seanTime >= 0 ? seanTime : _clipTime + dt;
             _clipBlendTime += dt;
 
             if(ReferenceEquals(_clip,ThrowClip))

@@ -507,6 +507,22 @@ namespace TumbangPreso.Visual
             // A player tripped mid-throw must be on the tarmac, not finishing the throw.
             if (StepTripPose()) return;
 
+            // Sample the retained cast against the actual leap/landing clock. This
+            // cannot create a hit; the motor and ability remain the contact owners.
+            if (_current == "hero-sean-supernova" && !_motor.IsStunned
+                && _motor.AbilitySystem?.Kit is Abilities.SeanHeroKit sean && sean.SupernovaPoseTime >= 0)
+            {
+                var front = Front();
+                if (front.IsValid())
+                {
+                    front.SetTime(sean.SupernovaPoseTime / 1.55f * ClipLength(_current));
+                    front.SetSpeed(0);
+                    _oneShotLeft = .05f;
+                    Blend();
+                    return;
+                }
+            }
+
             if (_oneShotLeft > 0.0f)
             {
                 _oneShotLeft -= Time.deltaTime;

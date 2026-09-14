@@ -584,279 +584,9 @@ namespace TumbangPreso.Abilities
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("FireTrailZone");
             go.transform.position = position;
-
-            // ⚠️⚠️ A DASH LEAVES A STREAK, NOT A CIRCLE, AND UNTIL 2026-08-25 EVERY FLOOR EFFECT
-            // IN THIS GAME WAS THE SAME SCALED CYLINDER. 🧑, on the first ability capture: *"look
-            // at this shit all of them look like circles lang"*. Fire, lightning, ice, magma and
-            // a tear in the world were five fictions drawn as one primitive in five colours, so
-            // the only channel telling them apart was HUE, which is the one channel the game
-            // already spends twice: `Art_Direction.md` § 1 reserves orange and blue for the two
-            // ROLES, and `UiTheme` spends five more on hero identity.
-            //
-            // ⚠️ THE STREAK IS A GAMEPLAY READ AS WELL AS AN ART ONE. It POINTS. A player who
-            // sees one knows which way the caster went, which a chain of circles cannot tell
-            // them, and knowing where Sean went is most of what surviving Sean is.
-            //
-            // ⚠️ SEEDED OFF THE POSITION so consecutive marks in one trail differ from each
-            // other while any given mark is identical between captures. `VfxShapes` has the
-            // reasoning; an unseeded probe is one that measured 110 and then 467 penalties on
-            // consecutive runs (`CLAUDE.md` § 7.1).
-            int seed = Mathf.RoundToInt((position.x + position.z) * 977.0f);
-
-            // ⚠️ HIS MOTIF: IT IS STILL EATING. `docs/TODO.md` § 27.1. A trail drop is otherwise
-            // a mark that appears whole and shrinks; separate burning pieces at falling density
-            // outside its edge say the fire got there and has not finished, which is the only
-            // thing that gives one drop an AGE distinct from the drop beside it.
-            //
-            // ⚠️ AND IT PUTS NO AREA BACK. His corridor was the worst offender ever measured in
-            // this game at 27.2 per cent of the box (`docs/VISION.md` § 2), and § 19.3 took a
-            // full-radius bright plate out of every drop to fix it. These are pieces with gaps:
-            // about 9 per cent of the ring they are scattered in. See `SpawnCinderFringe`.
-            SpawnCinderFringe(go.transform, radius, seed + 53);
-            float yaw = 0.0f;
-            if (forward.sqrMagnitude > 0.0001f)
-            {
-                forward.y = 0.0f;
-                yaw = Quaternion.LookRotation(forward.normalized, Vector3.up).eulerAngles.y;
-            }
-
-            // ⚠️⚠️ A SCORCH MARK WITH A BURNING RIM, NOT AN ORANGE DISC. This is the single
-            // most-seen effect in Hero Strike (Sean drops one every 0.15 s of every dash) and
-            // until 2026-08-25 it was one flat translucent cylinder, which is the literal
-            // definition of the fault described as *"it just looks like puddles everywhere"*.
-            //
-            // Three parts, and each is doing a job the flat disc could not:
-            //  * a DARK charred core, so the mark reads as burnt ground rather than as coloured
-            //    light lying on the road;
-            //  * a bright licking RIM at the edge, which is where a real fire actually is;
-            //  * a short ember column, because heat is the only thing in this game that goes UP
-            //    and vertical is the one direction a floor effect has spare.
-            //
-            // `docs/VISION.md` § 2 rule 3: the budget is spent on DETAIL, not on AREA. The
-            // radius came down from 1.6 to 1.0 at the same time (`SeanHeroKit.TrailRadius`), so
-            // this is strictly more to look at over strictly less floor.
-
-            // The char. Dark, nearly opaque, and the thing that persists. Stretched 1.55x
-            // along the run and pinched across it, so the mark has a direction.
-            var visual = VfxShapes.Lay(go.transform, "FireChar",
-                                       VfxShapes.Streak(0.60f, 12, seed),
-                                       radius * 0.90f, 0.015f, yaw);
-            visual.transform.localScale = new Vector3(radius * 0.62f, 1.0f, radius * 1.28f);
-            // ⚠️⚠️ 0.93 ALPHA, AND "MAKE IT TRANSLUCENT SO THE ROAD SHOWS THROUGH" IS THE
-            // MISTAKE THAT COST THREE RENDER PASSES. Write it down so nobody retries it.
-            //
-            // The char is drawn ON TOP of `edge`, which is a full bright orange DISC and not a
-            // ring: `edge` covers the whole footprint at radius * 2.0 and the char covers
-            // radius * 1.80 of it. So any alpha under about 0.9 here does not blend the char
-            // with the ROAD, it blends the char with the bright orange plate directly beneath
-            // it, and the result is mid-terracotta however dark the colour is.
-            //
-            // ⚠️ THAT IS WHY DARKENING THE COLOUR TWICE AND CUTTING THE LIGHT TWICE DID NOTHING.
-            // v1 blamed the colour (0.16, 0.05, 0.02), v2 blamed the light (3.5 down to 1.1),
-            // v3 blamed both (0.05, 0.02, 0.01 and 0.55) and every one of the three still
-            // rendered an orange middle, because none of them was the cause. Alpha was.
-            // `Logs/shots-abilities/ability_fire_trail_v1.png` through `_v3.png` are the three
-            // wrong answers, kept on disk.
-            //
-            // ⚠️ A SCORCH IS OPAQUE ANYWAY. Burnt asphalt does not show the road through it.
-            //
-            // ⚠️ THE PLATE ALSO GREW TO radius * 1.80 SO THE RIM BAND IS THINNER. At 1.55 the
-            // gap to the 2.0 edge was a fat mustard donut and the mark read as a ring rather
-            // than as burnt ground with a hot edge.
-            // ⚠️⚠️ OPAQUE, AND THE ALPHA WAS NOT A LOOK, IT WAS A SORTING BUG. Read the note
-            // above: it argues at length for 0.93 alpha over any lower value, and it ends with
-            // *"A SCORCH IS OPAQUE ANYWAY. Burnt asphalt does not show the road through it."*
-            // That last line was right and the code stopped one step short of it.
-            //
-            // ⚠️⚠️ WHAT 0.92 ALPHA ACTUALLY COST: TWO COPLANAR TRANSLUCENT PLATES SORT
-            // ARBITRARILY, SO THE MARK RENDERED A DIFFERENT COLOUR PER DROP. Unity orders
-            // transparent renderers by the distance from the camera to each one's bounds centre.
-            // The char and the bright rim under it are concentric and 5 mm apart, so their
-            // centres are the same point to within rounding and the comparison is effectively a
-            // coin toss. `ability_worstframe_v11.png` is the proof and it had been on disk
-            // unexplained: six drops of ONE trail, alternating dark brown and bright salmon, from
-            // one call with one set of constants. Nothing was wrong with either colour.
-            //
-            // ⚠️ AN OPAQUE MATERIAL CANNOT LOSE THAT ARGUMENT, WHICH IS THE REAL FIX. It renders
-            // in the geometry queue and writes depth, so it occludes whatever is beneath it by
-            // construction rather than by winning a sort. The rule this file now follows: ground
-            // that has been BURNT or BROKEN is opaque, and only things you can genuinely see
-            // through are ghosted.
-            // ⚠️ BURNT ASPHALT, NOT A HOLE. At (0.15, 0.06, 0.03) and opaque this read as pure
-            // black in `ability_fire_trail_v13.png`, so the mark looked like a gap in the road
-            // with an orange ring round it. Scorched tarmac is a dark warm GREY; the road it sits
-            // on is already dark, so the mark only has to be darker than that, not absent.
-            VfxMaterial.Solid(visual.GetComponent<Renderer>(), new Color(0.25f, 0.19f, 0.16f), 0.0f);
-            VfxMaterial.StripCollider(visual);
-
-            // ⚠️⚠️ THE BRIGHT LOZENGE PLATE IS DELETED AND FLAMES REPLACE IT. THIS IS THE
-            // SINGLE UGLIEST OBJECT IN HERO STRIKE AND IT TOOK A CORRIDOR RENDER TO SEE IT.
-            // What stood here was a second `Streak` fan at `radius * 0.86` by `radius * 1.66`,
-            // full orange at 0.42 alpha, drawn UNDER the char. On its own it is a hot perimeter.
-            // Six of them in a row, which is what a dash actually lays, is
-            // `ability_worstframe_v11.png`: a chain of flat salmon LOZENGES down the middle of
-            // the street that reads as a row of leaves, and it is the widest painted thing in the
-            // game.
-            //
-            // ⚠️⚠️ THE FAULT IS THE AXIS, NOT THE COLOUR OR THE ALPHA, AND THAT IS WHY THREE
-            // EARLIER PASSES ON THIS EFFECT DID NOT FIX IT. The note above records darkening the
-            // colour twice and cutting the light twice against `_v1` through `_v3`. Every one of
-            // those was still a plate. Fire is the one fiction in the game that does not lie on
-            // the ground, and a ground decal cannot use the only direction it has.
-            //
-            // ⚠️ IT ALSO PAYS FOR ITSELF IN FOOTPRINT, WHICH IS THE OTHER HALF. `VISION.md` § 2
-            // measures Sean's and Zack's corridors as the two worst offenders in the game at 27.2
-            // per cent of the box, and the arithmetic there is per-disc area times the drop count.
-            // The plate was the largest disc in each drop, at 1.66 by 0.86 of the radius against
-            // the char's 1.28 by 0.62. Deleting it takes roughly 40 per cent of the painted area
-            // out of every drop Sean makes, and buys the budget the flames spend on detail, which
-            // is `VISION.md` § 2 rule 3 exactly.
-            //
-            // ⚠️ THREE, NOT FIVE, AND UNDER HALF A METRE. Six drops live at once during a dash,
-            // so anything on this object is multiplied by six before a second hero casts
-            // anything. Three tongues at 0.55 m are visible from eye height and still let a
-            // player see a body standing behind the mark, which is `ArcFlicker`'s knee-height
-            // ceiling applied to the other trail.
-            for (int t = 0; t < 3; t++)
-            {
-                // ⚠️ TALLER AND SPREAD ALONG THE RUN. The flames are meant to be the READ and at
-                // 0.38 m they were smaller than the rim around them, so the effect still resolved
-                // as a ring. They also sat in a circle, which fights the streak: a dash mark
-                // points, so the fire on it should be strung out along the direction of travel.
-                float ta = t * 120.0f + Random.Range(-24.0f, 24.0f);
-                float tr = radius * Random.Range(0.10f, 0.44f);
-                float th = Random.Range(0.52f, 0.78f);
-
-                var flame = VfxShapes.Stand(go.transform, $"FireTongue_{t}",
-                                            VfxShapes.Tongue(5, 0.34f,
-                                                             Random.Range(0.16f, 0.38f),
-                                                             Random.Range(0.35f, 0.75f),
-                                                             0.18f, seed + 11 + t),
-                                            radius * 0.30f, heightScale: th,
-                                            yaw: ta);
-                flame.transform.localPosition = new Vector3(
-                    Mathf.Cos(ta * Mathf.Deg2Rad) * tr * 0.55f,
-                    0.0f,
-                    Mathf.Sin(ta * Mathf.Deg2Rad) * tr * 1.45f);
-
-                // ⚠️ GHOSTED AND LOW-EMISSION, BECAUSE THREE OF THESE STACK ON EVERY DROP AND
-                // SIX DROPS OVERLAP. The rim notes in this file record 1.05 emission clipping a
-                // ring to a flat yellow donut; a flame is thin enough that it does not need the
-                // help, and `AbilityShowcaseProbe`'s 12 per cent gate is measured on frames where
-                // a whole corridor is live at once.
-                VfxMaterial.Ghost(flame.GetComponent<Renderer>(),
-                                  new Color(1.0f, Random.Range(0.42f, 0.66f), 0.10f, 0.72f), 0.20f);
-            }
-
-            // A thin hot lip at the very edge of the char, which is where a real fire is. It is
-            // what the deleted plate was FOR, at a fraction of the area: a RING rather than a
-            // disc, standing a few centimetres proud so it cannot argue with the char about
-            // sort order the way the plate did.
-            // ⚠️ THIN. At an 0.80 inner ratio this was a fat orange band that became the whole
-            // effect: `ability_fire_trail_v13.png` reads as an ORANGE RING, which is one more
-            // repeated outline and exactly the complaint this pass is answering. 0.90 is a lip.
-            var edge = VfxShapes.Stand(go.transform, "FireEdge",
-                                       VfxShapes.Collar(12, 1.0f, 0.90f, 0.14f, 0.0f, seed + 1),
-                                       1.0f, heightScale: 0.04f, lift: 0.012f, yaw: yaw);
-            edge.transform.localScale = new Vector3(radius * 0.64f, 0.04f, radius * 1.30f);
-            // ⚠️ EMISSION 1.05 CLIPPED THE RIM TO A FLAT YELLOW DONUT. Measured off
-            // `ability_fire_trail_v1.png`: the ring came back as one solid band with no shading
-            // and no hue left in it, because anything over about 0.5 here writes past white
-            // before `ColourGrade` ever sees the frame. 0.30 keeps it hot and keeps it ORANGE.
-            VfxMaterial.Ghost(edge.GetComponent<Renderer>(), new Color(1.0f, 0.42f, 0.07f, 0.62f), 0.22f);
-            VfxMaterial.StripCollider(edge);
-
-            // ⚠️⚠️ NO `HazardRimLife` ON A TRAIL DISC, AND I PUT ONE HERE BEFORE REMOVING IT.
-            // `AbilityVfx` already states the rule for this exact object: *"a dashing hero drops
-            // a trail disc every 0.10 s and each lives 3 s, so ONE dash leaves up to thirty live
-            // objects. Thirty looping ParticleSystems is a different kind of bug from the one
-            // this feature is for. Zone hazards are singular and get one each; trails get none."*
-            //
-            // A per-frame material write is not a ParticleSystem, but it is the same shape of
-            // mistake: thirty `Update` calls each writing colour and emission, and thirty rims
-            // throbbing out of phase along a corridor, which is visual noise in the one place
-            // `VISION.md` § 2 already measures as the worst offender at 27.2 per cent of the box.
-            //
-            // ⚠️ The expiry read is also worth least here. A trail disc lives 3 s and a player
-            // runs THROUGH it; the ice sheet is a zone somebody stands at the edge of deciding
-            // whether to cross, which is the case § 8.5 item 2 actually names. The pulse stays
-            // on the sheet and off the trails.
-
-            // ⚠️⚠️ THE EMBERS ARE CUBES, AND THE BILLBOARD QUADS THEY REPLACE RENDERED AS
-            // LITERAL YELLOW SQUARES. `ability_fire_trail_v1.png` is unambiguous about it: three
-            // flat rectangles standing on the mark, because a `Quad` with an untextured material
-            // IS a rectangle and nothing about facing the camera changes that. A soft plume
-            // needs an alpha texture, which is a whole asset path this effect does not warrant.
-            //
-            // ⚠️ CUBES ARE ALSO THE RIGHT ANSWER RATHER THAN A CHEAP ONE. This game is voxel
-            // art (`docs/Voxel_Person_Guide.md`, and the whole cast is built from boxes), so a
-            // scatter of small bright cubes rising off a scorch is IN the visual language. A
-            // soft photographic flame would be the thing that looked broken, which is
-            // `docs/VISION.md` § 6: *"his UI art is the design system. Anything drawn in a
-            // different visual language is the thing that looks broken, not the thing that
-            // looks new."*
-            // ⚠️ FIVE EMBERS DOWN TO TWO, BECAUSE THE TONGUES ABOVE NOW CARRY THE VERTICAL
-            // READ AND THE EMBERS WERE THE ONLY THING DOING IT BEFORE. Two is enough to say the
-            // mark is throwing sparks; five plus three flames plus a char plus a rim is
-            // `VISION.md` § 2 rule 4 broken on a single trail disc, six of which are live at once.
-            for (int f = 0; f < 2; f++)
-            {
-                var ember = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                ember.name = $"Ember_{f}";
-                ember.transform.SetParent(go.transform, false);
-
-                float fa = f * 180.0f * Mathf.Deg2Rad + 0.5f;
-                float fr = radius * Random.Range(0.15f, 0.62f);
-                ember.transform.localPosition = new Vector3(Mathf.Cos(fa) * fr,
-                                                            Random.Range(0.14f, 0.52f),
-                                                            Mathf.Sin(fa) * fr);
-                ember.transform.localRotation = Random.rotation;
-
-                float s = Random.Range(0.07f, 0.14f);
-                ember.transform.localScale = new Vector3(s, s, s);
-
-                // Solid rather than ghosted: an ember is a hot chip of something, and the one
-                // thing in this effect that should be opaque.
-                VfxMaterial.Solid(ember.GetComponent<Renderer>(),
-                                  new Color(1.0f, Random.Range(0.45f, 0.72f), 0.12f), 0.30f);
-                VfxMaterial.StripCollider(ember);
-                ember.AddComponent<EmberDrift>();
-            }
-
-            // Flickering fire light
-            var lightGo = new GameObject("FireLight");
-            lightGo.transform.SetParent(go.transform, false);
-            lightGo.transform.localPosition = new Vector3(0, 1.3f, 0);
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroFireBright;
-            // ⚠️ THE LIGHT REACH IS DECOUPLED FROM THE HAZARD RADIUS NOW. At radius 1.0 a
-            // `radius * 2.4` range is 2.4 m, which lights nothing; the mark still has to throw
-            // a glow onto the street or a narrower trail becomes an invisible one. 3.2 m fixed.
-            //
-            // ⚠️⚠️ AND 3.5 INTENSITY IS WHAT MADE THE DARK CHAR RENDER BRIGHT SALMON. See the
-            // note on the ice sheet's light: a hot source sitting on top of its own effect
-            // paints the effect, not the street. At 1.1 the char stays burnt and the glow still
-            // reaches the road, which is the only thing the light was ever for.
-            light.range = 3.2f;
-            light.intensity = 0.55f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
-            // ⚠⚠ A TRAIL IS DELIBERATELY *NOT* REGISTERED WITH `HazardMap`, AND THAT IS A
-            // MEASUREMENT, NOT AN OVERSIGHT. `OnTick` drops one of these every 0.10 s for the
-            // whole dash and each lives 3 s, so a single dashing hero leaves up to THIRTY
-            // live discs and three of them fill a 14 by 14 box with a minefield. Registering
-            // them took `BotBehaviourProbe`'s Hero Strike run from 59 throws, 122 skill uses
-            // and 58 idle penalties down to **11 throws, 3 skill uses and 661 idle
-            // penalties**: every bot was surrounded by obstacles it was trying to respect and
-            // simply stopped playing. Trails are breadcrumbs to be run through, not terrain
-            // to be walked around.
-
+            SeanHeatGround.Build(go.transform, radius, duration, forward, false);
             var comp = go.AddComponent<FireTrailComponent>();
-            comp.Radius = radius;
-            comp.Duration = duration;
-            comp.OwnerSlot = ownerSlot;
-
-            VfxShapes.DrapeToGround(visual, .003f);
+            comp.Radius = radius; comp.Duration = duration; comp.OwnerSlot = ownerSlot;
             return go;
         }
 
@@ -880,7 +610,7 @@ namespace TumbangPreso.Abilities
                     return;
                 }
 
-                Burn(transform, _left, Duration);
+                // The heat cools in place; its visible boundary never shrinks inside the live hazard.
 
                 if (!NetAuthority.ShouldResolve()) return;
                 var round = GameServices.Round;
@@ -2058,28 +1788,7 @@ namespace TumbangPreso.Abilities
             var go = new GameObject("SupernovaCrater");
             go.transform.position = position;
 
-            // The rim. `Collar` is a continuous annulus, which § 19.2's rule asks for on anything
-            // that is a BOUNDARY: the edge of the burn is a boundary and has to be readable as
-            // one from any angle.
-            var rim = VfxShapes.Lay(go.transform, "CraterRim",
-                                    VfxShapes.Collar(44, 0.10f, 0.94f),
-                                    radius, 0.026f);
-            VfxMaterial.Ghost(rim.GetComponent<Renderer>(),
-                              new Color(1.00f, 0.46f, 0.12f, 0.72f), 1.05f);
-            VfxMaterial.StripCollider(rim);
-
-            // The burnt floor inside it, dark rather than bright: this is ash with heat under it.
-            // ⚠️ IT IS THE DIMMEST PART OF THE EFFECT ON PURPOSE. A bright plate at 5 m radius is
-            // the puddle `docs/VISION.md` § 2 rule 3 names; what says "burning" is the RIM and the
-            // cinders, both of which are thin.
-            var bed = VfxShapes.Lay(go.transform, "CraterBed",
-                                    VfxShapes.Splat(26, 0.30f, ownerSlot * 13 + 7),
-                                    radius * 0.92f, 0.012f);
-            VfxMaterial.Ghost(bed.GetComponent<Renderer>(),
-                              new Color(0.22f, 0.07f, 0.03f, 0.62f), 0.0f);
-            VfxMaterial.StripCollider(bed);
-
-            SpawnCinderFringe(go.transform, radius, ownerSlot * 31 + 5);
+            SeanHeatGround.Build(go.transform, radius, duration, Vector3.forward, true);
 
             var light = new GameObject("CraterGlow");
             light.transform.SetParent(go.transform, false);
@@ -2088,7 +1797,7 @@ namespace TumbangPreso.Abilities
             l.type = LightType.Point;
             l.color = new Color(1.00f, 0.52f, 0.20f);
             l.range = radius * 2.4f;
-            l.intensity = 1.5f * .40f; // Keep the effect readable without bleaching nearby bodies.
+            l.intensity = .18f; // The road glows without washing out the nearby cast.
             l.shadows = LightShadows.None;
 
             HazardVolume.Attach(go, radius, ownerSlot);
@@ -2100,8 +1809,6 @@ namespace TumbangPreso.Abilities
             comp.Glow = l;
 
             Object.Destroy(go, duration);
-            VfxShapes.DrapeToGround(rim, .003f);
-            VfxShapes.DrapeToGround(bed, .003f);
             return go;
         }
 
@@ -2133,7 +1840,7 @@ namespace TumbangPreso.Abilities
             private float _next;
             private float _glowRest = 1.5f;
 
-            private void Awake()
+            private void Start()
             {
                 _left = Duration;
                 if (Glow != null) _glowRest = Glow.intensity;
@@ -4265,7 +3972,7 @@ namespace TumbangPreso.Abilities
                         shakeAmount: 0.22f, shakeSeconds: 0.16f);
 
                 default:
-                    return new ExplosionLook(style, UiTheme.HeroFireBright, UiTheme.HeroFire,
+                    return new ExplosionLook(style, AbilityVfx.FireHotColour, AbilityVfx.FireColour,
                         "sfx_explosion_heavy", hasCore: true, debrisCount: 12,
                         debrisSize: new Vector2(0.18f, 0.40f), debrisSpeed: new Vector2(7.0f, 15.0f),
                         debrisLift: 1.6f, debrisLife: 0.65f,
@@ -4430,8 +4137,8 @@ namespace TumbangPreso.Abilities
                     // `docs/Asset_Sourcing.md` § 3 asks Supernova for by name: *"one main burst
                     // with shrapnel and sparse embers."* The shrapnel is wider than the burst on
                     // purpose, because pieces travel further than the flash that launched them.
-                    VfxFlipbook.Play(VfxSheets.Burst, center + Vector3.up * 0.35f, radius * 0.85f);
-                    VfxFlipbook.Play(VfxSheets.Shrapnel, center + Vector3.up * 0.30f, radius * 1.15f);
+                    VfxFlipbook.Play(VfxSheets.Burst, center + Vector3.up * 0.35f, radius * 0.85f, tint: new Color(1, 1, .08f));
+                    VfxFlipbook.Play(VfxSheets.Shrapnel, center + Vector3.up * 0.30f, radius * 1.15f, tint: new Color(1, 1, .08f));
                     break;
             }
 

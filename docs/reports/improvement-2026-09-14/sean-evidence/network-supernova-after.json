@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 458,
+      "rise": 3.3542389999999997,
+      "crater_samples": 95,
+      "max_craters": 1.0,
+      "first_crater_grounded": 1.0,
+      "final_craters": 0.0,
+      "final_pose": -1.0
+    },
+    "owner": {
+      "samples": 447,
+      "rise": 3.125394,
+      "crater_samples": 95,
+      "max_craters": 1.0,
+      "first_crater_grounded": 1.0,
+      "final_craters": 0.0,
+      "final_pose": -1.0
+    },
+    "observer": {
+      "samples": 452,
+      "rise": 2.8915894,
+      "crater_samples": 96,
+      "max_craters": 1.0,
+      "first_crater_grounded": 1.0,
+      "final_craters": 0.0,
+      "final_pose": -1.0
+    }
+  },
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "70fd0694d08c4c472f3eed6505e50a795163cd506d2a797f6563b139b87cb936"
+}

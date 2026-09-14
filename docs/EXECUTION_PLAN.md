@@ -5,7 +5,8 @@ wire the existing six into selection/introduction during the UI work. Zack's
 condo is Sa Bubong, Pasig; Cheska is from La Trinidad, Benguet. Every hero needs
 distinct casting movement, especially ultimate preparation/release/recovery.
 BADJAO_EXPANSION.md is the seventh hero's concrete water-kit and map brief,
-LAST LAST after the complete existing queue. Research/concepts only now.
+LAST LAST after the complete existing queue. Owner selected character B + map C
+on2026-09-14. Preserve the green tied-hair boatcraft hero and lagoon-village court.
 The owner authorizes built-in image ideation for alternative concepts; no exact
 image model version is exposed. This narrowly supersedes older paid-call wording.
 
@@ -19,7 +20,7 @@ Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRARework
 Checkpointsbc8a5f00 and b106c6ac are pushed. Fresh internal player and focused network checks passed.
 Dante e6237a0d and Phaister timing/performance/rejoin checkpoints through5cfb04b3
 are pushed. Phaister placement/alternate behavior now passes; copy is corrected.
-Continue the remaining whole-kit reviews, beginning with Cheska. Inday FPP stays deferred.
+Cheska flight is corrected in95a70713. Sean timing/art work is active next; Inday FPP stays deferred.
 Read ACTIVE_REWORK_LEDGER.md for exact latest process, evidence and next action.
 Old plans are archived in reports/improvement-2026-09-14/execution-plan-before-restored-hands.md.
 

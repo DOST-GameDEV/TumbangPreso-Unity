@@ -1,5 +1,13 @@
 # Deferred seventh hero and water-village expansion
 
+**SELECTED by the owner, 2026-09-14: character B + map C.** Use the tied-hair,
+rolled green shirt and practical boatcraft direction, with a central court
+surrounded by the lagoon village. Source sheets are in
+ArtSource/badjao/concepts-2026-09-14. This selects the concept, not every generated
+surface detail. Preserve native chunky TUMP forms and no-thumb hands. The
+working name Rafi is not a separately approved final name. Implementation stays
+LAST LAST after the existing queue.
+
 **LAST LAST. Research and concept selection only for now.** The owner explicitly
 places this after the existing rework, UI and deferred Inday work. Do not add
 runtime roster rows, character assets, abilities, unlock rules or a playable map

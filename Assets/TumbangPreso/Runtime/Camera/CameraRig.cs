@@ -1047,6 +1047,18 @@ namespace TumbangPreso.CameraSystem
                 held = carrier != null ? carrier.Held : null;
             }
 
+            // A released prop starts on the unchanged physical throw origin. Keep
+            // its world mesh hidden from this FPP owner until it clears the eye;
+            // moving the origin forward would let throws bypass nearby obstacles.
+            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null
+                && _hiddenCarriedSlipper != null && _hiddenCarriedSlipper.State == SlipperState.InFlight
+                && _hiddenCarriedSlipper.ThrowerSlot == _character.PlayerSlot)
+            {
+                var fromEye = _hiddenCarriedSlipper.transform.position + _hiddenCarriedSlipper.DrawnCentreOffset - transform.position;
+                if (fromEye.magnitude < .25f + _hiddenCarriedSlipper.CarrySupportExtent(fromEye))
+                    held = _hiddenCarriedSlipper;
+            }
+
             if (held == _hiddenCarriedSlipper) return;
 
             for (int i = 0; i < _hiddenCarriedRenderers.Count; i++)

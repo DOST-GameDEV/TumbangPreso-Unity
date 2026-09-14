@@ -42,5 +42,6 @@ exact location and publication rights are unknown. Internal reference only;
 do not ship it as game art. Research links and a specific fictional Sama Dilaut
 background are in `docs/BADJAO_EXPANSION.md`.
 
-The owner has been asked to choose hero and map directions separately. Choices
-are pending. All seventh-hero and map implementation remains LAST LAST.
+The owner selected **character B + map C** in this conversation on 2026-09-14.
+Retain the tied-hair green boatcraft outfit and surrounding lagoon village.
+All seventh-hero and map implementation remains LAST LAST.

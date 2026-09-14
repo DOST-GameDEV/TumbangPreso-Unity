@@ -681,6 +681,11 @@ namespace TumbangPreso
                                        Vector3 velocity, float pektusSpin,
                                        SlipperAffinity affinity, int throwerSlot)
         {
+            bool enteringFireFlight = state == SlipperState.InFlight && affinity == SlipperAffinity.FireExplosive
+                && (State != SlipperState.InFlight || Affinity != affinity);
+            if (enteringFireFlight && Holder != null && Holder.PlayerSlot == throwerSlot
+                && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
+                sean.IsIgnitionCannonActive = false;
             ReleasePreviousHolder(holder);
 
             // ⚠️⚠️ A HELD SLIPPER IS PLACED BY THE HAND THAT HOLDS IT, NOT BY THE WIRE. `Carrier`
@@ -723,6 +728,18 @@ namespace TumbangPreso
                 : 0.0f;
             Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
+            if (enteringFireFlight)
+            {
+                if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
+                CreateFireFlightVisual();
+            }
+            else if (state != SlipperState.InFlight || affinity != SlipperAffinity.FireExplosive)
+            {
+                if (_affinityVfxGo != null && _affinityVfxGo.name == "FireSlipperVfx")
+                {
+                    Destroy(_affinityVfxGo); _affinityVfxGo = null;
+                }
+            }
             _flightTime = 0.0f;
             _airborneTotal = 0.0f;
             _throwerIgnoreLeft = 0.0f;
@@ -831,29 +848,7 @@ namespace TumbangPreso
 
             if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
 
-            if (Affinity == SlipperAffinity.FireExplosive)
-            {
-                _affinityVfxGo = new GameObject("FireSlipperVfx");
-                _affinityVfxGo.transform.SetParent(transform, false);
-                var l = _affinityVfxGo.AddComponent<Light>();
-                l.type = LightType.Point;
-                l.color = UI.UiTheme.HeroFireBright;
-                l.range = 3.5f;
-                l.intensity = 3.0f;
-
-                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
-                trail.time = 0.35f;
-                trail.startWidth = 0.24f;
-                trail.endWidth = 0.0f;
-                var mat = new Material(Shader.Find("Sprites/Default")) { color = UI.UiTheme.HeroFireBright };
-                trail.material = mat;
-                trail.startColor = mat.color;
-                trail.endColor = new Color(mat.color.r, mat.color.g, mat.color.b, 0.0f);
-
-                // ⚠️ NO WORD. Same rule as the pektus callout above: the thrower armed this on
-                // purpose one press ago, and the shoe is now trailing fire with a light on it.
-                // Four confirmations before the fifth one is text.
-            }
+            if (Affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
                 _affinityVfxGo = new GameObject("ZapSlipperVfx");
@@ -888,6 +883,22 @@ namespace TumbangPreso
                 trail.startColor = mat.color;
                 trail.endColor = new Color(1.0f, 0.95f, 0.7f, 0.0f);
             }
+        }
+
+        private void CreateFireFlightVisual()
+        {
+            _affinityVfxGo = new GameObject("FireSlipperVfx");
+            _affinityVfxGo.transform.SetParent(transform, false);
+            var light = _affinityVfxGo.AddComponent<Light>();
+            light.color = Visual.AbilityVfx.FireHotColour; light.range = 2.1f; light.intensity = .65f;
+            light.shadows = LightShadows.None;
+            var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
+            trail.time = .22f; trail.startWidth = .14f; trail.endWidth = 0;
+            trail.minVertexDistance = .04f;
+            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            trail.sharedMaterial = material; Visual.VfxRenderTag.Own(_affinityVfxGo, material);
+            trail.startColor = Visual.AbilityVfx.FireHotColour;
+            trail.endColor = new Color(1, .22f, .015f, 0);
         }
 
         private void TriggerAffinityImpact()

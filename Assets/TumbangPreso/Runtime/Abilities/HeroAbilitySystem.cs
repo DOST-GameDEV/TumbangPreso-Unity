@@ -757,7 +757,7 @@ namespace TumbangPreso.Abilities
                         ability.TelegraphRadius, slot == Slot.Ultimate);
                 return;
             }
-            if(Kit!=null&&Kit.HeroId=="phaister")return;
+            if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean")) return;
             Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
@@ -1002,7 +1002,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister"))
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN
@@ -1056,7 +1056,7 @@ namespace TumbangPreso.Abilities
 
             // Dante's pressure cue precedes the hit. The camera kick belongs to
             // the actual ground contact, not a long chromatic blast on keypress.
-            if (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister")) return;
+            if (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean")) return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;

@@ -1,30 +1,124 @@
 # Active TUMP rework ledger
 
+## Standing AFK continuation contract, renewed 2026-09-14
+
+The owner explicitly requests continuous work until the whole authorized queue
+is finished. Do not stop at a batch, tests, commit, image choices or compaction.
+Reaffirmed again: permission to stop is only when everything is done. Keep
+checkpoint reports as progress updates and continue the next saved work item.
+Do not reopen an approval already given. Park optional questions and art choices
+for the owner's return, with enough context to answer later. Continue independent
+work around any item that needs their input; make routine implementation choices
+from the accepted direction. Keep current process IDs, evidence, failures and the
+next executable step below accurate. Preserve the existing credit, delegation,
+Figma, profile and checkout boundaries. The selected expansion direction is
+already character B + map C and does not require reconfirmation.
+
 ## Current task and process
 
 Checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Branch ASTRAReworks, latest COMMITTED AND PUSHED HEAD:
-95a707131327d38fd451eee821955be23d393dba, Cheska Nova grounded-slipper flight.
+f653002f, Sean baseline/continuation docs. Previous95a70713 fixes Cheska Nova flight.
 Earlier36805af4ddd38bec84029c3e6514b0e0c5e57553 saves Phaister placement/alternate checks and truthful copy.
 Earlier5cfb04b3c44e9a14368a0afeb390c7696144a06f restores live Coven/current sky on rejoin.
 Prior pushed checkpoints: 06b54470 construction cost; 6a1811c7 Phaister timing/forms/
 rejection; c59cef8f origins/concepts; e6237a0d Dante; bc8a5f00 and b106c6ac preserved.
 
-NEXT WORK: Sean's current kit needs the authored pass. Baseline capture FINISHED
-1/1PASS, Logs/sean-current-kit-v1.xml, receipt007b8193637b. All3real presses accepted;
-that is functional coverage, not art approval. Source is unchanged for Sean.
-Current owner/body videos are encoded at recorded times; contact sheets inspected.
-Observed: Ignition has a pink BoltHead symbol and large square particles in FPP;
-Supernova floods the scene red with a generic column/early ground overlay; its
-body returns to holding pose while airborne. Rush repeats ornate floor marks.
-Source still uses35%dash stretch,45%launch stretch,40%landing squash; the existing
-art plan rejects that rubbery scaling. Ignition's hand aura has a fixed10s life
-and its handle is not stored; investigate actual throw consumption/cleanup, not
-only the buff press. Baseline capture did NOT throw the empowered slipper.
-Supernova has an.85s impact timeout after the.55s airborne phase; reproduce an
-airborne/low-ceiling case before changing landing logic.
-Preserve the retained Sean model/outfit and distinct leap/rush/empowered-throw jobs.
-No Sean production edits yet. No active Editor/player/helper or image job.
+ACTIVE: Sean timing/art correction. Baseline SeanSkillTimingProbe finished
+0/2 as expected failures: actual empowered throw consumed the flag and emptied
+hand but left one emitting hand aura; elevated Supernova detonated at Y47.12653,
+not grounded,1.805656s after press. Logs/sean-timing-baseline-v1.xml, receipt
+a8343d82e6dc, preserved CSVs end in -before.csv. Python6904 exited.
+The elevated baseline began at60m; regression now starts20m so landing is inside
+its bounded4s observation window. This is a diagnostic elevated cast, not map art.
+
+Changes under test: compact native flames follow actual held shoe/body and FPP;
+remove pink BoltHead and old unbound hand particles; remove Sean's generic early
+column/flash/camera blast. Body/FPP use an actual leap/dive/contact/recovery clock;
+impact requires grounded motor, and shape deformation is reduced to6-8percent.
+Preserve body, outfits, all clip data, existing hit radii and objective rules.
+No final artistic/peer acceptance yet. Flame Rush aftermath still needs work.
+
+Timing/capture v2 FINISHED3/3PASS, profilec848b4a12bd0, Python15580 exited.
+Actual throwfire=True/charged=False/held=False/staleemitters0. Elevated20m cast
+landed atY.1819999, groundedTrue,2.087498s. Body/FPP capture inspected; still
+found a newly attached body ember visible beside the FPP copy. Source cause:
+CameraRig caches held renderers before the effect exists. Ember now mirrors its
+source renderer's shadow/visibility modes; witness capture can reveal both.
+
+Rush and crater now have separate low heat wakes/cooling scorch geometry, no
+repeated CinderFringe or orange badge. Preserve physical hazard radius and life;
+FireTrail visual no longer scales its ground footprint inside the active radius.
+Crater initialization now reads assigned glow/duration in Start, not Awake.
+
+Ground-effect v3 FAILED4/5, profile417946eaf26a, Python5440 exited. Three failures
+came from NEW MaterialPropertyBlock creation in a MonoBehaviour field initializer;
+moved allocation to Awake. One cleanup assertion inspected the discarded kit's
+boolean after BindHero replaced the instance. Fixture now checks the live Zack
+kit and disappearance of the old ember for replacement; expiry/refusal still
+require the original live flag false. No production BindHero change.
+
+Ground/capture v4 FINISHED5/5PASS, profilec681378b6ce9, Python14380 exited.
+New owner/body sheets inspected and ordinary-speed videos encoded. The native
+heat wake is restrained, and the crater keeps the street readable. It no longer
+resembles the rejected orange disk/ornate trail badges. Review is provisional,
+not a human play-feel or multiplayer approval.
+
+Full empowered throw capture v1 FINISHED1/1PASS, profile35dd02e37811,
+Logs/sean-throw-v1.xml, evidenceLogs/sean-ignition-throw-v1. Actual release
+frame28/t1.9681 has heldFalse. New findings: world slipper fills the eye for its
+first release frame; flight is pink. MuzzleForward is.15m, intentionally unchanged;
+CameraRig now keeps its own released world mesh hidden until its support extent
+clears the eye by.25m. This affects visibility only, preserves physical origin,
+trajectory, cover and objective rules. Existing world observer path remains.
+World-fire colours now use AbilityVfx.FireColour/FireHotColour, leaving UiTheme's
+roster accent unchanged. Fire trail is smaller/shorter with restrained light.
+
+INTERNAL Sean buildv1 FINISHED, profile911073bd4567, Python11864 exited.
+Builds/SeanSkillReview/TumbangPreso.exe, RuntimeSHA
+8eb5381f6c5d7814ef31e85e43dc2161277275879d00c2892acadc50b1d5eeb6.
+This binary predates the flight/visibility/network-consumption correction below.
+Protocol31. Desktop untouched.
+
+Actual3-client Ignition baseline FAILED: Logs/sean-net-ignite-baseline-v1/result.json.
+150ms each direction on owner link. Host463/owner449/observer454samples; all3saw
+5empowered-flight samples. Host consumed charge; owner and observer retained it
+in the post-throw window. No carried embers/held shoe remained. Helper session74043
+completed and all3ownedplayers/link helper exited;0pre-existing named profilefiles.
+NetSeanProbe uses actual room pick and one preloaded-arena accepted-pick init,
+then real owner key intent. No periodic forced accepted states.
+
+Correction: first trusted FireExplosive flight snapshot consumes the previous
+holder's Sean charge, and creates the actual fire flight VFX on peers. Repeated
+flight snapshots do not consume another charge/recreate trail. Loose/held snapshots
+clean that effect. No protocol change. Same-process replay check is added but is
+not a replacement for the actual delayed-client rerun.
+Flight-v2 failed compilation: missing namespace qualifier for SeanHeroKit in
+Slipper.cs; qualified Abilities.SeanHeroKit. No tests ran, profiledbd3b9875612,
+Python17560 exited. Preserve this failure rather than calling it a gameplay test.
+
+Flight-v3 FINISHED6/6PASS, profilefa5208222244, Python11352 exited.
+Four Sean timing/lifecycle/snapshot tests, real full E throw capture, and all
+held-shoe handling/releases in both modes. Fresh first released frame28/t1.9891
+was inspected directly: no world shoe filling the eye. Source trajectory/origin
+remain unchanged. The orange flight is visible subsequently; no pink beam/light.
+Videos encoded at measured times under Logs/sean-ignition-throw-v3. Earlier
+heat-v4 owner/body sequences remain the Q/R ground evidence, before latest amber
+world palette. Selected CSV/images are in the report's sean-evidence directory.
+
+Internal buildv2 FINISHED, profile61ce6816a649, Python4676 exited.
+RuntimeSHA70fd0694d08c4c472f3eed6505e50a795163cd506d2a797f6563b139b87cb936.
+Actual150ms delayed three-peerIgnition PASS, session60633 completed,462/451/454
+samples,5/6/5fire-flight samples,no stale charge/held/embers;7profilefilesrestored.
+ActualSupernova PASS, session65314 completed,458/447/452samples,onecraterperpeer,
+firstcratergrounded,allcraters/posesexpired;8profilefilesrestored. Measured rise
+3.354/3.125/2.892m includes sampling/smoothing, not identical peer-frame motion.
+Results copied to report's sean-evidence. Allownedplayers/link helpers exited.
+No Editor/player/helper running. Inday arm asset and ProjectAuditor changes were
+verified whitespace-only againstHEAD and restored exactly. No body/FPPassetedit.
+Fetch originASTRAReworks confirmed0/0; stage/review/commit/push this batch now.
+Then continue Sean alternative/counterplay checks and Zack presentation baseline.
+Do not stop at the checkpoint; the whole remaining queue remains authorized.
 
 Completed Cheska Nova correction. Her prior deep ice art/animation
 pass is already committed and should be preserved; reports/improvement-2026-09-10/
@@ -142,10 +236,10 @@ Three image calls finished, files/prompts/critique/owner photo preserved in
 ArtSource/badjao/concepts-2026-09-14. First smooth/realistic hero sheet rejected
 internally. Corrected blocky sheet used the approved Classic cast reference.
 Map sheet is composition exploration, not approved final material detail.
-Two async choices still pending, no owner selection:
-Hero A cropped/indigo athlete, B tied-hair/green boatcraft, C shaggy/white trickster.
-Map A neighbourhood boardwalk, B community jetty, C sheltered lagoon.
-Do not implement an assumed choice. Originals remain in .codex/generated_images/
+Owner selected character B (tied-hair/green boatcraft) + map C (sheltered lagoon)
+after both sheets were shown directly in this chat on 2026-09-14.
+Selection is saved in AGENTS.md, BADJAO_EXPANSION.md and the concept README.
+Implementation stays LAST LAST. Originals remain in .codex/generated_images/
 01a09d13-63f5-7f20-a750-d0de43358454 (see prompts/README for filenames).
 
 ## Phaister checkpoints, preserve rather than redo
