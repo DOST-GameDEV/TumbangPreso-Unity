@@ -56,7 +56,7 @@ namespace TumbangPreso.UI
         {
             var theme=OwnerUiTheme.Current;var text=Rect(parent,name).gameObject.AddComponent<UnityEngine.UI.Text>();
             text.text=words;text.font=role==TypeRole.Display?theme.Display:role==TypeRole.Accent?theme.Accent:theme.Reading;
-            text.fontSize=size;text.fontStyle=FontStyle.Normal;text.color=theme.Ink;
+            text.fontSize=size;text.fontStyle=FontStyle.Normal;text.color=theme.ActionInk;
             text.alignment=TextAnchor.MiddleLeft;text.alignByGeometry=true;text.raycastTarget=false;
             text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Truncate;
             text.supportRichText=false;return text;

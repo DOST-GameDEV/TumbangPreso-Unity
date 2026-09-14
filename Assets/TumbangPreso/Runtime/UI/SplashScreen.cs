@@ -30,7 +30,7 @@ namespace TumbangPreso.UI
     /// animation plays, so the handoff is instant instead of a second black frame at the end of
     /// a three second clip.
     /// </summary>
-    public sealed class SplashScreen : MonoBehaviour
+    public sealed partial class SplashScreen : MonoBehaviour
     {
         /// <summary>When crossed, log that loading is slow but keep the barrier intact.</summary>
         public const float MaxWait = 6.0f;
@@ -175,7 +175,7 @@ namespace TumbangPreso.UI
                 _video.clip = _clip;
                 _video.Play();
             }
-            else if (_illustration == null)
+            else if (!_ownerLoading && _illustration == null)
             {
                 Debug.LogWarning("[Splash] no video clip bound; run Tumbang Preso > Import Godot UI.");
             }
@@ -206,7 +206,7 @@ namespace TumbangPreso.UI
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
-                bool presentationComplete = _illustration != null || _clip == null
+                bool presentationComplete = _ownerLoading || _illustration != null || _clip == null
                     ? _elapsed >= 0.5f
                     : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
@@ -249,7 +249,7 @@ namespace TumbangPreso.UI
             if (_artButton != null) _artButton.interactable = false;
             if (_illustration != null) _illustration.Animating = false;
             // The illustrated home continues on paper; the legacy video exits on black.
-            SetFadeColour(_illustration != null ? UiTheme.Paper : Color.black);
+            SetFadeColour(_ownerLoading ? (Color)new Color32(238,108,74,255) : _illustration != null ? UiTheme.Paper : Color.black);
 
             for (float t = 0.0f; t < 0.22f; t += Time.unscaledDeltaTime)
             {
@@ -675,7 +675,7 @@ namespace TumbangPreso.UI
         private void SetLoadingStage(string label, float progress)
         {
             _targetProgress = Mathf.Max(_targetProgress, Mathf.Clamp01(progress));
-            if (_loadingLabel != null) _loadingLabel.text = label == "ready" ? "Ready" : "Getting ready";
+            if (_loadingLabel != null) _loadingLabel.text = _ownerLoading ? FriendlyLoadingStage(label) : label == "ready" ? "Ready" : "Getting ready";
         }
 
         private void UpdateLoadingAnimation()
@@ -734,6 +734,8 @@ namespace TumbangPreso.UI
 
         private void BuildSurface()
         {
+            if(OwnerUiTheme.Current.Background!=null && OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo)!=null)
+            {BuildOwnerLoadingSurface();return;}
             if (Resources.Load<Texture2D>("UI/illustrations/street_key_art") != null)
             {
                 BuildIllustratedSurface();

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,12 @@ namespace TumbangPreso.PlayTests
         internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null)
         {
             Assert.IsNotNull(canvas);
+            float settleUntil=Time.realtimeSinceStartup+1.5f;
+            while(canvas.GetComponentsInChildren<UI.OwnerUiMotion>().Any(motion=>motion.Entering)
+                && Time.realtimeSinceStartup<settleUntil)yield return null;
+            Canvas.ForceUpdateCanvases();
+            var scrollStates=canvas.GetComponentsInChildren<ScrollRect>()
+                .Select(scroll=>(scroll,position:scroll.normalizedPosition,velocity:scroll.velocity)).ToArray();
             var oldMode = canvas.renderMode;
             var oldCamera = canvas.worldCamera;
             float oldDistance = canvas.planeDistance;
@@ -93,6 +100,16 @@ namespace TumbangPreso.PlayTests
                 RenderTexture.active = oldTarget;
                 if (image != null) Object.DestroyImmediate(image);
                 camera.targetTexture = null; rt.Release(); Object.DestroyImmediate(rt); Object.DestroyImmediate(camGo);
+            }
+            // Give the original screen's scaler/font metrics their normal frame
+            // after restoring an alternate-resolution camera before another action.
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)canvas.transform);
+            foreach(var state in scrollStates)if(state.scroll!=null)
+            {
+                state.scroll.StopMovement();state.scroll.normalizedPosition=state.position;
+                state.scroll.velocity=state.velocity;
             }
         }
     }

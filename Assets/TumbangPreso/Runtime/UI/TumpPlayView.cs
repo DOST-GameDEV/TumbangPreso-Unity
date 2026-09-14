@@ -9,9 +9,14 @@ namespace TumbangPreso.UI
     public sealed class TumpPlayView : MonoBehaviour
     {
         private Canvas _canvas;
+        private OwnerPlayView _ownerPainted;
         private TumpModeStamp _classic, _hero;
         private Button _ranked;
         public void Build(Transform owner)
+        {
+            _ownerPainted=gameObject.AddComponent<OwnerPlayView>();_ownerPainted.Build(owner);
+        }
+        private void BuildPrevious(Transform owner)
         {
             var f = TumpUiTheme.Current;
             _canvas = TumpUiFactory.Canvas(owner, "TumpPlayCanvas", 100);
@@ -29,7 +34,7 @@ namespace TumbangPreso.UI
             _ranked = Route(root, "RankedButton", "Ranked", "Online · Sign-in required", TumpSymbol.Icon.Trophy, 1274, LobbyMode.Ranked);
             var learn = TumpUiFactory.Button(root, "TutorialButton", "Learn to play", SceneFlow.StartTraining, TumpSurface.Form.Link, f.Cream, 30);
             TumpUiFactory.Place((RectTransform)learn.transform, 94, 972, 350, 76);
-            Select(SceneFlow.SelectedMode);
+            SelectPrevious(SceneFlow.SelectedMode);
         }
         private TumpModeStamp Mode(Transform root, string name, string title, string detail, GameMode mode, float x, Color fill)
         {
@@ -37,7 +42,7 @@ namespace TumbangPreso.UI
             var rect = TumpUiFactory.Rect(root, name);
             var stamp = rect.gameObject.AddComponent<TumpModeStamp>(); stamp.StampColor = fill; stamp.raycastTarget = true;
             var button = rect.gameObject.AddComponent<Button>(); button.transition = Selectable.Transition.None;
-            button.targetGraphic = stamp; button.onClick.AddListener(() => { MenuSfx.Click(); Select(mode); });
+            button.targetGraphic = stamp; button.onClick.AddListener(() => { MenuSfx.Click(); SelectPrevious(mode); });
             TumpUiFactory.Place((RectTransform)button.transform, x, 264, 832, 352);
             var entries = Roster.GetPeople(mode);
             for (int i = 0; i < Mathf.Min(3, entries.Count); i++)
@@ -71,7 +76,8 @@ namespace TumbangPreso.UI
             TumpUiFactory.Place(caption.rectTransform, 132, 96, 372, 54);
             return button;
         }
-        public void Select(GameMode mode)
+        public void Select(GameMode mode) => _ownerPainted?.Select(mode);
+        private void SelectPrevious(GameMode mode)
         {
             SceneFlow.SelectedMode = mode; SceneFlow.SetSelectedRules(SceneFlow.SelectedRules);
             _classic.Selected = mode == GameMode.Classic; _hero.Selected = mode == GameMode.HeroStrike;

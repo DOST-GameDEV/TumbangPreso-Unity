@@ -27,20 +27,28 @@ namespace TumbangPreso.PlayTests
             foreach (var size in new[] { new Vector2Int(1920, 1080), new Vector2Int(1280, 720), new Vector2Int(1280, 960) })
                 yield return TumpUiCapture.Capture("NativeHome-" + size.x + "x" + size.y, home, size.x, size.y, false);
             Press("CreditsButton"); yield return null;
-            var credits = GameObject.Find("TumpCreditsCanvas").GetComponent<Canvas>();
+            var credits = GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
             Assert.IsFalse(home.gameObject.activeSelf);
             Assert.AreEqual(CreditsContent.CcByCredits.Length + CreditsContent.CourtesyCredits.Length,
                 credits.GetComponentsInChildren<Text>().Count(t => t.name == "CreditBody"));
-            yield return TumpUiCapture.Capture("NativeCredits-v1", credits, 1920, 1080);
+            yield return TumpUiCapture.Capture("OwnerCredits-v1", credits, 1920, 1080, false);
             var creditScroll = credits.GetComponentInChildren<ScrollRect>();
             creditScroll.verticalNormalizedPosition = 0; yield return null; yield return null;
             var lastCredit = credits.GetComponentsInChildren<Text>().Last(t => t.name == "CreditBody");
+            Debug.Log($"[OwnerCreditScroll] normalized={creditScroll.verticalNormalizedPosition} content={creditScroll.content.rect.height} viewport={creditScroll.viewport.rect.height} lastHeight={lastCredit.rectTransform.rect.height} preferred={lastCredit.preferredHeight}");
+            var creditLayout=creditScroll.content.GetComponent<VerticalLayoutGroup>();
+            float childHeight=creditLayout.padding.vertical+Mathf.Max(0,creditScroll.content.childCount-1)*creditLayout.spacing;
+            foreach(RectTransform child in creditScroll.content)childHeight+=child.rect.height;
+            Debug.Log($"[OwnerCreditLayout] actualChildren={childHeight} preferred={creditLayout.preferredHeight} padding={creditLayout.padding.bottom} contentPos={creditScroll.content.anchoredPosition} lastPos={lastCredit.rectTransform.anchoredPosition}");
+            yield return TumpUiCapture.Capture("OwnerCredits-bottom-diagnostic-v2",credits,1920,1080,false);
             Assert.GreaterOrEqual(lastCredit.rectTransform.rect.height + 1, lastCredit.preferredHeight, "The complete licence body must fit its own text rect.");
             var corners = new Vector3[4]; lastCredit.rectTransform.GetWorldCorners(corners);
+            var contentCorners=new Vector3[4];creditScroll.content.GetWorldCorners(contentCorners);
+            Debug.Log($"[OwnerCreditCoordinates] contentRect={creditScroll.content.rect} pivot={creditScroll.content.pivot} anchors={creditScroll.content.anchorMin}/{creditScroll.content.anchorMax} contentScale={creditScroll.content.localScale} lastScale={lastCredit.rectTransform.localScale} lastPivot={lastCredit.rectTransform.pivot} contentBottom={creditScroll.viewport.InverseTransformPoint(contentCorners[0])} lastBottom={creditScroll.viewport.InverseTransformPoint(corners[0])} finalNormalized={creditScroll.verticalNormalizedPosition} finalContent={creditScroll.content.rect.height} finalPos={creditScroll.content.anchoredPosition} finalLast={lastCredit.rectTransform.anchoredPosition}/{lastCredit.rectTransform.rect}");
             Assert.GreaterOrEqual(creditScroll.viewport.InverseTransformPoint(corners[0]).y + 1, creditScroll.viewport.rect.yMin,
                 "The final licence must be reachable by scrolling to the end.");
             Assert.That(creditScroll.verticalScrollbar.handleRect.rect.width, Is.LessThanOrEqualTo(12), "Scrollbar must stay inside its narrow track.");
-            yield return TumpUiCapture.Capture("NativeCredits-licenses-v1", credits, 1280, 960);
+            yield return TumpUiCapture.Capture("OwnerCredits-licenses-v1", credits, 1280, 960, false);
             Press("CreditsBack"); yield return null;
             Assert.IsTrue(home.gameObject.activeSelf);
             Press("SettingsButton"); yield return null;
@@ -48,16 +56,16 @@ namespace TumbangPreso.PlayTests
             Press("TumpSettingsBack"); yield return null;
             Assert.IsTrue(home.gameObject.activeSelf);
             Press("StartButton"); yield return null; yield return null;
-            var play = GameObject.Find("TumpPlayCanvas").GetComponent<Canvas>();
+            var play = GameObject.Find("OwnerPlayCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(play.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(6, play.GetComponentsInChildren<Image>().Count(i => i.name.StartsWith("ModePortrait") && i.sprite != null));
             Press("ClassicButton"); yield return null;
             Assert.AreEqual(GameMode.Classic, SceneFlow.SelectedMode);
-            Assert.IsFalse(play.GetComponentsInChildren<Button>(true).First(b => b.name == "RankedButton").gameObject.activeSelf);
-            yield return TumpUiCapture.Capture("NativePlay-Classic-v1", play, 1920, 1080);
+            Assert.IsFalse(play.GetComponentsInChildren<Button>(true).First(b => b.name == "RankedButton").gameObject.activeInHierarchy);
+            yield return TumpUiCapture.Capture("OwnerPlay-Classic-v1", play, 1920, 1080, false);
             Press("HeroStrikeButton"); yield return null;
             Assert.IsTrue(Find("RankedButton").interactable);
-            yield return TumpUiCapture.Capture("NativePlay-Hero-v1", play, 1280, 960);
+            yield return TumpUiCapture.Capture("OwnerPlay-Hero-v1", play, 1280, 960, false);
             Press("BackButton"); yield return null; yield return null;
             Assert.IsNotNull(GameObject.Find("OwnerHomeCanvas"));
         }
@@ -183,6 +191,31 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(playerId,GameServices.Account?.PlayerId,"Startup Guest must not replace the current progress identity.");
             }
             finally{Settings.SettingsStore.Current.ReducedUiMotion=reduced;Settings.SettingsStore.Current.AccountHasPassword=hadPassword;}
+        }
+
+        [UnityTest]
+        public IEnumerator OwnerLoadingKeepsSourceArtProgressAndOptionalStories()
+        {
+            var owner=new GameObject("LoadingVisualFixture");owner.SetActive(false);
+            var loading=owner.AddComponent<SplashScreen>();
+            const System.Reflection.BindingFlags flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            typeof(SplashScreen).GetMethod("BuildOwnerLoadingSurface",flags).Invoke(loading,null);
+            typeof(SplashScreen).GetMethod("SetFade",flags).Invoke(loading,new object[]{0f});
+            typeof(SplashScreen).GetMethod("SetLoadingStage",flags).Invoke(loading,new object[]{"loading characters",.45f});
+            for(int i=0;i<10;i++)
+            {typeof(SplashScreen).GetMethod("UpdateLoadingAnimation",flags).Invoke(loading,null);yield return null;}
+            var canvas=GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
+            Assert.IsEmpty(canvas.GetComponentsInChildren<StreetGraphic>(true));
+            var progress=canvas.GetComponentsInChildren<Image>().First(image=>image.name=="ActualProgress");
+            Assert.Greater(progress.fillAmount,0);Assert.LessOrEqual(progress.fillAmount,.45f);
+            Assert.AreEqual("GETTING THE PLAYERS READY",canvas.GetComponentsInChildren<Text>().First(text=>text.name=="LoadingStatus").text);
+            yield return TumpUiCapture.Capture("OwnerLoading-v1",canvas,1920,1080,false);
+            Press("LoadingStories");yield return null;
+            var story=canvas.GetComponentsInChildren<Text>().First(text=>text.name=="StoryText");var before=story.text;
+            Assert.IsNotEmpty(before);Press("LoadingStoryNext");Assert.AreNotEqual(before,story.text);
+            yield return TumpUiCapture.Capture("OwnerLoading-story-v1",canvas,1280,720,false);
+            Press("LoadingStoryClose");yield return null;
+            Assert.False(story.gameObject.activeInHierarchy);
         }
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
         private static void Press(string name)

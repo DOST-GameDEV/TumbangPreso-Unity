@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.1015377">
+  <test-suite type="TestSuite" id="1513" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.101538" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1507" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.091270" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36412" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1508" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.087069" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1509" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.082440" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1440" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.073681" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1441" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="2130512146" result="Failed" start-time="2026-09-14 19:20:52Z" end-time="2026-09-14 19:20:53Z" duration="1.062033" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final licence must be reachable by scrolling to the end.
+  Expected: greater than or equal to -412.0f
+  But was:  -442.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeFrontEndTests+<TitlePlayCreditsAndSettingsReturnThroughNativeViews>d__2.MoveNext () [0x0036b] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\TumpNativeFrontEndTests.cs:40
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=237,114,78; isolated UI camera, no ColourGrade.
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerCredits-v1/CreditsSheet: vertices=18, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -9,8 +9,14 @@ namespace TumbangPreso.UI
     public sealed class TumpCreditsView : MonoBehaviour
     {
         private Canvas _canvas;
+        private OwnerCreditsView _ownerPainted;
         private Action _back;
         public void Open(Transform owner, Action back)
+        {
+            if(_ownerPainted==null)_ownerPainted=gameObject.AddComponent<OwnerCreditsView>();
+            _ownerPainted.Open(owner,back);
+        }
+        private void OpenPrevious(Transform owner, Action back)
         {
             _back = back;
             if (_canvas == null) Build(owner);

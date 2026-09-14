@@ -142,9 +142,11 @@ critical HUD changes without delaying their information or shaking stable anchor
   sign-up/sign-in, guest, returning-player and validation/busy/error states.
   Scoped account/entry checks and original captures are in reports/owner-ui-u1.md.
   Broader async/input/motion qualification remains in U8; this is not overall completion.
-- [ ] U2: actual main menu, play/mode selection, credits and loading/transitions.
+- [x] U2 first implementation: actual main menu, play/mode selection, credits and loading/transitions.
   Keep few clear main choices and the logo-led composition. The new PNG theme
   supersedes the prior paper-left/street-right layouts.
+  Scoped routes/loading controls pass; see reports/owner-ui-u2.md. Refine the
+  mode-panel character and complete cold-launch/motion qualification in U8.
 - [ ] U3: preparation/lobby, map/mode/local/network/custom choices, readiness,
   room browser, joining/queue/cancellation and their loading/empty/error states.
 - [ ] U4: character/equipment/skill pickers and held skill reference. Preserve

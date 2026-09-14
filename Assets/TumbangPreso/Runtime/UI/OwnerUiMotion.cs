@@ -13,6 +13,7 @@ namespace TumbangPreso.UI
         private float _started, _scale=1, _goal=1;
         private bool _ready;
         private bool _disabled;
+        public bool Entering=>isActiveAndEnabled && Time.unscaledTime<_started+EntryDelay+OwnerUiTheme.Current.EnterSeconds;
         public void SetState(bool focused,bool pressed,bool disabled)
         {
             _disabled=disabled;

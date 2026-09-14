@@ -1,5 +1,73 @@
 # Active TUMP rework ledger
 
+## CURRENT U2 scoped checks passed; save then U3 preparation/lobby
+
+94686navigation completedPASS, guard225a8b97c006.60907loading/control casepassed;
+its other failure was old activeSelf expectation, corrected to activeInHierarchy
+for the new complete Ranked route group. Credits issue resolved in capture helper:
+alternate-resolution capture had changed normalized scroll0to.03562653. It now
+restores scroll position/velocity, with no production padding inflation or weakened
+assertion. Final text bottom-356inside viewport min-412. All tools retired.
+Original Play Classic/Hero, Credits full/bottom, Loading and story PNGs inspected.
+Source theme/font/art coherent; mode panels still geometric, explicitly marked
+for whole-UI visual refinement. Report owner-ui-u2.md. Latest pushedb550958e
+until U2saved. No native cold-launch claim from isolated loading visual case.
+NEXT U3: ConvertedMatchSetup still uses old Wire/builders and must get a fresh
+owner-art preparation view with nonvisual action/state adapters. Read Wire and
+current callbacks/event ownership before replacing it; preserve all net/lobby/
+ready/map/mode/custom/profile/picker routes. Browser and queue native partials
+exist but still need this new theme. No agents/Figma/reset/Desktop. UIthen gameplay.
+
+## CURRENT U2 credits geometry investigation not yet resolved
+
+v2/v3 still report final text rect30units below viewport after capture returns.
+Do NOT call the earlier camera-restoration hypothesis a fix. Native bottom PNG
+OwnerCredits-bottom-diagnostic-v2 shows complete final controller attribution
+inside the viewport, while original-window world-corner assertion fails.
+Diagnostics: content3266, viewport824, padding56, actual child-height sum3266,
+normalized0, contentPosY2442, lastPosY-3157, lastHeight106/preferred78. These
+numbers should fit, so inspect post-capture transform/scale/anchor records next.
+Runningv4 same focused test with post-capture coordinate diagnostics:
+Logs/owner-play-credits-u2-v4.xml/.log. All earlier run IDs retired.
+No production padding changes or weakened assertions. Splash owner-art draft and
+hook script are ready in Logs/SplashScreen.OwnerPainted.cs.draft and
+Logs/activate_owner_loading.py; not applied yet. Hook must preserve readiness,
+account barrier/random dwell/stories and add friendly new-route loading label.
+U1pushedb550958e. No agents/Figma/reset/Desktop. Continue U2-U8 then gameplay.
+
+## CURRENT U2 credits scroll investigation; loading draft work in parallel
+
+U2v1 failed final-credit reachability by30units immediately after an alternate
+resolution capture restored the original canvas. Initial credits image inspected:
+source palette/type/art retained, but entrance motion was still fading the logo
+in a still labelled as a settled view. Capture helper now waits for natural
+OwnerUiMotion entry completion, and after restoring the old camera yields for
+normal scaler/font layout before returning control. No production scroll padding
+or acceptance weakened. Added precise scroll/content/last-line diagnostic.
+Running ONLY same failed frontend flow v2: Logs/owner-play-credits-u2-v2.xml/.log.
+No C#/imported edits while Editor runs. Read actual result before attributing the
+issue to the capture helper; it remains a hypothesis until the rerun.
+Next loading visual replacement: SplashScreen.BuildSurface/BuildIllustratedSurface
+own visuals, but preserve preload/account barrier/random reading dwell and optional
+story interaction. Add owner-art route without restarting old shared visual builders.
+U1pushedb550958e. U2uncommitted. Full UI then gameplay queue, no agents/reset/Figma.
+
+## CURRENT U1 pushed b550958e; U2 Play/Credits first check running
+
+U1 owner-painted entrance/home/source/plan pushed to ASTRAReworks atb550958e.
+Actual startup has no Back and the corrected screenshot was shown. Full overhaul
+continues; do not stop or resume gameplay yet. Added new OwnerPlayView and
+OwnerCreditsView from reviewed drafts, plus OwnerPortraitArt/OwnerScrollColumn
+and a common text-link family constructor. Existing Tump controllers now delegate
+to these new views; prior builders retained inactive. No generic old skins used.
+Play has genuine portraits, distinct paper mode choices and actual supplied action
+art at its own aspect ratio. Classic routes recenter when Ranked is hidden.
+Credits keep every original attribution in a new themed readable scroll sheet.
+Running ONLY TitlePlayCreditsAndSettingsReturnThroughNativeViews:
+Logs/owner-play-credits-u2-v1.xml/.log. Inspect original captures afterward;
+no C#/imported edits during Editor run. U2loading/transition work remains next.
+No agents/Figma/reset/Desktop. U3-U8 and gameplay bookmark all remain assigned.
+
 ## CURRENT startup Back correction passed; save U1 then continue U2
 
 34618completed1/1, guard1e34ef47cef6. Actual OpenAtBoot signup PNG inspected:
