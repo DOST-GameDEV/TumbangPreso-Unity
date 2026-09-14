@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 629,
+      "live_samples": 55,
+      "active_samples": 55,
+      "visual_samples": 55,
+      "restore_delay": null,
+      "expected_speed_stack": 1,
+      "expiry_offset": 0.0
+    },
+    "owner": {
+      "samples": 620,
+      "live_samples": 55,
+      "active_samples": 55,
+      "visual_samples": 55,
+      "restore_delay": null,
+      "expected_speed_stack": 1,
+      "expiry_offset": -0.2068023681640625
+    },
+    "observer": {
+      "samples": 621,
+      "live_samples": 49,
+      "active_samples": 49,
+      "visual_samples": 49,
+      "restore_delay": 0.0,
+      "expected_speed_stack": 1,
+      "expiry_offset": -0.0131988525390625
+    }
+  },
+  "runtime_sha256": "0cdda833ca710667dd11d6fe59667b760c95ea938ac55f598837e41a96618200"
+}

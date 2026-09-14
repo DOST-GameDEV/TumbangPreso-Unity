@@ -11,11 +11,21 @@ namespace TumbangPreso.Abilities
     {
         public const float StompContactSeconds = .30f;
         public bool IsDemonicCarapaceActive => Skill2 != null && Skill2.IsActive;
+        private bool _joiningCarapaceSettled;
+
+        public bool RestoreJoiningCarapace(CharacterMotor motor, float remaining)
+        {
+            if (motor == null || _joiningCarapaceSettled || Skill2.IsActive) return false;
+            _joiningCarapaceSettled = true;
+            var ctx = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
+            ((DemonicCarapaceAbility)Skill2).RestoreWard(ctx, remaining);
+            return true;
+        }
 
         public DanteHeroKit() : base("dante", "DANTE")
         {
             Skill1 = new SeismicStompAbility();
-            Skill2 = new DemonicCarapaceAbility();
+            Skill2 = new DemonicCarapaceAbility(this);
             Ultimate = new DemonTitanFissureAbility();
         }
 
@@ -146,19 +156,31 @@ namespace TumbangPreso.Abilities
 
         private sealed class DemonicCarapaceAbility : HeroAbility
         {
+            private readonly DanteHeroKit _kit;
             private DanteCarapaceVisual _ward;
             private bool _heavySlow;
 
-            public DemonicCarapaceAbility()
+            public DemonicCarapaceAbility(DanteHeroKit kit)
                 : base("dante_skill2", "DEMONIC CARAPACE",
                        "Armours you for a few seconds. Nothing can stun, shove or slip you, so you can walk in and take what you need.",
                        62.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.DanteShield,
                        summary: "Nothing stuns, shoves or slips you while it holds.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
-                       castCue: "sfx_cast_dante_carapace") { }
+                       castCue: "sfx_cast_dante_carapace") { _kit = kit; }
+
+            public void RestoreWard(AbilityContext ctx, float remaining)
+            {
+                if (remaining <= 0) return;
+                RestoreLiveClock(remaining);
+                _heavySlow = ctx.HasVariant("dante.2.plating");
+                if (_heavySlow) ctx.Motor.EnterSpeedZone(.70f);
+                _ward = DanteCarapaceVisual.Attach(ctx.Motor, _heavySlow, Duration);
+                if (_ward != null) _ward.StepTo(Duration - DurationRemaining);
+            }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit._joiningCarapaceSettled = true;
                 _heavySlow=ctx.HasVariant("dante.2.plating");
                 if(_heavySlow)ctx.Motor.EnterSpeedZone(.70f);
                 NetCue.Play("guard_block",ctx.Position);ctx.Motor.ClearStun();

@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 630,
+      "live_samples": 100,
+      "active_samples": 100,
+      "visual_samples": 100,
+      "restore_delay": null,
+      "expiry_offset": 0.0
+    },
+    "owner": {
+      "samples": 619,
+      "live_samples": 99,
+      "active_samples": 99,
+      "visual_samples": 99,
+      "restore_delay": null,
+      "expiry_offset": -0.17290496826171875
+    },
+    "observer": {
+      "samples": 619,
+      "live_samples": 94,
+      "active_samples": 94,
+      "visual_samples": 94,
+      "restore_delay": 0.03369903564453125,
+      "expiry_offset": 0.05159759521484375
+    }
+  },
+  "runtime_sha256": "0cdda833ca710667dd11d6fe59667b760c95ea938ac55f598837e41a96618200",
+  "owner_link_one_way_ms": 150,
+  "scope": "Three native peers; observer kit reconstruction and explicit world snapshot, not process restart"
+}

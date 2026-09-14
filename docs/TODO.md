@@ -1,5 +1,13 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**Verified progress,2026-09-15:** live ice and Sean/Zack joining charges are
+qualified and pushed. Dante/Nemu initial personal-effect state now passes scoped
+local and native snapshot checks, including both sidegrades. See
+[personal-effect report](reports/improvement-2026-09-15-personal-buffs/README.md).
+Next: remaining persistent fire/shock/Hex/crater/fissure fields, pending casts,
+reconnect/rematch lifecycle, then movement/spectator and remaining engineering.
+The whole queue is not complete; ACTIVE_REWORK_LEDGER.md carries current runs.
+
 **Latest owner scope,2026-09-14:** remaining UI work is REMOVED from this queue.
 Existing UI/source stays saved; archived checklist is linked from
 [UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Continue non-UI gameplay, skills,
@@ -33,13 +41,12 @@ LAST LAST. See [the live ledger](ACTIVE_REWORK_LEDGER.md) before running tools.
 **Newest origin/expansion tasks, 2026-09-14:**
 
 
-- [ ] Wire the six researched fictional origins and short lore into character
-  selection, and longer stories into the character introduction/unlock surface.
-  Copy and source limits: [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md). Keep the
-  six currently available heroes available; do not invent paid locks.
+- **Cancelled with the UI scope:** origins/short-lore selection and character
+  introduction/unlock UI integration. Preserve the researched copy and source
+  limits in [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md) for later ownership.
 - [ ] Review every hero cast for its own preparation, weight transfer, release
   and recovery. No identical ult movement across heroes with recoloured effects.
-- [ ] **LAST LAST, after the full existing queue including UI and deferred Inday:**
+- [ ] **LAST LAST, after the full remaining non-UI queue and deferred Inday:**
   implement the seventh male Sama Dilaut water hero and his stilt-village map.
   Working name Rafi; proposed Crosscurrent, Mirrorwake and Breakwater abilities.
   [BADJAO_EXPANSION.md](BADJAO_EXPANSION.md) records research, cast distinctions,

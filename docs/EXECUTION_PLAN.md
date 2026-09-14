@@ -1,5 +1,13 @@
 # Active execution plan
 
+**LATEST2026-09-15:** Dante/Nemu initial personal-effect restoration qualified
+with3 focused local contracts and4 actual three-player snapshot cases, including
+both sidegrades;36vs35 refusal passed. Details and honest fixture limits:
+reports/improvement-2026-09-15-personal-buffs/README.md. Remaining ground effects
+will extend the existing atomic ice batch together: fire/shock/Hex/crater and
+solid Dante fissure pillars. Pending windups, actual reconnect lifecycle and
+the larger movement/spectator queue remain open. No UI or new delegation.
+
 **LATEST2026-09-15:** Zack initial Magnet/active-ultimate window restoration
 passes4 focused local cases, real observer Magnet/ultimate and owner Magnet
 reconnects with150ms delay, and protocol35vs34 refusal. Spent charges stay spent,

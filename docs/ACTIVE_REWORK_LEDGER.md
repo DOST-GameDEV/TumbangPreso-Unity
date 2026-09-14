@@ -1,5 +1,43 @@
 # Active TUMP rework ledger
 
+## CURRENT personal-effect batch qualified; save then extend world snapshot
+
+All runs retired:56473build,32262ward,31440plating,80873veil,26826fade.4native
+cases pass after correcting an observer-authority expectation, with original
+failure/raw trace retained. Protocol36vs35 actual refusal passed. Full receipts:
+reports/improvement-2026-09-15-personal-buffs/README.md. Latest pushed9d0ee524,
+current personal-effect source ready for final stage/commit/push. No active tools.
+Important: native personal-buff fixture reconstructs observer kit and requests
+real host state; NOT a cold process restart. Never claim otherwise. No buffs
+lengthened. Existing held-slipper tag risk and remote motor authority preserved.
+Next extend existing atomic ice snapshot to all remaining persistent ground
+fields in one batch. Reviewed draft capture and concrete lifecycle notes in
+Logs/WorldEffectSnapshot.cs.draft and Logs/remaining-world-effects-plan.md.
+Include solid Dante pillars: DanteFissurePillar owns art/age/side; EarthPillar
+owns lifetime and must respect restored remaining time. Do not duplicate familars,
+Coven or sky, replay impacts/casts, or alter accepted art. Continue full non-UI
+queue afterward. No agents/Figma/reset/Desktop. Deferred Inday and expansion order stays.
+
+## CURRENT Dante/Nemu remaining personal effects under native qualification
+
+Zack checkpoint9d0ee524 pushed to ASTRAReworks. No UI/agents/Figma/reset/Desktop.
+Added initial-only Dante armor and Nemu veil restoration, retaining remaining
+duration, selected sidegrade slow and mature existing visual. No replayed surge,
+cast sound or resource spend. Renamed the packet TimedKit, protocol36.
+Focused Play checks: initial3cases2passed/1test expectation failed. The failure
+wrongly expected tag immunity while holding a shoe; actual existing rule remains
+vulnerable while held. Corrected the test to verify vulnerability while carrying,
+immunity after disarm and cancellation on new pickup; rerun1/1PASS. No production
+change to that carry rule. XMLs personal-buff-joining-v1 and personal-buff-veil-v2.
+Protocol36 assertion1/1PASS. Sessions12524,49110,76032 retired.
+Building INTERNAL PersonalBuffReview, Logs/personal-buff-build-v1.log. New opt-in
+NetPersonalBuffProbe reconstructs only observer's local kit then requests the real
+host snapshot. This is separate-player transport proof, NOT a process-restart
+claim, and does not extend the real2.5second Veil duration to cover boot time.
+Next tools/net_personal_buff_review.py cases ward/plating/veil/fade sequential,
+then36vs35 refusal using preserved ZackBuffRejoinReview. Draft work outside Assets
+while Editor builds; continue persistent effects and other game queue after batch.
+
 ## CURRENT Zack joining windows qualified; save batch then Dante/Nemu
 
 All tools retired:51289build,89421Magnet observer,60733storm observer,29001Magnet

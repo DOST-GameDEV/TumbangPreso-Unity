@@ -56,6 +56,115 @@ namespace TumbangPreso.PlayTests
             _who.Intent.Set(verb,false);yield return new WaitForSeconds(.04f);
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow()
+        {
+            var progress=Settings.SettingsStore.Current.AbilityChallenges;
+            var saved=progress.ToArray();
+            try
+            {
+                progress.RemoveAll(row=>row.VariantId=="dante.2.plating");
+                progress.Add(new AbilityChallengeProgress{VariantId="dante.2.plating",Count=999});
+                var art=RosterBook.Load().FindPersonArt("dante");
+                _who.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"dante");
+                _who.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                foreach(bool heavy in new[]{false,true})
+                {
+                    _who.AbilitySystem.BindHero("dante",new HeroBuild{HeroId="dante",Slot2VariantId=heavy?"dante.2.plating":null});
+                    var kit=(DanteHeroKit)_who.AbilitySystem.Kit;
+                    kit.Skill2.ApplyNetworkSnapshot(32,0);
+                    float speed=_who.SpeedMultiplier, bank=kit.UltimateCharge;
+                    Assert.True(kit.RestoreJoiningCarapace(_who,1.1f));
+                    Assert.True(kit.IsDemonicCarapaceActive);
+                    Assert.AreEqual(32,kit.Skill2.CooldownRemaining,.001f);
+                    Assert.AreEqual(bank,kit.UltimateCharge);
+                    Assert.AreEqual(speed*(heavy?.70f:1),_who.SpeedMultiplier,.001f);
+                    Assert.AreEqual(1,_who.GetComponentsInChildren<DanteCarapaceVisual>().Length);
+                    Assert.AreEqual(3,_who.transform.Find("DanteOrbitingWard").childCount);
+                    Assert.False(kit.RestoreJoiningCarapace(_who,4));
+                    _who.ApplyStagger(1,StunElement.Stone,6);
+                    Assert.Less(_who.StunLeft,.01f);
+                    yield return new WaitForSeconds(1.25f);
+                    Assert.False(kit.IsDemonicCarapaceActive);
+                    Assert.AreEqual(speed,_who.SpeedMultiplier,.001f);
+                    Assert.IsNull(_who.GetComponentInChildren<DanteCarapaceVisual>());
+                    Assert.IsNull(_who.transform.Find("DanteOrbitingWard"));
+                    _who.ApplyStagger(.4f,StunElement.Stone,6);
+                    Assert.Greater(_who.StunLeft,0,"Restored armor kept immunity after expiry.");
+                    _who.ClearStun();
+                    Assert.False(kit.RestoreJoiningCarapace(_who,4),"A stale initial state rearmed expired armor.");
+                }
+            }
+            finally{progress.Clear();progress.AddRange(saved);}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup()
+        {
+            var progress=Settings.SettingsStore.Current.AbilityChallenges;
+            var saved=progress.ToArray();var carrier=_who.GetComponent<Carrier>();var shoe=carrier.Held;
+            Assert.IsNotNull(shoe);
+            try
+            {
+                progress.RemoveAll(row=>row.VariantId=="nemu.1.fade");
+                progress.Add(new AbilityChallengeProgress{VariantId="nemu.1.fade",Count=999});
+                foreach(bool longFade in new[]{false,true})
+                {
+                    Assert.True(shoe.HostForceEquip(_who));
+                    _who.AbilitySystem.BindHero("nemu",new HeroBuild{HeroId="nemu",Slot1VariantId=longFade?"nemu.1.fade":null});
+                    var kit=(NemuHeroKit)_who.AbilitySystem.Kit;
+                    kit.Skill1.ApplyNetworkSnapshot(28,0);
+                    yield return new WaitForSeconds(.2f);
+                    var velocity=_who.Velocity;var at=_who.transform.position;float speed=_who.SpeedMultiplier;
+                    Assert.True(kit.RestoreJoiningVeil(_who,1.2f));
+                    Assert.AreEqual(velocity,_who.Velocity,"Restoring the veil replayed its opening surge.");
+                    Assert.AreEqual(28-.2f,kit.Skill1.CooldownRemaining,.15f);
+                    Assert.AreEqual(speed*(longFade?.65f:1),_who.SpeedMultiplier,.001f);
+                    yield return new WaitForSeconds(.18f);
+                    Assert.True(kit.IsPhantomPhaseActive,"A shoe already held at restoration cancelled the veil.");
+                    Assert.False(_who.AbilitySystem.IsImmuneToTags,"Holding a shoe must retain the existing tag risk.");
+                    Assert.Less(Vector3.Distance(at,_who.transform.position),.08f);
+                    Assert.AreEqual(1,_who.GetComponentsInChildren<NemuVeilPresentation>().Length);
+                    Assert.False(kit.RestoreJoiningVeil(_who,2.5f));
+                    shoe.HostDisarm();yield return null;yield return null;
+                    Assert.True(_who.AbilitySystem.IsImmuneToTags,"The empty-handed veil lost its actual protection.");
+                    Assert.True(shoe.HostForceEquip(_who));yield return null;yield return null;
+                    Assert.False(kit.IsPhantomPhaseActive,"A genuinely new pickup did not end restored protection.");
+                    Assert.False(_who.AbilitySystem.IsImmuneToTags);
+                    Assert.AreEqual(speed,_who.SpeedMultiplier,.001f);
+                    Assert.False(kit.RestoreJoiningVeil(_who,2.5f),"A stale record rearmed the consumed veil.");
+                    yield return new WaitForSeconds(.4f);
+                    Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
+                }
+            }
+            finally{progress.Clear();progress.AddRange(saved);}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement()
+        {
+            var nemu=(NemuHeroKit)_who.AbilitySystem.Kit;
+            yield return Press(Verb.Skill1);
+            float clock=nemu.Skill1.DurationRemaining;
+            Assert.False(nemu.RestoreJoiningVeil(_who,.1f));
+            Assert.AreEqual(clock,nemu.Skill1.DurationRemaining);
+            _who.AbilitySystem.BindHero("dante");yield return new WaitForSeconds(.4f);
+            Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
+            var dante=(DanteHeroKit)_who.AbilitySystem.Kit;
+            yield return Press(Verb.Skill2);
+            clock=dante.Skill2.DurationRemaining;
+            Assert.False(dante.RestoreJoiningCarapace(_who,.1f));
+            Assert.AreEqual(clock,dante.Skill2.DurationRemaining);
+            _who.AbilitySystem.BindHero("nemu");yield return null;yield return null;
+            Assert.IsEmpty(_who.GetComponentsInChildren<DanteCarapaceVisual>());
+            Assert.IsNull(_who.transform.Find("DanteOrbitingWard"));
+            nemu=(NemuHeroKit)_who.AbilitySystem.Kit;
+            Assert.True(nemu.RestoreJoiningVeil(_who,.35f));
+            yield return new WaitForSeconds(.8f);
+            Assert.False(nemu.IsPhantomPhaseActive);
+            Assert.IsEmpty(Object.FindObjectsByType<NemuVeilPresentation>(FindObjectsSortMode.None));
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow()
         {

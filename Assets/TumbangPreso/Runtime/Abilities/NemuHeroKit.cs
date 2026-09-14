@@ -9,6 +9,16 @@ namespace TumbangPreso.Abilities
     public sealed class NemuHeroKit : HeroKit
     {
         public bool IsPhantomPhaseActive => Skill1 != null && Skill1.IsActive;
+        private bool _joiningVeilSettled;
+
+        public bool RestoreJoiningVeil(CharacterMotor motor, float remaining)
+        {
+            if (motor == null || _joiningVeilSettled || Skill1.IsActive) return false;
+            _joiningVeilSettled = true;
+            var ctx = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
+            ((PhantomPhaseAbility)Skill1).RestoreVeil(ctx, remaining);
+            return true;
+        }
         public override float MovementSpeedScale => IsPhantomPhaseActive ? Balance.NemuPhaseSpeedScale : 1f;
 
         public void RestoreFamiliar(CharacterMotor motor,int mode,Vector3 position,float remaining,float? yaw=null)
@@ -35,7 +45,7 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new PhantomPhaseAbility();
+            Skill1 = new PhantomPhaseAbility(this);
             Skill2 = new GhostlyPoltergeistAbility();
             Ultimate = new NightmareSeanceVoidAbility();
         }
@@ -57,11 +67,12 @@ namespace TumbangPreso.Abilities
 
         private sealed class PhantomPhaseAbility : HeroAbility
         {
+            private readonly NemuHeroKit _kit;
             private NemuVeilPresentation _veil;
             private bool _wasHolding;
             private bool _longFadeSlow;
 
-            public PhantomPhaseAbility()
+            public PhantomPhaseAbility(NemuHeroKit kit)
                 // ⚠️⚠️ 52 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 50 AND DANTE'S 62. Tag
                 // immunity is the strongest defensive verb in the game: for 2.5 s the taya
                 // simply cannot do their job. It is priced under Carapace only because picking
@@ -82,10 +93,23 @@ namespace TumbangPreso.Abilities
                        viewmodelAction: "ghost-step",
                        castCue: "sfx_cast_nemu_veil")
             {
+                _kit = kit;
+            }
+
+            public void RestoreVeil(AbilityContext ctx, float remaining)
+            {
+                if (remaining <= 0) return;
+                RestoreLiveClock(remaining);
+                _longFadeSlow = ctx.HasVariant("nemu.1.fade");
+                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(.65f);
+                _wasHolding = ctx.Motor.HoldingSlipper;
+                _veil = NemuVeilPresentation.Attach(ctx.Motor, Duration);
+                _veil.StepTo(Duration - DurationRemaining);
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit._joiningVeilSettled = true;
                 _longFadeSlow=ctx.HasVariant("nemu.1.fade");
                 if (_longFadeSlow) ctx.Motor.EnterSpeedZone(.65f);
                 _wasHolding=ctx.Motor.HoldingSlipper;

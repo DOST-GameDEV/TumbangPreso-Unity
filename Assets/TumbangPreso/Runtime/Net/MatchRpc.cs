@@ -339,7 +339,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
             cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
-            cm.RegisterNamedMessageHandler("HeldCharge", OnHeldChargeMsg);
+            cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("IceBegin", OnIceBeginMsg);
             cm.RegisterNamedMessageHandler("IceItem", OnIceItemMsg);
             cm.RegisterNamedMessageHandler("IceEnd", OnIceEndMsg);
@@ -1798,7 +1798,7 @@ namespace TumbangPreso.Net
                 kit.RestoreFamiliar(unit,mode,position,remaining,yaw);
         }
 
-        private void SendHeldChargeSnapshot(int slot, ulong peer)
+        private void SendTimedKitSnapshot(int slot, ulong peer)
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
             var kit = Unit(slot)?.AbilitySystem?.Kit;
@@ -1810,6 +1810,10 @@ namespace TumbangPreso.Net
                 chargeRemaining = zack.IsOverchargeThrowActive ? kit.Skill2.DurationRemaining : 0;
                 ultimateRemaining = zack.IsThunderstrikeActive ? kit.Ultimate.DurationRemaining : 0;
             }
+            else if (kit is Abilities.DanteHeroKit dante)
+                chargeRemaining = dante.IsDemonicCarapaceActive ? kit.Skill2.DurationRemaining : 0;
+            else if (kit is Abilities.NemuHeroKit nemu)
+                chargeRemaining = nemu.IsPhantomPhaseActive ? kit.Skill1.DurationRemaining : 0;
             else return;
             using var writer = new FastBufferWriter(64, Allocator.Temp);
             writer.WriteValueSafe(slot);
@@ -1818,10 +1822,10 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(chargeRemaining);
             writer.WriteValueSafe(ultimateRemaining);
             writer.WriteValueSafe((float)_nm.ServerTime.Time);
-            _nm.CustomMessagingManager.SendNamedMessage("HeldCharge", peer, writer);
+            _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer);
         }
 
-        private void OnHeldChargeMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnTimedKitMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
             reader.ReadValueSafe(out int slot);
@@ -1837,12 +1841,15 @@ namespace TumbangPreso.Net
             var kit = motor?.AbilitySystem?.Kit;
             if (kit == null || kit.HeroId != hero) return;
             float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - sentAt);
-            remaining = Mathf.Clamp(remaining - elapsed, 0, kit.Skill2.Duration);
+            var personalSkill = kit is Abilities.NemuHeroKit ? kit.Skill1 : kit.Skill2;
+            remaining = Mathf.Clamp(remaining - elapsed, 0, personalSkill.Duration);
             ultimateRemaining = Mathf.Max(0, ultimateRemaining - elapsed);
             using (NetCue.SuppressRelay())
             {
                 if (kit is Abilities.SeanHeroKit sean && ultimateRemaining <= 0) sean.RestoreJoiningIgnition(motor, remaining);
                 else if (kit is Abilities.ZackHeroKit zack) zack.RestoreJoiningCharges(motor, remaining, ultimateRemaining);
+                else if (kit is Abilities.DanteHeroKit dante && ultimateRemaining <= 0) dante.RestoreJoiningCarapace(motor, remaining);
+                else if (kit is Abilities.NemuHeroKit nemu && ultimateRemaining <= 0) nemu.RestoreJoiningVeil(motor, remaining);
             }
         }
 
@@ -5692,7 +5699,7 @@ namespace TumbangPreso.Net
             {
                 BroadcastFamiliarEffect(slot,(ulong)peerId);
                 SendCovenSnapshot(slot, (ulong)peerId);
-                SendHeldChargeSnapshot(slot, (ulong)peerId);
+                SendTimedKitSnapshot(slot, (ulong)peerId);
             }
             SendSkySnapshot((ulong)peerId);
             SendIceSnapshot((ulong)peerId);
