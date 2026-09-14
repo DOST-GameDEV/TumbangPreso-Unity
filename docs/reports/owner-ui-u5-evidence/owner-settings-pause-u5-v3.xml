@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.521369">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.521369" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.510720" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4668" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.505788" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Failed" site="Child" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.501417" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1464" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.493246" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1468" name="PauseEscapeRespectsChildSettingsDiscardAndReturn" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.PauseEscapeRespectsChildSettingsDiscardAndReturn" methodname="PauseEscapeRespectsChildSettingsDiscardAndReturn" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="688413036" result="Failed" label="Error" start-time="2026-09-14 20:55:10Z" end-time="2026-09-14 20:55:12Z" duration="1.482430" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00011] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.TumpNativeSettingsTests.Find (System.String name) [0x0000d] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\TumpNativeSettingsTests.cs:193 
+  at TumbangPreso.PlayTests.TumpNativeSettingsTests+<PauseEscapeRespectsChildSettingsDiscardAndReturn>d__13.MoveNext () [0x00291] in C:\Users\Matthew\Documents\Codex\2026-09-09\ok-x20\work\TumbangPreso-Unity\Assets\TumbangPreso\Tests\PlayMode\TumpNativeSettingsTests.cs:171 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] NativePause-v1 cream source=252,211,159 pixel=105,107,93; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

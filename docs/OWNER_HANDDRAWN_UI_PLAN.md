@@ -158,9 +158,11 @@ critical HUD changes without delaying their information or shaking stable anchor
   port its needed behavior, do not blindly apply its old visual implementation.
   Completed first views and cache-invalidation port: reports/owner-ui-u4.md.
   Final all-kit/input/motion and preview-color review remains in U8.
-- [ ] U5: settings and pause/settings nesting, input rebinding, touch editor.
+- [x] U5 first implementation: settings and pause/settings nesting, input rebinding, touch editor.
   Preserve the explicitly approved original controller artwork,18button callouts
   and connecting lines. Adapt surrounding theme only if it retains that design.
+  Scoped native settings/controller/touch/transaction checks: reports/owner-ui-u5.md.
+  Pause shell and actual gameplay touch-button surfaces migrate with U6.
 - [ ] U6: in-game HUD, scoreboard/timer, reticle prompts, ability cooldown/state,
   training steps, contextual interaction, chat, round change/recovery prompts,
   spectator readouts, pause and results. Keep both modes and world readability.

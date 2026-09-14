@@ -1,5 +1,84 @@
 # Active TUMP rework ledger
 
+## CURRENT U5 scoped checks passed; save then U6 HUD and pause
+
+11091completed2/2 PASS, guardeb87b252edac. Fresh receipt owner-settings-pause-u5-v5.
+Delivered keyboardTrue/MenuNavTrue/performedTrue; child decision owns consumed
+Escape, discards back to pause, second Escape unparks player. Test-only batch
+focus override matches existing RecoveryDeviceProbe and restores in finally.
+Production MenuNav/UiInputModule/controller logic untouched. Touch test now opens
+actual collapsed adjustment panel before setting its slider, checks compact/
+expanded state and retained cancel rollback. v2's other two settings/binding
+checks passed; four related contracts now covered across scoped runs.
+All original five settings pages, updated dropdown/slider sizes, decision and
+compact touch toolbar inspected. No asset stretching, 21x24source checkbox with
+large hit area, short pages do not scroll unnecessarily. Approved controller
+image/18callouts/leader lines unchanged. Report owner-ui-u5.md; readyto save.
+Latest pusheda0d73099 until U5commit. No running tools. Next U6: see
+Logs/U6-next-implementation.md. Drafts Logs/OwnerScoreStrip.cs.draft and
+Logs/PausePanel.OwnerPainted.cs.draft are not imported. Apply reviewed pause
+partial preserving domain methods; rerun only related pause case after change.
+HUD actual TumpMatchReadout/TumpPowerReadout/TumpHudEffects need new builders and
+runtime color writers. GuidedTraining.cs, TumpRoundSwapView, results and gameplay
+touch visuals follow. U7profile/U8full visual+input+art-authoring review then
+GAMEPLAY_RESUME_AFTER_UI.md. Do not stop at this commit. No agents/reset/Figma/
+Desktop. All stage reports are scoped evidence, not overall art approval.
+
+## CURRENT U5 pause failure isolated to undelivered synthetic keyboard; final focused check next
+
+37304completed3/4 (guarda692c2b55f61), isolated32029 also failed pause
+(guarda8760642524c). Diagnostic2503 completed0/2 (guard2a8bb88997fe).
+Its pause trace: dirtyTrue, MenuNavFalse, keyboardFalse, cancel action enabled,
+performedFalse, blockedFalse, only active takeover was TumpSettingsView. The
+queued synthetic Escape never arrived; no evidence of UI escape ownership bug.
+Used existing RecoveryDeviceProbe's test-only IgnoreFocus/AllDeviceInputAlwaysGoesToGameView
+settings, restoring them in finally, and added explicit delivery assertion.
+No production input/controller algorithms changed. Extra diagnostic frame removed.
+Touch failure in2503 was test looking up collapsed TouchSize before opening the
+new Size & Opacity panel. Updated test clicks its actual expand control first,
+then changes scale, captures expanded/compact and checks cancel restoration.
+Toolbar now compact by default so upper gameplay controls can be dragged.
+Next run same two related cases Logs/owner-settings-pause-u5-v5.xml/.log; read
+actual result before calling either corrected. U6next planning/source draft outside
+Assets: Logs/U6-next-implementation.md and Logs/OwnerScoreStrip.cs.draft. They are
+NOT imported. Current U5dirty, latest pusheda0d73099. All prior runIDsretired.
+No agents/reset/Figma/Desktop. Finish U5 then U6-U8 and full gameplay bookmark.
+
+## CURRENT U5 settings first check passed; visual fixes and touch shell next check
+
+63426passed1/1, guard2b4a2deefa59. All five original settings pages/unsaved modal
+inspected. Correct source frames/color/type; actual render exposed dropdown arrow
+rotation around its top-left pivot and slider handle nonmoving-axis stretch.
+Fixed centered arrow pivot and negative handle inset (39 added to58 had produced
+97px handle). Source checkbox restored to21x24 pixels, generous hit area retained.
+Settings-only scroll bottom padding20 prevents unnecessary short-page scrollbar;
+shared credits scroll padding unchanged. New touch-toolbar partial now applied
+from reviewed draft, preserving actual TouchHud layout/drag/save/cancel lifecycle.
+Approved controller diagram remains unchanged. Next focused TumpNativeSettingsTests
+(only these4 related cases): pages/framecap, approved controller+touch, binding
+transaction and pause nesting. Logs/owner-settings-u5-v2.xml/.log. No Assets edits
+while running. Current dirty U5, latest pusheda0d73099. Need actual corrected
+Audio/Controls/popup/touch render review, then U5 scoped report/save. Full U6HUD,
+U7profile and U8art/integration review then gameplay. No agents/reset/Figma/Desktop.
+
+## CURRENT U4 pushed a0d73099; new U5 settings first check
+
+All U4source/evidence/report saved and pushed. Applied new OwnerOptionMenu,
+OwnerSettingsRows and TumpSettingsView.OwnerPainted. Former settings visual methods
+retained inactive as Previous; existing TumpSettingsSession, BindingLabel, Changed,
+Back and controller/touch callbacks preserved. New top-category layout and native
+source fields/checkboxes, sliders, dropdown popup and unsaved-choice dialog.
+Fresh menu closes through ScreenTakeover and focuses selected option. Frame-rate
+choice retains VSync/operator-limit gating. No controller diagram/input algorithm
+changes. Upcoming focused ONLY NativeSettingsPagesAndFramePacingHaveTruthfulStates,
+Logs/owner-settings-u5-v1.xml/.log. Current edits UNVERIFIED until fresh XML/render.
+Do not edit Assets while Editor runs; useful next draft: touch-layout visual shell
+preserving TouchLayoutStore/TouchHud geometry and approved controller exception.
+Old settings tests now point to OwnerSettingsCanvas and OptionN popup rows.
+Next readresult, inspect every page and popup/savedecision. Then controller/touch/
+pause nesting and binding transaction checks. Full U6-U8 then gameplay remains.
+No agents, reset credits, Figma or Desktop. Continue independently.
+
 ## CURRENT U4 scoped qualification passed; save then U5 settings
 
 42170 passed2/2, guarddab1ea06ae87. 67082passed1/1, guard09a57861487e;

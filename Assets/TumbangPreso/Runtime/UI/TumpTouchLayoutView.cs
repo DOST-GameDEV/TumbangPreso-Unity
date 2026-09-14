@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>Edits the real native touch controls through existing layout-store APIs.</summary>
-    public sealed class TumpTouchLayoutView : MonoBehaviour
+    public sealed partial class TumpTouchLayoutView : MonoBehaviour
     {
         private Canvas _canvas;
         private TouchHud _hud;
@@ -30,13 +30,13 @@ namespace TumbangPreso.UI
             _forceBefore = TouchHud.ForceVisible; _createdHud = TouchHud.Instance == null;
             TouchHud.ForceVisible = true; _hud = TouchHud.Install();
             TouchButton.Customising = true;
-            if (_canvas == null) _canvas = TumpUiFactory.Canvas(owner, "TumpTouchLayoutCanvas", 820);
+            if (_canvas == null) _canvas = OwnerUiLayout.Canvas(owner, "OwnerTouchLayoutCanvas", 820);
             _canvas.gameObject.SetActive(true);
             foreach (Transform child in _canvas.transform) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
-            TumpUiFactory.Ground(_canvas.transform, TumpUiTheme.Current.Cream);
+            OwnerUiBackdrop.Build(_canvas.transform);
             _previousParent = _hud.Canvas.transform.parent; _sortBefore = _hud.Canvas.sortingOrder;
             _hud.Canvas.transform.SetParent(_canvas.transform, false); _hud.Canvas.sortingOrder = 830;
-            TumpUiFactory.Stretch((RectTransform)_hud.Canvas.transform);
+            OwnerUiLayout.Fill((RectTransform)_hud.Canvas.transform);
             Canvas.ForceUpdateCanvases();
             var focus = _hud.Canvas.GetComponent<ScreenFocus>(); _focusBefore = focus != null && focus.enabled;
             if (focus != null) focus.enabled = false;
@@ -46,7 +46,7 @@ namespace TumbangPreso.UI
             _drag = _hud.Stick.gameObject.AddComponent<TumpTouchStickDrag>();
             BuildToolbar(); _hud.ApplyLayout(); _open = true;
         }
-        private void BuildToolbar()
+        private void BuildPreviousToolbar()
         {
             var f = TumpUiTheme.Current;
             var toolbar = TumpUiFactory.Surface(_canvas.transform, "LayoutToolbar", TumpSurface.Form.WavePanel, f.DeepOlive, false);

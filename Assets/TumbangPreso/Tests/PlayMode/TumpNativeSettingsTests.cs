@@ -45,12 +45,12 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open();
             var view = Object.FindFirstObjectByType<TumpSettingsView>();
-            var canvas = GameObject.Find("TumpSettingsCanvas").GetComponent<Canvas>();
+            var canvas = GameObject.Find("OwnerSettingsCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             for (int i = 0; i < TumpSettingsView.Sections.Length; i++)
             {
                 view.ShowSection(i); yield return null;
-                yield return TumpUiCapture.Capture("NativeSettings-" + TumpSettingsView.Sections[i] + "-v1", canvas, 1920, 1080);
+                yield return TumpUiCapture.Capture("OwnerSettings-" + TumpSettingsView.Sections[i] + "-v1", canvas, 1920, 1080,false);
             }
             view.ShowSection(2); yield return null;
             canvas.GetComponentInChildren<ScrollRect>().verticalNormalizedPosition = 0;
@@ -60,19 +60,19 @@ namespace TumbangPreso.PlayTests
                 && FrameRateOptions.ReadOperatorLimit(System.Environment.GetCommandLineArgs()) == 0, cap.interactable);
             int before = SettingsStore.Current.FrameRateLimit;
             Press(Find("VSyncValue")); yield return null;
-            Press(Find("Choice0")); yield return null;
+            Press(Find("Option0")); yield return null;
             Assert.AreEqual(before, SettingsStore.Current.FrameRateLimit, "Changing sync must retain the capped preference.");
             if (FrameRateOptions.ReadOperatorLimit(System.Environment.GetCommandLineArgs()) == 0)
             {
                 Assert.IsTrue(cap.interactable);
-                Press(cap); yield return null; Press(Find("Choice2")); yield return null;
+                Press(cap); yield return null; Press(Find("Option2")); yield return null;
                 Assert.AreEqual(60, SettingsStore.Current.FrameRateLimit);
             }
             view.ShowSection(4); yield return null;
             var motion = GameObject.Find("ReducedUiMotionValue").GetComponent<Toggle>();
             motion.isOn = !motion.isOn;
             Press(Find("TumpSettingsBack")); yield return null;
-            yield return TumpUiCapture.Capture("NativeSettings-unsaved-v1", canvas, 1280, 720, false);
+            yield return TumpUiCapture.Capture("OwnerSettings-unsaved-v1", canvas, 1280, 720, false);
             Press(Find("DiscardAndBack")); yield return null;
             Assert.AreEqual(before, SettingsStore.Current.FrameRateLimit);
             Assert.IsFalse(canvas.gameObject.activeSelf);
@@ -81,7 +81,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths()
         {
             yield return Open();
-            Press(Find("InputDeviceValue")); yield return null; Press(Find("Choice1")); yield return null;
+            Press(Find("InputDeviceValue")); yield return null; Press(Find("Option1")); yield return null;
             Press(Find("ControllerMapAction")); yield return null;
             var controller = GameObject.Find("ControllerMapCanvas").GetComponent<Canvas>();
             Assert.IsNotNull(controller.transform.Find("Diagram").GetComponent<Image>().sprite);
@@ -90,22 +90,27 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(GameObject.Find("TumpControllerCanvas"), "The rejected list presentation must stay inactive.");
             yield return TumpUiCapture.Capture("ApprovedController-restored-v1", controller, 1920, 1080, false);
             Press(Find("Done")); yield return null; yield return null;
-            Press(Find("InputDeviceValue")); yield return null; Press(Find("Choice2")); yield return null;
+            Press(Find("InputDeviceValue")); yield return null; Press(Find("Option2")); yield return null;
             float scale = TouchLayoutStore.Scale;
             Press(Find("TouchLayoutAction")); yield return null;
             Assert.IsTrue(TouchButton.Customising);
-            var canvas = GameObject.Find("TumpTouchLayoutCanvas").GetComponent<Canvas>();
+            var canvas = GameObject.Find("OwnerTouchLayoutCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(TouchHud.Instance.Canvas.GetComponentsInChildren<WoodSkin>(true));
             Press(Find("ResetTouchLayout")); yield return null;
+            Press(Find("TouchAdjustments"));yield return null;
             GameObject.Find("TouchSize").GetComponent<Slider>().value = Mathf.Min(TouchLayoutStore.MaxScale, scale + .15f);
             yield return null;
             AssertTouchPositions(canvas);
-            yield return TumpUiCapture.Capture("NativeTouchLayout-v2", canvas, 1920, 1080);
+            yield return TumpUiCapture.Capture("OwnerTouchLayout-expanded-v2", canvas, 1920, 1080,false);
+            Assert.IsTrue(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
+            Press(Find("TouchAdjustments"));yield return null;
+            Assert.IsFalse(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
+            yield return TumpUiCapture.Capture("OwnerTouchLayout-compact-v2", canvas, 1920, 1080,false);
             AssertTouchPositions(canvas);
             Press(Find("CancelTouchLayout")); yield return null;
             Assert.IsFalse(TouchButton.Customising);
             Assert.That(TouchLayoutStore.Scale, Is.EqualTo(scale).Within(.001f));
-            Assert.IsTrue(GameObject.Find("TumpSettingsCanvas").activeSelf);
+            Assert.IsTrue(GameObject.Find("OwnerSettingsCanvas").activeSelf);
         }
         [UnityTest]
         public IEnumerator BindingOverridesBelongToTheSaveDiscardTransaction()
@@ -153,7 +158,11 @@ namespace TumbangPreso.PlayTests
             yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSecondsRealtime(.4f);
             var actions = Resources.Load<InputActionAsset>("TumbangPreso");
             string original = actions.SaveBindingOverridesAsJson();
-            var keyboard = InputSystem.AddDevice<Keyboard>();
+            var inputSettings=InputSystem.settings;var background=inputSettings.backgroundBehavior;var editorInput=inputSettings.editorInputBehaviorInPlayMode;
+            // Synthetic keyboard events must reach the unattended batch GameView, as in RecoveryDeviceProbe.
+            inputSettings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>();InputSystem.EnableDevice(keyboard);
             try
             {
                 Assert.IsTrue(Rebinding.ResolveBindingIndexFor(actions, "Pause", InputDeviceKind.KeyboardMouse, out var pauseAction, out int binding));
@@ -167,6 +176,12 @@ namespace TumbangPreso.PlayTests
                 pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();
                 var motion = GameObject.Find("ReducedUiMotionValue").GetComponent<Toggle>(); motion.isOn = !motion.isOn;
                 InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.Escape)); yield return null;
+                var module=EventSystem.current.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+                Debug.Log("[OwnerPauseCancel] frame="+Time.frameCount+" dirty="+settings.Session.Dirty+" nav="+MenuNav.CancelPressed+
+                    " keyboard="+keyboard.escapeKey.isPressed+" enabled="+module.cancel.action.enabled+
+                    " performed="+module.cancel.action.WasPerformedThisFrame()+" blocked="+ScreenTakeover.EscapeIsSpokenExcept(settings)+
+                    " bindings="+string.Join(",",module.cancel.action.bindings.Select(b=>b.effectivePath)));
+                Assert.IsTrue(keyboard.escapeKey.isPressed,"The batch driver must deliver its simulated Escape before testing the UI response.");
                 Assert.IsTrue(pause.gameObject.activeInHierarchy, "Escape must not close the parent live menu.");
                 Assert.IsTrue(Find("DiscardAndBack").gameObject.activeInHierarchy, "Settings owns the unsaved decision.");
                 Assert.IsTrue(pause.Local.Intent.Parked);
@@ -181,6 +196,7 @@ namespace TumbangPreso.PlayTests
             finally
             {
                 InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior=background;inputSettings.editorInputBehaviorInPlayMode=editorInput;
                 actions.RemoveAllBindingOverrides(); actions.LoadBindingOverridesFromJson(original); Rebinding.Invalidate();
             }
         }

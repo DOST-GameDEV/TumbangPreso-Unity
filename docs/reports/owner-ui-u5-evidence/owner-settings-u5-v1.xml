@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.1258601">
+  <test-suite type="TestSuite" id="1519" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.125860" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1513" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-09-09/ok-x20/work/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.115877" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9120" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1514" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.111458" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1515" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="396" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.107333" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1464" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.098432" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1465" name="NativeSettingsPagesAndFramePacingHaveTruthfulStates" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.NativeSettingsPagesAndFramePacingHaveTruthfulStates" methodname="NativeSettingsPagesAndFramePacingHaveTruthfulStates" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="162647386" result="Passed" start-time="2026-09-14 20:50:40Z" end-time="2026-09-14 20:50:42Z" duration="2.087900" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] OwnerSettings-Controls-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/Expand: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] OwnerSettings-Controls-v1/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpUiCapture] OwnerSettings-Controls-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-Audio-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-Audio-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSettings-Audio-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] OwnerSettings-Audio-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSettings-Audio-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerSettings-Audio-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpUiCapture] OwnerSettings-Audio-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-Graphics-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Expand: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Expand: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Expand: vertices=12, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Expand: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Expand: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] OwnerSettings-Graphics-v1/Check: vertices=8, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] OwnerSettings-Graphics-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-Player-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-Player-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSettings-Player-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerSettings-Player-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerSettings-Player-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerSettings-Player-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSettings-Player-v1/Check: vertices=8, cull=False, alpha=1, depth=33, material=1
+[TumpUiCapture] OwnerSettings-Player-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-Accessibility-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/Expand: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] OwnerSettings-Accessibility-v1/Check: vertices=8, cull=False, alpha=1, depth=36, material=1
+[TumpUiCapture] OwnerSettings-Accessibility-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-unsaved-v1/SectionIcon: vertices=144, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/SectionIcon: vertices=40, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/SectionIcon: vertices=120, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/SectionIcon: vertices=116, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/SectionIcon: vertices=192, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/SettingsSheet: vertices=18, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/Check: vertices=8, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/Expand: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/Check: vertices=8, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/DecisionPaper: vertices=18, cull=False, alpha=1, depth=47, material=1
+[TumpUiCapture] OwnerSettings-unsaved-v1 cream source=252,211,159 pixel=153,61,47; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

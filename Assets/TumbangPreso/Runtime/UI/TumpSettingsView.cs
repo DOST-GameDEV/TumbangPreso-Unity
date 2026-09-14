@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    public sealed class TumpSettingsView : MonoBehaviour
+    public sealed partial class TumpSettingsView : MonoBehaviour
     {
         private Canvas _canvas;
         private RectTransform _list;
@@ -49,12 +49,12 @@ namespace TumbangPreso.UI
             if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }
-            if (TumpChoice.OpenChoice != null) { TumpChoice.OpenChoice.Close(); return; }
+            if (OwnerOptionMenu.OpenOption != null) { OwnerOptionMenu.OpenOption.Close(); return; }
             if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
             Back();
         }
         private void OnDestroy() => ScreenTakeover.Unregister(this);
-        private void Build(Transform owner)
+        private void BuildPrevious(Transform owner)
         {
             var f = TumpUiTheme.Current;
             _canvas = TumpUiFactory.Canvas(owner, "TumpSettingsCanvas", 800);
@@ -93,7 +93,7 @@ namespace TumbangPreso.UI
             _save = TumpUiFactory.Button(root, "TumpSaveSettings", "Save changes", () => _session.Save(), TumpSurface.Form.Slap, f.Lime, 42);
             TumpUiFactory.Anchor((RectTransform)_save.transform, new Vector2(1, 0), new Vector2(-340, 80), new Vector2(536, 100));
         }
-        public void ShowSection(int index)
+        public void ShowSectionPrevious(int index)
         {
             _tab = Mathf.Clamp(index, 0, Sections.Length - 1);
             if (_canvas == null) return;
@@ -113,18 +113,18 @@ namespace TumbangPreso.UI
             var scroll = _list.GetComponentInParent<ScrollRect>(); scroll.verticalNormalizedPosition = 1;
             Changed(""); _canvas.GetComponent<ScreenFocus>().Rebuild();
         }
-        private void Note(string words)
+        private void NotePrevious(string words)
         {
             var text = TumpUiFactory.Text(_list, "Note", words, 26);
             text.alignment = TextAnchor.UpperLeft;
             TumpUiFactory.Height(text, 78);
         }
-        private RectTransform Row(string name, string label) => TumpFormWidgets.Row(_list, name, label);
-        private void Toggle(string name, string label, bool value, Action<bool> set, Action apply = null)
+        private RectTransform RowPrevious(string name, string label) => TumpFormWidgets.Row(_list, name, label);
+        private void TogglePrevious(string name, string label, bool value, Action<bool> set, Action apply = null)
             => TumpFormWidgets.Toggle(Row(name, label), name + "Value", value, v => { set(v); _session.Preview(apply); });
-        private void Choice(string name, string label, string[] values, int value, Action<int> set)
+        private void ChoicePrevious(string name, string label, string[] values, int value, Action<int> set)
             => TumpFormWidgets.Choice(Row(name, label), name + "Value", values, value, v => { set(v); _session.Preview(); });
-        private void Audio()
+        private void AudioPrevious()
         {
             Note("Listen as you adjust. Save your changes when they feel right.");
             var s = SettingsStore.Current;
@@ -132,10 +132,10 @@ namespace TumbangPreso.UI
             AudioSlider("SoundVolume", "Sound effects", s.SfxVolume, v => s.SfxVolume = v);
             AudioSlider("MusicVolume", "Music", s.MusicVolume, v => s.MusicVolume = v);
         }
-        private void AudioSlider(string name, string label, float value, Action<float> set)
+        private void AudioSliderPrevious(string name, string label, float value, Action<float> set)
             => TumpFormWidgets.Slider(Row(name, label), name + "Value", value, 0, 1,
                 v => { set(v); _session.Preview(); }, v => Mathf.RoundToInt(v * 100) + "%");
-        private void Graphics()
+        private void GraphicsPrevious()
         {
             Note("Changes preview immediately. You can save them or go back to your previous settings.");
             var s = SettingsStore.Current;
@@ -155,7 +155,7 @@ namespace TumbangPreso.UI
             UpdateFrameCapState();
             Toggle("Fullscreen", "Fullscreen", s.Fullscreen, v => s.Fullscreen = v, s.ApplyDisplay);
         }
-        private void UpdateFrameCapState()
+        private void UpdateFrameCapStatePrevious()
         {
             if (_frameCap == null || _frameReason == null) return;
             bool sync = VSyncModes.Of(SettingsStore.Current.VSyncMode).Count > 0;
@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
             _frameReason.text = launch > 0 ? "Launch settings control the frame rate: " + launch + " FPS."
                 : sync ? "Turn vertical sync off to use your saved frame rate limit." : "Your limit applies while vertical sync is off.";
         }
-        private void Player()
+        private void PlayerPrevious()
         {
             var s = SettingsStore.Current;
             var name = TumpUiFactory.Field(Row("PlayerName", "Player name"), "PlayerNameField", "Your player name", s.PlayerName);
@@ -173,7 +173,7 @@ namespace TumbangPreso.UI
             Toggle("Telemetry", "Share play statistics", s.TelemetryEnabled, v => s.TelemetryEnabled = v);
             Note("Counts only: matches, modes, maps, picks and frame rate. No names, chat or anything you type.");
         }
-        private void Accessibility()
+        private void AccessibilityPrevious()
         {
             var s = SettingsStore.Current;
             Toggle("ReducedUiMotion", "Reduce interface motion", s.ReducedUiMotion, v => s.ReducedUiMotion = v);
@@ -181,7 +181,7 @@ namespace TumbangPreso.UI
             Toggle("Rumble", "Controller vibration", s.Rumble, v => s.Rumble = v, () => Rumble.Enabled = s.Rumble);
             Note("Interface motion can be reduced while gameplay movement stays visible.");
         }
-        private void Controls()
+        private void ControlsPrevious()
         {
             Choice("InputDevice", "Input device", new[] { "Keyboard & mouse", "Controller", "Touch" }, (int)_device, v =>
             { _device = (InputDeviceKind)v; ShowSection(0); });
@@ -220,7 +220,7 @@ namespace TumbangPreso.UI
             }
             return label;
         }
-        private Button ActionRow(string name, string title, string label, Action action)
+        private Button ActionRowPrevious(string name, string title, string label, Action action)
         {
             bool binding = name.StartsWith("Binding_", StringComparison.Ordinal);
             var button = TumpUiFactory.Button(Row(name, title), name + "Action", label, action,
@@ -244,7 +244,7 @@ namespace TumbangPreso.UI
             if (_session.Dirty) { Decision(); return; }
             _canvas.gameObject.SetActive(false); _back?.Invoke();
         }
-        private void Decision()
+        private void DecisionPrevious()
         {
             if (_decision != null) { _decision.SetActive(true); return; }
             var f = TumpUiTheme.Current;
