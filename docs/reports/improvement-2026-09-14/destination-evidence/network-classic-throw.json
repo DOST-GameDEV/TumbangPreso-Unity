@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "warmup_foreign_pickup": true,
+    "warmup_disarmed_before_whistle": true,
+    "host": {
+      "straight": {
+        "samples": 9,
+        "visible_matching_samples": 9
+      },
+      "negative": {
+        "samples": 93,
+        "visible_matching_samples": 93
+      },
+      "positive": {
+        "samples": 130,
+        "visible_matching_samples": 130
+      },
+      "release_samples": 88,
+      "unexpected_post_release_holding": 0
+    },
+    "owner": {
+      "straight": {
+        "samples": 9,
+        "visible_matching_samples": 9
+      },
+      "negative": {
+        "samples": 92,
+        "visible_matching_samples": 92
+      },
+      "positive": {
+        "samples": 128,
+        "visible_matching_samples": 128
+      },
+      "release_samples": 91,
+      "unexpected_post_release_holding": 0
+    },
+    "observer": {
+      "straight": {
+        "samples": 9,
+        "visible_matching_samples": 9
+      },
+      "negative": {
+        "samples": 93,
+        "visible_matching_samples": 93
+      },
+      "positive": {
+        "samples": 132,
+        "visible_matching_samples": 132
+      },
+      "release_samples": 90,
+      "unexpected_post_release_holding": 0
+    }
+  },
+  "mode": "classic",
+  "delay_one_way_ms": 0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "c49a540168f800fcde948114e9d9f3b1fc208379be0d815091d1fbfbded82b17"
+}

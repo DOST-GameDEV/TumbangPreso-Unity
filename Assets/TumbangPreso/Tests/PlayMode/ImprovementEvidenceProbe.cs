@@ -44,6 +44,54 @@ namespace TumbangPreso.PlayTests
         }
         private static string Output => Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/improvement-baseline-v1";
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator DirectionalLocomotionWithAndWithoutTheSlipper()
+        {
+            var priorNet=NetAuthority.Provider;
+            try
+            {
+                yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.Classic);
+                NetAuthority.Provider=new SoloProvider();
+                var who=GameServices.Round.PlayerAt(1);var carrier=who.GetComponent<Carrier>();var shoe=carrier.Held;
+                var art=RosterBook.Load().FindPersonArt("bayan");
+                who.CharacterIndex=Roster.IndexIn(Roster.ClassicPeople,"bayan");
+                who.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                var rig=Object.FindFirstObjectByType<CameraSystem.CameraRig>();rig.Follow(who);
+                rig.SetAimSource(CameraSystem.AimSource.Movement);
+                var witness=MakeWitness();
+                try
+                {
+                    foreach(bool holding in new[]{true,false})
+                    {
+                        who.Teleport(new Vector3(0,.12f,-12));who.transform.rotation=Quaternion.identity;
+                        who.Intent.Clear();who.Intent.Parked=false;
+                        if(holding)shoe.HostForceEquip(who);
+                        else
+                        {
+                            Assert.True(shoe.HostDisarm());var parked=new Vector3(-6,0,-12);
+                            parked.y=Slipper.GroundY(parked)+shoe.RestHeight;shoe.transform.position=parked;
+                        }
+                        yield return Record(witness,holding?"directional-carry":"directional-empty",12f,who,t=>
+                        {
+                            Vector2 move=Vector2.zero;
+                            if(t>=.5f&&t<2.3f)move=Vector2.up;
+                            if(t>=2.8f&&t<4.6f)move=Vector2.down;
+                            if(t>=5.1f&&t<6.9f)move=Vector2.right;
+                            if(t>=7.4f&&t<9.2f)move=Vector2.up;
+                            if(t>=9.7f&&t<11.5f)move=Vector2.up;
+                            who.Intent.Move=move;who.Intent.Set(Verb.Sprint,t>=7.4f&&t<9.2f);
+                            who.Intent.AimPoint=who.transform.position+(t>=9.7f?Vector3.right:Vector3.forward)*20;
+                            who.Intent.FaceAimPoint=true;
+                        },new Vector3(3,1.45f,-3));
+                        Assert.AreEqual(holding,carrier.Held!=null,"Locomotion changed slipper possession.");
+                        who.Intent.Clear();who.Intent.Parked=true;
+                    }
+                }
+                finally{Object.Destroy(witness.gameObject);}
+            }
+            finally{NetAuthority.Provider=priorNet;}
+        }
+
         [UnityTest, Timeout(180000)]
         public IEnumerator RoundClockAndSceneLookupMeasuredInActualPlay()
         {

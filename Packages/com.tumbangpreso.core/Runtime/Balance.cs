@@ -664,6 +664,12 @@
         public const float TraitPowerPerPoint = 0.07f;
         public const float TraitGritPerPoint = 0.07f;
 
+        // Equipment cadence/recoil need a visible difference without retuning people's
+        // speed, grit or power. Recovery ranges from 0.92 to 1.95 seconds after pickup;
+        // can recoil retains 14..36% of incoming speed and never adds flight energy.
+        public const float SlipperRecoveryPerPoint = 0.18f;
+        public const float CanReboundPerPoint = 0.22f;
+
         // -------------------------------------------------------------------
         // MISC
         // -------------------------------------------------------------------

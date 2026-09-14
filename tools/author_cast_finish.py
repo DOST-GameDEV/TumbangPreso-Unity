@@ -201,6 +201,9 @@ class Geometry:
 
 def author(character,path):
     g,original=read_glb(path)
+    if g.get("extras",{}).get("preserveOwnerBackupGeometry"):
+        return {"id":character,"state":"owner-restored backup geometry preserved",
+                "animation_sha256":animation_digest(g,original)}
     if g.get("extras",{}).get("castFinish")==VERSION:
         return {"id":character,"file":str(path.relative_to(ROOT)),"state":"already authored",
                 "animation_sha256":animation_digest(g,original)}

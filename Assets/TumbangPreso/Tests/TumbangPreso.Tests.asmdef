@@ -2,6 +2,7 @@
     "name": "TumbangPreso.Tests",
     "rootNamespace": "TumbangPreso.Tests",
     "references": [
+        "TumbangPreso.TestSupport",
         "TumbangPreso.Core",
         "TumbangPreso.Runtime",
         "TumbangPreso.Editor",

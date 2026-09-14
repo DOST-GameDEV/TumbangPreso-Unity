@@ -18,14 +18,13 @@ namespace TumbangPreso.PlayTests
         {
             yield return PlayModeWorld.Reset();
             var target=new GameObject("Idle review origin");
-            var source=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu").PetModel;
+            var entry=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu");
+            var source=entry.PetModel;
             Assert.IsNotNull(source);
             var pet=Object.Instantiate(source);
             var companion=pet.AddComponent<GhostPetCompanion>();companion.Bind(target.transform,Vector3.zero,CharacterVisual.PersonScale);
             companion.enabled=false; // The deterministic authoring sampler owns this review.
-            ToonSkin.Apply(pet,ToonSkin.PersonOutlineWidth*.4f,null);
-            foreach(var face in pet.GetComponentsInChildren<Renderer>())
-                if(face.name.Contains("eye")||face.name.Contains("mouth"))ToonSkin.Apply(face,0,null);
+            GhostPetCompanion.ApplyAppearance(pet,entry.Palette);
             foreach(var node in pet.GetComponentsInChildren<Transform>())node.gameObject.layer=30;
             var sunObject=new GameObject("Idle review key");var sun=sunObject.AddComponent<Light>();
             sun.type=LightType.Directional;sun.intensity=.9f;sun.color=new Color(1,.96f,.90f);sun.cullingMask=1<<30;
@@ -59,6 +58,14 @@ namespace TumbangPreso.PlayTests
                 camera.transform.LookAt(bounds.center);
                 yield return ImprovementEvidenceProbe.Record(camera,"kuro-rage-portrait",.4f,null,
                     seconds=>companion.StepTo(.8f));
+                companion.StopDevouring();companion.enabled=true;
+                yield return new WaitForSeconds(1.1f);
+                Assert.IsFalse(companion.IsReturning);
+                camera.fieldOfView=50;camera.transform.position=front*7+Vector3.up*2.7f;
+                camera.transform.LookAt(Vector3.up*2.4f);
+                companion.Devour(4);
+                yield return ImprovementEvidenceProbe.Record(camera,"restored-mini-to-monster-return",7.0f,null,null);
+                Assert.IsFalse(companion.IsDevouring);Assert.IsFalse(companion.IsRageFormVisible);
             }
             finally
             {

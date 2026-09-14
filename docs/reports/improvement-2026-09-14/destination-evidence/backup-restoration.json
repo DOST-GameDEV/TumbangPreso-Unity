@@ -1,0 +1,19 @@
+{
+  "backup_ref": "82524c7537fc5fcff00ebb845ee4c360acd468cb",
+  "results": [
+    {
+      "id": "inday",
+      "source_sha256": "8cfcff43460da8b421f2a7fdfb43ec177321cad2746db9497cbf128d5806e2a8",
+      "preserved_animation_sha256": "46c7921d3937b14cf6ebf9c8c714de9660e11d75ae729046bf5c799aa4b71050",
+      "animations": 33
+    },
+    {
+      "id": "ghost",
+      "source_sha256": "136e35ebbc3f0d43eebda8e6c0a56836b9c40fbe29f8e7470a96bd90480840b5",
+      "preserved_rage_sha256": "ef5a0d18520256b81d287bd191c6bda64f945e9c86c51b71b00fbd957fc44373",
+      "preserved_animation_sha256": "7f28cc851f4ec49ebab9bd6a7000c326aed14c18dc415e6b4ad3d80bd04f8854",
+      "original_vertices": 408,
+      "restored_parts": 17
+    }
+  ]
+}

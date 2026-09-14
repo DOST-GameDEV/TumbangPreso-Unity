@@ -2745,22 +2745,22 @@ namespace TumbangPreso.UI
                 case "aling_nena": return "She owns the corner store, so she owns the rules. Nobody has ever argued a call twice.";
 
                 case "pasip": return "Definitely a different soft drink. Tall, thin and empty, it goes over if you look at it hard, and it is back up before you have turned around.";
-                case "boyben": return "Leftover fence paint, half set solid. Nothing on the mark stands its ground like it does, but righting it is a proper job.";
+                case "boyben": return "Leftover fence paint, half set solid. A narrow tipping window and a firm rebound, paid for with the slowest reset.";
                 case "decades": return "Flakes in oil from Aling Nena's. Squat and low, so tipping it is the hard part, and setting it back up is barely a motion.";
-                case "metal": return "No label left, just ribs and rust. Heavy for its size, it sends the slipper across the street, and it is slow to stand back up.";
-                case "piyesta": return "Fruit cocktail, saved for a family feast and opened early anyway. The widest can on the mark and still full of syrup, so it plants itself and swallows the hit whole.";
+                case "metal": return "No label left, just ribs and rust. The strongest kickback makes the return bounce harder to read, but standing it up takes time.";
+                case "piyesta": return "Fruit cocktail, opened before the family feast. As stubborn to tip as BOYBEN and quicker to reset, but it sends the slipper back less sharply.";
                 case "karne": return "Corned beef, the tin that tapers. Top-heavy over a narrow lid so it tips at the first excuse, but it is packed solid and it kicks the slipper back at you.";
 
                 case "tsinelas": return "The street-game original. Thick layered sole, printed Y-strap, worn down at the heel. Balanced in flight, impact and recovery.";
-                case "crocs": return "Holes in the top, strap swung round the back. Heavy and it does not fly straight, but whoever body-blocks it knows all about it.";
-                case "pantulog": return "Grandma's house slipper, fur worn flat and a bow hanging on by a thread. No weight behind it at all, but it is ready again before the defender has turned around.";
-                case "sike": return "Definitely not the real brand. Light, loud, and the quickest thing off a hand on this street.";
+                case "crocs": return "Holes in the top, strap round the back. Heavy body-block impact with slower flight and handling. Quicker to ready than HEELS.";
+                case "pantulog": return "Grandma's house slipper, fur worn flat. Quick to ready and settle with ordinary flight, but the softest body-block impact.";
+                case "sike": return "Definitely not the real brand. Fast flight and ordinary handling, with a lighter body-block impact than the street original.";
                 case "spartan": return "Black rubber and a red Y-strap, straight from the corner shop. Hits harder than the basic pair, but takes longer to settle back into your hand.";
-                case "alpombra": return "Somebody's good pair, block heel and a stoned buckle, borrowed off the rack by the door. It drops early and lands quiet, and it is back in your hand before the defender turns.";
-                case "pambahay": return "The scuffed white slide that lives by the shower, somebody's toes moulded into the footbed. Light rubber that lands flat and soft, and you have it back before the puddle has dried.";
-                case "heels": return "Completely impractical and brutally effective. Short-ranged, slow to recover, and the last thing anyone wants to body-block.";
+                case "alpombra": return "The good pair borrowed from the doorway. As quick to ready and settle as PANTULOG, with more impact in exchange for slower flight.";
+                case "pambahay": return "The scuffed slide beside the shower. Quicker handling than the street original, with the same flight and a softer body-block impact.";
+                case "heels": return "Completely impractical and brutally effective. CROCS-level impact at ordinary flight speed, paid for with the slowest readying and aim settling.";
                 case "sandals": return "Strapped down and built for walking. Fast and steady through the air, but not made for rapid-fire throws.";
-                case "loafers": return "Somebody's school shoe, buckle and all, still warm. Stiff leather with no give in it, so it does not sail, but it lands like a brick with homework in it.";
+                case "loafers": return "The school shoe, buckle and all. SPARTAN's firm impact with ordinary handling, paid for with slower flight. A brick with homework in it.";
 
                 default: return "";
             }

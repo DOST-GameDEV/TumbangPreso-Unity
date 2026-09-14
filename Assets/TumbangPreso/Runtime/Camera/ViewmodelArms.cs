@@ -1347,6 +1347,10 @@ namespace TumbangPreso.CameraSystem
                     charId = classicPeople[character.CharacterIndex].Id;
             }
 
+            var actual=character.GetComponent<Visual.CharacterVisual>();
+            if(actual!=null&&actual.SourceModel!=null)
+                foreach(var candidate in RosterBook.Load().People)
+                    if(candidate.Model==actual.SourceModel){charId=candidate.Id;break;}
             SetCharacter(charId);
         }
 
@@ -1372,7 +1376,11 @@ namespace TumbangPreso.CameraSystem
         {
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
-            if (UseRosterArms(characterId)) return;
+            if(characterId=="inday" && UseIndaySourceArms())return;
+            // Use the retained solid block-hand frame with character-specific
+            // sleeves and skin. Extracting every body gauntlet/prop into this
+            // close view created the rejected fragmented hands. All action
+            // pivots, reach and timing remain on the established hand rig.
             var fallback = Resources.Load<Mesh>("Models/viewmodel_arm");
             _rightArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
             _leftArmRenderer.GetComponent<MeshFilter>().sharedMesh = fallback;
@@ -1409,7 +1417,7 @@ namespace TumbangPreso.CameraSystem
             // shared arm at full section, tinted skin, with sleeve boxes stacked over its upper
             // half. That is where "arms a bit thicker" comes from, because the shared mesh is
             // the width the voxel cast's arms actually are.
-            bool hasCustomArmMesh = characterId == "sean";
+            bool hasCustomArmMesh = false;
 
             if (_rightArmRenderer != null)
             {
@@ -1434,6 +1442,21 @@ namespace TumbangPreso.CameraSystem
             if (_leftArm != null) BuildArmAccessories(_leftArm, characterId, isRight: false, parent: this);
         }
 
+        private bool UseIndaySourceArms()
+        {
+            var right=Resources.Load<Mesh>("Models/FppDetails/inday_right_arm");
+            var left=Resources.Load<Mesh>("Models/FppDetails/inday_left_arm");
+            var entry=RosterBook.Load().FindPersonArt("inday");
+            if(right==null||left==null||entry?.Model==null)return false;
+            Material source=null;
+            foreach(var surface in entry.Model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                if(surface.name=="body-mesh"){source=surface.sharedMaterial;break;}
+            var palette=_characterMotor?.GetComponent<Visual.CharacterVisual>()?.AppliedPalette??entry.Palette;
+            ApplyRosterArm(_rightArm,_rightArmRenderer,right,source,palette,true);
+            ApplyRosterArm(_leftArm,_leftArmRenderer,left,source,palette,true);
+            return true;
+        }
+
         private bool UseRosterArms(string characterId)
         {
             var actual = _characterMotor != null ? _characterMotor.GetComponent<Visual.CharacterVisual>() : null;
@@ -1455,11 +1478,14 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
-        private static void ApplyRosterArm(Transform arm, MeshRenderer renderer, Mesh mesh, Material source, Color[] palette)
+        private static void ApplyRosterArm(Transform arm, MeshRenderer renderer, Mesh mesh, Material source, Color[] palette,bool preserveProportions=false)
         {
             float section = Mathf.Max(mesh.bounds.size.x,mesh.bounds.size.z);
-            float width = Mathf.Min(1f,.50f / Mathf.Max(.001f,section));
-            arm.localScale = new Vector3(width,1f,width);
+            // The retained clean hand is 0.316m wide. Whole-body sleeve volume
+            // at 0.50m overwhelmed the close view and turned trim into slabs.
+            // Preserve the longitudinal hand/grip frame used by every action.
+            float width = Mathf.Min(1f,.34f / Mathf.Max(.001f,section));
+            arm.localScale = preserveProportions?Vector3.one:new Vector3(width,1f,width);
             renderer.enabled = true;
             renderer.GetComponent<MeshFilter>().sharedMesh = mesh;
             renderer.sharedMaterial = source;
@@ -1560,7 +1586,7 @@ namespace TumbangPreso.CameraSystem
                     BuildTotoyAccessories(arm, isRight);
                     break;
                 case "inday":
-                    BuildIndayAccessories(arm, isRight);
+                    BuildIndayAccessories(arm, isRight, parent);
                     break;
                 case "kuya_boy":
                     BuildKuyaBoyAccessories(arm, isRight);
@@ -1606,13 +1632,7 @@ namespace TumbangPreso.CameraSystem
             // team-sean.glb is sleeveless and uses a continuous broad deltoid, bicep,
             // narrow elbow and thick forearm. Build that silhouette as one mesh instead
             // of stacking rectangular skin blocks.
-            var muscleGo = new GameObject(AccessoryPrefix + "MuscularArm");
-            muscleGo.transform.SetParent(arm, false);
-            var muscleFilter = muscleGo.AddComponent<MeshFilter>();
-            muscleFilter.sharedMesh = CreateSeanMuscularArmMesh();
-            var muscleRenderer = muscleGo.AddComponent<MeshRenderer>();
-            Visual.MaterialKit.Dress(muscleRenderer, SkinSean);
-            Visual.ToonSkin.Apply(muscleRenderer, Visual.ToonSkin.PersonOutlineWidth);
+            // Sean keeps the same simple hand anatomy, with his own bracers.
 
             // The source model wraps the same red and gold combat bracer around both
             // forearms, followed by an uncovered fist.
@@ -1726,8 +1746,9 @@ namespace TumbangPreso.CameraSystem
                 new Vector3(0.0f, 0.405f, 0.0f), Quaternion.identity, jacketDark);
             AddBoxAccessory(arm, "ElectricSleeveStripe", new Vector3(0.24f, 0.025f, 0.025f),
                 new Vector3(0.0f, 0.29f, 0.16f), Quaternion.identity, jacketDark);
-            AddBoxAccessory(arm, "ElectricWristband", new Vector3(0.31f, 0.085f, 0.30f),
-                new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crest);
+            if (!isRight)
+                AddBoxAccessory(arm, "ElectricWristband", new Vector3(0.31f, 0.085f, 0.30f),
+                    new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crest);
         }
 
         private static void BuildDanteAccessories(Transform arm, bool isRight)
@@ -2043,11 +2064,9 @@ namespace TumbangPreso.CameraSystem
 
             // 5. The lavender bar down each side face of the upper sleeve. It stands 0.018 proud,
             //    which is enough to never z-fight and little enough to read as paint on cloth.
-            AddBoxAccessory(arm, "LavenderStripeA", new Vector3(0.036f, 0.355f, 0.175f),
-                new Vector3(0.172f, 0.1975f, 0.0f), Quaternion.identity, lavenderTrim);
+            AddBoxAccessory(arm, "LavenderCuffTrim", new Vector3(0.398f, 0.032f, 0.386f),
+                new Vector3(0.0f, 0.549f, 0.0f), Quaternion.identity, lavenderTrim);
 
-            AddBoxAccessory(arm, "LavenderStripeB", new Vector3(0.036f, 0.355f, 0.175f),
-                new Vector3(-0.172f, 0.1975f, 0.0f), Quaternion.identity, lavenderTrim);
 
             // 6. ⚠️ NO FOREARM BOX. `Models/viewmodel_arm` is the forearm now and it is switched
             //    back on for her in `ApplyCharacterStyle`. A hand-rolled box was tried first and
@@ -2077,15 +2096,13 @@ namespace TumbangPreso.CameraSystem
             // limb read as floating: the eye had a big box, a gap, and something too small to be
             // attached to it. 0.170 by 0.160 is the section of the forearm it sits on, which is
             // what `tools/build_person_voxel.py` emits: one `hand-right` box, no taper.
-            AddBoxAccessory(handGo.transform, "Hand", new Vector3(0.170f, 0.130f, 0.160f),
-                new Vector3(0.0f, 0.760f, 0.0f), Quaternion.identity, skinTone);
+            // The retained base already contains the connected forearm and hand.
         }
 
         private static void BuildPhaisterAccessories(Transform arm, bool isRight)
         {
             var blackSleeve = new Color(0.094f, 0.086f, 0.133f, 1.0f); // COAT_DARK #181622
             var purpleBand  = new Color(0.290f, 0.118f, 0.471f, 1.0f); // CLOTH_PURPLE #4a1e78
-            var crimsonBand = new Color(0.549f, 0.078f, 0.141f, 1.0f); // CRIMSON #8c1424
             var goldStripe  = new Color(0.973f, 0.722f, 0.141f, 1.0f); // GOLD #f8b824
             var whiteCuff   = Color.white;                              // WHITE #ffffff
             var skinTone    = SkinPhaister;                             // SKIN #f4c098
@@ -2107,8 +2124,8 @@ namespace TumbangPreso.CameraSystem
                 new Vector3(crossSign * 0.156f, 0.350f, 0.0f), Quaternion.identity, goldStripe);
 
             // 3. Crimson Red Sleeve Stripe (Y ~ 0.48 to 0.53)
-            AddBoxAccessory(arm, "CrimsonSleeveStripe", new Vector3(0.310f, 0.050f, 0.310f),
-                new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, crimsonBand);
+            AddBoxAccessory(arm, "GoldSleeveStripe", new Vector3(0.310f, 0.050f, 0.310f),
+                new Vector3(0.0f, 0.505f, 0.0f), Quaternion.identity, goldStripe);
 
             // 4. Crisp White Flared Cuff Rim (Y ~ 0.53 to 0.62, right at wrist)
             AddBoxAccessory(arm, "WhiteCuffRim", new Vector3(0.330f, 0.085f, 0.330f),
@@ -2167,22 +2184,24 @@ namespace TumbangPreso.CameraSystem
                 new Vector3(0.0f, 0.175f, 0.0f), Quaternion.identity, darkGreenShirt);
         }
 
-        private static void BuildIndayAccessories(Transform arm, bool isRight)
+        private static void BuildIndayAccessories(Transform arm, bool isRight, ViewmodelArms parent)
         {
             var yellow = new Color(0.878f, 0.706f, 0.235f, 1.0f);
-            var coral = new Color(0.761f, 0.329f, 0.247f, 1.0f);
-            var plum = new Color(0.478f, 0.247f, 0.369f, 1.0f);
 
             // character-female-a.glb uses a yellow short sleeve and the same chunky
             // coral gauntlet with a plum centre strap on both arms.
-            AddBoxAccessory(arm, "YellowShortSleeve", new Vector3(0.30f, 0.30f, 0.30f),
-                new Vector3(0.0f, 0.15f, 0.0f), Quaternion.identity, yellow);
-            AddBoxAccessory(arm, "CoralSleeveCap", new Vector3(0.32f, 0.055f, 0.32f),
-                new Vector3(0.0f, 0.325f, 0.0f), Quaternion.identity, coral);
-            AddBoxAccessory(arm, "CoralForearmGuard", new Vector3(0.34f, 0.20f, 0.34f),
-                new Vector3(0.0f, 0.485f, 0.0f), Quaternion.identity, coral);
-            AddBoxAccessory(arm, "PlumGuardStrap", new Vector3(0.35f, 0.065f, 0.35f),
-                new Vector3(0.0f, 0.485f, 0.0f), Quaternion.identity, plum);
+            AddBoxAccessory(arm, "YellowShortSleeve", new Vector3(0.30f, 0.51f, 0.30f),
+                new Vector3(0.0f, 0.255f, 0.0f), Quaternion.identity, yellow);
+            var mesh=Resources.Load<Mesh>("Models/FppDetails/inday_"+(isRight?"right":"left")+"_guard");
+            if(mesh==null)return;
+            var detail=new GameObject(AccessoryPrefix+"RestoredCoralGuard");detail.transform.SetParent(arm,false);
+            // Accessories own their meshes: character changes dispose this copy.
+            detail.AddComponent<MeshFilter>().sharedMesh=Object.Instantiate(mesh);
+            var renderer=detail.AddComponent<MeshRenderer>();var entry=RosterBook.Load().FindPersonArt("inday");
+            foreach(var surface in entry.Model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                if(surface.name=="body-mesh"){renderer.sharedMaterial=surface.sharedMaterial;break;}
+            var palette=parent?._characterMotor?.GetComponent<Visual.CharacterVisual>()?.AppliedPalette ?? entry.Palette;
+            Visual.ToonSkin.Apply(renderer,Visual.ToonSkin.PersonOutlineWidth*.18f,palette);
         }
 
         private static void BuildKuyaBoyAccessories(Transform arm, bool isRight)
@@ -2318,9 +2337,7 @@ namespace TumbangPreso.CameraSystem
             // stripes; there is nothing left to shade, and the toon ramp gives the box its own
             // banding for free. Keeping the signature means the four call sites did not each need
             // editing again, and a hero that later wants a cuff colour has it to hand.
-            AddBoxAccessory(arm, (isRight ? "Right" : "Left") + "Hand",
-                new Vector3(handWidth, handWidth * 0.825f, handWidth * 0.388f),
-                new Vector3(0.0f, 0.735f, 0.040f), Quaternion.identity, skinTone);
+            // Deliberately no added anatomy: the base supplies the one block hand.
         }
 
         private static GameObject AddBoxAccessory(Transform parent, string name, Vector3 size,

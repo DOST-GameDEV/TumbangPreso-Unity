@@ -424,6 +424,11 @@ namespace TumbangPreso.Visual
                 foreach (var clip in baked.Clips)
                     if (clip != null) _clips[clip.name] = clip;
             }
+            // Character-specific carrying corrections retain the original rig and
+            // source clips; the measured pose also becomes the throw's real basis.
+            var carry=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>("CarryMotion/"+rig);
+            if(carry!=null&&carry.Clips!=null)
+                foreach(var clip in carry.Clips)if(clip!=null)_clips[clip.name]=clip;
             var swimming=string.IsNullOrEmpty(rig)?null:Resources.Load<GeneratedAnimationSet>(SwimmingMotion.Folder+"/"+rig);
             if(swimming!=null&&swimming.Clips!=null)
                 foreach(var clip in swimming.Clips)if(clip!=null)_clips[clip.name]=clip;

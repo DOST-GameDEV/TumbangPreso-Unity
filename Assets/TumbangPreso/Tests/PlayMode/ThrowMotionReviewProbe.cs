@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
+using TumbangPreso.Tests;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object=UnityEngine.Object;
@@ -20,12 +21,14 @@ namespace TumbangPreso.PlayTests
         private CustomRules _rules;
         private INetProvider _net;
         private string _evidence;
+        private int _slipperPick;
         [UnitySetUp] public IEnumerator Before()
         {
             _bots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_seat=GameLaunch.SoloSeat;
             _pinned=SceneFlow.RulesPinned;_rules=SceneFlow.SelectedRules.Clone();_net=NetAuthority.Provider;
             _evidence=Environment.GetEnvironmentVariable("TUMP_EVIDENCE");
             Environment.SetEnvironmentVariable("TUMP_EVIDENCE",Output);
+            _slipperPick=Settings.SettingsStore.Current.SlipperPick;
             yield return PlayModeWorld.Reset();
         }
 
@@ -34,6 +37,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return PlayModeWorld.Reset();NetAuthority.Provider=_net;
             Environment.SetEnvironmentVariable("TUMP_EVIDENCE",_evidence);
+            Settings.SettingsStore.Current.SlipperPick=_slipperPick;
             GameLaunch.AllBots=_bots;GameLaunch.Spectator=_spectator;GameLaunch.SoloSeat=_seat;
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
@@ -42,19 +46,26 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ActualQuickHeldAndMovingThrowsHaveNormalSpeedOwnerAndBodyEvidence()
         {
             var clipping=new System.Collections.Generic.List<string>();
+            string equipment=Environment.GetEnvironmentVariable("TUMP_THROW_REVIEW_SLIPPER");
+            int equipmentIndex=string.IsNullOrEmpty(equipment)?-1:Roster.IndexIn(Roster.Slippers,equipment);
+            Assert.True(string.IsNullOrEmpty(equipment)||equipmentIndex>=0,"Unknown equipment review ID.");
+            var mode=Environment.GetEnvironmentVariable("TUMP_THROW_REVIEW_MODE")=="hero"?GameMode.HeroStrike:GameMode.Classic;
             foreach(var shot in new[]{(Name:"quick",Hold:.20f,Spin:0f,Move:0f),
                 (Name:"held-left",Hold:2.8f,Spin:-.75f,Move:0f),
                 (Name:"moving-right",Hold:2.8f,Spin:.75f,Move:.6f)})
             {
-                yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+                if(equipmentIndex>=0)Settings.SettingsStore.Current.SlipperPick=equipmentIndex;
+                yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,mode);
                 NetAuthority.Provider=new SoloProvider();GameServices.Round.Lata.HostRestore();GameServices.Round.BeginRound();
                 var who=GameServices.Round.PlayerAt(1);who.Teleport(new Vector3(0,.12f,-10));who.transform.rotation=Quaternion.identity;
-                who.CharacterIndex=Roster.GetPeople(GameMode.Classic).Select((p,i)=>(p,i)).First(row=>row.p.Id=="bayan").i;
-                var person=Resources.Load<RosterBook>("RosterBook").PersonArt(who.CharacterIndex,GameMode.Classic);
+                string personId=Environment.GetEnvironmentVariable("TUMP_THROW_REVIEW_PERSON") ?? (mode==GameMode.Classic?"bayan":"dante");
+                who.CharacterIndex=Roster.GetPeople(mode).Select((p,i)=>(p,i)).First(row=>row.p.Id==personId).i;
+                var person=Resources.Load<RosterBook>("RosterBook").PersonArt(who.CharacterIndex,mode);
                 who.GetComponent<CharacterVisual>().ApplyModel(person.Model,person.Tint,person.Clips,person.Palette,person.PetModel);
                 var rig=Object.FindFirstObjectByType<CameraSystem.CameraRig>();rig.Follow(who);rig.SetAimSource(CameraSystem.AimSource.Movement);
                 var carrier=who.GetComponent<Carrier>();var shoe=carrier.Held;Assert.IsNotNull(shoe);
-                var head=HeadVolume(who.GetComponent<CharacterVisual>().ModelRoot);
+                if(equipmentIndex>=0)Assert.AreEqual(equipmentIndex,shoe.SkinIndex,"Review must use the actual selected equipment model.");
+                var head=new HeadSurfaceVolume(who.GetComponent<CharacterVisual>().Model.transform);
                 var shoeMesh=shoe.GetComponentInChildren<MeshFilter>();Assert.IsNotNull(shoeMesh);
                 var shoeVertices=shoeMesh.sharedMesh.vertices;
                 int worstInside=0,clearanceSamples=0;
@@ -62,10 +73,10 @@ namespace TumbangPreso.PlayTests
                 clearance.Read=()=>
                 {
                     if(carrier==null || !carrier.IsCharging || carrier.Held==null)return;
-                    if(head.Bone==null)head=HeadVolume(who.GetComponent<CharacterVisual>().ModelRoot);
+                    if(head.Bone==null)head=new HeadSurfaceVolume(who.GetComponent<CharacterVisual>().Model.transform);
                     clearanceSamples++;
                     var toHead=head.Bone.worldToLocalMatrix*shoeMesh.transform.localToWorldMatrix;
-                    int inside=0;foreach(var vertex in shoeVertices)if(head.Box.Contains(toHead.MultiplyPoint3x4(vertex)))inside++;
+                    int inside=0;foreach(var vertex in shoeVertices)if(head.Contains(toHead.MultiplyPoint3x4(vertex)))inside++;
                     worstInside=Mathf.Max(worstInside,inside);
                 };
                 who.Intent.Clear();who.Intent.Parked=false;
@@ -87,7 +98,7 @@ namespace TumbangPreso.PlayTests
                     },new Vector3(3,1.5f,-3));
                     Assert.True(released,shot.Name+" did not release through the normal input/Carrier path.");
                     Assert.False(carrier.IsCharging);
-                    File.WriteAllText(Path.Combine(Output,shot.Name+"-head-clearance.txt"),$"Maximum shoe vertices inside the inset head volume: {worstInside} / {shoeVertices.Length}; samples {clearanceSamples}\n");
+                    File.WriteAllText(Path.Combine(Output,shot.Name+"-head-clearance.txt"),$"Maximum shoe vertices inside actual rigid head surfaces: {worstInside} / {shoeVertices.Length}; samples {clearanceSamples}\n");
                     Assert.Greater(clearanceSamples,2,"Head clearance must include actual held frames.");
                     if(worstInside>0)clipping.Add(shot.Name+": "+worstInside+" shoe vertices inside head");
                 }

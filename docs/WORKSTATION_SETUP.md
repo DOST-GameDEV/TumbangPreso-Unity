@@ -28,6 +28,24 @@ TODO.md. The transfer's full latest hash is supplied with the chat prompt.
 
 ## Known working versions
 
+Destination verified on 2026-09-14: active checkout is
+C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks. Unity's exact
+Editor/revision and .NET SDK match below. Python is 3.12.8 and Blender is 5.2.0;
+do not assume the source-PC patch versions or username. The official CLI beta.5
+was installed and checksum-verified at C:/Users/matth/AppData/Local/Unity/bin/unity.exe.
+Use that absolute CLI path: C:/Users/matth/bin/unity.cmd is an older Editor wrapper.
+
+The task shell omitted ALLUSERSPROFILE although PROGRAMDATA exists. Unity's
+package manager failed with an undefined path before compilation. The guard now
+restores this alias from the existing local ProgramData directory in the child
+environment only. Explicit values/global settings are preserved. Clearing the
+project package cache did not fix it; the original cache was restored. Do not
+change package versions or transport source to work around this environment bug.
+
+All 16 portable skills are downloaded under Logs/portable-skills-2026-09-14;
+all 225 files match the manifest sizes/hashes. Current corresponding installed
+skills were retained. The owner explicitly excludes Figma calls on this PC.
+
 | Component | Source workstation |
 | --- | --- |
 | OS / target | Windows, Win64 player |

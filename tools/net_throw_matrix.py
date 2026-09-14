@@ -88,7 +88,10 @@ def main():
         deadline=time.monotonic()+95;rejoined=None
         while time.monotonic()<deadline and host.poll() is None:
             if a.rejoin and rejoined is None:
-                try:active=any(r["spin"]<-.6 and r["charge"]>.9 for r in rows(folder/"owner.csv"))
+                # Collect the observer's actual pre-disconnect tell before
+                # removing it; an early owner-only trigger left just 3 samples.
+                try:active=sum(r["spin"]<-.6 and r["charge"]>.9 and r["torso"]<-5
+                               for r in rows(folder/"observer.csv"))>=30
                 except (OSError,ValueError,TypeError):active=False
                 if active:
                     observer.terminate();observer.wait(timeout=8)

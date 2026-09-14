@@ -1,0 +1,10 @@
+{
+    "name": "TumbangPreso.TestSupport",
+    "rootNamespace": "TumbangPreso.Tests",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "noEngineReferences": false
+}

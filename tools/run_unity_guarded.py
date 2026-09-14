@@ -24,6 +24,21 @@ PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Pre
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def unity_environment(source=None):
+    """Restore the Windows common-profile alias omitted by some task shells.
+
+    Unity 6000.5's package manager joins ALLUSERSPROFILE into a configuration
+    path. A missing alias fails before it loads any package, even with a valid
+    project and cache. Use this machine's existing ProgramData only in the
+    child environment; never replace an explicit value or edit global settings.
+    """
+    environment=dict(os.environ if source is None else source)
+    common=environment.get("PROGRAMDATA") or environment.get("ProgramData")
+    if not environment.get("ALLUSERSPROFILE") and common and Path(common).is_dir():
+        environment["ALLUSERSPROFILE"]=common
+    return environment
+
+
 def profile_root(args):
     """Mirror ProfilePaths.LaunchProfile/ForProfile; reject ambiguous input."""
     names=[]
@@ -57,7 +72,8 @@ def run(args):
     (backup/"editor-input-prefs.json").write_text(json.dumps(editor_prefs,indent=2))
     result=1
     try:
-        result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT).returncode
+        result=subprocess.run([str(UNITY),"-projectPath",str(ROOT),*args],cwd=ROOT,
+                              env=unity_environment()).returncode
     finally:
         restored=0
         for relative,expected in manifest.items():

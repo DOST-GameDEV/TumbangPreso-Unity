@@ -151,10 +151,15 @@ namespace TumbangPreso
             {
                 if (!_charging) return Vector2.zero;
                 var offset=ThrowAimRules.Sample(_aimHeldSeconds,_aimMovement,Time.time,
-                    _motor.PlayerSlot*.73f+(_aimSequence%4096)*.618034f);
+                    _motor.PlayerSlot*.73f+(_aimSequence%4096)*.618034f,Held != null ? Held.SkinIndex : -1);
                 return new Vector2(offset.Yaw,offset.Pitch);
             }
         }
+
+        public float AimGuideConfidence => ThrowAimRules.GuideConfidence(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
+        public float AimGuideHorizon => ThrowAimRules.GuideHorizon(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
+        public Vector3 AimGuidePoint() => RawAimPoint();
+        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimGuidePoint());
 
         /// <summary>
         /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
@@ -803,10 +808,16 @@ namespace TumbangPreso
         /// slipper lands and the real one five per cent away.
         /// </summary>
         public Vector3 LaunchVelocityNow()
+            => LaunchVelocityFor(ThrowOrigin(), AimPoint());
+
+        public Vector3 AimGuideVelocityNow()
+            => LaunchVelocityFor(AimGuideOrigin(), AimGuidePoint());
+
+        private Vector3 LaunchVelocityFor(Vector3 origin, Vector3 target)
         {
             if (Held == null) return Vector3.zero;
 
-            Vector3 vel = Held.LaunchVelocityTo(ThrowOrigin(), AimPoint(), ChargeRatio);
+            Vector3 vel = Held.LaunchVelocityTo(origin, target, ChargeRatio);
             var ability = _motor.AbilitySystem;
             if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
             {

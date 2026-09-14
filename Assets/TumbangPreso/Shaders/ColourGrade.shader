@@ -134,10 +134,13 @@ Shader "TumbangPreso/ColourGrade"
                 // White lands at 0.837 rather than 0.90. A fully lit white surface reaching 84
                 // per cent is a roll-off doing its job; reaching 65 per cent, which is what 0.60
                 // gave, was the actual defect.
-                half3 x = colour * 1.25h / max(0.001h, _White / 1.9h);
-                half3 mapped = (x * (2.51h * x + 0.03h)) / (x * (2.43h * x + 0.59h) + 0.14h);
-
-                return saturate(mapped);
+                // Preserve each material's channel ratios. The previous separate
+                // RGB curves pushed brown skin toward yellow in the live camera,
+                // despite correct palettes on both the body and first-person hand.
+                half peak = max(colour.r, max(colour.g, colour.b));
+                half x = peak * 1.25h / max(0.001h, _White / 1.9h);
+                half mapped = (x * (2.51h * x + 0.03h)) / (x * (2.43h * x + 0.59h) + 0.14h);
+                return colour * (saturate(mapped) / max(peak, 0.0001h));
             }
 
             // ⚠️⚠️ § THE SPLIT'S SHAPE. THE FLAT HORIZONTAL OFFSET IS A VHS ARTEFACT, NOT A LENS,
@@ -217,7 +220,11 @@ Shader "TumbangPreso/ColourGrade"
                 half3 c = Tonemap(source.rgb);
 
                 c = lerp(half3(0, 0, 0), c, _Brightness);
-                c = lerp(half3(0.5h, 0.5h, 0.5h), c, _Contrast);
+                // Contrast changes brightness, not the hue of low blue/green
+                // channels. A per-channel half-grey subtraction clipped dark skin.
+                half peak = max(c.r, max(c.g, c.b));
+                half contrasted = saturate((peak - 0.18h) * _Contrast + 0.18h);
+                c *= contrasted / max(peak, 0.0001h);
 
                 half grey = dot(half3(1, 1, 1), c) * 0.33333h;
                 c = lerp(half3(grey, grey, grey), c, _Saturation);

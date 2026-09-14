@@ -297,10 +297,7 @@ namespace TumbangPreso.Visual
                 Companion = companion;
                 // The familiar has its own authored materials. Applying Nemu's person
                 // palette mapped its plain face parts through an unrelated atlas slot.
-                ToonSkin.Apply(_petInstance, ToonSkin.PersonOutlineWidth*.4f, null);
-                foreach (var face in _petInstance.GetComponentsInChildren<Renderer>())
-                    if (face.name.Contains("eye") || face.name.Contains("mouth"))
-                        ToonSkin.Apply(face,0,null);
+                GhostPetCompanion.ApplyAppearance(_petInstance,palette);
                 _renderers.AddRange(_petInstance.GetComponentsInChildren<Renderer>(includeInactive: true));
             }
 
@@ -461,11 +458,13 @@ namespace TumbangPreso.Visual
             var weights = mesh.boneWeights;
             var vertices = mesh.vertices;
             var binds = mesh.bindposes;
+            var uv = mesh.uv;
 
             if (weights == null || weights.Length != vertices.Length ||
                 binds == null || bone >= binds.Length) return false;
 
             var local = new List<Vector3>();
+            var skin = new List<Vector3>();
 
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -478,7 +477,13 @@ namespace TumbangPreso.Visual
 
                 if (weight < 0.5f) continue;
 
-                local.Add(binds[bone].MultiplyPoint3x4(vertices[i]));
+                var point=binds[bone].MultiplyPoint3x4(vertices[i]);
+                local.Add(point);
+                if(uv.Length==vertices.Length)
+                {
+                    int row=Mathf.FloorToInt(uv[i].y*16),column=Mathf.FloorToInt(uv[i].x*16);
+                    if(row>=0&&row<=3&&column>=10&&column<=15)skin.Add(point);
+                }
             }
 
             if (local.Count < 8) return false;
@@ -494,6 +499,18 @@ namespace TumbangPreso.Visual
 
             Vector3 size = max - min;
             int axis = size.x >= size.y && size.x >= size.z ? 0 : (size.y >= size.z ? 1 : 2);
+
+            // Restored outfits may carry long props on the arm bone. They are
+            // not the palm. Prefer a substantial longitudinal skin region;
+            // a thin skin-coloured gauntlet inset is not a hand either.
+            if(skin.Count>=8)
+            {
+                var skinMin=skin[0];var skinMax=skin[0];
+                foreach(var point in skin){skinMin=Vector3.Min(skinMin,point);skinMax=Vector3.Max(skinMax,point);}
+                var span=skinMax-skinMin;
+                if(span[axis]>=Mathf.Max(span[(axis+1)%3],span[(axis+2)%3])*.5f)
+                {local=skin;min=skinMin;max=skinMax;size=span;}
+            }
 
             // The far end is whichever end is further from the bone's own origin, because the
             // bone sits at the shoulder and the hand does not.

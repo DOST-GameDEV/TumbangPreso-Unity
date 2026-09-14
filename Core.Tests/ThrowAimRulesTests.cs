@@ -63,5 +63,23 @@ namespace TumbangPreso.Core.Tests
             Assert.False(float.IsNaN(sample.Yaw)||float.IsInfinity(sample.Yaw));
             Assert.False(float.IsNaN(sample.Pitch)||float.IsInfinity(sample.Pitch));
         }
+
+        [Fact] public void MovingEarlyThrowsCanMissACentreAimAtStreetGameDistance()
+        {
+            float maximum = 0;
+            for (int i = 0; i < 240; i++)
+                maximum = Math.Max(maximum, Math.Abs(ThrowAimRules.Sample(.08f, 1, i / 60f, .4f).Yaw));
+            float lateralMiss = 10 * (float)Math.Tan(maximum * Math.PI / 180);
+            Assert.True(lateralMiss > ThrowRules.HitWindow(-1), $"Worst moving miss was only {lateralMiss:F3} m at 10 m.");
+            Assert.InRange(ThrowAimRules.Amplitude(2.5f, 0), .07f, .08f);
+        }
+
+        [Fact] public void DirectionGuideOnlyExtendsAfterAStationaryHoldSettles()
+        {
+            Assert.InRange(ThrowAimRules.GuideHorizon(0, 0), .2f, .3f);
+            Assert.True(ThrowAimRules.GuideHorizon(2.5f, 0) > ThrowAimRules.GuideHorizon(.2f, 0) * 2);
+            Assert.Equal(0, ThrowAimRules.GuideConfidence(2.5f, 1));
+            Assert.Equal(1, ThrowAimRules.GuideConfidence(2.5f, 0));
+        }
     }
 }

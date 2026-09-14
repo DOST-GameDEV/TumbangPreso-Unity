@@ -22,6 +22,22 @@ class ProfileIsolationTests(unittest.TestCase):
                          guard.PROFILE/"profiles"/expected)
         self.assertEqual(guard.profile_root(["-batchmode"]),guard.PROFILE)
 
+    def test_missing_common_profile_alias_uses_existing_local_programdata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source={"PROGRAMDATA":temp,"KEEP":"unchanged"}
+            result=guard.unity_environment(source)
+            self.assertEqual(result["ALLUSERSPROFILE"],temp)
+            self.assertEqual(result["KEEP"],"unchanged")
+            self.assertNotIn("ALLUSERSPROFILE",source)
+
+    def test_common_profile_repair_preserves_explicit_values_and_refuses_missing_paths(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source={"ProgramData":temp,"ALLUSERSPROFILE":"explicit-profile"}
+            self.assertEqual(guard.unity_environment(source),source)
+            self.assertEqual(guard.unity_environment({"PROGRAMDATA":str(Path(temp)/"absent")}),
+                             {"PROGRAMDATA":str(Path(temp)/"absent")})
+            self.assertEqual(guard.unity_environment({}),{})
+
     def test_malformed_flags_cannot_fall_back_to_real_profile(self):
         for args in (["-tp-profile"],["-profile"," "],["-profile","-batchmode"],
                      ["-profile","one","-tp-profile","two"]):

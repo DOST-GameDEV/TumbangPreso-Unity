@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "stage_span": 20.87160181921838,
+      "rows": 444,
+      "model_error": 0.0,
+      "field": [
+        0.6864,
+        -11.432
+      ],
+      "ends": 30.7411,
+      "pet_yaw": 348.6901
+    },
+    "owner": {
+      "stage_span": 3.9473144908912445,
+      "rows": 370,
+      "model_error": 0.0,
+      "field": [
+        0.6864,
+        -11.432
+      ],
+      "ends": 30.7265,
+      "pet_yaw": 348.6901,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    },
+    "observer": {
+      "stage_span": 4.303839239562742,
+      "rows": 379,
+      "model_error": 0.0,
+      "field": [
+        0.6864,
+        -11.432
+      ],
+      "ends": 30.748,
+      "pet_yaw": 348.6901,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    }
+  },
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "c49a540168f800fcde948114e9d9f3b1fc208379be0d815091d1fbfbded82b17",
+  "delay_one_way_ms": 0,
+  "loss": 0
+}

@@ -1078,8 +1078,12 @@ namespace TumbangPreso
             {
                 TriggerAffinityImpact();
                 round.Lata.HostKnockDown(_throwerSlot);
-                Deflect(-_velocity.normalized * Balance.LataRecoilScale * _velocity.magnitude,
-                        Balance.LataRecoilLiftScale);
+                // REBOUND belongs to the shared can that was hit, never the thrower's
+                // own loadout. Host-owned velocity already replicates to every peer.
+                // The restore shield still returns the shoe without awarding a hit.
+                float rebound = Roster.CanReboundScale(round.Lata.SkinIndex);
+                Deflect(-_velocity * Balance.LataRecoilScale * rebound,
+                        Balance.LataRecoilLiftScale * rebound);
                 return;
             }
 

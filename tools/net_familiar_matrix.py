@@ -1,6 +1,7 @@
 """Three actual player processes, one owning-client familiar driver, independent traces."""
 import argparse,csv,hashlib,json,math,os,re,shutil,subprocess,sys,time,uuid
 from pathlib import Path
+from run_unity_guarded import profile_root
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE=Path(os.environ["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
 
@@ -88,7 +89,13 @@ def evaluate(folder,case,reconnected=False):
             if spread>.35:errors.append("field expiry spread exceeds 350 ms: "+str(spread))
     if reconnected:
         joined=read(folder/"rejoined.csv")
+        # The trace can include one lobby frame after the host closes. Compare
+        # seats/effects only while the host was still supplying a match clock.
+        joined=[r for r in joined if r["time"]<=data["host"][-1]["time"]]
         active=[r for r in joined if r["fieldCount"]==1]
+        details["rejoin_window"]={"first_sample":joined[0]["time"] if joined else None,
+                                  "host_field_last_sample":details["host"].get("ends"),
+                                  "active_samples":len(active)}
         if len(active)<10:errors.append("rejoined owner did not reconstruct the active field")
         if not joined or any(r["local"]!=1 for r in joined):errors.append("rejoined owner did not reclaim seat 1")
         if joined and active:
@@ -105,10 +112,12 @@ def main():
     if a.reconnect and a.case!="ultimate":ap.error("reconnect uses the ultimate case")
     folder=(a.out or ROOT/"Logs"/("familiar-"+a.case+"-"+uuid.uuid4().hex[:8])).resolve();folder.mkdir(parents=True,exist_ok=False)
     backup=folder/"profiles";manifest={}
-    for source in PROFILE.rglob("*"):
-        if not source.is_file() or source.suffix==".log":continue
-        rel=source.relative_to(PROFILE);target=backup/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
-        manifest[str(rel)]=hashlib.sha256(source.read_bytes()).hexdigest()
+    for name in ("famhost","famowner","famobserver"):
+        owned_profile=profile_root(["-tp-profile",name])
+        for source in owned_profile.rglob("*"):
+            if not source.is_file() or source.suffix==".log":continue
+            rel=source.relative_to(PROFILE);target=backup/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
+            manifest[str(rel)]=hashlib.sha256(source.read_bytes()).hexdigest()
     processes=[];handles=[]
     startup=None
     if os.name=="nt":

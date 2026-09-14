@@ -534,6 +534,16 @@ namespace TumbangPreso.Visual
             return null;
         }
 
+        public static void ApplyAppearance(GameObject pet,Color[] ownerPalette)
+        {
+            ToonSkin.Apply(pet,ToonSkin.PersonOutlineWidth*.4f,null);
+            var restored=FindForm(pet.transform,"RestoredCalm");
+            if(restored!=null)ToonSkin.Apply(restored.gameObject,ToonSkin.PersonOutlineWidth*.25f,ownerPalette);
+            foreach(var face in pet.GetComponentsInChildren<Renderer>(true))
+                if(face.name.Contains("eye")||face.name.Contains("mouth"))
+                    ToonSkin.Apply(face,0,restored!=null&&face.transform.IsChildOf(restored)?ownerPalette:null);
+        }
+
         private void FindFace()
         {
             if (_faceFound) return;

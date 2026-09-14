@@ -2,6 +2,7 @@
     "name": "TumbangPreso.PlayTests",
     "rootNamespace": "TumbangPreso.PlayTests",
     "references": [
+        "TumbangPreso.TestSupport",
         "TumbangPreso.Core",
         "TumbangPreso.Runtime",
         "UnityEngine.TestRunner",

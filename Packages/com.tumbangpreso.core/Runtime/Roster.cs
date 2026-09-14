@@ -212,12 +212,10 @@ namespace TumbangPreso.Core
         /// retune every AI seat and every peer that never reached the CHARACTER screen.
         /// The same holds for the cans' entry 0 through the neutral fallback.
         ///
-        /// ⚠️ FLIGHT IS THE NARROWEST STAT IN THE GAME, spanning only 2..4. That ceiling
-        /// is not taste: the AI inverts the range equation against LaunchSpeed to decide
-        /// how long to charge a throw, so a per-skin launch speed is an error term inside
-        /// a solve that lives in another file. 5% sits inside the margin it already
-        /// charges to; 20% would make every bot holding a slow slipper fall short, which
-        /// reads as an AI regression rather than as a balance change.
+        /// Flight remains a narrow 2..4 ladder to preserve the familiar court range.
+        /// The AI already solves with ThrowRules.LaunchSpeedFor for the held shoe.
+        /// Recovery now buys both pickup cadence and faster visible aim settling.
+        /// Every row spends nine points: no shoe is a direct upgrade over another.
         /// </summary>
         public static readonly IReadOnlyList<RosterEntry> Slippers = new[]
         {
@@ -228,7 +226,7 @@ namespace TumbangPreso.Core
             // ⚠️ APPEND ONLY. These indices cross the wire. Inserting above an existing row
             // would make two peers render different footwear for the same pick with no error.
             new RosterEntry("spartan",   "SPARTAN",    3,    4,    2),
-            new RosterEntry("alpombra",  "ALPOMBRA",   2,    1,    5),
+            new RosterEntry("alpombra",  "ALPOMBRA",   2,    2,    5),
             // ⚠️⚠️ PAMBAHAY IS A DIFFERENT SHOE NOW AND THE ID DELIBERATELY DID NOT MOVE.
             // 🧑 2026-08-28: *"delete pambahay"*, of the purple Poly flip-flop, then *"hwo
             // about just rename pangbanyo"*. Deleting row 6 is the one thing this list's own
@@ -240,9 +238,9 @@ namespace TumbangPreso.Core
             // It now wears the worn rubber bathroom slide, and carries that shoe's stats
             // rather than the flip-flop's 4/2/4.
             new RosterEntry("pambahay",  "PAMBAHAY",   3,    2,    4),
-            new RosterEntry("heels",     "HEELS",      2,    5,    1),
+            new RosterEntry("heels",     "HEELS",      3,    5,    1),
             new RosterEntry("sandals",   "SANDALS",    4,    3,    2),
-            new RosterEntry("loafers",   "LOAFERS",    3,    4,    3),
+            new RosterEntry("loafers",   "LOAFERS",    2,    4,    3),
         };
 
         /// <summary>
@@ -370,7 +368,7 @@ namespace TumbangPreso.Core
 
         /// <summary>How far this can throws a slipper that hits it.</summary>
         public static float CanReboundScale(int index) =>
-            TraitScale(CanTrait(index, Trait.Lakas), Balance.TraitPowerPerPoint);
+            TraitScale(CanTrait(index, Trait.Lakas), Balance.CanReboundPerPoint);
 
         /// <summary>How hard this can is to knock over: divides the hit MARGIN.
         /// ⚠️ Floored at 0.1 exactly as lata.gd does, because it divides.</summary>
@@ -388,11 +386,11 @@ namespace TumbangPreso.Core
         public static float SlipperImpactScale(int index) =>
             TraitScale(SlipperTrait(index, Trait.Lakas), Balance.TraitPowerPerPoint);
 
-        /// <summary>Divides ThrowLockTime: armed again sooner after a pickup.
+        /// <summary>Divides ThrowLockTime and aim settle time after a pickup/aim start.
         /// ⚠️ Floored at 0.1 exactly as slipper.gd does, because it divides.</summary>
         public static float SlipperRecoveryScale(int index)
         {
-            float scale = TraitScale(SlipperTrait(index, Trait.Tatag), Balance.TraitGritPerPoint);
+            float scale = TraitScale(SlipperTrait(index, Trait.Tatag), Balance.SlipperRecoveryPerPoint);
             return scale < 0.1f ? 0.1f : scale;
         }
 

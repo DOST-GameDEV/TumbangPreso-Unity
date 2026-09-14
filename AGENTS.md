@@ -1,5 +1,72 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest priority change:** owner explicitly parks Inday FPP work for LATER in
+TODO.md and asks to do other project work now. Preserve the in-progress actual
+source-arm copy; do not continue its visual iteration as the immediate task.
+Proceed with throwing/equipment, movement, abilities and remaining full queue.
+
+**Newest Inday FPP instruction:** owner again rejects the reconstructed guards
+and explicitly asks to copy her actual restored arms into FPP. Use source left
+and right sleeve/hand/guard geometry with its real material and palette. Only
+rigid rotation, placement and uniform scale for camera framing; no replacement
+block hand or remapped/clamped guard reconstruction. Retain existing animations.
+
+**Latest FPP matching correction:** the owner questioned the clean-hand candidate,
+especially Inday. A clean generic silhouette is not enough: guards, sleeve layout,
+gloves/bare skin and colours must correspond to each current/restored body. Verify
+actual body/FPP comparisons for every character and correct mismatches before
+calling the FPP work complete. Preserve the simple no-thumb hand quality basis.
+The subsequent flat red hand covers with purple bands are EXPLICITLY REJECTED,
+including the user's Photo1. Do not restore them. Use actual garment geometry
+from the restored character around the proper clean hand, then inspect the result.
+
+**Newest restoration request, 2026-09-14:** bring back the OLD INDAY MODEL from
+backup-branch files. Restore the OLD SMALL NEMU GHOST from backups, improve its
+expressions and bugs, and transition it into the CURRENT MONSTER FORM, which
+must be retained. This supersedes preserving the current Inday and current small
+ghost designs. Inspect backup refs and actual candidate assets; copy only the
+chosen files into ASTRAReworks without resetting history or touching other
+checkouts. All remaining work stays active. Investigate floating slippers seen
+in captures versus real drop/retrieval behavior; do not guess a clipping fix.
+
+**Newest urgent visual correction, 2026-09-14:** owner rejects the FPP hands in
+the shown Inday and Zack captures as fragmented/oversized/wrongly coloured and
+not matching the characters. Check BOTH first-person hands for ALL18 people
+against their actual retained body/outfit. Match the supplied reference's solid
+simple block hands, natural sleeve join and restrained outlines. Do not add
+fingers/thumbs or redesign bodies. This is now the immediate defect to resolve,
+before continuing the current throw guide/equipment review and full queue.
+User references are preserved in the active ledger; test passes are not visual
+acceptance. Do not claim the PC change caused a defect without evidence.
+The latest cropped good-hand basis is explicitly the quality reference for every
+character, with each person's own skin/sleeve/details. Preserve compatibility with
+ALL existing FPP animations and the old hand rig/control interface. Owner is AFK
+again and asks to finish the entire queue, not only this repair.
+Owner also reports apparent thumbs on Zack's actual in-game body despite the
+approved clean sheet. The NO THUMBS instruction applies to every body AND FPP
+hand. Trace exact runtime asset versus approved source and all authoring paths;
+remove surviving/regenerated thumb geometry without redesigning approved people.
+
+**Newest destination request, 2026-09-14:** continue the entire remaining queue
+here while the owner is AFK; do not stop at a single batch. Verify this PC's paths.
+No Figma calls; its allowance is exhausted. All relevant portable skills have
+been downloaded locally and current counterparts already exist. No agents,
+other conversations, credit resets, paid work or Desktop update.
+
+**Newest throw aiming direction supersedes exact-preview wording below:** the
+owner wants the aiming outline/guide to show general direction rather than the
+exact landing spot. A steady fully held throw may be very close or exact. Keep
+noticeable early-hold/movement accuracy loss and small shaking; meaningful bounded
+accuracy error is now explicitly requested, with Counter-Strike as a reference.
+Improve the disappearing/odd THROW TRAJECTORY LINE. The owner clarified this
+explicitly; this request does not concern black character/object outlines.
+Do not restore the former exact-endpoint guide contract after compaction.
+
+**Focused verification reaffirmed, 2026-09-14:** run only tests necessary for
+changed behavior. Maintain ACTIVE_REWORK_LEDGER and EXECUTION_PLAN for compaction,
+including actual branch/path, decisions, failed candidates, active processes,
+evidence and the next concrete action. The complete remaining goal stays open.
+
 **No usage-reset permission:** the owner manually redeemed a reset and explicitly
 revoked all assistant reset authorization on2026-09-14. Do not redeem any credit.
 Previous conditional permission is cancelled, not waiting for a threshold. Do not

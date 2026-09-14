@@ -11663,3 +11663,14 @@ mechanics/purposes and complete casting/body/FPP/moving geometry/VFX/impact/SFX.
 All six heroes/defaults/alternatives, within existing slots and simple controls.
 This is not a recolor pass. Existing map corrections remain first; the other
 movement/equipment/network/graphics/TODO scope remains open.
+# Deferred by owner, 2026-09-14
+
+- [ ] Finish Inday's FPP arms LATER. Owner explicitly moved this below other
+  project work. Keep her actual restored left/right arm meshes, not the rejected
+  reconstructed guards or red mittens/purple bands. Source-copy v1 passed the
+  character-switch and quick/held/moving throw checks, but its sleeve ends showed
+  in the carrying camera. Uniform full-reach source-copy v2 is the pending framing
+  candidate and has not been visually reviewed. Current author evidence is in
+  Logs/inday-source-arm-author-v2; prior motion in Logs/inday-source-arm-motion-v1.
+  Retain existing animations, source proportions, material and character palette.
+  Resolve framing and remove obsolete reconstruction code/assets when resumed.

@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "flight_span": 6.097200000000001,
+      "rows": 461,
+      "model_error": 0.0,
+      "field": [
+        1.2144,
+        -1.5505
+      ],
+      "ends": 35.5389,
+      "pet_yaw": 190.6635
+    },
+    "owner": {
+      "flight_span": 6.097200000000001,
+      "rows": 118,
+      "field": [
+        1.2144,
+        -1.5505
+      ],
+      "ends": 28.4094,
+      "pet_yaw": 190.6635,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    },
+    "observer": {
+      "flight_span": 6.097205514003937,
+      "rows": 388,
+      "model_error": 0.0,
+      "field": [
+        1.2144,
+        -1.5505
+      ],
+      "ends": 35.5055,
+      "pet_yaw": 190.6635,
+      "final_error": 0.0,
+      "yaw_error": 0.0
+    },
+    "rejoin_window": {
+      "first_sample": 33.9729,
+      "host_field_last_sample": 35.5389,
+      "active_samples": 24
+    },
+    "rejoined": {
+      "field": [
+        1.2144,
+        -1.5505
+      ],
+      "rows": 225,
+      "ends": 35.5298,
+      "s2charges": 0.0,
+      "ultcharge": 0.0
+    }
+  },
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "c49a540168f800fcde948114e9d9f3b1fc208379be0d815091d1fbfbded82b17",
+  "delay_one_way_ms": 150.0,
+  "loss": 0
+}

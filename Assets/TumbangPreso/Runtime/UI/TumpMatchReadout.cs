@@ -187,7 +187,7 @@ namespace TumbangPreso.UI
             var view=UnityEngine.Camera.main;
             if(_aimCarrier!=null && _aimCarrier.IsCharging && view!=null)
             {
-                var point=view.WorldToViewportPoint(_aimCarrier.AimPoint());
+                var point=view.WorldToViewportPoint(_aimCarrier.AimGuidePoint());
                 if(point.z>0)anchor=view.rect.min+Vector2.Scale(new Vector2(point.x,point.y),view.rect.size);
             }
             _crosshair.rectTransform.anchorMin=_crosshair.rectTransform.anchorMax=anchor;

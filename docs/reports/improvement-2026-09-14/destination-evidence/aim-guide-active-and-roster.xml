@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:46Z" duration="33.2730882">
+  <test-suite type="TestSuite" id="1448" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="335" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:46Z" duration="33.273088" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1442" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="335" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:46Z" duration="33.259706" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7456" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1443" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="335" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:46Z" duration="33.255842" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1444" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="335" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:46Z" duration="33.252518" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1101" name="FppHandsReviewProbe" fullname="TumbangPreso.PlayTests.FppHandsReviewProbe" classname="TumbangPreso.PlayTests.FppHandsReviewProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:28Z" duration="14.635057" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1102" name="AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" fullname="TumbangPreso.PlayTests.FppHandsReviewProbe.AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" methodname="AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" classname="TumbangPreso.PlayTests.FppHandsReviewProbe" runstate="Runnable" seed="1210140676" result="Passed" start-time="2026-09-14 02:36:13Z" end-time="2026-09-14 02:36:28Z" duration="14.617624" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/fpp-restored-guard-v6/bayan-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/bayan-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/bayan-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/maring-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/maring-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/maring-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/totoy-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/totoy-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/totoy-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/inday-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/inday-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/inday-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/kuya_boy-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/kuya_boy-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/kuya_boy-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/ate_girlie-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/ate_girlie-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/ate_girlie-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/tikboy-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/tikboy-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/tikboy-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/bebang-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/bebang-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/bebang-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/jun_jun-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/jun_jun-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/jun_jun-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/lola_pacing-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/lola_pacing-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/lola_pacing-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/mang_kanor-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/mang_kanor-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/mang_kanor-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/aling_nena-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/aling_nena-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/aling_nena-body.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/fpp-restored-guard-v6/dante-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/dante-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/dante-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/cheska-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/cheska-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/cheska-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/sean-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/sean-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/sean-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/zack-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/zack-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/zack-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/nemu-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/nemu-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/nemu-body.png
+[Play] wrote Logs/fpp-restored-guard-v6/phaister-carrying.png
+[Play] wrote Logs/fpp-restored-guard-v6/phaister-empty.png
+[Play] wrote Logs/fpp-restored-guard-v6/phaister-body.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1377" name="ThrowAimIntegrationProbe" fullname="TumbangPreso.PlayTests.ThrowAimIntegrationProbe" classname="TumbangPreso.PlayTests.ThrowAimIntegrationProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-14 02:36:28Z" end-time="2026-09-14 02:36:46Z" duration="18.597967" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1379" name="DirectionGuideStaysVisibleOnRealSurfacesWithoutGivingAwayMovingLanding" fullname="TumbangPreso.PlayTests.ThrowAimIntegrationProbe.DirectionGuideStaysVisibleOnRealSurfacesWithoutGivingAwayMovingLanding" methodname="DirectionGuideStaysVisibleOnRealSurfacesWithoutGivingAwayMovingLanding" classname="TumbangPreso.PlayTests.ThrowAimIntegrationProbe" runstate="Runnable" seed="1575922645" result="Passed" start-time="2026-09-14 02:36:28Z" end-time="2026-09-14 02:36:46Z" duration="18.596343" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/aim-guide-active-v3/BayanPlaza-moving-guide.png
+[Play] wrote Logs/aim-guide-active-v3/BayanPlaza-settled-guide.png
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/aim-guide-active-v3/IlalimNgTulay-moving-guide.png
+[Play] wrote Logs/aim-guide-active-v3/IlalimNgTulay-settled-guide.png
+[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/aim-guide-active-v3/SaBubong-moving-guide.png
+[Play] wrote Logs/aim-guide-active-v3/SaBubong-settled-guide.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

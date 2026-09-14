@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "warmup_foreign_pickup": true,
+    "warmup_disarmed_before_whistle": true,
+    "host": {
+      "straight": {
+        "samples": 9,
+        "visible_matching_samples": 9
+      },
+      "negative": {
+        "samples": 96,
+        "visible_matching_samples": 96
+      },
+      "positive": {
+        "samples": 135,
+        "visible_matching_samples": 135
+      },
+      "release_samples": 97,
+      "unexpected_post_release_holding": 0
+    },
+    "owner": {
+      "straight": {
+        "samples": 10,
+        "visible_matching_samples": 10
+      },
+      "negative": {
+        "samples": 96,
+        "visible_matching_samples": 96
+      },
+      "positive": {
+        "samples": 134,
+        "visible_matching_samples": 134
+      },
+      "release_samples": 99,
+      "unexpected_post_release_holding": 0
+    },
+    "observer": {
+      "straight": {
+        "samples": 10,
+        "visible_matching_samples": 10
+      },
+      "negative": {
+        "samples": 31,
+        "visible_matching_samples": 31
+      },
+      "positive": {
+        "samples": 116,
+        "visible_matching_samples": 116
+      },
+      "release_samples": 99,
+      "unexpected_post_release_holding": 0
+    },
+    "rejoined_active_samples": 133
+  },
+  "mode": "hero",
+  "delay_one_way_ms": 150.0,
+  "exe_sha256": "6f44fe53090dad3edd9f86f5b5691b2cc8cba07deb4efd4791d7e32135385cb8",
+  "runtime_sha256": "c49a540168f800fcde948114e9d9f3b1fc208379be0d815091d1fbfbded82b17"
+}

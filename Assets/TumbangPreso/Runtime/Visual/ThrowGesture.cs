@@ -32,7 +32,7 @@ namespace TumbangPreso.Visual
             float p=(1-Mathf.Exp(-4.5f*Mathf.Clamp01(charge)))/(1-Mathf.Exp(-4.5f));
             spin=Mathf.Clamp(spin,-1,1);
             return new Pose(new Vector3(-13,24+10*spin,2*spin)*p,new Vector3(7,-12-4*spin,0)*p,
-                new Vector3(-26,35-22*spin,-28-10*spin)*p,
+                new Vector3(-16,38-22*spin,-44-10*spin)*p,
                 new Vector3(-24,-12,20)*p);
         }
         public static Pose Contact(float spin)=>new Pose(new Vector3(11,-10-8*spin,-2*spin),
