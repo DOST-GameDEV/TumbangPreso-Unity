@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.8369615">
+  <test-suite type="TestSuite" id="1539" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="411" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.836962" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1533" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="411" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.814549" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1534" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="411" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.803251" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1535" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="411" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.791668" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1353" name="RecoveryDeviceProbe" fullname="TumbangPreso.PlayTests.RecoveryDeviceProbe" classname="TumbangPreso.PlayTests.RecoveryDeviceProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:30Z" duration="41.761472" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1358" name="GamepadRecoveryUsesTheConfiguredReaderAcrossCadences" fullname="TumbangPreso.PlayTests.RecoveryDeviceProbe.GamepadRecoveryUsesTheConfiguredReaderAcrossCadences" methodname="GamepadRecoveryUsesTheConfiguredReaderAcrossCadences" classname="TumbangPreso.PlayTests.RecoveryDeviceProbe" runstate="Runnable" seed="2118730462" result="Passed" start-time="2026-09-15 06:15:48Z" end-time="2026-09-15 06:16:04Z" duration="15.513238" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.41 context=trip tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.35 context=Ice tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.32 context=Fire tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.57 context=Shock tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.36 context=Stone tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.33 context=Void tap=1 hold=1
+[Recovery device] gamepad requestedFPS=30 observedFrameMS=33.27 context=Hex tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.69 context=trip tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.72 context=Ice tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.71 context=Fire tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.75 context=Shock tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.68 context=Stone tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.71 context=Void tap=1 hold=1
+[Recovery device] gamepad requestedFPS=60 observedFrameMS=16.68 context=Hex tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.95 context=trip tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.54 context=Ice tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.95 context=Fire tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.94 context=Shock tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.96 context=Stone tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=7.05 context=Void tap=1 hold=1
+[Recovery device] gamepad requestedFPS=144 observedFrameMS=6.98 context=Hex tap=1 hold=1
+]]></output>
+            </test-case>
+            <test-case id="1357" name="KeyboardRecoveryUsesTheConfiguredReaderAcrossCadences" fullname="TumbangPreso.PlayTests.RecoveryDeviceProbe.KeyboardRecoveryUsesTheConfiguredReaderAcrossCadences" methodname="KeyboardRecoveryUsesTheConfiguredReaderAcrossCadences" classname="TumbangPreso.PlayTests.RecoveryDeviceProbe" runstate="Runnable" seed="1902589518" result="Passed" start-time="2026-09-15 06:16:04Z" end-time="2026-09-15 06:16:18Z" duration="14.047498" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.32 context=trip tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.30 context=Ice tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.30 context=Fire tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.28 context=Shock tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.32 context=Stone tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.28 context=Void tap=1 hold=1
+[Recovery device] keyboard requestedFPS=30 observedFrameMS=33.31 context=Hex tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.65 context=trip tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.78 context=Ice tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.68 context=Fire tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.64 context=Shock tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.63 context=Stone tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.67 context=Void tap=1 hold=1
+[Recovery device] keyboard requestedFPS=60 observedFrameMS=16.70 context=Hex tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.92 context=trip tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.97 context=Ice tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=7.01 context=Fire tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.97 context=Shock tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.90 context=Stone tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.99 context=Void tap=1 hold=1
+[Recovery device] keyboard requestedFPS=144 observedFrameMS=6.95 context=Hex tap=1 hold=1
+]]></output>
+            </test-case>
+            <test-case id="1354" name="QuickTouchDownAndUpSurvivesUntilTheRecoveryConsumer" fullname="TumbangPreso.PlayTests.RecoveryDeviceProbe.QuickTouchDownAndUpSurvivesUntilTheRecoveryConsumer" methodname="QuickTouchDownAndUpSurvivesUntilTheRecoveryConsumer" classname="TumbangPreso.PlayTests.RecoveryDeviceProbe" runstate="Runnable" seed="575750593" result="Passed" start-time="2026-09-15 06:16:18Z" end-time="2026-09-15 06:16:30Z" duration="12.182485" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 190 renderers, 0 with a roof variant.
+[NearFade] 811 occluder nodes matched, 181 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

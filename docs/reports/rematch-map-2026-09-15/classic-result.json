@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\demo-rematch-classic-v4\\demo-rematch-classic\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 500,
+        "travelled": 120.4
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 0,
+        "travelled": 69.5
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 102.7
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 200,
+        "travelled": 118.0
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "37",
+    "sampled": "68.0",
+    "round": "1",
+    "active": "True",
+    "defender": "0",
+    "mode": "Classic",
+    "map": "BayanPlaza",
+    "structural": "8DBA666E",
+    "hash": "B7459E9A"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\demo-rematch-classic-v4\\demo-rematch-classic\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 190,
+        "travelled": 110.0
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 0,
+        "travelled": 19.7
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 107.8
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 124.8
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "37",
+    "sampled": "55.0",
+    "round": "1",
+    "active": "True",
+    "defender": "0",
+    "mode": "Classic",
+    "map": "BayanPlaza",
+    "structural": "8DBA666E",
+    "hash": "C4D5B55F"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Builds\\demo-2026-09-16-v4\\TumbangPreso.exe",
+  "runtimeSha256": "53565e945341c50c3ab8fa8aba7f33da8076d93b19e5980fcade1877b92b5e7c",
+  "sharedInputUnchanged": true
+}

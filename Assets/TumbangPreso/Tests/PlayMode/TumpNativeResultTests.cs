@@ -57,6 +57,20 @@ namespace TumbangPreso.PlayTests
             Assert.That(Time.timeScale, Is.EqualTo(1).Within(.001));
         }
         [UnityTest]
+        public IEnumerator RematchActuallyLoadsTheChosenArena()
+        {
+            SceneFlow.Networked=false;SceneFlow.SelectedMap=SceneFlow.Eskinita;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);yield return new WaitForSecondsRealtime(.4f);
+            var result=Object.FindFirstObjectByType<MatchResult>();result.OnMatchWon(0);yield return null;
+            int next=System.Array.IndexOf(SceneFlow.Maps,SceneFlow.BayanPlaza);
+            result.HostReceiveMapVote(GameLaunch.SoloSeat,next);result.RequestRematch();yield return null;
+            Assert.AreEqual(SceneFlow.BayanPlaza,SceneFlow.SelectedMap);
+            Assert.AreEqual(SceneFlow.BayanPlaza,SceneManager.GetActiveScene().name,"Rematch selected the next map but kept playing on the old court.");
+            Assert.IsNotNull(Object.FindFirstObjectByType<ReadyGate>());
+        }
+
+        [UnityTest]
         public IEnumerator PopulatedResultSummaryAndRewardBreakdownRemainReadable()
         {
             SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));

@@ -6,6 +6,11 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- The rematch-map defect is fixed and qualified in nativev4. Both modes' real
+  connected votes reload BayanPlaza on both processes and start the new round.
+  The offline/native UI path also checks the actual next scene. Older candidates
+  still contain the old-map restart defect.
+
 - D1-D9 UI changes and the8-round/dark-settings/four-sampayan correction are
   committed through8f21e603 with focused tests and in-engine screenshots.
 - D10 credits/queue/touch and the Play heading fix have scoped passing evidence.
@@ -70,8 +75,8 @@ or Editor screenshots for a verified native demo build.
 
 ## Candidate record to fill after qualification
 
-- Executable/data: Builds/demo-2026-09-16-v3/TumbangPreso.exe and its adjacent data folder.
-- Runtime SHA256:E66713F7FCEE4BC4E5AB0948F9272198D7824ECED18BC9A082FBEFC7CDFD3F72.
+- Executable/data: Builds/demo-2026-09-16-v4/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:53565E945341C50C3AB8FA8ABA7F33DA8076D93B19E5980FCADE1877B92B5E7C.
 - Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
 - Measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.

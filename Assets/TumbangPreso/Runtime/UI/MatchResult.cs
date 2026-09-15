@@ -1199,7 +1199,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void HostReceiveVote(int peerId)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || _canvas==null || !_canvas.gameObject.activeSelf) return;
 
             if (!_rematchVotes.Add(peerId)) return;   // idempotent, like the ready set
 
@@ -1210,7 +1210,6 @@ namespace TumbangPreso.UI
 
             if (_rematchVotes.Satisfied(expected))
             {
-                Net.MatchRpc.Instance?.BeginRematchClientRpc();
                 BeginRematchLocally();
             }
         }
@@ -1235,7 +1234,6 @@ namespace TumbangPreso.UI
 
             if (_rematchVotes.Satisfied(expected))
             {
-                Net.MatchRpc.Instance?.BeginRematchClientRpc();
                 BeginRematchLocally();
             }
         }
@@ -1489,14 +1487,17 @@ namespace TumbangPreso.UI
 
                 int mapIndex = System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap);
                 if (mapIndex >= 0) Net.MatchRpc.Instance?.SelectMapServerRpc(mapIndex);
+                // Map state must arrive before the command that reloads the arena.
+                if (NetAuthority.IsNetworked) Net.MatchRpc.Instance?.BeginRematchClientRpc();
             }
 
             // ⚠️ ONLY THE HOST STARTS THE MATCH. Every peer hides its own board and unlocks its
             // own cursor, which is local presentation, but `StartMatch` writes match state and
             // `CLAUDE.md` § 4 keeps that on the host: four peers each starting a match is four
             // matches. Clients arrive through the host's own round start.
-            if (!NetAuthority.IsNetworked || NetAuthority.IsHost)
-                GameServices.Match?.StartMatch();
+            // The scene loader installs the chosen court and its ready gate.
+            // Resetting only the match director left everyone on the old map.
+            SceneFlow.StartMatch();
         }
 
         /// <summary>

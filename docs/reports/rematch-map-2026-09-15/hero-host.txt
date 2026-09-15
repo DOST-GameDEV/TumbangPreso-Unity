@@ -1,0 +1,50 @@
+TUMBANG PRESO NETWORK STATE REPORT
+
+role            : HOST
+networked       : True
+local slot      : 0
+protocol        : 37
+mode            : HeroStrike
+map             : BayanPlaza
+sampled         : 68.0 s
+graphics        : Balanced; 640x400; vsync=0; target=60
+hardware        : AMD Ryzen 5 2600 Six-Core Processor ; AMD Radeon RX 6600; RAM=16335 MB
+live frame rate : frames=1137; seconds=19.139; avg=59.41; p50=59.70; p5=57.97; p1=57.97; max_ms=34.82
+round           : 1
+defender        : 0
+round active    : True
+lata upright    : True   flips: 8
+tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic / GameLaunch.AllBots is ON and a tournament match needs it OFF: Fills every seat with a bot, including the one a human would take. It exists for `BotBehaviourProbe`. A bracket match that starts with it set has four bots and no players and looks like a hung lobby.
+tournament modifiers : GameLaunch.AllBots
+build identity  : TUMBANG PRESO 1.0.0 | 75d0937dcd28+dirty | protocol 37 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled  skills  ults
+--------------------------------------------------------------------------
+0         0 False       Human  True     230      129.6       0     0
+1         0  True HandedToBot False       0       57.3       0     0
+2         0  True         Bot False     100       84.7       1     0
+3         3  True         Bot False     200      100.7       2     0
+
+slipper    on  state  owner  holder  changes
+---------------------------------------------
+0           n      0     -1      -1        4
+1           y      1      1       1        3
+2           y      1      2       2       19
+3           y      0      3      -1       21
+
+structural state hash : 7F54E08E
+discrete state hash : 73AEF5A6
+
+⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
+for bit on a position or a clock; they must agree on who is who, who is
+taya, what each tsinelas is doing and what the score is.
+
+⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH
+IS. Discrete is not the same as CONSTANT: the score, the slipper states and
+the defender all move during a match, and two reports stop at two different
+instants by construction (a referee has to outlive its clients). Comparing
+the discrete hash between peers therefore fails on a working link roughly
+whenever anything happens. The structural hash covers only what CANNOT
+change while a match runs: which character sits in which seat, which seats
+are bots, and the protocol. Two peers disagreeing on that are playing two
+different matches, whenever you look.

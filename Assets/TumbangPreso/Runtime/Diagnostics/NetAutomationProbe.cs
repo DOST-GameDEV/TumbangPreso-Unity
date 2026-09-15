@@ -26,10 +26,26 @@ namespace TumbangPreso.Diagnostics
         private int _expectedPeers;
         private bool _autoRematch;
         private bool _readySent;
+        private ReadyGate _lastReadyGate;
         private bool _rematchSent;
         private bool _rematchObserved;
         private float _readyStableFor;
         private float _resultStableFor;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void ConfigureReviewRules()
+        {
+            var args=Environment.GetCommandLineArgs();
+            int rounds=IntArgument(args,"-tp-review-rounds"),seconds=IntArgument(args,"-tp-review-seconds");
+            if(!Has(args,AutoRematchSwitch) || Has(args,"-tp-tournament") || rounds<=0 || seconds<=0)return;
+            int at=Array.IndexOf(args,"-tp-review-mode");
+            bool classic=at>=0&&at+1<args.Length&&string.Equals(args[at+1],"classic",StringComparison.OrdinalIgnoreCase);
+            var rules=Core.CustomGameRules.Defaults(classic?Core.GameMode.Classic:Core.GameMode.HeroStrike);
+            rules.Rounds=Mathf.Clamp(rounds,Core.CustomGameRules.MinRounds,Core.CustomGameRules.MaxRounds);
+            rules.RoundSeconds=Mathf.Clamp(seconds,Core.CustomGameRules.MinRoundSeconds,Core.CustomGameRules.MaxRoundSeconds);
+            SceneFlow.PinSelectedRules(rules);
+            Debug.Log("[NetAuto] Explicit review rules: "+Core.CustomGameRules.ToWire(rules));
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -73,10 +89,12 @@ namespace TumbangPreso.Diagnostics
         /// </summary>
         private void StepReady()
         {
-            if (_readySent || _expectedPeers <= 0 || !NetAuthority.IsNetworked) return;
+            if (_expectedPeers <= 0 || !NetAuthority.IsNetworked) return;
 
             var net = NetSession.Instance;
             var gate = FindFirstObjectByType<ReadyGate>();
+            if(gate!=_lastReadyGate){_lastReadyGate=gate;_readySent=false;_readyStableFor=0;}
+            if(_readySent)return;
             if (net == null || gate == null || !gate.AwaitingReady)
             {
                 _readyStableFor = 0.0f;
@@ -119,7 +137,9 @@ namespace TumbangPreso.Diagnostics
 
             if (_rematchSent)
             {
-                if (result.IsVisible) return;
+                if (result.IsVisible || GameServices.Round==null || !GameServices.Round.RoundActive) return;
+                var gate=FindFirstObjectByType<ReadyGate>();
+                if(gate!=null && (gate.AwaitingReady||gate.CountingDown))return;
 
                 _rematchObserved = true;
                 Debug.Log("[NetAuto] REMATCH began after the peer vote.");

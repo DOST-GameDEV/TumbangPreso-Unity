@@ -236,8 +236,11 @@ namespace TumbangPreso.Diagnostics
                 yield return Click("ResultTab1");yield return Shot(mode+"-details");
                 if(mode=="ClassicButton")
                 {
+                    string nextMap=SceneFlow.Maps[(Array.IndexOf(SceneFlow.Maps,SceneFlow.SelectedMap)+1)%SceneFlow.Maps.Length];
                     Stage("Classic real rematch");yield return Click("ResultRematch");
                     yield return WaitFor(()=>Find("ResultRematch")==null);yield return StartReadyRound();
+                    if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name!=nextMap)
+                        throw new InvalidOperationException("Rematch did not load the announced next map.");
                     yield return Shot("Classic-rematch");
                     watcher=UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();pause=Panel.Open<PausePanel>(watcher);pause.Local=watcher.Local;
                     yield return Click("LeaveMatch");

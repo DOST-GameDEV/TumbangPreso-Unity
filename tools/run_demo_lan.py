@@ -22,13 +22,18 @@ def main():
     parser.add_argument('--out',required=True,type=Path)
     parser.add_argument('--profile-prefix',required=True)
     parser.add_argument('--seconds',type=int,default=105)
+    parser.add_argument('--rematch',action='store_true')
+    parser.add_argument('--mode',choices=['classic','hero'],default='hero')
     args=parser.parse_args()
+    if not args.rematch and args.mode!='hero':parser.error('Mode selection is supported for the explicit rematch review.')
     os.chdir(ROOT);exe=args.exe.resolve();output=args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):raise ValueError('Use a verified internal build.')
     if not output.is_relative_to(ROOT/'Logs') or output==ROOT/'Logs':raise ValueError('Use a dedicated Logs subfolder.')
     if output.exists():raise FileExistsError('Preserve prior evidence; select a fresh output folder.')
     output.mkdir(parents=True)
-    scenario=net_matrix.Scenario('demo clean direct','Both peers remain joined and progress to the next round.',seconds=args.seconds,direct=True)
+    scenario=net_matrix.Scenario('demo rematch '+args.mode if args.rematch else 'demo clean direct',
+        'Both peers load and start the voted rematch map.' if args.rematch else 'Both peers remain joined and progress to the next round.',
+        seconds=args.seconds,direct=True)
     work=(output/net_matrix.slug(scenario.name)).resolve()
     # The older runner removes its scenario folder. Verify the exact resolved
     # target before calling it, and require it to be new for this operation.
@@ -52,6 +57,7 @@ def main():
                 # Explicit host/join routes remain normal host/client topology;
                 # batch mode suppresses external UGS sign-in for this local check.
                 command+=['-batchmode','-tp-framecap','60']
+                if args.rematch:command+=['-tp-autorematch','-tp-review-rounds','1','-tp-review-seconds','30','-tp-review-mode',args.mode]
                 kwargs['env']=unity_environment()
                 startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
                 kwargs['startupinfo']=startup
@@ -65,8 +71,15 @@ def main():
             if data is None:continue
             words=Path(data['path']).read_text(encoding='utf-8',errors='replace')
             mode=re.search(r'mode\s*:\s*(\S+)',words)
-            if mode is None or mode.group(1)!='HeroStrike':faults.append(side+' did not use the expected default Hero Strike session.')
-            if int(data.get('round',0))<2:faults.append(side+' did not cross a real round boundary.')
+            expected='Classic' if args.mode=='classic' else 'HeroStrike'
+            if mode is None or mode.group(1)!=expected:faults.append(side+' did not use the expected '+expected+' session.')
+            if args.rematch:
+                log=(Path(data['path']).parent/(side+'.log')).read_text(encoding='utf-8',errors='replace')
+                if '[NetAuto] Explicit review rules:' not in log:faults.append(side+' lacks explicit short-match configuration.')
+                if '[NetAuto] REMATCH began after the peer vote.' not in log:faults.append(side+' did not observe the new rematch actually start.')
+                if data.get('map')!='BayanPlaza':faults.append(side+' did not load the next court.')
+                if int(data.get('round',0))!=1:faults.append(side+' is not in the new match first round.')
+            elif int(data.get('round',0))<2:faults.append(side+' did not cross a real round boundary.')
         receipt={'passed':ok and not faults,'faults':faults,'host':result['host'],'client':result['client'],
                  'artifact':str(exe),'runtimeSha256':hashlib.sha256((exe.parent/(exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll').read_bytes()).hexdigest()}
     finally:

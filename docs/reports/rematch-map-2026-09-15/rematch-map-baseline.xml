@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.5529185">
+  <test-suite type="TestSuite" id="1539" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="411" result="Failed" site="Child" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.552919" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1533" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="411" result="Failed" site="Child" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.533209" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1534" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="411" result="Failed" site="Child" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.523836" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1535" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="411" result="Failed" site="Child" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.514631" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1478" name="TumpNativeResultTests" fullname="TumbangPreso.PlayTests.TumpNativeResultTests" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.496966" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1481" name="RematchActuallyLoadsTheChosenArena" fullname="TumbangPreso.PlayTests.TumpNativeResultTests.RematchActuallyLoadsTheChosenArena" methodname="RematchActuallyLoadsTheChosenArena" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" seed="33383356" result="Failed" start-time="2026-09-15 06:03:44Z" end-time="2026-09-15 06:03:47Z" duration="2.479662" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Rematch selected the next map but kept playing on the old court.
+  Expected string length 10 but was 8. Strings differ at index 0.
+  Expected: "BayanPlaza"
+  But was:  "Eskinita"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeResultTests+<RematchActuallyLoadsTheChosenArena>d__5.MoveNext () [0x00105] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpNativeResultTests.cs:69
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

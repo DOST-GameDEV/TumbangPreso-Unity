@@ -3795,7 +3795,8 @@ namespace TumbangPreso.Net
 
         private void SyncMapClientRpc(int mapIndex)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || mapIndex<0 || mapIndex>=UI.SceneFlow.Maps.Length) return;
+            UI.SceneFlow.SelectedMap=UI.SceneFlow.Maps[mapIndex];
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
                 using var writer = new FastBufferWriter(16, Allocator.Temp);
@@ -3815,6 +3816,9 @@ namespace TumbangPreso.Net
             if (NetAuthority.IsHost) return;
 
             reader.ReadValueSafe(out int mapIndex);
+            if(mapIndex<0 || mapIndex>=UI.SceneFlow.Maps.Length)return;
+            // Session state must update even when there is no lobby screen listening.
+            UI.SceneFlow.SelectedMap=UI.SceneFlow.Maps[mapIndex];
             OnMapChanged?.Invoke(mapIndex);
         }
 

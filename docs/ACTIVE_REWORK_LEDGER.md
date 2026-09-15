@@ -1,5 +1,98 @@
 # Active TUMP rework ledger
 
+## CURRENT corrected native v4 fully passed its scoped rematch checks
+
+Hero peer rematch FINISHEDPASS, Python24132 and owned players retired. Both modes
+now have real two-process vote/reload/ready/new-round proof on BayanPlaza. Hero
+structural7F54E08E agrees, as Classic8DBA666E did. Shared input unchanged; prior
+profile-file count0. Native UI-v4 also passed actual map rotation. See
+docs/reports/rematch-map-2026-09-15. v4 is the preferred working candidate; prior
+v2/v3 retain their documented old-map-rematch defect.
+
+Recovery-input-v1 FINISHED3/3PASS, Python5252 retired, restorationcad297ecf815.
+Keyboard/gamepad/touch press and release pass across30/60/144 settings and trip/
+six stagger types. Not physical hardware certification. No active owned Unity,
+player, encoder or server remains. Next save/push v4 correction, then continue
+the full remaining queue, including preview pixel sizing and other visible polish,
+broader lifecycle/counterplay, deferred Inday and last expansion. Do not stop here.
+
+## CURRENT Classic/offline corrected rematch passed; Hero and recovery input running
+
+Classic connected rematch-v4 FINISHEDPASS, Python7892 and both players retired.
+Both real result-board votes led through a new ready gate to active round1 in
+BayanPlaza. Protocol37 and structural8DBA666E match; shared input unchanged and no
+prior named-profile files. Native UI-v4 also FINISHEDPASS, Python492/player14132
+retired, including its new actual-scene assertion. Its rematch screenshot is now
+BayanPlaza, not the old Eskinita court. Do not use concurrent-run timing as a
+performance claim.
+
+RUNNING Hero connected rematch Python24132, Logs/demo-rematch-hero-v4
+(.pid/.stdout/.stderr) and folder; fresh matching profile prefix,55s,1x30s explicit
+review rules. In PARALLEL guarded Editor Python5252 runs three recovery-input
+cases: keyboard, gamepad and touch press/release through the actual readers at
+30/60/144 cadence settings across trip and six stagger types. Logs/demo-recovery-input-v1
+(.pid/.stdout/.stderr/.log/.xml), profile demo-recovery-input-review. These are
+synthetic device/callback checks, not physical-controller certification. No
+imported edits until all active runs exit. Consume receipts, then save v4 fix.
+
+## CURRENT corrected v4 offline and connected rematch qualification
+
+Build-v4 FINISHED1081MB/46s, Python11304 retired, restorationb9db7207d491.
+Runtime.dll timestamp2026-09-15T06:10:33.9358473Z, SHA256
+53565E945341C50C3AB8FA8ABA7F33DA8076D93B19E5980FCADE1877B92B5E7C.
+Artifact Builds/demo-2026-09-16-v4/TumbangPreso.exe.
+
+RUNNING Classic peer rematch Python7892, Logs/demo-rematch-classic-v4
+(.pid/.stdout/.stderr) and folder, protected profiles of that prefix.55s client
+duration, explicit1x30s custom test format. Require actual peer vote, new ReadyGate,
+active new first round and BayanPlaza on both sides. After this exits, run Hero
+with another fresh prefix on the same port. In PARALLEL native UI loop Python492,
+Logs/demo-native-loop-v4 and matching fresh profile, now asserting the next scene.
+These concurrent runs are functional evidence; ignore their frame timings for
+clean performance claims. No imported edits until all these players finish.
+
+## CURRENT rematch map fix passed Editor checks; native v4 building
+
+rematch-map-fix-v1 FINISHED3/3PASS, Python1448 retired, restoration1561afb18868.
+The focused failing regression now loads BayanPlaza, and both mode result/rematch
+routes pass. Runtime changes are small: map state is synchronized before reload,
+and every peer uses the scene entry path. Existing protocol37 messages are retained.
+
+RUNNING guarded build-v4, Logs/demo-native-build-v4(.pid/.stdout/.stderr/.log),
+profile demo-build-review, target Builds/demo-2026-09-16-v4/TumbangPreso.exe.
+After exit run two-process --rematch reviews in Classic and Hero sequentially
+(shared test port), using fresh profile/output prefixes and --seconds55. Require
+both real vote/start markers, active new round1 and actual BayanPlaza scene. Then
+run the native UI driver, which now asserts the announced next scene after rematch.
+No imported edits while the build runs. Keep earlier candidates as fallbacks and
+explicitly note their old-map rematch defect until v4 is qualified.
+
+## CURRENT real rematch-map defect reproduced and fix under test
+
+Candidate checkpoint committed/pushed75d0937d. Further lifecycle review found that
+the result board selected the next map but BeginRematchNow only restarted the match
+director in the old scene. Native earlier rematch images also remained Eskinita.
+Focused rematch-map-baseline FAILED as intended, Python13516 retired,
+restoration8e8fd580d508: SelectedMap=BayanPlaza but actual scene=Eskinita. Earlier
+native passes prove restart, not correct map rotation; the strengthened test now
+checks the actual scene. Do not describe this defect as already qualified.
+
+Applied fix: host selects/synchronizes the next map BEFORE broadcasting BeginRematch;
+every peer uses SceneFlow.StartMatch to load that arena. SyncMap writes session map
+state even when no lobby UI is subscribed. Invalid map indices are rejected; old
+votes are ignored when the host result board is closed. Existing named messages
+and protocol37 remain unchanged. All demo peers must use the corrected build.
+
+NetAutomationProbe now resets ready submission for each new ReadyGate and only
+logs rematch success once the new round is active. Opt-in short rematch flags can
+select Classic/Hero rules without changing normal defaults. The protected LAN
+wrapper can test a real30s first match, peer votes, Bayan reload and second start.
+
+RUNNING guarded rematch-map-fix-v1, Python1448, Logs/rematch-map-fix-v1
+(.pid/.stdout/.stderr/.log/.xml), profile rematch-map-review. Expected3cases: focused
+map regression and both result/rematch routes. No imported edits until exit. Then
+build nativev4 and test real two-process rematch in each mode, plus native UI loop.
+
 ## CURRENT native v3 and Nemu pose follow-ups qualified; preserve candidate
 
 Nativev3 FINISHEDPASS, Python11468/player16620 retired. Quiet repeat also PASS,
