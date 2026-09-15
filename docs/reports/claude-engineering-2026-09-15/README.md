@@ -59,41 +59,71 @@ traced a stranded slipper**: every charged seat's shoe was Loose, active, on the
    * current Hero Strike Eskinita seed 4242: seat 3 `plan=Stalk stalk=10.74 idle=11`, went
      the second seat 0 picked up.
    * current Ilalim seed 20260904: seat 2 `plan=Stalk idle=11`, fetched only once seat 1 held.
-2. **A fetching seat that did not move, historical seed 42 only.** Seat 3 stayed at
-   `(-4.63, 0.08, 11.11)` in `plan=Fetch` for five seconds with its shoe 7.5 m away. The
-   trace that ran then did not yet record move axis, velocity, stuck timers or emote
-   state, and the two re-runs did not repeat the match. **Why that body did not move is
-   unexplained.** Nothing in 18 current-build matches after the fix showed it.
+2. **A fetching bot pinned against Ilalim geometry that never unsticks, on both builds.**
+   `AIController.StepUnstick` compared `CharacterMotor.Velocity` with `StuckSpeed`, but that
+   field is the steered target handed to `CharacterController.Move`, not the movement the
+   collider allowed. A body pressed into a pillar reports walking speed and never sidesteps.
+   * historical seed 42 round 1: seat 3 at `(-4.63, 0.08, 11.11)`, `plan=Fetch`, not moving for
+     five traced seconds with its shoe at `(-5.36, 0.09, 3.68)`, while seat 1 yielded to it
+     (mechanism 1). Two re-runs of that seed did not repeat the match.
+   * current C1-only build (`32e073fd` over `091f9210`), Hero Strike Ilalim seed 4242: seat 0 at
+     exactly `(-3.34, 0.08, 9.90)` for 77 s, `move=(-1, 0)`, `vel=(-2.40, -2.00, 0.00)`,
+     `stuck=0`, not stunned, tripped or emoting, its shoe loose and on the ground at
+     `(-8.30, 0.26, 11.92)`: **68 penalties in one match**. A replay of that seed gave 0.
 3. Ordinary late fetches: one to three penalties while a seat that waited for a taya
    crossed the court. These are the rule working.
 
-### Fix and regression
+### The pinned fetch, placed deterministically
 
-`32e073fd` adds `AiRetrievalRules`: the three overrides now skip the yield, which is what
-the one-runner comment already specified. EditMode `AiRetrievalRulesTests` 5/5
-(`c1-editmode-v1.xml` locally).
+Because neither build replays a seed, `PinnedFetchProbe` puts one attacker bot and its loose
+shoe at each traced pair of positions on Ilalim, parks the other seats, steps at 1/60 s and
+requires the bot to hold its own shoe inside the 10 s grace period. `AIController` was
+byte-identical from `2fde55d3` to `0f1d997b`.
 
-Whole fixture, six seeds each (18 matches per column):
+| build | seed 4242 positions | historical seed 42 positions |
+|---|---|---|
+| `2fde55d3` as shipped (old map) | **fail**, motionless 10.00 s | **fail**, motionless 10.00 s |
+| `2fde55d3` + only the stuck-watch patch | pass, held 3.65 s | pass, held 3.98 s |
+| C1-only current copy (no stuck watch) | **fail**, motionless 10.00 s | not run |
+| current checkout (`b3a9dbbe`) | pass, held 3.25 s | pass, held 4.08 s |
 
-| arm | idle before (4752f610) | idle after (091f9210) | tags before | tags after |
+Receipts in `c1/pinned-fetch/`; `historical-stuck-fix.patch` is the exact change applied to the
+old build.
+
+### Fixes and regression
+
+* `32e073fd`, `AiRetrievalRules`: the three overrides now skip the yield, which is what the
+  one-runner comment already specified. EditMode `AiRetrievalRulesTests` 5/5.
+* `ea776bdc`, `AiStuckWatch`: unstick from resolved position over 0.2 s windows. EditMode
+  `AiStuckWatchTests` 5/5 (13/13 with the other two focused fixtures), `PinnedFetchProbe` above.
+
+Whole fixture, six seeds each. Idle penalties, mean (range):
+
+| arm | before, `4752f610` | C1 yield fix only | C1 + C2 | final, all fixes |
 |---|---|---|---|---|
-| Classic Eskinita | 0 (0-0) | 0 (0-0) | 146.8 (141-155) | 146.5 (138-152) |
-| Hero Strike Eskinita | 0.8 (0-5), 5 total | 0 (0-0) | 132.8 (121-143) | 131.3 (123-144) |
-| Hero Strike Ilalim | 0.5 (0-3), 3 total | 0 (0-0) | 132.5 (119-140) | 126.7 (117-136) |
+| Classic Eskinita | 0 (0-0) | 0 (0-0) | 0 (0-0) | 0 (0-0) |
+| Hero Strike Eskinita | 0.8 (0-5) | 0 (0-0) | 0 (0-0) | 0 (0-0) |
+| Hero Strike Ilalim | 0.5 (0-3) | **11.3 (0-68)** | 0 (0-0) | 0 (0-0) |
 
-Throws and retrievals stay inside the before range on every arm (receipts in
-`c1/current-before` and `c1/current-after`). The after column includes C2; the isolation
-sweep with only C1 is recorded in the execution log when it finishes.
+Final against before, Welch's t on six seeds an arm: throws, retrievals and knockdowns show
+no move past |t| 2 on any arm. **Classic tags read 146.8 → 140.8 (-4.1%, t = -2.28)**, but
+146.0 → 140.8 (t = -1.38) against the C1-only build and 146.0 → 146.5 (t = +0.12) for the C2 step
+alone, so it is flagged as a possible small shift to watch, not a measured effect of one change.
+Hero Strike tags: 132.8 → 131.5 (t = -0.33) and 132.5 → 131.3 (t = -0.24). Receipts:
+`c1/current-before`, `c1/current-c1-only`, `c1/current-after` (C1 + C2), `c1/current-final`.
 
 ### Bounded relationship to the historical 48
 
-Demonstrated: the yield deadlock charged idle penalties on the historical build (seeds 42
-and 11) and on the current build, and the fix removes it from 18 current matches.
-**Not demonstrated**: that it produced the 48. The seed is unrecoverable, the build does
-not replay, and the one historical outlier caught here also contained a non-moving fetcher
-that stays unexplained. The historical attribution therefore remains open. Preserved and
-untouched: raised ground, roof and pool retrieval, the 10 second off-roof penalty, pickup
-radius and all penalty rules.
+Demonstrated on the historical build itself: both mechanisms charged idle penalties there
+(seeds 42 and 11 traced), and the one historical outlier caught here (13 penalties) contained
+both at once. The pinned fetcher reproduces deterministically on `2fde55d3` at its traced
+positions and is cured there by the stuck-watch patch alone. The same pin produced 68
+penalties in one current match, the same order as 48.
+
+**Not demonstrated, and not demonstrable here:** that the specific 48-penalty match was this.
+Its seed is not in committed data and neither build replays a seed on this machine. Preserved
+and untouched: raised ground, roof and pool retrieval, the 10 second off-roof penalty, pickup
+radius, penalty rules and all movement and collision numbers.
 
 ## C2: bot lunge decisions
 
@@ -139,10 +169,10 @@ After (`eb29f871`):
 | **total** | **57/82, 70%** | **7** |
 
 Run-to-run noise: hits per match 7-12 before and 4-13 after; attempts 107-125 before and
-7-19 after. The whole-match sweep above is the tag-rate check: Classic tags 146.8 → 146.5.
-Hero Strike tags on Ilalim read 132.5 → 126.7 with overlapping ranges and an upstream kit
-change between the two, so the C1-only isolation sweep decides whether that move belongs
-to this fix. **Human slide and lunge feel are out of scope and were not judged.**
+7-19 after. Tag-rate check with C2 isolated (C1-only build against C1 + C2, same base, six seeds): Classic
+146.0 → 146.5 (t = +0.12), Hero Strike Eskinita 129.5 → 131.3 (t = +0.31), Ilalim 133.0 → 126.7
+(t = -1.59). No arm moves past |t| 2, so no change in overall tagging was measured; six seeds
+cannot resolve a shift smaller than about 5 per cent. **Human slide and lunge feel are out of scope and were not judged.**
 
 A tracker fault was found and fixed in `844da009`: a lunge tagging on its release frame was
 counted as a punch tag. The before table separates the two cases by `heldAfterRelease`,

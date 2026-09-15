@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.1612206">
+  <test-suite type="TestSuite" id="1560" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="425" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.161221" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1554" name="TumbangPreso.PlayTests.dll" fullname="/Users/paul/Documents/GitHub/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="425" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.152090" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="61065" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1555" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="425" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.147784" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1556" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="425" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.144147" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1351" name="PinnedFetchProbe" fullname="TumbangPreso.PlayTests.PinnedFetchProbe" classname="TumbangPreso.PlayTests.PinnedFetchProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.133681" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1352" name="ABotPressedAgainstTheIlalimPillarStillFetchesItsShoe" fullname="TumbangPreso.PlayTests.PinnedFetchProbe.ABotPressedAgainstTheIlalimPillarStillFetchesItsShoe" methodname="ABotPressedAgainstTheIlalimPillarStillFetchesItsShoe" classname="TumbangPreso.PlayTests.PinnedFetchProbe" runstate="Runnable" seed="1730663999" result="Passed" start-time="2026-09-15 12:14:10Z" end-time="2026-09-15 12:14:12Z" duration="2.125382" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 2.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+t=0.00 at=(-3.34, 0.08, 9.90) plan=Fetch vel=(0.00, 0.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+t=0.50 at=(-3.34, 0.08, 9.90) plan=Fetch vel=(-3.80, -2.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+t=1.02 at=(-3.34, 0.08, 9.90) plan=Fetch vel=(-3.80, -2.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+t=1.52 at=(-3.34, 0.08, 10.41) plan=Fetch vel=(0.00, -2.00, 2.53) shoe=Loose@(-8.30, 0.26, 11.92)
+t=2.02 at=(-3.44, 0.08, 11.57) plan=Fetch vel=(-2.53, -2.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+t=2.52 at=(-4.71, 0.08, 11.57) plan=Fetch vel=(-2.53, -2.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+t=3.02 at=(-5.97, 0.08, 11.57) plan=Fetch vel=(-2.53, -2.00, 0.00) shoe=Loose@(-8.30, 0.26, 11.92)
+held at 3.27s, longest motionless spell 1.33s
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
