@@ -25,11 +25,13 @@ The owner will send the assignment manually. Codex must leave this work alone.
 See [CLAUDE_ENGINEERING_LANE.md](CLAUDE_ENGINEERING_LANE.md) for exclusive file
 ownership, detailed acceptance criteria, sync rules and the separate execution log.
 
-- [ ] C1: TODO151.9 Ilalim48-idle/slipper-resting-position investigation.
-- [ ] C2: TODO151.9 bot lunge decision/aim investigation at ordinary1x.
-- [ ] C3: TODO149.5 measured AI/combat lookup cost and only justified optimization.
+- [x] C1: TODO151.9 Ilalim48-idle/slipper-resting-position investigation.
+- [x] C2: TODO151.9 bot lunge decision/aim investigation at ordinary1x.
+- [x] C3: TODO149.5 measured AI/combat lookup cost and only justified optimization.
 
-All three are RESERVED, NOT STARTED. Tick only after the full task criteria and
+Claude completed all three on 2026-09-15 with evidence in
+[claude-engineering-2026-09-15](reports/claude-engineering-2026-09-15/README.md). The specific
+historical 48-penalty match remains unreplayable and unattributed. Tick only after the full task criteria and
 necessary validation are satisfied and evidence is pushed. Partial, unverified,
 blocked and unexplained historical defects stay open. Do not close parent152.4
 or all151.9 for a completed subtask. All other work remains with Codex.
@@ -1668,6 +1670,14 @@ future session cites when it decides to leave `HeroHazards` alone.
 reserved to Claude as C1/C2 in CLAUDE_ENGINEERING_LANE.md. Codex must not work
 these tasks until released. The historical human slide-feel question stays separate.
 
+**2026-09-15 status (Claude, C1 and C2 complete, 151.9 itself stays open):** Ilalim idle
+penalties came from two bot decision defects traced on 2fde55d3 and the current build, a
+yield deadlock and an unstick that read wished velocity; both fixed (AiRetrievalRules,
+AiStuckWatch, PinnedFetchProbe). Final six-seed sweep 0 idle penalties in 18 matches. The
+specific 48 match is not replayable. Lunge: 556 of 671 bot lunges were dumped after the
+taya's own punch had tagged; AiLungeRules fixed it, 57/82 hits after. No balance number
+changed. Human slide feel is still unjudged. See reports/claude-engineering-2026-09-15.
+
 2026-09-10: the clock discrepancy was traced to the probe retaining eight rounds
 when switching only the mode to Classic. A fresh pinned 90-second round counted
 75 events and 75 recorded ticks. The probe now pins the full ruleset and prints it.
@@ -2433,6 +2443,12 @@ unless the architecture actually demands it.
 **September15 ownership:** reserved to Claude as C3 in
 CLAUDE_ENGINEERING_LANE.md. Codex must leave the measured AI/combat lookup work
 alone until released. It is not complete and remains measure-first.
+
+**2026-09-15 measured (Claude, C3 complete, no production change):** 134.5 to 134.9 slipper
+lookups per simulated second in whole four-bot matches, 33.7 to 49.8 us each, 0.052 to 0.096 ms
+per editor frame for AIController, CombatVerbs and Carrier, 0.034 to 0.067 ms for
+RoundDirector.cs:408. Code retained. macOS editor only; see SlipperLookupCostProbe and
+reports/claude-engineering-2026-09-15.
 
 Seat to `CharacterMotor`, seat or origin to `Slipper`, and the current `Lata` are resolved by
 runtime discovery in replicated and request-processing code. `MatchRpc.SlipperFor` already
