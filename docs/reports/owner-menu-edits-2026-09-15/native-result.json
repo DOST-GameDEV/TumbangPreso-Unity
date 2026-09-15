@@ -1,0 +1,13 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "cold loading and login music gate",
+        "loading and login silent for 1215 observed frames",
+        "menu music begins on revealed home",
+        "normal home artwork and ground dust verified",
+        "reduced home motion verified",
+        "settings credits and Play/Back remain reachable"
+    ],
+    "frameWindows": []
+}

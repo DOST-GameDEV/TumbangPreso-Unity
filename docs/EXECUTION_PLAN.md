@@ -1,5 +1,13 @@
 # Active execution plan
 
+**September15 owner menu checkpoint COMPLETE:** supplied clean background/buttons,
+updated login art, source-preserving extraction, uniform hover/press, ground dust,
+and music delayed until visible home are qualified locally and in Windowsv20.
+See [owner-menu report](reports/owner-menu-edits-2026-09-15/README.md). Continue the
+saved gameplay queue now; this does not close the larger project. C4 networking
+is still reserved to the separate Claude PC, whose paths must be discovered.
+
+
 **Newest priority:** finish publishing the current movement/peer integration, then
 implement the owner's main-menu/login artwork in ArtSource/ui/owner-ui-edits-2026-09-15.
 Match reference_mainmenu exactly for typography, colours and placement; extract

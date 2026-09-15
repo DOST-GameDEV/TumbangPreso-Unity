@@ -33,6 +33,17 @@ namespace TumbangPreso.UI
                 _tabs.Add(tab);
             }
             var note = OwnerUiLayout.Text(root, "SaveHint", "Save your changes\nwhen you're ready.", 28);
+            // Keep credits reachable without adding a fifth door to the owner's
+            // supplied four-button title composition.
+            var credits=SettingsWorkspaceRows.Action(root,"SettingsCredits","CREDITS",()=>
+            {
+                Suspend();
+                var view=GetComponent<TumpCreditsView>();
+                if(view==null)view=gameObject.AddComponent<TumpCreditsView>();
+                view.Open(transform,Resume);
+            },407);
+            OwnerUiLayout.Place((RectTransform)credits.transform,71,870,407,70);
+            credits.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
             OwnerUiLayout.Place(note.rectTransform, 86, 951, 381, 91); note.color = SettingsPalette.Muted;
             _heading = OwnerUiLayout.Text(root, "Heading", "", 62, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_heading.rectTransform, 572, 104, 1238, 113); _heading.color = SettingsPalette.Ink;

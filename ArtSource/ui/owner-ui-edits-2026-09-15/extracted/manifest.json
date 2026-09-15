@@ -1,0 +1,227 @@
+[
+  {
+    "name": "main-logo",
+    "source": "buttons_mainmenu.png",
+    "source_sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "source_xywh": [
+      134,
+      38,
+      658,
+      435
+    ],
+    "output": "main-logo.png",
+    "output_sha256": "55d559f2bc0890f993a196c5462f4c3d79ec336476202b0e2b666cef307b0d1e",
+    "white_matte_edge_pixels_recovered": 3404,
+    "resized": false
+  },
+  {
+    "name": "main-play",
+    "source": "buttons_mainmenu.png",
+    "source_sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "source_xywh": [
+      164,
+      454,
+      413,
+      156
+    ],
+    "output": "main-play.png",
+    "output_sha256": "35f07990c7826a212757849ee5f4bf527dd2d0e219ada511270be671e31f2329",
+    "white_matte_edge_pixels_recovered": 2117,
+    "resized": false
+  },
+  {
+    "name": "main-tutorial",
+    "source": "buttons_mainmenu.png",
+    "source_sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "source_xywh": [
+      166,
+      613,
+      446,
+      122
+    ],
+    "output": "main-tutorial.png",
+    "output_sha256": "8b35cffeee8f8580ae07e48042647b86ff2ddfc1e1a6172fc9a331606d07f1f3",
+    "white_matte_edge_pixels_recovered": 2509,
+    "resized": false
+  },
+  {
+    "name": "main-settings",
+    "source": "buttons_mainmenu.png",
+    "source_sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "source_xywh": [
+      165,
+      738,
+      497,
+      122
+    ],
+    "output": "main-settings.png",
+    "output_sha256": "91c386e93dad28e8a97c27239050b04521b9083769f774d7feacee964d6043da",
+    "white_matte_edge_pixels_recovered": 2380,
+    "resized": false
+  },
+  {
+    "name": "main-quit",
+    "source": "buttons_mainmenu.png",
+    "source_sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "source_xywh": [
+      175,
+      862,
+      316,
+      123
+    ],
+    "output": "main-quit.png",
+    "output_sha256": "c448e1914e6fd17890f22de0b8d07bb2e14dda4cb8e3e90b3b8ab25f2545708d",
+    "white_matte_edge_pixels_recovered": 1861,
+    "resized": false
+  },
+  {
+    "name": "login-logo",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      741,
+      37,
+      425,
+      286
+    ],
+    "output": "login-logo.png",
+    "output_sha256": "6c4a9ad5f7832a8ded9cb4204f3356e91d1774be27bfdee2c0727185f84fe0dd",
+    "white_matte_edge_pixels_recovered": 2924,
+    "resized": false
+  },
+  {
+    "name": "login-tabs",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      751,
+      339,
+      399,
+      96
+    ],
+    "output": "login-tabs.png",
+    "output_sha256": "b719b4a85036b721f0e260933a20835fa84b2de2860cb79d76f0ac9aec2aa7d1",
+    "white_matte_edge_pixels_recovered": 1864,
+    "resized": false
+  },
+  {
+    "name": "login-field1",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      675,
+      459,
+      553,
+      82
+    ],
+    "output": "login-field1.png",
+    "output_sha256": "6448dfcaf4a38af6ce297cade041892cd2e7477ff923bdcd9f621bf7b0a763a9",
+    "white_matte_edge_pixels_recovered": 3047,
+    "resized": false
+  },
+  {
+    "name": "login-field2",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      675,
+      553,
+      553,
+      83
+    ],
+    "output": "login-field2.png",
+    "output_sha256": "e91154a86a054ac314e0d55dc412fd23a96fb0d8b0a7e73d1d3d5fb345918d86",
+    "white_matte_edge_pixels_recovered": 3052,
+    "resized": false
+  },
+  {
+    "name": "login-field3",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      675,
+      652,
+      553,
+      82
+    ],
+    "output": "login-field3.png",
+    "output_sha256": "9758b9bf4ae7c29586a2ebc6069cb3d7e14631b63f468bbb5397e4e5944b9e2e",
+    "white_matte_edge_pixels_recovered": 3115,
+    "resized": false
+  },
+  {
+    "name": "login-checkbox",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      685,
+      750,
+      26,
+      28
+    ],
+    "output": "login-checkbox.png",
+    "output_sha256": "1e7caf80eaf085a00881c1116aed5839d37d7049bc4f6cb5bc1f7ee566540ec1",
+    "white_matte_edge_pixels_recovered": 96,
+    "resized": false
+  },
+  {
+    "name": "login-primary",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      736,
+      813,
+      431,
+      96
+    ],
+    "output": "login-primary.png",
+    "output_sha256": "dd8bca3a43cb0f1a8792bb5836d561f2a5e107e18189ba3011982242cd2152e6",
+    "white_matte_edge_pixels_recovered": 2247,
+    "resized": false
+  },
+  {
+    "name": "login-rule-left",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      679,
+      932,
+      245,
+      10
+    ],
+    "output": "login-rule-left.png",
+    "output_sha256": "6df8a8e36ab01c1600b6b1fecd2fef1c67956d92b57c42416bdc0559178bb33e",
+    "white_matte_edge_pixels_recovered": 0,
+    "resized": false
+  },
+  {
+    "name": "login-rule-right",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      999,
+      934,
+      246,
+      10
+    ],
+    "output": "login-rule-right.png",
+    "output_sha256": "8ac1fd33dd10329c378e4a3e8d03e8a53cb60d8a8c119e8e1c8ad35ca7df7349",
+    "white_matte_edge_pixels_recovered": 0,
+    "resized": false
+  },
+  {
+    "name": "login-guest",
+    "source": "updatedbuttons_login.png",
+    "source_sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "source_xywh": [
+      736,
+      955,
+      431,
+      99
+    ],
+    "output": "login-guest.png",
+    "output_sha256": "e82d6ccd0d9d30f385b1e2beb49fb4ec4fefff0e45ea1edaa011844bd622d5c4",
+    "white_matte_edge_pixels_recovered": 2020,
+    "resized": false
+  }
+]

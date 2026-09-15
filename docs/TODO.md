@@ -1,5 +1,13 @@
 # TODO: Tumbang Preso Unity
 
+**September15 owner menu checkpoint COMPLETE:** supplied clean background/buttons,
+updated login art, source-preserving extraction, uniform hover/press, ground dust,
+and music delayed until visible home are qualified locally and in Windowsv20.
+See [owner-menu report](reports/owner-menu-edits-2026-09-15/README.md). Continue the
+saved gameplay queue now; this does not close the larger project. C4 networking
+is still reserved to the separate Claude PC, whose paths must be discovered.
+
+
 **New Claude reservation:** [C4 request safety](CLAUDE_REQUEST_SAFETY_LANE.md)
 owns TODO149.4's remaining action-request audit. It is RESERVED, NOT STARTED.
 Codex leaves the listed networking files and task alone while doing the requested

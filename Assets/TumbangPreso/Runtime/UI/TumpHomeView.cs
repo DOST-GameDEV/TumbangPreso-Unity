@@ -9,6 +9,7 @@ namespace TumbangPreso.UI
     public sealed class TumpHomeView : MonoBehaviour
     {
         private Canvas _canvas;
+        private bool _musicStarted;
         public void Build(Transform owner, Action settings, Action credits)
             => _canvas=HomeCourtView.Build(owner,settings,credits);
 
@@ -47,6 +48,14 @@ namespace TumbangPreso.UI
         }
         public void Suspend() { if (_canvas != null) _canvas.gameObject.SetActive(false); }
         public void Resume() { if (_canvas != null) { _canvas.gameObject.SetActive(true); _canvas.GetComponent<ScreenFocus>().Rebuild(); } }
+        private void LateUpdate()
+        {
+            // Wire can open startup login immediately after building the home.
+            // Wait until that decision has settled and the home is actually shown.
+            if(_musicStarted || _canvas==null || !_canvas.isActiveAndEnabled || GameServices.Music==null)return;
+            GameServices.Music.Play("menu",GameServices.MenuTrack);
+            _musicStarted=true;
+        }
         private void OnDisable() => Suspend();
     }
 }

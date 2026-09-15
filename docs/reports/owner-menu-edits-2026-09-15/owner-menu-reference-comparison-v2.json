@@ -1,0 +1,82 @@
+[
+  {
+    "label": "PLAY",
+    "source_rgb": [
+      15,
+      86,
+      19
+    ],
+    "reference_ink": [
+      275,
+      498,
+      187,
+      55
+    ],
+    "render_ink": [
+      274,
+      499,
+      187,
+      53
+    ]
+  },
+  {
+    "label": "TUTORIAL",
+    "source_rgb": [
+      25,
+      51,
+      72
+    ],
+    "reference_ink": [
+      244,
+      644,
+      284,
+      40
+    ],
+    "render_ink": [
+      244,
+      644,
+      283,
+      40
+    ]
+  },
+  {
+    "label": "SETTINGS",
+    "source_rgb": [
+      150,
+      87,
+      22
+    ],
+    "reference_ink": [
+      245,
+      768,
+      257,
+      41
+    ],
+    "render_ink": [
+      245,
+      768,
+      256,
+      41
+    ]
+  },
+  {
+    "label": "QUIT",
+    "source_rgb": [
+      118,
+      21,
+      26
+    ],
+    "reference_ink": [
+      259,
+      895,
+      138,
+      42
+    ],
+    "render_ink": [
+      259,
+      895,
+      137,
+      41
+    ]
+  }
+]

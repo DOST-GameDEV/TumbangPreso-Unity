@@ -32,6 +32,7 @@ def main():
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
+    parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     args=parser.parse_args()
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
@@ -52,6 +53,7 @@ def main():
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
     if args.frame_poll:command.append('-tp-review-frame-poll')
+    if args.menu_only:command.append('-tp-menu-review-only')
     process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
     print('Started internal UI review, process',process.pid,flush=True)
     try:

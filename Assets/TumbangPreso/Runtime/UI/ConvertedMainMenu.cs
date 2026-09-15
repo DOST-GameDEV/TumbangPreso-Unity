@@ -54,7 +54,6 @@ namespace TumbangPreso.UI
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
             signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
-            GameServices.Music?.Play("menu", GameServices.MenuTrack);
             OfferTheLoginStep();
         }
 

@@ -1,5 +1,69 @@
 # Active TUMP rework ledger
 
+## CURRENT owner menu complete; continue gameplay after publishing
+
+Owner UI edit qualified in local2/2PlayMode and fresh internal Windowsv20.
+Report: reports/owner-menu-edits-2026-09-15/README.md, with native receipts,
+reference comparison, PNGs and normal-speed motion MP4/frame timing.
+Runtime SHA037a4cf026102885efd2b41d7e47303249d7156c7c6e181fde3f2e26352a041d.
+Native menu-only run passed startup silence through1215frames, Guest music start,
+three real PC windows, hover/press/reduced motion, Settings/Credits and Play/Back.
+Guards c25505cf2546 (local tests),426c5b822d2e (build). Native PID1648 retired.
+No active task-owned Editor/player/server/browser. Generated whitespace-only
+metadata/project serialization was compared to HEAD, backed up under
+Logs/owner-menu-generated-whitespace and restored exactly. No profile reset.
+
+Next concrete step: commit/push the complete UI batch on ASTRAReworks, then read
+current whole-kit/demo gameplay criteria and begin an independent controlled
+ordinary-speed action review. Sean's networking phase and C4 request-safety files
+remain reserved to Claude until handback. Preserve all earlier skill/state fixes.
+Do not stop at this stable checkpoint. GAMEPLAY_RESUME_AFTER_UI.md is still open,
+including movement/recovery, spectator/performance, deferred Inday and Rafi LAST.
+
+
+## CURRENT owner menu local tests passed; native menu-only check next
+
+UI importv2 and OwnerMenuEditsTests v2 passed2/2 with fresh Logs/owner-menu-v2.xml.
+Ten PC viewports pass home control/text bounds, including4:3,16:10,ultrawide,4K.
+Startup login captures pass four window shapes; real SignIn/Guest/reveal-password
+and silent-until-home music pass. Hover/press preserves art aspect and fixed hit
+areas; reduced motion removes dust. Settings/Credits/Back routes pass.
+
+v1 failed: dust lacked CanvasRenderer and login helper text fell below14px at
+960x540. Both fixed. v1 also exposed white export noise along extracted outlines;
+conversion now removes connected near-white backing and demattes the edge band.
+All original source images remain untouched. v1/v2 logs/XML retained; initial
+capture names were reused by v2, so current OwnerMenu-v1 PNGs show the v2 source.
+Visual review: clean native supplied shapes, matching composition/ink, no fringe.
+Credits is reachable from Settings to preserve the supplied four-button main.
+
+No Editor/player is active after guard aac567e45101/f9ff9d5cdadb and v2 test guard
+(completion receipt in current tool stream). Apply prepared menu-only native probe,
+build internal Builds/owner-menu-v20 and run --menu-only, not the full gameplay
+walkthrough. Source/assets remain UNCOMMITTED. No Desktop build replacement.
+After verifying/correcting/pushing this UI batch, CONTINUE independent gameplay
+queue. C4 Net request audit stays reserved; do not edit its files.
+
+
+## CURRENT owner menu implementation and focused import, September15
+
+HEAD86e12e71 on ASTRAReworks. C4 request-safety remains exclusively reserved to
+CLAUDE_REQUEST_SAFETY_LANE.md on the other PC; paths/tools must be discovered.
+Owner asked what remains after UI: preserve GAMEPLAY_RESUME_AFTER_UI.md ordering,
+with whole-kit play, movement/FPP, recovery/input, lifecycle/spectator/performance,
+deferred actual-source Inday arms, then selected Rafi/lagoon expansion LAST LAST.
+
+UI changes are UNCOMMITTED. Added source-space OwnerRoadDust, scoped new login
+sprites with embedded glyphs (no duplicated icons), and delayed main music until
+TumpHomeView is visible after login. Studio sting stays at engine logo but stops
+when illustrated loading begins; no fallback loading sting on that route.
+Main logo/buttons use supplied crops, clean source background and provisional
+native Darumadrop reference labels. Original login composition/background stay.
+Next: guarded OwnerMenuEditsAuthor.Prepare import, then focused real menu/login
+flow, music, aspect and visual captures. No UI runtime claim or final art acceptance
+yet. Do not edit imported source during that Unity run; draft probe outside Assets.
+
+
 ## CURRENT additional Claude prompt; then resume the UI implementation
 
 Owner requested another non-animation task and again stresses the different PC.

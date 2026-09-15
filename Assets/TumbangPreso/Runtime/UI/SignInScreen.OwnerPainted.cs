@@ -25,26 +25,26 @@ namespace TumbangPreso.UI
             var theme=OwnerUiTheme.Current;
             OwnerUiBackdrop.Build(_root.transform);
             var design=_ownerDesign=OwnerUiLayout.DesignArea(_root.transform,"OwnerAccountComposition");
-            var logo=OwnerUiLayout.Art(design,"OriginalOwnerLogo",OwnerUiTheme.Piece.Logo);
+            var logo=OwnerMenuArt.Image(design,"OriginalOwnerLogo","login-logo");
             OwnerUiLayout.Place(logo.rectTransform,760,44,407,273);
             logo.gameObject.AddComponent<OwnerUiMotion>().GentleFloat=true;
             _ownerForm=OwnerUiLayout.Rect(design,"AccountForm");OwnerUiLayout.Fill(_ownerForm);
 
             var track=OwnerUiLayout.Rect(_ownerForm,"AccountTabArtwork");OwnerUiLayout.Place(track,770,337,383,88);
             _ownerTabArt=track.gameObject.AddComponent<OwnerAccountTabArt>();
-            _ownerTabArt.Left=OwnerUiLayout.Art(track,"SelectedLeft",OwnerUiTheme.Piece.AccountTabs);
+            _ownerTabArt.Left=OwnerMenuArt.Image(track,"SelectedLeft","login-tabs");
             OwnerUiLayout.Fill(_ownerTabArt.Left.rectTransform);
-            _ownerTabArt.Right=OwnerUiLayout.Art(track,"SelectedRight",OwnerUiTheme.Piece.AccountTabs);
+            _ownerTabArt.Right=OwnerMenuArt.Image(track,"SelectedRight","login-tabs");
             OwnerUiLayout.Fill(_ownerTabArt.Right.rectTransform);_ownerTabArt.Right.rectTransform.localScale=new Vector3(-1,1,1);
             _createTab=OwnerTextButton(_ownerForm,"CreateAccountTab","SIGN UP",()=>SetMode(true),28,OwnerUiLayout.TypeRole.Accent);
             _signInTab=OwnerTextButton(_ownerForm,"SignInTab","SIGN IN",()=>SetMode(false),28,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place((RectTransform)_createTab.transform,790,350,175,55);
             OwnerUiLayout.Place((RectTransform)_signInTab.transform,964,350,170,55);
 
-            _username=OwnerUiEntry.Create(_ownerForm,"Username","USERNAME",OwnerUiTheme.Piece.FirstField);
-            _ownerEmail=OwnerUiEntry.Create(_ownerForm,"Email","EMAIL (OPTIONAL)",OwnerUiTheme.Piece.SecondField,OwnerUiGlyph.Mark.Envelope);
+            _username=OwnerUiEntry.Create(_ownerForm,"Username","USERNAME",OwnerUiTheme.Piece.FirstField,artwork:OwnerMenuArt.Piece("login-field1"),embeddedGlyph:true);
+            _ownerEmail=OwnerUiEntry.Create(_ownerForm,"Email","EMAIL (OPTIONAL)",OwnerUiTheme.Piece.SecondField,artwork:OwnerMenuArt.Piece("login-field2"),embeddedGlyph:true);
             _ownerEmail.contentType=InputField.ContentType.EmailAddress;
-            _password=OwnerUiEntry.Create(_ownerForm,"Password","PASSWORD",OwnerUiTheme.Piece.ThirdField,OwnerUiGlyph.Mark.Lock,true);
+            _password=OwnerUiEntry.Create(_ownerForm,"Password","PASSWORD",OwnerUiTheme.Piece.ThirdField,password:true,artwork:OwnerMenuArt.Piece("login-field3"),embeddedGlyph:true);
             _username.characterLimit=64;
             OwnerUiLayout.Place((RectTransform)_username.transform,695,454,533,78);
             OwnerUiLayout.Place((RectTransform)_ownerEmail.transform,695,547,533,77);
@@ -62,27 +62,27 @@ namespace TumbangPreso.UI
             var hit=OwnerUiLayout.Rect(_ownerTermsRow.transform,"TermsAcceptance");OwnerUiLayout.Place(hit,0,0,44,42);
             var hitImage=hit.gameObject.AddComponent<UnityEngine.UI.Image>();hitImage.color=Color.clear;
             _ownerTerms=hit.gameObject.AddComponent<Toggle>();_ownerTerms.targetGraphic=hitImage;_ownerTerms.transition=Selectable.Transition.None;
-            var box=OwnerUiLayout.Art(hit,"OriginalCheckbox",OwnerUiTheme.Piece.Checkbox);OwnerUiLayout.Place(box.rectTransform,12,8,21,24);
+            var box=OwnerMenuArt.Image(hit,"OriginalCheckbox","login-checkbox");OwnerUiLayout.Place(box.rectTransform,12,8,21,24);
             var tick=OwnerUiGlyph.Create(hit,"Check",OwnerUiGlyph.Mark.Check,theme.ActionInk);
             OwnerUiLayout.Place(tick.rectTransform,13,9,20,22);_ownerTerms.graphic=tick;_ownerTerms.isOn=false;
-            var terms=OwnerTextButton(_ownerTermsRow.transform,"TermsLink","TERMS & CONDITIONS",ShowOwnerTerms,26,OwnerUiLayout.TypeRole.Accent);
+            var terms=OwnerTextButton(_ownerTermsRow.transform,"TermsLink","TERMS & CONDITIONS",ShowOwnerTerms,28,OwnerUiLayout.TypeRole.Accent);
             _ownerTermsLink=terms;OwnerUiLayout.Place((RectTransform)terms.transform,39,0,361,42);terms.GetComponentInChildren<Text>().alignment=TextAnchor.MiddleLeft;
 
-            _ownerAlready=OwnerUiLayout.Text(_ownerForm,"AlreadyPlayed","Already played?",23,OwnerUiLayout.TypeRole.Display);
-            _ownerAlready.color=theme.EnteredInk;OwnerUiLayout.Place(_ownerAlready.rectTransform,714,750,193,35);
-            _ownerSwitch=OwnerTextButton(_ownerForm,"OtherAccountMode","SIGN IN",()=>SetMode(!_creating),23,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place((RectTransform)_ownerSwitch.transform,901,750,117,35);
+            _ownerAlready=OwnerUiLayout.Text(_ownerForm,"AlreadyPlayed","Already played?",28,OwnerUiLayout.TypeRole.Display);
+            _ownerAlready.color=theme.EnteredInk;OwnerUiLayout.Place(_ownerAlready.rectTransform,714,746,225,46);
+            _ownerSwitch=OwnerTextButton(_ownerForm,"OtherAccountMode","SIGN IN",()=>SetMode(!_creating),28,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place((RectTransform)_ownerSwitch.transform,935,746,150,46);
             _ownerSwitch.GetComponentInChildren<Text>().color=theme.HintInk;
-            _nativeSubmit=OwnerPaintedAction.Create(_ownerForm,"SubmitAccount","CREATE",Submit,false,64);
+            _nativeSubmit=OwnerPaintedAction.Create(_ownerForm,"SubmitAccount","CREATE",Submit,false,64,OwnerMenuArt.Piece("login-primary"));
             OwnerUiLayout.Place((RectTransform)_nativeSubmit.transform,755,796,413,91);
             _primaryLabel=_nativeSubmit.GetComponentInChildren<Text>();
-            var left=OwnerUiLayout.Art(_ownerForm,"LeftDivider",OwnerUiTheme.Piece.LeftRule);
+            var left=OwnerMenuArt.Image(_ownerForm,"LeftDivider","login-rule-left");
             OwnerUiLayout.Place(left.rectTransform,705,907,242,6);
-            var right=OwnerUiLayout.Art(_ownerForm,"RightDivider",OwnerUiTheme.Piece.RightRule);
+            var right=OwnerMenuArt.Image(_ownerForm,"RightDivider","login-rule-right");
             OwnerUiLayout.Place(right.rectTransform,1025,909,242,5);
-            var or=OwnerUiLayout.Text(_ownerForm,"Or","OR",24,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(or.rectTransform,950,892,70,39);or.alignment=TextAnchor.MiddleCenter;or.color=theme.EnteredInk;
-            _guest=OwnerPaintedAction.Create(_ownerForm,"GuestAccount","GUEST",GuestPressed,true,64);
+            var or=OwnerUiLayout.Text(_ownerForm,"Or","OR",28,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(or.rectTransform,950,888,70,46);or.alignment=TextAnchor.MiddleCenter;or.color=theme.EnteredInk;
+            _guest=OwnerPaintedAction.Create(_ownerForm,"GuestAccount","GUEST",GuestPressed,true,64,OwnerMenuArt.Piece("login-guest"));
             OwnerUiLayout.Place((RectTransform)_guest.transform,755,935,413,91);
 
             _error=OwnerUiLayout.Text(_ownerForm,"AccountStatus","",23,OwnerUiLayout.TypeRole.Display);
@@ -114,7 +114,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_welcomeName.rectTransform,650,493,620,80);_welcomeName.alignment=TextAnchor.MiddleCenter;
             _welcomeHint=OwnerUiLayout.Text(_welcome.transform,"WelcomeHint","",28);
             OwnerUiLayout.Place(_welcomeHint.rectTransform,650,582,620,70);_welcomeHint.alignment=TextAnchor.MiddleCenter;
-            var go=OwnerPaintedAction.Create(_welcome.transform,"ContinueAccount","CONTINUE",BootGuest,false,52);
+            var go=OwnerPaintedAction.Create(_welcome.transform,"ContinueAccount","CONTINUE",BootGuest,false,52,OwnerMenuArt.Piece("login-primary"));
             OwnerUiLayout.Place((RectTransform)go.transform,755,699,413,91);
             var change=OwnerTextButton(_welcome.transform,"OtherAccount","Use another account",LeaveWelcomeForTheForm,28,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place((RectTransform)change.transform,704,818,513,70);_welcome.SetActive(false);
@@ -122,17 +122,17 @@ namespace TumbangPreso.UI
         private void SetNativeMode(bool creating)
         {
             _creating=creating;_ownerTabArt.SelectLeft(creating);
-            _createTab.GetComponentInChildren<Text>().color=creating?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.IdleTabInk;
-            _signInTab.GetComponentInChildren<Text>().color=creating?OwnerUiTheme.Current.IdleTabInk:OwnerUiTheme.Current.Green;
+            _createTab.GetComponentInChildren<Text>().color=creating?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.Pale;
+            _signInTab.GetComponentInChildren<Text>().color=creating?OwnerUiTheme.Current.Pale:OwnerUiTheme.Current.Green;
             _primaryLabel.text=creating?"CREATE":"SIGN IN";
             _ownerEmail.gameObject.SetActive(creating);_ownerTermsRow.SetActive(creating);
             OwnerUiLayout.Place((RectTransform)_password.transform,695,creating?642:547,533,77);
-            MoveOwnerRow(_ownerAlready.rectTransform,creating?750:655);
-            MoveOwnerRow((RectTransform)_ownerSwitch.transform,creating?750:655);
+            MoveOwnerRow(_ownerAlready.rectTransform,creating?746:651);
+            MoveOwnerRow((RectTransform)_ownerSwitch.transform,creating?746:651);
             MoveOwnerRow((RectTransform)_nativeSubmit.transform,creating?796:701);
             MoveOwnerRow((RectTransform)_ownerForm.Find("LeftDivider"),creating?907:812);
             MoveOwnerRow((RectTransform)_ownerForm.Find("RightDivider"),creating?909:814);
-            MoveOwnerRow((RectTransform)_ownerForm.Find("Or"),creating?892:797);
+            MoveOwnerRow((RectTransform)_ownerForm.Find("Or"),creating?888:793);
             MoveOwnerRow((RectTransform)_guest.transform,creating?935:840);
             _ownerModePlaced=true;
             _ownerAlready.text=creating?"Already played?":"New player?";

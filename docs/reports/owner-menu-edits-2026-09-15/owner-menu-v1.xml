@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.7987052">
+  <test-suite type="TestSuite" id="1569" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="432" result="Failed" site="Child" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.798705" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1563" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="432" result="Failed" site="Child" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.783560" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6224" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1564" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="432" result="Failed" site="Child" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.778130" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1565" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="432" result="Failed" site="Child" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.773014" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1314" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:43Z" duration="6.756723" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1315" name="MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" methodname="MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="601363500" result="Failed" label="Error" start-time="2026-09-15 13:02:36Z" end-time="2026-09-15 13:02:42Z" duration="5.882854" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[UnityEngine.MissingComponentException : There is no 'CanvasRenderer' attached to the "BackgroundRoadDust" game object, but a script is trying to access it.
+You probably need to add a CanvasRenderer to the game object "BackgroundRoadDust". Or your script needs to check if the component is attached before using it.]]></message>
+                <stack-trace><![CDATA[  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x000b4] in <858f0765bd8f497aacadfc2cd49efcc0>:0
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0
+  at UnityEngine.CanvasRenderer.GetMesh () [0x00006] in <5f02f1bb2f3448fdbeec3054d807f2f3>:0
+  at TumbangPreso.PlayTests.OwnerMenuEditsTests+<MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows>d__2.MoveNext () [0x0049a] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\OwnerMenuEditsTests.cs:54
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpUiCapture] OwnerMenu-v1-960x540 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-1280x720 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-1366x768 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-1920x1080 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-1920x1200 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-1280x960 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-2560x1440 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-3440x1440 cream source=252,211,159 pixel=198,137,119; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-3840x1080 cream source=252,211,159 pixel=247,184,116; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-3840x2160 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v1-dust cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1316" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1873672597" result="Failed" start-time="2026-09-15 13:02:42Z" end-time="2026-09-15 13:02:43Z" duration="0.856669" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  OwnerLogin-v1-create-960x540/OwnerSignInCanvas/SignInRoot/OwnerAccountComposition/AccountForm/TermsRow/TermsLink/Label is below the small-window reading floor.
+  Expected: greater than or equal to 13.9499998f
+  But was:  13.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__3.MoveNext () [0x0098f] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:158
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpGeometry] OwnerLogin-v1-create-1920x1080/Eye: vertices=20, cull=False, alpha=1, depth=22, material=1
+[TumpUiCapture] OwnerLogin-v1-create-1920x1080 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLogin-v1-create-960x540/Eye: vertices=20, cull=False, alpha=1, depth=22, material=1
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

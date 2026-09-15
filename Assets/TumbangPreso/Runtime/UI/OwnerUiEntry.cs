@@ -5,9 +5,10 @@ namespace TumbangPreso.UI
     public static class OwnerUiEntry
     {
         public static UnityEngine.UI.InputField Create(Transform parent,string name,string placeholder,
-            OwnerUiTheme.Piece frame,OwnerUiGlyph.Mark? glyph=null,bool password=false)
+            OwnerUiTheme.Piece frame,OwnerUiGlyph.Mark? glyph=null,bool password=false,Sprite artwork=null,bool embeddedGlyph=false)
         {
             var art=OwnerUiLayout.Art(parent,name,frame);art.raycastTarget=true;
+            if(artwork!=null)art.sprite=artwork;
             var input=art.gameObject.AddComponent<UnityEngine.UI.InputField>();
             input.targetGraphic=art;input.transition=UnityEngine.UI.Selectable.Transition.None;
             input.lineType=UnityEngine.UI.InputField.LineType.SingleLine;
@@ -21,6 +22,7 @@ namespace TumbangPreso.UI
             var hint=OwnerUiLayout.Text(area,"Placeholder",placeholder,28,OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Fill(hint.rectTransform);hint.color=OwnerUiTheme.Current.Ochre;
             input.placeholder=hint;
+            if(embeddedGlyph)return input;
             if(glyph.HasValue)
             {
                 var mark=OwnerUiGlyph.Create(art.transform,"FieldIcon",glyph.Value,OwnerUiTheme.Current.Ochre);

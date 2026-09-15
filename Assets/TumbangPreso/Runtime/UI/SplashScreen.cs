@@ -147,6 +147,10 @@ namespace TumbangPreso.UI
         {
             _displaySeconds = LoadingPresentation.ChooseDuration(new System.Random());
             BuildSurface();
+            // The logo may have its short studio cue. The illustrated loading
+            // screen stays quiet; the menu bed begins only on the visible home.
+            GameServices.Music?.StopNow();
+            if(_ownerLoading || _illustration!=null)BootSting.Stop();
             BeginPreload();
             // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
             // prompt and no account form here: a fresh player signs in anonymously while the
@@ -164,7 +168,7 @@ namespace TumbangPreso.UI
             // 2026-09-06 (`docs/TODO.md` § 150.7), so this is the eighth non-diegetic site and
             // the one a `Vector3.zero` grep finds last: it never went through `AudioDirector` at
             // all. A boot sting that pans is not a boot sting.
-            if (_sting != null && !BootSting.Started)
+            if (!_ownerLoading && _illustration==null && _sting != null && !BootSting.Started)
             {
                 var s = Settings.SettingsStore.Current;
                 GameServices.Audio?.PlayClipUi(_sting, Mathf.Clamp01(s.SfxGain));

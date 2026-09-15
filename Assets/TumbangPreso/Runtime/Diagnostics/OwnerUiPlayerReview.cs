@@ -162,38 +162,41 @@ namespace TumbangPreso.Diagnostics
         }
         private IEnumerator Motion(string name,bool reduced)
         {
-            // The current home design changes ink/underline, never the hit target's scale.
             var folder=Path.Combine(_folder,name+"-frames");Directory.CreateDirectory(folder);
-            var csv=new System.Text.StringBuilder("frame,real_seconds,focus_amount,control_scale,label_scale\n");
+            var csv=new System.Text.StringBuilder("frame,real_seconds,art_scale,target_scale,dust_vertices\n");
             var control=Find("SettingsButton");var pointer=Pointer(control);
-            var field=typeof(HomeMenuAction).GetField("_shown",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
-            if(!(control is HomeMenuAction)||field==null)throw new InvalidOperationException("Current home ink feedback missing.");
+            var motion=control.GetComponentInChildren<OwnerUiMotion>();
+            if(!(control is OwnerPaintedAction)||motion==null)throw new InvalidOperationException("Painted home feedback missing.");
+            Settings.SettingsStore.Current.ReducedUiMotion=reduced;
             EventSystem.current.SetSelectedGameObject(null);
             ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerExitHandler);
-            yield return new WaitForSecondsRealtime(.2f);
-            float start=Time.realtimeSinceStartup,nextImage=0,min=1,max=0;int frame=0;
+            yield return new WaitForSecondsRealtime(.4f);
+            float start=Time.realtimeSinceStartup,nextImage=0,min=1,max=1;int frame=0;
             bool hover=false,down=false,up=false;
-            while(Time.realtimeSinceStartup-start<2.3f)
+            var dust=UnityEngine.Object.FindFirstObjectByType<OwnerRoadDust>();
+            while(Time.realtimeSinceStartup-start<4)
             {
                 float age=Time.realtimeSinceStartup-start;
-                if(age>.35f&&!hover){hover=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerEnterHandler);}
-                if(age>1&&!down){down=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerDownHandler);}
-                if(age>1.25f&&!up){up=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerUpHandler);EventSystem.current.SetSelectedGameObject(null);ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerExitHandler);}
+                if(age>.5f&&!hover){hover=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerEnterHandler);}
+                if(age>1.5f&&!down){down=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerDownHandler);}
+                if(age>1.9f&&!up){up=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerUpHandler);EventSystem.current.SetSelectedGameObject(null);ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerExitHandler);}
                 yield return new WaitForEndOfFrame();
-                float focus=(float)field.GetValue(control);min=Mathf.Min(min,focus);max=Mathf.Max(max,focus);
-                float scale=control.transform.localScale.x,labelScale=control.GetComponentInChildren<Text>().transform.localScale.x;
-                if(Mathf.Abs(scale-1)>.001f||Mathf.Abs(labelScale-1)>.001f)throw new InvalidOperationException("Home target or label unexpectedly scaled.");
-                if(reduced && Mathf.Abs(focus-(hover&&!up?1:0))>.001f)throw new InvalidOperationException("Reduced home ink feedback kept interpolating.");
-                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{focus:F6},{scale:F6},{labelScale:F6}"));
+                float scale=motion.transform.localScale.x;min=Mathf.Min(min,scale);max=Mathf.Max(max,scale);
+                int vertices=dust!=null?dust.canvasRenderer.GetMesh().vertexCount:0;
+                if(Mathf.Abs(control.transform.localScale.x-1)>.001f || Mathf.Abs(scale-motion.transform.localScale.y)>.001f)
+                    throw new InvalidOperationException("Supplied artwork stretched or its hit target moved.");
+                if(reduced && (Mathf.Abs(scale-1)>.001f || vertices!=0))throw new InvalidOperationException("Reduced menu still animates.");
+                if(!reduced && vertices==0)throw new InvalidOperationException("Background dust has no rendered geometry.");
+                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{scale:F6},{control.transform.localScale.x:F6},{vertices}"));
                 if(age>=nextImage)
                 {
-                    var image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(folder,frame.ToString("00000")+".jpg"),image.EncodeToJPG(88));Destroy(image);nextImage=age+.10f;
+                    var image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(folder,frame.ToString("00000")+".jpg"),image.EncodeToJPG(93));Destroy(image);nextImage=age+1f/15f;
                 }
                 frame++;
             }
             File.WriteAllText(Path.Combine(folder,"frames.csv"),csv.ToString());
-            if(max-min<.9f)throw new InvalidOperationException("Home ink feedback did not visibly respond.");
-            Stage(reduced?"reduced home ink verified":"normal home ink verified");
+            if(!reduced && (max<1.015f || min>.99f))throw new InvalidOperationException("Hover/press feedback did not respond.");
+            Stage(reduced?"reduced home motion verified":"normal home artwork and ground dust verified");
         }
         private IEnumerator ReducedTextAction()
         {
@@ -277,8 +280,54 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>gate==null||!gate.CountingDown);
             yield return WaitFor(()=>GameServices.Round.RoundActive);
         }
+        private IEnumerator MenuOnly()
+        {
+            Stage("cold loading and login music gate");
+            yield return null;
+            int silentFrames=0;float until=Time.realtimeSinceStartup+80;
+            while(Find("GuestAccount")==null && Find("ContinueAccount")==null && Time.realtimeSinceStartup<until)
+            {
+                if(GameServices.Music!=null && GameServices.Music.Current!=null)throw new InvalidOperationException("Music began during loading.");
+                if(GameObject.Find("OwnerLoadingCanvas")!=null && BootSting.Playing)throw new InvalidOperationException("Studio cue continued into illustrated loading.");
+                silentFrames++;yield return null;
+            }
+            if(Find("GuestAccount")==null && Find("ContinueAccount")==null)throw new InvalidOperationException("Startup entrance did not arrive.");
+            if(GameServices.Music.Current!=null)throw new InvalidOperationException("Music began before leaving startup login.");
+            Stage("loading and login silent for "+silentFrames+" observed frames");
+            if(Find("SignInBack")!=null)throw new InvalidOperationException("Startup unexpectedly has Back.");
+            foreach(var size in new[]{new Vector2Int(1366,768),new Vector2Int(960,540),new Vector2Int(1920,1080)})
+            {
+                Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);
+                yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
+                yield return Shot("Login-"+size.x+"x"+size.y);
+            }
+            yield return Click(Find("GuestAccount")!=null?"GuestAccount":"ContinueAccount");
+            yield return WaitFor(()=>GameServices.Music.Current=="menu");
+            if(GameServices.Music.GetComponents<AudioSource>().Count(a=>a.isPlaying)!=1)throw new InvalidOperationException("Expected exactly one menu music source.");
+            Stage("menu music begins on revealed home");
+            EventSystem.current.SetSelectedGameObject(null);
+            foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1366,768),new Vector2Int(960,540)})
+            {
+                Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);
+                yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
+                yield return Shot("Home-"+size.x+"x"+size.y);
+            }
+            Screen.SetResolution(1366,768,FullScreenMode.Windowed);
+            yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
+            yield return Motion("normal",false);yield return Motion("reduced",true);
+            Settings.SettingsStore.Current.ReducedUiMotion=false;
+            yield return Click("SettingsButton");yield return Click("SettingsCredits");
+            yield return WaitFor(()=>GameObject.Find("OwnerCreditsCanvas")!=null);
+            yield return Click("CreditsBack");yield return Click("TumpSettingsBack");
+            yield return Click("StartButton");yield return WaitFor(()=>GameObject.Find("OwnerPlayCanvas")!=null);
+            yield return Click("BackButton");
+            Stage("settings credits and Play/Back remain reachable");
+        }
+
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-menu-review-only"))
+            {yield return MenuOnly();yield break;}
             Stage("cold boot");
             yield return WaitFor(()=>Find("GuestAccount")!=null || Find("ContinueAccount")!=null || Find("StartButton")!=null,80);
             Settings.SettingsStore.Current.Fullscreen=false;

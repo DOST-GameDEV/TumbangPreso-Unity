@@ -3,48 +3,42 @@ using UnityEngine;
 
 namespace TumbangPreso.UI
 {
-    // PDF41's quiet side-menu idea, newly composed around the court illustration.
-    // The logo is original artwork; every label and hit target remains native.
     public static class HomeCourtView
     {
-        public static Canvas Build(Transform owner, Action settings, Action credits)
+        public static Canvas Build(Transform owner,Action settings,Action credits)
         {
-            var canvas = OwnerUiLayout.Canvas(owner, "OwnerHomeCanvas", 100);
-            var background = OwnerUiLayout.Rect(canvas.transform, "HomeCourtIllustration");
+            var canvas=OwnerUiLayout.Canvas(owner,"OwnerHomeCanvas",100);
+            var background=OwnerUiLayout.Rect(canvas.transform,"OwnerMainMenuBackground");
             OwnerUiLayout.Fill(background);
-            background.gameObject.AddComponent<UnityEngine.UI.RawImage>();
-            background.gameObject.AddComponent<HomeCourtScene>();
-            var design = OwnerUiLayout.DesignArea(canvas.transform, "HomeCourtComposition");
-            var logo = OwnerUiLayout.Art(design, "OriginalOwnerLogo", OwnerUiTheme.Piece.Logo);
-            OwnerUiLayout.Place(logo.rectTransform, 116, 80, 540, 540 * 273f / 407);
-            Action(design, "StartButton", "PLAY", () => SceneFlow.Go(SceneFlow.ModeSelect), 138, 486, 504, 104, 66, true);
-            Action(design, "TutorialButton", "LEARN TO PLAY", SceneFlow.StartTraining, 151, 625, 465, 80, 42);
-            Action(design, "SettingsButton", "SETTINGS", settings, 151, 729, 465, 80, 42);
-            Action(design, "QuitButton", "QUIT", SceneFlow.Quit, 151, 833, 465, 80, 42);
-            Action(design, "CreditsButton", "CREDITS", credits, 151, 940, 238, 58, 30);
-            var version = OwnerUiLayout.Text(design, "GameVersion", "", 28, OwnerUiLayout.TypeRole.Reading);
-            OwnerUiLayout.Place(version.rectTransform, 1350, 1020, 470, 36);
-            version.alignment = TextAnchor.MiddleRight;
-            version.color = OwnerUiTheme.Current.DeepInk; GameVersion.ApplyTo(version);
+            var image=background.gameObject.AddComponent<UnityEngine.UI.RawImage>();
+            var scene=background.gameObject.AddComponent<HomeCourtScene>();
+            scene.Illustration=OwnerMenuArt.Texture("main-background");scene.Drift=0;
+            image.texture=scene.Illustration;
+            var dust=OwnerUiLayout.Rect(background,"BackgroundRoadDust").gameObject.AddComponent<OwnerRoadDust>();
+            OwnerUiLayout.Fill(dust.rectTransform);dust.Background=image;dust.raycastTarget=false;
+            var design=OwnerUiLayout.DesignArea(canvas.transform,"OwnerMainMenuComposition");
+            var logo=OwnerMenuArt.Image(design,"OriginalOwnerLogo","main-logo");
+            OwnerUiLayout.Place(logo.rectTransform,134,38,658,435);
+            Action(design,"StartButton","PLAY","main-play",()=>SceneFlow.Go(SceneFlow.ModeSelect),
+                new Rect(164,454,413,156),new Rect(274,497,188,57),84,new Color32(15,86,19,255));
+            Action(design,"TutorialButton","TUTORIAL","main-tutorial",SceneFlow.StartTraining,
+                new Rect(166,613,446,122),new Rect(243,643,286,41),63,new Color32(25,51,72,255));
+            Action(design,"SettingsButton","SETTINGS","main-settings",settings,
+                new Rect(165,738,497,122),new Rect(244,767,259,43),63,new Color32(150,87,22,255));
+            Action(design,"QuitButton","QUIT","main-quit",SceneFlow.Quit,
+                new Rect(175,862,316,123),new Rect(258,894,140,43),62,new Color32(118,21,26,255));
             canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             return canvas;
         }
 
-        private static void Action(Transform parent, string name, string words, Action click,
-            float x, float y, float width, float height, int size, bool primary = false)
+        private static void Action(Transform parent,string name,string words,string art,Action click,
+            Rect frame,Rect ink,int size,Color colour)
         {
-            var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, x, y, width, height);
-            var hit = root.gameObject.AddComponent<UnityEngine.UI.Image>(); hit.color = Color.clear;
-            var paint = OwnerUiLayout.Rect(root, "HomeBrush").gameObject.AddComponent<HomeMenuStroke>();
-            OwnerUiLayout.Fill(paint.rectTransform); paint.Primary = primary; paint.raycastTarget = false;
-            var label = OwnerUiLayout.Text(root, "Label", words, size,
-                primary ? OwnerUiLayout.TypeRole.Display : OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place(label.rectTransform, primary ? 44 : 6, primary ? 2 : 0,
-                width - (primary ? 132 : 12), height - (primary ? 7 : 9));
-            var button = root.gameObject.AddComponent<HomeMenuAction>();
-            button.targetGraphic = hit; button.transition = UnityEngine.UI.Selectable.Transition.None;
-            button.Configure(label, paint);
-            button.onClick.AddListener(() => { MenuSfx.Click(); click?.Invoke(); });
+            var button=OwnerPaintedAction.Create(parent,name,words,click,false,size,OwnerMenuArt.Piece(art));
+            OwnerUiLayout.Place((RectTransform)button.transform,frame.x,frame.y,frame.width,frame.height);
+            var label=button.GetComponentInChildren<UnityEngine.UI.Text>();label.color=colour;
+            OwnerUiLayout.Place(label.rectTransform,ink.x-frame.x-24,ink.y-frame.y-30,ink.width+48,ink.height+60);
+            label.alignment=TextAnchor.MiddleCenter;label.alignByGeometry=true;
         }
     }
 }

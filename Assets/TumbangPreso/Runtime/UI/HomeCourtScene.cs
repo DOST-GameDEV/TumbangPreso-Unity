@@ -32,7 +32,7 @@ namespace TumbangPreso.UI
                 Mathf.Lerp(.5f, WideVerticalFocus, Mathf.Clamp01((1 - uv.y) / .5f)));
             if (!reduced)
             {
-                uv /= 1.008f;
+                if(Drift>0)uv /= 1.008f;
                 centre += new Vector2(Mathf.Sin(Time.unscaledTime * .10f), Mathf.Sin(Time.unscaledTime * .075f)) * Drift;
             }
             centre.x = Mathf.Clamp(centre.x, uv.x * .5f, 1 - uv.x * .5f);

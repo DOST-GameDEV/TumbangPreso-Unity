@@ -6,7 +6,7 @@ namespace TumbangPreso.UI
     public sealed class OwnerPaintedAction : UnityEngine.UI.Button
     {
         private OwnerUiMotion _motion;
-        public static OwnerPaintedAction Create(Transform parent,string name,string words,Action click,bool orange=false,int fontSize=54)
+        public static OwnerPaintedAction Create(Transform parent,string name,string words,Action click,bool orange=false,int fontSize=54,Sprite artwork=null)
         {
             var root=OwnerUiLayout.Rect(parent,name);root.sizeDelta=new Vector2(413,91);
             var hit=root.gameObject.AddComponent<UnityEngine.UI.Image>();hit.color=Color.clear;hit.raycastTarget=true;
@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
             button.transition=Transition.None;
             var piece=orange?OwnerUiTheme.Piece.OrangeAction:OwnerUiTheme.Piece.LimeAction;
             var art=OwnerUiLayout.Art(root,"PaintedArtwork",piece);OwnerUiLayout.Fill(art.rectTransform);
+            if(artwork!=null)art.sprite=artwork;
             var label=OwnerUiLayout.Text(art.transform,"Label",words,fontSize,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(label.rectTransform);label.rectTransform.offsetMin=new Vector2(14,10);
             label.rectTransform.offsetMax=new Vector2(-14,-3);label.alignment=TextAnchor.MiddleCenter;
