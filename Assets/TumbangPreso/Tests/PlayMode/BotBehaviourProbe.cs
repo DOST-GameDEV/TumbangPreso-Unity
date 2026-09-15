@@ -963,15 +963,20 @@ namespace TumbangPreso.PlayTests
             Vector3 at = who.transform.position;
             var ai = who.GetComponent<AIController>();
             var carrier = who.GetComponent<Carrier>();
-            string goal = "-", arrived = "-", stalk = "-";
+            string goal = "-", arrived = "-", stalk = "-", stuck = "-", unstick = "-", emoteHold = "-";
             if (ai != null)
             {
                 var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                 goal = typeof(AIController).GetField("_goal", flags)?.GetValue(ai)?.ToString() ?? "-";
                 arrived = typeof(AIController).GetField("_arrived", flags)?.GetValue(ai)?.ToString() ?? "-";
                 stalk = typeof(AIController).GetField("_stalkTime", flags)?.GetValue(ai)?.ToString() ?? "-";
+                stuck = typeof(AIController).GetField("_stuckTime", flags)?.GetValue(ai)?.ToString() ?? "-";
+                unstick = typeof(AIController).GetField("_unstickLeft", flags)?.GetValue(ai)?.ToString() ?? "-";
+                emoteHold = typeof(AIController).GetField("_emoteHoldLeft", flags)?.GetValue(ai)?.ToString() ?? "-";
             }
             sb.Append($" at={at} grounded={who.IsGrounded} plan={(ai != null ? ai.Plan.ToString() : "human")} goal={goal} arrived={arrived} stalk={stalk}");
+            var face = who.GetComponent<Social.EmotePlayer>();
+            sb.Append($" move={who.Intent.MoveAxis} vel={who.Velocity} stuck={stuck} unstick={unstick} emoteHold={emoteHold} emoting={(face != null && face.IsEmoting)} stunned={who.IsStunned} tripped={who.IsTripped}");
             sb.Append($" canAct={who.CanAct()} holding={who.HoldingSlipper} held={(carrier != null && carrier.Held != null ? carrier.Held.SeatOfOrigin.ToString() : "-")} inBox={who.IsInsideBox()}");
 
             foreach (var p in round.Players)
