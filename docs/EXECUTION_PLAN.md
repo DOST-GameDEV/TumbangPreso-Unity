@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Latest spectator checkpoint:** Windowsv37 passes actual entry/camera controls/
+POV item restoration/manual replay plus4:3and ultrawide capture proportions.
+Local replay Escape and known-actor regressions also pass2/2. See
+reports/spectator-review-2026-09-16. Publish then continue the full remaining
+whole-kit/movement/network/cinematic queue; do not repeat the completed overlay
+gap. Native/physical limits remain explicit and C4 remains reserved.
+
+
 **Latest close-feedback batch:** GPU bounds/camera/random-state checks and nativev32
 both-mode tag/can captures PASS. See reports/close-feedback-2026-09-16. Preserve the
 finalized menu andv29 full-loop checkpoint; continue remaining gameplay/cinematic/

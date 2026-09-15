@@ -419,6 +419,8 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-spectator-review-only"))
+            {yield return SpectatorOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-gameplay-review-only"))
             {yield return GameplayOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-recovery-review-only"))

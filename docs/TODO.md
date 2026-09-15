@@ -1,5 +1,14 @@
 # TODO: Tumbang Preso Unity
 
+**Spectator/control/replay pass qualified:** real Watch instead entry, POV held-item
+visibility/restoration, free-flight/autopilot/manual-cut cleanup, bookmark/recall,
+paused camera movement, actual manual replay, Escape ownership, scorer captions,
+visible footer and16:9/4:3/ultrawide replay proportions pass in Windowsv37.
+See [spectator review](reports/spectator-review-2026-09-16/README.md). The older134.20
+claim that nobody had seen the replay overlay is superseded. Broader cinematic,
+network-spectator, event-selection, physical-device and performance cases stay open.
+
+
 **Close-view feedback polish qualified:** projected-size caps keep nearby comic
 captions and impact points bounded; thinner confetti fades at the camera. A tag's
 duplicate world word is hidden only for involved first-person participants, while
@@ -6281,48 +6290,14 @@ touch that scaling. `docs/VISION.md` § 2 rule 5 is the standard it should be ju
 
 ---
 
-### 134.20 ⚠️ NOT DONE: THE REPLAY OVERLAY IS NOT IN THE CAPTURE, AND BATCH MODE IS WHY
+### 134.20 · VERIFIED: actual native replay overlay, 2026-09-16
 
-The showcase run writes fourteen frames named `showcase_*_replay.png` and **every one of them is
-live gameplay**. The replay never started.
-
-⚠️⚠️ **THE CAUSE IS THE HARNESS, NOT THE FEATURE.** `SpectatorReplayCapture.OnRenderImage` is
-where a frame enters the ring, and an image effect only runs when its camera actually renders. In
-`-batchmode` there is no game view being drawn, so the spectator camera renders **only when the
-probe explicitly calls `cam.Render()`**, which is about three times a second rather than the ten
-`ReplaySampleInterval` asks for. `StartReplay` refuses below twelve frames and says so, so the
-press was consumed and answered with a toast.
-
-⚠️ **THE SHIPPING PATH IS UNAFFECTED AND THAT IS WORTH STATING PLAINLY.** In a real player the
-camera renders every frame, `OnRenderImage` fires every frame, and the `_captureReplayFrame` flag
-gates it to 10 Hz exactly as it always has. **This pass changed the frame FORMAT, the frame SIZE
-and the METADATA, not the mechanism that fills the ring.**
-
-**What IS verified about the replay, and how:**
-
-| Claim | Evidence |
-|---|---|
-| the buffer holds the window plus reaction time | `BroadcastPassTests.TheReplayBufferHoldsTheWholeWindowPlusAnOperatorsReactionTime`, arithmetic off the constants |
-| it stays under 50 MB | `.TheReplayBufferStaysUnderFiftyMegabytes`, 43.9 MB computed |
-| exactly one trigger, and it is a key | `.ReplayHasExactlyOneTriggerAndItIsAKeyPress`, one call site |
-| the autopilot cannot reach it | `.TheAutopilotCannotReplayPauseOrChangeTime`, source text |
-
-**What is NOT verified: the overlay itself.** Nobody has seen `REPLAY · TAG · ZACK`, the progress
-bar, or the exit line on a screen. ⚠️ `CLAUDE.md` § 6.2a is exactly about this gap: *"a green
-layout probe is not a good screen ... the probe asks whether the screen is a screen; the picture
-asks whether it can be read."*
-
-**Done looks like** one of:
-
-1. **A human presses the replay key in the Windows build** and looks at it. One minute, and it is
-   the honest test.
-2. **The probe drives the camera at capture rate**, calling `cam.Render()` on the same 0.10 s
-   cadence the ring wants for a couple of seconds before pressing. That makes the batch harness
-   fill the ring the way a player would, at the cost of a slower capture.
-
-⚠️ **DO NOT "FIX" IT BY LOWERING THE TWELVE-FRAME FLOOR.** That floor is what stops a replay
-playing three frames of nothing, and lowering it to make a probe pass would ship a worse feature
-to make a test green.
+The real Watch instead path, manual replay input, rendered footage, visible exit
+instructions, Escape ownership and16:9/4:3/ultrawide proportions now pass in
+Windowsv37. See [spectator evidence](reports/spectator-review-2026-09-16/README.md).
+Physical-device, network-spectator and broader event-selection/performance scope
+remain separate. Original reasoning/failed batch evidence is retained whole in
+[TODO_Archive.md](TODO_Archive.md#13420-completion-2026-09-16).
 
 ---
 

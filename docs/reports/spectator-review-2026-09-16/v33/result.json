@@ -1,0 +1,10 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Spectator POV still renders the world-held slipper alongside its viewmodel\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<SpectatorOnly>d__2.MoveNext () [0x007fe] in <c17dc902d0bb4d67b3628724325ff8d7>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__20.MoveNext () [0x00054] in <c17dc902d0bb4d67b3628724325ff8d7>:0 ",
+    "stages": [
+        "spectator startup through Watch instead",
+        "spectator autopilot and manual flight takeover",
+        "real spectator POV of seat 2"
+    ],
+    "frameWindows": []
+}

@@ -22137,3 +22137,55 @@ actual rejoin-v6 PASS and actual protocol30client refusal PASS. Reconstructed in
 135.94ms,25active returned samples, correct expiry. Full evidence and limitations:
 reports/improvement-2026-09-14/phaister-rejoin-state.md. This closes that specific
 request, not other persistent hazards or the broader networking queue.
+
+
+## 134.20 completion, 2026-09-16
+
+The real Windows replay overlay is now captured and qualified in nativev37.
+See reports/spectator-review-2026-09-16 for exact scope and remaining limits.
+The historical reasoning and failed batch-harness evidence follow intact.
+
+### 134.20 ⚠️ NOT DONE: THE REPLAY OVERLAY IS NOT IN THE CAPTURE, AND BATCH MODE IS WHY
+
+The showcase run writes fourteen frames named `showcase_*_replay.png` and **every one of them is
+live gameplay**. The replay never started.
+
+⚠️⚠️ **THE CAUSE IS THE HARNESS, NOT THE FEATURE.** `SpectatorReplayCapture.OnRenderImage` is
+where a frame enters the ring, and an image effect only runs when its camera actually renders. In
+`-batchmode` there is no game view being drawn, so the spectator camera renders **only when the
+probe explicitly calls `cam.Render()`**, which is about three times a second rather than the ten
+`ReplaySampleInterval` asks for. `StartReplay` refuses below twelve frames and says so, so the
+press was consumed and answered with a toast.
+
+⚠️ **THE SHIPPING PATH IS UNAFFECTED AND THAT IS WORTH STATING PLAINLY.** In a real player the
+camera renders every frame, `OnRenderImage` fires every frame, and the `_captureReplayFrame` flag
+gates it to 10 Hz exactly as it always has. **This pass changed the frame FORMAT, the frame SIZE
+and the METADATA, not the mechanism that fills the ring.**
+
+**What IS verified about the replay, and how:**
+
+| Claim | Evidence |
+|---|---|
+| the buffer holds the window plus reaction time | `BroadcastPassTests.TheReplayBufferHoldsTheWholeWindowPlusAnOperatorsReactionTime`, arithmetic off the constants |
+| it stays under 50 MB | `.TheReplayBufferStaysUnderFiftyMegabytes`, 43.9 MB computed |
+| exactly one trigger, and it is a key | `.ReplayHasExactlyOneTriggerAndItIsAKeyPress`, one call site |
+| the autopilot cannot reach it | `.TheAutopilotCannotReplayPauseOrChangeTime`, source text |
+
+**What is NOT verified: the overlay itself.** Nobody has seen `REPLAY · TAG · ZACK`, the progress
+bar, or the exit line on a screen. ⚠️ `CLAUDE.md` § 6.2a is exactly about this gap: *"a green
+layout probe is not a good screen ... the probe asks whether the screen is a screen; the picture
+asks whether it can be read."*
+
+**Done looks like** one of:
+
+1. **A human presses the replay key in the Windows build** and looks at it. One minute, and it is
+   the honest test.
+2. **The probe drives the camera at capture rate**, calling `cam.Render()` on the same 0.10 s
+   cadence the ring wants for a couple of seconds before pressing. That makes the batch harness
+   fill the ring the way a player would, at the cost of a slower capture.
+
+⚠️ **DO NOT "FIX" IT BY LOWERING THE TWELVE-FRAME FLOOR.** That floor is what stops a replay
+playing three frames of nothing, and lowering it to make a probe pass would ship a worse feature
+to make a test green.
+
+---

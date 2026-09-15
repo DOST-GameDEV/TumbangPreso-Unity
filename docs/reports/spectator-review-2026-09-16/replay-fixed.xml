@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.8621633">
+  <test-suite type="TestSuite" id="1591" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="447" result="Passed" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.862163" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1585" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="447" result="Passed" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.844777" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1586" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="447" result="Passed" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.837326" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1587" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="447" result="Passed" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.830455" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1481" name="SpectatorReplayOwnershipProbe" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 19:06:52Z" end-time="2026-09-15 19:06:55Z" duration="2.816347" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1483" name="EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe.EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" methodname="EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" seed="654638902" result="Passed" start-time="2026-09-15 19:06:53Z" end-time="2026-09-15 19:06:55Z" duration="2.744018" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Replay] readback warm-up landed in 3.6 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+]]></output>
+            </test-case>
+            <test-case id="1482" name="FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe.FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" methodname="FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" seed="890779303" result="Passed" start-time="2026-09-15 19:06:55Z" end-time="2026-09-15 19:06:55Z" duration="0.054275" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

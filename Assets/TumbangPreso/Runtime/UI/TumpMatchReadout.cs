@@ -202,8 +202,14 @@ namespace TumbangPreso.UI
                 _names[i].text = SeatLabel.ForBoard(slot); _scores[i].text = match.ScoreFor(slot).ToString();
                 bool defender = slot == match.DefenderSlot;
                 string state = defender ? "Defender" : "";
-                if (local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";
-                if (spectating) state += (state.Length > 0 ? " · " : "") + (actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" : actor.HoldingSlipper ? "Holding" : "Retrieving");
+                if (!spectating && local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";
+                if (spectating)
+                {
+                    string activity = actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" :
+                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting can" : "") :
+                        actor.HoldingSlipper ? "Holding" : "Retrieving";
+                    if (!string.IsNullOrEmpty(activity)) state += (state.Length > 0 ? " · " : "") + activity;
+                }
                 _roles[i].text = state;
                 _roles[i].color = defender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
                 var people = Roster.GetPeople(actor.Mode);
@@ -212,7 +218,7 @@ namespace TumbangPreso.UI
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
                 _portraits[i].enabled = portrait != null;
                 var strip = _scoreRows[i].GetComponent<OwnerScoreStrip>();
-                bool mine = local != null && slot == local.PlayerSlot;
+                bool mine = !spectating && local != null && slot == local.PlayerSlot;
                 if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
             }
         }

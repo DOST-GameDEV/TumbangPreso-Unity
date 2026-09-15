@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current task: close-view feedback qualified; publish and continue
+## Current task: spectator pass qualified; publish and continue
 
 Owner is asleep/AFK. Continue the full authorized queue after checkpoints. NEVER
 use usage resets or reset credits. No optional questions, Figma, paid fallback,
@@ -9,7 +9,32 @@ ASTRAReworks. C4 request-safety files remain reserved to the separate Claude PC.
 
 Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Paths/PIDs from this PC must be rediscovered on any other PC. Last verified pushed
-commit: f5124c2ba8701571950be7d012c4aed8a0192877 (preserved Windowsv29 candidate).
+commit: 7546c3442f63d49e2c12dd1f693df353c02df9f4 (close-view feedback and compact ledger).
+
+### Qualified spectator operation
+
+- Nativev33 reproduced the duplicate world-held slipper. v34 exposed missing
+  free-flight cleanup. v35 proved actual replay but showed clipped exit text.
+- Two local regressions reproduced Escape opening the match menu and fallback
+  polling erasing a known scorer. Fixed2/2PASS, guard18bf87bc749a.
+- v36 reproduced4:3replay distortion. Per-frame capture aspect now restores original
+  picture proportions without increasing texture storage or lowering replay floor.
+- Final nativev37 PASSED actual Watch instead entry, manual/autopilot/POV/free-flight
+  transitions, held-item release/re-equip and cleanup, bookmark/recall, paused camera
+  movement, manual replay/visible footer/Escape, and16:9/4:3/ultrawide playback.
+- Artifact: Builds/spectator-review-v37/TumbangPreso.exe,1135MB/49s,
+  guard2c1d7e32de97. Runtime SHA256:
+  4D325BF644979A5DFB36F19B9E4F8BFBC882A3EC408BAFF1689B0A0E4224C508.
+- Logs/spectator-native-v37/result.json and runner-result.json PASS. PID13780 retired;
+  shared input unchanged. Actual POV/free/replay captures inspected. All jobs stopped.
+- Report: reports/spectator-review-2026-09-16. Original134.20 failed-batch reasoning
+  moved whole to TODO_Archive; the active entry now points to actual native proof.
+- Preserve limitations: one controlled local spectator, one existing held target,
+  staged release/re-equip; no physical-device/network spectator/full event-selection
+  or performance certification. A synthetic warm-up reports a driver error; actual
+  recorded readbacks pass with FailedReadbacks=0. Do not hide that distinction.
+- Next publish this qualified batch, then continue remaining whole-kit/movement/
+  network/cinematic tasks. No resets or optional questions; owner remains asleep.
 
 ### Completed operation
 
@@ -34,8 +59,8 @@ commit: f5124c2ba8701571950be7d012c4aed8a0192877 (preserved Windowsv29 candidate
 
 ### Next actions
 
-1. Publish the qualified close-feedback batch; verify actual remote HEAD. Do not
-   rerun its passing local/native checks without a new change or concern.
+1. Publish the qualified spectator batch and verify remote HEAD. Do not repeat the
+   completed close-feedback or spectator cases without new changes/concerns.
 2. Restore only proven
    test-generated whitespace after owned jobs finish; preserve all real edits.
 3. Keep the ledger current; full pre-compaction history is preserved below.

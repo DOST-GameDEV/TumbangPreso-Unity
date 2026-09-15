@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "spectator-native-v36",
+  "existingFilesRestored": 0,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Replay stretches a four-by-three source into a different picture aspect\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<SpectatorOnly>d__2.MoveNext () [0x0147a] in <f22c62941baf45a08c1494b3bb9f94ae>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__20.MoveNext () [0x00054] in <f22c62941baf45a08c1494b3bb9f94ae>:0 "
+}

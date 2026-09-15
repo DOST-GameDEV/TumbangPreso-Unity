@@ -100,7 +100,11 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
    tapped/held input,30/60/144Hz, owner/observer and delayed/rejoined paths.
    Preserve forward-only breaststroke versus upright tread/back/strafe swimming,
    matching body and FPP. Do not call a simulated device physical certification.
-7. **Cinematic tournament spectator.** Free/follow/POV, manual caster control,
+7. **Cinematic tournament spectator.**
+   A bounded real Windows spectator pass is now qualified in
+   reports/spectator-review-2026-09-16: POV world-item restoration, mode cleanup,
+   manual takeover/bookmarks/pause, actual replay/Escape and three picture aspects.
+   Do not redo those named cases. Broader remaining work includes
    collision and framing, highlights/replays and useful match information remain
    assigned. Keep the court/objective readable and competitive decisions clear.
 8. **Remaining engineering and performance.** Reconcile actual open TODO152/

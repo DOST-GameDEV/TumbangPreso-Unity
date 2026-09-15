@@ -340,6 +340,9 @@ namespace TumbangPreso.CameraSystem
         private sealed class ReplayFrame
         {
             public Texture2D Image;
+            // Storage stays fixed-size; playback restores the captured viewport's
+            // proportions instead of treating its storage texture as the camera aspect.
+            public float Aspect;
 
             /// <summary>
             /// True until the readback has landed in <see cref="Image"/>.
@@ -466,6 +469,7 @@ namespace TumbangPreso.CameraSystem
         private string _replayReason = "LAST PLAY";
         private Canvas _replayCanvas;
         private RawImage _replayImage;
+        private AspectRatioFitter _replayFit;
         private Text _replayLabel;
 
         private string _pendingHighlight;
@@ -495,6 +499,7 @@ namespace TumbangPreso.CameraSystem
             _camera.fieldOfView = SpectatorFov;
             _camera.farClipPlane = SpectatorFar;
             BuildReplayOverlay();
+            UI.ScreenTakeover.Register(this, () => _replaying);
 
             // ⚠️⚠️ THE MAP'S GRADE AND ITS TONEMAP, WHICH THIS CAMERA HAD NEITHER OF, AND THAT
             // IS "the characters are all light as frick, same with map and game overall".
@@ -742,7 +747,14 @@ namespace TumbangPreso.CameraSystem
             if (AutopilotEngaged)
             {
                 if (ManualTakeover()) _director.Engaged = false;
-                else return;   // `SpectatorDirector.LateUpdate` owns the pose this frame
+                else
+                {
+                    // Autopilot never owns a POV shot. Release any borrowed presentation
+                    // before its director takes over the camera position.
+                    _follow = null; _followIndex = -1; _pov = false;
+                    StepPovArms(Time.unscaledDeltaTime);
+                    return;   // `SpectatorDirector.LateUpdate` owns the pose this frame
+                }
             }
 
             StepLook();
@@ -790,6 +802,9 @@ namespace TumbangPreso.CameraSystem
             }
             else
             {
+                // Free flight has no follow target, but still has to release the body,
+                // carried item and viewmodel borrowed by the previous POV cut.
+                StepPovArms(delta);
                 Vector2 dir = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
                 Vector3 move = transform.forward * dir.y + transform.right * dir.x;
 
@@ -910,7 +925,10 @@ namespace TumbangPreso.CameraSystem
             if (_replaying)
             {
                 if (Fired(_replayKey) || kb.escapeKey.wasPressedThisFrame)
+                {
+                    if (kb.escapeKey.wasPressedThisFrame) UI.ScreenTakeover.ConsumeEscape();
                     EndReplay();
+                }
                 return;
             }
 
@@ -920,7 +938,7 @@ namespace TumbangPreso.CameraSystem
                 _bookmarkRotation = transform.rotation;
                 _bookmarkFov = _camera != null ? _camera.fieldOfView : SpectatorFov;
                 _hasBookmark = true;
-                UI.Hud.Instance?.ShowToast("CAMERA MARK SAVED  ·  [N] TO RECALL", 1.2f);
+                UI.Hud.Instance?.ShowToast($"CAMERA MARK SAVED  ·  {BoundKey("SpectatorRecall")} TO RECALL", 1.2f);
             }
 
             if (Fired(_recall) && _hasBookmark)
@@ -1138,6 +1156,7 @@ namespace TumbangPreso.CameraSystem
 
             var frame = ReserveFrame();
             if (frame == null) return;
+            frame.Aspect = source.width / (float)source.height;
 
             if (!_asyncReadbackWorks)
             {
@@ -1481,8 +1500,7 @@ namespace TumbangPreso.CameraSystem
             if (_replayCanvas != null) _replayCanvas.enabled = true;
             RefreshReplayLabels();
 
-            if (_replayImage != null && _replayClip.Count > 0)
-                _replayImage.texture = _replayClip[0].Image;
+            if (_replayClip.Count > 0) ShowReplayFrame(_replayClip[0]);
 
             // ⚠️ NO TOAST. The overlay covers the screen and titles itself in 30 pt across the
             // top; a line underneath it saying the same words is the redundancy 🧑 asked to be rid
@@ -1656,7 +1674,7 @@ namespace TumbangPreso.CameraSystem
             if (round == null) return null;
 
             foreach (var p in round.Players)
-                if (p != null && p.PlayerSlot == slot) return p.DisplayName();
+                if (p != null && p.PlayerSlot == slot) return $"P{slot + 1} · {p.DisplayName()}";
 
             return null;
         }
@@ -1700,6 +1718,7 @@ namespace TumbangPreso.CameraSystem
         private float _pendingMarkAt = -1.0f;
         private string _pendingMarkReason;
         private int _pendingMarkSlot = -1;
+        private int _pendingMarkFrame = -1;
 
         private void StepReplay()
         {
@@ -1721,7 +1740,7 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            if (_replayImage != null) _replayImage.texture = _replayClip[localIndex].Image;
+            ShowReplayFrame(_replayClip[localIndex]);
 
             if (_replayProgress != null)
             {
@@ -1732,6 +1751,14 @@ namespace TumbangPreso.CameraSystem
 
         private Text _replayExitLabel;
         private Image _replayProgress;
+
+        private void ShowReplayFrame(ReplayFrame frame)
+        {
+            if (_replayImage == null) return;
+            _replayImage.texture = frame.Image;
+            if (_replayFit != null)
+                _replayFit.aspectRatio = frame.Aspect > 0 ? frame.Aspect : ReplayWidth / (float)ReplayHeight;
+        }
 
         private void EndReplay(bool showLiveToast = true)
         {
@@ -1768,6 +1795,7 @@ namespace TumbangPreso.CameraSystem
             _replayCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _replayCanvas.overrideSorting = true;
             _replayCanvas.sortingOrder = 500;
+            _replayCanvas.vertexColorAlwaysGammaSpace = true;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -1788,10 +1816,7 @@ namespace TumbangPreso.CameraSystem
             var panelGo = new GameObject("ReplayPictureInPicture");
             panelGo.transform.SetParent(canvasGo.transform, false);
             var panel = panelGo.AddComponent<Image>();
-            panel.sprite = UI.GodotTheme.Box(UI.UiTheme.WoodDark, UI.UiTheme.Highlight,
-                                             UI.GodotTheme.WoodBorderWidth,
-                                             UI.GodotTheme.WoodCornerRadius);
-            panel.type = Image.Type.Sliced;
+            panel.color = new Color32(28, 34, 37, 255);
             panel.raycastTarget = false;
 
             // ⚠️⚠️ THE WHOLE SCREEN, NOT A CORNER BOX. 🧑 2026-08-27: *"i alsoo really dont like
@@ -1820,23 +1845,25 @@ namespace TumbangPreso.CameraSystem
             imageRt.offsetMin = new Vector2(10.0f, 10.0f);
             imageRt.offsetMax = new Vector2(-10.0f, -62.0f);
 
-            // ⚠️⚠️ THE CLIP KEEPS ITS OWN ASPECT INSIDE THAT RECT. The buffer is captured at a
-            // fixed 854 x 480, and stretching 16:9 frames to fill an arbitrary window distorts
-            // every body in the shot; a 4:3 or ultrawide panel would make the replay visibly a
-            // different game from the live view it is covering. `FitInParent` letterboxes instead,
-            // which is what every broadcast replay does and what the corner box got for free by
-            // being authored at 16:9.
+            // Storage textures have a fixed memory budget. ShowReplayFrame restores each
+            // captured viewport's aspect, and FitInParent letterboxes that original picture
+            // inside the current window. Storage dimensions are not camera proportions.
             var fit = imageGo.AddComponent<AspectRatioFitter>();
+            _replayFit = fit;
             fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             fit.aspectRatio = ReplayWidth / (float)ReplayHeight;
 
             var labelGo = new GameObject("ReplayLabel");
+            BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);
             labelGo.transform.SetParent(panelGo.transform, false);
             _replayLabel = labelGo.AddComponent<Text>();
-            _replayLabel.font = UI.MenuKit.Font;
-            _replayLabel.fontSize = 30;
+            _replayLabel.font = UI.OwnerUiTheme.Current.Display;
+            _replayLabel.fontSize = 36;
             _replayLabel.alignment = TextAnchor.MiddleLeft;
-            _replayLabel.color = UI.UiTheme.Highlight;
+            _replayLabel.color = UI.OwnerUiTheme.Current.Pale;
+            _replayLabel.alignByGeometry = true;
+            _replayLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _replayLabel.verticalOverflow = VerticalWrapMode.Overflow;
             _replayLabel.raycastTarget = false;
             _replayLabel.text = "INSTANT REPLAY";
 
@@ -1848,8 +1875,8 @@ namespace TumbangPreso.CameraSystem
             labelRt.anchorMin = new Vector2(0.0f, 1.0f);
             labelRt.anchorMax = new Vector2(1.0f, 1.0f);
             labelRt.pivot = new Vector2(0.5f, 1.0f);
-            labelRt.offsetMin = new Vector2(24.0f, -56.0f);
-            labelRt.offsetMax = new Vector2(-24.0f, -10.0f);
+            labelRt.offsetMin = new Vector2(24.0f, -68.0f);
+            labelRt.offsetMax = new Vector2(-24.0f, -8.0f);
 
             // -------------------------------------------------------------------
             // § THE THREE THINGS THE OVERLAY OWED AND DID NOT SAY
@@ -1872,14 +1899,17 @@ namespace TumbangPreso.CameraSystem
             // -------------------------------------------------------------------
 
             var exitGo = new GameObject("ReplayExitHint");
+            BuildReplayBand(panelGo.transform, "ReplayFooterBand", false, 72);
             exitGo.transform.SetParent(panelGo.transform, false);
             _replayExitLabel = exitGo.AddComponent<Text>();
-            _replayExitLabel.font = UI.MenuKit.Font;
-            _replayExitLabel.fontSize = 20;
+            _replayExitLabel.font = UI.OwnerUiTheme.Current.Reading;
+            _replayExitLabel.fontSize = 26;
             _replayExitLabel.alignment = TextAnchor.MiddleRight;
-            _replayExitLabel.color = UI.UiTheme.CreamMuted;
+            _replayExitLabel.color = UI.OwnerUiTheme.Current.Pale;
             _replayExitLabel.raycastTarget = false;
             _replayExitLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _replayExitLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            _replayExitLabel.alignByGeometry = true;
             _replayExitLabel.text = "LIVE PLAY CONTINUES";
 
             var exitOutline = exitGo.AddComponent<Outline>();
@@ -1890,8 +1920,8 @@ namespace TumbangPreso.CameraSystem
             exitRt.anchorMin = new Vector2(0.0f, 0.0f);
             exitRt.anchorMax = new Vector2(1.0f, 0.0f);
             exitRt.pivot = new Vector2(0.5f, 0.0f);
-            exitRt.offsetMin = new Vector2(24.0f, 16.0f);
-            exitRt.offsetMax = new Vector2(-24.0f, 44.0f);
+            exitRt.offsetMin = new Vector2(24.0f, 14.0f);
+            exitRt.offsetMax = new Vector2(-24.0f, 60.0f);
 
             // The progress bar: a track along the very bottom edge with an amber fill.
             var trackGo = new GameObject("ReplayProgressTrack");
@@ -1910,7 +1940,7 @@ namespace TumbangPreso.CameraSystem
             var fillGo = new GameObject("ReplayProgressFill");
             fillGo.transform.SetParent(trackGo.transform, false);
             _replayProgress = fillGo.AddComponent<Image>();
-            _replayProgress.color = UI.UiTheme.Amber;
+            _replayProgress.color = UI.OwnerUiTheme.Current.Lime;
             _replayProgress.raycastTarget = false;
 
             // ⚠️ ANCHORED LEFT AND DRIVEN BY `anchorMax.x`, NOT BY A WIDTH. A width would be
@@ -1924,6 +1954,16 @@ namespace TumbangPreso.CameraSystem
             fillRt.offsetMax = Vector2.zero;
 
             _replayCanvas.enabled = false;
+        }
+
+        private static void BuildReplayBand(Transform parent, string name, bool top, float height)
+        {
+            var band = UI.OwnerUiLayout.Rect(parent, name);
+            band.anchorMin = new Vector2(0, top ? 1 : 0); band.anchorMax = new Vector2(1, top ? 1 : 0);
+            band.pivot = new Vector2(.5f, top ? 1 : 0); band.anchoredPosition = Vector2.zero;
+            band.sizeDelta = new Vector2(0, height);
+            var image = band.gameObject.AddComponent<Image>();
+            image.color = new Color32(33, 40, 43, 238); image.raycastTarget = false;
         }
 
         private void PollHighlights()
@@ -2131,12 +2171,17 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void QueueHighlight(string reason, int slot)
         {
+            // A coarse state/score poll can observe the same event after Scored supplied
+            // its real actor. Do not replace that same-frame identity with an unknown one.
+            if (slot < 0 && _pendingMarkSlot >= 0 && _pendingMarkFrame == Time.frameCount &&
+                reason == _pendingMarkReason) return;
             _pendingHighlight = reason;
             _pendingHighlightAt = Time.unscaledTime;
 
             _pendingMarkAt = Time.unscaledTime;
             _pendingMarkReason = reason;
             _pendingMarkSlot = slot;
+            _pendingMarkFrame = Time.frameCount;
         }
 
         /// <summary>
@@ -2174,6 +2219,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void OnDestroy()
         {
+            UI.ScreenTakeover.Unregister(this);
             _captureGeneration++;
 
             UnhookHighlights();
@@ -2371,6 +2417,10 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Renderer> _povHiddenRenderers = new List<Renderer>();
         private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povShadowModes =
             new List<UnityEngine.Rendering.ShadowCastingMode>();
+        private Slipper _povCarriedSlipper;
+        private readonly List<Renderer> _povCarriedRenderers = new List<Renderer>();
+        private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povCarriedModes =
+            new List<UnityEngine.Rendering.ShadowCastingMode>();
 
         private void StepPovArms(float delta)
         {
@@ -2397,6 +2447,7 @@ namespace TumbangPreso.CameraSystem
             // wrong shoe until the next swap.
             var carrier = _follow.GetComponent<Carrier>();
             var held = carrier != null ? carrier.Held : null;
+            ApplyPovCarriedHide(held);
 
             _povArms.SetHolding(held != null);
 
@@ -2460,6 +2511,7 @@ namespace TumbangPreso.CameraSystem
 
         private void RestorePovBody()
         {
+            RestorePovCarried();
             for (int i = 0; i < _povHiddenRenderers.Count; i++)
             {
                 var r = _povHiddenRenderers[i];
@@ -2472,6 +2524,39 @@ namespace TumbangPreso.CameraSystem
             _povHiddenRenderers.Clear();
             _povShadowModes.Clear();
             _povHidden = null;
+        }
+
+        private void ApplyPovCarriedHide(Slipper held)
+        {
+            // The world slipper is not parented to the body. Keep only its shadow while
+            // the POV viewmodel supplies the visible copy, and poll real item changes.
+            if (held == null && _follow != null && _povCarriedSlipper != null &&
+                _povCarriedSlipper.State == SlipperState.InFlight &&
+                _povCarriedSlipper.ThrowerSlot == _follow.PlayerSlot)
+            {
+                var fromEye = _povCarriedSlipper.transform.position +
+                    _povCarriedSlipper.DrawnCentreOffset - transform.position;
+                if (fromEye.magnitude < .25f + _povCarriedSlipper.CarrySupportExtent(fromEye))
+                    held = _povCarriedSlipper;
+            }
+            if (held == _povCarriedSlipper) return;
+            RestorePovCarried();
+            if (held == null) return;
+            _povCarriedSlipper = held;
+            foreach (var renderer in held.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer == null || renderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly) continue;
+                _povCarriedRenderers.Add(renderer); _povCarriedModes.Add(renderer.shadowCastingMode);
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            }
+        }
+
+        private void RestorePovCarried()
+        {
+            for (int i = 0; i < _povCarriedRenderers.Count; i++)
+                if (_povCarriedRenderers[i] != null)
+                    _povCarriedRenderers[i].shadowCastingMode = _povCarriedModes[i];
+            _povCarriedRenderers.Clear(); _povCarriedModes.Clear(); _povCarriedSlipper = null;
         }
 
         private void SelectPlayerPov(int slot)
@@ -2502,10 +2587,12 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
+            // A direct function-key cut is a manual camera decision too.
+            if (_director != null) _director.Engaged = false;
             _follow = wanted;
             _followIndex = -1;
             _pov = true;
-            UI.Hud.Instance?.ShowToast($"POV CUT  ·  {wanted.DisplayName()}", 0.9f);
+            UI.Hud.Instance?.ShowToast($"POV CUT  ·  P{slot + 1} · {wanted.DisplayName()}", 0.9f);
         }
 
         /// <summary>
@@ -2690,7 +2777,7 @@ namespace TumbangPreso.CameraSystem
         private string FollowName()
         {
             if (_follow == null) return "";
-            return $"{_follow.DisplayName()} · {(_follow.IsDefender ? "DEFENDER" : "ATTACKER")}";
+            return $"P{_follow.PlayerSlot + 1} · {_follow.DisplayName()} · {(_follow.IsDefender ? "DEFENDER" : "ATTACKER")}";
         }
     }
 

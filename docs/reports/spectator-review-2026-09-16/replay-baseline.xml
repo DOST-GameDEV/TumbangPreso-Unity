@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.9075729">
+  <test-suite type="TestSuite" id="1591" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.907573" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1585" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.892061" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1586" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.885551" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1587" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.878228" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1481" name="SpectatorReplayOwnershipProbe" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.863710" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1483" name="EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe.EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" methodname="EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" seed="697013221" result="Failed" start-time="2026-09-15 19:00:59Z" end-time="2026-09-15 19:01:02Z" duration="2.787445" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The same Escape also opened the match menu
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe+<EscapeExitsReplayWithoutAlsoOpeningTheMatchMenu>d__9.MoveNext () [0x001e8] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\SpectatorReplayOwnershipProbe.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Replay] readback warm-up landed in 4.3 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+]]></output>
+            </test-case>
+            <test-case id="1482" name="FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" fullname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe.FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" methodname="FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame" classname="TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe" runstate="Runnable" seed="1869018607" result="Failed" start-time="2026-09-15 19:01:02Z" end-time="2026-09-15 19:01:02Z" duration="0.057322" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The same-frame fallback erased the scored event's known actor
+  Expected: 2
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorReplayOwnershipProbe+<FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame>d__8.MoveNext () [0x000bb] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\SpectatorReplayOwnershipProbe.cs:45
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

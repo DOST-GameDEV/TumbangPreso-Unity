@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "spectator-native-v34",
+  "existingFilesRestored": 0,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Leaving spectator POV did not restore the world slipper renderer\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<SpectatorOnly>d__2.MoveNext () [0x009e2] in <b52bcb2d38264be489c8e71d68d532a8>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__20.MoveNext () [0x00054] in <b52bcb2d38264be489c8e71d68d532a8>:0 "
+}

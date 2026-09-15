@@ -6,6 +6,11 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Nativev37 qualifies actual spectator entry, POV item cleanup, manual camera
+  takeover/bookmarks/pause and real replay with correct picture proportions at
+  three window shapes. See reports/spectator-review-2026-09-16. Physical device
+  comfort and network spectator cases remain separate from this local native pass.
+
 - Nativev32 qualifies cleaner close-up tag/can feedback and the same direct-control
   sequences. Participant score HUD stays readable; alternate local camera retains
   the world tag caption. See reports/close-feedback-2026-09-16. This is a newer
