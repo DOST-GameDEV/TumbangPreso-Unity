@@ -4240,10 +4240,10 @@ namespace TumbangPreso.Abilities
                 var confetti = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 confetti.name = "ConfettiRibbon";
                 confetti.transform.position = center + Vector3.up * 1.2f + Random.insideUnitSphere * 0.4f;
-                confetti.transform.localScale = new Vector3(0.18f, 0.02f, 0.10f);
+                confetti.transform.localScale = new Vector3(0.10f, 0.006f, 0.035f);
                 confetti.transform.rotation = Random.rotation;
 
-                VfxMaterial.Solid(confetti.GetComponent<Renderer>(), colors[Random.Range(0, colors.Length)]);
+                ConfettiPaperMaterial.Apply(confetti.GetComponent<Renderer>(), colors[Random.Range(0, colors.Length)]);
                 VfxMaterial.StripCollider(confetti);
 
                 var rb = confetti.AddComponent<Rigidbody>();

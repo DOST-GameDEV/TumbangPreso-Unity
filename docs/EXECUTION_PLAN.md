@@ -1,5 +1,12 @@
 # Active execution plan
 
+**Latest close-feedback batch:** GPU bounds/camera/random-state checks and nativev32
+both-mode tag/can captures PASS. See reports/close-feedback-2026-09-16. Preserve the
+finalized menu andv29 full-loop checkpoint; continue remaining gameplay/cinematic/
+whole-kit work. ACTIVE_REWORK_LEDGER.md is now compact; its full prior history is
+retained in the linked same-directory archive. Owner asleep; no resets/questions.
+
+
 **Current preserved candidate:** Windowsv29 passes both direct controls and the
 full native loop on the same executable. See reports/demo-candidate-v29-2026-09-16.
 Only role-specific cooldown label filtering was added after2e505944. Publish then

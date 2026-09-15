@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.3046195">
+  <test-suite type="TestSuite" id="1587" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="444" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.304620" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1581" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="444" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.292951" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16008" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1582" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="444" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.290689" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1583" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="444" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.289301" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1078" name="CloseFeedbackViewProbe" fullname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" classname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.274980" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1080" name="ConfettiCannotBecomeALargeForegroundBlock" fullname="TumbangPreso.PlayTests.CloseFeedbackViewProbe.ConfettiCannotBecomeALargeForegroundBlock" methodname="ConfettiCannotBecomeALargeForegroundBlock" classname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" runstate="Runnable" seed="1774623981" result="Passed" start-time="2026-09-15 18:02:51Z" end-time="2026-09-15 18:02:51Z" duration="0.258248" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[CloseFeedback] confetti-near ink=(x:474, y:268, width:12, height:4)
+[CloseFeedback] confetti-crossing-camera ink=(x:0, y:0, width:0, height:0)
+[CloseFeedback] confetti-far ink=(x:476, y:269, width:8, height:2)
+[CloseFeedback] confetti-ortho ink=(x:474, y:268, width:12, height:4)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -6,6 +6,11 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Nativev32 qualifies cleaner close-up tag/can feedback and the same direct-control
+  sequences. Participant score HUD stays readable; alternate local camera retains
+  the world tag caption. See reports/close-feedback-2026-09-16. This is a newer
+  presentation checkpoint; v29 remains the recorded complete-loop artifact.
+
 - Nativev28 passes the direct shipped-keyboard/mouse verbs in both modes and fixes
   pickup spending an unintended shove/cooldown. It uses staged legal targets and
   an explicit role advance; human/freeform play remains separate. The source fix,

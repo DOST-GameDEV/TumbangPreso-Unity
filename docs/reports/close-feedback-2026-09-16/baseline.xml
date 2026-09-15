@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.5006392">
+  <test-suite type="TestSuite" id="1586" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="443" result="Failed" site="Child" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.500639" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1580" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="443" result="Failed" site="Child" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.489246" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10816" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1581" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="443" result="Failed" site="Child" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.487397" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1582" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="443" result="Failed" site="Child" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.486125" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1078" name="CloseFeedbackViewProbe" fullname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" classname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.472501" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1079" name="CloseCaptionStaysReadableWithoutCoveringTheView" fullname="TumbangPreso.PlayTests.CloseFeedbackViewProbe.CloseCaptionStaysReadableWithoutCoveringTheView" methodname="CloseCaptionStaysReadableWithoutCoveringTheView" classname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" runstate="Runnable" seed="1379216780" result="Failed" start-time="2026-09-15 17:48:12Z" end-time="2026-09-15 17:48:13Z" duration="0.354577" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Close tag text covers too much of the first-person view
+  Expected: less than or equal to 384.0f
+  But was:  960.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CloseFeedbackViewProbe+<CloseCaptionStaysReadableWithoutCoveringTheView>d__6.MoveNext () [0x00147] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\CloseFeedbackViewProbe.cs:76
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[CloseFeedback] caption-near ink=(x:0, y:172, width:960, height:196)
+]]></output>
+            </test-case>
+            <test-case id="1080" name="ConfettiCannotBecomeALargeForegroundBlock" fullname="TumbangPreso.PlayTests.CloseFeedbackViewProbe.ConfettiCannotBecomeALargeForegroundBlock" methodname="ConfettiCannotBecomeALargeForegroundBlock" classname="TumbangPreso.PlayTests.CloseFeedbackViewProbe" runstate="Runnable" seed="1193888942" result="Failed" start-time="2026-09-15 17:48:13Z" end-time="2026-09-15 17:48:13Z" duration="0.100146" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  One confetti ribbon occupies too much of the view
+  Expected: less than or equal to 18.8999996f
+  But was:  64.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CloseFeedbackViewProbe+<ConfettiCannotBecomeALargeForegroundBlock>d__7.MoveNext () [0x00113] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\CloseFeedbackViewProbe.cs:107
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[CloseFeedback] confetti-near ink=(x:448, y:252, width:64, height:36)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

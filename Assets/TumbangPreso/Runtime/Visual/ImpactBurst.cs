@@ -77,6 +77,7 @@ namespace TumbangPreso.Visual
 
             var renderer = ps.GetComponent<ParticleSystemRenderer>();
             renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            renderer.maxParticleSize = .02f;
 
             // ⚠️⚠️ A RENDERER CREATED IN CODE HAS NO MATERIAL AND UNITY DRAWS THAT IN MAGENTA.
             // This is the same rule the port ledger opens with, and a particle system is the

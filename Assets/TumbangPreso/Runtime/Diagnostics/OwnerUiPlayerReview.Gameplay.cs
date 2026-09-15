@@ -202,6 +202,19 @@ namespace TumbangPreso.Diagnostics
                     Stage(label + " direct left-mouse punch tag");
                     Buttons(1); yield return new WaitForSecondsRealtime(.12f); Buttons(0);
                     if (tags != 1) throw new InvalidOperationException("Left mouse did not resolve exactly one legal punch tag");
+                    yield return Shot(label + "-direct-participant-tag");
+                    var caption = GameObject.Find("ComicPopup_TAGGED!");
+                    if (caption == null || caption.transform.localScale.sqrMagnitude > .0000001f)
+                        throw new InvalidOperationException("Participant tag caption was not retained but hidden after real rendering");
+                    var witness = GameServices.Round.PlayerAt(3);
+                    var toward = new Vector3(1, 0, -.4f) - witness.transform.position; toward.y = 0;
+                    witness.transform.rotation = Quaternion.LookRotation(toward);
+                    rig.Follow(witness);
+                    typeof(CameraRig).GetField("_pitchDeg", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(rig, 0f);
+                    yield return Shot(label + "-direct-other-view-tag");
+                    if (caption == null || caption.transform.localScale.sqrMagnitude <= .0000001f)
+                        throw new InvalidOperationException("The other character's camera lost the real world tag caption");
+                    Stage(label + " participant HUD and alternate local camera tag feedback verified");
                     victim = GameServices.Round.PlayerAt(0);
                     Place(new Vector3(1, .12f, -2), Vector3.forward);
                     victim.Teleport(new Vector3(1, .12f, 0));

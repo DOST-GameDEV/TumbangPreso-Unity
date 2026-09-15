@@ -1,5 +1,15 @@
 # TODO: Tumbang Preso Unity
 
+**Close-view feedback polish qualified:** projected-size caps keep nearby comic
+captions and impact points bounded; thinner confetti fades at the camera. A tag's
+duplicate world word is hidden only for involved first-person participants, while
+other views retain it and normal spawn/dedupe/random consumption stays intact.
+GPU4/4, opposite-camera1/1, orthographic-paper1/1 and nativev32 both-mode controls/
+participant+alternate-view captures PASS. See
+[close feedback](reports/close-feedback-2026-09-16/README.md). Whole-kit, real
+spectator/replay, broader movement and network cases remain open.
+
+
 **Direct native controls now pass in both modes:** movement/sprint/jump/get-up,
 real throw and retrieval, shove, slide, can channel/restore and punch/lunge tags.
 This found and fixed a real high-frame-rate pickup press also spending25stamina

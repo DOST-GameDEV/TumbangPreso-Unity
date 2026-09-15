@@ -352,7 +352,18 @@ namespace TumbangPreso.Visual
                 victim.GetComponentInChildren<CharacterVisual>()?.FlashHit();
             }
 
-            ComicPopup.Spawn(at, "TAGGED!", UI.UiTheme.Defense, 1.4f);
+            var rig = Camera.main != null
+                ? Camera.main.GetComponent<CameraSystem.CameraRig>()
+                : null;
+            // The participant already receives the HUD tag/score feedback. A second word
+            // immediately above this close contact sits behind the clock in first person.
+            // Keep the world callout for other players and broadcast/third-person views.
+            bool participantFpp = rig != null && rig.IsLocalFpp &&
+                ((taya != null && rig.IsFollowing(taya)) || (victim != null && rig.IsFollowing(victim)));
+            // Still spawn/dedupe normally so presentation does not change the shared
+            // random stream. Only this participant's first-person rendering is hidden.
+            ComicPopup.Spawn(at, "TAGGED!", UI.UiTheme.Defense, 1.4f,
+                ComicPopup.Weight.Cast, participantFpp ? rig.Following : null);
             ImpactBurst.SpawnAt(at);
             Hitstop.Trigger();
 
@@ -362,10 +373,6 @@ namespace TumbangPreso.Visual
                 victim.GetComponentInChildren<CharacterSquashStretch>()?.Impact(hitDirection, 0.30f);
                 taya.GetComponentInChildren<CharacterSquashStretch>()?
                     .DashStretch(taya.transform.forward, 0.18f);
-
-                var rig = Camera.main != null
-                    ? Camera.main.GetComponent<CameraSystem.CameraRig>()
-                    : null;
 
                 if (rig != null && rig.IsFollowing(victim))
                 {

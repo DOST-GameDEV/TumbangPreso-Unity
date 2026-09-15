@@ -122,15 +122,18 @@ namespace TumbangPreso.Visual
 
         private Text _text;
         private CanvasGroup _group;
-        private Transform _cameraTransform;
+        private Camera _camera;
         private static bool _preparingCamera;
         private float _elapsed;
         private float _tiltAngle;
         private float _baseScale;
+        private float _animatedScale;
+        private Vector2 _layoutSize;
         private float _kick;
 
         private string _phrase;
         private Weight _weight;
+        private CharacterMotor _firstPersonParticipant;
 
         // ------------------------------------------------------------------ spawning
 
@@ -139,6 +142,10 @@ namespace TumbangPreso.Visual
 
         public static void Spawn(Vector3 worldPos, string text, Color color, float scale,
                                  Weight weight)
+            => Spawn(worldPos, text, color, scale, weight, null);
+
+        public static void Spawn(Vector3 worldPos, string text, Color color, float scale,
+                                 Weight weight, CharacterMotor firstPersonParticipant)
         {
             if (string.IsNullOrEmpty(text)) return;
 
@@ -154,6 +161,7 @@ namespace TumbangPreso.Visual
                 if (live._elapsed > DedupeSeconds) continue;
                 if ((live.transform.position - worldPos).sqrMagnitude > DedupeMetres * DedupeMetres) continue;
 
+                live._firstPersonParticipant=firstPersonParticipant;
                 live.Kick();
                 return;
             }
@@ -165,6 +173,7 @@ namespace TumbangPreso.Visual
 
             var popup = go.AddComponent<ComicPopup>();
             popup.Init(text, color, scale, weight);
+            popup._firstPersonParticipant=firstPersonParticipant;
             Live.Add(popup);
         }
 
@@ -206,7 +215,11 @@ namespace TumbangPreso.Visual
             return true;
         }
 
-        private void OnDestroy() => Live.Remove(this);
+        private void OnDestroy()
+        {
+            Live.Remove(this);
+            if(Live.Count==0)Camera.onPreCull-=PrepareView;
+        }
         public static void PrepareView(UnityEngine.Camera camera)
         {
             if(camera==null||_preparingCamera||Live.Count==0)return;
@@ -214,9 +227,8 @@ namespace TumbangPreso.Visual
             foreach(var popup in Live)
             {
                 if(popup==null||!popup.isActiveAndEnabled)continue;
-                var rotation=camera.transform.rotation*Quaternion.Euler(0,0,popup._tiltAngle);
-                if(Mathf.Abs(Quaternion.Dot(popup.transform.rotation,rotation))>=.999999f)continue;
-                popup.transform.rotation=rotation;changed=true;
+                if((camera.cullingMask & (1<<popup.gameObject.layer))==0)continue;
+                changed|=popup.ApplyView(camera);
             }
             if(!changed)return;
             // World-space UI batches can retain the previous camera's transform.
@@ -229,6 +241,7 @@ namespace TumbangPreso.Visual
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
+            Camera.onPreCull-=PrepareView;
             Live.Clear();_preparingCamera=false;
         }
 
@@ -322,10 +335,12 @@ namespace TumbangPreso.Visual
             var ink = textGo.AddComponent<GodotOutline>();
             ink.OutlineColour = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.95f);
             ink.Radius = 6.0f;
+            _layoutSize=new Vector2(Mathf.Max(1,_text.preferredWidth+ink.Radius*2),
+                Mathf.Max(1,_text.preferredHeight+ink.Radius*2));
 
             transform.localScale = Vector3.zero;
-            if (UnityEngine.Camera.main != null)
-                _cameraTransform = UnityEngine.Camera.main.transform;
+            _camera=Camera.main;
+            if(Live.Count==0)Camera.onPreCull+=PrepareView;
 
         }
 
@@ -347,11 +362,7 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            if (_cameraTransform == null && UnityEngine.Camera.main != null)
-                _cameraTransform = UnityEngine.Camera.main.transform;
-
-            if (_cameraTransform != null)
-                transform.rotation = _cameraTransform.rotation * Quaternion.Euler(0, 0, _tiltAngle);
+            if (_camera == null) _camera=Camera.main;
 
 
             // Rises fast and slows, so the eye is pulled up to it and then let go.
@@ -371,12 +382,38 @@ namespace TumbangPreso.Visual
                 scale += Mathf.Sin((_kick / 0.16f) * Mathf.PI) * 0.22f;
             }
 
-            transform.localScale = Vector3.one * (_baseScale * scale);
+            _animatedScale=_baseScale*scale;
+            if(_camera!=null)ApplyView(_camera);
+            else transform.localScale=Vector3.one*_animatedScale;
 
             // ⚠️ ONE `CanvasGroup` FADES THE FACE AND ITS INK TOGETHER. Fading them separately
             // is how a ring of ink ends up floating over the court with nothing inside it.
             if (_group != null)
                 _group.alpha = t > 0.6f ? 1.0f - (t - 0.6f) / 0.4f : 1.0f;
+        }
+
+        private bool ApplyView(Camera camera)
+        {
+            var rotation=camera.transform.rotation*Quaternion.Euler(0,0,_tiltAngle);
+            float depth=Vector3.Dot(transform.position-camera.transform.position,camera.transform.forward);
+            float visibleHeight=camera.orthographic?camera.orthographicSize*2:
+                Mathf.Max(0,depth)*2*Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f);
+            // Keep authored world size at ordinary distances, but never let a nearby
+            // caption become a screen-filling overlay. Apply independently for each view.
+            float limit=Mathf.Min(visibleHeight*camera.aspect*.36f/_layoutSize.x,
+                visibleHeight*.11f/_layoutSize.y);
+            float size=depth<=camera.nearClipPlane?0:Mathf.Min(_animatedScale,limit);
+            if(_firstPersonParticipant!=null && !GameLaunch.Spectator)
+            {
+                var rig=camera.GetComponent<CameraSystem.CameraRig>();
+                if(rig!=null && rig.IsLocalFpp && rig.IsFollowing(_firstPersonParticipant))size=0;
+            }
+            var desired=Vector3.one*size;
+            bool changed=Mathf.Abs(Quaternion.Dot(transform.rotation,rotation))<.999999f ||
+                (transform.localScale-desired).sqrMagnitude>1e-14f;
+            transform.rotation=rotation;
+            transform.localScale=desired;
+            return changed;
         }
     }
 }
