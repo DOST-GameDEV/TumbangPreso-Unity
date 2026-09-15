@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    public sealed class OwnerCharacterStoryView : MonoBehaviour
+    public sealed partial class OwnerCharacterStoryView : MonoBehaviour
     {
         private Canvas _canvas;
         private Text _title,_origin,_court,_shortLine,_body;
@@ -19,7 +19,7 @@ namespace TumbangPreso.UI
             _shortLine.text=story.shortLine;_body.text=story.introduction;_portrait.sprite=OwnerPortraitArt.Get("UI/portraits/"+id);
             _canvas.gameObject.SetActive(true);_scroll.verticalNormalizedPosition=1;_canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }
-        private void Build()
+        private void BuildPreviousPaintedStory()
         {
             _canvas=OwnerUiLayout.Canvas(transform,"OwnerCharacterStoryCanvas",730);OwnerUiBackdrop.Build(_canvas.transform);
             var root=OwnerUiLayout.DesignArea(_canvas.transform,"CharacterStoryComposition");

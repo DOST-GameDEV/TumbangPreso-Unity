@@ -10,7 +10,7 @@ namespace TumbangPreso.UI
         private Text _ownerOrigin,_ownerStoryLine;
         private Button _ownerMeet;
         private OwnerCharacterStoryView _ownerStoryView;
-        private void Build(Transform owner)
+        private void BuildPreviousPaintedPicker(Transform owner)
         {
             _canvas=OwnerUiLayout.Canvas(owner,"OwnerLoadoutCanvas",700);OwnerUiBackdrop.Build(_canvas.transform);
             _root=OwnerUiLayout.DesignArea(_canvas.transform,"LoadoutComposition");
@@ -77,49 +77,35 @@ namespace TumbangPreso.UI
                 _choices.Clear();_builtCategory=_category;_builtMode=_mode;
                 for(int i=0;i<entries.Count;i++)
                 {
-                    int index=i;var item=entries[i];
-                    var box=OwnerUiLayout.Rect(_grid,"Portrait_"+item.Id);
-                    var hit=box.gameObject.AddComponent<Image>();hit.color=Color.clear;
-                    var button=box.gameObject.AddComponent<OwnerTextAction>();button.targetGraphic=hit;button.transition=Selectable.Transition.None;
-                    button.onClick.AddListener(()=>{MenuSfx.Click();_picks[_category]=index;Refresh();});
-                    var visual=OwnerUiLayout.Rect(box,"PortraitCard");OwnerUiLayout.Fill(visual);
-                    var frame=visual.gameObject.AddComponent<OwnerRosterTile>();frame.raycastTarget=false;
-                    visual.gameObject.AddComponent<OwnerUiMotion>();
-                    var portrait=OwnerPortraitArt.Create(visual,"Portrait","UI/portraits/"+item.Id);
-                    OwnerUiLayout.Place(portrait.rectTransform,17,8,161,146);
-                    var label=OwnerUiLayout.Text(visual,"Name",item.Name,26,OwnerUiLayout.TypeRole.Display);
-                    OwnerUiLayout.Place(label.rectTransform,12,147,170,49);label.alignment=TextAnchor.MiddleCenter;
-                    var selected=OwnerUiGlyph.Create(visual,"SelectedCheck",OwnerUiGlyph.Mark.Check,OwnerUiTheme.Current.Green);
-                    OwnerUiLayout.Place(selected.rectTransform,153,11,26,26);_choices.Add(button);
+                    var item=entries[i];_choices.Add(BuildCollectionChoice(i,item.Id,item.Name));
                 }
             }
             for(int i=0;i<_choices.Count;i++)
             {
-                bool selected=i==_picks[_category];_choices[i].GetComponentInChildren<OwnerRosterTile>().Select(selected);
-                _choices[i].transform.Find("PortraitCard/SelectedCheck").gameObject.SetActive(selected);
+                bool selected=i==_picks[_category];((CollectionChoice)_choices[i]).SetPicked(selected);
             }
             for(int i=0;i<_categories.Count;i++)
             {
                 _categories[i].transform.Find("SelectedCategory").gameObject.SetActive(i==_category);
-                _categories[i].GetComponentInChildren<Text>().color=i==_category?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _categories[i].GetComponentInChildren<Text>().color=i==_category?OwnerUiTheme.Current.Lime:OwnerUiTheme.Current.Pale;
             }
             _categories[0].GetComponentInChildren<Text>().text=_mode==GameMode.HeroStrike?"HEROES":"PEOPLE";
             var picked=entries[_picks[_category]];_name.text=picked.Name;_description.text=_describe?.Invoke(picked.Id)??"";
             bool hero=_category==0 && _mode==GameMode.HeroStrike;_skills.gameObject.SetActive(hero);_stats.gameObject.SetActive(!hero);
             var story=hero?OwnerCharacterStories.For(picked.Id):null;
             _ownerOrigin.gameObject.SetActive(story!=null);_ownerStoryLine.gameObject.SetActive(story!=null);_ownerMeet.gameObject.SetActive(story!=null);
-            OwnerUiLayout.Place(_name.rectTransform,1025,story!=null?189:216,786,story!=null?78:86);
             if(story!=null)
             {
                 _ownerOrigin.text=story.origin;_ownerStoryLine.text=story.shortLine;
                 _ownerMeet.GetComponentInChildren<Text>().text="MEET "+picked.Name;
             }
             string[][] traits={new[]{"Speed","Power","Grit"},new[]{"Reset","Rebound","Stance"},new[]{"Flight","Impact","Recovery"}};
-            _stats.text=$"{traits[_category][0]} {picked.Bilis}/{Roster.TraitMax}   {traits[_category][1]} {picked.Lakas}/{Roster.TraitMax}   {traits[_category][2]} {picked.Tatag}/{Roster.TraitMax}";
+            _stats.text=$"{traits[_category][0]}  {picked.Bilis}/{Roster.TraitMax}\n{traits[_category][1]}  {picked.Lakas}/{Roster.TraitMax}\n{traits[_category][2]}  {picked.Tatag}/{Roster.TraitMax}";
             var saved=Settings.SettingsStore.Current;
             _state.text=_picks[0]==saved.CharacterPick && _picks[1]==saved.CanPick && _picks[2]==saved.SlipperPick?"Your equipped loadout":"Previewing · choose USE LOADOUT to keep it";
             var book=RosterBook.Load();var art=_category==0?book.PersonArt(_picks[0],_mode):_category==1?book.CanArt(_picks[1]):book.SlipperArt(_picks[2]);
             _preview.ShowingSlipper=_category==2;_preview.Show(art.Model,art.Clips,art.Palette,art.PetModel);
+            PlaceCollection();
             _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }
     }

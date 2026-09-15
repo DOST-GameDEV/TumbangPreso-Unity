@@ -30,7 +30,15 @@ namespace TumbangPreso.PlayTests
             var candidate = Roster.ClassicPeople[(Mathf.Max(0, saved) + 1) % 12];
             Press(Find("Portrait_" + candidate.Id));
             Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick);
-            yield return TumpUiCapture.Capture("OwnerPicker-people-v1", canvas, 1920, 1080,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("Collection-people-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, checkActionBounds: true);
+            foreach (var person in Roster.ClassicPeople)
+            {
+                Press(Find("Portrait_" + person.Id)); yield return null;
+                yield return TumpUiCapture.Capture("Collection-person-" + person.Id, canvas, 960, 540, false, checkActionBounds: true);
+                Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick, "Inspecting the collection must not save a pick.");
+            }
             Press(Find("TumpBack")); yield return null;
             Assert.IsFalse(canvas.gameObject.activeSelf);
             Press(Find("LoadoutButton")); yield return null;
@@ -43,7 +51,15 @@ namespace TumbangPreso.PlayTests
                 Press(Find("TumpCategory" + i)); yield return null;
                 foreach (var choice in canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait_")))
                     Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
-                yield return TumpUiCapture.Capture("OwnerPicker-category" + i + "-v1", canvas, 1280, 720,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("Collection-category" + i + "-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
+                var entries = i == 1 ? Roster.Cans : Roster.Slippers;
+                foreach (var item in entries)
+                {
+                    Press(Find("Portrait_" + item.Id)); yield return null;
+                    yield return TumpUiCapture.Capture("Collection-item-" + item.Id, canvas, 960, 540, false, checkActionBounds: true);
+                }
             }
         }
         [UnityTest]
@@ -56,14 +72,30 @@ namespace TumbangPreso.PlayTests
                 var story=OwnerCharacterStories.For(person.Id);Assert.IsNotNull(story,person.Id);
                 Assert.IsNotEmpty(story.origin);Assert.IsNotEmpty(story.introduction);
             }
-            yield return TumpUiCapture.Capture("OwnerPicker-heroes-v1", picker, 1920, 1080,false);
+            foreach (var person in Roster.HeroPeople)
+            {
+                Press(Find("Portrait_" + person.Id)); yield return null;
+                yield return TumpUiCapture.Capture("Collection-hero-" + person.Id, picker, 960, 540, false, checkActionBounds: true);
+                Press(Find("MeetCharacter")); yield return null;
+                var biography = GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
+                Assert.AreEqual(OwnerCharacterStories.For(person.Id).origin,
+                    biography.GetComponentsInChildren<Text>().First(t => t.name == "StoryOrigin").text);
+                yield return TumpUiCapture.Capture("Biography-" + person.Id, biography, 960, 540, false, checkActionBounds: true);
+                Press(Find("CloseCharacterStory")); yield return null;
+            }
+            Press(Find("Portrait_" + Roster.HeroPeople[Settings.SettingsStore.Current.CharacterPick].Id)); yield return null;
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("Collection-heroes-" + size.x + "x" + size.y,
+                    picker, size.x, size.y, false, checkActionBounds: true);
             int originalPick=Settings.SettingsStore.Current.CharacterPick;
             Press(Find("MeetCharacter"));yield return null;
             var storyCanvas=GameObject.Find("OwnerCharacterStoryCanvas").GetComponent<Canvas>();
             Assert.IsFalse(picker.gameObject.activeSelf);
             var selectedStory=OwnerCharacterStories.For(Roster.HeroPeople[originalPick].Id);
             Assert.AreEqual(selectedStory.origin,storyCanvas.GetComponentsInChildren<Text>().First(t=>t.name=="StoryOrigin").text);
-            yield return TumpUiCapture.Capture("OwnerCharacter-story-v1",storyCanvas,1920,1080,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("Biography-" + size.x + "x" + size.y,
+                    storyCanvas, size.x, size.y, false, checkActionBounds: true);
             Press(Find("CloseCharacterStory"));yield return null;
             Assert.IsTrue(picker.gameObject.activeSelf);Assert.AreEqual(originalPick,Settings.SettingsStore.Current.CharacterPick);
             Press(Find("TumpSkills")); yield return null;
@@ -71,7 +103,9 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(skills.GetComponentsInChildren<TumpAbilitySymbol>().Length, 3);
             Assert.IsEmpty(skills.GetComponentsInChildren<PaperSkin>(true));
             Assert.IsEmpty(skills.GetComponentsInChildren<TumpSurface>(true));
-            yield return TumpUiCapture.Capture("OwnerSkills-slot1-v1", skills, 1920, 1080,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("SkillGuide-slot1-" + size.x + "x" + size.y,
+                    skills, size.x, size.y, false, checkActionBounds: true);
             var hero=Roster.HeroPeople[Settings.SettingsStore.Current.CharacterPick].Id;
             var options=HeroLoadoutRules.VariantsFor(hero,1);
             var alternative=options[options.Count-1];
@@ -86,15 +120,44 @@ namespace TumbangPreso.PlayTests
                 equip.interactable);
             if(!unlocked)
                 StringAssert.Contains(alternative.Challenge,skills.GetComponentsInChildren<Text>().First(t=>t.name=="UnlockState").text);
-            yield return TumpUiCapture.Capture("OwnerSkills-variant-v1", skills, 1920, 1080,false);
+            yield return TumpUiCapture.Capture("SkillGuide-variant", skills, 960, 540, false, checkActionBounds: true);
             Press(Find("TumpSkillSlot2")); yield return null;
-            yield return TumpUiCapture.Capture("OwnerSkills-slot2-v1", skills, 1280, 720,false);
+            yield return TumpUiCapture.Capture("SkillGuide-slot2", skills, 960, 540, false, checkActionBounds: true);
             Press(Find("TumpSkillSlot0")); yield return null;
-            yield return TumpUiCapture.Capture("OwnerSkills-ultimate-v1", skills, 1200, 900,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("SkillGuide-ultimate-" + size.x + "x" + size.y,
+                    skills, size.x, size.y, false, checkActionBounds: true);
             Press(Find("TumpSkillBack")); yield return null;
             Assert.IsTrue(picker.gameObject.activeSelf);
             Press(Find("TumpBack")); yield return null;
             Assert.IsFalse(picker.gameObject.activeSelf);
+        }
+        [UnityTest]
+        public IEnumerator EveryHeroSkillGuideFitsItsActualVariationText()
+        {
+            yield return Open(GameMode.HeroStrike);
+            int saved = Settings.SettingsStore.Current.CharacterPick;
+            foreach (var person in Roster.HeroPeople)
+            {
+                Press(Find("Portrait_" + person.Id)); yield return null;
+                Press(Find("TumpSkills")); yield return null;
+                var canvas = GameObject.Find("OwnerSkillsCanvas").GetComponent<Canvas>();
+                foreach (int slot in new[] { 1, 2, 0 })
+                {
+                    Press(Find("TumpSkillSlot" + slot)); yield return null;
+                    if (slot == 0)
+                        yield return TumpUiCapture.Capture("SkillGuide-" + person.Id + "-ultimate", canvas, 960, 540, false, checkActionBounds: true);
+                    else foreach (var variant in HeroLoadoutRules.VariantsFor(person.Id, slot))
+                    {
+                        Press(Find("TumpVariant_" + variant.Id)); yield return null;
+                        Assert.AreEqual(variant.Name, canvas.GetComponentsInChildren<Text>().First(t => t.name == "AbilityName").text);
+                        yield return TumpUiCapture.Capture("SkillGuide-" + person.Id + "-" + variant.Id,
+                            canvas, 960, 540, false, checkActionBounds: true);
+                    }
+                }
+                Press(Find("TumpSkillBack")); yield return null;
+            }
+            Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick, "Skill inspection must not change the saved character.");
         }
         private static IEnumerator Open(GameMode mode)
         {

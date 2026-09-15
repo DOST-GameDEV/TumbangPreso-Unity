@@ -23,7 +23,7 @@ namespace TumbangPreso.UI
             if(_content==null)BuildOwnerSkillSurface();
             RefreshOwnerSkill();
         }
-        private void BuildOwnerSkillSurface()
+        private void BuildPreviousPaintedSkillSurface()
         {
             OwnerUiBackdrop.Build(_canvas.transform);
             _content=OwnerUiLayout.DesignArea(_canvas.transform,"SkillsComposition");
@@ -87,7 +87,7 @@ namespace TumbangPreso.UI
                 int slot=i==2?0:i+1;bool selected=slot==_slot;
                 _ownerTabs[i].GetComponentInChildren<TumpAbilitySymbol>().Glyph=powers[i].Glyph;
                 _ownerTabs[i].GetComponentInChildren<TumpAbilitySymbol>().SetVerticesDirty();
-                _ownerTabs[i].GetComponentInChildren<Text>().color=selected?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _ownerTabs[i].GetComponentInChildren<Text>().color=selected?OwnerUiTheme.Current.Lime:OwnerUiTheme.Current.Pale;
                 _ownerTabs[i].transform.Find("SelectedSlot").gameObject.SetActive(selected);
             }
             var ability=_slot==0?kit.Ultimate:_slot==1?kit.Skill1:kit.Skill2;
@@ -103,17 +103,7 @@ namespace TumbangPreso.UI
                 var options=HeroLoadoutRules.VariantsFor(_hero,_slot);
                 for(int i=0;i<options.Count;i++)
                 {
-                    var option=options[i];
-                    var button=OwnerTextAction.Create(_ownerOptions,"TumpVariant_"+option.Id,option.Name,
-                        ()=>{_selected=option.Id;Build();},0,i*181,775,155,34);
-                    var label=button.GetComponentInChildren<Text>();OwnerUiLayout.Place(label.rectTransform,130,7,620,78);label.alignment=TextAnchor.MiddleLeft;
-                    var icon=OwnerUiLayout.Rect(button.transform,"AbilityPicture").gameObject.AddComponent<TumpAbilitySymbol>();
-                    icon.Glyph=ability.Glyph;icon.color=OwnerUiTheme.Current.ActionInk;icon.raycastTarget=false;
-                    OwnerUiLayout.Place(icon.rectTransform,8,21,102,106);
-                    var status=OwnerUiLayout.Text(button.transform,"Status","",26);status.color=OwnerUiTheme.Current.EnteredInk;
-                    OwnerUiLayout.Place(status.rectTransform,132,88,609,43);
-                    var check=OwnerUiLayout.Art(button.transform,"SelectedVariant",OwnerUiTheme.Piece.LeftRule);
-                    OwnerUiLayout.Place(check.rectTransform,132,144,242,6);_ownerVariants.Add(button);
+                    _ownerVariants.Add(BuildGuideVariation(options[i],i));
                 }
             }
             if(_slot!=0)

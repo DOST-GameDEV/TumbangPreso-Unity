@@ -1,5 +1,101 @@
 # Active TUMP rework ledger
 
+## CURRENT D4 verified; next player hub and remaining UI
+
+Guides-v2 FINISHED2/2PASS, restoration93ccc0f09700. All-guides-v3 FINISHED1/1PASS,
+restoration9552599afb5f; Python4736 retired. No Unity/image/build/player/browser
+job. Every34collection entry/all six biographies and30skill-guide content states
+were covered; representative category/story/skill/ultimate layouts covered ten PC
+sizes. Actual collection/biography/final hero-guide images inspected. Report:
+reports/ui-composition-d4, with selected screenshots/XML. D4 currently uncommitted
+oned7ff358. Next save/push, then player hub/rank/custom rules/remaining screens.
+
+PlayerHub.OwnerPainted, OwnerFriends and OwnerPlayerHubTests have been read.
+Preserve draft text across tab/service refresh; do not submit profile/friend/delete
+operations solely for UI testing. Account login remains the approved original.
+U8 also needs ModelPreview virtual-vs-physical render-size review for large/high-DPI
+screens, along with known reduced-motion native qualifier and both-mode routes.
+No model/rig/hand/skill-gameplay changes in D4. Full gameplay bookmark follows UI/U8.
+
+
+## CURRENT D4 all-hero guide sweep
+
+Guides-v2 FINISHED2/2PASS, restoration93ccc0f09700; Python22880/Unity7056 retired.
+Actual skill/variant and Zack biography captures inspected. Header portrait was
+slightly too close to the first slot symbol; reduced only that portrait box height
+before the next check. Runtime gameplay effects/models remain untouched.
+
+RUNNING all-guides-v3, Python4736, Logs/ui-composition-all-guides-v3
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-collection-review.
+One targeted additional case inspects every hero's three slots and all actual
+variation/challenge text at960x540, without equipping or saving. Needed because
+description/name lengths differ across the new fixed layout. D4 remains uncommitted
+oned7ff358. No imported edits until Editor exits. Next inspect result/receipt and
+any clipped content, saveD4, then player hub/rank/custom rules/remaining UI. Old login
+and controller diagram remain protected; UI/U8 precedes full gameplay bookmark.
+
+## CURRENT D4 skill guide and biography qualification
+
+New TumpSkillView.FieldGuide uses a horizontal hero/slot header, readable chosen
+power detail and a separate variation list. Repeated per-variant copies of the same
+ability drawing are removed; actual distinct slot/selected-power symbols remain.
+OwnerCharacterStoryView.BookSpread is a dedicated biography composition, retaining
+all original lore/origin/home-court text and optional reading/Back behavior.
+No account artwork/background reuse. Collection handling now uses three clear rows.
+
+RUNNING guarded guides-v2, Python22880, Logs/ui-composition-guides-v2
+(.pid/.stdout/.stderr/.log/.xml), namedprofileui-composition-collection-review.
+Two picker/skill/story contract cases with every collection entry, all six biography
+origins, ten-size category/story/primary-skill/ultimate captures and selected variant/
+second-slot small-window captures. D4 remains uncommitted oned7ff358. No imported
+edits while Unity runs; no image/player/browser jobs. Next inspect XML/receipt and
+actual layout, fix observed issues, then saveD4 and continue remaining UI. Old login
+and approved controller diagram stay unchanged. Full gameplay queue follows UI/U8.
+
+## CURRENT D4 collection initial checks pass; skill/story work next
+
+Collection-v1 FINISHED2/2PASS, restorationa79beeaa758f; Python1448 retired.
+No Unity/image/build/player/browser job. All34collection entries got960x540
+captures and category representatives passed ten sizes. Actual Dante/Classic/
+loafers/hero screenshots inspected. Stats are now deliberately three separate
+rows instead of wrapping a space-separated sentence; recheck with the next batch.
+D4 uncommitted oned7ff358. No source models, palettes, rig or clips changed.
+
+Observed a dark purple protrusion beside Dante's head in his current3D preview.
+Source check confirms his own team-dante.glb is selected and PetModel is null;
+the original GLB has only body/head meshes. It is already present on the first
+Dante capture, before cycling through Phaister. Do not invent a leaked-pet or
+new-UI-model-corruption explanation. Leave source-model interpretation for the
+later authorized model review; current UI changes did not introduce those files.
+
+Next create distinct skill/stories compositions preserving actual icons, variants,
+challenge/equip behavior and optional lore. Current source inspected:
+TumpSkillView.OwnerPainted, OwnerCharacterStoryView and TumpNativePickerTests.
+Original PDF43 rechecked: large character identity and readable biography/ability
+side are inspiration, not a literal requirement to add an unlock economy.
+Login stays as approved. Continue all UI/U8 and saved gameplay queue afterward.
+
+## CURRENT D4 collection presentation running
+
+D3 committed/pusheded7ff358. Login remains unchanged and approved controller
+illustration preserved. New uncommitted TumpPickerView.Collection and
+CollectionChoice use a dark warm model stage, complete portrait/name collection
+below and a separate reading column for identity/origin/handling/lore/actions.
+Original model/rig/animations/IDs are unchanged. The September2 dark-stage
+preference was found in source history and respected without restoring old textures.
+Old painted picker builder remains inactive. Current Refresh keeps existing
+preview-only and confirm/save callbacks, but constructs/reflows new collection rows.
+
+RUNNING guarded collection-v1, Python1448, Logs/ui-composition-collection-v1
+(.pid/.stdout/.stderr/.log/.xml), namedprofileui-composition-collection-review.
+Two related picker tests: preview/save/Back/categories and hero story/skill/variant
+return paths. Each category uses ten PC sizes; every12Classic/6hero/6can/10slipper
+entry also gets a worst-size960x540 text/model capture. This is UI evidence, not
+proof of deferred FPP fixes or new source model acceptance. Skill page itself is
+not redesigned yet. No C#/imported edits while Unity runs. No image/player/browser
+job. Next inspect compilation/XML/receipt and actual collection screenshots; fix
+clipping/composition, then redesign skill/story surfaces and continue UI/U8/gameplay.
+
 ## CURRENT D3 verified; moving to selection and equipment
 
 Settings-v3 FINISHED4/4PASS, restoration70e4b08ff90f; Python9128/Unity21596 retired.

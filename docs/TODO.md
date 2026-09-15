@@ -1,5 +1,12 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**D4 checkpoint:** collection, skill guide and optional biographies have distinct
+compositions. Related selection/save/return checks and all-hero content sweep pass;
+34collection entries and30power content states checked. Report: reports/ui-composition-d4.
+Next remaining hub/rank/rules/match/UI surfaces, U8 native qualification and gameplay.
+Original login remains protected. U8 must review preview physical pixel scaling.
+
+
 **D3 checkpoint:** settings workspace and native control family qualified with
 four related contracts plus one final visual recheck. Five pages cover ten PC sizes.
 See reports/ui-composition-d3. Original login stays protected. Next selection,
