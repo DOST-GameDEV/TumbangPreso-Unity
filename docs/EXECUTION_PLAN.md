@@ -1,5 +1,15 @@
 # Active execution plan
 
+**September16 current gameplay work:** UI/video are delivered and pushed. Recovery
+menu suppression is pushed in e9c25ea5 with local6/6 and nativev23 evidence; a new
+configured-key case also passed1/1. Client-round expiry F4 is reproduced and the
+small RoundDirector fix passed3/3. Nativev24 PASSED a real delayed client
+rejoin across round1/intermission/round2 in both modes. See newest ledger for the
+active process and reports/client-round-boundary-2026-09-16 for evidence/limits.
+C4 remains reserved. Owner asleep: no optional questions or usage resets. Continue
+the saved gameplay queue after publication; do not restart the finished UI work.
+
+
 **Latest final owner UI correction is implemented/qualified and the video is
 DELIVERED:** final TUMP7/TUMP8 login, no email, password confirmation, copied eyes,
 Terms checkmark, centered tab/Guest labels, woven background, equal OR lines,

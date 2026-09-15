@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 503,
+      "buffer_samples": 50,
+      "round2_samples": 78,
+      "invalid_warmup_samples": 0,
+      "intermission_events": 1.0
+    },
+    "client": {
+      "samples": 434,
+      "buffer_samples": 50,
+      "round2_samples": 47,
+      "invalid_warmup_samples": 0,
+      "intermission_events": 0.0
+    }
+  },
+  "shared_input_unchanged": true,
+  "runtime_sha256": "e08238cfe7b6d8880e4c55c0ab56ba98a66630d36af9f974240f72f3fb79f0fc",
+  "mode": "hero",
+  "one_way_delay_ms": 150,
+  "retired_pids": [
+    7188,
+    10096,
+    2356
+  ]
+}

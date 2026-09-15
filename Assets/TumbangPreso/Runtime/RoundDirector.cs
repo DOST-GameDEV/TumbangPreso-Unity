@@ -126,6 +126,13 @@ namespace TumbangPreso
             TimeLeft = Mathf.Clamp(timeLeft, 0.0f, RoundLength);
             RoundActive = roundActive;
 
+            // The accepted snapshot owns the client's buffer state too. Do not raise the
+            // intermission event: its subscribers reset the world and schedule another round.
+            // This also repairs a late join without requiring a local active-to-inactive edge.
+            var match = GameServices.Match;
+            if (!NetAuthority.ShouldResolve() && match != null)
+                match.IsWarmupBuffer = matchInProgress && !roundActive && match.RoundNumber > 0;
+
             // ⚠️⚠️ THE FREE-ROAM WINDOW IS WHY THIS IS NOT SIMPLY `= roundActive`, AND STAMPING
             // IT WAS WHY A CLIENT COULD NOT MOVE AT ALL.
             //
@@ -275,7 +282,7 @@ namespace TumbangPreso
 
             float dt = Time.fixedDeltaTime;
             _clock += dt;
-            TimeLeft -= dt;
+            TimeLeft = Mathf.Max(0.0f, TimeLeft - dt);
 
             if (_throwCooldownLeft > 0.0f)
                 _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
@@ -292,7 +299,9 @@ namespace TumbangPreso
             StepTournamentPenalties(dt);
             StepPassiveDefence(dt);
 
-            if (TimeLeft <= 0.0f)
+            // A client only interpolates the display clock. It must retain the host's live
+            // state at zero until the next snapshot, including under delay or packet loss.
+            if (TimeLeft <= 0.0f && NetAuthority.ShouldResolve())
             {
                 EndRound();
                 GameServices.Match.BeginIntermission();

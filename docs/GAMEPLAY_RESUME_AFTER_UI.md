@@ -49,7 +49,12 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
 
 ## Unfinished work to resume
 
-1. **Reconnect/rematch/session lifecycle.** The current HeroStrike same-process
+1. **Reconnect/rematch/session lifecycle.**
+   Client round-boundary F4 is now fixed: local timers cannot create intermissions,
+   and accepted snapshots own warm-up state. Both modes' delayed native same-process
+   rejoin through the next round PASS in reports/client-round-boundary-2026-09-16.
+   Do not repeat that named case or conflate it with the remaining full matrix.
+   The earlier HeroStrike same-process
    reload/rejoin check **PASSED; no production fix was needed.** See
    reports/improvement-2026-09-15-session-cycle.md. Do not rerun that completed
    case by default. Its probe uses real

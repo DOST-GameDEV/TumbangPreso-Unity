@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.1461665">
+  <test-suite type="TestSuite" id="1577" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="437" result="Failed" site="Child" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.146167" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1571" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="437" result="Failed" site="Child" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.134023" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1572" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="437" result="Failed" site="Child" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.131666" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1573" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="437" result="Failed" site="Child" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.129564" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1074" name="ClientRoundBoundaryProbe" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.110927" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1075" name="ClientClockExpiryDoesNotStartItsOwnIntermission" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe.ClientClockExpiryDoesNotStartItsOwnIntermission" methodname="ClientClockExpiryDoesNotStartItsOwnIntermission" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" seed="157472767" result="Failed" start-time="2026-09-15 16:18:27Z" end-time="2026-09-15 16:18:27Z" duration="0.094147" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A client clock fired the authoritative intermission event
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ClientRoundBoundaryProbe+<ClientClockExpiryDoesNotStartItsOwnIntermission>d__2.MoveNext () [0x0018b] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\ClientRoundBoundaryProbe.cs:29
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ClientRoundBoundary] local expiry: warmup=True active=False events=1
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

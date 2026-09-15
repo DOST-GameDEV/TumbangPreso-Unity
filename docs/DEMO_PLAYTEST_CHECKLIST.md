@@ -6,6 +6,12 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Latest source includes the final supplied menu/login and delivered motion video
+  (nativev22), recovery menu-input fix (nativev23), and client round authority fix
+  (nativev24). Both modes' delayed rejoin/intermission/next-round paths PASS onv24.
+  See reports/client-round-boundary-2026-09-16. Older candidate metadata below is
+  historical, not the latest binary. No complete candidate freeze is claimed yet.
+
 - Controller map/settings now match the dark theme while retaining the central
   artwork,18callouts and real connector lines. Focus highlights the correct control.
   Open it directly from Settings > Controls > Controller map. Nativev11 verifies

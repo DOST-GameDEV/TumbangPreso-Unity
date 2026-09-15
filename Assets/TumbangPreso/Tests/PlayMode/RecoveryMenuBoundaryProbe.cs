@@ -61,5 +61,44 @@ namespace TumbangPreso.PlayTests
                 InputLayer.TouchInput.ReleaseAll();
             }
         }
+
+        [UnityTest,Timeout(60000)]
+        public IEnumerator CustomJumpBindingStillRecoversAfterMenuRelease()
+        {
+            var settings=InputSystem.settings;var background=settings.backgroundBehavior;var editor=settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard=InputSystem.AddDevice<Keyboard>();InputActionAsset actions=null;PlayerInputReader reader=null;
+            try
+            {
+                yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);GameServices.Round.BeginRound();
+                var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
+                reader=who.GetComponent<PlayerInputReader>();actions=Object.Instantiate(Resources.Load<InputActionAsset>("TumbangPreso"));
+                actions.devices=new InputDevice[]{keyboard};
+                typeof(PlayerInputReader).GetField("_actions",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(reader,actions);
+                reader.SendMessage("Awake");reader.enabled=true;
+                Assert.True(Settings.Rebinding.ResolveBindingIndexFor(actions,"Jump",InputLayer.InputDeviceKind.KeyboardMouse,out var jump,out int binding));
+                jump.ApplyBindingOverride(binding,"<Keyboard>/j");
+                InputLayer.TouchInput.ReleaseAll();InputLayer.TouchInput.Active=false;
+                who.ClearTrip();who.ClearStun();who.ApplyTrip();
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Space));yield return null;yield return new WaitForFixedUpdate();
+                Assert.AreEqual(0,who.MashPresses,"The removed default binding must not recover");
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                who.Intent.Parked=true;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.J));yield return null;
+                reader.DiscardMenuButtonsUntilRelease();who.Intent.Parked=false;
+                yield return new WaitForSeconds(.2f);
+                Assert.AreEqual(0,who.MashPresses,"Configured key held across menu close must stay consumed");
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;yield return new WaitForFixedUpdate();
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.J));yield return null;yield return new WaitForFixedUpdate();
+                Assert.AreEqual(1,who.MashPresses,"A fresh configured key must recover once");
+            }
+            finally
+            {
+                if(reader!=null)reader.enabled=false;if(actions!=null){actions.Disable();Object.Destroy(actions);}
+                InputSystem.RemoveDevice(keyboard);settings.backgroundBehavior=background;settings.editorInputBehaviorInPlayMode=editor;
+                InputLayer.TouchInput.ReleaseAll();
+            }
+        }
     }
 }

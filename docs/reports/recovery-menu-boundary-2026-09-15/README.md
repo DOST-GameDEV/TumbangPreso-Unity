@@ -12,6 +12,11 @@ and touch state, so there is no hard-coded key or arbitrary timed cooldown. The
 latch is producer-owned, avoiding interference from Nemu's companion AI writer.
 Movement axes and host recovery rules are unchanged. Net/C4 files are untouched.
 
+Additional configured-key coverage PASSED1/1 in Logs/recovery-rebound-v1.xml,
+guardb2d371373984. After rebinding Jump to J, old Space gives no mash, held J across
+menu closure stays consumed, and release/fresh J gives exactly one. This uses a
+cloned action asset and synthetic keyboard; it is not physical-device certification.
+
 Focused v2 reproduction passes: Resume spends no mash and a release/fresh press
 still recovers. An extended check also holds Submit after closing. Related quick
 keyboard/gamepad/touch recovery and timing regressions PASSED6/6, including the

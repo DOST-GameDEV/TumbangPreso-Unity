@@ -1,5 +1,59 @@
 # Active TUMP rework ledger
 
+## CURRENT client round fix qualified; publish then continue demo/gameplay
+
+F4 reproduced: local client expiry fired one intermission event and left warmup=True,
+active=False. Baseline guard398c896c7b17. RoundDirector now clamps at0, resolves
+expiry only with authority, and hydrates the client's buffer flag from accepted
+host snapshots. No Net/C4 file edits or wire changes. Related3/3PASS,
+Logs/client-round-boundary-v2.xml, guard8a1aed5a1867.
+
+Build finished: Builds/round-boundary-v24/TumbangPreso.exe,1135MB/52s,
+guard40fe66b8096f. Runtime SHA256 e08238cfe7b6d8880e4c55c0ab56ba98a66630d36af9f974240f72f3fb79f0fc.
+Classic nativePASS in Logs/round-boundary-classic-v24/result.json: host/client
+buffer49/49samples, live round2 78/47samples, zero invalid warm-up, client events0.
+Shared input unchanged; PIDs8204/18808/8556 retired.
+Hero nativePASS in Logs/round-boundary-hero-v24/result.json: buffer50/50samples,
+live round2 78/47samples, zero invalid warm-up, client events0. Shared input
+unchanged; PIDs7188/10096/2356 retired. All Editor/player/link jobs are stopped.
+The opt-in probe restarts the client transport and
+reloads its arena at round1+8s, then witnesses real buffer and live round2 with
+150ms one-way delay. Both modes passed; physical two-PC/Wi-Fi remains unqualified.
+The earlier custom Jump test1/1PASS is included in pending publication.
+
+UI/video already delivered; owner asleep. NO resets, optional questions, other
+chats, agents or Desktop replacement. Continue the full saved queue after this
+bounded fix. C4 remains reserved. Report: reports/client-round-boundary-2026-09-16.
+
+Next publish this batch, then resume actual native demo verbs/whole-kit gameplay.
+Do not rerun the completed UI matrix or the above round-boundary cases by default.
+Preserve the reduced-motion focus-cue follow-up: artwork buttons currently lose
+their sole scale cue when reduced motion is enabled; optional static cue remains open.
+
+
+## CURRENT rebound recovery passed; investigate client round expiry F4
+
+Recovery fix is verified pushed e9c25ea5084ae902d43672adbf5a895cf5e40d45.
+An additional configured-key test PASSED1/1 (Logs/recovery-rebound-v1.xml,
+guardb2d371373984): old Space does nothing after binding Jump to J; held menu J
+stays consumed, release/fresh J recovers once. Test/report still need publication.
+
+Next concrete defect comes from C4's explicitly outside-scope F4 observation:
+rejoined client stays in warm-up through a later live round. Read-only source trace
+finds RoundDirector.FixedUpdate decrements client clocks and calls EndRound plus
+MatchDirector.BeginIntermission on expiry without authority gating. This can mutate
+client timeline/world, while ApplySnapshot never clears that local buffer flag.
+Do not modify reserved MatchRpc/NetSession or their request audit.
+
+New ClientRoundBoundaryProbe reproduces local client expiry through actual fixed
+steps under a client provider and requires no authoritative intermission event,
+no invented warm-up, live authority retained and presentation clock clamped at0.
+No production edit yet. Next run this one fixture and inspect evidence before any
+fix. Existing native C4 reports independently measured the rejoin symptom; this
+local probe is not itself a separate-process network qualification.
+Owner asleep, NO usage resets or optional questions; continue all saved work.
+
+
 ## CURRENT recovery menu boundary qualified; publish then continue
 
 Reproduced and fixed a controller Resume press also spending a recovery mash.

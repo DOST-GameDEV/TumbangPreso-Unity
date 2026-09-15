@@ -1,5 +1,13 @@
 # TODO: Tumbang Preso Unity
 
+**September16 joining fix:** client clocks no longer create intermissions. Accepted
+host snapshots restore real warm-up and clear it for the next round. Local3/3 and
+separate Windows host/rejoining-client cases PASS in both modes at150ms one-way
+delay. See [round-boundary evidence](reports/client-round-boundary-2026-09-16/README.md).
+This resolves the outside-C4 F4 symptom without changing reserved networking files.
+The broader session matrix and demo/gameplay queue remain open.
+
+
 **September16 gameplay fix:** controller Resume no longer also spends a get-up
 press. Held menu buttons stay consumed until release, then fresh gameplay input
 works. Related6/6tests and native Windowsv23 pass; see

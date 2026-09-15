@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.2664007">
+  <test-suite type="TestSuite" id="1579" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="439" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.266401" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1573" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="439" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.254713" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9760" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1574" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="439" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.252704" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1575" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="439" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.251381" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1074" name="ClientRoundBoundaryProbe" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.237673" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1077" name="AcceptedSnapshotsRestoreLateJoinBufferAndClearItForLiveRound" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe.AcceptedSnapshotsRestoreLateJoinBufferAndClearItForLiveRound" methodname="AcceptedSnapshotsRestoreLateJoinBufferAndClearItForLiveRound" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" seed="974475220" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.070668" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1075" name="ClientClockExpiryDoesNotStartItsOwnIntermission" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe.ClientClockExpiryDoesNotStartItsOwnIntermission" methodname="ClientClockExpiryDoesNotStartItsOwnIntermission" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" seed="1597352882" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.072340" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ClientRoundBoundary] local expiry: warmup=False active=True events=0
+]]></output>
+            </test-case>
+            <test-case id="1076" name="HostClockStillStartsOneIntermission" fullname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe.HostClockStillStartsOneIntermission" methodname="HostClockStillStartsOneIntermission" classname="TumbangPreso.PlayTests.ClientRoundBoundaryProbe" runstate="Runnable" seed="1610187726" result="Passed" start-time="2026-09-15 16:26:32Z" end-time="2026-09-15 16:26:32Z" duration="0.077361" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
