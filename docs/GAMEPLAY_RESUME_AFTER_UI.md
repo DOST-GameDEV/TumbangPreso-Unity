@@ -90,7 +90,12 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
    Remaining Pektus gesture must visibly impart the accepted spin direction;
    keep both directions, held/released states and observers consistent. Preserve
    the approved simple no-finger/no-thumb people and original rig contracts.
-6. **Recovery and input.** Finish struggle/get-up quality and button-mash checks
+6. **Recovery and input.**
+   Pickup press ownership is now fixed and locally/native qualified: no second
+   rendered Update may reuse a successful pickup as a shove. Both modes' shipped
+   keyboard/mouse native control sequences pass, including actual get-up completion.
+   See reports/direct-gameplay-2026-09-16 for staged-case limits. Broader cases
+   below remain open. Finish struggle/get-up quality and button-mash checks
    across stun, trip and Sa Bubong falls; keyboard, controller and touch;
    tapped/held input,30/60/144Hz, owner/observer and delayed/rejoined paths.
    Preserve forward-only breaststroke versus upright tread/back/strafe swimming,

@@ -186,10 +186,10 @@ namespace TumbangPreso
         public bool ThrowLocked => _throwLockLeft > 0.0f;
 
         /// <summary>
-        /// True while this unit is mid-commitment, so <see cref="CombatVerbs"/> knows an E press
+        /// True while this unit is mid-commitment, so <see cref="CombatVerbs"/> knows a grab press
         /// was already spent on something else.
         ///
-        /// ⚠️⚠️ `_grabConsumedThisFrame` IS THE THIRD CASE AND ITS ABSENCE WAS THE REPORTED
+        /// ⚠️⚠️ Pickup press consumption is the third case and its absence was the reported
         /// *"SHOVE GETS USED EVEN WHEN I HAVE SLIPPER"*. `carrier.gd::is_busy()` is
         /// `_is_charging or _channelling or _grab_consumed_this_frame` and only the first two
         /// were ported. E is contextual: a tap with a tsinelas at your feet is a pickup, and a
@@ -204,15 +204,15 @@ namespace TumbangPreso
         /// See the execution-order attribute on this class for what makes the ordering real
         /// rather than incidental.
         /// </summary>
-        public bool IsBusy => _channel > 0.0f || _charging || _grabConsumedThisFrame;
+        public bool IsBusy => _channel > 0.0f || _charging || _grabPressConsumed;
 
         /// <summary>
-        /// ⚠️ A ONE-FRAME FLAG, NOT A FOURTH PERSISTENT STATE. A grab has nothing to stay busy
-        /// WITH once it has resolved, so it only says "already spent" for the remainder of the
-        /// frame it fired on. Cleared at the top of every step, exactly as the .gd clears it at
-        /// the top of `input_step()`, so a later frame's press is never shadowed by an old one.
+        /// A successful pickup owns this grab press until release. InputIntent edges last
+        /// until the next physics commit, so multiple rendered Updates can read the same
+        /// edge. Clearing this every Update let the second pass also spend25stamina on a
+        /// shove. Release clears only this latch; a fresh contextual press remains valid.
         /// </summary>
-        private bool _grabConsumedThisFrame;
+        private bool _grabPressConsumed;
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
@@ -429,8 +429,7 @@ namespace TumbangPreso
             _aimMovement=Mathf.Lerp(_aimMovement,moving,1-Mathf.Exp(-Mathf.Max(0,dt)/settle));
             if (_charging) _aimHeldSeconds+=dt;
 
-            // ⚠️ CLEARED HERE, ONCE, BEFORE ANY BRANCH BELOW CAN SET IT. See _grabConsumedThisFrame.
-            _grabConsumedThisFrame = false;
+            if (!_motor.Intent.Pressed(Verb.Grab)) _grabPressConsumed = false;
 
             if (_throwLockLeft > 0.0f) _throwLockLeft = Mathf.Max(0.0f, _throwLockLeft - dt);
 
@@ -578,7 +577,7 @@ namespace TumbangPreso
             // CONNECTING grab may mark the press spent.
             if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
             {
-                _grabConsumedThisFrame = true;
+                _grabPressConsumed = true;
                 return;
             }
 

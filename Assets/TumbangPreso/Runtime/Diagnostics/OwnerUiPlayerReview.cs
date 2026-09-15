@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 namespace TumbangPreso.Diagnostics
 {
     // Opt-in built-player UI qualification. Normal play and tournament launches never install it.
-    public sealed class OwnerUiPlayerReview : MonoBehaviour
+    public sealed partial class OwnerUiPlayerReview : MonoBehaviour
     {
         [Serializable]private sealed class FrameWindow
         {
@@ -419,6 +419,8 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-gameplay-review-only"))
+            {yield return GameplayOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-recovery-review-only"))
             {yield return RecoveryOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-menu-review-only"))

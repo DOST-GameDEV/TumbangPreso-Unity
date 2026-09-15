@@ -1,5 +1,14 @@
 # TODO: Tumbang Preso Unity
 
+**Direct native controls now pass in both modes:** movement/sprint/jump/get-up,
+real throw and retrieval, shove, slide, can channel/restore and punch/lunge tags.
+This found and fixed a real high-frame-rate pickup press also spending25stamina
+on a shove. Focused reproduction/regression and Windowsv28 pass; exact staged
+fixture limits are in [direct gameplay](reports/direct-gameplay-2026-09-16/README.md).
+Do not equate these control cases with freeform play, whole-kit balance or physical
+devices. The remaining creative/gameplay queue and human review stay open.
+
+
 **Current native checkpoint:** v24 passed final startup/menu, both-mode picker/
 short-custom-match/results, Classic rematch/leave and Hero return. Normal defaults
 remain8. See [native loop](reports/demo-loop-v24-2026-09-16/README.md). Its quiet

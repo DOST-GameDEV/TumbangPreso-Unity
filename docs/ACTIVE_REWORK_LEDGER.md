@@ -1,5 +1,89 @@
 # Active TUMP rework ledger
 
+## CURRENT pickup/shove fix qualified; direct native controlsPASS; publish
+
+Carrier now keeps pickup ownership of the grab press until release. Reproduced
+local second-update cost25/unwantedshove, fixed localPASS1/1 including fresh press,
+and final teardown-safe localv4PASS1/1, guarde9c91d2e9de0. No rule/balance/Net changes.
+Nativev28 PASSED both modes' direct shipped-keyboard/mouse move/sprint/jump/get-up,
+charge/release/real-shoe-retrieval, intentional shove/displacement, retrieval slide,
+actual can channel/restore and punch/lunge tags. Staged legal targets/positions and
+one role advance are explicit fixture limits, not human play or whole-kit approval.
+
+Build1135MB/45s, guardf3958cd94150; Runtime SHA256
+70A8566AB6070C283E70D72176962A89D01D47EA28B893150FDF0706B1F6081B.
+Logs/direct-gameplay-native-v28/result.json and runner-result.json PASS, shared
+input unchanged; PID8504 retired. All captured views1280x720 windowed; inspected
+pickup/restore views. Baselinev27 failure and screenshots preserved. All jobs stopped.
+Report: reports/direct-gameplay-2026-09-16. Next commit/push this batch, restore
+only proven generated whitespace and continue remaining gameplay/whole-kit work.
+One visible next item: irrelevant SHOVE CD after a quick defender role change;
+review HUD role filtering without changing real cooldown rules. Owner asleep,
+no resets/optional questions/other chats. C4 remains reserved. Full queue unfinished.
+
+## CURRENT native control run exposed pickup/shove double-use; focused repro running
+
+Nativev27 FAILED at the later staged shove. Earlier Classic movement/sprint/jump/
+get-up/real throw/walk-to-the-same-shoe/X-pickup succeeded. Its retrieved screenshot
+visibly shows SHOVE CD1.7s before the intentional shove. Source: pickup's consumed
+flag resets every Carrier.Update, but JustPressed is held until the next physics
+CommitFrame. A second rendered Update can reuse that pickup press and spend25
+stamina/start the shove cooldown. This is a demonstrated native symptom plus a
+specific execution-order mechanism, not permission to change shove balance.
+
+New PickupPressOwnershipProbe repeats the actual Carrier then Combat Update order
+three times before a physics commit, then verifies release/fresh press still shoves.
+The corrected local baseline reproduces the bug: update0 has shove0/stamina60;
+update1 has shove7.5/stamina35, guard1ada6d085ef1. Carrier now owns a successful
+pickup's grab press until release, preserving the next fresh shove. Focused fixed
+case PASS1/1 in Logs/pickup-press-v3.xml, guarda20bea70ae7c. No balance/Net changes.
+v28 built1135MB/45s, guardf3958cd94150. Runtime SHA256:
+70A8566AB6070C283E70D72176962A89D01D47EA28B893150FDF0706B1F6081B.
+Native direct-control retry active: Logs/direct-gameplay-native-v28, exec4939,
+PID8504. No imported edits during it. Added a direct no-shove/no-stamina-loss
+assertion immediately after pickup. The local test now also restores its pinned
+rules/launch flags after teardown; verify that test-only cleanup before publication.
+The first local baseline stopped at a probe precondition: Component.SendMessage
+broadcasts Update to the entire GameObject, including disabled readers. Corrected
+to invoke only Carrier/Combat methods. New baseline Logs/pickup-press-v2.log/XML
+failed as above. Also changed the pending native
+reader setup to invoke only its own Awake, not reinitialize the whole actor.
+Nativev27 PID16008 retired; shared input unchanged. Preserve its failed result
+and retrieved screenshot. After baseline, fix only pickup press consumption,
+recheck the focused case and resume both native direct-control sequences. No C4
+file edits, no reset credits or optional questions. Owner asleep, full queue active.
+
+## CURRENT direct gameplay native fixture building; focus/loop pushed
+
+Verified pushed b3281b3d7b3fec1555714af0da747c0dd56a7057, including reduced-motion
+focus and nativev24 whole-loop receipts. All prior UI/round/recovery checks remain.
+Now extending the opt-in native driver with --gameplay-only: shipped keyboard/
+mouse bindings on a cloned action asset, actual local motor/Carrier/Combat paths,
+both modes. Fixture stages positions, legal target availability, a fallen can and
+one role advance; it must not inject successful verb outcomes or claim human play.
+
+Pending source: OwnerUiPlayerReview becomes partial, new Gameplay partial/meta,
+tools/run_ui_player_review.py option. No gameplay rules changed. The first build
+failed on an ambiguous InputDevice namespace (guardffd253ae519f); corrected with
+the explicit Unity input type. Also aligned the staged shove with the existing
+attacker-only target rule and moved tag fixtures clear of the can collider.
+v25b built1135MB/47s, guard18fe7e15934b, but was not run: source review caught a
+fixture assumption about a Rigidbody on Slipper, which has custom simulation.
+Removed that assumption; HostDisarm clears velocity, and fixture placement now
+uses the actual GroundY plus RestHeight.
+v26 built1135MB/70s, guard9a6ebce0233f. Before execution, tightened the restore
+fixture: wait for actual can protection to expire, assert it really fell, require
+visible channel progress before accepting restoration. Shove now uses an unparked
+stationary rival and requires real displacement, not only a hit timestamp.
+Buildv27 finished1135MB/44s, guard6da13655f4dc. Runtime SHA256:
+8144779B7CCC7D7381579DEDA4E9861F578BD137AB57032E4D4C94E5F2F36F92.
+Native --gameplay-only active in Logs/direct-gameplay-native-v27, exec65516,
+PID16008. Pending report: reports/direct-gameplay-2026-09-16.
+No imported source edits during the native run. Preserve failed
+steps and distinguish a fixture precondition from a demonstrated production bug.
+Finish/correct the fixture, inspect screenshots, then publish. Full direct-verb
+coverage is NOT yet claimed. Owner asleep: no resets/questions/agents/paid work.
+
 ## CURRENT native loopPASS; reduced-motion focus qualified; publish then gameplay
 
 Verified pushed ec2cae4aa97595f00078c42ac01243d7945e8d75. Nativev24 full UI/both-mode

@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Latest direct-gameplay checkpoint:** Carrier pickup now consumes its grab press
+until release, preventing an unintended shove/stamina cost on a second Update.
+Local regression and both native control sequences PASS onv28. See
+reports/direct-gameplay-2026-09-16 and the newest ledger for exact evidence.
+Publish this fix, then review the observed irrelevant cooldown label after role
+change and continue the remaining whole-kit/movement/demo queue. C4 stays reserved.
+
+
 **Latest checkpoint:** ec2cae4a is pushed. Nativev24 full demo-loop PASS is recorded
 in reports/demo-loop-v24-2026-09-16. Reduced-motion button focus now has a stationary
 side marker, with source/art-preserving render and state checks1/1PASS in v4,

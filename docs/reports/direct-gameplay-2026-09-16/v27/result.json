@@ -1,0 +1,14 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: X did not land a shove on the staged rival\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<DirectVerbs>d__1.MoveNext () [0x00c39] in <5e848753748f4a48b2aeea5e67a1eb17>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__19.MoveNext () [0x00054] in <5e848753748f4a48b2aeea5e67a1eb17>:0 ",
+    "stages": [
+        "direct gameplay startup",
+        "Classic direct controls in BayanPlaza",
+        "Classic direct walk sprint jump",
+        "Classic direct get-up presses",
+        "Classic direct left-mouse wind-up and release",
+        "Classic direct walk to slipper and X pickup",
+        "Classic direct X shove"
+    ],
+    "frameWindows": []
+}

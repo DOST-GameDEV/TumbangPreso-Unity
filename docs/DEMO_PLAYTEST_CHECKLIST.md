@@ -6,6 +6,12 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Nativev28 passes the direct shipped-keyboard/mouse verbs in both modes and fixes
+  pickup spending an unintended shove/cooldown. It uses staged legal targets and
+  an explicit role advance; human/freeform play remains separate. The source fix,
+  failed baseline, passing local case and selected captures are recorded in
+  reports/direct-gameplay-2026-09-16. All shared input/profile data is preserved.
+
 - Latest source includes the final supplied menu/login and delivered motion video
   (nativev22), recovery menu-input fix (nativev23), and client round authority fix
   (nativev24). Both modes' delayed rejoin/intermission/next-round paths PASS onv24.
@@ -79,7 +85,7 @@ or Editor screenshots for a verified native demo build.
 ## First visible checks when the owner returns
 
 - [ ] Start the exact recorded demo executable twice. It opens without errors,
-  retains the approved old login and lets Guest enter without an account.
+  uses the latest supplied woven login and lets Guest enter without an account.
 - [ ] Use Play, character/equipment selection and Back. Check the chosen character
   matches the portrait, first-person arms, clothes and equipped slipper.
 - [ ] Start normal Classic and Hero Strike. Both show Round1/8. A shorter custom
@@ -134,5 +140,28 @@ or Editor screenshots for a verified native demo build.
   Relaunch the selected executable and
   use Guest -> Play -> With bots if a demo session needs restarting.
 
+## Short operator route using the preserved candidate
+
+1. Open the exact executable above, choose Guest, then Play and Classic with bots.
+   Show the normal8-round default. If a short rehearsal is needed, explicitly use
+   Custom rules to choose1round/30seconds; never change the shipped default for it.
+2. Use WASD, Shift to sprint and Space to jump. As attacker, hold/release left mouse
+   to throw, then approach the loose slipper and press X to retrieve it. The aim
+   guide shows general direction; early or moving throws have less accuracy.
+3. X shoves a rival attacker when it is not consumed by pickup. Right mouse slides
+   toward a legal nearby loose slipper. As defender, left mouse punches/tags,
+   hold/release right mouse lunges, and hold X near the fallen can to restore it.
+   These are the shipped keyboard/mouse bindings; the controller map shows device
+   equivalents and user-rebound settings may differ.
+4. If tripped, use fresh Space presses to get up. Escape opens the match menu;
+   Resume returns to play without consuming the menu press as a recovery mash.
+5. Let the short custom match reach its actual result, show details and rematch or
+   return to menu. Hero Strike follows the same route, with Q/E/F skills and Tab
+   for the selected kit's guide. Show charged ultimates only when actually available.
+6. If a venue connection is unavailable, keep the offline bot route. To recover a
+   stuck demo session, close only that game's window, relaunch this executable and
+   choose Guest again. Preserve saves; no profile deletion or usage reset is needed.
+
+This is an operator reference, not a record that a human has completed the steps.
 Update this file with exact evidence and open items as work progresses. Leave
 human approval boxes unticked until the corresponding playtest actually happens.
