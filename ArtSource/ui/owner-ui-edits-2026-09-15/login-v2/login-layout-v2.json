@@ -1,0 +1,148 @@
+{
+  "pieces": [
+    {
+      "name": "login2-logo",
+      "x": 736,
+      "y": 28,
+      "width": 425,
+      "height": 281,
+      "faceX": 212.5,
+      "faceY": 140.5,
+      "source": "signup-reference-v2.png",
+      "sha256": "59ce3cc31167ebe9ea00c2eb21311a54463220f2f76a832958e2d7242c385733",
+      "resized": false
+    },
+    {
+      "name": "login2-tabs-left",
+      "x": 748,
+      "y": 330,
+      "width": 399,
+      "height": 92,
+      "faceX": 199.5,
+      "faceY": 46.0,
+      "source": "signup-reference-v2.png",
+      "sha256": "78eb8049acc17cb9902de25617b4021bae015c9880fbccb37652338b67726d40",
+      "resized": false
+    },
+    {
+      "name": "login2-user-up",
+      "x": 674,
+      "y": 449,
+      "width": 550,
+      "height": 80,
+      "faceX": 275.0,
+      "faceY": 40.0,
+      "source": "signup-reference-v2.png",
+      "sha256": "d392220bcb010c7145fc4d9c745c1826c511963e4cc7a5eff5f5381cc5bde2f1",
+      "resized": false
+    },
+    {
+      "name": "login2-pass-up",
+      "x": 674,
+      "y": 545,
+      "width": 551,
+      "height": 79,
+      "faceX": 275.5,
+      "faceY": 39.5,
+      "source": "signup-reference-v2.png",
+      "sha256": "2cbbf01a73f58cb2bf44078ed41d1dc8b298199fce705e75cdd51c5e8fbe1589",
+      "resized": false
+    },
+    {
+      "name": "login2-confirm",
+      "x": 673,
+      "y": 642,
+      "width": 552,
+      "height": 81,
+      "faceX": 276.0,
+      "faceY": 40.5,
+      "source": "signup-reference-v2.png",
+      "sha256": "b443de8f20f53ea8ba8025042e5ca8044095fdfd1c5d80ae6005767d4e9d593e",
+      "resized": false
+    },
+    {
+      "name": "login2-check",
+      "x": 675,
+      "y": 731,
+      "width": 22,
+      "height": 23,
+      "faceX": 11.0,
+      "faceY": 11.5,
+      "source": "signup-reference-v2.png",
+      "sha256": "6d5fd0e2aa2994c4b1187cfd7d84de934fbddb3b0a9cceca7460f4d6f00160c9",
+      "resized": false
+    },
+    {
+      "name": "login2-primary-up",
+      "x": 732,
+      "y": 803,
+      "width": 429,
+      "height": 95,
+      "faceX": 216.0,
+      "faceY": 37.5,
+      "source": "signup-reference-v2.png",
+      "sha256": "a0dc204d0775bebd046188f4a260345e54999a2b0950879c2b9371a98cd145c1",
+      "resized": false
+    },
+    {
+      "name": "login2-guest",
+      "x": 732,
+      "y": 947,
+      "width": 430,
+      "height": 94,
+      "faceX": 216.0,
+      "faceY": 37.0,
+      "source": "signup-reference-v2.png",
+      "sha256": "4cbf1b957ced825dcef48b4cbbe109f1cefba29056afc67c02d9490eb3d847c4",
+      "resized": false
+    },
+    {
+      "name": "login2-tabs-right",
+      "x": 754,
+      "y": 332,
+      "width": 391,
+      "height": 89,
+      "faceX": 195.5,
+      "faceY": 44.5,
+      "source": "signin-reference-v2.png",
+      "sha256": "ecc18d1943c079eb9ab431483b8c60daeba27ee57a304b284bc537f67ec16d36",
+      "resized": false
+    },
+    {
+      "name": "login2-user-in",
+      "x": 674,
+      "y": 539,
+      "width": 551,
+      "height": 79,
+      "faceX": 275.5,
+      "faceY": 39.5,
+      "source": "signin-reference-v2.png",
+      "sha256": "24726d7a303ef3c08c97e32310cfbc0b24e0fd5fae06b8261d12a9129ad4c64a",
+      "resized": false
+    },
+    {
+      "name": "login2-pass-in",
+      "x": 674,
+      "y": 637,
+      "width": 551,
+      "height": 80,
+      "faceX": 275.5,
+      "faceY": 40.0,
+      "source": "signin-reference-v2.png",
+      "sha256": "d6fcbf56fc1b867cd668d30951489a344a53d8dd8e3884506f4aa5ced3bcb41e",
+      "resized": false
+    },
+    {
+      "name": "login2-primary-in",
+      "x": 732,
+      "y": 798,
+      "width": 429,
+      "height": 95,
+      "faceX": 216.0,
+      "faceY": 37.5,
+      "source": "signin-reference-v2.png",
+      "sha256": "939d300749d08244b28d44d5345593ab1fc87a58c658cd72a12da21192dc2127",
+      "resized": false
+    }
+  ]
+}

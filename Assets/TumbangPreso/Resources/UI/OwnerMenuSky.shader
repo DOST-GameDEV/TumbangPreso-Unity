@@ -3,7 +3,10 @@ Shader "TumbangPreso/UI/OwnerMenuSky"
     Properties
     {
         [PerRendererData] _MainTex ("Original illustration", 2D) = "white" {}
-        _SkyMask ("Linear sky distance", 2D) = "black" {}
+        _SkyMask ("Sky opening", 2D) = "black" {}
+        _CloudA ("Near painted cloud", 2D) = "black" {}
+        _CloudB ("Far painted cloud", 2D) = "black" {}
+        _CloudOpacity ("Cloud opacity", Range(0,1)) = 1
         _CloudDrift ("Cloud drift in source pixels", Vector) = (0,0,0,0)
         _StencilComp ("Stencil comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
@@ -29,34 +32,48 @@ Shader "TumbangPreso/UI/OwnerMenuSky"
             #include "UnityUI.cginc"
             struct appdata { float4 vertex:POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; };
             struct v2f { float4 vertex:SV_POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; float4 local:TEXCOORD1; };
-            sampler2D _MainTex, _SkyMask;
+            sampler2D _MainTex, _SkyMask, _CloudA, _CloudB;
             float4 _CloudDrift, _ClipRect;
+            float _CloudOpacity;
             v2f vert(appdata v)
             {
                 v2f o;o.local=v.vertex;o.vertex=UnityObjectToClipPos(v.vertex);o.uv=v.uv;o.color=v.color;return o;
             }
+            float4 Cloud(sampler2D cloud,float2 p,float4 rect)
+            {
+                float2 uv=(p-rect.xy)/rect.zw;uv.y=1-uv.y;
+                float inside=step(0,uv.x)*step(uv.x,1)*step(0,uv.y)*step(uv.y,1);
+                float4 ink=tex2D(cloud,saturate(uv));ink.a*=inside;return ink;
+            }
             fixed4 frag(v2f i):SV_Target
             {
                 fixed4 original=tex2D(_MainTex,i.uv);
-                fixed4 result=original;
-                float2 p=float2(i.uv.x*1920,(1-i.uv.y)*1080);
-                // The overwhelming majority of this image is stationary: do not
-                // pay the sky's sampling cost across the entire PC display.
-                if(p.x>1220 && p.x<1750 && p.y<326 && dot(_CloudDrift.xy,_CloudDrift.xy)>.0001)
+                float opening=tex2D(_SkyMask,i.uv).r;
+                float3 result=original.rgb;
+                if(opening>.001)
                 {
-                    float clearance=tex2D(_SkyMask,i.uv).r;
-                    float flow=smoothstep(0,1,clearance);
-                    float depth=lerp(.76,1,smoothstep(.69,.83,i.uv.x));
-                    float2 offset=float2(_CloudDrift.x/1920,-_CloudDrift.y/1080)*depth*flow;
-                    // A single smoothly displaced sample. Crossfading two shifted
-                    // pictures would draw duplicate cloud/foliage contours.
-                    result=tex2D(_MainTex,i.uv-offset);
+                    float2 p=float2(i.uv.x*1920,(1-i.uv.y)*1080);
+                    // Fitted to the original unobstructed teal sky. Replace the
+                    // complete opening so no old cloud contour remains behind it.
+                    float3 sky=float3(.245151,.572371,.502873)
+                        +p.x/1920*float3(.057191,.087356,.010417)
+                        +p.y/1080*float3(.227202,.048443,-.036591);
+                    #ifndef UNITY_COLORSPACE_GAMMA
+                    sky=GammaToLinearSpace(sky);
+                    #endif
+                    float ax=230+fmod(770+_CloudDrift.x,1710);
+                    float bx=320+fmod(1060+_CloudDrift.y,1620);
+                    float4 far=Cloud(_CloudB,p,float4(bx,126,530,530*756.0/2081));
+                    float4 near=Cloud(_CloudA,p,float4(ax,38,620,620*724.0/2172));
+                    sky=lerp(sky,far.rgb,far.a*_CloudOpacity);
+                    sky=lerp(sky,near.rgb,near.a*_CloudOpacity);
+                    result=lerp(original.rgb,sky,opening);
                 }
-                result*=i.color;
+                fixed4 output=fixed4(result,original.a)*i.color;
                 #ifdef UNITY_UI_CLIP_RECT
-                result.a*=UnityGet2DClipping(i.local.xy,_ClipRect);
+                output.a*=UnityGet2DClipping(i.local.xy,_ClipRect);
                 #endif
-                return result;
+                return output;
             }
             ENDCG
         }

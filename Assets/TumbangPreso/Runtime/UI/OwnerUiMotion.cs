@@ -37,7 +37,7 @@ namespace TumbangPreso.UI
             float age=Time.unscaledTime-_started-EntryDelay;
             float entry=Mathf.Clamp01(age/Mathf.Max(.05f,OwnerUiTheme.Current.EnterSeconds));
             float ease=1-Mathf.Pow(1-entry,3);
-            _scale=Mathf.Lerp(_scale,reduced?1:_goal,1-Mathf.Exp(-Time.unscaledDeltaTime/Mathf.Max(.03f,OwnerUiTheme.Current.StateSeconds)));
+            _scale=reduced?1:Mathf.Lerp(_scale,_goal,1-Mathf.Exp(-Time.unscaledDeltaTime/Mathf.Max(.03f,OwnerUiTheme.Current.StateSeconds)));
             _rect.localScale=Vector3.one*_scale;
             float drift=GentleFloat && !reduced?Mathf.Sin(Time.unscaledTime*.85f)*2:0;
             _rect.anchoredPosition=_rest+Vector2.up*(reduced?0:(1-ease)*-10+drift);

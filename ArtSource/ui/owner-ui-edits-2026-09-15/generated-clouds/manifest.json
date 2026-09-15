@@ -1,0 +1,16 @@
+[
+  {
+    "file": "cloud-bank-a.png",
+    "source_tool": "built-in image_gen",
+    "sha256": "e2ec27383a2577253a48bacd33cf14661b3bcc27ffbdb0d2da4d5dd68317923d",
+    "alpha_preserved": true,
+    "original_background_edited": false
+  },
+  {
+    "file": "cloud-bank-b.png",
+    "source_tool": "built-in image_gen",
+    "sha256": "b2c883a87d1b611540890cf9e69cb0a42d411fe29c8b4c8e9d92738e642b3b27",
+    "alpha_preserved": true,
+    "original_background_edited": false
+  }
+]

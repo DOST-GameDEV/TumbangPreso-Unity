@@ -20,7 +20,9 @@ namespace TumbangPreso.UI
             {Debug.LogWarning("[OwnerMenuClouds] Sky shader unavailable; preserving original illustration.");return;}
             _previous=_image.material;
             _material=new Material(shader){name="OwnerMenuSkyMotion",hideFlags=HideFlags.DontSave};
-            _material.SetTexture("_SkyMask",OwnerMenuArt.Texture("main-sky-mask"));
+            _material.SetTexture("_SkyMask",OwnerMenuArt.Texture("main-sky-cutout"));
+            _material.SetTexture("_CloudA",OwnerMenuArt.Texture("cloud-bank-a"));
+            _material.SetTexture("_CloudB",OwnerMenuArt.Texture("cloud-bank-b"));
             _image.material=_material;
         }
 
@@ -29,11 +31,9 @@ namespace TumbangPreso.UI
             if(_material==null)return;
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             if(!reduced)_elapsed+=Time.unscaledDeltaTime;
-            // Very long drift cycle, initially about one source pixel per second.
-            // Slightly different depth speeds keep both cloud masses from moving
-            // as one rigid cutout. The shader protects foreground silhouettes.
-            var drift=reduced?Vector4.zero:new Vector4(Mathf.Sin(_elapsed*.03f)*36,
-                Mathf.Sin(_elapsed*.018f)*3,0,0);
+            // Independent painted layers travel continuously with the wind.
+            // Wrap occurs entirely behind the scene, outside the sky opening.
+            var drift=reduced?Vector4.zero:new Vector4(_elapsed*2.8f,_elapsed*1.35f,0,0);
             _material.SetVector(DriftId,drift);
         }
 

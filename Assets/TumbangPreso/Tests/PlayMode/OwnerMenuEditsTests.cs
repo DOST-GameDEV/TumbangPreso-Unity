@@ -28,7 +28,7 @@ namespace TumbangPreso.PlayTests
                 EventSystem.current.SetSelectedGameObject(null);
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 foreach(var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("OwnerMenu-v1-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                    yield return TumpUiCapture.Capture("OwnerMenu-v7-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
                 Assert.AreEqual("menu",GameServices.Music.Current);
                 foreach(var art in canvas.GetComponentsInChildren<Image>().Where(i=>i.name=="PaintedArtwork"))
                 {
@@ -50,7 +50,7 @@ namespace TumbangPreso.PlayTests
                 button.OnPointerUp(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
                 button.OnDeselect(new BaseEventData(EventSystem.current));
                 var dust=canvas.GetComponentInChildren<OwnerRoadDust>();
-                yield return TumpUiCapture.Capture("OwnerMenu-v1-dust",canvas,1920,1080,false);
+                yield return TumpUiCapture.Capture("OwnerMenu-v7-dust",canvas,1920,1080,false);
                 var mesh=dust.canvasRenderer.GetMesh();Assert.Greater(mesh.vertexCount,0);
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 yield return null;yield return null;Canvas.ForceUpdateCanvases();
@@ -82,14 +82,30 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(canvas.GetComponentsInChildren<Button>().Any(b=>b.name=="BackButton"));
                 Assert.IsEmpty(canvas.GetComponentsInChildren<Transform>().Where(t=>t.name=="FieldIcon" || t.name=="PersonIcon"),"Supplied fields already contain icons");
                 foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(3440,1440)})
-                    yield return TumpUiCapture.Capture("OwnerLogin-v1-create-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                    yield return TumpUiCapture.Capture("OwnerLogin-v7-create-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                var fields=canvas.GetComponentsInChildren<InputField>();
+                Assert.IsFalse(fields.Any(f=>f.name=="Email"));
+                var confirmation=fields.First(f=>f.name=="ConfirmPassword");
+                fields.First(f=>f.name=="Username").text="local.validation";
+                fields.First(f=>f.name=="Password").text="test-only";
+                confirmation.text="different";Find("SubmitAccount").onClick.Invoke();yield return null;
+                StringAssert.Contains("do not match",canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus").text);
+                Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Standard,confirmation.contentType);
+                Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Password,confirmation.contentType);
+                var divider=canvas.GetComponentsInChildren<RectTransform>().First(t=>t.name=="AccountDivider");
+                var left=(RectTransform)divider.Find("LeftDivider");var right=(RectTransform)divider.Find("RightDivider");
+                Assert.AreEqual(left.sizeDelta,right.sizeDelta);Assert.AreEqual(left.anchoredPosition.y,right.anchoredPosition.y);
+                fields.First(f=>f.name=="Username").text="";fields.First(f=>f.name=="Password").text="";
                 Find("SignInTab").onClick.Invoke();yield return null;
-                yield return TumpUiCapture.Capture("OwnerLogin-v1-signin",canvas,1920,1080,false,checkActionBounds:true);
+                yield return TumpUiCapture.Capture("OwnerLogin-v7-signin",canvas,1920,1080,false,checkActionBounds:true);
                 Assert.IsNull(GameServices.Music.Current);
                 var password=canvas.GetComponentsInChildren<InputField>().First(f=>f.name=="Password");
                 password.text="local-test-only";Find("RevealPassword").onClick.Invoke();
                 Assert.AreEqual(InputField.ContentType.Standard,password.contentType);
                 Find("RevealPassword").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Password,password.contentType);
+                Assert.IsFalse(confirmation.gameObject.activeInHierarchy);
+                Assert.IsFalse(canvas.GetComponentsInChildren<Button>().Any(b=>b.name=="GuestAccount"));
+                Find("CreateAccountTab").onClick.Invoke();yield return null;
                 Find("GuestAccount").onClick.Invoke();yield return null;yield return null;
                 Assert.False(login.IsOpen);Assert.AreEqual("menu",GameServices.Music.Current);
                 var sources=GameServices.Music.GetComponents<AudioSource>();

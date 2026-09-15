@@ -29,6 +29,7 @@ namespace TumbangPreso.PlayTests
                 var sky=canvas.GetComponentInChildren<OwnerMenuClouds>();Assert.IsNotNull(sky);
                 var material=sky.GetComponent<RawImage>().material;
                 Assert.AreEqual("TumbangPreso/UI/OwnerMenuSky",material.shader.name);Assert.True(material.shader.isSupported);
+                Assert.IsNotNull(material.GetTexture("_CloudA"));Assert.IsNotNull(material.GetTexture("_CloudB"));
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=false;
                 yield return new WaitForSecondsRealtime(.2f);
                 Assert.Greater(material.GetVector("_CloudDrift").x,0);
@@ -36,16 +37,16 @@ namespace TumbangPreso.PlayTests
                 yield return null;yield return null;
                 Assert.AreEqual(Vector4.zero,material.GetVector("_CloudDrift"));
                 sky.enabled=false;
-                yield return TumpUiCapture.Capture("OwnerSky-v4-rest",canvas,1920,1080,false);
+                yield return TumpUiCapture.Capture("OwnerSky-layers-v6-rest",canvas,1920,1080,false);
                 material.SetVector("_CloudDrift",new Vector4(24,1,0,0));
-                yield return TumpUiCapture.Capture("OwnerSky-v4-drift",canvas,1920,1080,false);
+                yield return TumpUiCapture.Capture("OwnerSky-layers-v6-drift",canvas,1920,1080,false);
                 before=Read("rest");after=Read("drift");
                 var a=before.GetPixels32();var b=after.GetPixels32();int skyChanges=0,outsideChanges=0;
                 for(int y=0;y<1080;y++)for(int x=0;x<1920;x++)
                 {
                     int at=(1079-y)*1920+x;int delta=Difference(a[at],b[at]);
                     if(delta<=3)continue;
-                    if(x>=1220 && x<=1750 && y<=326)skyChanges++;else outsideChanges++;
+                    if(x>=1184 && x<=1780 && y<=326)skyChanges++;else outsideChanges++;
                 }
                 Debug.Log("[OwnerSky] changed sky pixels="+skyChanges+" unchanged-region violations="+outsideChanges);
                 Assert.Greater(skyChanges,800,"Cloud drift must be visible, not just a changing material value");
@@ -59,12 +60,18 @@ namespace TumbangPreso.PlayTests
                     int at=(1079-point.y)*1920+point.x;
                     Assert.LessOrEqual(Difference(a[at],b[at]),1,"Clouds moved a foreground sample at "+point);
                 }
+                material.SetFloat("_CloudOpacity",0);
+                yield return TumpUiCapture.Capture("OwnerSky-layers-v6-cleared",canvas,1920,1080,false);
+                var cleared=Read("cleared");
+                foreach(var point in new[]{new Vector2Int(1335,82),new Vector2Int(1490,200),new Vector2Int(1550,225)})
+                    Assert.Less(cleared.GetPixel(point.x,1079-point.y).r,.65f,"An old yellow cloud remained at "+point);
+                Object.DestroyImmediate(cleared);material.SetFloat("_CloudOpacity",1);
                 material.SetVector("_CloudDrift",new Vector4(-36,-3,0,0));
-                yield return TumpUiCapture.Capture("OwnerSky-v4-reverse",canvas,1920,1080,false);
+                yield return TumpUiCapture.Capture("OwnerSky-layers-v6-reverse",canvas,1920,1080,false);
                 Object.DestroyImmediate(after);after=Read("reverse");b=after.GetPixels32();
                 int reverseOutside=0;
                 for(int y=0;y<1080;y++)for(int x=0;x<1920;x++)
-                    if((x<1220 || x>1750 || y>326) && Difference(a[(1079-y)*1920+x],b[(1079-y)*1920+x])>3)reverseOutside++;
+                    if((x<1184 || x>1780 || y>326) && Difference(a[(1079-y)*1920+x],b[(1079-y)*1920+x])>3)reverseOutside++;
                 Assert.AreEqual(0,reverseOutside,"Reverse drift moved the stationary scene");
             }
             finally
@@ -77,7 +84,7 @@ namespace TumbangPreso.PlayTests
         private static Texture2D Read(string pose)
         {
             var texture=new Texture2D(2,2,TextureFormat.RGB24,false);
-            texture.LoadImage(File.ReadAllBytes("Logs/shots-native-ui/OwnerSky-v4-"+pose+".png"));return texture;
+            texture.LoadImage(File.ReadAllBytes("Logs/shots-native-ui/OwnerSky-layers-v6-"+pose+".png"));return texture;
         }
     }
 }

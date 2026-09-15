@@ -1,5 +1,32 @@
 # Working instructions for ChatGPT / Codex
 
+**FINAL login references, newest owner message:** TUMP (7).png is sign-up and
+TUMP (8).png is sign-in. Copy their layout and supplied crossed-eye icons in
+password fields. NO EMAIL: sign-up uses username/password/confirm password;
+sign-in uses username/password. Sign-up shows terms, primary, OR and Guest;
+sign-in shows its primary only, as pictured. Top tabs switch these actual states.
+Remove Already played/New player and the redundant Sign in/Sign up link row.
+This supersedes the earlier required-email correction. Preserve existing saved
+data. The woven TUMP (2) background remains. Main-menu background/button artwork
+is FINALIZED: change only the requested cloud/dust effects. Owner is asleep;
+park optional questions and keep working, then continue other work after UI.
+
+**Newest AFK instruction:** NEVER use a usage reset or reset credit, under any
+circumstances. The owner reconfirmed this twice while noting low usage. Commit
+and push progress as it is made, with unfinished status explicit. Finish polishing
+the requested combined UI changes and send a downloadable video in this chat.
+
+**Newest UI scope:** use Downloads/TUMP (2).png (preserved in ArtSource as
+login-background-woven.png) for login instead of the old pattern. Email is required,
+GUEST must be centered on its painted button face, and new equal divider lines
+must flank OR. Dust belongs subtly across ALL sand, with depth and occlusion.
+Replace the baked clouds with new moving cloud assets behind the original scene;
+the owner explicitly authorizes built-in image generation for those new clouds.
+Keep the original main-menu photo/button pixels unchanged. Only the sky/cloud
+opening is composited; no rebuilding other scene elements. Evaluate actual output
+before delivering the next video. This supersedes preserving the old login pattern
+and the rejected attempts to deform the old clouds or confine dust to one patch.
+
 **Newest menu motion feedback, September15:** the owner could not see v20 dust
 in the shared video. Keep ground dust visibly readable after video compression,
 while confining it to the background road. The owner now explicitly requests slow,

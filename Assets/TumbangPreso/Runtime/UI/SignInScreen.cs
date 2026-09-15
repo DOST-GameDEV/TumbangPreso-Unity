@@ -1698,7 +1698,7 @@ namespace TumbangPreso.UI
         private void Close()
         {
             _root.SetActive(false);
-            if(_nativeForm){_password.text="";_ownerEmail.text="";}
+            if(_nativeForm){_password.text="";_ownerConfirm.text="";}
             Opened?.Invoke(false);
             Closed?.Invoke();
         }
@@ -1880,11 +1880,6 @@ namespace TumbangPreso.UI
                 if (_creating) await account.UpgradeAsync(username, password);
                 else await account.SignInAsync(username, password);
 
-                if(_nativeForm && _creating)
-                {
-                    Settings.SettingsStore.Current.LocalContactEmail=_ownerEmail.text.Trim();
-                    Settings.SettingsStore.Save();
-                }
                 RememberTheChoiceWasMade();
                 Close();
             }

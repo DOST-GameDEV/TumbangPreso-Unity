@@ -15,7 +15,14 @@ namespace TumbangPreso.EditorTools
                 const string target="Assets/TumbangPreso/Resources/UI/owner-menu-edits";
                 Directory.CreateDirectory(target);
                 File.Copy(source+"/background_mainmenu_clean.png",target+"/main-background.png",true);
-                File.Copy(source+"/derived/main-sky-mask.png",target+"/main-sky-mask.png",true);
+                File.Copy(source+"/login-background-woven.png",target+"/login-background.png",true);
+                File.Copy(source+"/derived/main-sky-cutout.png",target+"/main-sky-cutout.png",true);
+                File.Copy(source+"/derived/main-ground-mask.png",target+"/main-ground-mask.png",true);
+                foreach(var file in Directory.GetFiles(source+"/generated-clouds","*.png"))
+                    File.Copy(file,target+"/"+Path.GetFileName(file),true);
+                foreach(var file in Directory.GetFiles(source+"/login-v2","*.png"))
+                    File.Copy(file,target+"/"+Path.GetFileName(file),true);
+                File.Copy(source+"/login-v2/login-layout-v2.json",target+"/login-layout-v2.json",true);
                 foreach(var file in Directory.GetFiles(source+"/extracted","*.png"))
                     File.Copy(file,target+"/"+Path.GetFileName(file),true);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -23,11 +30,12 @@ namespace TumbangPreso.EditorTools
                 {
                     var importer=(TextureImporter)AssetImporter.GetAtPath(file.Replace('\\','/'));
                     importer.textureType=TextureImporterType.Default;
-                    importer.sRGBTexture=!file.EndsWith("main-sky-mask.png",StringComparison.Ordinal);
+                    importer.sRGBTexture=!file.EndsWith("main-sky-mask.png",StringComparison.Ordinal)
+                        && !file.EndsWith("main-sky-cutout.png",StringComparison.Ordinal);
                     importer.alphaSource=TextureImporterAlphaSource.FromInput;
                     importer.alphaIsTransparency=!file.EndsWith("main-background.png",StringComparison.Ordinal);
                     importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;
-                    importer.maxTextureSize=2048;importer.npotScale=TextureImporterNPOTScale.None;
+                    importer.maxTextureSize=file.Contains("cloud-bank-")?4096:2048;importer.npotScale=TextureImporterNPOTScale.None;
                     importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=FilterMode.Bilinear;
                     importer.SaveAndReimport();
                 }

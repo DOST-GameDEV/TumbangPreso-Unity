@@ -1,5 +1,119 @@
 # Active TUMP rework ledger
 
+## CURRENT final login references supersede email; preserve finalized main art
+
+Owner is asleep. Do not ask optional questions; continue all work after UI. NEVER
+use a usage reset, under any circumstances. Commit/push checkpoints with honest
+unfinished status. Latest main background/buttons are FINALIZED; improve only the
+requested effects, then resume gameplay. No new redesign of those approved pixels.
+
+Latest login source: Downloads/TUMP (7).png = sign-up; TUMP (8).png = sign-in.
+Copies are ArtSource/ui/owner-ui-edits-2026-09-15/signup-reference-v2.png and
+signin-reference-v2.png. EMAIL IS REMOVED, superseding the earlier required-email
+request. Sign-up: username, enter password, confirm password, supplied crossed-eye
+icons on both password fields, checkbox/terms, primary, equal OR divider and Guest.
+Sign-in: username/password, right tab selected, primary only, exactly as reference;
+no confirmation, terms, OR or Guest there. Guest remains on sign-up. Remove BOTH
+Already played/New player and the redundant second SignIn/SignUp text link.
+Keep necessary native labels on the blank supplied art. No startup Back.
+
+New tools/extract_login_v2.py extracts original-size pieces and layout/face-centre
+metadata; OwnerLoginLayout places them from that data. Original eye artwork is
+inside the password frames and transparent hit areas toggle each field. No eye
+redraw. Woven background from TUMP (2) remains as-is. Password mismatch is rejected
+before contacting services; existing stored email data is preserved, not erased.
+
+v6 local results: home/login2/2PASS, sky test failed on14 main-button text pixels,
+not the scene. Fixed ReducedUiMotion to settle scale exactly, avoiding tiny drift.
+Visual review also rejected old-cloud residue and a cutout through the sunlit
+small house. Updated mask protects that architecture/horizon; sky no longer retains
+old-cloud edge colours. New generated cloud assets are retained. Latest v7 source
+IMPORTED successfully, profile guard3f67c7c917e0.
+Focused runtime/visual validation is still pending. No Unity/player active. Next guarded Prepare,
+focused OwnerMenu tests and actual visual critique; save/push WIP promptly, then
+nativev22 combined video after polished. C4 Net remains reserved and untouched.
+
+
+## CURRENT combine generated clouds, all-sand dust and corrected woven login
+
+Owner is AFK, usage low. NEVER use any usage reset/reset credit under any
+circumstances. Commit and push progress as it is made. Deliver a polished MP4
+here when ready; then continue the remaining queue. Original main-menu photo
+must remain untouched except runtime compositing of the sky/cloud opening.
+
+Latest requests ALL remain active: replace baked clouds with better generated
+painted sprites behind scenery (builtin imagegen explicitly authorized); dust
+subtly across the entire sandy plane with occlusion; EMAIL required; center GUEST
+on its painted face; equal new divider lines around OR; login background replaced
+with the new Downloads/TUMP (2).png. Source copy: login-background-woven.png.
+
+Two transparent cloud PNGs generated successfully by builtin tool and copied to
+ArtSource/ui/owner-ui-edits-2026-09-15/generated-clouds/cloud-bank-a.png and
+cloud-bank-b.png, original alpha/dimensions intact. Generation cell797 is complete.
+Current shader composites independent continuously translating sprites behind a
+new sky-opening mask; it no longer warps the rejected old clouds. Skyline/poles/
+foliage retain original pixels. Ground mask covers sand and protects solid props.
+Current login code has required-email validation, face-centered captions, a single
+symmetric OR divider and the new woven background with no pattern drift.
+
+All these newest changes are UNVERIFIED. Next run guarded OwnerMenuEditsAuthor.
+Prepare to import current copies, then focused login/sky/dust renders and validation.
+Inspect masks for removed foreground or old-cloud residue; inspect actual guest
+ink centering/divider. Then nativev22 combined clip. Keep all source/derivation
+manifests and rejected evidence. HEAD4a564874 local; remote last3c944e85. Push a
+clearly labeled checkpoint promptly after imports/checks, before final polish.
+No Unity/native job currently active. No paid CLI fallback, agents, or C4 Net edits.
+
+
+## CURRENT new generated cloud layers plus latest login corrections
+
+Newest owner direction supersedes warping the baked clouds: CUT OUT the cloud/sky
+part for composition, generate better clouds in the same painted style, animate
+new cloud layers BEHIND the original scene. Original source photo/buttons stay
+untouched; no other scene area should be redesigned. Owner explicitly authorizes
+the built-in image generator for this work. Two new transparent cloud sprites are
+in generation via exec cell797; result keys cloud_asset_a / cloud_asset_b. A is
+reported generated; B may still run. Use functions.wait only for cell797 after
+independent work. No paid CLI fallback or new accounts are authorized.
+
+New dust requirement: subtle wind over ALL sandy ground, with proper perspective
+and masking behind can/slipper/leaves/plants. Source OwnerRoadDust now uses the
+new ground-opacity mask. Guarded importv5 finished, guard966e2bd6f872. No Unity or
+native player is active. Need coverage/occluder renders before nativev22.
+
+Latest login correction: EMAIL is required, remove OPTIONAL. GUEST must be centered
+on its painted front face. Replace copied uneven divider art with new equal lines
+and OR at their midpoint. Source now enforces nonblank valid email before service,
+centers Create/Guest/Continue against measured face geometry, and uses a single
+symmetric divider row. These edits are UNVERIFIED. Test/capture now while images
+finish; no real account creation. Keep startup no-Back and Guest flow unchanged.
+
+HEAD4a564874 is local only; remote was3c944e85. Do not present rejected v20/v21
+motion as approved. Deliver a new downloadable video only after evaluating actual
+combined result. Then continue full gameplay bookmark; C4 Net remains reserved.
+
+
+## CURRENT owner rejects localized dust and unreadable cloud motion; revise again
+
+Owner's newest screenshot says dust is confined to one patch; he wants subtle
+windblown dust distributed across ALL sandy ground. He also cannot see clouds move
+in the v21 clip. Do not claim v21 is visually accepted. Local commit4a564874 is
+NOT PUSHED yet;3c944e85 remains the last verified remote at this moment.
+
+Current edits distribute low gusts/grains across the ground at perspective-scaled
+speeds/sizes. A new authored RGBA ground-opacity mask clips them behind can, shoe,
+plants/leaves and architecture; buttons stay above the background layer. New tool:
+tools/author_menu_ground_mask.py, output ArtSource/.../derived/main-ground-mask.png.
+Original source art is untouched. OwnerMenuClouds retains the clean continuous
+flow but has a more readable initial3pixel/second drift instead of1pixel/second.
+
+Next: guarded Prepare imports the new ground mask, focused pixel coverage/occluder
+check and cloud timing review, then internalv22 native recording. Deliver a new
+MP4 download that visibly shows distributed dust AND moving clouds. Keep rejected
+v20/v21 examples/history. Do not proceed to gameplay until this correction is
+properly handled. C4 remains reserved; no agents, paid tools or Desktop changes.
+
+
 ## CURRENT motion revision delivered and verified; publish, then resume gameplay
 
 Owner requested visible dust and slow clouds after rejecting v20 faint particles.
