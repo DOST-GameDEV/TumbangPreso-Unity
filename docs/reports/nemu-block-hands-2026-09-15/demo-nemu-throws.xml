@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.3529553">
+  <test-suite type="TestSuite" id="1536" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="408" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.352955" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1530" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="408" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.334755" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10560" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1531" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="408" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.326662" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1532" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="408" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.318824" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1451" name="ThrowMotionReviewProbe" fullname="TumbangPreso.PlayTests.ThrowMotionReviewProbe" classname="TumbangPreso.PlayTests.ThrowMotionReviewProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.301015" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1452" name="ActualQuickHeldAndMovingThrowsHaveNormalSpeedOwnerAndBodyEvidence" fullname="TumbangPreso.PlayTests.ThrowMotionReviewProbe.ActualQuickHeldAndMovingThrowsHaveNormalSpeedOwnerAndBodyEvidence" methodname="ActualQuickHeldAndMovingThrowsHaveNormalSpeedOwnerAndBodyEvidence" classname="TumbangPreso.PlayTests.ThrowMotionReviewProbe" runstate="Runnable" seed="1716921523" result="Passed" start-time="2026-09-15 04:24:27Z" end-time="2026-09-15 04:24:45Z" duration="17.281618" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

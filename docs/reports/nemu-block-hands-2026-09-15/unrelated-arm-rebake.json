@@ -1,0 +1,58 @@
+[
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/cheska_left.asset",
+    "vertices": 600,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/cheska_right.asset",
+    "vertices": 360,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/dante_left.asset",
+    "vertices": 324,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/dante_right.asset",
+    "vertices": 672,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/phaister_left.asset",
+    "vertices": 1200,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/phaister_right.asset",
+    "vertices": 1200,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/sean_left.asset",
+    "vertices": 3240,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/Models/RosterArms/sean_right.asset",
+    "vertices": 3144,
+    "positions_normals_uv_unchanged": true,
+    "indices_unchanged": true,
+    "difference": "Rebake omitted the old tangent stream; preserve original unrelated asset."
+  }
+]

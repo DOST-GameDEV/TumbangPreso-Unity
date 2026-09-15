@@ -15,8 +15,9 @@ or Editor screenshots for a verified native demo build.
   results, Classic rematch/leave and Hero return at1366x768. Normal defaults were
   verified8 before the custom rehearsal. This is a native-loop baseline; remaining
   gameplay, LAN, clean performance and human review are still pending.
-- All18 body/FPP views were captured. Nemu's body retains stepped finger pieces
-  despite the no-finger requirement; that confirmed visible mismatch is being fixed.
+- All18 body/FPP views were captured. Nemu's original finger steps were replaced
+  with block palms; its body/FPP view and three real throw paths passed focused
+  checks. This newer source correction still needs inclusion in the next native build.
 - Hero/gameplay reports qualify their named cases only. Whole-kit ordinary play,
   device feel and the owner's visual approval remain separate.
 

@@ -1,5 +1,68 @@
 # Active TUMP rework ledger
 
+## CURRENT Nemu palms and throws qualified; checkpoint then visible aiming/skills
+
+Nemu throw case FINISHED1/1PASS, Python21520 retired, restoration287b170f60ba.
+Quick/held-left/moving-right releases used the actual intent/Carrier path and had
+zero shoe vertices inside head surfaces over6/96/94 held samples. Body/FPP keyframes
+inspected; singles palms retain costume identity and release action. Report:
+docs/reports/nemu-block-hands-2026-09-15. No Unity/player/encoder job remains.
+
+Output variable correction: launched TUMP_THROW_REVIEW, but source reads
+TUMP_THROW_MOTION_REVIEW. Actual scratch output was Logs/throw-motion-review-v5,
+which already existed. Copied only fresh CSV-referenced images/receipts into
+Logs/demo-nemu-throws, verifying write times against the new NUnit start.403files,
+3owner/body clip pairs encoded at measured time. Do not treat old v5 leftovers as
+new evidence. Always inspect exact output flags before launch.
+
+Next save/push Nemu source/art/test/evidence. Native v2 remains preserved and does
+not include this model correction. Continue visible gameplay first, full queue still
+active. Candidate concern: moving-right owner frame48 has no obvious aim guide,
+while held-left frame45 shows it; investigate actual charge/guide state before
+assuming a defect. TrajectoryPreview.cs currently draws a short nominal guide,
+not a landing marker. Do not change that accepted behavior. Other hero identities
+(Dante, Cheska, Sean, Phaister) FPP views inspected; distinct cuffs/materials retained.
+
+## CURRENT surgical Nemu body-hand correction
+
+Native baseline committed/pushed091114a2. Tested internal v2 remains untouched.
+Dry geometry inspection confirmed three disconnected skin pieces per Nemu arm,
+matching the source palm/fingers/tip entries. New repair_nemu_block_hands.py
+replaces only those408triangles with one beveled block palm on each original arm
+joint, keeping the exact old overall hand reach. Source generator now makes the
+same single palms and stamps the invariant. It does not rebuild the whole character.
+
+Applied and repeated: GLB SHA256 stays
+57d580aae44ae13ec5fecddeb1a762c0be61d1bf1a4a081cf6387502fc757730;
+second run verifies one skin component per arm and is a no-op. Animation digest
+c9253a340f2654e51418f2da621c603a26ccbff3acbb6b12f3c88d3ca41c4eab unchanged.
+Unchanged costume/body geometry semantic hash2a8d7a86ffbfbad584f6cb706e0460d6183446972981dd8e3a0238caaaf169c6
+verified after serialized roundtrip. Backup/receipts in Logs/nemu-block-hands.
+No familiar/monster assets touched. The previous hand-volume tool's dry run alone
+did not solve this: it saw the palm depth as adequate and left fingers intact.
+
+Roster rebuild FINISHED OK, Python19328 retired, restoratione56b619d3f4c.
+Logs/nemu-block-roster-v1(.pid/.stdout/.stderr/.log);20art entries include the two
+off-roster assets, not new playable characters. ViewmodelArmAuthor baked matching
+arm assets. It also dirtied several other hero arm assets; inspect their exact
+diffs before keeping/restoring anything. Next focused
+NemuBlockPalmsMatchTheExistingFirstPersonIdentity case and visual review.
+Focused Nemu hand view FINISHED1/1PASS, Python12368 retired, restorationd9e0190eee2d.
+Fixed body/FPP images inspected in Logs/nemu-block-hands/fixed: tucked palms are
+single blocks; costume/familiar and matching FPP colour identity remain. Other
+rebaked hero arms lost only their tangent stream: exact positions/normals/UVs and
+index bytes match HEAD. Restored those8 unrelated assets, keeping only Nemu's changed
+arm outputs; comparison receipt Logs/nemu-block-hands/unrelated-arm-rebake.json.
+
+Now RUNNING guarded demo-nemu-throws, logs Logs/demo-nemu-throws(.pid/.stdout/.stderr/
+.log/.xml), named profile demo-nemu-throws. Existing three-shot real input/Carrier
+case uses TUMP_THROW_REVIEW_PERSON=nemu and MODE=hero to cover quick, held-left and
+moving-right spin throws plus actual head clearance and owner/body motion. No
+imported edits until exit. Consume its exact XML and camera recordings next, then
+save the model/source/test/report checkpoint and continue visible gameplay/LAN.
+Other hand snapshots still need inspection. Preserve deferred Inday scope. This
+source/art work is uncommitted on091114a2; no new native build includes it yet.
+
 ## CURRENT native baseline passed; visible hand/hero review next
 
 Native loop-v2 FINISHEDPASS/exit0, Python8956/player9072 retired. All14 actual

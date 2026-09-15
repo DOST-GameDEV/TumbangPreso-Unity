@@ -35,6 +35,13 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest,Timeout(180000)]
         public IEnumerator AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera()
+            => ReviewHands(null);
+
+        [UnityTest,Timeout(90000)]
+        public IEnumerator NemuBlockPalmsMatchTheExistingFirstPersonIdentity()
+            => ReviewHands(new[]{"nemu"});
+
+        private IEnumerator ReviewHands(string[] selected)
         {
             Directory.CreateDirectory(Output);var rows=new List<string>();int people=0;
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
@@ -53,7 +60,9 @@ namespace TumbangPreso.PlayTests
                 var entries=Roster.GetPeople(mode);
                 for(int index=0;index<entries.Count;index++)
                 {
-                    var entry=RosterBook.Load().PersonArt(index,mode);who.CharacterIndex=index;
+                    var entry=RosterBook.Load().PersonArt(index,mode);
+                    if(selected!=null && !selected.Contains(entry.Id))continue;
+                    who.CharacterIndex=index;
                     if(mode==GameMode.HeroStrike)who.AbilitySystem.BindHero(entry.Id);
                     visual.ApplyModel(entry.Model,entry.Tint,entry.Clips,entry.Palette,entry.PetModel);
                     who.Intent.Clear();who.Intent.Parked=true;
@@ -81,7 +90,7 @@ namespace TumbangPreso.PlayTests
                 yield return PlayModeWorld.Reset();
             }
             File.WriteAllLines(Path.Combine(Output,"materials.txt"),rows);
-            Assert.AreEqual(18,people);
+            Assert.AreEqual(selected?.Length??18,people);
         }
 
         [UnityTest]

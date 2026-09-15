@@ -173,10 +173,8 @@ ARM_LEFT = [
     # 5. Dark Hollow Cuff Interior (Single clean recess plate, zero z-fighting)
     ("sleeve-cuff-interior-l", "arm-left", (0.238, 0.118, -0.092), (0.246, 0.252, 0.092), HOODIE_SHADOW),
 
-    # 6. Cute Tucked Hand (Peeking horizontally at cuff side - inside vertical sleeve span)
-    ("hand-palm-left",         "arm-left", (0.236, 0.160, -0.015), (0.268, 0.210, 0.025), SKIN),
-    ("hand-fingers-left",      "arm-left", (0.264, 0.165, -0.010), (0.282, 0.205, 0.020), SKIN),
-    ("hand-fingers-tip-l",     "arm-left", (0.278, 0.170, -0.006), (0.288, 0.200, 0.016), SKIN_DARK),
+    # One tucked block palm. Keep the original reach without fingers or thumbs.
+    ("hand-palm-left",         "arm-left", (0.236, 0.160, -0.015), (0.288, 0.210, 0.025), SKIN),
 ]
 
 ARM_RIGHT = [
@@ -197,10 +195,8 @@ ARM_RIGHT = [
     # 5. Dark Hollow Cuff Interior (Single clean recess plate, zero z-fighting)
     ("sleeve-cuff-interior-r", "arm-right", (-0.246, 0.118, -0.092), (-0.238, 0.252, 0.092), HOODIE_SHADOW),
 
-    # 6. Cute Tucked Hand (Peeking horizontally at cuff side - inside vertical sleeve span)
-    ("hand-palm-right",        "arm-right", (-0.268, 0.160, -0.015), (-0.236, 0.210, 0.025), SKIN),
-    ("hand-fingers-right",     "arm-right", (-0.282, 0.165, -0.010), (-0.264, 0.205, 0.020), SKIN),
-    ("hand-fingers-tip-r",     "arm-right", (-0.288, 0.170, -0.006), (-0.278, 0.200, 0.016), SKIN_DARK),
+    # One tucked block palm. Keep the original reach without fingers or thumbs.
+    ("hand-palm-right",        "arm-right", (-0.288, 0.160, -0.015), (-0.236, 0.210, 0.025), SKIN),
 ]
 
 # ---------------------------------------------------------------------------
@@ -885,6 +881,7 @@ def main():
     print(f"retargeted {len(deltas)} bones, shifted {moved} translation tracks")
 
     verify(body, head)
+    gltf.setdefault("extras", {})["blockPalms"] = "nemu-block-palms-v1"
     write_glb(OUT, gltf, blob)
     write_palette(PALETTE_OUT)
     write_unity_asset(ROSTER_OUT)

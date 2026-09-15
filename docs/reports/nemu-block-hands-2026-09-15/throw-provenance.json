@@ -1,0 +1,6 @@
+{
+  "source": "Logs\\throw-motion-review-v5",
+  "testStartUtc": "2026-09-15 04:24:27Z",
+  "copiedCurrentRunFiles": 403,
+  "note": "Launch used TUMP_THROW_REVIEW rather than the required TUMP_THROW_MOTION_REVIEW. Default scratch output was reused. Only the current CSV-referenced files with fresh write times were copied; older surplus frames excluded."
+}
