@@ -1,0 +1,15 @@
+slipper lookup cost  ·  HeroStrike  ·  IlalimNgTulay
+45903 frames, 765.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.619 ms; gen0 collections 3
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 523, Transform 2214, Component 6061
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      48.658 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                48.723 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                49.347 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      50.320 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                50.898 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.052 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.114 us     0.0 B  (15/15 batches without a collection)
+
+call frequency: LookupMeter ABSENT (live checkout). Frequency is measured only in the instrumented scratch copy; see the C3 report.

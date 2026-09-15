@@ -1,7 +1,7 @@
 # Joining during Sean Rush and Zack Sprint
 
-Status: named implementation and native cases QUALIFIED; shared-branch integration
-is finishing. This does not cover Sean Supernova's airborne phase,
+Status: named implementation, native cases and combined-source checks QUALIFIED.
+This does not cover Sean Supernova's airborne phase,
 general continuous correction or a process-reconnect matrix.
 
 ## Reproduced failure
@@ -61,6 +61,10 @@ requires42for the final source; internal41must not join it.
   host captures are preserved as actual witnesses, not assumed from a delay flag.
 - Finalv19 protocol42host refused the actual internalv18/protocol41client, with
   passed=true, no faults, and shared input unchanged.
+- Peer commits through9c236eb8 merged without source conflicts. The focused
+  Windows MovementSnapshotProbe on the combined source passed4/4, guard
+  a9e4864dd1ab. This compiled the merged runtime/tests without rerunning Claude's
+  separately owned AI investigations. Nativev19 predates those peer AI changes.
 
 v17 runtime SHA256:
 73557da7938bea87de5f2430371e1006a3c1f1e4d2fdd822a11a96c453e33aba
@@ -82,7 +86,7 @@ before the later parallel AI commits were integrated; those are not in this bina
 - [x] Positive movement records expiring in transit: no replayed movement and
   retained legitimate lasting fields, with actual timing witnesses.
 - [x] Final protocol42 refusal of internalv18/protocol41.
-- [ ] Final diff, portable evidence, commit and push with honest scope limits.
+- [x] Final diff, portable evidence and publication with honest scope limits.
 
 The source-local design draft is Logs/movement-state-design.md. Current process
 ownership and the next command are in ACTIVE_REWORK_LEDGER.md. Baseline/fixed peer

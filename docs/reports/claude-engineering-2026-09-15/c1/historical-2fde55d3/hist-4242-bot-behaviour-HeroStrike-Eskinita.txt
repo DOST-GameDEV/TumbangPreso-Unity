@@ -1,0 +1,25 @@
+bot behaviour probe  ·  HeroStrike  ·  Eskinita
+historical rules: rounds 8; seconds per round 90; pinned False
+45938 frames at 16.7 ms  ·  765.6s simulated  ·  86.6s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 17.761 ms after 120 aligning frame(s)
+lata knocks 76  tags 129  sabotages 3
+throws 184  retrievals 177  lata restores 89
+camp penalties 0  idle penalties 4
+skill uses 32  ultimate uses 14  kits seen True
+emotes 23  hops 190
+slides 130
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 7.69 of 8.1  z 11.34 of 17.5
+furthest a free slipper reached: x 7.59  z 11.05
+Unretrieved-slipper penalty trace (4 lines, capped at 400):
+  frame=47412 round=1 left=72.1 slot=3 idle=11.0 at=(4.49, 0.18, 1.76) grounded=True plan=Fetch goal=(0.25, 0.19, 0.04) arrived=False stalk=0 canAct=True holding=False held=- inBox=True taya=0@(0.15, 0.18, 0.64) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.15, 9.00) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(0.25, 0.19, 0.04) flat=4.58 d3=4.58 dy=0.01 ground=0.10 grabbable=False | other origin=2 owner=2 state=InFlight active=True holder=-1 pos=(-1.09, 1.38, 2.20) | other origin=1 owner=1 state=Held active=True holder=1 pos=(-1.28, 0.97, 8.39)
+  frame=47472 round=1 left=71.1 slot=3 idle=12.0 at=(2.19, 0.18, 1.40) grounded=True plan=Stalk goal=(3.50, 0.00, 7.60) arrived=False stalk=0.4000001 canAct=True holding=False held=- inBox=True taya=0@(2.93, 0.18, 0.89) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.15, 9.00) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(0.25, 0.19, 0.04) flat=2.38 d3=2.38 dy=0.01 ground=0.10 grabbable=False | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(-1.52, 0.18, 4.25) | other origin=1 owner=1 state=Held active=True holder=1 pos=(-2.12, 1.55, 8.88)
+  frame=47532 round=1 left=70.1 slot=3 idle=13.0 at=(2.19, 0.18, 3.54) grounded=True plan=Stalk goal=(4.29, 0.00, 7.60) arrived=False stalk=1.399999 canAct=True holding=False held=- inBox=True taya=0@(2.45, 0.18, 1.84) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.15, 9.00) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(0.25, 0.19, 0.04) flat=4.01 d3=4.01 dy=0.01 ground=0.10 grabbable=False | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(-1.52, 0.18, 4.25) | other origin=1 owner=1 state=Held active=True holder=1 pos=(-1.21, 1.01, 8.99)
+  frame=47652 round=1 left=68.1 slot=3 idle=14.1 at=(1.79, 0.18, 1.75) grounded=True plan=Fetch goal=(0.25, 0.19, 0.04) arrived=False stalk=0 canAct=True holding=False held=- inBox=True taya=0@(1.41, 0.18, 2.62) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.15, 9.00) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(0.25, 0.19, 0.04) flat=2.31 d3=2.31 dy=0.01 ground=0.10 grabbable=False | other origin=2 owner=2 state=Held active=True holder=2 pos=(-2.46, 1.05, 7.15) | other origin=1 owner=1 state=Held active=True holder=1 pos=(-1.21, 1.01, 8.99)
+seat 0 travelled 1182.5 m  final score 6770
+seat 1 travelled 1162.9 m  final score 6790
+seat 2 travelled 1133.1 m  final score 6310
+seat 3 travelled 1175.2 m  final score 6310

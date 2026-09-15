@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.2598773">
+  <test-suite type="TestSuite" id="1558" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.259877" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1552" name="TumbangPreso.PlayTests.dll" fullname="/Users/paul/Documents/GitHub/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.251115" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="57352" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1553" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.246816" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1554" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.242789" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1446" name="SlipperLookupCostProbe" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:58:29Z" duration="156.232717" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1448" name="ClassicOnEskinita" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe.ClassicOnEskinita" methodname="ClassicOnEskinita" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" seed="1126456510" result="Passed" start-time="2026-09-15 11:55:53Z" end-time="2026-09-15 11:57:05Z" duration="71.796139" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 1.9 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6520 / 7020 / 6540 / 6430. seat 1 wins
+slipper lookup cost  ·  Classic  ·  Eskinita
+45966 frames, 766.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.401 ms; gen0 collections 5
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 407, Transform 1151, Component 3244
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      33.763 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                32.995 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                33.024 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      34.183 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                34.764 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.040 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.091 us     0.0 B  (15/15 batches without a collection)
+
+call frequency: LookupMeter ABSENT (live checkout). Frequency is measured only in the instrumented scratch copy; see the C3 report.
+
+]]></output>
+            </test-case>
+            <test-case id="1447" name="HeroStrikeUnderTheBridge" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe.HeroStrikeUnderTheBridge" methodname="HeroStrikeUnderTheBridge" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" seed="858637308" result="Passed" start-time="2026-09-15 11:57:05Z" end-time="2026-09-15 11:58:29Z" duration="84.425374" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6100 / 7150 / 5410 / 6060. seat 1 wins
+slipper lookup cost  ·  HeroStrike  ·  IlalimNgTulay
+45903 frames, 765.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.619 ms; gen0 collections 3
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 523, Transform 2214, Component 6061
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      48.658 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                48.723 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                49.347 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      50.320 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                50.898 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.052 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.114 us     0.0 B  (15/15 batches without a collection)
+
+call frequency: LookupMeter ABSENT (live checkout). Frequency is measured only in the instrumented scratch copy; see the C3 report.
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

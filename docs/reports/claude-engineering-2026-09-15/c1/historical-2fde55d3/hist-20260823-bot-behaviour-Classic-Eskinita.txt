@@ -1,0 +1,21 @@
+bot behaviour probe  ·  Classic  ·  Eskinita
+historical rules: rounds 8; seconds per round 90; pinned False
+45963 frames at 16.7 ms  ·  766.1s simulated  ·  61.3s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 19.721 ms after 120 aligning frame(s)
+lata knocks 73  tags 136  sabotages 6
+throws 161  retrievals 156  lata restores 87
+camp penalties 0  idle penalties 0
+skill uses 0  ultimate uses 0  kits seen False
+emotes 22  hops 100
+slides 112
+seat 0 hero -            model character-male-f(Clone)
+seat 1 hero -            model character-female-a(Clone)
+seat 2 hero -            model character-male-c(Clone)
+seat 3 hero -            model character-female-d(Clone)
+furthest a body reached: x 7.69 of 8.1  z 12.13 of 17.5
+furthest a free slipper reached: x 7.61  z 10.06
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1090.4 m  final score 6580
+seat 1 travelled 1054.9 m  final score 6000
+seat 2 travelled 1205.0 m  final score 7560
+seat 3 travelled 1071.4 m  final score 6730

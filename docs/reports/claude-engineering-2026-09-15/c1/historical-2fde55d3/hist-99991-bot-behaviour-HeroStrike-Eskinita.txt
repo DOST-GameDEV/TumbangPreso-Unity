@@ -1,0 +1,21 @@
+bot behaviour probe  ·  HeroStrike  ·  Eskinita
+historical rules: rounds 8; seconds per round 90; pinned False
+46003 frames at 16.7 ms  ·  766.7s simulated  ·  98.1s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 0.427 ms after 4 aligning frame(s)
+lata knocks 78  tags 144  sabotages 5
+throws 178  retrievals 173  lata restores 92
+camp penalties 2  idle penalties 0
+skill uses 26  ultimate uses 15  kits seen True
+emotes 28  hops 179
+slides 129
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 7.69 of 8.1  z 12.62 of 17.5
+furthest a free slipper reached: x 7.60  z 10.85
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1260.5 m  final score 7110
+seat 1 travelled 1164.8 m  final score 6660
+seat 2 travelled 1092.4 m  final score 6600
+seat 3 travelled 1247.8 m  final score 7580

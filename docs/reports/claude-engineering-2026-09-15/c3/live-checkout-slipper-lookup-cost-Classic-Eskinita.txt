@@ -1,0 +1,15 @@
+slipper lookup cost  ·  Classic  ·  Eskinita
+45966 frames, 766.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.401 ms; gen0 collections 5
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 407, Transform 1151, Component 3244
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      33.763 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                32.995 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                33.024 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      34.183 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                34.764 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.040 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.091 us     0.0 B  (15/15 batches without a collection)
+
+call frequency: LookupMeter ABSENT (live checkout). Frequency is measured only in the instrumented scratch copy; see the C3 report.

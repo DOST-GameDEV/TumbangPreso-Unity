@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.4610444">
+  <test-suite type="TestSuite" id="1300" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.461044" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1294" name="TumbangPreso.PlayTests.dll" fullname="/private/tmp/claude-501/-Users-paul-Documents-GitHub-TumbangPreso-Unity/ea4afabe-3a17-4fb3-9a5f-3ffb200679b2/scratchpad/hist/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.453139" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36009" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1295" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.452221" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1296" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.451332" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1024" name="BotBehaviourProbe" fullname="TumbangPreso.PlayTests.BotBehaviourProbe" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:05:04Z" duration="240.443274" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1025" name="ClassicBotsPlayAWholeMatch" fullname="TumbangPreso.PlayTests.BotBehaviourProbe.ClassicBotsPlayAWholeMatch" methodname="ClassicBotsPlayAWholeMatch" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" seed="1607956376" result="Passed" start-time="2026-09-15 11:01:03Z" end-time="2026-09-15 11:02:14Z" duration="71.205768" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="420000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 163 of 239 renderers, 99 with a roof variant.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 313 occluder nodes matched, 238 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 1.7 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6690 / 5770 / 7400 / 7570. seat 3 wins
+bot behaviour probe  ·  Classic  ·  Eskinita
+historical rules: rounds 8; seconds per round 90; pinned False
+45993 frames at 16.7 ms  ·  766.6s simulated  ·  69.7s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 9.631 ms after 120 aligning frame(s)
+lata knocks 64  tags 149  sabotages 5
+throws 170  retrievals 163  lata restores 78
+camp penalties 0  idle penalties 0
+skill uses 0  ultimate uses 0  kits seen False
+emotes 25  hops 76
+slides 134
+seat 0 hero -            model character-male-f(Clone)
+seat 1 hero -            model character-female-a(Clone)
+seat 2 hero -            model character-male-c(Clone)
+seat 3 hero -            model character-female-d(Clone)
+furthest a body reached: x 7.75 of 8.1  z 12.02 of 17.5
+furthest a free slipper reached: x 7.63  z 10.02
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1138.7 m  final score 6690
+seat 1 travelled 1137.7 m  final score 5770
+seat 2 travelled 1162.6 m  final score 7400
+seat 3 travelled 1063.8 m  final score 7570
+
+]]></output>
+            </test-case>
+            <test-case id="1026" name="HeroStrikeBotsPlayAWholeMatchAndUseTheirKits" fullname="TumbangPreso.PlayTests.BotBehaviourProbe.HeroStrikeBotsPlayAWholeMatchAndUseTheirKits" methodname="HeroStrikeBotsPlayAWholeMatchAndUseTheirKits" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" seed="1978983356" result="Passed" start-time="2026-09-15 11:02:14Z" end-time="2026-09-15 11:03:28Z" duration="73.490724" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="420000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 163 of 239 renderers, 99 with a roof variant.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 'Unlit/Transparent' is not a lit surface this pass can reproduce, so it keeps its own material and will not dissolve. Add the name to NearFade.ColourProperties if it should.
+[NearFade] 313 occluder nodes matched, 238 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6510 / 6480 / 6670 / 7200. seat 3 wins
+bot behaviour probe  ·  HeroStrike  ·  Eskinita
+historical rules: rounds 8; seconds per round 90; pinned False
+45958 frames at 16.7 ms  ·  766.0s simulated  ·  73.1s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 0.366 ms after 5 aligning frame(s)
+lata knocks 80  tags 132  sabotages 5
+throws 174  retrievals 172  lata restores 93
+camp penalties 0  idle penalties 0
+skill uses 34  ultimate uses 14  kits seen True
+emotes 27  hops 179
+slides 123
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 7.69 of 8.1  z 11.28 of 17.5
+furthest a free slipper reached: x 7.60  z 10.66
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1215.1 m  final score 6510
+seat 1 travelled 1211.8 m  final score 6480
+seat 2 travelled 1135.8 m  final score 6670
+seat 3 travelled 1241.9 m  final score 7200
+
+]]></output>
+            </test-case>
+            <test-case id="1027" name="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" fullname="TumbangPreso.PlayTests.BotBehaviourProbe.HeroStrikeBotsPlayAWholeMatchUnderTheBridge" methodname="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" seed="2068891794" result="Passed" start-time="2026-09-15 11:03:28Z" end-time="2026-09-15 11:05:04Z" duration="95.733188" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="420000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2292 renderers, 0 with a roof variant.
+[NearFade] 2761 occluder nodes matched, 2292 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6290 / 5960 / 5960 / 8000. seat 3 wins
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+historical rules: rounds 8; seconds per round 90; pinned False
+45940 frames at 16.7 ms  ·  765.7s simulated  ·  94.7s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 9.766 ms after 120 aligning frame(s)
+lata knocks 80  tags 127  sabotages 2
+throws 179  retrievals 175  lata restores 92
+camp penalties 0  idle penalties 0
+skill uses 35  ultimate uses 15  kits seen True
+emotes 26  hops 176
+slides 128
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 8.14 of 11.0  z 11.41 of 16.5
+furthest a free slipper reached: x 8.02  z 10.81
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1223.1 m  final score 6290
+seat 1 travelled 1255.0 m  final score 5960
+seat 2 travelled 1121.4 m  final score 5960
+seat 3 travelled 1193.9 m  final score 8000
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

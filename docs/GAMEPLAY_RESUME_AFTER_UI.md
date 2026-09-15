@@ -68,10 +68,12 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
    and actual rejoin coverage remain separate from the qualified observer-kit
    reconstruction fixture. Preserve captured contact, resources and authority,
    Phaister's existing preparation/sky and Nemu's existing familiar semantics.
-3. **Remaining active movement skills and corrections.** Audit Sean rush/Zack
-   sprint active movement/window state on joining and interruption. General
-   repeated state correction is not the same as initial-only charge hydration.
-   Keep consumed-charge/newer-cast guards; never rearm an old spent effect.
+3. **Broader active-state corrections.** Initial Sean Rush/Zack Sprint joining
+   windows, emitter phase, owned field references and expired nonreplay are now
+   qualified in reports/movement-joining-2026-09-15/README.md, including native
+   controlling-owner and observer cases. Preserve this work. General continuous
+   correction and full process-rejoin/interruption matrices remain separate;
+   keep consumed-charge/newer-cast guards and never rearm an old spent effect.
 4. **Whole-kit play and counterplay.** Six existing heroes,18slots, all existing
    alternates: mixed attacker/defender situations, overlap, refusal/interruption,
    readability and actual effects on players/slippers/can. Preserve polished

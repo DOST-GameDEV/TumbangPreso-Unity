@@ -1,5 +1,26 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest UI request, September15:** after finishing the current movement/peer
+integration checkpoint, update main menu from the owner's UI EDITS artwork:
+background_mainmenu.png, buttons_mainmenu.png and reference_mainmenu.png. Match
+the reference's typography sizes, exact colours and text placement. Update login
+buttons from updatedbuttons_login.png while preserving the approved login flow.
+Originals and SHA manifest are under ArtSource/ui/owner-ui-edits-2026-09-15.
+Use the supplied art as-is: extract/convert it, do not redraw, stretch or invent
+replacement buttons. Preserve its aspect ratios. Add restrained hover/press motion
+and ground-level background dust, with deliberate subtle ambient movement inspired
+by the owner's Slay the Spire2 reference. Keep dust behind the controls/foreground.
+The owner flags a white export artifact at the top edge; inspect/correct only that
+artifact in runtime extraction and preserve the original files. No Figma required.
+After these UI edits, CONTINUE the saved gameplay queue from its exact bookmark;
+do not lose progress at compaction or treat the UI interruption as cancellation.
+The owner's later clean exports supersede the edged background/reference:
+background_mainmenu_clean.png and reference_mainmenu_clean.png in that source folder
+are byte-identical to the newly supplied Downloads/TUMP (3).png and TUMP (4).png.
+Do not overwrite the separately preserved older login background with this new
+TUMP (3) file. Start menu music when the home menu becomes visible, after startup
+loading/login, as newly requested; do not start it on the loading screen.
+
 **Urgent owner corrections, September15:** first-person slippers must not cast
 their own detached world shadow. Keep the world slipper/body shadow contracts;
 fix the camera's presentation copy and its charge attachments. Remove visible

@@ -1,0 +1,28 @@
+slipper lookup cost  ·  Classic  ·  Eskinita
+45903 frames, 765.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.210 ms; gen0 collections 6
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 406, Transform 1147, Component 3233
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      33.721 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                33.823 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                40.432 us     0.0 B  (14/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      37.483 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                34.670 us   163.8 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.050 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.088 us     0.0 B  (15/15 batches without a collection)
+
+call frequency by production site (instrumented copy; us/call includes the meter's own Stopwatch overhead; B/call* is the unit-rate figure above):
+site                                             calls  per sim s  per frame  us/call  ms total B/call*  avg n
+AIController.cs:1672                             41604       54.4      0.906    35.86    1491.8       0   3.00
+RoundDirector.cs:408                             36008       47.1      0.784    43.60    1569.8       0   3.00
+AIController.cs:4001                             17245       22.5      0.376    34.74     599.0       0   3.00
+Carrier.cs:710                                    3174        4.1      0.069    29.37      93.2       0   3.00
+AIController.cs:1693                              2258        3.0      0.049    47.28     106.7       0   3.00
+CombatVerbs.cs:628                                1608        2.1      0.035    31.82      51.2       0   3.00
+AIController.cs:954                                656        0.9      0.014    38.24      25.1       0   3.00
+CombatVerbs.cs:517                                 400        0.5      0.009    30.69      12.3       0   3.00
+AIController.cs:1244                               283        0.4      0.006    29.31       8.3       0   3.00
+AIController.cs:3660                                 3        0.0      0.000    28.47       0.1       0   3.00
+MatchStatsCollector.cs:399                           1        0.0      0.000    71.30       0.1       0   4.00
+TOTAL calls 103240 (134.9/sim s, 2.25/frame), time 3957.6 ms (0.0862 ms/frame = 7.12% of mean frame wall time), allocation at the unit rate 0 KiB (0 B/sim s)

@@ -1,5 +1,59 @@
 # Active TUMP rework ledger
 
+## LATEST UI source update: clean background/reference and menu-music timing
+
+Owner supplied new Downloads/TUMP (3).png and TUMP (4).png without the white top
+edge. Copied byte-for-byte as background_mainmenu_clean.png and
+reference_mainmenu_clean.png under ArtSource/ui/owner-ui-edits-2026-09-15, with
+original names/hashes in source-manifest.json. Use these as canonical. The initial
+exports had exactly1white top row; no manual repair of those old files is needed.
+Keep buttons_mainmenu.png and updatedbuttons_login.png from the supplied folder.
+The new TUMP(3) is MAIN MENU art, not the older separately tracked login background.
+
+Owner additionally wants menu music to begin only on reaching the main menu,
+not during startup loading. Interpret this as visible home after the loading/login
+entrance, and trace the real audio/startup producers before editing. Button feedback
+and subtle background-road dust remain required. After UI, resume the saved gameplay
+queue. Integration check4PASS is already complete; finish the pending merge/push now.
+
+## CURRENT integration passed; publish and start supplied main-menu/login edit
+
+Local movement commit e8517f23 is merged with peer commits through9c236eb8 without
+conflicts; merge commit/publication is the immediate next action. Combined-source
+Windows MovementSnapshotProbe FINISHED4/4PASS, guard a9e4864dd1ab; Python6080 and
+all previous native/Editor/proxy jobs are retired. No reserved AI code was edited.
+The separate worker's report retains its historical48-idle reproduction limit;
+do not independently close their task boxes. Nativev19 predates those AI commits.
+
+Owner now supplied C:/Users/matth/Downloads/UI EDITS and asks to do these UI changes,
+THEN RESUME the previous full gameplay work. The temporary pause request is retired.
+All4original RGB1920x1080PNGs were copied byte-for-byte with hashes to
+ArtSource/ui/owner-ui-edits-2026-09-15: background_mainmenu, buttons_mainmenu,
+reference_mainmenu and updatedbuttons_login. Do not require Downloads after transfer.
+
+Main-menu reference has the provided logo and four buttons at authored sizes:
+PLAY, TUTORIAL, SETTINGS, QUIT. Match exact label sizes, colours and positions;
+preserve original art and aspect ratios. Buttons sheet has an opaque white backing,
+so extraction/conversion must remove backing without redrawing the artwork. Login
+sheet includes logo/tab bar/fields/checkbox/CTA/guest assets. Keep its existing
+approved composition/flow and use new art. User explicitly requests hover/press
+animation and thoughtful subtle ambience, primarily dust moving along the background
+road behind UI/foreground props. No Figma or generated replacement art. User flagged
+the thin white export edge; inspect its pixel extent and remove only that artifact
+from runtime presentation, retaining originals.
+
+Active main-menu path: ConvertedMainMenu -> TumpHomeView.Build -> HomeCourtView.Build.
+No UI implementation/import has begun yet. Existing unity-ui/ugui, game-ui-design
+and sprite-editor guidance was read; importer edits must use Unity APIs, never
+hand-written sprite metadata. Read remaining relevant skill references as needed.
+
+Gameplay resume bookmark AFTER this UI task: initial Dante/Cheska/Zack preparations,
+Zack charge tail and Sean/Zack active movement are qualified. Next is Sean Supernova's
+distinct impulse/dive/grounded-contact joining phase and the broader lifecycle,
+all-variant/counterplay, movement/Pektus/recovery, spectator and later tasks in
+GAMEPLAY_RESUME_AFTER_UI. Deferred Inday later; selected seventh hero/map LAST LAST.
+Do not re-run completed cases or abandon the full queue after the UI edit/compaction.
+
 ## CURRENT movement cases complete; integrate peer commits and finish for UI
 
 All4nativev19 cases FINISHEDPASS, session58519 retired: controlling owner for

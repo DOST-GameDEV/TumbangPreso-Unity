@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Newest priority:** finish publishing the current movement/peer integration, then
+implement the owner's main-menu/login artwork in ArtSource/ui/owner-ui-edits-2026-09-15.
+Match reference_mainmenu exactly for typography, colours and placement; extract
+art as-is, preserve aspect ratios, animate buttons and add subtle background road
+dust. Then return to GAMEPLAY_RESUME_AFTER_UI from the saved bookmark. Initial
+Sean/Zack movement restoration is now qualified; Sean Supernova's physical phase
+and broader gameplay work remain. This supersedes the temporary pause-for-UI note.
+
 **Current checkpoint, September15:** the detached FPP slipper shadow and visible
 version labels are corrected. Plain/charged first-person renderer checks pass;
 world shadows and internal version identity are retained. Initial Dante Q/R,

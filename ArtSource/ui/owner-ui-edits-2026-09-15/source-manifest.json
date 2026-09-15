@@ -1,0 +1,100 @@
+[
+  {
+    "file": "background_mainmenu.png",
+    "sha256": "e25e6c45edbd68319c2c0f880c68c9e2ec0b5487b8b561b64e1e7ca9d656586b",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB",
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "corner_rgba": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "file": "buttons_mainmenu.png",
+    "sha256": "2d662d984e0e1204fb38836e27a6a53d26408db1505b05e5f7d816509c6a0f99",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB",
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "corner_rgba": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "file": "reference_mainmenu.png",
+    "sha256": "90417c2e0284f2347a29b0f6b7d6779fa0e4ce207a0927a55c16de65e207cf83",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB",
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "corner_rgba": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "file": "updatedbuttons_login.png",
+    "sha256": "689e79329969c617bbdab191d50442ff9b70f03519d54e8577b95f13792e48be",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB",
+    "alpha_extrema": [
+      255,
+      255
+    ],
+    "corner_rgba": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "file": "background_mainmenu_clean.png",
+    "original_name": "TUMP (3).png",
+    "role": "canonical main menu background",
+    "sha256": "75795a6e0ac441091f1693d90a94262dc90d4a18d8213f54c9d817d0581433d8",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB"
+  },
+  {
+    "file": "reference_mainmenu_clean.png",
+    "original_name": "TUMP (4).png",
+    "role": "canonical main menu reference",
+    "sha256": "325dc450d45a6a39df4482715d2834c9e938dabd1192cde4cf52c86fcdad135c",
+    "size": [
+      1920,
+      1080
+    ],
+    "mode": "RGB"
+  }
+]

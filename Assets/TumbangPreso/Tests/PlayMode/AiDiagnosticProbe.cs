@@ -95,6 +95,101 @@ namespace TumbangPreso.PlayTests
             yield return Diagnose(GameMode.HeroStrike, 40.0f);
         }
 
+        /// <summary>
+        /// C2: whole matches of lunges at ordinary 1x simulation speed. The world is stepped at a
+        /// fixed 1/60 s with time scale 1, so every bot decision sees exactly the frame time a
+        /// 60 fps player's game gives it; only the wall clock is removed. The 40 s wall-clock
+        /// diagnostics above carry the same tracker as a real-time cross-check.
+        /// </summary>
+        [UnityTest, Timeout(900000)]
+        public IEnumerator ClassicLungesAcrossAWholeMatchAreExplained()
+        {
+            yield return TraceLunges(GameMode.Classic, "Eskinita");
+        }
+
+        [UnityTest, Timeout(900000)]
+        public IEnumerator HeroLungesAcrossAWholeMatchAreExplained()
+        {
+            yield return TraceLunges(GameMode.HeroStrike, "Eskinita");
+        }
+
+        private static int LungeSeed()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+                if (args[i] == "-tp-bot-seed" && int.TryParse(args[i + 1], out int seed))
+                    return seed;
+            return 20260823;
+        }
+
+        private IEnumerator TraceLunges(GameMode mode, string map)
+        {
+            const float step = 1.0f / 60.0f;
+            var previousRules = UI.SceneFlow.SelectedRules.Clone();
+            bool previousPin = UI.SceneFlow.RulesPinned;
+            bool previousAllBots = GameLaunch.AllBots;
+            UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(mode));
+            GameLaunch.AllBots = true;
+            UnityEngine.Random.InitState(LungeSeed());
+            Hitstop.End();
+            Time.timeScale = 1.0f;
+
+            var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+            for (int i = 0; i < 25; i++) yield return null;
+
+            var round = GameServices.Round;
+            var match = GameServices.Match;
+            var runner = Object.FindFirstObjectByType<SliceRunner>();
+            Assert.IsNotNull(round);
+            Assert.IsNotNull(match);
+            Assert.IsNotNull(runner);
+
+            UnityEngine.Random.InitState(LungeSeed());
+            Time.captureDeltaTime = step;
+            for (int i = 0; i < 120; i++) yield return null;
+            runner.Begin();
+
+            var tracker = new LungeTracker();
+            int frames = 0;
+            try
+            {
+                while (match.MatchInProgress && frames < 64000)
+                {
+                    frames++;
+                    tracker.Sample(round, match, frames, step);
+                    yield return null;
+                }
+            }
+            finally
+            {
+                Time.captureDeltaTime = 0.0f;
+                UI.SceneFlow.AdoptRemoteRules(previousRules);
+                if (previousPin) UI.SceneFlow.PinSelectedRules(previousRules); else UI.SceneFlow.UnpinSelectedRules();
+                GameLaunch.AllBots = previousAllBots;
+            }
+
+            var record = GameServices.Stats != null ? GameServices.Stats.Last : null;
+            int attempts = 0, hits = 0;
+            if (record?.Players != null)
+                foreach (var p in record.Players)
+                    if (p != null) { attempts += p.LungeAttempts; hits += p.LungeHits; }
+
+            var log = new StringBuilder();
+            tracker.Unwatch();
+            log.AppendLine($"lunge trace  ·  {mode}  ·  {map}  ·  seed {LungeSeed()}  ·  {frames} frames at 1/60 s, time scale 1");
+            log.AppendLine($"collector: {hits}/{attempts} lunge hits/attempts; tracker saw {tracker.Attempts} releases");
+            log.Append(tracker.Describe());
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText($"Logs/ai-lunge-trace-{mode}-{map}.txt", log.ToString());
+            Debug.Log(log.ToString());
+
+            Assert.IsFalse(match.MatchInProgress, $"{mode} on {map}: the traced match did not finish.");
+            // The trace is only evidence if it counts the same releases the collector counted.
+            Assert.AreEqual(attempts, tracker.Attempts,
+                "The lunge tracker and MatchStatsCollector disagree about how many lunges were released.");
+        }
+
         private IEnumerator Diagnose(GameMode mode, float seconds)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
@@ -120,6 +215,8 @@ namespace TumbangPreso.PlayTests
 
             log.AppendLine($"ai diagnostic  ·  {mode}  ·  {bots.Length} bots  ·  1x");
 
+            var lunges = new LungeTracker();
+            int lungeFrame = 0;
             float elapsed = 0.0f;
             float nextSample = 0.0f;
             int throws = 0;
@@ -139,6 +236,7 @@ namespace TumbangPreso.PlayTests
             {
                 float dt = Time.unscaledDeltaTime;
                 elapsed += dt;
+                lunges.Sample(round, GameServices.Match, ++lungeFrame, Time.deltaTime);
 
                 foreach (var bot in bots)
                 {
@@ -334,6 +432,9 @@ namespace TumbangPreso.PlayTests
                                + $"{SabotageRules.MaxApproachRange:F2} m while a shove was "
                                + "affordable and off cooldown)");
 
+            log.AppendLine();
+            log.Append(lunges.Describe());
+
             Directory.CreateDirectory("Logs");
             File.WriteAllText($"Logs/ai-diagnostic-{mode}.txt", log.ToString());
             Debug.Log(log.ToString());
@@ -382,6 +483,262 @@ namespace TumbangPreso.PlayTests
                     $"{Balance.SlipperUnretrievedGracePeriod:F0}s grace period. That is a piece " +
                     $"of ammunition its owner cannot reach rather than one it has not fetched. " +
                     $"At the worst moment: {why}");
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // § C2: EVERY LUNGE, FROM THE CHARGE TO THE AUTHORITATIVE OUTCOME
+        //
+        // docs/CLAUDE_ENGINEERING_LANE.md C2. BotBehaviourProbe's lunge column is the
+        // collector's LungeHits/LungeAttempts and it cannot say whether a miss was a bad aim, a
+        // target that stopped being taggable, a charge released because the plan changed, or a
+        // lunge the rules simply could not land. This records the taya's charge, the AI's
+        // intended victim, the facing at release and every frame of the live sweep against the
+        // victim, and reads the collector's own counters as the outcome so the trace is checked
+        // against the number it explains.
+        // -------------------------------------------------------------------
+
+        private sealed class LungeTracker
+        {
+            private sealed class Live
+            {
+                public int Slot, Frame, Round, ChargeFrames;
+                public string Reason, Plan, Victim;
+                public CharacterMotor VictimBody;
+                public Vector3 From, Forward, VictimAt, VictimVel;
+                public float Power, Distance, Bearing, Lateral, Time;
+                public bool VictimTaggable, AnyTaggable;
+                public float MinVictim = float.MaxValue, MinVictimTaggable = float.MaxValue, MinAnyTaggable = float.MaxValue;
+                public bool VictimLeftTaggable, Hit;
+                public int HitsBefore;
+                // Three frames of slack: the collector's hit lands inside CombatVerbs.Update,
+                // which can run after this sample on the last live frame.
+                public float ActiveLeft = Balance.LungeActiveTime + 3.0f / 60.0f;
+                public string Start = "-";
+                public float HeldAfter, PunchCooldown;
+                public int TagsDuringCharge;
+            }
+
+            private readonly Dictionary<int, int> _charging = new Dictionary<int, int>();
+            private readonly Dictionary<int, bool> _cooling = new Dictionary<int, bool>();
+            private readonly Dictionary<int, string> _planAtCharge = new Dictionary<int, string>();
+            private readonly Dictionary<int, string> _startAtCharge = new Dictionary<int, string>();
+            private readonly Dictionary<int, int> _tagsBySlot = new Dictionary<int, int>();
+            private readonly Dictionary<int, int> _tagsAtCharge = new Dictionary<int, int>();
+            private readonly Dictionary<int, int> _hitsWhileCharging = new Dictionary<int, int>();
+            private readonly Dictionary<int, int> _tagsWhileCharging = new Dictionary<int, int>();
+            private RoundDirector _watched;
+
+            private void Watch(RoundDirector round)
+            {
+                if (_watched == round) return;
+                if (_watched != null) _watched.Tagged -= OnTagged;
+                _watched = round;
+                round.Tagged += OnTagged;
+            }
+
+            public void Unwatch() { if (_watched != null) _watched.Tagged -= OnTagged; _watched = null; }
+
+            private void OnTagged(int taya, int victim)
+            {
+                _tagsBySlot.TryGetValue(taya, out int n);
+                _tagsBySlot[taya] = n + 1;
+            }
+            private readonly List<Live> _live = new List<Live>();
+            private readonly List<Live> _done = new List<Live>();
+            public readonly List<string> Lines = new List<string>();
+
+            private static readonly System.Reflection.BindingFlags Private =
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+
+            public int Attempts => _done.Count + _live.Count;
+
+            public void Sample(RoundDirector round, MatchDirector match, int frame, float dt)
+            {
+                if (round == null) return;
+                Watch(round);
+
+                foreach (var live in _live) Step(live, round, dt);
+                for (int i = _live.Count - 1; i >= 0; i--)
+                {
+                    if (_live[i].ActiveLeft > 0.0f) continue;
+                    Finish(_live[i]);
+                    _done.Add(_live[i]);
+                    _live.RemoveAt(i);
+                }
+
+                foreach (var taya in round.Players)
+                {
+                    if (taya == null) continue;
+                    var verbs = taya.GetComponent<CombatVerbs>();
+                    if (verbs == null) continue;
+                    int slot = taya.PlayerSlot;
+                    var ai = taya.GetComponent<AIController>();
+
+                    bool charging = taya.IsDefender && verbs.ObservedLungeCharge >= 0.0f;
+                    _charging.TryGetValue(slot, out int chargeFrames);
+                    if (charging && chargeFrames == 0)
+                    {
+                        _planAtCharge[slot] = ai != null ? ai.Plan.ToString() : "human";
+                        _startAtCharge[slot] = DescribeStart(taya, ai);
+                        _tagsAtCharge[slot] = _tagsBySlot.TryGetValue(slot, out int tc) ? tc : 0;
+                    }
+                    int heldFrames = charging ? chargeFrames + 1 : chargeFrames;
+
+                    _cooling.TryGetValue(slot, out bool wasCooling);
+                    bool cooling = taya.IsDefender && verbs.LungeCooldownLeft > 0.0f;
+                    _cooling[slot] = cooling;
+
+                    // The collector and tag counts as of the previous sample: SweepLungeTag runs in the same
+                    // CombatVerbs.Update that releases, so a lunge that tags on its first live frame has already
+                    // been counted by the time this sample sees the cooldown edge.
+                    if (cooling && !wasCooling && chargeFrames > 0)
+                        _live.Add(Open(taya, verbs, ai, round, match, frame, chargeFrames, dt));
+
+                    _charging[slot] = charging ? heldFrames : 0;
+                    if (charging)
+                    {
+                        _hitsWhileCharging[slot] = LungeHits(slot);
+                        _tagsWhileCharging[slot] = _tagsBySlot.TryGetValue(slot, out int tw) ? tw : 0;
+                    }
+                }
+            }
+
+            private Live Open(CharacterMotor taya, CombatVerbs verbs, AIController ai, RoundDirector round,
+                              MatchDirector match, int frame, int chargeFrames, float dt)
+            {
+                var l = new Live
+                {
+                    Slot = taya.PlayerSlot, Frame = frame, Round = match != null ? match.RoundNumber : -1,
+                    ChargeFrames = chargeFrames, Time = round.TimeLeft,
+                    Plan = ai != null ? ai.Plan.ToString() : "human",
+                };
+                l.From = (Vector3)(typeof(CombatVerbs).GetField("_lungeFrom", Private)?.GetValue(verbs) ?? taya.transform.position);
+                l.Forward = taya.transform.forward; l.Forward.y = 0.0f; l.Forward.Normalize();
+                float charge = chargeFrames * dt;
+                l.Power = Mathf.Clamp(charge / Balance.LungeChargeTime, Balance.LungeMinPower, 1.0f);
+
+                var victim = ai != null ? typeof(AIController).GetField("_lastTagTarget", Private)?.GetValue(ai) as CharacterMotor : null;
+                l.VictimBody = victim;
+                l.Victim = victim != null ? victim.PlayerSlot.ToString() : "none";
+                foreach (var p in round.Players)
+                    if (p != null && p != taya && !p.IsDefender && p.IsTaggable()) l.AnyTaggable = true;
+
+                if (victim != null)
+                {
+                    l.VictimAt = victim.transform.position;
+                    l.VictimVel = victim.Velocity; l.VictimVel.y = 0.0f;
+                    l.VictimTaggable = victim.IsTaggable();
+                    Vector3 to = victim.transform.position - l.From; to.y = 0.0f;
+                    l.Distance = to.magnitude;
+                    l.Bearing = to.sqrMagnitude > 0.0001f ? Vector3.Angle(l.Forward, to) : 0.0f;
+                    l.Lateral = Vector3.Cross(l.Forward, to).magnitude;
+                }
+
+                string planAtCharge = _planAtCharge.TryGetValue(taya.PlayerSlot, out var p0) ? p0 : "-";
+                if (ai == null) l.Reason = "human";
+                else if (l.Plan != "Hunt") l.Reason = $"released-by-plan-change({planAtCharge}->{l.Plan})";
+                else if (victim == null || !l.VictimTaggable) l.Reason = "no-taggable-victim";
+                else if (charge >= AiTuning.LungeHoldTime + 0.45f - dt * 0.5f) l.Reason = "hold-timeout";
+                else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.Reason = "cone-release";
+                else l.Reason = "short-release";
+
+                l.HitsBefore = _hitsWhileCharging.TryGetValue(taya.PlayerSlot, out int hb) ? hb : LungeHits(taya.PlayerSlot);
+                l.Start = _startAtCharge.TryGetValue(taya.PlayerSlot, out var s0) ? s0 : "-";
+                l.PunchCooldown = verbs.PunchCooldownLeft;
+                l.TagsDuringCharge = (_tagsWhileCharging.TryGetValue(taya.PlayerSlot, out int tn) ? tn : 0)
+                                     - (_tagsAtCharge.TryGetValue(taya.PlayerSlot, out int t0) ? t0 : 0);
+                l.HeldAfter = ai != null ? (float)(typeof(AIController).GetField("_lungeHeld", Private)?.GetValue(ai) ?? 0.0f) : 0.0f;
+                return l;
+            }
+
+            /// <summary>The AI's own lunge bookkeeping on the first charging frame. `_lungeHeld`
+            /// near one frame means StepLungeIntent opened a fresh charge after its range check;
+            /// anything larger means the charge resumed from an earlier, unfinished hold.</summary>
+            private static string DescribeStart(CharacterMotor taya, AIController ai)
+            {
+                if (ai == null) return "human";
+                float held = (float)(typeof(AIController).GetField("_lungeHeld", Private)?.GetValue(ai) ?? 0.0f);
+                var victim = typeof(AIController).GetField("_lastTagTarget", Private)?.GetValue(ai) as CharacterMotor;
+                if (victim == null) return $"held={held:F3} victim=none";
+                Vector3 to = victim.transform.position - taya.transform.position; to.y = 0.0f;
+                return $"held={held:F3} victim={victim.PlayerSlot} dist={to.magnitude:F2} taggable={victim.IsTaggable()} range={AiTuning.For(ai.SeatDifficulty ?? AIController.ActiveDifficulty).LungeRange:F1}";
+            }
+
+            private static void Step(Live l, RoundDirector round, float dt)
+            {
+                var taya = round.PlayerAt(l.Slot);
+                if (taya == null) { l.ActiveLeft = 0.0f; return; }
+                Vector3 a = new Vector3(l.From.x, 0, l.From.z);
+                Vector3 b = new Vector3(taya.transform.position.x, 0, taya.transform.position.z);
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p == taya || p.IsDefender) continue;
+                    Vector3 t = new Vector3(p.transform.position.x, 0, p.transform.position.z);
+                    float d = Segment(t, a, b);
+                    bool taggable = p.IsTaggable();
+                    if (taggable) l.MinAnyTaggable = Mathf.Min(l.MinAnyTaggable, d);
+                    if (p != l.VictimBody) continue;
+                    l.MinVictim = Mathf.Min(l.MinVictim, d);
+                    if (taggable) l.MinVictimTaggable = Mathf.Min(l.MinVictimTaggable, d);
+                    else if (l.VictimTaggable) l.VictimLeftTaggable = true;
+                }
+                l.ActiveLeft -= dt;
+            }
+
+            private void Finish(Live l)
+            {
+                int hits = LungeHits(l.Slot) - l.HitsBefore;
+                string outcome = hits > 0 ? "HIT" : "miss";
+                Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} reason={l.Reason} " +
+                          $"charge={l.ChargeFrames} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
+                          $"dist={l.Distance:F2} bearing={l.Bearing:F1} lateral={l.Lateral:F2} victimSpeed={l.VictimVel.magnitude:F2} " +
+                          $"minVictim={Fmt(l.MinVictim)} minVictimWhileTaggable={Fmt(l.MinVictimTaggable)} minAnyTaggable={Fmt(l.MinAnyTaggable)} " +
+                          $"victimLeftTaggable={l.VictimLeftTaggable} heldAfterRelease={l.HeldAfter:F3} punchCooldown={l.PunchCooldown:F2} tagsDuringCharge={l.TagsDuringCharge} start=[{l.Start}] outcome={outcome}");
+                l.Hit = hits > 0;
+            }
+
+            private static string Fmt(float v) => v == float.MaxValue ? "-" : v.ToString("F2");
+
+            private static int LungeHits(int slot)
+            {
+                var stats = GameServices.Stats;
+                if (stats == null) return 0;
+                var lines = typeof(MatchStatsCollector).GetField("_lines", Private)?.GetValue(stats) as System.Array;
+                var line = lines != null && slot >= 0 && slot < lines.Length ? lines.GetValue(slot) : null;
+                if (line == null) return 0;
+                var member = line.GetType().GetField("LungeHits");
+                if (member != null) return (int)member.GetValue(line);
+                var prop = line.GetType().GetProperty("LungeHits");
+                return prop != null ? (int)prop.GetValue(line) : 0;
+            }
+
+            private static float Segment(Vector3 p, Vector3 a, Vector3 b)
+            {
+                Vector3 ab = b - a;
+                float len = ab.sqrMagnitude;
+                if (len < 1e-6f) return Vector3.Distance(p, a);
+                float t = Mathf.Clamp01(Vector3.Dot(p - a, ab) / len);
+                return Vector3.Distance(p, a + ab * t);
+            }
+
+            public string Describe()
+            {
+                var sb = new StringBuilder();
+                int hits = 0;
+                var byReason = new SortedDictionary<string, int[]>();
+                foreach (var l in _done)
+                {
+                    bool hit = l.Hit;
+                    if (hit) hits++;
+                    string key = l.Reason.StartsWith("released-by-plan-change") ? "released-by-plan-change" : l.Reason;
+                    if (!byReason.TryGetValue(key, out var c)) byReason[key] = c = new int[2];
+                    c[0]++; if (hit) c[1]++;
+                }
+                sb.AppendLine($"lunge trace: {_done.Count} completed lunges, {hits} hits");
+                foreach (var kv in byReason) sb.AppendLine($"  {kv.Key,-28} {kv.Value[1]}/{kv.Value[0]}");
+                foreach (var line in Lines) sb.AppendLine("  " + line);
+                return sb.ToString();
             }
         }
 

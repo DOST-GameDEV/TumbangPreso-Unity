@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.3610466">
+  <test-suite type="TestSuite" id="1555" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="422" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.361047" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1549" name="TumbangPreso.PlayTests.dll" fullname="/Users/paul/Documents/GitHub/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="422" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.351833" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46364" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1550" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="422" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.349839" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1551" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="422" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.348650" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="AiDiagnosticProbe" fullname="TumbangPreso.PlayTests.AiDiagnosticProbe" classname="TumbangPreso.PlayTests.AiDiagnosticProbe" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.314910" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1012" name="HeroLungesAcrossAWholeMatchAreExplained" fullname="TumbangPreso.PlayTests.AiDiagnosticProbe.HeroLungesAcrossAWholeMatchAreExplained" methodname="HeroLungesAcrossAWholeMatchAreExplained" classname="TumbangPreso.PlayTests.AiDiagnosticProbe" runstate="Runnable" seed="1844711802" result="Passed" start-time="2026-09-15 11:23:16Z" end-time="2026-09-15 11:24:32Z" duration="76.288621" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 2.1 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6030 / 5780 / 6020 / 6730. seat 3 wins
+lunge trace  ·  HeroStrike  ·  Eskinita  ·  seed 1  ·  45899 frames at 1/60 s, time scale 1
+collector: 4/7 lunge hits/attempts; tracker saw 7 releases
+lunge trace: 7 completed lunges, 1 hits
+  cone-release                 1/2
+  no-taggable-victim           0/5
+  frame=9265 round=2 left=32.6 taya=1 plan=Hunt reason=no-taggable-victim charge=42 power=1.00 victim=2 victimTaggable=False anyTaggable=False dist=5.54 bearing=123.3 lateral=4.63 victimSpeed=0.00 minVictim=5.54 minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=False heldAfterRelease=0.700 punchCooldown=0.90 tagsDuringCharge=1 start=[held=0.017 victim=2 dist=2.88 taggable=True range=2.6] outcome=miss
+  frame=15893 round=3 left=18.5 taya=2 plan=Hunt reason=no-taggable-victim charge=35 power=1.00 victim=3 victimTaggable=False anyTaggable=False dist=6.08 bearing=133.7 lateral=4.40 victimSpeed=0.00 minVictim=6.08 minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=False heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=1 start=[held=0.017 victim=3 dist=1.47 taggable=True range=2.6] outcome=miss
+  frame=24505 round=5 left=66.8 taya=0 plan=Hunt reason=cone-release charge=38 power=1.00 victim=1 victimTaggable=True anyTaggable=True dist=4.25 bearing=32.4 lateral=2.28 victimSpeed=1.16 minVictim=2.53 minVictimWhileTaggable=2.53 minAnyTaggable=2.53 victimLeftTaggable=False heldAfterRelease=-1.000 punchCooldown=0.31 tagsDuringCharge=0 start=[held=0.001 victim=3 dist=0.74 taggable=True range=2.6] outcome=miss
+  frame=26796 round=5 left=29.3 taya=0 plan=Hunt reason=cone-release charge=33 power=1.00 victim=3 victimTaggable=True anyTaggable=True dist=1.31 bearing=3.0 lateral=0.07 victimSpeed=2.66 minVictim=7.77 minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=True heldAfterRelease=-1.000 punchCooldown=0.40 tagsDuringCharge=0 start=[held=0.001 victim=3 dist=1.62 taggable=True range=2.6] outcome=HIT
+  frame=30298 round=6 left=66.6 taya=1 plan=Hunt reason=no-taggable-victim charge=29 power=0.97 victim=3 victimTaggable=False anyTaggable=False dist=5.37 bearing=68.4 lateral=4.99 victimSpeed=0.00 minVictim=4.95 minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=False heldAfterRelease=-1.000 punchCooldown=0.11 tagsDuringCharge=1 start=[held=0.017 victim=3 dist=2.68 taggable=True range=2.6] outcome=miss
+  frame=38913 round=7 left=19.6 taya=2 plan=Hunt reason=no-taggable-victim charge=9 power=0.35 victim=none victimTaggable=False anyTaggable=False dist=0.00 bearing=0.0 lateral=0.00 victimSpeed=0.00 minVictim=- minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=False heldAfterRelease=0.087 punchCooldown=0.80 tagsDuringCharge=0 start=[held=0.001 victim=3 dist=2.36 taggable=True range=2.6] outcome=miss
+  frame=42289 round=8 left=59.1 taya=3 plan=Hunt reason=no-taggable-victim charge=35 power=1.00 victim=2 victimTaggable=False anyTaggable=False dist=4.45 bearing=110.9 lateral=4.15 victimSpeed=0.00 minVictim=3.57 minVictimWhileTaggable=- minAnyTaggable=2.17 victimLeftTaggable=False heldAfterRelease=-1.000 punchCooldown=0.28 tagsDuringCharge=1 start=[held=0.017 victim=2 dist=2.72 taggable=True range=2.6] outcome=miss
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

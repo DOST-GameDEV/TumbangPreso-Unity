@@ -1,0 +1,32 @@
+slipper lookup cost  ·  HeroStrike  ·  IlalimNgTulay
+45964 frames, 766.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.703 ms; gen0 collections 3
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 553, Transform 2243, Component 6199
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      49.847 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                50.321 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                47.184 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      48.616 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                48.134 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.042 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.095 us     0.0 B  (15/15 batches without a collection)
+
+call frequency by production site (instrumented copy; us/call includes the meter's own Stopwatch overhead; B/call* is the unit-rate figure above):
+site                                             calls  per sim s  per frame  us/call  ms total B/call*  avg n
+AIController.cs:1672                             37321       48.7      0.812    69.71    2601.8       0   3.00
+RoundDirector.cs:408                             36008       47.0      0.783    85.08    3063.5       0   3.00
+AIController.cs:4001                             14524       19.0      0.316    66.91     971.8       0   3.00
+AIController.cs:954                               6719        8.8      0.146    72.60     487.8       0   3.00
+Map/StreetTripHazard.cs:239                       2783        3.6      0.061    67.56     188.0       0   3.00
+AIController.cs:1693                              2177        2.8      0.047    72.97     158.9       0   3.00
+CombatVerbs.cs:628                                1401        1.8      0.030    61.14      85.7       0   3.00
+Carrier.cs:710                                    1371        1.8      0.030    57.15      78.3       0   3.00
+CombatVerbs.cs:517                                 389        0.5      0.008    62.35      24.3       0   3.00
+AIController.cs:1244                               225        0.3      0.005    58.99      13.3       0   3.00
+Abilities/ZackHeroKit.cs:377                        40        0.1      0.001    61.71       2.5       0   3.00
+Abilities/DanteHeroKit.cs:132                       31        0.0      0.001   109.03       3.4       0   3.00
+AIController.cs:4084                                24        0.0      0.001    57.31       1.4       0   3.00
+AIController.cs:3660                                 2        0.0      0.000    64.00       0.1       0   3.00
+MatchStatsCollector.cs:399                           1        0.0      0.000    56.20       0.1       0   4.00
+TOTAL calls 103016 (134.5/sim s, 2.24/frame), time 7680.7 ms (0.1671 ms/frame = 9.81% of mean frame wall time), allocation at the unit rate 0 KiB (0 B/sim s)
