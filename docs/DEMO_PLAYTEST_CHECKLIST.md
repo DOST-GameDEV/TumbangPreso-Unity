@@ -121,21 +121,22 @@ or Editor screenshots for a verified native demo build.
 
 ## Current preserved candidate, September16
 
-- Executable/data: Builds/round-boundary-v24/TumbangPreso.exe and its adjacent data folder.
-- Runtime SHA256:e08238cfe7b6d8880e4c55c0ab56ba98a66630d36af9f974240f72f3fb79f0fc.
+- Executable/data: Builds/demo-2026-09-16-v29/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:2380E9DC8115C75E5FE04A346AD0ECC2EAE99A4D7CB25785A07991567E7E84FF.
 - Protocol42; use matching current builds for LAN. Both-mode delayed rejoin through
   the next round passed. Physical venue LAN and the remaining C4 scope stay open.
 - Native routes/matches: final supplied UI, both modes' short custom loops,
   Classic rematch, pause/resume and menu return passed. See
-  reports/demo-loop-v24-2026-09-16. Full direct verb acceptance remains open.
-- This binary predates the additional reduced-motion static focus-marker fix.
-- Current isolated1366x768 samples: Classic171.86/Hero191.02FPS averages,
-  p99 16.67/9.97ms, maxima36.66/40.01ms. About28seconds per mode on this PC.
+  reports/demo-candidate-v29-2026-09-16. Direct staged-input verbs also pass in
+  both modes on this same binary. Physical/human review remains open.
+- This binary includes the static focus marker, pickup fix and role-specific HUD.
+- Current isolated1366x768 samples: Classic173.79/Hero192.13FPS averages,
+  p99 16.66/6.71ms, maxima66.65/36.69ms. About28seconds per mode on this PC.
 - Nativev3 measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.
   Nativev4 checks ran concurrently and do not provide clean performance evidence.
 - Known issues or intentionally deferred features: see current ledger; not yet frozen.
-- Fallback: internalv24 is preserved while newer source is qualified. Earlier
+- Fallback: internalv29 andv28 are preserved while newer source is qualified. Earlier
   v11/v4 binaries remain historical artifacts, not the recommended current build.
   Relaunch the selected executable and
   use Guest -> Play -> With bots if a demo session needs restarting.

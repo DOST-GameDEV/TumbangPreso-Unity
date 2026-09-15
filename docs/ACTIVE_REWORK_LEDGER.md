@@ -1,5 +1,42 @@
 # Active TUMP rework ledger
 
+## CURRENT v29 candidate qualified; publish then close-view feedback polish
+
+Same binary passed direct control cases and full UI/both-mode timed results/
+rematch loop. Role-specific cooldown HUD inspected: no irrelevant SHOVE CD while
+defending; LUNGE CD still appears after lunge. Build1135MB/45s,
+guard950bc3fb7699, Runtime SHA256
+2380E9DC8115C75E5FE04A346AD0ECC2EAE99A4D7CB25785A07991567E7E84FF.
+Logs/demo-direct-v29 and Logs/demo-loop-v29 pass; PIDs4748/18972 retired; shared
+input unchanged. No active Editor/player. Report: reports/demo-candidate-v29-2026-09-16.
+Short frame-window limits and staged-input limits remain explicit. Demo queue2/5
+now complete for automated/native scope; human approval and whole project stay open.
+
+Next visible issue comes from the actual direct captures: a near TAGGED caption
+fills most of the upper view, and nearby can confetti becomes large foreground
+blocks. Sources: Visual/ComicPopup.cs uses fixed world size; ImpactBurst uses
+billboard particles; HeroHazards.SpawnConfettiShower emits physical small cuboids.
+Preserve fonts, colours, priority/lifetime, festive look and gameplay RNG. Plan a
+close-view size/fade guard, inspect near/distant/secondary cameras, and validate
+actual native tag/can events. No original menu art or character model changes.
+Owner asleep: no reset credits, optional questions, other chats or agents. C4 reserved.
+
+## CURRENT pickup fix pushed; role-specific cooldown HUD cleanup building
+
+Verified pushed2e505944ea32fe8c173b71c6aaf88e5315c7e72d. Direct native controls and
+pickup regression are qualified; preserve their evidence, do not repeat their
+baseline investigation. One small UI cleanup now changes StatusStack.Collect:
+show throw/shove cooldowns for attackers and lunge/tag cooldowns for defenders.
+The live timers remain unchanged. This addresses the SHOVE CD shown after the
+quick defender role advance in the actualv28 capture. No new test boilerplate.
+
+Building Builds/demo-2026-09-16-v29/TumbangPreso.exe, Logs/demo-build-v29.log.
+After build, use existing direct-control walkthrough to inspect the actual changed
+defender HUD, then run the full native loop on this same candidate for its final
+current-artifact route qualification. No unrelated Editor matrices. Preservev24/v28
+as checkpoints; no Desktop replacement. Owner asleep; no resets/questions/agents.
+After publishing the candidate receipt, continue the full gameplay/whole-kit queue.
+
 ## CURRENT pickup/shove fix qualified; direct native controlsPASS; publish
 
 Carrier now keeps pickup ownership of the grab press until release. Reproduced

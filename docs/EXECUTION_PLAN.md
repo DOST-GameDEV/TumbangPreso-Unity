@@ -1,5 +1,12 @@
 # Active execution plan
 
+**Current preserved candidate:** Windowsv29 passes both direct controls and the
+full native loop on the same executable. See reports/demo-candidate-v29-2026-09-16.
+Only role-specific cooldown label filtering was added after2e505944. Publish then
+address the observed oversized near-camera tag captions/confetti; preserve this
+working candidate and continue all remaining gameplay tasks. C4 stays reserved.
+
+
 **Latest direct-gameplay checkpoint:** Carrier pickup now consumes its grab press
 until release, preventing an unintended shove/stamina cost on a second Update.
 Local regression and both native control sequences PASS onv28. See

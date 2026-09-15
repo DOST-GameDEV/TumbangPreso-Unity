@@ -139,8 +139,11 @@ Prefer recognizable icons and reserve words/numbers for necessary information.
    at8 rounds and settings grey/dark. Required windows:960x540,1366x768,1920x1080,
    plus the already-established4:3/ultrawide coverage for any changed view.
    Finish or isolate current D10 edits without introducing another visual redesign.
-2. [ ] **Prove the whole loop in a fresh native player.** Native UI/match/result/
-   rematch routes now pass in both modes; direct play of all named verbs remains.  Cold boot to Guest, pick
+2. [x] **Prove the whole loop in a fresh native player.** The same Windowsv29
+   executable passes both-mode direct control cases and the complete UI/match/
+   result/rematch routes. Staged target/role setup is explicit; physical/human play
+   remains in the separate checklist. See reports/demo-candidate-v29-2026-09-16.
+   Cold boot to Guest, pick
    a character and map, start offline Classic and Hero Strike, throw, retrieve,
    defend, recover, pause/resume, finish, show results and rematch. Repair stalls,
    missing controls, wrong roles/scores and lost input before cosmetic work. Confirm
@@ -163,7 +166,11 @@ Prefer recognizable icons and reserve words/numbers for necessary information.
    demo fallback. Exhaustive joining-during-every-windup, host-switch and all-variant
    matrices follow the visible/demo work; keep attempting them before tomorrow when
    time allows, and promote any discovered demo blocker immediately.
-5. [ ] **Freeze and verify a reproducible demo candidate.** Build a versioned internal
+5. [x] **Freeze and verify a reproducible demo candidate.** Windowsv29 is preserved
+   with its exact build/hash, two native entry runs, current operator route and
+   measured short frame windows. Occasional hitches and missing human listening/
+   device checks remain explicit in reports/demo-candidate-v29-2026-09-16.
+   Build a versioned internal
    Windows artifact, record commit/hash and exact executable/data timestamps, run
    the actual candidate at ordinary speed and inspect errors and measured frame
    stability on this PC. Check audio, readable HUD, restart and a second match.

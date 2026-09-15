@@ -106,7 +106,7 @@ namespace TumbangPreso
             // was missing from this list entirely. It is the beat between HAVING the slipper and
             // being able to throw it, and without a row the player presses fire, nothing
             // happens, and there is no reason on screen for it.
-            if (carrier != null && carrier.ThrowLocked)
+            if (!m.IsDefender && carrier != null && carrier.ThrowLocked)
                 into.Add(new StatusRow
                 {
                     Label = "THROW CD",
@@ -117,7 +117,9 @@ namespace TumbangPreso
 
             if (verbs != null)
             {
-                if (verbs.ShoveCooldownLeft > 0.0f)
+                // Timers keep running across role changes; the HUD only names actions
+                // available to the current role. Do not reset gameplay state to hide a row.
+                if (!m.IsDefender && verbs.ShoveCooldownLeft > 0.0f)
                     into.Add(new StatusRow
                     {
                         Label = "SHOVE CD",
@@ -126,7 +128,7 @@ namespace TumbangPreso
                         Timed = true,
                     });
 
-                if (verbs.LungeCooldownLeft > 0.0f)
+                if (m.IsDefender && verbs.LungeCooldownLeft > 0.0f)
                     into.Add(new StatusRow
                     {
                         Label = "LUNGE CD",
@@ -135,7 +137,7 @@ namespace TumbangPreso
                         Timed = true,
                     });
 
-                if (verbs.PunchCooldownLeft > 0.0f)
+                if (m.IsDefender && verbs.PunchCooldownLeft > 0.0f)
                     into.Add(new StatusRow
                     {
                         // To the player this is the taya's short-range tag, not a generic

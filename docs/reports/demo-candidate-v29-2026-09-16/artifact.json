@@ -1,0 +1,18 @@
+{
+  "unity": "6000.5.8f1",
+  "protocol": 42,
+  "base_commit": "2e505944ea32fe8c173b71c6aaf88e5315c7e72d",
+  "pending_production_change": "StatusStack role-specific cooldown presentation",
+  "files": {
+    "Builds/demo-2026-09-16-v29/TumbangPreso.exe": {
+      "sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+      "bytes": 667648,
+      "modified_utc": "2026-09-15T17:30:38.243664+00:00"
+    },
+    "Builds/demo-2026-09-16-v29/TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll": {
+      "sha256": "2380e9dc8115c75e5fe04a346ad0ecc2eae99a4d7cb25785a07991567e7e84ff",
+      "bytes": 2062336,
+      "modified_utc": "2026-09-15T17:30:41.331274+00:00"
+    }
+  }
+}
