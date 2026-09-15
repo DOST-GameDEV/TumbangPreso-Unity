@@ -17,7 +17,8 @@ is still reserved to the separate Claude PC, whose paths must be discovered.
 
 
 **New Claude reservation:** [C4 request safety](CLAUDE_REQUEST_SAFETY_LANE.md)
-owns TODO149.4's remaining action-request audit. It is RESERVED, NOT STARTED.
+owns TODO149.4's remaining action-request audit. It is IN PROGRESS: C4.1 inventory done
+with real-peer evidence, C4.2 and C4.3 open, no production change.
 Codex leaves the listed networking files and task alone while doing the requested
 UI edit and then independent gameplay work. Incomplete criteria stay unchecked.
 
@@ -2451,6 +2452,14 @@ gameplay verb pressed during the join window is a verb pressed before the player
 **September15 ownership:** reserved to the separate Claude PC as C4 in
 CLAUDE_REQUEST_SAFETY_LANE.md. Do not duplicate that work here. Preserve cleared
 siblings and the recently qualified preparation/movement snapshots.
+
+**2026-09-15 C4 status (Claude, still OPEN):** throw, grab, shove, punch, lunge, slide and
+hero casts were traced and then measured with two real Mac players sending duplicated,
+stale-seat and wrong-role requests: the host granted each effect once, spent each resource
+once, stamped each cooldown once and refused the rest, across a rematch, a 150 ms round trip
+and a seat reclaim. No production change. Open: three traced, unreproduced client rollback
+limitations (F1 to F3, two need excluded ability files), no re-hosted session, killed-client,
+lossy-link or Windows run. [Report](reports/claude-request-safety-2026-09-15/README.md).
 
 Concrete classes to look for on the competitive paths, in order of what would actually cost a
 match: a rejected packet refreshing a timer, a duplicate RPC granting an effect twice, a stale

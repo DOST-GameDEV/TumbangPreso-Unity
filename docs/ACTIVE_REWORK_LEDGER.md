@@ -1,5 +1,24 @@
 # Active TUMP rework ledger
 
+## CURRENT saved UI checkpoint integrates C4 inventory; focused checks next
+
+Owner is asleep: no optional questions and NO usage resets under any circumstances.
+Local UI checkpoint b8f90123 preserves final references, generated clouds and work
+in progress. Remote advanced with787ae4af/8aa36050 C4 inventory/probe/evidence;
+merged without conflicts or production Net changes. C4 is still IN PROGRESS:
+C4.1 complete, C4.2/C4.3 open. Respect its reservation. Findings F1/F2 need real
+peer reproduction and excluded ability changes; leave those for later coordination.
+
+Newest login contract is NO EMAIL, username/password/confirmation on sign-up,
+username/password on sign-in, supplied eye icons, matching top-tab content, no
+redundant link row, new woven background. Main-menu artwork is finalized. Only
+layered generated clouds and perspective-correct masked wind across sand change.
+Current import passed under guard3f67c7c917e0; source compiles. Final revised visual
+and runtime checks have not passed yet. Next focused OwnerMenu fixtures, inspect
+actual images and mask defects, then nativev22 clip. Commit/push now as WIP and
+continue, never claim the UI or whole project complete from this checkpoint.
+
+
 ## CURRENT final login references supersede email; preserve finalized main art
 
 Owner is asleep. Do not ask optional questions; continue all work after UI. NEVER
