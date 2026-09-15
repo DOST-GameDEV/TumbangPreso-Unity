@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    public sealed class OwnerPreparationView : MonoBehaviour
+    public sealed partial class OwnerPreparationView : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
         public MapPreviewSurface Preview { get; private set; }
@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
         public readonly Image[] Portraits=new Image[4];
         public readonly Text[] SeatLabels=new Text[4];
         public RectTransform QueueHost;
-        public void Build(Transform owner,Action back,Action primary,Action start,Action join,Action online,
+        private void BuildPreviousPainted(Transform owner,Action back,Action primary,Action start,Action join,Action online,
             Action spectate,Action custom,Action loadout,Action profile,Action settings,
             Action<int> map,Action<int> mode,Action<int> bots,Action<int> seat,Action copyCode,Action copyAddress,Action<LobbyMode> route,Action chat)
         {
@@ -130,6 +130,7 @@ namespace TumbangPreso.UI
         {
             var image=Portraits[seat];
             image.sprite=OwnerPortraitArt.Get(resource);image.enabled=image.sprite!=null;
+            if(_emptySeatMarks[seat]!=null)_emptySeatMarks[seat].gameObject.SetActive(false);
         }
         public void SelectRoute(LobbyMode selected)
         {
@@ -137,7 +138,7 @@ namespace TumbangPreso.UI
             for(int i=0;i<_routes.Length;i++)
             {
                 bool active=kinds[i]==selected;
-                _routes[i].GetComponentInChildren<Text>().color=active?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _routes[i].GetComponentInChildren<Text>().color=active?OwnerUiTheme.Current.Lime:OwnerUiTheme.Current.Pale;
                 _routes[i].transform.Find("SelectedRoute").gameObject.SetActive(active);
             }
             MatchChoices.SetActive(selected!=LobbyMode.Ranked);RankedSummary.SetActive(selected==LobbyMode.Ranked);

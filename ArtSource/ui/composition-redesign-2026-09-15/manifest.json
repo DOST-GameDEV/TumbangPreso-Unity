@@ -13,5 +13,15 @@
     "file": "loading-street-v1.png",
     "sha256": "0353ed998b7cf687677a04da936ae0784106c57659c46b514ac6ae2306bf951f",
     "bytes": 2521002
+  },
+  {
+    "file": "account-gate-v1-style-rejected.png",
+    "sha256": "ac14d18d367bc6b10f13325936b280bfd7ee450983a984a71c447fe32446502f",
+    "bytes": 1983585
+  },
+  {
+    "file": "account-gate-v2.png",
+    "sha256": "8a6bdff11645036f75439c00098f9d0a37d6bef690b30155c0d5726009a56014",
+    "bytes": 1513615
   }
 ]

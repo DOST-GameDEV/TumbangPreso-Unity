@@ -87,7 +87,7 @@ namespace TumbangPreso.UI
             _lanAddresses.Clear();
             for (int i = 0; i < _lanRows.Count; i++)
             {
-                if (i >= lan.Count) { NativeRoom(_lanRows[i], i == 0, false, "No nearby rooms found yet", "You can still enter a code or address above."); continue; }
+                if (i >= lan.Count) { NativeRoom(_lanRows[i], i == 0, false, "No nearby rooms found yet", "You can still enter a code or address to join."); continue; }
                 var entry = lan[i]; string address = entry.Address + ":" + entry.Port; _lanAddresses.Add(address);
                 NativeRoom(_lanRows[i], true, !_busy, entry.HostName + " · " + entry.Players + "/" + entry.MaxPlayers,
                     (entry.InProgress ? "In a match" : "In the lobby") + " · " + address);
@@ -100,7 +100,7 @@ namespace TumbangPreso.UI
             _onlineCodes.Clear();
             for (int i = 0; i < _onlineRows.Count; i++)
             {
-                if (i >= online.Count) { NativeRoom(_onlineRows[i], i == 0, false, "No online rooms found yet", "Enter a friend's room code above."); continue; }
+                if (i >= online.Count) { NativeRoom(_onlineRows[i], i == 0, false, "No online rooms found yet", "You can still enter a friend's room code."); continue; }
                 var entry = online[i]; string code = string.IsNullOrEmpty(entry.JoinCode) ? entry.Name : entry.JoinCode; _onlineCodes.Add(code);
                 NativeRoom(_onlineRows[i], true, !_busy, code + " · " + entry.Players + "/" + entry.Capacity,
                     entry.Name + " · " + (entry.InProgress ? "In a match" : "In the lobby"));

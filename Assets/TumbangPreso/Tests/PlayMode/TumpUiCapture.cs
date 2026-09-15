@@ -11,6 +11,11 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
+        internal static readonly Vector2Int[] PcViewports = {
+            new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
+            new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
+            new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160)
+        };
         internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null, bool checkActionBounds = false)
         {
             Assert.IsNotNull(canvas);
@@ -67,7 +72,8 @@ namespace TumbangPreso.PlayTests
                 foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
-                        || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface;
+                        || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface
+                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
@@ -83,6 +89,9 @@ namespace TumbangPreso.PlayTests
                     var corners = new Vector3[4];
                     foreach (var button in canvas.GetComponentsInChildren<Button>())
                     {
+                        // Hidden room chat stays active to receive messages. Its
+                        // zero-alpha CanvasGroup is not part of this visible layout.
+                        if (button.targetGraphic != null && button.targetGraphic.canvasRenderer.GetInheritedAlpha() <= .001f) continue;
                         ((RectTransform)button.transform).GetWorldCorners(corners);
                         foreach (var corner in corners)
                         {
@@ -93,11 +102,12 @@ namespace TumbangPreso.PlayTests
                     }
                     foreach (var text in canvas.GetComponentsInChildren<Text>())
                     {
-                        if (string.IsNullOrWhiteSpace(text.text)) continue;
+                        if (!text.enabled || string.IsNullOrWhiteSpace(text.text) || text.canvasRenderer.GetInheritedAlpha() <= .001f) continue;
+                        string path = string.Join("/", text.GetComponentsInParent<Transform>().Reverse().Select(t => t.name));
                         Assert.LessOrEqual(text.preferredHeight, text.rectTransform.rect.height + 3,
-                            name + "/" + text.name + " clips its content.");
+                            name + "/" + path + " clips its content.");
                         Assert.GreaterOrEqual(text.fontSize * canvas.scaleFactor, 13.95f,
-                            name + "/" + text.name + " is below the small-window reading floor.");
+                            name + "/" + path + " is below the small-window reading floor.");
                     }
                 }
                 RenderTexture.active = rt;

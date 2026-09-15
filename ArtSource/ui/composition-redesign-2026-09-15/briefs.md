@@ -34,3 +34,15 @@ Original outputs remain in the local generated_images task folder. These portabl
 copies and their hashes are authoritative if the original workstation changes.
 The source rasters are1672x941. Native text/shapes remain resolution-independent;
 all PC-size checks must distinguish layout support from source bitmap resolution.
+
+## Account gate v1 and v2
+
+Built-in generation: account illustration only, near-square open green community
+court gate, small distant can, two slippers, native-logo room upper-left and quiet
+dark lower quarter for captions. Warm Philippine neighbourhood, no people/text/UI.
+V1 rejected: plaster and foliage too detailed despite flat-shape brief.
+V2 targeted edit preserves the gate composition and takes style only from original
+TUMP (5): thick uneven burgundy outlines, broad green foliage clumps, two tones per
+wall/roof/gate face, remove realistic wear/flecks. Original owner image unaltered.
+Source outputs exec-bbce01d8-7fa3-441a-8c0f-2ae6cf7f1c61 and
+exec-027037eb-5b4b-4026-961b-3435b9e82d41.

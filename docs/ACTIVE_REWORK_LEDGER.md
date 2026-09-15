@@ -1,5 +1,102 @@
 # Active TUMP rework ledger
 
+## CURRENT D2 verified and ready to save; login remains protected
+
+rooms-v3 FINISHED5/5PASS, restorationcd49fbd565fe; Python3132 retired.
+Browser-v4 FINISHED1/1PASS, restoration0a7f11ce2e7f; Python16248 retired.
+No Unity/image/build/player/browser process running. Inspected actual corrected
+browser1080p/32:9 and preparation friends4:3/ranked540p/Classic1080p.
+Report/screenshots/XML: reports/ui-composition-d2. Source is uncommitted on9bba95a1,
+origin fetched and no divergence. Final login diff against9bba95a1 is empty.
+
+Browser's ROOM line disappeared despite preferredHeight fitting; new actual
+line/character check and larger title area fix it. Five related room cases pass;
+no remote join or new multiplayer match is claimed. Ten-size coverage is for
+visible preparation and directory states, not hidden chat or active queue/fill.
+Original shared-input/profile files were hash-restored. Generated-only metadata
+whitespace was restored after verifying it had no semantic change.
+
+Next commit/push this coherent D2 batch, then implement the remaining settings/
+selection/equipment/other UI and U8 native motion/routes. Continue full gameplay
+bookmark afterward. Preserve OLD LOGIN LOOK, no Figma/delegation/resets.
+Settings source review complete: TumpSettingsView.OwnerPainted, OwnerSettingsRows,
+OwnerOptionMenu and TumpNativeSettingsTests. These helpers also serve player hub/
+touch, so isolate new settings presentation; do not globally reskin them.
+
+
+## CURRENT D2 preparation and room browser, login protected
+
+Preparation-v2 FINISHED2/2PASS, restoration15931c49b831, Python10940/Unity4388
+retired. Inspected actual Classic1080p and ranked960x540 screenshots. Native map
+preview stays16:9. Replaced reused account-person placeholders with neutral native
+bot/open-seat marks; real occupied slots retain actual portraits. Added separate
+room directory builder LobbyJoinPanel.CourtBrowser, with code entrance on wine
+rail and nearby/online lists on their own reading field, no account button/field
+art. Existing cancellation/async logic remains in place. All source uncommitted
+on9bba95a1. Original login remains restored exactly and must not be redesigned.
+
+RUNNING guarded rooms-v3, Python3132, Logs/ui-composition-rooms-v3
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-preparation-review.
+Five focused checks: Classic/Hero preparation, ranked preparation, actual local
+friends host/chat/room controls, directory lists/error/Back, delayed join cancel.
+Ten-size matrix includes closed friends view and both directory list states.
+No C# or imported asset edits while Unity runs. No image/player/browser jobs.
+Next inspect XML/profile/captures, fix defects, save verifiedD2 and continue
+settings/selection/other UI. U8 motion and full gameplay queue still follow.
+
+## CURRENT preparation redesign qualification
+
+Login remains restored exactly, per latest owner instruction. New preparation
+builder OwnerPreparationView.Court, PreparationBoard and PreparationReadyAction/Art
+use live map imagery, a dark green gathering layout and separate clipped rules
+sheet. All inherited service/data/ready/loadout callbacks preserved. Source is
+uncommitted on9bba95a1. New geometry and ten-size checks cover Classic/Hero/ranked.
+Prep-v1 finished0/2 because the new visible-layout assertion inspected the hidden
+chat subtree, which stays active at CanvasGroup alpha0 to retain incoming history.
+Corrected qualifier to ignore only fully invisible inherited alpha, not offscreen
+or clipped visible controls; error paths now identify the entire hierarchy.
+Receipt a76f37281303, Python14088/Unity13500 retired. No runtime chat change.
+RUNNING guarded prep-v2, Python10940, Logs/ui-composition-preparation-v2
+(.pid/.stdout/.stderr/.log/.xml). Two specific preparation tests, namedprofile
+ui-composition-preparation-review. PID also recorded in the .pid file. No C# or
+imported asset edits until it exits. Next inspect evidence/screenshots and qualify
+friends room controls, then save checkpoint and continue other UI. No image jobs.
+
+## CURRENT owner correction: previous login restored; other screens continue
+
+Owner explicitly says the OLD LOGIN LOOK WAS GOOD and asks to redesign only the
+other screens. Restored SignInScreen.cs, SignInScreen.OwnerPainted.cs and account
+test edits exactly to9bba95a1. No active Assets reference AccountGateArt or
+BuildCourtAccount. New runtime gate art/builders moved to ignored
+Logs/rejected-account-redesign; generated source retained as unused exploration.
+No login redesign was committed/pushed. CurrentD1HEAD9bba95a1 remains onorigin.
+
+Account-v1 stopped on duplicate archived method names, receipt3aa50d43bb8e.
+Account-v2 completed2/2PASS, receiptc6c2129bc677; Python22584/Unity22804 exited.
+That passing candidate is WITHDRAWN, not approved or active. Its outcome cannot
+justify overriding the owner's login choice. No image/Unity/player job running.
+Both gate image jobs56/61 finished, none pending.
+
+Next: match preparation new composition draft at
+Logs/ui-drafts/OwnerPreparationView.Court.cs. Finish its dedicated board/action
+geometry, then apply outside a Unity run and run only related preparation checks.
+Keep actual preview, lobby/ready/account/loadout callbacks. Test PC-size matrix.
+Continue other UI screens/U8, then the full gameplay bookmark. Login stays as it was.
+
+## CURRENT D2 account composition in progress
+
+D1 committed and pushed as9bba95a1. No Unity run active. New account art/form
+split uses SignInScreen.CourtAccount and AccountGateArt, retaining old builder
+inactive. Original fields/tabs/actions are used specifically on this account
+screen. Startup no-Back and offline Guest callbacks preserved. Form controls
+larger, feedback lives on the dark illustration side, focus chain includes
+terms link and mode switch. Account create/sign-in checks now cover ten PC sizes.
+Not tested yet. First generated gate image is too detailed and is being simplified
+against the owner's actual art style: image job cell61 RUNNING. Original cell56
+completed at exec-bbce01d8-7fa3-441a-8c0f-2ae6cf7f1c61.png. No paid API/Figma.
+Next inspect/copy selected image and run two focused account tests. Keep doing
+preparation/layout source review while generation or Unity is working. No agents.
+
 ## CURRENT D1 verified; continuing account composition
 
 Guarded front-v4 FINISHED 2/2 PASS. Fresh XML: Logs/ui-composition-front-v4.xml;

@@ -18,3 +18,11 @@ quiet lower-left tip space. Selected for in-engine testing. It is not reused as
 home art and contains no baked controls/text. The native loading view preserves
 actual progress and optional stories. Original generator files remain in the
 local generated_images folder; this directory holds portable project copies.
+
+Account gate: v1 rejected for detailed environment-painting treatment. V2 uses
+strong burgundy outlines, broad foliage and simpler planes; selected for runtime
+review beside the native account form. Built-in generation only, no API fallback.
+
+OWNER CORRECTION: the original login was already approved. Both gate images are
+unused exploration, not selected UI assets. The form split and runtime art were
+withdrawn. Do not apply these to login or automatically recycle them elsewhere.

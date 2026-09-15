@@ -206,8 +206,7 @@ namespace TumbangPreso.UI
                 if(occupied && pick>=0 && pick<people.Count)_ownerPreparation.SetPortrait(i,"UI/portraits/"+people[pick].Id);
                 else
                 {
-                    _ownerPreparation.Portraits[i].sprite=OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Person);
-                    _ownerPreparation.Portraits[i].enabled=true;
+                    _ownerPreparation.SetEmptySeat(i,_ownerRoute!=LobbyMode.Ranked && AIController.BotsEnabled);
                 }
                 string label=mine?"YOU":occupied?(info.Name??"PLAYER "+(i+1)):
                     _ownerRoute!=LobbyMode.Ranked && AIController.BotsEnabled?"BOT":"OPEN";

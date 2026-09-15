@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:12Z" duration="20.5140981">
+  <test-suite type="TestSuite" id="1527" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:12Z" duration="20.514098" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1521" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:12Z" duration="20.492485" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19644" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1522" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:12Z" duration="20.480337" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1523" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:12Z" duration="20.468424" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1303" name="OwnerPreparationTests" fullname="TumbangPreso.PlayTests.OwnerPreparationTests" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:30:10Z" duration="17.743192" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1307" name="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" methodname="FriendsHostKeepsChatHistoryWhileHiddenAndRoomControlsReachable" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="932991504" result="Passed" start-time="2026-09-15 00:29:52Z" end-time="2026-09-15 00:29:58Z" duration="5.789389" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18658, join code X9FC
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=67, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=72, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=77, material=1
+[TumpGeometry] CourtPreparation-friends-960x540/StartButton: vertices=61, cull=False, alpha=1, depth=81, material=1
+[TumpUiCapture] CourtPreparation-friends-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=67, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=72, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=77, material=1
+[TumpGeometry] CourtPreparation-friends-1280x720/StartButton: vertices=61, cull=False, alpha=1, depth=81, material=1
+[TumpUiCapture] CourtPreparation-friends-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=67, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=72, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=77, material=1
+[TumpGeometry] CourtPreparation-friends-1366x768/StartButton: vertices=61, cull=False, alpha=1, depth=81, material=1
+[TumpUiCapture] CourtPreparation-friends-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=67, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=72, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=77, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1080/StartButton: vertices=61, cull=False, alpha=1, depth=81, material=1
+[TumpUiCapture] CourtPreparation-friends-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-1920x1200/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-1280x960/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-2560x1440/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-3440x1440/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-3840x1080/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] CourtPreparation-friends-3840x2160/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpUiCapture] CourtPreparation-friends-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=66, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=71, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=76, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/StartButton: vertices=61, cull=False, alpha=1, depth=80, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/ChatPaper: vertices=110, cull=False, alpha=1, depth=82, material=1
+[TumpGeometry] OwnerPreparation-friends-chat-v1/HistoryPaper: vertices=110, cull=False, alpha=1, depth=0, material=1
+[TumpUiCapture] OwnerPreparation-friends-chat-v1 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1304" name="OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" methodname="OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1661572656" result="Passed" start-time="2026-09-15 00:29:58Z" end-time="2026-09-15 00:30:06Z" duration="8.388476" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] OwnerCustomRules-match-v1/RulesPaper: vertices=110, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] OwnerCustomRules-match-v1/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] OwnerCustomRules-match-v1 cream source=252,211,159 pixel=237,111,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerCustomRules-room-v1/RulesPaper: vertices=110, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] OwnerCustomRules-room-v1/Arrow: vertices=12, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] OwnerCustomRules-room-v1/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerCustomRules-room-v1/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerCustomRules-room-v1/Arrow: vertices=12, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] OwnerCustomRules-room-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=33, material=1
+[TumpUiCapture] OwnerCustomRules-room-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1305" name="RankedPreparationKeepsRankedStakeAndAccountState" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.RankedPreparationKeepsRankedStakeAndAccountState" methodname="RankedPreparationKeepsRankedStakeAndAccountState" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1604668703" result="Passed" start-time="2026-09-15 00:30:06Z" end-time="2026-09-15 00:30:10Z" duration="3.546269" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] CourtPreparation-ranked-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-960x540/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-960x540/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-960x540/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-960x540/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x720/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x720/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x720/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x720/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-1366x768/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-1366x768/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-1366x768/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-1366x768/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1080/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1200/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1200/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1200/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-1920x1200/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x960/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x960/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x960/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-1280x960/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-2560x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-2560x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-2560x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-2560x1440/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-3440x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-3440x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-3440x1440/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-3440x1440/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x1080/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x1080/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-ranked-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x2160/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x2160/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x2160/EmptySeatMark: vertices=220, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtPreparation-ranked-3840x2160/StartButton: vertices=61, cull=False, alpha=1, depth=43, material=1
+[TumpUiCapture] CourtPreparation-ranked-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1462" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 00:30:10Z" end-time="2026-09-15 00:30:12Z" duration="2.686323" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1464" name="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" methodname="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="402384904" result="Passed" start-time="2026-09-15 00:30:10Z" end-time="2026-09-15 00:30:10Z" duration="0.072864" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1463" name="NativeJoinShowsSourceListsErrorsAndAnActualBackPath" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeJoinShowsSourceListsErrorsAndAnActualBackPath" methodname="NativeJoinShowsSourceListsErrorsAndAnActualBackPath" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1146022337" result="Passed" start-time="2026-09-15 00:30:10Z" end-time="2026-09-15 00:30:12Z" duration="2.610542" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] CourtJoin-nearby-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-nearby-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtJoin-online-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

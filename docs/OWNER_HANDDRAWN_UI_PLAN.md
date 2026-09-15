@@ -1,5 +1,14 @@
 # Owner hand-drawn UI replacement
 
+**LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
+says the old login already looked good and was not part of the requested redesign.
+Preserve its original centred artwork, form, colours, tabs and actions. Redesign
+the OTHER screens. Startup still has no Back, Guest remains account-free, and PC
+size support remains required without replacing this approved login composition.
+The uncommitted gate/form split was withdrawn and all login source restored to
+9bba95a1 (identical to pulled4c6b852c). Do not reinstate that proposal after compaction.
+
+
 Owner-authorized2026-09-15. ACTIVE. This is the immediate priority after the
 completed reconnect checkpoint9faf6ba6. Finish the overhaul, then resume
 GAMEPLAY_RESUME_AFTER_UI.md. No agents, Figma, usage resets or Desktop update.

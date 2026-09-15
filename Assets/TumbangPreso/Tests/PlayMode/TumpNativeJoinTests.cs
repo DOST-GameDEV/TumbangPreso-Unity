@@ -29,10 +29,21 @@ namespace TumbangPreso.PlayTests
                 Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
                 Press("ConnectToRoom"); yield return null;
                 Assert.That(canvas.GetComponentsInChildren<Text>().First(t => t.name == "JoinStatus").text, Does.Contain("Enter"));
-                yield return TumpUiCapture.Capture("OwnerJoin-nearby-v1", canvas, 1920, 1080, false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                {
+                    yield return TumpUiCapture.Capture("CourtJoin-nearby-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
+                    var heading = canvas.GetComponentsInChildren<Text>().First(t => t.name == "JoinTitle");
+                    Assert.That(heading.cachedTextGenerator.lines.Count, Is.EqualTo(2),
+                        "The two-line JOIN A / ROOM heading must draw both lines.");
+                    Assert.GreaterOrEqual(heading.cachedTextGenerator.characterCountVisible, heading.text.Length,
+                        "The room heading lost characters despite reporting a fitted preferred height.");
+                }
                 Press("OnlineChip"); yield return null;
                 Assert.IsNotNull(GameObject.Find("OnlineRooms"));
-                yield return TumpUiCapture.Capture("OwnerJoin-online-v1", canvas, 1280, 960, false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("CourtJoin-online-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 Press("CloseJoinButton"); yield return null;
                 Assert.IsFalse(panel.IsOpen); Assert.IsFalse(canvas.gameObject.activeSelf);
             }

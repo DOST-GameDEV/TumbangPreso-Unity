@@ -36,9 +36,14 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(preview.GetComponent<RawImage>().texture,"Selected map never reached its actual preview.");
                 var previewRect=((RectTransform)preview.transform).rect;
                 Assert.That(previewRect.width/previewRect.height,Is.EqualTo(16f/9f).Within(.001f),"The real map must keep its render aspect.");
-                yield return TumpUiCapture.Capture("OwnerPreparation-offline-v2",canvas,1920,1080,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("CourtPreparation-classic-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 Press("ModeNextButton");yield return new WaitForSecondsRealtime(.2f);
                 Assert.AreEqual(GameMode.HeroStrike,SceneFlow.SelectedMode);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("CourtPreparation-hero-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 string beforeMap=SceneFlow.SelectedMap;
                 Press("MapNextButton");yield return new WaitForSecondsRealtime(.2f);
                 Assert.AreNotEqual(beforeMap,SceneFlow.SelectedMap);
@@ -102,7 +107,9 @@ namespace TumbangPreso.PlayTests
             while(view.Preview.GetComponent<RawImage>().texture==null && Time.realtimeSinceStartup<until)yield return null;
             Assert.IsNotNull(view.Preview.GetComponent<RawImage>().texture);
             Assert.IsNotEmpty(view.RankedTitle.text);Assert.IsNotEmpty(view.RankedDetail.text);
-            yield return TumpUiCapture.Capture("OwnerPreparation-ranked-v2",canvas,1920,1080,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("CourtPreparation-ranked-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, checkActionBounds: true);
             Press("BackButton");yield return null;yield return null;
             Assert.IsNotNull(GameObject.Find("OwnerPlayCanvas"));
             SceneFlow.Networked=false;
@@ -147,6 +154,9 @@ namespace TumbangPreso.PlayTests
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
                 var view=Object.FindFirstObjectByType<OwnerPreparationView>();
                 Assert.True(view.CopyCode.gameObject.activeInHierarchy);Assert.True(view.StartMatch.gameObject.activeInHierarchy);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("CourtPreparation-friends-" + size.x + "x" + size.y,
+                        view.Canvas, size.x, size.y, false, checkActionBounds: true);
                 var chat=Object.FindFirstObjectByType<LobbyChat>();
                 Assert.IsNotNull(chat,"Hidden chat must stay subscribed to incoming room messages.");
                 Assert.IsFalse(chat.IsPresented);

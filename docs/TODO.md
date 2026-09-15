@@ -1,5 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**D2 checkpoint:** original login explicitly preserved. Preparation and room
+directory redesigned separately; five focused checks plus one browser heading
+recheck pass. Ten-size visible layouts covered. Report: reports/ui-composition-d2.
+Settings/selection/equipment/other UI and native motion/routes remain, then gameplay.
+
+
 **Current UI D1:** independent home/play/loading compositions reviewed with2/2focused
 checks; home and Hero Play cover ten PC sizes. See reports/ui-composition-d1.
 All-size support and distinct screen designs remain required for the rest of UI.

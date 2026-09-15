@@ -1,5 +1,20 @@
 # UI reopened: owner hand-drawn theme
 
+**D2 checkpoint:** original login explicitly preserved. Preparation and room
+directory redesigned separately; five focused checks plus one browser heading
+recheck pass. Ten-size visible layouts covered. Report: reports/ui-composition-d2.
+Settings/selection/equipment/other UI and native motion/routes remain, then gameplay.
+
+
+**LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
+says the old login already looked good and was not part of the requested redesign.
+Preserve its original centred artwork, form, colours, tabs and actions. Redesign
+the OTHER screens. Startup still has no Back, Guest remains account-free, and PC
+size support remains required without replacing this approved login composition.
+The uncommitted gate/form split was withdrawn and all login source restored to
+9bba95a1 (identical to pulled4c6b852c). Do not reinstate that proposal after compaction.
+
+
 **Current D1 redesign,2026-09-15:** home/play/loading have independent native
 compositions with selected supplemental court/street artwork. Two focused checks
 pass; home and Hero Play cover ten PC viewport sizes. Report:

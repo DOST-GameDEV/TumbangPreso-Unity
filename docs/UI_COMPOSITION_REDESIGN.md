@@ -1,5 +1,14 @@
 # UI composition redesign from the original layout studies
 
+**LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
+says the old login already looked good and was not part of the requested redesign.
+Preserve its original centred artwork, form, colours, tabs and actions. Redesign
+the OTHER screens. Startup still has no Back, Guest remains account-free, and PC
+size support remains required without replacing this approved login composition.
+The uncommitted gate/form split was withdrawn and all login source restored to
+9bba95a1 (identical to pulled4c6b852c). Do not reinstate that proposal after compaction.
+
+
 Active after pull4c6b852c on2026-09-15. The owner rejected the repeated orange
 wallpaper/main-menu assets. U1-U7 implementation is useful functional groundwork,
 not accepted visual design. Preserve service actions, data and original art files.

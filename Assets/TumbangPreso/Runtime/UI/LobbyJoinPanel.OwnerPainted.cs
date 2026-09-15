@@ -7,7 +7,7 @@ namespace TumbangPreso.UI
 {
     public sealed partial class LobbyJoinPanel
     {
-        private void ConstructNative()
+        private void ConstructPreviousPaintedJoin()
         {
             _nativeJoin=true;
             _nativeJoinCanvas=OwnerUiLayout.Canvas(transform,"OwnerJoinCanvas",830);
@@ -38,7 +38,7 @@ namespace TumbangPreso.UI
             SetSource(false);RefreshNative();
             ScreenTakeover.Register(this,()=>_nativeJoinCanvas!=null && _nativeJoinCanvas.gameObject.activeInHierarchy);
         }
-        private static void SelectNativeSource(Button button,bool selected)
+        private static void SelectPreviousPaintedSource(Button button,bool selected)
         {
             button.GetComponentInChildren<Text>().color=selected?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
             var mark=button.transform.Find("SelectedSource");
@@ -49,7 +49,7 @@ namespace TumbangPreso.UI
             }
             mark.gameObject.SetActive(selected);
         }
-        private void EnsureNativeRows(RectTransform parent,List<Button> rows,List<Text> labels,int count,Action<int> selected)
+        private void EnsurePreviousPaintedRows(RectTransform parent,List<Button> rows,List<Text> labels,int count,Action<int> selected)
         {
             while(rows.Count<Mathf.Max(1,count))
             {
