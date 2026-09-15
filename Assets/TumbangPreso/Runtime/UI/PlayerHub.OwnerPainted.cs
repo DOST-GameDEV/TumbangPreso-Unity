@@ -15,7 +15,7 @@ namespace TumbangPreso.UI
         private bool _ownerSaving;
         private RectTransform _ownerDetailList;
 
-        public void Install()
+        private void InstallPreviousPaintedHub()
         {
             if(_canvas!=null)return;
             ScreenTakeover.Register(this,()=>_root!=null && _root.activeInHierarchy);
@@ -71,7 +71,8 @@ namespace TumbangPreso.UI
             OwnerOptionMenu.OpenOption?.Close();
             foreach(var pair in _tabs)
             {
-                pair.Value.GetComponentInChildren<Text>().color=pair.Key==tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                pair.Value.GetComponentInChildren<Text>().color=pair.Key==tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.Pale;
+                var index=pair.Value.GetComponent<ProfileIndexTab>();index.Selected=pair.Key==tab;index.SetVerticesDirty();
                 pair.Value.transform.Find("SelectedTab").gameObject.SetActive(pair.Key==tab);
             }
             foreach(Transform child in _list){child.gameObject.SetActive(false);Destroy(child.gameObject);}
@@ -97,7 +98,7 @@ namespace TumbangPreso.UI
             var row=OwnerUiLayout.Rect(_list,"Group_"+title);row.gameObject.AddComponent<LayoutElement>().preferredHeight=102;
             var button=OwnerTextAction.Create(row,"ToggleGroup",(open?"-  ":"+  ")+title,()=>{_groups[key]=!open;Show(_tab);},0,0,1530,48,28);
             button.GetComponentInChildren<Text>().alignment=TextAnchor.MiddleLeft;
-            var hint=OwnerUiLayout.Text(row,"GroupHint",subtitle,26);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,0,49,1540,48);
+            var hint=OwnerUiLayout.Text(row,"GroupHint",subtitle,28);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,0,49,1540,48);
             return open;
         }
         private RectTransform HubValue(string label,string value,string detail="",Color? tint=null,string portrait=null)
@@ -107,9 +108,9 @@ namespace TumbangPreso.UI
             if(!string.IsNullOrEmpty(portrait)){var image=OwnerPortraitArt.Create(row,"ValuePortrait",portrait);OwnerUiLayout.Place(image.rectTransform,0,1,76,78);inset=98;}
             var title=OwnerUiLayout.Text(row,"ValueName",label,29,OwnerUiLayout.TypeRole.Accent);OwnerUiLayout.Place(title.rectTransform,inset,0,910-inset,64);
             bool longValue=(value?.Length??0)>22;
-            var text=OwnerUiLayout.Text(row,"ValueText",value,longValue?27:31,longValue?OwnerUiLayout.TypeRole.Reading:OwnerUiLayout.TypeRole.Display);text.color=tint??OwnerUiTheme.Current.ActionInk;
+            var text=OwnerUiLayout.Text(row,"ValueText",value,longValue?28:31,longValue?OwnerUiLayout.TypeRole.Reading:OwnerUiLayout.TypeRole.Display);text.color=tint??OwnerUiTheme.Current.ActionInk;
             OwnerUiLayout.Place(text.rectTransform,946,0,622,64);text.alignment=TextAnchor.MiddleRight;
-            if(!string.IsNullOrEmpty(detail)){var hint=OwnerUiLayout.Text(row,"ValueDetail",detail,26);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,inset,65,1540-inset,43);}
+            if(!string.IsNullOrEmpty(detail)){var hint=OwnerUiLayout.Text(row,"ValueDetail",detail,28);hint.color=OwnerUiTheme.Current.EnteredInk;OwnerUiLayout.Place(hint.rectTransform,inset,65,1540-inset,43);}
             return row;
         }
         private Button HubAction(string name,string title,string action,Action click,string detail="")
@@ -122,10 +123,10 @@ namespace TumbangPreso.UI
             var label=OwnerUiLayout.Text(_list,"HubNote",text,28);label.color=OwnerUiTheme.Current.EnteredInk;label.gameObject.AddComponent<TumpParagraph>();
         }
         private void HubChoice(string name,string label,string[] options,int selected,Action<int> choose)
-            =>OwnerOptionMenu.Create(OwnerSettingsRows.Row(_list,name,label),name+"Value",options,selected,choose);
+            =>RecordChoice.Create(RecordFields.Row(_list,name,label),name+"Value",options,selected,choose);
         private InputField HubField(string key,string label,string value,int limit,string placeholder,OwnerUiTheme.Piece frame)
         {
-            var field=OwnerUiEntry.Create(OwnerSettingsRows.Row(_list,key+"Row",label),key,placeholder,frame);
+            var field=RecordFields.Input(RecordFields.Row(_list,key+"Row",label),key,placeholder);
             field.characterLimit=limit;field.SetTextWithoutNotify(_ownerDraft.TryGetValue(key,out var draft)?draft:value??"");
             field.interactable=!_ownerSaving;field.onValueChanged.AddListener(text=>
             {

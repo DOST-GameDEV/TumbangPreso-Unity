@@ -18,6 +18,10 @@ namespace TumbangPreso.PlayTests
             {
                 var viewport = scroll.viewport;
                 if (viewport == null || !target.IsChildOf(viewport)) continue;
+                // Native dropdowns place an override-sorting canvas inside a row
+                // specifically to escape the outer scroll mask. Keep testing it.
+                bool escapes = target.GetComponentsInParent<Canvas>().Any(c => c.overrideSorting && c.transform.IsChildOf(viewport));
+                if (escapes) continue;
                 var min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
                 var max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
                 foreach (var corner in corners)
@@ -94,7 +98,7 @@ namespace TumbangPreso.PlayTests
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
                         || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface
-                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace;
+                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace || graphic is UI.ProfileIndexTab;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
@@ -108,7 +112,7 @@ namespace TumbangPreso.PlayTests
                 if (checkActionBounds)
                 {
                     var corners = new Vector3[4];
-                    foreach (var button in canvas.GetComponentsInChildren<Button>())
+                    foreach (var button in canvas.GetComponentsInChildren<Selectable>())
                     {
                         // Hidden room chat stays active to receive messages. Its
                         // zero-alpha CanvasGroup is not part of this visible layout.

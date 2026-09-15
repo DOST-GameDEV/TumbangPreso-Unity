@@ -1,5 +1,47 @@
 # Active TUMP rework ledger
 
+## CURRENT D5 qualified; custom rules draft next
+
+Records-v1 FINISHED3/3PASS, restoration672f43be2282; Python16620 retired.
+Records-v2 FINISHED2/3, restoration86cd30f58993; Python23832 retired. Its added
+Escape test did not deliver input with the initial unattended keyboard setup.
+Choice-cancel-v3 FINISHED1/1PASS, restoration63d61aadff6e; Python18060 retired.
+Only the test driver changed: focus settings before device creation and explicit
+EnableDevice. Production dropdown code unchanged. Log confirms enabled=True,
+nav=True, performed=True, selected=CareerModeValue; dropdown retired and hub stayed.
+Actual profile/career/scorecard/popup screenshots inspected. Report/XML:
+reports/ui-composition-d5. No Unity/image/build/player/browser jobs. D5 currently
+uncommitted oned135628; next commit/push, then apply custom-rule draft.
+
+D6 draft exists only locally at Logs/ui-drafts/CustomGameScreen.MatchSlate.cs,
+not imported yet. It preserves host/read-only rule callbacks with a distinct native
+slate, larger rows and a real masked room-password field. Apply/review after saving
+D5, then run only custom-rule/preparation authority checks. Original login stays
+protected. Remaining UI/U8, preview physical scaling and complete gameplay follow.
+
+
+## CURRENT D5 player record book qualification
+
+D4 committed/pusheded135628. New PlayerHub.RecordBook, ProfileIndexTab,
+RecordFields and RecordChoice replace account-art reuse in the hub with a player
+record header, file tabs, aligned editable rows and native uGUI choice lists.
+The native Dropdown implementation was checked against the installed Unity package;
+it owns its item placement/content height, while the wrapper owns Escape takeover.
+Shared settings/old option helpers remain unchanged. Scorecard labels are enlarged
+and columns redistributed for small displays. Profile/social/save/delete callbacks
+remain unchanged; no live submissions are being made for UI qualification.
+
+RUNNING guarded records-v1, Python16620, Logs/ui-composition-records-v1
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-records-review.
+Three related hub tests: draft persistence through navigation/service refresh;
+populated local fixture career/history scorecard; native career choice interaction
+without changing match mode. Hub pages and populated views use ten PC sizes. Bounds
+qualifier now checks all Selectables, including fields/toggles/sliders/dropdowns,
+not only Buttons. No imported edits until Editor exits. No image/player/browser jobs.
+D5 uncommitted oned135628. Next inspect failures/screenshots and validate popup
+Escape ownership before saving. Then remaining ranks/rules/match/UI, U8 and gameplay.
+Original login and controller diagram remain protected.
+
 ## CURRENT D4 verified; next player hub and remaining UI
 
 Guides-v2 FINISHED2/2PASS, restoration93ccc0f09700. All-guides-v3 FINISHED1/1PASS,

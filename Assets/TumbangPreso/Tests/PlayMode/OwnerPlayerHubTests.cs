@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace TumbangPreso.PlayTests
 {
@@ -30,12 +31,16 @@ namespace TumbangPreso.PlayTests
             string accountName=GameServices.Account?.DisplayName,localName=TumbangPreso.Settings.SettingsStore.Current.PlayerName;
             name.text="Draft_Player";hub.SendMessage("OnDataChanged");yield return null;
             Assert.AreEqual("Draft_Player",canvas.GetComponentsInChildren<InputField>().First(f=>f.name=="PlayerNameEdit").text);
-            yield return TumpUiCapture.Capture("OwnerHub-profile-v1",canvas,1920,1080,false);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("RecordBook-profile-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, checkActionBounds: true);
             foreach(string tab in new[]{"Friends","Career","Matches","Account"})
             {
                 Press(Find("HubTab"+tab));yield return null;
                 Assert.IsNotEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="HubPageTitle").text);
-                yield return TumpUiCapture.Capture("OwnerHub-"+tab+"-v1",canvas,1280,800,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("RecordBook-" + tab + "-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
             }
             Press(Find("HubTabProfile"));yield return null;
             Assert.AreEqual("Draft_Player",canvas.GetComponentsInChildren<InputField>().First(f=>f.name=="PlayerNameEdit").text);
@@ -72,7 +77,9 @@ namespace TumbangPreso.PlayTests
                 var canvas=GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>();
                 Press(Find("HubTabCareer"));yield return null;
                 Assert.That(canvas.GetComponentsInChildren<Text>().Any(t=>t.text.Contains(RatingRules.TierName(RatingRules.TierFor(1800)))));
-                yield return TumpUiCapture.Capture("OwnerHub-career-populated-v1",canvas,1920,1080,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("RecordBook-career-populated-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 var record=new MatchRecord{MatchId="ui-fixture-only",Mode="Classic",MapId=SceneFlow.Eskinita,Rounds=4,
                     DurationSeconds=360,PlayedUtc="2026-09-15T12:00:00Z",WinningSlot=0,DefenderByRound=new[]{0,1,2,3},Players=new PlayerMatchStats[4]};
                 for(int i=0;i<4;i++)record.Players[i]=new PlayerMatchStats{Slot=i,PlayerId=i==0?TumbangPreso.Net.CareerStore.LocalPlayerId:"ui-only-"+i,
@@ -83,12 +90,63 @@ namespace TumbangPreso.PlayTests
                 Press(Find("OpenMatchDetail"));yield return null;
                 Assert.AreEqual(4,canvas.GetComponentsInChildren<RectTransform>().Count(r=>r.name=="PlayerStats"));
                 Assert.IsTrue(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="DefendersByRound" && t.text.Contains("R4: P4")));
-                yield return TumpUiCapture.Capture("OwnerHub-scorecard-v1",canvas,1920,1080,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("RecordBook-scorecard-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
                 Press(Find("CloseMatchDetail"));yield return null;
                 Assert.IsFalse(canvas.GetComponentsInChildren<RectTransform>().Any(r=>r.name=="PlayerStats"));
                 Press(Find("ClosePlayerHub"));yield return null;
             }
             finally{JsonUtility.FromJsonOverwrite(before,profile);}
+        }
+        [UnityTest]
+        public IEnumerator CareerRecordChoicesUseNativeOptionsWithoutChangingMatchMode()
+        {
+            SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            PlaySelectionScreen.RequestedLobbyMode=LobbyMode.Practice;
+            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);yield return null;
+            Press(Find("ProfileButton"));yield return null;Press(Find("HubTabCareer"));yield return null;
+            var choice=Object.FindObjectsByType<RecordChoice>().First(c=>c.name=="CareerModeValue");
+            ClickSelectable(choice);yield return null;
+            var option=choice.GetComponentsInChildren<Toggle>().First(t=>t.GetComponentInChildren<Text>().text=="HERO STRIKE");
+            ClickSelectable(option);yield return null;
+            var updated=Object.FindObjectsByType<RecordChoice>().First(c=>c.name=="CareerModeValue");
+            Assert.AreEqual(1,updated.value);Assert.AreEqual(GameMode.Classic,SceneFlow.SelectedMode);
+            Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen);
+            var input=InputSystem.settings;var background=input.backgroundBehavior;var editorInput=input.editorInputBehaviorInPlayMode;
+            input.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            input.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard=InputSystem.AddDevice<Keyboard>();
+            InputSystem.EnableDevice(keyboard);
+            try
+            {
+                ClickSelectable(updated);yield return null;
+                var canvas=GameObject.Find("OwnerPlayerHubCanvas").GetComponent<Canvas>();
+                yield return TumpUiCapture.Capture("RecordBook-choice-open",canvas,960,540,false,checkActionBounds:true);
+                InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.Escape));yield return null;
+                Assert.IsTrue(keyboard.escapeKey.isPressed,"The unattended test keyboard did not deliver Escape.");
+                var module=EventSystem.current.GetComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+                Debug.Log("[RecordChoiceCancel] enabled="+keyboard.enabled+" nav="+TumbangPreso.InputLayer.MenuNav.CancelPressed+
+                    " performed="+module.cancel.action.WasPerformedThisFrame()+" selected="+EventSystem.current.currentSelectedGameObject?.name);
+                Assert.IsTrue(Object.FindFirstObjectByType<PlayerHub>().IsOpen,"Dropdown Escape closed the profile underneath.");
+                InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                yield return new WaitForSecondsRealtime(.25f);
+                Assert.IsEmpty(updated.GetComponentsInChildren<Toggle>(),"Escape did not retire the native choice list.");
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard);input.backgroundBehavior=background;input.editorInputBehaviorInPlayMode=editorInput;
+            }
+            Press(Find("ClosePlayerHub"));yield return null;
+        }
+        private static void ClickSelectable(Selectable control)
+        {
+            Canvas.ForceUpdateCanvases();var rect=(RectTransform)control.transform;
+            var pointer=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,
+                position=RectTransformUtility.WorldToScreenPoint(null,rect.TransformPoint(rect.rect.center))};
+            var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(pointer,hits);
+            Assert.IsNotEmpty(hits,control.name);Assert.AreEqual(control,hits[0].gameObject.GetComponentInParent<Selectable>(),control.name+" is covered");
+            ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerClickHandler);
         }
         private static Button Find(string name)=>Object.FindObjectsByType<Button>().First(b=>b.name==name && b.isActiveAndEnabled);
         private static void Press(Button button)

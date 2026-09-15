@@ -45,12 +45,12 @@ namespace TumbangPreso.UI
                 var dim=cover.gameObject.AddComponent<Image>();var ink=OwnerUiTheme.Current.DeepInk;dim.color=new Color(ink.r,ink.g,ink.b,.82f);
                 var design=OwnerUiLayout.DesignArea(cover,"MatchDetailComposition");
                 var sheet=OwnerUiLayout.Rect(design,"ScorecardPaper").gameObject.AddComponent<OwnerUiPaper>();sheet.Style=OwnerUiPaper.Treatment.Dialog;
-                OwnerUiLayout.Place(sheet.rectTransform,132,156,1656,749);sheet.raycastTarget=true;
+                OwnerUiLayout.Place(sheet.rectTransform,132,100,1656,890);sheet.raycastTarget=true;
                 _detailTitle=OwnerUiLayout.Text(design,"MatchDetailTitle","",39,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(_detailTitle.rectTransform,175,193,1554,113);
-                _ownerDetailList=OwnerScrollColumn.Build(design,"ScorecardRows",new Rect(181,327,1535,438),out var scroll);
+                OwnerUiLayout.Place(_detailTitle.rectTransform,175,137,1554,113);
+                _ownerDetailList=OwnerScrollColumn.Build(design,"ScorecardRows",new Rect(181,280,1535,570),out var scroll);
                 var layout=_ownerDetailList.GetComponent<VerticalLayoutGroup>();layout.spacing=10;layout.padding.bottom=12;
-                OwnerTextAction.Create(design,"CloseMatchDetail","CLOSE",()=>_detail.SetActive(false),685,793,550,74,34);
+                OwnerTextAction.Create(design,"CloseMatchDetail","CLOSE",()=>_detail.SetActive(false),685,887,550,74,34);
                 InputLayer.ScreenFocus.Install(cover.gameObject);
             }
             foreach(Transform child in _ownerDetailList){child.gameObject.SetActive(false);Destroy(child.gameObject);}
@@ -67,7 +67,7 @@ namespace TumbangPreso.UI
             if(record.DefenderByRound!=null && record.DefenderByRound.Length>0)
             {
                 var names=new List<string>();for(int i=0;i<record.DefenderByRound.Length;i++)names.Add("R"+(i+1)+": P"+(record.DefenderByRound[i]+1));
-                var note=OwnerUiLayout.Text(_ownerDetailList,"DefendersByRound","DEFENDER EACH ROUND\n"+string.Join(" · ",names),25);
+                var note=OwnerUiLayout.Text(_ownerDetailList,"DefendersByRound","DEFENDER EACH ROUND\n"+string.Join(" · ",names),28);
                 note.color=OwnerUiTheme.Current.EnteredInk;note.gameObject.AddComponent<TumpParagraph>();
             }
             _detail.SetActive(true);_detail.GetComponent<InputLayer.ScreenFocus>().Rebuild();
@@ -75,13 +75,13 @@ namespace TumbangPreso.UI
         }
         private void DetailRow(string[] values,bool heading)
         {
-            var row=OwnerUiLayout.Rect(_ownerDetailList,heading?"TableHead":"PlayerStats");row.gameObject.AddComponent<LayoutElement>().preferredHeight=heading?48:62;
-            float[] widths={96,322,121,119,120,157,95,158,191};float x=0;
+            var row=OwnerUiLayout.Rect(_ownerDetailList,heading?"TableHead":"PlayerStats");row.gameObject.AddComponent<LayoutElement>().preferredHeight=heading?64:74;
+            float[] widths={112,308,125,148,132,185,100,190,214};float x=0;
             for(int i=0;i<values.Length;i++)
             {
-                var cell=OwnerUiLayout.Text(row,"Cell"+i,values[i],heading?21:27,heading?OwnerUiLayout.TypeRole.Accent:OwnerUiLayout.TypeRole.Reading);
+                var cell=OwnerUiLayout.Text(row,"Cell"+i,values[i],heading?28:29,heading?OwnerUiLayout.TypeRole.Accent:OwnerUiLayout.TypeRole.Reading);
                 cell.color=heading?OwnerUiTheme.Current.ActionInk:OwnerUiTheme.Current.EnteredInk;
-                OwnerUiLayout.Place(cell.rectTransform,x,0,widths[i]-8,heading?46:60);cell.alignment=i==1?TextAnchor.MiddleLeft:TextAnchor.MiddleCenter;x+=widths[i];
+                OwnerUiLayout.Place(cell.rectTransform,x,0,widths[i]-8,heading?60:70);cell.alignment=i==1?TextAnchor.MiddleLeft:TextAnchor.MiddleCenter;x+=widths[i];
             }
         }
     }

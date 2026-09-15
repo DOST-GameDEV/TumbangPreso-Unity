@@ -29,7 +29,7 @@ namespace TumbangPreso.UI
         private void BuildFindFriendRows(Net.SocialStore social)
         {
             if(!Group("Find a friend","Enter their exact NAME#TAG.",false))return;
-            var field=OwnerUiEntry.Create(OwnerSettingsRows.Row(_list,"FriendSearchRow","Name and tag"),"FriendSearch","NAME#TAG",OwnerUiTheme.Piece.FirstField);
+            var field=RecordFields.Input(RecordFields.Row(_list,"FriendSearchRow","Name and tag"),"FriendSearch","NAME#TAG");
             field.characterLimit=AccountRules.HandleMax;field.SetTextWithoutNotify(_ownerFriendSearch);field.onValueChanged.AddListener(value=>_ownerFriendSearch=value);
             HubAction("SendFriendRequest","","SEND REQUEST",()=>social?.RequestHandle(_ownerFriendSearch),"They must accept before joining your friends list.");
             if(!string.IsNullOrEmpty(social?.SearchStatus))HubNote(social.SearchStatus);

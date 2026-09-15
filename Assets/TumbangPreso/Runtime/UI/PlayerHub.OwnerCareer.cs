@@ -16,16 +16,6 @@ namespace TumbangPreso.UI
             var totals=ProfileRules.ModeFor(profile,_mode.ToString()).Totals;
             if(totals.Matches==0){EmptyCareer(profile);return;}
             var rank=profile.Rank;
-            if(rank!=null && rank.MatchesThisSeason>0 && Group("Competitive rank","Your seasonal ranked standing."))
-            {
-                bool placing=rank.Deviation>RatingRules.SettledDeviation;
-                var rankRow=HubValue("Current tier",RatingRules.TierName(RatingRules.TierFor(rank.Rating))+(placing?" · PLACING":""),
-                    rank.MatchesThisSeason+" matches this season.",OwnerUiTheme.Current.Green);
-                var badge=OwnerUiLayout.Rect(rankRow,"CareerRankEmblem").gameObject.AddComponent<TumpRankBadge>();
-                badge.Tier=(int)RatingRules.TierFor(rank.Rating);badge.raycastTarget=false;OwnerUiLayout.Place(badge.rectTransform,0,2,88,92);
-                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueName"),108,0,799,64);
-                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueDetail"),108,65,1432,43);
-            }
             if(Group("Overview","Classic and Hero Strike statistics stay separate."))
             {
                 var summary=OwnerUiLayout.Rect(_list,"CareerOverview");summary.gameObject.AddComponent<LayoutElement>().preferredHeight=137;
@@ -36,10 +26,20 @@ namespace TumbangPreso.UI
                 {
                     var value=OwnerUiLayout.Text(summary,"MetricValue"+i,values[i],48,OwnerUiLayout.TypeRole.Display);
                     OwnerUiLayout.Place(value.rectTransform,i*395,0,376,77);value.alignment=TextAnchor.MiddleCenter;
-                    var name=OwnerUiLayout.Text(summary,"MetricName"+i,names[i],25,OwnerUiLayout.TypeRole.Accent);
+                    var name=OwnerUiLayout.Text(summary,"MetricName"+i,names[i],28,OwnerUiLayout.TypeRole.Accent);
                     OwnerUiLayout.Place(name.rectTransform,i*395,82,376,45);name.alignment=TextAnchor.MiddleCenter;
                 }
                 HubValue("Finishes",$"1st {totals.Placements[0]} · 2nd {totals.Placements[1]} · 3rd {totals.Placements[2]} · 4th {totals.Placements[3]}");
+            }
+            if(rank!=null && rank.MatchesThisSeason>0 && Group("Competitive rank","Your seasonal ranked standing."))
+            {
+                bool placing=rank.Deviation>RatingRules.SettledDeviation;
+                var rankRow=HubValue("Current tier",RatingRules.TierName(RatingRules.TierFor(rank.Rating))+(placing?" · PLACING":""),
+                    rank.MatchesThisSeason+" matches this season.",OwnerUiTheme.Current.Green);
+                var badge=OwnerUiLayout.Rect(rankRow,"CareerRankEmblem").gameObject.AddComponent<TumpRankBadge>();
+                badge.Tier=(int)RatingRules.TierFor(rank.Rating);badge.raycastTarget=false;OwnerUiLayout.Place(badge.rectTransform,0,2,88,92);
+                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueName"),108,0,799,64);
+                OwnerUiLayout.Place((RectTransform)rankRow.Find("ValueDetail"),108,65,1432,43);
             }
             if(Group("Attack","What you did with the slipper in your hand.",false))
             {

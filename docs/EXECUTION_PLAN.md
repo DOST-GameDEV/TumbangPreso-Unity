@@ -1,5 +1,12 @@
 # Active execution plan
 
+**D5 checkpoint:** player record pages, drafts, career/history scorecard and native
+choice/Cancel behavior qualified. Ten-size page coverage; local fixture data only,
+no live profile/social writes. See reports/ui-composition-d5. Next custom rules and
+remaining match/UI surfaces, U8 native qualification and the gameplay bookmark.
+Original login remains protected.
+
+
 **D4 checkpoint:** collection, skill guide and optional biographies have distinct
 compositions. Related selection/save/return checks and all-hero content sweep pass;
 34collection entries and30power content states checked. Report: reports/ui-composition-d4.
