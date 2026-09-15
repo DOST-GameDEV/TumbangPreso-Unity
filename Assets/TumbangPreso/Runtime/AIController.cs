@@ -2733,6 +2733,17 @@ namespace TumbangPreso
                 // landed, so a taya 0.78 m from a vulnerable attacker had no verb at all.
                 if (reach > Me.LungeRange) { Press(intent, Verb.Lunge, false); return; }
 
+                // ⚠️⚠️ AND NOT WHEN THE PUNCH WILL GET THERE FIRST. See `AiLungeRules`: a charge
+                // opened inside that distance was almost always dumped after the punch had
+                // already tagged, as a dash at nobody with a 1.5 s cooldown. The punch branch
+                // above still fires the moment the victim is in its range.
+                if (AiLungeRules.PunchWillArriveFirst(reach, verbs.PunchCooldownLeft,
+                        AiTuning.LungeHoldTime, Balance.Speed))
+                {
+                    Press(intent, Verb.Lunge, false);
+                    return;
+                }
+
                 _lungeHeld = 0.0f;
             }
 
