@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "errors": [
+    "Fixture did not receive a positive preparation after its deadline"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 429,
+      "impactBirths": 1.0
+    },
+    "owner": {
+      "samples": 419,
+      "impactBirths": 1.0
+    },
+    "observer": {
+      "samples": 420,
+      "restoredWindupSamples": 0,
+      "firstRefreshTime": 24.9687089417316,
+      "expiredRefreshTime": 32.6969478650019,
+      "impactBirths": 0.0
+    }
+  },
+  "scope": "Three native peers; observer kit reconstruction during real windup and after expiry, not a process reconnect.",
+  "shared_input_unchanged": true,
+  "delay_one_way_ms": 0,
+  "observer_delay_one_way_ms": 130.0,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "184f743a27747789a9f0c8e7810bc52a00dfb47611f13c40ad4863036e2dfb80"
+}

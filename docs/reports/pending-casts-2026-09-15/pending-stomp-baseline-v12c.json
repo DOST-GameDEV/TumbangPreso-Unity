@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "errors": [
+    "Observer did not restore the accepted pending cast",
+    "Restored observer did not resolve its one pending presentation"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 441,
+      "impactBirths": 1.0
+    },
+    "owner": {
+      "samples": 427,
+      "impactBirths": 1.0
+    },
+    "observer": {
+      "samples": 419,
+      "restoredWindupSamples": 0,
+      "firstRefreshTime": 23.2957584123624,
+      "expiredRefreshTime": 31.15424873737,
+      "impactBirths": 0.0
+    }
+  },
+  "scope": "Three native peers; observer kit reconstruction during real windup and after expiry, not a process reconnect.",
+  "shared_input_unchanged": true,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "8e2d4aa4796997a0425f5aefe5c767d6857a2235b36400aefd5d3ef2c21a1bb2"
+}

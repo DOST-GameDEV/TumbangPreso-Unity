@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
 {
@@ -1034,6 +1034,13 @@ namespace TumbangPreso.CameraSystem
             return _clip != null;
         }
 
+        public void SeekAction(string expected,float elapsed)
+        {
+            if(_clip==null || _actionName!=expected)return;
+            _clipTime=Mathf.Clamp(elapsed,0,_clip[_clip.Length-1].T);
+            _clipBlendTime=Mathf.Max(_clipBlendTime,_clipTime);
+        }
+
         private static Quaternion ToUnityLocal(Vector3 godotEuler) =>
             Quaternion.Euler(-godotEuler.x * Mathf.Rad2Deg,
                              -godotEuler.y * Mathf.Rad2Deg,
@@ -1177,6 +1184,9 @@ namespace TumbangPreso.CameraSystem
                 mf.sharedMesh = slipperMesh;
 
                 _heldRenderer = slipperGo.AddComponent<MeshRenderer>();
+                // This camera-mounted copy is not a second object in the world.
+                // Charge attachments inherit its mode; the real shoe keeps its shadow.
+                _heldRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 // ⚠️⚠️ THIS TINT IS A PLACEHOLDER AND IT GOES INTO A PROPERTY BLOCK, WHICH MEANS
                 // IT OUTLIVES EVERY MATERIAL ASSIGNED AFTER IT. `MatchSkin` is what takes it back
                 // off, and for two days it did not: read its note before changing anything here.

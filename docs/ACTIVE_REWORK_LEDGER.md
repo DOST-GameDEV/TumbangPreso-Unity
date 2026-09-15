@@ -1,5 +1,103 @@
 # Active TUMP rework ledger
 
+## CURRENT v16 fixes qualified; publish this batch and continue remaining gameplay
+
+Current checkout C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
+ASTRAReworks. Previous pushed HEAD4752f610 contains the manual Claude reservation;
+this source batch follows it. No Claude-reserved source file was changed. All
+Unity/native/proxy jobs are FINISHED and retired, including session12727. No owned
+browser, temporary server or preview remains. All test profiles/input were preserved.
+
+Completed here: initial pending Dante Q/R, Cheska R and Zack R with captured aim,
+hold and body/FPP phase; expired-impact nonreplay and post-contact state request;
+Zack's pending-versus-empty TimedKit distinction; FPP slipper shadow Off including
+charge attachments; hidden visible version labels in current/retained menu/HUD.
+Internal app/build identity remains. Protocol40 rejects old38andinternal39.
+
+Evidence: pending contracts3PASS, body/FPP presentation1PASS over4preparations,
+charge-tail4PASS, FPP-shadow1PASS over4plain/charged states. Nativev13 normal Dante
+stomp/fissure; v14 normal Cheska/Zack; v16 exact Zack450ms spike, Dante450ms spike,
+normal Zack and actual38/39refusals all pass. The validv15 spike failure and fixedv16
+comparison are preserved. Earlier constant-delay fixtures missed the deadline and
+must not be called gameplay failures. The temporary refusal wrapper read ok instead
+of passed and exited1; both actual result.json verdicts are passed=true, faults=[]
+with correct40versus38/39and sharedInputUnchanged=true. No rerun was needed.
+
+Internalv16: Builds/pending-cast-v16/TumbangPreso.exe,1082MB/47s, guard9bd14d370b5e.
+EXE2026-09-15T10:25:57Z; Runtime.dll10:26:01Z; runtime SHA256
+AE2CC646FD9117E96D6872BB735E01B70B18CBFB8E6BC51F3DD52C3636B28BD8.
+Built from the final dirty source before publication, so the older embedded Git
+stamp alone is not identity. Nativev11 remains the previously rehearsed UI/demo
+fallback; no Desktop replacement. Report folders fpp-shadow-version-2026-09-15 and
+pending-casts-2026-09-15 contain portable receipts/captures and explicit limits.
+
+Only proven whitespace-only import noise in2UI metas and2ProjectSettings files
+was restored, with before-bytes backed up in Logs/pending-v16-import-noise. No
+meaningful model, animation or source edit was discarded. Publish explicit owned
+paths after diff review, fetch/integrate any newer peer work without force, verify
+remote HEAD, then CONTINUE in this conversation. Do not stop at this checkpoint.
+
+Next concrete investigation: timed-kit hydration after a newer accepted cast is
+cancelled during windup. Zack's _joinThunderSettled is set in OnActivate, while
+IsWindingUp blocks replies only until cancellation; this is a SOURCE HYPOTHESIS,
+not yet a reproduced bug. Establish a focused failure before changing it. Then
+continue active Sean Rush/Zack Sprint and Sean Supernova's physical-phase joining
+contract; do not replay launch impulses or old trail discs. Keep Claude C1/C2/C3
+reserved and untouched; full all-variant/movement/spectator/deferred-Inday/expansion
+queue stays open in GAMEPLAY_RESUME_AFTER_UI. User again explicitly says continue.
+
+## URGENT owner corrections: FPP slipper shadow and visible version labels
+
+Owner reports a separate first-person slipper shadow and asks to remove v1.0.0
+from the main menu and everywhere in game. Prioritize these before the next native
+cast build. ViewmodelArms creates HeldSlipper's MeshRenderer with default shadow
+casting On; its world materials have a shadow pass. The Sean/Zack charge attachments
+copy their source renderer's shadow mode. Fix the first-person source, preserving
+the actual world shoe/body shadows and appearance. No Claude-reserved file needed.
+
+GameVersion.ApplyTo serves the current and retained menus/HUD; VersionStamp serves
+authored legacy scenes. Hide these display widgets centrally and on activation,
+keeping Application.version, protocol/build identity and network compatibility.
+This supersedes historical instructions to show a corner version on every screen.
+
+Pending charge-tail tests FINISHED4/4PASS, guard a4a10858d38f, Python19772 retired.
+New + retained tests verify independent clocks, no strike replay, spent/empty guards.
+Protocol40 fix still requires native spike rerun; no v16 build has started.
+New FppSlipperShadowProbe will first establish the actual default-caster failure,
+then check plain and charged first-person shoes and retained world shadow modes.
+No owned Unity/player process remained when this urgent test was added.
+The first shadow probe failed compilation because it lacked the CharacterVisual
+namespace, guard ff0ab99190fe; no runtime result. Added the using. RUNNING corrected
+baseline, Python22264, FINISHED with the expected runtime failure: HeldSlipper
+casts On instead of Off. Guard0fec51aa9d0c; Logs/fpp-shadow-before-v2 contains
+the plain Zack capture. Its other nearby actors cluttered the frame, so the next
+probe parks them away; do not call that an exact pixel A/B. All jobs exited.
+
+Set the first-person HeldSlipper renderer to ShadowCastingMode.Off at creation;
+world source unchanged. Imported the central hidden-version helper and made old
+VersionStamp hide in Awake/OnEnable. Focused shadow probe FINISHED1/1PASS across
+plain/charged Zack and Sean with visible shoes/attachments and unchanged world
+shadow modes. Guard8f7d879995ec restored2prior profile files/0Editor inputs;
+Python9188 retired. Images in Logs/fpp-shadow-fixed were inspected. Source search
+finds no remaining direct version display outside the shared helper; internal
+Application.version uses remain in build identity and networking. No broad UI
+suite was added for this small removal. Nativev16 build FINISHED1082MB/47s,
+guard9bd14d370b5e, Python17876 retired. Runtime SHA256
+AE2CC646FD9117E96D6872BB735E01B70B18CBFB8E6BC51F3DD52C3636B28BD8.
+Zack450ms spike FINISHEDPASS, session90842 retired: captured.0745s, received
+age.3846s,0observer impacts, surviving charge window restored. Elapsed14..18:
+host73active samples; observer66active samples. Profiles/input preserved.
+
+Sequential native session73186 FINISHEDBOTH PASS: pending-spike-fissure-v16
+(Dante450ms spike,0obsolete impacts and2persistent pillars) and pending-zack-final-v16
+(normal pending restoration). Wrapper outputs Logs/<case>.stdout. All peers exited.
+RUNNING protocol-refusal sequence, session12727: pending-refuse-38-v16 usesv11,
+then pending-refuse-39-v16 usesv15, each35s against finalv16 protocol40 host.
+No imported edits until peers exit. Next: final diff, evidence/report reconciliation
+and publish. Claude's reserved tasks remain untouched. Whitespace-only import noise
+has been verified in Logs/pending-v16-noise-review.json; restore only those four
+listed files after the native runs, preserving all meaningful changes.
+
 ## CURRENT Claude lane reserved; continue pending-cast validation locally
 
 Owner will manually give Claude a noncreative assignment on a friend's separate
@@ -25,11 +123,66 @@ captured aim/held time. Those generalized edits are NOT native-qualified yet.
 No v14 build has started. A possible Zack late-packet interaction with the empty
 initial TimedKit settled flag is an unproven hypothesis, not a confirmed defect.
 
-Next: publish the reservation and give the complete copyable prompt in chat, then
-continue Codex's pending-cast work. Build fresh internalv14; run delayed Dante
-fissure, normal Cheska/Zack and late Zack cases with real expiry witnesses.
+Reservation committed/pushed4752f610 and verified remotely; complete copyable
+prompt delivered directly in chat. Owner reaffirmed continuing Codex's work.
+Internalv14 build FINISHED; Python22004 and its Editor exited, profile guard
+76182b0cb4f8 restored0prior files/0Editor input values. Runtime SHA256
+184F743A27747789A9F0C8E7810BC52A00DFB47611F13C40AD4863036E2DFB80,
+DLL2026-09-15T09:53:03Z. Delayed Dante fissure session27917 FINISHED but did not
+qualify the requested expiry case: no positive-expired receipt. It showed no
+replayed windup/impact and did receive2pillars; profiles/input preserved. This is
+incomplete fixture coverage, not a demonstrated gameplay failure. Preserve
+Logs/pending-late-fissure-v14, --observer-delay130 --late-preparation.
+Normal Cheska session27739 and Zack session48430 FINISHEDPASS: each3peer run
+produced1impact per peer,4restored observer windup samples, captured target/hold
+agreement and no replay. Logs/pending-cheska-v14 and pending-zack-v14. Late Zack
+session55368 at110ms also missed the positive-expired witness; it did restore the
+remaining charge tail without replay. Preserve pending-late-zack-v14 as incomplete
+boundary coverage, not a confirmed bug. All native jobs exited.
+
+The opt-in late fixture now has the host capture its actual HostSyncPeer snapshot
+at <=.09s windup, delivering it through the delayed real transport. The observer
+rebuilds during the accepted windup but skips its first request for this mode;
+the second after-expiry request remains real. This removes the round-trip capture
+race from the fixture, without changing gameplay timing. It must prove both host
+capture and positive-expired receipt. Buildv15 FINISHED1082MB/46s, guard7f4463ab8a08,
+Python20216 retired. Runtime SHA75873CDA86AEBE03884AD8592D64F790C6AE42DF3BB6DAF235E4D08FA82DA581.
+Late Zack constant180ms, session68171 FINISHED without the expiry witness: the
+host captured.0767s, but the client's buffered network clock still considered
+the arriving preparation live and restored it. This is another unqualified
+boundary fixture, not proof of an expired-impact replay. Preserve its result.
+
+Added tools/net_pending_link.py around the existing UDP relay: synchronize with
+normal traffic, then briefly delay downstream packets when the real host CSV
+shows <=.20s remaining. The controlled host snapshot follows at<=.09s. This tests
+a latency spike instead of steady clock buffering, without changing game time.
+Spike session98735 FINISHED with a VALID failure: host captured.0767s remaining,
+observer received it at age.3878s and correctly replayed0impacts, but the active
+Thunderstrike tail was lost. Between elapsed14..18, host had71active samples;
+observer had66samples with0active. This confirms the early empty TimedKit snapshot
+settled its separate charge-window guard before the preparation expired in transit.
+Logs/pending-spike-zack-v15, --observer-delay450 --observer-spike --late-preparation.
+All peers exited and profiles/input were preserved.
+
+Applied a pending-ultimate bit to TimedKit and skip initial Thunderstrike settlement
+while that bit is true; Magnet remains independent and settled windows never reopen.
+Protocol40 now rejects both preserved38 and internal39 binaries, whose payload
+lacks this field. Import the prepared focused charge-tail tests, validate them,
+then buildv16 and repeat the exact real spike plus Dante persistent pillars and
+normal Zack. The spike harness and final40source are not yet qualified together.
+Logs/ZackKitAcceptanceProbe-pending-draft.cs remains UNIMPORTED, prepared only
+for the unconfirmed TimedKit settlement hypothesis. No production fix applied.
 Qualify protocol39 refusal against preserved protocol38. Fix only evidenced
 failures, retain v11 fallback, and do not enter the Claude-reserved source files.
+
+Independent next-scope audit: Sean Supernova's post-windup phase applies an upward
+impulse, then a timed dive and actual grounded smash. It cannot use the same
+late-windup-only restoration without matching the physical phase/pose and avoiding
+a second impulse. Preserve it for a distinct active-motion snapshot contract;
+no Sean implementation change has been made during this build/test wait.
+Sean Rush also has a one-time impulse/jet/cue and separate remaining trail ticks;
+its OnTick contacts already have host authority. A joining clock must not call
+OnActivate again or rebuild old trail discs already in the world-field snapshot.
 
 ## CURRENT pending restoration implemented; pose timing validation running
 

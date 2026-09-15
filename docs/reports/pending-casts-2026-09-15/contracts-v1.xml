@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.2226473">
+  <test-suite type="TestSuite" id="1547" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="416" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.222647" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1541" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="416" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.207710" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11036" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1542" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="416" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.201995" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1543" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="416" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.196447" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1325" name="PendingPreparationTests" fullname="TumbangPreso.PlayTests.PendingPreparationTests" classname="TumbangPreso.PlayTests.PendingPreparationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.179766" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1327" name="EmptyOrKnownCastStateCannotBeRearmedAndResetReleasesTheRoot" fullname="TumbangPreso.PlayTests.PendingPreparationTests.EmptyOrKnownCastStateCannotBeRearmedAndResetReleasesTheRoot" methodname="EmptyOrKnownCastStateCannotBeRearmedAndResetReleasesTheRoot" classname="TumbangPreso.PlayTests.PendingPreparationTests" runstate="Runnable" seed="2134895225" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.080233" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1328" name="InvalidInitialTimingDoesNotPoisonTheNextValidSnapshot" fullname="TumbangPreso.PlayTests.PendingPreparationTests.InvalidInitialTimingDoesNotPoisonTheNextValidSnapshot" methodname="InvalidInitialTimingDoesNotPoisonTheNextValidSnapshot" classname="TumbangPreso.PlayTests.PendingPreparationTests" runstate="Runnable" seed="1775633416" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.036681" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1326" name="RestorationPreservesCapturedAimAndSpendsNoSecondCharge" fullname="TumbangPreso.PlayTests.PendingPreparationTests.RestorationPreservesCapturedAimAndSpendsNoSecondCharge" methodname="RestorationPreservesCapturedAimAndSpendsNoSecondCharge" classname="TumbangPreso.PlayTests.PendingPreparationTests" runstate="Runnable" seed="9476739" result="Passed" start-time="2026-09-15 09:17:34Z" end-time="2026-09-15 09:17:34Z" duration="0.045100" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

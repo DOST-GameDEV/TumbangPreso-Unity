@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 440,
+      "impactBirths": 1.0
+    },
+    "owner": {
+      "samples": 425,
+      "impactBirths": 1.0
+    },
+    "observer": {
+      "samples": 424,
+      "restoredWindupSamples": 3,
+      "firstRefreshTime": 23.4496249210772,
+      "expiredRefreshTime": 31.2526290699964,
+      "impactBirths": 1.0
+    }
+  },
+  "scope": "Three native peers; observer kit reconstruction during real windup and after expiry, not a process reconnect.",
+  "shared_input_unchanged": true,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "2dbce8d68a3dcdb922952583b1541b416d1ede45124cb92a0ef730de515ca346"
+}

@@ -12,13 +12,14 @@ import subprocess
 import sys
 import time
 
-from run_unity_guarded import profile_root
+from run_unity_guarded import profile_root, unity_environment
+from run_ui_player_review import read_input_preferences
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def rows(path):
-    with path.open(newline="") as handle:
+    with path.open(newline="",encoding="utf-8") as handle:
         return [{key: float(value) for key, value in row.items()} for row in csv.DictReader(handle)]
 
 
@@ -122,16 +123,75 @@ def evaluate(folder, case):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_pending(folder,case,late=False,hero="dante"):
+    data={side:rows(folder/(side+'.csv')) for side in ('host','owner','observer')}
+    faults=[];measurements={}
+    for side,trace in data.items():
+        seat={'host':0,'owner':1,'observer':2}[side]
+        if len(trace)<100 or any(row['local']!=seat or row['pendingReview']!=1 for row in trace):
+            faults.append(side+' lacks continuous preparation-review evidence');continue
+        expected_pick={'dante':0,'cheska':1,'zack':3}[hero]
+        if any(row['heroIndex']!=expected_pick or row['casterPick']!=expected_pick for row in trace):
+            faults.append(side+' did not retain the real selected hero identity');continue
+        if side!='observer':
+            if not any(row['windup']>0 for row in trace):faults.append(side+' never accepted the real windup')
+            if trace[-1]['impactBirths']!=1:faults.append(side+' did not produce exactly one real impact')
+            measurements[side]={'samples':len(trace),'impactBirths':trace[-1]['impactBirths']}
+            continue
+        restored=[row for row in trace if row['pendingRefreshed'] and not row['expiredRefreshed']]
+        expired=[row for row in trace if row['expiredRefreshed']]
+        if not restored or not expired:faults.append('Observer did not run both fresh-kit snapshot stages');continue
+        if late:
+            log=(folder/'observer.log').read_text(encoding='utf-8',errors='replace')
+            if '[PendingCastProbe] captured near deadline' not in (folder/'host.log').read_text(encoding='utf-8',errors='replace'):
+                faults.append('Host did not capture the controlled near-contact snapshot')
+            if '[CastPreparation] expired in transit' not in log:faults.append('Fixture did not receive a positive preparation after its deadline')
+            if any(row['windup']>0 for row in restored) or restored[-1]['impactBirths']!=0:
+                faults.append('Observer replayed a preparation that expired in transit')
+            if hero=='dante' and case=='fissure' and not any(row['pillars']==2 for row in restored):faults.append('Late observer never received the actual post-contact pillars')
+            if hero=='zack' and not any(row['ultActive'] for row in restored):faults.append('Late observer lost the remaining Thunderstrike charge window')
+        else:
+            if not any(row['windup']>0 for row in restored):faults.append('Observer did not restore the accepted pending cast')
+            if restored[-1]['impactBirths']!=1:faults.append('Restored observer did not resolve its one pending presentation')
+        if any(row['windup']>0 for row in expired) or expired[-1]['impactBirths']!=restored[-1]['impactBirths']:
+            faults.append('The post-expiry snapshot replayed an old preparation/impact')
+        if trace[-1]['s1charges']!=data['host'][-1]['s1charges'] or trace[-1]['ultcharge']!=data['host'][-1]['ultcharge']:
+            faults.append('Observer resource state differs after restoration')
+        if not late:
+            host=data['host'][-1];last=trace[-1]
+            if math.hypot(last['impactX']-host['impactX'],last['impactZ']-host['impactZ'])>.08:
+                faults.append('Restored impact lost the host-captured target')
+            if hero=='zack' and abs(last['impactHeld']-host['impactHeld'])>.03:faults.append('Restored strike lost held aiming accuracy/range')
+        measurements[side]={'samples':len(trace),'restoredWindupSamples':sum(row['windup']>0 for row in restored),
+            'firstRefreshTime':restored[0]['time'],'expiredRefreshTime':expired[0]['time'],'impactBirths':trace[-1]['impactBirths']}
+    return {'ok':not faults,'errors':faults,'measurements':measurements,
+        'scope':'Three native peers; observer kit reconstruction during real windup and after expiry, not a process reconnect.'}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
     parser.add_argument("--case", choices=["stomp", "tremor", "ward", "plating", "fissure"], required=True)
     parser.add_argument("--delay", type=float, default=0)
+    parser.add_argument("--observer-delay",type=float,default=0)
+    parser.add_argument("--observer-spike",action="store_true",help="Apply observer delay briefly near contact, after normal clock synchronization.")
+    parser.add_argument("--late-preparation",action="store_true")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--pending-review",action="store_true")
+    parser.add_argument("--hero",choices=["dante","cheska","zack"],default="dante")
+    parser.add_argument("--profile-prefix",default="dante")
     args = parser.parse_args()
-    folder = args.out.resolve(); folder.mkdir(parents=True, exist_ok=False)
+    folder = args.out.resolve()
+    if not args.exe.resolve().is_relative_to(ROOT/'Builds') or not args.exe.is_file():raise ValueError('Use an internal build.')
+    if not folder.is_relative_to(ROOT/'Logs') or folder==ROOT/'Logs':raise ValueError('Use a dedicated Logs subfolder.')
+    if args.pending_review and args.case not in ('stomp','fissure'):raise ValueError('Preparation review supports stomp/fissure only.')
+    if args.hero!="dante" and (not args.pending_review or args.case!="fissure"):raise ValueError("Other heroes use the pending ultimate review.")
+    if args.late_preparation and (not args.pending_review or args.observer_delay<=0):raise ValueError('Late preparation needs the pending review and an explicit observer delay.')
+    if args.observer_spike and not args.late_preparation:raise ValueError('A controlled spike belongs to the late-preparation fixture only.')
+    folder.mkdir(parents=True, exist_ok=False)
+    input_before=read_input_preferences()
     backups = []
-    for name in ("dantehost", "danteowner", "danteobserver"):
+    for name in (args.profile_prefix+"host", args.profile_prefix+"owner", args.profile_prefix+"observer"):
         profile = profile_root(["-tp-profile", name])
         for source in profile.rglob("*"):
             if source.is_file() and source.suffix != ".log":
@@ -143,14 +203,14 @@ def main():
     if os.name == "nt":
         startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
     def launch(command):
-        process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startup)
+        process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, startupinfo=startup,env=unity_environment())
         processes.append(process); return process
     try:
         def peer(name, route):
             return launch([str(args.exe.resolve()), "-batchmode", "-screen-width", "640", "-screen-height", "360",
-                           "-screen-fullscreen", "0", "-tp-autostart", "3", "-tp-profile", "dante" + name,
+                           "-screen-fullscreen", "0", "-tp-framecap", "60", "-tp-autostart", "3", "-tp-profile", args.profile_prefix + name,
                            "-tp-dantecase", args.case, "-tp-dantetrace", str(folder / (name + ".csv")),
-                           "-logFile", str(folder / (name + ".log"))] + route)
+                           "-logFile", str(folder / (name + ".log"))] + (["-tp-dantepending-review","-tp-pendinghero",args.hero] if args.pending_review else []) + (["-tp-pendinglate-review"] if args.late_preparation else []) + route)
         host = peer("host", ["-tp-host", "8960"]); time.sleep(7)
         port = "8960"
         if args.delay:
@@ -163,7 +223,7 @@ def main():
         owner = peer("owner", ["-tp-join", "127.0.0.1", port])
         deadline = time.monotonic() + 35
         while time.monotonic() < deadline:
-            path = folder / "owner.log"; text = path.read_text(errors="replace") if path.exists() else ""
+            path = folder / "owner.log"; text = path.read_text(encoding="utf-8",errors="replace") if path.exists() else ""
             if re.search(r"(?:seat changed|arena installed): LocalSlot=1[^\n]*host=False", text):
                 break
             if owner.poll() is not None:
@@ -171,13 +231,27 @@ def main():
             time.sleep(.25)
         else:
             raise RuntimeError("Owner never took seat one")
-        observer = peer("observer", ["-tp-join", "127.0.0.1", "8960"])
+        observer_port="8960"
+        if args.observer_delay:
+            observer_port="8962";log=(folder/'observer-link.log').open('w',encoding='utf-8');handles.append(log)
+            proxy=subprocess.Popen([sys.executable,str(ROOT/('tools/net_pending_link.py' if args.observer_spike else 'tools/net_link.py')),'--listen',observer_port,'--to','127.0.0.1:8960',
+                '--delay',str(args.observer_delay),'--seconds','110']+(['--trace',str(folder/'host.csv')] if args.observer_spike else []),cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,startupinfo=startup)
+            processes.append(proxy);time.sleep(1)
+        observer = peer("observer", ["-tp-join", "127.0.0.1", observer_port])
         print("Tracing " + args.case + " from three actual players: " + str(folder), flush=True)
         deadline = time.monotonic() + 90
         while time.monotonic() < deadline and any(process.poll() is None for process in (host, owner, observer)):
             time.sleep(.5)
-        result = evaluate(folder, args.case)
+        result = evaluate_pending(folder,args.case,args.late_preparation,args.hero) if args.pending_review else evaluate(folder, args.case)
+        result["shared_input_unchanged"]=read_input_preferences()==input_before
+        result["ok"] &= result["shared_input_unchanged"]
         result["delay_one_way_ms"] = args.delay
+        result["observer_delay_one_way_ms"]=0 if args.observer_spike else args.observer_delay
+        result["observer_spike_delay_ms"]=args.observer_delay if args.observer_spike else 0
+        if args.observer_spike:
+            spike_log=(folder/'observer-link.log').read_text(encoding='utf-8',errors='replace')
+            if '[pending-link] armed' not in spike_log:
+                result['errors'].append('The transient link did not arm');result['ok']=False
         result["exe_sha256"] = hashlib.sha256(args.exe.read_bytes()).hexdigest()
         runtime = args.exe.parent / (args.exe.stem + "_Data") / "Managed/TumbangPreso.Runtime.dll"
         result["runtime_sha256"] = hashlib.sha256(runtime.read_bytes()).hexdigest()
@@ -199,7 +273,9 @@ def main():
             source.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(backup, source)
             if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
                 raise RuntimeError("Named test profile restoration failed")
-        print("Preserved " + str(len(backups)) + " existing named-profile files", flush=True)
+        unchanged=read_input_preferences()==input_before
+        (folder/'preservation.json').write_text(json.dumps({'existingFilesRestored':len(backups),'sharedInputUnchanged':unchanged},indent=2),encoding='utf-8')
+        print("Preserved " + str(len(backups)) + " existing named-profile files; shared input unchanged="+str(unchanged), flush=True)
 
 
 if __name__ == "__main__":

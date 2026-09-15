@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -206,6 +206,7 @@ namespace TumbangPreso.Abilities
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Frost;
                 Windup = UltimateWindup;
+                SupportsPendingSnapshot=true;
             }
 
             protected override void OnActivate(AbilityContext ctx)

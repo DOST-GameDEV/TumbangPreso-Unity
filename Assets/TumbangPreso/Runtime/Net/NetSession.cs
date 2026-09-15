@@ -357,7 +357,10 @@ namespace TumbangPreso.Net
         // 37 restores the complete persistent ground-field batch for joining peers.
         // 38 makes Classic character picks cosmetic. Older peers still predict
         // unequal movement and contact from their archived character points.
-        public const int ProtocolVersion = 38;
+        // 39 carries accepted pending preparations and their captured aim to joining peers.
+        // 40 distinguishes a pending Thunderstrike from an empty active-charge
+        // snapshot. Internal protocol39 players cannot decode this TimedKit field.
+        public const int ProtocolVersion = 40;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

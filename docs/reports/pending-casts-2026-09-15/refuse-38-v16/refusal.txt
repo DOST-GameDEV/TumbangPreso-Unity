@@ -1,0 +1,2 @@
+client.log: [Net] disconnected: Game version mismatch (network protocol 40)
+host.log: [NetApproval] peer=1 approved=False reason=Game version mismatch (network protocol 40)

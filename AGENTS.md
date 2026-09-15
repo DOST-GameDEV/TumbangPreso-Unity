@@ -1,5 +1,12 @@
 # Working instructions for ChatGPT / Codex
 
+**Urgent owner corrections, September15:** first-person slippers must not cast
+their own detached world shadow. Keep the world slipper/body shadow contracts;
+fix the camera's presentation copy and its charge attachments. Remove visible
+version stamps (including v1.0.0) from the main menu and all other game UI.
+Keep internal build/version metadata and network compatibility. This supersedes
+historical instructions to display a corner version number on every screen.
+
 **Current parallel-work reservation, September15:** the owner will manually give
 Claude a bounded engineering assignment on a different PC/account. Its exclusive
 scope, files and completion criteria are in

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 // ShadowCastingMode, for the first-person self-hide. See ApplyFppSelfHide.
 using UnityEngine.Rendering;
@@ -281,6 +281,13 @@ namespace TumbangPreso.CameraSystem
             if (rig._arms.PlayAction(kind)) return;
 
             rig.ViewmodelKick(Vector3.forward);
+        }
+
+        public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
+        {
+            var rig=FindFirstObjectByType<CameraRig>();
+            if(rig!=null && rig.IsFollowing(who) && rig._mode==CameraMode.Fpp)
+                rig._arms?.SeekAction(expected,elapsed);
         }
 
         public static void CancelViewmodelAction(CharacterMotor who, string expected = null)

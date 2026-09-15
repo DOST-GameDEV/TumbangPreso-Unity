@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
@@ -116,6 +116,8 @@ namespace TumbangPreso.Abilities
 
         private CharacterMotor _rooted;
         private AbilityContext _committedContext;
+        private bool _joiningPreparationSettled;
+        public bool SupportsPendingSnapshot { get; protected set; }
 
         // ------------------------------------------------------------------ charges
         //
@@ -691,6 +693,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Activate(AbilityContext ctx)
         {
+            _joiningPreparationSettled=true;
             // ⚠️ A CHARGE ABILITY SPENDS A CHARGE AND NOTHING ELSE. Setting `CooldownRemaining`
             // as well would put it behind two gates, and the deck would then draw it as Cooling
             // while it still had charges in hand: `Cooldown` is 0 on every charge ability, so
@@ -907,6 +910,27 @@ namespace TumbangPreso.Abilities
         {
             ReleaseRoot();_committedContext=null;WindupRemaining=0;
             DurationRemaining=Mathf.Clamp(remaining,0,Duration);
+        }
+
+        public bool CapturePendingPreparation(out AbilityContext context,out float remaining)
+        {
+            context=_committedContext;remaining=WindupRemaining;
+            return SupportsPendingSnapshot && IsWindingUp && context!=null;
+        }
+
+        // Initial state belongs only to a new ability instance. A known cast or
+        // an already-settled empty snapshot cannot be restarted by an older reply.
+        public bool RestoreJoiningPreparation(AbilityContext context,float remaining,float heldSeconds)
+        {
+            if(!SupportsPendingSnapshot || _joiningPreparationSettled || IsWindingUp || IsActive
+                || context?.Motor==null || float.IsNaN(remaining) || float.IsInfinity(remaining)
+                || float.IsNaN(heldSeconds) || float.IsInfinity(heldSeconds)
+                || remaining<0 || remaining>Windup+.0001f || heldSeconds<0)return false;
+            _joiningPreparationSettled=true;
+            if(remaining<=0)return false;
+            HeldSecondsOnCast=heldSeconds;
+            RestoreWindupClock(context,remaining);
+            return true;
         }
 
         // Restore an accepted preparation without spending resources or invoking

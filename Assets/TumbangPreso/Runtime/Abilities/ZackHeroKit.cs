@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -18,7 +18,7 @@ namespace TumbangPreso.Abilities
             IsOverchargeThrowActive = false;
         }
 
-        public bool RestoreJoiningCharges(CharacterMotor motor, float magnetRemaining, float thunderRemaining)
+        public bool RestoreJoiningCharges(CharacterMotor motor, float magnetRemaining, float thunderRemaining, bool ultimatePending = false)
         {
             if (motor == null) return false;
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
@@ -29,7 +29,10 @@ namespace TumbangPreso.Abilities
                 ((MagnetRecallAbility)Skill2).RestoreCharge(context, magnetRemaining);
                 restored = true;
             }
-            if (!_joinThunderSettled && !Ultimate.IsActive && !Ultimate.IsWindingUp)
+            // A pre-impact snapshot has no active tail yet. Keep that state open
+            // for the post-contact snapshot if its preparation expires in transit.
+            // This never reopens an already settled/consumed newer state.
+            if (!ultimatePending && !_joinThunderSettled && !Ultimate.IsActive && !Ultimate.IsWindingUp)
             {
                 _joinThunderSettled = true;
                 ((ThunderstrikeOverdriveAbility)Ultimate).RestoreChargeWindow(context, thunderRemaining);
@@ -481,6 +484,7 @@ namespace TumbangPreso.Abilities
                 TelegraphStyle = Visual.GroundReticle.Style.Storm;
                 _kit = kit;
                 Windup = UltimateWindup;
+                SupportsPendingSnapshot=true;
             }
 
             protected override void OnActivate(AbilityContext ctx)

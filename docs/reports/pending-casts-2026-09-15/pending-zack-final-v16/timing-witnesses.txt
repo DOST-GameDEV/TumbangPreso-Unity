@@ -1,0 +1,2 @@
+observer.log: [PendingCastProbe] refreshed during preparation at=12.97782
+observer.log: [PendingCastProbe] refreshed after expiry at=20.01664

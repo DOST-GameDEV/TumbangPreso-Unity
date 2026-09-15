@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\pending-refuse-39-v16\\demo-protocol-refusal\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 0,
+        "travelled": 21.4
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 17.8
+      },
+      {
+        "seat": 2,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 17.4
+      },
+      {
+        "seat": 3,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 23.0
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "40",
+    "sampled": "48.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "8337D772",
+    "hash": "5741FD35"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\pending-refuse-39-v16\\demo-protocol-refusal\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 0,
+        "travelled": 1.8
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      },
+      {
+        "seat": 2,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      },
+      {
+        "seat": 3,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 0.2
+      }
+    ],
+    "role": "HOST",
+    "networked": "False",
+    "slot": "0",
+    "protocol": "39",
+    "sampled": "35.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "E267E7C7",
+    "hash": "65B41EA3"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Builds\\pending-cast-v16\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Builds\\pending-cast-v15\\TumbangPreso.exe",
+  "expectedProtocolRefusal": true,
+  "runtimeSha256": "ae2cc646fd9117e96d6872bb735e01b70b18cbfb8e6bc51f3dd52c3636b28bd8",
+  "clientRuntimeSha256": "75873cda86aebe03884ad8592d64f790c6ae42df3bb6daf235e4d08fa82da581",
+  "sharedInputUnchanged": true
+}

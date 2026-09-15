@@ -103,6 +103,44 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ExpiredJoiningPreparationKeepsIndependentChargeTailWithoutStrike()
+        {
+            var kit=(ZackHeroKit)_caster.AbilitySystem.Kit;
+            var held=_caster.GetComponent<Carrier>().Held;
+            float bank=kit.UltimateCharge;
+            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,.8f,0,ultimatePending:true));
+            Assert.IsTrue(kit.IsOverchargeThrowActive);
+            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsFalse(kit.Ultimate.RestoreJoiningPreparation(Context(),0,.5f));
+            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,0,1.8f));
+            yield return null;
+            Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.AreSame(held,_caster.GetComponent<Carrier>().Held);
+            Assert.AreEqual(bank,kit.UltimateCharge);
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
+            yield return new WaitForSeconds(1f);
+            Assert.IsFalse(kit.IsOverchargeThrowActive);
+            Assert.IsTrue(kit.IsThunderstrikeActive);
+            yield return new WaitForSeconds(1f);
+            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,0,7));
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator EmptyJoiningRecordCannotBeReopenedByAnOlderPreparationMarker()
+        {
+            var kit=(ZackHeroKit)_caster.AbilitySystem.Kit;
+            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,0,0));
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,1,0,ultimatePending:true));
+            Assert.IsFalse(kit.RestoreJoiningCharges(_caster,1,7));
+            yield return null;
+            Assert.IsFalse(kit.IsOverchargeThrowActive);
+            Assert.IsFalse(kit.IsThunderstrikeActive);
+        }
+
         [UnityTest, Timeout(90000)]
         public IEnumerator SnapDischargeTradesArmingTimeForActualFasterFlight()
         {

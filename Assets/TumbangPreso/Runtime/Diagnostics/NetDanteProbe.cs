@@ -17,11 +17,21 @@ namespace TumbangPreso.Diagnostics
     {
         private static bool _active;
         private string _case;
+        private string _pendingHero="dante";
+        private Vector3 _lastImpact;
+        private float _impactHeld;
         private StreamWriter _writer;
         private bool _prepared, _testedGuard, _testedAfter;
         private double _next;
         private float _guardStarted = -1;
         private Slipper _loose;
+        private bool _pendingReview,_pendingRefreshed,_expiredRefreshed;
+        private bool _pendingPickSent,_pendingPickSeeded;
+        private bool _latePreparationReview,_lateSnapshotSent;
+        private float _pendingSeenAt=-1;
+        private readonly System.Collections.Generic.HashSet<UnityEngine.Object> _seenImpacts=new System.Collections.Generic.HashSet<UnityEngine.Object>();
+        private static readonly System.Reflection.FieldInfo WarningField=typeof(DanteSeismicVisual).GetField("_warning",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+        private static readonly System.Reflection.MethodInfo HostSnapshot=typeof(MatchRpc).GetMethod("HostSyncPeer",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
         private static string Argument(string key)
         {
             var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, key);
@@ -34,12 +44,13 @@ namespace TumbangPreso.Diagnostics
             _active = Argument("-tp-dantetrace") != null && !Environment.GetCommandLineArgs().Contains("-tp-tournament");
             if (!_active) return;
             UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            string hero=Argument("-tp-pendinghero")??"dante";
             Settings.SettingsStore.Current.CharacterPick = Roster.GetPeople(GameMode.HeroStrike)
-                .Select((person, index) => (person, index)).First(pair => pair.person.Id == "dante").index;
+                .Select((person, index) => (person, index)).First(pair => pair.person.Id == hero).index;
             // The named fixture profile advertises the same selected build through
             // normal pick replication. A later join must not overwrite the case.
             string scenario = Argument("-tp-dantecase") ?? "stomp";
-            var build = Settings.SettingsStore.HeroBuildFor("dante");
+            var build = Settings.SettingsStore.HeroBuildFor(hero);
             build.Slot1VariantId = scenario == "tremor" ? "dante.1.tremor" : "";
             build.Slot2VariantId = scenario == "plating" ? "dante.2.plating" : "";
             foreach (var id in new[] { build.Slot1VariantId, build.Slot2VariantId })
@@ -57,18 +68,38 @@ namespace TumbangPreso.Diagnostics
             if (!_active) return;
             var root = new GameObject("~NetDanteProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetDanteProbe>(); probe._case = Argument("-tp-dantecase") ?? "stomp";
+            probe._pendingReview=Environment.GetCommandLineArgs().Contains("-tp-dantepending-review");
+            probe._latePreparationReview=Environment.GetCommandLineArgs().Contains("-tp-pendinglate-review");
+            probe._pendingHero=Argument("-tp-pendinghero")??"dante";
             string path = Path.GetFullPath(Argument("-tp-dantetrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,s1charges,s2active,s2cooldown,ultcharge,casterX,casterY,casterZ,frontX,frontY,frontZ,rearX,rearY,rearZ,frontTrip,frontStun,casterStun,ward,pillars,shoeX,shoeY,shoeZ,guardTested,afterTested,tremor,plating,orbitStones,rumble");
+            probe._writer.WriteLine("time,elapsed,local,host,s1charges,s2active,s2cooldown,ultcharge,casterX,casterY,casterZ,frontX,frontY,frontZ,rearX,rearY,rearZ,frontTrip,frontStun,casterStun,ward,pillars,shoeX,shoeY,shoeZ,guardTested,afterTested,tremor,plating,orbitStones,rumble,pendingReview,pendingRefreshed,expiredRefreshed,windup,impactBirths,heroIndex,casterPick,casterMode,ultActive,ultRemaining,impactX,impactY,impactZ,impactHeld");
         }
 
         private void Update()
         {
             var round = GameServices.Round;
+            int dantePick=Roster.IndexIn(Roster.HeroPeople,_pendingHero);
+            if(_pendingReview && NetAuthority.IsNetworked && MatchRpc.Instance!=null)
+            {
+                if(!_pendingPickSent && NetAuthority.LocalSlot==1)
+                {
+                    var settings=Settings.SettingsStore.Current;
+                    MatchRpc.Instance.SelectLobbyPickServerRpc(dantePick,settings.CanPick,settings.SlipperPick);
+                    _pendingPickSent=true;
+                }
+                if(!_pendingPickSeeded && NetAuthority.IsHost && round?.PlayerAt(1)!=null
+                    && MatchRpc.Instance.GetSeatInfo(1)?.CharacterPick==dantePick)
+                {
+                    _pendingPickSeeded=true;MatchRpc.Instance.SyncPicksClientRpc(new[]{1,dantePick,-1,-1});
+                    MatchRpc.Instance.BroadcastPicks();
+                }
+            }
             if (!_active || !NetAuthority.IsNetworked || round == null || !round.RoundActive || GameServices.Match == null || GameServices.Match.RoundNumber < 1) return;
             var ready = FindFirstObjectByType<ReadyGate>(); if (ready != null && ready.CountingDown) return;
             var caster = round.PlayerAt(1); var front = round.PlayerAt(2); var rear = round.PlayerAt(3);
             if (caster == null || front == null || rear == null || caster.AbilitySystem?.Kit == null) return;
+            if(_pendingReview && !_prepared && (caster.CharacterIndex!=dantePick || caster.AbilitySystem.HeroId!=_pendingHero))return;
             foreach (var brain in FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
             foreach (var reader in FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
             foreach (var player in round.Players) if (player != null && player != caster) { player.Intent.Clear(); player.Intent.Parked = true; }
@@ -83,7 +114,8 @@ namespace TumbangPreso.Diagnostics
                 _prepared = true;
                 var build = new HeroBuild { HeroId = "dante", Slot1VariantId = _case == "tremor" ? "dante.1.tremor" : null,
                     Slot2VariantId = _case == "plating" ? "dante.2.plating" : null };
-                caster.AbilitySystem.BindHero("dante", build); caster.AbilitySystem.Kit.AddUltimateCharge(100);
+                if(!_pendingReview)caster.AbilitySystem.BindHero("dante", build);
+                caster.AbilitySystem.Kit.AddUltimateCharge(100);
                 if (NetAuthority.IsHost || NetAuthority.LocalSlot == 1)
                 {
                     caster.Teleport(new Vector3(0, .12f, -8)); caster.transform.rotation = Quaternion.identity;
@@ -106,8 +138,8 @@ namespace TumbangPreso.Diagnostics
             if (NetAuthority.LocalSlot == 1)
             {
                 caster.Intent.Parked = false;
-                caster.Intent.AimPoint = new Vector3(0, .1f, -3); caster.Intent.FaceAimPoint = true;
-                caster.Intent.Set(guard ? Verb.Skill2 : _case == "fissure" ? Verb.Ultimate : Verb.Skill1, elapsed >= 12 && elapsed < 12.35f);
+                caster.Intent.AimPoint = _pendingHero=="zack" && elapsed>=12.75f?new Vector3(4,.1f,-7):new Vector3(0, .1f, -3); caster.Intent.FaceAimPoint = true;
+                caster.Intent.Set(guard ? Verb.Skill2 : _case == "fissure" ? Verb.Ultimate : Verb.Skill1, elapsed >= 12 && elapsed < (_pendingHero=="zack"?12.7f:12.35f));
                 caster.Intent.Move = guard && elapsed >= 12.5f && elapsed < 15.2f ? Vector2.up * .35f : Vector2.zero;
             }
             if (guard && NetAuthority.IsHost)
@@ -120,6 +152,52 @@ namespace TumbangPreso.Diagnostics
                 }
                 if (_testedGuard && !caster.AbilitySystem.Kit.Skill2.IsActive && !_testedAfter)
                 { _testedAfter = true; caster.ApplyStagger(.8f, StunElement.Stone, 6); }
+            }
+            var pendingSkill=_case=="fissure"?caster.AbilitySystem.Kit.Ultimate:caster.AbilitySystem.Kit.Skill1;
+            if(_pendingReview)
+            {
+                // A normal round trip can reach the host after this short cast
+                // finishes. This opt-in boundary case captures the actual host
+                // snapshot near contact, then lets the real transport delay it.
+                if(_latePreparationReview && NetAuthority.IsHost && !_lateSnapshotSent
+                    && pendingSkill.IsWindingUp && pendingSkill.WindupRemaining<=.09f)
+                {
+                    foreach(ulong peer in NetworkManager.Singleton.ConnectedClientsIds)
+                        if(NetSession.Instance.Lobby.PeerById((int)peer)?.Seat==2)
+                        {
+                            Debug.Log($"[PendingCastProbe] captured near deadline remaining={pendingSkill.WindupRemaining:F4}");
+                            HostSnapshot.Invoke(MatchRpc.Instance,new object[]{(int)peer});
+                            _lateSnapshotSent=true;break;
+                        }
+                }
+                if(_pendingHero=="dante")
+                {
+                    foreach(var impact in FindObjectsByType<DanteSeismicVisual>())
+                        if(WarningField!=null && !(bool)WarningField.GetValue(impact))
+                        { _seenImpacts.Add(impact);_lastImpact=impact.transform.position;_impactHeld=pendingSkill.HeldSecondsOnCast; }
+                }
+                else
+                {
+                    var impact=GameObject.Find(_pendingHero=="cheska"?"GlacialNovaWave":"ThunderShockRing");
+                    if(impact!=null){_seenImpacts.Add(impact);_lastImpact=impact.transform.position;_impactHeld=pendingSkill.HeldSecondsOnCast;}
+                }
+                if(NetAuthority.LocalSlot==2)
+                {
+                    if(!_pendingRefreshed && pendingSkill.IsWindingUp && _pendingSeenAt<0)_pendingSeenAt=Time.realtimeSinceStartup;
+                    bool during=!_pendingRefreshed && pendingSkill.IsWindingUp && _pendingSeenAt>=0 && Time.realtimeSinceStartup-_pendingSeenAt>=.035f;
+                    bool expired=_pendingRefreshed && !_expiredRefreshed && elapsed>=20;
+                    if(during || expired)
+                    {
+                        if(during)_pendingRefreshed=true;else _expiredRefreshed=true;
+                        // Reconstruct the observer kit and request the actual host snapshot.
+                        // This is a live snapshot fixture, not a process reconnect claim.
+                        caster.AbilitySystem.BindHero(_pendingHero,new HeroBuild{HeroId=_pendingHero});
+                        caster.GetComponentInChildren<CharacterAnimator>()?.CancelHeroAction();
+                        if(!during || !_latePreparationReview)MatchRpc.Instance.RequestWorldSnapshot();
+                        pendingSkill=_case=="fissure"?caster.AbilitySystem.Kit.Ultimate:caster.AbilitySystem.Kit.Skill1;
+                        Debug.Log("[PendingCastProbe] refreshed "+(during?"during preparation":"after expiry")+" at="+elapsed);
+                    }
+                }
             }
             double now = NetworkManager.Singleton.ServerTime.Time;
             if (now >= _next)
@@ -139,7 +217,10 @@ namespace TumbangPreso.Diagnostics
                     shoe.x, shoe.y, shoe.z, _testedGuard ? 1 : 0, _testedAfter ? 1 : 0,
                     caster.AbilitySystem.HasVariant("dante.1.tremor") ? 1 : 0,
                     caster.AbilitySystem.HasVariant("dante.2.plating") ? 1 : 0,
-                    orbit!=null?orbit.childCount:0,cameraRig!=null?cameraRig.GroundRumbleOffset.magnitude:0 };
+                    orbit!=null?orbit.childCount:0,cameraRig!=null?cameraRig.GroundRumbleOffset.magnitude:0,
+                    _pendingReview?1:0,_pendingRefreshed?1:0,_expiredRefreshed?1:0,pendingSkill.WindupRemaining,_seenImpacts.Count,
+                    Roster.IndexIn(Roster.HeroPeople,caster.AbilitySystem.HeroId),caster.CharacterIndex,(int)caster.Mode,caster.AbilitySystem.Kit.Ultimate.IsActive?1:0,
+                    caster.AbilitySystem.Kit.Ultimate.DurationRemaining,_lastImpact.x,_lastImpact.y,_lastImpact.z,_impactHeld };
                 _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
             }
             if (elapsed > 24) { _writer.Flush(); Application.Quit(); }

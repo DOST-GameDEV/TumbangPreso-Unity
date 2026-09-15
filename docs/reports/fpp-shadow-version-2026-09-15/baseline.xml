@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.1022926">
+  <test-suite type="TestSuite" id="1553" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.102293" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1547" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.087903" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15928" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1548" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.084632" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1549" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.081882" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1127" name="FppSlipperShadowProbe" fullname="TumbangPreso.PlayTests.FppSlipperShadowProbe" classname="TumbangPreso.PlayTests.FppSlipperShadowProbe" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.065250" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1128" name="FirstPersonSlipperAndChargePartsCastNoSeparateWorldShadow" fullname="TumbangPreso.PlayTests.FppSlipperShadowProbe.FirstPersonSlipperAndChargePartsCastNoSeparateWorldShadow" methodname="FirstPersonSlipperAndChargePartsCastNoSeparateWorldShadow" classname="TumbangPreso.PlayTests.FppSlipperShadowProbe" runstate="Runnable" seed="1440656290" result="Failed" start-time="2026-09-15 10:19:42Z" end-time="2026-09-15 10:19:45Z" duration="3.047939" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  zack FPP caster: HeldSlipper
+  Expected: Off
+  But was:  On
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FppSlipperShadowProbe+<FirstPersonSlipperAndChargePartsCastNoSeparateWorldShadow>d__8.MoveNext () [0x003a2] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\FppSlipperShadowProbe.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/fpp-shadow-before-v2/zack-plain.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

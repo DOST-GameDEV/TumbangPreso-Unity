@@ -34,11 +34,11 @@ namespace TumbangPreso.Visual
             { Node = node; At = node.localPosition; Velocity = velocity; Scale = node.localScale; Rotation = node.localRotation; Spin = spin; GroundRise = groundRise; }
         }
 
-        public static void Warn(CharacterMotor owner, HeroAbility cast, Vector3 position, Vector3 forward, float radius, bool fissure)
+        public static void Warn(CharacterMotor owner, HeroAbility cast, Vector3 position, Vector3 forward, float radius, bool fissure, float elapsed = 0)
         {
             var effect = Create(position, cast.Windup, true);
             effect._cast = cast; effect._owner = owner;
-            effect.Build(forward, radius, fissure, false); effect.StepTo(0);
+            effect.Build(forward, radius, fissure, false); effect.StepTo(Mathf.Clamp(elapsed,0,cast.Windup));
         }
 
         public static void Impact(Vector3 position, Vector3 forward, float radius, bool fissure, bool tremor = false)

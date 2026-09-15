@@ -1,9 +1,16 @@
 # Active execution plan
 
-**Current work, September15:** loadout/Classic cosmetic correction and themed
-controller are pushed through b0820b2b. Codex is implementing and validating
-initial pending-cast restoration; source is uncommitted protocol39, preserved
-nativev11 is protocol38. See the newest ledger pointer for exact evidence.
+**Current checkpoint, September15:** the detached FPP slipper shadow and visible
+version labels are corrected. Plain/charged first-person renderer checks pass;
+world shadows and internal version identity are retained. Initial Dante Q/R,
+Cheska R and Zack R preparation restoration and Zack's delayed charge tail are
+qualified in nativev16/protocol40. Both38and39older binaries are refused. Reports:
+reports/fpp-shadow-version-2026-09-15 and reports/pending-casts-2026-09-15.
+
+**Next Codex work:** inspect cancelled/newer-cast ordering for initial timed-kit
+hydration, then the remaining Sean/Zack active-motion and Sean Supernova phase
+contracts. Preserve the named passing preparation cases and the v11/protocol38
+UI/demo fallback. See newest ledger for exact process and publication state.
 
 **Separate Claude reservation:** C1 Ilalim idle, C2 bot lunge decisions and C3
 measured AI/combat lookups belong to CLAUDE_ENGINEERING_LANE.md. Codex must not

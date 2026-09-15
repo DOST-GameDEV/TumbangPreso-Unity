@@ -1,5 +1,24 @@
 # TODO: Tumbang Preso Unity
 
+## Urgent local corrections, September15
+
+- [x] Remove the detached shadow cast by the first-person slipper presentation
+  copy, including its charged attachments. Preserve actual world shoe/body shadows.
+- [x] Remove visible v1.0.0/version stamps from all game UI, including home and HUD.
+  Preserve internal build/version identity and connection compatibility.
+
+Codex owns these new corrections. The separate Claude reservation below stays intact.
+Implemented and included in internalv16; focused plain/charged shadow checks pass,
+world shadow modes and internal version identity are retained. Evidence and exact
+limits: [display corrections](reports/fpp-shadow-version-2026-09-15/README.md).
+
+**Bounded networking batch complete:** initial pending Dante Q/R, Cheska R and
+Zack R restoration, including Zack's delayed charge tail, is qualified in local
+contracts and real native peers. Final protocol40 refuses38and39. See
+[pending-cast report](reports/pending-casts-2026-09-15/README.md). This does not
+close broader152.4, active movement, Sean's physical Supernova phase, all variants
+or process-reconnect qualification.
+
 ## Reserved for Claude on the separate PC, September15
 
 The owner will send the assignment manually. Codex must leave this work alone.

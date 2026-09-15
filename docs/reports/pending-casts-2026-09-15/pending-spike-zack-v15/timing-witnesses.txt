@@ -1,0 +1,5 @@
+host.log: [PendingCastProbe] captured near deadline remaining=0.0767
+observer-link.log: [pending-link] armed at host elapsed=13.01781, windup=0.1775324; downstream=0.450s for0.7s
+observer.log: [PendingCastProbe] refreshed during preparation at=12.99782
+observer.log: [CastPreparation] expired in transit seat=1 kind=2 remaining=0.0767 age=0.3878
+observer.log: [PendingCastProbe] refreshed after expiry at=20.01664

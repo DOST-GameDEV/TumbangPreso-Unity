@@ -1016,6 +1016,24 @@ namespace TumbangPreso.Visual
             _gaitWeight = 0f;
         }
 
+        // Rejoining an accepted preparation resumes its existing authored body/FPP
+        // gesture; it does not emit a new gameplay cast or ultimate introduction.
+        public void PlayActionAt(string action,string viewmodelAction,float elapsed)
+        {
+            PlayAction(action,viewmodelAction);
+            var clip=ResolveChain(ActionClips,action);
+            if(clip!=null && _current==clip && _graph.IsValid())
+            {
+                float age=Mathf.Clamp(elapsed,0,ClipLength(clip));
+                var playing=Front();if(playing.IsValid())playing.SetTime(age);
+                _oneShotLeft=Mathf.Max(0,ClipLength(clip)-age);
+                _weight=Mathf.Max(_weight,_transitionSeconds<=0?1:Mathf.Clamp01(age/_transitionSeconds));
+                _mixer.SetInputWeight(0,1-_weight);_mixer.SetInputWeight(1,_weight);
+                if(_weight>=1)RetireOutgoing();
+            }
+            CameraSystem.CameraRig.SeekViewmodelAction(_motor,viewmodelAction,elapsed);
+        }
+
         public void PlayPickUp() => PlayOneShot(PickUp);
 
         /// <summary>

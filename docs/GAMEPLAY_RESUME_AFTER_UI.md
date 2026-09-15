@@ -59,13 +59,15 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
    MatchInstaller already requests state after each arena build. Broader
    same-process host switch, both modes, real rematch, host loss, retained
    loadouts and interrupted/rebound input still need scoped qualification.
-2. **Pending casts on joining.** Zack restoration covers an ultimate that has
-   already struck and still empowers throws. Joining during its windup is not
-   solved by that work. Audit other pending stomp/fissure/Nova/Supernova
-   preparations and preserve captured aim, grounded contact, resource spending,
-   cancellation and authority without replaying completed impacts. Phaister's
-   specialized existing preparation/sky and Nemu familiar paths are already
-   implemented; preserve their distinct semantics.
+2. **Remaining preparation/phase coverage on joining.** Dante Q/R, Cheska R
+   and Zack R initial preparations now restore captured aim/hold and body/FPP
+   elapsed timing. Real latency-spike evidence and Zack's separate remaining
+   charge-window correction are in reports/pending-casts-2026-09-15/README.md.
+   Do not redo those named cases. Sean's impulse/dive/grounded impact still needs
+   its distinct physical-phase contract. Broader cancelled/newer-cast ordering
+   and actual rejoin coverage remain separate from the qualified observer-kit
+   reconstruction fixture. Preserve captured contact, resources and authority,
+   Phaister's existing preparation/sky and Nemu's existing familiar semantics.
 3. **Remaining active movement skills and corrections.** Audit Sean rush/Zack
    sprint active movement/window state on joining and interruption. General
    repeated state correction is not the same as initial-only charge hydration.

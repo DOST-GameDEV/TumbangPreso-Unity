@@ -28,7 +28,7 @@ namespace TumbangPreso.Net
     /// before it resolves; folding it into the result would show the tell and the tag on the
     /// same frame, which removes the only warning the game gives.
     /// </summary>
-    public sealed class MatchRpc : MonoBehaviour
+    public sealed partial class MatchRpc : MonoBehaviour
     {
         public static MatchRpc Instance { get; private set; }
 
@@ -340,6 +340,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("CovenEffect", OnCovenEffectMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
+            cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
             cm.RegisterNamedMessageHandler("WorldFieldItem", OnWorldFieldItemMsg);
             cm.RegisterNamedMessageHandler("WorldFieldEnd", OnWorldFieldEndMsg);
@@ -1822,6 +1823,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(chargeRemaining);
             writer.WriteValueSafe(ultimateRemaining);
             writer.WriteValueSafe((float)_nm.ServerTime.Time);
+            writer.WriteValueSafe(kit is Abilities.ZackHeroKit && kit.Ultimate.IsWindingUp);
             _nm.CustomMessagingManager.SendNamedMessage("TimedKit", peer, writer);
         }
 
@@ -1834,8 +1836,10 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float remaining);
             reader.ReadValueSafe(out float ultimateRemaining);
             reader.ReadValueSafe(out float sentAt);
+            reader.ReadValueSafe(out bool ultimatePending);
             if (!ValidSlot(slot) || !Finite(remaining) || !Finite(ultimateRemaining) || !Finite(sentAt)
                 || remaining < 0 || remaining > 10.1f || ultimateRemaining < 0 || ultimateRemaining > 7.1f
+                || (ultimatePending && hero != "zack")
                 || GameServices.Match == null || GameServices.Match.RoundNumber != round) return;
             var motor = Unit(slot);
             var kit = motor?.AbilitySystem?.Kit;
@@ -1847,7 +1851,7 @@ namespace TumbangPreso.Net
             using (NetCue.SuppressRelay())
             {
                 if (kit is Abilities.SeanHeroKit sean && ultimateRemaining <= 0) sean.RestoreJoiningIgnition(motor, remaining);
-                else if (kit is Abilities.ZackHeroKit zack) zack.RestoreJoiningCharges(motor, remaining, ultimateRemaining);
+                else if (kit is Abilities.ZackHeroKit zack) zack.RestoreJoiningCharges(motor, remaining, ultimateRemaining, ultimatePending);
                 else if (kit is Abilities.DanteHeroKit dante && ultimateRemaining <= 0) dante.RestoreJoiningCarapace(motor, remaining);
                 else if (kit is Abilities.NemuHeroKit nemu && ultimateRemaining <= 0) nemu.RestoreJoiningVeil(motor, remaining);
             }
@@ -5704,6 +5708,7 @@ namespace TumbangPreso.Net
                 BroadcastFamiliarEffect(slot,(ulong)peerId);
                 SendCovenSnapshot(slot, (ulong)peerId);
                 SendTimedKitSnapshot(slot, (ulong)peerId);
+                SendPreparationSnapshot(slot,(ulong)peerId);
             }
             SendSkySnapshot((ulong)peerId);
             SendWorldFieldSnapshot((ulong)peerId);

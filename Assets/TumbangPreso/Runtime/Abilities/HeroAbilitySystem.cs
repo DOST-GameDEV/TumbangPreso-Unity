@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
@@ -1288,6 +1288,25 @@ namespace TumbangPreso.Abilities
             if (Kit == null || Kit.PracticeMode) return;
 
             Kit.OnRechargeEvent(what);
+        }
+
+        public bool RestoreJoiningPreparation(Slot slot,Vector3 position,Vector3 forward,Vector3 aimPoint,float heldSeconds,float remaining)
+        {
+            var ability=AbilityFor(slot);
+            if(ability==null || _motor==null)return false;
+            var context=new AbilityContext(_motor,_carrier,_verbs,position,forward,aimPoint);
+            if(!ability.RestoreJoiningPreparation(context,remaining,heldSeconds))return false;
+            float elapsed=ability.Windup-ability.WindupRemaining;
+            GetComponentInChildren<Visual.CharacterAnimator>()?.PlayActionAt(ability.CastAction,ability.ViewmodelAction,elapsed);
+            if(Kit.HeroId=="dante")
+                Visual.DanteSeismicVisual.Warn(_motor,ability,position,forward,ability.TelegraphRadius,slot==Slot.Ultimate,elapsed);
+            else if(_reticle!=null && ability.HasTelegraph)
+            {
+                _reticle.SetStyle(ability.TelegraphStyle);
+                var centre=ability.HoldToAim?AimPoint(ability,ability.AimRangeFor(heldSeconds),context):ability.TelegraphCentre(context);
+                _reticle.Flash(centre,ability.TelegraphRadius,AccentColour(),remaining);
+            }
+            return true;
         }
 
         public bool NeedsOwnerEffectConfirmation(Slot slot)

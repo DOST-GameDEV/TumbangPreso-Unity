@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -65,6 +65,7 @@ namespace TumbangPreso.Abilities
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Fissure;
                 Windup = StompContactSeconds;
+                SupportsPendingSnapshot=true;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -223,6 +224,7 @@ namespace TumbangPreso.Abilities
             {
                 TelegraphStyle = Visual.GroundReticle.Style.Fissure;
                 Windup = UltimateWindup;
+                SupportsPendingSnapshot=true;
             }
 
             protected override void OnActivate(AbilityContext ctx)
