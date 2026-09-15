@@ -104,7 +104,13 @@ namespace TumbangPreso.UI
         protected override void OnClosed()
         {
             if (Canvas != null) Canvas.gameObject.SetActive(false);
-            if (Local != null) Local.Intent.Parked = false;
+            if (Local != null)
+            {
+                // UI Submit/click can also bind Jump/throw. Consume that menu
+                // press and wait for release before accepting a fresh game action.
+                Local.GetComponent<PlayerInputReader>()?.DiscardMenuButtonsUntilRelease();
+                Local.Intent.Parked = false;
+            }
 
             // Only the match wants the mouse back. A close on the way to the title screen has
             // already handed the pointer to the menu and must not have it taken away again.

@@ -324,3 +324,13 @@ Zack Snap Discharge/Sean Flare Shot preview now includes the same variant gain
 as HostThrowAt. Do not call this phase visually accepted yet. Next: check aim
 motion at normal speed, then refine full-body preparation/release/follow-through
 and signed Pektus against actual retained rig poses. Do not change the18people.
+
+
+## September16 recovery/menu boundary correction
+
+A real controller Submit on Resume also spent a get-up press. The reader now
+consumes menu-owned buttons through release; fresh gameplay presses remain valid.
+Related6/6local checks and an exact native Windowsv23 case pass. No gameplay
+numbers, network protocol or movement axes changed. See
+reports/recovery-menu-boundary-2026-09-15. Remaining recovery/device/animation
+qualification is not closed by this boundary fix.

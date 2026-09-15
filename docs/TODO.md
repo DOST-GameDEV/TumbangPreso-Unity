@@ -1,5 +1,12 @@
 # TODO: Tumbang Preso Unity
 
+**September16 gameplay fix:** controller Resume no longer also spends a get-up
+press. Held menu buttons stay consumed until release, then fresh gameplay input
+works. Related6/6tests and native Windowsv23 pass; see
+[recovery/menu boundary](reports/recovery-menu-boundary-2026-09-15/README.md).
+Broader movement/recovery/kit work continues, with C4 still reserved.
+
+
 **Latest final owner UI correction is implemented/qualified and the video is
 DELIVERED:** final TUMP7/TUMP8 login, no email, password confirmation, copied eyes,
 Terms checkmark, centered tab/Guest labels, woven background, equal OR lines,

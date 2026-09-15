@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,6 +42,31 @@ namespace TumbangPreso
     [DefaultExecutionOrder(-120)]
     public sealed class PlayerInputReader : MonoBehaviour
     {
+        private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
+        private int _menuClosedFrame=-1;
+
+        public void DiscardMenuButtonsUntilRelease()
+        {
+            _menuClosedFrame=Time.frameCount;
+            CaptureMenuButton(_jump,Verb.Jump);CaptureMenuButton(_special,Verb.SpecialAbility);
+            CaptureMenuButton(_grab,Verb.Grab);CaptureMenuButton(_lunge,Verb.Lunge);
+            CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
+            CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
+            InputLayer.TouchInput.ConsumeRecoveryPress();
+            _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
+        }
+        private void CaptureMenuButton(InputAction action,Verb verb)
+        {
+            if(RawButton(action,verb))_menuButtons.Add(verb);
+        }
+        private static bool RawButton(InputAction action,Verb verb)
+            =>(action!=null && action.IsPressed()) || InputLayer.TouchInput.Pressed(verb);
+        private bool ReadButton(InputAction action,Verb verb)
+        {
+            bool down=RawButton(action,verb);
+            if(!down)_menuButtons.Remove(verb);
+            return Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(verb) && down;
+        }
         [SerializeField] private InputActionAsset _actions;
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
@@ -193,12 +219,12 @@ namespace TumbangPreso
 
             // Recovery and hero controls still belong to the human while Kuro
             // owns movement. Preserve quick Jump taps until the physics consumer.
-            intent.Set(Verb.Jump, _jump.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Jump));
+            intent.Set(Verb.Jump, ReadButton(_jump,Verb.Jump));
             bool touchRecovery=InputLayer.TouchInput.ConsumeRecoveryPress();
-            if (_jump.WasPressedThisFrame()||touchRecovery) intent.BufferPress(Verb.Jump);
-            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill1));
-            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
-            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Ultimate));
+            if (Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(Verb.Jump) && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
+            if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
+            if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
+            if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
@@ -235,17 +261,17 @@ namespace TumbangPreso
                 move = InputLayer.TouchInput.Move;
 
             intent.Move = move;
-            intent.Set(Verb.Sprint, _sprint.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Sprint));
-            intent.Set(Verb.SpecialAbility, _special.IsPressed() || InputLayer.TouchInput.Pressed(Verb.SpecialAbility));
-            intent.Set(Verb.Grab, _grab.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Grab));
-            intent.Set(Verb.Lunge, _lunge.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Lunge));
-            intent.Set(Verb.EmoteWheel, _emote.IsPressed() || InputLayer.TouchInput.Pressed(Verb.EmoteWheel));
+            intent.Set(Verb.Sprint, ReadButton(_sprint,Verb.Sprint));
+            intent.Set(Verb.SpecialAbility, ReadButton(_special,Verb.SpecialAbility));
+            intent.Set(Verb.Grab, ReadButton(_grab,Verb.Grab));
+            intent.Set(Verb.Lunge, ReadButton(_lunge,Verb.Lunge));
+            intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
             intent.LookDelta = ReadLookDelta();
 
             // Pektus (Curve Spin) control: Independent of WASD movement!
             // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
-            if (_special.IsPressed())
+            if (intent.Pressed(Verb.SpecialAbility))
             {
                 if (Mouse.current != null)
                 {

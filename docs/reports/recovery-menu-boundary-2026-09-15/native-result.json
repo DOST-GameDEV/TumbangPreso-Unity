@@ -1,0 +1,9 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "recovery menu boundary setup",
+        "native Resume consumes Submit; hold stays consumed; fresh press recovers"
+    ],
+    "frameWindows": []
+}

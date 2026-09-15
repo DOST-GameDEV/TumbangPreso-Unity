@@ -1,5 +1,88 @@
 # Active TUMP rework ledger
 
+## CURRENT recovery menu boundary qualified; publish then continue
+
+Reproduced and fixed a controller Resume press also spending a recovery mash.
+New producer-owned suppression consumes the closing frame and held configured
+buttons until release. Fresh presses still work, with no arbitrary cooldown or
+Net/axis changes. Failed baseline and fix results are retained.
+
+Local related6/6PASS (guardff89b3fd3bd5). Fresh internal Windowsv23 native fixture
+PASSED actual Resume/no-mash, continued hold/no-mash and release/fresh-mash.
+Build1135MB/46s, guard23f33fc9973b; native PID19336 retired. Shared input unchanged.
+Evidence: reports/recovery-menu-boundary-2026-09-15. Runtime SHA: 71ca7072355efc1982e9e4a11cd0546d7d56caf904ad9b9896a68531ba1a0786.
+All task-owned Editor/player jobs stopped. Inday mesh/UI/project changes were
+verified whitespace-only, backed up and restored; no Inday geometry edits.
+
+Next commit/push this bounded gameplay fix, then continue the remaining recovery/
+movement/whole-kit queue. C4 remains reserved; do not duplicate request-safety work.
+UI/video are already delivered and pushed. Owner asleep: NO usage resets, no
+optional questions, no Desktop replacement. Full project remains unfinished.
+
+
+## CURRENT recovery boundary6/6PASS; nativev23 building
+
+RecoveryDeviceProbe plus extended menu boundary passed6/6, guardff89b3fd3bd5.
+This includes63device/element/cadence cases, quick taps/holds, independent tag
+clocks, delayed prediction and consumed Resume Submit. No full suite run.
+
+Active build: Builds/recovery-menu-v23/TumbangPreso.exe,
+Logs/recovery-menu-build-v23.log, exec1822. No C#/asset edits during build.
+New --recovery-only native diagnostic enters Classic through the real UI, starts
+a round, uses a synthetic gamepad to Resume while tripped, verifies no immediate
+or held mash leak, then verifies release/fresh press. Overrides are on a cloned
+input asset only. Native fixture is not physical-controller certification.
+
+Next run tools/run_ui_player_review.py --recovery-only onv23, preserve result and
+publish this bounded input fix. Generated Inday mesh diffs are whitespace-only
+15lines each; inspected, back up and restore exactly after runs. Do not change its
+geometry. Final UI/video are pushed and delivered; C4 remains reserved. Owner
+asleep: NO usage resets or optional questions; continue the remaining queue.
+
+
+## CURRENT reproduced recovery leak fixed; related input regressions running
+
+Actual controller Submit on Resume reproduced a gameplay leak:1get-up press from
+a menu action. Failed Logs/recovery-menu-boundary-v1.xml is preserved. Small fix:
+PausePanel.OnClosed calls PlayerInputReader.DiscardMenuButtonsUntilRelease. Reader
+consumes the closing frame and blocks only currently held configured buttons until
+release, clearing pending intent. No time-based cooldown, axis change or Net edit.
+Focused v2 passed1/1 with fresh press still working (guard21ee48264fb1).
+
+Active related test: Logs/recovery-input-regression-v3.log/XML, exec76330, expected
+RecoveryDeviceProbe plus RecoveryMenuBoundaryProbe. Added hold-after-resume check.
+No C#/asset edits during it. Next inspect results; add only necessary keyboard/
+mouse/rebound boundary coverage if warranted, then native verification and commit.
+Map loading dirtied two pre-existing Inday arm mesh assets and UI meta whitespace;
+these were clean before this investigation. Back up and inspect exact diffs after
+run, restoring only proven generated changes. Do not alter deferred Inday work.
+
+Final UI remains pushedae986265 and its video is delivered. UI post-peer integration
+passed1/1 guard02e5d2dc5db5. Owner asleep; no optional questions or usage resets.
+Continue remaining gameplay queue after this bounded fix. C4 stays reserved.
+
+
+## CURRENT gameplay recovery/menu boundary investigation
+
+Final UI is pushed in ae986265 (verified remote), video delivered. Post-peer
+integration startup fixture PASSED1/1, guard02e5d2dc5db5. All UI/recording processes
+are retired. Owner asleep, NO resets or optional questions; full queue continues.
+
+Resumed recovery/input work. Existing reports already qualify63device/element/
+cadence cases and roof fall/mash/stock timing; do NOT rerun or rebuild those blindly.
+Source inspection found a narrower unqualified boundary: PlayerInputReader keeps
+sampling Jump while PausePanel parks input, and closing the menu unparks it in the
+same frame as controller Submit (also the default Jump control). Hypothesis: the
+Resume press can also shorten a trip. No production change yet and no bug claim.
+
+New RecoveryMenuBoundaryProbe uses a synthetic gamepad through the actual input
+reader/EventSystem and actual Resume button. It requires menu resume without mash,
+then release/fresh press still mashes. Next run this one focused fixture, preserve
+failure evidence, trace causal ordering and only fix if reproduced. C4 Net files
+are reserved and untouched. Native v22 remains the UI artifact; gameplay source
+is not yet changed. New probe/meta are uncommitted. No active Editor before run.
+
+
 ## CURRENT final UI committed; peer evidence merge, then gameplay
 
 Final polished UI is committed as d04370f8; video already delivered in chat.

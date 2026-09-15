@@ -7,6 +7,7 @@ using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace TumbangPreso.Diagnostics
 {
@@ -373,8 +374,53 @@ namespace TumbangPreso.Diagnostics
             Stage("settings credits and Play/Back remain reachable");
         }
 
+        private IEnumerator RecoveryOnly()
+        {
+            Stage("recovery menu boundary setup");
+            yield return WaitFor(()=>Find("GuestAccount")!=null||Find("ContinueAccount")!=null||Find("StartButton")!=null,80);
+            if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
+            else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
+            yield return Click("StartButton");yield return Click("ClassicButton");yield return Click("PracticeButton");
+            yield return WaitFor(()=>Find("PrimaryButton")!=null);yield return Click("PrimaryButton");yield return StartReadyRound();
+            foreach(var brain in UnityEngine.Object.FindObjectsByType<AIController>())brain.enabled=false;
+            var watcher=UnityEngine.Object.FindAnyObjectByType<PauseWatcher>();var who=watcher.Local;
+            var inputSettings=UnityEngine.InputSystem.InputSystem.settings;var oldBackground=inputSettings.backgroundBehavior;
+            inputSettings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            var pad=UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Gamepad>();
+            var reader=who.GetComponent<PlayerInputReader>();
+            var original=typeof(PlayerInputReader).GetField("_actions",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+            var actions=UnityEngine.Object.Instantiate(Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso"));
+            try
+            {
+                actions.devices=new UnityEngine.InputSystem.InputDevice[]{pad};original.SetValue(reader,actions);reader.SendMessage("Awake");reader.enabled=true;
+                if(Settings.Rebinding.ResolveBindingIndexFor(actions,"Jump",InputLayer.InputDeviceKind.Gamepad,out var jump,out int binding))
+                    jump.ApplyBindingOverride(binding,"<Gamepad>/buttonSouth");
+                InputLayer.TouchInput.ReleaseAll();InputLayer.TouchInput.Active=false;
+                who.ClearTrip();who.ClearStun();who.ApplyTrip();
+                var pause=Panel.Open<PausePanel>(watcher);pause.Local=who;yield return null;
+                EventSystem.current.SetSelectedGameObject(Find("ResumeMatch").gameObject);yield return null;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState().WithButton(UnityEngine.InputSystem.LowLevel.GamepadButton.South));
+                yield return new WaitForSecondsRealtime(.2f);
+                if(pause.gameObject.activeInHierarchy || who.MashPresses!=0)throw new InvalidOperationException("Menu Submit also mashed recovery or did not resume.");
+                yield return new WaitForSecondsRealtime(.2f);
+                if(who.MashPresses!=0)throw new InvalidOperationException("Held menu Submit leaked after resume.");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState());yield return new WaitForSecondsRealtime(.15f);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState().WithButton(UnityEngine.InputSystem.LowLevel.GamepadButton.South));
+                yield return new WaitForSecondsRealtime(.12f);
+                if(who.MashPresses!=1)throw new InvalidOperationException("Fresh recovery press did not arrive after menu release.");
+                Stage("native Resume consumes Submit; hold stays consumed; fresh press recovers");yield return Shot("recovery-after-menu");
+            }
+            finally
+            {
+                reader.enabled=false;actions.Disable();UnityEngine.Object.Destroy(actions);
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(pad);inputSettings.backgroundBehavior=oldBackground;
+            }
+        }
+
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-recovery-review-only"))
+            {yield return RecoveryOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-menu-review-only"))
             {yield return MenuOnly();yield break;}
             Stage("cold boot");
