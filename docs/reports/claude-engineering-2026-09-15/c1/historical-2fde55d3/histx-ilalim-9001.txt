@@ -1,0 +1,21 @@
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+historical rules: rounds 8; seconds per round 90; pinned False
+45854 frames at 16.7 ms  ·  764.2s simulated  ·  91.0s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 14.453 ms after 120 aligning frame(s)
+lata knocks 65  tags 113  sabotages 2
+throws 166  retrievals 160  lata restores 77
+camp penalties 0  idle penalties 0
+skill uses 26  ultimate uses 13  kits seen True
+emotes 17  hops 194
+slides 103
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 9.10 of 11.0  z 12.53 of 16.5
+furthest a free slipper reached: x 10.13  z 14.11
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1086.7 m  final score 4860
+seat 1 travelled 993.0 m  final score 5720
+seat 2 travelled 1073.1 m  final score 5940
+seat 3 travelled 1158.4 m  final score 7080

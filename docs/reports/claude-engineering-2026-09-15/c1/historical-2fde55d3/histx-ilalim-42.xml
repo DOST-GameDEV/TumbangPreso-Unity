@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.226513">
+  <test-suite type="TestSuite" id="1300" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.226513" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1294" name="TumbangPreso.PlayTests.dll" fullname="/private/tmp/claude-501/-Users-paul-Documents-GitHub-TumbangPreso-Unity/ea4afabe-3a17-4fb3-9a5f-3ffb200679b2/scratchpad/hist/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.218503" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45219" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1295" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.217510" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1296" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.216678" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1024" name="BotBehaviourProbe" fullname="TumbangPreso.PlayTests.BotBehaviourProbe" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 11:20:31Z" end-time="2026-09-15 11:22:13Z" duration="101.207369" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1027" name="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" fullname="TumbangPreso.PlayTests.BotBehaviourProbe.HeroStrikeBotsPlayAWholeMatchUnderTheBridge" methodname="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" seed="847953320" result="Passed" start-time="2026-09-15 11:20:32Z" end-time="2026-09-15 11:22:13Z" duration="101.197338" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="420000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 1.7 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2292 renderers, 0 with a roof variant.
+[NearFade] 2761 occluder nodes matched, 2292 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 5870 / 6185 / 6210 / 7130. seat 3 wins
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+historical rules: rounds 8; seconds per round 90; pinned False
+45922 frames at 16.7 ms  ·  765.4s simulated  ·  98.5s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 13.320 ms after 120 aligning frame(s)
+lata knocks 68  tags 129  sabotages 2
+throws 171  retrievals 162  lata restores 83
+camp penalties 0  idle penalties 13
+skill uses 33  ultimate uses 12  kits seen True
+emotes 20  hops 173
+slides 125
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 8.38 of 11.0  z 13.06 of 16.5
+furthest a free slipper reached: x 8.02  z 12.11
+Unretrieved-slipper penalty trace (13 lines, capped at 400):
+  frame=5310 round=1 left=5.1 slot=3 idle=11.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=5348 round=1 left=4.5 slot=1 idle=11.0 at=(7.48, 0.29, 7.17) grounded=True plan=Stalk goal=(7.49, 0.00, 7.60) arrived=True stalk=10.40335 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | MINE origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) flat=10.31 d3=10.31 dy=-0.20 ground=0.00 grabbable=False | other origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68)
+  frame=5370 round=1 left=4.1 slot=3 idle=12.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=5408 round=1 left=3.5 slot=1 idle=12.0 at=(7.48, 0.29, 7.17) grounded=True plan=Stalk goal=(7.44, 0.00, 7.60) arrived=True stalk=11.40333 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | MINE origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) flat=10.31 d3=10.31 dy=-0.20 ground=0.00 grabbable=False | other origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68)
+  frame=5430 round=1 left=3.1 slot=3 idle=13.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=5468 round=1 left=2.5 slot=1 idle=13.0 at=(7.52, 0.29, 7.18) grounded=True plan=Stalk goal=(7.48, 0.00, 7.60) arrived=True stalk=12.40332 canAct=True holding=False held=- inBox=False taya=0@(-0.88, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | MINE origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) flat=10.35 d3=10.35 dy=-0.20 ground=0.00 grabbable=False | other origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68)
+  frame=5490 round=1 left=2.1 slot=3 idle=14.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=5528 round=1 left=1.5 slot=1 idle=14.0 at=(7.52, 0.29, 7.18) grounded=True plan=Stalk goal=(7.45, 0.00, 7.60) arrived=True stalk=13.4033 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | MINE origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) flat=10.35 d3=10.35 dy=-0.20 ground=0.00 grabbable=False | other origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68)
+  frame=5550 round=1 left=1.1 slot=3 idle=15.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-0.97, 0.08, 2.76) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=5588 round=1 left=0.5 slot=1 idle=15.0 at=(7.37, 0.29, 7.33) grounded=True plan=Stalk goal=(6.80, 0.00, 7.60) arrived=True stalk=14.40329 canAct=True holding=False held=- inBox=False taya=0@(-1.21, 0.08, 2.42) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | MINE origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) flat=10.34 d3=10.34 dy=-0.20 ground=0.00 grabbable=False | other origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68)
+  frame=5610 round=1 left=0.1 slot=3 idle=16.0 at=(-4.63, 0.08, 11.11) grounded=True plan=Fetch goal=(-5.36, 0.09, 3.68) arrived=False stalk=0 canAct=True holding=False held=- inBox=False taya=0@(-1.14, 0.08, 2.49) | other origin=0 owner=-1 state=Held active=False holder=1 pos=(-1.80, 0.05, 9.00) | other origin=2 owner=2 state=Loose active=True holder=-1 pos=(0.09, 0.08, 1.65) | other origin=1 owner=1 state=Loose active=True holder=-1 pos=(-0.13, 0.09, 0.21) | MINE origin=3 owner=3 state=Loose active=True holder=-1 pos=(-5.36, 0.09, 3.68) flat=7.47 d3=7.47 dy=0.01 ground=0.00 grabbable=False
+  frame=43024 round=8 left=50.4 slot=2 idle=11.0 at=(0.40, 0.08, 6.67) grounded=True plan=Fetch goal=(4.98, 0.08, 4.10) arrived=False stalk=0 canAct=True holding=False held=- inBox=True taya=3@(3.92, 0.08, 4.25) | other origin=0 owner=0 state=Held active=True holder=0 pos=(-1.64, 0.91, 10.26) | MINE origin=2 owner=2 state=Loose active=True holder=-1 pos=(4.98, 0.08, 4.10) flat=5.25 d3=5.25 dy=0.00 ground=0.00 grabbable=False | other origin=1 owner=1 state=Held active=True holder=1 pos=(-0.74, 0.91, 8.77) | other origin=3 owner=-1 state=Loose active=False holder=-1 pos=(-1.80, 0.05, 9.00)
+  frame=43084 round=8 left=49.4 slot=2 idle=12.0 at=(2.19, 0.08, 5.18) grounded=True plan=Fetch goal=(4.98, 0.08, 4.10) arrived=False stalk=0 canAct=True holding=False held=- inBox=True taya=3@(4.00, 0.08, 4.17) | other origin=0 owner=0 state=Held active=True holder=0 pos=(-1.64, 0.92, 10.25) | MINE origin=2 owner=2 state=Loose active=True holder=-1 pos=(4.98, 0.08, 4.10) flat=3.00 d3=3.00 dy=0.00 ground=0.00 grabbable=False | other origin=1 owner=1 state=Held active=True holder=1 pos=(-0.61, 0.91, 8.14) | other origin=3 owner=-1 state=Loose active=False holder=-1 pos=(-1.80, 0.05, 9.00)
+seat 0 travelled 1138.5 m  final score 5870
+seat 1 travelled 1202.8 m  final score 6185
+seat 2 travelled 1116.2 m  final score 6210
+seat 3 travelled 1171.9 m  final score 7130
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

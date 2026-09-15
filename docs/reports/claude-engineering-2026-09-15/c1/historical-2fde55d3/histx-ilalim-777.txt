@@ -1,0 +1,22 @@
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+historical rules: rounds 8; seconds per round 90; pinned False
+45978 frames at 16.7 ms  ·  766.3s simulated  ·  96.7s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 5.980 ms after 120 aligning frame(s)
+lata knocks 77  tags 137  sabotages 1
+throws 183  retrievals 180  lata restores 92
+camp penalties 2  idle penalties 1
+skill uses 30  ultimate uses 14  kits seen True
+emotes 22  hops 171
+slides 132
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 8.49 of 11.0  z 11.40 of 16.5
+furthest a free slipper reached: x 8.36  z 10.80
+Unretrieved-slipper penalty trace (1 lines, capped at 400):
+  frame=41565 round=8 left=75.0 slot=0 idle=11.0 at=(0.24, 2.69, 4.07) grounded=False plan=Fetch goal=(-0.15, 0.05, 0.20) arrived=False stalk=0 canAct=True holding=False held=- inBox=True taya=3@(1.12, 1.48, 1.63) | other origin=3 owner=-1 state=Loose active=False holder=-1 pos=(-1.80, 0.05, 9.00) | MINE origin=0 owner=0 state=Loose active=True holder=-1 pos=(-0.15, 0.05, 0.20) flat=3.89 d3=4.70 dy=-2.64 ground=0.00 grabbable=False | other origin=1 owner=1 state=Held active=True holder=1 pos=(-0.61, 0.91, 9.48) | other origin=2 owner=2 state=Held active=True holder=2 pos=(1.25, 0.91, 9.53)
+seat 0 travelled 1244.3 m  final score 6205
+seat 1 travelled 1135.4 m  final score 6610
+seat 2 travelled 1214.6 m  final score 6890
+seat 3 travelled 1208.1 m  final score 7190

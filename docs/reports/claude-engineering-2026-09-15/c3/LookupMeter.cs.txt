@@ -1,0 +1,33 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using UnityEngine;
+
+namespace TumbangPreso
+{
+    /// <summary>Measurement-only wrapper injected into a scratch copy by instrument_slipper_lookups.py. Never committed to Runtime.</summary>
+    public static class LookupMeter
+    {
+        public sealed class Site { public long Calls, Ticks, Bytes, Returned; }
+        public static readonly Dictionary<string, Site> Sites = new Dictionary<string, Site>();
+        public static void Reset() => Sites.Clear();
+
+        private static Slipper[] Record(string site, System.Func<Slipper[]> query)
+        {
+            long bytes = System.GC.GetAllocatedBytesForCurrentThread();
+            long start = Stopwatch.GetTimestamp();
+            var result = query();
+            long ticks = Stopwatch.GetTimestamp() - start;
+            bytes = System.GC.GetAllocatedBytesForCurrentThread() - bytes;
+            if (!Sites.TryGetValue(site, out var s)) Sites[site] = s = new Site();
+            s.Calls++; s.Ticks += ticks; s.Bytes += bytes; s.Returned += result.Length;
+            return result;
+        }
+
+        public static Slipper[] Slippers(string site, FindObjectsSortMode mode)
+            => Record(site, () => Object.FindObjectsByType<Slipper>(mode));
+        public static Slipper[] Slippers(string site, FindObjectsInactive inactive)
+            => Record(site, () => Object.FindObjectsByType<Slipper>(inactive));
+        public static Slipper[] Slippers(string site, FindObjectsInactive inactive, FindObjectsSortMode mode)
+            => Record(site, () => Object.FindObjectsByType<Slipper>(inactive, mode));
+    }
+}

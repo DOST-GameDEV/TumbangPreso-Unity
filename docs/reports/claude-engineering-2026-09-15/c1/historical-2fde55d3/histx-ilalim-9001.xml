@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.196145">
+  <test-suite type="TestSuite" id="1300" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.196145" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1294" name="TumbangPreso.PlayTests.dll" fullname="/private/tmp/claude-501/-Users-paul-Documents-GitHub-TumbangPreso-Unity/ea4afabe-3a17-4fb3-9a5f-3ffb200679b2/scratchpad/hist/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.185661" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48234" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1295" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.183045" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1296" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="217" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.181028" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1024" name="BotBehaviourProbe" fullname="TumbangPreso.PlayTests.BotBehaviourProbe" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.158786" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1027" name="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" fullname="TumbangPreso.PlayTests.BotBehaviourProbe.HeroStrikeBotsPlayAWholeMatchUnderTheBridge" methodname="HeroStrikeBotsPlayAWholeMatchUnderTheBridge" classname="TumbangPreso.PlayTests.BotBehaviourProbe" runstate="Runnable" seed="1604246383" result="Passed" start-time="2026-09-15 11:28:05Z" end-time="2026-09-15 11:29:38Z" duration="93.145275" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="420000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 1.5 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2292 renderers, 0 with a roof variant.
+[NearFade] 2761 occluder nodes matched, 2292 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 4860 / 5720 / 5940 / 7080. seat 3 wins
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+historical rules: rounds 8; seconds per round 90; pinned False
+45854 frames at 16.7 ms  ·  764.2s simulated  ·  91.0s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 14.453 ms after 120 aligning frame(s)
+lata knocks 65  tags 113  sabotages 2
+throws 166  retrievals 160  lata restores 77
+camp penalties 0  idle penalties 0
+skill uses 26  ultimate uses 13  kits seen True
+emotes 17  hops 194
+slides 103
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 9.10 of 11.0  z 12.53 of 16.5
+furthest a free slipper reached: x 10.13  z 14.11
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+seat 0 travelled 1086.7 m  final score 4860
+seat 1 travelled 993.0 m  final score 5720
+seat 2 travelled 1073.1 m  final score 5940
+seat 3 travelled 1158.4 m  final score 7080
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
