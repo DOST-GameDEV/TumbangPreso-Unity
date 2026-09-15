@@ -1,5 +1,10 @@
 # Current owner revision: PC loadout composition
 
+**Controller styling reopened:** owner now allows redesign of controller settings
+and map, keeping the controller central and its lines/core mapping intact. Dark
+settings theme and current typography now have focused passing evidence; native
+qualification is running. This supersedes the previous controller visual lock.
+
 **Newest correction:** Classic people have no personal playstyle stats. Remove
 the entire Speed/Power/Grit block; show description and confirmation only. Keep
 meaningful can/slipper handling. Earlier Classic-stat styling instructions below

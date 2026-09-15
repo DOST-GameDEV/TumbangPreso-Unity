@@ -518,6 +518,8 @@ namespace TumbangPreso.InputLayer
             // settings panel and has to cover it; `PlayerHub` sits at 500, so 520 puts this over
             // the whole front end and keeps the ordering readable as a list rather than a race.
             _canvas.sortingOrder = 520;
+            _canvas.vertexColorAlwaysGammaSpace=true;
+            _canvas.gameObject.AddComponent<OwnerUiCanvas>();
 
             var root = (RectTransform)_canvas.transform;
 
@@ -526,7 +528,8 @@ namespace TumbangPreso.InputLayer
             // stops a press on this screen reaching the settings rows underneath, which are still
             // built and still raycasting. § 100 records exactly this: a scrim that was silently
             // the only thing stopping a press falling through, deleted for looking decorative.
-            var ground = PaperKit.Sheet(root, "Ground");
+            var ground = OwnerUiLayout.Rect(root,"Ground").gameObject.AddComponent<Image>();
+            ground.color=SettingsPalette.Background;ground.raycastTarget=true;
             MenuKit.Stretch(ground.rectTransform);
 
             BuildHeader(root);
@@ -539,19 +542,12 @@ namespace TumbangPreso.InputLayer
 
         private void BuildHeader(RectTransform root)
         {
-            var title = PaperKit.Ink(root, "CONTROLLER MAP", PaperKit.Display,
-                                     TextAnchor.UpperCenter);
-            MenuKit.Place(title.rectTransform, new Vector2(0.5f, 1.0f),
-                          new Vector2(0.0f, -52.0f), new Vector2(900.0f, 56.0f));
-
-            // ⚠️ THE HINT SAYS WHAT TO DO, NOT WHAT THE SCREEN IS. § 6.2 question 2 asks whether
-            // the player can guess the first press; `TouchLayoutScreen` records the same decision
-            // for the same reason, because on both screens the first press is not a button that
-            // looks like a button.
-            var hint = PaperKit.Ink(root, "Press any label to change what that control does.",
-                                    PaperKit.Body, TextAnchor.UpperCenter, soft: true);
-            MenuKit.Place(hint.rectTransform, new Vector2(0.5f, 1.0f),
-                          new Vector2(0.0f, -108.0f), new Vector2(1100.0f, 30.0f));
+            var title=OwnerUiLayout.Text(root,"ControllerHeading","CONTROLLER MAP",56,OwnerUiLayout.TypeRole.Display);
+            title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
+            MenuKit.Place(title.rectTransform,new Vector2(.5f,1),new Vector2(0,-66),new Vector2(1100,100));
+            var hint=OwnerUiLayout.Text(root,"ControllerHint","Choose a control to change its binding.",29);
+            hint.alignment=TextAnchor.MiddleCenter;hint.color=SettingsPalette.Muted;
+            MenuKit.Place(hint.rectTransform,new Vector2(.5f,1),new Vector2(0,-140),new Vector2(1300,44));
         }
 
         private RectTransform _diagram;
@@ -679,23 +675,35 @@ namespace TumbangPreso.InputLayer
                 _callouts.Add(callout);
 
                 BuildLeader(root, slot, new Vector2(x, y), size);
+                var lines=new List<Graphic>();
+                foreach(Transform line in _leaders)
+                    if(line.name.StartsWith("Leader_"+slot.Control+"_"))lines.Add(line.GetComponent<Graphic>());
+                GameObject dot=null;
+                if(PadDiagram.Art!=null && TryTarget(slot,size,out var target))
+                {
+                    var spot=OwnerUiLayout.Rect(_leaders,"ControlTarget_"+slot.Control).gameObject.AddComponent<Image>();
+                    MenuKit.Place(spot.rectTransform,new Vector2(.5f,.5f),target,new Vector2(12,12));
+                    spot.rectTransform.localRotation=Quaternion.Euler(0,0,45);spot.color=SettingsPalette.Accent;spot.raycastTarget=false;
+                    dot=spot.gameObject;
+                }
+                ((ControllerCalloutButton)callout.Button).BindLeaders(lines.ToArray(),dot);
             }
         }
 
         private Callout BuildCallout(RectTransform root, Slot slot, Vector2 at)
         {
             var go = new GameObject("Callout_" + slot.Control,
-                                    typeof(RectTransform), typeof(Image), typeof(Button));
+                                    typeof(RectTransform), typeof(ControllerCalloutFace), typeof(ControllerCalloutButton));
             go.transform.SetParent(root, false);
 
             var rt = (RectTransform)go.transform;
             MenuKit.Place(rt, new Vector2(0.5f, 0.5f), at, new Vector2(CalloutWidth, RowHeight));
 
-            PaperSkin.Apply(go, PaperCraft.Surface.Tray);
+            var face=go.GetComponent<ControllerCalloutFace>();face.PointsLeft=slot.Side==Side.Right;
 
             var button = go.GetComponent<Button>();
             button.transition = Selectable.Transition.None;
-            button.targetGraphic = go.GetComponent<Image>();
+            button.targetGraphic = face;
 
             string name = HumanName(slot.Control);
 
@@ -711,7 +719,7 @@ namespace TumbangPreso.InputLayer
             // this whole pass exists to remove, just pointing the other way. Every other prompt in
             // the game follows the pad the player is actually holding, which is
             // `InputGlyphs.CurrentFamily` and is what omitting this argument gets you.
-            var sprite = InputGlyphs.For(name, onDark: false,
+            var sprite = InputGlyphs.For(name, onDark: true,
                                          family: InputGlyphs.PadFamily.PlayStation);
 
             if (sprite != null)
@@ -739,7 +747,8 @@ namespace TumbangPreso.InputLayer
             // the only thing naming it.
             float textLeft = sprite != null ? PaperKit.Pad + GlyphSize + 10.0f : PaperKit.Pad;
 
-            var label = PaperKit.Ink(go.transform, name, PaperKit.Body, TextAnchor.MiddleLeft);
+            var label = OwnerUiLayout.Text(go.transform,"Job",name,28);
+            label.color=SettingsPalette.Ink;
             label.name = "Job";
             label.raycastTarget = false;
 
@@ -753,8 +762,7 @@ namespace TumbangPreso.InputLayer
 
             button.onClick.AddListener(() => Press(callout));
 
-            go.AddComponent<PaperButton>();
-            FocusRing.Attach(go, 3.0f);
+
 
             return callout;
         }
@@ -847,28 +855,36 @@ namespace TumbangPreso.InputLayer
             // ⚠️ SOFT INK AT HALF STRENGTH. A leader line is the quietest mark on the screen by
             // construction: it carries no information of its own, it only joins two things that
             // do. At full ink weight eighteen of them read as a cage over the drawing.
-            var ink = UiTheme.PaperInkSoft;
-            image.color = new Color(ink.r, ink.g, ink.b, 0.5f);
+            image.color=new Color32(131,139,145,255);
+            var edge=go.AddComponent<Outline>();edge.effectColor=SettingsPalette.Background;
+            edge.effectDistance=new Vector2(.6f,.6f);
+        }
+
+        private static Button FooterAction(Transform parent,string name,string words)
+        {
+            var root=OwnerUiLayout.Rect(parent,name);var face=root.gameObject.AddComponent<ControllerCalloutFace>();
+            var button=root.gameObject.AddComponent<ControllerCalloutButton>();button.targetGraphic=face;button.transition=Selectable.Transition.None;
+            var label=OwnerUiLayout.Text(root,"Label",words,32,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=SettingsPalette.Ink;
+            return button;
         }
 
         private void BuildFooter(RectTransform root)
         {
-            _status = PaperKit.Ink(root, "", PaperKit.Body, TextAnchor.MiddleCenter);
+            _status = OwnerUiLayout.Text(root,"ControllerStatus","",29);
+            _status.alignment=TextAnchor.MiddleCenter;_status.color=SettingsPalette.Ink;
             MenuKit.Place(_status.rectTransform, new Vector2(0.5f, 0.0f),
-                          new Vector2(0.0f, 118.0f), new Vector2(1400.0f, 30.0f));
+                          new Vector2(0.0f, 138.0f), new Vector2(1460.0f, 44.0f));
 
             // ⚠️ THE SPECTATOR FOOTNOTE, BECAUSE SILENCE HERE READS AS A BUG. A broadcast
             // operator who knows TAB cycles a target will look for it on this picture and not
             // find it, and the honest reason is one sentence long. `Rebinding.BlurbFor` puts the
             // same sentence over the same rows in the settings list.
-            var note = PaperKit.Ink(root,
-                                    "Spectator camera controls are not on this map. They share "
-                                    + "these buttons and are listed in SETTINGS, CONTROLS.",
-                                    PaperKit.Caption, TextAnchor.MiddleCenter, soft: true);
-            MenuKit.Place(note.rectTransform, new Vector2(0.5f, 0.0f),
-                          new Vector2(0.0f, 86.0f), new Vector2(1500.0f, 24.0f));
+            var note=OwnerUiLayout.Text(root,"SpectatorHint","Spectator controls: Settings / Controls.",28);
+            note.alignment=TextAnchor.MiddleCenter;note.color=SettingsPalette.Muted;
+            MenuKit.Place(note.rectTransform,new Vector2(.5f,0),new Vector2(0,96),new Vector2(1500,38));
 
-            var reset = PaperKit.Chip(root, "Reset", "RESET ALL");
+            var reset = FooterAction(root,"Reset","RESET ALL");
             MenuKit.Place((RectTransform)reset.transform, new Vector2(0.5f, 0.0f),
                           new Vector2(-220.0f, 40.0f), new Vector2(320.0f, 60.0f));
 
@@ -884,7 +900,7 @@ namespace TumbangPreso.InputLayer
                 Refresh();
             });
 
-            var done = PaperKit.Chip(root, "Done", "DONE");
+            var done = FooterAction(root,"Done","DONE");
             MenuKit.Place((RectTransform)done.transform, new Vector2(0.5f, 0.0f),
                           new Vector2(220.0f, 40.0f), new Vector2(320.0f, 60.0f));
 
@@ -925,7 +941,7 @@ namespace TumbangPreso.InputLayer
                 {
                     callout.Action = action;
                     callout.Label.text = Rebinding.LabelFor(action);
-                    callout.Label.color = UiTheme.PaperInk;
+                    callout.Label.color = SettingsPalette.Ink;
                     Pressable(callout, true);
                     continue;
                 }
@@ -940,7 +956,7 @@ namespace TumbangPreso.InputLayer
                     // press instead of starting a rebind that cannot finish.
                     callout.Action = null;
                     callout.Label.text = job;
-                    callout.Label.color = UiTheme.PaperInkSoft;
+                    callout.Label.color = SettingsPalette.Muted;
                     Pressable(callout, false);
                     continue;
                 }
@@ -950,7 +966,7 @@ namespace TumbangPreso.InputLayer
                 // the button is free, which is a fact worth knowing on a screen about bindings.
                 callout.Action = null;
                 callout.Label.text = "-";
-                callout.Label.color = UiTheme.PaperInkSoft;
+                callout.Label.color = SettingsPalette.Muted;
                 Pressable(callout, false);
             }
 
@@ -966,8 +982,8 @@ namespace TumbangPreso.InputLayer
             // ⚠️ THE SURFACE CHANGES WITH IT, NOT ONLY THE FLAG. `Selectable.interactable` alone
             // is invisible on a control whose transition is `None`, which every paper control's
             // is: the row would refuse the press and look exactly like the rows that take one.
-            PaperSkin.Apply(callout.Button.gameObject,
-                            live ? PaperCraft.Surface.Tray : PaperCraft.Surface.Ghost);
+            var face=callout.Button.GetComponent<ControllerCalloutFace>();
+            if(face!=null){face.Available=live;face.SetVerticesDirty();}
         }
 
         /// <summary>
@@ -985,7 +1001,7 @@ namespace TumbangPreso.InputLayer
 
             return Gamepad.current != null
                 ? "Reading " + Gamepad.current.displayName + "."
-                : "No controller is connected. This map still shows what one would do.";
+                : "Connect a controller to change bindings.";
         }
 
         private void Press(Callout callout)

@@ -294,7 +294,22 @@ namespace TumbangPreso.Diagnostics
             yield return Shot("02-home");yield return Motion("normal",false);
             Stage("settings and reduced motion");yield return Click("SettingsButton");yield return Click("SettingsSection4");
             if(!(Find("ReducedUiMotionValue") is Toggle))throw new InvalidOperationException("Motion toggle missing.");
-            yield return Shot("03-settings");yield return Click("TumpSettingsBack");
+            yield return Shot("03-settings");
+            yield return Click("SettingsSection0");yield return Click("ControllerMapAction");
+            var controller=GameObject.Find("ControllerMapCanvas").GetComponent<Canvas>();
+            if(controller.GetComponentsInChildren<ControllerCalloutButton>().Count(b=>b.name.StartsWith("Callout_"))!=18
+                || controller.transform.Find("Leaders").Cast<Transform>().Count(t=>t.name.StartsWith("Leader_"))<18)
+                throw new InvalidOperationException("The central controller lost its mapped callouts or lines.");
+            foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1366,768),new Vector2Int(1920,1080)})
+            {
+                Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);
+                yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
+                yield return Shot("Controller-map-"+size.x+"x"+size.y);
+            }
+            Screen.SetResolution(1366,768,FullScreenMode.Windowed);
+            yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
+            yield return Click("Done");yield return Shot("Controller-bindings");
+            yield return Click("TumpSettingsBack");Stage("controller diagram and settings return verified");
             // Compare rendering without writing the shared standalone binding preferences.
             bool reducedBefore=Settings.SettingsStore.Current.ReducedUiMotion;Settings.SettingsStore.Current.ReducedUiMotion=true;
             yield return Motion("reduced",true);Settings.SettingsStore.Current.ReducedUiMotion=reducedBefore;

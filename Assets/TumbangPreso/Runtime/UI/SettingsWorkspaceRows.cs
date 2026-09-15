@@ -66,7 +66,7 @@ namespace TumbangPreso.UI
         {
             var root = OwnerUiLayout.Rect(parent, name); OwnerUiLayout.Place(root, 0, 0, width, 78);
             var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
-            var label = OwnerUiLayout.Text(root, "Label", words, 30, OwnerUiLayout.TypeRole.Accent);
+            var label = OwnerUiLayout.Text(root, "Label", words, 30, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(label.rectTransform, 18, 2, width - 36, 73); label.color = Color.white;
             var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = label;
             var colours = button.colors; colours.normalColor = SettingsPalette.Ink;

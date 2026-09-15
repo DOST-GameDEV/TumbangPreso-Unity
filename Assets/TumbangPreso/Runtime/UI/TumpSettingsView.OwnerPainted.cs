@@ -131,8 +131,9 @@ namespace TumbangPreso.UI
             {
                 ActionRow("TouchLayout","Touch controls","ARRANGE",()=>{Suspend();_touch?.Invoke();});return;
             }
-            if(_device==InputDeviceKind.Gamepad)
-                ActionRow("ControllerMap","Controller map","SEE CONTROLLER",()=>{Suspend();_controller?.Invoke();});
+            var controller=ActionRow("ControllerMap","Controller map","OPEN",()=>
+            { _device=InputDeviceKind.Gamepad;Suspend();_controller?.Invoke(); });
+            controller.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
             Choice("BindingGroup","Control group",Rebinding.Groups.Select(g=>g.Title).ToArray(),_group,v=>{_group=v;ShowSection(0);});
             foreach(string action in Rebinding.Groups[_group].Actions)
             {

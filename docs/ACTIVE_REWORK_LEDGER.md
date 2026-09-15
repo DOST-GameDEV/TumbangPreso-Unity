@@ -1,5 +1,80 @@
 # Active TUMP rework ledger
 
+## CURRENT controller/settings complete in nativev11; pending-cast baseline next
+
+Nativev11 FINISHEDPASS, Python9364/player8088 retired. Both controller map and
+controller bindings were inspected in the built player; sidebar headings are now
+Darumadrop, binding values Lydian, and Back is an arrow. Direct Controls entry,
+18callouts/leaders, three real window sizes, return and both-mode picker/match loops
+pass. Shared input unchanged, prior profile0. Build1081MB/45s, guard539de26eb047.
+Runtime SHA2568F4CE2F929F7AA9BA910A9A8987F660895F2E58DEB6477F9D5918EB65E64B61F,
+DLL2026-09-15T08:37:00.2104200Z, protocol38. No owned Editor/native/server/browser
+job remains. Save/push this bounded UI batch, then continue the full queue.
+
+Normal Guest source audit: BootGuest only remembers the local choice and closes;
+UGS starts asynchronously at boot. No demonstrated blocking Guest defect and no
+external account calls were made. Diagnostic reviews still bypass UGS, so they do
+not certify external-service failure timing. Do not invent an auth fix from this.
+
+Next concrete draft: Logs/NetDanteProbe-pending-draft.cs, NOT imported. It extends
+the existing opt-in three-peer Dante trace with -tp-dantepending-review: observer
+reconstructs its kit roughly35ms into an actual windup, cancels the stale actor
+presentation, requests the real host snapshot, and repeats after expiry at20s.
+Records windup, refresh flags and unique non-warning Dante impact births. First
+run a baseline before adding restoration. It is a live kit-reconstruction fixture,
+not a process-reconnect claim. Logs/pending-cast-next.md has the full bounded plan.
+Gameplay restoration is still unimplemented. Current protocol is38; a future
+required preparation payload should advance to39, never revert current rules.
+
+## CURRENT controller/sidebar font cleanup passed; nativev11 building
+
+Nativev10 FINISHEDPASS, Python4336/player16168 retired. It opened the diagram directly
+from default Controls, retained18callouts/leaders at three native window sizes,
+returned to controller bindings and completed both-mode picker/match routes.
+Build1081MB/48s, guarda9d20ac2d58d; SHA256
+27744F5595CBF9D666E60F017A5EC1C71DAA95245073E27AEC8E4D195480F5EB,
+DLL2026-09-15T08:25:33.6899328Z. Shared input unchanged, prior native profile0.
+
+Actual native controller-bindings view exposed remaining Kawit in sidebar tabs
+and binding values. Settings sidebar now uses Darumadrop; action/value labels use
+Lydian unless explicitly a display action. Back is an arrow. Controller-theme-v3
+FINISHED2/2PASS across all settings pages plus diagram/return/focus, ten PC sizes;
+guard292fcdaf99af, Python22060 retired. No binding/backend behavior changed.
+
+RUNNING nativev11 build, Logs/demo-native-build-v11(.pid/.stdout/.stderr/.log), profile
+demo-build-review; read its pid file for wrapper. After it exits run a fresh native
+UI review at Logs/demo-native-loop-v11 with matching profile. Inspect the updated
+controller-bindings view, save/push the final controller batch, then keep working.
+No imported edits while Unity/native jobs run. Preserve protocol38/nativev9 fallback.
+Next useful audit: normal offline Guest startup outside the diagnostic UGS bypass,
+then the remaining lifecycle/cast/movement/spectator queue. Do not assume the test
+bypass proves external-service behavior. No external account/paid-service creation.
+
+## CURRENT controller restyle passed; nativev10 building
+
+Prior Classic/compact-font checkpoint committed/pushed8c05ad3b. Controller map now
+uses dark SettingsPalette, Darumadrop heading/footer, readable Lydian callouts,
+contrasting physical-control glyphs and restrained angular faces. The original
+PadDiagram image, Ring/anchor data, all18callouts and actual connecting lines stay.
+Focus highlights only that callout's lines and a small marker on its real control.
+Rebinding/refusal/reset behavior and input backend are unchanged. A controller-map
+OPEN action is now visible directly on default PC Controls; entering it selects
+the controller view for the settings return. No need to discover a hidden device
+dropdown first. Touch's existing separate route stays.
+
+controller-theme-v1 and v2 each FINISHED1/1PASS. Receipts338c17789684/2103d859771d;
+Python12776/24524 retired. Tests cover18actual glyphs/leaders, ten PC sizes, real
+focus highlight/target, direct entry from Controls and return/cancel paths. Reviewed
+1920px normal/focused views. Physical controller use remains unverified.
+
+RUNNING guarded nativev10 build, logs Logs/demo-native-build-v10(.pid/.stdout/.stderr/
+.log), profile demo-build-review, Builds/demo-2026-09-16-v10/TumbangPreso.exe. Read its
+pid file for current wrapper. After exit run fresh Logs/demo-native-loop-v10 and
+matching named profile through tools/run_ui_player_review.py. The native driver now
+opens the map directly from Controls, captures three real Windows sizes, returns
+to controller bindings, then checks the normal picker/match routes. Preservev9.
+No imported edits until exit; continue the full remaining project queue afterward.
+
 ## CURRENT Classic/nativev9 qualified; controller visual redesign next
 
 Nativev9 build FINISHED1081MB/50s, guard0723b315b994, Python22100 retired. Runtime

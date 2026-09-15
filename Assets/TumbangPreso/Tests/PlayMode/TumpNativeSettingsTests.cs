@@ -85,14 +85,31 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths()
         {
             yield return Open();
-            Press(Find("InputDeviceValue")); yield return null; Press(Find("Option1")); yield return null;
+            foreach(var tab in Object.FindObjectsByType<Button>().Where(b=>b.name.StartsWith("SettingsSection")&&b.isActiveAndEnabled))
+                Assert.AreEqual(OwnerUiTheme.Current.Display,tab.GetComponentInChildren<Text>().font,"Settings section headings must use Darumadrop.");
+            // The controller diagram is discoverable from the default PC controls page.
             Press(Find("ControllerMapAction")); yield return null;
             var controller = GameObject.Find("ControllerMapCanvas").GetComponent<Canvas>();
             Assert.IsNotNull(controller.transform.Find("Diagram").GetComponent<Image>().sprite);
             Assert.AreEqual(18, controller.GetComponentsInChildren<Button>().Count(b => b.name.StartsWith("Callout_")));
-            Assert.GreaterOrEqual(controller.transform.Find("Leaders").childCount, 18, "Keep the approved connector lines.");
+            Assert.GreaterOrEqual(controller.transform.Find("Leaders").Cast<Transform>().Count(t=>t.name.StartsWith("Leader_")),18,"Keep the actual connector lines.");
+            Assert.AreEqual(SettingsPalette.Background,controller.transform.Find("Ground").GetComponent<Image>().color);
+            Assert.IsEmpty(controller.GetComponentsInChildren<PaperSkin>(true),"The controller map must use the current settings treatment.");
+            foreach(var action in controller.GetComponentsInChildren<ControllerCalloutButton>().Where(b=>b.name.StartsWith("Callout_")))
+                Assert.IsNotNull(action.transform.Find("Glyph").GetComponent<Image>().sprite,action.name);
             Assert.IsNull(GameObject.Find("TumpControllerCanvas"), "The rejected list presentation must stay inactive.");
-            yield return TumpUiCapture.Capture("ApprovedController-restored-v1", controller, 1920, 1080, false);
+            foreach(var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("ControllerSettings-dark-"+size.x+"x"+size.y,controller,size.x,size.y,false,checkActionBounds:true);
+            EventSystem.current.SetSelectedGameObject(null);
+            var hovered=controller.GetComponentsInChildren<ControllerCalloutButton>().First(b=>b.name.StartsWith("Callout_")&&b.interactable);
+            var hover=new PointerEventData(EventSystem.current);
+            ExecuteEvents.Execute(hovered.gameObject,hover,ExecuteEvents.pointerEnterHandler);yield return null;
+            string control=hovered.name.Substring("Callout_".Length);
+            Assert.IsTrue(controller.transform.Find("Leaders/ControlTarget_"+control).gameObject.activeSelf,"Focus must identify the real physical control.");
+            foreach(var line in controller.transform.Find("Leaders").GetComponentsInChildren<Image>().Where(i=>i.name.StartsWith("Leader_"+control+"_")))
+                Assert.AreEqual(SettingsPalette.Accent,line.color);
+            yield return TumpUiCapture.Capture("ControllerSettings-focused",controller,1920,1080,false,checkActionBounds:true);
+            ExecuteEvents.Execute(hovered.gameObject,hover,ExecuteEvents.pointerExitHandler);yield return null;
             Press(Find("Done")); yield return null; yield return null;
             Press(Find("InputDeviceValue")); yield return null; Press(Find("Option2")); yield return null;
             float scale = TouchLayoutStore.Scale;

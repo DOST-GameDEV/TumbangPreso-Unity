@@ -17,6 +17,9 @@ namespace TumbangPreso.UI
             var root = OwnerUiLayout.DesignArea(_canvas.transform, "SettingsComposition");
             var back = SettingsWorkspaceRows.Action(root, "TumpSettingsBack", "BACK", Back, 190);
             OwnerUiLayout.Place((RectTransform)back.transform, 61, 25, 190, 78);
+            back.GetComponentInChildren<Text>().text="";
+            var backIcon=OwnerUiGlyph.Create(back.transform,"BackIcon",OwnerUiGlyph.Mark.Back,Color.white);
+            OwnerUiLayout.Place(backIcon.rectTransform,30,14,58,45);back.targetGraphic=backIcon;
             var title = OwnerUiLayout.Text(root, "SettingsTitle", "SETTINGS", 64, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform, 80, 130, 410, 130); title.color = SettingsPalette.Ink;
             for (int i = 0; i < Sections.Length; i++)
@@ -24,7 +27,7 @@ namespace TumbangPreso.UI
                 int index = i;
                 var tab = SettingsWorkspaceRows.Action(root, "SettingsSection" + i, Sections[i], () => ShowSection(index), 407);
                 OwnerUiLayout.Place((RectTransform)tab.transform, 71, 336 + i * 110, 407, 86);
-                var label = tab.GetComponentInChildren<Text>(); label.fontSize = 33;
+                var label = tab.GetComponentInChildren<Text>(); label.fontSize = 33;label.font=OwnerUiTheme.Current.Display;
                 var mark = OwnerUiLayout.Rect(tab.transform, "SelectedSection").gameObject.AddComponent<Image>();
                 OwnerUiLayout.Place(mark.rectTransform, 18, 75, 286, 5); mark.color = SettingsPalette.Accent; mark.raycastTarget = false;
                 _tabs.Add(tab);
