@@ -1,5 +1,50 @@
 # Active TUMP rework ledger
 
+## CURRENT owner reprioritization: visible demo first, entire queue still active
+
+September15 owner requests ordering for a demo tomorrow, then clarifies to still
+attempt the entire to-do list. New authoritative order is docs/TODO.md: main-route
+blockers, fresh native both-mode loop, visible existing-hero gameplay, needed LAN,
+versioned candidate/rehearsal, then continue all remaining work immediately as time
+allows. Do not wait for the demo date or stop after the candidate. Larger work is
+reprioritized, not cancelled. DEMO_PLAYTEST_CHECKLIST.md separates existing evidence
+from pending native and human checks. Original login and all standing limits remain.
+
+D10 details-v2 FINISHED0/2, Python22548 retired, restoration32bd2702a09b.
+Play heading failure is repeatable at1366x768 and its diagnostic image REALLY has
+no heading: charsBefore=-1, charsAfter=-1, rendered vertices0. It is not merely an
+invalid metadata read. Next isolate fractional-scale text generation/height margin
+and fix that visible demo blocker first. Touch has another existing small label,
+SandboxToggle/Label24units; keep pending behind this blocker. Queue's earlier pass
+stands. Current HEAD8f21e603, D10 source/docs dirty; no Unity/player job remains.
+
+U8 prep found more stale driver assumptions: OwnerUiPlayerReview.Motion still seeks
+StartButton/PaintedArtwork, but the actual HomeMenuAction now uses ink/underline
+feedback and never scales. Update the driver to observe the real design, retaining
+normal/reduced transition and steady-state checks. Cold startup must settle before
+its final still. Native capture actual resolution must be verified after settings
+apply. No new native build is qualified yet. ModelPreview pixel-sizing regression
+test draft is in Logs/ui-drafts/ModelPreviewPixelTests.cs; not imported or run yet.
+
+## CURRENT D10 credits, queue and touch-layout surroundings
+
+D9 committed/pushed8f21e603. Credits now has a studio margin and continuous readable
+credit list, retaining all exact source attributions. Queue keeps its distinct dark
+ticket with larger support labels and native actions; the old once-per-match claim
+is corrected to a format-independent rotation statement. Touch editor now uses the
+dark settings palette and controls around the same native draggable touch surfaces.
+Protected original login, its account/guideline artwork and controller diagram stay.
+
+details-v1 FINISHED1/3PASS, Python17168 retired, restoration16538ee861e6. Queue passed.
+Touch revealed existing27unit skill numbers below the small-window reading floor;
+enlarged only those labels to30. Credits passed its new views, but the enclosing
+front-end case failed later on unchanged CourtPlay Heading: cached character count
+was-1 at1366x768. Added focused test-only before/after cache and rendered-vertex
+diagnostics with a failure screenshot, keeping the original assertion. Do not infer
+missing visible text from that cache alone. Rerun only these two failed cases next.
+Then inspect visuals, save/push and finish U8 native motion/end-to-end/physical
+preview resolution before the gameplay queue. No production font workaround yet.
+
 ## CURRENT D9 chat and training qualification
 
 D8 committed/pushed111ed5b1. Applied the reviewed chat/training drafts: a distinct

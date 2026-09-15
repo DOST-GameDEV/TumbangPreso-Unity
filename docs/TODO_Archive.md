@@ -1,5 +1,172 @@
 # TODO archive: the batch reports and the closed work
 
+## 2026-09-15 pre-demo checkpoint and ordering notes
+
+These notes are preserved whole as history. Their scheduling is superseded by
+the September16 demo priority order in TODO.md. Deferred work is still open in
+the current queue and GAMEPLAY_RESUME_AFTER_UI.md; this is not a completion claim.
+
+<!-- OWNER_PLAYTEST_20260913 -->
+
+**D9 checkpoint:** room chat/history and the training sidebar passed two focused
+cases. Ten-size layouts plus all17lesson screens/completion were checked through
+the real Skip/return paths; gameplay actions remain separately qualified. Report:
+reports/ui-composition-d9. Next credits/queue/touch surroundings/dialogs/U8/gameplay.
+
+
+**D8 checkpoint:** both-mode result sheets and the live court round-break overlay
+passed focused route/layout checks. Ten-size coverage plus populated local reward
+fixtures; no career/social write. Report: reports/ui-composition-d8. Continue chat,
+training, remaining dialogs/U8 and the full gameplay queue. Original login protected.
+
+
+**Immediate owner corrections,2026-09-15:** Classic now defaults to8rounds, with
+explicit custom lengths retained. Dark-grey settings and three additional varied,
+supported Eskinita clotheslines passed focused checks and visual review. See
+reports/owner-corrections-2026-09-15. Resume D8 results and between-round screens.
+Keep the original login. See ACTIVE_REWORK_LEDGER.md for current runs and evidence.
+
+**D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
+related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
+no production camera or source-model change. Report: reports/ui-composition-d7.
+Next results/round changes/chat/training/remaining UI, U8 and the gameplay bookmark.
+
+
+**D6 checkpoint:** distinct custom match/room slate and read-only authority views
+qualified across ten PC sizes. Report: reports/ui-composition-d6. Next match HUD,
+pause/results and remaining UI, then U8 and the whole gameplay bookmark. Protected
+original login and controller illustration remain unchanged.
+
+
+**D5 checkpoint:** player record pages, drafts, career/history scorecard and native
+choice/Cancel behavior qualified. Ten-size page coverage; local fixture data only,
+no live profile/social writes. See reports/ui-composition-d5. Next custom rules and
+remaining match/UI surfaces, U8 native qualification and the gameplay bookmark.
+Original login remains protected.
+
+
+**D4 checkpoint:** collection, skill guide and optional biographies have distinct
+compositions. Related selection/save/return checks and all-hero content sweep pass;
+34collection entries and30power content states checked. Report: reports/ui-composition-d4.
+Next remaining hub/rank/rules/match/UI surfaces, U8 native qualification and gameplay.
+Original login remains protected. U8 must review preview physical pixel scaling.
+
+
+**D3 checkpoint:** settings workspace and native control family qualified with
+four related contracts plus one final visual recheck. Five pages cover ten PC sizes.
+See reports/ui-composition-d3. Original login stays protected. Next selection,
+equipment/skills and other UI, then native U8 and the complete gameplay bookmark.
+
+
+**D2 checkpoint:** original login explicitly preserved. Preparation and room
+directory redesigned separately; five focused checks plus one browser heading
+recheck pass. Ten-size visible layouts covered. Report: reports/ui-composition-d2.
+Settings/selection/equipment/other UI and native motion/routes remain, then gameplay.
+
+
+**Current UI D1:** independent home/play/loading compositions reviewed with2/2focused
+checks; home and Hero Play cover ten PC sizes. See reports/ui-composition-d1.
+All-size support and distinct screen designs remain required for the rest of UI.
+Next account/preparation, then other screens/U8 and GAMEPLAY_RESUME_AFTER_UI.
+
+**LATEST transfer and UI rejection,2026-09-15:** save/push this checkpoint for
+another laptop, which must continue the FULL queue until done. U1-U7 first
+functional implementations are retained, but the owner rejects their repeated
+main-menu art and orange background. Existing assets are inspiration for NEW
+designs. Re-study the old PDF's layout ideas, especially slides39-49, and use
+built-in GPT image generation for new screen-specific art/backgrounds. Do not
+copy one layout literally or spam one universal button/panel. Preserve original
+source files, editable controls and the approved controller diagram.
+
+- [ ] Redesign the rejected UI creatively, then finish U8's actual art/motion/
+  input/async/native-route qualification. The current native run failed a
+  reduced-motion settling assertion before matches; it is NOT a pass.
+- [ ] Resume every remaining item in GAMEPLAY_RESUME_AFTER_UI.md afterward,
+  including deferred Inday and the selected seventh hero/map LAST LAST.
+
+Current checkpoint/evidence: reports/owner-ui-u8-checkpoint.md and newest
+ACTIVE_REWORK_LEDGER. PDF/new PNGs/skill references are in Git. On destination,
+discover actual paths/tools, preserve local work and safely pull ASTRAReworks.
+No agents, Figma, reset credits or Desktop build update. Source stops at handoff;
+destination continues across batch boundaries, commits and compactions.
+
+**NEWEST owner order,2026-09-15:** finish the currently running same-process
+reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
+UI theme. Resume all unfinished gameplay afterward using
+[GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
+older cancellation text below is historical. No extra agents or reset credits.
+
+**Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots
+are implemented and scoped checks pass; see [world-field report](reports/improvement-2026-09-15-world-fields.md).
+Pending windups and actual same-process reconnect/rematch/host loss remain open,
+alongside movement/spectator/engineering, deferred Inday and final expansion.
+
+**Verified progress,2026-09-15:** live ice and Sean/Zack joining charges are
+qualified and pushed. Dante/Nemu initial personal-effect state now passes scoped
+local and native snapshot checks, including both sidegrades. See
+[personal-effect report](reports/improvement-2026-09-15-personal-buffs/README.md).
+Next: remaining persistent fire/shock/Hex/crater/fissure fields, pending casts,
+reconnect/rematch lifecycle, then movement/spectator and remaining engineering.
+The whole queue is not complete; ACTIVE_REWORK_LEDGER.md carries current runs.
+
+**Latest owner scope,2026-09-14:** remaining UI work is REMOVED from this queue.
+Existing UI/source stays saved; archived checklist is linked from
+[UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Continue non-UI gameplay, skills,
+network, movement and spectator work; deferred Inday later; expansion LAST LAST.
+No agents or usage resets. Older UI-LAST instructions are superseded.
+
+**Latest owner playtest corrections are active:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
+Remove Street Hype and main RULES row; fix Ilalim floating/road continuity; redesign
+Eskinita sampayan/tighter feel; improve Bayan floor texture, varied trees and warm
+palette. Approved Sa Bubong must now enter implementation. Current Desktop build
+is delivered and in use. Preserve concurrent saves. Earlier Street Hype mandates
+are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
+
+# TODO: Tumbang Preso Unity
+
+**Newest PC transfer, 2026-09-14:** all unfinished Zack work is saved for transfer.
+Pull ASTRAReworks first on the destination; follow ACTIVE_REWORK_LEDGER.md's newest
+section. Focused local tests pass. The final internal build and corrected delayed
+peer reruns remain unfinished. Continue the remaining non-UI queue,
+deferred Inday FPP and finally the selected B-hero/C-map expansion.
+
+**Current continuation, 2026-09-14:** keep working until the complete remaining
+queue is finished. Park optional questions for the owner's return. Sean's native
+heat/ignition/grounded landing and first-person release visibility are implemented;
+focused local checks and actual delayed Ignition/Supernova clients pass. Exact
+scope and remaining variants/counterplay: [Sean review](reports/improvement-2026-09-14/sean-skills.md).
+Continue those remaining checks and Zack's presentation, then the full saved queue.
+The owner selected seventh-character B and map C; expansion implementation stays
+LAST LAST. See [the live ledger](ACTIVE_REWORK_LEDGER.md) before running tools.
+
+**Newest origin/expansion tasks, 2026-09-14:**
+
+
+- **Cancelled with the UI scope:** origins/short-lore selection and character
+  introduction/unlock UI integration. Preserve the researched copy and source
+  limits in [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md) for later ownership.
+- [ ] Review every hero cast for its own preparation, weight transfer, release
+  and recovery. No identical ult movement across heroes with recoloured effects.
+- [ ] **LAST LAST, after the full remaining non-UI queue and deferred Inday:**
+  implement the seventh male Sama Dilaut water hero and his stilt-village map.
+  Working name Rafi; proposed Crosscurrent, Mirrorwake and Breakwater abilities.
+  [BADJAO_EXPANSION.md](BADJAO_EXPANSION.md) records research, cast distinctions,
+  mechanics/counterplay and map choices. Concept art may be discussed now;
+  runtime roster, hero model, abilities and map implementation are deferred.
+
+**Current verification policy:** owner requests focused tests relevant to each
+change, not routine full PlayMode/EditMode suites. Batch implementation and retain
+strong behavioral/visual checks; old blanket full-suite mandates are superseded.
+
+**The open worklist. If it is not open, it is in [`TODO_Archive.md`](TODO_Archive.md).**
+
+Read [`../AGENTS.md`](../AGENTS.md) first and [`VISION.md`](VISION.md) second. Check this file
+before inventing a task, and update it in the same commit as the work.
+
+---
+
+
+
 ## 152.7 Owner-view map composition and route batch: CLOSED, 2026-09-12
 
 Real CameraRig comparisons use the actual1.25m eye offset and95-degree FOV,

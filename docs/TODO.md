@@ -1,163 +1,107 @@
-<!-- OWNER_PLAYTEST_20260913 -->
-
-**D9 checkpoint:** room chat/history and the training sidebar passed two focused
-cases. Ten-size layouts plus all17lesson screens/completion were checked through
-the real Skip/return paths; gameplay actions remain separately qualified. Report:
-reports/ui-composition-d9. Next credits/queue/touch surroundings/dialogs/U8/gameplay.
-
-
-**D8 checkpoint:** both-mode result sheets and the live court round-break overlay
-passed focused route/layout checks. Ten-size coverage plus populated local reward
-fixtures; no career/social write. Report: reports/ui-composition-d8. Continue chat,
-training, remaining dialogs/U8 and the full gameplay queue. Original login protected.
-
-
-**Immediate owner corrections,2026-09-15:** Classic now defaults to8rounds, with
-explicit custom lengths retained. Dark-grey settings and three additional varied,
-supported Eskinita clotheslines passed focused checks and visual review. See
-reports/owner-corrections-2026-09-15. Resume D8 results and between-round screens.
-Keep the original login. See ACTIVE_REWORK_LEDGER.md for current runs and evidence.
-
-**D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
-related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
-no production camera or source-model change. Report: reports/ui-composition-d7.
-Next results/round changes/chat/training/remaining UI, U8 and the gameplay bookmark.
-
-
-**D6 checkpoint:** distinct custom match/room slate and read-only authority views
-qualified across ten PC sizes. Report: reports/ui-composition-d6. Next match HUD,
-pause/results and remaining UI, then U8 and the whole gameplay bookmark. Protected
-original login and controller illustration remain unchanged.
-
-
-**D5 checkpoint:** player record pages, drafts, career/history scorecard and native
-choice/Cancel behavior qualified. Ten-size page coverage; local fixture data only,
-no live profile/social writes. See reports/ui-composition-d5. Next custom rules and
-remaining match/UI surfaces, U8 native qualification and the gameplay bookmark.
-Original login remains protected.
-
-
-**D4 checkpoint:** collection, skill guide and optional biographies have distinct
-compositions. Related selection/save/return checks and all-hero content sweep pass;
-34collection entries and30power content states checked. Report: reports/ui-composition-d4.
-Next remaining hub/rank/rules/match/UI surfaces, U8 native qualification and gameplay.
-Original login remains protected. U8 must review preview physical pixel scaling.
-
-
-**D3 checkpoint:** settings workspace and native control family qualified with
-four related contracts plus one final visual recheck. Five pages cover ten PC sizes.
-See reports/ui-composition-d3. Original login stays protected. Next selection,
-equipment/skills and other UI, then native U8 and the complete gameplay bookmark.
-
-
-**D2 checkpoint:** original login explicitly preserved. Preparation and room
-directory redesigned separately; five focused checks plus one browser heading
-recheck pass. Ten-size visible layouts covered. Report: reports/ui-composition-d2.
-Settings/selection/equipment/other UI and native motion/routes remain, then gameplay.
-
-
-**Current UI D1:** independent home/play/loading compositions reviewed with2/2focused
-checks; home and Hero Play cover ten PC sizes. See reports/ui-composition-d1.
-All-size support and distinct screen designs remain required for the rest of UI.
-Next account/preparation, then other screens/U8 and GAMEPLAY_RESUME_AFTER_UI.
-
-**LATEST transfer and UI rejection,2026-09-15:** save/push this checkpoint for
-another laptop, which must continue the FULL queue until done. U1-U7 first
-functional implementations are retained, but the owner rejects their repeated
-main-menu art and orange background. Existing assets are inspiration for NEW
-designs. Re-study the old PDF's layout ideas, especially slides39-49, and use
-built-in GPT image generation for new screen-specific art/backgrounds. Do not
-copy one layout literally or spam one universal button/panel. Preserve original
-source files, editable controls and the approved controller diagram.
-
-- [ ] Redesign the rejected UI creatively, then finish U8's actual art/motion/
-  input/async/native-route qualification. The current native run failed a
-  reduced-motion settling assertion before matches; it is NOT a pass.
-- [ ] Resume every remaining item in GAMEPLAY_RESUME_AFTER_UI.md afterward,
-  including deferred Inday and the selected seventh hero/map LAST LAST.
-
-Current checkpoint/evidence: reports/owner-ui-u8-checkpoint.md and newest
-ACTIVE_REWORK_LEDGER. PDF/new PNGs/skill references are in Git. On destination,
-discover actual paths/tools, preserve local work and safely pull ASTRAReworks.
-No agents, Figma, reset credits or Desktop build update. Source stops at handoff;
-destination continues across batch boundaries, commits and compactions.
-
-**NEWEST owner order,2026-09-15:** finish the currently running same-process
-reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
-UI theme. Resume all unfinished gameplay afterward using
-[GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
-older cancellation text below is historical. No extra agents or reset credits.
-
-**Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots
-are implemented and scoped checks pass; see [world-field report](reports/improvement-2026-09-15-world-fields.md).
-Pending windups and actual same-process reconnect/rematch/host loss remain open,
-alongside movement/spectator/engineering, deferred Inday and final expansion.
-
-**Verified progress,2026-09-15:** live ice and Sean/Zack joining charges are
-qualified and pushed. Dante/Nemu initial personal-effect state now passes scoped
-local and native snapshot checks, including both sidegrades. See
-[personal-effect report](reports/improvement-2026-09-15-personal-buffs/README.md).
-Next: remaining persistent fire/shock/Hex/crater/fissure fields, pending casts,
-reconnect/rematch lifecycle, then movement/spectator and remaining engineering.
-The whole queue is not complete; ACTIVE_REWORK_LEDGER.md carries current runs.
-
-**Latest owner scope,2026-09-14:** remaining UI work is REMOVED from this queue.
-Existing UI/source stays saved; archived checklist is linked from
-[UI_REMAINING_TODO.md](UI_REMAINING_TODO.md). Continue non-UI gameplay, skills,
-network, movement and spectator work; deferred Inday later; expansion LAST LAST.
-No agents or usage resets. Older UI-LAST instructions are superseded.
-
-**Latest owner playtest corrections are active:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
-Remove Street Hype and main RULES row; fix Ilalim floating/road continuity; redesign
-Eskinita sampayan/tighter feel; improve Bayan floor texture, varied trees and warm
-palette. Approved Sa Bubong must now enter implementation. Current Desktop build
-is delivered and in use. Preserve concurrent saves. Earlier Street Hype mandates
-are superseded by explicit removal. Larger TODO152/152.4 remains OPEN.
-
 # TODO: Tumbang Preso Unity
 
-**Newest PC transfer, 2026-09-14:** all unfinished Zack work is saved for transfer.
-Pull ASTRAReworks first on the destination; follow ACTIVE_REWORK_LEDGER.md's newest
-section. Focused local tests pass. The final internal build and corrected delayed
-peer reruns remain unfinished. Continue the remaining non-UI queue,
-deferred Inday FPP and finally the selected B-hero/C-map expansion.
-
-**Current continuation, 2026-09-14:** keep working until the complete remaining
-queue is finished. Park optional questions for the owner's return. Sean's native
-heat/ignition/grounded landing and first-person release visibility are implemented;
-focused local checks and actual delayed Ignition/Supernova clients pass. Exact
-scope and remaining variants/counterplay: [Sean review](reports/improvement-2026-09-14/sean-skills.md).
-Continue those remaining checks and Zack's presentation, then the full saved queue.
-The owner selected seventh-character B and map C; expansion implementation stays
-LAST LAST. See [the live ledger](ACTIVE_REWORK_LEDGER.md) before running tools.
-
-**Newest origin/expansion tasks, 2026-09-14:**
-
-
-- **Cancelled with the UI scope:** origins/short-lore selection and character
-  introduction/unlock UI integration. Preserve the researched copy and source
-  limits in [CHARACTER_ORIGINS.md](CHARACTER_ORIGINS.md) for later ownership.
-- [ ] Review every hero cast for its own preparation, weight transfer, release
-  and recovery. No identical ult movement across heroes with recoloured effects.
-- [ ] **LAST LAST, after the full remaining non-UI queue and deferred Inday:**
-  implement the seventh male Sama Dilaut water hero and his stilt-village map.
-  Working name Rafi; proposed Crosscurrent, Mirrorwake and Breakwater abilities.
-  [BADJAO_EXPANSION.md](BADJAO_EXPANSION.md) records research, cast distinctions,
-  mechanics/counterplay and map choices. Concept art may be discussed now;
-  runtime roster, hero model, abilities and map implementation are deferred.
-
-**Current verification policy:** owner requests focused tests relevant to each
-change, not routine full PlayMode/EditMode suites. Batch implementation and retain
-strong behavioral/visual checks; old blanket full-suite mandates are superseded.
-
-**The open worklist. If it is not open, it is in [`TODO_Archive.md`](TODO_Archive.md).**
-
-Read [`../AGENTS.md`](../AGENTS.md) first and [`VISION.md`](VISION.md) second. Check this file
-before inventing a task, and update it in the same commit as the work.
-
----
-
 ## CURRENT IMPLEMENTATION QUEUE
+
+**Owner reprioritized this queue on September15 for a demo tomorrow, September16.**
+The goal is still the ENTIRE to-do list. Prioritize what the audience will see,
+secure a tested demo candidate early, then keep completing the remaining work as
+time allows, including before tomorrow. Do not pause work until the demo date.
+This supersedes the earlier
+requirement to finish every remaining UI surface before touching gameplay. Keep
+working after each stable checkpoint; the full backlog remains authorized.
+
+Assumed demo setup: one Windows PC, keyboard/mouse, offline bots as the dependable
+baseline. Both Classic and Hero Strike remain available. LAN is the next priority;
+paid services, new account creation and a working venue internet connection must
+not be prerequisites for showing the game. Adjust this assumption if the owner
+later supplies a different demo format.
+
+### Visible demo priorities, in this order
+
+1. [ ] **Fix visible blockers on the main route.** Resolve the missing Play heading
+   reproduced at1366x768, then check startup, Guest, Play, selection, settings Back
+   and starting a match. Preserve the approved original login. Keep normal matches
+   at8 rounds and settings grey/dark. Required windows:960x540,1366x768,1920x1080,
+   plus the already-established4:3/ultrawide coverage for any changed view.
+   Finish or isolate current D10 edits without introducing another visual redesign.
+2. [ ] **Prove the whole loop in a fresh native player.** Cold boot to Guest, pick
+   a character and map, start offline Classic and Hero Strike, throw, retrieve,
+   defend, recover, pause/resume, finish, show results and rematch. Repair stalls,
+   missing controls, wrong roles/scores and lost input before cosmetic work. Confirm
+   the8-round default; a clearly labelled shorter custom match may be used to
+   rehearse results/rematch without changing the normal defaults. Update the stale
+   native review driver for the current UI and distinguish settling from steady
+   reduced-motion behavior. Tests that only invoke display callbacks are not this gate.
+3. [ ] **Check the existing heroes and the moments the audience will see.** Check
+   all six heroes' first-person identity and actual casts for obvious broken poses,
+   disappearing/floating slippers, missing effects, stuck abilities and unreadable
+   tells. Rehearse the strongest stable sequences, including Dante's distinct stone
+   effects and Nemu's restored small ghost/current monster transition. Preserve
+   approved art and cast identities. Apply small demonstrated fixes; do not start
+   new anatomy, balance, animation-system or model-family redesigns before the demo.
+   Keep the larger Inday reconstruction/framing task deferred as requested.
+4. [ ] **Validate connection and match continuity needed for the demo.** Establish
+   a two-player LAN host/join and complete a round/rematch with correct owner and
+   observer effects. Check clean exit/rejoin and truthful connection failure.
+   Preserve the completed protocol37 snapshot work. Offline play remains the primary
+   demo fallback. Exhaustive joining-during-every-windup, host-switch and all-variant
+   matrices follow the visible/demo work; keep attempting them before tomorrow when
+   time allows, and promote any discovered demo blocker immediately.
+5. [ ] **Freeze and verify a reproducible demo candidate.** Build a versioned internal
+   Windows artifact, record commit/hash and exact executable/data timestamps, run
+   the actual candidate at ordinary speed and inspect errors and measured frame
+   stability on this PC. Check audio, readable HUD, restart and a second match.
+   Keep a verified fallback candidate and a short operator demo route with controls,
+   known limits and recovery steps. No Desktop-build replacement without new permission.
+6. [ ] **Rehearse, then spend remaining time on the highest visible payoff.** Repair
+   any reproduced candidate defect first. Only then improve a demonstrated rough
+   transition, obvious clipping, severe stutter or unreadable text. Native preview
+   resolution on high-DPI displays and secondary dialogs/touch-editor details are
+   next if they do not delay the candidate. Preserve the tested build before further
+   work and keep all changes committed/pushed on ASTRAReworks.
+
+### Continue immediately after securing the demo candidate
+
+7. [ ] Complete remaining U8 UI coverage: native motion and long-session lifecycle,
+   physical preview-pixel scaling, secondary dialogs and device-specific paths.
+   Reconcile the unfinished touch-label checks from D10. Preserve the original
+   login/controller art and all completed D1-D9 work.
+8. [ ] Complete the remaining gameplay backlog in GAMEPLAY_RESUME_AFTER_UI.md:
+   pending casts and active movement on joining, broader reconnect/host loss,
+   whole-kit variants/counterplay, movement/feet/Pektus/recovery/swimming, cinematic
+   spectator and measured engineering/performance work. Promote only a reproduced
+   demo blocker ahead of the candidate gate.
+9. [ ] Return to deferred Inday FPP framing using her actual restored arm geometry,
+   materials and existing animations. Keep the no-finger/no-thumb rule. Do not
+   revive the rejected red-block/purple-band reconstruction.
+10. [ ] **Seventh hero and map LAST LAST.** The selected B-character/C-map direction
+    remains approved: male Sama Dilaut water hero, working name Rafi, personal fantasy
+    gills, and a stilt lagoon village. Preserve research/cultural boundaries and the
+    current six heroes. No expansion implementation before the preceding backlog.
+
+### Evidence and constraints
+
+Use DEMO_PLAYTEST_CHECKLIST.md when the owner returns. Keep implementation,
+automated/runtime evidence and pending human playtest separate. Update those
+states as work lands; do not label a feature fully verified from a screenshot.
+
+
+D1-D9 and the8-round/dark-settings/four-sampayan correction are committed through
+8f21e603. D10 is unfinished; see ACTIVE_REWORK_LEDGER.md for exact failures and dirty
+files. A passed visual test is not owner acceptance or full gameplay qualification.
+
+Only related tests. One guarded Editor per checkout. Draft outside Assets while
+Unity runs. Preserve profiles, original art, stable IDs and both modes. No agents,
+other chats, Figma, resets, paid fallback or unrequested Desktop update. User-facing
+questions may wait while independent authorized work continues.
+
+Earlier checkpoint paragraphs are preserved in TODO_Archive.md under the dated
+pre-demo entry. The detailed numbered sections below retain their original evidence;
+the priority order above is authoritative over their historical scheduling/ownership.
+
+## Earlier execution index and supporting reasoning
+
+
 
 **Standing model-style rule:** every new/reworked model must look native to TUMP
 and avoid excessive detail. Use the existing cute blocky cast as the reference.

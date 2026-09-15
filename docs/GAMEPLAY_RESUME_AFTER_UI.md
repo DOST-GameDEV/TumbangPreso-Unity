@@ -1,5 +1,24 @@
 # Resume gameplay after the owner-art UI overhaul
 
+**Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
+changes priority, not scope. Secure a tested demo candidate, then continue the rest
+immediately as time allows, including before tomorrow. Do not stop at the candidate
+or wait for the demo date. Record completed/verified/pending-playtest states in
+TODO.md, ACTIVE_REWORK_LEDGER.md and DEMO_PLAYTEST_CHECKLIST.md.
+
+
+**LATEST owner priority, September15: demo tomorrow, September16.** Follow the new
+ordered CURRENT IMPLEMENTATION QUEUE in TODO.md. First fix main-route blockers,
+prove both modes in a fresh native player, check visible existing-hero gameplay,
+validate needed LAN continuity, then freeze/rehearse a versioned demo candidate.
+This supersedes finishing all UI before any gameplay. Broad polish, exhaustive
+network/device matrices, deferred Inday and the seventh hero/map remain saved later.
+Keep working through stable checkpoints. Preserve original login,8-round defaults,
+dark settings and all existing creative constraints. No agents, paid fallback,
+Figma, resets or Desktop-build update. Primary assumed demo is Windows offline bots;
+LAN is secondary until the owner says otherwise.
+
+
 Owner instruction,2026-09-15: finish the current reconnect check, then overhaul
 UI from her new PNGs. Resume this unfinished gameplay list afterward. This file
 is the durable interruption bookmark, not a claim that the game is finished.
@@ -94,7 +113,7 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
 
 ASTRAReworks only, no resets/cleaning unrelated work. No agents/forks/other chats,
 no Figma, no usage-reset permission. No Desktop update unless newly requested.
-Classic12people/no powers/four rounds and HeroStrike six heroes/eight rounds
+Classic12people/no powers/eight rounds and HeroStrike six heroes/eight rounds
 remain first-class. One guarded Unity Editor and named test profiles. Only
 related tests; draft outside imported Assets while builds/tests run. Keep stable
 batches pushed, receipts truthful and the ledger current. Quality and visual

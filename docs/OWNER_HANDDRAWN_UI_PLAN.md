@@ -1,5 +1,24 @@
 # Owner hand-drawn UI replacement
 
+**Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
+changes priority, not scope. Secure a tested demo candidate, then continue the rest
+immediately as time allows, including before tomorrow. Do not stop at the candidate
+or wait for the demo date. Record completed/verified/pending-playtest states in
+TODO.md, ACTIVE_REWORK_LEDGER.md and DEMO_PLAYTEST_CHECKLIST.md.
+
+
+**LATEST owner priority, September15: demo tomorrow, September16.** Follow the new
+ordered CURRENT IMPLEMENTATION QUEUE in docs/TODO.md. First fix main-route blockers,
+prove both modes in a fresh native player, check visible existing-hero gameplay,
+validate needed LAN continuity, then freeze/rehearse a versioned demo candidate.
+This supersedes finishing all UI before any gameplay. Broad polish, exhaustive
+network/device matrices, deferred Inday and the seventh hero/map remain saved later.
+Keep working through stable checkpoints. Preserve original login,8-round defaults,
+dark settings and all existing creative constraints. No agents, paid fallback,
+Figma, resets or Desktop-build update. Primary assumed demo is Windows offline bots;
+LAN is secondary until the owner says otherwise.
+
+
 **LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
 says the old login already looked good and was not part of the requested redesign.
 Preserve its original centred artwork, form, colours, tabs and actions. Redesign

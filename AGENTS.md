@@ -1,5 +1,24 @@
 # Working instructions for ChatGPT / Codex
 
+**Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
+changes priority, not scope. Secure a tested demo candidate, then continue the rest
+immediately as time allows, including before tomorrow. Do not stop at the candidate
+or wait for the demo date. Record completed/verified/pending-playtest states in
+TODO.md, ACTIVE_REWORK_LEDGER.md and DEMO_PLAYTEST_CHECKLIST.md.
+
+
+**LATEST owner priority, September15: demo tomorrow, September16.** Follow the new
+ordered CURRENT IMPLEMENTATION QUEUE in docs/TODO.md. First fix main-route blockers,
+prove both modes in a fresh native player, check visible existing-hero gameplay,
+validate needed LAN continuity, then freeze/rehearse a versioned demo candidate.
+This supersedes finishing all UI before any gameplay. Broad polish, exhaustive
+network/device matrices, deferred Inday and the seventh hero/map remain saved later.
+Keep working through stable checkpoints. Preserve original login,8-round defaults,
+dark settings and all existing creative constraints. No agents, paid fallback,
+Figma, resets or Desktop-build update. Primary assumed demo is Windows offline bots;
+LAN is secondary until the owner says otherwise.
+
+
 **LATEST owner corrections, 2026-09-15:** normal/Classic matches default to EIGHT
 rounds, like Hero Strike. The shown1/4 was the old gameplay default, not just HUD
 copy. Correct defaults, rotation checks and current UI copy; keep custom lengths
