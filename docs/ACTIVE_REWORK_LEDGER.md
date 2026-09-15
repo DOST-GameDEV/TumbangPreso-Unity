@@ -1,5 +1,25 @@
 # Active TUMP rework ledger
 
+## CURRENT D8 results and between-round presentation
+
+Owner correction batch committed/pushed ded1315c. Eight-round defaults, dark settings
+and four supported varied laundry lines are saved with focused evidence. Source
+login, characters and unrelated map geometry remain unchanged.
+
+Applied MatchResult.FinishSheet and TumpRoundSwapView.CourtBreak from drafts. Results
+has one readable horizontal standings sheet; the short break uses a subdued court
+overlay with actual next-defender portrait and scores. Both keep existing outcome,
+ties, XP, map-vote/rematch and live warmup callbacks. No social/account writes for QA.
+Results-v1 FINISHED3/3PASS, Python15376 retired, restorationd9994cb6ef19. Both result
+modes and between-round views cover ten PC sizes. Additional populated-summary
+fixture passed1/1 twice: Python16672/c309c9361286, then final computed-award fixture
+Python10604/ef6ca62e81cd. The latter replaces hand-entered fixture XP with the actual
+ProgressionRules award and matching185XP itemization. No saved career/account write.
+Final images inspected; report docs/reports/ui-composition-d8. No Unity jobs remain.
+Next save/push D8 and apply reviewed chat/training drafts in Logs/ui-drafts. Their
+new native fields/panels need focused chat history/return and17lesson checks.
+Then remaining dialogs/U8 and the full gameplay queue; original login stays protected.
+
 ## CURRENT owner steering batch: eight rounds, charcoal settings, sampayan
 
 D7 committed/pushed416e48a9. Owner now explicitly corrects normal/Classic to8rounds,

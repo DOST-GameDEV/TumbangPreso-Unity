@@ -1,5 +1,11 @@
 # UI composition redesign from the original layout studies
 
+**D8 checkpoint:** both-mode result sheets and the live court round-break overlay
+passed focused route/layout checks. Ten-size coverage plus populated local reward
+fixtures; no career/social write. Report: reports/ui-composition-d8. Continue chat,
+training, remaining dialogs/U8 and the full gameplay queue. Original login protected.
+
+
 **LATEST owner corrections, 2026-09-15:** normal/Classic matches default to EIGHT
 rounds, like Hero Strike. The shown1/4 was the old gameplay default, not just HUD
 copy. Correct defaults, rotation checks and current UI copy; keep custom lengths

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:15:11Z" duration="33.4855732">
+  <test-suite type="TestSuite" id="1532" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="405" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:15:11Z" duration="33.485573" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1526" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="405" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:15:11Z" duration="33.465800" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13256" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1527" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="405" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:15:11Z" duration="33.455285" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1528" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="405" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:15:11Z" duration="33.444959" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1462" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:14:52Z" duration="14.374799" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1463" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="289065219" result="Passed" start-time="2026-09-15 03:14:37Z" end-time="2026-09-15 03:14:52Z" duration="14.357893" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-recovery/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-recovery/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=155,124,84; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-960x540 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x720 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1366x768 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1080 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1200 cream source=252,211,159 pixel=78,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x960 cream source=252,211,159 pixel=76,83,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-2560x1440 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3440x1440 cream source=252,211,159 pixel=15,26,24; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x1080 cream source=252,211,159 pixel=44,43,38; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x2160 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1473" name="TumpNativeResultTests" fullname="TumbangPreso.PlayTests.TumpNativeResultTests" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 03:14:52Z" end-time="2026-09-15 03:15:11Z" duration="19.048412" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1475" name="HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch" fullname="TumbangPreso.PlayTests.TumpNativeResultTests.HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch" methodname="HeroResultsKeepStandingsPlayersMapChoiceAndRealRematch" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" seed="1557113307" result="Passed" start-time="2026-09-15 03:14:52Z" end-time="2026-09-15 03:15:01Z" duration="9.689527" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-standings-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-players-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-empty-details cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-HeroStrike-reward-fixture-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1474" name="ResultsKeepStandingsPlayersMapChoiceAndRealRematch" fullname="TumbangPreso.PlayTests.TumpNativeResultTests.ResultsKeepStandingsPlayersMapChoiceAndRealRematch" methodname="ResultsKeepStandingsPlayersMapChoiceAndRealRematch" classname="TumbangPreso.PlayTests.TumpNativeResultTests" runstate="Runnable" seed="309956683" result="Passed" start-time="2026-09-15 03:15:01Z" end-time="2026-09-15 03:15:11Z" duration="9.355695" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] FinishSheet-Classic-standings-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-standings-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-players-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-empty-details cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-960x540 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-1280x720 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-1366x768 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-1920x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-1920x1200 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-1280x960 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-2560x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-3440x1440 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-3840x1080 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] FinishSheet-Classic-reward-fixture-3840x2160 cream source=252,211,159 pixel=241,229,202; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

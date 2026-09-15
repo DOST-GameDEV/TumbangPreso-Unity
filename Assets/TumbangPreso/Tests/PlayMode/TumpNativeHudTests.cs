@@ -43,7 +43,11 @@ namespace TumbangPreso.PlayTests
             var intermission = GameObject.Find("OwnerRoundSwapCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(intermission.GetComponentsInChildren<PaperSkin>(true));
             Assert.IsNotNull(intermission.GetComponentsInChildren<Image>().First(i=>i.name=="NextDefenderPortrait").sprite);
-            yield return TumpUiCapture.Capture("OwnerRoundSwap-v1", intermission, 1920, 1080,false);
+            foreach(var size in TumpUiCapture.PcViewports)
+            {
+                swap.ShowForShot(2,(GameServices.Match.DefenderSlot+1)%4);
+                yield return TumpUiCapture.Capture("CourtBreak-"+size.x+"x"+size.y,intermission,size.x,size.y,false,true,checkActionBounds:true);
+            }
             swap.DismissAndPractice(); Assert.IsFalse(intermission.gameObject.activeSelf);
         }
         [UnityTest]

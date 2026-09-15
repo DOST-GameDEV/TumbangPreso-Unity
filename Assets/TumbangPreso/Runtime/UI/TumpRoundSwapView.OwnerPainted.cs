@@ -6,7 +6,7 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpRoundSwapView
     {
-        public void Build(Transform owner,Action dismiss)
+        private void BuildPreviousOwnerBreak(Transform owner,Action dismiss)
         {
             Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",220);
             if(Hud.Instance!=null){Canvas.transform.SetParent(Hud.Instance.CleanFeedRoot,false);OwnerUiLayout.Fill((RectTransform)Canvas.transform);}

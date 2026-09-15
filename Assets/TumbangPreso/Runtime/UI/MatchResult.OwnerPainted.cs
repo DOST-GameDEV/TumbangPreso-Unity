@@ -8,7 +8,7 @@ namespace TumbangPreso.UI
     public sealed partial class MatchResult
     {
         private Text _ownerEmptyDetails;
-        private void BuildNativeResult()
+        private void BuildPreviousOwnerResult()
         {
             _nativeResult=true;_canvas=OwnerUiLayout.Canvas(transform,"OwnerResultCanvas",400);
             if(Hud.Instance!=null){_canvas.transform.SetParent(Hud.Instance.CleanFeedRoot,false);OwnerUiLayout.Fill((RectTransform)_canvas.transform);}

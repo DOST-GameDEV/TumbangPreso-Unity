@@ -1,5 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**D8 checkpoint:** both-mode result sheets and the live court round-break overlay
+passed focused route/layout checks. Ten-size coverage plus populated local reward
+fixtures; no career/social write. Report: reports/ui-composition-d8. Continue chat,
+training, remaining dialogs/U8 and the full gameplay queue. Original login protected.
+
+
 **Immediate owner corrections,2026-09-15:** Classic now defaults to8rounds, with
 explicit custom lengths retained. Dark-grey settings and three additional varied,
 supported Eskinita clotheslines passed focused checks and visual review. See
