@@ -1,5 +1,25 @@
 # Hero kit decisions and distinct loadout jobs
 
+## Current interpretation, 2026-09-16
+
+The design candidates and source findings below are historical. The six kits
+already contain substantial implemented/qualified work; consult the current
+index in ABILITY_REWORK_PLAN.md and each named report before changing a mechanic.
+Do not replace a useful choice merely because an old table calls it a candidate.
+
+In particular, the old Dante self-bounce/Long Tremor displacement faults and
+Phaister immediate-curse/ceiling placement faults were corrected. Zack Arc Line/
+Snap Discharge and Nemu Long Fade/Short Leash have measured lane/speed/time
+tradeoffs, and Cheska Split Spires has actual passage evidence. These are bounded
+behavior results, not a declaration that every kit is balanced or artistically
+accepted. Mixed-role counterplay, overlap and broader interruption/rejoin work
+remain open. Preserve variant/save IDs, current distinct casts, the approved
+model/shield baselines and the latest source-restoration decisions.
+
+The finalized owner menu/login is complete for its reported UI scope; the older
+UI-removed/UI-last ordering elsewhere does not override the current continuation.
+No usage resets, agents, Figma or new paid work. Keep the seventh expansion last.
+
 **Style acceptance is mandatory for every kit:** models must belong to TUMP,
 using its cute blocky forms and restrained detail. A mechanically improved skill
 with an off-theme model is unfinished. Follow

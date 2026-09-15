@@ -1,5 +1,45 @@
 # Ability rework plan
 
+## Current continuation status, 2026-09-16
+
+The older OPEN/not-implemented headings below preserve design history. They are
+not instructions to rebuild completed skills or restore rejected models/UI.
+Use ACTIVE_REWORK_LEDGER.md and GAMEPLAY_RESUME_AFTER_UI.md for the live queue.
+The owner reopened UI on September15; the finalized supplied menu/login and its
+cloud/dust effects are now implemented and qualified. Continue gameplay afterward.
+
+Preserve the bounded completed work documented here:
+
+- Sean's grounded Supernova, empowered-throw cleanup and distinct heat presentation:
+  reports/improvement-2026-09-14/sean-skills.md.
+- Dante's grounded Stomp/Long Tremor distinction, fitted armor/orbiting protection,
+  clean stone fissure and restrained earthquake:
+  reports/improvement-2026-09-14/dante-skills.md. Visual acceptance of fitted markings
+  remains distinct from implementation; do not replace the approved shield baseline.
+- Zack's charged recall/throw and sprint lifecycle/variant behavior:
+  reports/improvement-2026-09-14/zack-skills.md.
+- Cheska's accepted captured placement and actual Split Spires passage:
+  reports/improvement-2026-09-14/cheska-network-review.md.
+- Nemu's restored small ghost, retained current monster, possession/transition and
+  alternate behavior: reports/improvement-2026-09-14/nemu-laptop-review.md. The older
+  purple-mini redesign checkpoint below is not authority to undo that restoration.
+- Phaister's staged ritual, ceiling-safe placement and real rejoin restoration:
+  reports/improvement-2026-09-14/phaister-skills.md and phaister-rejoin-state.md.
+
+Seven persistent field types, the named pending casts and Sean/Zack movement
+restoration are separately qualified in reports/improvement-2026-09-15-world-fields.md,
+reports/pending-casts-2026-09-15 and reports/movement-joining-2026-09-15. These do not
+close every interruption/rejoin/variant combination. Current protocol is42; old
+protocol numbers inside historical receipts describe those binaries only.
+
+Remaining: whole-kit attacker/defender counterplay and overlap, broader movement/
+animation and network matrices, unresolved visual acceptance and performance.
+Sean's physical Supernova joining phase waits where it conflicts with the reserved
+C4 networking files. The seventh hero/map remains LAST LAST. No agents, Figma,
+usage resets or paid fallback; preserve distinct cast/part design and source art.
+
+## Historical planning and decisions
+
 **Newest scoped results,2026-09-14:** see zack-skills.md, nemu-laptop-review.md
 and cheska-network-review.md under reports/improvement-2026-09-14. Current
 Cheska confirmation/pose and actual SplitSpires passage are corrected and

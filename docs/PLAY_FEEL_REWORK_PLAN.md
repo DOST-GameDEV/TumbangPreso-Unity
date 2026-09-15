@@ -1,12 +1,42 @@
 # Play-feel and equipment rework after the maps
 
+## Current continuation status, 2026-09-16
+
+This is an active but partially implemented plan. The dated scope/NOT implemented
+statements below are historical and must not trigger a restart. The owner later
+reopened UI; the finalized supplied menu/login is now qualified, and gameplay work
+continues. Follow ACTIVE_REWORK_LEDGER.md and GAMEPLAY_RESUME_AFTER_UI.md.
+
+Preserve the short general-direction guide and current aim settling. The moving
+Nemu guide was verified in actual pixels without an exact landing marker in
+reports/demo-moving-guide-2026-09-15. Older throw reports describing full preview
+consistency are not permission to restore an exact endpoint guide.
+
+Current completed boundaries include menu Resume not spending recovery input,
+configured recovery keys, successful pickup consuming only its own grab press,
+client round clocks waiting for host authority, and both-mode native direct
+keyboard/mouse verbs. See reports/recovery-menu-boundary-2026-09-15,
+reports/direct-gameplay-2026-09-16 and reports/client-round-boundary-2026-09-16.
+Spectator POV/replay and close-view feedback are qualified only for the cases in
+reports/spectator-review-2026-09-16 and reports/close-feedback-2026-09-16.
+
+Do not equate those checks with finished play feel. Remaining work includes full
+start/stop/strafe/turn/foot-contact and interruption review, remaining signed Pektus
+quality, whole-kit counterplay/variants and wider device/network cases. Preserve
+the18simple thumb/finger-free people, restored Inday/mini ghost, retained monster,
+equipment/save identifiers and all accepted animations. Inday framing remains
+deferred; the seventh hero/map is last. No resets, agents or optional AFK questions.
+
+## Historical planning and evidence
+
 **Current scope,2026-09-14:** owner removed the remaining UI work from this
 active queue. Earlier finish-UI ordering below is historical. Preserve UI source
 and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
 
 
 Owner-authorized scope,2026-09-12. Begin this phase after the substantial map
-transformation. It is not implemented or qualified. Read the actual motor, throw,
+transformation. The original baseline was not implemented or qualified; current
+partial completion is summarized above. Read the actual motor, throw,
 Pektus, can, equipment, animation/FPP and network owners before choosing changes.
 
 ## Required outcome
