@@ -1,0 +1,50 @@
+bot behaviour probe  ·  HeroStrike  ·  IlalimNgTulay
+rules: 1|0|8|90|0|3|0|1|0; actual rounds 8; seconds per round 90
+45937 frames at 16.7 ms  ·  765.6s simulated  ·  44.4s wall clock  ·  match in progress at exit: False
+physics phase at the whistle: 6.592 ms after 120 aligning frame(s)
+lata knocks 50  tags 141  sabotages 3
+throws 207  retrievals 198  lata restores 64
+camp penalties 0  idle penalties 0
+skill uses 36  ultimate uses 13  kits seen True
+emotes 22  hops 113
+slides 138
+seat  throws  knocks  retr  underP  tags    shove    lunge  defTick  1stThrow  metres
+   0      50      15    45      12    36     2/26      2/3      156     100.0    1160
+   1      51      13    43      15    33     2/28      4/5      140       3.5    1282
+   2      53      10    48      18    36     3/28      2/3      158       4.1    1141
+   3      51      12    44      19    36     3/21      0/0      160       3.7    1321
+seat 0 hero dante        model team-dante(Clone)
+seat 1 hero zack         model team-zack(Clone)
+seat 2 hero dante        model team-dante(Clone)
+seat 3 hero zack         model team-zack(Clone)
+furthest a body reached: x 7.90 of 11.0  z 10.99 of 16.5
+furthest a free slipper reached: x 9.03  z 10.84
+Unretrieved-slipper penalty trace (0 lines, capped at 400):
+Resting-shoe samples at each five seconds continuously loose:
+  round=1 loose=5.0s origin=2 owner=2 shoe=(0.39, 0.08, 0.62) velocity=(0.00, 0.00, 0.00) ownerAt=(0.21, 0.08, 2.62) plan=Fetch canAct=True grabbable=False
+  round=1 loose=5.0s origin=3 owner=3 shoe=(3.18, 0.09, 0.19) velocity=(0.00, 0.00, 0.00) ownerAt=(0.16, 0.08, 8.58) plan=Windup canAct=True grabbable=False
+  round=2 loose=5.0s origin=2 owner=2 shoe=(0.14, 0.08, 0.18) velocity=(0.00, 0.00, 0.00) ownerAt=(-2.97, 0.08, 8.29) plan=Windup canAct=True grabbable=False
+  round=2 loose=10.0s origin=2 owner=2 shoe=(0.14, 0.08, 0.18) velocity=(0.00, 0.00, 0.00) ownerAt=(-2.46, 0.08, 6.28) plan=Fetch canAct=True grabbable=False
+  round=2 loose=5.0s origin=3 owner=3 shoe=(-0.53, 0.09, 0.44) velocity=(0.00, 0.00, 0.00) ownerAt=(2.34, 0.08, 1.67) plan=Fetch canAct=True grabbable=False
+  round=2 loose=5.0s origin=2 owner=2 shoe=(-0.59, 0.08, -0.54) velocity=(0.00, 0.00, 0.00) ownerAt=(-3.97, 0.08, 4.74) plan=Fetch canAct=True grabbable=False
+  round=3 loose=5.0s origin=0 owner=0 shoe=(-6.40, 0.05, -4.04) velocity=(0.00, 0.00, 0.00) ownerAt=(-4.49, 0.08, -3.22) plan=Fetch canAct=True grabbable=False
+  round=3 loose=5.0s origin=1 owner=1 shoe=(-1.38, 0.09, -0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(0.00, 0.00, 9.00) plan=Withdraw canAct=False grabbable=False
+  round=3 loose=10.0s origin=1 owner=1 shoe=(-1.38, 0.09, -0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(3.29, 0.08, 8.92) plan=Position canAct=True grabbable=False
+  round=3 loose=15.0s origin=1 owner=1 shoe=(-1.38, 0.09, -0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(3.88, 0.08, 5.00) plan=Fetch canAct=True grabbable=False
+  round=3 loose=5.0s origin=1 owner=1 shoe=(0.12, 0.09, 0.91) velocity=(0.00, 0.00, 0.00) ownerAt=(7.46, 0.29, 1.20) plan=Fetch canAct=True grabbable=False
+  round=4 loose=5.0s origin=1 owner=1 shoe=(0.20, 0.09, 0.53) velocity=(0.00, 0.00, 0.00) ownerAt=(2.30, 0.08, 1.11) plan=Fetch canAct=True grabbable=False
+  round=4 loose=5.0s origin=0 owner=0 shoe=(-1.30, 0.05, 4.45) velocity=(0.00, 0.00, 0.00) ownerAt=(0.76, 0.08, 5.36) plan=Fetch canAct=True grabbable=False
+  round=5 loose=5.0s origin=1 owner=1 shoe=(-2.35, 0.09, 3.73) velocity=(0.00, 0.00, 0.00) ownerAt=(2.18, 0.08, 5.50) plan=Fetch canAct=True grabbable=False
+  round=6 loose=5.0s origin=2 owner=2 shoe=(-1.22, 0.08, -0.43) velocity=(0.00, 0.00, 0.00) ownerAt=(-3.44, 0.08, -0.70) plan=Fetch canAct=True grabbable=False
+  round=7 loose=5.0s origin=1 owner=1 shoe=(0.10, 0.09, 0.74) velocity=(0.00, 0.00, 0.00) ownerAt=(0.00, 0.08, 9.00) plan=Withdraw canAct=False grabbable=False
+  round=7 loose=10.0s origin=1 owner=1 shoe=(0.10, 0.09, 0.74) velocity=(0.00, 0.00, 0.00) ownerAt=(2.82, 0.08, 8.48) plan=Position canAct=True grabbable=False
+  round=7 loose=15.0s origin=1 owner=1 shoe=(0.10, 0.09, 0.74) velocity=(0.00, 0.00, 0.00) ownerAt=(1.41, 0.08, 2.25) plan=Stalk canAct=True grabbable=False
+  round=7 loose=5.0s origin=3 owner=3 shoe=(0.55, 0.09, 0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(0.20, 0.08, 10.81) plan=Withdraw canAct=False grabbable=False
+  round=7 loose=10.0s origin=3 owner=3 shoe=(0.55, 0.09, 0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(0.35, 0.08, 7.80) plan=Windup canAct=True grabbable=False
+  round=7 loose=15.0s origin=3 owner=3 shoe=(0.55, 0.09, 0.68) velocity=(0.00, 0.00, 0.00) ownerAt=(2.47, 0.08, 6.12) plan=Stalk canAct=True grabbable=False
+  round=8 loose=5.0s origin=0 owner=0 shoe=(-0.87, 0.05, 4.52) velocity=(0.00, 0.00, 0.00) ownerAt=(3.86, 1.28, 6.19) plan=Fetch canAct=False grabbable=False
+  round=8 loose=5.0s origin=2 owner=2 shoe=(0.87, 0.08, 0.94) velocity=(0.00, 0.00, 0.00) ownerAt=(0.22, 0.08, 2.59) plan=Fetch canAct=True grabbable=False
+seat 0 travelled 1159.1 m  final score 6710
+seat 1 travelled 1280.7 m  final score 6000
+seat 2 travelled 1140.7 m  final score 6280
+seat 3 travelled 1319.5 m  final score 6400

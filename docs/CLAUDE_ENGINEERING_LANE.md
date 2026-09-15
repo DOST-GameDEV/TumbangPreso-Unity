@@ -1,6 +1,7 @@
 # Reserved engineering work on the separate Claude PC
 
-Owner assigned this lane on 2026-09-15. Status: RESERVED, NOT STARTED.
+Owner assigned this lane on 2026-09-15. Status: C1, C2 and C3 COMPLETE as recorded in the
+execution log, with the specific historical 48-penalty match still unattributed.
 This is a shared ownership record, not a claim that another worker is running.
 Codex continues the other work and must leave these tasks and files alone until
 the owner releases the reservation or Claude records an explicit handback here.
@@ -13,7 +14,7 @@ Historical absolute paths and PIDs are not instructions for that machine.
 
 ## Assigned tasks, in order
 
-- [ ] **C1: Ilalim unretrieved-slipper outlier, TODO151.9.** Locate the historical
+- [x] **C1: Ilalim unretrieved-slipper outlier, TODO151.9.** Locate the historical
   seed/rules/report that produced48idle penalties. Reproduce with actual resting
   slipper position, owner, active/carried/flight state, legal court bounds, bot
   target/decision and pickup eligibility logged. Separate unreachable slippers,
@@ -25,7 +26,7 @@ Historical absolute paths and PIDs are not instructions for that machine.
   current equivalent with its relationship explicitly bounded, plus relevant
   regression evidence. If the original cannot be explained, leave that historical
   attribution open even if a separate defect is fixed.
-- [ ] **C2: Bot lunge decisions, TODO151.9.** Investigate the historical5hits in
+- [x] **C2: Bot lunge decisions, TODO151.9.** Investigate the historical5hits in
   125attempts using AiDiagnosticProbe at ordinary1x. Record target motion, facing,
   intent, accepted lunge, distance, cooldown/role and authority outcome. Establish
   whether DoHunt aims/chooses poorly, whether the fixture miscounts, or whether the
@@ -34,7 +35,7 @@ Historical absolute paths and PIDs are not instructions for that machine.
   Completion requires causal evidence, a focused regression where code changes,
   and comparable before/after traces with both modes and run-to-run noise stated.
   Human judgment of slide feel remains outside this task.
-- [ ] **C3: Measured AI/combat slipper lookups, TODO149.5.** Recheck actual current
+- [x] **C3: Measured AI/combat slipper lookups, TODO149.5.** Recheck actual current
   call sites and measure frequency, allocations and time against a real arena's
   object count and four-player activity. Distinguish decision/frame/action/packet
   paths. Seat-to-motor and network seat-to-slipper are already cached; do not redo
@@ -121,3 +122,56 @@ host authority, single score ownership, square confinement and stable identities
 2026-09-15: Reserved at owner request. No assigned investigation or implementation
 has started in this reservation. No task is complete. Codex retains its uncommitted
 pending-cast work outside this lane and continues independently.
+
+2026-09-15, Claude on the separate Mac. Full evidence:
+[reports/claude-engineering-2026-09-15/README.md](reports/claude-engineering-2026-09-15/README.md).
+
+Setup: existing clone at /Users/paul/Documents/GitHub/TumbangPreso-Unity (user paul),
+clean, ASTRAReworks equal to origin at 4752f610; later fast-forwarded to 0f1d997b and
+rebased one unpublished commit over Codex's 12e9e6a5. Unity 6000.5.8f1 with Mac and
+WebGL modules only, so every launch used -buildTarget OSXUniversal; no dotnet; python3.
+tools/run_unity_guarded.py is Windows only (USERPROFILE, Windows Unity path, winreg), so
+launches used a Mac equivalent that snapshots and hash-restores the Mac persistentDataPath,
+kept in the report folder. Guard runners were not edited. Historical 2fde55d3 and
+instrumented copies ran as git-archive scratch projects with APFS-cloned Library folders.
+
+C1 (ticked). Cause found and fixed; historical attribution bounded. The seed that carried
+the 48 is not in committed data (only Logs/bot-sweep.json on Windows had it). 2fde55d3 on
+this Mac: six sweep seeds 0 each, twelve more seeds max 13 (seed 42), seed 42 re-run 0 and 0;
+the build is not seed-reproducible here. Per-penalty traces (52beee35, 091f9210) showed no
+stranded slipper. Two decision defects, both traced on the historical and current builds:
+(1) PlanAttacker yielded to a better-ranked rival even when late or stalled, fixed in
+32e073fd with AiRetrievalRules and 5/5 EditMode tests; (2) StepUnstick read the wished
+CharacterMotor.Velocity, so a bot pressed into Ilalim geometry never unstuck, fixed in
+ea776bdc with AiStuckWatch and 5/5 EditMode tests. The C1-only current build produced 68
+penalties from one pinned seat in one match. PinnedFetchProbe places the bot at the traced
+positions: 2fde55d3 fails both cases (motionless 10 s), 2fde55d3 plus only the stuck patch
+passes (3.65 s, 3.98 s), the pre-fix current copy fails, the current checkout passes 2/2.
+Final six-seed sweep: 0 idle penalties in 18 matches (before 8, C1-only 68). The specific
+48-penalty match was not replayed and cannot be here, so its exact attribution stays open.
+Flagged: Classic tags 146.8 to 140.8 against the pre-fix sweep at t -2.28, but t -1.38
+against the C1-only build; not attributed to a single change.
+
+C2 (ticked). AiDiagnosticProbe whole-match lunge traces at 1/60 s, time scale 1, both
+modes, seeds 20260823, 1, 7 (8bf42787, tracker fix 844da009). Before: 61/671 hits, and 556
+of 671 lunges were released by the plan sweep after the same taya's punch had already
+tagged during the charge. Aim was not the main fault. Fix eb29f871 (AiLungeRules, 3/3
+EditMode): no charge when a ready punch will be in range by the end of the hold. After:
+57/82 hits, 7 punch dumps. Hits per match 7-12 before, 4-13 after. C2 isolated against
+the C1-only build, six seeds: tags t +0.12, +0.31, -1.59, no measured change. No human
+lunge, slide or punch number changed; slide feel is not judged.
+
+C3 (ticked, no production change). 34 FindObjectsByType<Slipper> sites metered in a scratch
+copy; SlipperLookupCostProbe (4ff38856, live checkout 2/2). Whole four-bot matches: 134.5 to
+134.9 lookups per simulated second, 33.7 to 49.8 us each, all sites 0.086 to 0.167 ms per
+editor frame, lane sites 0.052 to 0.096 ms, RoundDirector.cs:408 (outside the lane) 0.034 to
+0.067 ms. Allocation read with a calibrated heap-growth method: 0 B for active-only shapes
+at that resolution, 160 B for Include with SortMode.None. Retained: about 0.3 to 0.6 percent
+of a 16.7 ms frame does not justify a registry with separate active and inactive semantics.
+Limits: macOS editor, offline host, not a Windows IL2CPP player.
+
+Commits in this lane: 52beee35, 32e073fd, 8bf42787, eb29f871, 844da009, 091f9210,
+4b9aa191, 4ff38856, 9c236eb8, ea776bdc, 22bbedb6, b3a9dbbe, c0f1edc2 and this log.
+Not run: full EditMode or PlayMode suites, Checks.RunAll, Windows builds, network paths.
+Test-generated whitespace-only changes to two composition-redesign png.meta files were
+restored each time and never committed. Handback: this lane's files are free for Codex.

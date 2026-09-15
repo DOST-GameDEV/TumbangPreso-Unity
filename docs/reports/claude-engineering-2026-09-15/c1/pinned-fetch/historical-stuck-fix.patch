@@ -1,0 +1,71 @@
+diff --git a/Assets/TumbangPreso/Runtime/AIController.cs b/Assets/TumbangPreso/Runtime/AIController.cs
+index f585b2b0..579f9955 100644
+--- a/Assets/TumbangPreso/Runtime/AIController.cs
++++ b/Assets/TumbangPreso/Runtime/AIController.cs
+@@ -692,6 +692,7 @@ namespace TumbangPreso
+             _glanceLeft = 0.0f;
+             _loiterDir = 0.0f;
+             _stuckTime = 0.0f;
++            _stuckWatch.Reset();
+ 
+             Press(intent, Verb.Sprint, false);
+             Press(intent, Verb.Jump, false);
+@@ -1092,6 +1093,7 @@ namespace TumbangPreso
+         // -------------------------------------------------------------------
+ 
+         private float _stuckTime;
++        private readonly AiStuckWatch _stuckWatch = new AiStuckWatch();
+         private float _unstickLeft;
+         private float _unstickSign = 1.0f;
+ 
+@@ -1104,31 +1106,24 @@ namespace TumbangPreso
+             if (_unstickLeft > 0.0f)
+             {
+                 _unstickLeft = Mathf.Max(0.0f, _unstickLeft - dt);
++                _stuckWatch.Reset();
+                 return;
+             }
+ 
+-            var v = _motor.Velocity;
+-            float speed = new Vector2(v.x, v.z).magnitude;
+-
+-            if (_driving && speed < AiTuning.StuckSpeed)
++            // ⚠️⚠️ WHERE THE BODY WENT, NOT THE VELOCITY IT WISHED FOR. This read
++            // `_motor.Velocity`, which is the steered target the CharacterController is asked to
++            // move by, so a bot pinned against a pillar reported walking speed and was never
++            // unstuck: 68 idle penalties from one seat in one Ilalim match. See `AiStuckWatch`.
++            if (_stuckWatch.Step(transform.position, _driving, dt))
+             {
+-                _stuckTime += dt;
+-
+-                if (_stuckTime >= AiTuning.StuckTrigger)
+-                {
+-                    _stuckTime = 0.0f;
+-                    _unstickLeft = AiTuning.UnstickTime;
++                _unstickLeft = AiTuning.UnstickTime;
+ 
+-                    // Alternate, so a bot that picks the wrong way out of a corner does not
+-                    // keep picking it.
+-                    _unstickSign = -_unstickSign;
+-                }
+-            }
+-            else
+-            {
+-                _stuckTime = 0.0f;
++                // Alternate, so a bot that picks the wrong way out of a corner does not
++                // keep picking it.
++                _unstickSign = -_unstickSign;
+             }
+ 
++            _stuckTime = _stuckWatch.StuckSeconds;
+             _driving = false;
+         }
+ 
+@@ -5052,6 +5047,7 @@ namespace TumbangPreso
+             _goalValid = false;
+             _arrived = false;
+             _stuckTime = 0.0f;
++            _stuckWatch.Reset();
+             _unstickLeft = 0.0f;
+             _driving = false;
+ 
