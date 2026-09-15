@@ -1,0 +1,22 @@
+real,local,match,round,elapsed,name
+10.0109,1,1,1,0.000,staged
+12.4705,1,1,1,7.000,stale-seat grab claiming seat 2
+13.5099,1,1,1,8.000,duplicate grab x2
+15.4706,1,1,1,10.000,duplicate throw x2
+16.9909,1,1,1,11.500,stale-seat shove claiming seat 2
+17.4902,1,1,1,12.000,wrong-role punch as attacker
+18.4904,1,1,1,13.000,duplicate shove x2
+22.5106,1,1,1,17.000,duplicate slide x2
+24.9913,1,1,1,19.500,duplicate carapace cast x2
+26.4698,1,1,1,21.000,stomp cast x3 in one frame
+27.9899,1,1,1,22.501,stomp cast 4 after windup
+29.4697,1,1,1,24.001,stomp cast 5 with no charge
+35.3703,1,1,1,29.901,duplicate throw at the round boundary
+44.9705,1,1,2,0.000,staged
+47.5102,1,1,2,7.000,duplicate punch x2
+49.5483,1,1,2,9.000,duplicate lunge x2
+51.5476,1,1,2,11.000,wrong-role shove as taya
+52.5475,1,1,2,12.000,stale-seat punch claiming seat 0
+54.5476,1,1,2,14.000,legitimate punch input
+56.6196,1,1,2,16.040,legitimate lunge input
+59.5475,1,1,2,19.000,legitimate stomp input

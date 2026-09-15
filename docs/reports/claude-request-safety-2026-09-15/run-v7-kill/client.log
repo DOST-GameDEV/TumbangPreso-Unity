@@ -1,0 +1,86 @@
+Mono path[0] = '/Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/Resources/Data/Managed'
+Mono config path = '/Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path /Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/Resources/Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.015 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Audio] loaded 125 of 125 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.349500 ms
+[Build] TUMBANG PRESO 1.0.0 | 8aa36050bd1c+dirty | protocol 42 | StandaloneOSX
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[Net] connecting to 127.0.0.1:8970
+[NetBoot] join requested to 127.0.0.1:8970: connecting
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=90.00 seat1=False kit=False canAct=
+[Social] presence not written: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+UnloadTime: 0.896792 ms
+Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 8263.
+Total: 0.986667 ms (FindLiveObjects: 0.095084 ms CreateObjectMapping: 0.233875 ms MarkObjects: 0.586833 ms  DeleteObjects: 0.070750 ms)
+
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=False allBots=False | s0:reader+sim+live+act | s1:-+bot+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[Net] connected
+[Net] connected as seat 2
+[NetSeat] seat changed: LocalSlot=1 spectator=False host=False allBots=False | s0:reader(OFF)+live+act | s1:reader+sim+bot+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[NetAuto] READY submitted from a client peer.
+[Link] Good at 2 ms round trip (client).
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[Slice] round 1 begins, taya is seat 0
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=29.90 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=28.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=27.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=26.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=25.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=0.000 staged
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=24.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=23.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=7.000 stale-seat grab claiming seat 2
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=22.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=8.000 duplicate grab x2
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=21.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=20.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=10.000 duplicate throw x2
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=19.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=18.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=11.500 stale-seat shove claiming seat 2
+[RequestSafetyProbe] local=1 round=1 elapsed=12.000 wrong-role punch as attacker
+[VerbDenied] taken Punch seat 1: 1 so far.
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=17.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=13.000 duplicate shove x2
+[VerbDenied] taken Shove seat 1: 1 so far.
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=16.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=15.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=14.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=13.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=17.000 duplicate slide x2
+[VerbDenied] taken Slide seat 1: 1 so far.
+[RequestSafetyProbe] state local=1 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=12.70 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=1 round=1 elapsed=17.500 client waits to be killed for the handover arm

@@ -1,0 +1,3 @@
+[link] :8971 -> 127.0.0.1:8970  delay=40.0ms jitter=20.0ms loss=3.0% outage=0.0s for 0.0s seed=20260904
+[link] client 127.0.0.1:49368 attached
+[link] forwarded=10057 dropped=312 (3.0%) of which outage=0

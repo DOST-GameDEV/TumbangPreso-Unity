@@ -2456,10 +2456,11 @@ siblings and the recently qualified preparation/movement snapshots.
 **2026-09-15 C4 status (Claude, still OPEN):** throw, grab, shove, punch, lunge, slide and
 hero casts were traced and then measured with two real Mac players sending duplicated,
 stale-seat and wrong-role requests: the host granted each effect once, spent each resource
-once, stamped each cooldown once and refused the rest, across a rematch, a 150 ms round trip
-and a seat reclaim. No production change. Open: three traced, unreproduced client rollback
-limitations (F1 to F3, two need excluded ability files), no re-hosted session, killed-client,
-lossy-link or Windows run. [Report](reports/claude-request-safety-2026-09-15/README.md).
+once, stamped each cooldown once and refused the rest, across a rematch, a 150 ms round trip,
+a 3 % lossy link, a clean-quit seat reclaim and a killed client replaced by its reconnect.
+No production change. Open: three traced, unreproduced client rollback limitations (F1 to
+F3, two need excluded ability files), no re-hosted session, outage link or Windows run.
+[Report](reports/claude-request-safety-2026-09-15/README.md).
 
 Concrete classes to look for on the competitive paths, in order of what would actually cost a
 match: a rejected packet refreshing a timer, a duplicate RPC granting an effect twice, a stale
