@@ -25,8 +25,6 @@ namespace TumbangPreso.PlayTests
     public sealed class PinnedFetchProbe
     {
         private const float Step = 1.0f / 60.0f;
-        private static readonly Vector3 PinnedAt = new Vector3(-3.34f, 0.08f, 9.90f);
-        private static readonly Vector3 ShoeAt = new Vector3(-8.30f, 0.26f, 11.92f);
 
         private bool _bots, _spectator, _pinned;
         private int _seat;
@@ -50,6 +48,20 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest, Timeout(300000)]
         public IEnumerator ABotPressedAgainstTheIlalimPillarStillFetchesItsShoe()
+            => Fetch(new Vector3(-3.34f, 0.08f, 9.90f), new Vector3(-8.30f, 0.26f, 11.92f), "seed4242");
+
+        /// <summary>
+        /// The historical 2fde55d3 outlier, Ilalim seed 42 round 1: seat 3 stood in Fetch at
+        /// (-4.63, 0.08, 11.11) for five traced seconds with its shoe at (-5.36, 0.09, 3.68) while
+        /// seat 1 yielded to it. `AIController` was byte-identical from 2fde55d3 to 0f1d997b, so
+        /// the same stuck watch applied. The map has changed since, so this case is a check on
+        /// the current geometry as well as the old one.
+        /// </summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator TheHistoricalSeed42FrozenFetcherStillFetchesItsShoe()
+            => Fetch(new Vector3(-4.63f, 0.08f, 11.11f), new Vector3(-5.36f, 0.09f, 3.68f), "hist42");
+
+        private IEnumerator Fetch(Vector3 PinnedAt, Vector3 ShoeAt, string label)
         {
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             GameLaunch.AllBots = true; GameLaunch.Spectator = false;
@@ -109,11 +121,11 @@ namespace TumbangPreso.PlayTests
             Time.captureDeltaTime = 0.0f;
             log.AppendLine($"held at {held:F2}s, longest motionless spell {longestStill:F2}s");
             Directory.CreateDirectory("Logs");
-            File.WriteAllText("Logs/pinned-fetch-probe.txt", log.ToString());
+            File.WriteAllText($"Logs/pinned-fetch-probe-{label}.txt", log.ToString());
             Debug.Log(log.ToString());
 
             Assert.GreaterOrEqual(held, 0.0f,
-                $"The bot did not retrieve its shoe within the {limit:F0} s grace period; longest motionless spell {longestStill:F2} s. See Logs/pinned-fetch-probe.txt.");
+                $"The bot did not retrieve its shoe within the {limit:F0} s grace period; longest motionless spell {longestStill:F2} s. See Logs/pinned-fetch-probe-{label}.txt.");
         }
     }
 }
