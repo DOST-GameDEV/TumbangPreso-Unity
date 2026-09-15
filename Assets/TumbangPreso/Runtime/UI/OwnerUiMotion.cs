@@ -13,10 +13,13 @@ namespace TumbangPreso.UI
         private float _started, _scale=1, _goal=1;
         private bool _ready;
         private bool _disabled;
+        private bool _focused, _pressed;
+        private StreetIcon _focusMark;
         public bool Entering=>isActiveAndEnabled && Time.unscaledTime<_started+EntryDelay+OwnerUiTheme.Current.EnterSeconds;
         public void SetState(bool focused,bool pressed,bool disabled)
         {
             _disabled=disabled;
+            _focused=focused;_pressed=pressed;
             _goal=disabled?1:pressed?.975f:focused?1.025f:1;
         }
         private void OnEnable(){_started=Time.unscaledTime;_ready=false;}
@@ -34,6 +37,7 @@ namespace TumbangPreso.UI
                 _ready=true;
             }
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            UpdateStaticFocus(reduced);
             float age=Time.unscaledTime-_started-EntryDelay;
             float entry=Mathf.Clamp01(age/Mathf.Max(.05f,OwnerUiTheme.Current.EnterSeconds));
             float ease=1-Mathf.Pow(1-entry,3);
@@ -42,6 +46,29 @@ namespace TumbangPreso.UI
             float drift=GentleFloat && !reduced?Mathf.Sin(Time.unscaledTime*.85f)*2:0;
             _rect.anchoredPosition=_rest+Vector2.up*(reduced?0:(1-ease)*-10+drift);
             _group.alpha=ease*(_disabled?.58f:1);
+        }
+
+        private void UpdateStaticFocus(bool reduced)
+        {
+            bool visible=reduced && !_disabled && (_focused || _pressed);
+            if(visible && _focusMark==null)
+            {
+                // A stationary side marker replaces scale feedback when motion is reduced.
+                // It leaves the supplied artwork and the tight vertical gaps untouched.
+                var mark=OwnerUiLayout.Rect(transform,"ReducedMotionFocus");
+                mark.anchorMin=mark.anchorMax=new Vector2(0,.5f);
+                mark.pivot=new Vector2(.5f,.5f);mark.sizeDelta=new Vector2(32,32);
+                _focusMark=mark.gameObject.AddComponent<StreetIcon>();
+                _focusMark.Kind=StreetIcon.Glyph.Next;_focusMark.raycastTarget=false;
+                var edge=mark.gameObject.AddComponent<UnityEngine.UI.Outline>();
+                edge.effectColor=OwnerUiTheme.Current.Pale;edge.effectDistance=Vector2.one;
+            }
+            if(_focusMark!=null)
+            {
+                _focusMark.gameObject.SetActive(visible);
+                _focusMark.rectTransform.anchoredPosition=new Vector2(-20,_rect.rect.height*.08f);
+                _focusMark.color=_pressed?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.DeepInk;
+            }
         }
     }
 }

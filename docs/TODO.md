@@ -1,5 +1,16 @@
 # TODO: Tumbang Preso Unity
 
+**Current native checkpoint:** v24 passed final startup/menu, both-mode picker/
+short-custom-match/results, Classic rematch/leave and Hero return. Normal defaults
+remain8. See [native loop](reports/demo-loop-v24-2026-09-16/README.md). Its quiet
+frame samples are recorded with limits. A subsequent small source fix restores
+stationary button focus when UI motion is reduced, with a focused render/state
+PASS and original artwork preserved; see
+[reduced focus](reports/reduced-action-focus-2026-09-16/README.md).
+Full direct-verb/whole-kit/human acceptance remains open; do not tick those from
+the UI driver. Continue the saved gameplay queue.
+
+
 **September16 joining fix:** client clocks no longer create intermissions. Accepted
 host snapshots restore real warm-up and clear it for the next round. Local3/3 and
 separate Windows host/rejoining-client cases PASS in both modes at150ms one-way

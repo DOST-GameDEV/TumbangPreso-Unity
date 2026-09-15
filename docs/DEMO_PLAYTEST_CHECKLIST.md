@@ -113,17 +113,25 @@ or Editor screenshots for a verified native demo build.
   spectator and performance queue. Keep working before tomorrow when feasible.
 - [ ] Deferred Inday framing, then the approved seventh hero/map LAST LAST.
 
-## Candidate record to fill after qualification
+## Current preserved candidate, September16
 
-- Executable/data: Builds/demo-2026-09-16-v11/TumbangPreso.exe and its adjacent data folder.
-- Runtime SHA256:8F4CE2F929F7AA9BA910A9A8987F660895F2E58DEB6477F9D5918EB65E64B61F.
-- Protocol38: use matching current builds for LAN. Actualv8(protocol37) refusal passed.
-- Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
+- Executable/data: Builds/round-boundary-v24/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:e08238cfe7b6d8880e4c55c0ab56ba98a66630d36af9f974240f72f3fb79f0fc.
+- Protocol42; use matching current builds for LAN. Both-mode delayed rejoin through
+  the next round passed. Physical venue LAN and the remaining C4 scope stay open.
+- Native routes/matches: final supplied UI, both modes' short custom loops,
+  Classic rematch, pause/resume and menu return passed. See
+  reports/demo-loop-v24-2026-09-16. Full direct verb acceptance remains open.
+- This binary predates the additional reduced-motion static focus-marker fix.
+- Current isolated1366x768 samples: Classic171.86/Hero191.02FPS averages,
+  p99 16.67/9.97ms, maxima36.66/40.01ms. About28seconds per mode on this PC.
 - Nativev3 measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.
   Nativev4 checks ran concurrently and do not provide clean performance evidence.
 - Known issues or intentionally deferred features: see current ledger; not yet frozen.
-- Fallback: internal v4 is preserved while newer source is qualified. Relaunch the selected executable and
+- Fallback: internalv24 is preserved while newer source is qualified. Earlier
+  v11/v4 binaries remain historical artifacts, not the recommended current build.
+  Relaunch the selected executable and
   use Guest -> Play -> With bots if a demo session needs restarting.
 
 Update this file with exact evidence and open items as work progresses. Leave

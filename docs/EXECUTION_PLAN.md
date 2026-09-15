@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Latest checkpoint:** ec2cae4a is pushed. Nativev24 full demo-loop PASS is recorded
+in reports/demo-loop-v24-2026-09-16. Reduced-motion button focus now has a stationary
+side marker, with source/art-preserving render and state checks1/1PASS in v4,
+guard777f9e0d2f3e. Nativev24 predates that small marker fix. Continue direct gameplay
+verbs, remaining whole-kit/movement and the full saved queue; no full UI rerun.
+Owner asleep, no resets/optional questions. C4 files remain reserved.
+
+
 **September16 current gameplay work:** UI/video are delivered and pushed. Recovery
 menu suppression is pushed in e9c25ea5 with local6/6 and nativev23 evidence; a new
 configured-key case also passed1/1. Client-round expiry F4 is reproduced and the

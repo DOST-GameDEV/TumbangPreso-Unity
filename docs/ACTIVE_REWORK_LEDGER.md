@@ -1,5 +1,26 @@
 # Active TUMP rework ledger
 
+## CURRENT native loopPASS; reduced-motion focus qualified; publish then gameplay
+
+Verified pushed ec2cae4aa97595f00078c42ac01243d7945e8d75. Nativev24 full UI/both-mode
+loop also PASSED in Logs/demo-loop-v24/result.json and runner-result.json, PID12576
+retired. Startup/Guest, settings/controller, picker, normal8-round defaults,
+explicit short custom results, Classic rematch/leave and Hero return all pass.
+Shared input unchanged. Quiet1366x768 frame windows: Classic171.86FPS avg,
+p99 16.67ms; Hero191.02FPS avg,p99 9.97ms. These short bot samples do not qualify
+worst-case overlap, physical input or every gameplay verb. Publish this receipt.
+
+Reduced-motion gap is fixed in OwnerUiMotion with a small stationary side arrow
+outside supplied artwork. The underline experiment was visually rejected, not
+shipped. Final focusedv4 PASS1/1, guard777f9e0d2f3e:199changed focus pixels,
+zero supplied-art/control-region violations, cleared/disabled states, normal-motion
+toggle and text actions.1920/960renders inspected. Nativev24 predates this source
+change. Publish source/evidence and full nativev24 loop receipt together.
+Next resume direct native gameplay verbs/whole-kit or movement work, preserving
+already-qualified cases. No repeated full UI matrix is needed for this small fix.
+No active Editor/native jobs. Owner asleep; no resets/questions/agents/paid work.
+Continue the remaining demo/gameplay list after this bounded fix.
+
 ## CURRENT client round fix qualified; publish then continue demo/gameplay
 
 F4 reproduced: local client expiry fired one intermission event and left warmup=True,
