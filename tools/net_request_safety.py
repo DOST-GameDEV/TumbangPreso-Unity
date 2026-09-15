@@ -127,7 +127,7 @@ def evaluate_match(folder, match):
                 "duplicate slide x2": (1, 17.0), "duplicate carapace cast x2": (1, 19.5),
                 "stomp cast x3 in one frame": (1, 21.0), "stomp cast 4 after windup": (1, 22.5),
                 "stomp cast 5 with no charge": (1, 24.0)}
-    leave_marker = at("client leaves for the handover arm")
+    leave_marker = at("client leaves for the handover arm") or at("client waits to be killed for the handover arm")
     skipped = []
 
     def case(name, seconds, check):
@@ -255,11 +255,24 @@ def evaluate_match(folder, match):
         # And the last frame after the HOST leaves reads LocalSlot 0 again during teardown, so
         # only rows while the host was still sampling round 2 count.
         host_end = max((r["elapsed"] for r in host if r["round"] == 2), default=-1)
-        round2 = [r for r in rejoined if r["round"] == 2 and r["elapsed"] <= host_end]
+        round2 = [r for r in rejoined if r["round"] == 2 and r["elapsed"] < host_end]
         cases[-1]["rejoined_round2_rows"] = len(round2)
         cases[-1]["rejoined_round2_all_seat_1"] = bool(round2) and all(r["local"] == 1 for r in round2)
         if leave is None or not reclaimed or not round2 or any(r["local"] != 1 for r in round2):
             errors.append("handover: the client did not leave and reclaim seat 1")
+        host_round2 = [r for r in host if r["round"] == 2]
+        if host_round2 and "seat1Bot" in host_round2[0]:
+            bot_rows = sum(1 for r in host_round2 if r["seat1Bot"] == 1)
+            cases[-1]["host_round2_rows_with_seat1_as_bot"] = bot_rows
+            if bot_rows:
+                errors.append(f"handover: the host still drove seat 1 as a bot for {bot_rows} round-2 rows")
+        if (folder / "host.log").exists():
+            cases[-1]["host_log_arrivals"] = [line for line in (folder / "host.log").read_text(errors="replace").splitlines()
+                                              if "[NetArrival]" in line or "[Handover]" in line or "[NetDisconnect]" in line]
+    elif host and "seat1Bot" in host[0] and any(r["seat1Bot"] == 1 for r in host):
+        errors.append("seat 1 was driven as a bot on the host while its player was connected")
+    if handover:
+        pass
     elif boundary is None:
         errors.append("boundary throw: client never sent it")
     else:
@@ -312,6 +325,9 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--port", type=int, default=8970)
     ap.add_argument("--delay", type=float, default=0.0, help="one-way milliseconds through tools/net_link.py")
+    ap.add_argument("--jitter", type=float, default=0.0, help="net_link.py jitter, milliseconds either side")
+    ap.add_argument("--loss", type=float, default=0.0, help="net_link.py per-packet loss fraction, 0.03 is 3 per cent")
+    ap.add_argument("--kill", action="store_true", help="with --handover, kill the client instead of letting it quit")
     ap.add_argument("--evaluate-only", action="store_true")
     ap.add_argument("--handover", action="store_true", help="client leaves in round 1 and reclaims seat 1 for round 2")
     ap.add_argument("--matches", type=int, default=1, help="2 plays the whole script again after a real rematch")
@@ -355,12 +371,13 @@ def main():
         processes.append(host)
         time.sleep(7)
         port = a.port
-        if a.delay:
+        if a.delay or a.jitter or a.loss:
             port = a.port + 1
             log = open(folder / "link.log", "w")
             handles.append(log)
             processes.append(subprocess.Popen([sys.executable, str(ROOT / "tools/net_link.py"), "--listen", str(port),
                                                "--to", f"127.0.0.1:{a.port}", "--delay", str(a.delay),
+                                               "--jitter", str(a.jitter), "--loss", str(a.loss),
                                                "--seconds", "200"], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT))
             time.sleep(1)
         def join(stem, extra):
@@ -371,18 +388,25 @@ def main():
             processes.append(p)
             return p
 
-        client = join("client", ["-tp-requestsafety-leave", str(a.leave_at)] if a.handover else [])
+        leave = ["-tp-requestsafety-leave", str(a.leave_at)] + (["-tp-requestsafety-kill"] if a.kill else [])
+        client = join("client", leave if a.handover else [])
         print("Running real host and client: " + str(folder), flush=True)
         deadline = time.monotonic() + 300 * a.matches
         relaunched = False
         while time.monotonic() < deadline and (host.poll() is None or client.poll() is None):
+            if a.handover and a.kill and client.poll() is None and not relaunched:
+                marks = folder / "client.markers.csv"
+                if marks.exists() and "client waits to be killed" in marks.read_text():
+                    client.kill()
+                    client.wait()
+                    print("Client killed with its connection still open on the host", flush=True)
             if a.handover and not relaunched and client.poll() is not None and host.poll() is None:
                 relaunched = True
                 print("Client left; relaunching the same profile to reclaim seat 1", flush=True)
                 client = join("client-rejoin", ["-tp-requestsafety-rejoin"])
             time.sleep(1)
         result = evaluate(folder)
-        result.update(match_count=a.matches, delay_one_way_ms=a.delay, handover=a.handover, leave_at=a.leave_at if a.handover else None, platform=sys.platform,
+        result.update(match_count=a.matches, delay_one_way_ms=a.delay, jitter_ms=a.jitter, loss=a.loss, killed=a.kill, handover=a.handover, leave_at=a.leave_at if a.handover else None, platform=sys.platform,
                       runtime_sha256=hashlib.sha256(runtime_dll(a.player).read_bytes()).hexdigest())
         (folder / "result.json").write_text(json.dumps(result, indent=2))
         print(json.dumps(result, indent=2), flush=True)

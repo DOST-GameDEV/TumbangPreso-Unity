@@ -43,6 +43,11 @@ namespace TumbangPreso.Diagnostics
         public const string LeaveSwitch = "-tp-requestsafety-leave";
         public const string RejoinSwitch = "-tp-requestsafety-rejoin";
 
+        // With this the leaving client does NOT quit: it marks the moment and goes silent, and
+        // the runner kills the process, so the host still holds a live connection for that
+        // token when the relaunch arrives. That is `NetSession`'s "Replaced by reconnect" path.
+        public const string KillSwitch = "-tp-requestsafety-kill";
+
         // ⚠️ THE MATCH-BOUNDARY ARM. With `-tp-autorematch` the real result board's REMATCH is
         // pressed and the whole script runs again in the same sessions, so the second match
         // shows whether anything a request touched leaked across the boundary.
@@ -52,6 +57,8 @@ namespace TumbangPreso.Diagnostics
         private static bool _active;
         private float _leaveAt = -1;
         private bool _rejoined;
+        private bool _awaitKill;
+        private bool _silent;
         private float _nextState;
         private int _matchesWanted = 1;
         private int _match;
@@ -104,6 +111,7 @@ namespace TumbangPreso.Diagnostics
             var probe = root.AddComponent<NetRequestSafetyProbe>();
             if (float.TryParse(Argument(LeaveSwitch), NumberStyles.Float, CultureInfo.InvariantCulture, out float leave)) probe._leaveAt = leave;
             probe._rejoined = Environment.GetCommandLineArgs().Contains(RejoinSwitch);
+            probe._awaitKill = Environment.GetCommandLineArgs().Contains(KillSwitch);
             if (int.TryParse(Argument(MatchesSwitch), out int matches) && matches > 1) probe._matchesWanted = matches;
             string path = Path.GetFullPath(Argument(TraceSwitch));
             Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -111,7 +119,7 @@ namespace TumbangPreso.Diagnostics
             probe._trace.WriteLine("real,host,local,match,round,elapsed,defender,punchCd,lungeCd,shoveCd,slideCd,stamina," +
                                    "holding,shoeState,shoeHolder,throws,retrievals,shoveAttempts,lungeAttempts,tags," +
                                    "denPunch,denLunge,denShove,denSlide,stompCharges,stompWindup,carapaceCd,carapaceActive," +
-                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z");
+                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z,seat1Bot");
             probe._markers = new StreamWriter(Path.ChangeExtension(path, ".markers.csv")) { AutoFlush = true };
             probe._markers.WriteLine("real,local,match,round,elapsed,name");
         }
@@ -231,8 +239,16 @@ namespace TumbangPreso.Diagnostics
             if (number == 1)
             {
                 if (_rejoined) return;
+                if (_silent) return;
                 if (_leaveAt > 0 && Once("r1-leave", elapsed >= _leaveAt))
                 {
+                    if (_awaitKill)
+                    {
+                        Mark(number, elapsed, "client waits to be killed for the handover arm");
+                        _markers.Flush();
+                        _silent = true;
+                        return;
+                    }
                     Mark(number, elapsed, "client leaves for the handover arm");
                     _trace.Flush(); _markers.Flush();
                     Application.Quit();
@@ -355,7 +371,7 @@ namespace TumbangPreso.Diagnostics
                 denials != null ? denials[2] : -1, denials != null ? denials[3] : -1,
                 kit.Skill1.ChargesRemaining, kit.Skill1.WindupRemaining, kit.Skill2.CooldownRemaining, kit.Skill2.IsActive ? 1 : 0,
                 seat0 != null ? seat0.PunchCooldownLeft : -1, seat2.HoldingSlipper ? 1 : 0, seat2.StunLeft,
-                caster.transform.position.x, caster.transform.position.z
+                caster.transform.position.x, caster.transform.position.z, caster.IsBot ? 1 : 0
             };
             _trace.WriteLine(string.Join(",", row.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture))));
         }
