@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+**September15 assignment for the separate Claude PC:** read
+[docs/CLAUDE_ENGINEERING_LANE.md](docs/CLAUDE_ENGINEERING_LANE.md) after the current
+AGENTS/VISION/TODO routing below. Work only that reserved engineering scope.
+Older whole-project instructions do not expand this assignment. Leave incomplete,
+unverified and blocked tasks unchecked; publish exact evidence for any completion.
+
 **Instruction routing changed by the owner, 2026-09-12:**
 [AGENTS.md](AGENTS.md) is now the primary self-contained instruction file for
 ChatGPT/Codex. Read AGENTS.md, docs/VISION.md, docs/TODO.md, then the newest active

@@ -1,9 +1,15 @@
 # Active execution plan
 
-**Current visible task:** owner-rejected PC/Windows loadout composition. Icon-only
-roster, larger real model, grouped information and visual stats; preserve the
-existing action/save/lore contracts. See latest ledger. Networking preparation
-audit is bookmarked and no pending-windup production changes have been made.
+**Current work, September15:** loadout/Classic cosmetic correction and themed
+controller are pushed through b0820b2b. Codex is implementing and validating
+initial pending-cast restoration; source is uncommitted protocol39, preserved
+nativev11 is protocol38. See the newest ledger pointer for exact evidence.
+
+**Separate Claude reservation:** C1 Ilalim idle, C2 bot lunge decisions and C3
+measured AI/combat lookups belong to CLAUDE_ENGINEERING_LANE.md. Codex must not
+touch those tasks or their reserved files until released. Only tick tasks with
+completed criteria, relevant validation and published evidence. The owner sends
+the prompt manually; no other chats or agents may be contacted.
 
 **Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
 changes priority, not scope. Secure a tested demo candidate, then continue the rest

@@ -1,5 +1,16 @@
 # Working instructions for ChatGPT / Codex
 
+**Current parallel-work reservation, September15:** the owner will manually give
+Claude a bounded engineering assignment on a different PC/account. Its exclusive
+scope, files and completion criteria are in
+[docs/CLAUDE_ENGINEERING_LANE.md](docs/CLAUDE_ENGINEERING_LANE.md).
+Codex must not implement or independently investigate those reserved tasks until
+the owner releases them or Claude explicitly hands them back through the repo.
+This permits the manual assignment only, not spawning agents or contacting chats.
+Only tick a task after its stated criteria and relevant validation are complete,
+with evidence committed and pushed. Partial, unverified or blocked work stays
+unchecked. A diagnostic result does not close an unresolved gameplay defect.
+
 **Newest controller UI permission, September15:** the owner explicitly permits
 redesigning the controller map and controller settings to match the current theme.
 Keep the controller in the middle, its connector lines and core mapping elements.

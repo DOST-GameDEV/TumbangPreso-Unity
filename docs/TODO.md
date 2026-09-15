@@ -1,5 +1,20 @@
 # TODO: Tumbang Preso Unity
 
+## Reserved for Claude on the separate PC, September15
+
+The owner will send the assignment manually. Codex must leave this work alone.
+See [CLAUDE_ENGINEERING_LANE.md](CLAUDE_ENGINEERING_LANE.md) for exclusive file
+ownership, detailed acceptance criteria, sync rules and the separate execution log.
+
+- [ ] C1: TODO151.9 Ilalim48-idle/slipper-resting-position investigation.
+- [ ] C2: TODO151.9 bot lunge decision/aim investigation at ordinary1x.
+- [ ] C3: TODO149.5 measured AI/combat lookup cost and only justified optimization.
+
+All three are RESERVED, NOT STARTED. Tick only after the full task criteria and
+necessary validation are satisfied and evidence is pushed. Partial, unverified,
+blocked and unexplained historical defects stay open. Do not close parent152.4
+or all151.9 for a completed subtask. All other work remains with Codex.
+
 ## CURRENT IMPLEMENTATION QUEUE
 
 **Owner reprioritized this queue on September15 for a demo tomorrow, September16.**
@@ -1630,6 +1645,10 @@ future session cites when it decides to leave `HeroHazards` alone.
 
 ### 151.9 THE MULTI-SEED SWEEP, RUN, AND THE PACING IT MEASURES
 
+**September15 ownership:** the Ilalim idle trace and bot lunge investigation are
+reserved to Claude as C1/C2 in CLAUDE_ENGINEERING_LANE.md. Codex must not work
+these tasks until released. The historical human slide-feel question stays separate.
+
 2026-09-10: the clock discrepancy was traced to the probe retaining eight rounds
 when switching only the mode to Classic. A fresh pinned 90-second round counted
 75 events and 75 recorded ticks. The probe now pins the full ruleset and prints it.
@@ -2391,6 +2410,10 @@ or session epoch where one is genuinely needed.
 unless the architecture actually demands it.
 
 ### 149.5 ⚠️ P2: REPEATED SCENE LOOKUPS IN NETWORK HOT PATHS
+
+**September15 ownership:** reserved to Claude as C3 in
+CLAUDE_ENGINEERING_LANE.md. Codex must leave the measured AI/combat lookup work
+alone until released. It is not complete and remains measure-first.
 
 Seat to `CharacterMotor`, seat or origin to `Slipper`, and the current `Lata` are resolved by
 runtime discovery in replicated and request-processing code. `MatchRpc.SlipperFor` already

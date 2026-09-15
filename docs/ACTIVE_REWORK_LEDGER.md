@@ -1,5 +1,99 @@
 # Active TUMP rework ledger
 
+## CURRENT Claude lane reserved; continue pending-cast validation locally
+
+Owner will manually give Claude a noncreative assignment on a friend's separate
+PC/account and explicitly says Codex must not touch its tasks. C1 Ilalim idle,
+C2 bot lunge decisions and C3 measured AI/combat lookups are RESERVED, NOT STARTED
+in CLAUDE_ENGINEERING_LANE.md. It is the file ownership/acceptance/worker log.
+Only tick full criteria with necessary validation and pushed evidence. Unverified,
+partial, blocked and unexplained defects stay open. No other chat was contacted.
+
+Actual checkout C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
+branch ASTRAReworks; origin verified at b0820b2b before reservation publication.
+Current pending-cast source/probes remain dirty and outside Claude's lane. This
+docs-only checkpoint does not ship or validate that implementation.
+
+Pose validation v2 FINISHED1/1PASS for all4supported preparations, guard999d6b585cbd,
+Logs/pending-presentation-v2. The prior body-blend failure and its fix remain in
+the preceding entry. Python13436 and all previous Unity/native runs are retired;
+fresh process inspection found no Unity.exe or TumbangPreso.exe. No owned browser.
+
+NetDanteProbe and net_dante_matrix.py now support bounded Cheska/Zack pending
+cases through --hero, actual selected identity, unique hero impact births and
+captured aim/held time. Those generalized edits are NOT native-qualified yet.
+No v14 build has started. A possible Zack late-packet interaction with the empty
+initial TimedKit settled flag is an unproven hypothesis, not a confirmed defect.
+
+Next: publish the reservation and give the complete copyable prompt in chat, then
+continue Codex's pending-cast work. Build fresh internalv14; run delayed Dante
+fissure, normal Cheska/Zack and late Zack cases with real expiry witnesses.
+Qualify protocol39 refusal against preserved protocol38. Fix only evidenced
+failures, retain v11 fallback, and do not enter the Claude-reserved source files.
+
+## CURRENT pending restoration implemented; pose timing validation running
+
+Corrected baselinev12c FAILED only observer restoration: host/owner each produced
+one stomp impact, refreshed observer had0windup samples/0impacts. Actual selected
+Dante identity was stable on all peers. v12b was an INVALID fixture: forced Dante
+kit sat on a different actual pick and normal rebind reconciliation cancelled it.
+The probe now selects/synchronizes Dante through the real pick path before staging.
+v12 first failed compilation on obsolete GetInstanceID; fixed by retaining actual
+component references. Preserve these failed runs; do not call them gameplay bugs.
+
+Implemented initial-only pending preparation for Dante Q/R, Cheska R and Zack R.
+Resources are not spent twice, captured position/facing/aim/held time are retained,
+known/empty/expired state cannot rearm a cast, and original body/FPP clips resume
+at elapsed time. No repeated cast cue/progression/ultimate introduction. Phaister,
+Nemu and Sean retain their separate semantics; remaining preparation work stays open.
+MatchRpc.Preparations.cs adds the guarded targeted payload; protocol39 now requires
+it. A positive timer that expires in transit triggers a debounced fresh field
+snapshot after the existing rate limit, rather than replaying the old impact.
+
+PendingPreparationTests FINISHED3/3PASS, guardd35fc01aceda. v13 build1082MB/51s,
+guard09310ac7846e, SHA2DBCE8D68A3DCDB922952583B1541B416D1EDE45124CB92A0EF730DE515CA346.
+Native stomp and fissure both PASSED actual three-peer reconstruction/expiry cases:
+one impact per peer, restored windup on observer, no replay after expiry, resources
+agree, profiles/input preserved. Logs/pending-stomp-fixed-v13 and pending-fissure-fixed-v13.
+
+The real body/FPP presentation probe FAILEDv1 because body crossfade weight stayed0
+even when the restored clip was near contact; guard472ec89b790d. Fixed crossfade
+weight to the same elapsed age (retiring old pose when complete). RUNNING
+pending-presentation-v2, Python13436, Logs/pending-presentation-v2(.pid/.stdout/
+.stderr/.log/.xml), profile pending-presentation-review. It checks all4supported
+preparations on actual models/playables/FPP. No imported edits until exit.
+
+Next: consume pose result, qualify a new native build with delayed-observer
+fissure (--observer-delay130 --late-preparation), require the explicit expired-in-
+transit log and actual post-contact pillars without a replayed impact. Then verify
+other supported hero cases and protocol refusal before marking this batch done.
+Controller/UI checkpointb0820b2b and nativev11(protocol38) remain preserved; current
+source is uncommitted protocol39. All other earlier PIDs are retired. Full queue active.
+
+## CURRENT pending-cast baseline build; controller checkpoint pushed
+
+Controller/settings batch committed/pushedb0820b2b. Preferred preserved candidate
+is nativev11 (protocol38), with the compact/no-Classic-stats picker, Darumadrop
+headings and themed controller. All its owned jobs ended before the next work.
+
+Imported the opt-in NetDanteProbe pending-review draft; gameplay restoration is
+STILL NOT implemented. tools/net_dante_matrix.py now accepts --pending-review and
+--profile-prefix, checks internal build/Logs paths, preserves input/profile data,
+and evaluates observer reconstruction during windup plus after expiry. It records
+non-warning impact births so a replayed old impact cannot pass merely by showing
+zero windup. Default old Dante cases retain their existing evaluation.
+
+RUNNING guarded build: Logs/pending-cast-build-v12(.pid/.stdout/.stderr/.log),
+profile pending-cast-build-review, Builds/pending-cast-baseline-v12/TumbangPreso.exe.
+Read the pid file for the current wrapper. After build exits run:
+python tools/net_dante_matrix.py Builds/pending-cast-baseline-v12/TumbangPreso.exe
+--case stomp --pending-review --profile-prefix pending-stomp-baseline-
+--out Logs/pending-stomp-baseline-v12
+This is the BEFORE experiment. Expect a missing restoration only if the live trace
+actually proves it; distinguish fixture errors and leave old failures intact.
+Do not edit imported source while Unity/native runs. Draft the restoration outside
+Assets if useful; preserve nativev11 and the full remaining queue.
+
 ## CURRENT controller/settings complete in nativev11; pending-cast baseline next
 
 Nativev11 FINISHEDPASS, Python9364/player8088 retired. Both controller map and

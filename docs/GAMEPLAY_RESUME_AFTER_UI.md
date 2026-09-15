@@ -96,6 +96,10 @@ The newest ACTIVE_REWORK_LEDGER entry records the exact current run/checkpoint.
    trace; do not attach it to an unrelated fixed flight bug. Keep map identities,
    native animal/animation quality and all retained accepted work while addressing
    concrete remaining defects. Full suites are not the routine verification plan.
+   **September15 reservation:** Ilalim idle, bot lunge decisions and measured
+   AI/combat lookup costs belong exclusively to the separate Claude PC under
+   CLAUDE_ENGINEERING_LANE.md. Codex must leave those tasks/files alone. This
+   reservation does not include request replay/networking or the other work here.
 9. **Deferred Inday FPP framing, later.** Use the preserved actual restored arm
    geometry/materials with rigid positioning/rotation/uniform scale. Do not
    revive the rejected red block/purple-band reconstruction, add thumbs, or

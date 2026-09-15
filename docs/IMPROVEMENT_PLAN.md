@@ -389,6 +389,11 @@ No animation event may invent a pickup, score, hit or authority result.
 
 ## P2/P9: concrete engineering and collision work
 
+**September15 split:** the separate Claude PC owns only the Ilalim idle/lunge
+diagnostics from151.9 and measured AI/combat lookup work149.5, under
+CLAUDE_ENGINEERING_LANE.md. Codex must leave that reserved work and its listed
+files alone. Other tasks below remain with Codex; this is not broad delegation.
+
 Already implemented: result controls above the gameplay input plane (152.1),
 dormant maker and graphics profiles/linear outline mask (152.2).
 
