@@ -29,11 +29,11 @@ namespace TumbangPreso
             column.padding=new RectOffset(26,26,24,22);column.childControlWidth=column.childControlHeight=true;
             column.childForceExpandWidth=true;column.childForceExpandHeight=false;
             card.gameObject.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
-            var header=OwnerRow(card,"TrainingHeader",38);
-            var word=OwnerUiLayout.Text(header,"TrainingWord","TRAINING",30,OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place(word.rectTransform,0,0,330,38);word.color=TrainingMuted;
+            var header=OwnerRow(card,"TrainingHeader",52);
+            var word=OwnerUiLayout.Text(header,"TrainingWord","TRAINING",30,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(word.rectTransform,0,0,330,52);word.color=TrainingMuted;
             _counter=OwnerUiLayout.Text(header,"LessonCounter","01 / 17",30,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_counter.rectTransform,350,0,285,38);_counter.alignment=TextAnchor.MiddleRight;_counter.color=TrainingMuted;_counter.verticalOverflow=VerticalWrapMode.Overflow;
+            OwnerUiLayout.Place(_counter.rectTransform,350,0,285,52);_counter.alignment=TextAnchor.MiddleRight;_counter.color=TrainingMuted;_counter.verticalOverflow=VerticalWrapMode.Overflow;
             var rail=OwnerRow(card,"RouteRail",8);var track=rail.gameObject.AddComponent<HorizontalLayoutGroup>();
             track.spacing=4;track.childControlWidth=track.childControlHeight=true;track.childForceExpandWidth=track.childForceExpandHeight=true;
             for(int i=0;i<GuidedTraining.LessonCount;i++)

@@ -19,6 +19,8 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--exe',required=True,type=Path)
+    parser.add_argument('--client-exe',type=Path,help='Optional second internal binary for a real version-compatibility check.')
+    parser.add_argument('--expect-protocol-refusal',action='store_true')
     parser.add_argument('--out',required=True,type=Path)
     parser.add_argument('--profile-prefix',required=True)
     parser.add_argument('--seconds',type=int,default=105)
@@ -28,10 +30,14 @@ def main():
     if not args.rematch and args.mode!='hero':parser.error('Mode selection is supported for the explicit rematch review.')
     os.chdir(ROOT);exe=args.exe.resolve();output=args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):raise ValueError('Use a verified internal build.')
+    client_exe=args.client_exe.resolve() if args.client_exe else exe
+    if not client_exe.is_file() or not client_exe.is_relative_to(ROOT/'Builds'):raise ValueError('Use an internal client build.')
+    if args.expect_protocol_refusal and (client_exe==exe or args.rematch):
+        raise ValueError('Version refusal requires two different binaries and no rematch.')
     if not output.is_relative_to(ROOT/'Logs') or output==ROOT/'Logs':raise ValueError('Use a dedicated Logs subfolder.')
     if output.exists():raise FileExistsError('Preserve prior evidence; select a fresh output folder.')
     output.mkdir(parents=True)
-    scenario=net_matrix.Scenario('demo rematch '+args.mode if args.rematch else 'demo clean direct',
+    scenario=net_matrix.Scenario('demo protocol refusal' if args.expect_protocol_refusal else 'demo rematch '+args.mode if args.rematch else 'demo clean direct',
         'Both peers load and start the voted rematch map.' if args.rematch else 'Both peers remain joined and progress to the next round.',
         seconds=args.seconds,direct=True)
     work=(output/net_matrix.slug(scenario.name)).resolve()
@@ -54,6 +60,7 @@ def main():
             if Path(command[0]).resolve()==exe:
                 key=command.index('-tp-profile')+1
                 command[key]=args.profile_prefix+('-host' if command[key]=='mtxhost' else '-client')
+                if '-tp-join' in command:command[0]=str(client_exe)
                 # Explicit host/join routes remain normal host/client topology;
                 # batch mode suppresses external UGS sign-in for this local check.
                 command+=['-batchmode','-tp-framecap','60']
@@ -65,8 +72,19 @@ def main():
         net_matrix.subprocess.Popen=launch
         print('Direct LAN check:',work,flush=True)
         result=net_matrix.run(scenario,str(exe),str(output),sys.executable)
-        ok,faults=net_matrix.evaluate(result)
+        if args.expect_protocol_refusal:
+            faults=[]
+            client_log=(work/'client.log').read_text(encoding='utf-8',errors='replace')
+            if 'Game version mismatch' not in client_log:faults.append('The old client did not receive the explicit version refusal.')
+            if result['host'] is None or result['client'] is None:faults.append('Both binaries must leave fresh diagnostic reports.')
+            else:
+                if result['host']['protocol']==result['client']['protocol']:faults.append('The supposed old client uses the same protocol.')
+                if result['client'].get('role')=='CLIENT' and result['client'].get('networked')=='True':
+                    faults.append('The old client still reports an accepted network session.')
+            ok=not faults
+        else:ok,faults=net_matrix.evaluate(result)
         for side in ['host','client']:
+            if args.expect_protocol_refusal:break
             data=result[side]
             if data is None:continue
             words=Path(data['path']).read_text(encoding='utf-8',errors='replace')
@@ -81,7 +99,9 @@ def main():
                 if int(data.get('round',0))!=1:faults.append(side+' is not in the new match first round.')
             elif int(data.get('round',0))<2:faults.append(side+' did not cross a real round boundary.')
         receipt={'passed':ok and not faults,'faults':faults,'host':result['host'],'client':result['client'],
-                 'artifact':str(exe),'runtimeSha256':hashlib.sha256((exe.parent/(exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll').read_bytes()).hexdigest()}
+                 'artifact':str(exe),'clientArtifact':str(client_exe),'expectedProtocolRefusal':args.expect_protocol_refusal,
+                 'runtimeSha256':hashlib.sha256((exe.parent/(exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll').read_bytes()).hexdigest(),
+                 'clientRuntimeSha256':hashlib.sha256((client_exe.parent/(client_exe.stem+'_Data')/'Managed/TumbangPreso.Runtime.dll').read_bytes()).hexdigest()}
     finally:
         net_matrix.subprocess.Popen=original_popen
         for process in processes:

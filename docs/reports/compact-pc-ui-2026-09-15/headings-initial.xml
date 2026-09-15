@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 07:30:08Z" end-time="2026-09-15 07:30:29Z" duration="20.6913287">
+  <test-suite type="TestSuite" id="1541" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 07:30:08Z" end-time="2026-09-15 07:30:29Z" duration="20.691329" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1535" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 07:30:09Z" end-time="2026-09-15 07:30:29Z" duration="20.674747" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3876" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 07:30:09Z" end-time="2026-09-15 07:30:29Z" duration="20.668093" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1537" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 07:30:09Z" end-time="2026-09-15 07:30:29Z" duration="20.661802" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1312" name="OwnerTrainingUiTests" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-15 07:30:09Z" end-time="2026-09-15 07:30:11Z" duration="2.834647" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1313" name="TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" fullname="TumbangPreso.PlayTests.OwnerTrainingUiTests.TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" methodname="TrainingUsesOwnerThemeAndRealSkipQuitCallbacks" classname="TumbangPreso.PlayTests.OwnerTrainingUiTests" runstate="Runnable" seed="365297235" result="Failed" start-time="2026-09-15 07:30:09Z" end-time="2026-09-15 07:30:11Z" duration="2.818012" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  TrainingSidebar-look-960x540/~Match/GuidedTrainingHud/ObjectiveCard/TrainingHeader/TrainingWord lost rendered characters despite its preferred height.
+  Expected: greater than or equal to 8
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__3.MoveNext () [0x00b11] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:171
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TextCacheDiagnostic] TrainingSidebar-look-960x540/~Match/GuidedTrainingHud/ObjectiveCard/TrainingHeader/TrainingWord charsBefore=-1 charsAfter=-1 vertices=0 text=TRAINING
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1339" name="PlayHeadingScaleTests" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 07:30:11Z" end-time="2026-09-15 07:30:13Z" duration="1.459437" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1340" name="PlayHeadingRemainsVisibleAcrossPcSizes" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests.PlayHeadingRemainsVisibleAcrossPcSizes" methodname="PlayHeadingRemainsVisibleAcrossPcSizes" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" seed="127226775" result="Passed" start-time="2026-09-15 07:30:11Z" end-time="2026-09-15 07:30:13Z" duration="1.456792" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HeadingScale] size=(960, 540) height=128 scale=0.5 preferred=64 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1280, 720) height=128 scale=0.6666667 preferred=61.5 adjusted=(x:-0.50, y:-127.50, width:1230.00, height:127.50) characters=10 vertices=36
+[HeadingScale] size=(1366, 768) height=128 scale=0.7111111 preferred=63.28125 adjusted=(x:-0.03, y:-127.88, width:1230.47, height:127.97) characters=10 vertices=36
+[HeadingScale] size=(1920, 1080) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1920, 1200) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1280, 960) height=128 scale=0.6666667 preferred=61.5 adjusted=(x:-0.50, y:-127.50, width:1230.00, height:127.50) characters=10 vertices=36
+[HeadingScale] size=(2560, 1440) height=128 scale=1.333333 preferred=60 adjusted=(x:0.25, y:-128.25, width:1230.00, height:128.25) characters=10 vertices=36
+[HeadingScale] size=(3440, 1440) height=128 scale=1.333333 preferred=60 adjusted=(x:0.25, y:-128.25, width:1230.00, height:128.25) characters=10 vertices=36
+[HeadingScale] size=(3840, 1080) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(3840, 2160) height=128 scale=2 preferred=59.5 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1463" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-15 07:30:13Z" end-time="2026-09-15 07:30:16Z" duration="3.540805" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1467" name="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" methodname="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="1043098224" result="Failed" start-time="2026-09-15 07:30:13Z" end-time="2026-09-15 07:30:16Z" duration="3.535916" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  OwnerStartupTerms-2560x1440/OwnerTermsCanvas/TermsComposition/TermsScroll/Viewport/Content/SectionTitle lost rendered characters despite its preferred height.
+  Expected: greater than or equal to 9
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__3.MoveNext () [0x00b11] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:171
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=24, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/Eye: vertices=20, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerStartupSignUp-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-960x540/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-960x540 cream source=252,211,159 pixel=210,99,67; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1280x720/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1280x720 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1366x768/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1366x768 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1920x1080/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1920x1080 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1920x1200/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1920x1200 cream source=252,211,159 pixel=210,95,64; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1280x960/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1280x960 cream source=252,211,159 pixel=210,95,64; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-2560x1440/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TextCacheDiagnostic] OwnerStartupTerms-2560x1440/OwnerTermsCanvas/TermsComposition/TermsScroll/Viewport/Content/SectionTitle charsBefore=-1 charsAfter=-1 vertices=0 text=PLAY FAIR
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1469" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 07:30:16Z" end-time="2026-09-15 07:30:29Z" duration="12.766578" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1470" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="782074891" result="Passed" start-time="2026-09-15 07:30:16Z" end-time="2026-09-15 07:30:29Z" duration="12.762191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-recovery/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-recovery/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=155,124,84; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-960x540 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x720 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1366x768 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1080 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1200 cream source=252,211,159 pixel=78,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x960 cream source=252,211,159 pixel=76,83,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-2560x1440 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3440x1440 cream source=252,211,159 pixel=15,26,24; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x1080 cream source=252,211,159 pixel=44,43,38; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x2160 cream source=252,211,159 pixel=79,84,83; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,5 +1,16 @@
 # Current owner revision: PC loadout composition
 
+**Newest correction:** Classic people have no personal playstyle stats. Remove
+the entire Speed/Power/Grit block; show description and confirmation only. Keep
+meaningful can/slipper handling. Earlier Classic-stat styling instructions below
+are superseded. Runtime personal multipliers are being corrected to match as well.
+
+Newest correction: compact the blank gap between description and stats, remove
+redundant stat fractions, use Darumadrop for ALL headings, and retain the readable
+Speed/Power/Grit font. Prefer clear icons; keep words/numbers when their meaning is
+necessary. Latest source is under qualification; the first v6 redesign remains
+evidence, not final owner approval.
+
 The September15 loadout screenshot is explicitly rejected as bland with scattered
 text. Replace repeated roster names with portrait icons only. Enlarge the genuine
 3D preview, group selected identity/lore/handling, and use visual stat rows. Focus

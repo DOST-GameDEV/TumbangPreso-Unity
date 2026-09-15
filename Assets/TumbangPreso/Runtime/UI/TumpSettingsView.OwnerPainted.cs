@@ -33,7 +33,7 @@ namespace TumbangPreso.UI
             }
             var sheet=OwnerUiLayout.Rect(design,"SettingsSheet").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Place(sheet.rectTransform,90,343,1740,571);sheet.raycastTarget=false;
-            _heading=OwnerUiLayout.Text(design,"Heading","",32,OwnerUiLayout.TypeRole.Accent);
+            _heading=OwnerUiLayout.Text(design,"Heading","",32,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_heading.rectTransform,123,354,1670,57);
             _list=OwnerScrollColumn.Build(design,"SettingsList",new Rect(123,425,1659,455),out var scroll);
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom=20;

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a5b0c3ba-c124-4492-b601-b756a3fd9b94" name="matth@DESKTOP-E4OQK9L 2026-09-15 15:46:21" runUser="DESKTOP-E4OQK9L\matth" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-15T15:46:21.2300962+08:00" queuing="2026-09-15T15:46:21.2300965+08:00" start="2026-09-15T15:46:20.1703074+08:00" finish="2026-09-15T15:46:21.2360494+08:00" />
+  <TestSettings name="default" id="e9801d1a-f37c-48c0-b0e6-3d2c7591947a">
+    <Deployment runDeploymentRoot="matth_DESKTOP-E4OQK9L_2026-09-15_15_46_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3bf9a44e-cdd0-4d50-a8d4-f4dbfe027535" testId="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5" testName="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0129408" startTime="2026-09-15T15:46:21.1135818+08:00" endTime="2026-09-15T15:46:21.1136028+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3bf9a44e-cdd0-4d50-a8d4-f4dbfe027535">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0.949999988</Message>
+          <StackTrace>   at TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers() in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\ClassicCosmeticCharacterTests.cs:line 13&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5">
+      <Execution id="3bf9a44e-cdd0-4d50-a8d4-f4dbfe027535" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests" name="EveryClassicCharacterHasNeutralGameplayMultipliers" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5" executionId="3bf9a44e-cdd0-4d50-a8d4-f4dbfe027535" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.19)&#xD;
+[xUnit.net 00:00:00.15]   Discovering: TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.32]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.32]       Expected: 1&#xD;
+[xUnit.net 00:00:00.32]       Actual:   0.949999988&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\ClassicCosmeticCharacterTests.cs(13,0): at TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers()&#xD;
+[xUnit.net 00:00:00.32]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.33]   Finished:    TumbangPreso.Core.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="DESKTOP-E4OQK9L" outcome="Error" timestamp="2026-09-15T15:46:21.1102378+08:00">
+        <Text>[xUnit.net 00:00:00.32]     TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -35,7 +35,7 @@ namespace TumbangPreso.UI
             var blocker=_storyRoot.AddComponent<Image>();blocker.color=new Color(0,0,0,.22f);blocker.raycastTarget=true;
             var sheet=OwnerUiLayout.Rect(_storyRoot.transform,"StorySheet").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Place(sheet.rectTransform,497,281,926,516);sheet.raycastTarget=true;
-            var title=OwnerUiLayout.Text(_storyRoot.transform,"StoryHeading","FROM THE STREET",34,OwnerUiLayout.TypeRole.Accent);
+            var title=OwnerUiLayout.Text(_storyRoot.transform,"StoryHeading","FROM THE STREET",34,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,552,321,806,62);
             _storyText=OwnerUiLayout.Text(_storyRoot.transform,"StoryText","",30);
             OwnerUiLayout.Place(_storyText.rectTransform,552,411,806,224);_storyText.color=OwnerUiTheme.Current.EnteredInk;

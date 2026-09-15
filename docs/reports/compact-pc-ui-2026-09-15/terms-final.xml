@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.4129831">
+  <test-suite type="TestSuite" id="1541" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.412983" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1535" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.395009" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.386620" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1537" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.375651" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1463" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.358233" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1467" name="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" methodname="OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="608956709" result="Passed" start-time="2026-09-15 07:36:41Z" end-time="2026-09-15 07:36:47Z" duration="5.341069" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=24, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] OwnerStartupSignUp-v1/Eye: vertices=20, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] OwnerStartupSignUp-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-960x540/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-960x540 cream source=252,211,159 pixel=210,99,67; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1280x720/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1280x720 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1366x768/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1366x768 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1920x1080/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1920x1080 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1920x1200/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1920x1200 cream source=252,211,159 pixel=210,95,64; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-1280x960/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-1280x960 cream source=252,211,159 pixel=210,95,64; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-2560x1440/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-2560x1440 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-3440x1440/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-3440x1440 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-3840x1080/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-3840x1080 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupTerms-3840x2160/ReadingSheet: vertices=220, cull=False, alpha=1, depth=1, material=1
+[TumpUiCapture] OwnerStartupTerms-3840x2160 cream source=252,211,159 pixel=209,113,75; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerStartupSignIn-v1/FieldIcon: vertices=16, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerStartupSignIn-v1/Eye: vertices=20, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] OwnerStartupSignIn-v1 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

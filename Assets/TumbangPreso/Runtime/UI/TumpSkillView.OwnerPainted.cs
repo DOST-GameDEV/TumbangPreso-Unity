@@ -51,7 +51,7 @@ namespace TumbangPreso.UI
             _ownerAbilityIcon=OwnerUiLayout.Rect(_content,"AbilityPicture").gameObject.AddComponent<TumpAbilitySymbol>();
             OwnerUiLayout.Place(_ownerAbilityIcon.rectTransform,992,481,116,120);_ownerAbilityIcon.color=OwnerUiTheme.Current.ActionInk;
             _ownerAbilityIcon.raycastTarget=false;
-            _ownerAbilityName=OwnerUiLayout.Text(_content,"AbilityName","",40,OwnerUiLayout.TypeRole.Accent);
+            _ownerAbilityName=OwnerUiLayout.Text(_content,"AbilityName","",40,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_ownerAbilityName.rectTransform,1136,465,630,110);
             _ownerBinding=OwnerUiLayout.Text(_content,"Binding","",27,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_ownerBinding.rectTransform,1140,575,616,48);_ownerBinding.color=OwnerUiTheme.Current.Green;

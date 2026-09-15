@@ -5,6 +5,7 @@ namespace TumbangPreso.UI
 {
     public sealed class OwnerTextAction : UnityEngine.UI.Button
     {
+        public OwnerUiMotion FeedbackMotion;
         public static OwnerTextAction Create(Transform parent,string name,string words,Action click,
             float x,float y,float width,float height,int size=30)
         {
@@ -19,7 +20,7 @@ namespace TumbangPreso.UI
         }
         protected override void DoStateTransition(SelectionState state,bool instant)
         {
-            var motion=GetComponentInChildren<OwnerUiMotion>();
+            var motion=FeedbackMotion!=null?FeedbackMotion:GetComponentInChildren<OwnerUiMotion>();
             motion?.SetState(state==SelectionState.Highlighted || state==SelectionState.Selected,
                 state==SelectionState.Pressed,state==SelectionState.Disabled);
         }

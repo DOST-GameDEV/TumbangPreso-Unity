@@ -182,7 +182,8 @@ namespace TumbangPreso.PlayTests
                 var terms=GameObject.Find("OwnerTermsCanvas").GetComponent<Canvas>();
                 Assert.IsNotNull(terms.GetComponentInChildren<ScrollRect>());
                 Assert.That(string.Join(" ",terms.GetComponentsInChildren<Text>().Select(label=>label.text)),Does.Contain("PLAY FAIR"));
-                yield return TumpUiCapture.Capture("OwnerStartupTerms-v1",terms,1280,720,false,false,new[]{canvas});
+                foreach(var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("OwnerStartupTerms-"+size.x+"x"+size.y,terms,size.x,size.y,false,false,new[]{canvas},checkActionBounds:true);
                 var termsScroll=terms.GetComponentInChildren<ScrollRect>();
                 Assert.LessOrEqual(termsScroll.content.rect.height,termsScroll.viewport.rect.height+1,
                     "The short default guidelines should fit without hiding the final paragraph.");

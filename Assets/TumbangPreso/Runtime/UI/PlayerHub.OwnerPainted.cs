@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
                 var mark=OwnerUiLayout.Art(button.transform,"SelectedTab",OwnerUiTheme.Piece.LeftRule);OwnerUiLayout.Place(mark.rectTransform,61,68,242,6);_tabs.Add(tab,button);
             }
             var paper=OwnerUiLayout.Rect(design,"HubPagePaper").gameObject.AddComponent<OwnerUiPaper>();OwnerUiLayout.Place(paper.rectTransform,91,406,1740,491);paper.raycastTarget=false;
-            _ownerPageTitle=OwnerUiLayout.Text(design,"HubPageTitle","",32,OwnerUiLayout.TypeRole.Accent);OwnerUiLayout.Place(_ownerPageTitle.rectTransform,126,418,1640,52);
+            _ownerPageTitle=OwnerUiLayout.Text(design,"HubPageTitle","",32,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Place(_ownerPageTitle.rectTransform,126,418,1640,52);
             _list=OwnerScrollColumn.Build(design,"HubRows",new Rect(126,486,1655,373),out _scroll);
             _list.GetComponent<VerticalLayoutGroup>().padding.bottom=24;
             _footerNote=OwnerUiLayout.Text(design,"HubNotice","",27);_footerNote.color=OwnerUiTheme.Current.EnteredInk;

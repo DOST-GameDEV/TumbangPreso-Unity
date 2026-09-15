@@ -18,10 +18,18 @@ later supplies a different demo format.
 
 ### Visible demo priorities, in this order
 
+**Newest correction:** Classic character selection is cosmetic. Remove its entire
+personal playstyle/stat block and neutralize the still-active old personal speed/
+power/grit multipliers found in this checkout. Keep equipment handling and Hero
+Strike unchanged. This supersedes the earlier Classic stat-label/compact-bar plan.
+
 **Immediate owner revision:** PC/Windows loadout picker needs a stronger composition,
 a larger real model, an icon-only roster (no repeated character-name labels), and
 grouped information/visual stats. This is the current visible task. Save/Back,
 all categories, hero story/skills and PC-size checks must still pass.
+The next owner correction removes blank space inside the detail card and numeric
+stat fractions. All headings use Darumadrop; retain the readable stat-label font.
+Prefer recognizable icons and reserve words/numbers for necessary information.
 
 1. [x] **Fix visible blockers on the main route.** Resolve the missing Play heading
    reproduced at1366x768, then check startup, Guest, Play, selection, settings Back

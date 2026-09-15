@@ -355,7 +355,9 @@ namespace TumbangPreso.Net
         // 33 restores live ice collision/traction fields when a peer synchronizes.
         // 34 includes existing held fire-charge state in the joining world.
         // 37 restores the complete persistent ground-field batch for joining peers.
-        public const int ProtocolVersion = 37;
+        // 38 makes Classic character picks cosmetic. Older peers still predict
+        // unequal movement and contact from their archived character points.
+        public const int ProtocolVersion = 38;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

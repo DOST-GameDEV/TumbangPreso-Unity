@@ -25,6 +25,8 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(12, choices.Length);
             foreach (var choice in choices) Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
             foreach(var choice in choices)Assert.IsEmpty(choice.GetComponentsInChildren<Text>(true),"The roster must stay icon-only.");
+            Assert.IsFalse(canvas.GetComponentsInChildren<Text>(true).Any(t=>t.name.StartsWith("TraitValue")),
+                "Stat bars must not repeat numeric fractions.");
             Assert.IsEmpty(canvas.GetComponentsInChildren<GodotButton>(true));
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             Canvas.ForceUpdateCanvases();
@@ -37,7 +39,15 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(saved, Settings.SettingsStore.Current.CharacterPick);
             foreach (var size in TumpUiCapture.PcViewports)
                 yield return TumpUiCapture.Capture("Collection-people-" + size.x + "x" + size.y,
-                    canvas, size.x, size.y, false, checkActionBounds: true);
+                    canvas, size.x, size.y, false, checkActionBounds: true,inspectViewport:()=>
+                    {
+                        var description=canvas.GetComponentsInChildren<Text>().First(t=>t.name=="Description").rectTransform;
+                        Assert.IsFalse(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="Traits" || t.name.StartsWith("TraitLabel")),
+                            "Classic people must not advertise retired character stats.");
+                        var confirm=(RectTransform)Find("TumpUseLoadout").transform;
+                        float gap=description.anchoredPosition.y-description.rect.height-confirm.anchoredPosition.y;
+                        Assert.That(gap,Is.InRange(12,24),"Confirmation must follow the actual description without a blank former-stat block.");
+                    });
             foreach (var person in Roster.ClassicPeople)
             {
                 Press(Find("Portrait_" + person.Id)); yield return null;
@@ -54,6 +64,8 @@ namespace TumbangPreso.PlayTests
             for (int i = 1; i <= 2; i++)
             {
                 Press(Find("TumpCategory" + i)); yield return null;
+                Assert.AreEqual(3,canvas.GetComponentsInChildren<Text>().Count(t=>t.name.StartsWith("TraitLabel")),
+                    "Equipment must retain its actual handling comparison.");
                 foreach (var choice in canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait_")))
                     Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
                 foreach (var size in TumpUiCapture.PcViewports)

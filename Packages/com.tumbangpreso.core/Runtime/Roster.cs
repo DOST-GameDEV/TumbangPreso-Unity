@@ -328,17 +328,17 @@ namespace TumbangPreso.Core
         // THE PERSON SCALES. These three are what gameplay actually asks for.
         // -------------------------------------------------------------------
 
-        public static float PersonSpeedScale(int index) =>
-            TraitScale(PersonTrait(index, Trait.Bilis), Balance.TraitSpeedPerPoint);
+        // Classic character choice is cosmetic. Archived roster points must not
+        // change movement or contact; equipment handling remains independent.
+        public static float PersonSpeedScale(int index) => PersonSpeedScale(index, GameMode.Classic);
 
         public static float PersonSpeedScale(int index, GameMode mode) =>
-            TraitScale(PersonTrait(index, Trait.Bilis, mode), Balance.TraitSpeedPerPoint);
+            mode == GameMode.Classic ? 1.0f : TraitScale(PersonTrait(index, Trait.Bilis, mode), Balance.TraitSpeedPerPoint);
 
-        public static float PersonPowerScale(int index) =>
-            TraitScale(PersonTrait(index, Trait.Lakas), Balance.TraitPowerPerPoint);
+        public static float PersonPowerScale(int index) => PersonPowerScale(index, GameMode.Classic);
 
         public static float PersonPowerScale(int index, GameMode mode) =>
-            TraitScale(PersonTrait(index, Trait.Lakas, mode), Balance.TraitPowerPerPoint);
+            mode == GameMode.Classic ? 1.0f : TraitScale(PersonTrait(index, Trait.Lakas, mode), Balance.TraitPowerPerPoint);
 
         /// <summary>
         /// ⚠️ FLOORED AT 0.1, MATCHING character_base.gd. Grit DIVIDES incoming knockback
@@ -346,14 +346,11 @@ namespace TumbangPreso.Core
         /// moment the game is resolving a hit. The floor can never be reached by any
         /// authored row; it exists so that a future per-point change cannot make it so.
         /// </summary>
-        public static float PersonGritScale(int index)
-        {
-            float scale = TraitScale(PersonTrait(index, Trait.Tatag), Balance.TraitGritPerPoint);
-            return scale < 0.1f ? 0.1f : scale;
-        }
+        public static float PersonGritScale(int index) => PersonGritScale(index, GameMode.Classic);
 
         public static float PersonGritScale(int index, GameMode mode)
         {
+            if (mode == GameMode.Classic) return 1.0f;
             float scale = TraitScale(PersonTrait(index, Trait.Tatag, mode), Balance.TraitGritPerPoint);
             return scale < 0.1f ? 0.1f : scale;
         }

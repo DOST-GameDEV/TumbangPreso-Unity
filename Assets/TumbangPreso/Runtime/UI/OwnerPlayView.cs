@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(logo.rectTransform,1608,53,190,190*273f/407);
             _classicTick=Choice(design,"ClassicButton","CLASSIC","Eight rounds. No powers.",GameMode.Classic,158);
             _heroTick=Choice(design,"HeroStrikeButton","HERO STRIKE","Eight rounds. Six heroes.",GameMode.HeroStrike,1018);
-            var routeTitle=OwnerUiLayout.Text(design,"RoutesHeading","HOW ARE YOU PLAYING?",33,OwnerUiLayout.TypeRole.Accent);
+            var routeTitle=OwnerUiLayout.Text(design,"RoutesHeading","HOW ARE YOU PLAYING?",33,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(routeTitle.rectTransform,230,671,1460,60);routeTitle.alignment=TextAnchor.MiddleCenter;
             _routes[0]=Route(design,"PracticeButton","WITH BOTS","Offline match",LobbyMode.Practice,false);
             _routes[1]=Route(design,"CustomButton","WITH FRIENDS","Create or join a room",LobbyMode.Custom,true);

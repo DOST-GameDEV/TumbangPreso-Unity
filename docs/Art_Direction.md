@@ -1,5 +1,12 @@
 # Art Direction — the laws
 
+**Current PC UI rule, September15:** headings use Darumadrop. Keep readable body
+labels such as Speed/Power/Grit in the existing Lydian face. Prefer recognizable
+icons for navigation/categories/rotation; keep words and numbers only where they
+convey necessary meaning. Stat bars do not repeat numeric fractions. Group related
+content and size reading cards to the actual text instead of reserving large blank
+rows. Preserve the approved original login composition and its source artwork.
+
 **Latest shield permission:** the owner allows visual refinement of Dante's
 orbiting shields if it clearly improves them. The approved current design remains
 the baseline; do not change it gratuitously. Fitted armor's repeated markings are

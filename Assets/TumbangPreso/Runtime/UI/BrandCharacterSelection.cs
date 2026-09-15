@@ -151,8 +151,8 @@ namespace TumbangPreso.UI
             var entry = entries[_pick[_tab]];
             _brandName.text = entry.Name;
             _brandDescription.text = TaglineFor(entry.Id);
-            _brandTraits.gameObject.SetActive(!OnHeroTab);
-            if (!OnHeroTab)
+            _brandTraits.gameObject.SetActive(_tab>0);
+            if (_tab>0)
             {
                 var names = MeterLabels[_tab];
                 _brandTraits.text = $"{LobbyChrome.Sentence(names[0])} {entry.Bilis}/{Roster.TraitMax}    " +

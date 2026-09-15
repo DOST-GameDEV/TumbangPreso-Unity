@@ -6,6 +6,17 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Latest correction: Classic people are cosmetic. Their obsolete stat block is
+  removed, and old personal movement/contact multipliers are now neutral. Core17/17
+  and actual-motor/picker2/2 checks pass. All12choices walk the same measured distance;
+  equipment handling is retained. Protocol38/nativev9 qualification is in progress.
+  Older preserved builds still have the unwanted character multipliers.
+
+- The owner requested a second picker revision: less blank space, Darumadrop
+  headings, icon controls and no redundant stat fractions. The compact source has
+  passing34entry/ten-size picker checks; other changed heading routes and a newer
+  native candidate are still being qualified. v6 is the preserved earlier version.
+
 - Revised PC loadout now passes34entry/ten-size Editor checks and nativev6's
   icon-only selection, mouse drag, save and both-mode routes at960x540/1366x768/
   1920x1080. Selected identity appears once beside the enlarged model. The roster
@@ -93,8 +104,9 @@ or Editor screenshots for a verified native demo build.
 
 ## Candidate record to fill after qualification
 
-- Executable/data: Builds/demo-2026-09-16-v6/TumbangPreso.exe and its adjacent data folder.
-- Runtime SHA256:3DB8FEA57ED3CEBA0C13EEEB23379F287B8B6C0724D59E00C847487C188A9B8E.
+- Executable/data: Builds/demo-2026-09-16-v9/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:6B3484A6797A31DC04A967C5C4BEA136D1A92AB578D2555503A5D2CC57CE2084.
+- Protocol38: use matching current builds for LAN. Actualv8(protocol37) refusal passed.
 - Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
 - Nativev3 measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.

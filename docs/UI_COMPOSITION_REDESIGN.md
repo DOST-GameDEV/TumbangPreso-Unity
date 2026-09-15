@@ -1,5 +1,12 @@
 # UI composition redesign from the original layout studies
 
+**Current PC UI rule, September15:** headings use Darumadrop. Keep readable body
+labels such as Speed/Power/Grit in the existing Lydian face. Prefer recognizable
+icons for navigation/categories/rotation; keep words and numbers only where they
+convey necessary meaning. Stat bars do not repeat numeric fractions. Group related
+content and size reading cards to the actual text instead of reserving large blank
+rows. Preserve the approved original login composition and its source artwork.
+
 **Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
 changes priority, not scope. Secure a tested demo candidate, then continue the rest
 immediately as time allows, including before tomorrow. Do not stop at the candidate

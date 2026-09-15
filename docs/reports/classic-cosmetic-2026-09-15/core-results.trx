@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6020ebb7-9721-43d1-8f7f-3d19cddcdf2c" name="matth@DESKTOP-E4OQK9L 2026-09-15 15:50:12" runUser="DESKTOP-E4OQK9L\matth" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-15T15:50:12.1352680+08:00" queuing="2026-09-15T15:50:12.1352685+08:00" start="2026-09-15T15:50:11.4002965+08:00" finish="2026-09-15T15:50:12.1640864+08:00" />
+  <TestSettings name="default" id="fe6bc645-eafb-4df9-a91f-c92ab5a3a2b7">
+    <Deployment runDeploymentRoot="matth_DESKTOP-E4OQK9L_2026-09-15_15_50_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="707dcddb-6ca3-4f03-b74c-d24c18a15b8f" testId="f3403639-9a37-6e02-f1d7-fc144b766b8d" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.TheHeightWindowIsTheOneTheDocumentsQuote" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0000979" startTime="2026-09-15T15:50:12.0711734+08:00" endTime="2026-09-15T15:50:12.0711734+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="707dcddb-6ca3-4f03-b74c-d24c18a15b8f" />
+    <UnitTestResult executionId="770ea6c3-899b-4aea-a113-7c42b650dacf" testId="63aae874-b172-8b79-41f6-515658f30d22" testName="TumbangPreso.Core.Tests.EquipmentRolesTests.HandlingSettlesEarlierButDoesNotBuyPerfectOrSteadierMovingAim" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0071386" startTime="2026-09-15T15:50:12.0702703+08:00" endTime="2026-09-15T15:50:12.0702704+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="770ea6c3-899b-4aea-a113-7c42b650dacf" />
+    <UnitTestResult executionId="0bfd6128-e6c5-47d4-9516-bb4ad81320ae" testId="4830a47c-9613-fbcf-aa04-a8d14ba616ea" testName="TumbangPreso.Core.Tests.EquipmentRolesTests.CanReboundChangesTheReturnJourneyWithoutExceedingIncomingSpeed" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0006232" startTime="2026-09-15T15:50:12.0716902+08:00" endTime="2026-09-15T15:50:12.0716902+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bfd6128-e6c5-47d4-9516-bb4ad81320ae" />
+    <UnitTestResult executionId="00b2c185-e352-48c3-9434-90c63f0f597f" testId="3ffe28fe-01be-723a-29ed-eb96ab723fef" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.AnOutOfRangeWireIsClampedRatherThanTrusted" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0002003" startTime="2026-09-15T15:50:12.1016516+08:00" endTime="2026-09-15T15:50:12.1016516+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00b2c185-e352-48c3-9434-90c63f0f597f" />
+    <UnitTestResult executionId="111d512b-5b86-4be8-a947-b8786b936430" testId="ca4b43d7-84cf-3324-e4a2-75fc25e5e58d" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;Tondo:Kid&quot;)" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0001834" startTime="2026-09-15T15:50:12.1014005+08:00" endTime="2026-09-15T15:50:12.1014006+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="111d512b-5b86-4be8-a947-b8786b936430" />
+    <UnitTestResult executionId="665724c0-88cc-4767-b979-386bb68052f4" testId="53135d67-4bb2-73b8-0dfe-394aeb4d5a77" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;Batang Kalye&quot;)" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0000096" startTime="2026-09-15T15:50:12.1015787+08:00" endTime="2026-09-15T15:50:12.1015788+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="665724c0-88cc-4767-b979-386bb68052f4" />
+    <UnitTestResult executionId="58e6db16-d2e6-4c78-858a-694872550208" testId="7be25097-827c-fb1a-506a-f261f748760c" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.MostOfThePaletteIsStillReachable" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0001062" startTime="2026-09-15T15:50:12.1017416+08:00" endTime="2026-09-15T15:50:12.1017417+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58e6db16-d2e6-4c78-858a-694872550208" />
+    <UnitTestResult executionId="cfae5cba-f85b-426d-94ac-ea6e467180bc" testId="2023ebd6-d5a0-a3e0-652f-747839ed4005" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;BATANG_KALYE&quot;)" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0000106" startTime="2026-09-15T15:50:12.1015416+08:00" endTime="2026-09-15T15:50:12.1015416+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cfae5cba-f85b-426d-94ac-ea6e467180bc" />
+    <UnitTestResult executionId="0a68a8af-6505-4b48-8b3a-9a5ce0cac2db" testId="012834d7-3fb8-49ea-f042-519bda1cce32" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.TheSkinSlotsAreInsideThePaletteAndDoNotIncludeTheFace" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0012783" startTime="2026-09-15T15:50:12.1017812+08:00" endTime="2026-09-15T15:50:12.1017813+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a68a8af-6505-4b48-8b3a-9a5ce0cac2db" />
+    <UnitTestResult executionId="5c862fbd-9628-483d-b1f2-6b9b830aa6ec" testId="7e62c511-f75d-81cc-9657-cb6bf30f7cb1" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;100% Kalye&quot;)" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0000151" startTime="2026-09-15T15:50:12.1016110+08:00" endTime="2026-09-15T15:50:12.1016111+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c862fbd-9628-483d-b1f2-6b9b830aa6ec" />
+    <UnitTestResult executionId="62c1ef72-65b3-4e00-9109-991c8abbd4aa" testId="c4e76f17-6908-d6f7-e715-60b6465a7acb" testName="TumbangPreso.Core.Tests.EquipmentRolesTests.RecoveryChoiceBuysAnObservableCadenceWithoutRemovingRetrievalLock" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0031949" startTime="2026-09-15T15:50:12.0716205+08:00" endTime="2026-09-15T15:50:12.0716206+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="62c1ef72-65b3-4e00-9109-991c8abbd4aa" />
+    <UnitTestResult executionId="d9d643eb-d7cf-4a78-b742-7332510f29de" testId="f9c69db6-2e56-cf1e-3d99-e9c082f7e9f5" testName="TumbangPreso.Core.Tests.EquipmentRolesTests.EverySlipperHasATradeoffAgainstEveryOtherSlipper" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0002346" startTime="2026-09-15T15:50:12.0717828+08:00" endTime="2026-09-15T15:50:12.0717828+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9d643eb-d7cf-4a78-b742-7332510f29de" />
+    <UnitTestResult executionId="6e049879-fb4e-409b-9400-99c580bd989a" testId="f34d4500-366f-d9d3-ef74-0b9ec1197469" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ThereAreExactlyThreeSlotsAndTheActiveOneIsAlwaysLegal" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0077625" startTime="2026-09-15T15:50:12.0672960+08:00" endTime="2026-09-15T15:50:12.0673202+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e049879-fb4e-409b-9400-99c580bd989a" />
+    <UnitTestResult executionId="754ffb3a-f533-4934-a163-6faa4b59ba21" testId="23714b15-157c-571e-0703-46b7da47fae6" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.OnlyTheFaceAndTheSkinRampAreProtected" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0025320" startTime="2026-09-15T15:50:12.1017024+08:00" endTime="2026-09-15T15:50:12.1017025+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="754ffb3a-f533-4934-a163-6faa4b59ba21" />
+    <UnitTestResult executionId="6c1f9fdf-da8c-4aea-94b1-ad37c1fc85ec" testId="68c2e7da-c6d9-084b-f01b-8099364404f3" testName="TumbangPreso.Core.Tests.EquipmentRolesTests.EquipmentIdentityAndUnpickedSlipperStayStable" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0098066" startTime="2026-09-15T15:50:12.1018097+08:00" endTime="2026-09-15T15:50:12.1018097+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6c1f9fdf-da8c-4aea-94b1-ad37c1fc85ec" />
+    <UnitTestResult executionId="70c45a0b-c442-4536-9cd1-2ff8f6b8d02a" testId="20dfb708-a550-88c3-6c31-cbec5f79cfa7" testName="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;under_score and space&quot;)" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0039408" startTime="2026-09-15T15:50:12.0717419+08:00" endTime="2026-09-15T15:50:12.0717420+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70c45a0b-c442-4536-9cd1-2ff8f6b8d02a" />
+    <UnitTestResult executionId="8d616a81-240e-4af5-bfd1-510ca38c27fe" testId="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5" testName="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers" computerName="DESKTOP-E4OQK9L" duration="00:00:00.0072480" startTime="2026-09-15T15:50:12.0699025+08:00" endTime="2026-09-15T15:50:12.0699025+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d616a81-240e-4af5-bfd1-510ca38c27fe" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;100% Kalye&quot;)" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="7e62c511-f75d-81cc-9657-cb6bf30f7cb1">
+      <Execution id="5c862fbd-9628-483d-b1f2-6b9b830aa6ec" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ACustomCharacterNameSurvivesTheCodec" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.TheHeightWindowIsTheOneTheDocumentsQuote" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="f3403639-9a37-6e02-f1d7-fc144b766b8d">
+      <Execution id="707dcddb-6ca3-4f03-b74c-d24c18a15b8f" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="TheHeightWindowIsTheOneTheDocumentsQuote" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.EquipmentRolesTests.CanReboundChangesTheReturnJourneyWithoutExceedingIncomingSpeed" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="4830a47c-9613-fbcf-aa04-a8d14ba616ea">
+      <Execution id="0bfd6128-e6c5-47d4-9516-bb4ad81320ae" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.EquipmentRolesTests" name="CanReboundChangesTheReturnJourneyWithoutExceedingIncomingSpeed" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.OnlyTheFaceAndTheSkinRampAreProtected" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="23714b15-157c-571e-0703-46b7da47fae6">
+      <Execution id="754ffb3a-f533-4934-a163-6faa4b59ba21" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="OnlyTheFaceAndTheSkinRampAreProtected" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;Batang Kalye&quot;)" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="53135d67-4bb2-73b8-0dfe-394aeb4d5a77">
+      <Execution id="665724c0-88cc-4767-b979-386bb68052f4" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ACustomCharacterNameSurvivesTheCodec" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.EquipmentRolesTests.HandlingSettlesEarlierButDoesNotBuyPerfectOrSteadierMovingAim" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="63aae874-b172-8b79-41f6-515658f30d22">
+      <Execution id="770ea6c3-899b-4aea-a113-7c42b650dacf" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.EquipmentRolesTests" name="HandlingSettlesEarlierButDoesNotBuyPerfectOrSteadierMovingAim" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;Tondo:Kid&quot;)" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="ca4b43d7-84cf-3324-e4a2-75fc25e5e58d">
+      <Execution id="111d512b-5b86-4be8-a947-b8786b936430" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ACustomCharacterNameSurvivesTheCodec" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.MostOfThePaletteIsStillReachable" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="7be25097-827c-fb1a-506a-f261f748760c">
+      <Execution id="58e6db16-d2e6-4c78-858a-694872550208" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="MostOfThePaletteIsStillReachable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;BATANG_KALYE&quot;)" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="2023ebd6-d5a0-a3e0-652f-747839ed4005">
+      <Execution id="cfae5cba-f85b-426d-94ac-ea6e467180bc" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ACustomCharacterNameSurvivesTheCodec" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.EquipmentRolesTests.EverySlipperHasATradeoffAgainstEveryOtherSlipper" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="f9c69db6-2e56-cf1e-3d99-e9c082f7e9f5">
+      <Execution id="d9d643eb-d7cf-4a78-b742-7332510f29de" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.EquipmentRolesTests" name="EverySlipperHasATradeoffAgainstEveryOtherSlipper" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.EquipmentRolesTests.RecoveryChoiceBuysAnObservableCadenceWithoutRemovingRetrievalLock" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="c4e76f17-6908-d6f7-e715-60b6465a7acb">
+      <Execution id="62c1ef72-65b3-4e00-9109-991c8abbd4aa" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.EquipmentRolesTests" name="RecoveryChoiceBuysAnObservableCadenceWithoutRemovingRetrievalLock" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests.EveryClassicCharacterHasNeutralGameplayMultipliers" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5">
+      <Execution id="8d616a81-240e-4af5-bfd1-510ca38c27fe" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ClassicCosmeticCharacterTests" name="EveryClassicCharacterHasNeutralGameplayMultipliers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.EquipmentRolesTests.EquipmentIdentityAndUnpickedSlipperStayStable" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="68c2e7da-c6d9-084b-f01b-8099364404f3">
+      <Execution id="6c1f9fdf-da8c-4aea-94b1-ad37c1fc85ec" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.EquipmentRolesTests" name="EquipmentIdentityAndUnpickedSlipperStayStable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.AnOutOfRangeWireIsClampedRatherThanTrusted" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="3ffe28fe-01be-723a-29ed-eb96ab723fef">
+      <Execution id="00b2c185-e352-48c3-9434-90c63f0f597f" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="AnOutOfRangeWireIsClampedRatherThanTrusted" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.TheSkinSlotsAreInsideThePaletteAndDoNotIncludeTheFace" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="012834d7-3fb8-49ea-f042-519bda1cce32">
+      <Execution id="0a68a8af-6505-4b48-8b3a-9a5ce0cac2db" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="TheSkinSlotsAreInsideThePaletteAndDoNotIncludeTheFace" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ThereAreExactlyThreeSlotsAndTheActiveOneIsAlwaysLegal" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="f34d4500-366f-d9d3-ef74-0b9ec1197469">
+      <Execution id="6e049879-fb4e-409b-9400-99c580bd989a" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ThereAreExactlyThreeSlotsAndTheActiveOneIsAlwaysLegal" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec(name: &quot;under_score and space&quot;)" storage="c:\users\matth\documents\github\tumbangpreso-unity-astrareworks\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="20dfb708-a550-88c3-6c31-cbec5f79cfa7">
+      <Execution id="70c45a0b-c442-4536-9cd1-2ff8f6b8d02a" />
+      <TestMethod codeBase="C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RosterIntegrityTests" name="ACustomCharacterNameSurvivesTheCodec" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f3403639-9a37-6e02-f1d7-fc144b766b8d" executionId="707dcddb-6ca3-4f03-b74c-d24c18a15b8f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63aae874-b172-8b79-41f6-515658f30d22" executionId="770ea6c3-899b-4aea-a113-7c42b650dacf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4830a47c-9613-fbcf-aa04-a8d14ba616ea" executionId="0bfd6128-e6c5-47d4-9516-bb4ad81320ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ffe28fe-01be-723a-29ed-eb96ab723fef" executionId="00b2c185-e352-48c3-9434-90c63f0f597f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca4b43d7-84cf-3324-e4a2-75fc25e5e58d" executionId="111d512b-5b86-4be8-a947-b8786b936430" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53135d67-4bb2-73b8-0dfe-394aeb4d5a77" executionId="665724c0-88cc-4767-b979-386bb68052f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7be25097-827c-fb1a-506a-f261f748760c" executionId="58e6db16-d2e6-4c78-858a-694872550208" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2023ebd6-d5a0-a3e0-652f-747839ed4005" executionId="cfae5cba-f85b-426d-94ac-ea6e467180bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="012834d7-3fb8-49ea-f042-519bda1cce32" executionId="0a68a8af-6505-4b48-8b3a-9a5ce0cac2db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e62c511-f75d-81cc-9657-cb6bf30f7cb1" executionId="5c862fbd-9628-483d-b1f2-6b9b830aa6ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4e76f17-6908-d6f7-e715-60b6465a7acb" executionId="62c1ef72-65b3-4e00-9109-991c8abbd4aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9c69db6-2e56-cf1e-3d99-e9c082f7e9f5" executionId="d9d643eb-d7cf-4a78-b742-7332510f29de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f34d4500-366f-d9d3-ef74-0b9ec1197469" executionId="6e049879-fb4e-409b-9400-99c580bd989a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23714b15-157c-571e-0703-46b7da47fae6" executionId="754ffb3a-f533-4934-a163-6faa4b59ba21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68c2e7da-c6d9-084b-f01b-8099364404f3" executionId="6c1f9fdf-da8c-4aea-94b1-ad37c1fc85ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20dfb708-a550-88c3-6c31-cbec5f79cfa7" executionId="70c45a0b-c442-4536-9cd1-2ff8f6b8d02a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8a2cfd6-02b3-6d0f-282f-b9dd8cb6dfb5" executionId="8d616a81-240e-4af5-bfd1-510ca38c27fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="17" executed="17" passed="17" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.19)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    TumbangPreso.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

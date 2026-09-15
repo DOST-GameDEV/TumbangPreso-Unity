@@ -16,8 +16,11 @@ namespace TumbangPreso.Diagnostics
         [Serializable]private sealed class FrameWindow
         {
             public string mode,gpu,cpu;public int width,height,samples,framesOver33Ms;
+            public int resultPolls,gc0,gc1,gc2;public bool pollEveryFrame;
             public float duration,averageFps,medianMs,p95Ms,p99Ms,maxMs;
         }
+        private struct FrameContext
+        { public float real,simulation,left;public int gc0,gc1,gc2; }
         [Serializable]private sealed class Report
         { public bool passed;public string error;public List<string> stages=new List<string>();public List<FrameWindow> frameWindows=new List<FrameWindow>(); }
         private readonly Report _report=new Report();
@@ -27,6 +30,9 @@ namespace TumbangPreso.Diagnostics
         private string _frameMode;
         private float _frameStarted;
         private readonly List<float> _frameTimes=new List<float>(8192);
+        private readonly List<FrameContext> _frameContexts=new List<FrameContext>(8192);
+        private int _resultPolls,_gc0Start,_gc1Start,_gc2Start;
+        private bool _pollEveryFrame;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
@@ -34,6 +40,7 @@ namespace TumbangPreso.Diagnostics
             if(Application.isEditor || at<0 || at+1>=args.Length || args.Contains("-tp-tournament"))return;
             var go=new GameObject("~OwnerUiPlayerReview");DontDestroyOnLoad(go);
             var probe=go.AddComponent<OwnerUiPlayerReview>();probe._folder=Path.GetFullPath(args[at+1]);
+            probe._pollEveryFrame=args.Contains("-tp-review-frame-poll");
             Directory.CreateDirectory(probe._folder);probe._deadline=Time.realtimeSinceStartup+120;probe.StartCoroutine(probe.Guard(probe.Walk()));
         }
         private IEnumerator Guard(IEnumerator sequence)
@@ -54,17 +61,28 @@ namespace TumbangPreso.Diagnostics
         private void Update()
         {
             if(_frameMode!=null && GameServices.Round!=null && GameServices.Round.RoundActive)
+            {
                 _frameTimes.Add(Time.unscaledDeltaTime*1000f);
+                _frameContexts.Add(new FrameContext{real=Time.realtimeSinceStartup-_frameStarted,
+                    simulation=Time.time,left=GameServices.Round.TimeLeft,
+                    gc0=GC.CollectionCount(0),gc1=GC.CollectionCount(1),gc2=GC.CollectionCount(2)});
+            }
             if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());
         }
         private void StartFrameWindow(string mode)
-        { _frameTimes.Clear();_frameStarted=Time.realtimeSinceStartup;_frameMode=mode; }
+        {
+            _frameTimes.Clear();_frameContexts.Clear();_resultPolls=0;
+            _gc0Start=GC.CollectionCount(0);_gc1Start=GC.CollectionCount(1);_gc2Start=GC.CollectionCount(2);
+            _frameStarted=Time.realtimeSinceStartup;_frameMode=mode;
+        }
         private void StopFrameWindow()
         {
             if(_frameMode==null)return;
             string mode=_frameMode;_frameMode=null;
             var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
-                duration=Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType};
+                duration=Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
+                resultPolls=_resultPolls,pollEveryFrame=_pollEveryFrame,gc0=GC.CollectionCount(0)-_gc0Start,
+                gc1=GC.CollectionCount(1)-_gc1Start,gc2=GC.CollectionCount(2)-_gc2Start};
             if(_frameTimes.Count>0)
             {
                 var sorted=_frameTimes.OrderBy(v=>v).ToArray();
@@ -75,6 +93,23 @@ namespace TumbangPreso.Diagnostics
             _report.frameWindows.Add(window);
             File.WriteAllLines(Path.Combine(_folder,mode+"-frame-times.csv"),new[]{"sample,frame_ms"}.Concat(
                 _frameTimes.Select((value,index)=>FormattableString.Invariant($"{index},{value:F6}"))));
+            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-context.csv"),new[]{"sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2"}.Concat(
+                _frameContexts.Select((v,i)=>FormattableString.Invariant($"{i},{v.real:F6},{v.simulation:F6},{v.left:F6},{v.gc0},{v.gc1},{v.gc2}"))));
+        }
+        private IEnumerator WaitForResult()
+        {
+            // Result discovery is UI work. Sampling frame times must not require a
+            // scene-wide Selectable allocation/search on every gameplay frame.
+            // Keep an explicit old-poll mode for the equivalent measurement control.
+            float until=Time.realtimeSinceStartup+65;
+            var pause=new WaitForSecondsRealtime(.1f);
+            while(Time.realtimeSinceStartup<until)
+            {
+                _resultPolls++;
+                if(Find("ResultRematch")!=null)yield break;
+                if(_pollEveryFrame)yield return null;else yield return pause;
+            }
+            throw new InvalidOperationException("The real result screen did not arrive.");
         }
         private void Stage(string label){_report.stages.Add(label);_deadline=Time.realtimeSinceStartup+100;Debug.Log("[OwnerUiReview] "+label);}
         private void Finish(bool passed,string error)
@@ -195,6 +230,14 @@ namespace TumbangPreso.Diagnostics
             foreach(var choice in canvas.GetComponentsInChildren<CollectionChoice>())
                 if(choice.GetComponentsInChildren<Text>(true).Length!=0)
                     throw new InvalidOperationException("A roster tile repeats a character name.");
+            foreach(var text in canvas.GetComponentsInChildren<Text>())
+            {
+                if(!hero && (text.name=="Traits" || text.name.StartsWith("TraitLabel")))
+                    throw new InvalidOperationException("Classic character stats returned to the picker.");
+                if(text.name.StartsWith("TraitValue"))throw new InvalidOperationException("Redundant stat numbers returned.");
+                if((text.name=="Heading" || text.name=="Traits" || text.name=="SelectedName") && text.font!=OwnerUiTheme.Current.Display)
+                    throw new InvalidOperationException("The loadout heading lost Darumadrop.");
+            }
             var preview=canvas.GetComponentInChildren<ModelPreview>();
             var surface=preview.GetComponentInChildren<ModelPreviewInput>();
             var point=RectTransformUtility.WorldToScreenPoint(null,((RectTransform)surface.transform).TransformPoint(((RectTransform)surface.transform).rect.center));
@@ -274,7 +317,7 @@ namespace TumbangPreso.Diagnostics
                 var watcher=UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();var pause=Panel.Open<PausePanel>(watcher);pause.Local=watcher.Local;
                 yield return WaitFor(()=>Find("ResumeMatch")!=null);yield return Shot(mode+"-pause");yield return Click("ResumeMatch");
                 Stage(mode+" waiting for real result");StartFrameWindow(mode);
-                yield return WaitFor(()=>Find("ResultRematch")!=null,65);StopFrameWindow();yield return Shot(mode+"-result");
+                yield return WaitForResult();StopFrameWindow();yield return Shot(mode+"-result");
                 yield return Click("ResultTab1");yield return Shot(mode+"-details");
                 if(mode=="ClassicButton")
                 {

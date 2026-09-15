@@ -15,7 +15,7 @@ namespace TumbangPreso.UI
             var root=OwnerUiLayout.DesignArea(Canvas.transform,"RoundComposition");
             _round=OwnerUiLayout.Text(root,"RoundHeadline","",72,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_round.rectTransform,98,52,1715,123);_round.color=new Color32(245,218,169,255);
-            var next=OwnerUiLayout.Text(root,"NextRole","NEXT DEFENDER",31,OwnerUiLayout.TypeRole.Accent);
+            var next=OwnerUiLayout.Text(root,"NextRole","NEXT DEFENDER",31,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(next.rectTransform,98,257,668,75);next.color=new Color32(198,218,135,255);
             _portrait=OwnerUiLayout.Rect(root,"NextDefenderPortrait").gameObject.AddComponent<Image>();
             _portrait.preserveAspect=true;_portrait.raycastTarget=false;OwnerUiLayout.Place(_portrait.rectTransform,119,352,544,390);
@@ -23,7 +23,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_name.rectTransform,98,766,697,104);_name.color=new Color32(247,235,210,255);
             var divider=OwnerUiLayout.Rect(root,"BreakDivider").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(divider.rectTransform,831,271,2,587);divider.color=new Color32(196,206,179,80);divider.raycastTarget=false;
-            var title=OwnerUiLayout.Text(root,"StandingsTitle","SCORE SO FAR",31,OwnerUiLayout.TypeRole.Accent);
+            var title=OwnerUiLayout.Text(root,"StandingsTitle","SCORE SO FAR",31,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,903,257,877,75);title.color=new Color32(198,218,135,255);
             for(int i=0;i<4;i++)
             {

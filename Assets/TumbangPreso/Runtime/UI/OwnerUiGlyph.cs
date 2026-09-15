@@ -7,7 +7,7 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class OwnerUiGlyph : UnityEngine.UI.MaskableGraphic
     {
-        public enum Mark { Envelope, Lock, Check, Eye, Back }
+        public enum Mark { Envelope, Lock, Check, Eye, Back, Rotate }
         public Mark Shape;
         protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper helper)
         {
@@ -34,6 +34,17 @@ namespace TumbangPreso.UI
                 Stroke(helper,rect,new Vector2(.56f,.87f),new Vector2(.19f,.50f),.11f);
                 Stroke(helper,rect,new Vector2(.19f,.50f),new Vector2(.57f,.13f),.11f);
                 Stroke(helper,rect,new Vector2(.23f,.50f),new Vector2(.93f,.50f),.11f);
+            }
+            else if(Shape==Mark.Rotate)
+            {
+                Vector2 previous=new Vector2(.82f,.69f);
+                for(int i=1;i<=24;i++)
+                {
+                    float angle=Mathf.Lerp(30,300,i/24f)*Mathf.Deg2Rad;
+                    var next=new Vector2(.5f+Mathf.Cos(angle)*.36f,.5f+Mathf.Sin(angle)*.36f);
+                    Stroke(helper,rect,previous,next,.08f);previous=next;
+                }
+                Poly(helper,rect,new Vector2(.69f,.16f),new Vector2(.88f,.37f),new Vector2(.63f,.42f),new Vector2(.69f,.16f));
             }
             else
             {

@@ -1,5 +1,29 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest controller UI permission, September15:** the owner explicitly permits
+redesigning the controller map and controller settings to match the current theme.
+Keep the controller in the middle, its connector lines and core mapping elements.
+This supersedes the old visual lock on the controller page. Use dark/grey settings,
+Darumadrop headings, readable body labels and clear controls. Preserve mapping,
+rebinding, cancellation, the existing18callouts and the actual controller artwork/
+anchor relationships. This is UI permission; do not replace the input backend.
+
+**Newest correction, September15: Classic people are cosmetic.** Do not show
+PLAY STYLE, Speed/Power/Grit, personal stat bars or numeric traits for Classic
+characters. The owner says those were removed already. This checkout still applied
+old movement/contact multipliers; make Classic person scales neutral as well as
+removing stale UI. Preserve Hero Strike behavior and real can/slipper handling.
+Older roster points may remain archival data, never Classic gameplay advantages.
+This supersedes previous picker notes that retained Classic stat rows.
+
+**Latest typography/compactness correction, September15:** owner rejects the big
+blank gap inside the loadout card. Flow stats immediately after the actual short
+description. ALL headings must use Darumadrop, not the decorative Kawit face used
+for PLAY STYLE. Keep the readable Speed/Power/Grit body font. Remove redundant
+numbers beside stat bars. Prefer recognizable icons wherever clear; keep words or
+numbers only when they convey necessary meaning (for example PLAY and game timing).
+Apply this to PC/Windows first. Preserve the approved original login composition.
+
 **Latest visible priority, September15:** improve the loadout picker shown by the
 owner. Its tiny model and scattered text feel bland. Focus on the PC/Windows
 version and responsive PC windows. Roster choices must be ICONS ONLY, with no

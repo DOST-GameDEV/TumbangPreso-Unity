@@ -1709,8 +1709,14 @@ namespace TumbangPreso.UI
 
             for (int i = rows.childCount - 1; i >= 0; i--) Destroy(rows.GetChild(i).gameObject);
 
+            if (_tab==0 && SceneFlow.SelectedMode==GameMode.Classic)
+            {
+                if(rows.TryGetComponent<LayoutElement>(out var cosmeticRows))cosmeticRows.preferredHeight=0;
+                return;
+            }
+
             // Hero Strike characters are defined by verbs and counter-play, not by the three
-            // Classic trait modifiers. Showing SPEED / POWER / GRIT here made the hero picker
+            // archived character points. Showing SPEED / POWER / GRIT here made the hero picker
             // look like a stat-select screen while hiding the information that actually changes
             // how a hero plays. The prop tabs keep their measured meters because cans and
             // slippers use those values in both modes.

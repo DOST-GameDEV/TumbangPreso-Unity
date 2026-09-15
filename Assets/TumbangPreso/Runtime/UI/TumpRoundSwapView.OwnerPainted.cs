@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
             var root=OwnerUiLayout.DesignArea(Canvas.transform,"RoundComposition");
             _round=OwnerUiLayout.Text(root,"RoundHeadline","",63,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_round.rectTransform,95,50,1725,108);
-            var next=OwnerUiLayout.Text(root,"NextRole","NEXT DEFENDER",36,OwnerUiLayout.TypeRole.Accent);
+            var next=OwnerUiLayout.Text(root,"NextRole","NEXT DEFENDER",36,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(next.rectTransform,123,233,695,76);
             var mat=OwnerUiLayout.Rect(root,"DefenderMat").gameObject.AddComponent<OwnerPreviewMat>();
             OwnerUiLayout.Place(mat.rectTransform,107,348,650,431);mat.raycastTarget=false;
@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_name.rectTransform,118,822,698,92);_name.alignment=TextAnchor.MiddleCenter;
             var sheet=OwnerUiLayout.Rect(root,"StandingsPaper").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Place(sheet.rectTransform,877,226,949,625);sheet.raycastTarget=false;
-            var title=OwnerUiLayout.Text(root,"StandingsTitle","STANDINGS",39,OwnerUiLayout.TypeRole.Accent);
+            var title=OwnerUiLayout.Text(root,"StandingsTitle","STANDINGS",39,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,925,249,847,70);
             for(int i=0;i<4;i++)
             {

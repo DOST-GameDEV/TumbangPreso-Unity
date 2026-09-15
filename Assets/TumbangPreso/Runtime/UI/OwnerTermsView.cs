@@ -21,11 +21,11 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(scrim.rectTransform);scrim.color=new Color(0,0,0,.24f);scrim.raycastTarget=true;
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"TermsComposition");
             var paper=OwnerUiLayout.Rect(design,"ReadingSheet").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Dialog;
-            OwnerUiLayout.Place(paper.rectTransform,510,95,900,890);paper.raycastTarget=true;
-            var title=OwnerUiLayout.Text(design,"Title","Terms & Conditions",46,OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place(title.rectTransform,565,140,790,70);title.alignment=TextAnchor.MiddleCenter;title.color=OwnerUiTheme.Current.ActionInk;
+            OwnerUiLayout.Place(paper.rectTransform,450,95,1020,890);paper.raycastTarget=true;
+            var title=OwnerUiLayout.Text(design,"Title","Terms & Conditions",46,OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(title.rectTransform,505,140,910,70);title.alignment=TextAnchor.MiddleCenter;title.color=OwnerUiTheme.Current.ActionInk;
             var scroll=OwnerUiLayout.Rect(design,"TermsScroll").gameObject.AddComponent<UnityEngine.UI.ScrollRect>();
-            OwnerUiLayout.Place((RectTransform)scroll.transform,570,230,780,557);
+            OwnerUiLayout.Place((RectTransform)scroll.transform,510,230,900,557);
             scroll.horizontal=false;scroll.vertical=true;scroll.movementType=UnityEngine.UI.ScrollRect.MovementType.Clamped;
             scroll.scrollSensitivity=35;
             var viewport=OwnerUiLayout.Rect(scroll.transform,"Viewport");OwnerUiLayout.Fill(viewport);
@@ -33,7 +33,7 @@ namespace TumbangPreso.UI
             var content=OwnerUiLayout.Rect(viewport,"Content");content.anchorMin=new Vector2(0,1);content.anchorMax=Vector2.one;
             content.pivot=new Vector2(.5f,1);content.sizeDelta=Vector2.zero;
             var layout=content.gameObject.AddComponent<UnityEngine.UI.VerticalLayoutGroup>();
-            layout.spacing=10;layout.childControlWidth=true;layout.childControlHeight=true;
+            layout.spacing=6;layout.childControlWidth=true;layout.childControlHeight=true;
             layout.childForceExpandWidth=true;layout.childForceExpandHeight=false;
             var fit=content.gameObject.AddComponent<UnityEngine.UI.ContentSizeFitter>();fit.verticalFit=UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
             scroll.viewport=viewport;scroll.content=content;
@@ -43,10 +43,10 @@ namespace TumbangPreso.UI
             {
                 int split=block.IndexOf('\n');
                 string heading=split>=0?block.Substring(0,split):block;
-                var label=OwnerUiLayout.Text(content,"SectionTitle",heading,27,OwnerUiLayout.TypeRole.Accent);
-                label.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=36;
+                var label=OwnerUiLayout.Text(content,"SectionTitle",heading,28,OwnerUiLayout.TypeRole.Display);
+                label.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=52;
                 if(split<0)continue;
-                var body=OwnerUiLayout.Text(content,"SectionText",block.Substring(split+1).Trim(),26);
+                var body=OwnerUiLayout.Text(content,"SectionText",block.Substring(split+1).Trim(),28);
                 body.color=OwnerUiTheme.Current.EnteredInk;body.verticalOverflow=VerticalWrapMode.Overflow;
             }
             var agree=OwnerPaintedAction.Create(design,"AcceptGuidelines","I AGREE",()=>Close(true),false,48);

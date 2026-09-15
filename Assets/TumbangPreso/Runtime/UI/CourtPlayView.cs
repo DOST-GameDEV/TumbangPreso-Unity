@@ -27,7 +27,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(logo.rectTransform, 1590, 47, 220, 220 * 273f / 407);
             _classic = Mode(design, false, out _classicTick);
             _hero = Mode(design, true, out _heroTick);
-            var routes = OwnerUiLayout.Text(design, "RoutesHeading", "PLAY YOUR WAY", 28, OwnerUiLayout.TypeRole.Accent);
+            var routes = OwnerUiLayout.Text(design, "RoutesHeading", "PLAY YOUR WAY", 28, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(routes.rectTransform, 111, 718, 970, 50);
             Route(design, 0, "PracticeButton", "WITH BOTS", "Offline match", LobbyMode.Practice, TumpSymbol.Icon.Bots);
             Route(design, 1, "CustomButton", "WITH FRIENDS", "Create or join", LobbyMode.Custom, TumpSymbol.Icon.Friends);

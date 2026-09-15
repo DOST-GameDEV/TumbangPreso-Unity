@@ -1,5 +1,188 @@
 # Active TUMP rework ledger
 
+## CURRENT Classic/nativev9 qualified; controller visual redesign next
+
+Nativev9 build FINISHED1081MB/50s, guard0723b315b994, Python22100 retired. Runtime
+SHA2566B3484A6797A31DC04A967C5C4BEA136D1A92AB578D2555503A5D2CC57CE2084.
+Native UI-v9 FINISHEDPASS, Python13256/player18216 retired: Classic has no personal
+stat block; both mode loadout/mouse/save/windows, short matches/results/rematch pass.
+Network controller6196 FINISHEDPASS: real Classic and Hero rematches both load
+BayanPlaza and start new round1 at protocol38. Structural352788E1/ED494119 match
+their peers. Actual retainedv8 client(protocol37) is explicitly refused byv9 host38
+and reports networkedFalse. All scoped profiles/shared input are preserved.
+These UI/network jobs overlapped; do not use v9 frame numbers as clean performance.
+All owned native/Editor jobs are finished. Source MatchInstaller assigns each
+motor's mode from SceneFlow.SelectedMode; Classic equality is not merely UI hiding.
+
+Owner now REOPENS controller-map styling: keep the central controller and lines,
+make controller settings fit the dark/grey current theme. No new controller source
+edits yet. Read Runtime/Input/ControllerMapScreen.cs: current palette uses PaperKit/
+PaperSkin,18callouts and calibrated PadDiagram anchors. Preserve all rebinding and
+refusal behavior. New style should use SettingsPalette, Darumadrop headings/Lydian
+body, contrasting control glyphs and connected readable leaders. Existing approved
+art and input backend stay; old visual-lock instructions are superseded by the user.
+Save the qualified Classic/compact-font checkpoint, then continue this UI request
+and the full remaining queue. Pending windup implementation remains untouched.
+
+## CURRENT Classic correction passed; protocol38 nativev9 building
+
+classic-cosmetic-v1 FINISHED2/2PASS, guard3199d564e190, Python6412 retired. All12
+Classic picks walked exactly1.01200m over the same20 fixed-step measurement after
+settling, through the real motor. The actual picker has no personal-stat heading,
+labels or blank stat area, while equipment retains three meaningful handling rows.
+The17core cosmetic/equipment/roster cases also pass; baseline failure is preserved.
+
+RUNNING guarded nativev9 build, Python22100, Logs/demo-native-build-v9(.pid/.stdout/
+.stderr/.log), profile demo-build-review, Builds/demo-2026-09-16-v9/TumbangPreso.exe.
+After build, run new native Windows route (fresh Logs/demo-native-loop-v9 profile)
+and direct Classic/Hero --rematch --seconds55 checks sequentially on their shared
+port. tools/run_demo_lan.py now also accepts --client-exe and --expect-protocol-refusal:
+use v9 host and retainedv8 client for a short real38-versus37 refusal check.
+It requires explicit mismatch text, distinct reported versions, no accepted old
+client session and preserved profiles. Do not claim compatibility from compilation.
+No imported edits until active Unity/native jobs exit; keep old candidates intact.
+
+Owner asked whether controller settings are accessible. Verified source/current
+route: Settings > Controls > Input device > Controller exposes bindings and SEE
+CONTROLLER. Earlier focused test opens the approved18-callout diagram and returns.
+Answered in chat; physical controller testing remains pending. Resume full work.
+
+## CURRENT Classic cosmetic correction under test
+
+Owner corrects the new screenshot: Classic characters no longer have playstyles.
+Remove the ENTIRE personal-stat block, not just numbers. Verified a deeper leftover:
+CharacterMotor still multiplied PersonSpeedScale, and CombatVerbs used personal
+power/grit. Core baseline ClassicCosmeticCharacterTests FAILED0.95 versus1.0 for
+Berto. Corrected Classic person speed/power/grit to1, including legacy no-mode
+overloads. Hero formulas, all equipment functions, roster IDs/order and models stay.
+Protocol38 now refuses older peers that still predict unequal Classic character
+movement/contact. Current v6/v8 binaries are protocol37 and predate this correction.
+
+Core fixed1/1PASS, then17/17PASS across cosmetic, equipment-role and roster-integrity
+contracts. Receipts Logs/classic-cosmetic-baseline, classic-cosmetic-fixed and
+classic-equipment-contracts. Active and retained picker paths now hide character
+stat rows; the compact Classic card goes straight from description to Use Loadout.
+Equipment still has three handling rows. Native diagnostic also rejects a Classic
+trait block. The previous assertion requiring Classic stats was replaced with the
+owner's actual contract; no hidden placeholder space is permitted.
+
+RUNNING guarded classic-cosmetic-v1, Python6412, Logs/classic-cosmetic-v1(.pid/.stdout/
+.stderr/.log/.xml), profile classic-cosmetic-review. Two cases: actual motor walking
+distance for all12Classic picks and the real picker/save/equipment/ten-size route.
+No imported edits until exit. Inspect result/captures, then build fresh nativev9,
+run the Windows route and version-compatible LAN/refusal checks. Keep the full
+remaining queue active; pending windup work has still not been implemented.
+
+Previous compact-font work qualified: Terms-v4 PASS6431d635e930; v8 buildPASS44s,
+guard11d2cbed138a; nativev8 UI/both-mode loop PASS, Python11280/player9464 retired.
+DLL SHA781D8F37A3F769F6F80FEAB3D29100106DC524B857908ECBAFD5C3A011A4E074,
+timestamp2026-09-15T07:39:25Z. Inday arm asset diffs were whitespace-only; vertex,
+index and data bytes were identical and source noise restored. No Inday work done.
+
+## CURRENT final Terms fit check; compact UI native build next
+
+Heading-v1 finished2PASS/2FAIL, guard4db018e4b4e8: Play and round-swap cases pass;
+TrainingWord and Terms SectionTitle were clipped by the old short Kawit boxes.
+Training header and Terms title rows now have52-design-pixel line boxes.
+Heading-v2 finished1PASS/1FAIL, guard48d8e462574d: training fully passes; Terms
+glyphs fit but the complete default document measured614px against557px viewport.
+Heading-v3 finished0PASS/1FAIL, guardaba229f16b74: widened Terms body to900px, which
+reduced content to584px. Last correction reduces its seven inter-row gaps from10
+to6px, expected556px total; text content/font sizes are preserved.
+
+RUNNING pc-headings-v4, Python18652, Logs/pc-headings-v4(.pid/.stdout/.stderr/.log/.xml),
+profile pc-heading-review, only OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms.
+All earlier heading PIDs retired. No imported edits until exit. Inspect its real
+960px capture and complete-content assertion. Then build nativev8 and run the
+existing native Windows loadout/match route. All compact picker and other changed
+heading checks already pass; do not repeat unrelated checks by default.
+Current heading/icon/compactness preference is saved in AGENTS, TODO and the live
+UI/art plans. The full gameplay backlog remains active after this visible request.
+
+## CURRENT compact picker passed; affected heading routes running
+
+compact-picker-v1 FINISHED2/2PASS, guardb342094c4fd8, Python5472 retired. All34entries
+and ten representative PC sizes fit, numeric stat labels are absent, and the stats
+follow the description with an18-design-pixel gap. Darumadrop heading assertions
+pass in picker/skills/story views. Inspected current Maring and Phaister: grouped
+card, icon-only roster/categories, no stat fractions, save with its detail card.
+Added pale discs behind the dark category objects for contrast and a clearer filled
+arrowhead on the rotate glyph afterward; positions and gameplay contracts unchanged.
+
+RUNNING pc-headings-v1, Python14524, Logs/pc-headings-v1(.pid/.stdout/.stderr/.log/.xml),
+profile pc-heading-review. Four related cases: Play heading scale, preserved startup
+account/Terms flow, Classic HUD/round swap, and training sidebar. Terms now uses
+28px minimum reading/section text and is checked across ten PC sizes. Original
+login source remains unchanged. No imported edits until exit. Inspect failures and
+actual captures, then build fresh nativev8 and rerun the scoped Windows UI route.
+Do not stop after this checkpoint; all wider gameplay work remains active.
+
+## CURRENT compact picker/font qualification running
+
+The latest picker draft is now applied. Bar fractions are removed; stat labels
+retain Lydian. PLAY STYLE/HANDLING and picker action words use Darumadrop. Back,
+category tabs and rotate hint use recognizable icons, with explicit icon hover/
+focus feedback. Reading card content flows after measured text; Use Loadout stays
+with that card. Existing real portraits, models, save/Back/lore/skills are retained.
+Heading-specific Kawit callers were changed to Darumadrop across the PC UI, including
+Play, training, terms and round swap; old inactive counterparts were also corrected.
+Original login artwork/form/fonts remain protected. Central capture now checks
+semantic heading fonts, alongside the existing bounds/actual text checks.
+
+RUNNING guarded compact-picker-v1, Python5472, Logs/compact-picker-v1(.pid/.stdout/
+.stderr/.log/.xml), profile loadout-composition-review. Two real picker cases cover
+all34entries, category/Back/save, hero skills/lore and ten PC viewports; new checks
+require no numeric stat labels and no large description-to-stats gap. No imported
+edits until exit. Inspect the new card for height, icon focus and long descriptions.
+Then run only affected non-picker heading routes and a new native candidate.
+
+Frame comparison FINISHEDPASS, controller12076 and both native players retired.
+Every-frame result discovery made4942/5366 searches;10Hz made274/274. GC counters
+were198/83 versus196/81. No captured long frame aligned with a collection completion
+within one sample. Maxima40.0/43.3 versus36.7/33.3ms; the earlier123ms event did not
+recur. This does NOT establish its cause or a game-performance fix. Keep the cheaper
+diagnostic polling and evidence, and prioritize the owner's new visible correction.
+
+## CURRENT tighter picker and Darumadrop heading correction drafted
+
+Owner's new screenshot rejects the blank gap in the right card. ALL headings must
+use Darumadrop; PLAY STYLE's Kawit face is rejected. Keep Speed/Power/Grit's readable
+body font, remove numeric stat fractions and prefer meaningful icons. PC/Windows
+remains the focus. Current draft in Logs/compact-picker-draft, NOT YET IN ASSETS:
+TumpPickerView.Collection.cs, TumpPickerView.OwnerPainted.cs, OwnerUiGlyph.cs,
+OwnerTextAction.cs. It flows card height after actual description, moves Use Loadout
+into the compact card, removes stat numbers/status clutter, makes category/back/
+rotate controls iconic, uses Darumadrop on headings/actions, and preserves icon
+focus feedback. Initial text widths are explicitly set before measuring wrapping.
+Review/apply after the active native comparison exits, then qualify actual content
+and bounds. Also audit remaining heading-specific Kawit callers across PC UI.
+
+Nativev7 diagnostic build FINISHED1081MB/67s, guard5ee21ace71c5, Python6508 and
+Editor23676/import worker6748 retired. Comparison RUNNING via Python12076,
+Logs/demo-frame-comparison-v7(.pid/.stdout/.stderr), script Logs/run-frame-comparison.py.
+The old every-frame poll run FINISHEDPASS; timed-poll player19204 is running second.
+No C#/imported edits until that comparison exits. Read Logs/demo-frame-comparison-v7.json
+when complete; it is diagnostic timing/GC correlation only. Then return immediately
+to the new visible typography/icon/spacing request. Full queue remains active.
+
+## CURRENT long-frame measurement control; PC picker saved
+
+PC picker committed/pushede8f6f58e; nativev6 is the preserved current candidate.
+Found a measurement confound: OwnerUiPlayerReview waits for results by finding all
+scene Selectables every frame during its gameplay sample. New diagnostic default
+polls at10Hz; --frame-poll retains the old behavior for an equivalent-binary control.
+Per-frame structs record real/simulation time, round time and GC collection counts
+without per-frame strings/objects. No gameplay production behavior was changed.
+
+RUNNING guarded build-v7, Python6508, Logs/demo-native-build-v7(.pid/.stdout/.stderr/
+.log), profile demo-build-review. Artifact Builds/demo-2026-09-16-v7/TumbangPreso.exe.
+After exit, run protected tools/run_ui_player_review.py twice SEQUENTIALLY with
+fresh output/profile: Logs/demo-frame-poll-v7 plus --frame-poll, then
+Logs/demo-timed-poll-v7 without that flag. Avoid any concurrent Unity/player run.
+Compare poll/GC counts and timed outliers, not only averages. This is a measurement
+investigation, not a demonstrated game-performance fix. Preservev6 and all prior
+receipts. Continue pending casts/remaining visible gameplay after the scoped audit.
+
 ## CURRENT PC picker qualified in nativev6; save and continue
 
 Buildv6 FINISHED1081MB/46s, guard2dec32e60fc7. Native loop-v6 FINISHEDPASS,

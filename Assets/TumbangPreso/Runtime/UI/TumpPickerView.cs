@@ -165,7 +165,7 @@ namespace TumbangPreso.UI
             var picked = entries[_picks[_category]];
             _name.text = picked.Name; _description.text = _describe?.Invoke(picked.Id) ?? "";
             bool hero = _category == 0 && _mode == GameMode.HeroStrike;
-            _skills.gameObject.SetActive(hero); _stats.gameObject.SetActive(!hero);
+            _skills.gameObject.SetActive(hero); _stats.gameObject.SetActive(_category>0);
             _state.gameObject.SetActive(hero);
             TumpUiFactory.Anchor((RectTransform)_use.transform, new Vector2(hero ? .66f : .5f, 0),
                 new Vector2(0, 79), new Vector2(hero ? 520 : 550, 100));

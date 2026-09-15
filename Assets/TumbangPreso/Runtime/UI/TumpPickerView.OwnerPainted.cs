@@ -89,7 +89,7 @@ namespace TumbangPreso.UI
                 _categories[i].transform.Find("SelectedCategory").gameObject.SetActive(i==_category);
                 _categories[i].GetComponentInChildren<Text>().color=i==_category?OwnerUiTheme.Current.Lime:OwnerUiTheme.Current.Pale;
             }
-            _categories[0].GetComponentInChildren<Text>().text=_mode==GameMode.HeroStrike?"HEROES":"PEOPLE";
+
             var picked=entries[_picks[_category]];_name.text=picked.Name;_description.text=_describe?.Invoke(picked.Id)??"";
             bool hero=_category==0 && _mode==GameMode.HeroStrike;_skills.gameObject.SetActive(hero);_stats.gameObject.SetActive(!hero);
             var story=hero?OwnerCharacterStories.For(picked.Id):null;
@@ -97,10 +97,10 @@ namespace TumbangPreso.UI
             if(story!=null)
             {
                 _ownerOrigin.text=story.origin;_description.text=story.shortLine;
-                _ownerMeet.GetComponentInChildren<Text>().text="MEET "+picked.Name;
+                _ownerMeet.GetComponentInChildren<Text>().text="STORY";
             }
-            string[][] traits={new[]{"Speed","Power","Grit"},new[]{"Reset","Rebound","Stance"},new[]{"Flight","Impact","Recovery"}};
-            RefreshCollectionDetails(hero,traits[_category],new[]{picked.Bilis,picked.Lakas,picked.Tatag});
+            string[][] traits={Array.Empty<string>(),new[]{"Reset","Rebound","Stance"},new[]{"Flight","Impact","Recovery"}};
+            RefreshCollectionDetails(hero,traits[_category],_category>0?new[]{picked.Bilis,picked.Lakas,picked.Tatag}:null);
             var saved=Settings.SettingsStore.Current;
             _state.text=_picks[0]==saved.CharacterPick && _picks[1]==saved.CanPick && _picks[2]==saved.SlipperPick?"Your equipped loadout":"Previewing changes";
             var book=RosterBook.Load();var art=_category==0?book.PersonArt(_picks[0],_mode):_category==1?book.CanArt(_picks[1]):book.SlipperArt(_picks[2]);
