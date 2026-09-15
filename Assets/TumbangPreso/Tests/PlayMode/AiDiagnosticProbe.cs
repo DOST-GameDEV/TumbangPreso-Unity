@@ -525,6 +525,8 @@ namespace TumbangPreso.PlayTests
             private readonly Dictionary<int, string> _startAtCharge = new Dictionary<int, string>();
             private readonly Dictionary<int, int> _tagsBySlot = new Dictionary<int, int>();
             private readonly Dictionary<int, int> _tagsAtCharge = new Dictionary<int, int>();
+            private readonly Dictionary<int, int> _hitsWhileCharging = new Dictionary<int, int>();
+            private readonly Dictionary<int, int> _tagsWhileCharging = new Dictionary<int, int>();
             private RoundDirector _watched;
 
             private void Watch(RoundDirector round)
@@ -587,10 +589,18 @@ namespace TumbangPreso.PlayTests
                     bool cooling = taya.IsDefender && verbs.LungeCooldownLeft > 0.0f;
                     _cooling[slot] = cooling;
 
+                    // The collector and tag counts as of the previous sample: SweepLungeTag runs in the same
+                    // CombatVerbs.Update that releases, so a lunge that tags on its first live frame has already
+                    // been counted by the time this sample sees the cooldown edge.
                     if (cooling && !wasCooling && chargeFrames > 0)
                         _live.Add(Open(taya, verbs, ai, round, match, frame, chargeFrames, dt));
 
                     _charging[slot] = charging ? heldFrames : 0;
+                    if (charging)
+                    {
+                        _hitsWhileCharging[slot] = LungeHits(slot);
+                        _tagsWhileCharging[slot] = _tagsBySlot.TryGetValue(slot, out int tw) ? tw : 0;
+                    }
                 }
             }
 
@@ -633,10 +643,10 @@ namespace TumbangPreso.PlayTests
                 else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.Reason = "cone-release";
                 else l.Reason = "short-release";
 
-                l.HitsBefore = LungeHits(taya.PlayerSlot);
+                l.HitsBefore = _hitsWhileCharging.TryGetValue(taya.PlayerSlot, out int hb) ? hb : LungeHits(taya.PlayerSlot);
                 l.Start = _startAtCharge.TryGetValue(taya.PlayerSlot, out var s0) ? s0 : "-";
                 l.PunchCooldown = verbs.PunchCooldownLeft;
-                l.TagsDuringCharge = (_tagsBySlot.TryGetValue(taya.PlayerSlot, out int tn) ? tn : 0)
+                l.TagsDuringCharge = (_tagsWhileCharging.TryGetValue(taya.PlayerSlot, out int tn) ? tn : 0)
                                      - (_tagsAtCharge.TryGetValue(taya.PlayerSlot, out int t0) ? t0 : 0);
                 l.HeldAfter = ai != null ? (float)(typeof(AIController).GetField("_lungeHeld", Private)?.GetValue(ai) ?? 0.0f) : 0.0f;
                 return l;
