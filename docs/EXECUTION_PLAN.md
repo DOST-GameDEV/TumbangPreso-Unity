@@ -1,5 +1,10 @@
 # Active execution plan
 
+**Current visible task:** owner-rejected PC/Windows loadout composition. Icon-only
+roster, larger real model, grouped information and visual stats; preserve the
+existing action/save/lore contracts. See latest ledger. Networking preparation
+audit is bookmarked and no pending-windup production changes have been made.
+
 **Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
 changes priority, not scope. Secure a tested demo candidate, then continue the rest
 immediately as time allows, including before tomorrow. Do not stop at the candidate

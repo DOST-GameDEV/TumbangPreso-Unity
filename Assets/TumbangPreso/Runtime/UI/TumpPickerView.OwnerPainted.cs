@@ -93,18 +93,19 @@ namespace TumbangPreso.UI
             var picked=entries[_picks[_category]];_name.text=picked.Name;_description.text=_describe?.Invoke(picked.Id)??"";
             bool hero=_category==0 && _mode==GameMode.HeroStrike;_skills.gameObject.SetActive(hero);_stats.gameObject.SetActive(!hero);
             var story=hero?OwnerCharacterStories.For(picked.Id):null;
-            _ownerOrigin.gameObject.SetActive(story!=null);_ownerStoryLine.gameObject.SetActive(story!=null);_ownerMeet.gameObject.SetActive(story!=null);
+            _ownerOrigin.gameObject.SetActive(story!=null);_ownerMeet.gameObject.SetActive(story!=null);
             if(story!=null)
             {
-                _ownerOrigin.text=story.origin;_ownerStoryLine.text=story.shortLine;
+                _ownerOrigin.text=story.origin;_description.text=story.shortLine;
                 _ownerMeet.GetComponentInChildren<Text>().text="MEET "+picked.Name;
             }
             string[][] traits={new[]{"Speed","Power","Grit"},new[]{"Reset","Rebound","Stance"},new[]{"Flight","Impact","Recovery"}};
-            _stats.text=$"{traits[_category][0]}  {picked.Bilis}/{Roster.TraitMax}\n{traits[_category][1]}  {picked.Lakas}/{Roster.TraitMax}\n{traits[_category][2]}  {picked.Tatag}/{Roster.TraitMax}";
+            RefreshCollectionDetails(hero,traits[_category],new[]{picked.Bilis,picked.Lakas,picked.Tatag});
             var saved=Settings.SettingsStore.Current;
-            _state.text=_picks[0]==saved.CharacterPick && _picks[1]==saved.CanPick && _picks[2]==saved.SlipperPick?"Your equipped loadout":"Previewing · choose USE LOADOUT to keep it";
+            _state.text=_picks[0]==saved.CharacterPick && _picks[1]==saved.CanPick && _picks[2]==saved.SlipperPick?"Your equipped loadout":"Previewing changes";
             var book=RosterBook.Load();var art=_category==0?book.PersonArt(_picks[0],_mode):_category==1?book.CanArt(_picks[1]):book.SlipperArt(_picks[2]);
             _preview.ShowingSlipper=_category==2;_preview.Show(art.Model,art.Clips,art.Palette,art.PetModel);
+            _preview.SetTileFraming(.86f);
             PlaceCollection();
             _canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }

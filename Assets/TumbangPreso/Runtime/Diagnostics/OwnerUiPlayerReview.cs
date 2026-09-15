@@ -185,6 +185,47 @@ namespace TumbangPreso.Diagnostics
             Settings.SettingsStore.Current.ReducedUiMotion=before;yield return Click("BackButton");
             Stage("reduced text-action transition and steady state verified");
         }
+        private IEnumerator ReviewPcLoadout(bool hero)
+        {
+            yield return Click("LoadoutButton");
+            yield return WaitFor(()=>GameObject.Find("OwnerLoadoutCanvas")!=null);
+            string id=hero?"cheska":"maring";
+            yield return Click("Portrait_"+id);
+            var canvas=GameObject.Find("OwnerLoadoutCanvas").GetComponent<Canvas>();
+            foreach(var choice in canvas.GetComponentsInChildren<CollectionChoice>())
+                if(choice.GetComponentsInChildren<Text>(true).Length!=0)
+                    throw new InvalidOperationException("A roster tile repeats a character name.");
+            var preview=canvas.GetComponentInChildren<ModelPreview>();
+            var surface=preview.GetComponentInChildren<ModelPreviewInput>();
+            var point=RectTransformUtility.WorldToScreenPoint(null,((RectTransform)surface.transform).TransformPoint(((RectTransform)surface.transform).rect.center));
+            var pointer=new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left,position=point,delta=new Vector2(90,0)};
+            var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(pointer,hits);
+            if(hits.Count==0 || hits[0].gameObject!=surface.gameObject)
+                throw new InvalidOperationException("The loadout model cannot receive mouse dragging.");
+            var rotation=preview.PreviewCamera.transform.rotation;
+            ExecuteEvents.Execute(surface.gameObject,pointer,ExecuteEvents.dragHandler);
+            yield return new WaitForSecondsRealtime(.15f);
+            if(Quaternion.Angle(rotation,preview.PreviewCamera.transform.rotation)<1)
+                throw new InvalidOperationException("Dragging did not turn the preview camera.");
+            pointer.button=PointerEventData.InputButton.Right;
+            ExecuteEvents.Execute(surface.gameObject,pointer,ExecuteEvents.pointerClickHandler);
+            foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1366,768),new Vector2Int(1920,1080)})
+            {
+                Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);
+                yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
+                yield return Shot((hero?"Hero":"Classic")+"-loadout-"+size.x+"x"+size.y);
+            }
+            Screen.SetResolution(1366,768,FullScreenMode.Windowed);
+            yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
+            foreach(int category in new[]{1,2})
+            {
+                yield return Click("TumpCategory"+category);
+                yield return Shot((hero?"Hero":"Classic")+"-equipment-"+category);
+            }
+            yield return Click("TumpCategory0");
+            yield return Click("TumpUseLoadout");
+            Stage((hero?"Hero":"Classic")+" PC loadout, icon choices and mouse drag verified");
+        }
         private IEnumerator StartReadyRound()
         {
             yield return WaitFor(()=>Hud.Instance!=null&&GameServices.Round!=null);
@@ -221,6 +262,7 @@ namespace TumbangPreso.Diagnostics
                 Stage(mode+" prepare");yield return Click("StartButton");yield return Click(mode);yield return Click("PracticeButton");
                 yield return WaitFor(()=>GameObject.Find("OwnerPreparationCanvas")!=null);
                 yield return WaitFor(()=>UnityEngine.Object.FindFirstObjectByType<MapPreviewSurface>()?.GetComponent<RawImage>().texture!=null);
+                yield return ReviewPcLoadout(mode=="HeroStrikeButton");
                 if(SceneFlow.SelectedRules.Rounds!=8)throw new InvalidOperationException("The normal default is not eight rounds.");
                 yield return Shot(mode+"-setup");Stage(mode+" short custom rehearsal; normal default remains8");yield return Click("CustomGameButton");
                 var rounds=Core.CustomGameRules.MinRounds;

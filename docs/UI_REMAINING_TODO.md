@@ -1,3 +1,12 @@
+# Current owner revision: PC loadout composition
+
+The September15 loadout screenshot is explicitly rejected as bland with scattered
+text. Replace repeated roster names with portrait icons only. Enlarge the genuine
+3D preview, group selected identity/lore/handling, and use visual stat rows. Focus
+on PC/Windows window sizes and mouse/keyboard navigation. Keep selection/save/Back,
+hero skills and short/long lore. The D4 technical pass below is historical evidence,
+not owner acceptance of that composition. Original login remains protected.
+
 # UI reopened: owner hand-drawn theme
 
 **Owner clarification:** still try to complete the ENTIRE to-do list. Visibility

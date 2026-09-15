@@ -24,8 +24,13 @@ namespace TumbangPreso.PlayTests
             var choices = canvas.GetComponentsInChildren<Button>().Where(b => b.name.StartsWith("Portrait_")).ToArray();
             Assert.AreEqual(12, choices.Length);
             foreach (var choice in choices) Assert.IsNotNull(choice.transform.Find("PortraitCard/Portrait").GetComponent<Image>().sprite, choice.name);
+            foreach(var choice in choices)Assert.IsEmpty(choice.GetComponentsInChildren<Text>(true),"The roster must stay icon-only.");
             Assert.IsEmpty(canvas.GetComponentsInChildren<GodotButton>(true));
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
+            Canvas.ForceUpdateCanvases();
+            var spotlight=canvas.GetComponentInChildren<LoadoutCourtSpot>();
+            Assert.IsNotNull(spotlight.GetComponent<CanvasRenderer>(),"The collection stage needs its own UI renderer.");
+            Assert.Greater(spotlight.canvasRenderer.GetMesh()?.vertexCount??0,40,"The collection stage is visually absent.");
             int saved = Settings.SettingsStore.Current.CharacterPick;
             var candidate = Roster.ClassicPeople[(Mathf.Max(0, saved) + 1) % 12];
             Press(Find("Portrait_" + candidate.Id));

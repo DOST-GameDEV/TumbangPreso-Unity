@@ -1,5 +1,72 @@
 # Active TUMP rework ledger
 
+## CURRENT PC picker qualified in nativev6; save and continue
+
+Buildv6 FINISHED1081MB/46s, guard2dec32e60fc7. Native loop-v6 FINISHEDPASS,
+Python22420/player24124 retired. Real icon-only selection, mouse drag and save pass
+at960x540/1366x768/1920x1080 in both modes. Both custom matches reach results;
+Classic reloads the actual next map. Source/Editor ten-size coverage includes
+ultrawide and4K. No source models/palettes/rigs changed. Original login preserved.
+Report docs/reports/pc-loadout-2026-09-15. Runtime SHA256:
+3DB8FEA57ED3CEBA0C13EEEB23379F287B8B6C0724D59E00C847487C188A9B8E.
+DLL2026-09-15T07:07:07Z. Shared standalone input unchanged, prior native profile0.
+All owned Editor/player jobs are finished; no task browser/server was opened.
+
+This run's short gameplay sample averaged172.7/191.3FPS, p99 about10ms, but retains
+isolated40.0/123.3ms maxima. Do not call it hitch-free. After saving this visible
+batch, trace long frames with timing/GC/context before guessing a performance fix.
+Pending-windup audit is still source-only; Logs/pending-cast-next.md is its bounded
+next experiment. Full queue stays active, Inday deferred, expansion LAST LAST.
+
+## CURRENT icon-only PC picker passed Editor review; nativev6 building
+
+The new picker has an icon-only left roster, a larger central model on a dedicated
+clay court spotlight and one reading/stat card. Classic/equipment get visual
+five-step stat rows. Heroes keep short lore, origin and working skills/biography
+links. The selected name appears once. Save-state copy is shortened and grouped
+with the footer action. No character assets, colours or IDs were changed.
+
+loadout-composition-v1:1PASS/1FAIL due clipped long can description; guard2ca2f2538733.
+v2 compilation failed because a new assertion was inserted in the wrong test;
+guard8324abe77562. Corrected its location, increased the description area and
+added the missing CanvasRenderer to the new backdrop. The backdrop is now in its
+own LoadoutCourtSpot.cs file for player compatibility. v3 FINISHED2/2PASS:
+34actual entries, ten PC sizes for category representatives, real save/Back and
+hero story/skill routes. Guard847f3335d289; Python16748/Editor10624 retired.
+Inspected Maring, Totoy, Phaister and ultrawide slipper views. Revised Maring image
+shown in chat as in-engine evidence, not claimed as owner acceptance.
+
+RUNNING guarded nativev6 build, Python5356, Logs/demo-native-build-v6(.pid/.stdout/
+.stderr/.log), profile demo-build-review, Builds/demo-2026-09-16-v6/TumbangPreso.exe.
+OwnerUiPlayerReview now checks actual icon-only choices, reachable mouse dragging,
+and960x540/1366x768/1920x1080 windows before each mode's match. No imported edits
+until exit. Run tools/run_ui_player_review.py with fresh Logs/demo-native-loop-v6
+and matching profile after build; inspect exact built captures, then save/push.
+Ultrawide/4K are already checked through the real canvas capture, not this monitor.
+Continue the full queue afterward. No networking production edits have been made.
+
+## CURRENT owner reopens PC loadout composition
+
+Owner rejects the loadout picker as bland with scattered text. Explicitly focus
+on PC/Windows and remove repeated character names from roster choices: icons only.
+Implement larger centred model, icon roster and one grouped identity/stat/action
+area. Preserve every real model and portrait, selection/preview/save, Back and
+hero stories/skills. All PC viewport coverage remains required. No mobile redesign.
+
+Touch fix committed/pushedde9f6da0. Nativev5 build and UI loop FINISHEDPASS:
+build1081MB/46s, guard660f586c35dd, runtime SHA256
+2FE2F9F0CA42C7FD039D1937DB0BC4313E42618512689B8CF5B8654D0A28AB06.
+Build Python4664/Editor19356 and native Python7904/player15820 all retired.
+Logs/demo-native-loop-v5/runner-result.json confirms no shared input change and
+no prior profile files. v5 predates the newly requested picker design; v4 retained.
+
+Pending-cast audit remains SOURCE ONLY, no networking edits made: general snapshots
+omit accepted preparations for Dante stomp/fissure, Cheska Nova, Zack strike and
+Sean leap. Captured aim AND HeldSecondsOnCast matter for Zack. Nemu invocation
+also has bespoke anchor/approach state and cannot use a generic timer-only restore;
+Phaister already has its own Coven path. Resume after the visible picker request.
+Avoid replaying expired impacts, resources or ultimate introductions on hydration.
+
 ## CURRENT touch toolbar qualified; continuing the demo-first full queue
 
 Guarded touch-toolbar-position-v3 FINISHED1/1PASS, Python18164 and Editor12136

@@ -18,6 +18,11 @@ later supplies a different demo format.
 
 ### Visible demo priorities, in this order
 
+**Immediate owner revision:** PC/Windows loadout picker needs a stronger composition,
+a larger real model, an icon-only roster (no repeated character-name labels), and
+grouped information/visual stats. This is the current visible task. Save/Back,
+all categories, hero story/skills and PC-size checks must still pass.
+
 1. [x] **Fix visible blockers on the main route.** Resolve the missing Play heading
    reproduced at1366x768, then check startup, Guest, Play, selection, settings Back
    and starting a match. Preserve the approved original login. Keep normal matches

@@ -6,6 +6,20 @@ or Editor screenshots for a verified native demo build.
 
 ## Current evidence
 
+- Revised PC loadout now passes34entry/ten-size Editor checks and nativev6's
+  icon-only selection, mouse drag, save and both-mode routes at960x540/1366x768/
+  1920x1080. Selected identity appears once beside the enlarged model. The roster
+  contains portraits only. Original login/models are preserved. Human approval is
+  still pending; see reports/pc-loadout-2026-09-15.
+
+- Nativev5 includes display-pixel previews and movable touch tools and passed the
+  existing Windows UI/both-mode short-match/result/rematch loop. The owner has
+  since requested a new PC loadout composition, so v5 predates that revision.
+  No concurrent Unity/player job ran during v5's gameplay sample: at1366x768,
+  Classic171.8FPS/Hero186.1FPS averages and33.3/26.7ms maxima in roughly28s windows.
+  These short offline-bot samples do not qualify worst-case ability overlap or
+  all PCs. Owner playtest and the complete gameplay verbs remain open.
+
 - The rematch-map defect is fixed and qualified in nativev4. Both modes' real
   connected votes reload BayanPlaza on both processes and start the new round.
   The offline/native UI path also checks the actual next scene. Older candidates
@@ -79,8 +93,8 @@ or Editor screenshots for a verified native demo build.
 
 ## Candidate record to fill after qualification
 
-- Executable/data: Builds/demo-2026-09-16-v4/TumbangPreso.exe and its adjacent data folder.
-- Runtime SHA256:53565E945341C50C3AB8FA8ABA7F33DA8076D93B19E5980FCADE1877B92B5E7C.
+- Executable/data: Builds/demo-2026-09-16-v6/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:3DB8FEA57ED3CEBA0C13EEEB23379F287B8B6C0724D59E00C847487C188A9B8E.
 - Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
 - Nativev3 measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.

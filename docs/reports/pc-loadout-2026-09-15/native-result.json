@@ -1,0 +1,55 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "cold boot",
+        "normal home ink verified",
+        "settings and reduced motion",
+        "reduced home ink verified",
+        "reduced text-action transition and steady state verified",
+        "ClassicButton prepare",
+        "Classic PC loadout, icon choices and mouse drag verified",
+        "ClassicButton short custom rehearsal; normal default remains8",
+        "ClassicButton playing",
+        "ClassicButton waiting for real result",
+        "Classic real rematch",
+        "HeroStrikeButton prepare",
+        "Hero PC loadout, icon choices and mouse drag verified",
+        "HeroStrikeButton short custom rehearsal; normal default remains8",
+        "HeroStrikeButton playing",
+        "HeroStrikeButton waiting for real result",
+        "complete"
+    ],
+    "frameWindows": [
+        {
+            "mode": "ClassicButton",
+            "gpu": "AMD Radeon RX 6600",
+            "cpu": "AMD Ryzen 5 2600 Six-Core Processor ",
+            "width": 1366,
+            "height": 768,
+            "samples": 4872,
+            "framesOver33Ms": 2,
+            "duration": 28.251506805419923,
+            "averageFps": 172.6895751953125,
+            "medianMs": 6.653295040130615,
+            "p95Ms": 6.717800617218018,
+            "p99Ms": 10.036401748657227,
+            "maxMs": 40.0286979675293
+        },
+        {
+            "mode": "HeroStrikeButton",
+            "gpu": "AMD Radeon RX 6600",
+            "cpu": "AMD Ryzen 5 2600 Six-Core Processor ",
+            "width": 1366,
+            "height": 768,
+            "samples": 5408,
+            "framesOver33Ms": 4,
+            "duration": 28.276954650878908,
+            "averageFps": 191.34915161132813,
+            "medianMs": 6.628897666931152,
+            "p95Ms": 6.677402019500732,
+            "p99Ms": 9.982100486755371,
+            "maxMs": 123.31420135498047
+        }
+    ]
+}

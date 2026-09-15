@@ -1,5 +1,13 @@
 # Working instructions for ChatGPT / Codex
 
+**Latest visible priority, September15:** improve the loadout picker shown by the
+owner. Its tiny model and scattered text feel bland. Focus on the PC/Windows
+version and responsive PC windows. Roster choices must be ICONS ONLY, with no
+character-name labels repeated on the tiles. Keep the selected identity in its
+single detail area, enlarge the real preview and organize stats visually. Preserve
+models, selection/save/Back, hero stories and skills. This steers the full ongoing
+queue; pending-windup networking is bookmarked, not abandoned.
+
 **Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
 changes priority, not scope. Secure a tested demo candidate, then continue the rest
 immediately as time allows, including before tomorrow. Do not stop at the candidate
