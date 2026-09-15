@@ -1,5 +1,42 @@
 # Active TUMP rework ledger
 
+## CURRENT default hero presentation review running; direct connection passed
+
+LAN-v1 FINISHEDPASS, Python17148 and both owned players18044/9200 retired. Both
+reported protocol37/Eskinita/HeroStrike/active round2/defender1, structural0589B31D.
+Client exits after its105s report; host samples at118s and shows normal bot takeover.
+Scores/travel totals are therefore not simultaneous comparisons. Shared input
+unchanged, no prior named-profile files. Report docs/reports/demo-lan-2026-09-15.
+This is local two-process evidence, not physical venue Wi-Fi or a LAN rematch test.
+
+RUNNING guarded Editor Python21732, Logs/demo-hero-defaults-v1
+(.pid/.stdout/.stderr/.log/.xml), profile demo-hero-defaults-review.
+TUMP_EVIDENCE=Logs/demo-hero-defaults-v1. Existing EveryHeroActionThroughTheRealPressAndRelease
+case now has an explicit600s timeout for18default slots. Hero/slot/variant filters
+cleared; ISOLATED=1 allows lingering fields to expire, MOVING_SPRINT=1,
+EMPOWERED_THROW=1 and MOVING_GUARD=1 exercise actual follow-through. No familiar-only
+witness flag. Expected6heroes x3slots; inspect hero-coverage.csv and actual owner/body
+clips before calling the presentation acceptable. No imported edits until exit.
+The full queue and demo-first ordering remain active.
+
+## CURRENT moving guide concern closed; direct LAN round progression running
+
+Nemu checkpoint committed/pushed9a209578. Guide-motion-v1/v2 FINISHED1/1 each,
+Python15532/2608 retired, restorations3e0af88575e4/c3d884c2cad7. Actual movement and
+held right spin were sampled through full charge. All four final samples have432
+vertices/37points and the short0.24s nominal horizon; full charge contributes658
+visible pixels at1280x720. No blocking collider or disappearance reproduced. Kept
+production guide/accuracy untouched. Report docs/reports/demo-moving-guide-2026-09-15.
+
+RUNNING Python17148, tools/run_demo_lan.py, Logs/demo-lan-v1(.pid/.stdout/.stderr)
+and output folder. Uses preserved internal nativev2 (D1617378...Runtime.dll), two
+isolated profiles demo-lan-v1-host/client, explicit host/join and batch mode to skip
+UGS sign-in. Direct loopback,105seconds, expected Hero Strike default session and
+both peers reaching round2. The wrapper preserves profiles/shared input, hides only
+owned players and verifies the exact fresh output path before calling the older
+matrix runner. It does not run the full latency/disconnect matrix. Consume result,
+preservation receipt and reports next. No Editor is currently running.
+
 ## CURRENT Nemu palms and throws qualified; checkpoint then visible aiming/skills
 
 Nemu throw case FINISHED1/1PASS, Python21520 retired, restoration287b170f60ba.

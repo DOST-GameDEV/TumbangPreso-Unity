@@ -142,6 +142,51 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest]
+        public IEnumerator MovingNemuGuideContributesVisiblePixelsDuringARealHeldThrow()
+        {
+            string output=Environment.GetEnvironmentVariable("TUMP_AIM_GUIDE_REVIEW")??"Logs/aim-guide-motion-v1";
+            Directory.CreateDirectory(output);
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza,GameMode.HeroStrike);
+            NetAuthority.Provider=new SoloProvider();GameServices.Round.BeginRound();
+            var who=GameServices.Round.PlayerAt(1);var carrier=who.GetComponent<Carrier>();
+            who.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"nemu");
+            var art=RosterBook.Load().PersonArt(who.CharacterIndex,GameMode.HeroStrike);
+            who.GetComponent<Visual.CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            who.AbilitySystem.BindHero("nemu");who.Teleport(new Vector3(0,.12f,-10));who.transform.rotation=Quaternion.identity;
+            who.Intent.Clear();who.Intent.Parked=false;
+            var rig=Object.FindFirstObjectByType<CameraSystem.CameraRig>();rig.Follow(who);rig.SetAimSource(CameraSystem.AimSource.Movement);
+            var guide=GameObject.Find($"~AimArc{who.PlayerSlot}").GetComponent<TrajectoryPreview>();
+            var notes=new List<string>();var sampleTimes=new[]{1.4f,2.1f,2.8f,3.15f};
+            float start=Time.realtimeSinceStartup;int sample=0;
+            try
+            {
+                while(Time.realtimeSinceStartup-start<3.6f)
+                {
+                    float t=Time.realtimeSinceStartup-start;
+                    who.Intent.Move=new Vector2(.6f,0);who.Intent.AimPoint=new Vector3(2,.18f,0);who.Intent.FaceAimPoint=true;
+                    who.Intent.SpinInput=.75f;who.Intent.Set(Verb.SpecialAbility,t>=.5f);
+                    yield return null;
+                    if(sample>=sampleTimes.Length || t<sampleTimes[sample])continue;
+                    yield return GameplayShots.Render(rig.Camera,"motion-"+sample,false,output);
+                    var path=(List<Vector3>)typeof(TrajectoryPreview).GetField("_path",Private).GetValue(guide);
+                    var renderer=guide.GetComponent<MeshRenderer>();var mesh=guide.GetComponent<MeshFilter>().sharedMesh;
+                    var tail=path.Count>1?path[path.Count-1]:Vector3.zero;string blocker="none";
+                    if(path.Count>1)
+                    {
+                        var delta=tail-path[path.Count-2];
+                        if(Physics.Linecast(path[path.Count-2],tail+delta.normalized*.06f,out var hit,~0,QueryTriggerInteraction.Ignore))blocker=hit.collider.name;
+                    }
+                    notes.Add($"sample={sample} t={t:F3} skin={carrier.Held?.SkinIndex} charge={carrier.IsCharging} power={carrier.ChargeRatio:F3} guide={renderer.enabled} vertices={mesh.vertexCount} points={path.Count} confidence={carrier.AimGuideConfidence:F3} horizon={carrier.AimGuideHorizon:F3} origin={carrier.AimGuideOrigin()} tail={tail} blocker={blocker}");
+                    File.WriteAllLines(Path.Combine(output,"state.txt"),notes);
+                    Assert.True(carrier.IsCharging);Assert.True(renderer.enabled);
+                    CaptureGuideDifference(rig.Camera,guide,output,"motion-"+sample);sample++;
+                }
+                Assert.AreEqual(sampleTimes.Length,sample);
+            }
+            finally{who.Intent.Clear();File.WriteAllLines(Path.Combine(output,"state.txt"),notes);}
+        }
+
         private static void CaptureGuideDifference(Camera camera,TrajectoryPreview guide,string folder,string name)
         {
             const int width=1280,height=720;

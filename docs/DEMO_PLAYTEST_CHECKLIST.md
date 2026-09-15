@@ -20,6 +20,9 @@ or Editor screenshots for a verified native demo build.
   checks. This newer source correction still needs inclusion in the next native build.
 - Hero/gameplay reports qualify their named cases only. Whole-kit ordinary play,
   device feel and the owner's visual approval remain separate.
+- A direct two-process Hero Strike connection passed into round2 with matching
+  protocol/map/defender/structural state and clean client departure/bot takeover.
+  Physical two-PC LAN, rematch/rejoin and venue Wi-Fi are still unverified.
 
 ## First visible checks when the owner returns
 

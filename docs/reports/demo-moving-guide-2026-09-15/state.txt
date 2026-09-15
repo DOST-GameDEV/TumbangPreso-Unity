@@ -1,0 +1,4 @@
+sample=0 t=1.401 skin=-1 charge=True power=0.397 guide=True vertices=432 points=37 confidence=0.000 horizon=0.240 origin=(3.90, 1.41, -9.85) tail=(3.10, 0.49, -7.32) blocker=none
+sample=1 t=2.101 skin=-1 charge=True power=0.643 guide=True vertices=432 points=37 confidence=0.000 horizon=0.240 origin=(5.48, 1.41, -9.86) tail=(4.21, 2.52, -7.21) blocker=none
+sample=2 t=2.801 skin=-1 charge=True power=0.911 guide=True vertices=432 points=37 confidence=0.000 horizon=0.240 origin=(7.26, 1.42, -9.87) tail=(5.11, 1.99, -6.50) blocker=none
+sample=3 t=3.207 skin=-1 charge=True power=1.000 guide=True vertices=432 points=37 confidence=0.000 horizon=0.240 origin=(8.21, 1.42, -9.87) tail=(5.66, 1.93, -6.41) blocker=none
