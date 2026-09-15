@@ -1,5 +1,11 @@
 # Active execution plan
 
+**Latest small visual pass:** Sean fire debris uses smaller fractured ember chips,
+with final real-press owner/body render PASS1/1 and inspected landing frames.
+See reports/sean-ember-polish-2026-09-16. No model/gesture/gameplay change; nativev37
+predates it. Keep work saved/pushed and continue the remaining authorized queue.
+
+
 **Latest spectator checkpoint:** Windowsv37 passes actual entry/camera controls/
 POV item restoration/manual replay plus4:3and ultrawide capture proportions.
 Local replay Escape and known-actor regressions also pass2/2. See

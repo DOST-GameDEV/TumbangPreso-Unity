@@ -1,5 +1,13 @@
 # TODO: Tumbang Preso Unity
 
+**Sean debris polish:** oversized square fire debris in the owner landing view is
+replaced by smaller angular ember chips. Original model, gesture, timing, core,
+footprint and other styles remain. Focused real-press render passed and owner/body
+frames were inspected; nativev37 predates this small source change. See
+[Sean ember review](reports/sean-ember-polish-2026-09-16/README.md). Whole-kit and
+human play-feel acceptance remain open.
+
+
 **Spectator/control/replay pass qualified:** real Watch instead entry, POV held-item
 visibility/restoration, free-flight/autopilot/manual-cut cleanup, bookmark/recall,
 paused camera movement, actual manual replay, Escape ownership, scorer captions,

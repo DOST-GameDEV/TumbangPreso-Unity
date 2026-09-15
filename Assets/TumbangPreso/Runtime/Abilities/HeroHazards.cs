@@ -4112,12 +4112,14 @@ namespace TumbangPreso.Abilities
             int shards = Mathf.Clamp(Mathf.RoundToInt(look.DebrisCount * (radius / 3.0f)), 4, 22);
             for (int i = 0; i < shards; i++)
             {
-                var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                var spark = style == ExplosionStyle.Fire
+                    ? SeanBurstEmber.Create() : GameObject.CreatePrimitive(PrimitiveType.Cube);
                 spark.name = "ExplosionSpark";
                 spark.transform.position = center + Vector3.up * 0.5f;
                 spark.transform.localScale = Vector3.one
                     * Random.Range(look.DebrisSize.x, look.DebrisSize.y)
                     * Mathf.Clamp(radius / 3.0f, 0.7f, 1.6f);
+                if (style == ExplosionStyle.Fire) spark.transform.localScale *= .55f;
                 spark.transform.rotation = Random.rotation;
 
                 VfxMaterial.Ghost(spark.GetComponent<Renderer>(), look.DebrisColour(), 0.9f);

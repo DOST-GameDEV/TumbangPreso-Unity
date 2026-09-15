@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current task: continue remaining backlog from qualified spectator checkpoint
+## Current task: Sean ember polish qualified; publish and continue
 
 Owner is asleep/AFK. Continue the full authorized queue after checkpoints. NEVER
 use usage resets or reset credits. No optional questions, Figma, paid fallback,
@@ -9,7 +9,28 @@ ASTRAReworks. C4 request-safety files remain reserved to the separate Claude PC.
 
 Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Paths/PIDs from this PC must be rediscovered on any other PC. Last verified pushed
-commit: 977f28996fa409329d7199cf3b35a3a4229b1204 (spectator/replay fixes).
+commit: 6392b8e9c1b63d90030871d15097053e302ad879 (reconciled live plans).
+
+### Completed Sean review
+
+- Existing real-press hero capture restricted to Sean slot3. This reviews the
+  previously noted coarse close-up embers, not a wholesale kit/model replacement.
+- Output Logs/sean-ultimate-close-review-v1; log/XML share that basename.
+  TUMP_EVIDENCE selects that folder; TUMP_REVIEW_HERO=sean,
+  TUMP_REVIEW_SKILL_SLOT=3, TUMP_REVIEW_ISOLATED=1.
+- Baseline capture PASS1/1, guard7ed998ae3c35; inspected owner/body landing frames.
+  Large square ExplosionSpark debris is visible close to the owner. VfxMaterial.Ghost
+  already strips colliders, so no physics-collider fix is needed or authorized by
+  this finding. Added a small Fire-only cached angular ember mesh and .55scale;
+  random calls, velocities, lifetime, core, footprint and other styles unchanged.
+- Final render comparison: Logs/sean-ultimate-close-review-v3 PASS1/1,
+  guard7d85f8a3a886. Inward winding in the intermediate mesh was corrected. Owner/
+  body landing/recovery frames inspected; reviewed large foreground block removed.
+  All jobs stopped. Report: reports/sean-ember-polish-2026-09-16. Nativev37 predates
+  this small visual-only source change. Publish source/evidence, continue backlog.
+- No imported edits while capture runs. Inspect complete owner/body frames and
+  actual effect source before making a visual change. Preserve grounded impact,
+  original rig/gesture, aim and world-field contracts. C4 files remain reserved.
 
 ### Qualified spectator operation
 
@@ -62,7 +83,7 @@ commit: 977f28996fa409329d7199cf3b35a3a4229b1204 (spectator/replay fixes).
 
 ### Next actions
 
-1. Preserve the qualified spectator batch and verify remote HEAD. Do not repeat the
+1. Publish the qualified Sean ember batch and verify remote HEAD. Do not repeat the
    completed close-feedback or spectator cases without new changes/concerns.
 2. Restore only proven
    test-generated whitespace after owned jobs finish; preserve all real edits.
