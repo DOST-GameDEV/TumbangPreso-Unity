@@ -1,0 +1,198 @@
+{
+  "ok": false,
+  "errors": [
+    "duplicate carapace cast x2: client never sent it",
+    "stomp cast x3 in one frame: client never sent it",
+    "stomp cast 4 after windup: client never sent it",
+    "stomp cast 5 with no charge: client never sent it",
+    "duplicate punch x2: client never sent it",
+    "duplicate lunge x2: client never sent it",
+    "wrong-role shove as taya: client never sent it",
+    "stale-seat punch claiming seat 0: client never sent it",
+    "legitimate punch input: client never sent it",
+    "legitimate lunge input: client never sent it",
+    "legitimate stomp input: client never sent it"
+  ],
+  "cases": [
+    {
+      "case": "stale-seat grab claiming seat 2",
+      "round": 1,
+      "client_elapsed": 7.0,
+      "host_samples": 1211,
+      "checks": {
+        "seat 2 carry unchanged": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "shoe never held by seat 2": {
+          "ok": true,
+          "measured": [
+            -1.0
+          ]
+        },
+        "shoe stays loose": {
+          "ok": true,
+          "measured": [
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate grab x2",
+      "round": 1,
+      "client_elapsed": 8.0,
+      "host_samples": 1859,
+      "checks": {
+        "one retrieval counted": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "held by seat 1": {
+          "ok": true,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate throw x2",
+      "round": 1,
+      "client_elapsed": 10.0,
+      "host_samples": 1846,
+      "checks": {
+        "one throw counted": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "hand empty afterwards": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "held before": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "stale-seat shove claiming seat 2",
+      "round": 1,
+      "client_elapsed": 11.5,
+      "host_samples": 741,
+      "checks": {
+        "no shove attempt": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no refusal sent (bare return)": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no stamina spent on seat 1": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "wrong-role punch as attacker",
+      "round": 1,
+      "client_elapsed": 12.0,
+      "host_samples": 1222,
+      "checks": {
+        "one punch refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "no punch cooldown stamped": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "duplicate shove x2",
+      "round": 1,
+      "client_elapsed": 13.0,
+      "host_samples": 1768,
+      "checks": {
+        "one shove attempt": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "one shove refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "stamina spent once": {
+          "ok": true,
+          "measured": 1
+        },
+        "cooldown stamped once": {
+          "ok": true,
+          "measured": 1
+        }
+      }
+    },
+    {
+      "case": "duplicate slide x2",
+      "round": 1,
+      "client_elapsed": 17.0,
+      "host_samples": 2180,
+      "checks": {
+        "not holding before": {
+          "ok": true,
+          "measured": [
+            0.0,
+            0.0
+          ]
+        },
+        "one slide refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "stamina spent once": {
+          "ok": true,
+          "measured": 1
+        },
+        "cooldown stamped once": {
+          "ok": true,
+          "measured": 1
+        },
+        "one retrieval counted": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "handover",
+      "left_at_round1_elapsed": 17.5,
+      "rejoined_reclaimed_seat_1": true,
+      "rejoined_rows": 6710
+    },
+    {
+      "case": "refusal tallies",
+      "host": {
+        "denPunch": 1.0,
+        "denLunge": 0.0,
+        "denShove": 1.0,
+        "denSlide": 1.0
+      },
+      "client": {
+        "denPunch": 1.0,
+        "denLunge": 0.0,
+        "denShove": 1.0,
+        "denSlide": 1.0
+      }
+    }
+  ],
+  "delay_one_way_ms": 0.0,
+  "handover": true,
+  "leave_at": 17.5,
+  "platform": "darwin",
+  "runtime_sha256": "789cadc1cb1e6793767f7614bff81d7d96d85499e14a6d7b574fcea505efef74"
+}

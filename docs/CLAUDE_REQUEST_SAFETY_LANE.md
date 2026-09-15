@@ -1,7 +1,7 @@
 # Reserved request-safety work for the separate Claude PC
 
-Owner requested another non-animation assignment on2026-09-15. Status: RESERVED,
-NOT STARTED. This is a manual handoff; no agent or other chat has been contacted.
+Owner requested another non-animation assignment on2026-09-15. Status: IN PROGRESS,
+C4.1 complete, C4.2 and C4.3 open (see the progress log). This is a manual handoff; no agent or other chat has been contacted.
 The existing C1/C2/C3 reservation and its remaining historical limits stay separate.
 
 Repository: https://github.com/DOST-GameDEV/TumbangPreso-Unity.git
@@ -13,7 +13,7 @@ GitHub access; never copy another person's credentials, saves or profile directo
 
 ## C4: TODO149.4 remaining request safety
 
-- [ ] **C4.1 Inventory and reproduce.** Trace the current remaining gameplay action
+- [x] **C4.1 Inventory and reproduce.** Trace the current remaining gameplay action
   requests and their replies: throw/grab/shove/punch/lunge/retrieval slide and hero
   cast/refusal. Record sender admission, claimed-seat ownership, round/session
   boundaries, readiness/cooldown/resource guards, side effects and duplicate behavior.
@@ -93,6 +93,43 @@ these files. The existing implemented skills and art are preserved.
    resets, Figma, external account creation or Desktop-build replacement.
 
 ## Progress log
+
+2026-09-15, Claude on the separate PC (macOS, Apple silicon; StandaloneOSX players only).
+Started from ASTRAReworks `86e12e71`, clean, protocol 42; `3c944e85` (menu artwork) was
+fast-forwarded in before publishing. Evidence and the full inventory table:
+[claude-request-safety-2026-09-15](reports/claude-request-safety-2026-09-15/README.md).
+
+- **C4.1 done.** Every listed request was traced from producer to host side effect:
+  admission (`SenderOwnsClaimedSeat`), pose/finite checks, the `HostResolve*` / `CanThrow` /
+  `CanBeGrabbedBy` / `HeroKit.Fire` guards, where each resource is spent, what a duplicate
+  meets, and the stale seat, role and round cases. All host guards check before they stamp or
+  spend. Then measured, not assumed, with `tools/net_request_safety.py` and
+  `Runtime/Diagnostics/NetRequestSafetyProbe.cs`: two real player processes, duplicated,
+  stale-seat and wrong-role requests sent through the game's own request methods, plus the
+  legitimate input path. v6 arms all PASS: two matches joined by a real rematch (21 + 21
+  cases), 75 ms each way (21), and a mid-match quit with seat reclaim (17, four skipped by
+  design). Earlier failures are preserved with their causes (evaluator windows, a client-side
+  `IsWarmupBuffer` gate in the fixture).
+- **C4.2 open, and no production file was changed.** No host-side defect was demonstrated,
+  so no guard or identifier was justified. Three client-side limitations were found by trace
+  and not reproduced, recorded as F1 to F3 in the report: a refusal carries no cast identity
+  so it can cancel a newer prediction of the same slot (fix needs a `ReqAbility`/`CastDenied`
+  sequence, a protocol bump, and a refund-only path in excluded `HeroAbility`), a refused free
+  reactivation refunds a charge (excluded `HeroAbility.RollBackPredictedCast` /
+  `HeroKit.Fire`), and a refused host cast still writes `HeldSecondsOnCast` (excluded
+  `HeroAbilitySystem.ApplyNetworkCast`, modified client only). Remaining work: reproduce F1 and
+  F2 with real peers before any change, with the owner of the excluded ability files.
+- **C4.3 open.** Done: focused real-peer regressions for duplicates, stale seats, wrong roles,
+  the round boundary, a match boundary and a seat reclaim, with the legitimate path and the
+  refusal tallies checked. Not done: a torn-down and re-hosted session, a killed (not quit)
+  client, a loss/outage link, and any Windows player run. No wire format changed, so no
+  compatibility test was needed.
+- Outside C4, recorded for their owners: F4, a reclaimed seat reads `IsWarmupBuffer = true`
+  through the next live round (skip prompt over live play expected on that peer); F5,
+  `tools/audit_wire_finite.py` is red on HEAD for `OnWorldFieldItemMsg` although
+  `WorldEffectSnapshot` validates the same fields; F6, every Mac build rewrites 22 tracked
+  animation/meta files (restored each time, never committed).
+
 
 2026-09-15: Reserved at owner request. No C4 work has begun in this assignment.
 The owner will copy the prompt manually to the other PC/account.

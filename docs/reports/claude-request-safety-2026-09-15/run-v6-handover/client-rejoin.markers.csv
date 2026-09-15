@@ -1,0 +1,9 @@
+real,local,match,round,elapsed,name
+18.6179,1,1,2,0.000,staged
+21.1177,1,1,2,7.000,duplicate punch x2
+23.1176,1,1,2,9.000,duplicate lunge x2
+25.1729,1,1,2,11.000,wrong-role shove as taya
+26.1730,1,1,2,12.000,stale-seat punch claiming seat 0
+28.1736,1,1,2,14.000,legitimate punch input
+30.1736,1,1,2,16.000,legitimate lunge input
+33.1724,1,1,2,19.000,legitimate stomp input

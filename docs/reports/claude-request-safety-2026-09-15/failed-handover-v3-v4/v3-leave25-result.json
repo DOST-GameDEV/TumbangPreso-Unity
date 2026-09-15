@@ -1,0 +1,273 @@
+{
+  "ok": false,
+  "errors": [
+    "duplicate punch x2: client never sent it",
+    "duplicate lunge x2: client never sent it",
+    "wrong-role shove as taya: client never sent it",
+    "stale-seat punch claiming seat 0: client never sent it",
+    "legitimate punch input: client never sent it",
+    "legitimate lunge input: client never sent it",
+    "legitimate stomp input: client never sent it"
+  ],
+  "cases": [
+    {
+      "case": "stale-seat grab claiming seat 2",
+      "round": 1,
+      "client_elapsed": 7.0,
+      "host_samples": 1581,
+      "checks": {
+        "seat 2 carry unchanged": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "shoe never held by seat 2": {
+          "ok": true,
+          "measured": [
+            -1.0
+          ]
+        },
+        "shoe stays loose": {
+          "ok": true,
+          "measured": [
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate grab x2",
+      "round": 1,
+      "client_elapsed": 8.0,
+      "host_samples": 2496,
+      "checks": {
+        "one retrieval counted": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "held by seat 1": {
+          "ok": true,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate throw x2",
+      "round": 1,
+      "client_elapsed": 10.0,
+      "host_samples": 2509,
+      "checks": {
+        "one throw counted": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "hand empty afterwards": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "held before": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "stale-seat shove claiming seat 2",
+      "round": 1,
+      "client_elapsed": 11.5,
+      "host_samples": 950,
+      "checks": {
+        "no shove attempt": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no refusal sent (bare return)": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no stamina spent on seat 1": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "wrong-role punch as attacker",
+      "round": 1,
+      "client_elapsed": 12.0,
+      "host_samples": 1526,
+      "checks": {
+        "one punch refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "no punch cooldown stamped": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "duplicate shove x2",
+      "round": 1,
+      "client_elapsed": 13.0,
+      "host_samples": 2287,
+      "checks": {
+        "one shove attempt": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "one shove refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "stamina spent once": {
+          "ok": true,
+          "measured": 1
+        },
+        "cooldown stamped once": {
+          "ok": true,
+          "measured": 1
+        }
+      }
+    },
+    {
+      "case": "duplicate slide x2",
+      "round": 1,
+      "client_elapsed": 17.0,
+      "host_samples": 2335,
+      "checks": {
+        "not holding before": {
+          "ok": true,
+          "measured": [
+            0.0,
+            0.0
+          ]
+        },
+        "one slide refusal": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "stamina spent once": {
+          "ok": true,
+          "measured": 1
+        },
+        "cooldown stamped once": {
+          "ok": true,
+          "measured": 1
+        },
+        "one retrieval counted": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "duplicate carapace cast x2",
+      "round": 1,
+      "client_elapsed": 19.5,
+      "host_samples": 2462,
+      "checks": {
+        "cooldown stamped once": {
+          "ok": true,
+          "measured": 1
+        },
+        "cooldown never re-armed after the stamp": {
+          "ok": true,
+          "measured": 62.0
+        },
+        "active": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "stomp cast x3 in one frame",
+      "round": 1,
+      "client_elapsed": 21.0,
+      "host_samples": 1874,
+      "checks": {
+        "two charges before": {
+          "ok": true,
+          "measured": 2.0
+        },
+        "exactly one charge spent": {
+          "ok": true,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        },
+        "one windup": {
+          "ok": true,
+          "measured": 1
+        }
+      }
+    },
+    {
+      "case": "stomp cast 4 after windup",
+      "round": 1,
+      "client_elapsed": 22.501,
+      "host_samples": 1903,
+      "checks": {
+        "second charge spent once": {
+          "ok": true,
+          "measured": [
+            1.0,
+            0.0
+          ]
+        },
+        "one windup": {
+          "ok": true,
+          "measured": 1
+        }
+      }
+    },
+    {
+      "case": "stomp cast 5 with no charge",
+      "round": 1,
+      "client_elapsed": 24.001,
+      "host_samples": 1984,
+      "checks": {
+        "charges stay at zero, never negative": {
+          "ok": true,
+          "measured": [
+            0.0
+          ]
+        },
+        "no windup": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "handover",
+      "left_at_round1_elapsed": 25.001,
+      "rejoined_reclaimed_seat_1": true,
+      "rejoined_rows": 1146
+    },
+    {
+      "case": "refusal tallies",
+      "host": {
+        "denPunch": 1.0,
+        "denLunge": 0.0,
+        "denShove": 1.0,
+        "denSlide": 1.0
+      },
+      "client": {
+        "denPunch": 1.0,
+        "denLunge": 0.0,
+        "denShove": 1.0,
+        "denSlide": 1.0
+      }
+    }
+  ],
+  "delay_one_way_ms": 0.0,
+  "handover": true,
+  "platform": "darwin",
+  "runtime_sha256": "b0e6f6a0f2a51f162811e8a115fd833a2060dbc45170475dbd343038678b2c3e"
+}

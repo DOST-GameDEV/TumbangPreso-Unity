@@ -1,0 +1,419 @@
+{
+  "ok": false,
+  "errors": [
+    "stale-seat grab claiming seat 2: seat 2 never holds measured 1.0",
+    "duplicate grab x2: one retrieval counted measured 0.0",
+    "duplicate throw x2: one throw counted measured 0.0",
+    "duplicate throw x2: held before measured 0.0",
+    "wrong-role punch as attacker: one punch refusal measured 0.0",
+    "duplicate shove x2: one shove attempt measured 0.0",
+    "duplicate shove x2: one shove refusal measured 0.0",
+    "duplicate shove x2: stamina spent once measured 0",
+    "duplicate shove x2: cooldown stamped once measured 0",
+    "duplicate slide x2: not holding before measured (1.0, 1.0)",
+    "duplicate slide x2: one slide refusal measured 0.0",
+    "duplicate slide x2: stamina spent once measured 0",
+    "duplicate slide x2: cooldown stamped once measured 0",
+    "duplicate slide x2: one retrieval counted measured 0.0",
+    "duplicate carapace cast x2: cooldown stamped once measured 0",
+    "stomp cast x3 in one frame: two charges before measured 1.0",
+    "stomp cast x3 in one frame: one windup measured 0",
+    "stomp cast 4 after windup: second charge spent once measured (0.0, 0.0)",
+    "stomp cast 4 after windup: one windup measured 0",
+    "duplicate punch x2: cooldown stamped once measured 0",
+    "duplicate punch x2: one punch refusal measured 0.0",
+    "duplicate lunge x2: one lunge attempt measured 0.0",
+    "duplicate lunge x2: one lunge refusal measured 0.0",
+    "duplicate lunge x2: cooldown stamped once measured 0",
+    "wrong-role shove as taya: one shove refusal measured 0.0",
+    "legitimate punch input: accepted, cooldown stamped once measured 0",
+    "legitimate stomp input: one charge spent measured (1.0, 1.0)",
+    "legitimate stomp input: one windup measured 0"
+  ],
+  "cases": [
+    {
+      "case": "stale-seat grab claiming seat 2",
+      "round": 1,
+      "client_elapsed": 7.0,
+      "host_samples": 1274,
+      "checks": {
+        "seat 2 never holds": {
+          "ok": false,
+          "measured": 1.0
+        },
+        "shoe never held by seat 2": {
+          "ok": true,
+          "measured": [
+            -1.0
+          ]
+        },
+        "shoe stays loose": {
+          "ok": true,
+          "measured": [
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate grab x2",
+      "round": 1,
+      "client_elapsed": 8.0,
+      "host_samples": 2146,
+      "checks": {
+        "one retrieval counted": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "held by seat 1": {
+          "ok": true,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    {
+      "case": "duplicate throw x2",
+      "round": 1,
+      "client_elapsed": 10.0,
+      "host_samples": 2052,
+      "checks": {
+        "one throw counted": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "hand empty afterwards": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "held before": {
+          "ok": false,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "stale-seat shove claiming seat 2",
+      "round": 1,
+      "client_elapsed": 11.5,
+      "host_samples": 649,
+      "checks": {
+        "no shove attempt": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no refusal sent (bare return)": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no stamina spent on seat 1": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "wrong-role punch as attacker",
+      "round": 1,
+      "client_elapsed": 12.0,
+      "host_samples": 1264,
+      "checks": {
+        "one punch refusal": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "no punch cooldown stamped": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "duplicate shove x2",
+      "round": 1,
+      "client_elapsed": 13.0,
+      "host_samples": 2034,
+      "checks": {
+        "one shove attempt": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "one shove refusal": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "stamina spent once": {
+          "ok": false,
+          "measured": 0
+        },
+        "cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "duplicate slide x2",
+      "round": 1,
+      "client_elapsed": 17.0,
+      "host_samples": 2061,
+      "checks": {
+        "not holding before": {
+          "ok": false,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        },
+        "one slide refusal": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "stamina spent once": {
+          "ok": false,
+          "measured": 0
+        },
+        "cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        },
+        "one retrieval counted": {
+          "ok": false,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "duplicate carapace cast x2",
+      "round": 1,
+      "client_elapsed": 19.5,
+      "host_samples": 2050,
+      "checks": {
+        "cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        },
+        "cooldown never re-armed upward": {
+          "ok": true,
+          "measured": null
+        },
+        "active": {
+          "ok": true,
+          "measured": 1.0
+        }
+      }
+    },
+    {
+      "case": "stomp cast x3 in one frame",
+      "round": 1,
+      "client_elapsed": 21.0,
+      "host_samples": 1547,
+      "checks": {
+        "two charges before": {
+          "ok": false,
+          "measured": 1.0
+        },
+        "exactly one charge spent": {
+          "ok": true,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        },
+        "one windup": {
+          "ok": false,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "stomp cast 4 after windup",
+      "round": 1,
+      "client_elapsed": 22.501,
+      "host_samples": 1582,
+      "checks": {
+        "second charge spent once": {
+          "ok": false,
+          "measured": [
+            0.0,
+            0.0
+          ]
+        },
+        "one windup": {
+          "ok": false,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "stomp cast 5 with no charge",
+      "round": 1,
+      "client_elapsed": 24.001,
+      "host_samples": 1710,
+      "checks": {
+        "charges stay at zero, never negative": {
+          "ok": true,
+          "measured": [
+            0.0
+          ]
+        },
+        "no windup": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "duplicate punch x2",
+      "round": 2,
+      "client_elapsed": 7.0,
+      "host_samples": 1032,
+      "checks": {
+        "seat 1 is the taya": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        },
+        "one punch refusal": {
+          "ok": false,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "duplicate lunge x2",
+      "round": 2,
+      "client_elapsed": 9.0,
+      "host_samples": 1788,
+      "checks": {
+        "one lunge attempt": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "one lunge refusal": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "wrong-role shove as taya",
+      "round": 2,
+      "client_elapsed": 11.0,
+      "host_samples": 1296,
+      "checks": {
+        "one shove refusal": {
+          "ok": false,
+          "measured": 0.0
+        },
+        "no shove attempt": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no stamina spent": {
+          "ok": true,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "stale-seat punch claiming seat 0",
+      "round": 2,
+      "client_elapsed": 12.0,
+      "host_samples": 1281,
+      "checks": {
+        "seat 0 cooldown untouched": {
+          "ok": true,
+          "measured": 0.0
+        },
+        "no refusal sent (bare return)": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "legitimate punch input",
+      "round": 2,
+      "client_elapsed": 14.0,
+      "host_samples": 1098,
+      "checks": {
+        "accepted, cooldown stamped once": {
+          "ok": false,
+          "measured": 0
+        },
+        "not refused": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "legitimate lunge input",
+      "round": 2,
+      "client_elapsed": 16.0,
+      "host_samples": 1816,
+      "checks": {
+        "accepted once": {
+          "ok": true,
+          "measured": 1.0
+        },
+        "not refused": {
+          "ok": true,
+          "measured": 0.0
+        }
+      }
+    },
+    {
+      "case": "legitimate stomp input",
+      "round": 2,
+      "client_elapsed": 19.0,
+      "host_samples": 1564,
+      "checks": {
+        "one charge spent": {
+          "ok": false,
+          "measured": [
+            1.0,
+            1.0
+          ]
+        },
+        "one windup": {
+          "ok": false,
+          "measured": 0
+        }
+      }
+    },
+    {
+      "case": "refusal tallies",
+      "host": {
+        "denPunch": 2.0,
+        "denLunge": 1.0,
+        "denShove": 2.0,
+        "denSlide": 1.0
+      },
+      "client": {
+        "denPunch": 2.0,
+        "denLunge": 1.0,
+        "denShove": 2.0,
+        "denSlide": 1.0
+      }
+    },
+    {
+      "case": "owner agrees after legitimate stomp",
+      "host": 1.0,
+      "client": 1.0
+    }
+  ],
+  "delay_one_way_ms": 0.0,
+  "platform": "darwin",
+  "runtime_sha256": "b7548fd951da982adaa496de19ce2f58e72a0e20076257442af7798bf8ee506e"
+}
