@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.4132286">
+  <test-suite type="TestSuite" id="1541" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.413229" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1535" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.397511" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.392942" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1537" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="412" result="Failed" site="Child" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.388616" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1237" name="ModelPreviewPixelTests" fullname="TumbangPreso.PlayTests.ModelPreviewPixelTests" classname="TumbangPreso.PlayTests.ModelPreviewPixelTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.371807" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1238" name="PreviewTargetTracksPhysicalCanvasPixelsWithoutChangingAspect" fullname="TumbangPreso.PlayTests.ModelPreviewPixelTests.PreviewTargetTracksPhysicalCanvasPixelsWithoutChangingAspect" methodname="PreviewTargetTracksPhysicalCanvasPixelsWithoutChangingAspect" classname="TumbangPreso.PlayTests.ModelPreviewPixelTests" runstate="Runnable" seed="841917623" result="Failed" start-time="2026-09-15 06:19:57Z" end-time="2026-09-15 06:19:58Z" duration="0.353994" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Preview resolution ignored the real display scale.
+  Expected: 1199.9998779296875d +/- 2.0d
+  But was:  600.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ModelPreviewPixelTests+<PreviewTargetTracksPhysicalCanvasPixelsWithoutChangingAspect>d__2.MoveNext () [0x0025f] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewPixelTests.cs:35
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

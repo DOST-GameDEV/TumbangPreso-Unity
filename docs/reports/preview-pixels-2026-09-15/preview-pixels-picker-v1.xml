@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.9016152">
+  <test-suite type="TestSuite" id="1541" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.901615" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1535" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.883827" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21888" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.875560" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1537" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="412" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.867452" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1476" name="TumpNativePickerTests" fullname="TumbangPreso.PlayTests.TumpNativePickerTests" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.845761" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1477" name="RealPortraitsDriveSelectionAndPreviewDoesNotSave" fullname="TumbangPreso.PlayTests.TumpNativePickerTests.RealPortraitsDriveSelectionAndPreviewDoesNotSave" methodname="RealPortraitsDriveSelectionAndPreviewDoesNotSave" classname="TumbangPreso.PlayTests.TumpNativePickerTests" runstate="Runnable" seed="1641642768" result="Passed" start-time="2026-09-15 06:23:43Z" end-time="2026-09-15 06:24:06Z" duration="22.825682" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] Collection-people-960x540/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-960x540 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-1280x720/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-1280x720 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-1366x768/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-1366x768 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-1920x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-1920x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-1920x1200/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-1920x1200 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-1280x960/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-1280x960 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-2560x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-2560x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-3440x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-3440x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-3840x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-3840x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-people-3840x2160/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-people-3840x2160 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-bayan/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-person-bayan cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-maring/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-person-maring cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-totoy/SelectedCheck: vertices=8, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] Collection-person-totoy cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-inday/SelectedCheck: vertices=8, cull=False, alpha=1, depth=32, material=1
+[TumpUiCapture] Collection-person-inday cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-kuya_boy/SelectedCheck: vertices=8, cull=False, alpha=1, depth=36, material=1
+[TumpUiCapture] Collection-person-kuya_boy cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-ate_girlie/SelectedCheck: vertices=8, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Collection-person-ate_girlie cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-tikboy/SelectedCheck: vertices=8, cull=False, alpha=1, depth=44, material=1
+[TumpUiCapture] Collection-person-tikboy cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-bebang/SelectedCheck: vertices=8, cull=False, alpha=1, depth=48, material=1
+[TumpUiCapture] Collection-person-bebang cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-jun_jun/SelectedCheck: vertices=8, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] Collection-person-jun_jun cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-lola_pacing/SelectedCheck: vertices=8, cull=False, alpha=1, depth=56, material=1
+[TumpUiCapture] Collection-person-lola_pacing cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-mang_kanor/SelectedCheck: vertices=8, cull=False, alpha=1, depth=60, material=1
+[TumpUiCapture] Collection-person-mang_kanor cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-person-aling_nena/SelectedCheck: vertices=8, cull=False, alpha=1, depth=64, material=1
+[TumpUiCapture] Collection-person-aling_nena cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-960x540/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-960x540 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-1280x720/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-1280x720 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-1366x768/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-1366x768 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-1920x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-1920x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-1920x1200/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-1920x1200 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-1280x960/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-1280x960 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-2560x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-2560x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-3440x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-3440x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-3840x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-3840x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category1-3840x2160/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category1-3840x2160 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-pasip/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-item-pasip cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-boyben/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-item-boyben cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-decades/SelectedCheck: vertices=8, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] Collection-item-decades cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-metal/SelectedCheck: vertices=8, cull=False, alpha=1, depth=32, material=1
+[TumpUiCapture] Collection-item-metal cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-piyesta/SelectedCheck: vertices=8, cull=False, alpha=1, depth=36, material=1
+[TumpUiCapture] Collection-item-piyesta cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-karne/SelectedCheck: vertices=8, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Collection-item-karne cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-960x540/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-960x540 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-1280x720/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-1280x720 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-1366x768/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-1366x768 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-1920x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-1920x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-1920x1200/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-1920x1200 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-1280x960/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-1280x960 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-2560x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-2560x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-3440x1440/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-3440x1440 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-3840x1080/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-3840x1080 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-category2-3840x2160/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-category2-3840x2160 cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-tsinelas/SelectedCheck: vertices=8, cull=False, alpha=1, depth=20, material=1
+[TumpUiCapture] Collection-item-tsinelas cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-crocs/SelectedCheck: vertices=8, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] Collection-item-crocs cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-pantulog/SelectedCheck: vertices=8, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] Collection-item-pantulog cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-sike/SelectedCheck: vertices=8, cull=False, alpha=1, depth=32, material=1
+[TumpUiCapture] Collection-item-sike cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-spartan/SelectedCheck: vertices=8, cull=False, alpha=1, depth=36, material=1
+[TumpUiCapture] Collection-item-spartan cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-alpombra/SelectedCheck: vertices=8, cull=False, alpha=1, depth=40, material=1
+[TumpUiCapture] Collection-item-alpombra cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-pambahay/SelectedCheck: vertices=8, cull=False, alpha=1, depth=44, material=1
+[TumpUiCapture] Collection-item-pambahay cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-heels/SelectedCheck: vertices=8, cull=False, alpha=1, depth=48, material=1
+[TumpUiCapture] Collection-item-heels cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-sandals/SelectedCheck: vertices=8, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] Collection-item-sandals cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+[TumpGeometry] Collection-item-loafers/SelectedCheck: vertices=8, cull=False, alpha=1, depth=56, material=1
+[TumpUiCapture] Collection-item-loafers cream source=252,211,159 pixel=74,48,38; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

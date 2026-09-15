@@ -1,5 +1,35 @@
 # Active TUMP rework ledger
 
+## CURRENT preview scale fix qualified; touch-tool overlap next
+
+Actual picker check FINISHED1/1PASS, Python5516 retired, restoration32f484be137c.
+People/cans/slippers retain preview/save/cancel behavior and ten-size captures.
+4K images inspected for framing; direct sizing regression proves physical target
+resolution. Report docs/reports/preview-pixels-2026-09-15. No owned Unity/player
+job remains. Save/push this scoped update; preserved nativev4 predates it.
+
+Next visible UI defect is the expanded touch toolbar covering upper controls.
+Plan a native above/below toolbar placement control, leaving the full touch canvas
+and saved coordinates unchanged. Verify that covered touch controls become reachable
+by moving the toolbar, along with existing Save/Cancel behavior and PC-size bounds.
+Then continue the full remaining backlog in the demo-first order.
+
+## CURRENT preview display-pixel correction being checked in the real picker
+
+Rematch fix committed/pushed2eb39c3e. Preserved nativev4 remains the tested demo
+candidate. Preview-pixels baseline FAILED as expected: a1200-screen-pixel panel
+still had a600px render target. Python6708 retired, restoration9e522dbb082e.
+ModelPreview now derives display scale from projected panel corners, retains the
+authored aspect and uniform2048cap, and releases/destroys replaced owned textures.
+Focused scale/cap regression FINISHED1/1PASS, Python20588 retired,
+restoration333d2d3fd101. This does not change character art or framing policy.
+
+Now running the existing real picker selection/save/return and ten-size capture
+case, logs Logs/preview-pixels-picker-v1(.pid/.stdout/.stderr/.log/.xml), profile
+preview-pixels-review. No imported edits until exit. Inspect actual4K character/
+equipment images next, then save the scoped correction and continue the full queue.
+Nativev4 does not yet contain this preview update.
+
 ## CURRENT corrected native v4 fully passed its scoped rematch checks
 
 Hero peer rematch FINISHEDPASS, Python24132 and owned players retired. Both modes

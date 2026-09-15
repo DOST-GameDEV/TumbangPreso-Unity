@@ -250,6 +250,7 @@ namespace TumbangPreso.UI
         private RenderTexture _texture;
         private RawImage _surface;
         private RectTransform _panel;
+        private readonly Vector3[] _panelCorners=new Vector3[4];
         private Transform _pivot;
         private GameObject _model;
 
@@ -565,13 +566,32 @@ namespace TumbangPreso.UI
 
             if (rect.width < 1.0f || rect.height < 1.0f) return;
 
+            var displaySize=rect.size;
+            var canvas=_surface!=null?_surface.canvas:null;
+            if(canvas!=null)
+            {
+                var root=canvas.rootCanvas;
+                var view=root.renderMode==RenderMode.ScreenSpaceOverlay?null:root.worldCamera;
+                if(root.renderMode==RenderMode.ScreenSpaceOverlay || view!=null)
+                {
+                    _panel.GetWorldCorners(_panelCorners);
+                    var bottom=RectTransformUtility.WorldToScreenPoint(view,_panelCorners[0]);
+                    float pixelsWide=Vector2.Distance(bottom,RectTransformUtility.WorldToScreenPoint(view,_panelCorners[3]));
+                    float pixelsHigh=Vector2.Distance(bottom,RectTransformUtility.WorldToScreenPoint(view,_panelCorners[1]));
+                    // Preserve the authored panel aspect while allocating enough actual
+                    // display pixels, including canvas and parent scaling on high-DPI views.
+                    float pixelScale=Mathf.Max(pixelsWide/rect.width,pixelsHigh/rect.height);
+                    if(pixelScale>0 && !float.IsNaN(pixelScale) && !float.IsInfinity(pixelScale))displaySize*=pixelScale;
+                }
+            }
+
             // Cap memory without ever clamping one axis independently. On a 2560x1440 monitor
             // the old code produced 2048x1440, changed the camera from 16:9 to 64:45, and then
             // stretched that texture back across a 16:9 panel. That is a literal wide-character
             // distortion at the resolutions where the new fullscreen build is meant to run.
-            float scale = Mathf.Min(1.0f, 2048.0f / Mathf.Max(rect.width, rect.height));
-            int width = Mathf.Max(64, Mathf.RoundToInt(rect.width * scale));
-            int height = Mathf.Max(64, Mathf.RoundToInt(rect.height * scale));
+            float scale = Mathf.Min(1.0f, 2048.0f / Mathf.Max(displaySize.x, displaySize.y));
+            int width = Mathf.Max(64, Mathf.RoundToInt(displaySize.x * scale));
+            int height = Mathf.Max(64, Mathf.RoundToInt(displaySize.y * scale));
 
             if (_texture != null && _texture.width == width && _texture.height == height) return;
 
@@ -595,7 +615,7 @@ namespace TumbangPreso.UI
             // is not enough; the aspect has to be re-derived.
             _camera.aspect = (float)width / height;
 
-            if (old != null) old.Release();
+            if (old != null) { old.Release();Destroy(old); }
 
             _frameAspect = (float)width / height;
             _needsFrame = true;
@@ -1181,7 +1201,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
-            if (_texture != null) _texture.Release();
+            if (_texture != null) { _texture.Release();Destroy(_texture); }
             if (_pivot != null) Destroy(_pivot.gameObject);
 
             RestoreAmbient();
