@@ -13,7 +13,7 @@ namespace TumbangPreso.UI
         public void Build(Transform root)
         {
             _deck=OwnerUiLayout.Rect(root,"PowerSeals");
-            _deck.anchorMin=_deck.anchorMax=_deck.pivot=new Vector2(.5f,0);_deck.anchoredPosition=new Vector2(0,20);_deck.sizeDelta=new Vector2(470,194);
+            _deck.anchorMin=_deck.anchorMax=_deck.pivot=new Vector2(.5f,0);_deck.anchoredPosition=new Vector2(0,34);_deck.sizeDelta=new Vector2(470,212);
             for(int i=0;i<3;i++)
             {
                 float size=i==2?116:98;
@@ -28,11 +28,11 @@ namespace TumbangPreso.UI
                 _keyGlyphs[i]=OwnerUiLayout.Rect(_keys[i].transform,"BindingGlyph").gameObject.AddComponent<Image>();
                 _keyGlyphs[i].preserveAspect=true;_keyGlyphs[i].raycastTarget=false;OwnerUiLayout.Fill(_keyGlyphs[i].rectTransform);
                 _keyGlyphs[i].rectTransform.offsetMin=new Vector2(5,5);_keyGlyphs[i].rectTransform.offsetMax=new Vector2(-5,-5);
-                _states[i]=OwnerUiLayout.Text(_ownerDials[i].transform,"PowerState","",27,OwnerUiLayout.TypeRole.Display);
+                _states[i]=OwnerUiLayout.Text(_ownerDials[i].transform,"PowerState","",28,OwnerUiLayout.TypeRole.Display);
                 _states[i].color=OwnerUiTheme.Current.Pale;_states[i].alignment=TextAnchor.MiddleCenter;OwnerUiLayout.Fill(_states[i].rectTransform);
             }
-            _hint=OwnerUiLayout.Text(_deck,"PowerInfoBinding","",23);_hint.color=OwnerUiTheme.Current.Pale;_hint.alignment=TextAnchor.MiddleCenter;
-            OwnerUiLayout.Place(_hint.rectTransform,-70,171,590,42);
+            _hint=OwnerUiLayout.Text(_deck,"PowerInfoBinding","",28);_hint.color=OwnerUiTheme.Current.Pale;_hint.alignment=TextAnchor.MiddleCenter;
+            OwnerUiLayout.Place(_hint.rectTransform,-70,173,590,49);
             var outline=_hint.gameObject.AddComponent<Outline>();outline.effectColor=OwnerUiTheme.Current.DeepInk;outline.effectDistance=new Vector2(1,-1);
             BuildDetails(root);
             var asset=Resources.Load<InputActionAsset>("TumbangPreso");_inspect=asset?.FindActionMap("Player",false)?.FindAction("AbilityInfo",false);_inspect?.Enable();

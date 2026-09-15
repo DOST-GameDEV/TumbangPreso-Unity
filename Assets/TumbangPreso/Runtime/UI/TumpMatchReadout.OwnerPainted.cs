@@ -5,7 +5,7 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpMatchReadout
     {
-        public void Build(Transform owner)
+        private void BuildPreviousPaintedHud(Transform owner)
         {
             Canvas=OwnerUiLayout.Canvas(owner,"OwnerMatchCanvas",100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled=false;_root=(RectTransform)Canvas.transform;

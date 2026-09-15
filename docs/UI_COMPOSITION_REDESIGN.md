@@ -1,5 +1,11 @@
 # UI composition redesign from the original layout studies
 
+**D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
+related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
+no production camera or source-model change. Report: reports/ui-composition-d7.
+Next results/round changes/chat/training/remaining UI, U8 and the gameplay bookmark.
+
+
 **D6 checkpoint:** distinct custom match/room slate and read-only authority views
 qualified across ten PC sizes. Report: reports/ui-composition-d6. Next match HUD,
 pause/results and remaining UI, then U8 and the whole gameplay bookmark. Protected

@@ -176,7 +176,12 @@ namespace TumbangPreso.PlayTests
                 var watcher = Object.FindFirstObjectByType<PauseWatcher>();
                 var pause = Panel.Open<PausePanel>(watcher); pause.Local = watcher.Local; yield return null;
                 Assert.IsTrue(pause.Local.Intent.Parked);
-                yield return TumpUiCapture.Capture("OwnerPause-v1", GameObject.Find("OwnerPauseCanvas").GetComponent<Canvas>(), 1920, 1080, false, true);
+                foreach (var size in TumpUiCapture.PcViewports)
+                {
+                    TumpUiCapture.StageHudReview(pause.Local);
+                    yield return TumpUiCapture.Capture("LivePause-" + size.x + "x" + size.y,
+                        GameObject.Find("OwnerPauseCanvas").GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+                }
                 Press(Find("PauseSettings")); yield return null;
                 var settings = Object.FindFirstObjectByType<TumpSettingsView>(); settings.ShowSection(4); yield return null;
                 pauseAction.ApplyBindingOverride(binding, "<Keyboard>/escape"); Rebinding.Invalidate();

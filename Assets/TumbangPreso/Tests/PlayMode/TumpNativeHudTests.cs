@@ -25,14 +25,16 @@ namespace TumbangPreso.PlayTests
                 "A sprite reference alone is not a visible portrait.");
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
-            yield return TumpUiCapture.Capture("OwnerHud-Classic-v1", canvas, 1920, 1080, false, true);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("CourtHud-Classic-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, true, checkActionBounds: true);
             bool before = local.IsDefender; local.IsDefender = true; yield return null;
             Assert.AreEqual("Defender", canvas.GetComponentsInChildren<Text>().First(t => t.name == "LocalRole").text);
             local.IsDefender = before;
             local.ApplyFallRecovery(); yield return null;
             var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
             Assert.That(prompt.text.ToLowerInvariant(), Does.Contain("get up").Or.Contain("getting up"));
-            yield return TumpUiCapture.Capture("OwnerHud-recovery-v1", canvas, 1280, 720, false, true);
+            yield return TumpUiCapture.Capture("CourtHud-recovery", canvas, 960, 540, false, true, checkActionBounds: true);
             local.ClearTrip();
             hud.ShowToast("Slipper returning · 10.0s", 1); yield return null;
             Assert.IsTrue(canvas.GetComponentsInChildren<Text>().First(t => t.name == "MatchToast").enabled);
@@ -70,13 +72,17 @@ namespace TumbangPreso.PlayTests
                 }
                 finally{setter.Invoke(kit.Skill1,new object[]{duration});}
                 yield return null;
-                yield return TumpUiCapture.Capture("OwnerHud-held-skills-v1", canvas, 1280, 720, false, true);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("CourtHud-held-skills-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, true, checkActionBounds: true);
             }
             finally { readout.CloseCapture(); }
             hud.EnterSpectatorMode(); yield return null;
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
             Assert.IsFalse(canvas.transform.Find("LocalState").gameObject.activeSelf);
-            yield return TumpUiCapture.Capture("OwnerHud-spectator-v1", canvas, 1280, 960, false, true);
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("CourtHud-spectator-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, true, checkActionBounds: true);
             hud.SetCleanFeed(true); Assert.IsFalse(canvas.gameObject.activeSelf);
             hud.SetCleanFeed(false); Assert.IsTrue(canvas.gameObject.activeSelf);
             hud.ExitSpectatorMode(); yield return null;
@@ -90,6 +96,8 @@ namespace TumbangPreso.PlayTests
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSecondsRealtime(3.7f);
             Assert.IsNotNull(Hud.Instance);
+            TumpUiCapture.StageHudReview(GameServices.Round.PlayerAt(GameLaunch.SoloSeat));
+            yield return null;
         }
     }
 }

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 02:17:13Z" end-time="2026-09-15 02:17:42Z" duration="28.5688119">
+  <test-suite type="TestSuite" id="1529" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 02:17:13Z" end-time="2026-09-15 02:17:42Z" duration="28.568812" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1523" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 02:17:13Z" end-time="2026-09-15 02:17:42Z" duration="28.549774" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8052" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1524" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 02:17:13Z" end-time="2026-09-15 02:17:42Z" duration="28.539469" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1525" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 02:17:13Z" end-time="2026-09-15 02:17:42Z" duration="28.529544" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1460" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 02:17:14Z" end-time="2026-09-15 02:17:37Z" duration="23.436782" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1461" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1632356929" result="Passed" start-time="2026-09-15 02:17:14Z" end-time="2026-09-15 02:17:24Z" duration="10.785897" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-recovery/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-recovery/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=31,30,18; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerRoundSwap-v1/StandingsPaper: vertices=110, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] OwnerRoundSwap-v1 cream source=252,211,159 pixel=238,110,75; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1462" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1478210526" result="Passed" start-time="2026-09-15 02:17:24Z" end-time="2026-09-15 02:17:37Z" duration="12.633533" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerHud-Hero-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] OwnerHud-Hero-v1 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1474" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 02:17:37Z" end-time="2026-09-15 02:17:42Z" duration="5.072175" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1478" name="PauseEscapeRespectsChildSettingsDiscardAndReturn" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.PauseEscapeRespectsChildSettingsDiscardAndReturn" methodname="PauseEscapeRespectsChildSettingsDiscardAndReturn" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="510519401" result="Passed" start-time="2026-09-15 02:17:37Z" end-time="2026-09-15 02:17:42Z" duration="5.069404" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] LivePause-960x540 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1280x720 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1366x768 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1920x1080 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1920x1200 cream source=252,211,159 pixel=165,171,171; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1280x960 cream source=252,211,159 pixel=161,169,171; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-2560x1440 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3440x1440 cream source=252,211,159 pixel=174,174,169; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3840x1080 cream source=252,211,159 pixel=93,78,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3840x2160 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[OwnerPauseCancel] frame=7242 dirty=True nav=True keyboard=True enabled=True performed=True blocked=True bindings=*/{Cancel}
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

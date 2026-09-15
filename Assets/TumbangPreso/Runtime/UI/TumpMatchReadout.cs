@@ -160,7 +160,7 @@ namespace TumbangPreso.UI
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.HintInk : OwnerUiTheme.Current.ActionInk;
+            _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Pale;
             _round.text = match.IsWarmupBuffer ? "Warm up · Scores paused" : $"Round {Mathf.Max(1, match.RoundNumber)} / {match.TotalRounds}";
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }

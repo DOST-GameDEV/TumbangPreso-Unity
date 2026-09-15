@@ -1,5 +1,45 @@
 # Active TUMP rework ledger
 
+## CURRENT D7 qualified; results and round changes next
+
+HUD-v2 FINISHED3/3PASS, restorationf18fbbdc4e93; Python12268 retired. Actual clear
+world/HUD/held-info/pause screenshots inspected. Report: reports/ui-composition-d7.
+No Unity/image/build/player/browser jobs. D7 uncommitted on64526f27; next save/push.
+
+HUD-v1's obstructing face was a nearby bot, not failed local-body self-hide. Probe
+showed local actor1 body/head ShadowsOnly and correct FPP camera; hiding only nearby
+actor2 removed the obstruction. Diagnostic-only hidden image is not final evidence.
+Normal ScreenCapture unavailable in Editor batch. Diagnostic runs retired: Python24292
+receipt0a939feb512a and Python9272 receiptcdd56c800843. Probe source moved out of Assets
+to Logs/hud-camera-diagnostics. Final StageHudReview is test-only: parks and spaces
+nearby bots, keeping every model visible. CameraRig/gameplay/source models unchanged.
+
+Next results draft at Logs/ui-drafts/MatchResult.FinishSheet.cs (not imported yet),
+then round-swap/chat/training and remaining UI. TumpRoundSwapView, MatchResult data
+adapters/tests and initial training UI have been read. Keep all four participants,
+ties, rematch/map-vote/progression and social boundaries. Original login/controller
+art protected. U8 native routes/motion/physical preview size and full gameplay follow.
+
+
+## CURRENT D7 match HUD and live pause qualification
+
+D6 committed/pushed64526f27. New TumpMatchReadout.CourtHud and PausePanel.LiveMenu
+use readable supporting text, lighter score strips/simple timer and a side menu
+that leaves more of the live court visible. Held power reference is a more compact
+dark continuous strip; state/binding descriptions stay native and data-driven.
+Original gameplay, aiming/trajectory, role/recovery/spectator and ability authority
+remain unchanged. The match still runs while its menu parks local input.
+
+RUNNING guarded hud-v1, Python21272, Logs/ui-composition-hud-v1
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-hud-review. Three related
+cases: Classic HUD/role/recovery, Hero held info/spectator clean feed, and nested
+pause/settings/Escape. Live HUD, held reference, spectator and pause use ten PC
+sizes; smaller recovery capture included. No imported edits until Editor exits.
+D7 uncommitted on64526f27. No image/player/browser job. Next inspect XML/receipt/
+actual world-composited captures and fix visible issues, then results/round change/
+chat/training and remaining UI. Protected login/controller art unchanged. U8 and
+full gameplay bookmark still follow; no physical device certification claimed.
+
 ## CURRENT D6 qualified; match presentation next
 
 Rules-v1 FINISHED2/2PASS, restoration8415a3529ffa; Python13384 retired. Actual

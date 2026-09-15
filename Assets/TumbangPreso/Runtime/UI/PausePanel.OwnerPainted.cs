@@ -5,14 +5,14 @@ namespace TumbangPreso.UI
 {
     public sealed partial class PausePanel
     {
-        protected override Canvas CreateCanvas()
+        private Canvas CreatePreviousPaintedCanvas()
         {
             var canvas=OwnerUiLayout.Canvas(transform,"OwnerPauseCanvas",500);
             var dim=OwnerUiLayout.Rect(canvas.transform,"MatchDim").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(dim.rectTransform);var ink=OwnerUiTheme.Current.DeepInk;dim.color=new Color(ink.r,ink.g,ink.b,.77f);
             return canvas;
         }
-        protected override void Build()
+        private void BuildPreviousPaintedPause()
         {
             var sheet=OwnerUiLayout.Rect(Canvas.transform,"MatchMenuPaper").gameObject.AddComponent<OwnerUiPaper>();sheet.Style=OwnerUiPaper.Treatment.Dialog;
             sheet.rectTransform.anchorMin=sheet.rectTransform.anchorMax=sheet.rectTransform.pivot=new Vector2(.5f,.5f);

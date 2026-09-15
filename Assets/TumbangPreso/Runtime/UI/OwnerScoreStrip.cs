@@ -10,7 +10,7 @@ namespace TumbangPreso.UI
         protected override void OnPopulateMesh(VertexHelper helper)
         {
             helper.Clear();var rect=GetPixelAdjustedRect();var theme=OwnerUiTheme.Current;
-            var ink=theme.DeepInk;ink.a=.93f;
+            var ink=(Color)new Color32(25,40,31,210);
             var points=new[]{new Vector2(rect.xMin+8,rect.yMax),new Vector2(rect.xMax-13,rect.yMax-2),
                 new Vector2(rect.xMax,rect.yMax-12),new Vector2(rect.xMax-6,rect.yMin+6),
                 new Vector2(rect.xMin+5,rect.yMin),new Vector2(rect.xMin,rect.yMax-12)};

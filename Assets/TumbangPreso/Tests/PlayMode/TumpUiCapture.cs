@@ -11,6 +11,20 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
+        internal static void StageHudReview(CharacterMotor local)
+        {
+            // This is only a UI review fixture. A nearby chibi head otherwise
+            // covers the camera while leftover bot input keeps moving the crowd.
+            // Keep every model visible and use real arena actors at a clear distance.
+            foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
+            foreach (var actor in Object.FindObjectsByType<CharacterMotor>())
+            {
+                if (actor == local) continue;
+                actor.Intent.Parked = true;
+                if (local != null && Vector3.Distance(actor.transform.position, local.transform.position) < 4)
+                    actor.Teleport(new Vector3(actor.PlayerSlot % 2 == 0 ? -5 : 5, actor.transform.position.y, 2));
+            }
+        }
         private static bool OutsideScrollMask(RectTransform target)
         {
             var corners = new Vector3[4]; target.GetWorldCorners(corners);
@@ -98,7 +112,8 @@ namespace TumbangPreso.PlayTests
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
                         || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface
-                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace || graphic is UI.ProfileIndexTab;
+                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace || graphic is UI.ProfileIndexTab
+                        || graphic is UI.OwnerScoreStrip || graphic is UI.OwnerAbilitySeal;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
