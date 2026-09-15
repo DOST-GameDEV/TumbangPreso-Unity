@@ -866,7 +866,14 @@ namespace TumbangPreso
                 // ⚠️⚠️ AND SOMEBODY ELSE MAY HAVE THE BETTER RUN. See `IHaveTheBestRun`: three
                 // attackers who each decide the box is safe all enter it together, which is the
                 // one thing a taya cannot lose to and the three of them cannot win.
-                if (!FetchIsSafe(mine, taya) || !IHaveTheBestRun(mine, taya)) return AiPlan.Stalk;
+                // ⚠️⚠️ THE OVERRIDES SKIP THE YIELD, WHICH `||` DID NOT. See `AiRetrievalRules`:
+                // a late or stalled bot deferred to a higher-ranked rival that was itself
+                // waiting, and the anti-stall clock charged both of them.
+                if (!FetchIsSafe(mine, taya)) return AiPlan.Stalk;
+                if (AiRetrievalRules.MayYieldToBetterRun(
+                        round != null ? round.AttackerIdleSeconds(_motor.PlayerSlot) : 0.0f,
+                        _stalkTime, StalkPatienceSeconds, lata == null || lata.IsUpright)
+                    && !IHaveTheBestRun(mine, taya)) return AiPlan.Stalk;
 
                 return AiPlan.Fetch;
             }
@@ -1240,6 +1247,10 @@ namespace TumbangPreso
             return null;
         }
 
+        /// <summary>How long this tier waits in Stalk before taking an unsafe run. One number for
+        /// `FetchIsSafe` and the one-runner rule, so the two cannot disagree about "stalled".</summary>
+        private float StalkPatienceSeconds => 2.0f + Me.FetchCaution * 0.4f;
+
         private bool FetchIsSafe(Slipper mine, CharacterMotor taya)
         {
             if (Me.FetchCaution <= 0.0f || taya == null) return true;
@@ -1257,11 +1268,11 @@ namespace TumbangPreso
             // ⚠️ IT READS THE AUTHORITATIVE TIMER, THE SAME ONE THE HUD COUNTS DOWN. A bot with
             // its own idea of how long it has been idle can be wrong in the direction that
             // costs points.
-            if (round != null && round.AttackerIdleSeconds(_motor.PlayerSlot)
-                >= Balance.SlipperUnretrievedWarningTime * 0.5f) return true;
+            if (round != null && AiRetrievalRules.IsLate(round.AttackerIdleSeconds(_motor.PlayerSlot)))
+                return true;
 
             // Waited long enough. Go anyway to keep the round moving.
-            if (_stalkTime >= 2.0f + Me.FetchCaution * 0.4f) return true;
+            if (_stalkTime >= StalkPatienceSeconds) return true;
 
             // The can is down: nobody can be tagged at all, so the run is free.
             var lata = round?.Lata;
