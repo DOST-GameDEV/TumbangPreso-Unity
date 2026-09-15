@@ -11,6 +11,11 @@ backing and recovers antialias opacity near outlines. It does not resize, redraw
 recolour interior paint, compress or warp the buttons. Extracted manifest.json
 records source crop coordinates, hashes and recovered edge counts.
 
+Run `python tools/author_menu_sky_mask.py` to regenerate the sky distance data
+from this exact source illustration. It records distance to fixed foreground
+objects; it is not replacement artwork. Its manifest and linear PNG live in
+derived/. Both authoring scripts use Pillow, NumPy and SciPy.
+
 Use the project's guarded Unity runner with executeMethod
 `TumbangPreso.EditorTools.OwnerMenuEditsAuthor.Prepare` to import runtime copies.
 This uses TextureImporter APIs: full source dimensions, uncompressed sRGB colour,
@@ -24,7 +29,10 @@ uniformly, keeping the click target stationary. Credits remains under Settings.
 
 OwnerRoadDust places faint drifting dust only on the painted middle-distance road.
 It maps source coordinates through the background's crop, stays behind all controls,
-and disappears with ReducedUiMotion. The background itself has no warp or drift.
+and disappears with ReducedUiMotion. The wall, street, buildings and props stay fixed. OwnerMenuClouds applies a slow
+continuous sky flow through OwnerMenuSky.shader, attenuated by the baked distance
+data around occluders. There is no duplicate-image crossfade. Reduced motion
+returns to the original still. The mask imports as linear data, not sRGB art.
 
 The approved login background/composition and real account/Guest flow remain.
 Updated field pieces already contain icons; additional glyphs are suppressed.

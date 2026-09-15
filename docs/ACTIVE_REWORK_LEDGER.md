@@ -1,5 +1,114 @@
 # Active TUMP rework ledger
 
+## CURRENT motion revision delivered and verified; publish, then resume gameplay
+
+Owner requested visible dust and slow clouds after rejecting v20 faint particles.
+Final continuous sky flow v4 is visually clean in forward/reverse close crops;
+failed crossfade/holdout examples are retained in the new motion report. Source
+art is untouched; linear distance data controls the sky-only flow. Stronger low
+road gusts and irregular warm motes survive compression. Reduced motion is still.
+
+Windows v21 build succeeded, 1097 MB/57s, guard57207207845a. Native menu-only run
+passed: 1678 silent loading/login frames, Guest music start, 3 actual PC windows,
+normal/reduced motion and Settings/Credits/Play/Back. Runtime DLL SHA:
+28a45da4aaa11418e74c0d6af48c533720c1ba52be0b052edd38ae73f4b15114.
+Native PID10124/exec82771 retired; no active task-owned Editor/player/browser/server.
+Sky test1/1 and dust home test1/1 pass; reports/owner-menu-motion-2026-09-15 holds
+receipts, rejected/final stills, real timing and the MP4. Owner approval is pending,
+not inferred. Download delivered directly in chat: Downloads/TUMP-clouds-and-dust-
+1080p.mp4, 12.07s,1920x1080,H.264. No third party received a message/file from tools.
+
+Next: commit/push this motion revision on ASTRAReworks, then CONTINUE independent
+existing-gameplay work. Brief read-only audit found ThrowGesture already has signed
+preparation/contact/follow-through and body-throw.md qualifies named Berto cases;
+do not rebuild it blindly. Remaining real cast/alternates, movement/recovery,
+spectator/performance, deferred Inday and Rafi LAST remain open. C4 request-safety
+Net files remain reserved until Claude handback. No optional decision should stop
+other authorized work while the owner is away.
+
+
+## CURRENT native clouds/dust review running; next export MP4
+
+OwnerMenuSkyTests v4 PASSED1/1, Logs/owner-menu-sky-v4.xml. Actual UI render changes
+11877sky pixels with zero changes outside the sky opening. Positive24pixel and
+reverse36pixel drift were rendered; named roof/pole/tree points stay fixed.
+Inspected both close crops: continuous cloud shapes, no former duplicate contours
+or wire-band fins. This supersedes rejected v1-v3 despite their technical passes.
+Mask import guard7769cc95eea7; v4 test completed (receipt in current tool stream).
+No active jobs before the next guarded build. Stronger dust now uses irregular
+mote heights, slightly broader low gusts and better compression visibility.
+
+Native review records12seconds of1920x1080 normal motion, then reduced-motion
+verification. CSV includes cloud offsets and missing-mask/reduced-motion checks.
+Windowsv21 build SUCCEEDED, 1097MB in57seconds, guard57207207845a.
+Native --menu-only is now running as PID10124, exec session82771; logs under
+Logs/owner-menu-native-v21. No imported-source edits while it runs. Then
+review/encode MP4 and give a direct download link in chat. Then commit/push this
+motion revision and CONTINUE gameplay. No Desktop/Net/C4 or original-art changes.
+
+
+## CURRENT cloud flow v4 importing; do not retain rejected crossfades
+
+Owner requests visibly drifting ground dust plus slow natural clouds and a real
+MP4 download to send to his girlfriend. Dust v20 was rejected as invisible.
+Stronger dust source passed1/1. Native review is now12seconds at1920x1080.
+
+Cloud attempts v1-v3 passed basic motion/static-region checks but were REJECTED
+by visual inspection: crossfading displaced pictures produced doubled cloud/leaf
+outlines, then fixed-wire bands made small fins. Never claim those render tests
+prove visual acceptance. Failed shader/crops preserved in Logs/OwnerMenuSky-rejected-*
+and Logs/OwnerSky-rejected-*. No cloud revision has been pushed yet.
+
+Current v4 replaces crossfades with a single continuous UV flow. New
+ tools/author_menu_sky_mask.py bakes linear distance-to-occluder data (not replacement
+art) to ArtSource/ui/owner-ui-edits-2026-09-15/derived/main-sky-mask.png. Source PNG
+is untouched. A64pixel smooth distance ramp with <=36pixel drift avoids folding
+and keeps sampled UVs away from fixed roofs/poles/wires/palm. Shader only runs the
+extra taps in the source sky opening. OwnerMenuClouds uses unscaled time; reduced
+motion returns to exactly zero flow. OwnerMenuEditsAuthor imports mask as linear.
+
+Active guarded import: Logs/owner-menu-sky-import-v4.log, exec session64153.
+Do not edit C#/imported assets while it runs. After completion, run focused
+OwnerMenuSkyTests, inspect actual sky crop for artifacts (not just test status),
+then build internal owner-menu-v21 and use native --menu-only for a longer clip.
+Publish only after visual critique, export downloadable MP4, then resume gameplay.
+HEAD3c944e85 pushed; C4 request Net ownership remains untouched. No paid services,
+image generation, other chats/agents, reset credits or Desktop replacement.
+
+
+## CURRENT clouds added to the active menu motion revision
+
+Owner now explicitly requests slow natural clouds behind the scene, with Slay the
+Spire2 as a motion reference. Implement independently moving sky pixels while the
+supplied wall/roofs/poles/wires/trees/road/button pixels stay fixed. Original source
+art remains untouched. Current source adds OwnerMenuClouds plus OwnerMenuSky UI
+shader; source-space sky/occluder classification must be visually verified for
+halos or distorted foreground edges before acceptance. Reduced motion returns to
+the original static illustration. Stronger dust is also pending final native proof.
+
+Dust-only home regression passed1/1 (Logs/owner-menu-dust-v3.xml), guard8fa86897a578,
+all processes stopped. Next: controlled shader render at two elapsed times plus
+foreground pixel comparison, then focused in-engine check and internalv21 capture.
+Do not use paid image tools or edit the owner's buttons. Next downloadable video
+must clearly show both clouds and dust. Full gameplay bookmark remains unchanged.
+
+
+## CURRENT owner rejects invisible dust; revise visibility before gameplay
+
+UI checkpoint3c944e8508b1673bd736d313d9b856f201701c03 is pushed and nativev20 passes
+its functional contracts. Owner reviewed the shared clip and cannot see particles.
+That visual feedback REOPENS dust acceptance; do not call v20's faint dust approved.
+Increase ground-level gust/mote size and contrast within the existing source-space
+road region. Keep buttons/background/foreground unchanged and reduced motion off.
+Record a longer12second native1080p clip, inspect compression visibility, and supply
+an MP4 download in chat. No gameplay files changed during the brief resumed audit.
+Gameplay bookmark remains full GAMEPLAY_RESUME_AFTER_UI, C4 reserved Net untouched.
+
+Current uncommitted changes: OwnerRoadDust visibility and native review clip length.
+Next: focused home motion/bounds regression only, then guarded internalv21 build
+and menu-only native capture. No full suite, no Desktop replacement or paid tools.
+
+
 ## CURRENT owner menu complete; continue gameplay after publishing
 
 Owner UI edit qualified in local2/2PlayMode and fresh internal Windowsv20.

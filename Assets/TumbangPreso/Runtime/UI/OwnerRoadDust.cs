@@ -26,23 +26,24 @@ namespace TumbangPreso.UI
             mesh.Clear();
             if(Background==null || Settings.SettingsStore.Current.ReducedUiMotion)return;
             float time=Time.unscaledTime;
-            // Broad, very faint low gusts travel through the middle distance.
-            for(int i=0;i<4;i++)
+            // Low gusts must survive a small window and a compressed shared video.
+            // They remain on the distant road, below the scene's horizon.
+            for(int i=0;i<5;i++)
             {
                 float phase=Mathf.Repeat(time/(11+i*2.1f)+i*.271f,1);
                 float life=Mathf.Sin(phase*Mathf.PI);
                 float x=Mathf.Lerp(1030,1450,phase);
-                float y=594+i*13+Mathf.Sin(phase*6.28f+i)*2;
-                Puff(mesh,new Vector2(x,y),new Vector2(48+i*9,3.5f+i*.5f),life*life*.085f);
+                float y=589+i*10+Mathf.Sin(phase*6.28f+i)*3;
+                Puff(mesh,new Vector2(x,y),new Vector2(58+i*11,7+i*.8f),life*life*.23f);
             }
             // A few grains catch the light; they stay near the road surface.
-            for(int i=0;i<12;i++)
+            for(int i=0;i<24;i++)
             {
-                float phase=Mathf.Repeat(time/(7+i*.43f)+i*.618034f,1);
+                float phase=Mathf.Repeat(time/(5.5f+i%7*.48f)+i*.618034f,1);
                 float life=Mathf.Sin(phase*Mathf.PI);
                 float x=Mathf.Lerp(1020,1490,phase);
-                float y=579+(i%5)*14-Mathf.Sin(phase*Mathf.PI)*4;
-                Puff(mesh,new Vector2(x,y),new Vector2(1.3f+i%3*.35f,.65f+i%2*.2f),life*life*.25f);
+                float y=584+Mathf.Repeat(i*.75487766f,1)*53-Mathf.Sin(phase*Mathf.PI)*6;
+                Puff(mesh,new Vector2(x,y),new Vector2(3+i%4*.6f,1.3f+i%3*.4f),life*life*.7f);
             }
         }
 

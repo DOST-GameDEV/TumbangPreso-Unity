@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Latest motion revision:** v20 dust was too faint for the owner. Stronger ground
+particles and newly requested slow clouds are now qualified in Windows v21 and a
+12-second1080p MP4 is delivered for review. See
+[menu motion](reports/owner-menu-motion-2026-09-15/README.md). Original source art,
+fixed foreground and reduced-motion behavior are preserved. Continue gameplay;
+C4 remains reserved and the full project is not complete.
+
+
 **September15 owner menu checkpoint COMPLETE:** supplied clean background/buttons,
 updated login art, source-preserving extraction, uniform hover/press, ground dust,
 and music delayed until visible home are qualified locally and in Windowsv20.

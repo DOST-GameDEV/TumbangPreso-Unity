@@ -1,0 +1,13 @@
+{
+  "source": "background_mainmenu_clean.png",
+  "source_sha256": "75795a6e0ac441091f1693d90a94262dc90d4a18d8213f54c9d817d0581433d8",
+  "output": "main-sky-mask.png",
+  "output_sha256": "51ddee38b7cebf48008dc5598a7f52ef8b82258bdf45f6b77bf071286811a75b",
+  "kind": "linear distance data, not replacement artwork",
+  "feather_pixels": 64,
+  "protected_edge_pixels": 3,
+  "size": [
+    1920,
+    1080
+  ]
+}

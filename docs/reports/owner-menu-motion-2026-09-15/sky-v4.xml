@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.7128913">
+  <test-suite type="TestSuite" id="1571" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="433" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.712891" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1565" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="433" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.698362" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22580" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1566" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="433" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.692946" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1567" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="433" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.687988" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1317" name="OwnerMenuSkyTests" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.671961" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1318" name="CloudsMoveBehindStationaryStreetAndOccluders" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests.CloudsMoveBehindStationaryStreetAndOccluders" methodname="CloudsMoveBehindStationaryStreetAndOccluders" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" seed="14277288" result="Passed" start-time="2026-09-15 13:40:44Z" end-time="2026-09-15 13:40:47Z" duration="2.656555" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerSky-v4-rest cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerSky-v4-drift cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[OwnerSky] changed sky pixels=11877 unchanged-region violations=0
+[TumpUiCapture] OwnerSky-v4-reverse cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

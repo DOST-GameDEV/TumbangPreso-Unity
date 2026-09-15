@@ -163,7 +163,7 @@ namespace TumbangPreso.Diagnostics
         private IEnumerator Motion(string name,bool reduced)
         {
             var folder=Path.Combine(_folder,name+"-frames");Directory.CreateDirectory(folder);
-            var csv=new System.Text.StringBuilder("frame,real_seconds,art_scale,target_scale,dust_vertices\n");
+            var csv=new System.Text.StringBuilder("frame,real_seconds,art_scale,target_scale,dust_vertices,cloud_x,cloud_y\n");
             var control=Find("SettingsButton");var pointer=Pointer(control);
             var motion=control.GetComponentInChildren<OwnerUiMotion>();
             if(!(control is OwnerPaintedAction)||motion==null)throw new InvalidOperationException("Painted home feedback missing.");
@@ -174,7 +174,11 @@ namespace TumbangPreso.Diagnostics
             float start=Time.realtimeSinceStartup,nextImage=0,min=1,max=1;int frame=0;
             bool hover=false,down=false,up=false;
             var dust=UnityEngine.Object.FindFirstObjectByType<OwnerRoadDust>();
-            while(Time.realtimeSinceStartup-start<4)
+            var clouds=UnityEngine.Object.FindFirstObjectByType<OwnerMenuClouds>();
+            if(clouds==null || clouds.GetComponent<RawImage>().material.GetTexture("_SkyMask")==null)
+                throw new InvalidOperationException("Cloud motion data missing from the built player.");
+            var skyMaterial=clouds.GetComponent<RawImage>().material;
+            while(Time.realtimeSinceStartup-start<(reduced?4:12))
             {
                 float age=Time.realtimeSinceStartup-start;
                 if(age>.5f&&!hover){hover=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerEnterHandler);}
@@ -187,7 +191,9 @@ namespace TumbangPreso.Diagnostics
                     throw new InvalidOperationException("Supplied artwork stretched or its hit target moved.");
                 if(reduced && (Mathf.Abs(scale-1)>.001f || vertices!=0))throw new InvalidOperationException("Reduced menu still animates.");
                 if(!reduced && vertices==0)throw new InvalidOperationException("Background dust has no rendered geometry.");
-                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{scale:F6},{control.transform.localScale.x:F6},{vertices}"));
+                var cloudShift=skyMaterial.GetVector("_CloudDrift");
+                if(reduced && cloudShift!=Vector4.zero)throw new InvalidOperationException("Reduced motion still moves clouds.");
+                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{scale:F6},{control.transform.localScale.x:F6},{vertices},{cloudShift.x:F6},{cloudShift.y:F6}"));
                 if(age>=nextImage)
                 {
                     var image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(folder,frame.ToString("00000")+".jpg"),image.EncodeToJPG(93));Destroy(image);nextImage=age+1f/15f;
@@ -312,8 +318,8 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
                 yield return Shot("Home-"+size.x+"x"+size.y);
             }
-            Screen.SetResolution(1366,768,FullScreenMode.Windowed);
-            yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
+            Screen.SetResolution(1920,1080,FullScreenMode.Windowed);
+            yield return WaitFor(()=>Screen.width==1920&&Screen.height==1080,8);
             yield return Motion("normal",false);yield return Motion("reduced",true);
             Settings.SettingsStore.Current.ReducedUiMotion=false;
             yield return Click("SettingsButton");yield return Click("SettingsCredits");

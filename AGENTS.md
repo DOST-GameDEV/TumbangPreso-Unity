@@ -1,5 +1,15 @@
 # Working instructions for ChatGPT / Codex
 
+**Newest menu motion feedback, September15:** the owner could not see v20 dust
+in the shared video. Keep ground dust visibly readable after video compression,
+while confining it to the background road. The owner now explicitly requests slow,
+natural cloud movement behind the buildings, poles/wires and trees, inspired by
+the restraint of Slay the Spire2. Preserve original artwork and button pixels.
+Reject doubled cloud contours, ghost wires and broken silhouettes even when tests
+pass. Reduced motion returns to a still sky and removes dust. Deliver a real
+downloadable MP4 in chat for the owner to share with his girlfriend, then continue
+the saved full gameplay queue. No paid tools, Figma or extra agents are needed.
+
 **Additional manual Claude reservation, September15:** TODO149.4 request-safety
 work now belongs to docs/CLAUDE_REQUEST_SAFETY_LANE.md. Leave that audit and its
 listed networking files alone until handback. UI work proceeds here, then resume

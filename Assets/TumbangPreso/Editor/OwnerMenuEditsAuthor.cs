@@ -15,6 +15,7 @@ namespace TumbangPreso.EditorTools
                 const string target="Assets/TumbangPreso/Resources/UI/owner-menu-edits";
                 Directory.CreateDirectory(target);
                 File.Copy(source+"/background_mainmenu_clean.png",target+"/main-background.png",true);
+                File.Copy(source+"/derived/main-sky-mask.png",target+"/main-sky-mask.png",true);
                 foreach(var file in Directory.GetFiles(source+"/extracted","*.png"))
                     File.Copy(file,target+"/"+Path.GetFileName(file),true);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -22,7 +23,8 @@ namespace TumbangPreso.EditorTools
                 {
                     var importer=(TextureImporter)AssetImporter.GetAtPath(file.Replace('\\','/'));
                     importer.textureType=TextureImporterType.Default;
-                    importer.sRGBTexture=true;importer.alphaSource=TextureImporterAlphaSource.FromInput;
+                    importer.sRGBTexture=!file.EndsWith("main-sky-mask.png",StringComparison.Ordinal);
+                    importer.alphaSource=TextureImporterAlphaSource.FromInput;
                     importer.alphaIsTransparency=!file.EndsWith("main-background.png",StringComparison.Ordinal);
                     importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;
                     importer.maxTextureSize=2048;importer.npotScale=TextureImporterNPOTScale.None;

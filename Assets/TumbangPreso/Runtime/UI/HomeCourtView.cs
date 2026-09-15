@@ -14,6 +14,7 @@ namespace TumbangPreso.UI
             var scene=background.gameObject.AddComponent<HomeCourtScene>();
             scene.Illustration=OwnerMenuArt.Texture("main-background");scene.Drift=0;
             image.texture=scene.Illustration;
+            background.gameObject.AddComponent<OwnerMenuClouds>();
             var dust=OwnerUiLayout.Rect(background,"BackgroundRoadDust").gameObject.AddComponent<OwnerRoadDust>();
             OwnerUiLayout.Fill(dust.rectTransform);dust.Background=image;dust.raycastTarget=false;
             var design=OwnerUiLayout.DesignArea(canvas.transform,"OwnerMainMenuComposition");

@@ -71,3 +71,12 @@ is separate from these measured checks. No foreground fog or flashing particles.
 This UI batch is complete. After this interruption, continue GAMEPLAY_RESUME_AFTER_UI.md. This report does
 not close whole-kit gameplay, movement/recovery, lifecycle/spectator/performance,
 deferred Inday FPP, or the approved final Rafi/lagoon expansion.
+
+
+## Owner feedback after v20
+
+The owner could not see particles in the shared video. The v20 functional checks
+still stand, but that visual result is rejected as too faint. The stronger ground
+pass and newly requested slow clouds are implemented and qualified in Windows v21.
+See ../owner-menu-motion-2026-09-15/README.md and its downloadable MP4.
+Do not treat v20 particles as visually accepted or repeat the rejected faintness.
