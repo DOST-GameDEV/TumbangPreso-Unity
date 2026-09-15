@@ -1,5 +1,38 @@
 # Active TUMP rework ledger
 
+## CURRENT additional Claude prompt; then resume the UI implementation
+
+Owner requested another non-animation task and again stresses the different PC.
+C4 TODO149.4 request safety is reserved in CLAUDE_REQUEST_SAFETY_LANE.md, including
+bounded MatchRpc.cs/NetSession.cs ownership. Codex leaves those files/audit alone
+until handback. No other chat/agent was contacted. After UI, continue independent
+gameplay/presentation; Sean physical-phase networking waits if it needs C4 files.
+Publish this docs-only reservation and give the complete prompt directly in chat,
+then CONTINUE the current UI edit. Do not stop at the prompt.
+
+Gameplay/peer integration is pushed12e9e6a5. UI source is currently unfinished:
+HomeCourtView is being replaced by the exact supplied four-button composition;
+OwnerMenuArt and OwnerMenuEditsAuthor were added, OwnerPaintedAction accepts a
+screen-scoped sprite override, and HomeCourtScene supports zero image drift.
+HomeCourtView currently references OwnerRoadDust, which has NOT been added yet;
+do not launch Unity until completing that component. No UI import/test run yet.
+
+tools/extract_owner_menu_edits.py generated15 original-size PNG pieces under
+ArtSource/ui/owner-ui-edits-2026-09-15/extracted, with source/crop/hash manifest.
+It removes white backing and only recovers antialias pixels consistent with nearby
+opaque colour; interior/thin strokes are preserved. Review actual compositing before
+accepting extraction. Canonical clean background/reference are saved in the source
+folder. reference-label-measurements.json records target glyph bounds/colours.
+Initial main-menu font sizes are provisional until in-engine comparison.
+
+Remaining UI work: finish subtle source-space road dust; use updated login crops
+without globally changing other screens; match reference text placement/colours;
+preserve button aspect ratio and uniform interaction motion; delay menu music until
+visible home after startup loading/login. Music currently starts in ConvertedMainMenu
+Wire before OfferTheLoginStep. Splash also has BootSting and a possible _sting;
+inspect those and the preload routes so music cannot begin in loading. Keep the
+original login background and all account/backend behavior. Use only related checks.
+
 ## CURRENT final integration passed; menu artwork implementation is next
 
 First merge16c33e5e preserved movement work and the UI brief, but its push was

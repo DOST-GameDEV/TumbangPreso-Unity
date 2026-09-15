@@ -1,5 +1,12 @@
 # Working instructions for ChatGPT / Codex
 
+**Additional manual Claude reservation, September15:** TODO149.4 request-safety
+work now belongs to docs/CLAUDE_REQUEST_SAFETY_LANE.md. Leave that audit and its
+listed networking files alone until handback. UI work proceeds here, then resume
+independent gameplay work; defer Sean physical-phase networking if it conflicts.
+The other PC's paths/tools/accounts must be discovered, not copied from this one.
+This is a manual prompt only, not permission to contact another chat or spawn agents.
+
 **Newest UI request, September15:** after finishing the current movement/peer
 integration checkpoint, update main menu from the owner's UI EDITS artwork:
 background_mainmenu.png, buttons_mainmenu.png and reference_mainmenu.png. Match

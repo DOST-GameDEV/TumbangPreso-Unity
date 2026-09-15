@@ -1,5 +1,10 @@
 # CLAUDE.md
 
+**Additional separate-PC assignment, September15:** TODO149.4 request safety is
+reserved under docs/CLAUDE_REQUEST_SAFETY_LANE.md. Read that file for C4 ownership,
+machine discovery and honest completion criteria. This does not reopen animation,
+UI or the current snapshot implementations.
+
 **September15 assignment for the separate Claude PC:** read
 [docs/CLAUDE_ENGINEERING_LANE.md](docs/CLAUDE_ENGINEERING_LANE.md) after the current
 AGENTS/VISION/TODO routing below. Work only that reserved engineering scope.

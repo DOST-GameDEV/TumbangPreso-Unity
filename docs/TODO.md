@@ -1,5 +1,10 @@
 # TODO: Tumbang Preso Unity
 
+**New Claude reservation:** [C4 request safety](CLAUDE_REQUEST_SAFETY_LANE.md)
+owns TODO149.4's remaining action-request audit. It is RESERVED, NOT STARTED.
+Codex leaves the listed networking files and task alone while doing the requested
+UI edit and then independent gameplay work. Incomplete criteria stay unchecked.
+
 ## Urgent local corrections, September15
 
 - [x] Remove the detached shadow cast by the first-person slipper presentation
@@ -2416,6 +2421,10 @@ and that is right for them: they carry no "it was delivered" claim to be wrong a
 gameplay verb pressed during the join window is a verb pressed before the player has a body.
 
 ### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP
+
+**September15 ownership:** reserved to the separate Claude PC as C4 in
+CLAUDE_REQUEST_SAFETY_LANE.md. Do not duplicate that work here. Preserve cleared
+siblings and the recently qualified preparation/movement snapshots.
 
 Concrete classes to look for on the competitive paths, in order of what would actually cost a
 match: a rejected packet refreshing a timer, a duplicate RPC granting an effect twice, a stale
