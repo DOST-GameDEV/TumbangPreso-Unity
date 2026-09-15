@@ -79,3 +79,9 @@ network spectator/rejoin coverage, a complete event-selection audit or all 134/1
 criteria. The held target and release/re-equip transitions are explicitly staged.
 Near-eye flight grace shares the existing local algorithm but was not separately
 captured as a flight-timing window in this native sequence.
+
+A subsequent focused local contract PASSED1/1, guardd6f6d93f54b1. It uses a real
+slipper's held/flight states and renderer modes: the released mesh stays hidden
+near the spectator eye, restores its original mode at3metres, and is not retained
+after changing to another target. This closes that local geometry/state contract;
+it is not an additional native flight-timing capture. Receipt: flight-visibility.xml.

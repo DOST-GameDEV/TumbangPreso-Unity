@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current task: spectator pass qualified; publish and continue
+## Current task: continue remaining backlog from qualified spectator checkpoint
 
 Owner is asleep/AFK. Continue the full authorized queue after checkpoints. NEVER
 use usage resets or reset credits. No optional questions, Figma, paid fallback,
@@ -9,7 +9,7 @@ ASTRAReworks. C4 request-safety files remain reserved to the separate Claude PC.
 
 Current checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
 Paths/PIDs from this PC must be rediscovered on any other PC. Last verified pushed
-commit: 7546c3442f63d49e2c12dd1f693df353c02df9f4 (close-view feedback and compact ledger).
+commit: 977f28996fa409329d7199cf3b35a3a4229b1204 (spectator/replay fixes).
 
 ### Qualified spectator operation
 
@@ -33,8 +33,11 @@ commit: 7546c3442f63d49e2c12dd1f693df353c02df9f4 (close-view feedback and compac
   staged release/re-equip; no physical-device/network spectator/full event-selection
   or performance certification. A synthetic warm-up reports a driver error; actual
   recorded readbacks pass with FailedReadbacks=0. Do not hide that distinction.
-- Next publish this qualified batch, then continue remaining whole-kit/movement/
-  network/cinematic tasks. No resets or optional questions; owner remains asleep.
+- A focused follow-up near-eye release contract PASSED1/1, guardd6f6d93f54b1,
+  Logs/spectator-flight-visibility-v1.xml. It checks actual slipper flight state and
+  renderer restoration at distance/target change; not a native timing capture.
+- Spectator/replay code is pushed. Publish the test-only follow-up, then continue
+  remaining whole-kit/movement/network/cinematic tasks. No resets/questions.
 
 ### Completed operation
 
@@ -59,7 +62,7 @@ commit: 7546c3442f63d49e2c12dd1f693df353c02df9f4 (close-view feedback and compac
 
 ### Next actions
 
-1. Publish the qualified spectator batch and verify remote HEAD. Do not repeat the
+1. Preserve the qualified spectator batch and verify remote HEAD. Do not repeat the
    completed close-feedback or spectator cases without new changes/concerns.
 2. Restore only proven
    test-generated whitespace after owned jobs finish; preserve all real edits.

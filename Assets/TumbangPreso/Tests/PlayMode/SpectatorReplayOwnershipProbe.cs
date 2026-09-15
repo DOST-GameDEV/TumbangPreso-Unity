@@ -32,6 +32,49 @@ namespace TumbangPreso.PlayTests
         private const BindingFlags Private = BindingFlags.NonPublic | BindingFlags.Instance;
 
         [UnityTest]
+        public IEnumerator SpectatorReleaseOnlyHidesItsOwnShotWhileItIsNearTheEye()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var who = GameServices.Round.PlayerAt(2);
+            var carrier = who.GetComponent<Carrier>(); var shoe = carrier.Held;
+            Assert.IsNotNull(shoe);
+            var renderers = shoe.GetComponentsInChildren<Renderer>(true);
+            var modes = new UnityEngine.Rendering.ShadowCastingMode[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++) modes[i] = renderers[i].shadowCastingMode;
+            var go = new GameObject("Spectator release contract");
+            var spectator = go.AddComponent<SpectatorCamera>(); spectator.enabled = false;
+            go.GetComponent<Camera>().enabled = false;
+            go.transform.position = who.transform.position + Vector3.up * 1.45f;
+            var follow = typeof(SpectatorCamera).GetField("_follow", Private);
+            var hide = typeof(SpectatorCamera).GetMethod("ApplyPovCarriedHide", Private);
+            var restore = typeof(SpectatorCamera).GetMethod("RestorePovBody", Private);
+            try
+            {
+                follow.SetValue(spectator, who);
+                hide.Invoke(spectator, new object[] { shoe });
+                Assert.True(shoe.HostDisarm());
+                shoe.HostThrow(who, go.transform.position + Vector3.forward * .03f, Vector3.forward * 8);
+                hide.Invoke(spectator, new object[] { null });
+                foreach (var renderer in renderers)
+                    Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly, renderer.shadowCastingMode,
+                        "A near-eye released world mesh flashed over the spectator view");
+                shoe.transform.position = go.transform.position + Vector3.forward * 3;
+                hide.Invoke(spectator, new object[] { null });
+                for (int i = 0; i < renderers.Length; i++) Assert.AreEqual(modes[i], renderers[i].shadowCastingMode,
+                    "The actual projectile did not become visible after clearing the eye");
+                Assert.True(shoe.HostForceEquip(who));
+                hide.Invoke(spectator, new object[] { shoe });
+                Assert.True(shoe.HostDisarm());
+                shoe.HostThrow(who, go.transform.position + Vector3.forward * .03f, Vector3.forward * 8);
+                follow.SetValue(spectator, GameServices.Round.PlayerAt(3));
+                hide.Invoke(spectator, new object[] { null });
+                for (int i = 0; i < renderers.Length; i++) Assert.AreEqual(modes[i], renderers[i].shadowCastingMode,
+                    "Switching targets retained the previous player's hidden projectile");
+            }
+            finally { restore.Invoke(spectator, null); Object.Destroy(go); }
+        }
+
+        [UnityTest]
         public IEnumerator FallbackPollingDoesNotEraseTheKnownActorInTheSameFrame()
         {
             var go = new GameObject("Replay marker owner");
