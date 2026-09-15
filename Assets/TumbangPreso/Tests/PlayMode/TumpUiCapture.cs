@@ -11,7 +11,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
-        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null)
+        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null, bool checkActionBounds = false)
         {
             Assert.IsNotNull(canvas);
             float settleUntil=Time.realtimeSinceStartup+1.5f;
@@ -67,7 +67,7 @@ namespace TumbangPreso.PlayTests
                 foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
-                        || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper;
+                        || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
@@ -77,6 +77,28 @@ namespace TumbangPreso.PlayTests
                     Debug.Log($"[TumpGeometry] {name}/{graphic.name}: vertices={mesh?.vertexCount ?? 0}, cull={renderer.cull}, alpha={renderer.GetInheritedAlpha():0.###}, depth={renderer.absoluteDepth}, material={renderer.materialCount}");
                     Assert.IsNotNull(mesh, graphic.name + " has no rendered mesh");
                     Assert.Greater(mesh.vertexCount, 0, graphic.name + " has no visible geometry");
+                }
+                if (checkActionBounds)
+                {
+                    var corners = new Vector3[4];
+                    foreach (var button in canvas.GetComponentsInChildren<Button>())
+                    {
+                        ((RectTransform)button.transform).GetWorldCorners(corners);
+                        foreach (var corner in corners)
+                        {
+                            var pixelPoint = camera.WorldToScreenPoint(corner);
+                            Assert.That(pixelPoint.x, Is.InRange(-1f, width + 1f), name + "/" + button.name + " leaves the horizontal viewport.");
+                            Assert.That(pixelPoint.y, Is.InRange(-1f, height + 1f), name + "/" + button.name + " leaves the vertical viewport.");
+                        }
+                    }
+                    foreach (var text in canvas.GetComponentsInChildren<Text>())
+                    {
+                        if (string.IsNullOrWhiteSpace(text.text)) continue;
+                        Assert.LessOrEqual(text.preferredHeight, text.rectTransform.rect.height + 3,
+                            name + "/" + text.name + " clips its content.");
+                        Assert.GreaterOrEqual(text.fontSize * canvas.scaleFactor, 13.95f,
+                            name + "/" + text.name + " is below the small-window reading floor.");
+                    }
                 }
                 RenderTexture.active = rt;
                 image = new Texture2D(width, height, TextureFormat.RGB24, false);

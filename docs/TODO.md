@@ -1,5 +1,10 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**Current UI D1:** independent home/play/loading compositions reviewed with2/2focused
+checks; home and Hero Play cover ten PC sizes. See reports/ui-composition-d1.
+All-size support and distinct screen designs remain required for the rest of UI.
+Next account/preparation, then other screens/U8 and GAMEPLAY_RESUME_AFTER_UI.
+
 **LATEST transfer and UI rejection,2026-09-15:** save/push this checkpoint for
 another laptop, which must continue the FULL queue until done. U1-U7 first
 functional implementations are retained, but the owner rejects their repeated

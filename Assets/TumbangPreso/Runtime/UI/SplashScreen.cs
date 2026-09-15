@@ -681,7 +681,8 @@ namespace TumbangPreso.UI
         private void UpdateLoadingAnimation()
         {
             if (_loadingMark != null)
-                _loadingMark.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(_elapsed * 2.1f) * 8f);
+                _loadingMark.localRotation = Settings.SettingsStore.Current.ReducedUiMotion ? Quaternion.identity
+                    : Quaternion.Euler(0, 0, Mathf.Sin(_elapsed * 2.1f) * 8f);
             // ⚠️ THE MENU LOAD IS A CONTINUOUS SOURCE, so it is read every frame rather than being
             // announced once. `LoadSceneAsync` held at 0.9 is "done"; the divide normalises that.
             if (_assetsPreloaded && _menu != null)

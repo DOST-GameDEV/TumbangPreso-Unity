@@ -1,5 +1,13 @@
 # Active execution plan
 
+**Current D1 redesign,2026-09-15:** home/play/loading have independent native
+compositions with selected supplemental court/street artwork. Two focused checks
+pass; home and Hero Play cover ten PC viewport sizes. Report:
+[reports/ui-composition-d1/README.md](reports/ui-composition-d1/README.md).
+This is an initial visual review, not owner acceptance or UI completion. Account,
+preparation, selection/equipment, settings and remaining screens continue next,
+then U8 native motion/routes qualification and the gameplay bookmark.
+
 **LATEST owner rejection, 2026-09-15:** current UI overuses main-menu assets and
 does not satisfy the requested creative overhaul. Before declaring U8 finished,
 re-study the old PDF's layout ideas (slides 39-49 are inspiration, not finals),

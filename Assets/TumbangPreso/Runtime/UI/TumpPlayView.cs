@@ -9,12 +9,12 @@ namespace TumbangPreso.UI
     public sealed class TumpPlayView : MonoBehaviour
     {
         private Canvas _canvas;
-        private OwnerPlayView _ownerPainted;
+        private CourtPlayView _ownerPainted;
         private TumpModeStamp _classic, _hero;
         private Button _ranked;
         public void Build(Transform owner)
         {
-            _ownerPainted=gameObject.AddComponent<OwnerPlayView>();_ownerPainted.Build(owner);
+            _ownerPainted=gameObject.AddComponent<CourtPlayView>();_ownerPainted.Build(owner);
         }
         private void BuildPrevious(Transform owner)
         {

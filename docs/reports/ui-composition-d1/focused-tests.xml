@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.7799512">
+  <test-suite type="TestSuite" id="1527" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.779951" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1521" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.759729" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13020" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1522" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.749290" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1523" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.739155" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1453" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:41Z" duration="7.717081" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1458" name="OwnerLoadingKeepsSourceArtProgressAndOptionalStories" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.OwnerLoadingKeepsSourceArtProgressAndOptionalStories" methodname="OwnerLoadingKeepsSourceArtProgressAndOptionalStories" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="869723733" result="Passed" start-time="2026-09-15 00:01:33Z" end-time="2026-09-15 00:01:34Z" duration="0.673432" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLoading-v1 cream source=252,211,159 pixel=92,61,52; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerLoading-story-v1/StorySheet: vertices=220, cull=False, alpha=1, depth=9, material=1
+[TumpUiCapture] OwnerLoading-story-v1 cream source=252,211,159 pixel=67,44,37; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1454" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="295690299" result="Passed" start-time="2026-09-15 00:01:34Z" end-time="2026-09-15 00:01:41Z" duration="7.025767" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] NativeHome-960x540/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-960x540 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x720/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1366x768/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1366x768 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1200/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1200 cream source=252,211,159 pixel=199,140,122; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x960/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=247,184,115; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-2560x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-2560x1440 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3440x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3440x1440 cream source=252,211,159 pixel=198,137,118; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x1080 cream source=252,211,159 pixel=248,184,117; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x2160/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x2160 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerCredits-v1/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-v1 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[OwnerCreditScroll] normalized=0 content=3266 viewport=824 lastHeight=106 preferred=78
+[OwnerCreditLayout] actualChildren=3266 preferred=3266 padding=56 contentPos=(0.00, 2442.00) lastPos=(517.00, -3157.00)
+[TumpGeometry] OwnerCredits-bottom-diagnostic-v2/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-bottom-diagnostic-v2 cream source=252,211,159 pixel=238,109,74; isolated UI camera, no ColourGrade.
+[OwnerCreditCoordinates] contentRect=(x:-521.00, y:-3266.00, width:1042.00, height:3266.00) pivot=(0.50, 1.00) anchors=(0.00, 1.00)/(1.00, 1.00) contentScale=(1.00, 1.00, 1.00) lastScale=(1.00, 1.00, 1.00) lastPivot=(0.50, 0.50) contentBottom=(-521.00, -412.00, 0.00) lastBottom=(-521.00, -356.00, 0.00) finalNormalized=0 finalContent=3266 finalPos=(0.00, 2442.00) finalLast=(517.00, -3157.00)/(x:-517.00, y:-53.00, width:1034.00, height:106.00)
+[TumpGeometry] OwnerCredits-licenses-v1/CreditsSheet: vertices=110, cull=False, alpha=1, depth=5, material=1
+[TumpUiCapture] OwnerCredits-licenses-v1 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPlay-Classic-v1/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/SelectedMode: vertices=8, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] OwnerPlay-Classic-v1 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-960x540/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-960x540 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1280x720/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1280x720 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1366x768/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1366x768 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1920x1080/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1920x1080 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1920x1200/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1920x1200 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1280x960/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1280x960 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-2560x1440/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-2560x1440 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3440x1440/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3440x1440 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3840x1080/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3840x1080 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3840x2160/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3840x2160 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

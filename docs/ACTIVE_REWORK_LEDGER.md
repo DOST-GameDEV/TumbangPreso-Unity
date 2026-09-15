@@ -1,5 +1,139 @@
 # Active TUMP rework ledger
 
+## CURRENT D1 verified; continuing account composition
+
+Guarded front-v4 FINISHED 2/2 PASS. Fresh XML: Logs/ui-composition-front-v4.xml;
+profile/input restoration receipt fe278bd2bca5. Python13372 and Unity exited.
+No image/build/player/browser job remains. Revised 32:9 crop keeps the can base,
+4:3 keeps the right focal art, and story focus uses readable dark green on paper.
+Home and Hero Play geometry qualify at ten sizes from960x540 through4K;
+Classic is captured1080p, loading/story at1080p/720p. These are render-target
+checks, not physical monitor certification or proof all other screens fit.
+Report and selected current screenshots: reports/ui-composition-d1/README.md.
+No owner acceptance claimed. Current changes are the first redesign batch after
+4c6b852c. Next account entrance/form split, preparation and other UI compositions,
+then native ordinary-speed/reduced-motion routes and the complete gameplay queue.
+Original source pixels untouched; no Figma/delegation/resets/paid fallback.
+
+## CURRENT D1 visual refinement after ten-size checks
+
+Front-v3 FINISHED2/2PASS, receipt6018d3d7d8c0, Python13336 exited. Home and mode
+route captures passed action-bound/text-fit/minimum-readable-size checks at ten
+viewport sizes; loading progress/optional-stories route passed. Native images
+inspected: primary shape now visible, new screen compositions differ, source
+logo preserved. Extreme32:9 cut off the can bottom; home cover now adjusts its
+crop focus for wide/narrow shapes without image distortion. Home swash contour
+is smoothed, and loading-modal focus now uses dark green on pale paper, retaining
+lime on the dark scene. No original owner PNGs were altered.
+
+RUNNING guarded front-v4, Python13372:
+Logs/ui-composition-front-v4(.pid/.stdout/.stderr/.log/.xml), same two focused tests,
+profileui-composition-home-review. Do not edit C#/imported assets until Editor exits.
+Next inspect exact result/receipt and revised widescreen/modal/home captures,
+then save a coherent D1 checkpoint and continue the next UI compositions. No
+image-generation job is running. Three generated files/briefs/hashes are recorded
+in ArtSource/ui/composition-redesign-2026-09-15. New runtime art is1672x941; native
+labels/shapes remain editable and resolution-independent. The size matrix tests
+layout support, not physical certification or original artwork being4K pixels.
+
+## CURRENT D1: home/play/loading composition and PC-size qualification
+
+HEAD remains pulled4c6b852c; uncommitted D1 source/art/docs under current matth
+checkout. Owner reaffirmed ALL PC sizes, not only4:3; requirement saved in AGENTS
+and UI_COMPOSITION_REDESIGN. Matrix covers960x540,1280x720,1366x768,1920x1080,
+1920x1200,1280x960,2560x1440,3440x1440,3840x1080 and3840x2160. These are actual
+render-target/layout checks, not physical certification of every monitor.
+
+All11 PDF layout pages39-49 and three new owner PNGs visually inspected. Home
+background v1 was too detailed and rejected; v2 simplified to broad painted
+shapes/red contours and is now integrated. Separate loading artv1 is integrated.
+Original images unchanged. Three built-in imagegen calls complete, none running.
+ArtSource/ui/composition-redesign-2026-09-15 holds versions/provenance, runtime
+new art lives under Resources/UI/composition-redesign. No paid API or Figma.
+
+New home: HomeCourtView, HomeCourtScene, HomeMenuAction, HomeMenuStroke, called
+by TumpHomeView. Original logo and editable side menu over its own court artwork.
+Old OwnerHomeView retained inactive. New mode spread: CourtPlayView with dedicated
+PlayChoiceSurface/Button, asymmetric Classic/Hero presentation, six real portraits
+and route choices. Old OwnerPlayView retained inactive. Loading now uses a separate
+street-action illustration, native actual-progress bar, optional story modal and
+native slipper mark; original owner loading method retained inactive. Loading mark
+honours ReducedUiMotion. No service/action removal or account capability changes.
+
+Home-v1 route test passed1/1, receipt10e67d497cf8, Python15784 exited. Actual PNGs
+exposed missing painted primary shape: HomeMenuStroke lacked CanvasRenderer.
+Added RequireComponent and geometry validation. Home-v2 then failed because the
+new assertion required geometry from unfocused secondary underlines, intentionally
+empty. Log confirms primary has30vertices, second underline0. Validation now
+requires the always-visible primary and all mode surfaces; no weakening of actual
+primary-shape evidence. Receipt26f02299f1c4, Python20956 exited.
+
+RUNNING guarded PlayMode D1 front-v3, Python13336:
+Logs/ui-composition-front-v3(.pid/.stdout/.stderr/.log/.xml), expected2tests:
+TitlePlayCreditsAndSettingsReturnThroughNativeViews and
+OwnerLoadingKeepsSourceArtProgressAndOptionalStories. Named profile
+ui-composition-home-review. Home/play captures also validate active button corners,
+text fit and small-window reading floor at the ten sizes. Only related checks.
+Do not edit C#/imported Assets while Editor runs. No player/build/browser job.
+
+Next inspect exact results, profile receipt, actual painted shapes/controls,
+wide/ultrawide/small/4K composition and loading story/progress. Fix visible and
+functional defects, preserve failed evidence, then commit a coherent stable D1
+batch and proceed to account/preparation/selection/settings/etc creative redesign.
+Do not stop at this batch. U8 reduced-motion native qualifier remains unresolved;
+full native two-mode routes/async/input qualification still required after redesign.
+All gameplay work follows UI, per GAMEPLAY_RESUME_AFTER_UI, not stale old UI-last.
+
+## CURRENT: resumed matth PC, pulled latest, redesigning rejected UI
+
+2026-09-15: owner supplied attachments/655555bb-52de-41bd-8352-b77f071f85ab/
+pasted-text.txt, explicitly asked to pull first, understand the handoff documents,
+update this ledger and continue while AFK. The other laptop is stopped.
+Clean ASTRAReworks advanced 18 commits from c664a7b9 to
+4c6b852c6a7bc84ec22ebe98406fc94008168cdd, matching origin. Current checkout:
+C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
+No Unity Editor/player or task-owned browser/preview is running.
+
+Read the ten handoff documents: AGENTS, this ledger's latest checkpoint and U8
+entries, EXECUTION_PLAN, TODO's latest directions/current execution index,
+UI_REMAINING_TODO, OWNER_HANDDRAWN_UI_PLAN, owner-ui-u8-checkpoint,
+OWNER_UI_AUTHORING, WORKSTATION_SETUP and GAMEPLAY_RESUME_AFTER_UI. Historical
+TODO/archive material is consulted by relevant section, not treated as new work.
+Retain protocol37 and the newer completed world/personal-effect restoration,
+session-cycle, Zack/Nemu/Cheska and functional UI changes. No stale gameplay redo.
+
+Visually inspected actual owner PNGs TUMP(3)/(5)/(6) and all PDF pages39-49.
+Rendered references are in Logs/ui-redesign-2026-09-15/pdf-39.png through49.
+PDF observations:39 splits art/account;40 uses full-scene loading with a tip;
+41 puts a short menu at the side of a court/can scene;42 stages profile and play
+around open scene space;43 separates character art and biography;44 uses a gallery
+and category rail;45-48 provide progressively focused item/measurement views;
+49 uses asymmetric illustrated play choices. These are layout ideas, not finals.
+The new PNGs establish brush contours, logo, type and colour roles. Their originals
+remain unchanged. Repeating their orange pattern or action sprites everywhere is
+the rejected behavior, not an acceptance requirement.
+
+Active implementation plan: docs/UI_COMPOSITION_REDESIGN.md. First coherent batch
+is home/play/loading: new scene-specific illustration and native editable layouts,
+keeping existing service callbacks and input ownership. No blanket background
+swap or universal new button template. Other screens follow their own composition.
+Built-in imagegen is authorized for integrated supplemental art; no paid fallback.
+Image output is art, never fabricated runtime evidence. No image job started yet.
+
+Known native qualification remains FAILED on reduced-motion transition/steady-state
+assertion, not passed. Boot/Guest/home/settings reached; both-mode match/pause/
+results/rematch routes were not reached. Startup capture was mid-entry;1280 launch
+arguments yielded1920 screenshots. Preserve these limits and inspect/fix while
+qualifying redesigned screens. Do not begin with a blind full-suite rerun.
+
+Environment verified: Unity6000.5.8f1 executable exists; guarded runner already
+uses this machine's path and profile protection. Poppler and local Python PDF/
+image dependencies available. Runtime UI is uGUI. Relevant UI/PDF/imagegen/game-UI
+skills read; no Figma. New instructions and this plan are currently the only
+tracked edits. Next: generate home scene art, implement its native composition
+while generation runs, then inspect/integrate/capture and iterate. Continue all
+remaining UI and the full gameplay bookmark afterward; no stop at batch/compaction.
+
 ## CURRENT TRANSFER CHECKPOINT: UI visually rejected; continue redesign on destination
 
 2026-09-15 owner requests finish this checkpoint, commit/push and direct chat

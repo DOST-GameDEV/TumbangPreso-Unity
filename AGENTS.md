@@ -1,5 +1,21 @@
 # Working instructions for ChatGPT / Codex
 
+**Responsive PC UI, explicit owner instruction 2026-09-15:** make the interface
+work across PC display/window sizes, not only4:3. Design adaptive resolution and
+aspect behavior and qualify representative small laptop,16:9,16:10,4:3,ultrawide
+and4K views. Preserve readable text, complete hit targets, focus/Back and artwork
+aspect ratios. Do not claim every physical monitor was tested from a few renders.
+
+**Resumed here, 2026-09-15:** owner explicitly requested pulling the other laptop's
+work and continuing. Clean ASTRAReworks fast-forward from c664a7b9 to
+4c6b852c6a7bc84ec22ebe98406fc94008168cdd is verified. Current checkout is
+C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks. Previous transfer
+stop/build prohibitions applied to the source run, not this resumed work.
+UI creative redesign is FIRST, then the entire GAMEPLAY_RESUME_AFTER_UI queue.
+Owner is AFK and asks to continue after reading the handoff documents and updating
+the ledger. New screen-specific built-in image generation is explicitly authorized.
+No Figma, agents, resets, paid fallback or Desktop update. Preserve source art.
+
 **LATEST visual rejection during transfer, 2026-09-15:** the owner calls the last
 UI batch hideous because the main-menu assets were reused everywhere. Existing
 assets are INSPIRATION for new designs, not a kit to spam across every screen.

@@ -24,8 +24,10 @@ namespace TumbangPreso.PlayTests
             var home = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(home.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(5, home.GetComponentsInChildren<Button>().Length, "Four choices and a credits link keep the title quiet.");
-            foreach (var size in new[] { new Vector2Int(1920, 1080), new Vector2Int(1280, 720), new Vector2Int(1280, 960) })
-                yield return TumpUiCapture.Capture("NativeHome-" + size.x + "x" + size.y, home, size.x, size.y, false);
+            foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
+                new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
+                new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160) })
+                yield return TumpUiCapture.Capture("NativeHome-" + size.x + "x" + size.y, home, size.x, size.y, false, checkActionBounds: true);
             Press("CreditsButton"); yield return null;
             var credits = GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
             Assert.IsFalse(home.gameObject.activeSelf);
@@ -65,7 +67,10 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("OwnerPlay-Classic-v1", play, 1920, 1080, false);
             Press("HeroStrikeButton"); yield return null;
             Assert.IsTrue(Find("RankedButton").interactable);
-            yield return TumpUiCapture.Capture("OwnerPlay-Hero-v1", play, 1280, 960, false);
+            foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
+                new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
+                new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160) })
+                yield return TumpUiCapture.Capture("CourtPlay-Hero-" + size.x + "x" + size.y, play, size.x, size.y, false, checkActionBounds: true);
             Press("BackButton"); yield return null; yield return null;
             Assert.IsNotNull(GameObject.Find("OwnerHomeCanvas"));
         }

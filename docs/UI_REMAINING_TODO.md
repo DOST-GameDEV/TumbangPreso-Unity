@@ -1,5 +1,13 @@
 # UI reopened: owner hand-drawn theme
 
+**Current D1 redesign,2026-09-15:** home/play/loading have independent native
+compositions with selected supplemental court/street artwork. Two focused checks
+pass; home and Hero Play cover ten PC viewport sizes. Report:
+[reports/ui-composition-d1/README.md](reports/ui-composition-d1/README.md).
+This is an initial visual review, not owner acceptance or UI completion. Account,
+preparation, selection/equipment, settings and remaining screens continue next,
+then U8 native motion/routes qualification and the gameplay bookmark.
+
 **LATEST 2026-09-15: current last UI batch visually REJECTED.** Owner says it
 spams the same main-menu assets and failed to use the old PDF's layout direction
 creatively. Existing artwork must inspire NEW designs, not be pasted everywhere.
