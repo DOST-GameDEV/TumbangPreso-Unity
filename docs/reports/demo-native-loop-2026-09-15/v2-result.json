@@ -1,0 +1,21 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "cold boot",
+        "normal home ink verified",
+        "settings and reduced motion",
+        "reduced home ink verified",
+        "reduced text-action transition and steady state verified",
+        "ClassicButton prepare",
+        "ClassicButton short custom rehearsal; normal default remains8",
+        "ClassicButton playing",
+        "ClassicButton waiting for real result",
+        "Classic real rematch",
+        "HeroStrikeButton prepare",
+        "HeroStrikeButton short custom rehearsal; normal default remains8",
+        "HeroStrikeButton playing",
+        "HeroStrikeButton waiting for real result",
+        "complete"
+    ]
+}

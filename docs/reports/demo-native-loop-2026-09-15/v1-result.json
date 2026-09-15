@@ -1,0 +1,16 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: LeaveMatch has no reachable hit target.\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Click>d__13.MoveNext () [0x000fc] in <6be89ead5c50498a8ad85036f3fef523>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__6.MoveNext () [0x00054] in <6be89ead5c50498a8ad85036f3fef523>:0 ",
+    "stages": [
+        "cold boot",
+        "normal home ink verified",
+        "settings and reduced motion",
+        "reduced home ink verified",
+        "reduced text-action transition and steady state verified",
+        "ClassicButton prepare",
+        "ClassicButton short custom rehearsal; normal default remains8",
+        "ClassicButton playing",
+        "ClassicButton waiting for real result",
+        "Classic real rematch"
+    ]
+}

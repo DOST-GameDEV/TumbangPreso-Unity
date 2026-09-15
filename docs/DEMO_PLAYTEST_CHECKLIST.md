@@ -11,8 +11,12 @@ or Editor screenshots for a verified native demo build.
 - D10 credits/queue/touch and the Play heading fix have scoped passing evidence.
   The heading is visible at ten PC sizes, including the formerly failing1366x768.
   Expanded touch-toolbar overlap remains a lower-priority visual follow-up.
-- A fresh native demo candidate has not yet been qualified. The old source-PC
-  native review stopped early and must not be presented as a current pass.
+- Fresh internal nativev2 passed Guest/settings, both short custom modes, real
+  results, Classic rematch/leave and Hero return at1366x768. Normal defaults were
+  verified8 before the custom rehearsal. This is a native-loop baseline; remaining
+  gameplay, LAN, clean performance and human review are still pending.
+- All18 body/FPP views were captured. Nemu's body retains stepped finger pieces
+  despite the no-finger requirement; that confirmed visible mismatch is being fixed.
 - Hero/gameplay reports qualify their named cases only. Whole-kit ordinary play,
   device feel and the owner's visual approval remain separate.
 
@@ -30,7 +34,7 @@ or Editor screenshots for a verified native demo build.
 - [ ] Try each existing hero's two skills and ultimate at normal speed. Check
   different casts, clear effects, understandable cooldowns and interruption.
   Look for detached slippers, clipping and effects that linger after they should end.
-- [ ] Show Dante's stone protection/earthquake and Phaister's Nemu ghost-to-monster
+- [ ] Show Dante's stone protection/earthquake and Nemu's ghost-to-monster
   sequence. Keep their approved forms and distinct visual identity.
 - [ ] Open the grey/dark settings during play, return with Back/Escape and resume.
   There should be no stuck cursor, input or paused-looking live match.
@@ -55,9 +59,10 @@ or Editor screenshots for a verified native demo build.
 
 ## Candidate record to fill after qualification
 
-- Executable and build-data path: pending.
-- Source commit and executable/runtime hashes: pending.
-- Native routes/matches passed: pending.
+- Executable/data: Builds/demo-2026-09-16-v2/TumbangPreso.exe and its adjacent data folder.
+- Source:91d1e2f3 plus the opt-in driver. Runtime SHA256:
+  D161737889CC2048C24BCD8BFDFF02694875C99E2BDD4BC9DD083B6B90C0F3F7.
+- Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
 - Measured frame behavior on this PC: pending.
 - Known issues or intentionally deferred features: see current ledger; not yet frozen.
 - Preserved fallback artifact and restart steps: pending.

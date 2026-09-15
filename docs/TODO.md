@@ -18,13 +18,14 @@ later supplies a different demo format.
 
 ### Visible demo priorities, in this order
 
-1. [ ] **Fix visible blockers on the main route.** Resolve the missing Play heading
+1. [x] **Fix visible blockers on the main route.** Resolve the missing Play heading
    reproduced at1366x768, then check startup, Guest, Play, selection, settings Back
    and starting a match. Preserve the approved original login. Keep normal matches
    at8 rounds and settings grey/dark. Required windows:960x540,1366x768,1920x1080,
    plus the already-established4:3/ultrawide coverage for any changed view.
    Finish or isolate current D10 edits without introducing another visual redesign.
-2. [ ] **Prove the whole loop in a fresh native player.** Cold boot to Guest, pick
+2. [ ] **Prove the whole loop in a fresh native player.** Native UI/match/result/
+   rematch routes now pass in both modes; direct play of all named verbs remains.  Cold boot to Guest, pick
    a character and map, start offline Classic and Hero Strike, throw, retrieve,
    defend, recover, pause/resume, finish, show results and rematch. Repair stalls,
    missing controls, wrong roles/scores and lost input before cosmetic work. Confirm
@@ -86,9 +87,9 @@ automated/runtime evidence and pending human playtest separate. Update those
 states as work lands; do not label a feature fully verified from a screenshot.
 
 
-D1-D9 and the8-round/dark-settings/four-sampayan correction are committed through
-8f21e603. D10 is unfinished; see ACTIVE_REWORK_LEDGER.md for exact failures and dirty
-files. A passed visual test is not owner acceptance or full gameplay qualification.
+D1-D9 and the8-round/dark-settings/four-sampayan correction are committed through91d1e2f3, with native-loop evidence in
+reports/demo-native-loop-2026-09-15. See ACTIVE_REWORK_LEDGER.md for the latest
+checkpoint and remaining work. A passed visual test is not owner acceptance or full gameplay qualification.
 
 Only related tests. One guarded Editor per checkout. Draft outside Assets while
 Unity runs. Preserve profiles, original art, stable IDs and both modes. No agents,

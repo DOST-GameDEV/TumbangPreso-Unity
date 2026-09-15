@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.373633">
+  <test-suite type="TestSuite" id="1535" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.373633" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1529" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.359041" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1530" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.355630" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1531" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.352741" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1119" name="FppHandsReviewProbe" fullname="TumbangPreso.PlayTests.FppHandsReviewProbe" classname="TumbangPreso.PlayTests.FppHandsReviewProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.332940" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1120" name="AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" fullname="TumbangPreso.PlayTests.FppHandsReviewProbe.AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" methodname="AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera" classname="TumbangPreso.PlayTests.FppHandsReviewProbe" runstate="Runnable" seed="1442578529" result="Passed" start-time="2026-09-15 04:02:23Z" end-time="2026-09-15 04:02:40Z" duration="17.309467" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/demo-hands-baseline/bayan-carrying.png
+[Play] wrote Logs/demo-hands-baseline/bayan-empty.png
+[Play] wrote Logs/demo-hands-baseline/bayan-body.png
+[Play] wrote Logs/demo-hands-baseline/maring-carrying.png
+[Play] wrote Logs/demo-hands-baseline/maring-empty.png
+[Play] wrote Logs/demo-hands-baseline/maring-body.png
+[Play] wrote Logs/demo-hands-baseline/totoy-carrying.png
+[Play] wrote Logs/demo-hands-baseline/totoy-empty.png
+[Play] wrote Logs/demo-hands-baseline/totoy-body.png
+[Play] wrote Logs/demo-hands-baseline/inday-carrying.png
+[Play] wrote Logs/demo-hands-baseline/inday-empty.png
+[Play] wrote Logs/demo-hands-baseline/inday-body.png
+[Play] wrote Logs/demo-hands-baseline/kuya_boy-carrying.png
+[Play] wrote Logs/demo-hands-baseline/kuya_boy-empty.png
+[Play] wrote Logs/demo-hands-baseline/kuya_boy-body.png
+[Play] wrote Logs/demo-hands-baseline/ate_girlie-carrying.png
+[Play] wrote Logs/demo-hands-baseline/ate_girlie-empty.png
+[Play] wrote Logs/demo-hands-baseline/ate_girlie-body.png
+[Play] wrote Logs/demo-hands-baseline/tikboy-carrying.png
+[Play] wrote Logs/demo-hands-baseline/tikboy-empty.png
+[Play] wrote Logs/demo-hands-baseline/tikboy-body.png
+[Play] wrote Logs/demo-hands-baseline/bebang-carrying.png
+[Play] wrote Logs/demo-hands-baseline/bebang-empty.png
+[Play] wrote Logs/demo-hands-baseline/bebang-body.png
+[Play] wrote Logs/demo-hands-baseline/jun_jun-carrying.png
+[Play] wrote Logs/demo-hands-baseline/jun_jun-empty.png
+[Play] wrote Logs/demo-hands-baseline/jun_jun-body.png
+[Play] wrote Logs/demo-hands-baseline/lola_pacing-carrying.png
+[Play] wrote Logs/demo-hands-baseline/lola_pacing-empty.png
+[Play] wrote Logs/demo-hands-baseline/lola_pacing-body.png
+[Play] wrote Logs/demo-hands-baseline/mang_kanor-carrying.png
+[Play] wrote Logs/demo-hands-baseline/mang_kanor-empty.png
+[Play] wrote Logs/demo-hands-baseline/mang_kanor-body.png
+[Play] wrote Logs/demo-hands-baseline/aling_nena-carrying.png
+[Play] wrote Logs/demo-hands-baseline/aling_nena-empty.png
+[Play] wrote Logs/demo-hands-baseline/aling_nena-body.png
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/demo-hands-baseline/dante-carrying.png
+[Play] wrote Logs/demo-hands-baseline/dante-empty.png
+[Play] wrote Logs/demo-hands-baseline/dante-body.png
+[Play] wrote Logs/demo-hands-baseline/cheska-carrying.png
+[Play] wrote Logs/demo-hands-baseline/cheska-empty.png
+[Play] wrote Logs/demo-hands-baseline/cheska-body.png
+[Play] wrote Logs/demo-hands-baseline/sean-carrying.png
+[Play] wrote Logs/demo-hands-baseline/sean-empty.png
+[Play] wrote Logs/demo-hands-baseline/sean-body.png
+[Play] wrote Logs/demo-hands-baseline/zack-carrying.png
+[Play] wrote Logs/demo-hands-baseline/zack-empty.png
+[Play] wrote Logs/demo-hands-baseline/zack-body.png
+[Play] wrote Logs/demo-hands-baseline/nemu-carrying.png
+[Play] wrote Logs/demo-hands-baseline/nemu-empty.png
+[Play] wrote Logs/demo-hands-baseline/nemu-body.png
+[Play] wrote Logs/demo-hands-baseline/phaister-carrying.png
+[Play] wrote Logs/demo-hands-baseline/phaister-empty.png
+[Play] wrote Logs/demo-hands-baseline/phaister-body.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

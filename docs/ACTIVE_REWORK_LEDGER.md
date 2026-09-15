@@ -1,5 +1,88 @@
 # Active TUMP rework ledger
 
+## CURRENT native baseline passed; visible hand/hero review next
+
+Native loop-v2 FINISHEDPASS/exit0, Python8956/player9072 retired. All14 actual
+captures1366x768. Shared standalone input unchanged, no existing named-profile
+files to restore. Real startup/Guest/settings/motion, both short custom matches,
+Classic rematch/leave and Hero result/return passed. Eight-round normal defaults
+checked before custom rehearsal. The one-rendered-frame click rule resolvedv1;
+no production pause-menu fix. Artifact/hash and limits are in
+docs/reports/demo-native-loop-2026-09-15. Keep v2 as a tested native-loop baseline,
+not a claim that all gameplay/LAN/performance/human review is done.
+
+Hand baseline FINISHED1/1, Python9240 retired, restorationc813a1cf6a22:54PNGs plus
+36material rows in Logs/demo-hands-baseline. All18 IDs present. Inspected Zack and
+Nemu body/carry pairs. Zack's block hands/cuffs correspond to the actual body.
+Nemu's human-body tucked hand visibly steps into fingers; confirmed source entries
+hand-fingers-left/right and hand-fingers-tip-l/r in tools/build_nemu_voxel.py.
+Its GLB extras only has castFinish=cast-clean-clothing-v3, whereas Zack also has
+handVolume=solid-block-hands-v1. Generic added-thumb removal did not remove Nemu's
+original finger pieces. Next make a surgical no-digit body-hand correction and
+update its source generator, preserving costume/rig/clips/current monster/familiar.
+Do not run the old Inday branch in author_hand_volume.py; its reconstruction was
+rejected and deferred. Dry-run existing geometry inspection first. No Unity/player
+jobs remain. Also finish visual inspection of the other recorded people and actual
+hero/throw behavior, then LAN/performance in the new demo-first/full-queue order.
+
+## CURRENT native loop-v2 and first-person identity review running in parallel
+
+Build-v2 FINISHED1082MB/58s, Python5888 retired, restoration928761018576.
+Artifact Builds/demo-2026-09-16-v2/TumbangPreso.exe, Runtime.dll timestamp
+2026-09-15T04:00:25.9277903Z and SHA256
+D161737889CC2048C24BCD8BFDFF02694875C99E2BDD4BC9DD083B6B90C0F3F7.
+Source91d1e2f3 plus uncommitted opt-in driver. It adds one rendered-frame wait
+before synthetic clicks and failure hit/image diagnostics. No game-menu workaround.
+
+RUNNING native Python8956, Logs/demo-native-loop-v2(.pid/.stdout/.stderr) and folder,
+fresh profile demo-native-loop-v2. In PARALLEL guarded Editor Python9240 runs only
+FppHandsReviewProbe.AllEighteenPeopleShowTheirOwnHandsInTheActualFirstPersonCamera,
+Logs/demo-hands-baseline(.pid/.stdout/.stderr/.log/.xml), named profile of same name;
+TUMP_FPP_HANDS_REVIEW=Logs/demo-hands-baseline. This captures current carrying/empty
+FPP and body views/material metadata for18people. It does not authorize a fresh
+Inday reconstruction; preserve deferred scope and fix only demonstrated identity bugs.
+Concurrent captures are functional/art evidence, not a clean performance benchmark.
+No imported/C# edits while these run. Consume exact receipts and pictures next.
+
+Nativev1 normal/reduced recordings were encoded at measured timestamps with explicit
+--sampled-images:23 images each, metrics370/416frames over2.30s. No interpolation.
+The encoder defaults remain strict; sparse image sampling is opt-in. Its Python
+change is also uncommitted. Original source-PC scale-based home test is obsolete:
+the current home never scales, and the new native ink checks already passedv1.
+
+## CURRENT native demo-loop build preparation
+
+D10/visible heading checkpoint committed/pushed91d1e2f3. Updated the opt-in
+OwnerUiPlayerReview for the actual home ink/underline feedback, stable hit boxes,
+separate reduced text-action preference settling and steady-state checks, settled
+startup stills, real captured resolution receipts and ReadyGate countdown. Both
+normal defaults are asserted8 before selecting a clearly labelled short custom
+rehearsal for results/rematch. This driver validates UI/match lifecycle, not all
+gameplay verbs or physical input hardware. Changes are uncommitted on91d1e2f3.
+
+Build-v1 FINISHED1082MB/60s, Python24372 retired, restorationfa907eaa554e.
+Builds/demo-2026-09-16-v1/TumbangPreso.exe, Logs/demo-native-build-v1
+(.pid/.stdout/.stderr/.log), named profile demo-build-review. Executable SHA256
+BA26219C895F07EAE430A96CF0BC31A09BD767905C1FFA957BBFA86D60D2BE59;
+Runtime.dll SHA256 EE806AAD618F84A979968AD460EA5F748942D9FE477095C6E82874DDA4FFCA67.
+Runtime timestamp2026-09-15T03:54:23.3783017Z. Build is91d1e2f3 plus the opt-in driver.
+
+Native loop-v1 FINISHED with exit1, Python14680/player11556 retired. Output:
+Logs/demo-native-loop-v1(.pid/.stdout/.stderr) and folder of the same name, fresh
+profile demo-native-loop-v1. sharedInputUnchanged=true, existingFilesRestored0.
+Passed stages: real1366x768 startup/Guest/home/settings, normal/reduced home ink,
+reduced text-action transition/steady state, Classic setup/default8, short custom
+match, pause/resume, actual result/details and real rematch. Failed on LeaveMatch
+raycast immediately after reopening pause, before Hero. No game-menu fix inferred.
+Driver previously checked existence before first rendered frame; now waits one
+rendered frame and records hits/point/failure image if the target remains blocked.
+Next build/runv2 from a fresh profile; do not claim the whole native loop passed.
+Build changed ProjectSettings.asset plus known import whitespace; inspect the
+exact diff before restoring/staging anything. No imported edits during this run.
+Continue useful independent work while building. No imported edits until exit.
+After native route fixes/qualification, continue visible gameplay/hero checks and
+the entire remaining queue in the saved demo-first order.
+
 ## CURRENT visible heading fixed; prepare native demo loop next
 
 Deadline/order docs committed/pushed8d542f7b. The full queue stays active, with

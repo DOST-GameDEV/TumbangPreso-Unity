@@ -9,7 +9,9 @@ from pathlib import Path
 import subprocess
 import shutil
 
-parser=argparse.ArgumentParser();parser.add_argument('folder');parser.add_argument('--ffmpeg');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('folder');parser.add_argument('--ffmpeg')
+parser.add_argument('--sampled-images',action='store_true',help='Metrics were recorded every frame, images intentionally sampled less often.')
+args=parser.parse_args()
 root=Path(args.folder).resolve();ffmpeg=args.ffmpeg or shutil.which('ffmpeg')
 if not ffmpeg:
     try:
@@ -24,9 +26,14 @@ for timing in sorted(root.glob('*/frames.csv')):
     if any(b<=a for a,b in zip(times,times[1:])):raise ValueError('Non-monotonic timestamps: '+str(timing))
     for label,folder in [(timing.parent.name if timing.parent.name.endswith('-frames') else 'observer',timing.parent),('owner',timing.parent/'owner')]:
         if not folder.exists():continue
+        selected=rows
+        if args.sampled_images:
+            selected=[row for row in rows if any((folder/(f"{int(row['frame']):05d}"+ext)).exists() for ext in ('.jpg','.png'))]
+            if len(selected)<2:raise ValueError('Need at least two deliberately sampled images: '+str(folder))
+        times=[float(row['real_seconds']) for row in selected]
         listing=timing.parent/(label+'-timed-frames.txt')
         lines=[]
-        for i,row in enumerate(rows):
+        for i,row in enumerate(selected):
             frame=folder/(f"{int(row['frame']):05d}.jpg")
             if not frame.exists():frame=folder/(f"{int(row['frame']):05d}.png")
             if not frame.exists():raise FileNotFoundError(frame)
@@ -37,4 +44,4 @@ for timing in sorted(root.glob('*/frames.csv')):
         output=timing.parent/(label+'-ordinary-speed.mp4')
         subprocess.run([ffmpeg,'-y','-hide_banner','-loglevel','error','-f','concat','-safe','0','-i',str(listing),
             '-fps_mode','vfr','-c:v','libx264','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(output)],check=True)
-        print(output, 'frames',len(rows),'recorded seconds',round(times[-1]-times[0],3))
+        print(output, 'images',len(selected),'metric rows',len(rows),'recorded seconds',round(times[-1]-times[0],3))
