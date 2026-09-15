@@ -1,5 +1,23 @@
 # Active TUMP rework ledger
 
+## CURRENT final integration passed; menu artwork implementation is next
+
+First merge16c33e5e preserved movement work and the UI brief, but its push was
+rejected because the peer published two more bot commits. Fetched and merged
+through22bbedb6 without conflicts; no force/reset and no reserved code edits.
+The new combined-source Windows MovementSnapshotProbe FINISHED4/4PASS,
+guardf8de37bf1672, Python23212 retired. All native/Editor/proxy jobs are stopped.
+Finish this merge commit and push now, then work on the supplied UI art/music.
+No further gameplay feature should start until this UI edit is finished.
+
+Asset inspection: all supplied images are RGB1920x1080, with white backing on the
+two button sheets. Connected-region measurements are available from the last tool
+output. Preserve thin authored strokes inside each crop; remove white backing by
+conversion, not redraw/reskin. Active home builder is HomeCourtView. Login is the
+SignInScreen partials and OwnerAccountTabArt. Music producer is
+Runtime/Audio/MusicDirector.cs; inspect its real startup route before editing.
+Canonical clean background/reference and full gameplay bookmark remain below.
+
 ## LATEST UI source update: clean background/reference and menu-music timing
 
 Owner supplied new Downloads/TUMP (3).png and TUMP (4).png without the white top

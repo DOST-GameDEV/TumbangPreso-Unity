@@ -65,6 +65,9 @@ requires42for the final source; internal41must not join it.
   Windows MovementSnapshotProbe on the combined source passed4/4, guard
   a9e4864dd1ab. This compiled the merged runtime/tests without rerunning Claude's
   separately owned AI investigations. Nativev19 predates those peer AI changes.
+- A concurrent push added two further bot commits through22bbedb6. Those merged
+  without conflicts and the combined Windows movement checks again passed4/4,
+  guardf8de37bf1672. Their reserved implementation was preserved.
 
 v17 runtime SHA256:
 73557da7938bea87de5f2430371e1006a3c1f1e4d2fdd822a11a96c453e33aba
