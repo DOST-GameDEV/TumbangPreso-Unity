@@ -1,0 +1,151 @@
+Mono path[0] = '/Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/Resources/Data/Managed'
+Mono config path = '/Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path /Users/paul/Documents/GitHub/TumbangPreso-Unity/Builds/c4-request-safety-v7/TumbangPreso.app/Contents/Resources/Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.014 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Audio] loaded 125 of 125 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.403916 ms
+[Build] TUMBANG PRESO 1.0.0 | 8aa36050bd1c+dirty | protocol 42 | StandaloneOSX
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8970, join code GK6U
+[NetBoot] host requested on 8970 dedicated=False: listening
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=90.00 seat1=False kit=False canAct=
+[Social] presence not written: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+UnloadTime: 0.845042 ms
+Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 8263.
+Total: 0.881583 ms (FindLiveObjects: 0.082125 ms CreateObjectMapping: 0.186208 ms MarkObjects: 0.551167 ms  DeleteObjects: 0.062000 ms)
+
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[Link] Good at 2 ms round trip (host, worst peer).
+[NetAuto] READY submitted with 2 playing peers.
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=0 active=False inProgress=False warmup=False timeLeft=30.00 seat1=True kit=True canAct=True
+[Slice] round 1 begins, taya is seat 0
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=29.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=28.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=27.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=26.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=0 round=1 elapsed=0.000 staged
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=25.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=24.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=23.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=22.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=21.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=20.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=19.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=18.32 seat1=True kit=True canAct=True
+[VerbDenied] sent Punch seat 1: 1 so far.
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=17.32 seat1=True kit=True canAct=True
+[VerbDenied] sent Shove seat 1: 1 so far.
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=16.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=15.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=0 round=1 elapsed=15.000 host staged slide shoe
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=14.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=13.32 seat1=True kit=True canAct=True
+[VerbDenied] sent Slide seat 1: 1 so far.
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=12.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=11.32 seat1=True kit=True canAct=True
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=1
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Net] 2 connected
+[Net] 2 connected, seat 1
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=10.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=9.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=8.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=7.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=6.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=5.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=4.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=3.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=2.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=1.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=True inProgress=True warmup=False timeLeft=0.32 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=False inProgress=True warmup=True timeLeft=0.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=False inProgress=True warmup=True timeLeft=0.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=False inProgress=True warmup=True timeLeft=0.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=False inProgress=True warmup=True timeLeft=0.00 seat1=True kit=True canAct=False
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=1 active=False inProgress=True warmup=True timeLeft=0.00 seat1=True kit=True canAct=False
+[Slice] round 2 begins, taya is seat 1
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=29.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=28.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=27.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=26.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] local=0 round=2 elapsed=0.000 staged
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=25.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=24.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=23.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=22.30 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=21.30 seat1=True kit=True canAct=True
+[VerbDenied] sent Lunge seat 1: 1 so far.
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=20.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=19.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=18.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=17.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=16.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=15.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=14.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=13.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=12.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=11.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=10.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=9.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=8.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=7.36 seat1=True kit=True canAct=True
+[RequestSafetyProbe] state local=0 networked=True rpc=True round=2 active=True inProgress=True warmup=False timeLeft=6.36 seat1=True kit=True canAct=True
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+Thread 0x1716bb000 may have been prematurely finalized
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+Thread 0x1700b3000 may have been prematurely finalized
+Thread 0x1701cb000 may have been prematurely finalized
+Thread 0x17013f000 may have been prematurely finalized
+Thread 0x170257000 may have been prematurely finalized
+Thread 0x1702e3000 may have been prematurely finalized
+CodeReloadManager destroyed

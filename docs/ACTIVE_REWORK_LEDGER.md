@@ -1,5 +1,20 @@
 # Active TUMP rework ledger
 
+## CURRENT final UI committed; peer evidence merge, then gameplay
+
+Final polished UI is committed as d04370f8; video already delivered in chat.
+Now merged remote967e2f88/5f1f365c: additional C4 diagnostic/loss/killed-client/rematch
+evidence only, no production request logic or protocol change. C4 remains in
+progress with its file reservation. UI binaryv22 predates these diagnostic-only
+commits; its stated UI evidence remains valid. One targeted post-merge startup
+fixture will verify combined Windows compilation/integration, not rerun all suites.
+
+Next finish merge commit/push, run that focused fixture, and resume independent
+movement/recovery/gameplay tasks from the saved queue. No active player or Editor
+at this point. Owner asleep, NO usage resets, no optional questions, no Desktop
+replacement. Unrelated ProjectAuditor whitespace must not be committed as a change.
+
+
 ## CURRENT final UI video delivered; publish and resume gameplay
 
 Final owner UI correction is implemented and qualified. Four focused tests pass,

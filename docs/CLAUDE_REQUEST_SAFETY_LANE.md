@@ -120,10 +120,12 @@ fast-forwarded in before publishing. Evidence and the full inventory table:
   `HeroAbilitySystem.ApplyNetworkCast`, modified client only). Remaining work: reproduce F1 and
   F2 with real peers before any change, with the owner of the excluded ability files.
 - **C4.3 open.** Done: focused real-peer regressions for duplicates, stale seats, wrong roles,
-  the round boundary, a match boundary and a seat reclaim, with the legitimate path and the
-  refusal tallies checked. Not done: a torn-down and re-hosted session, a killed (not quit)
-  client, a loss/outage link, and any Windows player run. No wire format changed, so no
-  compatibility test was needed.
+  the round boundary, a match boundary (real rematch), a clean-quit seat reclaim, a SIGKILLed
+  client replaced by its reconnect while the host still held the old connection (no bot
+  handover, seat 1 human for all of round 2), a 75 ms link and a 40 +- 20 ms link with 3 % loss,
+  with the legitimate path and the refusal tallies checked each time. Not done: a torn-down
+  and re-hosted session, an outage link, and any Windows player run. No wire format changed,
+  so no compatibility test was needed.
 - Outside C4, recorded for their owners: F4, a reclaimed seat reads `IsWarmupBuffer = true`
   through the next live round (skip prompt over live play expected on that peer); F5,
   `tools/audit_wire_finite.py` is red on HEAD for `OnWorldFieldItemMsg` although

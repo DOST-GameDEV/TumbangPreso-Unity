@@ -15,7 +15,8 @@ No production file was changed. Every listed request path already refuses a dupl
 stale seat claim and a wrong-role claim on the host without granting a second effect,
 spending a second resource or refreshing a timer, and that is now measured with two real
 player processes over a real transport: directly for two whole matches joined by a real
-rematch, over a 150 ms round trip, and across a mid-match quit and seat reclaim. Three
+rematch, over a 150 ms round trip, over a lossy jittered link, across a mid-match quit and
+seat reclaim, and across a killed client whose stale connection was replaced by its reconnect. Three
 client-side limitations were found by trace and are recorded as open below; none of them changes host-authoritative state, one needs a wire change that
 was not justified without a reproduced harm, and two need excluded files.
 
@@ -64,21 +65,24 @@ stomp). Folders hold gzipped traces, both markers files, logs and `result.json`;
 reads the gzipped files directly:
 
 ```bash
-python3 tools/net_request_safety.py unused --out docs/reports/claude-request-safety-2026-09-15/run-v6-rematch --evaluate-only
+python3 tools/net_request_safety.py unused --out docs/reports/claude-request-safety-2026-09-15/run-v7-rematch --evaluate-only
 ```
 
-All three final arms ran on build v6, `TumbangPreso.Runtime.dll` SHA-256
-`fa056719e2284570d911091b8b960df689ee87c4d73a0f05099716dc0b0bea0c`, built from `86e12e71` plus
-the probe (the build stamp says dirty for that reason). Commit `3c944e85` (menu artwork) landed
-upstream during the run and touches no networking or gameplay file.
+Two builds. **v6** (`TumbangPreso.Runtime.dll` SHA-256 `fa056719e228...`) is `86e12e71` plus
+the probe. **v7** (`fd9db88ba8c2...`) is `8aa36050` plus the probe's kill switch and a seat-1
+bot column, so it also carries upstream `3c944e85` (menu artwork; UI files only, no networking
+or gameplay file). Both build stamps say dirty because the probe edit was uncommitted.
 
 | Arm | What it adds | Cases | Result |
 |---|---|---|---|
-| `run-v6-rematch` (`--matches 2`) | the whole script, then the real result board's REMATCH, then the whole script again in the same sessions | 21 in match 1, 21 in match 2 | **PASS** |
+| `run-v7-rematch` (`--matches 2`) | v7 repeat of the rematch arm | 21 + 21 | **PASS** |
+| `run-v7-lossy` (`--delay 40 --jitter 20 --loss 0.03`) | 40 ms each way, +-20 ms jitter, 312 of 10,369 packets dropped (3.0 %) both directions | 21 | **PASS** |
+| `run-v7-kill` (`--handover --kill --leave-at 17.5`) | the client goes silent and is SIGKILLed with its connection still open on the host; the relaunch arrives while the host still holds it. Host log: `[NetArrival] peer=2 seat=1 replaces=1`, then the old peer disconnected with **no** bot handover, and the host's seat-1 bot column read 0 for every round-2 row | 17 (4 skipped by design) | **PASS** after evaluator correction (5) |
+| `run-v6-rematch` (`--matches 2`, traces not kept, v7 repeats it) | the whole script, then the real result board's REMATCH, then the whole script again in the same sessions | 21 in match 1, 21 in match 2 | **PASS** |
 | `run-v6-delay75` (`--delay 75`) | every packet through `tools/net_link.py` at 75 ms each way, 0 dropped of 11,227 | 21 | **PASS** |
 | `run-v6-handover` (`--handover --leave-at 17.5`) | the client quits at round 1 elapsed 17.5, the host hands seat 1 to a bot, the same profile relaunches, reclaims seat 1 (18,866 round-2 rows, all seat 1) and runs round 2 | 17 (the 4 round-1 sends scheduled after the quit are reported as skipped, not passed) | **PASS** |
 
-What the host measured, identical in every count across the three arms unless the row says:
+What the host measured, identical in every count across the arms unless the row says:
 
 | Case | Host outcome |
 |---|---|
@@ -98,7 +102,7 @@ What the host measured, identical in every count across the three arms unless th
 | wrong-role shove as taya | one refusal, no attempt, no stamina |
 | stale-seat punch claiming seat 0 | the host's own seat untouched, no refusal sent |
 | legitimate punch / lunge / stomp input | accepted once each, **no refusal**, owner and host charges agree |
-| duplicate throw at the round boundary | direct: landed once inside round 1; 150 ms: arrived after the whistle and landed **zero** times; nothing counted after the last active round-1 sample in either |
+| duplicate throw at the round boundary | direct and lossy: landed once inside round 1; 150 ms: arrived after the whistle and landed **zero** times; nothing counted after the last active round-1 sample in any arm (the handover arms do not send it) |
 | refusal tallies | host sent = client took back, per verb (Punch 2, Lunge 1, Shove 2, Slide 1 per match; 4, 2, 4, 2 cumulative after the rematch; the reclaimed process's own tally added to the first process's in the handover arm) |
 
 **The evaluator discriminates.** Four mutated copies of the passing host trace (a second
@@ -115,7 +119,10 @@ to watch the fixture go red, because that means editing production code to test 
   re-armed" is measured after the first stamp, because the window deliberately starts before it
   (v1). (4) The handover's seat-1 claim is about round-2 rows while the host was still sampling:
   the reclaimed arena installs as LocalSlot 0 for frames before its seat message, and reads 0 again
-  on the teardown frame after the host leaves (v5). All earlier folders re-evaluate with the final
+  on the teardown frame after the host leaves (v5). (5) That teardown frame can carry the same
+  round-clock value as the host's last sample, so the bound is strict (`run-v7-kill`'s live
+  `result.json` failed on exactly that one row, 1 of 27,313; `reevaluated.json` is the corrected
+  verdict). All earlier folders re-evaluate with the final
   evaluator; `run-v1` still fails only because the boundary throw did not exist yet.
 
 - `run-v1`: the first run on build v1. The evaluator windows started at the client's round
@@ -187,11 +194,12 @@ No finding changes host-authoritative state, score, or a resource the host spend
 ## Limits
 
 - macOS players only. No Windows, Android or controller evidence.
-- Two processes on one machine over loopback, plus one 75 ms each-way `net_link.py` arm. No
-  loss, jitter or outage arm.
-- The handover arm covers a clean quit and a reclaim through the ordinary reconnect path, not
-  a crash or a killed process. The rematch arm crosses a match boundary inside one transport
-  session; **no arm tears a session down and starts a new one** (host shutdown and re-host).
+- Two processes on one machine over loopback, plus `net_link.py` arms at 75 ms each way and at
+  40 +- 20 ms with 3 % loss. No outage arm.
+- The handover arms cover a clean quit and a SIGKILL, each reclaimed through the ordinary
+  reconnect path. The rematch arm crosses a match boundary inside one transport session; **no
+  arm tears a session down and starts a new one** (host shutdown and re-host). After a host
+  leaves, the client in these runs falls back to hosting on its own port, which is outside C4.
 - One run per arm. The counts are exact and not noise-bearing, but a timing-dependent case
   (the boundary throw landing or not) was observed once per link shape.
 - F1 to F3 are traced, not reproduced. They are recorded so the next owner of the excluded
