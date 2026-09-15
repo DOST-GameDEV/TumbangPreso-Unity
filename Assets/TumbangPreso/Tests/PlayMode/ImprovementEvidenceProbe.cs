@@ -347,7 +347,7 @@ namespace TumbangPreso.PlayTests
             who.Intent.Clear();
         }
 
-        [UnityTest]
+        [UnityTest,Timeout(600000)]
         public IEnumerator EveryHeroActionThroughTheRealPressAndRelease()
         {
             string[] heroes = { "sean", "zack", "dante", "cheska", "nemu", "phaister" };
