@@ -52,7 +52,7 @@ namespace TumbangPreso.PlayTests
             new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
             new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160)
         };
-        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null, bool checkActionBounds = false)
+        internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null, bool checkActionBounds = false, System.Action inspectViewport = null)
         {
             Assert.IsNotNull(canvas);
             float settleUntil=Time.realtimeSinceStartup+1.5f;
@@ -97,6 +97,7 @@ namespace TumbangPreso.PlayTests
                 // they do not own an OwnerUiMotion entry component.
                 yield return new WaitForSecondsRealtime(.12f);
                 foreach (var preview in canvas.GetComponentsInChildren<UI.ModelPreview>()) preview.StepForCapture();
+                inspectViewport?.Invoke();
                 Canvas.ForceUpdateCanvases();
                 if (includeWorld && Camera.main != null)
                 {

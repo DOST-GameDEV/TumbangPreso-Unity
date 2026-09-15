@@ -65,7 +65,8 @@ later supplies a different demo format.
 
 7. [ ] Complete remaining U8 UI coverage: native motion and long-session lifecycle,
    physical preview-pixel scaling, secondary dialogs and device-specific paths.
-   Reconcile the unfinished touch-label checks from D10. Preserve the original
+   Preview scaling and movable touch tools now pass focused tests; include both
+   in the next native candidate. Preserve the original
    login/controller art and all completed D1-D9 work.
 8. [ ] Complete the remaining gameplay backlog in GAMEPLAY_RESUME_AFTER_UI.md:
    pending casts and active movement on joining, broader reconnect/host loss,

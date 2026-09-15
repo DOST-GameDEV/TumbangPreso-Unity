@@ -1,5 +1,37 @@
 # Active TUMP rework ledger
 
+## CURRENT touch toolbar qualified; continuing the demo-first full queue
+
+Guarded touch-toolbar-position-v3 FINISHED1/1PASS, Python18164 and Editor12136
+retired, restoration259d0ed80457 (two prior profile files, shared input unchanged).
+At the actual1920x1080 capture viewport, three of nine controls partially overlap
+the upper expanded toolbar. TOOLS BELOW exposes all three, with every saved
+control position unchanged. Lower-toolbar960x540/1280x960/1920x1080 captures and
+existing return/cancel checks pass. Inspected the rendered1920x1080 lower toolbar.
+v1/v2 failures were fixture errors: centre-only hit testing, then measuring the
+restored batch GameView instead of the capture viewport. Both failures are retained.
+Report: reports/touch-toolbar-2026-09-15. Nativev4 remains the preserved candidate
+and predates this and the preview-pixel correction. Next qualify the updated
+native candidate, then continue visible gameplay/lifecycle and the full backlog.
+The owner reaffirmed: visibility changes order, not scope. Human playtest remains
+explicitly pending in DEMO_PLAYTEST_CHECKLIST.md. Do not stop at this checkpoint.
+
+## CURRENT touch toolbar placement qualification
+
+Preview scale correction committed/pushed6c3583f4. Added TOOLS BELOW/TOOLS ABOVE
+to the touch layout toolbar, preserving all touch-control coordinates. Compact/
+expanded height and above/below placement stay coherent; existing save/cancel and
+native input remain. First test attempt failed because it assumed covered control
+centres, while the observed defect was partial rectangular overlap. That fixture
+assumption was corrected to measure the actual overlap and require the previously
+covered controls to be fully exposed after moving the toolbar. Assertions for
+unchanged control positions and real button callbacks remain.
+
+v1 FINISHED, Python22316 retired, restoration197ca7061d0a. Now running guarded
+touch-toolbar-position-v2, Logs/touch-toolbar-position-v2(.pid/.stdout/.stderr/.log/.xml),
+profile touch-toolbar-review. No imported edits until exit. Inspect the new lower
+toolbar captures, save the scoped UI fix and keep working through the full queue.
+
 ## CURRENT preview scale fix qualified; touch-tool overlap next
 
 Actual picker check FINISHED1/1PASS, Python5516 retired, restoration32f484be137c.

@@ -15,14 +15,17 @@ or Editor screenshots for a verified native demo build.
   committed through8f21e603 with focused tests and in-engine screenshots.
 - D10 credits/queue/touch and the Play heading fix have scoped passing evidence.
   The heading is visible at ten PC sizes, including the formerly failing1366x768.
-  Expanded touch-toolbar overlap remains a lower-priority visual follow-up.
+  The touch toolbar can now move above/below controls; the focused viewport test
+  exposes three covered controls without moving their saved positions. Pixel-sized
+  model previews also pass their regression and actual picker checks. Both source
+  changes postdate the preserved nativev4 candidate.
 - Fresh internal nativev2 passed Guest/settings, both short custom modes, real
   results, Classic rematch/leave and Hero return at1366x768. Normal defaults were
   verified8 before the custom rehearsal. This is a native-loop baseline; remaining
   gameplay, LAN, clean performance and human review are still pending.
 - All18 body/FPP views were captured. Nemu's original finger steps were replaced
   with block palms; its body/FPP view and three real throw paths passed focused
-  checks. This newer source correction still needs inclusion in the next native build.
+  checks. Nativev3 and v4 include the Nemu correction.
 - Hero/gameplay reports qualify their named cases only. Whole-kit ordinary play,
   device feel and the owner's visual approval remain separate.
 - The18default hero slots accepted real presses/releases and showed their declared
@@ -30,7 +33,8 @@ or Editor screenshots for a verified native demo build.
   inspected; actual opponents, alternate kits, interruption and owner feel still need testing.
 - A direct two-process Hero Strike connection passed into round2 with matching
   protocol/map/defender/structural state and clean client departure/bot takeover.
-  Physical two-PC LAN, rematch/rejoin and venue Wi-Fi are still unverified.
+  Both modes' two-process rematches also pass in v4. Physical two-PC LAN and venue
+  Wi-Fi remain unverified; broader rejoin cases stay in the gameplay queue.
 - Nativev3 includes the Nemu correction and passed two fresh native loops. The
   repeated frame sample is fast on this PC but retains isolated hitch observations.
   Nemu's rebaked swim/recovery poses, both-mode water retrieval and the accelerated
@@ -78,10 +82,11 @@ or Editor screenshots for a verified native demo build.
 - Executable/data: Builds/demo-2026-09-16-v4/TumbangPreso.exe and its adjacent data folder.
 - Runtime SHA256:53565E945341C50C3AB8FA8ABA7F33DA8076D93B19E5980FCADE1877B92B5E7C.
 - Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
-- Measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
+- Nativev3 measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
   maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.
+  Nativev4 checks ran concurrently and do not provide clean performance evidence.
 - Known issues or intentionally deferred features: see current ledger; not yet frozen.
-- Fallback: internal v2 remains preserved. Relaunch the selected executable and
+- Fallback: internal v4 is preserved while newer source is qualified. Relaunch the selected executable and
   use Guest -> Play -> With bots if a demo session needs restarting.
 
 Update this file with exact evidence and open items as work progresses. Leave

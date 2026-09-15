@@ -109,6 +109,23 @@ namespace TumbangPreso.PlayTests
             AssertTouchPositions(canvas);
             foreach(var size in TumpUiCapture.PcViewports)
                 yield return TumpUiCapture.Capture("TouchWorkspace-expanded-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+            var toolbar=canvas.GetComponentsInChildren<RectTransform>().First(t=>t.name=="LayoutToolbar");
+            var controls=TouchHud.Instance.Buttons.Where(b=>b.isActiveAndEnabled).ToArray();
+            // Inspect the same16:9 viewport where the partial overlap was observed,
+            // not the restored batch GameView's unrelated aspect/anchors.
+            yield return TumpUiCapture.Capture("TouchWorkspace-placement-check",canvas,1920,1080,false,checkActionBounds:true,inspectViewport:()=>
+            {
+                var locations=controls.Select(b=>((RectTransform)b.transform).anchoredPosition).ToArray();
+                var covered=controls.Where(b=>RectsOverlap((RectTransform)b.transform,toolbar)).ToArray();
+                Debug.Log("[TouchToolbar] controls="+controls.Length+" covered="+covered.Length+" canvas="+((RectTransform)canvas.transform).rect);
+                Assert.IsNotEmpty(covered,"The fixture must include a control covered by the upper toolbar.");
+                Find("TouchToolbarPosition").onClick.Invoke();Canvas.ForceUpdateCanvases();
+                foreach(var button in covered)Assert.IsFalse(RectsOverlap((RectTransform)button.transform,toolbar),"Moving tools must fully expose "+button.name);
+                for(int i=0;i<controls.Length;i++)Assert.AreEqual(locations[i],((RectTransform)controls[i].transform).anchoredPosition,"Moving tools changed a saved-control position.");
+            });
+            foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(1920,1080)})
+                yield return TumpUiCapture.Capture("TouchWorkspace-tools-below-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+            Press(Find("TouchToolbarPosition"));yield return null;
             Assert.IsTrue(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
             Press(Find("TouchAdjustments"));yield return null;
             Assert.IsFalse(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
@@ -142,6 +159,13 @@ namespace TumbangPreso.PlayTests
                 Rebinding.Invalidate(); Rebinding.Save(session.Actions);
             }
             yield return null;
+        }
+        private static bool RectsOverlap(RectTransform a,RectTransform b)
+        {
+            Canvas.ForceUpdateCanvases();var ac=new Vector3[4];var bc=new Vector3[4];a.GetWorldCorners(ac);b.GetWorldCorners(bc);
+            var ar=Rect.MinMaxRect(ac.Min(p=>p.x),ac.Min(p=>p.y),ac.Max(p=>p.x),ac.Max(p=>p.y));
+            var br=Rect.MinMaxRect(bc.Min(p=>p.x),bc.Min(p=>p.y),bc.Max(p=>p.x),bc.Max(p=>p.y));
+            return ar.Overlaps(br);
         }
         private static void AssertTouchPositions(Canvas editor)
         {

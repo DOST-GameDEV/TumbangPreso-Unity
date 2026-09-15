@@ -6,18 +6,33 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpTouchLayoutView
     {
+        private RectTransform _toolbarRect;
+        private bool _toolbarBelow,_toolbarExpanded;
+        private Text _toolbarPositionLabel;
+        private void PositionToolbar()
+        {
+            float height=_toolbarExpanded?296:181;
+            OwnerUiLayout.Place(_toolbarRect,97,_toolbarBelow?1080-height-28:28,1726,height);
+            if(_toolbarPositionLabel!=null)_toolbarPositionLabel.text=_toolbarBelow?"TOOLS ABOVE":"TOOLS BELOW";
+        }
         private void BuildToolbar()
         {
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"TouchEditorComposition");
             var bar=OwnerUiLayout.Rect(design,"LayoutToolbar").gameObject.AddComponent<Image>();bar.color=SettingsPalette.Surface;
-            OwnerUiLayout.Place(bar.rectTransform,97,28,1726,181);bar.raycastTarget=true;
+            _toolbarRect=bar.rectTransform;_toolbarBelow=false;_toolbarExpanded=false;
+            PositionToolbar();bar.raycastTarget=true;
             var layer=bar.gameObject.AddComponent<Canvas>();layer.overrideSorting=true;layer.sortingOrder=850;layer.vertexColorAlwaysGammaSpace=true;
             bar.gameObject.AddComponent<GraphicRaycaster>();
             var title=OwnerUiLayout.Text(bar.transform,"Heading","TOUCH LAYOUT",51,OwnerUiLayout.TypeRole.Display);
             title.color=SettingsPalette.Ink;
             OwnerUiLayout.Place(title.rectTransform,36,20,750,84);
-            var hint=OwnerUiLayout.Text(bar.transform,"Hint","Drag controls to move them. Save to keep your layout.",29);
-            hint.color=SettingsPalette.Muted;OwnerUiLayout.Place(hint.rectTransform,36,113,1240,58);
+            var hint=OwnerUiLayout.Text(bar.transform,"Hint","Drag controls. Save to keep your layout.",29);
+            hint.color=SettingsPalette.Muted;OwnerUiLayout.Place(hint.rectTransform,36,113,790,58);
+            var position=OwnerTextAction.Create(bar.transform,"TouchToolbarPosition","TOOLS BELOW",()=>
+            {
+                _toolbarBelow=!_toolbarBelow;PositionToolbar();bar.GetComponent<ScreenFocus>().Rebuild();
+            },866,113,366,58,30);
+            _toolbarPositionLabel=position.GetComponentInChildren<Text>();_toolbarPositionLabel.color=SettingsPalette.Muted;
             var save=OwnerTextAction.Create(bar.transform,"SaveTouchLayout","SAVE LAYOUT",()=>Close(true),1290,20,413,91,39);
             save.GetComponentInChildren<Text>().color=SettingsPalette.Accent;
             OwnerUiLayout.Place((RectTransform)save.transform,1290,20,413,91);
@@ -27,7 +42,7 @@ namespace TumbangPreso.UI
             OwnerTextAction.Create(bar.transform,"TouchAdjustments","SIZE & OPACITY",()=>
             {
                 bool show=!adjustments.gameObject.activeSelf;adjustments.gameObject.SetActive(show);
-                bar.rectTransform.sizeDelta=new Vector2(1726,show?296:181);
+                _toolbarExpanded=show;PositionToolbar();
                 bar.GetComponent<ScreenFocus>().Rebuild();
             },815,32,416,68,30).GetComponentInChildren<Text>().color=SettingsPalette.Muted;
             var opacity=OwnerUiLayout.Text(adjustments,"Opacity","OPACITY",30,OwnerUiLayout.TypeRole.Accent);opacity.color=SettingsPalette.Ink;
