@@ -106,7 +106,8 @@ namespace TumbangPreso.UI
         private void PresentNativeResult(int winner)
         {
             _message.text = winner < 0 ? "It's a draw!" : NameFor(winner) + " wins!"; _message.color = OwnerUiTheme.Current.ActionInk;
-            _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + GameServices.Match.TotalRounds + " rounds";
+            int rounds=GameServices.Match.TotalRounds;
+            _broadcastLine.text = (SceneFlow.SelectedMode == GameMode.Classic ? "Classic" : "Hero Strike") + " · " + rounds + (rounds==1 ? " round" : " rounds");
             _broadcastLine.color = OwnerUiTheme.Current.EnteredInk;
             var order = GameServices.Match.Ranking();
             for(int i=0;i<4;i++)

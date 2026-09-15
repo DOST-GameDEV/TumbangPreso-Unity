@@ -1,5 +1,66 @@
 # Active TUMP rework ledger
 
+## CURRENT native v3 and Nemu pose follow-ups qualified; preserve candidate
+
+Nativev3 FINISHEDPASS, Python11468/player16620 retired. Quiet repeat also PASS,
+Python21248/player14016 retired. Both have sharedInputUnchanged=true and no prior
+named-profile files to restore. Actual1366x768 native UI/match loops pass. Quiet
+averages173.9/179.1FPS, p95~6.7ms/p99~10ms over28s per mode. First Classic outlier
+363.3ms did not recur; repeat maxima36.7ms Classic/90.0ms Hero remain unresolved
+isolated hitches. Do not claim stutter-free or all-hardware performance.
+
+Nemu four swim/grip states + supported recovery FINISHED1/1PASS, Python10264 retired,
+restoration17958fc6d0e4. Gaps-.0283..+.0224m; all actual serialized swim states bind.
+The rebaked curves are geometry-dependent palm-centre corrections, not merely
+format churn: retain the two Nemu RecoveryAnimations/SwimmingAnimations assets.
+Embedded GLB animation data remains unchanged. Images inspected.
+
+Core-loop-v1 FINISHED2/2PASS, Python13852 retired, restoration17f170b3da07. Accelerated
+synthetic8rounds gave every seat two turns; both modes used real movement/grab to
+retrieve floating stock and leave/re-enter the pool. Report:
+docs/reports/demo-candidate-v3-2026-09-15. No owned Unity/player/encoder job remains.
+Next save this candidate checkpoint, then continue remaining demo-visible input/
+recovery and LAN rematch/rejoin checks, and the entire reprioritized backlog.
+
+## CURRENT native v3 loop and frame timings running alone
+
+Build-v3 FINISHED1081MB/54s, Python14900 retired, restoration21d801b3fdba.
+Artifact Builds/demo-2026-09-16-v3/TumbangPreso.exe. Runtime.dll timestamp
+2026-09-15T05:21:21.9526779Z, SHA256
+E66713F7FCEE4BC4E5AB0948F9272198D7824ECED18BC9A082FBEFC7CDFD3F72.
+RUNNING native Python11468, Logs/demo-native-loop-v3(.pid/.stdout/.stderr) and folder,
+fresh profile demo-native-loop-v3. No other owned Editor/player/encoder was active
+at launch. Inspect result.json frameWindows and actual viewports after completion.
+This remains normal offline-bot sampling, not worst-case overlap or every PC.
+
+Build regenerated Nemu recovery/swimming clips. The inspected differences so far
+are tiny quaternion/slope floats, not obvious new motion; quantify all changes
+before deciding whether to retain or restore them. GLB animation digest is still
+unchanged. Do not edit imported assets while this player run is active.
+
+## CURRENT native v3 with hand correction and clean frame-timing collection
+
+Default hero review FINISHED1/1PASS, Python21732 retired, restoratione27b783d13e8.
+All18default slots accepted and every declared body cast appears in the actual
+frame traces. Defaults have distinct body/FPP action IDs. Reviewed ultimate setup
+and impact frames; Nemu's preserved monster transition is clearly visible. Zack's
+cast was not missing: its recorded summon interval is0.7829..1.5601s. Other early
+stills alone had caught its preparation/idle stage. Full counterplay/variants and
+owner feel approval remain open. Motion encoder Python18460 completed36 owner/body
+clips at measured real timings under Logs/demo-hero-defaults-v1.
+
+RUNNING guarded native build-v3, Python14900, Logs/demo-native-build-v3
+(.pid/.stdout/.stderr/.log), profile demo-build-review. Target
+Builds/demo-2026-09-16-v3/TumbangPreso.exe. Includes Nemu's block palms and the small
+single-round caption fix. The opt-in native driver now records active-game frame
+times only during the wait for real results, outside screenshot capture windows.
+Its report carries median/p95/p99/max, sample count, duration and actual hardware/
+resolution. Run the new native review only after Editor/encoder jobs are finished,
+so the measurement has no other task-owned render workload. Keep v2 untouched.
+No imported edits until build exit. Current committed HEADcdab6d63; driver, small
+caption and the hero-test timeout are uncommitted. After native v3, continue the
+remaining visible gameplay, recovery/input, LAN rematch and full saved queue.
+
 ## CURRENT default hero presentation review running; direct connection passed
 
 LAN-v1 FINISHEDPASS, Python17148 and both owned players18044/9200 retired. Both

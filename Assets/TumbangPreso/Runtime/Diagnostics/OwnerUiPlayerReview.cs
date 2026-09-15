@@ -13,11 +13,20 @@ namespace TumbangPreso.Diagnostics
     // Opt-in built-player UI qualification. Normal play and tournament launches never install it.
     public sealed class OwnerUiPlayerReview : MonoBehaviour
     {
-        [Serializable]private sealed class Report { public bool passed;public string error;public List<string> stages=new List<string>(); }
+        [Serializable]private sealed class FrameWindow
+        {
+            public string mode,gpu,cpu;public int width,height,samples,framesOver33Ms;
+            public float duration,averageFps,medianMs,p95Ms,p99Ms,maxMs;
+        }
+        [Serializable]private sealed class Report
+        { public bool passed;public string error;public List<string> stages=new List<string>();public List<FrameWindow> frameWindows=new List<FrameWindow>(); }
         private readonly Report _report=new Report();
         private string _folder;
         private float _deadline;
         private bool _finished;
+        private string _frameMode;
+        private float _frameStarted;
+        private readonly List<float> _frameTimes=new List<float>(8192);
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
@@ -42,11 +51,35 @@ namespace TumbangPreso.Diagnostics
             }
             if(!_finished)Finish(true,"");
         }
-        private void Update(){if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());}
+        private void Update()
+        {
+            if(_frameMode!=null && GameServices.Round!=null && GameServices.Round.RoundActive)
+                _frameTimes.Add(Time.unscaledDeltaTime*1000f);
+            if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());
+        }
+        private void StartFrameWindow(string mode)
+        { _frameTimes.Clear();_frameStarted=Time.realtimeSinceStartup;_frameMode=mode; }
+        private void StopFrameWindow()
+        {
+            if(_frameMode==null)return;
+            string mode=_frameMode;_frameMode=null;
+            var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
+                duration=Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType};
+            if(_frameTimes.Count>0)
+            {
+                var sorted=_frameTimes.OrderBy(v=>v).ToArray();
+                float Percentile(float p)=>sorted[Mathf.Clamp(Mathf.CeilToInt(p*sorted.Length)-1,0,sorted.Length-1)];
+                window.medianMs=Percentile(.5f);window.p95Ms=Percentile(.95f);window.p99Ms=Percentile(.99f);window.maxMs=sorted[sorted.Length-1];
+                window.averageFps=1000f/Mathf.Max(.001f,_frameTimes.Average());window.framesOver33Ms=_frameTimes.Count(v=>v>33.333f);
+            }
+            _report.frameWindows.Add(window);
+            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-times.csv"),new[]{"sample,frame_ms"}.Concat(
+                _frameTimes.Select((value,index)=>FormattableString.Invariant($"{index},{value:F6}"))));
+        }
         private void Stage(string label){_report.stages.Add(label);_deadline=Time.realtimeSinceStartup+100;Debug.Log("[OwnerUiReview] "+label);}
         private void Finish(bool passed,string error)
         {
-            if(_finished)return;_finished=true;_report.passed=passed;_report.error=error;
+            if(_finished)return;StopFrameWindow();_finished=true;_report.passed=passed;_report.error=error;
             File.WriteAllText(Path.Combine(_folder,"result.json"),JsonUtility.ToJson(_report,true));
             Debug.Log("[OwnerUiReview] "+(passed?"PASS":"FAIL "+error));Application.Quit(passed?0:1);
         }
@@ -198,7 +231,8 @@ namespace TumbangPreso.Diagnostics
                 Stage(mode+" playing");yield return new WaitForSecondsRealtime(1);yield return Shot(mode+"-hud");
                 var watcher=UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();var pause=Panel.Open<PausePanel>(watcher);pause.Local=watcher.Local;
                 yield return WaitFor(()=>Find("ResumeMatch")!=null);yield return Shot(mode+"-pause");yield return Click("ResumeMatch");
-                Stage(mode+" waiting for real result");yield return WaitFor(()=>Find("ResultRematch")!=null,65);yield return Shot(mode+"-result");
+                Stage(mode+" waiting for real result");StartFrameWindow(mode);
+                yield return WaitFor(()=>Find("ResultRematch")!=null,65);StopFrameWindow();yield return Shot(mode+"-result");
                 yield return Click("ResultTab1");yield return Shot(mode+"-details");
                 if(mode=="ClassicButton")
                 {

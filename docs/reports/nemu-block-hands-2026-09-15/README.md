@@ -6,7 +6,7 @@ The older generic thumb cleanup had not removed these original pieces.
 
 Each side is now one lightly beveled block palm, using the original skin slot and
 arm joint. The overall hand reach is unchanged. The repair changes only those
-hand triangles; costume, face, skeleton, palette and animation samples are retained.
+hand triangles; costume, face, skeleton, palette and embedded animation samples are retained.
 The current familiar and monster assets are unchanged. Inday was not reworked.
 
 Source durability: build_nemu_voxel.py now generates single palms. The new surgical
@@ -40,3 +40,8 @@ does not claim every aiming, skill, device or network condition is qualified.
 
 The preserved native v2 demo-loop baseline predates this model correction. A later
 native candidate must include it. Continue the visible-gameplay and full TODO queue.
+
+Follow-up: native v3 includes the correction. Its geometry-dependent recovery and
+swimming arm curves were rebaked from the actual new palm centre and passed a
+focused four-state swim/grip and supported-recovery check. See the v3 candidate
+report; this is distinct from the unchanged embedded GLB animation data.

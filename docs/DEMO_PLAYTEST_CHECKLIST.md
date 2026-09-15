@@ -26,6 +26,10 @@ or Editor screenshots for a verified native demo build.
 - A direct two-process Hero Strike connection passed into round2 with matching
   protocol/map/defender/structural state and clean client departure/bot takeover.
   Physical two-PC LAN, rematch/rejoin and venue Wi-Fi are still unverified.
+- Nativev3 includes the Nemu correction and passed two fresh native loops. The
+  repeated frame sample is fast on this PC but retains isolated hitch observations.
+  Nemu's rebaked swim/recovery poses, both-mode water retrieval and the accelerated
+  complete8-round rotation checks pass. Human feel/venue checks remain unticked.
 
 ## First visible checks when the owner returns
 
@@ -66,13 +70,14 @@ or Editor screenshots for a verified native demo build.
 
 ## Candidate record to fill after qualification
 
-- Executable/data: Builds/demo-2026-09-16-v2/TumbangPreso.exe and its adjacent data folder.
-- Source:91d1e2f3 plus the opt-in driver. Runtime SHA256:
-  D161737889CC2048C24BCD8BFDFF02694875C99E2BDD4BC9DD083B6B90C0F3F7.
+- Executable/data: Builds/demo-2026-09-16-v3/TumbangPreso.exe and its adjacent data folder.
+- Runtime SHA256:E66713F7FCEE4BC4E5AB0948F9272198D7824ECED18BC9A082FBEFC7CDFD3F72.
 - Native routes/matches: both modes' short custom loops, Classic rematch and menu return passed.
-- Measured frame behavior on this PC: pending.
+- Measured1366x768 quiet repeat:173.9/179.1FPS averages, p99 about10ms, isolated
+  maxima36.7/90.0ms. An earlier363.3ms Classic outlier has no confirmed cause.
 - Known issues or intentionally deferred features: see current ledger; not yet frozen.
-- Preserved fallback artifact and restart steps: pending.
+- Fallback: internal v2 remains preserved. Relaunch the selected executable and
+  use Guest -> Play -> With bots if a demo session needs restarting.
 
 Update this file with exact evidence and open items as work progresses. Leave
 human approval boxes unticked until the corresponding playtest actually happens.

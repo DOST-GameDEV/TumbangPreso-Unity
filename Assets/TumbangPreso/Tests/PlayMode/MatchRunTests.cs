@@ -324,11 +324,12 @@ namespace TumbangPreso.PlayTests
             runner.Slippers = new Slipper[0];
             runner.AutoStart = false;
 
-            var seen = new bool[Balance.PlayerCount];
-            GameServices.Match.RoundStarted += (round, defender) => seen[defender] = true;
+            var seen = new int[Balance.PlayerCount];
+            GameServices.Match.RoundStarted += (round, defender) => seen[defender]++;
 
             Time.timeScale = 60.0f;
             runner.Begin();
+            Assert.AreEqual(8,GameServices.Match.TotalRounds,"The normal format must retain the owner's eight rounds.");
 
             float guard = 0.0f;
             while (GameServices.Match.MatchInProgress && guard < 90.0f)
@@ -343,7 +344,7 @@ namespace TumbangPreso.PlayTests
                 "the match never ended: a round boundary is not advancing");
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
-                Assert.IsTrue(seen[slot], $"seat {slot} never defended: the rotation is broken");
+                Assert.AreEqual(2,seen[slot],$"seat {slot} did not get exactly two defender turns");
         }
 
         private CharacterMotor[] SeatArray()

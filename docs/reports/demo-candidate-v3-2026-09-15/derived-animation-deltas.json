@@ -1,0 +1,16 @@
+[
+  {
+    "asset": "Assets/TumbangPreso/Resources/RecoveryAnimations/team-nemu.asset",
+    "numbers": 37329,
+    "changedNumbers": 1944,
+    "maxNumericDelta": 0.08933817000000002,
+    "structureSame": true
+  },
+  {
+    "asset": "Assets/TumbangPreso/Resources/SwimmingAnimations/team-nemu.asset",
+    "numbers": 21806,
+    "changedNumbers": 3168,
+    "maxNumericDelta": 0.007397000000000098,
+    "structureSame": true
+  }
+]

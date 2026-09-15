@@ -137,6 +137,13 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest,Timeout(240000)]
         public IEnumerator EveryApprovedPersonBindsSwimmingAndReturnsFromSupportedRecovery()
+            => ReviewApprovedRigs(null);
+
+        [UnityTest,Timeout(90000)]
+        public IEnumerator NemuBlockPalmsKeepAllSwimGripsAndSupportedRecovery()
+            => ReviewApprovedRigs(new[]{"nemu"});
+
+        private IEnumerator ReviewApprovedRigs(string[] selected)
         {
             var report=new StringBuilder("mode,person,swim_phase_change,eye_y,recovery_min_gap,recovery_max_gap\n");
             var mesh=new Mesh();var book=RosterBook.Load();
@@ -144,6 +151,7 @@ namespace TumbangPreso.PlayTests
             {
                 foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
                 {
+                    if(selected!=null && !Roster.GetPeople(mode).Any(p=>selected.Contains(p.Id)))continue;
                     yield return MapRetrievalProbe.Load(SceneFlow.SaBubong,mode);Time.timeScale=1;GameServices.Round.BeginRound();
                     var who=GameServices.Round.PlayerAt(1);who.Intent.Parked=false;
                     _rig=Object.FindFirstObjectByType<CameraRig>();_rig.Follow(who);_rig.SetAimSource(AimSource.Movement);
@@ -154,6 +162,7 @@ namespace TumbangPreso.PlayTests
                         var people=Roster.GetPeople(mode);
                         for(int i=0;i<people.Count;i++)
                         {
+                            if(selected!=null && !selected.Contains(people[i].Id))continue;
                             who.CharacterIndex=i;var art=book.FindPersonArt(people[i].Id);Assert.IsNotNull(art);
                             var visual=who.GetComponent<CharacterVisual>();visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
                             who.ClearTrip();who.Intent.Clear();who.Intent.Parked=false;
@@ -169,6 +178,29 @@ namespace TumbangPreso.PlayTests
                             witness.transform.SetPositionAndRotation(at,Quaternion.LookRotation(who.transform.position+Vector3.up*.8f-at));
                             yield return GameplayShots.Render(witness,people[i].Id+"-swimming-body",false,Output,who);
                             yield return GameplayShots.Render(_rig.Camera,people[i].Id+"-swimming-owner",false,Output);
+                            if(selected!=null)
+                            {
+                                var carrier=who.GetComponent<Carrier>();var shoe=carrier.Held;Assert.IsNotNull(shoe);
+                                foreach(bool held in new[]{false,true})foreach(bool moving in new[]{false,true})
+                                {
+                                    who.Teleport(new Vector3(-13.2f,RooftopPool.SurfaceY-RooftopPool.FloatDepth,7));
+                                    who.transform.rotation=Quaternion.identity;
+                                    if(held)shoe.HostForceEquip(who);
+                                    else if(carrier.Held!=null){Assert.True(shoe.HostDisarm());shoe.transform.position=new Vector3(-15,RooftopPool.SurfaceY,10);}
+                                    who.Intent.Move=moving?Vector2.up*.45f:Vector2.zero;
+                                    who.Intent.AimPoint=who.transform.position+Vector3.forward*20;who.Intent.FaceAimPoint=true;
+                                    yield return new WaitForSeconds(.55f);
+                                    Assert.IsTrue(who.IsSwimming);Assert.AreEqual(held,who.HoldingSlipper);
+                                    Assert.IsTrue(animator.SwimmingMotionPlaying);
+                                    Assert.AreEqual(moving,animator.ForwardSwimmingMotionPlaying,"Nemu used the wrong water stroke.");
+                                    string label=people[i].Id+"-"+(moving?"forward":"tread")+"-"+(held?"held":"empty");
+                                    at=who.transform.position+new Vector3(2.6f,2.3f,-2.8f);
+                                    witness.transform.SetPositionAndRotation(at,Quaternion.LookRotation(who.transform.position+Vector3.up*.8f-at));
+                                    yield return GameplayShots.Render(witness,label+"-body",false,Output,who);
+                                    yield return GameplayShots.Render(_rig.Camera,label+"-owner",false,Output);
+                                }
+                                who.Intent.Move=Vector2.zero;
+                            }
                             // Physical rail descent is covered separately. Here the
                             // real recovery state samples every approved serialized rig.
                             who.Teleport(new Vector3(0,.1f,-10));yield return new WaitForSeconds(.2f);who.ApplyFallRecovery();
