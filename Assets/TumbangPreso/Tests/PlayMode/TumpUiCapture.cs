@@ -146,13 +146,26 @@ namespace TumbangPreso.PlayTests
                         if (!text.enabled || string.IsNullOrWhiteSpace(text.text) || text.canvasRenderer.GetInheritedAlpha() <= .001f) continue;
                         if (OutsideScrollMask(text.rectTransform)) continue;
                         string path = string.Join("/", text.GetComponentsInParent<Transform>().Reverse().Select(t => t.name));
+                        int charsBefore=text.cachedTextGenerator.characterCountVisible;
+                        int verticesBefore=text.canvasRenderer.GetMesh()?.vertexCount??0;
                         Assert.LessOrEqual(text.preferredHeight, text.rectTransform.rect.height + 3,
                             name + "/" + path + " clips its content.");
                         Assert.GreaterOrEqual(text.fontSize * canvas.scaleFactor, 13.95f,
                             name + "/" + path + " is below the small-window reading floor.");
                         if (text.verticalOverflow == VerticalWrapMode.Truncate && text.GetComponentInParent<InputField>() == null)
+                        {
+                            if(text.cachedTextGenerator.characterCountVisible<text.text.TrimEnd().Length)
+                            {
+                                Debug.Log("[TextCacheDiagnostic] "+name+"/"+path+" charsBefore="+charsBefore+
+                                    " charsAfter="+text.cachedTextGenerator.characterCountVisible+" vertices="+verticesBefore+" text="+text.text);
+                                Directory.CreateDirectory("Logs/shots-native-ui");RenderTexture.active=rt;
+                                var diagnostic=new Texture2D(width,height,TextureFormat.RGB24,false);
+                                diagnostic.ReadPixels(new Rect(0,0,width,height),0,0);diagnostic.Apply();
+                                File.WriteAllBytes("Logs/shots-native-ui/"+name+"-text-cache-diagnostic.png",diagnostic.EncodeToPNG());Object.DestroyImmediate(diagnostic);
+                            }
                             Assert.GreaterOrEqual(text.cachedTextGenerator.characterCountVisible, text.text.TrimEnd().Length,
                                 name + "/" + path + " lost rendered characters despite its preferred height.");
+                        }
                     }
                 }
                 RenderTexture.active = rt;

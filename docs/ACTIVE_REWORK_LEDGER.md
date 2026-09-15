@@ -1,5 +1,22 @@
 # Active TUMP rework ledger
 
+## CURRENT visible heading fixed; prepare native demo loop next
+
+Deadline/order docs committed/pushed8d542f7b. The full queue stays active, with
+visible demo work first. Heading-scale-v1 FINISHED1/1, Python10560 retired,
+restoration75c2ba478145. Controlled110/128/110 boxes at1366x768 gave missing/visible/
+missing heading; preferredHeight reported63.28125 despite the failed110box. Increased
+only the production heading's height to128. New source-based regression captures
+ten PC sizes. demo-visible-ui-v1 FINISHED3/3PASS, Python16392 retired,
+restoration6c120d857056; front-end and touch routes pass too. No Unity/player job.
+
+D10 report: docs/reports/ui-composition-d10. Source changes are ready to checkpoint.
+Known lower-priority visual follow-up: expanded touch toolbar overlaps some top
+controls. Keep it in the playtest list, not as a completed editor-design claim.
+Next update stale OwnerUiPlayerReview for HomeMenuAction ink/underline, actual
+resolution, startup settling and ReadyGate, then guarded internal build/native run.
+Main demo path takes priority over the saved ModelPreview physical-pixel draft.
+
 ## CURRENT owner reprioritization: visible demo first, entire queue still active
 
 September15 owner requests ordering for a demo tomorrow, then clarifies to still

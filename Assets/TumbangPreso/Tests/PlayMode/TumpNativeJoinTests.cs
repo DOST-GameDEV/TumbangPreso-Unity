@@ -91,7 +91,13 @@ namespace TumbangPreso.PlayTests
                 typeof(QueueCard).GetMethod("Refresh", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(card, null);
                 yield return null;
                 Press("UnderlyingLoadout"); Assert.IsTrue(underlyingUsed, "Searching must not block the rest of preparation.");
-                yield return TumpUiCapture.Capture("OwnerQueue-v1", canvas, 1920, 1080,false);
+                foreach(var elapsed in new[]{10f,180f})
+                {
+                    typeof(Matchmaker).GetProperty("Elapsed").GetSetMethod(true).Invoke(queue,new object[]{elapsed});
+                    typeof(QueueCard).GetMethod("Refresh",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(card,null);yield return null;
+                    foreach(var size in TumpUiCapture.PcViewports)
+                        yield return TumpUiCapture.Capture("QueueStatus-"+elapsed+"-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                }
                 Press("CancelQueueButton"); yield return null;
                 Assert.IsFalse(card.IsQueueing); Assert.IsTrue(Find("QuickMatchButton").interactable);
             }

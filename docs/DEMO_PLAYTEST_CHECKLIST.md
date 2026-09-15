@@ -8,8 +8,9 @@ or Editor screenshots for a verified native demo build.
 
 - D1-D9 UI changes and the8-round/dark-settings/four-sampayan correction are
   committed through8f21e603 with focused tests and in-engine screenshots.
-- D10 credits/queue/touch changes are unfinished. Queue passed. A Play heading
-  disappears at1366x768 in a repeatable capture; small touch labels also need work.
+- D10 credits/queue/touch and the Play heading fix have scoped passing evidence.
+  The heading is visible at ten PC sizes, including the formerly failing1366x768.
+  Expanded touch-toolbar overlap remains a lower-priority visual follow-up.
 - A fresh native demo candidate has not yet been qualified. The old source-PC
   native review stopped early and must not be presented as a current pass.
 - Hero/gameplay reports qualify their named cases only. Whole-kit ordinary play,

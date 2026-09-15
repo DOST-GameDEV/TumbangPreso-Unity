@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:59Z" duration="22.8592576">
+  <test-suite type="TestSuite" id="1535" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:59Z" duration="22.859258" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1529" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:59Z" duration="22.838557" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2152" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1530" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:59Z" duration="22.827787" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1531" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:59Z" duration="22.818903" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1336" name="PlayHeadingScaleTests" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:38Z" duration="1.702745" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1337" name="PlayHeadingRemainsVisibleAcrossPcSizes" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests.PlayHeadingRemainsVisibleAcrossPcSizes" methodname="PlayHeadingRemainsVisibleAcrossPcSizes" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" seed="1941709300" result="Passed" start-time="2026-09-15 03:44:36Z" end-time="2026-09-15 03:44:38Z" duration="1.686574" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HeadingScale] size=(960, 540) height=128 scale=0.5 preferred=64 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1280, 720) height=128 scale=0.6666667 preferred=61.5 adjusted=(x:-0.50, y:-127.50, width:1230.00, height:127.50) characters=10 vertices=36
+[HeadingScale] size=(1366, 768) height=128 scale=0.7111111 preferred=63.28125 adjusted=(x:-0.03, y:-127.88, width:1230.47, height:127.97) characters=10 vertices=36
+[HeadingScale] size=(1920, 1080) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1920, 1200) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(1280, 960) height=128 scale=0.6666667 preferred=61.5 adjusted=(x:-0.50, y:-127.50, width:1230.00, height:127.50) characters=10 vertices=36
+[HeadingScale] size=(2560, 1440) height=128 scale=1.333333 preferred=60 adjusted=(x:0.25, y:-128.25, width:1230.00, height:128.25) characters=10 vertices=36
+[HeadingScale] size=(3440, 1440) height=128 scale=1.333333 preferred=60 adjusted=(x:0.25, y:-128.25, width:1230.00, height:128.25) characters=10 vertices=36
+[HeadingScale] size=(3840, 1080) height=128 scale=1 preferred=61 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+[HeadingScale] size=(3840, 2160) height=128 scale=2 preferred=59.5 adjusted=(x:0.00, y:-128.00, width:1230.00, height:128.00) characters=10 vertices=36
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1458" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-15 03:44:38Z" end-time="2026-09-15 03:44:52Z" duration="14.347872" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1459" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="579651855" result="Passed" start-time="2026-09-15 03:44:38Z" end-time="2026-09-15 03:44:52Z" duration="14.343076" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] NativeHome-960x540/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-960x540 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x720/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1366x768/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1366x768 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1200/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1200 cream source=252,211,159 pixel=199,140,122; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x960/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=247,184,115; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-2560x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-2560x1440 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3440x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3440x1440 cream source=252,211,159 pixel=198,137,118; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x1080 cream source=252,211,159 pixel=247,184,116; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x2160/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x2160 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-960x540 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1280x720 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1366x768 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1920x1080 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1920x1200 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1280x960 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-2560x1440 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3440x1440 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3840x1080 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3840x2160 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[OwnerCreditScroll] normalized=4.609906E-08 content=3472 viewport=824 lastHeight=120 preferred=90
+[OwnerCreditLayout] actualChildren=3472 preferred=3472 padding=56 contentPos=(0.00, 2648.00) lastPos=(517.00, -3356.00)
+[TumpUiCapture] OwnerCredits-bottom-diagnostic-v2 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[OwnerCreditCoordinates] contentRect=(x:-521.00, y:-3472.00, width:1042.00, height:3472.00) pivot=(0.50, 1.00) anchors=(0.00, 1.00)/(1.00, 1.00) contentScale=(1.00, 1.00, 1.00) lastScale=(1.00, 1.00, 1.00) lastPivot=(0.50, 0.50) contentBottom=(-521.00, -412.00, 0.00) lastBottom=(-521.00, -356.00, 0.00) finalNormalized=4.609906E-08 finalContent=3472 finalPos=(0.00, 2648.00) finalLast=(517.00, -3356.00)/(x:-517.00, y:-60.00, width:1034.00, height:120.00)
+[TumpUiCapture] StudioCredits-licenses-960x540 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1280x720 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1366x768 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1920x1080 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1920x1200 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1280x960 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-2560x1440 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3440x1440 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3840x1080 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3840x2160 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPlay-Classic-v1/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/SelectedMode: vertices=8, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] OwnerPlay-Classic-v1 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-960x540/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-960x540 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1280x720/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1280x720 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1366x768/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1366x768 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1920x1080/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1080/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1920x1080 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1920x1200/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1920x1200/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1920x1200 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1280x960/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1280x960/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1280x960 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-2560x1440/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-2560x1440/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-2560x1440 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3440x1440/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3440x1440/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3440x1440 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3840x1080/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3840x1080/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3840x1080 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-3840x2160/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-3840x2160/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-3840x2160 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1480" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 03:44:52Z" end-time="2026-09-15 03:44:59Z" duration="6.742981" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1482" name="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" methodname="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="1871312459" result="Passed" start-time="2026-09-15 03:44:52Z" end-time="2026-09-15 03:44:59Z" duration="6.737773" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] ApprovedController-restored-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+[TumpUiCapture] TouchWorkspace-expanded-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-960x540/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x720/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-1366x768/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1080/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-1920x1200/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-1280x960/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-2560x1440/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-3440x1440/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x1080/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-compact-3840x2160/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpUiCapture] TouchWorkspace-compact-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

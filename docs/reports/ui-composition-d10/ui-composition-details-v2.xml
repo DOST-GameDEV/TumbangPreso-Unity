@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:17Z" duration="13.9497717">
+  <test-suite type="TestSuite" id="1533" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="406" result="Failed" site="Child" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:17Z" duration="13.949772" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1527" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="406" result="Failed" site="Child" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:17Z" duration="13.929236" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17848" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1528" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="406" result="Failed" site="Child" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:17Z" duration="13.918293" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1529" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="406" result="Failed" site="Child" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:17Z" duration="13.907465" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1456" name="TumpNativeFrontEndTests" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:15Z" duration="12.167153" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1457" name="TitlePlayCreditsAndSettingsReturnThroughNativeViews" fullname="TumbangPreso.PlayTests.TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews" methodname="TitlePlayCreditsAndSettingsReturnThroughNativeViews" classname="TumbangPreso.PlayTests.TumpNativeFrontEndTests" runstate="Runnable" seed="1713572994" result="Failed" start-time="2026-09-15 03:35:03Z" end-time="2026-09-15 03:35:15Z" duration="12.148695" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  CourtPlay-Hero-1366x768/OwnerPlayCanvas/CourtPlayComposition/Heading lost rendered characters despite its preferred height.
+  Expected: greater than or equal to 10
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__3.MoveNext () [0x00a49] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:166
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpGeometry] NativeHome-960x540/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-960x540 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x720/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x720 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1366x768/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1366x768 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1080 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1920x1200/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1920x1200 cream source=252,211,159 pixel=199,140,122; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-1280x960/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-1280x960 cream source=252,211,159 pixel=247,184,115; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-2560x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-2560x1440 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3440x1440/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3440x1440 cream source=252,211,159 pixel=198,137,118; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x1080/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x1080 cream source=252,211,159 pixel=248,184,116; isolated UI camera, no ColourGrade.
+[TumpGeometry] NativeHome-3840x2160/HomeBrush: vertices=126, cull=False, alpha=1, depth=3, material=1
+[TumpUiCapture] NativeHome-3840x2160 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-960x540 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1280x720 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1366x768 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1920x1080 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1920x1200 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-1280x960 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-2560x1440 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3440x1440 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3840x1080 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-team-3840x2160 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[OwnerCreditScroll] normalized=4.609906E-08 content=3472 viewport=824 lastHeight=120 preferred=90
+[OwnerCreditLayout] actualChildren=3472 preferred=3472 padding=56 contentPos=(0.00, 2648.00) lastPos=(517.00, -3356.00)
+[TumpUiCapture] OwnerCredits-bottom-diagnostic-v2 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[OwnerCreditCoordinates] contentRect=(x:-521.00, y:-3472.00, width:1042.00, height:3472.00) pivot=(0.50, 1.00) anchors=(0.00, 1.00)/(1.00, 1.00) contentScale=(1.00, 1.00, 1.00) lastScale=(1.00, 1.00, 1.00) lastPivot=(0.50, 0.50) contentBottom=(-521.00, -412.00, 0.00) lastBottom=(-521.00, -356.00, 0.00) finalNormalized=4.609906E-08 finalContent=3472 finalPos=(0.00, 2648.00) finalLast=(517.00, -3356.00)/(x:-517.00, y:-60.00, width:1034.00, height:120.00)
+[TumpUiCapture] StudioCredits-licenses-960x540 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1280x720 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1366x768 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1920x1080 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1920x1200 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-1280x960 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-2560x1440 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3440x1440 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3840x1080 cream source=252,211,159 pixel=239,225,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StudioCredits-licenses-3840x2160 cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerPlay-Classic-v1/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/SelectedMode: vertices=8, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] OwnerPlay-Classic-v1/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpUiCapture] OwnerPlay-Classic-v1 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-960x540/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-960x540/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-960x540 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1280x720/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1280x720/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TumpUiCapture] CourtPlay-Hero-1280x720 cream source=252,211,159 pixel=224,181,144; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPlay-Hero-1366x768/ClassicButton: vertices=30, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/HeroStrikeButton: vertices=27, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/SelectedMode: vertices=8, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/PracticeButton: vertices=21, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=312, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/CustomButton: vertices=21, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=220, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RankedButton: vertices=21, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] CourtPlay-Hero-1366x768/RouteIcon: vertices=52, cull=False, alpha=1, depth=28, material=1
+[TextCacheDiagnostic] CourtPlay-Hero-1366x768/OwnerPlayCanvas/CourtPlayComposition/Heading charsBefore=-1 charsAfter=-1 vertices=0 text=LET'S PLAY
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1478" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-15 03:35:15Z" end-time="2026-09-15 03:35:17Z" duration="1.718433" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1480" name="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" methodname="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="1542003009" result="Failed" start-time="2026-09-15 03:35:15Z" end-time="2026-09-15 03:35:17Z" duration="1.715430" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  TouchWorkspace-expanded-960x540/OwnerTouchLayoutCanvas/OwnerTouchCanvas/SandboxToggle/Label is below the small-window reading floor.
+  Expected: greater than or equal to 13.9499998f
+  But was:  12.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__3.MoveNext () [0x008c7] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:153
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpUiCapture] ApprovedController-restored-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/Handle: vertices=25, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] TouchWorkspace-expanded-960x540/Handle: vertices=25, cull=False, alpha=1, depth=23, material=1
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

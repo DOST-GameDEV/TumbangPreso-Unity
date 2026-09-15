@@ -20,7 +20,9 @@ namespace TumbangPreso.UI
             var design = OwnerUiLayout.DesignArea(_canvas.transform, "CourtPlayComposition");
             OwnerTextAction.Create(design, "BackButton", "BACK", () => SceneFlow.Go(SceneFlow.MainMenu), 80, 27, 175, 65, 30);
             var title = OwnerUiLayout.Text(design, "Heading", "LET'S PLAY", 76, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform, 98, 114, 1230, 110);
+            // Fractional laptop canvas scales need room for the rendered display
+            // font line, beyond the smaller preferredHeight reported by Text.
+            OwnerUiLayout.Place(title.rectTransform, 98, 114, 1230, 128);
             var logo = OwnerUiLayout.Art(design, "OriginalOwnerLogo", OwnerUiTheme.Piece.Logo);
             OwnerUiLayout.Place(logo.rectTransform, 1590, 47, 220, 220 * 273f / 407);
             _classic = Mode(design, false, out _classicTick);

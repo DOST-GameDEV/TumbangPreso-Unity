@@ -107,11 +107,13 @@ namespace TumbangPreso.PlayTests
             GameObject.Find("TouchSize").GetComponent<Slider>().value = Mathf.Min(TouchLayoutStore.MaxScale, scale + .15f);
             yield return null;
             AssertTouchPositions(canvas);
-            yield return TumpUiCapture.Capture("OwnerTouchLayout-expanded-v2", canvas, 1920, 1080,false);
+            foreach(var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("TouchWorkspace-expanded-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
             Assert.IsTrue(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
             Press(Find("TouchAdjustments"));yield return null;
             Assert.IsFalse(canvas.GetComponentsInChildren<Slider>().Any(s=>s.name=="TouchSize"));
-            yield return TumpUiCapture.Capture("OwnerTouchLayout-compact-v2", canvas, 1920, 1080,false);
+            foreach(var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("TouchWorkspace-compact-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
             AssertTouchPositions(canvas);
             Press(Find("CancelTouchLayout")); yield return null;
             Assert.IsFalse(TouchButton.Customising);

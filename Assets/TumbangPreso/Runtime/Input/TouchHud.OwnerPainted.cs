@@ -33,13 +33,13 @@ namespace TumbangPreso.InputLayer
                 var button=face.gameObject.AddComponent<TouchButton>();button.BindOwnerPresentation(entry,opacity,face,verb,ability);
                 if(entry.Zone==TouchZone.SkillRail)
                 {
-                    var label=OwnerUiLayout.Text(rect,"SkillSlot",entry.Verb==Verb.Ultimate?"ULT":(entry.Slot+1).ToString(),27,OwnerUiLayout.TypeRole.Display);
+                    var label=OwnerUiLayout.Text(rect,"SkillSlot",entry.Verb==Verb.Ultimate?"ULT":(entry.Slot+1).ToString(),30,OwnerUiLayout.TypeRole.Display);
                     label.alignment=TextAnchor.MiddleCenter;label.rectTransform.anchorMin=label.rectTransform.anchorMax=label.rectTransform.pivot=new Vector2(.5f,0);
                     label.rectTransform.anchoredPosition=new Vector2(0,9);label.rectTransform.sizeDelta=new Vector2(90,48);
                 }
                 _buttons.Add(button);
             }
-            var sandbox=OwnerTextAction.Create(root,"SandboxToggle",SandboxOffText,()=>{PracticeSandbox.Toggle();RefreshSandbox();},SandboxMargin,SandboxTopInset,SandboxWidth,SandboxHeight,24);
+            var sandbox=OwnerTextAction.Create(root,"SandboxToggle",SandboxOffText,()=>{PracticeSandbox.Toggle();RefreshSandbox();},SandboxMargin,SandboxTopInset,SandboxWidth,SandboxHeight,30);
             var paper=OwnerUiLayout.Rect(sandbox.transform,"SandboxPaper").gameObject.AddComponent<OwnerUiPaper>();
             OwnerUiLayout.Fill(paper.rectTransform);paper.raycastTarget=false;paper.transform.SetAsFirstSibling();
             _sandboxRoot=sandbox.gameObject;_sandboxLabel=sandbox.GetComponentInChildren<Text>();

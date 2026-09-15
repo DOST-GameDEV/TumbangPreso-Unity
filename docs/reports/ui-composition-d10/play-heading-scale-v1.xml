@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.5129032">
+  <test-suite type="TestSuite" id="1535" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.512903" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1529" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.497781" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1530" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.491958" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1531" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="407" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.486342" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1336" name="PlayHeadingScaleTests" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.471123" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1337" name="CompareHeadingHeightAtFractionalLaptopScale" fullname="TumbangPreso.PlayTests.PlayHeadingScaleTests.CompareHeadingHeightAtFractionalLaptopScale" methodname="CompareHeadingHeightAtFractionalLaptopScale" classname="TumbangPreso.PlayTests.PlayHeadingScaleTests" runstate="Runnable" seed="1434593326" result="Passed" start-time="2026-09-15 03:42:27Z" end-time="2026-09-15 03:42:28Z" duration="0.454119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HeadingScale] height=110 scale=0.7111111 preferred=63.28125 adjusted=(x:-0.03, y:-109.59, width:1230.47, height:109.69) characters=-1 vertices=0
+[HeadingScale] height=128 scale=0.7111111 preferred=63.28125 adjusted=(x:-0.03, y:-127.88, width:1230.47, height:127.97) characters=10 vertices=36
+[HeadingScale] height=110 scale=0.7111111 preferred=63.28125 adjusted=(x:-0.03, y:-109.59, width:1230.47, height:109.69) characters=-1 vertices=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

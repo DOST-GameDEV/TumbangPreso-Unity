@@ -91,7 +91,7 @@ namespace TumbangPreso.UI
                 _fillLabel.text = BotFillRules.FillOffer(_queue.BotsToFill);
                 _fillCaveat.text = BotFillRules.FillCaveat(_queue.Stake, _queue.PartySize, Balance.PlayerCount);
             }
-            _nativeQueueBounds.sizeDelta = new Vector2(620, fill ? 580 : 440);
+            _nativeQueueBounds.sizeDelta = new Vector2(620, fill ? 760 : 540);
             if (!wasVisible || fillChanged) GetComponentInParent<ScreenFocus>()?.Rebuild();
         }
         private void Update()

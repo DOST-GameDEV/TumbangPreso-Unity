@@ -33,7 +33,8 @@ namespace TumbangPreso.UI
             if (_canvas == null) _canvas = OwnerUiLayout.Canvas(owner, "OwnerTouchLayoutCanvas", 820);
             _canvas.gameObject.SetActive(true);
             foreach (Transform child in _canvas.transform) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
-            OwnerUiBackdrop.Build(_canvas.transform);
+            var background=OwnerUiLayout.Rect(_canvas.transform,"TouchLayoutGround").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(background.rectTransform);background.color=SettingsPalette.Background;background.raycastTarget=false;
             _previousParent = _hud.Canvas.transform.parent; _sortBefore = _hud.Canvas.sortingOrder;
             _hud.Canvas.transform.SetParent(_canvas.transform, false); _hud.Canvas.sortingOrder = 830;
             OwnerUiLayout.Fill((RectTransform)_hud.Canvas.transform);
