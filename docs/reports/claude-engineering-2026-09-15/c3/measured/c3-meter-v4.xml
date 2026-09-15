@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.4411379">
+  <test-suite type="TestSuite" id="1558" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.441138" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1552" name="TumbangPreso.PlayTests.dll" fullname="/private/tmp/claude-501/-Users-paul-Documents-GitHub-TumbangPreso-Unity/ea4afabe-3a17-4fb3-9a5f-3ffb200679b2/scratchpad/meter/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.431685" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55846" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1553" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.427060" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1554" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="424" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.422419" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1446" name="SlipperLookupCostProbe" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:54:38Z" duration="152.401505" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1448" name="ClassicOnEskinita" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe.ClassicOnEskinita" methodname="ClassicOnEskinita" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" seed="262645279" result="Passed" start-time="2026-09-15 11:52:05Z" end-time="2026-09-15 11:53:09Z" duration="64.005482" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 1.8 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6570 / 5520 / 6000 / 6400. seat 0 wins
+slipper lookup cost  ·  Classic  ·  Eskinita
+45903 frames, 765.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.210 ms; gen0 collections 6
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 406, Transform 1147, Component 3233
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      33.721 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                33.823 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                40.432 us     0.0 B  (14/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      37.483 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                34.670 us   163.8 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.050 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.088 us     0.0 B  (15/15 batches without a collection)
+
+call frequency by production site (instrumented copy; us/call includes the meter's own Stopwatch overhead; B/call* is the unit-rate figure above):
+site                                             calls  per sim s  per frame  us/call  ms total B/call*  avg n
+AIController.cs:1672                             41604       54.4      0.906    35.86    1491.8       0   3.00
+RoundDirector.cs:408                             36008       47.1      0.784    43.60    1569.8       0   3.00
+AIController.cs:4001                             17245       22.5      0.376    34.74     599.0       0   3.00
+Carrier.cs:710                                    3174        4.1      0.069    29.37      93.2       0   3.00
+AIController.cs:1693                              2258        3.0      0.049    47.28     106.7       0   3.00
+CombatVerbs.cs:628                                1608        2.1      0.035    31.82      51.2       0   3.00
+AIController.cs:954                                656        0.9      0.014    38.24      25.1       0   3.00
+CombatVerbs.cs:517                                 400        0.5      0.009    30.69      12.3       0   3.00
+AIController.cs:1244                               283        0.4      0.006    29.31       8.3       0   3.00
+AIController.cs:3660                                 3        0.0      0.000    28.47       0.1       0   3.00
+MatchStatsCollector.cs:399                           1        0.0      0.000    71.30       0.1       0   4.00
+TOTAL calls 103240 (134.9/sim s, 2.25/frame), time 3957.6 ms (0.0862 ms/frame = 7.12% of mean frame wall time), allocation at the unit rate 0 KiB (0 B/sim s)
+
+]]></output>
+            </test-case>
+            <test-case id="1447" name="HeroStrikeUnderTheBridge" fullname="TumbangPreso.PlayTests.SlipperLookupCostProbe.HeroStrikeUnderTheBridge" methodname="HeroStrikeUnderTheBridge" classname="TumbangPreso.PlayTests.SlipperLookupCostProbe" runstate="Runnable" seed="1501035753" result="Passed" start-time="2026-09-15 11:53:09Z" end-time="2026-09-15 11:54:38Z" duration="88.381334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] readback warm-up landed in 0.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[Env] repainted 325 of 2828 renderers, 0 with a roof variant.
+[NearFade] 3381 occluder nodes matched, 2809 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] round 5 begins, taya is seat 0
+[Slice] round 6 begins, taya is seat 1
+[Slice] round 7 begins, taya is seat 2
+[Slice] round 8 begins, taya is seat 3
+[Slice] match over. scores: 6310 / 6095 / 6590 / 7300. seat 3 wins
+slipper lookup cost  ·  HeroStrike  ·  IlalimNgTulay
+45964 frames, 766.1s simulated at 16.7 ms, match ended True
+mean wall time per frame (batchmode editor, whole frame incl. rendering) 1.703 ms; gen0 collections 3
+scene counts: Slipper active 3, Slipper incl inactive 4, MonoBehaviour 553, Transform 2243, Component 6199
+
+unit cost in this arena, 20000 calls each (mean microseconds, bytes per call):
+  FindObjectsByType<Slipper>(Exclude)                                      49.847 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(SortMode.None)                                50.321 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Exclude, None)                                47.184 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include)                                      48.616 us     0.0 B  (15/15 batches without a collection)
+  FindObjectsByType<Slipper>(Include, None)                                48.134 us   159.7 B  (15/15 batches without a collection)
+  calibration: new Slipper[4] (must report a non-zero size)                 0.042 us    81.9 B  (15/15 batches without a collection)
+  registry best case: scan a held List<Slipper> with an active check        0.095 us     0.0 B  (15/15 batches without a collection)
+
+call frequency by production site (instrumented copy; us/call includes the meter's own Stopwatch overhead; B/call* is the unit-rate figure above):
+site                                             calls  per sim s  per frame  us/call  ms total B/call*  avg n
+AIController.cs:1672                             37321       48.7      0.812    69.71    2601.8       0   3.00
+RoundDirector.cs:408                             36008       47.0      0.783    85.08    3063.5       0   3.00
+AIController.cs:4001                             14524       19.0      0.316    66.91     971.8       0   3.00
+AIController.cs:954                               6719        8.8      0.146    72.60     487.8       0   3.00
+Map/StreetTripHazard.cs:239                       2783        3.6      0.061    67.56     188.0       0   3.00
+AIController.cs:1693                              2177        2.8      0.047    72.97     158.9       0   3.00
+CombatVerbs.cs:628                                1401        1.8      0.030    61.14      85.7       0   3.00
+Carrier.cs:710                                    1371        1.8      0.030    57.15      78.3       0   3.00
+CombatVerbs.cs:517                                 389        0.5      0.008    62.35      24.3       0   3.00
+AIController.cs:1244                               225        0.3      0.005    58.99      13.3       0   3.00
+Abilities/ZackHeroKit.cs:377                        40        0.1      0.001    61.71       2.5       0   3.00
+Abilities/DanteHeroKit.cs:132                       31        0.0      0.001   109.03       3.4       0   3.00
+AIController.cs:4084                                24        0.0      0.001    57.31       1.4       0   3.00
+AIController.cs:3660                                 2        0.0      0.000    64.00       0.1       0   3.00
+MatchStatsCollector.cs:399                           1        0.0      0.000    56.20       0.1       0   4.00
+TOTAL calls 103016 (134.5/sim s, 2.24/frame), time 7680.7 ms (0.1671 ms/frame = 9.81% of mean frame wall time), allocation at the unit rate 0 KiB (0 B/sim s)
+
+Saving results to: /Users/paul/Library/Application Support/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

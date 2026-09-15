@@ -150,4 +150,68 @@ which that fault did not affect.
 
 ## C3: slipper lookup cost
 
-In progress; see the execution log.
+### Method
+
+* **Frequency**: `c3/instrument_slipper_lookups.py` rewrites every runtime
+  `FindObjectsByType<Slipper>(` in a `git archive` copy of `091f9210` into a call through
+  `c3/LookupMeter.cs.txt`, which counts calls and time per `file:line`. Production code in
+  the checkout was never edited for this. 34 sites instrumented.
+* **Workload**: `SlipperLookupCostProbe`, one whole default match each of Classic on
+  Eskinita and Hero Strike on Ilalim, four bots, 1/60 s steps, time scale 1, seed 20260823.
+  Offline host, so request and packet paths are not exercised (the network seat-to-motor
+  and seat-to-slipper caches were not touched, per the brief).
+* **Unit cost and allocation**: each query shape timed 20000 times in the loaded arena,
+  allocation as the median heap growth over 1000-call batches. The calibration row
+  (`new Slipper[4]`, 81.9 B) proves that counter works; the first two methods did not
+  (`GC.GetAllocatedBytesForCurrentThread` read 0 B for the calibration array, pausing the
+  collector throws in the editor).
+* Receipts: `c3/measured/` (instrumented, 2/2), `c3/live-checkout-*` (the committed probe in
+  the unmodified checkout, 2/2, meter absent).
+
+### Result (instrumented copy, macOS editor)
+
+| | Classic Eskinita | Hero Strike Ilalim |
+|---|---|---|
+| scene | 3 active + 1 parked Slipper, 3233 components | 3 + 1, 6199 components |
+| lookups | 134.9 per simulated s, 2.25 per frame | 134.5 per s, 2.24 per frame |
+| unit cost, active-only | 33.7 µs | 49.8 µs |
+| held-list scan, same slippers | 0.09 µs | 0.10 µs |
+| all sites | 0.086 ms per frame | 0.167 ms per frame |
+| lane sites (AIController, CombatVerbs, Carrier) | 0.052 ms per frame | 0.096 ms per frame |
+| RoundDirector.cs:408 (outside the lane) | 0.034 ms per frame | 0.067 ms per frame |
+| batchmode editor frame | 1.21 ms | 1.70 ms |
+
+Per site, Hero Strike Ilalim, calls per simulated second and the path each is on:
+
+| site | per s | path |
+|---|---|---|
+| AIController `MySlipper` (1672) | 48.7 | per frame for an attacker in Fetch, Stalk or Position, plus the think tick |
+| RoundDirector idle monitor (408) | 47.0 | per frame, host (outside lane) |
+| AIController `TryCoverPoint` (4001) | 19.0 | per frame in Cover, per think tick for a defender |
+| AIController `RivalShotIsInbound` (954) | 8.8 | think tick, plus Hero Strike ability weighing |
+| StreetTripHazard (239) | 3.6 | map hazard (outside lane) |
+| AIController `TryInterceptPoint` (1693) | 2.8 | defender think tick and Intercept frames |
+| CombatVerbs `SweepSlideRetrieval` (628) | 1.8 | per frame while a slide is live |
+| Carrier `TryPickup` (710) | 1.8 | per grab press |
+| CombatVerbs `FindSlideTarget` (517) | 0.5 | per slide press |
+| AIController `SlipperOwnedBy` (1244) | 0.3 | think tick |
+| hero kits, `NearestFlyingSlipper`, `TryGlanceAt`, stats | < 0.1 each | per cast or rare |
+
+Allocation: the active-only and sort-mode shapes measured 0.0 B per call at this counter's
+resolution, `Include, None` 160 B. At 135 lookups a second that bounds the lookups at about
+22 KB a simulated second in the worst shape, and the whole matches ran 3 to 6 gen0 collections.
+Per-call µs in the site table include the meter's Stopwatch overhead; the unit rows do not.
+
+### Decision
+
+**No production change.** Every lane-owned slipper lookup together costs 0.05 to 0.10 ms of
+a frame here, about 0.3 to 0.6 per cent of a 16.7 ms frame. A registry would recover nearly
+all of it, but it would have to model active-only and include-inactive queries separately and
+keep the defender's parked shoe visible to diagnostics, for a saving below the frame-to-frame
+noise of a real player. Semantics are unchanged: the active-only sites still exclude the parked
+shoe and `NetStateReport` still includes it.
+
+Limits, stated plainly: measured in the macOS editor, not an IL2CPP Windows player or a lower
+spec laptop; a machine three times slower would put the lane sites near 0.3 ms. The largest
+single site after `MySlipper` is `RoundDirector.cs:408`, outside this lane. This says nothing
+about general game performance.
