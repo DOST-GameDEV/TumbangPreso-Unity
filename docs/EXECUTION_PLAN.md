@@ -1,5 +1,11 @@
 # Active execution plan
 
+**D9 checkpoint:** room chat/history and the training sidebar passed two focused
+cases. Ten-size layouts plus all17lesson screens/completion were checked through
+the real Skip/return paths; gameplay actions remain separately qualified. Report:
+reports/ui-composition-d9. Next credits/queue/touch surroundings/dialogs/U8/gameplay.
+
+
 **D8 checkpoint:** both-mode result sheets and the live court round-break overlay
 passed focused route/layout checks. Ten-size coverage plus populated local reward
 fixtures; no career/social write. Report: reports/ui-composition-d8. Continue chat,

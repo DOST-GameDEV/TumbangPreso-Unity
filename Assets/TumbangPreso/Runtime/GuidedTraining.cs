@@ -1624,9 +1624,9 @@ namespace TumbangPreso
             for (int i = 0; i < _pips.Count; i++)
             {
                 if (_pips[i] == null) continue;
-                _pips[i].color = i < lesson ? UI.OwnerUiTheme.Current.Green
-                               : i == lesson ? UI.OwnerUiTheme.Current.Orange
-                               : UI.OwnerUiTheme.Current.Peach;
+                _pips[i].color = i < lesson ? TrainingDone
+                               : i == lesson ? TrainingCurrent
+                               : TrainingTrack;
             }
 
             RebuildKeys(action, role);

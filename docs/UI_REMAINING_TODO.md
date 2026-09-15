@@ -1,5 +1,11 @@
 # UI reopened: owner hand-drawn theme
 
+**D9 checkpoint:** room chat/history and the training sidebar passed two focused
+cases. Ten-size layouts plus all17lesson screens/completion were checked through
+the real Skip/return paths; gameplay actions remain separately qualified. Report:
+reports/ui-composition-d9. Next credits/queue/touch surroundings/dialogs/U8/gameplay.
+
+
 **D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
 related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
 no production camera or source-model change. Report: reports/ui-composition-d7.

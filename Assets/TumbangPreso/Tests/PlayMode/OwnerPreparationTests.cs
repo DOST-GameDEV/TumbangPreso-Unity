@@ -176,10 +176,13 @@ namespace TumbangPreso.PlayTests
                 Press("ChatButton");yield return null;
                 Assert.True(chat.IsPresented);
                 Assert.That(chat.GetComponentsInChildren<Text>().Any(t=>t.text.Contains("Local test note")));
+                foreach(var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("RoomChat-compact-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,checkActionBounds:true);
                 Press("ChatHistoryButton");yield return null;
                 var transcript=chat.GetComponentsInChildren<Text>().First(t=>t.name=="FullTranscript");
                 StringAssert.Contains("Local test note",transcript.text);
-                yield return TumpUiCapture.Capture("OwnerPreparation-friends-chat-v1",view.Canvas,1920,1080,false);
+                foreach(var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("RoomChat-history-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,checkActionBounds:true);
                 Press("ChatHistoryBack");yield return null;Press("CloseChatButton");yield return null;
                 Assert.False(chat.IsPresented);Assert.True(chat.isActiveAndEnabled);
                 local.Invoke(chat,new object[]{"Second local note survives hiding."});

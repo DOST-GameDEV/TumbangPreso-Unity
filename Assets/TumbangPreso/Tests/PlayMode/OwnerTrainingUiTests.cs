@@ -30,17 +30,25 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(hud);var canvas=hud.GetComponent<Canvas>();Assert.IsNotNull(canvas.GetComponent<OwnerUiCanvas>());
                 var counter=hud.GetComponentsInChildren<Text>().First(t=>t.name=="LessonCounter");
                 var body=hud.GetComponentsInChildren<Text>().First(t=>t.name=="LessonBody");
-                Assert.IsNotEmpty(body.text);string first=counter.text;
-                yield return TumpUiCapture.Capture("OwnerTraining-look-v1",canvas,1920,1080,false,true);
-                Press(hud.GetComponentsInChildren<Button>().First(b=>b.name=="SkipTrainingLesson"));
-                until=Time.realtimeSinceStartup+5;
-                while(counter.text==first && Time.realtimeSinceStartup<until)yield return null;
-                Assert.AreNotEqual(first,counter.text,"Skip must advance the real lesson controller.");
+                Assert.IsNotEmpty(body.text);
+                var route=Object.FindFirstObjectByType<GuidedTraining>();
+                foreach(var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("TrainingSidebar-look-"+size.x+"x"+size.y,canvas,size.x,size.y,false,true,checkActionBounds:true);
+                for(int step=0;step<=GuidedTraining.LessonCount;step++)
+                {
+                    Assert.AreEqual(step,(int)route.CurrentLesson,"A real lesson was skipped by the UI review driver.");
+                    yield return TumpUiCapture.Capture("TrainingSidebar-lesson-"+step,canvas,960,540,false,true,checkActionBounds:true);
+                    if(step==GuidedTraining.LessonCount)break;
+                    Press(hud.GetComponentsInChildren<Button>().First(b=>b.name=="SkipTrainingLesson"));
+                    until=Time.realtimeSinceStartup+5;
+                    while((int)route.CurrentLesson==step && Time.realtimeSinceStartup<until)yield return null;
+                    yield return null;
+                }
                 // Check the renderer setter before the lesson controller next publishes its real progress.
                 hud.SetProgress(.5f);
                 var fill=hud.GetComponentsInChildren<Image>().First(i=>i.name=="ProgressFill");
                 Assert.That(fill.rectTransform.anchorMax.x,Is.EqualTo(.5f).Within(.001f));
-                yield return TumpUiCapture.Capture("OwnerTraining-move-v1",canvas,1280,720,false,true);
+                yield return TumpUiCapture.Capture("TrainingSidebar-complete",canvas,1280,720,false,true,checkActionBounds:true);
                 Press(hud.GetComponentsInChildren<Button>().First(b=>b.name=="QuitTraining"));
                 until=Time.realtimeSinceStartup+10;
                 while(SceneManager.GetActiveScene().name!=SceneFlow.MainMenu && Time.realtimeSinceStartup<until)yield return null;

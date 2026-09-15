@@ -1,5 +1,28 @@
 # Active TUMP rework ledger
 
+## CURRENT D9 chat and training qualification
+
+D8 committed/pushed111ed5b1. Applied the reviewed chat/training drafts: a distinct
+blue training sidebar with larger reading/key labels, and a light-green room-chat
+sheet with a native adaptive composer. In-match chat keeps its unobtrusive transcript.
+All existing lesson, skip/quit, history/subscription and submit behavior is retained.
+
+training-chat-v1 FINISHED2/2PASS, Python2604 retired, restoration86b1e9dd0a94.
+Logs/ui-composition-training-chat-v1(.pid/.stdout/.stderr/.log/.xml), profile
+ui-composition-training-chat-review. Localhost room chat history/hidden-state/return
+routes and real skip progression through all17lessons plus completion passed.
+Initial training, compact chat and history cover ten PC sizes; every lesson uses
+the smallest viewport. Longer panels and chat layouts visually inspected. This is
+presentation/Skip coverage, not successful execution of every taught gameplay action.
+Report docs/reports/ui-composition-d9. No Unity jobs remain. Next save/push D9, then
+credits, queue, touch-layout surroundings and remaining dialogs/U8/gameplay.
+
+D10 source investigation: active OwnerCreditsView still uses the repeated wallpaper;
+QueueCard.OwnerPainted has23-26unit support labels; TumpTouchLayoutView and toolbar
+still use the old backdrop/paper. Preserve its actual editable touch controls and
+the approved controller illustration. ModelPreview.EnsureTexture still needs the
+U8 physical-pixel/large-display audit. Existing routes/tests located; do not redo D1-D9.
+
 ## CURRENT D8 results and between-round presentation
 
 Owner correction batch committed/pushed ded1315c. Eight-round defaults, dark settings
