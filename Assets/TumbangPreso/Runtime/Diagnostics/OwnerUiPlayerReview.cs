@@ -286,6 +286,49 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>gate==null||!gate.CountingDown);
             yield return WaitFor(()=>GameServices.Round.RoundActive);
         }
+        private IEnumerator RecordEntryJourney()
+        {
+            var folder=Path.Combine(_folder,"entry-frames");Directory.CreateDirectory(folder);
+            var csv=new System.Text.StringBuilder("frame,real_seconds,stage\n");
+            string[] actions={"SignInTab","CreateAccountTab","TermsLink","AcceptGuidelines","GuestAccount"};
+            float[] times={1.0f,2.6f,4.0f,5.7f,7.2f};
+            float start=Time.realtimeSinceStartup,nextImage=0;int step=0,frame=0;bool termsVerified=false;
+            while(Time.realtimeSinceStartup-start<8.8f)
+            {
+                float age=Time.realtimeSinceStartup-start;
+                if(step<actions.Length && age>=times[step])
+                {
+                    var control=Find(actions[step]);if(control==null)throw new InvalidOperationException("Missing entry control: "+actions[step]);
+                    var pointer=Pointer(control);var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(pointer,hits);
+                    if(hits.Count==0 || (hits[0].gameObject!=control.gameObject && !hits[0].gameObject.transform.IsChildOf(control.transform)))
+                        throw new InvalidOperationException("Entry control covered: "+actions[step]);
+                    ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerEnterHandler);
+                    ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerDownHandler);
+                    ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerUpHandler);
+                    ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerClickHandler);
+                    step++;
+                }
+                yield return new WaitForEndOfFrame();
+                if(step==4 && !termsVerified && age>6.1f)
+                {
+                    var terms=Find("TermsAcceptance") as Toggle;
+                    if(terms==null || !terms.isOn || terms.graphic.canvasRenderer.GetAlpha()<.95f)
+                        throw new InvalidOperationException("Agree did not visibly check Terms.");
+                    termsVerified=true;Stage("Terms agreement visibly checks the signup box");
+                }
+                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{step}"));
+                if(age>=nextImage)
+                {
+                    var image=ScreenCapture.CaptureScreenshotAsTexture();
+                    File.WriteAllBytes(Path.Combine(folder,frame.ToString("00000")+".jpg"),image.EncodeToJPG(93));Destroy(image);nextImage=age+1f/15f;
+                }
+                frame++;
+            }
+            File.WriteAllText(Path.Combine(folder,"frames.csv"),csv.ToString());
+            if(!termsVerified)throw new InvalidOperationException("Terms journey was not observed.");
+            Stage("Both supplied login layouts, Terms and Guest recorded");
+        }
+
         private IEnumerator MenuOnly()
         {
             Stage("cold loading and login music gate");
@@ -307,7 +350,7 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
                 yield return Shot("Login-"+size.x+"x"+size.y);
             }
-            yield return Click(Find("GuestAccount")!=null?"GuestAccount":"ContinueAccount");
+            if(Find("GuestAccount")!=null)yield return RecordEntryJourney();else yield return Click("ContinueAccount");
             yield return WaitFor(()=>GameServices.Music.Current=="menu");
             if(GameServices.Music.GetComponents<AudioSource>().Count(a=>a.isPlaying)!=1)throw new InvalidOperationException("Expected exactly one menu music source.");
             Stage("menu music begins on revealed home");

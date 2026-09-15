@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:33:01Z" duration="17.0281465">
+  <test-suite type="TestSuite" id="1572" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="434" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:33:01Z" duration="17.028147" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1566" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="434" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:33:01Z" duration="17.012261" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1567" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="434" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:33:01Z" duration="17.006785" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1568" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="434" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:33:01Z" duration="17.001793" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1314" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:32:53Z" duration="8.340181" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1315" name="MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" methodname="MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1031500881" result="Passed" start-time="2026-09-15 15:32:44Z" end-time="2026-09-15 15:32:50Z" duration="6.037442" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerMenu-v7-960x540 cream source=252,211,159 pixel=199,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-1280x720 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-1366x768 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-1920x1080 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-1920x1200 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-1280x960 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-2560x1440 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-3440x1440 cream source=252,211,159 pixel=198,137,119; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-3840x1080 cream source=252,211,159 pixel=247,184,116; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-3840x2160 cream source=252,211,159 pixel=198,140,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerMenu-v7-dust cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1316" name="StartupLoginStaysSilentUntilGuestRevealsHome" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.StartupLoginStaysSilentUntilGuestRevealsHome" methodname="StartupLoginStaysSilentUntilGuestRevealsHome" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="187485214" result="Passed" start-time="2026-09-15 15:32:50Z" end-time="2026-09-15 15:32:53Z" duration="2.285682" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerLogin-v7-create-1920x1080 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-960x540 cream source=252,211,159 pixel=242,142,105; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-1280x960 cream source=252,211,159 pixel=244,135,100; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-create-3440x1440 cream source=252,211,159 pixel=242,140,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerLogin-v7-signin cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1317" name="OwnerMenuSkyTests" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 15:32:53Z" end-time="2026-09-15 15:33:01Z" duration="8.645139" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1318" name="CloudsMoveBehindStationaryStreetAndOccluders" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests.CloudsMoveBehindStationaryStreetAndOccluders" methodname="CloudsMoveBehindStationaryStreetAndOccluders" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" seed="2067035223" result="Passed" start-time="2026-09-15 15:32:53Z" end-time="2026-09-15 15:32:55Z" duration="2.367544" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerSky-matte-v11-rest cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerSky-matte-v11-drift cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[OwnerSky] changed sky pixels=27649 unchanged-region violations=0
+[TumpUiCapture] OwnerSky-matte-v11-cleared cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerSky-matte-v11-reverse cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1319" name="DustCoversSandAndLeavesForegroundPropsClear" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests.DustCoversSandAndLeavesForegroundPropsClear" methodname="DustCoversSandAndLeavesForegroundPropsClear" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" seed="2032193513" result="Passed" start-time="2026-09-15 15:32:55Z" end-time="2026-09-15 15:33:01Z" duration="6.269131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] OwnerDust-v8-base cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerDust-v8-active-0 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerDust-v8-active-1 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerDust-v8-active-2 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[TumpUiCapture] OwnerDust-v8-active-3 cream source=252,211,159 pixel=198,140,122; isolated UI camera, no ColourGrade.
+[OwnerDustCoverage] (x:1000, y:570, width:550, height:100) motion coverage pixels=142
+[OwnerDustCoverage] (x:0, y:984, width:800, height:96) motion coverage pixels=4497
+[OwnerDustCoverage] (x:1760, y:700, width:155, height:365) motion coverage pixels=77
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

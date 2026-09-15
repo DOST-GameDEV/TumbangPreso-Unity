@@ -18,8 +18,8 @@
       "y": 330,
       "width": 399,
       "height": 92,
-      "faceX": 199.5,
-      "faceY": 46.0,
+      "faceX": 114.0,
+      "faceY": 39.0,
       "source": "signup-reference-v2.png",
       "sha256": "78eb8049acc17cb9902de25617b4021bae015c9880fbccb37652338b67726d40",
       "resized": false
@@ -102,8 +102,8 @@
       "y": 332,
       "width": 391,
       "height": 89,
-      "faceX": 195.5,
-      "faceY": 44.5,
+      "faceX": 281.0,
+      "faceY": 38.5,
       "source": "signin-reference-v2.png",
       "sha256": "ecc18d1943c079eb9ab431483b8c60daeba27ee57a304b284bc537f67ec16d36",
       "resized": false

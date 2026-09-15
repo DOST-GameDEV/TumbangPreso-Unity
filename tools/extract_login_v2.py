@@ -52,6 +52,9 @@ def main():
                      (rgba[:,:,3]>230)&(rgba[:,:,1]>180)&(rgba[:,:,0]>220)&(rgba[:,:,2]<140)
                 fy,fx=np.where(face);entry['faceX']=float((fx.min()+fx.max())/2);entry['faceY']=float((fy.min()+fy.max())/2)
             entries.append(entry)
+            if 'tabs-' in name:
+                face=(rgba[:,:,3]>230)&(rgba[:,:,0]>120)&(rgba[:,:,1]>165)&(rgba[:,:,2]<145)
+                fy,fx=np.where(face);entry['faceX']=float((fx.min()+fx.max())/2);entry['faceY']=float((fy.min()+fy.max())/2)
             print(name,entry['x'],entry['y'],entry['width'],entry['height'])
     (out/'login-layout-v2.json').write_text(json.dumps({'pieces':entries},indent=2),encoding='utf-8')
 

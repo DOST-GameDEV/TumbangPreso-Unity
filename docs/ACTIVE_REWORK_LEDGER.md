@@ -1,5 +1,130 @@
 # Active TUMP rework ledger
 
+## CURRENT final UI video delivered; publish and resume gameplay
+
+Final owner UI correction is implemented and qualified. Four focused tests pass,
+including copied login layouts/eyes, matching confirmation, Terms acceptance visibly
+checking the box, sky removal/foreground preservation and moving dust over the sand.
+Precise matte replaces all rejected cover/warp attempts; original photo remains.
+Windows v22 menu-only walkthrough PASSED and all owned processes exited. Build
+1135MB/97s, guardddc6a794b0c3. Runtime SHA:
+9405c76c2eecde0c18400faadbb0631851078535e7da4a492fd7988a9d776232.
+
+Delivered20.83s1080p MP4 directly in chat and Downloads/TUMP-polished-menu-and-
+login.mp4. Repo copy and full evidence: reports/owner-final-ui-2026-09-15.
+Near cloud moves33.61source pixels in the main segment, not an invisible parameter
+change. Encoded frames show checked Terms and clean scene edges. Owner approval
+remains pending while he sleeps; technical/visual review here is not his approval.
+
+Next: commit/push final UI source/report, integrate fetched C4 diagnostic/evidence
+commits967e2f88/5f1f365c without discarding work, then CONTINUE independent gameplay
+from GAMEPLAY_RESUME_AFTER_UI. No active Editor/player/browser/helper. Never use
+usage reset credits or ask optional questions while owner sleeps. C4 remains
+reserved until actual handback; do not independently implement its request audit.
+One deferred UI observation: reduced-motion painted buttons need a static keyboard/
+controller focus cue; preserve as a small follow-up rather than forgetting it.
+
+
+## CURRENT nativev22 recording running; preserve and encode next
+
+Windowsv22 build succeeded,1135MB in97s, guardddc6a794b0c3. Runtime DLL SHA:
+9405c76c2eecde0c18400faadbb0631851078535e7da4a492fd7988a9d776232.
+Native menu-only is running as PID17068, exec37017, under
+Logs/owner-menu-native-v22. Already recorded both final login tabs, Terms acceptance
+visibly ticking the box, Guest and correct menu-music start. Main animation and
+reduced-motion checks are finishing. No source edits during the run.
+
+Next inspect result/frame sequences, encode entry+main into downloadable1080p MP4
+and send it here. Then publish final source/evidence. Remote advanced with
+967e2f88/5f1f365c C4 evidence; FETCHED ONLY, not merged while player runs. Inspect
+and integrate after this run; C4 ownership remains in its latest report. Do not
+force/reset. Owner asleep, NO usage reset, no optional questions. Continue gameplay
+after UI delivery. Current source/report/ledger remain partly uncommitted.
+
+
+## CURRENT4/4PASS; Windowsv22 building for final combined video
+
+Focused OwnerMenu finalv11 completed4/4PASS, guard737368ae27b5. Full images
+inspected: corrected final login templates/eye icons/password confirmation,
+centered top labels/Guest, symmetric OR; precise cloud matte has no prior roof
+patches or old-cloud contours. Terms I AGREE visibly checks the box. Temporal
+whole-sand coverage142far/4497near-left/77near-right pixels; can/shoe/plant protected.
+
+Active guarded build: Builds/owner-menu-v22/TumbangPreso.exe,
+Logs/owner-menu-build-v22.log, exec18744. Do not edit C#/assets during it.
+Next run tools/run_ui_player_review.py --menu-only using a fresh namedv22 profile.
+It records actual signup/signin/Terms/Guest journey plus main animation. Inspect
+normal/reduced frames, encode timestamps into an MP4, send download link here,
+then commit/push and CONTINUE gameplay. Report: owner-final-ui-2026-09-15.
+No resets; owner asleep and no optional questions. Remote saved caaaeefd.
+
+
+## CURRENT final precise-matte test running before nativev22
+
+Final source authoring uses PyMatting1.1.16 in isolated Logs/menu-matting-env.
+Precise v11 close views are clean: roof/foliage/wires retain soft original edges,
+and old cloud contours are gone. Pixel audit finds ZERO foreground residue in
+10800left-cloud and1000right-cloud unobstructed pixels. Original photo untouched.
+Source/requirements and derived mask/background data are saved; final report has
+trimap/alpha/clear comparison. Import guard0d07050e3724 complete.
+
+Active focused test: Logs/owner-menu-final-v11.log and XML, exec83749. Expected4
+OwnerMenu cases: home art/PC layout, final signup/signin/eyes/confirmation/Terms,
+sky foreground/removal/motion, temporal whole-sand coverage and solid occlusion.
+No source edits during run. Once passed, inspect native-size captures and build
+Builds/owner-menu-v22/TumbangPreso.exe. Native menu-only recorder includes actual
+signup/signin/Terms/Guest actions plus12s main effects; encode a downloadable MP4.
+Remote caaaeefd remains the last saved checkpoint; publish polished changes soon.
+No resets or optional questions. Owner asleep; continue other work after UI.
+
+
+## CURRENT precise foreground matte ready for Unity qualification
+
+Owner rejected noticeable masking around roofs and wires and demanded pixel-level
+cleanup. The former polygon/colour-only matte is rejected, not accepted. A local
+closed-form alpha matte (PyMatting1.1.16) with conservative foreground/background
+seeds now produces a clean cloud-free diagnostic: no roof patch or old cloud
+contours, original soft foliage/wires retained. Inspected Logs/matte-v11/clear-
+composite.png and foreground-alpha.png. No more image-generation calls used.
+Library installed only in ignored Logs/menu-matting-env; no paid API or resets.
+Tool promoted to tools/author_menu_sky_cutout.py; requirements file records it.
+Original RGB photo is untouched. Shader composes using the estimated original
+background contribution; crop is1170,0..1810,350. No arbitrary painted cover panel.
+
+Sign-up label alignment is now measured against the green face, and Terms I AGREE
+is verified to check the actual rendered box in local tests. Latest login states
+and eye/password-confirmation checks pass. Dust test now observes coverage across
+a moving sequence, not an arbitrary single frame, while requiring zero pixels on
+solid can/shoe/near foliage. All sand regions remain required.
+
+Next: author/import the precise matte, run the4 focused OwnerMenu cases, inspect
+full images, then build internalv22 and native --menu-only. Native review now
+records both login tabs, Terms agreement, Guest, and main cloud/dust/button motion
+for a combined downloadable video. No active Unity/player job before import.
+Remote caaaeefd is saved; latest matte/recording refinements are uncommitted.
+Owner asleep: no optional questions, NO reset credits, continue after UI.
+
+
+## CURRENT v8 matte and terms/ground verification
+
+Remote caaaeefd is verified pushed, including UI WIP and C4 inventory integration.
+Owner is asleep; NO resets and no optional questions. Continue after UI is done.
+Final login templates now pass both-mode layout/interaction/password-confirmation
+checks. Latest request adds verifying that I AGREE visibly checks the signup box;
+existing callback already sets it. Focused test now presses the actual Terms dialog
+and checks Toggle state plus rendered checkmark alpha, without creating an account.
+
+v7 sky imagery showed gold wire remnants after removing old clouds. Current v8
+compositing subtracts the estimated old-background contribution at translucent
+foreground edges before adding new sky/clouds. Original source photo stays intact;
+opaque foreground remains unchanged. Calibration data is a small cropped texture.
+Cloud mip filtering prevents shimmer. Ground mask also excludes blurred near foliage.
+V8 import finished (guard receipt in current tools); no active Editor before tests.
+Next OwnerMenu tests now include actual ground coverage in far/near-left/near-right
+and no dust on can/shoe/foreground plant, plus original-cloud removal and motion.
+Inspect resulting images before nativev22. No visual completion claim yet.
+
+
 ## CURRENT saved UI checkpoint integrates C4 inventory; focused checks next
 
 Owner is asleep: no optional questions and NO usage resets under any circumstances.

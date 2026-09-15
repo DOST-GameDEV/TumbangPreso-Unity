@@ -17,6 +17,7 @@ namespace TumbangPreso.EditorTools
                 File.Copy(source+"/background_mainmenu_clean.png",target+"/main-background.png",true);
                 File.Copy(source+"/login-background-woven.png",target+"/login-background.png",true);
                 File.Copy(source+"/derived/main-sky-cutout.png",target+"/main-sky-cutout.png",true);
+                File.Copy(source+"/derived/main-sky-background-data.png",target+"/main-sky-background-data.png",true);
                 File.Copy(source+"/derived/main-ground-mask.png",target+"/main-ground-mask.png",true);
                 foreach(var file in Directory.GetFiles(source+"/generated-clouds","*.png"))
                     File.Copy(file,target+"/"+Path.GetFileName(file),true);
@@ -34,9 +35,9 @@ namespace TumbangPreso.EditorTools
                         && !file.EndsWith("main-sky-cutout.png",StringComparison.Ordinal);
                     importer.alphaSource=TextureImporterAlphaSource.FromInput;
                     importer.alphaIsTransparency=!file.EndsWith("main-background.png",StringComparison.Ordinal);
-                    importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;
+                    importer.mipmapEnabled=file.Contains("cloud-bank-");importer.textureCompression=TextureImporterCompression.Uncompressed;
                     importer.maxTextureSize=file.Contains("cloud-bank-")?4096:2048;importer.npotScale=TextureImporterNPOTScale.None;
-                    importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=FilterMode.Bilinear;
+                    importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=file.Contains("cloud-bank-")?FilterMode.Trilinear:FilterMode.Bilinear;
                     importer.SaveAndReimport();
                 }
                 AssetDatabase.SaveAssets();

@@ -21,6 +21,7 @@ namespace TumbangPreso.UI
             _previous=_image.material;
             _material=new Material(shader){name="OwnerMenuSkyMotion",hideFlags=HideFlags.DontSave};
             _material.SetTexture("_SkyMask",OwnerMenuArt.Texture("main-sky-cutout"));
+            _material.SetTexture("_OldSkyBackground",OwnerMenuArt.Texture("main-sky-background-data"));
             _material.SetTexture("_CloudA",OwnerMenuArt.Texture("cloud-bank-a"));
             _material.SetTexture("_CloudB",OwnerMenuArt.Texture("cloud-bank-b"));
             _image.material=_material;

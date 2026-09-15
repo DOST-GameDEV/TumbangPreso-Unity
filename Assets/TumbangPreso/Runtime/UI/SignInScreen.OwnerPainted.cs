@@ -31,8 +31,7 @@ namespace TumbangPreso.UI
             _ownerTabArt.Right=OwnerMenuArt.Image(track,"SelectedRight","login2-tabs-right");OwnerLoginLayout.Place(_ownerTabArt.Right.transform,"login2-tabs-right");
             _createTab=OwnerTextButton(_ownerForm,"CreateAccountTab","SIGN UP",()=>SetMode(true),28,OwnerUiLayout.TypeRole.Accent);
             _signInTab=OwnerTextButton(_ownerForm,"SignInTab","SIGN IN",()=>SetMode(false),28,OwnerUiLayout.TypeRole.Accent);
-            OwnerUiLayout.Place((RectTransform)_createTab.transform,773,346,180,58);
-            OwnerUiLayout.Place((RectTransform)_signInTab.transform,950,346,180,58);
+            PlaceOwnerTab(_createTab,"login2-tabs-left");PlaceOwnerTab(_signInTab,"login2-tabs-right");
 
             _username=OwnerUiEntry.Create(_ownerForm,"Username","USERNAME",OwnerUiTheme.Piece.FirstField,artwork:OwnerMenuArt.Piece("login2-user-up"),embeddedGlyph:true);
             _password=OwnerUiEntry.Create(_ownerForm,"Password","ENTER PASSWORD",OwnerUiTheme.Piece.SecondField,password:true,artwork:OwnerMenuArt.Piece("login2-pass-up"),embeddedGlyph:true);
@@ -85,6 +84,12 @@ namespace TumbangPreso.UI
             OwnerLoginLayout.Place(button.transform,name);
             button.transform.Find("PaintedArtwork").GetComponent<Image>().sprite=OwnerMenuArt.Piece(name);
             var art=OwnerLoginLayout.Get(name);CenterOwnerCaption(button,art.Size,art.Face);
+        }
+
+        private static void PlaceOwnerTab(Button button,string name)
+        {
+            var art=OwnerLoginLayout.Get(name);
+            OwnerUiLayout.Place((RectTransform)button.transform,art.x+art.faceX-90,art.y+art.faceY-29,180,58);
         }
 
         private static void CenterOwnerCaption(Button button,Vector2 sourceSize,Vector2 faceCentre)

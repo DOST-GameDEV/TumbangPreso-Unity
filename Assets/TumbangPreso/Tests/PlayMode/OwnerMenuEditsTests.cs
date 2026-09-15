@@ -83,6 +83,11 @@ namespace TumbangPreso.PlayTests
                 Assert.IsEmpty(canvas.GetComponentsInChildren<Transform>().Where(t=>t.name=="FieldIcon" || t.name=="PersonIcon"),"Supplied fields already contain icons");
                 foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(3440,1440)})
                     yield return TumpUiCapture.Capture("OwnerLogin-v7-create-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                Find("TermsLink").onClick.Invoke();yield return null;
+                Find("AcceptGuidelines").onClick.Invoke();yield return new WaitForSecondsRealtime(.2f);
+                var terms=canvas.GetComponentsInChildren<Toggle>().First(t=>t.name=="TermsAcceptance");
+                Assert.True(terms.isOn,"Accepting the actual Terms dialog must tick the signup checkbox");
+                Assert.Greater(terms.graphic.canvasRenderer.GetAlpha(),.95f,"Terms checkmark must be visibly rendered");
                 var fields=canvas.GetComponentsInChildren<InputField>();
                 Assert.IsFalse(fields.Any(f=>f.name=="Email"));
                 var confirmation=fields.First(f=>f.name=="ConfirmPassword");

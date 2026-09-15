@@ -1,0 +1,15 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "cold loading and login music gate",
+        "loading and login silent for 2856 observed frames",
+        "Terms agreement visibly checks the signup box",
+        "Both supplied login layouts, Terms and Guest recorded",
+        "menu music begins on revealed home",
+        "normal home artwork and ground dust verified",
+        "reduced home motion verified",
+        "settings credits and Play/Back remain reachable"
+    ],
+    "frameWindows": []
+}

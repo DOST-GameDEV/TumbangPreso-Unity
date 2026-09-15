@@ -2,7 +2,7 @@
   "source": "background_mainmenu_clean.png",
   "source_sha256": "75795a6e0ac441091f1693d90a94262dc90d4a18d8213f54c9d817d0581433d8",
   "output": "main-ground-mask.png",
-  "output_sha256": "5f0f8a2eecc7eab5dae50985b84cdb518862055ffb47402004a2c645af823641",
+  "output_sha256": "d6b0a30df307b5ed3f897dfd5366fc7b142db44c7f9a89e96071fb41641d1a41",
   "kind": "ground opacity data, not replacement artwork",
   "protected_solids": {
     "can": [

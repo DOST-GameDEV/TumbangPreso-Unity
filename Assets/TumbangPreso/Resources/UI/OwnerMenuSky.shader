@@ -4,6 +4,7 @@ Shader "TumbangPreso/UI/OwnerMenuSky"
     {
         [PerRendererData] _MainTex ("Original illustration", 2D) = "white" {}
         _SkyMask ("Sky opening", 2D) = "black" {}
+        _OldSkyBackground ("Original background contribution", 2D) = "black" {}
         _CloudA ("Near painted cloud", 2D) = "black" {}
         _CloudB ("Far painted cloud", 2D) = "black" {}
         _CloudOpacity ("Cloud opacity", Range(0,1)) = 1
@@ -32,7 +33,7 @@ Shader "TumbangPreso/UI/OwnerMenuSky"
             #include "UnityUI.cginc"
             struct appdata { float4 vertex:POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; };
             struct v2f { float4 vertex:SV_POSITION; float4 color:COLOR; float2 uv:TEXCOORD0; float4 local:TEXCOORD1; };
-            sampler2D _MainTex, _SkyMask, _CloudA, _CloudB;
+            sampler2D _MainTex, _SkyMask, _CloudA, _CloudB, _OldSkyBackground;
             float4 _CloudDrift, _ClipRect;
             float _CloudOpacity;
             v2f vert(appdata v)
@@ -67,7 +68,15 @@ Shader "TumbangPreso/UI/OwnerMenuSky"
                     float4 near=Cloud(_CloudA,p,float4(ax,38,620,620*724.0/2172));
                     sky=lerp(sky,far.rgb,far.a*_CloudOpacity);
                     sky=lerp(sky,near.rgb,near.a*_CloudOpacity);
-                    result=lerp(original.rgb,sky,opening);
+                    float3 oldBackground=tex2D(_OldSkyBackground,float2((p.x-1170)/640,1-p.y/350)).rgb;
+                    // Replace only the old background contribution. This keeps
+                    // fine wires and soft leaf edges in front without gold halos.
+                    #ifndef UNITY_COLORSPACE_GAMMA
+                    result=GammaToLinearSpace(saturate(LinearToGammaSpace(original.rgb)
+                        +opening*(LinearToGammaSpace(sky)-LinearToGammaSpace(oldBackground))));
+                    #else
+                    result=saturate(original.rgb+opening*(sky-oldBackground));
+                    #endif
                 }
                 fixed4 output=fixed4(result,original.a)*i.color;
                 #ifdef UNITY_UI_CLIP_RECT

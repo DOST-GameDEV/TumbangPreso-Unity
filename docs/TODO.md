@@ -1,5 +1,14 @@
 # TODO: Tumbang Preso Unity
 
+**Latest final owner UI correction is implemented/qualified and the video is
+DELIVERED:** final TUMP7/TUMP8 login, no email, password confirmation, copied eyes,
+Terms checkmark, centered tab/Guest labels, woven background, equal OR lines,
+separate generated clouds with precise foreground matting, and masked wind over
+the full sand plane. Four focused checks and native Windowsv22 passed. See
+[final UI report](reports/owner-final-ui-2026-09-15/README.md). Owner approval is
+pending while asleep. Continue gameplay now. Never use usage reset credits.
+
+
 **Latest motion revision:** v20 dust was too faint for the owner. Stronger ground
 particles and newly requested slow clouds are now qualified in Windows v21 and a
 12-second1080p MP4 is delivered for review. See

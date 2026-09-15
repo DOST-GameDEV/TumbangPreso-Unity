@@ -27,7 +27,10 @@ def main():
         'foreground_foliage':[(0,878),(47,895),(56,932),(153,928),(219,952),(245,1079),(0,1079)]
     }
     for polygon in solids.values():draw.polygon(polygon,fill=0)
-    distance=ndimage.distance_transform_edt(np.array(mask)>0)
+    ground=np.array(mask)>0;rgb=np.array(image.convert('RGB')).astype(int)
+    yy,xx=np.indices(ground.shape)
+    ground &= ~((xx<360)&(yy>840)&(rgb[:,:,1]>=rgb[:,:,0]-5)&(rgb[:,:,2]<100))
+    distance=ndimage.distance_transform_edt(ground)
     alpha=np.uint8(np.clip(distance/4,0,1)*255)
     rgba=np.full((1080,1920,4),255,dtype=np.uint8);rgba[:,:,3]=alpha
     OUT.mkdir(exist_ok=True);target=OUT/'main-ground-mask.png';Image.fromarray(rgba).save(target)
