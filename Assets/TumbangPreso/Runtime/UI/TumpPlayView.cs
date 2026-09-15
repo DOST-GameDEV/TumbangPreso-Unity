@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Place((RectTransform)back.transform, 56, 26, 170, 76);
             var title = TumpUiFactory.Text(root, "Heading", "Let's play", 68, true);
             title.color = f.Brick; TumpUiFactory.Place(title.rectTransform, 86, 110, 1180, 106);
-            _classic = Mode(root, "ClassicButton", "Classic", "Four rounds · No powers", GameMode.Classic, 88, f.Apricot);
+            _classic = Mode(root, "ClassicButton", "Classic", "Eight rounds · No powers", GameMode.Classic, 88, f.Apricot);
             _hero = Mode(root, "HeroStrikeButton", "Hero Strike", "Eight rounds · Hero abilities", GameMode.HeroStrike, 986, f.Yellow);
             var line = TumpUiFactory.Text(root, "RouteHeading", "How are you playing?", 40, true);
             TumpUiFactory.Place(line.rectTransform, 94, 654, 1560, 74);

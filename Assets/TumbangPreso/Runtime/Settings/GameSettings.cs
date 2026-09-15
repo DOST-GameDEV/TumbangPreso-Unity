@@ -440,6 +440,7 @@ namespace TumbangPreso.Settings
         /// (`SetSelectedRules`), which is what stops them drifting.
         /// </summary>
         public string CustomRulesWire = "";
+        public int MatchDefaultsRevision;
 
         // -------------------------------------------------------------------
         // PICKS. Carried into a match by GameLaunch.
@@ -585,6 +586,19 @@ namespace TumbangPreso.Settings
             // `settings.json` on every machine today. `CustomGameRules.Parse` answers `Defaults`
             // for an empty string, so this needs no migration beyond not being null.
             CustomRulesWire ??= "";
+            if (MatchDefaultsRevision < 1)
+            {
+                // Upgrade only the former untouched Classic preset. Explicit new
+                // custom four-round choices remain valid after this one-time step.
+                var oldDefault = CustomGameRules.Defaults(GameMode.Classic); oldDefault.Rounds = 4;
+                var saved = CustomGameRules.Parse(CustomRulesWire, GameMode.Classic);
+                if (!string.IsNullOrWhiteSpace(CustomRulesWire) && CustomGameRules.ToWire(saved) == CustomGameRules.ToWire(oldDefault))
+                {
+                    saved.Rounds = Balance.Rounds;
+                    CustomRulesWire = CustomGameRules.ToWire(saved);
+                }
+                MatchDefaultsRevision = 1;
+            }
 
             CharacterLoadouts ??= new List<CharacterLoadout>();
             HeroBuilds ??= new List<HeroBuild>();

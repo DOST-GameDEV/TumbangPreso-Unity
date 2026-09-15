@@ -27,7 +27,7 @@ namespace TumbangPreso.Core
     /// </summary>
     public enum MatchFormat
     {
-        /// <summary>Four rounds (Classic) or eight (Hero Strike), cumulative score.</summary>
+        /// <summary>Eight rounds by default in either mode, with cumulative score.</summary>
         Standard = 0,
 
         /// <summary>

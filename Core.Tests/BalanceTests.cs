@@ -805,7 +805,7 @@ namespace TumbangPreso.Core.Tests
         /// clockwise" is true by construction rather than by careful bookkeeping.
         /// </summary>
         [Fact]
-        public void EverySlotDefendsExactlyOnce()
+        public void EverySlotAppearsInTheDefaultRotation()
         {
             var seen = new HashSet<int>();
             for (int round = 1; round <= Balance.Rounds; round++)
@@ -819,7 +819,7 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void MatchLengthFollowsTheSelectedMode()
         {
-            Assert.Equal(4, MatchRules.RoundCountFor(GameMode.Classic));
+            Assert.Equal(8, MatchRules.RoundCountFor(GameMode.Classic));
             Assert.Equal(8, MatchRules.RoundCountFor(GameMode.HeroStrike));
 
             var defended = new int[Balance.PlayerCount];
@@ -876,9 +876,9 @@ namespace TumbangPreso.Core.Tests
             int ticks = (int)(Balance.RoundTime / Balance.DefenseTickInterval);
             Assert.Equal(900, ticks * Balance.ScoreDefensePerTick);
 
-            // ⚠️ AND THE ROTATION CAPS IT STRUCTURALLY. Everyone is taya exactly once, so
-            // the most passive defence anybody can bank in a match is one round of it.
-            Assert.Equal(1, CountRoundsDefending(slot: 0));
+            // ⚠️ AND THE ROTATION CAPS IT STRUCTURALLY. Everyone is taya twice in the default match, so
+            // the passive ceiling spans two defender rounds.
+            Assert.Equal(2, CountRoundsDefending(slot: 0));
         }
 
         // ===================================================================

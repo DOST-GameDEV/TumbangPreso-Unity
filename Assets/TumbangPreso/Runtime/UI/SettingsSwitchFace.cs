@@ -10,9 +10,9 @@ namespace TumbangPreso.UI
         protected override void OnPopulateMesh(VertexHelper h)
         {
             h.Clear(); var r = GetPixelAdjustedRect();
-            if (KnobOnly) { Disc(h, r.center, Mathf.Min(r.width, r.height) * .5f, OwnerUiTheme.Current.ActionInk); return; }
+            if (KnobOnly) { Disc(h, r.center, Mathf.Min(r.width, r.height) * .5f, SettingsPalette.Accent); return; }
             float radius = r.height * .5f;
-            var ink = On ? OwnerUiTheme.Current.Green : (Color)new Color32(146, 126, 104, 255);
+            var ink = On ? SettingsPalette.Accent : SettingsPalette.Rule;
             Disc(h, new Vector2(r.xMin + radius, r.center.y), radius, ink);
             Disc(h, new Vector2(r.xMax - radius, r.center.y), radius, ink);
             int n = h.currentVertCount;
@@ -21,7 +21,7 @@ namespace TumbangPreso.UI
             h.AddVert(new Vector2(r.xMax - radius, r.yMax), ink, Vector2.zero);
             h.AddVert(new Vector2(r.xMax - radius, r.yMin), ink, Vector2.zero);
             h.AddTriangle(n, n + 1, n + 2); h.AddTriangle(n, n + 2, n + 3);
-            Disc(h, new Vector2(On ? r.xMax - radius : r.xMin + radius, r.center.y), radius - 5, OwnerUiTheme.Current.Pale);
+            Disc(h, new Vector2(On ? r.xMax - radius : r.xMin + radius, r.center.y), radius - 5, On ? SettingsPalette.Background : SettingsPalette.Ink);
         }
         private static void Disc(VertexHelper h, Vector2 centre, float radius, Color colour)
         {

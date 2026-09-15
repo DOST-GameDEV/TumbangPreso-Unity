@@ -10,6 +10,7 @@ from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('--out',default='Logs/resident-laundry-v1')
+p.add_argument('--new-only',action='store_true')
 args=p.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 out=ROOT/args.out;out.mkdir(parents=True,exist_ok=True)
 
@@ -44,7 +45,10 @@ def garment(kind,number,at,slope,mat):
     outlines={
         'Tee':[(-.34,-.08),(-.2,0),(-.12,-.015),(0,-.075),(.12,-.015),(.2,0),(.34,-.08),(.43,-.26),(.28,-.30),(.20,-.19),(.21,-.69),(-.20,-.70),(-.20,-.19),(-.28,-.30),(-.43,-.26)],
         'Shorts':[(-.27,0),(.27,0),(.30,-.53),(.07,-.56),(0,-.29),(-.06,-.55),(-.30,-.53)],
-        'Towel':[(-.26,0),(.26,0),(.255,-.39),(.27,-.82),(.05,-.80),(-.14,-.83),(-.27,-.81),(-.25,-.39)]}
+        'Towel':[(-.26,0),(.26,0),(.255,-.39),(.27,-.82),(.05,-.80),(-.14,-.83),(-.27,-.81),(-.25,-.39)],
+        'Pants':[(-.27,0),(.27,0),(.26,-1.03),(.07,-1.05),(.015,-.33),(-.04,-1.04),(-.25,-1.02)],
+        'Dress':[(-.19,0),(-.10,-.025),(0,-.07),(.10,-.025),(.19,0),(.24,-.28),(.15,-.42),(.38,-.98),(.08,-1.01),(-.36,-.97),(-.15,-.42),(-.24,-.28)],
+        'Sheet':[(-.70,0),(.70,0),(.72,-.88),(.35,-.94),(-.11,-.91),(-.69,-.95)]}
     outline=outlines[kind];verts=[]
     for side in [-1,1]:
         for x,z in outline:
@@ -57,22 +61,30 @@ def garment(kind,number,at,slope,mat):
 
 specs=[('courtyard-line',4.4,.16,[(.65,'Tee',0),(1.62,'Shorts',1),(2.47,'Towel',2),(3.48,'Tee',3)]),
        ('alley-line',15.5,.48,[(2.0,'Towel',2),(3.0,'Tee',0),(4.0,'Shorts',1),(5.0,'Tee',3),
-                              (11.4,'Tee',0),(12.45,'Towel',4),(13.4,'Shorts',1),(14.45,'Tee',2)])]
+                              (11.4,'Tee',0),(12.45,'Towel',4),(13.4,'Shorts',1),(14.45,'Tee',2)]),
+       ('alley-colour-line',15.5,.50,[(1.7,'Tee',5),(2.9,'Pants',1),(4.1,'Dress',3),(5.4,'Towel',0),
+                                    (10.6,'Tee',4),(11.8,'Shorts',5),(13.0,'Pants',1),(14.3,'Tee',3)]),
+       ('courtyard-family-line',4.4,.16,[(.6,'Tee',3),(1.66,'Pants',1),(2.62,'Towel',0),(3.67,'Dress',4)]),
+       ('courtyard-sheets-line',4.4,.12,[(1.03,'Sheet',0),(2.66,'Towel',5),(3.65,'Tee',2)])]
+if args.new_only:specs=specs[2:]
 for name,span,sag,clothes in specs:
     bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
     rope_mat=material('Worn braided line',(.27,.25,.19));peg=material('Wooden clothespins',(.56,.42,.25))
-    colors=[(.72,.73,.63),(.18,.27,.34),(.50,.60,.54),(.55,.36,.28),(.63,.56,.68)]
+    colors=([(.72,.73,.63),(.18,.27,.34),(.50,.60,.54),(.55,.36,.28),(.63,.56,.68)]
+            if name in ('courtyard-line','alley-line') else
+            [(.82,.77,.60),(.17,.26,.42),(.30,.51,.38),(.70,.28,.22),(.47,.31,.53),(.26,.47,.64)])
     cloth=[material('Cotton '+str(i),c) for i,c in enumerate(colors)]
     def height(x):return -4*sag*(x/span)*(1-x/span)
     rope([(span*j/48,0,height(span*j/48)) for j in range(49)],rope_mat)
     for i,(x,kind,color) in enumerate(clothes):
         slope=-4*sag/span*(1-2*x/span)
         garment(kind,i,(x,0,height(x)),slope,cloth[color])
-        for dx in [-.18,.18]:box(f'Peg_{i}_{dx}',(x+dx,-.015,height(x+dx)-.018),(.025,.048,.075),peg)
+        pegs=[-.62,-.21,.21,.62] if kind=='Sheet' else [-.18,.18]
+        for dx in pegs:box(f'Peg_{i}_{dx}',(x+dx,-.015,height(x+dx)-.018),(.025,.048,.075),peg)
     bpy.ops.wm.save_as_mainfile(filepath=str(out/(name+'.blend')))
     bpy.ops.export_scene.gltf(filepath=str(out/(name+'.glb')),export_format='GLB',export_yup=True)
     (out/(name+'.json')).write_text(json.dumps({'spanMetres':span,'sagMetres':sag,'garments':len(clothes),
-        'anchorLocalUnity':[[0,0,0],[span,0,0]],'source':'Original Blender geometry, no imported photographs'},indent=2))
+        'anchorLocalUnity':[[0,0,0],[span,0,0]],'source':'Original Blender geometry, no imported photographs'},indent=2),encoding='utf-8')
     scene=bpy.context.scene;scene.render.engine='BLENDER_WORKBENCH';scene.view_settings.view_transform='Standard'
     scene.world.color=(.22,.24,.24);shade=scene.display.shading;shade.light='STUDIO';shade.color_type='MATERIAL'
     shade.show_shadows=True;shade.show_specular_highlight=False;shade.background_type='WORLD'
@@ -82,4 +94,4 @@ for name,span,sag,clothes in specs:
     data.type='ORTHO';data.ortho_scale=span+1
     scene.render.resolution_x=1600;scene.render.resolution_y=420;scene.render.resolution_percentage=100
     scene.render.filepath=str(out/(name+'.png'));bpy.ops.render.render(write_still=True)
-print('Authored two original resident laundry assemblies.')
+print('Authored',len(specs),'original resident laundry assemblies.')

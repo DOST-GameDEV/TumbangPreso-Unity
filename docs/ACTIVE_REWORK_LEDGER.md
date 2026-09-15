@@ -1,5 +1,66 @@
 # Active TUMP rework ledger
 
+## CURRENT owner steering batch: eight rounds, charcoal settings, sampayan
+
+D7 committed/pushed416e48a9. Owner now explicitly corrects normal/Classic to8rounds,
+requests grey/dark settings, and asks to fix floating-looking sampayan attachments
+and add2-3more varied clotheslines (three chosen). These steer current work before
+returning to the remaining full queue. Original login remains unchanged.
+
+Core Balance.Rounds was still4; changed to8, with default/tournament/rotation tests
+updated and active menu copy corrected.42focused .NET cases PASS, artifact:
+Logs/normal-eight-rounds/normal-eight-rounds.trx. Custom wire parsing still preserves
+explicit4round values. GameSettings.MatchDefaultsRevision performs a one-time
+upgrade only for the exact former unmodified Classic preset; later explicit custom
+four-round selections and other custom/mode settings remain valid. Migration tests
+added. Settings now has its own dark-grey SettingsPalette and contrast-safe native
+rows/options/switches/dialog, scoped away from the approved login.
+
+owner-corrections-edit-v1 FINISHED7/7PASS, restoration0625811c08db; Python11220
+retired. Both existing rope ends measured6mm from the true pole trunk surfaces;
+the unsupported appearance needs visible tie hardware, not a speculative anchor
+position rewrite. Blender3488 also retired: three new original assemblies authored
+and visually reviewed under Logs/resident-laundry-2026-09-15. Native .blend/.json
+sources copied to MapSource/environment/resident-laundry; runtime GLBs imported.
+
+laundry-refresh-v1 FINISHED, Python4680 retired, restorationc020cfbe64c9.
+Laundry-only scene authoring adds one long street line and two front-yard lines,
+with two wraps, crossed hitches and loose rope tails on actual supports. No unrelated
+map rebuild. laundry-refresh-v2 FINISHED, Python3908 retired, restorationd38e5e43b0e0.
+Both semantic outputs SHA256 D0C8DBC09E277AC3C429A8FF7703AF5BA2F9C025CFA034517A9427C4F628AC97.
+The two author runs produced identical named world geometry.
+New ResidentLaundrySceneTests checks all23 garments, fixed pegs/ropes/hitches and
+captures four actualFPP views. Placement tests check four lines and yard-post clearance.
+Python21324 retired. laundry-edit-v2 FINISHED7/7PASS, restoration131fbce1b6fd.
+owner-corrections-play-v1 FINISHED6/7, restorationfebe345036f5: both live8roundHUD
+cases and all four settings cases PASS. Laundry test attempted CPU vertex access
+on unreadable static-batched fixed pieces. Corrected only the test to observe their
+world transforms/rendered bounds; production batching unchanged. Targeted
+laundry-play-v2 FINISHED1/1PASS, Python15180 retired, restorationfdcb2f89224a.
+All23 clothes billow below fixed pins; four actualFPP captures inspected. Report:
+docs/reports/owner-corrections-2026-09-15. No Unity/Blender/player jobs remain.
+Core profile-distance normalization case also passed1/1 with the8round denominator.
+Next save/push this stable correction batch, then apply/review D8 results and
+Logs/ui-drafts/TumpRoundSwapView.CourtBreak.cs. Full UI/U8/gameplay queue continues.
+
+Laundry source: ResidentLaundryAuthor.AddToEskinita currently uses poles2/8 and
+only scales X to the destination; inspect measured endpoint gaps before changing
+anchors. Plan one additional long line plus two shorter yard lines with distinct
+clothes, visible tie/support hardware and no unsupported ends. User reference shows
+the right-hand attachment near the utility post. Existing source authoring/tests
+and LaundryMotion fixed-top behavior were read. Next consume both jobs, inspect new
+art/actual anchors, then apply targeted scene authoring and focused validation.
+D8 results draft remains in Logs/ui-drafts/MatchResult.FinishSheet.cs for later.
+
+**LATEST owner corrections, 2026-09-15:** normal/Classic matches default to EIGHT
+rounds, like Hero Strike. The shown1/4 was the old gameplay default, not just HUD
+copy. Correct defaults, rotation checks and current UI copy; keep custom lengths
+configurable. Settings must use grey/dark colours, scoped to settings so the approved
+login stays unchanged. Fix the visibly disconnected Eskinita sampayan attachments
+and add three more clotheslines with varied garments and real visible supports.
+These requests are immediate steering within the continuing full queue.
+
+
 ## CURRENT D7 qualified; results and round changes next
 
 HUD-v2 FINISHED3/3PASS, restorationf18fbbdc4e93; Python12268 retired. Actual clear

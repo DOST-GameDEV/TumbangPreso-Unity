@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &107435
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &4858085
@@ -435,19 +435,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 9208542360768981429, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: m_LocalScale.x
@@ -529,7 +529,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Peripheral vegetation rooted on the existing scenery plate outside reachable
     play; original terrain elevation retained.
@@ -883,7 +883,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Retained vehicle part attached to its chassis; author verifies four grounded
     wheels intersect the body. Wheels retain the ordinary grounding check.
@@ -1001,7 +1001,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &14574063
@@ -1444,7 +1444,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Window/cladding/terrace finishes are fitted to this retained solid house;
     source frame and wall positions are preserved.
@@ -1672,7 +1672,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &34433912
@@ -1776,7 +1776,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &38820899
@@ -2314,7 +2314,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &46117378
@@ -2418,7 +2418,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &49761402
@@ -2592,7 +2592,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &53034041
@@ -2696,7 +2696,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &53197495
@@ -3719,7 +3719,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &75442460
@@ -4163,7 +4163,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &83804258
@@ -4415,7 +4415,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &94498256
@@ -4551,7 +4551,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &99159045
@@ -4845,7 +4845,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &108093212
@@ -4949,7 +4949,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &108441958
@@ -5143,7 +5143,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &112075715
@@ -5335,11 +5335,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 8aa74156de248f54b9d6b71cd463fc33, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: -7635826562936255635, guid: 8aa74156de248f54b9d6b71cd463fc33, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 8aa74156de248f54b9d6b71cd463fc33, type: 3}
       propertyPath: m_Name
@@ -5489,7 +5489,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &123079772
@@ -5657,19 +5657,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 9208542360768981429, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: m_LocalScale.x
@@ -5751,7 +5751,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Peripheral vegetation rooted on the existing scenery plate outside reachable
     play; original terrain elevation retained.
@@ -5889,7 +5889,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &132850675
@@ -6083,7 +6083,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &133743741
@@ -6549,6 +6549,105 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 12, z: 40}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &149888091
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 761934862}
+    m_Modifications:
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.00000004371139
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8771091787928289351, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      propertyPath: m_Name
+      value: courtyard-family-line
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 149888095}
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 149888094}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+--- !u!4 &149888092 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3910990755373119420, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+  m_PrefabInstance: {fileID: 149888091}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &149888093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8771091787928289351, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+  m_PrefabInstance: {fileID: 149888091}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &149888094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149888093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Clothes hang from the fixed sagging line between its two supported end
+    posts.
+--- !u!114 &149888095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149888093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3d87c02a31a1547993071d7de32abd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.LaundryMotion
 --- !u!1001 &151192731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7425,7 +7524,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &170197567
@@ -7529,7 +7628,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &171471681
@@ -7699,7 +7798,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &173561405
@@ -7893,7 +7992,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &175910912
@@ -7953,6 +8052,111 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 175910909}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &176091373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 176091374}
+  - component: {fileID: 176091377}
+  - component: {fileID: 176091376}
+  - component: {fileID: 176091375}
+  m_Layer: 0
+  m_Name: Supported rope hitch yard-1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &176091374
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176091373}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &176091375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176091373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &176091376
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176091373}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -8076141525590312824, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &176091377
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176091373}
+  m_Mesh: {fileID: 4300000, guid: 1882737f402b58b4e8f89e919c29f63f, type: 2}
 --- !u!1001 &177116298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8417,7 +8621,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: m_Name
@@ -8915,7 +9119,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &200474033
@@ -9059,7 +9263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &207148139
@@ -9343,7 +9547,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &215341212
@@ -9447,7 +9651,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &215802292
@@ -9641,7 +9845,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &226062767
@@ -9837,7 +10041,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 5ced868741b47bc4f8d488b263148439, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 5ced868741b47bc4f8d488b263148439, type: 3}
       propertyPath: m_Name
@@ -9897,7 +10101,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &234412633
@@ -10493,7 +10697,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &252126358
@@ -10597,7 +10801,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &256541866
@@ -10881,7 +11085,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &258946628
@@ -11059,7 +11263,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &259524625
@@ -11343,7 +11547,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &263139484
@@ -11953,6 +12157,40 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3061319678431522736, guid: fc40dc775ec336d45855c2f88ce1ccb1, type: 3}
   m_PrefabInstance: {fileID: 267662203}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &268860585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 268860586}
+  m_Layer: 0
+  m_Name: Resident laundry alley-colour-line
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &268860586
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268860585}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.624, y: 4.65, z: -9}
+  m_LocalScale: {x: 0.98374194, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 517204959}
+  - {fileID: 1934655089}
+  - {fileID: 993157514}
+  m_Father: {fileID: 1206666619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &271462414
 GameObject:
   m_ObjectHideFlags: 0
@@ -11997,7 +12235,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &271462417
@@ -12265,7 +12503,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &276804168
@@ -12525,7 +12763,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &282479395
@@ -12629,7 +12867,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &287004174
@@ -12823,7 +13061,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &287941250
@@ -13239,7 +13477,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &292698133
@@ -13353,7 +13591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: m_Name
@@ -13529,19 +13767,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13654,19 +13892,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 4994722700305964486, guid: 5b200fe7c2081174982ca1e3f4bac642, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13921,7 +14159,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &299825843
@@ -15020,7 +15258,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &336327476
@@ -15080,6 +15318,44 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 336327473}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &344657810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 344657811}
+  m_Layer: 0
+  m_Name: Resident laundry courtyard-sheets-line
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &344657811
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344657810}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 9.040001, y: 2.85, z: 6.6000004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1617282552}
+  - {fileID: 1713143241}
+  - {fileID: 1900754375}
+  - {fileID: 2019350265}
+  - {fileID: 515738371}
+  - {fileID: 523308578}
+  - {fileID: 1867307608}
+  m_Father: {fileID: 1206666619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &347033428
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15160,7 +15436,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Window/cladding/terrace finishes are fitted to this retained solid house;
     source frame and wall positions are preserved.
@@ -15805,7 +16081,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &373773469
@@ -15954,6 +16230,118 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 377063114}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &377215533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 377215534}
+  - component: {fileID: 377215537}
+  - component: {fileID: 377215536}
+  - component: {fileID: 377215535}
+  m_Layer: 0
+  m_Name: Post foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &377215534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377215533}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.9402554e-11, y: -2.4720001, z: -1.5522043e-10}
+  m_LocalScale: {x: 0.28, y: 0.24, z: 0.28}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &377215535
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377215533}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &377215536
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377215533}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &377215537
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 377215533}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &377877771
 GameObject:
@@ -16179,7 +16567,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &380877353
@@ -16685,7 +17073,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &394304187
@@ -17137,7 +17525,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &400772040
@@ -18010,7 +18398,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &429530956
@@ -18982,7 +19370,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &470373685
@@ -19150,19 +19538,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 9208542360768981429, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: m_LocalScale.x
@@ -19491,19 +19879,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19590,7 +19978,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &491273990
@@ -19694,7 +20082,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &492094166
@@ -19962,7 +20350,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &508427323
@@ -20021,6 +20409,118 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 508427320}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &515738370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 515738371}
+  - component: {fileID: 515738374}
+  - component: {fileID: 515738373}
+  - component: {fileID: 515738372}
+  m_Layer: 0
+  m_Name: Post foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &515738371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515738370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.400001, y: -2.622, z: -0.00000047683716}
+  m_LocalScale: {x: 0.28, y: 0.24, z: 0.28}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &515738372
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515738370}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &515738373
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515738370}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &515738374
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515738370}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &515865270
 GameObject:
@@ -20178,6 +20678,105 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9305e91c7ec0b3a43b2501ac73615cfa, type: 3}
   m_PrefabInstance: {fileID: 516001153}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &517204958
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 268860586}
+    m_Modifications:
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.00000004371139
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8771091787928289351, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      propertyPath: m_Name
+      value: alley-colour-line
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 517204962}
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 517204961}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+--- !u!4 &517204959 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3910990755373119420, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+  m_PrefabInstance: {fileID: 517204958}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &517204960 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8771091787928289351, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+  m_PrefabInstance: {fileID: 517204958}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &517204961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 517204960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: The measured rope ends tie to the existing utility trunks below the electrical
+    conductors.
+--- !u!114 &517204962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 517204960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3d87c02a31a1547993071d7de32abd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.LaundryMotion
 --- !u!1 &517837934
 GameObject:
   m_ObjectHideFlags: 0
@@ -20859,6 +21458,111 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4298570690893186911, guid: a1037e223c4fadf4a960a0aaa0419f5d, type: 3}
   m_PrefabInstance: {fileID: 522460375}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &523308577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 523308578}
+  - component: {fileID: 523308581}
+  - component: {fileID: 523308580}
+  - component: {fileID: 523308579}
+  m_Layer: 0
+  m_Name: Supported rope hitch yard-0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &523308578
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523308577}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &523308579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523308577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &523308580
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523308577}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1137189726968206863, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &523308581
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523308577}
+  m_Mesh: {fileID: 4300000, guid: b2896a6adc2fd6843ab8e3a8e6cae11b, type: 2}
 --- !u!1001 &525168318
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20909,23 +21613,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 1b3eb4bd8405342438a5760ecece7d4d, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 777f7da1a9b35ef43b03bacb910acd3a, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: b47ab982480b6c94db694920eab00185, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 0e6786d1ec16fc54685e7f9ab9eab83b, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: c03b4ed6d0376fa409ab0cc04c47ae27, type: 2}
     - target: {fileID: 919132149155446097, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: m_Name
@@ -21075,7 +21779,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &526855887
@@ -21279,7 +21983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 9ea4cc75c74b712499625da4552dc12a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 9ea4cc75c74b712499625da4552dc12a, type: 3}
       propertyPath: m_Name
@@ -21339,7 +22043,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &534295690
@@ -21486,7 +22190,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &534579281
@@ -22430,7 +23134,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &558838465
@@ -22612,7 +23316,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &561424377
@@ -22936,10 +23640,109 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Washing line strung between two poles across the eskinita, 2.5 m up. It
     hangs by construction and nothing walks into it.
+--- !u!1001 &566815204
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 888514501}
+    m_Modifications:
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.00000004371139
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      propertyPath: m_Name
+      value: alley-line
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 566815208}
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 566815207}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+--- !u!4 &566815205 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+  m_PrefabInstance: {fileID: 566815204}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &566815206 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+  m_PrefabInstance: {fileID: 566815204}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &566815207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566815206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: The measured rope ends tie to the existing utility trunks below the electrical
+    conductors.
+--- !u!114 &566815208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566815206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3d87c02a31a1547993071d7de32abd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.LaundryMotion
 --- !u!1 &572075300
 GameObject:
   m_ObjectHideFlags: 0
@@ -23390,7 +24193,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Painted distant landscape behind the neighborhood; no reachable collision.
 --- !u!1 &577230339
@@ -23573,6 +24376,111 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578953579}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &582160737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 582160738}
+  - component: {fileID: 582160741}
+  - component: {fileID: 582160740}
+  - component: {fileID: 582160739}
+  m_Layer: 0
+  m_Name: Supported rope hitch yard-0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &582160738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582160737}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &582160739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582160737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &582160740
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582160737}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -8076141525590312824, guid: 8bc7129ad1b54ed38ad7693f67961b59, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &582160741
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582160737}
+  m_Mesh: {fileID: 4300000, guid: 2e0b8507f7cf12d479a7647880e884ed, type: 2}
 --- !u!1 &584184399
 GameObject:
   m_ObjectHideFlags: 0
@@ -24745,7 +25653,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &610540962
@@ -25202,7 +26110,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &626577058
@@ -25634,7 +26542,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &639763869
@@ -26008,7 +26916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &649931751
@@ -26143,7 +27051,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &660229378
@@ -26551,6 +27459,118 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664687117}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &667212482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 667212483}
+  - component: {fileID: 667212486}
+  - component: {fileID: 667212485}
+  - component: {fileID: 667212484}
+  m_Layer: 0
+  m_Name: Post foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &667212483
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667212482}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.400001, y: -2.4720001, z: -0.00000047683716}
+  m_LocalScale: {x: 0.28, y: 0.24, z: 0.28}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &667212484
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667212482}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &667212485
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667212482}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &667212486
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667212482}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &672039584
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26669,7 +27689,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &672863736
@@ -26756,7 +27776,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dba385a2ef712dc4abab15f0bc5b882b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.EnvColourPass
 --- !u!4 &673378094
 Transform:
@@ -26829,7 +27849,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &673601251
@@ -26933,7 +27953,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &674936744
@@ -27568,7 +28588,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &685958322
@@ -28002,7 +29022,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -28109,7 +29129,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &704936881
@@ -28605,7 +29625,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &726355913
@@ -28997,7 +30017,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &739963923
@@ -29084,7 +30104,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 379e83f9f367a8e4d8f138b555291fc0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.MatchInstaller
   _allBots: 0
   UseReadyGate: 1
@@ -29533,6 +30553,118 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1adeeaaadfb7ae6478f40e2d9d37d958, type: 3}
   m_PrefabInstance: {fileID: 754314220}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &754579866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 754579867}
+  - component: {fileID: 754579870}
+  - component: {fileID: 754579869}
+  - component: {fileID: 754579868}
+  m_Layer: 0
+  m_Name: Clothesline end post
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &754579867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754579866}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.9402554e-11, y: -1.2785001, z: -1.5522043e-10}
+  m_LocalScale: {x: 0.13, y: 2.627, z: 0.13}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &754579868
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754579866}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &754579869
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754579866}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &754579870
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 754579866}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &754678107
 GameObject:
   m_ObjectHideFlags: 0
@@ -30045,6 +31177,44 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 760679357}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &761934861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 761934862}
+  m_Layer: 0
+  m_Name: Resident laundry courtyard-family-line
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &761934862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761934861}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -9.040001, y: 2.7, z: -10.378}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 149888092}
+  - {fileID: 754579867}
+  - {fileID: 377215534}
+  - {fileID: 1803527736}
+  - {fileID: 667212483}
+  - {fileID: 582160738}
+  - {fileID: 176091374}
+  m_Father: {fileID: 1206666619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &762212246
 GameObject:
   m_ObjectHideFlags: 0
@@ -30605,7 +31775,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &769742682
@@ -30745,7 +31915,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Window/cladding/terrace finishes are fitted to this retained solid house;
     source frame and wall positions are preserved.
@@ -30945,7 +32115,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &773490102
@@ -31337,7 +32507,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &787560756
@@ -31839,7 +33009,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &805138594
@@ -32137,11 +33307,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: -7635826562936255635, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: m_Name
@@ -32437,7 +33607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: m_Name
@@ -32665,7 +33835,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &838856910
@@ -33391,7 +34561,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &873075391
@@ -33495,7 +34665,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &874452156
@@ -33599,7 +34769,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &874741542
@@ -33807,6 +34977,40 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e886a660b14de2845802ceb2b4e15b77, type: 3}
   m_PrefabInstance: {fileID: 887518221}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &888514500
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888514501}
+  m_Layer: 0
+  m_Name: Resident laundry alley-line
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &888514501
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888514500}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.624, y: 4.45, z: 3}
+  m_LocalScale: {x: 0.98374194, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 566815205}
+  - {fileID: 1143403215}
+  - {fileID: 1823537401}
+  m_Father: {fileID: 1206666619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &891533498
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34089,7 +35293,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &903752560
@@ -34525,7 +35729,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &917083532
@@ -35191,7 +36395,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &937133775
@@ -35405,7 +36609,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Washing line strung between two poles across the eskinita, 2.5 m up. It
     hangs by construction and nothing walks into it.
@@ -35453,7 +36657,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &956764695
@@ -35557,7 +36761,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &963490635
@@ -35661,7 +36865,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &963639553
@@ -36019,7 +37223,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &973429300
@@ -36237,7 +37441,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Window/cladding/terrace finishes are fitted to this retained solid house;
     source frame and wall positions are preserved.
@@ -36663,6 +37867,111 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991253920}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &993157513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 993157514}
+  - component: {fileID: 993157517}
+  - component: {fileID: 993157516}
+  - component: {fileID: 993157515}
+  m_Layer: 0
+  m_Name: Supported rope hitch east
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &993157514
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993157513}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 268860586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &993157515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993157513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &993157516
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993157513}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -3141028740969340456, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &993157517
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993157513}
+  m_Mesh: {fileID: 4300000, guid: dde35f1ae80b9134bbe9f724bbbab180, type: 2}
 --- !u!1 &993652138
 GameObject:
   m_ObjectHideFlags: 0
@@ -36797,7 +38106,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &998755658
@@ -37397,7 +38706,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1021948320
@@ -37579,7 +38888,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1025428266
@@ -37851,7 +39160,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1041847459
@@ -38213,7 +39522,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1045584505
@@ -38723,7 +40032,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1061380365
@@ -38917,7 +40226,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1068873815
@@ -39485,7 +40794,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1094114514
@@ -39679,7 +40988,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1096170200
@@ -40081,7 +41390,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1105981016
@@ -40215,105 +41524,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8284388872498137994, guid: 1abff988df6b9ec4da3ea9e485b2f3e9, type: 3}
   m_PrefabInstance: {fileID: 1107579924}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1108618710
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1357905390}
-    m_Modifications:
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.00000004371139
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      propertyPath: m_Name
-      value: alley-line
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1108618714}
-    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1108618713}
-  m_SourcePrefab: {fileID: -4161369568681901532, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
---- !u!4 &1108618711 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -3910990755373119420, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-  m_PrefabInstance: {fileID: 1108618710}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1108618712 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8771091787928289351, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
-  m_PrefabInstance: {fileID: 1108618710}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1108618713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1108618712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
-  Reason: The measured rope ends tie to the existing utility trunks below the electrical
-    conductors.
---- !u!114 &1108618714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1108618712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d3d87c02a31a1547993071d7de32abd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.LaundryMotion
 --- !u!1 &1109897780
 GameObject:
   m_ObjectHideFlags: 0
@@ -40780,7 +41990,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1119653122
@@ -40894,7 +42104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 923763dacfa9ad84095e2eb64373a001, type: 3}
       propertyPath: m_Name
@@ -40985,7 +42195,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1125972799
@@ -41210,7 +42420,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1134107931
@@ -41494,7 +42704,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1138776295
@@ -41727,6 +42937,111 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.23999977, y: 7.2, z: 0.23999977}
   m_Center: {x: 0, y: 3.6, z: 0}
+--- !u!1 &1143403214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1143403215}
+  - component: {fileID: 1143403218}
+  - component: {fileID: 1143403217}
+  - component: {fileID: 1143403216}
+  m_Layer: 0
+  m_Name: Supported rope hitch west
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1143403215
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143403214}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 888514501}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1143403216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143403214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &1143403217
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143403214}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -8076141525590312824, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1143403218
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143403214}
+  m_Mesh: {fileID: 4300000, guid: 5dd091b11e5535c4695edfdead8ff43d, type: 2}
 --- !u!1 &1145963144
 GameObject:
   m_ObjectHideFlags: 0
@@ -41861,7 +43176,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1148435312
@@ -42031,7 +43346,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1152978057
@@ -42225,7 +43540,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1156832245
@@ -42329,7 +43644,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1157117702
@@ -42577,7 +43892,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1162158829
@@ -42833,7 +44148,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1174395979
@@ -43465,7 +44780,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1194113462
@@ -43733,7 +45048,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1203652052
@@ -43957,7 +45272,10 @@ Transform:
   - {fileID: 2102167310}
   - {fileID: 58340008}
   - {fileID: 1770329476}
-  - {fileID: 1357905390}
+  - {fileID: 888514501}
+  - {fileID: 268860586}
+  - {fileID: 761934862}
+  - {fileID: 344657811}
   m_Father: {fileID: 685918122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1209956663
@@ -44652,7 +45970,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1229134975
@@ -46360,7 +47678,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1268956755
@@ -46538,7 +47856,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1270899966
@@ -46716,7 +48034,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1281593786
@@ -47488,7 +48806,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1306288107
@@ -47682,7 +49000,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1313124702
@@ -47965,7 +49283,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: daf526e0fb31c63438f5b93e3b133a5a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.KillPlane
   CharacterRespawned:
     m_PersistentCalls:
@@ -48014,7 +49332,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1319949041
@@ -48281,7 +49599,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1323349968
@@ -48475,7 +49793,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1329650579
@@ -48669,7 +49987,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1331209421
@@ -48981,7 +50299,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1337041189
@@ -49495,7 +50813,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1349695806
@@ -49899,38 +51217,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1356837415}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1357905389
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1357905390}
-  m_Layer: 0
-  m_Name: Resident laundry alley-line
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1357905390
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1357905389}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.624, y: 4.45, z: 3}
-  m_LocalScale: {x: 0.98374194, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1108618711}
-  m_Father: {fileID: 1206666619}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1359948922
 GameObject:
   m_ObjectHideFlags: 0
@@ -50075,7 +51361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 9ea4cc75c74b712499625da4552dc12a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 9ea4cc75c74b712499625da4552dc12a, type: 3}
       propertyPath: m_Name
@@ -50479,7 +51765,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1377874957
@@ -50779,7 +52065,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1381547244
@@ -51531,7 +52817,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1400181391
@@ -52159,7 +53445,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1427010841
@@ -52341,7 +53627,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1433180140
@@ -52523,7 +53809,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1433959541
@@ -53229,7 +54515,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Painted distant landscape behind the neighborhood; no reachable collision.
 --- !u!1001 &1471664966
@@ -53290,7 +54576,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 4c5fe41c807658a4bbe00f7fbf82e606, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 4c5fe41c807658a4bbe00f7fbf82e606, type: 3}
       propertyPath: m_Name
@@ -53530,7 +54816,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1476208521
@@ -53634,7 +54920,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1479997171
@@ -53738,7 +55024,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1481656951
@@ -53842,7 +55128,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1485104975
@@ -53982,7 +55268,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Window/cladding/terrace finishes are fitted to this retained solid house;
     source frame and wall positions are preserved.
@@ -54354,7 +55640,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1505275054
@@ -54548,7 +55834,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1510407431
@@ -54652,7 +55938,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1514576369
@@ -55191,7 +56477,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1529850808
@@ -55643,7 +56929,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1554004827
@@ -55813,7 +57099,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1561791395
@@ -55917,7 +57203,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1561938479
@@ -56730,7 +58016,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1592912683
@@ -57372,7 +58658,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1612260273
@@ -57432,6 +58718,105 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1612260270}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1617282551
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 344657811}
+    m_Modifications:
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.00000004371139
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8771091787928289351, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      propertyPath: m_Name
+      value: courtyard-sheets-line
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1617282555}
+    - targetCorrespondingSourceObject: {fileID: 8771091787928289351, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1617282554}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+--- !u!4 &1617282552 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3910990755373119420, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+  m_PrefabInstance: {fileID: 1617282551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1617282553 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8771091787928289351, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+  m_PrefabInstance: {fileID: 1617282551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1617282554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617282553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Clothes hang from the fixed sagging line between its two supported end
+    posts.
+--- !u!114 &1617282555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617282553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3d87c02a31a1547993071d7de32abd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.LaundryMotion
 --- !u!1 &1618272101
 GameObject:
   m_ObjectHideFlags: 0
@@ -58067,7 +59452,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Retained vehicle part attached to its chassis; author verifies four grounded
     wheels intersect the body. Wheels retain the ordinary grounding check.
@@ -59334,7 +60719,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1667708990
@@ -59616,7 +61001,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 4c5fe41c807658a4bbe00f7fbf82e606, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 4c5fe41c807658a4bbe00f7fbf82e606, type: 3}
       propertyPath: m_Name
@@ -59975,7 +61360,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Painted distant landscape behind the neighborhood; no reachable collision.
 --- !u!1 &1694327927
@@ -60164,7 +61549,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Retained vehicle part attached to its chassis; author verifies four grounded
     wheels intersect the body. Wheels retain the ordinary grounding check.
@@ -60456,19 +61841,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 9208542360768981429, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: m_LocalScale.x
@@ -60550,10 +61935,122 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Peripheral vegetation rooted on the existing scenery plate outside reachable
     play; original terrain elevation retained.
+--- !u!1 &1713143240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1713143241}
+  - component: {fileID: 1713143244}
+  - component: {fileID: 1713143243}
+  - component: {fileID: 1713143242}
+  m_Layer: 0
+  m_Name: Clothesline end post
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1713143241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713143240}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.3535, z: -1.5522043e-10}
+  m_LocalScale: {x: 0.13, y: 2.777, z: 0.13}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1713143242
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713143240}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1713143243
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713143240}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1713143244
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713143240}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1715786481
 GameObject:
   m_ObjectHideFlags: 0
@@ -60598,7 +62095,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1715786484
@@ -60858,7 +62355,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1727374314
@@ -61817,7 +63314,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Five separated conductors connect the actual retained pole insulators;
     circular cross-sections remain visible from oblique views.
@@ -62522,6 +64019,118 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8779930453158379301, guid: 4b587f0942e04854493d12cfc6eceef7, type: 3}
   m_PrefabInstance: {fileID: 1799444864}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1803527735
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1803527736}
+  - component: {fileID: 1803527739}
+  - component: {fileID: 1803527738}
+  - component: {fileID: 1803527737}
+  m_Layer: 0
+  m_Name: Clothesline end post
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1803527736
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803527735}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.400001, y: -1.2785001, z: -0.00000047683716}
+  m_LocalScale: {x: 0.13, y: 2.627, z: 0.13}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 761934862}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1803527737
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803527735}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1803527738
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803527735}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1803527739
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803527735}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1805419885
 GameObject:
   m_ObjectHideFlags: 0
@@ -62656,7 +64265,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1806687056
@@ -63122,6 +64731,111 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bfb7ebe9a44147442be367741340b042, type: 3}
   m_PrefabInstance: {fileID: 1822413150}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1823537400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1823537401}
+  - component: {fileID: 1823537404}
+  - component: {fileID: 1823537403}
+  - component: {fileID: 1823537402}
+  m_Layer: 0
+  m_Name: Supported rope hitch east
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1823537401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823537400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 888514501}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1823537402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823537400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &1823537403
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823537400}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -8076141525590312824, guid: 3d4c7de1503e00c48b598d403d667069, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1823537404
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823537400}
+  m_Mesh: {fileID: 4300000, guid: 69d886737dbe21041a8d74c2ce2aa413, type: 2}
 --- !u!1 &1825733151
 GameObject:
   m_ObjectHideFlags: 0
@@ -63166,7 +64880,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1825733154
@@ -63656,19 +65370,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 8317241474763294999, guid: a5dafbcb8cff1544cb9bcbf3c45de56f, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -63755,7 +65469,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1850288454
@@ -64039,7 +65753,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1857204629
@@ -64527,6 +66241,111 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1988090643052312241, guid: fd15ffe6f5a7bfe45b35ebeaca5a0a3e, type: 3}
   m_PrefabInstance: {fileID: 1865113043}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1867307607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1867307608}
+  - component: {fileID: 1867307611}
+  - component: {fileID: 1867307610}
+  - component: {fileID: 1867307609}
+  m_Layer: 0
+  m_Name: Supported rope hitch yard-1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1867307608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867307607}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1867307609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867307607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &1867307610
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867307607}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 1137189726968206863, guid: 06e5489f76c7412cb135f66b3be7c6b8, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1867307611
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867307607}
+  m_Mesh: {fileID: 4300000, guid: 34311b1b6ddd40b45be35f2feacadc57, type: 2}
 --- !u!1001 &1869296856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -64577,7 +66396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: ec43d644f09381a49ae6c05bd0b15120, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: ec43d644f09381a49ae6c05bd0b15120, type: 3}
       propertyPath: m_Name
@@ -64727,7 +66546,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1872179050
@@ -64831,7 +66650,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1876231334
@@ -65630,7 +67449,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Closed gate leaf is supported by its hinges/jambs.
 --- !u!23 &1894096098
@@ -65734,7 +67553,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1895072508
@@ -66016,6 +67835,118 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 93cb3d9dab1765e4cb19c2818a3e7773, type: 3}
   m_PrefabInstance: {fileID: 1897040359}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1900754374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1900754375}
+  - component: {fileID: 1900754378}
+  - component: {fileID: 1900754377}
+  - component: {fileID: 1900754376}
+  m_Layer: 0
+  m_Name: Post foot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1900754375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900754374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -2.622, z: -1.5522043e-10}
+  m_LocalScale: {x: 0.28, y: 0.24, z: 0.28}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1900754376
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900754374}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1900754377
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900754374}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1900754378
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900754374}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1902090470
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -66034,19 +67965,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 66564e8aa8ae2084aa959d8a2577386c, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 59754a6831de27f4d85cb4d186883a69, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 6e036537daa4cc84a95310e0b7525e37, type: 2}
     - target: {fileID: 2108493448823709416, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 786fe4eaccc342f438cd781128401d52, type: 2}
     - target: {fileID: 9208542360768981429, guid: 8a7e3c87e09f9d841a218865441cceef, type: 3}
       propertyPath: m_LocalScale.x
@@ -67190,6 +69121,111 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1988090643052312241, guid: fd15ffe6f5a7bfe45b35ebeaca5a0a3e, type: 3}
   m_PrefabInstance: {fileID: 1932441060}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1934655088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1934655089}
+  - component: {fileID: 1934655092}
+  - component: {fileID: 1934655091}
+  - component: {fileID: 1934655090}
+  m_Layer: 0
+  m_Name: Supported rope hitch west
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1934655089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934655088}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 268860586}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1934655090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934655088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Two rope turns hug the measured support; the crossed hitch joins the actual
+    clothesline end.
+--- !u!23 &1934655091
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934655088}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -3141028740969340456, guid: 2d2171b1e0b646309290a8f0f42e96b5, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1934655092
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934655088}
+  m_Mesh: {fileID: 4300000, guid: 762888f770c223f4287e0800152d6299, type: 2}
 --- !u!1001 &1942640562
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -67402,7 +69438,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1954001982
@@ -67686,7 +69722,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1960630558
@@ -68012,7 +70048,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1984524045
@@ -68256,7 +70292,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &1992929981
@@ -68360,7 +70396,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &1995647767
@@ -68962,7 +70998,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bd71f9877e31ef419cdd4071543db64, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AmbientLife
   Animals:
   - Id: aspin-tan
@@ -69842,6 +71878,118 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2016964363}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2019350264
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2019350265}
+  - component: {fileID: 2019350268}
+  - component: {fileID: 2019350267}
+  - component: {fileID: 2019350266}
+  m_Layer: 0
+  m_Name: Clothesline end post
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &2019350265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019350264}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.400001, y: -1.3535, z: -0.00000047683716}
+  m_LocalScale: {x: 0.13, y: 2.777, z: 0.13}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 344657811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &2019350266
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019350264}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 7af18af22174ff143a6ae41441673253, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2019350267
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019350264}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &2019350268
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019350264}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2020771591
 GameObject:
   m_ObjectHideFlags: 0
@@ -69886,7 +72034,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &2020771594
@@ -70481,7 +72629,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2044128091
@@ -70760,7 +72908,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &2050263019
@@ -71397,7 +73545,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Retained vehicle part attached to its chassis; author verifies four grounded
     wheels intersect the body. Wheels retain the ordinary grounding check.
@@ -71411,7 +73559,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Retained vehicle part attached to its chassis; author verifies four grounded
     wheels intersect the body. Wheels retain the ordinary grounding check.
@@ -71867,7 +74015,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2086130443
@@ -72672,7 +74820,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2105388744
@@ -73044,11 +75192,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: -7635826562936255635, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2144580317}
     - target: {fileID: 919132149155446097, guid: 4b856062fcc760046aa79fba24b47ac4, type: 3}
       propertyPath: m_Name
@@ -73108,7 +75256,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2124606325
@@ -73290,7 +75438,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2128785848
@@ -73455,7 +75603,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7061ca02cc07b254bac4c3d37e01e9d9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.MapGrade
   _brightness: 1
   _contrast: 1.04
@@ -73521,7 +75669,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Upper rail spans the masonry piers and vertical grille bars.
 --- !u!23 &2133718875
@@ -73625,7 +75773,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2134148583
@@ -73729,7 +75877,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2139453313
@@ -73923,7 +76071,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2140970328
@@ -74062,7 +76210,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
   Reason: Vertical bar is part of the closed hinged gate leaf.
 --- !u!23 &2141869139
@@ -74262,23 +76410,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 1b3eb4bd8405342438a5760ecece7d4d, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 777f7da1a9b35ef43b03bacb910acd3a, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: b47ab982480b6c94db694920eab00185, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 0e6786d1ec16fc54685e7f9ab9eab83b, type: 2}
     - target: {fileID: -7635826562936255635, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: 'm_Materials.Array.data[4]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: c03b4ed6d0376fa409ab0cc04c47ae27, type: 2}
     - target: {fileID: 919132149155446097, guid: 62aa61cb0d61e554182babd9bd256288, type: 3}
       propertyPath: m_Name
@@ -74313,7 +76461,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:

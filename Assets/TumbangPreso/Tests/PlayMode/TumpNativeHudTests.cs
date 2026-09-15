@@ -96,6 +96,7 @@ namespace TumbangPreso.PlayTests
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSecondsRealtime(3.7f);
             Assert.IsNotNull(Hud.Instance);
+            Assert.AreEqual(8,GameServices.Match.TotalRounds,"Normal matches must start with the owner's eight-round default.");
             TumpUiCapture.StageHudReview(GameServices.Round.PlayerAt(GameLaunch.SoloSeat));
             yield return null;
         }

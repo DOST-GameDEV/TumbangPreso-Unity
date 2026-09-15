@@ -338,7 +338,7 @@ namespace TumbangPreso.UI
                 v => { SetMode(v == 1 ? GameMode.HeroStrike : GameMode.Classic); },
                 _editing.Mode == GameMode.HeroStrike
                     ? "Six heroes with two skills and an ultimate each. Eight rounds as it ships."
-                    : "The street game, twelve characters, no powers. Four rounds as it ships.");
+                    : "The street game, twelve characters, no powers. Eight rounds as it ships.");
 
             UiRows.StepperRow(_list, "ROUNDS", _editing.Rounds.ToString(),
                 _editing.Rounds - CustomGameRules.MinRounds, RoundOptionCount,

@@ -264,7 +264,7 @@ namespace TumbangPreso.Core.Tests
         public void DistanceIsReportedPerRoundSoTheTwoModesCompare()
         {
             var t = new CareerTotals { Matches = 2, DistanceTravelled = 800.0f };
-            Assert.Equal(100.0f, ProfileRules.DistancePerRound(t, Balance.Rounds));
+            Assert.Equal(50.0f, ProfileRules.DistancePerRound(t, Balance.Rounds));
         }
 
         /// <summary>

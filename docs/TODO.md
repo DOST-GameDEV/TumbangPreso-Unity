@@ -1,5 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**Immediate owner corrections,2026-09-15:** Classic now defaults to8rounds, with
+explicit custom lengths retained. Dark-grey settings and three additional varied,
+supported Eskinita clotheslines passed focused checks and visual review. See
+reports/owner-corrections-2026-09-15. Resume D8 results and between-round screens.
+Keep the original login. See ACTIVE_REWORK_LEDGER.md for current runs and evidence.
+
 **D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
 related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
 no production camera or source-model change. Report: reports/ui-composition-d7.

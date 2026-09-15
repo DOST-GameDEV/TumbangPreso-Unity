@@ -301,8 +301,9 @@ namespace TumbangPreso.UI
         /// entry, which is correct for an ordinary player returning to a lobby they left on a
         /// custom set, and wrong for anything that configured the match on purpose first. On this
         /// machine the saved wire read `0|0|8|90|...`: **Classic with EIGHT rounds**, a format
-        /// the game does not ship (Classic plays four, `docs/VISION.md` § 1.1), and every entry
-        /// into that screen restored it.
+        /// the game did not ship at that time, and every entry into that screen restored it.
+        /// Classic now defaults to eight by the owner's2026-09-15 correction; the protection
+        /// against silently replacing a deliberately chosen rule set still applies.
         ///
         /// **What it cost was two things at once.** A tournament match configured by
         /// `TournamentGuard.Apply()` lost its whole rule set on the way into the screen an
@@ -422,10 +423,8 @@ namespace TumbangPreso.UI
         /// How many rounds the next match plays.
         ///
         /// ⚠️⚠️ IT IS A CUSTOM RULE NOW AND `MatchRules.RoundCountFor` IS ITS DEFAULT RATHER
-        /// THAN ITS ANSWER. `docs/VISION.md` § 1 fixes the shipped lengths (Classic four rounds,
-        /// Hero Strike eight) and `CustomGameRules.Defaults` sets them from that same function,
-        /// so **a rule set nobody has edited plays exactly what it always did**. What changes is
-        /// that a custom lobby can now say three, and the match obeys.
+        /// THAN ITS ANSWER. Both modes default to eight rounds, and `CustomGameRules.Defaults`
+        /// reads that shared policy. A custom lobby can still choose three, and the match obeys.
         /// </summary>
         public static int SelectedRoundCount => SelectedRules.Rounds;
 

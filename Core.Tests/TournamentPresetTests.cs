@@ -33,8 +33,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(GameMode.Classic, r.Mode);
             Assert.Equal(MatchFormat.Standard, r.Format);
 
-            // Four rounds, so everybody defends exactly once. VISION § 1.1.
-            Assert.Equal(4, r.Rounds);
+            // Eight rounds, so everybody defends twice. Current owner direction.
+            Assert.Equal(8, r.Rounds);
             Assert.Equal(MatchRules.RoundCountFor(GameMode.Classic), r.Rounds);
 
             Assert.Equal((int)Balance.RoundTime, r.RoundSeconds);
@@ -63,7 +63,7 @@ namespace TumbangPreso.Core.Tests
             Assert.NotSame(a, b);
 
             a.Rounds = 99;
-            Assert.Equal(4, TournamentPreset.Rules().Rounds);
+            Assert.Equal(8, TournamentPreset.Rules().Rounds);
         }
 
         [Fact]

@@ -19,13 +19,13 @@
         // MATCH STRUCTURE — match_manager.gd, round_manager.gd
         // -------------------------------------------------------------------
 
-        /// <summary>Classic keeps the one-defence-turn street format.</summary>
-        public const int Rounds = 4;
+        /// <summary>Both normal Classic and Hero Strike play two full defender rotations.</summary>
+        public const int Rounds = 8;
 
         /// <summary>
         /// Hero Strike runs two complete role rotations. Eight rounds gives every seat the
         /// attacker and defender matchup twice, which is the requested competitive format,
-        /// while Classic remains the shorter four-round street game.
+        /// matching the owner's eight-round Classic default.
         /// </summary>
         public const int HeroStrikeRounds = 8;
         public const int PlayerCount = 4;
@@ -42,8 +42,8 @@
         ///
         /// **The arithmetic is why 15 was indefensible once the mode count doubled.** Hero Strike
         /// is eight rounds, so seven buffers at 15 s is **1 m 45 s of a match with nobody
-        /// playing**, against 12 m of actual play. At 5 s it is 35 s. Classic's four rounds go
-        /// from 45 s to 15 s.
+        /// playing**, against 12 m of actual play. At 5 s it is 35 s. The historical Classic
+        /// four-round format went from45s to15s; the owner changed Classic to8rounds on2026-09-15.
         ///
         /// ⚠️ `BufferSkipVote` STAYS AND IS NOT MADE REDUNDANT BY THIS. It was added on the same
         /// day for the same complaint, and a unanimous vote is what lets a room that is ready end

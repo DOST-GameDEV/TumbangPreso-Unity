@@ -3,7 +3,7 @@
 The Unity 6 build of **Tumbang Preso**, 1st place at the Gear Up NCR Esports Game Dev
 Challenge and NCR's entry at the nationals in General Santos City.
 
-Four players. Four rounds. One *taya*. A defender guards the lata inside a chalk box while
+Four players. Eight rounds. One *taya*. A defender guards the lata inside a chalk box while
 three attackers throw tsinelas at it, then have to run in and get them back. **The tension is
 the retrieval, not the throw.**
 
@@ -43,7 +43,7 @@ file holding the old number. `Roster.cs` carries the full reasoning.
 
 ## Where things stand
 
-The game runs end to end in both modes: menus, character select, four-round matches with
+The game runs end to end in both modes: menus, character select, eight-round matches with
 bots, the hero ability layer, spectator, reconnect and the netcode layer.
 [`docs/Port_Ledger.md`](docs/Port_Ledger.md) is the file-by-file status and the definition of
 done; [`docs/TODO.md`](docs/TODO.md) is what is left.

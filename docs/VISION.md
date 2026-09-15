@@ -59,11 +59,10 @@ gammeode with a lot of stuff."*
   ultimate is banked. If a change makes the game deeper for a player who has put fifty hours
   in, it belongs here.
 
-- **THE ROUND RULES ARE SHARED; THE MATCH LENGTH IS NOT.** Four players, 90 s rounds, one taya
-  rotating clockwise, cumulative score. Classic plays one complete rotation, **4 rounds**, so
-  everybody defends once. Hero Strike plays two complete rotations, **8 rounds**, so every
-  seat defends twice. The role schedule and scoring stay shared; Hero Strike gets the longer
-  competitive set without changing Classic's shorter street-game format.
+- **BOTH MODES DEFAULT TO EIGHT ROUNDS.** Four players, 90 s rounds, one taya rotating
+  clockwise, cumulative score. Classic and Hero Strike each play two complete rotations,
+  so every seat defends twice. This is the owner's correction on2026-09-15. Custom room
+  lengths remain configurable. The modes differ through their rosters and hero powers.
 
 - **CLASSIC IS THE TOURNAMENT RULESET UNTIL SOMEONE SAYS OTHERWISE.** Hero Strike is the one
   being grown toward that. Neither statement is permission to neglect the other.
@@ -318,7 +317,7 @@ penalties on consecutive runs. **None of the three were visible by playing it.**
 
 > Four players, one rotating taya, and the whole game is the run back in for your slipper.
 > **Two modes: Classic keeps it simple, Hero Strike raises the ceiling for competition.**
-> Classic plays four rounds; Hero Strike plays eight.
+> Classic and Hero Strike both default to eight rounds, two defender turns per player.
 > Both ship, neither is the "real" one. In a 14 by 14 box, an effect that cannot be read is a
 > bug regardless of how good it looks. A player must be able to tell what a power does by
 > looking at its icon, and read the details by holding one key, and never by reading the HUD

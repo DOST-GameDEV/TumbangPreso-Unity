@@ -1,5 +1,14 @@
 # Active execution plan
 
+**LATEST owner corrections, 2026-09-15:** normal/Classic matches default to EIGHT
+rounds, like Hero Strike. The shown1/4 was the old gameplay default, not just HUD
+copy. Correct defaults, rotation checks and current UI copy; keep custom lengths
+configurable. Settings must use grey/dark colours, scoped to settings so the approved
+login stays unchanged. Fix the visibly disconnected Eskinita sampayan attachments
+and add three more clotheslines with varied garments and real visible supports.
+These requests are immediate steering within the continuing full queue.
+
+
 **D7 checkpoint:** HUD, held skill info and live pause menu qualified with three
 related cases and ten-size coverage. Clear UI review stages visible bots at a distance;
 no production camera or source-model change. Report: reports/ui-composition-d7.

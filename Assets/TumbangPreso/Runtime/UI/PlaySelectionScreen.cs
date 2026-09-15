@@ -55,7 +55,7 @@ namespace TumbangPreso.UI
             _routes=Rect(content,"AccessChoice",new Vector2(.35f,0),Vector2.one);
             _routes.offsetMin=new Vector2(28,0);
             Caption(games,"Game");Caption(_routes,"How would you like to play?");
-            _classic=GameChoice(games,"ClassicButton","Classic","Four rounds. No powers.",
+            _classic=GameChoice(games,"ClassicButton","Classic","Eight rounds. No powers.",
                 StreetIcon.Glyph.Can,66,GameMode.Classic);
             _hero=GameChoice(games,"HeroStrikeButton","Hero Strike","Eight rounds. Hero abilities.",
                 StreetIcon.Glyph.Star,244,GameMode.HeroStrike);

@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
             for(int i=0;i<_tabs.Count;i++)
             {
                 _tabs[i].transform.Find("SelectedSection").gameObject.SetActive(i==_tab);
-                var colours=_tabs[i].colors; colours.normalColor=i==_tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                var colours=_tabs[i].colors; colours.normalColor=i==_tab?SettingsPalette.Accent:SettingsPalette.Ink;
                 _tabs[i].colors=colours;
             }
             _heading.text=Sections[_tab];
@@ -62,7 +62,7 @@ namespace TumbangPreso.UI
         }
         private void Note(string words)
         {
-            var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=OwnerUiTheme.Current.EnteredInk;
+            var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=SettingsPalette.Muted;
             text.alignment=TextAnchor.UpperLeft;text.gameObject.AddComponent<LayoutElement>().preferredHeight=67;
         }
         private RectTransform Row(string name,string label)=>SettingsWorkspaceRows.Row(_list,name,label);
@@ -93,7 +93,7 @@ namespace TumbangPreso.UI
             _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
                 FrameRateOptions.All.Select(FrameRateOptions.Label).ToArray(),Array.IndexOf(FrameRateOptions.All,s.FrameRateLimit),
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
-            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=OwnerUiTheme.Current.EnteredInk;
+            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=SettingsPalette.Muted;
             _frameReason.gameObject.AddComponent<LayoutElement>().preferredHeight=67;UpdateFrameCapState();
             Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
         }
@@ -157,16 +157,18 @@ namespace TumbangPreso.UI
         {
             if(_decision!=null){_decision.SetActive(true);return;}
             var root=OwnerUiLayout.Rect(_canvas.transform,"UnsavedDecision");OwnerUiLayout.Fill(root);_decision=root.gameObject;
-            var dim=root.gameObject.AddComponent<Image>();var ink=OwnerUiTheme.Current.DeepInk;dim.color=new Color(ink.r,ink.g,ink.b,.8f);
-            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<OwnerUiPaper>();paper.Style=OwnerUiPaper.Treatment.Dialog;
+            var dim=root.gameObject.AddComponent<Image>();dim.color=new Color(0,0,0,.72f);
+            var paper=OwnerUiLayout.Rect(root,"DecisionPaper").gameObject.AddComponent<Image>();paper.color=SettingsPalette.Surface;
             paper.rectTransform.anchorMin=paper.rectTransform.anchorMax=paper.rectTransform.pivot=new Vector2(.5f,.5f);
             paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;
+            OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
             var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},413);
             OwnerUiLayout.Place((RectTransform)save.transform,267,224,413,91);
-            OwnerTextAction.Create(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},139,358,670,78,33);
-            OwnerTextAction.Create(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),139,474,670,78,33);
+            var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},670);
+            OwnerUiLayout.Place((RectTransform)discard.transform,139,358,670,78);
+            var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),670);
+            OwnerUiLayout.Place((RectTransform)keep.transform,139,474,670,78);
             ScreenFocus.Install(root.gameObject).Rebuild();
         }
     }

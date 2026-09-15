@@ -1,0 +1,18 @@
+{
+  "spanMetres": 15.5,
+  "sagMetres": 0.5,
+  "garments": 8,
+  "anchorLocalUnity": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      15.5,
+      0,
+      0
+    ]
+  ],
+  "source": "Original Blender geometry, no imported photographs"
+}

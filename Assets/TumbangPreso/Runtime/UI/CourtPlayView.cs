@@ -45,7 +45,7 @@ namespace TumbangPreso.UI
             button.onClick.AddListener(() => { MenuSfx.Click(); Select(hero ? GameMode.HeroStrike : GameMode.Classic); });
             var name = OwnerUiLayout.Text(root, "ModeName", hero ? "HERO STRIKE" : "CLASSIC", hero ? 54 : 65, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(name.rectTransform, 35, 35, hero ? 588 : 490, 94);
-            var detail = OwnerUiLayout.Text(root, "ModeDetails", hero ? "Eight rounds. Six heroes." : "Four rounds. No powers.", 29);
+            var detail = OwnerUiLayout.Text(root, "ModeDetails", hero ? "Eight rounds. Six heroes." : "Eight rounds. No powers.", 29);
             OwnerUiLayout.Place(detail.rectTransform, 40, hero ? 132 : 158, hero ? 572 : 397, 76);
             detail.color = OwnerUiTheme.Current.EnteredInk;
             var entries = Roster.GetPeople(hero ? GameMode.HeroStrike : GameMode.Classic);

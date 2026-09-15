@@ -13,7 +13,7 @@ namespace TumbangPreso.UI
             _line = OwnerUiLayout.Rect(transform, "ControlFocus").gameObject.AddComponent<Image>();
             _line.rectTransform.anchorMin = Vector2.zero; _line.rectTransform.anchorMax = new Vector2(1, 0);
             _line.rectTransform.offsetMin = new Vector2(10, 0); _line.rectTransform.offsetMax = new Vector2(-10, 3);
-            _line.color = OwnerUiTheme.Current.Green; _line.raycastTarget = false; Refresh();
+            _line.color = SettingsPalette.Accent; _line.raycastTarget = false; Refresh();
         }
         public void OnSelect(BaseEventData e) { _selected = true; Refresh(); }
         public void OnDeselect(BaseEventData e) { _selected = false; Refresh(); }

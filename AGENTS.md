@@ -1,5 +1,14 @@
 # Working instructions for ChatGPT / Codex
 
+**LATEST owner corrections, 2026-09-15:** normal/Classic matches default to EIGHT
+rounds, like Hero Strike. The shown1/4 was the old gameplay default, not just HUD
+copy. Correct defaults, rotation checks and current UI copy; keep custom lengths
+configurable. Settings must use grey/dark colours, scoped to settings so the approved
+login stays unchanged. Fix the visibly disconnected Eskinita sampayan attachments
+and add three more clotheslines with varied garments and real visible supports.
+These requests are immediate steering within the continuing full queue.
+
+
 **LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
 says the old login already looked good and was not part of the requested redesign.
 Preserve its original centred artwork, form, colours, tabs and actions. Redesign

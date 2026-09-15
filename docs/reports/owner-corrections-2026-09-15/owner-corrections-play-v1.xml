@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:06:39Z" duration="47.6071989">
+  <test-suite type="TestSuite" id="1531" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="404" result="Failed" site="Child" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:06:39Z" duration="47.607199" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1525" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="404" result="Failed" site="Child" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:06:39Z" duration="47.588850" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2600" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1526" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="404" result="Failed" site="Child" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:06:39Z" duration="47.579888" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1527" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="404" result="Failed" site="Child" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:06:39Z" duration="47.571052" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1360" name="ResidentLaundrySceneTests" fullname="TumbangPreso.PlayTests.ResidentLaundrySceneTests" classname="TumbangPreso.PlayTests.ResidentLaundrySceneTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:05:54Z" duration="2.717505" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1361" name="FourSupportedLinesBillowBelowFixedPegsAndRemainReadableFromTheStreet" fullname="TumbangPreso.PlayTests.ResidentLaundrySceneTests.FourSupportedLinesBillowBelowFixedPegsAndRemainReadableFromTheStreet" methodname="FourSupportedLinesBillowBelowFixedPegsAndRemainReadableFromTheStreet" classname="TumbangPreso.PlayTests.ResidentLaundrySceneTests" runstate="Runnable" seed="1605429696" result="Failed" start-time="2026-09-15 03:05:51Z" end-time="2026-09-15 03:05:54Z" duration="2.701022" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 5' (isReadable is false; Read/Write must be enabled in import settings)'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Mesh:get_vertices ()
+TumbangPreso.PlayTests.ResidentLaundrySceneTests/<>c:<FourSupportedLinesBillowBelowFixedPegsAndRemainReadableFromTheStreet>b__2_3 (UnityEngine.MeshFilter) (at Assets/TumbangPreso/Tests/PlayMode/ResidentLaundrySceneTests.cs:26)
+System.Linq.Enumerable:ToArray<UnityEngine.Vector3[]> (System.Collections.Generic.IEnumerable`1<UnityEngine.Vector3[]>)
+TumbangPreso.PlayTests.ResidentLaundrySceneTests/<FourSupportedLinesBillowBelowFixedPegsAndRemainReadableFromTheStreet>d__2:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/ResidentLaundrySceneTests.cs:26)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 5' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 9' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 10' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 10' (isReadable is false; Read/Write must be enabled in import settings)
+Not allowed to access vertices on mesh 'Combined Mesh (root: scene) 5' (isReadable is false; Read/Write must be enabled in import settings)
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1462" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 03:05:54Z" end-time="2026-09-15 03:06:17Z" duration="22.479951" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1463" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="701118448" result="Passed" start-time="2026-09-15 03:05:54Z" end-time="2026-09-15 03:06:04Z" duration="9.792389" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-Classic-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-recovery/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-recovery/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-recovery/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=155,124,84; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerRoundSwap-v1/StandingsPaper: vertices=110, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] OwnerRoundSwap-v1 cream source=252,211,159 pixel=237,111,75; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1464" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1421183356" result="Passed" start-time="2026-09-15 03:06:04Z" end-time="2026-09-15 03:06:17Z" duration="12.684683" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] OwnerHud-Hero-v1/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] OwnerHud-Hero-v1/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpUiCapture] OwnerHud-Hero-v1 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power0: vertices=321, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=44, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power1: vertices=321, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=56, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power2: vertices=321, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=64, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon0: vertices=44, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon1: vertices=56, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon2: vertices=64, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-960x540/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-960x540/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-960x540 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1280x720/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1280x720 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1366x768/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1366x768 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1920x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1920x1080 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1920x1200/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1920x1200 cream source=252,211,159 pixel=191,198,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-1280x960/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-1280x960 cream source=252,211,159 pixel=187,195,198; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-2560x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-2560x1440 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3440x1440/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3440x1440 cream source=252,211,159 pixel=201,201,196; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3840x1080/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3840x1080 cream source=252,211,159 pixel=108,91,77; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] CourtHud-spectator-3840x2160/CanStateIcon: vertices=930, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] CourtHud-spectator-3840x2160 cream source=252,211,159 pixel=194,199,197; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1476" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 03:06:17Z" end-time="2026-09-15 03:06:39Z" duration="22.350782" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1479" name="BindingOverridesBelongToTheSaveDiscardTransaction" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.BindingOverridesBelongToTheSaveDiscardTransaction" methodname="BindingOverridesBelongToTheSaveDiscardTransaction" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="980605974" result="Passed" start-time="2026-09-15 03:06:17Z" end-time="2026-09-15 03:06:18Z" duration="1.219641" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1478" name="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" methodname="ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="1348567813" result="Passed" start-time="2026-09-15 03:06:18Z" end-time="2026-09-15 03:06:20Z" duration="2.096048" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] ApprovedController-restored-v1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] OwnerTouchLayout-expanded-v2/LayoutToolbar: vertices=110, cull=False, alpha=1, depth=0, material=1
+[TumpUiCapture] OwnerTouchLayout-expanded-v2 cream source=252,211,159 pixel=236,128,86; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=128, cull=False, alpha=0.55, depth=5, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=7, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=36, cull=False, alpha=0.55, depth=9, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=60, cull=False, alpha=0.55, depth=11, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=132, cull=False, alpha=0.55, depth=13, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=112, cull=False, alpha=0.55, depth=15, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=17, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=20, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/VerbIcon: vertices=40, cull=False, alpha=0.55, depth=23, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/SandboxPaper: vertices=110, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] OwnerTouchLayout-compact-v2/LayoutToolbar: vertices=110, cull=False, alpha=1, depth=0, material=1
+[TumpUiCapture] OwnerTouchLayout-compact-v2 cream source=252,211,159 pixel=236,128,86; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1477" name="NativeSettingsPagesAndFramePacingHaveTruthfulStates" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.NativeSettingsPagesAndFramePacingHaveTruthfulStates" methodname="NativeSettingsPagesAndFramePacingHaveTruthfulStates" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="1631350101" result="Passed" start-time="2026-09-15 03:06:20Z" end-time="2026-09-15 03:06:34Z" duration="13.938006" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] WorkspaceSettings-Controls-960x540/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-960x540/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-960x540/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-960x540/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x720/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1366x768/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1920x1200/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-1280x960/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-2560x1440/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3440x1440/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x1080/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Controls-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] WorkspaceSettings-Controls-3840x2160/Switch: vertices=79, cull=False, alpha=1, depth=67, material=1
+[TumpUiCapture] WorkspaceSettings-Controls-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-960x540/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-960x540/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-960x540/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1280x720/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1366x768/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1920x1080/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1920x1200/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-1280x960/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-2560x1440/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3440x1440/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3840x1080/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Audio-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] WorkspaceSettings-Audio-3840x2160/Handle: vertices=25, cull=False, alpha=1, depth=42, material=1
+[TumpUiCapture] WorkspaceSettings-Audio-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-960x540/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x720/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1366x768/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1920x1200/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-1280x960/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-2560x1440/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3440x1440/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x1080/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] WorkspaceSettings-Graphics-3840x2160/Switch: vertices=79, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] WorkspaceSettings-Graphics-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-960x540/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-1280x720/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-1366x768/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-1920x1200/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-1280x960/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-2560x1440/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-3440x1440/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-3840x1080/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Player-3840x2160/Switch: vertices=79, cull=False, alpha=1, depth=29, material=1
+[TumpUiCapture] WorkspaceSettings-Player-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-960x540/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-960x540/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-960x540/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-960x540 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x720/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x720/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x720/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-1280x720 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-1366x768/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1366x768/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1366x768/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-1366x768 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1080/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1080/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-1920x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1200/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1200/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1920x1200/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-1920x1200 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x960/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x960/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-1280x960/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-1280x960 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-2560x1440/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-2560x1440/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-2560x1440/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-2560x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-3440x1440/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3440x1440/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3440x1440/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-3440x1440 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x1080/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x1080/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x1080/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-3840x1080 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x2160/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x2160/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] WorkspaceSettings-Accessibility-3840x2160/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] WorkspaceSettings-Accessibility-3840x2160 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] OwnerSettings-unsaved-v1/Switch: vertices=79, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/Expand: vertices=12, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] OwnerSettings-unsaved-v1/Switch: vertices=79, cull=False, alpha=1, depth=35, material=1
+[TumpUiCapture] OwnerSettings-unsaved-v1 cream source=252,211,159 pixel=11,12,14; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1480" name="PauseEscapeRespectsChildSettingsDiscardAndReturn" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.PauseEscapeRespectsChildSettingsDiscardAndReturn" methodname="PauseEscapeRespectsChildSettingsDiscardAndReturn" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="341292044" result="Passed" start-time="2026-09-15 03:06:34Z" end-time="2026-09-15 03:06:39Z" duration="5.093705" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] LivePause-960x540 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1280x720 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1366x768 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1920x1080 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1920x1200 cream source=252,211,159 pixel=165,171,171; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-1280x960 cream source=252,211,159 pixel=161,169,171; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-2560x1440 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3440x1440 cream source=252,211,159 pixel=174,174,169; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3840x1080 cream source=252,211,159 pixel=93,78,65; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LivePause-3840x2160 cream source=252,211,159 pixel=168,172,170; isolated UI camera, no ColourGrade.
+[OwnerPauseCancel] frame=24719 dirty=True nav=True keyboard=True enabled=True performed=True blocked=True bindings=*/{Cancel}
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

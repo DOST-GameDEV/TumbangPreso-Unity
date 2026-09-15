@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.3619152">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="558" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.361915" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1648" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="558" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.340705" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1649" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="558" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.330762" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1650" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="558" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.320765" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1493" name="ResidentLaundryPlacementTests" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.292108" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1498" name="BothPostsMeetTheActualImportedLine" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests.BothPostsMeetTheActualImportedLine" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.086652" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1495" name="BothPostsMeetTheActualImportedLine(&quot;courtyard-line&quot;,0,4.4f)" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests.BothPostsMeetTheActualImportedLine(&quot;courtyard-line&quot;,0,4.4f)" methodname="BothPostsMeetTheActualImportedLine" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" seed="2045891506" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.069597" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1496" name="BothPostsMeetTheActualImportedLine(&quot;courtyard-line&quot;,90,4.4f)" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests.BothPostsMeetTheActualImportedLine(&quot;courtyard-line&quot;,90,4.4f)" methodname="BothPostsMeetTheActualImportedLine" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" seed="563422366" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.002288" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1497" name="BothPostsMeetTheActualImportedLine(&quot;alley-line&quot;,0,15.5f)" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests.BothPostsMeetTheActualImportedLine(&quot;alley-line&quot;,0,15.5f)" methodname="BothPostsMeetTheActualImportedLine" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" seed="467470620" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.005960" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1494" name="InspectSavedEskinitaClotheslineAnchors" fullname="TumbangPreso.Tests.ResidentLaundryPlacementTests.InspectSavedEskinitaClotheslineAnchors" methodname="InspectSavedEskinitaClotheslineAnchors" classname="TumbangPreso.Tests.ResidentLaundryPlacementTests" runstate="Runnable" seed="1330713551" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.194793" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[LaundryAnchors] west=Center: (-7.75, 3.70, 3.00), Extents: (0.12, 3.60, 0.12) east=Center: (7.75, 3.70, 3.00), Extents: (0.12, 3.60, 0.12) start=(-7.624, 4.450, 3.000) end=(7.624, 4.450, 3.000) gaps=0.006,0.006
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1555" name="SettingsRoundDefaultMigrationTests" fullname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" classname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.010891" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1559" name="ExistingCustomAndOtherModeRulesKeepTheirValues" fullname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests.ExistingCustomAndOtherModeRulesKeepTheirValues" classname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.007227" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1557" name="ExistingCustomAndOtherModeRulesKeepTheirValues(Classic,60)" fullname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests.ExistingCustomAndOtherModeRulesKeepTheirValues(Classic,60)" methodname="ExistingCustomAndOtherModeRulesKeepTheirValues" classname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" runstate="Runnable" seed="1495639787" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.005916" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1558" name="ExistingCustomAndOtherModeRulesKeepTheirValues(HeroStrike,90)" fullname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests.ExistingCustomAndOtherModeRulesKeepTheirValues(HeroStrike,90)" methodname="ExistingCustomAndOtherModeRulesKeepTheirValues" classname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" runstate="Runnable" seed="933551186" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.000213" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1556" name="FormerUntouchedClassicPresetUpgradesOnce" fullname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests.FormerUntouchedClassicPresetUpgradesOnce" methodname="FormerUntouchedClassicPresetUpgradesOnce" classname="TumbangPreso.Tests.SettingsRoundDefaultMigrationTests" runstate="Runnable" seed="177649367" result="Passed" start-time="2026-09-15 02:48:41Z" end-time="2026-09-15 02:48:41Z" duration="0.000648" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
