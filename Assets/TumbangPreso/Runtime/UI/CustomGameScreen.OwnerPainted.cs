@@ -15,7 +15,7 @@ namespace TumbangPreso.UI
         private bool _ownerRules;
         public event Action RulesChanged;
 
-        private void BuildOwnerRules()
+        private void BuildPreviousPaintedRules()
         {
             _ownerRules=true;
             _canvas=OwnerUiLayout.Canvas(transform,"OwnerCustomGameCanvas",SortingOrder);

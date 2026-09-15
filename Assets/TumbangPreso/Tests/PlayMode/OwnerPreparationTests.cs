@@ -56,7 +56,13 @@ namespace TumbangPreso.PlayTests
                 Press("RoundsNext");yield return null;
                 Assert.That(SceneFlow.SelectedRules.Rounds,Is.EqualTo(rounds+1));
                 Assert.That(custom.GetComponentsInChildren<Text>().First(t=>t.name=="RoundsValue").text,Is.EqualTo((rounds+1).ToString()));
-                yield return TumpUiCapture.Capture("OwnerCustomRules-match-v1",custom,1920,1080,false);
+                for (int format = 0; format < System.Enum.GetValues(typeof(MatchFormat)).Length; format++)
+                {
+                    foreach (var size in TumpUiCapture.PcViewports)
+                        yield return TumpUiCapture.Capture("MatchSlate-format" + format + "-" + size.x + "x" + size.y,
+                            custom, size.x, size.y, false, checkActionBounds: true);
+                    Press("FormatNext"); yield return null;
+                }
                 Press("RoomRulesTab");yield return null;
                 Press("PrivateNext");yield return null;
                 var password=custom.GetComponentsInChildren<InputField>().First(i=>i.name=="RoomPassword");
@@ -64,7 +70,9 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual("testroom",SceneFlow.SelectedRules.Password);
                 Press("BotsPrevious");yield return null;
                 int botTier=TumbangPreso.Settings.SettingsStore.Current.AiDifficulty;
-                yield return TumpUiCapture.Capture("OwnerCustomRules-room-v1",custom,1280,800,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("MatchSlate-room-" + size.x + "x" + size.y,
+                        custom, size.x, size.y, false, checkActionBounds: true);
                 Press("UseRulesButton");yield return new WaitForSecondsRealtime(.65f);
                 Assert.IsFalse(Object.FindFirstObjectByType<CustomGameScreen>().IsOpen);
                 Assert.AreEqual(botTier,TumbangPreso.Settings.SettingsStore.Current.AiDifficulty,"Preparation must not overwrite the chosen custom bot setting.");
@@ -127,6 +135,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(buttons.First(b=>b.name=="RoundsNext").interactable);
             Assert.IsFalse(buttons.First(b=>b.name=="ResetRulesButton").interactable);
             int rounds=SceneFlow.SelectedRules.Rounds;
+            foreach (var size in TumpUiCapture.PcViewports)
+                yield return TumpUiCapture.Capture("MatchSlate-readonly-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, false, checkActionBounds: true);
             Press("RoomRulesTab");yield return null;
             Assert.IsTrue(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="BotsValue"));
             Press("UseRulesButton");yield return null;

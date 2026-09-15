@@ -1,5 +1,38 @@
 # Active TUMP rework ledger
 
+## CURRENT D6 qualified; match presentation next
+
+Rules-v1 FINISHED2/2PASS, restoration8415a3529ffa; Python13384 retired. Actual
+long-format1080p, read-only540p and private-room4:3 screenshots inspected.
+Report/XML/captures: reports/ui-composition-d6. No Unity/image/build/player/browser
+job. D6 uncommitted on9fe3d282; next save/push, then match HUD/pause/results and
+remaining UI. Original login and approved controller diagram remain untouched.
+
+Read initial match presentation sources: TumpMatchReadout.OwnerPainted,
+TumpPowerReadout.OwnerPainted, PausePanel.OwnerPainted and MatchResult.OwnerPainted.
+Keep live-match pause truth, world visibility, ability/timer/score data, rematch/map
+vote and social-action boundaries. Relevant existing match-UI fixtures must be
+located before running; do not broaden to gameplay suites for visual changes.
+Then finish other dialogs/training/U8 native motion/routes and preview physical-pixel
+review, followed by the entire gameplay bookmark and expansion LAST LAST.
+
+
+## CURRENT D6 custom match slate running
+
+D5 committed/pushed9fe3d282. Applied CustomGameScreen.MatchSlate from the earlier
+local draft; old painted rule builder remains inactive. New native match/room
+slate uses readable rows, distinct navigation/step controls and a real masked
+password field, preserving all existing host/read-only callbacks and validation.
+
+RUNNING guarded rules-v1, Python13384, Logs/ui-composition-rules-v1
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-rules-review. Two focused
+preparation/custom-rule cases cover all rule formats and room/private/readonly
+views at ten PC sizes, plus actual change/return/authority behavior. D6 uncommitted
+on9fe3d282. No imported edits while Unity runs. No image/player/browser jobs.
+Next inspect XML/receipt and actual slate screenshots, save stable D6 and continue
+match HUD/pause/results/dialogs/tutorial and other remaining UI, then U8 and full
+gameplay bookmark. Protected original login and controller diagram stay unchanged.
+
 ## CURRENT D5 qualified; custom rules draft next
 
 Records-v1 FINISHED3/3PASS, restoration672f43be2282; Python16620 retired.

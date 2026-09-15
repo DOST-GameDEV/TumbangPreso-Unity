@@ -1,5 +1,11 @@
 # UI composition redesign from the original layout studies
 
+**D6 checkpoint:** distinct custom match/room slate and read-only authority views
+qualified across ten PC sizes. Report: reports/ui-composition-d6. Next match HUD,
+pause/results and remaining UI, then U8 and the whole gameplay bookmark. Protected
+original login and controller illustration remain unchanged.
+
+
 **D5 checkpoint:** player record pages, drafts, career/history scorecard and native
 choice/Cancel behavior qualified. Ten-size page coverage; local fixture data only,
 no live profile/social writes. See reports/ui-composition-d5. Next custom rules and

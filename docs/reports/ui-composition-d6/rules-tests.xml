@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.8656444">
+  <test-suite type="TestSuite" id="1529" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.865644" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1523" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.849095" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8068" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1524" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.841699" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1525" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="403" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.834511" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1304" name="OwnerPreparationTests" fullname="TumbangPreso.PlayTests.OwnerPreparationTests" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:53Z" duration="26.811527" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1305" name="OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" methodname="OfflinePreparationKeepsMapModeLoadoutAndBackRoutes" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="345287433" result="Passed" start-time="2026-09-15 01:44:26Z" end-time="2026-09-15 01:44:50Z" duration="23.913205" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 849 renderers, 135 with a roof variant.
+[NearFade] 1006 occluder nodes matched, 848 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-960x540/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1280x720/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1366x768/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1920x1200/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-1280x960/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-2560x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3440x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3840x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-classic-3840x2160/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-classic-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-960x540/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-960x540 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1280x720/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1280x720 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1366x768/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1366x768 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1920x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1920x1200/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1920x1200 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-1280x960/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-1280x960 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-2560x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-2560x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3440x1440/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3440x1440 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3840x1080/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3840x1080 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/MatchPlanBoard: vertices=145, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/EmptySeatMark: vertices=312, cull=False, alpha=1, depth=64, material=1
+[TumpGeometry] CourtPreparation-hero-3840x2160/PrimaryButton: vertices=61, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] CourtPreparation-hero-3840x2160 cream source=252,211,159 pixel=41,63,46; isolated UI camera, no ColourGrade.
+[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 798 renderers moved onto TumbangPreso/NearFade.
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format0-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format0-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] MatchSlate-format1-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=57, material=1
+[TumpUiCapture] MatchSlate-format1-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-format2-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-format2-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-room-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-room-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-room-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-room-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpUiCapture] MatchSlate-room-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1307" name="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" fullname="TumbangPreso.PlayTests.OwnerPreparationTests.ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" methodname="ReadOnlyCustomRulesKeepTabsAndCloseWithoutChangingRules" classname="TumbangPreso.PlayTests.OwnerPreparationTests" runstate="Runnable" seed="1422878227" result="Passed" start-time="2026-09-15 01:44:50Z" end-time="2026-09-15 01:44:53Z" duration="2.880382" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-960x540/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-960x540 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-1280x720/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-1280x720 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-1366x768/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-1366x768 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-1920x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-1920x1200/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-1920x1200 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-1280x960/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-1280x960 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-2560x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-2560x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-3440x1440/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-3440x1440 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-3840x1080/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-3840x1080 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] MatchSlate-readonly-3840x2160/Arrow: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpUiCapture] MatchSlate-readonly-3840x2160 cream source=252,211,159 pixel=223,219,170; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
