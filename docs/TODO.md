@@ -1,5 +1,11 @@
 <!-- OWNER_PLAYTEST_20260913 -->
 
+**D3 checkpoint:** settings workspace and native control family qualified with
+four related contracts plus one final visual recheck. Five pages cover ten PC sizes.
+See reports/ui-composition-d3. Original login stays protected. Next selection,
+equipment/skills and other UI, then native U8 and the complete gameplay bookmark.
+
+
 **D2 checkpoint:** original login explicitly preserved. Preparation and room
 directory redesigned separately; five focused checks plus one browser heading
 recheck pass. Ten-size visible layouts covered. Report: reports/ui-composition-d2.

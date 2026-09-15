@@ -9,8 +9,8 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpSettingsView
     {
-        private OwnerOptionMenu _ownerFrameCap;
-        private void Build(Transform owner)
+        private SettingsOptionMenu _ownerFrameCap;
+        private void BuildPreviousPaintedSettings(Transform owner)
         {
             _canvas=OwnerUiLayout.Canvas(owner,"OwnerSettingsCanvas",800);OwnerUiBackdrop.Build(_canvas.transform);
             var design=OwnerUiLayout.DesignArea(_canvas.transform,"SettingsComposition");
@@ -45,14 +45,15 @@ namespace TumbangPreso.UI
         public void ShowSection(int index)
         {
             _tab=Mathf.Clamp(index,0,Sections.Length-1);if(_canvas==null)return;
-            OwnerOptionMenu.OpenOption?.Close();
+            SettingsOptionMenu.OpenOption?.Close();
             if(_session.Listening)_session.CancelRebind();
             foreach(Transform child in _list){child.gameObject.SetActive(false);Destroy(child.gameObject);}
             _bindingRows.Clear();_ownerFrameCap=null;_frameReason=null;
             for(int i=0;i<_tabs.Count;i++)
             {
                 _tabs[i].transform.Find("SelectedSection").gameObject.SetActive(i==_tab);
-                _tabs[i].GetComponentInChildren<Text>().color=i==_tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                var colours=_tabs[i].colors; colours.normalColor=i==_tab?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _tabs[i].colors=colours;
             }
             _heading.text=Sections[_tab];
             switch(_tab){case 0:Controls();break;case 1:Audio();break;case 2:Graphics();break;case 3:Player();break;case 4:Accessibility();break;}
@@ -61,14 +62,14 @@ namespace TumbangPreso.UI
         }
         private void Note(string words)
         {
-            var text=OwnerUiLayout.Text(_list,"Note",words,27);text.color=OwnerUiTheme.Current.EnteredInk;
+            var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=OwnerUiTheme.Current.EnteredInk;
             text.alignment=TextAnchor.UpperLeft;text.gameObject.AddComponent<LayoutElement>().preferredHeight=67;
         }
-        private RectTransform Row(string name,string label)=>OwnerSettingsRows.Row(_list,name,label);
+        private RectTransform Row(string name,string label)=>SettingsWorkspaceRows.Row(_list,name,label);
         private void Toggle(string name,string label,bool value,Action<bool> set,Action apply=null)
-            =>OwnerSettingsRows.Toggle(Row(name,label),name+"Value",value,v=>{set(v);_session.Preview(apply);});
+            =>SettingsWorkspaceRows.Toggle(Row(name,label),name+"Value",value,v=>{set(v);_session.Preview(apply);});
         private void Choice(string name,string label,string[] values,int value,Action<int> set)
-            =>OwnerOptionMenu.Create(Row(name,label),name+"Value",values,value,v=>{set(v);_session.Preview();});
+            =>SettingsOptionMenu.Create(Row(name,label),name+"Value",values,value,v=>{set(v);_session.Preview();});
         private void Audio()
         {
             Note("Listen as you adjust. Save to keep your changes.");var s=SettingsStore.Current;
@@ -77,7 +78,7 @@ namespace TumbangPreso.UI
             AudioSlider("MusicVolume","Music",s.MusicVolume,v=>s.MusicVolume=v);
         }
         private void AudioSlider(string name,string label,float value,Action<float> set)
-            =>OwnerSettingsRows.Slider(Row(name,label),name+"Value",value,0,1,v=>{set(v);_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
+            =>SettingsWorkspaceRows.Slider(Row(name,label),name+"Value",value,0,1,v=>{set(v);_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
         private void Graphics()
         {
             Note("Preview a change, then save it or return to your previous settings.");var s=SettingsStore.Current;
@@ -89,10 +90,10 @@ namespace TumbangPreso.UI
                 v=>{s.AntiAliasMode=v;AntiAliasModes.Apply(v);});
             Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,
                 v=>{s.VSyncMode=v;VSyncModes.Apply(v);FrameRateOptions.Apply(s.FrameRateLimit);UpdateFrameCapState();});
-            _ownerFrameCap=OwnerOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
+            _ownerFrameCap=SettingsOptionMenu.Create(Row("FrameRate","Frame rate limit"),"FrameRateValue",
                 FrameRateOptions.All.Select(FrameRateOptions.Label).ToArray(),Array.IndexOf(FrameRateOptions.All,s.FrameRateLimit),
                 v=>{s.FrameRateLimit=FrameRateOptions.All[v];FrameRateOptions.Apply(s.FrameRateLimit);_session.Preview();});
-            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",27);_frameReason.color=OwnerUiTheme.Current.EnteredInk;
+            _frameReason=OwnerUiLayout.Text(_list,"FrameRateReason","",28);_frameReason.color=OwnerUiTheme.Current.EnteredInk;
             _frameReason.gameObject.AddComponent<LayoutElement>().preferredHeight=67;UpdateFrameCapState();
             Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
         }
@@ -108,7 +109,7 @@ namespace TumbangPreso.UI
         private void Player()
         {
             var s=SettingsStore.Current;
-            var name=OwnerUiEntry.Create(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME",OwnerUiTheme.Piece.SecondField);
+            var name=SettingsWorkspaceRows.Entry(Row("PlayerName","Player name"),"PlayerNameField","PLAYER NAME");
             name.SetTextWithoutNotify(s.PlayerName);name.characterLimit=Core.Balance.PlayerNameMax;
             name.onValueChanged.AddListener(v=>{s.PlayerName=v;_session.Preview();});
             Toggle("Telemetry","Share play statistics",s.TelemetryEnabled,v=>s.TelemetryEnabled=v);
@@ -141,7 +142,7 @@ namespace TumbangPreso.UI
             if(_device==InputDeviceKind.KeyboardMouse && _group==0)
             {
                 var s=SettingsStore.Current;
-                OwnerSettingsRows.Slider(Row("Sensitivity","Mouse sensitivity"),"SensitivityValue",s.MouseSensitivity,.1f,5,
+                SettingsWorkspaceRows.Slider(Row("Sensitivity","Mouse sensitivity"),"SensitivityValue",s.MouseSensitivity,.1f,5,
                     v=>{s.MouseSensitivity=v;_session.Preview();},v=>v.ToString("0.0")+"×");
                 Toggle("InvertY","Invert vertical look",s.InvertY,v=>s.InvertY=v);
             }
@@ -149,7 +150,7 @@ namespace TumbangPreso.UI
         }
         private Button ActionRow(string name,string title,string label,Action action)
         {
-            var button=OwnerTextAction.Create(Row(name,title),name+"Action",label,action,0,0,533,78,30);
+            var button=SettingsWorkspaceRows.Action(Row(name,title),name+"Action",label,action);
             return button;
         }
         private void Decision()
@@ -162,7 +163,7 @@ namespace TumbangPreso.UI
             paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;
-            var save=OwnerPaintedAction.Create(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},false,41);
+            var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},413);
             OwnerUiLayout.Place((RectTransform)save.transform,267,224,413,91);
             OwnerTextAction.Create(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},139,358,670,78,33);
             OwnerTextAction.Create(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),139,474,670,78,33);

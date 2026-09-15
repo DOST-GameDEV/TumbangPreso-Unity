@@ -50,7 +50,9 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < TumpSettingsView.Sections.Length; i++)
             {
                 view.ShowSection(i); yield return null;
-                yield return TumpUiCapture.Capture("OwnerSettings-" + TumpSettingsView.Sections[i] + "-v1", canvas, 1920, 1080,false);
+                foreach (var size in TumpUiCapture.PcViewports)
+                    yield return TumpUiCapture.Capture("WorkspaceSettings-" + TumpSettingsView.Sections[i] + "-" + size.x + "x" + size.y,
+                        canvas, size.x, size.y, false, checkActionBounds: true);
             }
             view.ShowSection(2); yield return null;
             canvas.GetComponentInChildren<ScrollRect>().verticalNormalizedPosition = 0;
@@ -61,6 +63,8 @@ namespace TumbangPreso.PlayTests
             int before = SettingsStore.Current.FrameRateLimit;
             Press(Find("VSyncValue")); yield return null;
             Press(Find("Option0")); yield return null;
+            Assert.AreEqual(Find("VSyncValue").gameObject,EventSystem.current.currentSelectedGameObject,
+                "Choosing an option must return controller focus to its settings row.");
             Assert.AreEqual(before, SettingsStore.Current.FrameRateLimit, "Changing sync must retain the capped preference.");
             if (FrameRateOptions.ReadOperatorLimit(System.Environment.GetCommandLineArgs()) == 0)
             {

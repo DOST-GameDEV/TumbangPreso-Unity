@@ -49,7 +49,7 @@ namespace TumbangPreso.UI
             if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }
-            if (OwnerOptionMenu.OpenOption != null) { OwnerOptionMenu.OpenOption.Close(); return; }
+            if (SettingsOptionMenu.OpenOption != null) { SettingsOptionMenu.OpenOption.Close(); return; }
             if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
             Back();
         }

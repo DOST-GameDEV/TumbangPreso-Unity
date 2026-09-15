@@ -11,6 +11,24 @@ namespace TumbangPreso.PlayTests
     /// <summary>Native view geometry/colour capture with an isolated, ungraded UI camera.</summary>
     internal static class TumpUiCapture
     {
+        private static bool OutsideScrollMask(RectTransform target)
+        {
+            var corners = new Vector3[4]; target.GetWorldCorners(corners);
+            foreach (var scroll in target.GetComponentsInParent<ScrollRect>())
+            {
+                var viewport = scroll.viewport;
+                if (viewport == null || !target.IsChildOf(viewport)) continue;
+                var min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+                var max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+                foreach (var corner in corners)
+                {
+                    Vector2 point = viewport.InverseTransformPoint(corner);
+                    min = Vector2.Min(min, point); max = Vector2.Max(max, point);
+                }
+                if (!viewport.rect.Overlaps(Rect.MinMaxRect(min.x, min.y, max.x, max.y))) return true;
+            }
+            return false;
+        }
         internal static readonly Vector2Int[] PcViewports = {
             new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
             new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
@@ -57,6 +75,9 @@ namespace TumbangPreso.PlayTests
                 LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)canvas.transform);
                 yield return null;
                 yield return null;
+                // Native Selectable colour transitions also need to settle;
+                // they do not own an OwnerUiMotion entry component.
+                yield return new WaitForSecondsRealtime(.12f);
                 foreach (var preview in canvas.GetComponentsInChildren<UI.ModelPreview>()) preview.StepForCapture();
                 Canvas.ForceUpdateCanvases();
                 if (includeWorld && Camera.main != null)
@@ -73,7 +94,7 @@ namespace TumbangPreso.PlayTests
                 {
                     bool symbol = graphic is UI.TumpAbilitySymbol || graphic is UI.TumpSymbol || graphic is UI.TumpVerbSymbol
                         || graphic is UI.OwnerUiGlyph || graphic is UI.OwnerUiPaper || (graphic is UI.HomeMenuStroke home && home.Primary) || graphic is UI.PlayChoiceSurface
-                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt;
+                        || graphic is UI.PreparationBoard || graphic is UI.PreparationReadyArt || graphic is UI.SettingsSwitchFace;
                     bool portrait = graphic is UI.TumpSurface surface && surface.Shape == UI.TumpSurface.Form.Portrait;
                     if (!symbol && !portrait) continue;
                     var renderer = graphic.GetComponent<CanvasRenderer>();
@@ -92,6 +113,7 @@ namespace TumbangPreso.PlayTests
                         // Hidden room chat stays active to receive messages. Its
                         // zero-alpha CanvasGroup is not part of this visible layout.
                         if (button.targetGraphic != null && button.targetGraphic.canvasRenderer.GetInheritedAlpha() <= .001f) continue;
+                        if (OutsideScrollMask((RectTransform)button.transform)) continue;
                         ((RectTransform)button.transform).GetWorldCorners(corners);
                         foreach (var corner in corners)
                         {
@@ -103,11 +125,15 @@ namespace TumbangPreso.PlayTests
                     foreach (var text in canvas.GetComponentsInChildren<Text>())
                     {
                         if (!text.enabled || string.IsNullOrWhiteSpace(text.text) || text.canvasRenderer.GetInheritedAlpha() <= .001f) continue;
+                        if (OutsideScrollMask(text.rectTransform)) continue;
                         string path = string.Join("/", text.GetComponentsInParent<Transform>().Reverse().Select(t => t.name));
                         Assert.LessOrEqual(text.preferredHeight, text.rectTransform.rect.height + 3,
                             name + "/" + path + " clips its content.");
                         Assert.GreaterOrEqual(text.fontSize * canvas.scaleFactor, 13.95f,
                             name + "/" + path + " is below the small-window reading floor.");
+                        if (text.verticalOverflow == VerticalWrapMode.Truncate && text.GetComponentInParent<InputField>() == null)
+                            Assert.GreaterOrEqual(text.cachedTextGenerator.characterCountVisible, text.text.TrimEnd().Length,
+                                name + "/" + path + " lost rendered characters despite its preferred height.");
                     }
                 }
                 RenderTexture.active = rt;

@@ -1,5 +1,88 @@
 # Active TUMP rework ledger
 
+## CURRENT D3 verified; moving to selection and equipment
+
+Settings-v3 FINISHED4/4PASS, restoration70e4b08ff90f; Python9128/Unity21596 retired.
+Settings-v4 FINISHED1/1PASS, restoration1b2d415a6c73; Python15784 retired.
+No Unity/image/build/player/browser jobs. Selected final captures inspected and
+stored with XML in reports/ui-composition-d3. Settings-only native workspace and
+controls preserve existing session/profile/binding/device behavior. All five pages
+pass ten PC sizes; source login and approved controller diagram are unchanged.
+D3 uncommitted on079f78ae; next save/push, then selection/equipment and skill views.
+
+Picker source/tests reviewed: TumpPickerView.OwnerPainted/.cs, TumpSkillView.OwnerPainted,
+TumpNativePickerTests, model-preview attachment and Packages/com.tumbangpreso.core/
+Runtime/Roster.cs. Existing12Classic/6hero roster/save IDs and source models are
+protected. Plan a larger genuine model stage with compact complete collection,
+separate category/identity/handling/lore hierarchy, not account panels/wallpaper.
+No D4 source written yet. Preview must remain unsaved until Use Loadout; optional
+stories/skill variants and their return paths stay functional. Deferred Inday model
+work is not part of this UI pass. Continue other UI/U8, then the full gameplay queue.
+
+
+## CURRENT D3 all settings contracts pass; final disabled-state check
+
+Settings-v2 finished2/2PASS, restorationa7ba97f04c71; Python20496 retired.
+Settings-v3 finished4/4PASS, restoration70e4b08ff90f; Python9128/Unity21596 retired.
+That full related fixture includes settings pages/frame pacing/save-discard,
+controller/touch returns, binding transaction and actual synthetic Escape through
+paused gameplay settings. Five settings pages pass ten-size visible bounds, text
+fit and actual-character checks. PNGs inspected at540p,1080p,4:3 and32:9.
+Capture helper now waits native colour transitions as well as OwnerUiMotion so
+initial fades are not presented as settled visuals. Fixed two accidental UTF-8
+multiplication-sign corruptions in edited settings source; no such corruption
+remains. Always read/write UTF-8 explicitly in Python on this Windows PC.
+
+One final visual correction: native option fields now use ColorTint to visibly
+show disabled state (such as frame cap under VSync), alongside focus underline.
+RUNNING settings-v4, Python15784; PID also in
+Logs/ui-composition-settings-v4.pid. Only the page/frame-pacing test is repeated.
+No C#/imported asset edits while it runs. D3 uncommitted on079f78ae, login protected.
+Next inspect final result/receipt, save D3, continue picker/skill/equipment and other
+UI then U8 and full gameplay bookmark. No image/build/player/browser jobs.
+
+## CURRENT D3 settings-v2 running
+
+Settings-v1 stopped on a new Color/Color32 ternary ambiguity in SettingsSwitchFace,
+now fixed with an explicit cast. Profile restorationd34f15d41366; Python22020
+retired. New SettingsOptionMenu now uses a native Button plus clear focus underline
+and restores owning-row selection when closing, with an explicit test. All-size
+qualifier additionally checks actual rendered characters on visible, non-input
+truncated text after the browser heading issue. It does not claim that enhanced
+check was rerun on previously saved D1/D2 screens.
+
+RUNNING guarded settings-v2, Python20496, Logs/ui-composition-settings-v2
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-settings-review; same two
+specific settings/controller/touch route tests. No imported edits until it exits.
+D3 remains uncommitted on079f78ae. No image/player/browser job. Login remains
+identical to approved source. Next inspect actual result, profile receipt and
+screenshots; fix/layout-qualify settings and save stable D3 before moving on.
+
+## CURRENT D3 settings workspace qualification
+
+D2 committed and pushed079f78ae. Login remains byte-identical to its approved
+previous builder; do not redesign it. New uncommitted settings workspace:
+TumpSettingsView.Workspace, SettingsWorkspaceRows, SettingsSwitchFace,
+SettingsControlFocus and SettingsOptionMenu. Native separate rows/switches/sliders/
+fields/options avoid account sprites; shared original OwnerSettingsRows/OptionMenu
+remain unchanged for hub/touch. Settings session, save/discard, bindings, controller
+and touch callbacks stay in place. No approved controller illustration changes.
+
+RUNNING guarded settings-v1, Python22020, Logs/ui-composition-settings-v1
+(.pid/.stdout/.stderr/.log/.xml), profileui-composition-settings-review.
+Two specific tests: NativeSettingsPagesAndFramePacingHaveTruthfulStates and
+ControllerAndTouchViewsKeepTheirRealReturnAndCancelPaths. All five settings pages
+capture ten PC sizes; viewport checks now exclude only fully off-viewport content
+inside an intentional ScrollRect, still testing visible controls and text.
+No C#/imported Assets edits until Editor exits. No image/build/player/browser jobs.
+
+Next inspect compile/XML/profile and actual settings captures. Review pending
+focus improvement in new SettingsOptionMenu: its frame still uses OwnerTextAction
+without a motion descendant; use native Button plus SettingsControlFocus. Restore
+focus to the owning button on Close when active. These improvements are not yet
+applied. Then run the appropriate related checks, save D3, and continue selection/
+equipment/other UI, U8 native motion/routes and the entire gameplay bookmark.
+
 ## CURRENT D2 verified and ready to save; login remains protected
 
 rooms-v3 FINISHED5/5PASS, restorationcd49fbd565fe; Python3132 retired.

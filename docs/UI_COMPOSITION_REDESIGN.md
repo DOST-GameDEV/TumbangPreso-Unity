@@ -1,5 +1,11 @@
 # UI composition redesign from the original layout studies
 
+**D3 checkpoint:** settings workspace and native control family qualified with
+four related contracts plus one final visual recheck. Five pages cover ten PC sizes.
+See reports/ui-composition-d3. Original login stays protected. Next selection,
+equipment/skills and other UI, then native U8 and the complete gameplay bookmark.
+
+
 **LATEST owner correction, 2026-09-15: KEEP THE PREVIOUS LOGIN LOOK.** The owner
 says the old login already looked good and was not part of the requested redesign.
 Preserve its original centred artwork, form, colours, tabs and actions. Redesign
