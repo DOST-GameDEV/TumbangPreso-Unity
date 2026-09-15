@@ -1,5 +1,141 @@
 # Active TUMP rework ledger
 
+## CURRENT movement cases complete; integrate peer commits and finish for UI
+
+All4nativev19 cases FINISHEDPASS, session58519 retired: controlling owner for
+Zack/Sean and positive-expired450ms observer cases for both. Protocol42versus
+internal41refusal also FINISHEDPASS, session66933 retired. All owned native/
+Editor/proxy jobs exited; profiles/shared input preserved. Finalv19 hash/timestamps
+and portable receipts are in reports/movement-joining-2026-09-15.
+
+Fetch found9new peer commits through9c236eb8, covering Claude's AI retrieval/lunge
+work, diagnostics and measured lookups. No file overlaps with this movement source
+batch. Preserve those commits and their implementation. Their own report explains
+the historical48-idle limit; do not mark that attribution solved. Reserved boxes
+remain untouched. Integrating this work is not taking over Claude's assignment.
+
+Next: commit this qualified local batch, merge origin/ASTRAReworks without force,
+run a focused combined-source check (no broad AI reruns), finish the merge/ledger
+and push. Then PAUSE for the owner's requested UI edits. Do not begin another
+gameplay feature. Nativev19 predates these peer AI commits, so do not claim its
+binary contains their changes. No Desktop replacement is authorized.
+
+## LATEST owner direction: finish current batch, then wait for UI edits
+
+Owner now explicitly asks to finish what is running because they will supply UI
+changes next, and requests a short account of recent work. This narrows the current
+continuation: finish the movement-restoration validation/publication already in
+progress, then pause for those UI instructions. Do not start Sean Supernova or
+another gameplay batch first. The full backlog and Claude reservation stay saved.
+
+Buildv19 FINISHED1082MB/46s, guardfd611868e5fa, Python10592 retired. Runtime SHA256
+45790CAC24E92899144BECFFD806241AAA1772435AAAC442EEFAACCA936EC96E, protocol42.
+RUNNING sequential native session58519: movement-zack-owner-v19, sean-owner,
+zack-late, sean-late, each under Logs/movement-<hero>-<kind>-v19 with wrapper
+Logs/<case>.stdout. Owner cases use --refresh-seat1; late cases use450ms downstream
+spike. No imported edits during the sequence. Consume results, run the required
+42versus41compatibility check, preserve evidence, review/commit/push, then stop
+for the requested UI handoff. No other chat or agent contact is authorized.
+
+## CURRENT v18 native movement passed; delayed wake slot correction under test
+
+Strengthened impulse test FINISHED1/1PASS, guardb737a069c48e, Python7500 retired;
+it checks the actual external-velocity accumulator below its clamp. Buildv18
+FINISHED1082MB/48s, guarde5c81296e1dc, Python10592 retired. Runtime SHA256
+A4DBEEA2C9EEA21F8860C58C06E2BD72E655353D22527A50D6E850FA04305A6E.
+Native zero-latency Zack and Sean observer reconstruction BOTH PASS, session49963
+retired. Logs/movement-{zack,sean}-fixed-v18; Zack observer44active samples/6fields
+against baseline0/1. These are protocol41 cases. Profiles/input preserved.
+
+Review found that merely deleting missing wake samples could delay the last known
+point's emission. The uncommitted correction keeps nullable time slots and a known-
+sample bitmask; unknown points never become coordinates or fields. Added a focused
+regression: after one missed interval, the newest known point drops in its proper
+slot and the next unknown slot emits nothing. The payload now requires protocol42,
+so internalv18/41 cannot be mixed with the next build.
+
+Also applied the checksum-verified owner-reconstruction probe draft. --refresh-seat1
+targets the controlling owner for normal movement tests; late movement remains an
+observer fixture using --late-movement --observer-delay450 --observer-spike. The
+host captures near the actual movement deadline and the relay spikes at<=.20s.
+The handler must witness a positive expired record; no old movement may restart.
+
+Focused MovementSnapshotProbe v3 FINISHED4/4PASS, guard7b1567f5275e; Python14480
+retired. RUNNING buildv19, Python10592 (a reused PID, identify it by the v19 command),
+Logs/movement-build-v19(.pid/.stdout/.stderr/.log), profile movement-build-review.
+No imported edits until exit. Then run both owner cases, late observer cases and
+protocol42 refusal ofv18/41. Keep completed normalv18 evidence. No source change
+to Claude's reserved files and no new publication since0f1d997b yet.
+
+## CURRENT active-movement restoration implemented; focused validation finishing
+
+Both nativev17 baselines FAILED with a valid missing-state result. Zack host/owner
+had45/47active samples and6shock fields, observer0restored active samples and1field.
+Sean host/owner each10active samples and5fire fields, observer0restored active
+samples and1field. Real selected identities/resources were valid. Session94883
+finished; all peers exited. Preserve Logs/movement-{zack,sean}-baseline-v17.
+
+Implemented uncommitted HeroMovementState and MatchRpc.Movement, plus Sean/Zack
+clock/emitter hydration. Movement payload follows the complete world-field batch
+and requires its generation, round, seat and hero. Remaining state skips startup
+impulses/cues/drops and resumes a gesture only while its authored body clip is live.
+Known/empty/finished/newer normal casts stay protected; refinement of the same
+restored active window cannot extend its deadline. Missed emissions are skipped,
+and a bounded world refresh recovers actual fields instead of inventing path points.
+
+WorldEffectSnapshot now reattaches active emitter queues to current owned field
+objects after replacement, preserving their caps/cancellation. Sean tracks and
+retires its own rush aura and cancelled predicted trail objects; natural expiry
+still leaves persistent fields to expire normally. Zack aura ends with its window.
+No Claude-reserved file was edited. New source protocol41; published0f1d997b and
+qualified nativev16 remain protocol40, including the urgent shadow/version fixes.
+
+MovementSnapshotProbe first run FINISHED3/3PASS, guard42118888cf81, Python20460
+retired. Checks clock/resources/phase, field replacement/cap/owner-only cancellation,
+and invalid/empty/expired/newer-state guards for both kits. Source review showed
+horizontal impulses live in CharacterMotor._externalVelocity, not only Velocity;
+the first test now also seeds/checks that actual accumulator below its clamp and
+confirms the source launch happened. Run just that strengthened test next. Then
+build a fresh internalv18 and repeat the two real native cases, delayed/repeated
+snapshot coverage and protocol41 refusal of the preserved40build as appropriate.
+Runtime movement implementation and protocol41 are NOT native-qualified yet.
+
+## CURRENT published0f1d997b; active-movement baseline probe next
+
+The complete v16 cast/display batch is committed and pushed as
+0f1d997b510214dbd93ebd29d9384297b4210e8e, remote verified and worktree was clean.
+User's urgent FPP slipper shadow/version-label corrections are saved. Continue
+the remaining queue; the separate Claude reservation remains intact.
+
+Cancellation source audit did not establish the proposed accepted-cast defect:
+Rollback is the owner's rejected-prediction path; ordinary ResetKit producers
+are round/intermission or training resets. Do not write a synthetic failure that
+bypasses those round/authority contracts and call it a reachable bug. Broader
+packet/phase ordering remains an open scoped qualification, not a new fix here.
+
+Now extending the existing native probe with --movement-review for Sean/Zack
+skill1 (--case stomp). It retains real selected-hero synchronization, makes the
+owner move, parks other actors outside contact, reconstructs only the observer
+kit while active and again after expiry. CSV records active window, speed scale,
+cooldown/resources and owned fire/shock field counts. Runtime restoration has
+NOT been implemented. Baselinev17 build FINISHED1082MB/45s, guarda7299972b895,
+Python17284 retired; runtime SHA256
+73557DA7938BEA87DE5F2430371E1006A3C1F1E4D2FDD822A11A96C453E33ABA.
+The sequential Zack/Sean zero-latency baseline has started; its execution session
+is in the latest tool result. Logs/movement-zack-baseline-v17 and
+Logs/movement-sean-baseline-v17, wrapper Logs/<case>.stdout. No imported edits
+until the sequence exits. Distinguish fixture errors from missing state.
+Logs/movement-state-design.md is an unimplemented design draft for the later fix.
+
+Source facts for the eventual design: Zack2.5s sprint has an initial12impulse,
+lagged wake samples, drop timer and6field cap; Sean.6s rush has a one-time impulse
+and.15s emitter. Only those skills produce their respective fire/shock trails
+outside diagnostics/snapshot reconstruction. WorldEffectSnapshot.Apply replaces
+the field objects, so a still-active kit's queue needs to adopt current owned
+fields after replacement; old object references cannot enforce its cap. Restore
+remaining clocks/phase without repeating launch impulses/cues or old trail drops.
+No active-motion production edit or wire change exists yet. Current protocol40.
+
 ## CURRENT v16 fixes qualified; publish this batch and continue remaining gameplay
 
 Current checkout C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,

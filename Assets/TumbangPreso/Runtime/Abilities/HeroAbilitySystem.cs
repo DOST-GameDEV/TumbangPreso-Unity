@@ -1312,6 +1312,21 @@ namespace TumbangPreso.Abilities
         public bool NeedsOwnerEffectConfirmation(Slot slot)
             => AbilityFor(slot)?.DefersPredictedEffect == true;
 
+        public bool RestoreJoiningMovement(HeroMovementState state,float age)
+        {
+            if(Kit==null || _motor==null) return false;
+            bool wasActive=Kit.Skill1.IsActive;
+            bool applied=Kit is ZackHeroKit zack?zack.RestoreJoiningMovement(_motor,state,age)
+                :Kit is SeanHeroKit sean && sean.RestoreJoiningMovement(_motor,state,age);
+            if(applied && !wasActive && Kit.Skill1.IsActive)
+            {
+                var ability=Kit.Skill1;
+                GetComponentInChildren<Visual.CharacterAnimator>()?.PlayActionAt(ability.CastAction,
+                    ability.ViewmodelAction,ability.Duration-ability.DurationRemaining,onlyWhileClipRunning:true);
+            }
+            return applied;
+        }
+
         public void ConfirmPredictedWorldEffect(Slot slot, Vector3 position, Vector3 forward,
                                                Vector3 aimPoint, float heldSeconds)
         {

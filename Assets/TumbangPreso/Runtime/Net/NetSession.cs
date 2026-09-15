@@ -360,7 +360,9 @@ namespace TumbangPreso.Net
         // 39 carries accepted pending preparations and their captured aim to joining peers.
         // 40 distinguishes a pending Thunderstrike from an empty active-charge
         // snapshot. Internal protocol39 players cannot decode this TimedKit field.
-        public const int ProtocolVersion = 40;
+        // 41 carries remaining sprint/rush emitter state after its world-field batch.
+        // 42 preserves missing wake time slots when a movement snapshot arrives late.
+        public const int ProtocolVersion = 42;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

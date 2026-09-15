@@ -1018,8 +1018,13 @@ namespace TumbangPreso.Visual
 
         // Rejoining an accepted preparation resumes its existing authored body/FPP
         // gesture; it does not emit a new gameplay cast or ultimate introduction.
-        public void PlayActionAt(string action,string viewmodelAction,float elapsed)
+        public void PlayActionAt(string action,string viewmodelAction,float elapsed,bool onlyWhileClipRunning=false)
         {
+            if(onlyWhileClipRunning)
+            {
+                var runningClip=ResolveChain(ActionClips,action);
+                if(runningClip==null || elapsed>=ClipLength(runningClip)) return;
+            }
             PlayAction(action,viewmodelAction);
             var clip=ResolveChain(ActionClips,action);
             if(clip!=null && _current==clip && _graph.IsValid())

@@ -12,3 +12,4 @@ docs/reports/improvement-2026-09-14/ice-rejoin-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-15-buff-rejoin/*.xml -text -whitespace
 docs/reports/pending-casts-2026-09-15/*.xml -text -whitespace
 docs/reports/fpp-shadow-version-2026-09-15/*.xml -text -whitespace
+docs/reports/movement-joining-2026-09-15/*.xml -text -whitespace

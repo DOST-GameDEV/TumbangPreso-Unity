@@ -341,6 +341,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
+            cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
             cm.RegisterNamedMessageHandler("WorldFieldItem", OnWorldFieldItemMsg);
             cm.RegisterNamedMessageHandler("WorldFieldEnd", OnWorldFieldEndMsg);
@@ -5711,7 +5712,10 @@ namespace TumbangPreso.Net
                 SendPreparationSnapshot(slot,(ulong)peerId);
             }
             SendSkySnapshot((ulong)peerId);
+            int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
+            if(_worldFieldGeneration>previousFieldGeneration)
+                for(int slot=0;slot<Balance.PlayerCount;slot++) SendMovementSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
         }
 
         /// <summary>

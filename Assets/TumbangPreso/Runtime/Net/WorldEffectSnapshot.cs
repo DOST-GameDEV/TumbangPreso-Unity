@@ -179,6 +179,14 @@ namespace TumbangPreso.Net
                     pillar.StepTo(field.Duration - remaining);
                 }
             }
+            // Replaced objects must also replace the emitter's ownership queue.
+            // Otherwise its live-field cap and cancellation still point at dead objects.
+            if(GameServices.Round!=null) foreach(var player in GameServices.Round.Players)
+            {
+                if(player==null) continue;
+                if(player.AbilitySystem?.Kit is ZackHeroKit zack) zack.AdoptMovementFields(player.PlayerSlot);
+                else if(player.AbilitySystem?.Kit is SeanHeroKit sean) sean.AdoptMovementFields(player.PlayerSlot);
+            }
             return true;
         }
 

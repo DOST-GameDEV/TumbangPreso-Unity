@@ -1,0 +1,33 @@
+{
+  "ok": false,
+  "errors": [
+    "Observer lost the remaining movement-skill window"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 436,
+      "activeSamples": 10,
+      "peakFireFields": 5.0,
+      "peakShockFields": 0.0
+    },
+    "owner": {
+      "samples": 426,
+      "activeSamples": 10,
+      "peakFireFields": 5.0,
+      "peakShockFields": 0.0
+    },
+    "observer": {
+      "samples": 426,
+      "activeSamples": 0,
+      "peakFireFields": 1.0,
+      "peakShockFields": 0.0
+    }
+  },
+  "scope": "Three native peers; accepted movement skill, observer kit reconstruction while active and after expiry.",
+  "shared_input_unchanged": true,
+  "delay_one_way_ms": 0,
+  "observer_delay_one_way_ms": 0,
+  "observer_spike_delay_ms": 0,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "73557da7938bea87de5f2430371e1006a3c1f1e4d2fdd822a11a96c453e33aba"
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -41,6 +42,11 @@ namespace TumbangPreso.Abilities
             return restored;
         }
         public bool IsThunderstrikeActive => Ultimate != null && Ultimate.IsActive;
+        public HeroMovementState CaptureMovementState()=>((StaticRailGrindAbility)Skill1).CaptureMovement();
+        public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
+            => motor!=null && ((StaticRailGrindAbility)Skill1).RestoreMovement(
+                new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
+        public void AdoptMovementFields(int owner)=>((StaticRailGrindAbility)Skill1).AdoptFields(owner);
         public override float MovementSpeedScale => Skill1 != null && Skill1.IsActive
             ? Balance.ZackSprintSpeedScale : 1.0f;
 
@@ -118,8 +124,54 @@ namespace TumbangPreso.Abilities
             /// </summary>
             private const float WakeLagSeconds = 0.5f;
 
-            private readonly Queue<Vector3> _wake = new Queue<Vector3>();
+            private readonly Queue<Vector3?> _wake = new Queue<Vector3?>();
             private readonly Queue<GameObject> _live = new Queue<GameObject>();
+            private bool _movementKnown, _movementRestored;
+
+            public HeroMovementState CaptureMovement()
+            {
+                if(!IsActive) return HeroMovementState.Empty;
+                var points=_wake.ToArray();
+                var state=new HeroMovementState { Remaining=DurationRemaining,UntilNextEmission=Mathf.Max(0,_trailDropTimer),Wake=new Vector3[points.Length] };
+                for(int i=0;i<points.Length;i++) if(points[i].HasValue)
+                { state.Wake[i]=points[i].Value;state.KnownWake|=1u<<i; }
+                return state;
+            }
+
+            public bool RestoreMovement(AbilityContext ctx,HeroMovementState state,float age)
+            {
+                int lagSamples=Mathf.Max(1,Mathf.RoundToInt(WakeLagSeconds/.30f));
+                if(!state.Valid(Duration,.30f,age) || (state.Wake?.Length??0)>lagSamples
+                    || (_movementKnown && (!_movementRestored || !IsActive))) return false;
+                float remaining=Mathf.Max(0,state.Remaining-age);
+                if(_movementKnown) remaining=Mathf.Min(remaining,DurationRemaining);
+                bool first=!_movementRestored;
+                _movementKnown=true; _movementRestored=remaining>0;
+                if(remaining<=0) { EndEarly(ctx); return true; }
+                RestoreLiveClock(remaining);
+                _trailDropTimer=state.NextEmission(age,.30f,out int missed);
+                _wake.Clear();
+                var points=state.Wake??Array.Empty<Vector3>();
+                for(int i=0;i<points.Length;i++) _wake.Enqueue((state.KnownWake&(1u<<i))!=0?points[i]:(Vector3?)null);
+                // Preserve the missing time slots, not invented path coordinates.
+                // Removing slots would make the last known point drop too late.
+                for(int i=0;i<missed;i++)
+                { _wake.Enqueue(null);if(_wake.Count>lagSamples)_wake.Dequeue(); }
+                if(first)
+                {
+                    AdoptFields(ctx.Motor.PlayerSlot);
+                    _sprintAura=AbilityVfx.AttachAura(ctx.Motor.transform,AbilityVfx.Aura.ElectricSpark,remaining);
+                }
+                return true;
+            }
+
+            public void AdoptFields(int owner)
+            {
+                if(!IsActive) return;
+                _live.Clear();
+                foreach(var field in UnityEngine.Object.FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None)
+                    .Where(field=>field.OwnerSlot==owner).OrderBy(field=>field.Remaining)) _live.Enqueue(field.gameObject);
+            }
 
             public StaticRailGrindAbility(ZackHeroKit kit)
                 // ⚠️⚠️ 46 s, UP FROM 6.0, AND IT IS THE SHORTEST OF THE FOUR LONG COOLDOWNS ON
@@ -156,6 +208,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _movementKnown=true; _movementRestored=false;
                 Vector3 forward = ctx.Forward;
                 forward.y = 0.0f;
 
@@ -200,9 +253,10 @@ namespace TumbangPreso.Abilities
                 _wake.Enqueue(ctx.Position);
                 int lagSamples = Mathf.Max(1, Mathf.RoundToInt(WakeLagSeconds / 0.30f));
 
-                Vector3 drop;
-                if (_wake.Count > lagSamples) drop = _wake.Dequeue();
-                else return;   // still inside the first half second: nothing behind him yet
+                if(_wake.Count<=lagSamples) return;
+                var sample=_wake.Dequeue();
+                if(!sample.HasValue) return;
+                Vector3 drop=sample.Value;
 
                 var disc = HeroHazards.SpawnShockTrail(drop,
                     TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
@@ -235,6 +289,7 @@ namespace TumbangPreso.Abilities
             {
                 _wake.Clear();
                 _live.Clear();
+                if(_sprintAura!=null) { _sprintAura.SetActive(false); UnityEngine.Object.Destroy(_sprintAura); }
                 _sprintAura = null;
             }
 
@@ -247,11 +302,6 @@ namespace TumbangPreso.Abilities
                     if (patch == null) continue;
                     patch.SetActive(false);
                     UnityEngine.Object.Destroy(patch);
-                }
-                if (_sprintAura != null)
-                {
-                    _sprintAura.SetActive(false);
-                    UnityEngine.Object.Destroy(_sprintAura);
                 }
                 OnEnd(ctx);
             }

@@ -28,6 +28,9 @@ namespace TumbangPreso.Diagnostics
         private bool _pendingReview,_pendingRefreshed,_expiredRefreshed;
         private bool _pendingPickSent,_pendingPickSeeded;
         private bool _latePreparationReview,_lateSnapshotSent;
+        private bool _movementReview;
+        private bool _lateMovementReview;
+        private int _refreshSeat=2;
         private float _pendingSeenAt=-1;
         private readonly System.Collections.Generic.HashSet<UnityEngine.Object> _seenImpacts=new System.Collections.Generic.HashSet<UnityEngine.Object>();
         private static readonly System.Reflection.FieldInfo WarningField=typeof(DanteSeismicVisual).GetField("_warning",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
@@ -70,10 +73,13 @@ namespace TumbangPreso.Diagnostics
             var probe = root.AddComponent<NetDanteProbe>(); probe._case = Argument("-tp-dantecase") ?? "stomp";
             probe._pendingReview=Environment.GetCommandLineArgs().Contains("-tp-dantepending-review");
             probe._latePreparationReview=Environment.GetCommandLineArgs().Contains("-tp-pendinglate-review");
+            probe._movementReview=Environment.GetCommandLineArgs().Contains("-tp-movement-review");
+            probe._lateMovementReview=Environment.GetCommandLineArgs().Contains("-tp-movementlate-review");
+            if(int.TryParse(Argument("-tp-refresh-seat"),out int refreshSeat) && refreshSeat>=1 && refreshSeat<=2)probe._refreshSeat=refreshSeat;
             probe._pendingHero=Argument("-tp-pendinghero")??"dante";
             string path = Path.GetFullPath(Argument("-tp-dantetrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,s1charges,s2active,s2cooldown,ultcharge,casterX,casterY,casterZ,frontX,frontY,frontZ,rearX,rearY,rearZ,frontTrip,frontStun,casterStun,ward,pillars,shoeX,shoeY,shoeZ,guardTested,afterTested,tremor,plating,orbitStones,rumble,pendingReview,pendingRefreshed,expiredRefreshed,windup,impactBirths,heroIndex,casterPick,casterMode,ultActive,ultRemaining,impactX,impactY,impactZ,impactHeld");
+            probe._writer.WriteLine("time,elapsed,local,host,s1charges,s2active,s2cooldown,ultcharge,casterX,casterY,casterZ,frontX,frontY,frontZ,rearX,rearY,rearZ,frontTrip,frontStun,casterStun,ward,pillars,shoeX,shoeY,shoeZ,guardTested,afterTested,tremor,plating,orbitStones,rumble,pendingReview,pendingRefreshed,expiredRefreshed,windup,impactBirths,heroIndex,casterPick,casterMode,ultActive,ultRemaining,impactX,impactY,impactZ,impactHeld,movementReview,movementActive,movementRemaining,movementSpeed,s1cooldown,fireFields,shockFields");
         }
 
         private void Update()
@@ -124,10 +130,10 @@ namespace TumbangPreso.Diagnostics
                 // Seat two is an actual owning observer, so initialize its own
                 // motor too. Its late spawn otherwise overwrites the host fixture pose.
                 if (NetAuthority.IsHost || NetAuthority.LocalSlot == 2)
-                    front.Teleport(_case == "fissure" ? new Vector3(0, .12f, -5.5f) : new Vector3(1.3f, .12f, -8));
+                    front.Teleport(_movementReview?new Vector3(8,.12f,-6):_case == "fissure" ? new Vector3(0, .12f, -5.5f) : new Vector3(1.3f, .12f, -8));
                 if (NetAuthority.IsHost)
                 {
-                    rear.Teleport(new Vector3(0, .12f, -9.3f)); round.PlayerAt(0).Teleport(new Vector3(-9, .12f, -12));
+                    rear.Teleport(_movementReview?new Vector3(-8,.12f,-6):new Vector3(0, .12f, -9.3f)); round.PlayerAt(0).Teleport(new Vector3(-9, .12f, -12));
                     _loose.HostDisarm();
                     var at = new Vector3(-1, 0, -8); at.y = Slipper.GroundY(at) + _loose.RestHeight;
                     _loose.transform.position = at;
@@ -141,6 +147,7 @@ namespace TumbangPreso.Diagnostics
                 caster.Intent.AimPoint = _pendingHero=="zack" && elapsed>=12.75f?new Vector3(4,.1f,-7):new Vector3(0, .1f, -3); caster.Intent.FaceAimPoint = true;
                 caster.Intent.Set(guard ? Verb.Skill2 : _case == "fissure" ? Verb.Ultimate : Verb.Skill1, elapsed >= 12 && elapsed < (_pendingHero=="zack"?12.7f:12.35f));
                 caster.Intent.Move = guard && elapsed >= 12.5f && elapsed < 15.2f ? Vector2.up * .35f : Vector2.zero;
+                if(_movementReview && elapsed>=12 && elapsed<15)caster.Intent.Move=Vector2.up*.4f;
             }
             if (guard && NetAuthority.IsHost)
             {
@@ -159,13 +166,15 @@ namespace TumbangPreso.Diagnostics
                 // A normal round trip can reach the host after this short cast
                 // finishes. This opt-in boundary case captures the actual host
                 // snapshot near contact, then lets the real transport delay it.
-                if(_latePreparationReview && NetAuthority.IsHost && !_lateSnapshotSent
-                    && pendingSkill.IsWindingUp && pendingSkill.WindupRemaining<=.09f)
+                bool ending=_lateMovementReview?pendingSkill.IsActive && pendingSkill.DurationRemaining<=.09f
+                    :pendingSkill.IsWindingUp && pendingSkill.WindupRemaining<=.09f;
+                if((_latePreparationReview || _lateMovementReview) && NetAuthority.IsHost && !_lateSnapshotSent && ending)
                 {
                     foreach(ulong peer in NetworkManager.Singleton.ConnectedClientsIds)
-                        if(NetSession.Instance.Lobby.PeerById((int)peer)?.Seat==2)
+                        if(NetSession.Instance.Lobby.PeerById((int)peer)?.Seat==_refreshSeat)
                         {
-                            Debug.Log($"[PendingCastProbe] captured near deadline remaining={pendingSkill.WindupRemaining:F4}");
+                            float remaining=_lateMovementReview?pendingSkill.DurationRemaining:pendingSkill.WindupRemaining;
+                            Debug.Log($"[PendingCastProbe] captured near deadline remaining={remaining:F4}");
                             HostSnapshot.Invoke(MatchRpc.Instance,new object[]{(int)peer});
                             _lateSnapshotSent=true;break;
                         }
@@ -181,10 +190,11 @@ namespace TumbangPreso.Diagnostics
                     var impact=GameObject.Find(_pendingHero=="cheska"?"GlacialNovaWave":"ThunderShockRing");
                     if(impact!=null){_seenImpacts.Add(impact);_lastImpact=impact.transform.position;_impactHeld=pendingSkill.HeldSecondsOnCast;}
                 }
-                if(NetAuthority.LocalSlot==2)
+                if(NetAuthority.LocalSlot==_refreshSeat)
                 {
-                    if(!_pendingRefreshed && pendingSkill.IsWindingUp && _pendingSeenAt<0)_pendingSeenAt=Time.realtimeSinceStartup;
-                    bool during=!_pendingRefreshed && pendingSkill.IsWindingUp && _pendingSeenAt>=0 && Time.realtimeSinceStartup-_pendingSeenAt>=.035f;
+                    bool live=_movementReview?pendingSkill.IsActive:pendingSkill.IsWindingUp;
+                    if(!_pendingRefreshed && live && _pendingSeenAt<0)_pendingSeenAt=Time.realtimeSinceStartup;
+                    bool during=!_pendingRefreshed && live && _pendingSeenAt>=0 && Time.realtimeSinceStartup-_pendingSeenAt>=.035f;
                     bool expired=_pendingRefreshed && !_expiredRefreshed && elapsed>=20;
                     if(during || expired)
                     {
@@ -193,9 +203,9 @@ namespace TumbangPreso.Diagnostics
                         // This is a live snapshot fixture, not a process reconnect claim.
                         caster.AbilitySystem.BindHero(_pendingHero,new HeroBuild{HeroId=_pendingHero});
                         caster.GetComponentInChildren<CharacterAnimator>()?.CancelHeroAction();
-                        if(!during || !_latePreparationReview)MatchRpc.Instance.RequestWorldSnapshot();
+                        if(!during || (!_latePreparationReview && !_lateMovementReview))MatchRpc.Instance.RequestWorldSnapshot();
                         pendingSkill=_case=="fissure"?caster.AbilitySystem.Kit.Ultimate:caster.AbilitySystem.Kit.Skill1;
-                        Debug.Log("[PendingCastProbe] refreshed "+(during?"during preparation":"after expiry")+" at="+elapsed);
+                        Debug.Log("[PendingCastProbe] refreshed "+(during?(_movementReview?"during movement":"during preparation"):"after expiry")+" at="+elapsed);
                     }
                 }
             }
@@ -220,7 +230,11 @@ namespace TumbangPreso.Diagnostics
                     orbit!=null?orbit.childCount:0,cameraRig!=null?cameraRig.GroundRumbleOffset.magnitude:0,
                     _pendingReview?1:0,_pendingRefreshed?1:0,_expiredRefreshed?1:0,pendingSkill.WindupRemaining,_seenImpacts.Count,
                     Roster.IndexIn(Roster.HeroPeople,caster.AbilitySystem.HeroId),caster.CharacterIndex,(int)caster.Mode,caster.AbilitySystem.Kit.Ultimate.IsActive?1:0,
-                    caster.AbilitySystem.Kit.Ultimate.DurationRemaining,_lastImpact.x,_lastImpact.y,_lastImpact.z,_impactHeld };
+                    caster.AbilitySystem.Kit.Ultimate.DurationRemaining,_lastImpact.x,_lastImpact.y,_lastImpact.z,_impactHeld,
+                    _movementReview?1:0,caster.AbilitySystem.Kit.Skill1.IsActive?1:0,caster.AbilitySystem.Kit.Skill1.DurationRemaining,
+                    caster.AbilitySystem.Kit.MovementSpeedScale,caster.AbilitySystem.Kit.Skill1.CooldownRemaining,
+                    _movementReview?FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None).Count(f=>f.OwnerSlot==1):0,
+                    _movementReview?FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None).Count(f=>f.OwnerSlot==1):0 };
                 _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
             }
             if (elapsed > 24) { _writer.Flush(); Application.Quit(); }

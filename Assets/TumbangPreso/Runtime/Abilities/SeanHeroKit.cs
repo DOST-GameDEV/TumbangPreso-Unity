@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -11,6 +12,11 @@ namespace TumbangPreso.Abilities
     {
         public bool IsIgnitionCannonActive { get; set; }
         private bool _joinChargeStateSettled;
+        public HeroMovementState CaptureMovementState()=>((RocketBurnDashAbility)Skill1).CaptureMovement();
+        public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
+            => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
+                new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
+        public void AdoptMovementFields(int owner)=>((RocketBurnDashAbility)Skill1).AdoptFields(owner);
 
         public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
         {
@@ -81,6 +87,39 @@ namespace TumbangPreso.Abilities
             private const int MaxLiveDiscs = 6;
 
             private readonly Queue<GameObject> _live = new Queue<GameObject>();
+            private bool _movementKnown, _movementRestored;
+            private GameObject _rushAura;
+
+            public HeroMovementState CaptureMovement()=>IsActive
+                ? new HeroMovementState { Remaining=DurationRemaining,UntilNextEmission=Mathf.Max(0,.15f-_trailSpawnAccum),Wake=Array.Empty<Vector3>() }
+                : HeroMovementState.Empty;
+
+            public bool RestoreMovement(AbilityContext ctx,HeroMovementState state,float age)
+            {
+                if(!state.Valid(Duration,.15f,age) || (state.Wake?.Length??0)!=0
+                    || (_movementKnown && (!_movementRestored || !IsActive))) return false;
+                float remaining=Mathf.Max(0,state.Remaining-age);
+                if(_movementKnown) remaining=Mathf.Min(remaining,DurationRemaining);
+                bool first=!_movementRestored;
+                _movementKnown=true; _movementRestored=remaining>0;
+                if(remaining<=0) { EndEarly(ctx); return true; }
+                RestoreLiveClock(remaining);
+                _trailSpawnAccum=.15f-state.NextEmission(age,.15f,out _);
+                if(first)
+                {
+                    AdoptFields(ctx.Motor.PlayerSlot);
+                    _rushAura=AbilityVfx.AttachAura(ctx.Motor.transform,AbilityVfx.Aura.FireEmber,remaining);
+                }
+                return true;
+            }
+
+            public void AdoptFields(int owner)
+            {
+                if(!IsActive) return;
+                _live.Clear();
+                foreach(var field in UnityEngine.Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None)
+                    .Where(field=>field.OwnerSlot==owner).OrderBy(field=>field.Remaining)) _live.Enqueue(field.gameObject);
+            }
 
             public RocketBurnDashAbility()
                 // ⚠️⚠️ 50 s, UP FROM 6.5. Longer than Zack's 46 because this dash also KNOCKS
@@ -101,6 +140,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _movementKnown=true; _movementRestored=false;
                 _trailSpawnAccum = 0.0f;
                 _hitSlots.Clear();
                 Vector3 forward = ctx.Forward;
@@ -118,7 +158,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ 0.6 s, WHICH IS THE DASH ITSELF AND NOT A SECOND LONGER. The rush is the
                 // shortest power in the game; an aura that outlived it would say Sean was still
                 // charging when he had already stopped.
-                Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
+                _rushAura=Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
                                              Visual.AbilityVfx.Aura.FireEmber, Duration);
 
                 // ⚠️⚠️ THE LEADING EDGE, WHICH IS THE HALF OF THIS ABILITY NOTHING DREW.
@@ -255,7 +295,19 @@ namespace TumbangPreso.Abilities
 
             /// <summary>See Zack's. The queue is cleared and the discs are left to their own
             /// 3.0 s life, which they are meant to outlive the dash by.</summary>
-            protected override void OnEnd(AbilityContext ctx) => _live.Clear();
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                _live.Clear();
+                if(_rushAura!=null) { _rushAura.SetActive(false); UnityEngine.Object.Destroy(_rushAura); }
+                _rushAura=null;
+            }
+
+            protected override void OnCancelled(AbilityContext ctx)
+            {
+                foreach(var field in _live)
+                    if(field!=null) { field.SetActive(false); UnityEngine.Object.Destroy(field); }
+                OnEnd(ctx);
+            }
         }
 
         private sealed class IgnitionCannonAbility : HeroAbility

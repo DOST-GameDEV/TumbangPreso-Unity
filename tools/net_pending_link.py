@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--to', required=True)
     parser.add_argument('--delay', type=float, required=True, help='Transient downstream delay, milliseconds.')
     parser.add_argument('--trace', type=Path, required=True, help='Host CSV from the pending-cast fixture.')
+    parser.add_argument('--phase',choices=['preparation','movement'],default='preparation')
     parser.add_argument('--seconds', type=float, default=110)
     args = parser.parse_args()
     if not 0 < args.delay <= 1000:
@@ -48,11 +49,11 @@ def main():
             if args.trace.is_file():
                 with args.trace.open(encoding='utf-8') as handle:
                     for row in csv.DictReader(handle):
-                        value = row.get('windup')
+                        value = row.get('movementRemaining' if args.phase=='movement' else 'windup')
                         if value and 0 < float(value) <= .20:
                             spike.until = time.monotonic() + .7
                             print(f'[pending-link] armed at host elapsed={row["elapsed"]}, '
-                                  f'windup={value}; downstream={spike.spike_seconds:.3f}s for0.7s', flush=True)
+                                  f'{args.phase} remaining={value}; downstream={spike.spike_seconds:.3f}s for0.7s', flush=True)
                             return
             time.sleep(.01)
 

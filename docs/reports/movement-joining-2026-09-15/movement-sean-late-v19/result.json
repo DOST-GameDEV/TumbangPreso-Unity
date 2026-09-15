@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 417,
+      "activeSamples": 10,
+      "peakFireFields": 5.0,
+      "peakShockFields": 0.0
+    },
+    "owner": {
+      "samples": 415,
+      "activeSamples": 9,
+      "peakFireFields": 4.0,
+      "peakShockFields": 0.0
+    },
+    "observer": {
+      "samples": 408,
+      "activeSamples": 0,
+      "peakFireFields": 5.0,
+      "peakShockFields": 0.0
+    }
+  },
+  "reconstructed_seat": 2,
+  "scope": "Three native peers; accepted movement skill, observer kit reconstruction while active and after expiry.",
+  "shared_input_unchanged": true,
+  "delay_one_way_ms": 0,
+  "observer_delay_one_way_ms": 0,
+  "observer_spike_delay_ms": 450.0,
+  "exe_sha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtime_sha256": "45790cac24e92899144becffd806241aaa1772435aaac442eefaacca936ec96e"
+}
