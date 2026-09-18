@@ -23,12 +23,28 @@ namespace TumbangPreso.PlayTests
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu); yield return null;
             var home = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(home.GetComponentsInChildren<PaperSkin>(true));
-            Assert.AreEqual(5, home.GetComponentsInChildren<Button>().Length, "Four choices and a credits link keep the title quiet.");
+            // ⚠️⚠️ ONE PRESS, NOT FIVE, SINCE 2026-09-18. 🧑: *"MAIN menu is getting revamped it
+            // will lose all buttons and will just have a tap to play or wtv text is"*. The logo
+            // went with them and is not missing: it is the graffiti she painted onto the wall in
+            // the plate. See `HomeCourtView`.
+            Assert.AreEqual(1, home.GetComponentsInChildren<Button>().Length, "The title street is one press.");
+            Assert.AreEqual("StartButton", home.GetComponentsInChildren<Button>()[0].name);
             foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
                 new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
                 new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160) })
                 yield return TumpUiCapture.Capture("NativeHome-" + size.x + "x" + size.y, home, size.x, size.y, false, checkActionBounds: true);
-            Press("CreditsButton"); yield return null;
+            // ⚠️⚠️ CREDITS AND SETTINGS ARE REACHED THROUGH THE LOBBY NOW, NOT THROUGH THE TITLE.
+            // Their doors went with the pennants, and 🧑 chose that: *"throw them away gang no
+            // need we hhave new plan for main menu which we will edit next time"*. Neither screen
+            // changed, and both are still reachable, so this fixture walks the journey a player
+            // can actually walk rather than opening them from nowhere. `GameSettingsButton` on
+            // the lobby is the door; SETTINGS carries the one to CREDITS.
+            Press("StartButton"); yield return new WaitForSecondsRealtime(.4f);
+            Press("ClassicButton"); yield return null;
+            Press("PracticeButton"); yield return new WaitForSecondsRealtime(.7f);
+            Press("GameSettingsButton"); yield return new WaitForSecondsRealtime(.3f);
+            Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"));
+            Press("SettingsCredits"); yield return new WaitForSecondsRealtime(.3f);
             var credits = GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
             Assert.IsFalse(home.gameObject.activeSelf);
             Assert.AreEqual(CreditsContent.CcByCredits.Length + CreditsContent.CourtesyCredits.Length,
@@ -56,13 +72,11 @@ namespace TumbangPreso.PlayTests
                 creditScroll.verticalNormalizedPosition=0;
                 yield return TumpUiCapture.Capture("StudioCredits-licenses-"+size.x+"x"+size.y,credits,size.x,size.y,false,checkActionBounds:true);
             }
-            Press("CreditsBack"); yield return null;
-            Assert.IsTrue(home.gameObject.activeSelf);
-            Press("SettingsButton"); yield return null;
+            Press("CreditsBack"); yield return null; yield return null;
             Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"));
-            Press("TumpSettingsBack"); yield return null;
-            Assert.IsTrue(home.gameObject.activeSelf);
-            Press("StartButton"); yield return null; yield return null;
+            Press("TumpSettingsBack"); yield return null; yield return null;
+            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu); yield return null;
+            Press("StartButton"); yield return new WaitForSecondsRealtime(.4f);
             var play = GameObject.Find("OwnerPlayCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(play.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(6, play.GetComponentsInChildren<Image>().Count(i => i.name.StartsWith("ModePortrait") && i.sprite != null));
@@ -163,14 +177,25 @@ namespace TumbangPreso.PlayTests
                 username.text="Stardust_Destroyer84";
                 Assert.AreEqual(OwnerUiTheme.Current.Reading,username.textComponent.font);
                 Assert.AreEqual(Color.black,username.textComponent.color);
-                var hint=(Text)fields.First(field=>field.name=="Email").placeholder;
+                // ⚠️ THE CAPTION IS THE PLACEHOLDER ON THE FIELD IT LABELS. There has never been
+                // an Email field on this form (`ArtSource/.../README.md`: "No email field"), and
+                // this line asked for one by name for long enough that nothing was checking the
+                // caption type at all.
+                var hint=(Text)fields.First(field=>field.name=="Password").placeholder;
                 Assert.AreEqual(OwnerUiTheme.Current.Accent,hint.font);
+                Assert.AreEqual("PASSWORD",hint.text);
                 Assert.AreEqual((Color)new Color32(188,135,73,255),hint.color);
                 Assert.AreEqual((Color)new Color32(144,18,25,255),Find("SubmitAccount").GetComponentInChildren<Text>().color);
                 Assert.AreEqual(Color.white,Find("GuestAccount").GetComponentInChildren<Text>().color);
                 var logo=canvas.GetComponentsInChildren<Image>().First(image=>image.name=="OriginalOwnerLogo");
-                Assert.AreEqual(new Vector2(407,273),logo.sprite.rect.size);Assert.True(logo.preserveAspect);
-                Assert.AreEqual(407f/273,logo.rectTransform.rect.width/logo.rectTransform.rect.height,.001f);
+                // ⚠️ HER 2026-09-18 SHEET, MEASURED BY ALPHA: 424x279 rather than the 407x273 the
+                // September 15 matting produced. The assertion is the size the extractor wrote
+                // into login-layout-v3.json, so a re-cut that changes the crop fails here.
+                var box=OwnerLoginLayout.Get("login3-logo");
+                Assert.AreEqual(new Vector2(box.sourceWidth,box.sourceHeight),logo.sprite.rect.size);
+                Assert.True(logo.preserveAspect);
+                Assert.AreEqual(box.sourceWidth/box.sourceHeight,
+                    logo.rectTransform.rect.width/logo.rectTransform.rect.height,.001f);
                 yield return TumpUiCapture.Capture("OwnerStartupSignUp-v1",canvas,1920,1080,false);
                 foreach(var name in new[]{"SubmitAccount","GuestAccount"})
                 {

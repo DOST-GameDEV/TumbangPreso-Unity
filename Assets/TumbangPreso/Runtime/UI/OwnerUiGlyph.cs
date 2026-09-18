@@ -7,7 +7,7 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class OwnerUiGlyph : UnityEngine.UI.MaskableGraphic
     {
-        public enum Mark { Envelope, Lock, Check, Eye, Back, Rotate }
+        public enum Mark { Envelope, Lock, Check, Eye, Back, Rotate, Disc }
         public Mark Shape;
         protected override void OnPopulateMesh(UnityEngine.UI.VertexHelper helper)
         {
@@ -34,6 +34,22 @@ namespace TumbangPreso.UI
                 Stroke(helper,rect,new Vector2(.56f,.87f),new Vector2(.19f,.50f),.11f);
                 Stroke(helper,rect,new Vector2(.19f,.50f),new Vector2(.57f,.13f),.11f);
                 Stroke(helper,rect,new Vector2(.23f,.50f),new Vector2(.93f,.50f),.11f);
+            }
+            else if(Shape==Mark.Disc)
+            {
+                // ⚠️ THE ONE PIECE OF HER LOGIN THAT IS DRAWN RATHER THAN LIFTED, AND THE ONLY
+                // REASON IS RESOLUTION. Her valid-field mark is a green disc with a white tick,
+                // but she only drew it in 44.png, which is a three-up contact sheet at about a
+                // third scale, so there is nothing to cut. The invalid mark beside it IS hers
+                // (`login3-invalid`), and this is built to the same 29x30 box and the same
+                // silhouette so the two read as a pair.
+                Vector2 previous=new Vector2(1f,.5f);
+                for(int i=1;i<=28;i++)
+                {
+                    float angle=i/28f*Mathf.PI*2;
+                    var next=new Vector2(.5f+Mathf.Cos(angle)*.5f,.5f+Mathf.Sin(angle)*.5f);
+                    Poly(helper,rect,new Vector2(.5f,.5f),previous,next,next);previous=next;
+                }
             }
             else if(Shape==Mark.Rotate)
             {

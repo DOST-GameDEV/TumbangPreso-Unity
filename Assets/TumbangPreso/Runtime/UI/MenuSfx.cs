@@ -56,6 +56,25 @@ namespace TumbangPreso.UI
         public static void Back() => Play("ui_back");
         public static void Error() => Play("ui_error");
 
+        /// <summary>A checkbox taking or losing its mark.</summary>
+        public static void Tick() => Play("ui_tick");
+
+        /// <summary>The SIGN UP / SIGN IN pill sliding across its track.</summary>
+        public static void Toggle() => Play("ui_toggle");
+
+        /// <summary>
+        /// A field that was wrong becoming right.
+        ///
+        /// ⚠️ IT IS THE EDGE, NOT THE STATE. `ui_error` already had this problem solved by the
+        /// once-a-frame rule above; this one needs the caller to fire it only on the crossing,
+        /// because a field is valid on every keystroke after the one that fixed it.
+        /// `SignInScreen.Watch` owns that comparison.
+        /// </summary>
+        public static void Valid() => Play("ui_valid");
+
+        /// <summary>The title screen letting go.</summary>
+        public static void Start() => Play("ui_start");
+
         /// <summary>
         /// Plays a named UI cue, at most once per frame.
         ///

@@ -29,15 +29,34 @@ namespace TumbangPreso.EditorTools
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 foreach(var file in Directory.GetFiles(target,"*.png"))
                 {
+                    string name=Path.GetFileName(file);
                     var importer=(TextureImporter)AssetImporter.GetAtPath(file.Replace('\\','/'));
                     importer.textureType=TextureImporterType.Default;
-                    importer.sRGBTexture=!file.EndsWith("main-sky-mask.png",StringComparison.Ordinal)
-                        && !file.EndsWith("main-sky-cutout.png",StringComparison.Ordinal);
+                    // ⚠️⚠️ A MASK IS DATA AND A PICTURE IS COLOUR, AND IMPORTING ONE AS THE OTHER
+                    // IS SILENT. An sRGB import applies a gamma curve to a coverage value, so a
+                    // shadow authored at 0.5 arrives at about 0.73 and every strength the shader
+                    // samples is wrong by an amount that reads as a tuning choice, not a defect.
+                    bool mask=name=="main-sky-mask.png" || name=="main-sky-cutout.png"
+                        || name=="main2-sky-mask.png" || name=="main2-shadow.png";
+                    // ⚠️ A FULL-FRAME PLATE HAS NO ALPHA TO HONOUR. Marking one as transparency
+                    // asks Unity to pre-multiply an opaque image and can shift its edges.
+                    bool plate=name=="main-background.png" || name=="main2-background.png";
+                    // ⚠️ MIPMAPS ONLY WHERE SOMETHING IS DRAWN SMALLER THAN IT WAS AUTHORED. The
+                    // far cloud bank runs at 0.70 and a leaf at about half, and both shimmer
+                    // without them; everything else is drawn at or above its own size, where a
+                    // mipmap only costs sharpness.
+                    bool minified=name.Contains("cloud-bank-") || name=="main2-cloud.png" || name=="main2-leaf.png";
+                    importer.sRGBTexture=!mask;
                     importer.alphaSource=TextureImporterAlphaSource.FromInput;
-                    importer.alphaIsTransparency=!file.EndsWith("main-background.png",StringComparison.Ordinal);
-                    importer.mipmapEnabled=file.Contains("cloud-bank-");importer.textureCompression=TextureImporterCompression.Uncompressed;
-                    importer.maxTextureSize=file.Contains("cloud-bank-")?4096:2048;importer.npotScale=TextureImporterNPOTScale.None;
-                    importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=file.Contains("cloud-bank-")?FilterMode.Trilinear:FilterMode.Bilinear;
+                    importer.alphaIsTransparency=!plate && !mask;
+                    importer.mipmapEnabled=minified;importer.textureCompression=TextureImporterCompression.Uncompressed;
+                    importer.maxTextureSize=name.Contains("cloud-bank-")?4096:2048;
+                    importer.npotScale=TextureImporterNPOTScale.None;
+                    // ⚠️ CLAMP EVEN FOR THE DRIFTING SHADOW. `OwnerMenuAir` mirrors in the shader
+                    // rather than relying on a wrap mode, so the seam behaviour is written down in
+                    // one place instead of living in an import setting nobody reads.
+                    importer.wrapMode=TextureWrapMode.Clamp;
+                    importer.filterMode=minified?FilterMode.Trilinear:FilterMode.Bilinear;
                     importer.SaveAndReimport();
                 }
                 AssetDatabase.SaveAssets();

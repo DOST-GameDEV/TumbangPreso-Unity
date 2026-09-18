@@ -57,7 +57,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.IsFalse(Settings.SettingsStore.Current.ReducedUiMotion);
 
-            Press(Find("SettingsButton"));
+            OpenSettingsPanel();
             yield return null;
             panel.ShowTab(4); motion.isOn = true;
             Press(panel.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
@@ -65,10 +65,20 @@ namespace TumbangPreso.PlayTests
             Press(Find("SaveAndBack"));
             yield return null;
             Assert.IsTrue(Settings.SettingsStore.Current.ReducedUiMotion);
-            var art = Object.FindFirstObjectByType<IllustratedBackdrop>();
-            float phase = art.Phase;
+            // ⚠️⚠️ THE SUBJECT OF THIS ASSERTION IS THE TITLE'S OWN MOTION AND THAT MOVED TWICE.
+            // `IllustratedBackdrop` belongs to `HomeScreen`, which `ConvertedMainMenu` stopped
+            // building when the owner-painted street landed, so this line was reading a null for
+            // some time. The title's motion is now her weather: the road dust and the leaves off
+            // her tree, both of which draw nothing at all with the setting on.
+            Object.FindFirstObjectByType<TumpHomeView>()?.Resume();
             yield return new WaitForSecondsRealtime(.3f);
-            Assert.AreEqual(phase, art.Phase, "Reduced UI motion must stop title artwork animation.");
+            Canvas.ForceUpdateCanvases();
+            var dust = Object.FindFirstObjectByType<OwnerRoadDust>();
+            var leaves = Object.FindFirstObjectByType<OwnerMenuLeaves>();
+            Assert.AreEqual(0, dust.canvasRenderer.GetMesh().vertexCount,
+                "Reduced UI motion must stop the title street drifting.");
+            Assert.AreEqual(0, leaves.canvasRenderer.GetMesh().vertexCount,
+                "Reduced UI motion must ground the falling leaves.");
             var roundtrip = JsonUtility.FromJson<Settings.GameSettings>(JsonUtility.ToJson(Settings.SettingsStore.Current));
             Assert.IsTrue(roundtrip.ReducedUiMotion);
         }
@@ -77,9 +87,26 @@ namespace TumbangPreso.PlayTests
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(.4f);
-            Press(Find("SettingsButton"));
+            OpenSettingsPanel();
             yield return null;
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE TITLE SCREEN LOST ITS SETTINGS PENNANT ON 2026-09-18 AND THIS FIXTURE IS
+        /// ABOUT THE PANEL, NOT ABOUT THE DOOR. 🧑 asked for a title screen with no buttons
+        /// (`HomeCourtView`) and for the four doors to be dropped until the next menu pass, so
+        /// there is no SettingsButton to press here any more. The panel is still the one
+        /// `ConvertedMainMenu` builds, opened the way that screen opens it: suspend the home,
+        /// activate the owner. ⚠️ The JOURNEY to settings is covered separately and through the
+        /// door a player actually has, `GameSettingsButton` on the lobby, in
+        /// `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews`.
+        /// </summary>
+        private static void OpenSettingsPanel()
+        {
+            Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
+            GameObject.Find("NativeSettingsOwner").SetActive(true);
+        }
+
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
             .First(b => b.name == name && b.isActiveAndEnabled);
         private static PointerEventData Hit(Button button)

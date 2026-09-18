@@ -16,39 +16,43 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
+        /// <summary>
+        /// ⚠️⚠️ THIS FIXTURE WAS ASSERTING A SCREEN THE GAME HAD ALREADY STOPPED BUILDING.
+        /// It looked for `HomeScreen`, `HomeCanvas` and `IllustratedBackdrop`, and
+        /// `ConvertedMainMenu.Wire` has built `TumpHomeView` instead since the owner-painted
+        /// pass; `HomeScreen.Install` is only reached from `WireLegacyReference`, which nothing
+        /// calls. That is § 114 and § 124.11's fault for the third time: a fixture driving a
+        /// control the game no longer makes. It asserts the screen that actually ships now.
+        ///
+        /// ⚠️ THE TITLE HAS ONE PRESS AND NO SETTINGS DOOR SINCE 2026-09-18. 🧑: *"MAIN menu is
+        /// getting revamped it will lose all buttons and will just have a tap to play"*, and on
+        /// where TUTORIAL, SETTINGS and QUIT should go, *"throw them away gang no need"*.
+        /// `TumpNativeFrontEndTests` walks to settings and credits through the lobby.
+        /// </summary>
         [UnityTest]
-        public IEnumerator HomeKeepsTheTitleCalmAndSettingsReturn()
+        public IEnumerator TitleIsOnePressAndKeepsHerStreetMoving()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(0.5f);
-            var home = Object.FindFirstObjectByType<HomeScreen>();
-            Assert.IsNotNull(home);
-            var illustration = home.GetComponentInChildren<IllustratedBackdrop>();
-            if (illustration == null)
-                illustration = Object.FindFirstObjectByType<IllustratedBackdrop>();
-            Assert.IsNotNull(illustration);
-            Assert.IsTrue(illustration.HasArtwork, "The illustrated placeholder must ship with its artwork.");
-            Assert.IsTrue(illustration.HasIndependentLayers, "Tree and sun must be independent animated layers.");
-            home.SendMessage("OnApplicationFocus", true);
-            float before = illustration.Phase;
-            yield return new WaitForSecondsRealtime(0.5f);
-            Assert.AreNotEqual(before, illustration.Phase, "The illustrated scene must advance in the foreground.");
+            var canvas = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
+            Assert.IsNotNull(canvas);
 
-            Press("SettingsButton");
-            yield return null;
-            var settings = Object.FindFirstObjectByType<ConvertedSettingsPanel>();
-            Assert.IsNotNull(settings);
-            Press("BackButton");
-            yield return null;
-            yield return null;
-            Assert.IsTrue(ActiveButton("StartButton").isActiveAndEnabled);
+            var buttons = canvas.GetComponentsInChildren<Button>().Where(b => b.isActiveAndEnabled).ToArray();
+            CollectionAssert.AreEquivalent(new[] { "StartButton" }, buttons.Select(b => b.name));
 
-            CollectionAssert.AreEquivalent(new[]{"StartButton","TutorialButton","SettingsButton","QuitButton","CreditsButton"},
-                GameObject.Find("HomeCanvas").GetComponentsInChildren<Button>().Select(button=>button.name));
-            Assert.IsFalse(home.GetComponentsInChildren<Button>().Any(button=>button.name=="CustomDoor"));
-            yield return UiRuntimeShots.Capture("Home-brand-v1",1920,1080);
-            yield return UiRuntimeShots.Capture("Home-brand-v1-720p",1280,720);
-            yield return UiRuntimeShots.Capture("Home-brand-v1-shortwide",1920,820);
+            var prompt = canvas.GetComponentsInChildren<Text>().Single(t => t.name == "ContinuePrompt");
+            StringAssert.Contains("to continue", prompt.text);
+            Assert.AreEqual(OwnerUiTheme.Current.Display, prompt.font,
+                "Her caption is Darumadrop; Paalalabas is the caption face on the login.");
+
+            var air = canvas.GetComponentInChildren<OwnerMenuAir>();
+            Assert.IsNotNull(air, "The sky and the cast shadow are the title's only motion in the air.");
+            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerMenuLeaves>());
+            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerRoadDust>());
+
+            yield return UiRuntimeShots.Capture("Home-street-v1",1920,1080);
+            yield return UiRuntimeShots.Capture("Home-street-v1-720p",1280,720);
+            yield return UiRuntimeShots.Capture("Home-street-v1-shortwide",1920,820);
         }
 
         [UnityTest]

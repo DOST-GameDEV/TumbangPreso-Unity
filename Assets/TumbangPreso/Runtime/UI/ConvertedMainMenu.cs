@@ -32,6 +32,26 @@ namespace TumbangPreso.UI
     {
         private TumpHomeView _nativeHome;
         private TumpCreditsView _nativeCredits;
+
+        /// <summary>
+        /// ⚠️⚠️ THE TITLE SCREEN LEAVES THE GAME ON ESCAPE, AND SINCE 2026-09-18 IT IS THE ONLY
+        /// WAY OUT. The screen lost its four pennants when 🧑 asked for a bare tap-to-play
+        /// composition (`HomeCourtView`'s header), and asked where the doors should go he said
+        /// *"throw them away gang no need we hhave new plan for main menu which we will edit next
+        /// time"*. QUIT going with them would have left the one screen every player starts on
+        /// with no exit at all, which is § 6.3's dead end rather than a clean screen.
+        ///
+        /// ⚠️ IT IS `Cancel`, NOT A KEY. `InputLayer.MenuNav` is the one reader, so this is B on
+        /// a pad and Android's hardware BACK button as well as Escape, per `CLAUDE.md` § 4a.
+        /// </summary>
+        protected override bool Cancel()
+        {
+            if (ScreenTakeover.AnyOpen) return false;
+            var signIn = GetComponent<SignInScreen>();
+            if (signIn != null && signIn.IsOpen) return false;
+            SceneFlow.Quit();
+            return true;
+        }
         private void Awake()
         {
             foreach (Transform child in transform) child.gameObject.SetActive(false);

@@ -258,8 +258,26 @@ namespace TumbangPreso.PlayTests
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(.4f);
-            Press(Find("SettingsButton")); yield return null;
+            OpenSettingsPanel();
+            yield return null;
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE TITLE SCREEN LOST ITS SETTINGS PENNANT ON 2026-09-18 AND THIS FIXTURE IS
+        /// ABOUT THE PANEL, NOT ABOUT THE DOOR. 🧑 asked for a title screen with no buttons
+        /// (`HomeCourtView`) and for the four doors to be dropped until the next menu pass, so
+        /// there is no SettingsButton to press here any more. The panel is still the one
+        /// `ConvertedMainMenu` builds, opened the way that screen opens it: suspend the home,
+        /// activate the owner. ⚠️ The JOURNEY to settings is covered separately and through the
+        /// door a player actually has, `GameSettingsButton` on the lobby, in
+        /// `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews`.
+        /// </summary>
+        private static void OpenSettingsPanel()
+        {
+            Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
+            GameObject.Find("NativeSettingsOwner").SetActive(true);
+        }
+
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
         private static void Press(Button button)
         {

@@ -22,12 +22,12 @@ MonoBehaviour:
   Ochre: {r: 0.7372549, g: 0.5294118, b: 0.28627452, a: 1}
   Green: {r: 0.05882353, g: 0.34901962, b: 0.07450981, a: 1}
   ActionInk: {r: 0.5647059, g: 0.07058824, b: 0.09803922, a: 1}
-  IdleTabInk: {r: 0.6313726, g: 0.18039216, b: 0.20392157, a: 1}
+  IdleTabInk: {r: 0.69411767, g: 0.18431373, b: 0.21176471, a: 1}
   HintInk: {r: 0.78431374, g: 0.09019608, b: 0.12941177, a: 1}
   EnteredInk: {r: 0, g: 0, b: 0, a: 1}
   GuestInk: {r: 1, g: 1, b: 1, a: 1}
   DisplayFont: {fileID: 12800000, guid: 56faabe7350be344d8d7382940d88e8d, type: 3}
-  AccentFont: {fileID: 12800000, guid: b580002053734318bec1585cc519daf5, type: 3}
+  AccentFont: {fileID: 12800000, guid: 9ad4c1f2b7e04c6f8a1d3e5069c7b418, type: 3}
   ReadingFont: {fileID: 12800000, guid: 803fd19bbbab42d5b028ba8b3575ed3c, type: 3}
   Artwork: {fileID: 2800000, guid: eb676c529e398204b936e097c3b8cb67, type: 3}
   Pattern: {fileID: 2800000, guid: 385536e3db467d34794bcb6f92cc414b, type: 3}

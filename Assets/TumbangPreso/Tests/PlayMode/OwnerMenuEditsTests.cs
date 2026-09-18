@@ -15,8 +15,17 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
 
+        /// <summary>
+        /// ⚠️⚠️ THIS FIXTURE USED TO DRIVE THE SETTINGS PENNANT AND THERE IS NO PENNANT NOW.
+        /// 🧑 2026-09-18: *"MAIN menu is getting revamped it will lose all buttons and will just
+        /// have a tap to play or wtv text is"*, and asked where TUTORIAL, SETTINGS and QUIT
+        /// should go, *"throw them away gang no need"*. What it was really asserting was that
+        /// the owner's art loads, that a control reacts without its hit box moving, and that the
+        /// road keeps moving with motion on and stops with it off. All three still have a
+        /// subject: the plate, the one full-screen press target, and the dust and the leaves.
+        /// </summary>
         [UnityTest,Timeout(120000)]
-        public IEnumerator MainCompositionKeepsArtworkControlsAndRoadMotionAcrossPcWindows()
+        public IEnumerator TitleStreetIsOnePressWithHerWeatherMoving()
         {
             bool boot=SceneFlow.BootedThroughSplash,offered=SceneFlow.LoginStepOffered;
             bool reduced=TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion;
@@ -26,43 +35,47 @@ namespace TumbangPreso.PlayTests
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);yield return null;
                 var canvas=GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
                 EventSystem.current.SetSelectedGameObject(null);
+
+                // ⚠️ ONE CONTROL, AND IT IS THE WHOLE SCREEN. A second button here would be the
+                // start of growing the pennants back one at a time.
+                var buttons=canvas.GetComponentsInChildren<Button>().Where(b=>b.isActiveAndEnabled).ToArray();
+                Assert.AreEqual(1,buttons.Length,"The title screen is one press: "+
+                    string.Join(", ",buttons.Select(b=>b.name)));
+                Assert.AreEqual("StartButton",buttons[0].name);
+                var surface=(RectTransform)buttons[0].transform;
+                Assert.AreEqual(Vector2.zero,surface.anchorMin);Assert.AreEqual(Vector2.one,surface.anchorMax);
+
+                var prompt=canvas.GetComponentsInChildren<Text>().Single(t=>t.name=="ContinuePrompt");
+                StringAssert.Contains("to continue",prompt.text);
+
+                var air=canvas.GetComponentInChildren<OwnerMenuAir>();
+                Assert.IsNotNull(air,"Her clouds and her cast shadow are the menu's only motion in the air");
+                var material=air.GetComponent<RawImage>().material;
+                foreach(string texture in new[]{"_SkyMask","_Cloud","_Shadow"})
+                    Assert.IsNotNull(material.GetTexture(texture),texture+" failed to load");
+
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 foreach(var size in TumpUiCapture.PcViewports)
-                    yield return TumpUiCapture.Capture("OwnerMenu-v7-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+                    yield return TumpUiCapture.Capture("OwnerMenu-v8-"+size.x+"x"+size.y,canvas,size.x,size.y,false);
                 Assert.AreEqual("menu",GameServices.Music.Current);
-                foreach(var art in canvas.GetComponentsInChildren<Image>().Where(i=>i.name=="PaintedArtwork"))
-                {
-                    Assert.IsNotNull(art.sprite,"Owner-supplied button failed to load");
-                    Assert.True(art.preserveAspect);
-                    Assert.AreEqual(art.transform.localScale.x,art.transform.localScale.y);
-                }
-                var button=Find("SettingsButton");var hit=(RectTransform)button.transform;
-                var position=hit.anchoredPosition;var bounds=hit.sizeDelta;
+
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=false;
-                button.OnSelect(new BaseEventData(EventSystem.current));
-                yield return new WaitForSecondsRealtime(.35f);
-                var painted=button.transform.Find("PaintedArtwork");
-                Assert.Greater(painted.localScale.x,1);Assert.AreEqual(painted.localScale.x,painted.localScale.y);
-                Assert.AreEqual(position,hit.anchoredPosition);Assert.AreEqual(bounds,hit.sizeDelta);
-                button.OnPointerDown(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
-                yield return new WaitForSecondsRealtime(.2f);
-                Assert.Less(painted.localScale.x,1);Assert.AreEqual(painted.localScale.x,painted.localScale.y);
-                button.OnPointerUp(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
-                button.OnDeselect(new BaseEventData(EventSystem.current));
+                yield return new WaitForSecondsRealtime(.3f);
                 var dust=canvas.GetComponentInChildren<OwnerRoadDust>();
-                yield return TumpUiCapture.Capture("OwnerMenu-v7-dust",canvas,1920,1080,false);
-                var mesh=dust.canvasRenderer.GetMesh();Assert.Greater(mesh.vertexCount,0);
+                var leaves=canvas.GetComponentInChildren<OwnerMenuLeaves>();
+                yield return TumpUiCapture.Capture("OwnerMenu-v8-weather",canvas,1920,1080,false);
+                Assert.Greater(dust.canvasRenderer.GetMesh().vertexCount,0);
+                Assert.Greater(leaves.canvasRenderer.GetMesh().vertexCount,0,"Leaves fall off her tree");
+
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 yield return null;yield return null;Canvas.ForceUpdateCanvases();
                 Assert.AreEqual(0,dust.canvasRenderer.GetMesh().vertexCount,"Reduced motion must remove drifting dust");
-                button.onClick.Invoke();yield return null;yield return null;
-                Assert.False(canvas.gameObject.activeInHierarchy,"Settings must open from the real painted button");
-                Assert.IsNotNull(Object.FindFirstObjectByType<ConvertedSettingsPanel>());
-                Find("SettingsCredits").onClick.Invoke();yield return null;yield return null;
-                Assert.IsNotNull(GameObject.Find("OwnerCreditsCanvas"));
-                Find("CreditsBack").onClick.Invoke();yield return null;
-                Find("TumpSettingsBack").onClick.Invoke();yield return null;
-                Assert.True(canvas.gameObject.activeInHierarchy);
+                Assert.AreEqual(0,leaves.canvasRenderer.GetMesh().vertexCount,"Reduced motion must ground the leaves");
+
+                buttons[0].onClick.Invoke();
+                yield return new WaitForSecondsRealtime(.5f);
+                Assert.AreEqual(SceneFlow.ModeSelect,SceneManager.GetActiveScene().name,
+                    "A press anywhere on the street is the way in");
             }
             finally{SceneFlow.BootedThroughSplash=boot;SceneFlow.LoginStepOffered=offered;TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
         }
@@ -92,16 +105,39 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(fields.Any(f=>f.name=="Email"));
                 var confirmation=fields.First(f=>f.name=="ConfirmPassword");
                 fields.First(f=>f.name=="Username").text="local.validation";
-                fields.First(f=>f.name=="Password").text="test-only";
-                confirmation.text="different";Find("SubmitAccount").onClick.Invoke();yield return null;
-                StringAssert.Contains("do not match",canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus").text);
+                // ⚠️ A PASSWORD THAT PASSES THE REAL RULES, so this case still reaches the
+                // confirmation check. `OwnerFieldFault` enforces UGS's own 8-to-30 with an
+                // upper, a lower, a digit and a symbol, and the old fixture's "test-only"
+                // would now be refused for its length before the two were ever compared.
+                fields.First(f=>f.name=="Password").text="Test-only1";
+                confirmation.text="Different-1";Find("SubmitAccount").onClick.Invoke();yield return null;
+                // ⚠️⚠️ THE MISMATCH IS UNDER THE FIELD IT IS ABOUT NOW, NOT IN THE SHARED LINE.
+                // She redrew the login with a red line under each input; `AccountStatus` keeps
+                // only what is about the whole attempt. `SignInScreen.Fail` routes the rest.
+                StringAssert.Contains("do not match",canvas.GetComponentsInChildren<Text>().First(t=>t.name=="ConfirmFault").text);
+                Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="AccountStatus").text);
+                confirmation.text=fields.First(f=>f.name=="Password").text;yield return null;yield return null;
+                Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="ConfirmFault").text,
+                    "Live validation must clear a fault the player has fixed");
                 Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Standard,confirmation.contentType);
                 Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Password,confirmation.contentType);
                 var divider=canvas.GetComponentsInChildren<RectTransform>().First(t=>t.name=="AccountDivider");
                 var left=(RectTransform)divider.Find("LeftDivider");var right=(RectTransform)divider.Find("RightDivider");
-                Assert.AreEqual(left.sizeDelta,right.sizeDelta);Assert.AreEqual(left.anchoredPosition.y,right.anchoredPosition.y);
+                // ⚠️⚠️ THE TWO STROKES ARE HER OWN PIXELS NOW, AND HERS ARE NOT IDENTICAL.
+                // The September 15 pass drew both as generated images so it could assert they
+                // matched exactly; she drew them by hand at 241x5 and 242x6. Resizing either one
+                // to make this line pass would be squashing her art to satisfy a test, so the
+                // assertion is what a player can actually see: a pair, level with each other.
+                Assert.That(Mathf.Abs(left.sizeDelta.x-right.sizeDelta.x),Is.LessThanOrEqualTo(2f));
+                Assert.That(Mathf.Abs(left.sizeDelta.y-right.sizeDelta.y),Is.LessThanOrEqualTo(2f));
+                Assert.That(Mathf.Abs((left.anchoredPosition.y-left.sizeDelta.y*.5f)
+                                     -(right.anchoredPosition.y-right.sizeDelta.y*.5f)),Is.LessThanOrEqualTo(1f),
+                    "The two strokes must share an optical centre line either side of OR");
                 fields.First(f=>f.name=="Username").text="";fields.First(f=>f.name=="Password").text="";
+                confirmation.text="";
                 Find("SignInTab").onClick.Invoke();yield return null;
+                // ⚠️ HER SIGN-IN SHEET RENAMES THE FIRST FIELD RATHER THAN ADDING ONE.
+                Assert.AreEqual("TUMP ID",((Text)fields.First(f=>f.name=="Username").placeholder).text);
                 yield return TumpUiCapture.Capture("OwnerLogin-v7-signin",canvas,1920,1080,false,checkActionBounds:true);
                 Assert.IsNull(GameServices.Music.Current);
                 var password=canvas.GetComponentsInChildren<InputField>().First(f=>f.name=="Password");

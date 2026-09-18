@@ -384,6 +384,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 |
 | **151** | The nationals fun pass: ears at the player, an impact frame one peer got, and a slide nobody could see or hear | ⚠️⚠️ **Seven player-perceivable defects, all closed**: the only `AudioListener` in the game sat at world origin so every 3D cue panned from the middle of the map; thirteen call sites faked a position to work around it; the throw wind-up and the committed slide were audible to the one player who already knew, while the VISIBLE half of the wind-up was relayed on purpose; the hit freeze on the lata knockdown fired **on the host alone** and `audit_presentation_reach.py` had no pattern that could see a time-scale freeze; the pisonet booth played the SCORE STING and ducked the music while awarding nothing; and the committed retrieval slide, the one move this brief is about, had **three** at once (the first-person arm stopped animating on it the day before this pass, the wire announces it as a lunge, and three players out of four cannot hear it). ⚠️ **What is open is three human calls and no code**: the ear on the listener, the eye on the jeepney, and the slide's own feel. `Attention.md` § 17.2 and § 18 |
 | **149** | The fresh-audit follow-up: movement budget, re-admission, the one-shot requests | ⚠️⚠️ **Six confirmed defects, five of them competitive or release-integrity, all closed with a regression each.** § 149.4 to § 149.8 are what is left, and § 149 carries the brief as well as the record |
 | **147** | The game records its own good moments and nothing draws them | Markers exist, are deduplicated, are deterministic and name a replay window. **No screen reads them.** § 147.3 lists the three cheapest readers, in order |
@@ -499,6 +500,194 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 153 · THE TITLE STREET AND THE LOGIN, REDRAWN BY HER AND PUT IN MOTION ⚠️ IN PROGRESS, 2026-09-18, branch `ASTRAReworks`
+
+🧑 handed over nine PNGs and five sentences: *"My girlfriend edited our tumbang preso unity UI
+a bit, ur task is to animate it and make it look better and add sfx too and make it work as it
+should"*, *"the screens u will touch is login and main menu"*, *"MAIN menu is getting revamped it
+will lose all buttons and will just have a tap to play or wtv text is"*, *"we're replacing old
+font too we will use PAALALABAS WIDE INSTEAD"*, and, separately, **"make sure all main menu
+effects are subtle"** and *"PLS make sure u dont stretch shit or break my icons or logo"*.
+
+Sources are preserved whole in `ArtSource/ui/owner-ui-edits-2026-09-18`. Two tools cut them,
+`tools/extract_login_v3.py` and `tools/author_owner_menu_v3.py`; `tools/build_ui_cues.py`
+generates the four new sounds. Import settings come from
+`TumbangPreso.EditorTools.OwnerMenuEditsAuthor.Prepare`.
+
+### 153.1 The three plates are an animation, not three drafts
+
+⚠️⚠️ **46.png MINUS 48.png IS HER CLOUD ART AND HER CAST SHADOW, SEPARATED.** She supplied the
+street three times: 47 clean, 48 with the graffiti, 46 with the graffiti plus painted sky clouds,
+their shadow on the wall and the road, and a caption. 🧑 said what that was for: *"I GAVE U A PIC
+WITHOUT CLOUDS ALREADY SO THAT U CAN JUST PUT OUR ANIMATED SUBTLE CLOUDS IN"*. So the runtime
+plate is 48 and both moving layers are lifted out of the difference rather than drawn.
+
+⚠️⚠️ **THE SKY IS ONE FLAT COLOUR NOW** (`#88C877`, measured; 47 and 48 agree on it to the
+byte) **AND THAT DELETED MOST OF THE SEPTEMBER 15 PIPELINE.** `OwnerMenuSky` needed PyMatting
+closed-form matting, a background estimate and a fitted analytic gradient because the old sky had
+clouds painted into it and the shader had to subtract an unknown per pixel. Its replacement
+`OwnerMenuAir` is a lerp: `plate + opening * cloudAlpha * (cloudRGB - SKY)`. **Do not reintroduce
+the matting stack.**
+
+### 153.2 Three things in that difference are not shadow, and all three travelled
+
+The first shadow mask shipped the caption as a moving HOLE in the road, and every roofline, the
+can, the slipper and the whole graffiti outline as bright moving wires. Causes, in order found:
+
+1. **The caption she typed onto 46 is brighter, not darker**, so it solved to negative strength
+   and clipped to zero: a shadow-shaped gap that then drifted.
+2. **Every hard edge in the painting**, where two exports of one drawing disagree by a pixel and
+   the ratio is meaningless.
+3. ⚠️⚠️ **AND THE TINT WAS FITTED FROM THE DARKEST PIXELS, WHICH ARE NOT SHADOW AT ALL.**
+   That returned `(0.93, 0.36, 0.45)`; the deepest samples all sat on the graffiti outline.
+   Fitting the PRINCIPAL DIRECTION over every shadowed ground pixel gives `(0.708, 0.665, 1.015)`,
+   a cool blue-shifted shadow, which is both what she painted and what a sky-lit shadow does. It
+   explains 87 per cent of the variance, and the projection's own spread is tight, so her shadow
+   is a hard-edged pattern at near-constant strength rather than a gradient.
+
+The mask is now read only where the plate is locally flat and filled from the nearest place it
+could be read. ⚠️ **The same class of fault bit the cloud sprite twice.** The pole and the palm
+are cut out of the raw difference because they stand in FRONT of the cloud, so lifting it as-is
+gave a sprite with a pole-shaped hole that slid across the sky; seeding the repaint from the
+source then left a tan ghost of the pole and a green one of the palm. ⚠️ **The last five per cent
+of that ghost was a threshold**: at `opening > .5` the pole's own half-covered rim qualified as
+cloud, so the fill was pinned to a dark blend along the silhouette and the healed hole came back
+with a crisp outline of the thing it was supposed to erase. `opening > .97` is the fix.
+
+### 153.3 Subtle is a number
+
+- The cast shadow SWAYS, it does not sweep: 46 source pixels over 74 seconds, about 1.2 px a
+  second at the fastest part of the cycle. ⚠️ **Her mask is exactly one screen wide**, so a
+  travelling drift has to do something at the edge: wrapping puts a seam on screen and a fade
+  window puts a travelling bright band on it. `OwnerMenuAir` mirrors in the shader instead, and a
+  mirror only reads as a mirror if you cross it.
+- Two cloud banks, both her one painted mass, near at 1.0 and far at 0.70 and higher.
+- **Five leaves, not a particle system**, cut from the litter already lying in her road, so a
+  falling leaf and a fallen leaf are the same object.
+- The three periods, 74 s, 101 s and 43 s, are deliberately not multiples of each other.
+- ⚠️ **Reduced motion parks the clouds at the x she drew them at and the shadow at zero drift**,
+  which reproduces 46.png exactly. The setting costs the art nothing.
+
+### 153.4 The title screen is one press and it has no other doors: STATED, NOT FORGOTTEN
+
+`HomeCourtView` builds the plate, the air, the dust, the leaves, one caption and one full-screen
+`StartButton`. PLAY, TUTORIAL, SETTINGS, QUIT and CREDITS are gone; the floating logo went with
+them and is not missing, because it is the graffiti she painted onto the wall.
+
+⚠️⚠️ **ASKED WHERE THE FOUR DOORS SHOULD GO, 🧑 SAID *"throw them away gang no need we
+hhave new plan for main menu which we will edit next time"*.** So this screen deliberately fails
+`CLAUDE.md` § 6.3's "every destination has a visible door" for those four, as a stated interim
+state. **Nothing was deleted**: `ConvertedSettingsPanel`, `TumpCreditsView`,
+`SceneFlow.StartTraining` and `SceneFlow.Quit` are still built and still wired, so restoring a
+door is adding a call. ⚠️ **Settings and credits are still reachable by a player**, through
+`GameSettingsButton` on the lobby, and `TumpNativeFrontEndTests` walks exactly that journey now.
+⚠️ **Escape still quits from the title**, because the one screen every player starts on may not
+be a room with no exit.
+
+⚠️ **The caption follows the device**, which is § 4a applied to the first sentence anybody reads:
+"Click anywhere" is right on a mouse, wrong on a phone and meaningless on a pad. The pad line
+says "press any button", and `MenuNav.PadAnyPressed` exists so that sentence is true.
+
+### 153.5 The login: her element sheet is the source, her compositions are the ruler
+
+⚠️⚠️ **`login-elements.png` IS HER WHOLE LOGIN DRAWN ONCE ON A TRANSPARENT BACKGROUND**, so
+every plate is lifted by its alpha with no matting error at all. **Her sheet is aligned with her
+composition and that was measured**: compositing each piece back at its own sheet coordinates and
+comparing against 41.png leaves 0.4 per cent disagreeing pixels on the logo, 0 on the rules and 5
+to 8 on the fields and the tabs, and every one of those percentages is the text she typed on top.
+**A piece's sheet box IS its layout box.**
+
+⚠️ **Except the two action plates, which she scaled.** Green and orange sit in the sheet at
+389x84 and 389x85 and in her composition at 424x92 and 422x92. Searching scale and offset together
+fits them at 1.090 and 1.085 with the residual being exactly their captions, so it is a uniform
+scale of her art and not a stretch. `login-layout-v3.json` carries both sizes and the runtime
+draws with `preserveAspect`.
+
+⚠️ **The tab is a track and a sliding pill now.** She drew one plate with the pill on the left
+and its mirror with it on the right, which is a slide drawn as two frames. **The only pixels in
+this whole pass that are not hers exactly as drawn are the track's left end cap**, mirrored from
+its right end because the pill covers the only copy of it she supplied, with nine columns of flat
+trough blended between two real neighbours.
+
+### 153.6 Type and colour were measured, not chosen
+
+Paalalabas Display Wide BETA (Aaron Amar; the file Canva itself serves) replaces Kawit Extended as
+`OwnerUiTheme.Accent`. ⚠️ **Kawit stays on disk and unreferenced**, so going back is one line.
+
+| Role | Face | Size | Her ink | Rendered |
+|---|---|---|---|---|
+| Field caption, tab | Paalalabas | 28 | cap 20 | cap 20 |
+| TERMS, FORGOT, OR | Paalalabas | 34 | cap 24 | cap 24 |
+| Fault line | Darumadrop | 22 | cap 15 | cap 15 |
+| Action caption | Darumadrop | 61 | CREATE 210 wide | 205 |
+| Entered text | Lydian | 31 | 216 wide | 215 |
+| Title caption | Darumadrop | 59 | 706 wide | 712 |
+
+Every ink resolved to a constant the theme already carried: `#bc8749` is `Ochre`, `#c81721` is
+`HintInk`, `#901219` is `ActionInk`, `#0f5913` is `Green`. ⚠️ **One moved**: `IdleTabInk` from
+`#a12e34` to the measured `#b12f36`. ⚠️ **Her tab captions are the one tracked thing on the
+screen** (107 units against Paalalabas's own 96), which is what `OwnerUiTracking` is for;
+everything else came out inside five units untouched.
+
+### 153.7 Validation is live, and it enforces the rules the SERVICE has
+
+Her sheet puts a red line under each field. `_error` is no longer the screen's only voice: three
+per-field lines carry what a field can say about itself and `_error` keeps what is about the whole
+attempt. `SignInScreen.Fail` routes a message to the field it names.
+
+⚠️⚠️ **THE RULES ARE UGS'S, NOT THE MOCK'S.** Username is 3 to 20 of letters, digits and
+`.-_@`; password is 8 to 30 with an upper, a lower, a digit and a symbol. Checking only the length
+she wrote would ship a form that says a password is fine and is then refused by the service in
+UGS's own wording, which is exactly what 🧑 met as **"create acct doesnt work"** in
+`PlayerAccount.UpgradeAsync`'s header.
+
+⚠️⚠️ **SIGN-IN GETS ONE FAULT LINE AND NOT TWO, EVEN THOUGH SHE DREW TWO.** Her sheet has
+"ID invalid." and "Password invalid."; `SignInWithUsernamePasswordAsync` refuses the PAIR and
+never says which was wrong. Two claims where there is one fact has the player fixing the wrong
+thing, so the line names the pair.
+
+⚠️ **TWO STRINGS WERE CORRECTED AND 🧑 SHOULD SAY IF HE WANTS THEM BACK**: "Use atleast 8
+characters." and "Password do not match." ship as "Use at least 8 characters." and "Passwords do
+not match." Both are single literals in `OwnerFieldFault`.
+
+⚠️⚠️ **FORGOT PASSWORD? OPENS NOTHING, AND SAYS SO.** UGS's username-password provider has
+no recovery flow this game has built. A link that silently does nothing is § 6.3's dead end and
+one that pretends to send an email is worse, so it names the one route that exists. **This is the
+one control on the screen that is honest rather than finished.**
+
+### 153.8 Four sounds for four states that had none
+
+`ui_tick`, `ui_toggle`, `ui_valid` and `ui_start`, generated by `tools/build_ui_cues.py` and
+registered in `AudioCues`. ⚠️ **Nothing was replaced**: `docs/Asset_Sourcing.md` § 5.5 records that
+swapping cues this game already had was rejected by name. Three of the four fire while somebody is
+typing, so they are mixed at or under `ui_hover`; only `ui_start` is an event. ⚠️ **`ui_valid` is
+played on the EDGE, not on the state**, because a field is valid on every keystroke after the one
+that fixed it.
+
+### 153.9 The green tick is the one drawn mark, and what would close it: OPEN
+
+`login3-invalid`, the red cross, is hers at full size. The green tick she drew exists only in
+44.png, a three-up contact sheet at about a third scale, so there is nothing to cut, and
+`OwnerFieldMark` builds it from `OwnerUiGlyph.Disc` plus `Check` in her own lime and white at her
+cross's exact 29x30 box. **Replace it the moment a full-size export exists.**
+
+### 153.10 What is not done: OPEN
+
+- 🧑's eye on all of it, which no probe can supply.
+- A full-size export of her green valid mark (§ 153.9).
+- Password recovery (§ 153.7), which needs a service decision rather than code.
+- The next main-menu pass he has already said is coming, which is where the four doors get
+  decided (§ 153.4).
+- ⚠️ **Three `HomeFlowTests` cases are red and none of them is this pass.**
+  `LoadingStoryCanBeOpenedAdvancedAndClosedWithoutSkippingReadiness` fails on the SPLASH scene;
+  `PlaySeparatesRulesFromRoutesAndNeverPromisesAClassicLadder` looks for
+  `PlayChoiceCanvas/TumpMark` and `CourtPlayView` names its canvas `OwnerPlayCanvas`;
+  `PreparationRemainsReachableFromThePracticeLobby` reports *"ProfileButton has no raycast
+  target"* in the lobby. All three are § 124.11's fault again: fixtures driving controls the game
+  no longer builds.
 
 ---
 

@@ -37,7 +37,10 @@ namespace TumbangPreso.EditorTools
                 theme.Pattern=AssetDatabase.LoadAssetAtPath<Texture2D>(folder+"/background.png");
                 const string fonts="Assets/TumbangPreso/Resources/UI/fonts/";
                 theme.DisplayFont=AssetDatabase.LoadAssetAtPath<Font>(fonts+"DarumadropOne-Regular.ttf");
-                theme.AccentFont=AssetDatabase.LoadAssetAtPath<Font>(fonts+"KawitExtended.ttf");
+                // ⚠️ PAALALABAS SINCE 2026-09-18, ON HIS INSTRUCTION. This authoring pass rewrites
+                // the theme asset, so a font changed only in the asset reverts the next time it
+                // runs: both places or neither, which is CLAUDE.md § 6.4's splash lesson.
+                theme.AccentFont=AssetDatabase.LoadAssetAtPath<Font>(fonts+"PaalalabasDisplayWide.otf");
                 theme.ReadingFont=AssetDatabase.LoadAssetAtPath<Font>(fonts+"Lydian-Regular.ttf");
                 EditorUtility.SetDirty(theme);AssetDatabase.SaveAssets();
                 Debug.Log("[OwnerUI] Original1920x1080 sources imported losslessly; exact fonts and theme assigned.");

@@ -17,7 +17,8 @@ namespace TumbangPreso.UI
         public Color Ochre=new Color32(188,135,73,255);
         public Color Green=new Color32(15,89,19,255);
         public Color ActionInk=new Color32(144,18,25,255);
-        public Color IdleTabInk=new Color32(161,46,52,255);
+        // Measured off her 2026-09-18 sheet: the unlit tab caption on the dark trough.
+        public Color IdleTabInk=new Color32(177,47,54,255);
         public Color HintInk=new Color32(200,23,33,255);
         public Color EnteredInk=Color.black;
         public Color GuestInk=Color.white;
@@ -38,7 +39,16 @@ namespace TumbangPreso.UI
             }
         }
         public Font Display=>DisplayFont!=null?DisplayFont:Resources.Load<Font>("UI/fonts/DarumadropOne-Regular");
-        public Font Accent=>AccentFont!=null?AccentFont:Resources.Load<Font>("UI/fonts/KawitExtended");
+        // ⚠️⚠️ PAALALABAS DISPLAY WIDE REPLACED KAWIT EXTENDED ON 2026-09-18, ON HIS
+        // INSTRUCTION: *"we're replacing old font too we will use PAALALABAS WIDE
+        // INSTEAD"*. It is the face in every caption on her redrawn login, and the
+        // sizes in `SignInScreen.OwnerPainted` were fitted to her own ink: cap
+        // height 20 at size 28 for the field captions and the tabs, cap height 24
+        // at size 34 for the two links.
+        //
+        // ⚠️ KAWIT IS KEPT ON DISK AND UNREFERENCED, which is `docs/TODO.md` § 68.3's
+        // keep-the-old-chrome rule: going back is this one line.
+        public Font Accent=>AccentFont!=null?AccentFont:Resources.Load<Font>("UI/fonts/PaalalabasDisplayWide");
         public Font Reading=>ReadingFont!=null?ReadingFont:Resources.Load<Font>("UI/fonts/Lydian-Regular");
         public Texture2D Background=>Pattern!=null?Pattern:Resources.Load<Texture2D>("UI/owner-painted/background");
         public Sprite Art(Piece piece)

@@ -129,6 +129,14 @@ namespace TumbangPreso.Audio
                 { "sfx_ice_shatter", -3.0f },
 
                 { "ui_hover",       -8.0f },
+                // ⚠️ THREE OF THE FOUR NEW CUES FIRE WHILE SOMEBODY IS TYPING, so they sit at
+                // or under the hover, not at the click. A validation chime mixed like an event
+                // is what makes a player turn menu sound off. Only `ui_start` is an event: it
+                // is the title screen letting go, and nothing else is happening on that frame.
+                { "ui_tick",       -13.0f },
+                { "ui_valid",      -12.0f },
+                { "ui_toggle",      -9.0f },
+                { "ui_start",       -3.0f },
                 { "land",           -6.0f },
                 { "step_rubber",   -11.0f },
                 { "slide_scrape",   -6.0f },
@@ -374,6 +382,13 @@ namespace TumbangPreso.Audio
 
             // UI.
             "ui_click", "ui_hover", "ui_back", "ui_error",
+
+            // ⚠️ FOUR STATES THAT HAD NO SOUND, ADDED 2026-09-18 WITH THE LOGIN AND TITLE
+            // REWORK. Nothing above was replaced: `docs/Asset_Sourcing.md` § 5.5 records that
+            // swapping cues this game already had was rejected by name. These are the gaps
+            // `MenuSfx`'s header describes, where a converted screen went silent for something
+            // the Godot build made a noise for. `tools/build_ui_cues.py` generates them.
+            "ui_tick", "ui_toggle", "ui_valid", "ui_start",
 
             // The boot sting. ⚠️ It is a separate stream rather than audio on the video
             // because Godot 4's only core video codec is Theora and the clip was exported

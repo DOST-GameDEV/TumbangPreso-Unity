@@ -117,6 +117,45 @@ namespace TumbangPreso.InputLayer
             }
         }
 
+        /// <summary>
+        /// True on the frame a pad player pressed anything that is not Cancel.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO ONE SENTENCE CAN BE TRUE. The title screen's whole
+        /// content is an instruction, and on a pad the honest version of "click
+        /// anywhere" is "press any button": a pad player has no pointer, so
+        /// "anywhere" names nothing they can aim at. Submit alone would have made
+        /// that sentence a lie for every other button on the pad, and the
+        /// alternative wording is a literal button name, which `docs/VISION.md`
+        /// § 3 bans because it teaches whatever the binding used to be.
+        ///
+        /// ⚠️ CANCEL IS EXCLUDED AND THAT IS THE ONLY EXCLUSION. B leaves the game
+        /// from the title screen (`ConvertedMainMenu.CancelTarget`), so accepting
+        /// it here would make one press both start the game and quit it, and the
+        /// order the two readers happen to run in would decide which.
+        ///
+        /// ⚠️ IT LIVES HERE RATHER THAN ON THE SCREEN, for this file's own reason:
+        /// a screen that reads `Gamepad.current` itself is the fault § 35.3
+        /// records, where nine spectator keys sat outside the input map and
+        /// nothing in the project could see them.
+        /// </summary>
+        public static bool PadAnyPressed
+        {
+            get
+            {
+                if (PadCancelPressed) return false;
+                if (PadSubmitPressed) return true;
+
+                var pad = Gamepad.current;
+                if (pad == null) return false;
+                return pad.buttonWest.wasPressedThisFrame
+                       || pad.buttonNorth.wasPressedThisFrame
+                       || pad.startButton.wasPressedThisFrame
+                       || pad.selectButton.wasPressedThisFrame
+                       || pad.leftShoulder.wasPressedThisFrame
+                       || pad.rightShoulder.wasPressedThisFrame;
+            }
+        }
+
         private static EventSystem _knownSystem;
         private static InputSystemUIInputModule _knownModule;
 

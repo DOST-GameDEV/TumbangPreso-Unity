@@ -148,6 +148,12 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (!IsOpen) return;
+
+            // ⚠️ THE LIVE FIELD STATE IS READ BEFORE THE EARLY RETURNS BELOW, because those
+            // returns are about Escape and about the welcome hold, and neither has anything to
+            // say about whether the password the player is typing is long enough yet.
+            if (_nativeForm) WatchOwnerFields();
+
             if (_nativeForm && ((_ownerTermsView!=null && _ownerTermsView.IsOpen) || _ownerTermsClosedFrame==Time.frameCount)) return;
 
             // ⚠️⚠️ THE HOLD IS ON UNSCALED TIME AND CANCELS ON ANY PRESS. `Time.time` would stop
@@ -1698,7 +1704,7 @@ namespace TumbangPreso.UI
         private void Close()
         {
             _root.SetActive(false);
-            if(_nativeForm){_password.text="";_ownerConfirm.text="";}
+            if(_nativeForm){_password.text="";_ownerConfirm.text="";ClearOwnerFaults();}
             Opened?.Invoke(false);
             Closed?.Invoke();
         }
@@ -1974,11 +1980,19 @@ namespace TumbangPreso.UI
 
         private void Fail(string message)
         {
+            // ⚠️⚠️ A FAULT ABOUT A FIELD GOES UNDER THAT FIELD, SINCE 2026-09-18. She redrew the
+            // login with a red line under each input, so a message naming the username or the
+            // password belongs there and not in the screen's one shared line. `RouteOwnerFault`
+            // answers whether it found a home for it; everything left over is about the attempt
+            // rather than about a field, and that is what the shared line is for.
+            if (RouteOwnerFault(message)) return;
+
             // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
             // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.
             // It is also unreadably hot on cream.
             _error.color = _nativeForm ? OwnerUiTheme.Current.HintInk : UiTheme.MenuRed;
             _error.text = message ?? "";
+            if (_nativeForm) MenuSfx.Error();
         }
     }
 }

@@ -1,0 +1,28 @@
+{
+  "source": "ArtSource/ui/owner-ui-edits-2026-09-18",
+  "plate": "48.png",
+  "lit": "46.png",
+  "sky": [
+    136.0,
+    200.0,
+    119.0
+  ],
+  "cloud": {
+    "x": 1243,
+    "y": 37,
+    "width": 532,
+    "height": 269
+  },
+  "shadow": {
+    "tint": [
+      0.7079,
+      0.665,
+      1.0149
+    ],
+    "covered": 0.3573
+  },
+  "leaf": {
+    "width": 115,
+    "height": 39
+  }
+}

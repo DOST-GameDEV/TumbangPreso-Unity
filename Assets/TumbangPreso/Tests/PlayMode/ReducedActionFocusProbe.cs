@@ -23,13 +23,26 @@ namespace TumbangPreso.PlayTests
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             try
             {
+                // ⚠️⚠️ THE SUBJECT MOVED FROM THE TITLE'S PLAY PENNANT TO THE LOGIN'S CREATE
+                // PLATE, BECAUSE THE PENNANT NO LONGER EXISTS. 🧑 2026-09-18 asked for a title
+                // screen with no buttons on it at all (`HomeCourtView`), so the last painted
+                // action a player meets before the lobby is this one. Nothing this fixture
+                // actually asserts is about the title: it is about `OwnerUiMotion` giving a
+                // keyboard or pad player visible feedback with motion reduced, without moving
+                // the hit box, rescaling the artwork or swapping her sprite.
                 SceneFlow.BootedThroughSplash = false;
                 Settings.SettingsStore.Current.ReducedUiMotion = true;
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
                 yield return null;
                 Settings.SettingsStore.Current.ReducedUiMotion = true;
-                var canvas = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
-                var button = canvas.GetComponentsInChildren<OwnerPaintedAction>().Single(b => b.name == "StartButton");
+                var login = Object.FindFirstObjectByType<ConvertedMainMenu>().GetComponent<SignInScreen>();
+                login.Install(); login.OpenAtBoot();
+                // ⚠️ THE ENTRY EASE RUNS ON UNSCALED TIME EVEN WITH MOTION REDUCED, because it is
+                // an opacity rather than a movement. Both captures have to be taken after it has
+                // settled or the difference between them is the form still arriving.
+                yield return new WaitForSecondsRealtime(1.2f);
+                var canvas = GameObject.Find("OwnerSignInCanvas").GetComponent<Canvas>();
+                var button = canvas.GetComponentsInChildren<OwnerPaintedAction>().Single(b => b.name == "SubmitAccount");
                 var hit = (RectTransform)button.transform;
                 var bounds = hit.sizeDelta;
                 var position = hit.anchoredPosition;
@@ -41,15 +54,19 @@ namespace TumbangPreso.PlayTests
                 yield return TumpUiCapture.Capture("ReducedFocus-selected", canvas, 1920, 1080, false);
                 var a = Read("rest"); var b = Read("selected");
                 int changed = 0, artworkChanged = 0, outside = 0;
-                // This check owns the fixed control pane. The separate sky fixture owns
-                // the distant composited cloud pixels and their sampling tolerances.
-                for (int y = 0; y < 1080; y++) for (int x = 0; x < 900; x++)
+                // ⚠️ THE WINDOWS ARE HER OWN LAYOUT, NOT PADDING. CREATE sits at 746,787 and is
+                // 424x92 (login-layout-v3.json), so the artwork window is exactly that rect and
+                // the band around it is 44 units to the left for the static focus marker, which
+                // `OwnerUiMotion.UpdateStaticFocus` hangs 20 units outside the control.
+                // ⚠️ AND THE WHOLE FRAME IS SCANNED HERE, unlike the title version of this
+                // fixture, because the login's woven background does not move.
+                for (int y = 0; y < 1080; y++) for (int x = 0; x < 1920; x++)
                 {
                     int at = (1079 - y) * 1920 + x;
                     if (Difference(a[at], b[at]) <= 3) continue;
                     changed++;
-                    if (x >= 165 && x < 577 && y >= 455 && y < 610) artworkChanged++;
-                    if (x < 120 || x > 587 || y < 445 || y > 610) outside++;
+                    if (x >= 746 && x < 1170 && y >= 787 && y < 879) artworkChanged++;
+                    if (x < 702 || x > 1194 || y < 777 || y > 889) outside++;
                 }
                 Debug.Log($"[ReducedFocus] changed={changed} artwork={artworkChanged} outside={outside}");
                 Assert.Greater(changed, 150, "Keyboard/controller selection has no visible feedback with motion reduced");
@@ -71,7 +88,7 @@ namespace TumbangPreso.PlayTests
                 yield return TumpUiCapture.Capture("ReducedFocus-cleared", canvas, 1920, 1080, false);
                 var cleared = Read("cleared");
                 int uncleared = 0;
-                for (int y = 0; y < 1080; y++) for (int x = 0; x < 900; x++)
+                for (int y = 0; y < 1080; y++) for (int x = 0; x < 1920; x++)
                     if (!a[y * 1920 + x].Equals(cleared[y * 1920 + x])) uncleared++;
                 Assert.AreEqual(0, uncleared, "Losing focus must remove the static cue");
                 EventSystem.current.SetSelectedGameObject(button.gameObject);
