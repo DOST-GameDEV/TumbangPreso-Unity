@@ -384,6 +384,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **155** | The recall beam, and the one question two features now share | 🧑, with a frame of a Fortnite loot beam: *"create a prompt that creates this beam when your tsinelas is in the ground ... there shouldnt be any conflict with the slipperRecall"*. ⚠️⚠️ **The no-conflict requirement was met by SHARING rather than by avoiding**: whose it is, the colour, Off, and when to stand down are each decided once and read twice. The rim pass had to learn to skip an effect parented to a prop. ⚠️ **Open: his eye on a column standing in a fight, and nothing measures the frame fraction against `AbilityShowcaseProbe`'s 12 per cent.** § 155 |
 | **154** | The recall mark, and ownership becomes a lock | 🧑: *"create a prompt where the image icon will pop up in a player's screen after their slippers get thrown"* and *"we should disable being able to take other people's tsinelas when you are attacking"*. ⚠️⚠️ **Both are built, and the pass found two faults older than it**: a non-host player had **never seen a landed rim at all** (every route into `Slipper.Land` is host-gated), and `Hud.UpdateIndicators` ran a `FindObjectsByType` on every frame of every taya round. ⚠️ **Open: the render, a probe that can fail, and his eye on what the lock does to a four-player match.** § 154 |
 | **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 |
 | **151** | The nationals fun pass: ears at the player, an impact frame one peer got, and a slide nobody could see or hear | ⚠️⚠️ **Seven player-perceivable defects, all closed**: the only `AudioListener` in the game sat at world origin so every 3D cue panned from the middle of the map; thirteen call sites faked a position to work around it; the throw wind-up and the committed slide were audible to the one player who already knew, while the VISIBLE half of the wind-up was relayed on purpose; the hit freeze on the lata knockdown fired **on the host alone** and `audit_presentation_reach.py` had no pattern that could see a time-scale freeze; the pisonet booth played the SCORE STING and ducked the music while awarding nothing; and the committed retrieval slide, the one move this brief is about, had **three** at once (the first-person arm stopped animating on it the day before this pass, the wire announces it as a lunge, and three players out of four cannot hear it). ⚠️ **What is open is three human calls and no code**: the ear on the listener, the eye on the jeepney, and the slide's own feel. `Attention.md` § 17.2 and § 18 |
@@ -501,6 +502,113 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 155 · THE RECALL BEAM, AND THE ONE QUESTION TWO FEATURES NOW SHARE ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`
+
+🧑, with a frame of a Fortnite loot beam: *"create a prompt that creates this beam when your
+tsinelas is in the ground. the beam color will be matched with your slipper's highlight color.
+there shouldnt be any conflict with the slipperRecall."*
+
+### 155.1 The beam ✅ DONE
+
+`Visual.SlipperBeam`: a column standing on your own loose tsinelas, in the colour you picked in
+settings. A bright core, a wide faint halo, a pool of light on the road, one point light and three
+rising motes, all painted by `VfxMaterial.Ghost`.
+
+- **2.2 m, chosen against the maps rather than against the reference.** The frame it was drawn
+  from is a third-person game with open sky; two of this game's three arenas are built UNDER
+  things. A column tall enough to look impressive outdoors punches through a ceiling indoors.
+- ⚠️ **The alphas are low and `AbilityShowcaseProbe` is why there is a number to point at.** That
+  probe fails a run in which one effect blows more than **12 per cent** of the frame to white, and
+  it caught Zack's ultimate at **62.8**. A beam is thin, but it is the one effect in the game a
+  player deliberately walks up to and stands under.
+- ⚠️ **The column is forced upright every frame rather than trusted to be.** It is a child of a
+  THROWN object: `SpinInFlight` tumbles the shoe and `Land` is the only thing that puts the
+  rotation back, so the routes that put a slipper down without landing it (the owner-mark
+  recovery, a snapshot applied on a client) are exactly the routes that would leave a beam lying
+  on its side.
+- ⚠️ **Blue is legal here and is the shipped default.** `CLAUDE.md` § 6.4 bans blue from UI
+  chrome; this is a world effect wearing a colour the player chose, and `SlipperHighlights`'
+  own note records blue being picked because *"the arena is warm dust and wood"*.
+
+### 155.2 ⚠️⚠️ "NO CONFLICT WITH SLIPPERRECALL" IS A DESIGN CONSTRAINT AND IT WAS MET BY SHARING RATHER THAN BY AVOIDING ✅ DONE
+
+The two answer the same question, *"where is mine"*, and differ in what they can do: a screen mark
+points at something you cannot see and a beam cannot; a beam is a landmark you read out of the
+corner of your eye and a mark is not. **Everything they could have disagreed about is one thing
+asked twice rather than two things kept in step:**
+
+| What could have diverged | Where it is decided, once |
+|---|---|
+| Whose tsinelas this is | `Slipper`'s per-peer owner flag, the one `MatchInstaller` and `MatchRpc` maintain |
+| The colour | `SlipperHighlights.ColourOf`, the same call the landed rim makes |
+| Off | the one `SlipperHighlight` setting silences the rim, the beam and the mark's cap colour together |
+| When to stand down | both fade out as the grab comes into reach, keyed off `Balance.PickupRadius`, and `TumpMatchReadout` takes over with `[X] Pick up` |
+| Who owns a renderer | `VfxMaterial.Ghost` attaches `VfxRenderTag`, which is what keeps the rim pass and the toon-outline sweep off an effect parented to a prop |
+
+⚠️⚠️ **AND THE RIM PASS HAD TO LEARN THE LAST ROW.** `Slipper.RefreshHighlight` wrote rim
+properties into EVERY child renderer, which would now include four beam parts. It is harmless
+today, because their material carries none of those properties, and it is the shape of the fault
+that would put a landed-rim assertion on the wrong renderer: `LandedHighlightTests` reads
+`GetComponentInChildren<Renderer>()`. It skips tagged renderers now, which is `VfxRenderTag`'s own
+rule (*"is this part of the model"*) applied one system further in.
+
+⚠️ **THE FADE IS PRESENTATION AND IS NOT A SECOND COPY OF THE PICKUP RULE.** It reads
+`Balance.PickupRadius` so the beam cannot stand down at a distance the grab disagrees with, and it
+asks no question about eligibility at all. The rule still lives only in
+`Slipper.IsGrabbableIgnoringReach`. `CombatVerbs.SlideMayStartFrom` draws the same line.
+
+### 155.3 ⚠️ THE BEAM IS BROADER THAN THE LANDED RIM, DELIBERATELY
+
+The rim answers *"where did the one you just threw end up"*, so it is cleared by a recovery that
+teleports the shoe home rather than lighting a place the throw never reached. The beam answers
+*"your tsinelas is lying over there"*, which is true however it got there. 🧑 asked for it
+*"when your tsinelas is in the ground"*. **They therefore have different lifetimes on purpose**,
+and a reader finding one lit without the other has not found a bug.
+
+### 155.4 ⚠️ `SetState` DRIVES IT AND `SetLandedHighlight` COULD NOT
+
+`SetLandedHighlight(false)` returns on its first line when the flag is already false, so it is not
+a reliable "the state moved" signal: a tsinelas going from Held to Loose with no landed rim on it
+repaints nothing at all. The beam stands on ANY loose tsinelas of yours, so it needs the transition
+itself. ⚠️ **On a real change only**: `ApplySnapshotState` calls `SetState` on every reliable state
+packet including keepalives, and a repaint per packet would rebuild four materials at the wire's
+cadence.
+
+### 155.6 Two faults the first build had, both caught before they shipped
+
+- ⚠️⚠️ **THE PER-FRAME PAINT WAS BUILDING A MATERIAL PER RENDERER PER FRAME.** `Paint` ran from
+  `Update` and called `VfxMaterial.Ghost`, which does `new Material(template)` and hands it to
+  `VfxRenderTag.Own`. At sixty frames a second that is sixty materials per renderer per second
+  added to a list only emptied when the slipper dies: **the exact leak `VfxRenderTag.Own` was
+  written to close**, reintroduced one call site later and an order of magnitude worse. Ghost is
+  for BUILDING an effect; per-frame work writes into what it built. The materials are made once
+  and tinted now.
+- ⚠️⚠️ **THE FIRST COLUMN WAS ONE CYLINDER AND RENDERED AS A LENGTH OF PLASTIC PIPE.**
+  `beam-witness.png` on the first green run is the receipt: a hard silhouette at one alpha from
+  base to tip, which is what a tube looks like and not what light looks like. It is a stack of six
+  segments now, tapering on width and on alpha, with the alpha curve raised to a power so most of
+  the falloff is in the last third and the column stops being there rather than stopping.
+  ⚠️ **Segments rather than a gradient texture or a custom shader**: this front end is blocky on
+  purpose, and a stack needs no new asset and no new entry in `GameBuilder.EnsureRuntimeShaders`.
+- ⚠️ **AND THE FIRST FRAMES CAME BACK RED WHILE THE SHIPPED DEFAULT IS BLUE**, because
+  `SettingsStore.Current` persists to disk and the probe took whatever this machine last chose.
+  `SlipperRecallShots` sets the default explicitly and raises the event, which is what
+  `LandedHighlightTests` already did and for the reason it records.
+
+### 155.5 NOT DONE, named rather than left implied
+
+- [ ] **His eye on it in play.** The frames say it draws; they cannot say whether a column standing
+  on your shoe during a fight is help or clutter, or whether 2.2 m is right under the bridge.
+  `Attention.md` § 20.
+- [ ] **Nothing measures the frame fraction.** `AbilityShowcaseProbe`'s 12 per cent bound is the
+  number this was written against and the beam is not in that probe's cast, so the claim that a
+  beam cannot blow out a first-person frame is argued rather than measured.
+- [ ] **No peer has watched another peer's screen.** The beam is per-peer by construction and
+  nothing about it crosses the wire, which is an argument rather than an observation. It is the
+  same gap § 126.11 records for crossplay.
 
 ---
 
