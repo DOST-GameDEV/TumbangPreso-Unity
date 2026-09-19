@@ -119,6 +119,11 @@ namespace TumbangPreso.PlayTests
                 confirmation.text=fields.First(f=>f.name=="Password").text;yield return null;yield return null;
                 Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="ConfirmFault").text,
                     "Live validation must clear a fault the player has fixed");
+                // ⚠ THE ONE MOMENT IN THE FLOW THAT PHOTOGRAPHS HER VALID MARK. All three
+                // fields are good only here, and the mark fades in over `StateSeconds`, so a
+                // capture on the same frame gets an empty seat. § 153.9 is judged off this shot.
+                yield return new WaitForSecondsRealtime(.6f);
+                yield return TumpUiCapture.Capture("OwnerLogin-v8-valid-marks",canvas,1920,1080,false);
                 Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Standard,confirmation.contentType);
                 Find("RevealConfirmation").onClick.Invoke();Assert.AreEqual(InputField.ContentType.Password,confirmation.contentType);
                 var divider=canvas.GetComponentsInChildren<RectTransform>().First(t=>t.name=="AccountDivider");

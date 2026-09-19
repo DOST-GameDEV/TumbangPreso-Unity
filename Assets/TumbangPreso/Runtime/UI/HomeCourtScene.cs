@@ -7,8 +7,27 @@ namespace TumbangPreso.UI
     {
         public Texture2D Illustration;
         public float Drift = .0015f;
-        public float WideVerticalFocus = .32f;
-        public float NarrowHorizontalFocus = .56f;
+        /// <summary>
+        /// Where the crop keeps its grip when the window is not 16:9.
+        ///
+        /// ⚠⚠ BOTH OF THESE POINTED AT THE CAN AND THEY HAD TO TURN ROUND ON
+        /// 2026-09-18, BECAUSE THE LOGO IS INSIDE THE PICTURE NOW. They were
+        /// tuned to hold the can and the slipper, which was right while the TUMP
+        /// mark was a separate UI sprite floating over the street and could not
+        /// be cropped by anything. Her redraw made the graffiti on the wall the
+        /// title, so the old bias cut the game's own name off: at 1280x960 the
+        /// crop took the T and the screen read "uMP", and at 3840x1080 the whole
+        /// graffiti sat above the top edge. Both are in this repository's own PC
+        /// viewport list, and `docs/TODO.md` § 153.13 has the two captures.
+        ///
+        /// ⚠ THE GRAFFITI IS AT u 0.02-0.45, v 0.46-0.95 of her plate, so these
+        /// are the values that keep all of it: a narrow window holds the left
+        /// edge, a wide one holds the top. The can and the slipper are what gets
+        /// given up at the extremes, and that is the right way round -- a title
+        /// screen may lose a prop, it may not lose its title.
+        /// </summary>
+        public float WideVerticalFocus = .71f;
+        public float NarrowHorizontalFocus = .30f;
         private UnityEngine.UI.RawImage _image;
         private void Awake()
         {
@@ -25,8 +44,8 @@ namespace TumbangPreso.UI
             float screen = size.x / size.y;
             var uv = screen > source ? new Vector2(1, source / screen) : new Vector2(screen / source, 1);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
-            // Keep the can/slipper focal area in view instead of slicing its base
-            // off on ultrawide displays. Narrower crops retain the right-hand can.
+            // Hold her graffiti, which is the logo: the left edge as the window
+            // narrows, the top as it widens. The clamp below decides the rest.
             var centre = new Vector2(
                 Mathf.Lerp(.5f, NarrowHorizontalFocus, Mathf.Clamp01((1 - uv.x) / .3f)),
                 Mathf.Lerp(.5f, WideVerticalFocus, Mathf.Clamp01((1 - uv.y) / .5f)));

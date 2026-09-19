@@ -677,17 +677,107 @@ cross's exact 29x30 box. **Replace it the moment a full-size export exists.**
 ### 153.10 What is not done: OPEN
 
 - 🧑's eye on all of it, which no probe can supply.
-- A full-size export of her green valid mark (§ 153.9).
-- Password recovery (§ 153.7), which needs a service decision rather than code.
+- A full-size export of her green valid mark (§ 153.9). ⚠️ **Until it exists the disc is her
+  own measured green and no longer `Lime`**, see § 153.11.
+- Password recovery (§ 153.7), which needs a service decision rather than code. ⚠️ **The
+  cheapest real answer is already half-built**: UGS has no reset for username-password because it
+  holds no address to send one to, and the identity that WOULD carry a recovery route is the
+  Google sign-in this game already ships dark, waiting on the OAuth Desktop client id § 115.8
+  records as owed. A recovery code issued at signup is the alternative and costs a screen nobody
+  reads until the day they need it. **🧑 chooses; neither is code this pass can write.**
 - The next main-menu pass he has already said is coming, which is where the four doors get
   decided (§ 153.4).
-- ⚠️ **Three `HomeFlowTests` cases are red and none of them is this pass.**
-  `LoadingStoryCanBeOpenedAdvancedAndClosedWithoutSkippingReadiness` fails on the SPLASH scene;
-  `PlaySeparatesRulesFromRoutesAndNeverPromisesAClassicLadder` looks for
-  `PlayChoiceCanvas/TumpMark` and `CourtPlayView` names its canvas `OwnerPlayCanvas`;
-  `PreparationRemainsReachableFromThePracticeLobby` reports *"ProfileButton has no raycast
-  target"* in the lobby. All three are § 124.11's fault again: fixtures driving controls the game
-  no longer builds.
+
+### 153.11 The three red `HomeFlowTests` were four stale names and one race: CLOSED 2026-09-19
+
+`Logs/homeflow-153-before.xml` is 1 passed, 3 failed; `Logs/homeflow-153-final.xml` is 6 passed,
+0 failed, over `HomeFlowTests` and `OwnerMenuEditsTests` together. None of the three was a fault
+in the shipping game; all of them were § 124.11 once more, a fixture knocking on a door the game
+had moved. What each one actually was:
+
+| Fixture asked for | The game builds | Since |
+|---|---|---|
+| `LoadingArtButton` | `LoadingStories`, a labelled link | `BuildCourtLoadingSurface`: artwork that is secretly a button is § 6.3's invisible door |
+| `PlayChoiceCanvas/TumpMark` | `OwnerPlayCanvas` / `OriginalOwnerLogo` | the owner-painted `CourtPlayView` |
+| `HubClose` | `ClosePlayerHub` | `PlayerHub.OwnerPainted` |
+| `CharacterButton`, then the panel's `BackButton` | `LoadoutButton`, then `TumpBack` | `OpenLoadout` IS `OpenCharacterSelect`, and what opens is `TumpPickerView` |
+
+⚠⚠ **AND THE FOURTH FAILURE MOVED BETWEEN RUNS, WHICH IS THE ONE WORTH READING.** The same
+unchanged fixture blamed `ProfileButton` on one run and `ClassicButton` on the next, both with an
+EMPTY raycast rather than a wrong hit. `Graphic.depth` is -1 until the canvas has been batched
+for a render and `GraphicRaycaster` skips a graphic with depth -1 however well its rect lines up,
+so every `WaitForSecondsRealtime` in these fixtures was a guess at how long a scene load takes on
+the machine of the day. **They wait for the control to be hittable now, not for a number of
+seconds**, which is `PressWhen`; `WaitForScene` replaces the same guess about an async load.
+
+⚠️ **`ActiveButton` names the control and lists the screen when it misses.** Every one of these
+fixtures died on `First`'s *"Sequence contains no matching element"*, which names neither, and
+placing the first of them cost two full runs.
+
+⚠️ **The loading test ends where a player ends.** It asserted the title screen the moment the
+menu scene went active and got her login, because a first boot meets `_atBoot` and `BootGuest`
+before it meets the street. It walks the guest door now.
+
+### 153.14 Five more fixtures beside these three are red, and they are NOT this pass: OPEN
+
+Running the suites around § 153.11 turned up five more, and they were measured rather than
+assumed: `Logs/ui-153-baseline.xml` is the same six suites with **this pass's three runtime files
+checked back out at `ec198019`**, and it fails exactly the same five with exactly the same
+messages. Nothing in §§ 153.11-153.13 caused any of them.
+
+| Fixture | What it reports |
+|---|---|
+| `TumpNativeFrontEndTests.NativeSignInKeepsRealFieldsValidationAndBackWithoutSendingCredentials` | wants `"Enter a username."` in the shared line and gets an empty string |
+| `TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms` | a name lookup finds nothing |
+| `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews` | a name lookup finds nothing |
+| `BrandSettingsTests.SettingsSectionsKeepTheCorrectRowsAndReadableControls` | `NullReferenceException` |
+| `BrandSettingsTests.ReducedMotionPreviewsSavesAndDiscardsThroughTheVisibleDecision` | `NullReferenceException` |
+
+⚠️ **The first one is worth reading before it is fixed**, because it is the only one that might
+be describing the game rather than the fixture: § 153.7 moved the login's faults under the field
+each is about and left `AccountStatus` for what is about the whole attempt, so a shared line that
+is now deliberately empty is the *owner-painted* screen's design. Whether the NATIVE sign-in
+screen was supposed to follow it there is a question about that screen, not about this one.
+⚠️ **And `TitlePlayCredits...` walks to CREDITS and SETTINGS from the title**, which is the
+journey 🧑 deleted in § 153.4. It cannot be repaired without deciding where those doors went,
+which is the next menu pass.
+
+### 153.13 The crop was still protecting the can, and it cost the logo: CLOSED 2026-09-19
+
+`HomeCourtScene` biases its crop when the window is not 16:9, and both biases pointed at the can
+and the slipper. That was right for as long as the TUMP mark was a separate UI sprite floating
+over the street, because a sprite cannot be cropped by a background's uv rect. **Her redraw made
+the graffiti on the wall the logo, and the old bias cut the game's own name off.**
+
+- **1280x960**, in this repository's own PC viewport list: the crop took the T and the title read
+  **"uMP"**.
+- **3840x1080**: the graffiti sat entirely above the top edge, so the title screen was a road.
+
+Her graffiti occupies u 0.02-0.45 and v 0.46-0.95 of the plate. `NarrowHorizontalFocus` .56 -> .30
+and `WideVerticalFocus` .32 -> .71 hold the left edge as the window narrows and the top as it
+widens; the existing clamp does the rest, so no window ever shows outside her art. ⚠️ **The can
+and the slipper are what gets given up at the extremes and that is the right way round**: a title
+screen may lose a prop, it may not lose its title. The weather needed no change, because
+`OwnerMenuAir` draws into the same uv rect and travels with the crop.
+
+### 153.12 Her valid mark is not `Lime`, measured: CLOSED 2026-09-19
+
+Her tick survives only in 44.png, at about a third scale, as a disc nine pixels across at
+(1021,851)-(1029,858). The plateau inside it reads **(138,172,89)**; `Lime` is (187,208,69) and is
+the face of her CREATE plate at full strength in the same picture, so the two are not the same
+green. ⚠⚠ **A nine-pixel disc can only be contaminated by the white tick inside it and the pale
+field behind it, and both of those are lighter than either candidate**, so a reading darker than
+`Lime` cannot be an artefact of the scale. The measured pixel is used rather than a fitted one and
+it is a CEILING on how light she drew it. Her refused disc, for comparison, is flat `HintInk`
+(200,23,33) to the byte across its whole 29x30 box, with no rim or shadow, so the accepted one is
+built flat too.
+
+⚠️ **And its rim fades now, because it sits beside a PNG.** Her cross is a sprite with a soft
+edge; the disc was a 28-segment mesh with a hard one, and at 29 pixels it read as a faceted stop
+sign next to her circle. `OwnerUiGlyph` grew a `Ring` with a one-pixel alpha skirt and `Stroke`
+takes the same treatment, so the check inside the disc is no longer stepped either. **More
+segments would not have fixed it**: the faceting was the smaller half and the hard alpha edge was
+the rest. The before and after are `Logs/shots-native-ui/OwnerLogin-v8-valid-marks.png`.
 
 ---
 

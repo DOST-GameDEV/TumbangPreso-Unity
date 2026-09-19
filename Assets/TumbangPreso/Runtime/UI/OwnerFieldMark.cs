@@ -13,8 +13,24 @@ namespace TumbangPreso.UI
     /// tick only exists in 44.png, which is a three-up contact sheet at about a
     /// third scale. There is nothing there to cut, so the green one is built to
     /// the same 29x30 box out of `OwnerUiGlyph.Disc` plus `OwnerUiGlyph.Check`
-    /// in her own lime and white. Replace it the moment a full-size export of
+    /// in her own green and white. Replace it the moment a full-size export of
     /// hers exists.
+    ///
+    /// ⚠️⚠️ ITS DISC WAS `Lime` AND HER OWN TICK IS DARKER THAN THAT, MEASURED.
+    /// Her mark survives in 44.png as a disc about nine pixels across, at
+    /// (1021,851)-(1029,858), and the plateau inside it reads (138,172,89).
+    /// `Lime` is (187,208,69) and is the face of her CREATE plate, which sits in
+    /// the same picture at full strength, so the two are not the same green. A
+    /// nine-pixel disc can only be contaminated by the white tick inside it and
+    /// the pale field behind it, and BOTH of those are lighter than either
+    /// candidate, so a reading darker than `Lime` cannot be an artefact of the
+    /// scale: her valid mark is its own ink. The measured pixel is used rather
+    /// than a fitted one, and it is a CEILING on how light she drew it.
+    ///
+    /// ⚠️ HER REFUSED DISC IS FLAT `HintInk` (200,23,33) TO THE BYTE, with the
+    /// cross knocked out in white and no rim or shadow anywhere in its 29x30
+    /// box, so the accepted one is built flat too. The pair reads as a pair
+    /// because they share a construction, not because they share an ink.
     ///
     /// ⚠️ NEITHER STATE MOVES THE FIELD'S RIGHT EDGE. Both marks are centred in
     /// the same 45x34 seat the password fields give their eye, so a field that
@@ -28,6 +44,9 @@ namespace TumbangPreso.UI
     public sealed class OwnerFieldMark : MonoBehaviour
     {
         public enum State { None, Refused, Accepted }
+
+        /// <summary>Her own valid-mark green, read off 44.png. See the note above.</summary>
+        public static readonly Color HerValidGreen = new Color32(138, 172, 89, 255);
 
         private Image _refused;
         private CanvasGroup _refusedGroup, _acceptedGroup;
@@ -54,7 +73,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(accepted,
                 (seat.width - refusedBox.width) * .5f, (seat.height - refusedBox.height) * .5f,
                 refusedBox.width, refusedBox.height);
-            var disc = OwnerUiGlyph.Create(accepted, "Disc", OwnerUiGlyph.Mark.Disc, OwnerUiTheme.Current.Lime);
+            var disc = OwnerUiGlyph.Create(accepted, "Disc", OwnerUiGlyph.Mark.Disc, HerValidGreen);
             OwnerUiLayout.Fill(disc.rectTransform);
             disc.raycastTarget = false;
             var tick = OwnerUiGlyph.Create(accepted, "Tick", OwnerUiGlyph.Mark.Check, Color.white);
