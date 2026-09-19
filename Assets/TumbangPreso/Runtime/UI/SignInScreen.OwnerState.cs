@@ -1,4 +1,5 @@
 using System.Linq;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -112,21 +113,13 @@ namespace TumbangPreso.UI
             if (value.Length == 0) return null;
             if (confirmAgainst != null)
                 return value == confirmAgainst ? null : "Passwords do not match.";
-            if (password)
-            {
-                if (value.Length < 8) return "Use at least 8 characters.";
-                if (value.Length > 30) return "Use at most 30 characters.";
-                if (!value.Any(char.IsUpper) || !value.Any(char.IsLower) || !value.Any(char.IsDigit)
-                    || value.All(char.IsLetterOrDigit))
-                    return "Add a capital, a number and a symbol.";
-                return null;
-            }
-            if (value.Length < 3) return "Use at least 3 characters.";
-            if (value.Length > 20) return "Use at most 20 characters.";
-            foreach (char c in value)
-                if (!char.IsLetterOrDigit(c) && c != '.' && c != '-' && c != '_' && c != '@')
-                    return "Letters, numbers and . - _ @ only.";
-            return null;
+
+            // ⚠⚠ THE RULES THEMSELVES MOVED TO `AccountRules` AND THE SENTENCES CAME WITH THEM.
+            // CHANGE PASSWORD is a third screen that has to refuse exactly what the service
+            // refuses, and this form is no longer the only reader. What stayed here is the line
+            // above and the one below it, which are this SCREEN's policy rather than the rule:
+            // an empty field is not a fault yet, and a confirmation is about the pair.
+            return password ? AccountRules.PasswordFault(value) : AccountRules.UsernameFault(value);
         }
 
         /// <summary>
@@ -274,10 +267,25 @@ namespace TumbangPreso.UI
         /// § 6.3's dead end, and one that pretends to send an email is worse.
         /// The line names the one route that does exist. `docs/TODO.md` § 150.
         /// </summary>
+        /// <summary>
+        /// ⚠⚠ THIS LINK OPENS NOTHING AND THAT IS THE HONEST ANSWER, NOT AN UNFINISHED ONE.
+        /// UGS's username-password provider holds no address, so there is no reset mail to send,
+        /// and the Admin API this client can reach has no reset either. A link that pretends to
+        /// send one is worse than a dead end, and a dead end is § 6.3's bug, so it names the one
+        /// route that exists instead.
+        ///
+        /// ⚠ AND THE ROUTE DEPENDS ON WHETHER THIS BUILD HAS GOOGLE. With a client id
+        /// (`docs/TODO.md` § 115.8) the button is already on this screen and a player who
+        /// connected it has a second door. Without one there is nothing to offer but a new TUMP
+        /// ID, and saying so beats implying they missed a step.
+        /// </summary>
         private void ForgotPressed()
         {
             _error.color = OwnerUiTheme.Current.HintInk;
-            _error.text = "Password recovery is not set up yet. Play as a guest or make a new TUMP ID.";
+            _error.text = Net.GoogleSignIn.IsAvailable
+                ? "There is no password reset. If you connected Google, sign in with it below, "
+                  + "then set a new one in ACCOUNT."
+                : "There is no password reset. Play as a guest or make a new TUMP ID.";
         }
 
         private void ShowOwnerTerms()

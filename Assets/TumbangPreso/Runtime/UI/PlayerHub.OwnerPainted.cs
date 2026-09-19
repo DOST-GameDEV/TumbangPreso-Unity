@@ -193,10 +193,22 @@ namespace TumbangPreso.UI
             if(!account.HasPassword)
                 HubAction("SetupAccount","Keep this progress","SET UP SIGN IN",OpenSignIn,"Your current progress stays with you.");
             else HubAction("SwitchAccount","Signed in as "+account.Username,"SWITCH ACCOUNT",OpenSignIn);
+            // ⚠⚠ THESE TWO ROWS ARE THE WHOLE OF PASSWORD RECOVERY IN THIS GAME, AND THEY ONLY
+            // WORK BEFORE THE DAY THEY ARE NEEDED. UGS's username-password provider holds no
+            // address, so there is no reset to send and no admin endpoint this client can call:
+            // a player who forgets their password with no second identity attached has lost the
+            // account. CHANGE is for the player who still knows it, CONNECT is the second door.
+            // `docs/TODO.md` § 153.15.
+            if(account.HasPassword)
+                HubAction("ChangePassword","Password","CHANGE",OpenChangePassword,
+                    account.GoogleAvailable && !account.HasGoogle
+                        ? "There is no password reset. Connect Google below so you have a way back in."
+                        : "There is no password reset, so keep it somewhere safe.");
             if(account.GoogleAvailable)
             {
-                if(account.HasGoogle)HubValue("Google","CONNECTED");
-                else HubAction("ConnectGoogle","Google account","CONNECT",OpenSignInForGoogle);
+                if(account.HasGoogle)HubValue("Google","CONNECTED","This is how you get back in if you forget your password.");
+                else HubAction("ConnectGoogle","Google account","CONNECT",OpenSignInForGoogle,
+                    "A second way into this account, and the only one there is.");
             }
             if(Group("Tournament guest","Let somebody else play without changing your account.",account.IsGuest))
                 HubAction("TournamentGuest",account.IsGuest?"A guest is playing":"Hand over this device",account.IsGuest?"TAKE IT BACK":"PLAY AS GUEST",ToggleGuest);

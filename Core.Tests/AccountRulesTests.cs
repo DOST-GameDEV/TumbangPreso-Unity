@@ -5,6 +5,58 @@ namespace TumbangPreso.Core.Tests
 {
     public sealed class AccountRulesTests
     {
+        /// <summary>
+        /// ⚠⚠ THESE ARE UGS'S RULES AND THE POINT IS THAT THEY ARE ASSERTED SOMEWHERE THAT
+        /// COSTS A MILLISECOND. The login used to hold its own copy, and a password the form
+        /// accepted could still be refused by the service in the service's own wording, which is
+        /// what 🧑 met as "create acct doesnt work". A third screen (CHANGE PASSWORD) reads them
+        /// now, so a disagreement between any two of them is a fault this file catches.
+        /// </summary>
+        [Theory]
+        [InlineData("Test-only1")]
+        [InlineData("aB3!aB3!")]
+        public void AGoodPasswordIsAccepted(string value) => Assert.Null(AccountRules.PasswordFault(value));
+
+        [Theory]
+        [InlineData("", "at least")]
+        [InlineData("Ab1!", "at least")]
+        [InlineData("Testonly1", "capital")]        // no symbol
+        [InlineData("test-only1", "capital")]       // no upper
+        [InlineData("TEST-ONLY1", "capital")]       // no lower
+        [InlineData("Test-only", "capital")]        // no digit
+        public void ABadPasswordIsRefusedAndSaysWhy(string value, string because) =>
+            Assert.Contains(because, AccountRules.PasswordFault(value));
+
+        /// <summary>Derived from the constant rather than written out, for the reason above.</summary>
+        [Fact]
+        public void APasswordIsRefusedPastTheServiceLimit()
+        {
+            string tooLong = "Aa1!" + new string('a', AccountRules.PasswordMax);
+            Assert.Contains("at most", AccountRules.PasswordFault(tooLong));
+            Assert.Null(AccountRules.PasswordFault("Aa1!" + new string('a', AccountRules.PasswordMax - 4)));
+        }
+
+        [Theory]
+        [InlineData("mat.001")]
+        [InlineData("Stardust_Destroyer84")]
+        [InlineData("a-b@c")]
+        public void AGoodUsernameIsAccepted(string value) => Assert.Null(AccountRules.UsernameFault(value));
+
+        [Theory]
+        [InlineData("", "at least")]
+        [InlineData("ab", "at least")]
+        [InlineData("has space", "Letters")]
+        [InlineData("hash#tag", "Letters")]
+        public void ABadUsernameIsRefusedAndSaysWhy(string value, string because) =>
+            Assert.Contains(because, AccountRules.UsernameFault(value));
+
+        [Fact]
+        public void AUsernameIsRefusedPastTheServiceLimit()
+        {
+            Assert.Contains("at most", AccountRules.UsernameFault(new string('a', AccountRules.UsernameMax + 1)));
+            Assert.Null(AccountRules.UsernameFault(new string('a', AccountRules.UsernameMax)));
+        }
+
         [Theory]
         [InlineData("Mat", "Mat")]
         [InlineData("  Maria   Clara  ", "Maria Clara")]

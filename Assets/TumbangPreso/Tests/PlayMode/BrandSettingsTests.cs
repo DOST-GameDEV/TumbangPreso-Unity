@@ -16,22 +16,39 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
+        /// <summary>
+        /// ⚠⚠ THIS FIXTURE WAS TESTING THE DORMANT HALF OF `ConvertedSettingsPanel`.
+        /// That class stopped dressing the converted Godot panel and became four lines that add
+        /// `TumpSettingsView` and open it; `SettingsTab`, `ShowTab`, `TabTitle` and
+        /// `MissingTabNodes` all still compile and all describe rows nothing builds, so the
+        /// fixture asked a live object about a screen that is no longer drawn and got every row
+        /// back as missing. The settings screen a player opens is `TumpSettingsView`, five
+        /// sections named in `TumpSettingsView.Sections`.
+        /// </summary>
         [UnityTest]
         public IEnumerator SettingsSectionsKeepTheCorrectRowsAndReadableControls()
         {
             yield return Open();
-            var panel = Object.FindFirstObjectByType<ConvertedSettingsPanel>();
-            Assert.IsEmpty(panel.MissingTabNodes());
-            for (int i = 0; i < ConvertedSettingsPanel.TabCount; i++)
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            Assert.IsNotNull(view, "The settings door must still open a settings screen.");
+            for (int i = 0; i < TumpSettingsView.Sections.Length; i++)
             {
-                panel.ShowTab(i);
+                view.ShowSection(i);
                 yield return null;
-                yield return UiRuntimeShots.Capture("Settings-brand-v4-" + ConvertedSettingsPanel.TabTitle(i), 1920, 1080);
-                Hit(panel.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+                var canvas = GameObject.Find("OwnerSettingsCanvas");
+                Assert.IsNotNull(canvas, TumpSettingsView.Sections[i] + " drew no canvas.");
+                // A section that builds nothing is the failure this replaces `MissingTabNodes`
+                // with: every one of the five has to put controls under its own heading.
+                Assert.IsNotEmpty(canvas.GetComponentsInChildren<Selectable>()
+                        .Where(control => control.isActiveAndEnabled && !control.name.StartsWith("SettingsSection")
+                                          && control.name != "TumpSettingsBack"),
+                    TumpSettingsView.Sections[i] + " has no controls of its own.");
+                Assert.AreEqual(TumpSettingsView.Sections[i],
+                    canvas.GetComponentsInChildren<Text>().First(t => t.name == "Heading").text);
+                yield return UiRuntimeShots.Capture("Settings-v5-" + TumpSettingsView.Sections[i], 1920, 1080);
             }
-            yield return UiRuntimeShots.Capture("Settings-brand-v4-accessibility-720p", 1280, 720);
-            var motion = panel.GetComponentsInChildren<Toggle>().Single(t => t.name == "ReducedUiMotionRow");
-            Assert.IsTrue(motion.isActiveAndEnabled);
+            yield return UiRuntimeShots.Capture("Settings-v5-accessibility-720p", 1280, 720);
+            Assert.IsTrue(Motion().isActiveAndEnabled);
         }
 
         [UnityTest]
@@ -39,19 +56,20 @@ namespace TumbangPreso.PlayTests
         {
             Settings.SettingsStore.Current.ReducedUiMotion = false;
             yield return Open();
-            var panel = Object.FindFirstObjectByType<ConvertedSettingsPanel>();
-            panel.ShowTab(4);
+            var view = Object.FindFirstObjectByType<TumpSettingsView>();
+            view.ShowSection(Accessibility);
             yield return null;
-            var motion = panel.GetComponentsInChildren<Toggle>().Single(t => t.name == "ReducedUiMotionRow");
-            motion.isOn = true;
-            Press(panel.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+            Motion().isOn = true;
+            Press(Find("TumpSettingsBack"));
             yield return null;
-            Assert.IsNotNull(GameObject.Find("UnsavedSettings"));
-            yield return UiRuntimeShots.Capture("Settings-brand-v4-unsaved", 1920, 1080);
+            // ⚠ THE DECISION IS `UnsavedDecision` NOW. Same screen, same three answers.
+            Assert.IsNotNull(GameObject.Find("UnsavedDecision"),
+                "Leaving with an unsaved change must ask rather than decide.");
+            yield return UiRuntimeShots.Capture("Settings-v5-unsaved", 1920, 1080);
             Press(Find("KeepEditing"));
             yield return null;
-            Assert.IsTrue(panel.gameObject.activeInHierarchy);
-            Press(panel.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+            Assert.IsTrue(view.gameObject.activeInHierarchy);
+            Press(Find("TumpSettingsBack"));
             yield return null;
             Press(Find("DiscardAndBack"));
             yield return null;
@@ -59,13 +77,16 @@ namespace TumbangPreso.PlayTests
 
             OpenSettingsPanel();
             yield return null;
-            panel.ShowTab(4); motion.isOn = true;
-            Press(panel.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+            view = Object.FindFirstObjectByType<TumpSettingsView>();
+            view.ShowSection(Accessibility);
+            yield return null;
+            Motion().isOn = true;
+            Press(Find("TumpSettingsBack"));
             yield return null;
             Press(Find("SaveAndBack"));
             yield return null;
             Assert.IsTrue(Settings.SettingsStore.Current.ReducedUiMotion);
-            // ⚠️⚠️ THE SUBJECT OF THIS ASSERTION IS THE TITLE'S OWN MOTION AND THAT MOVED TWICE.
+            // ⚠⚠ THE SUBJECT OF THIS ASSERTION IS THE TITLE'S OWN MOTION AND THAT MOVED TWICE.
             // `IllustratedBackdrop` belongs to `HomeScreen`, which `ConvertedMainMenu` stopped
             // building when the owner-painted street landed, so this line was reading a null for
             // some time. The title's motion is now her weather: the road dust and the leaves off
@@ -81,6 +102,22 @@ namespace TumbangPreso.PlayTests
                 "Reduced UI motion must ground the falling leaves.");
             var roundtrip = JsonUtility.FromJson<Settings.GameSettings>(JsonUtility.ToJson(Settings.SettingsStore.Current));
             Assert.IsTrue(roundtrip.ReducedUiMotion);
+        }
+
+        /// <summary>ACCESSIBILITY is the last of the five and the reduced-motion switch lives on
+        /// it. Reading the index off the array rather than typing 4 means a section added in the
+        /// middle moves this fixture with it.</summary>
+        private static int Accessibility =>
+            System.Array.IndexOf(TumpSettingsView.Sections, "Accessibility");
+
+        /// <summary>`SettingsWorkspaceRows.Toggle` names the control `<row>Value`.</summary>
+        private static Toggle Motion()
+        {
+            var toggle = Object.FindObjectsByType<Toggle>(FindObjectsSortMode.None)
+                .FirstOrDefault(t => t.name == "ReducedUiMotionValue");
+            Assert.IsNotNull(toggle, "Accessibility must carry the reduced-motion switch. Toggles: " +
+                string.Join(", ", Object.FindObjectsByType<Toggle>(FindObjectsSortMode.None).Select(t => t.name)));
+            return toggle;
         }
 
         private static IEnumerator Open()
@@ -104,11 +141,28 @@ namespace TumbangPreso.PlayTests
         private static void OpenSettingsPanel()
         {
             Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
-            GameObject.Find("NativeSettingsOwner").SetActive(true);
+
+            // ⚠⚠ `GameObject.Find` ONLY SEES ACTIVE OBJECTS AND THIS ONE IS BUILT SWITCHED OFF.
+            // `ConvertedMainMenu.Wire` creates `NativeSettingsOwner` inactive and the door turns
+            // it on, so this line returned null and EVERY case in this fixture died in its own
+            // setup with a `NullReferenceException` that named nothing. Asking for the component
+            // and including inactive objects is the same screen by the route that can find it.
+            var panel = Object.FindFirstObjectByType<ConvertedSettingsPanel>(FindObjectsInactive.Include);
+            Assert.IsNotNull(panel, "ConvertedMainMenu must still build the settings panel.");
+            panel.gameObject.SetActive(true);
         }
 
-        private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-            .First(b => b.name == name && b.isActiveAndEnabled);
+        // A control that moved throws "Sequence contains no matching element" out of `First`,
+        // which names neither the control nor the screen.
+        private static Button Find(string name)
+        {
+            var button = Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .FirstOrDefault(b => b.name == name && b.isActiveAndEnabled);
+            Assert.IsNotNull(button, name + " is not on screen. Active: " +
+                string.Join(", ", Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                    .Where(b => b.isActiveAndEnabled).Select(b => b.name).Distinct().OrderBy(n => n)));
+            return button;
+        }
         private static PointerEventData Hit(Button button)
         {
             Canvas.ForceUpdateCanvases();

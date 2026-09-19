@@ -27,6 +27,53 @@ namespace TumbangPreso.Core
         public const int PronounsMax = 32;
         public const int HandleMax = DisplayNameMax + 1 + DiscriminatorDigits;
 
+        // ------------------------------------------------------------------ credentials ----
+        //
+        // ⚠⚠ THESE ARE UGS'S RULES AND NOT THE MOCK'S, AND THE DIFFERENCE HAS ALREADY COST A
+        // BUG REPORT. Checking only the length her sheet wrote would ship a form that tells a
+        // player their password is fine and then hands them the service's own refusal in the
+        // service's own wording, which is what 🧑 met as *"create acct doesnt work"*
+        // (`PlayerAccount.UpgradeAsync`'s header, `docs/TODO.md` § 153.7).
+        //
+        // ⚠ THEY LIVE HERE RATHER THAN ON THE LOGIN because there is more than one screen that
+        // has to agree with them now: the sign-up form, the sign-in form and CHANGE PASSWORD.
+        // Three copies of a rule is three chances to disagree with the service, which is this
+        // file's whole reason for existing.
+        public const int UsernameMin = 3, UsernameMax = 20;
+        public const int PasswordMin = 8, PasswordMax = 30;
+
+        /// <summary>What is wrong with a TUMP ID, or null when nothing is.</summary>
+        public static string UsernameFault(string value)
+        {
+            value ??= "";
+            if (value.Length < UsernameMin) return "Use at least " + UsernameMin + " characters.";
+            if (value.Length > UsernameMax) return "Use at most " + UsernameMax + " characters.";
+            foreach (char c in value)
+                if (!char.IsLetterOrDigit(c) && c != '.' && c != '-' && c != '_' && c != '@')
+                    return "Letters, numbers and . - _ @ only.";
+            return null;
+        }
+
+        /// <summary>What is wrong with a password, or null when nothing is.</summary>
+        public static string PasswordFault(string value)
+        {
+            value ??= "";
+            if (value.Length < PasswordMin) return "Use at least " + PasswordMin + " characters.";
+            if (value.Length > PasswordMax) return "Use at most " + PasswordMax + " characters.";
+            bool upper = false, lower = false, digit = false, symbol = false;
+            foreach (char c in value)
+            {
+                if (char.IsUpper(c)) upper = true;
+                else if (char.IsLower(c)) lower = true;
+                else if (char.IsDigit(c)) digit = true;
+                else symbol = true;
+            }
+            // ⚠ ONE SENTENCE FOR THE WHOLE SHAPE RULE. Naming only the first missing class
+            // walks a player through four separate refusals for one password.
+            if (!upper || !lower || !digit || !symbol) return "Add a capital, a number and a symbol.";
+            return null;
+        }
+
         public static bool TryDisplayName(string raw, out string clean)
         {
             if (raw != null)

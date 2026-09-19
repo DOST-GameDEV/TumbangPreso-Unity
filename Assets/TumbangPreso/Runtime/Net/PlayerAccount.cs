@@ -546,6 +546,47 @@ namespace TumbangPreso.Net
             await SaveCloudProfileAsync();
         }
 
+        /// <summary>
+        /// Replaces the password on the account this machine is signed in as.
+        ///
+        /// ⚠⚠ THIS IS THE ONLY WAY A PASSWORD EVER CHANGES, AND IT IS WHY IT MATTERS:
+        /// UGS's username-password provider holds NO ADDRESS, so there is no reset mail to send
+        /// and no admin endpoint this client can call. A player who forgets their password and
+        /// has no second identity attached has lost the account, full stop. Everything this game
+        /// can do about that happens BEFORE the day they forget: change it while they still know
+        /// it, and attach Google so there is a second door (`LinkGoogleAsync`). See
+        /// `docs/TODO.md` § 153.15.
+        ///
+        /// ⚠ THE NEW PASSWORD IS CHECKED AGAINST `AccountRules` FIRST, in this game's wording,
+        /// rather than sent and refused in UGS's. That is the same reason the sign-up form does
+        /// it: the service's sentence names its own policy and reads like a fault in the game.
+        ///
+        /// ⚠ THE SERVICE VERIFIES THE CURRENT ONE. It is not checked here and must not be:
+        /// a local comparison would need the old password stored somewhere, and the only correct
+        /// place for a password is the service that hashes it.
+        /// </summary>
+        public async Task ChangePasswordAsync(string current, string next)
+        {
+            await InitializeAsync();
+            await EnsureLiveSessionAsync();
+            if (!IsSignedIn) throw new InvalidOperationException("Changing a password needs UGS to be reachable.");
+            if (IsGuest) throw new InvalidOperationException("A guest has no password to change.");
+            if (!HasPassword) throw new InvalidOperationException("This account has no password yet. Set one up first.");
+            if (string.IsNullOrEmpty(current)) throw new InvalidOperationException("Enter your current password.");
+
+            string fault = AccountRules.PasswordFault(next);
+            if (fault != null) throw new InvalidOperationException(fault);
+            if (current == next) throw new InvalidOperationException("That is already your password.");
+
+            await AuthenticationService.Instance.UpdatePasswordAsync(current, next);
+
+            // ⚠ THE SESSION SURVIVES IT. `UpdatePasswordAsync` returns a fresh session for the
+            // same player, so nothing here re-signs in or re-reads the profile; saying so is the
+            // point, because the obvious mistake is to "repair" a session that was never broken
+            // and mint a new player id doing it.
+            Apply(Profile, signedIn: true, "Password changed");
+        }
+
         public async Task SignInAsync(string username, string password)
         {
             await InitializeAsync();

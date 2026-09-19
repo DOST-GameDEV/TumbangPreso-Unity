@@ -44,6 +44,10 @@ namespace TumbangPreso.UI
         /// original could rely on uniqueness. The converter reproduces the TREE, which has no
         /// such guarantee once a name appears in two branches.
         /// </summary>
+        /// <summary>False when this component was added to a bare GameObject rather than to a
+        /// converted Godot hierarchy, in which case a missing node is not a fault.</summary>
+        private bool _converted;
+
         private readonly Dictionary<string, List<Transform>> _byName =
             new Dictionary<string, List<Transform>>();
 
@@ -83,6 +87,13 @@ namespace TumbangPreso.UI
             // nothing that ships. See AspectSafeCanvas for what match-on-height cropped.
             AspectSafeCanvas.ApplyToParentOf(this);
 
+            // ⚠⚠ NOT EVERY SCREEN WEARING THIS BASE CLASS DRESSES A CONVERTED SCENE ANY MORE.
+            // `ConvertedMainMenu.Wire` builds `NativeSettingsOwner` with `new GameObject` and
+            // adds `ConvertedSettingsPanel` to it, because that panel draws itself now instead of
+            // re-skinning a Godot hierarchy. A component indexed with no children at all has no
+            // converted scene under it, and on one of those a missing node is the expected answer
+            // rather than a fault: see `Nodes`.
+            _converted = transform.childCount > 0;
             Index(transform);
             Wire();
         }
@@ -161,14 +172,26 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// EVERY node with this name, in tree order. Empty and logged loudly when there are none.
+        /// EVERY node with this name, in tree order. Empty, and logged loudly when this screen
+        /// has a converted scene that should have contained it.
+        ///
+        /// ⚠⚠ IT WAS LOGGING AN ERROR ON A HEALTHY MAIN MENU. `ConvertedSettingsPanel` draws
+        /// its own screen on a bare GameObject, so `TabNode`'s fallback to `Node("Content")`
+        /// named a node that was never supposed to exist, every time the menu wired itself. In a
+        /// PlayMode run an unhandled error log fails whichever test is standing there, which is
+        /// how `BrandSettingsTests` came to report a fault in a screen that works.
+        ///
+        /// ⚠ THE LOUD CASE IS THE ONE THAT MATTERS AND IT IS UNCHANGED: a screen that really
+        /// does dress a converted hierarchy, asking for a node the conversion dropped, still says
+        /// so. Only "this object never had a converted scene" went quiet.
         /// </summary>
         protected IReadOnlyList<Transform> Nodes(string name)
         {
             if (_byName.TryGetValue(name, out var all) && all.Count > 0) return all;
 
-            Debug.LogError($"[{GetType().Name}] no node named '{name}' in the converted scene. " +
-                           "The Godot scene was renamed, or the conversion dropped it.");
+            if (_converted)
+                Debug.LogError($"[{GetType().Name}] no node named '{name}' in the converted scene. " +
+                               "The Godot scene was renamed, or the conversion dropped it.");
 
             return System.Array.Empty<Transform>();
         }

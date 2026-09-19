@@ -2141,6 +2141,18 @@ namespace TumbangPreso.UI
             _signIn.OpenForUpgrade();
         }
 
+        /// <summary>
+        /// ⚠ IT IS ITS OWN SHEET RATHER THAN A MODE ON THE SIGN-IN SCREEN, and
+        /// `OwnerPasswordView`'s header carries the reasoning: her login is two halves of one
+        /// drawing and a third state threaded through it would be a rewrite of the screen
+        /// § 153 just measured against her art.
+        /// </summary>
+        private void OpenChangePassword()
+        {
+            _notice = "";
+            OwnerPasswordView.Open(transform, () => Show(_tab));
+        }
+
         private void ToggleGuest()
         {
             try

@@ -39,14 +39,23 @@ namespace TumbangPreso.PlayTests
             // changed, and both are still reachable, so this fixture walks the journey a player
             // can actually walk rather than opening them from nowhere. `GameSettingsButton` on
             // the lobby is the door; SETTINGS carries the one to CREDITS.
-            Press("StartButton"); yield return new WaitForSecondsRealtime(.4f);
-            Press("ClassicButton"); yield return null;
-            Press("PracticeButton"); yield return new WaitForSecondsRealtime(.7f);
-            Press("GameSettingsButton"); yield return new WaitForSecondsRealtime(.3f);
-            Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"));
-            Press("SettingsCredits"); yield return new WaitForSecondsRealtime(.3f);
+            yield return PressWhen("StartButton");
+            yield return PressWhen("ClassicButton");
+            yield return PressWhen("PracticeButton");
+            // ⚠ THE LOBBY'S DOOR IS `SettingsButton`. `GameSettingsButton` was the converted
+            // lobby's name for it and `OwnerPreparationView` builds "SETTINGS" as `SettingsButton`.
+            yield return PressWhen("SettingsButton");
+            yield return WaitForObject("OwnerSettingsCanvas", "SETTINGS on the lobby must open the settings screen.");
+            yield return PressWhen("SettingsCredits");
+            yield return WaitForObject("OwnerCreditsCanvas", "CREDITS in settings must open the credits screen.");
             var credits = GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
-            Assert.IsFalse(home.gameObject.activeSelf);
+            // ⚠⚠ `home` BELONGS TO A SCENE THIS WALK HAS ALREADY LEFT. The journey to settings
+            // goes through the lobby now, so by this line `MainMenu` has been unloaded and the
+            // title canvas destroyed with it: reading `home.gameObject` threw a
+            // `MissingReferenceException` from a fixture that was otherwise passing. What is
+            // worth asserting here is the same thing in terms of the scene we are actually in.
+            Assert.IsNull(GameObject.Find("OwnerHomeCanvas"),
+                "Credits is reached from the lobby, so the title screen is not behind it.");
             Assert.AreEqual(CreditsContent.CcByCredits.Length + CreditsContent.CourtesyCredits.Length,
                 credits.GetComponentsInChildren<Text>().Count(t => t.name == "CreditBody"));
             foreach(var size in TumpUiCapture.PcViewports)
@@ -72,26 +81,26 @@ namespace TumbangPreso.PlayTests
                 creditScroll.verticalNormalizedPosition=0;
                 yield return TumpUiCapture.Capture("StudioCredits-licenses-"+size.x+"x"+size.y,credits,size.x,size.y,false,checkActionBounds:true);
             }
-            Press("CreditsBack"); yield return null; yield return null;
-            Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"));
-            Press("TumpSettingsBack"); yield return null; yield return null;
+            yield return PressWhen("CreditsBack");
+            yield return WaitForObject("OwnerSettingsCanvas", "Leaving credits must return to settings.");
+            yield return PressWhen("TumpSettingsBack");
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu); yield return null;
-            Press("StartButton"); yield return new WaitForSecondsRealtime(.4f);
+            yield return PressWhen("StartButton");
             var play = GameObject.Find("OwnerPlayCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(play.GetComponentsInChildren<PaperSkin>(true));
             Assert.AreEqual(6, play.GetComponentsInChildren<Image>().Count(i => i.name.StartsWith("ModePortrait") && i.sprite != null));
-            Press("ClassicButton"); yield return null;
+            yield return PressWhen("ClassicButton");
             Assert.AreEqual(GameMode.Classic, SceneFlow.SelectedMode);
             Assert.IsFalse(play.GetComponentsInChildren<Button>(true).First(b => b.name == "RankedButton").gameObject.activeInHierarchy);
             yield return TumpUiCapture.Capture("OwnerPlay-Classic-v1", play, 1920, 1080, false);
-            Press("HeroStrikeButton"); yield return null;
+            yield return PressWhen("HeroStrikeButton");
             Assert.IsTrue(Find("RankedButton").interactable);
             foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1280, 720), new Vector2Int(1366, 768),
                 new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
                 new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160) })
                 yield return TumpUiCapture.Capture("CourtPlay-Hero-" + size.x + "x" + size.y, play, size.x, size.y, false, checkActionBounds: true);
-            Press("BackButton"); yield return null; yield return null;
-            Assert.IsNotNull(GameObject.Find("OwnerHomeCanvas"));
+            yield return PressWhen("BackButton");
+            yield return WaitForObject("OwnerHomeCanvas", "BACK on the play screen must return to her street.");
         }
 
         [UnityTest]
@@ -107,7 +116,13 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(InputField.ContentType.Password, password.contentType);
             user.SetTextWithoutNotify(""); password.SetTextWithoutNotify("");
             Press("SubmitAccount"); yield return null;
-            Assert.AreEqual("Enter a username.", canvas.GetComponentsInChildren<Text>().First(t => t.name == "AccountStatus").text);
+            // ⚠⚠ THE ANSWER IS UNDER THE FIELD IT IS ABOUT, NOT IN THE SHARED LINE. § 153.7 gave
+            // her redrawn login a red rule under each input and left `AccountStatus` for what is
+            // about the whole attempt; `SignInScreen.Fail` routes anything naming a field to that
+            // field. The message is unchanged, so this asserts the same sentence in the place a
+            // player now reads it, and that the shared line stayed out of it.
+            Assert.AreEqual("Enter a username.", canvas.GetComponentsInChildren<Text>().First(t => t.name == "UsernameFault").text);
+            Assert.IsEmpty(canvas.GetComponentsInChildren<Text>().First(t => t.name == "AccountStatus").text);
             yield return TumpUiCapture.Capture("OwnerSignIn-error-v1", canvas, 1920, 1080, false);
             Press("CreateAccountTab"); yield return null;
             Assert.AreEqual("CREATE", Find("SubmitAccount").GetComponentInChildren<Text>().text);
@@ -222,6 +237,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(2,canvas.GetComponentsInChildren<InputField>().Length);
                 yield return TumpUiCapture.Capture("OwnerStartupSignIn-v1",canvas,1920,1080,false);
                 string playerId=GameServices.Account?.PlayerId;
+                // ⚠⚠ THERE IS NO GUEST ON THE SIGN-IN SHEET AND THAT IS HER DESIGN. She drew
+                // CONTINUE AS GUEST under CREATE only, and `NativeSignInKeeps...` asserts from the
+                // other side that the sign-in tab does not carry one. The line above had just
+                // switched to SIGN IN, so this press was reaching for a control the screen
+                // deliberately does not build. Go back the way a player would.
+                Press("CreateAccountTab");yield return null;
                 Press("GuestAccount");yield return null;
                 Assert.False(account.IsOpen);Assert.IsEmpty(password.text,"A closed account view retained password text.");
                 Assert.AreEqual(playerId,GameServices.Account?.PlayerId,"Startup Guest must not replace the current progress identity.");
@@ -253,7 +274,66 @@ namespace TumbangPreso.PlayTests
             Press("LoadingStoryClose");yield return null;
             Assert.False(story.gameObject.activeInHierarchy);
         }
-        private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
+        /// <summary>
+        /// ⚠⚠ A SCREEN IS NOT HITTABLE ON THE FRAME IT IS BUILT. `Graphic.depth` is -1 until
+        /// the canvas has been batched for a render and `GraphicRaycaster` skips a graphic with
+        /// depth -1 however well its rect lines up, so a press that lands on a freshly loaded
+        /// scene raycasts NOTHING and the failure names whichever control that run reached first.
+        /// Every `WaitForSecondsRealtime` in this fixture is a guess at how long a scene load
+        /// takes on the machine of the day; this waits for the control instead. Same note as
+        /// `HomeFlowTests.PressWhen`, same cause.
+        /// </summary>
+        private static IEnumerator PressWhen(string name)
+        {
+            float end = Time.realtimeSinceStartup + 10f;
+            Button button = null;
+            while (Time.realtimeSinceStartup < end)
+            {
+                Canvas.ForceUpdateCanvases();
+                button = Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                    .FirstOrDefault(b => b.name == name && b.isActiveAndEnabled);
+                if (button != null && Hits(button).Count > 0) break;
+                yield return null;
+            }
+            Assert.IsNotNull(button, name + " never appeared.");
+            Press(name);
+        }
+
+        /// <summary>A screen that opens on a press is not on screen the same frame the press is
+        /// dispatched, and a fixed sleep is the same coin flip `PressWhen` exists to stop.</summary>
+        private static IEnumerator WaitForObject(string name, string because)
+        {
+            float end = Time.realtimeSinceStartup + 10f;
+            while (Time.realtimeSinceStartup < end && GameObject.Find(name) == null) yield return null;
+            Assert.IsNotNull(GameObject.Find(name), because);
+        }
+
+        private static List<RaycastResult> Hits(Button button)
+        {
+            var rect = (RectTransform)button.transform;
+            var canvas = button.GetComponentInParent<Canvas>();
+            var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            var pointer = new PointerEventData(EventSystem.current)
+            {
+                position = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center)),
+                button = PointerEventData.InputButton.Left
+            };
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointer, hits);
+            return hits;
+        }
+
+        // `First` on a control that moved throws "Sequence contains no matching element", which
+        // names neither the control nor the screen it was looked for on.
+        private static Button Find(string name)
+        {
+            var button = Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                .FirstOrDefault(b => b.name == name && b.isActiveAndEnabled);
+            Assert.IsNotNull(button, name + " is not on screen. " + SceneManager.GetActiveScene().name +
+                " has: " + string.Join(", ", Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                    .Where(b => b.isActiveAndEnabled).Select(b => b.name).Distinct().OrderBy(n => n)));
+            return button;
+        }
         private static void Press(string name)
         {
             var button = Find(name); Canvas.ForceUpdateCanvases();

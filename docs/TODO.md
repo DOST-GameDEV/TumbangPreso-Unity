@@ -718,29 +718,77 @@ placing the first of them cost two full runs.
 menu scene went active and got her login, because a first boot meets `_atBoot` and `BootGuest`
 before it meets the street. It walks the guest door now.
 
-### 153.14 Five more fixtures beside these three are red, and they are NOT this pass: OPEN
+### 153.14 The five fixtures beside those three, and the one real fault under them: CLOSED 2026-09-19
 
-Running the suites around § 153.11 turned up five more, and they were measured rather than
-assumed: `Logs/ui-153-baseline.xml` is the same six suites with **this pass's three runtime files
-checked back out at `ec198019`**, and it fails exactly the same five with exactly the same
-messages. Nothing in §§ 153.11-153.13 caused any of them.
+Running the suites around § 153.11 turned up five more red, and they were measured rather than
+assumed before anything was touched: `Logs/ui-153-baseline.xml` is those suites with this pass's
+three runtime files checked back out at `ec198019`, failing the same five identically. Nothing in
+§§ 153.11-153.13 caused any of them. `Logs/native-fix5.xml` and the run after it are green.
 
-| Fixture | What it reports |
-|---|---|
-| `TumpNativeFrontEndTests.NativeSignInKeepsRealFieldsValidationAndBackWithoutSendingCredentials` | wants `"Enter a username."` in the shared line and gets an empty string |
-| `TumpNativeFrontEndTests.OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms` | a name lookup finds nothing |
-| `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews` | a name lookup finds nothing |
-| `BrandSettingsTests.SettingsSectionsKeepTheCorrectRowsAndReadableControls` | `NullReferenceException` |
-| `BrandSettingsTests.ReducedMotionPreviewsSavesAndDiscardsThroughTheVisibleDecision` | `NullReferenceException` |
+⚠⚠ **ONE OF THE FIVE WAS THE GAME AND NOT THE FIXTURE, AND IT WAS LOGGING AN ERROR ON A HEALTHY
+MAIN MENU.** `ConvertedSettingsPanel` stopped dressing a converted Godot hierarchy when the
+owner-painted settings landed: `Wire` is four lines that add `TumpSettingsView` and open it, and
+the component is added to a bare `new GameObject("NativeSettingsOwner")`. Every `Node` lookup on
+one of those hit `ConvertedScreen.Nodes`'s `Debug.LogError` naming a node that was never supposed
+to exist. In a PlayMode run an unhandled error log fails whichever test is standing there, which
+is how `BrandSettingsTests` came to report a fault in a screen that works. **A converted screen
+indexed with no children has no converted scene**, and `Nodes` is quiet for that case now; the
+loud case, a real converted hierarchy missing a node the conversion dropped, is untouched.
 
-⚠️ **The first one is worth reading before it is fixed**, because it is the only one that might
-be describing the game rather than the fixture: § 153.7 moved the login's faults under the field
-each is about and left `AccountStatus` for what is about the whole attempt, so a shared line that
-is now deliberately empty is the *owner-painted* screen's design. Whether the NATIVE sign-in
-screen was supposed to follow it there is a question about that screen, not about this one.
-⚠️ **And `TitlePlayCredits...` walks to CREDITS and SETTINGS from the title**, which is the
-journey 🧑 deleted in § 153.4. It cannot be repaired without deciding where those doors went,
-which is the next menu pass.
+The other four were § 124.11 again, and two of them were testing a screen the game stopped
+drawing:
+
+| Fixture | Asked for | The game builds |
+|---|---|---|
+| `BrandSettingsTests` (both cases) | `ConvertedSettingsPanel.ShowTab`, `MissingTabNodes`, rows like `CONTROLS/BindingsList` | `TumpSettingsView`, five `Sections`, `TumpSettingsBack`, `ReducedUiMotionValue`, `UnsavedDecision` |
+| `NativeSignInKeeps...` | `"Enter a username."` in `AccountStatus` | the same sentence under the field it is about (§ 153.7), with the shared line deliberately empty |
+| `OwnerAccountUses...` | GUEST while the SIGN IN sheet is up | she drew CONTINUE AS GUEST under CREATE only, which `NativeSignInKeeps...` asserts from the other side |
+| `TitlePlayCredits...` | `GameSettingsButton`, then the title canvas after a scene change | `SettingsButton` on the lobby, and a `MissingReferenceException` for the canvas, because the walk had left that scene |
+
+⚠️ **AND THE SAME RACE AS § 153.11 WAS UNDER TWO OF THEM.** Both suites press on fixed sleeps;
+`PressWhen`, `WaitForObject` and a named `Find` are in them now for the reason given there.
+
+### 153.15 Password recovery, built as far as UGS allows: CLOSED 2026-09-19
+
+⚠⚠ **THERE IS NO PASSWORD RESET TO BUILD AND THAT IS A FACT ABOUT THE SERVICE, NOT A GAP.**
+UGS's username-password provider holds **no address**: there is no mail to send, and the Admin API
+this client can reach exposes player management without a password reset. Signing a player in
+without their password needs a second identity provider or a Custom ID token signed by an identity
+service this project does not have. **So what a game can do about a forgotten password happens
+before the day it is forgotten**, and all three halves of that are built now:
+
+- **CHANGE PASSWORD, which did not exist at all.** `PlayerAccount.ChangePasswordAsync` wraps
+  `UpdatePasswordAsync`; `OwnerPasswordView` is the screen, opened from the hub's account tab.
+  ⚠ **It is a sheet of its own rather than a third mode on her login**: `SetNativeMode` is a
+  bool, and her two sheets are two halves of one drawing (the pill slides, the primary plate moves
+  between two heights she drew, the divider follows the second route). It borrows her pieces, her
+  field plates, her key, her eye and her green plate, so it belongs without editing the screen
+  § 153 just measured against her art. ⚠ **The current password is never checked locally**: only
+  the service can say, and a local check would need the old password stored somewhere it must not
+  be.
+- **The second door, made visible.** `LinkGoogleAsync` and `SignInWithGoogleAsync` were already
+  built; what was missing was anything telling a player why they would want it. CONNECT now says
+  *"A second way into this account, and the only one there is"*, and CHANGE says there is no reset.
+  ⚠ **This is the whole recovery path and it is dark until the OAuth Desktop client id lands**
+  (§ 115.8, `Assets/TumbangPreso/Resources/google_oauth.txt`). The code is finished either way,
+  and `GoogleSignIn.IsAvailable` already hides the button rather than shipping a dead one.
+- **FORGOT PASSWORD? tells the truth in two versions.** With Google in the build it names it as
+  the route; without, it names a guest or a new TUMP ID. ⚠ **A link that pretends to send a mail
+  is worse than a dead end**, and a dead end is § 6.3's bug.
+
+⚠⚠ **AND THE RULES MOVED TO `AccountRules` WHILE THERE WERE STILL ONLY TWO READERS.** Username
+3-20 of letters, digits and `.-_@`; password 8-30 with an upper, a lower, a digit and a symbol,
+with the sentences that name them. The login had held its own copy since § 153.7, and CHANGE
+PASSWORD made a third screen that has to refuse exactly what the service refuses. `Core.Tests`
+asserts them in 49 ms, which is the argument for an engine-free rules core in one line.
+⚠ **What stayed on the screen is its own policy and not the rule**: an empty field is not a fault
+until a press, and a confirmation is about the pair.
+
+⚠️ **Three `Core.Tests` cases are red and none of them is this**:
+`HeroLoadoutTests.EveryVariantRowFitsTheTileItIsDrawnOn`,
+`BalanceTests.BodyBlock_ScalesByThrowerImpactAndDividesByBlockerGrit` and
+`MatchmakingTests.TheQueueSaysTheTayaRotatesAndEveryoneDefendsOnce`. 576 passed, 3 failed both
+with this change and with `AccountRules.cs` checked back out at `ec198019`.
 
 ### 153.13 The crop was still protecting the can, and it cost the logo: CLOSED 2026-09-19
 
