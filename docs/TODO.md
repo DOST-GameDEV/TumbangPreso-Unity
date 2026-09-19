@@ -1231,6 +1231,74 @@ with this change and with `AccountRules.cs` checked back out at `ec198019`. **Al
 closed as of 2026-09-19 and § 153.19 is what each of them turned out to be: 598 passed, 0
 failed, 179 ms.**
 
+### 153.21 The three moving layers were each wrong in their own way: CLOSED 2026-09-19
+
+🧑, opening the shipped title: *"WHY IS THIS SHIT SO BLURRY WHAT DID U DOOOO"*, *"the
+clouds are absolute dog water btw , the leaves arent even the same color"*, and the sentence
+that explains all three: **"46 was just reference"**.
+
+⚠️⚠️ **THE PIPELINE TREATED 46.png AS A LAYER AND IT IS A LOOK.** `author_owner_menu_v3.py`
+opens by asserting that 46 is 48 plus painted clouds and their cast shadow, *"so 46 minus 48 is
+exactly her own cloud art and her own shadow pattern"*. It is not. 46 is a separate export, lit
+slightly differently across the WHOLE frame, with her caption typed into it. Measured, the raw
+difference calls **48 per cent of the wall and the entire sari-sari block** shadowed and renders
+the words *"to continue"* as a dark stencil lying on the road. All of it was then multiplied
+over her painting by a blue-shifted tint, which is what the blur and the dimming were.
+**Her plate is untouched and always was**: `main2-background.png` is 48.png with a maximum
+channel difference of **0.0**. Everything wrong was in the layers drawn on top.
+
+| Layer | What it was doing | What it does now |
+|---|---|---|
+| **shadow** | 38.4% of the frame, incl. wall + houses + her caption; filled by `distance_transform_edt`, a Voronoi **stamp**, then blurred 2px | **22.5%**, restricted to the ground plane she painted it on, filled by coarse-to-fine diffusion, blurred 0.5px |
+| **cloud** | the pole and the palm fronds cut as **10 per cent alpha holes** in their own shape, travelling with the cloud | the holes carry the surrounding cloud's own alpha across them |
+| **leaf** | her road litter, measured (174, 84, 39) | her form, her canopy's ramp, so it falls out of the tree it came from |
+
+⚠⚠ **THE STAMP IS THE ONE WORTH REMEMBERING, BECAUSE IT WAS WRONG IN BOTH DIRECTIONS AT ONCE.**
+`edges` is every gradient over 6 in a PAINTING dilated three pixels, so most of the frame was
+"unreliable" and got the value of its single nearest reliable pixel. Against her own darkening:
+her dapple carries **0.0121** of edge energy on the road and the stamped mask carried **0.0167**,
+38 per cent MORE edge than she painted, while over the whole frame it came back **1.4x softer**
+than hers from the blur underneath. Hard slabs on the road and grey blobs on the wall, from one
+line.
+
+⚠️ **AND THE ALPHA HOLE IS THE ONE THAT HID.** The cloud's COLOUR under the pole was already
+being repainted by diffusion and the header said so; the alpha floor beside it was
+`max(alpha, .9)`, a flat ten per cent dip in exactly the pole's and the fronds' shape. So her
+green sky showed through in the outline of a telephone pole, and the outline slid across the sky
+with the cloud.
+
+⚠️ **NOTHING WAS REMOVED AND NO SYSTEM WAS REPLACED**, on his instruction: *"keep using the
+shit astra made and js improve"*, *"I ONLY WANTED U TO KEEP THE ANIMATIONS FROM ASTRA AND
+IMPROVE"*. `OwnerMenuAir`, its shader, the sky mask, the drift and the sway are all untouched.
+The four sprites the tool derives are regenerated from her own plates; her plates are not edited.
+
+### 153.22 Her login answered a press and ignored everything up to it: CLOSED 2026-09-19
+
+🧑: *"add sounds here bruh"*, *"atleast sounds when u interact with shit"*.
+
+⚠⚠ **THE THREE FIELDS WERE THE ONLY COMPLETELY SILENT CONTROLS ON THE SCREEN AND THEY ARE THE
+MOST PRESSED ONES ON IT.** Every button played `ui_click`, the checkbox ticked, the pill
+toggled, a fault buzzed and a field turning valid chimed. **A player could take a field, type a
+whole password and submit it having heard nothing until the button.** `OwnerFieldSound` answers
+both things a player does to a field: taking it, and typing in it.
+
+⚠️ **THE KEYSTROKE IS `ui_tick` AT 35 PER CENT THROUGH `PlayUiVaried`, NOT A CLICK.** A click
+per character at full volume is the difference between a game that responds and one that nags,
+and the pitch window is what stops a fast typist hearing a comb filter. It counts CHARACTERS
+rather than `onValueChanged`, because that event also fires for a paste and for the screen
+writing a remembered username in, and the screen filling a field in for you must not sound like
+somebody typing it.
+
+⚠⚠ **AND NOTHING SHE DREW MADE A SOUND ON HOVER, ANYWHERE IN THE FRONT END.** `MenuSfx.Hover`
+has existed since the conversion and its own header is about exactly this failure; its four
+callers are all retired wood and pennant controls. `OwnerTextAction` and `OwnerPaintedAction`
+are every button on every painted screen, so the rising edge into Highlighted **or Selected**
+lives in their `DoStateTransition`, which is `CLAUDE.md` § 4a's construction rule: a screen
+added next month cannot forget a sound it never has to remember. ⚠️ **Selected counts because a
+pad has no pointer.** ⚠️ **And the first 0.3 s after a control is enabled is silent**, or
+`ScreenFocus.Rebuild` selecting the first control would open every screen on a chord of every
+button on it announcing itself at once.
+
 ### 153.19 The three red core cases were three different kinds of stale, and two were product faults: CLOSED 2026-09-19
 
 `dotnet test Core.Tests` is the cheapest signal in the repository (§ 2.1b) and it had been

@@ -267,6 +267,9 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Fill(hint.rectTransform);
             hint.color = OwnerUiTheme.Current.Ochre;
             input.placeholder = hint;
+            // ⚠️ EVERY FIELD ON THE SCREEN ANSWERS THE PLAYER. See `OwnerFieldSound`: the
+            // three most-pressed controls on this screen were the only silent ones on it.
+            input.gameObject.AddComponent<OwnerFieldSound>();
             return input;
         }
 
