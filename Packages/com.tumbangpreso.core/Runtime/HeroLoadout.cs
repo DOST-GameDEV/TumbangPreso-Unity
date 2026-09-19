@@ -324,7 +324,12 @@ namespace TumbangPreso.Core
             // ---------------------------------------------------------------
             new AbilityVariant("phaister.1.hex", "phaister", 1, "HEX", "PhaisterHexSigil",
                 "HEX",
-                "Place a broad binding. Opponents who remain inside suffer repeated stumbles.",
+                // ⚠️ 66 AND 65 CHARACTERS, AGAINST `EveryVariantRowFitsTheTileItIsDrawnOn`'S 67.
+                // Both of Phaister's slot 1 rows were written at 76 and 101 and shipped over the
+                // budget, because this hero was added after the bound was measured and the core
+                // suite that holds it had been red for long enough that a third red case read as
+                // the weather. They say the same two things in the room the tile has.
+                "Bind a broad patch of ground. Whoever stays in it keeps stumbling.",
                 0.0f, 0.0f, "Covers more space", "Lighter, slower pulses"),
 
             // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
@@ -333,7 +338,7 @@ namespace TumbangPreso.Core
             // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
             // version of the same puddle.
             new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "SLOW BRAND", "A smaller binding with stronger, more frequent stumbles. Go around it or push through between pulses.",
+                "SLOW BRAND", "A tighter patch, and whoever stays in it stumbles harder, sooner.",
                 0.40f, -0.40f, "Stronger, quicker pulses", "Smaller reach",
                 "Use Hex eight times", true, 8),
 

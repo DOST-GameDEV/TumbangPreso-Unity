@@ -112,11 +112,27 @@ namespace TumbangPreso.Core
         /// Knockback costs the taya POSITION, which is the resource a body block is
         /// actually about, and it cannot lock anybody out of the game.
         /// </summary>
-        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex)
+        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex) =>
+            BlockKnockbackSpeed(throwerSlipperIndex, blockerPersonIndex, GameMode.Classic);
+
+        /// <summary>
+        /// ⚠️⚠️ THE BLOCKER'S GRIT IS MODE-SCOPED AND THIS OVERLOAD IS WHY THE PUBLISHED PAIR
+        /// STOPPED REPRODUCING. `Roster.PersonGritScale` answers a flat 1.0 in Classic, because
+        /// a Classic character is cosmetic now, so the modeless call above divides by 1 for
+        /// every character there is. `CombatVerbs` already passed `victim.Mode` for the tag and
+        /// the shove, so a Hero Strike body block was the one contact left ignoring the grit
+        /// its two neighbours honour: Dante (tatag 5) and Zack (tatag 3) were taking the
+        /// identical push off the identical slipper.
+        ///
+        /// ⚠️ THE SLIPPER'S IMPACT IS NOT MODE-SCOPED AND MUST NOT BE. Equipment is chosen in
+        /// both modes and `Roster.SlipperImpactScale` has no mode to take; the cosmetic
+        /// decision was about the PERSON table, which is the half that got archived.
+        /// </summary>
+        public static float BlockKnockbackSpeed(int throwerSlipperIndex, int blockerPersonIndex, GameMode mode)
         {
             return Balance.BlockKnockbackSpeed
                    * Roster.SlipperImpactScale(throwerSlipperIndex)
-                   / Roster.PersonGritScale(blockerPersonIndex);
+                   / Roster.PersonGritScale(blockerPersonIndex, mode);
         }
 
         // ⚠️⚠️ THE DEFLECT AND THE LATA RECOIL ARE DELIBERATELY NOT MODELLED HERE, AND A

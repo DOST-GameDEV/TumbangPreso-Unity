@@ -75,25 +75,47 @@ namespace TumbangPreso.PlayTests
         /// looks fine. Every name here was on the screen before this pass and has to be on it
         /// after.
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ SEVEN OF THESE NAMES ARE THE OWNER-PAINTED LOBBY'S AND WERE THE CONVERTED
+        /// LOBBY'S, AND THE RENAMES ARE WHY THIS CASE WENT RED. Nothing was lost; every
+        /// capability on the old list is still one press away, under the name
+        /// `OwnerPreparationView` builds it with. The mapping, once, so the next reader does not
+        /// have to re-derive it from two files:
+        ///
+        /// | § 119.3 | the painted lobby |
+        /// |---|---|
+        /// | `PracticeTab` | `PracticeRoute` |
+        /// | `RankedTab` | `RankedRoute` |
+        /// | `CustomTab` | `CustomGameButton` |
+        /// | `CharacterButton` | `LoadoutButton`, which was already on this list beside it |
+        /// | `SettingsDrawerToggle` | `SettingsButton` |
+        /// | `RoomCodeButton` | `CopyRoomCode` |
+        /// | `JoinChip` | `JoinRoomButton` |
+        /// | `ChatChip` | `ChatButton` |
+        /// | `StatusLabel` | `PreparationStatus` |
+        ///
+        /// ⚠️ THE LIST STILL MEANS WHAT IT MEANT. It is an inventory of what the lobby owes a
+        /// player, not a record of what some pass happened to name things, so a redesign that
+        /// drops a capability fails here exactly as before.
+        /// </remarks>
         private static readonly string[] LobbyControls =
         {
             "BackButton",
-            "PracticeTab",
-            "RankedTab",
-            "CustomTab",
+            "PracticeRoute",
+            "RankedRoute",
+            "CustomGameButton",
             "ProfileButton",
-            "CharacterButton",
             "LoadoutButton",
-            "SettingsDrawerToggle",
-            "RoomCodeButton",
+            "SettingsButton",
+            "CopyRoomCode",
             // ⚠️ `PlayerNameEdit` IS NOT HERE ANY MORE. It lives in `PlayerHub`'s PROFILE tab,
             // which is built when the tab is shown, so a probe that looked for it on a lobby
             // nobody had opened the account screen on would be asserting the absence of a control
             // rather than its presence. `UiRuntimeShots.TheLobbyDraws` presses the door and checks
             // it there, which is the state a player is in when they use it.
-            "JoinChip",
-            "ChatChip",
-            "StatusLabel",
+            "JoinRoomButton",
+            "ChatButton",
+            "PreparationStatus",
         };
 
         /// <summary>The two action buttons, of which exactly one is live at a time. ⚠️ They are
@@ -202,7 +224,7 @@ namespace TumbangPreso.PlayTests
             // ⚠️⚠️ EVERY DRAWER IS OPENED BEFORE THE WALK, WHICH IS THE POINT OF DOING THIS IN A
             // PROBE RATHER THAN IN A RENDER. A shut drawer is invisible to a camera and its
             // contents are exactly where a leftover survives a review.
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "SettingsButton", "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;
@@ -224,7 +246,7 @@ namespace TumbangPreso.PlayTests
             // `UiRuntimeShots.TheLobbyDoorsDraw` records: everything on them is drawn off a
             // selection change, and a panel switched on without one is a panel nobody has selected
             // anything in.
-            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            foreach (string door in new[] { "LoadoutButton", "ProfileButton" })
             {
                 var open = Find(door)?.GetComponent<Button>();
                 if (open == null) continue;
@@ -257,6 +279,22 @@ namespace TumbangPreso.PlayTests
             // ⚠️ THE IN-MATCH HUD AND THE MAIN MENU ARE SKIPPED BY NAME. They are still wooden on
             // purpose and 🧑 scoped both out twice: *"dont touch main menu and inngame ui"*.
             if (t.name == "HudCanvas" || t.name == "MainMenuRoot") return;
+
+            // ⚠️⚠️ A SUBTREE THAT IS SWITCHED OFF IS NOT A LEFTOVER, AND THE OWNER-PAINTED PASS
+            // IS WHY THIS LINE HAD TO BE WRITTEN. `ConvertedMatchSetup.WireOwnerPreparation`
+            // opens with `foreach (Transform child in transform) child.gameObject.SetActive(false)`
+            // and then builds `OwnerPreparationView` beside it, and
+            // `ConvertedCharacterSelect.Awake` does the same: **the whole authored Godot lobby
+            // is retained, deliberately, as an inactive reference**, which is what let the
+            // painted screens be written without deleting the conversion they replaced. This
+            // walk was reporting every plank of it — `ConfigPanel`, `SeatPanel`, `SeatButton0`
+            // to `3`, `CharacterButton` — as wood surviving on the lobby.
+            //
+            // ⚠️ IT LOSES NOTHING THIS PROBE EXISTS FOR, because the caller OPENS every drawer
+            // before it walks: a shut drawer is active by the time this runs, and a surface
+            // hidden UNDER another surface is active too. **The one thing no longer asked is
+            // whether a wholly disabled subtree is wooden, and a player cannot see one.**
+            if (!t.gameObject.activeInHierarchy) return;
 
             // ⚠️⚠️ THE ACTION SLOT IS EXEMPT WHOLESALE AND THAT IS THE DESIGN, NOT A HOLE IN THE
             // TEST. Its three occupants are the one primary this screen has, and 🧑 chose their
@@ -632,7 +670,7 @@ namespace TumbangPreso.PlayTests
 
             CatalogueScene("lobby", found);
 
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "SettingsButton", "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;
@@ -643,7 +681,7 @@ namespace TumbangPreso.PlayTests
                 CatalogueScene("lobby", found);
             }
 
-            foreach (string door in new[] { "CharacterButton", "LoadoutButton", "ProfileButton" })
+            foreach (string door in new[] { "LoadoutButton", "ProfileButton" })
             {
                 var open = Find(door)?.GetComponent<Button>();
                 if (open == null) continue;
@@ -703,6 +741,31 @@ namespace TumbangPreso.PlayTests
                     if (live.StartsWith(stem, System.StringComparison.Ordinal))
                         nodeSurvived = true;
 
+                // ⚠️⚠️ AND A CONTROL THAT KEPT ITS WORD AND CHANGED ITS NODE NAME HAS NOT BEEN
+                // LOST EITHER, WHICH IS THE OTHER HALF AND THE ONE THE PAINTED PASS NEEDED.
+                // This gate answers 🧑's *"it should have all the functions of old ui, make sure
+                // ntohing in old ui as functions get lost"*, and a function is what the button
+                // SAYS, not what the object is called: the painted lobby renamed about forty
+                // controls at once (`PracticeTab` to `PracticeRoute`, `ChatChip` to
+                // `ChatButton`, `LoadoutDoor` to `TumpSkills`) without dropping one of them, and
+                // a name-only comparison reported every single one as a lost function. The
+                // node-name match above still runs first, so a control that kept its name and
+                // changed its word is still reported as the design decision it is.
+                //
+                // ⚠️ AN EMPTY WORD MATCHES NOTHING, deliberately. The arrow buttons carry no
+                // lettering at all, so a word-match on "" would let any of them stand in for
+                // any other, which would quietly excuse a real loss.
+                if (!nodeSurvived && parts.Length >= 4 && !string.IsNullOrWhiteSpace(parts[3]))
+                {
+                    string says = "\t" + parts[1] + "\t";
+                    string word = "\t" + parts[3];
+
+                    foreach (string live in found)
+                        if (live.Contains(says, System.StringComparison.Ordinal)
+                            && live.EndsWith(word, System.StringComparison.Ordinal))
+                            nodeSurvived = true;
+                }
+
                 if (!nodeSurvived) lost.Add(row.Replace("\t", "  |  "));
             }
 
@@ -749,7 +812,7 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < SettleFrames; i++) yield return null;
 
-            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "SettingsButton", "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;
@@ -757,7 +820,7 @@ namespace TumbangPreso.PlayTests
                 for (int i = 0; i < 6; i++) yield return null;
             }
 
-            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            foreach (string door in new[] { "LoadoutButton", "ProfileButton" })
             {
                 var open = Find(door)?.GetComponent<Button>();
                 if (open == null) continue;
@@ -841,7 +904,7 @@ namespace TumbangPreso.PlayTests
             yield return ProbeWait.Done(lobby, "MatchSetup load");
             for (int i = 0; i < SettleFrames; i++) yield return null;
 
-            foreach (string chip in new[] { "JoinChip", "ChatChip" })
+            foreach (string chip in new[] { "JoinRoomButton", "ChatButton" })
             {
                 var button = Find(chip)?.GetComponent<Button>();
                 if (button == null) continue;

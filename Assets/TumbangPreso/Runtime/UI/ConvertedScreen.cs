@@ -95,6 +95,21 @@ namespace TumbangPreso.UI
             // rather than a fault: see `Nodes`.
             _converted = transform.childCount > 0;
             Index(transform);
+
+            // ⚠️⚠️ EVERY AUTHORED TEXT FIELD UNDER THIS SCREEN LOSES UNITY'S BLUE SELECTION
+            // HIGHLIGHT HERE, BY CONSTRUCTION, FOR THE SAME REASON THE CURSOR IS RELEASED FOUR
+            // LINES UP: *"doing it in the base class means a screen added later cannot forget."*
+            // `MenuKit.Dress` fixes a field the moment it is BUILT, which reaches every field
+            // this project writes in code and none of the ones that arrive out of a `.tscn`.
+            // `PaperPurityProbe.NoFieldHighlightsInBlue` found the survivor by walking the
+            // scene: the settings panel's authored `PlayerNameField`, still `a8ceff`, blue 1.00
+            // over red 0.66, against `CLAUDE.md` § 6.4's *"more blue in it than red"*. Dressing
+            // it at its one wiring site would have fixed that one field; every other authored
+            // field in every converted scene would still have been one rename away from the
+            // same fault, and a selection highlight appears in no render and no layout probe.
+            foreach (var field in GetComponentsInChildren<UnityEngine.UI.InputField>(true))
+                MenuKit.Dress(field);
+
             Wire();
         }
 

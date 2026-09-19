@@ -86,6 +86,16 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < SettleFrames; i++) yield return null;
             Canvas.ForceUpdateCanvases();
 
+            // ⚠️⚠️ THE CHAT IS OPENED FIRST, THROUGH ITS OWN DOOR, BECAUSE A CLOSED CHAT IS
+            // DELIBERATELY UNTYPEABLE AND THIS PROBE READ THAT AS THE FAULT IT HUNTS.
+            // `LobbyChat.SetPresented(false)` sets its CanvasGroup to alpha 0 and writes
+            // `_field.interactable = false`, and it does NOT deactivate the object, so a sweep
+            // that excludes inactive objects finds a live `ChatInput` a player cannot type into
+            // and is right about the letter of it. The lobby opens with the chat closed on
+            // purpose (§ 114: an empty log is a promise, not a screen element), so the only
+            // question worth asking is about the OPEN chat, which is what CHAT gets you.
+            yield return PresentTheChat(report);
+
             // The lobby's own furniture first, then the join card, which is built inactive and
             // is the only place the join-code field exists.
             yield return Check("lobby", report, broken);
@@ -202,6 +212,64 @@ namespace TumbangPreso.PlayTests
 
                 report.AppendLine($"   {field.name}: ok (selected and held {HoldFrames} frames)");
             }
+        }
+
+        /// <summary>
+        /// Press CHAT the way a player does, and fall back to the component when the lobby on
+        /// screen has no such door. Reported either way, because "there was no CHAT button" is
+        /// the thing a reader of this log needs to know before believing the lines under it.
+        /// </summary>
+        internal static IEnumerator PresentTheChat(StringBuilder report)
+        {
+            // ⚠️ EVERY `LobbyChat` IN THE SCENE, NOT THE FIRST ONE. The lobby builds one and the
+            // join card builds its own, and this walk reports a field per surface: presenting
+            // one of the two left the other half of the list still red and reading exactly as
+            // it did before, which is the least useful shape a partial fix can have.
+            var chats = Object.FindObjectsByType<TumbangPreso.UI.LobbyChat>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            if (chats.Length == 0)
+            {
+                report.AppendLine("--- chat --- NOT BUILT");
+                yield break;
+            }
+
+            var door = FindByName("ChatButton") ?? FindByName("ChatChip");
+            var button = door != null ? door.GetComponent<Button>() : null;
+
+            if (button != null && button.IsInteractable())
+            {
+                button.onClick.Invoke();
+                report.AppendLine($"--- chat --- opened by pressing {door.name}");
+            }
+
+            for (int i = 0; i < HoldFrames; i++) yield return null;
+
+            // Whatever the door reached, the rest are presented directly: a join card's chat has
+            // no door of its own on the lobby it is drawn over.
+            foreach (var chat in chats)
+            {
+                if (chat == null || chat.IsPresented) continue;
+
+                chat.SetPresented(true);
+                report.AppendLine($"--- chat --- {Path(chat.transform)} presented directly");
+            }
+
+            for (int i = 0; i < HoldFrames; i++) yield return null;
+            Canvas.ForceUpdateCanvases();
+
+            foreach (var chat in chats)
+                if (chat != null && !chat.IsPresented)
+                    report.AppendLine($"--- chat --- {Path(chat.transform)} STILL CLOSED");
+        }
+
+        private static string Path(Transform t)
+        {
+            string path = t.name;
+
+            for (var p = t.parent; p != null; p = p.parent) path = p.name + "/" + path;
+
+            return path;
         }
 
         internal static GameObject FindByName(string name)

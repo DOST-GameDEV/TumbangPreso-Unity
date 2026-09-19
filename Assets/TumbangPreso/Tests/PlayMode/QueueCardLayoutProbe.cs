@@ -155,7 +155,7 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(measured, 0,
                     $"{name}: the queue card drew no labels, so this proves nothing");
 
-                var state = Find(canvas, "QueueState");
+                var state = StatePlate(canvas);
                 Assert.IsNotNull(state, "the card has no QueueState plate");
                 AssertInside((RectTransform)canvas, (RectTransform)state, name, "the queue card");
 
@@ -183,7 +183,15 @@ namespace TumbangPreso.PlayTests
             string text = everything.ToString();
 
             // 1. The mode.
-            StringAssert.Contains(MenuKit.ModeLabel(GameMode.Classic), text,
+            //
+            // ⚠️ CASE-INSENSITIVE, BECAUSE THE CARD'S VOICE IS NOT THE ASSERTION. The painted
+            // card writes "Classic · Searching 1200 to 1800 skill" under a headline reading
+            // "Finding a match", which is sentence case throughout; `MenuKit.ModeLabel` shouts,
+            // because it was written for the converted screens' all-caps chrome. **The claim
+            // this case makes is that the card SAYS which mode it is queueing for**, and
+            // forcing the painted screen to shout it would be a test choosing a typographic
+            // voice, which is 🧑's to choose.
+            StringAssert.Contains(MenuKit.ModeLabel(GameMode.Classic), text.ToUpperInvariant(),
                 "the queue card never says which mode it is queueing for. A player who queued " +
                 "from the wrong tab finds out at the character select. FUTURE.md § 0.5b, phase 7.");
 
@@ -205,7 +213,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(cancel.GetComponent<Button>().interactable, "CANCEL is not pressable");
 
             // 5. And the sentence the game has never said out loud.
-            StringAssert.Contains("everyone defends exactly once", text,
+            //
+            // ⚠️ IT ASKS FOR THE CORE'S OWN STRING AND NOT FOR A COPY OF ITS WORDS. This line
+            // held a hard-typed "everyone defends exactly once", which is the second copy of a
+            // sentence that already has one home and one test: `MatchmakingRules` owns the
+            // claim, `MatchmakingTests` owns the wording, and the only thing a layout probe can
+            // usefully say is whether the card DREW it. The copy would have failed here on a
+            // capital letter alone.
+            StringAssert.Contains(MatchmakingRules.TayaRotationPromise, text,
                 "the queue does not tell the player that the taya rotates. FUTURE.md § 7 asks " +
                 "for it by name and INSPIRATION.md § 4.5 is titled 'the taya rotation is a gift " +
                 "and nobody knows it'. It is why a bad first round is not a lost match.");
@@ -272,7 +287,7 @@ namespace TumbangPreso.PlayTests
                 yield return null;
 
                 var door = Find(canvas.transform, "QuickMatchButton");
-                var plate = Find(canvas.transform, "QueueState");
+                var plate = StatePlate(canvas.transform);
 
                 Assert.IsNotNull(door, "the QUICK MATCH door is gone");
                 Assert.IsNotNull(plate, "the queue card is gone");
@@ -400,6 +415,20 @@ namespace TumbangPreso.PlayTests
                 if (t.name == name) return t;
             return null;
         }
+
+        /// <summary>
+        /// The card's own root, under either name it has been built with.
+        ///
+        /// ⚠️⚠️ IT IS `NativeQueueState` ON THE SHIPPING CARD AND `QueueState` ON THE ONE THIS
+        /// FILE WAS WRITTEN AGAINST, AND THAT RENAME IS THE WHOLE OF WHY TWO CASES HERE WERE
+        /// RED. `QueueCard.Build` draws the owner-painted ticket now
+        /// (`QueueCard.OwnerPainted`), and a probe that cannot find the card reports the card as
+        /// missing rather than reporting itself as stale. Both names are accepted rather than
+        /// one being chosen, because the legacy builder is still compiled and a future pass that
+        /// reaches for it must not silently lose this coverage.
+        /// </summary>
+        private static Transform StatePlate(Transform scope) =>
+            Find(scope, "NativeQueueState") ?? Find(scope, "QueueState");
 
         private static Transform Find(Transform scope, string name)
         {

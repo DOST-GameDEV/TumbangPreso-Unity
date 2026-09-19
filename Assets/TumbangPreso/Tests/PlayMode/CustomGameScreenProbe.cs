@@ -111,7 +111,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return OpenScreen(CustomGameRules.Defaults(GameMode.HeroStrike));
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
             // ⚠️⚠️ § 114.14, AND IT IS THE ONE QUESTION EVERY OTHER ASSERTION IS BLIND TO.
@@ -156,7 +156,7 @@ namespace TumbangPreso.PlayTests
 
             yield return OpenScreen(rules);
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
             string headline = HeadlineText(canvas);
@@ -193,10 +193,16 @@ namespace TumbangPreso.PlayTests
         {
             yield return OpenScreen(CustomGameRules.Defaults(GameMode.HeroStrike));
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
-            Assert.IsNull(RowNamed(canvas, "SLIPPERS EACH"),
+            // ⚠️ ON SCREEN, NOT IN THE HIERARCHY. The painted screen builds every rule row once
+            // and turns the stock row off under a format that has no stock
+            // (`RefreshOwnerRules`), where the old one declined to build it at all. The
+            // question this test asks is the player's — is there a control here that does
+            // nothing — and a row that is not active is not on their screen. What it must
+            // never be is present and greyed, which is what `VisibleRowNamed` would catch.
+            Assert.IsNull(VisibleRowNamed(canvas, "SLIPPERS EACH"),
                 "a STANDARD match is offering a TSINELAS EACH row, which does nothing. " +
                 "SceneFlow.SelectedTsinelas is read only under LAST TSINELAS STANDING.");
 
@@ -209,7 +215,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
             yield return null;
 
-            Assert.IsNotNull(RowNamed(canvas, "SLIPPERS EACH"),
+            Assert.IsNotNull(VisibleRowNamed(canvas, "SLIPPERS EACH"),
                 "LAST TSINELAS STANDING has no control for its own stock, so the format ships " +
                 "with a number nothing can change. docs/TODO.md § 130.13.");
         }
@@ -226,13 +232,18 @@ namespace TumbangPreso.PlayTests
 
             yield return OpenScreen(bad);
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
             Assert.IsNotEmpty(CustomGameRules.Refusal(bad),
                 "this test's own fixture is playable, so it proves nothing");
 
-            var action = ButtonNamed(canvas, "USE THESE RULES");
+            // ⚠️ BY OBJECT NAME, BECAUSE THE ONE ACTION IS NOT A FIXED WORD ANY MORE. The
+            // painted screen writes DONE while you may edit and CLOSE while a host sets the
+            // rules (`RefreshOwnerRules`), so asking for the label "USE THESE RULES" asks for a
+            // string the game stopped saying. `UseRulesButton` is the control; the words on it
+            // are a state.
+            var action = ObjectNamed<Button>(canvas, "UseRulesButton");
             Assert.IsNotNull(action, "the screen has no primary action");
             Assert.IsFalse(action.interactable,
                 "the screen offers USE THESE RULES on a rule set the match will refuse");
@@ -258,7 +269,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return OpenScreen(CustomGameRules.Defaults(GameMode.HeroStrike));
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
             string shipped = RankedText(canvas);
@@ -293,7 +304,7 @@ namespace TumbangPreso.PlayTests
 
             yield return OpenScreen(rules);
 
-            var canvas = Root("CustomGameCanvas");
+            var canvas = Root("OwnerCustomGameCanvas");
             Assert.IsNotNull(canvas, "the custom game screen built no canvas");
 
             yield return Drive();
@@ -392,6 +403,13 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE CANVAS IS `OwnerCustomGameCanvas` AND WAS `CustomGameCanvas`, WHICH IS THE
+        /// WHOLE OF WHY SIX CASES IN THIS FILE WERE RED. `CustomGameScreen.Build` is one line,
+        /// `=> BuildOwnerRules()`, so the painted screen is the only one a player can reach and
+        /// `MenuKit.BuildCanvas(transform, "CustomGameCanvas")` is unreachable code in the same
+        /// class. § 124.11 again: a fixture knocking on a door the game moved.
+        /// </summary>
         private static Transform Root(string name)
         {
             foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,
@@ -411,6 +429,25 @@ namespace TumbangPreso.PlayTests
             foreach (var t in scope.GetComponentsInChildren<Text>(true))
                 if (t != null && string.Equals(t.text, label, System.StringComparison.Ordinal))
                     return t;
+
+            return null;
+        }
+
+        /// <summary>The same lookup, restricted to what a player can actually see.</summary>
+        private static Text VisibleRowNamed(Transform scope, string label)
+        {
+            foreach (var t in scope.GetComponentsInChildren<Text>(true))
+                if (t != null && t.gameObject.activeInHierarchy
+                    && string.Equals(t.text, label, System.StringComparison.Ordinal))
+                    return t;
+
+            return null;
+        }
+
+        private static T ObjectNamed<T>(Transform scope, string name) where T : Component
+        {
+            foreach (var c in scope.GetComponentsInChildren<T>(true))
+                if (c != null && c.name == name) return c;
 
             return null;
         }

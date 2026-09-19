@@ -106,10 +106,28 @@ namespace TumbangPreso.UI
             _ownerRuleRows["Stock"].SetActive(_editing.Format==MatchFormat.LastTsinelas);
             _ownerValues["Bots"].text=BotLabel(_editing);_ownerValues["Private"].text=_editing.Private?"ON":"OFF";
             _passwordRow.SetActive(_editing.Private && MayEdit);
+            // ⚠️⚠️ THE TARGET AND THE STOCK ARE PART OF THIS SENTENCE AND THE PAINTED REWRITE
+            // DROPPED BOTH. `CustomGameScreen.Refresh` has carried them since the screen was
+            // written: a LAST SLIPPER STANDING room whose headline does not say how many
+            // slippers each player starts with has left out the one number that format is
+            // about, and a first-to-N room reads as a full-length match. They are appended the
+            // same way and only when they apply, which is the row rule one line up.
+            string target=_editing.ScoreTarget>0?" · first to "+_editing.ScoreTarget:"";
+            string stock=_editing.Format==MatchFormat.LastTsinelas?" · "+_editing.Tsinelas+" slippers":"";
             _headline.text=(_editing.Mode==GameMode.Classic?"CLASSIC":"HERO STRIKE")+" · "+CustomGameRules.FormatName(_editing.Format)+
-                " · "+_editing.Rounds+" rounds · "+_editing.RoundSeconds+"s"+(!MayEdit?"  (the host sets these)":"");
+                " · "+_editing.Rounds+(_editing.Rounds==1?" round":" rounds")+" · "+_editing.RoundSeconds+"s"+target+stock+
+                (!MayEdit?"  (the host sets these)":"");
             foreach(var page in new[]{_ownerMatchPage,_ownerRoomPage})
                 foreach(var selectable in page.GetComponentsInChildren<Selectable>(true))selectable.interactable=MayEdit;
+            // ⚠️⚠️ AND THE RANKED LINE WAS A CONSTANT, WHICH MADE IT FALSE HALF THE TIME. It
+            // was painted once as "Custom rooms do not enter ranked matchmaking." and never
+            // written again, so a room left on the shipped rules told the player their match
+            // does not count when `CustomGameRules.CanBeRanked` says it does. A line that reads
+            // the same whatever the rules say is decoration; this one is a fact a player has to
+            // have BEFORE the match rather than off the results board.
+            _ranked.text=CustomGameRules.CanBeRanked(_editing)
+                ?"These are the shipped rules, so this match counts for your rank."
+                :"Custom rules. This match does not count for your rank.";
             string refusal=CustomGameRules.Refusal(_editing);_refusal.text=refusal;
             _use.GetComponentInChildren<Text>().text=MayEdit?"DONE":"CLOSE";
             _use.interactable=!MayEdit || string.IsNullOrEmpty(refusal);_ownerReset.interactable=MayEdit;

@@ -718,6 +718,63 @@ placing the first of them cost two full runs.
 menu scene went active and got her login, because a first boot meets `_atBoot` and `BootGuest`
 before it meets the street. It walks the guest door now.
 
+### 153.18 The gate's first real number, and the fifty-three it found: IN PROGRESS 2026-09-19
+
+`python tools/playmode_suite.py --gate` ran for the first time on `0e401b36`, the commit that
+made it able to run at all, and answered: **392 cases, 322 passed, 61 failed, 9 skipped.** By
+group: `destroyer` 4/5, `screens` 60/114, `match` 231/235, `capture` 13/16, `services` 11/19
+with 8 skipped by design in batch mode, `bots` 3/3. `Logs/playmode-suite/gate.json` is the run.
+
+⚠️⚠️ **THE SECOND RUN OF `screens` RETURNED THE SAME FIFTY-THREE CASES, NAME FOR NAME, AND THAT
+IS THE FINDING RATHER THAN THE NUMBER.** § 126.8 measured the single-process suite four times
+and its complaint was never the count: *"the count barely moved and the red set largely
+changed, which is a gate that is not measuring the code"*. Two runs of the grouped suite an
+hour apart, on the same commit, produced identical red sets in every group. **The isolation
+holds, so every one of these is about the code and not about its neighbours**, and that is the
+first time this repository has been able to say so.
+
+⚠️⚠️ **AND THE SHAPE OF THE FIFTY-THREE IS ONE FAULT REPEATED: § 124.11, A FIXTURE KNOCKING ON
+A DOOR THE OWNER-PAINTED PASS MOVED.** § 153.11 closed four of them and § 153.14 five more, and
+what is left is the rest of the same sweep. The painted front end renamed the surface under
+every screen probe in the folder, and a probe that cannot find a screen reports the screen as
+missing rather than reporting itself as stale:
+
+| The fixture asks for | The game builds | Where |
+|---|---|---|
+| `CustomGameCanvas` | `OwnerCustomGameCanvas` | `CustomGameScreen.Build` is `=> BuildOwnerRules()`, so `MenuKit.BuildCanvas(transform, "CustomGameCanvas")` in the same class is unreachable code |
+| `USE THESE RULES` | `UseRulesButton`, reading DONE or CLOSE | the words are a state now (`RefreshOwnerRules`), so the label is the wrong handle |
+| `PracticeTab`, `RankedTab`, `CustomTab` | `PracticeRoute`, `RankedRoute`, `CustomGameButton` | `OwnerPreparationView` |
+| `SettingsDrawerToggle`, `RoomCodeButton`, `JoinChip`, `ChatChip`, `StatusLabel` | `SettingsButton`, `CopyRoomCode`, `JoinRoomButton`, `ChatButton`, `PreparationStatus` | the same |
+| `LoadoutDoor`, `LoadoutBoard` | `TumpSkills` into `TumpSkillView` | `ConvertedCharacterSelect.Wire` builds `TumpPickerView` and `WireLegacyReference`, which holds `BuildStageDoors`, has **no live caller** |
+| `HubClose` | `ClosePlayerHub` | `PlayerHub.OwnerPainted`, already recorded in § 153.11 and still held by two more fixtures |
+
+⚠️⚠️ **THREE PRODUCT FAULTS CAME OUT OF REPOINTING THEM, WHICH IS THE ARGUMENT FOR DOING THE
+WORK RATHER THAN MUTING THE CASES.** Each was invisible while the fixture could not reach the
+screen at all:
+
+- **The custom game headline had lost the score target and the slipper stock.**
+  `CustomGameScreen.Refresh` has carried both since the screen was written and
+  `RefreshOwnerRules` reimplemented the sentence without them, so a LAST SLIPPER STANDING room
+  never said how many slippers each player starts with, which is the one number that format is
+  about.
+- ⚠️⚠️ **The ranked line on that screen was a constant, so it was false half the time.** It was
+  painted once as *"Custom rooms do not enter ranked matchmaking."* and never written again,
+  while `CustomGameRules.CanBeRanked` says a room left on the shipped rules DOES count. A line
+  that reads the same whatever the rules say is decoration, and this one told the player the
+  opposite of the truth.
+- **Unity's blue selection highlight survived on the settings panel's authored
+  `PlayerNameField`**, `a8ceff`, blue 1.00 over red 0.66, against `CLAUDE.md` § 6.4. `MenuKit.Dress`
+  fixes a field where it is BUILT, which reaches every field written in code and none that arrives
+  out of a `.tscn`. `ConvertedScreen.Start` dresses every `InputField` under a converted screen
+  now, which is § 4a's construction rule rather than a fourth call site to remember.
+
+⚠️⚠️ **AND TWO CASES WERE MEASURING A CLOSED DRAWER AND CALLING IT A DEAD CONTROL.**
+`LobbyChat.SetPresented(false)` sets alpha 0, `interactable` false and `_field.interactable`
+false, and does NOT deactivate the object, so a sweep that excludes inactive objects finds a
+live `ChatInput` a player cannot type into and is right about the letter of it. The lobby opens
+with the chat closed on purpose (§ 114: an empty log is a promise, not a screen element), so
+both typing probes press CHAT first, through the door, exactly as `OwnerPreparationTests` does.
+
 ### 153.17 The PlayMode gate could not run at all, and the reason was a list: CLOSED 2026-09-19
 
 `python tools/playmode_suite.py --gate` is the number `CLAUDE.md` § 7 says to quote, and it
@@ -828,11 +885,61 @@ asserts them in 49 ms, which is the argument for an engine-free rules core in on
 ⚠ **What stayed on the screen is its own policy and not the rule**: an empty field is not a fault
 until a press, and a confirmation is about the pair.
 
-⚠️ **Three `Core.Tests` cases are red and none of them is this**:
+⚠️ **Three `Core.Tests` cases were red and none of them was this**:
 `HeroLoadoutTests.EveryVariantRowFitsTheTileItIsDrawnOn`,
 `BalanceTests.BodyBlock_ScalesByThrowerImpactAndDividesByBlockerGrit` and
 `MatchmakingTests.TheQueueSaysTheTayaRotatesAndEveryoneDefendsOnce`. 576 passed, 3 failed both
-with this change and with `AccountRules.cs` checked back out at `ec198019`.
+with this change and with `AccountRules.cs` checked back out at `ec198019`. **All three are
+closed as of 2026-09-19 and § 153.19 is what each of them turned out to be: 598 passed, 0
+failed, 179 ms.**
+
+### 153.19 The three red core cases were three different kinds of stale, and two were product faults: CLOSED 2026-09-19
+
+`dotnet test Core.Tests` is the cheapest signal in the repository (§ 2.1b) and it had been
+answering **596 cases, 593 passed, 3 failed** for long enough that a third red case read as the
+weather. It is **598 passed, 0 failed in 179 ms** now. None of the three was one fault; they
+were three, and only one of them was in a test.
+
+⚠️⚠️ **`BalanceTests.BodyBlock_ScalesByThrowerImpactAndDividesByBlockerGrit` WAS ASSERTING A
+DESIGN THAT WAS DELIBERATELY REVERSED, AND IT FOUND A REAL GAP UNDER IT.** `Make Classic
+character choices cosmetic` archived the person table there, so `Roster.PersonGritScale` answers
+a flat 1.0 for every Classic index and a blocker's own grit divides nothing. The published pair
+(4.238 and 5.618) is kept and still reproduces: it was measured on Jun-Jun, whose tatag is 2 and
+was never the reason for either figure, and `5.618 / 4.238` is exactly the IMPACT ratio
+`1.14 / 0.86`. The DIVISOR is what changed, and the fixture asserts the reversal now so it
+cannot come back by accident: in Classic, Bebang at grit 5 and Jun-Jun at grit 2 take the
+identical push, because the character a Classic player picks is a costume.
+
+⚠️⚠️ **AND HERO STRIKE'S BODY BLOCK WAS IGNORING GRIT TOO, WHICH NOTHING HAD NOTICED.**
+`Combat.BlockKnockbackSpeed` took no mode, so it divided by `PersonGritScale`'s modeless
+overload, which is Classic, which is 1.0 for every input there is. `CombatVerbs` already passed
+`victim.Mode` for the tag and the shove, so the body block was the one contact left ignoring the
+grit its two neighbours honour: **Dante (tatag 5) and Zack (tatag 3) took the identical push off
+the identical slipper.** There is a mode overload now, `Slipper.HostBlockedBy` passes
+`blocker.Mode`, and `BodyBlock_InHeroStrike_IsStillDividedByTheBlockersGrit` is the second case.
+
+⚠️⚠️ **`MatchmakingTests.TheQueueSaysTheTayaRotatesAndEveryoneDefendsOnce` WAS THE FIXTURE
+DOING ITS JOB AND NOBODY READING IT.** `91d1e2f3`, a commit about restoring a Play heading at
+laptop scales, rewrote `MatchmakingRules.TayaRotationPromise` to *"The defender changes every
+round. Scores carry across the match."* and said nothing about it in its message. That sentence
+describes the FORMAT and drops the promise: a player who reads it learns that the role moves,
+not that a bad first round is survivable, which is the half `FUTURE.md` § 7 asks for by name.
+The sentence is **"Everyone defends exactly once. A bad first round is not a lost match."** now,
+69 characters against the two-line budget of the narrowest of the three queue cards, and
+`TayaRotationPromiseBudget` plus `TheQueuePromiseFitsTheCardItIsDrawnOn` hold that budget in 40
+ms rather than in a three-minute Unity launch. ⚠️ **The fixture asserts the CLAIM and not the
+wording now**, which is what it should have done the first time, and
+`QueueCardLayoutProbe` asks for the core's own string rather than a hard-typed copy of its words
+— that copy would have failed on a capital letter alone.
+
+⚠️⚠️ **`HeroLoadoutTests.EveryVariantRowFitsTheTileItIsDrawnOn` WAS TWO OVER-BUDGET STRINGS AND
+IT COULD ONLY EVER REPORT ONE.** Phaister was *"the hero the previous table left out entirely"*
+and both of his slot 1 rows were written after the 67-character bound was measured: HEX at 76 and
+SLOW BRAND at **101**. They read *"Bind a broad patch of ground. Whoever stays in it keeps
+stumbling."* (66) and *"A tighter patch, and whoever stays in it stumbles harder, sooner."* (65)
+now. ⚠️ **The fixture measures every row before failing any of them**, because the first version
+stopped at the first offender: a table with two long rows in it cost two full runs to see, and
+the second only appeared once the first had been rewritten.
 
 ### 153.13 The crop was still protecting the can, and it cost the logo: CLOSED 2026-09-19
 

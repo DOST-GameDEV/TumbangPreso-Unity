@@ -122,9 +122,34 @@ namespace TumbangPreso.Core.Tests
         {
             string promise = MatchmakingRules.TayaRotationPromise;
 
-            Assert.Contains("defender rotates", promise);
-            Assert.Contains("everyone defends exactly once", promise);
+            // ⚠️⚠️ THE THING THIS FIXTURE EXISTS FOR HAPPENED, AND IT CAUGHT IT: `91d1e2f3`,
+            // a commit about a heading at laptop scales, rewrote the sentence to "The
+            // defender changes every round. Scores carry across the match." and said nothing
+            // about it in its message. That sentence describes the format and drops the
+            // promise, which is the half `FUTURE.md` § 7 asks for by name.
+            //
+            // ⚠️ IT ASSERTS THE CLAIM AND NOT THE WORDING, which is what it should have done
+            // the first time. "The defender rotates" was the mechanism and it is the same
+            // fact as "everyone defends exactly once" said twice; the card has room for one
+            // of them, so the one that survives is the one a waiting player can use.
+            Assert.Contains("defends exactly once", promise);
             Assert.Contains("bad first round is not a lost match", promise);
+        }
+
+        /// <summary>
+        /// ⚠️ THE OTHER HALF OF WHY THAT SENTENCE WAS CUT: it has to be drawn, on the
+        /// narrowest of the three queue cards, in a box two lines tall. A count here fails in
+        /// 40 ms and names the budget; `QueueCardLayoutProbe` measures the real wrap at nine
+        /// resolutions and takes a three-minute Unity launch to say so.
+        /// </summary>
+        [Fact]
+        public void TheQueuePromiseFitsTheCardItIsDrawnOn()
+        {
+            Assert.True(MatchmakingRules.TayaRotationPromise.Length
+                        <= MatchmakingRules.TayaRotationPromiseBudget,
+                $"the queue promise is {MatchmakingRules.TayaRotationPromise.Length} characters " +
+                $"against a {MatchmakingRules.TayaRotationPromiseBudget} budget, so it wraps to a " +
+                "third line the owner-painted card has no room for.");
         }
 
         // ------------------------------------------------------------------------------

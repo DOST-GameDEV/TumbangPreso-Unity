@@ -162,7 +162,9 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ FRIENDS IS IN THE LOOP FROM THE DAY IT SHIPPED. `docs/TODO.md` § 92 records
                 // three of five faults being layout faults a measurement would have caught the
                 // day they were written, and the reason none did is that the screens had no probe.
-                foreach (var tab in new[] { "PROFILE", "FRIENDS", "CAREER", "MATCHES", "ACCOUNT" })
+                // ⚠️ `HISTORY`, NOT `MATCHES`. `PlayerHub.RecordBook` names the five pages
+                // PROFILE, FRIENDS, CAREER, HISTORY and ACCOUNT.
+                foreach (var tab in new[] { "PROFILE", "FRIENDS", "CAREER", "HISTORY", "ACCOUNT" })
                 {
                     Press(tab);
                     yield return null;
@@ -307,10 +309,21 @@ namespace TumbangPreso.PlayTests
             // "keep the account you already have"; from the ACCOUNT tab it means the TOURNAMENT
             // guest, which parks the owner's profile. Two behaviours behind one word is the
             // confusion this screen was rebuilt to remove.
-            var guest = ButtonReading(root, "CONTINUE AS GUEST");
+            // ⚠️⚠️ BY CONTROL, NOT BY CAPTION, AND THE CAPTION IS WHY THIS WAS RED. Her painted
+            // login draws the guest door as `GuestAccount` reading **GUEST**, a cut piece of her
+            // own element sheet (`SignInScreen.OwnerPainted`); the converted screen wrote
+            // "CONTINUE AS GUEST" into a chip. § 97's rule is about the PRESS — one, and never
+            // needing the network, because of the venue in General Santos City — and never about
+            // how many words are on it. What still has to be true is asserted below: it is on
+            // screen, it is live, and one press leaves.
+            var guest = ObjectNamed(root, "GuestAccount") ?? ObjectNamed(root, "GuestButton")
+                        ?? ButtonReading(root, "CONTINUE AS GUEST");
             Assert.IsNotNull(guest,
-                "there is no CONTINUE AS GUEST on the boot screen. It is the one press that " +
+                "there is no guest door on the boot screen. It is the one press that " +
                 "makes a boot gate acceptable rather than a wall.");
+            Assert.IsTrue(guest.gameObject.activeInHierarchy && guest.IsInteractable(),
+                "the boot screen's guest door is present but not pressable, which is the same " +
+                "wall with a picture of a door on it.");
 
             // ⚠️ HIDDEN, NOT ABSENT. The button is built once and its caption and visibility
             // change with the mode, so `GetComponentsInChildren<Button>(true)` finds it either
@@ -330,7 +343,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
 
             Assert.IsFalse(root.gameObject.activeInHierarchy,
-                "one press of CONTINUE AS GUEST did not leave the screen");
+                "one press of the guest door did not leave the screen");
             Assert.IsTrue(settings.AccountChoiceMade,
                 "the answer was not recorded, and `ShouldOfferUpgrade` reads that flag");
 
@@ -356,6 +369,15 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>The first button under `root` whose label reads exactly `label`, or null.</summary>
+        /// <summary>A control by its object name, which survives a caption being redrawn.</summary>
+        private static Button ObjectNamed(Transform scope, string name)
+        {
+            foreach (var b in scope.GetComponentsInChildren<Button>(true))
+                if (b != null && b.name == name) return b;
+
+            return null;
+        }
+
         private static Button ButtonReading(Transform root, string label)
         {
             foreach (var button in root.GetComponentsInChildren<Button>(true))
@@ -454,12 +476,20 @@ namespace TumbangPreso.PlayTests
 
             // ⚠️ ONE GROUP OPENED, WHICH IS THE STATE THE COLLAPSING EXISTS FOR. A picture of
             // everything shut says nothing about what happens when you press one.
-            Press("+  ATTACK");
+            //
+            // ⚠️⚠️ AND THE PAINTED CAREER PAGE HAS NO COLLAPSING GROUPS AT ALL, SO THIS IS A
+            // PRESS IF IT IS THERE RATHER THAN AN ASSERTION THAT IT IS. `PlayerHub.RecordBook`
+            // draws the career as one record book: five page titles, no `+  ATTACK` header and
+            // nothing shut. A hard `Press` here failed the whole photograph pass on a control
+            // the design deliberately no longer has, and losing the pictures of ACCOUNT, the
+            // boot screen and the sign-in screen with it, which is the § 6.2b failure this case
+            // exists to prevent.
+            PressIfPresent("+  ATTACK");
             yield return null;
             yield return null;
             yield return Shoot("04-hub-career-open");
 
-            Press("MATCHES");
+            Press("HISTORY");
             yield return null;
             yield return null;
             yield return Shoot("05-hub-matches");
@@ -708,7 +738,8 @@ namespace TumbangPreso.PlayTests
             foreach (var canvas in Object.FindObjectsByType<Canvas>(
                          FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
-                if (canvas != null && canvas.name == "SignInCanvas")
+                if (canvas != null
+                    && (canvas.name == "OwnerSignInCanvas" || canvas.name == "SignInCanvas"))
                     Object.DestroyImmediate(canvas.gameObject);
             }
 
@@ -793,6 +824,19 @@ namespace TumbangPreso.PlayTests
             // Three frames: the scaler recomputes in its own Update, the layout rebuild lands the
             // frame after, and a ContentSizeFitter inside a ScrollRect settles on the third.
             for (int i = 0; i < 3; i++) yield return null;
+        }
+
+        /// <summary>Press it when the screen has it, and say so in the log when it does not.</summary>
+        private static void PressIfPresent(string label)
+        {
+            foreach (var button in Object.FindObjectsByType<Button>(FindObjectsInactive.Include,
+                                                                    FindObjectsSortMode.None))
+            {
+                var text = button.GetComponentInChildren<Text>(true);
+                if (text != null && text.text == label) { button.onClick.Invoke(); return; }
+            }
+
+            Debug.Log($"[PlayerHubLayoutProbe] no button reading '{label}'; the page has no such group");
         }
 
         private void Press(string label)
@@ -947,11 +991,31 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>The canvas a case is about, by name.</summary>
+        /// <summary>
+        /// ⚠️⚠️ THE CANVAS NAMES MOVED WITH THE OWNER-PAINTED PASS AND THAT IS WHY FOUR CASES
+        /// IN THIS FILE WERE RED. `PlayerHub.Build` draws `OwnerPlayerHubCanvas`
+        /// (`PlayerHub.OwnerPainted`) and `SignInScreen` draws `OwnerSignInCanvas`; the names
+        /// this file held, `PlayerHubCanvas` and `SignInCanvas`, are built by the code paths
+        /// underneath them, which nothing reaches. A probe that cannot find a screen reports the
+        /// screen as missing rather than itself as stale, so all four said "nothing was built"
+        /// about screens that build perfectly well. § 124.11.
+        ///
+        /// ⚠️ BOTH NAMES ARE ACCEPTED rather than one being swapped in, because the legacy
+        /// builders are still compiled and a pass that reaches for one again must not silently
+        /// lose this coverage.
+        /// </summary>
         private static Transform Root(string canvas)
         {
-            var go = Find(canvas);
+            var go = Find(Painted(canvas)) ?? Find(canvas);
             return go != null ? go.transform : null;
         }
+
+        private static string Painted(string canvas) => canvas switch
+        {
+            "PlayerHubCanvas" => "OwnerPlayerHubCanvas",
+            "SignInCanvas" => "OwnerSignInCanvas",
+            _ => canvas,
+        };
 
         private static GameObject Find(string name)
         {

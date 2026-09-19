@@ -1031,8 +1031,20 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ THE TWO STAT TABLES COMPOSE AND NEITHER KNOWS ABOUT THE OTHER. A crocs thrown
-        /// at Bebang (grit 5) barely moves her; the same throw rocks Jun-Jun (grit 2).
+        /// ⚠️⚠️ THE TWO STAT TABLES COMPOSE AND NEITHER KNOWS ABOUT THE OTHER, BUT ONLY ONE
+        /// OF THEM IS STILL ALLOWED TO SPEAK IN CLASSIC. `Make Classic character choices
+        /// cosmetic` archived the person table there, so `Roster.PersonGritScale` answers a
+        /// flat 1.0 for every Classic index and a blocker's own grit divides nothing. The
+        /// equipment half is untouched, in both modes.
+        ///
+        /// ⚠️ THIS FIXTURE ASSERTED THE PRE-COSMETIC COMPOSITION AND HAD BEEN RED SINCE. The
+        /// published pair below is kept, because it is still exactly reproducible: it was
+        /// measured on Jun-Jun, whose tatag is 2, and 2 was never the reason for either
+        /// figure. Design.md's sentence names Bebang and Jun-Jun and its measurement then
+        /// says "on one blocker", which reads as one slipper on two people and is two
+        /// slippers on one: 5.618 / 4.238 is the IMPACT ratio 1.14 / 0.86 and no grit ratio.
+        /// What changed under it is the DIVISOR, which is 1.0 in Classic and the blocker's
+        /// own grit in Hero Strike, so the pair now reproduces against Classic exactly.
         /// </summary>
         [Fact]
         public void BodyBlock_ScalesByThrowerImpactAndDividesByBlockerGrit()
@@ -1042,18 +1054,44 @@ namespace TumbangPreso.Core.Tests
             int bebang = IndexOf(Roster.People, "bebang");
             int junjun = IndexOf(Roster.People, "jun_jun");
 
-            // ⚠️ THE PUBLISHED PAIR IS TWO SLIPPERS ON ONE BLOCKER, NOT ONE SLIPPER ON
-            // TWO. Design.md's sentence names Bebang and Jun-Jun and its measurement then
-            // says "on one blocker", which reads as the former and is the latter: the
-            // ratio 5.618 / 4.238 is exactly the IMPACT ratio 1.14 / 0.86, not any grit
-            // ratio. Both figures reproduce to three decimals against Jun-Jun.
-            Assert.Equal(4.238f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
-            Assert.Equal(5.618f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
+            // The impact half, which is equipment and survives the archive. Both published
+            // figures are the neutral push scaled by the slipper alone.
+            Assert.Equal(3.941f, Combat.BlockKnockbackSpeed(pantulog, junjun), 2);
+            Assert.Equal(5.224f, Combat.BlockKnockbackSpeed(crocs, junjun), 2);
+            Assert.Equal(1.14f / 0.86f,
+                Combat.BlockKnockbackSpeed(crocs, junjun) / Combat.BlockKnockbackSpeed(pantulog, junjun), 3);
 
-            // And the sentence's own claim, which is a separate comparison: the same
-            // throw moves the heavy pick less than the fragile one.
-            Assert.True(Combat.BlockKnockbackSpeed(crocs, junjun) > Combat.BlockKnockbackSpeed(crocs, bebang),
-                "grit must reduce the push a block costs you");
+            // ⚠️ AND THE REVERSAL ITSELF, ASSERTED SO IT CANNOT COME BACK BY ACCIDENT.
+            // Bebang is grit 5 and Jun-Jun is grit 2 and in Classic they take the identical
+            // push, because the character a Classic player picks is a costume.
+            Assert.Equal(Combat.BlockKnockbackSpeed(crocs, bebang),
+                         Combat.BlockKnockbackSpeed(crocs, junjun), 6);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SENTENCE'S OWN CLAIM STILL HOLDS, IN THE MODE THAT STILL HAS CHARACTERS.
+        /// Hero Strike keeps its own person table, so grit there divides the push a body
+        /// block costs the blocker exactly as `Design.md` describes. `CombatVerbs` passed
+        /// `victim.Mode` for the tag and the shove already; the body block did not, so this
+        /// comparison was 1.00 for every hero in the game until `Combat.BlockKnockbackSpeed`
+        /// grew the mode overload this asserts.
+        /// </summary>
+        [Fact]
+        public void BodyBlock_InHeroStrike_IsStillDividedByTheBlockersGrit()
+        {
+            int crocs = IndexOf(Roster.Slippers, "crocs");
+            int dante = IndexOf(Roster.HeroPeople, "dante"); // tatag 5, scale 1.14
+            int zack = IndexOf(Roster.HeroPeople, "zack");  // tatag 3, scale 1.00
+
+            float onDante = Combat.BlockKnockbackSpeed(crocs, dante, GameMode.HeroStrike);
+            float onZack = Combat.BlockKnockbackSpeed(crocs, zack, GameMode.HeroStrike);
+
+            Assert.True(onDante < onZack, "grit must reduce the push a block costs you");
+            Assert.Equal(onZack / 1.14f, onDante, 3);
+
+            // And Classic is the flat case beside it, off the same throw.
+            Assert.Equal(Combat.BlockKnockbackSpeed(crocs, dante, GameMode.Classic),
+                         Combat.BlockKnockbackSpeed(crocs, zack, GameMode.Classic), 6);
         }
 
         /// <summary>

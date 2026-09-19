@@ -142,22 +142,32 @@ namespace TumbangPreso.Core.Tests
             const int DescriptionBudget = 67;
             const int TradeBudget = 48;
 
+            // ⚠️ EVERY ROW IS MEASURED BEFORE ANY OF THEM FAILS. The first version stopped at
+            // the first offender, so a table with two long rows in it cost two full runs to
+            // see, and the second one only appeared once the first was rewritten. A budget
+            // check is a sweep over a table and its useful output is the whole list.
+            var over = new List<string>();
+
             foreach (var variant in HeroLoadoutRules.AllVariants)
             {
-                Assert.True(variant.Description.Length <= DescriptionBudget,
-                    $"'{variant.Id}' has a {variant.Description.Length} character description "
-                    + $"against a budget of {DescriptionBudget}. Two boxes have to hold it and "
-                    + "the tighter one decides: the picker's ability row wraps past 67 and its "
-                    + "second line draws THROUGH the row underneath, and the loadout tile's body "
-                    + "box truncates past two lines and NOTHING SAYS SO.");
+                if (variant.Description.Length > DescriptionBudget)
+                    over.Add($"'{variant.Id}' has a {variant.Description.Length} character "
+                             + $"description against a budget of {DescriptionBudget}.");
 
                 int trade = variant.GainLabel.Length + 7 + variant.CostLabel.Length;
 
-                Assert.True(trade <= TradeBudget,
-                    $"'{variant.Id}' draws a {trade} character trade line against a budget of "
-                    + $"{TradeBudget}. It is one 13 pt MenuKit.Label with no wrapping in a 311 "
-                    + "unit band, so it does not shrink or wrap, it draws over its neighbour.");
+                if (trade > TradeBudget)
+                    over.Add($"'{variant.Id}' draws a {trade} character trade line against a "
+                             + $"budget of {TradeBudget}.");
             }
+
+            Assert.True(over.Count == 0,
+                string.Join("\n", over)
+                + "\nTwo boxes have to hold the description and the tighter one decides: the "
+                + "picker's ability row wraps past 67 and its second line draws THROUGH the row "
+                + "underneath, and the loadout tile's body box truncates past two lines and "
+                + "NOTHING SAYS SO. The trade line is one 13 pt MenuKit.Label with no wrapping "
+                + "in a 311 unit band, so it does not shrink or wrap either.");
         }
 
         /// <summary>

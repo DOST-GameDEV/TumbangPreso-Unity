@@ -146,6 +146,10 @@ namespace TumbangPreso.PlayTests
             report.AppendLine("networked lobby: host listening, SceneFlow.Networked = true");
             report.AppendLine(Inventory());
 
+            // The same door, for the same reason: a closed chat is untypeable by design and its
+            // twin probe's note has the whole of it.
+            yield return LobbyTypingProbe.PresentTheChat(report);
+
             yield return LobbyTypingProbe.Check("networked lobby", report, broken);
 
             var join = LobbyTypingProbe.FindByName("LobbyJoinPanel");

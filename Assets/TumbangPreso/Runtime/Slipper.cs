@@ -1492,7 +1492,7 @@ namespace TumbangPreso
             // See `docs/TODO.md` § 83.12.
             NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
 
-            float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
+            float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex, blocker.Mode);
             Vector3 along = _velocity;
             along.y = 0.0f;
             blocker.ApplyImpulse(along.normalized * speed);

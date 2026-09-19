@@ -483,8 +483,23 @@ namespace TumbangPreso.Core
         /// it". The role is derived, `(round - 1) % 4` (`CLAUDE.md` § 4), so this sentence is true
         /// by construction and not by bookkeeping, and the game has never once said it to a
         /// player. It lives in the core beside the rule it describes so it cannot drift from it.
+        ///
+        /// ⚠️⚠️ AND IT DRIFTED ANYWAY, INSIDE A UI COMMIT WHOSE MESSAGE DOES NOT MENTION IT.
+        /// `91d1e2f3` replaced it with *"The defender changes every round. Scores carry across
+        /// the match."*, which is a true statement about the FORMAT and says nothing about the
+        /// promise: a player who reads it learns that the role moves, not that a bad first
+        /// round is survivable. The card it was cut to fit is the reason the sentence below is
+        /// shorter than the one before it and not shorter than the claim.
+        ///
+        /// ⚠️ THE BUDGET IS TWO LINES ON THE NARROWEST OF THE THREE CARDS, which is the
+        /// owner-painted one: a 560-unit box at type size 30, about 37 characters a line.
+        /// `TheQueuePromiseFitsTheCardItIsDrawnOn` holds the count and
+        /// `QueueCardLayoutProbe` measures the wrap itself at nine resolutions.
         /// </summary>
         public const string TayaRotationPromise =
-            "The defender changes every round. Scores carry across the match.";
+            "Everyone defends exactly once. A bad first round is not a lost match.";
+
+        /// <summary>The two-line budget above, as a number a test can hold.</summary>
+        public const int TayaRotationPromiseBudget = 74;
     }
 }
