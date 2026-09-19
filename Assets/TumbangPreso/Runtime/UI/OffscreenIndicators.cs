@@ -4,19 +4,25 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Screen-edge arrows for your own slipper and the tracked can, converted from
+    /// The screen-edge arrow for the tracked can, converted from
     /// `scripts/ui/offscreen_indicators.gd`.
     ///
     /// `Dev_Plan.md` §3.3 calls these **mandatory** for FPP: a Person's camera has a much
     /// narrower awareness cone than a Prop's TPP, and this is the mitigation.
     ///
-    /// ⚠️ THE FIRST ARROW POINTS AT **YOUR OWN SLIPPER**. 🧑 2026-08-01: *"A dynamic UI arrow
-    /// floats around the Attacker's feet pointing directly toward their uncollected slipper."*
-    /// It used to point at a teammate; the pivot deleted teams. It is only well-defined
-    /// because slippers have owners now — under the old any-attacker-may-take-any rule there
-    /// was no such thing as "your" slipper.
+    /// ⚠️⚠️ THE SLIPPER ARROW WAS DELETED ON 2026-09-19 AND IT WAS REPLACED RATHER THAN DROPPED.
+    /// 🧑 2026-08-01 asked for it in these words: *"A dynamic UI arrow floats around the
+    /// Attacker's feet pointing directly toward their uncollected slipper."* That is still the
+    /// feature and it is `SlipperRecall` now, which does strictly more: it sits ON the tsinelas
+    /// while the tsinelas is on screen, clamps to this same edge with a chevron when it is not,
+    /// and carries the control that fetches it. **The two could not both draw.** This arrow hid
+    /// itself the moment the shoe came into frame and the mark appears there, so keeping both
+    /// would have been two markers for one target with a seam in the middle, which is
+    /// `CLAUDE.md` § 6.3's *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM"* built in.
     ///
-    /// Nothing is drawn while you are holding it: an arrow pointing at your own hand is noise.
+    /// ⚠️ NOTHING ABOUT THE PROJECTION WAS DELETED WITH IT. `ScreenTrack` is the maths that used
+    /// to live in `UpdateOne`, lifted out whole so the can arrow and the recall mark cannot drift
+    /// apart, and its three measured corrections are recorded there.
     ///
     /// Driven from the HUD, which already resolves the local character once a frame. It takes
     /// that as a parameter rather than scanning for it a second time.
@@ -28,8 +34,10 @@ namespace TumbangPreso.UI
         public const float EdgeMargin = 40.0f;
 
         /// <summary>Roughly chest height, so the arrow points at "the unit" rather than at
-        /// whatever happens to be at its feet.</summary>
-        public static readonly Vector3 TargetHeightOffset = new Vector3(0.0f, 0.5f, 0.0f);
+        /// whatever happens to be at its feet. ⚠️ IT IS `ScreenTrack`'S NOW, not a second copy
+        /// of the same number: two markers read it and `CLAUDE.md` § 5's rule about a number
+        /// living in two places applies to a constant as much as to a balance value.</summary>
+        public static Vector3 TargetHeightOffset => ScreenTrack.ChestHeight;
 
         /// <summary>INK outline on the glyphs. These arrows live on the screen EDGE, which is
         /// where this game's backgrounds are least predictable: sky one frame, asphalt the
@@ -38,7 +46,6 @@ namespace TumbangPreso.UI
         public const int GlyphOutline = 6;
 
         private RectTransform _canvasRect;
-        private RectTransform _slipperArrow;
         private RectTransform _canArrow;
 
         private void Awake() => BuildNative();
@@ -48,7 +55,6 @@ namespace TumbangPreso.UI
             var canvas = TumpUiFactory.Canvas(transform, "TumpOffscreenCanvas", 110);
             _canvasRect = (RectTransform)canvas.transform;
             var focus = canvas.GetComponent<InputLayer.ScreenFocus>(); if (focus != null) focus.enabled = false;
-            _slipperArrow = NativeArrow(_canvasRect, "SlipperArrow", TumpUiTheme.Current.Cream, "UI/portraits/" + Core.Roster.Slippers[0].Id);
             _canArrow = NativeArrow(_canvasRect, "CanArrow", TumpUiTheme.Current.Yellow, "UI/portraits/" + Core.Roster.Cans[0].Id);
         }
         private static RectTransform NativeArrow(Transform parent, string name, Color tint, string portrait)
@@ -78,7 +84,6 @@ namespace TumbangPreso.UI
 
             _canvasRect = canvasGo.GetComponent<RectTransform>();
 
-            _slipperArrow = MakeArrow(canvasGo.transform, "SlipperArrow", UiTheme.Ink);
             _canArrow = MakeArrow(canvasGo.transform, "CanArrow", UiTheme.Highlight);
         }
 
@@ -126,24 +131,37 @@ namespace TumbangPreso.UI
             if (pointer != null) pointer.color = colour;
         }
 
-        /// <summary>Called once a frame by the HUD with the already-resolved local unit.</summary>
-        public void UpdateArrows(CharacterMotor local, Carrier carrier, Transform ownSlipper,
-            Transform can)
+        /// <summary>
+        /// Called once a frame by the HUD with the already-resolved local unit.
+        ///
+        /// ⚠️ THE TSINELAS IS NOT A PARAMETER ANY MORE. `SlipperRecall` owns that target now, on
+        /// screen and off it, and the class note above records why it could not be both.
+        /// </summary>
+        public void UpdateArrows(CharacterMotor local, Transform can)
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null || local == null)
             {
-                _slipperArrow.gameObject.SetActive(false);
                 _canArrow.gameObject.SetActive(false);
                 return;
             }
 
-            // An arrow pointing at your own hand is noise.
-            bool holding = carrier != null && carrier.Held != null;
-            UpdateOne(_slipperArrow, cam, holding ? null : ownSlipper);
             UpdateOne(_canArrow, cam, can);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE PROJECTION IS `ScreenTrack`'S AND IS NO LONGER WRITTEN HERE. It carried three
+        /// corrections that were each measured once (the mirrored behind-camera point, the push
+        /// that has to be in canvas units rather than pixels, and the direction that must not be
+        /// converted at all), and a second marker had to ask the same question. Copying them
+        /// would have been `docs/TODO.md` § 94.1 again: two rules that happen to agree today.
+        /// The reasoning moved with the code and is recorded in that file.
+        ///
+        /// ⚠️ THE MARGIN IS ZERO ON THE EDGE TEST AND `EdgeMargin` ON THE PUSH, WHICH IS WHAT
+        /// THIS ARROW ALWAYS DID. It hides on any target inside the frame at all and only keeps
+        /// its own body clear once it is clamped. The recall mark passes its own radius instead,
+        /// because a ring straddling the edge is drawn half cut rather than simply hidden.
+        /// </summary>
         private void UpdateOne(RectTransform arrow, UnityEngine.Camera cam, Transform target)
         {
             // ⚠️ THE NULL TEST IS A LIVENESS TEST, NOT JUST A REFERENCE TEST. Godot needed
@@ -156,81 +174,38 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            Vector3 worldPos = target.position + TargetHeightOffset;
-            Vector3 toTarget = worldPos - cam.transform.position;
+            // ⚠️ THE CAMERA'S OWN PIXELS, NOT `Screen`. They agree in play and disagree under a
+            // render probe, and `ScreenTrack.Project` carries the reasoning.
+            var viewport = new Vector2(cam.pixelWidth, cam.pixelHeight);
+            Vector2 canvas = _canvasRect != null ? _canvasRect.rect.size : viewport;
 
-            // The projection divides by a plane distance that hits zero when a target sits
-            // exactly perpendicular to the camera's forward axis, or sits on the lens itself.
-            // Both are edge cases with nothing meaningful to point at anyway.
-            float forward = Vector3.Dot(cam.transform.forward, toTarget);
-            if (toTarget.magnitude < 0.1f || Mathf.Abs(forward) < 0.05f)
+            var track = ScreenTrack.Project(cam, target.position + ScreenTrack.ChestHeight,
+                                            canvas, viewport, 0.0f);
+
+            if (!track.Visible || !track.Clamped)
             {
                 arrow.gameObject.SetActive(false);
                 return;
             }
 
-            bool isBehind = forward < 0.0f;
-            Vector3 screen = cam.WorldToScreenPoint(worldPos);
-
-            var viewport = new Vector2(Screen.width, Screen.height);
-            var screenPos = new Vector2(screen.x, screen.y);
-
-            // ⚠️ A BEHIND-CAMERA POINT COMES BACK MIRRORED THROUGH THE FRAME CENTRE rather
-            // than flagged. Undo that, or the arrow points the long way around to the target.
-            if (isBehind) screenPos = viewport - screenPos;
-
-            Vector2 centre = viewport * 0.5f;
-
-            bool onScreen = !isBehind
-                            && screenPos.x >= 0.0f && screenPos.x <= viewport.x
-                            && screenPos.y >= 0.0f && screenPos.y <= viewport.y;
-
-            if (onScreen)
+            // The clamp itself has to keep the glyph's own body inside the frame, which the edge
+            // test above deliberately does not do. Re-asking with the margin is one extra
+            // projection of one point per frame and keeps both behaviours exactly as shipped.
+            track = ScreenTrack.Project(cam, target.position + ScreenTrack.ChestHeight,
+                                        canvas, viewport, EdgeMargin);
+            if (!track.Visible)
             {
                 arrow.gameObject.SetActive(false);
                 return;
             }
 
             arrow.gameObject.SetActive(true);
+            arrow.anchoredPosition = track.Anchored;
 
-            Vector2 dir = screenPos - centre;
-            if (dir.magnitude < 0.01f) dir = Vector2.up;   // dead centre behind: pick an edge
-            dir.Normalize();
-
-            // ⚠️⚠️ THE PUSH IS IN CANVAS UNITS, NOT PIXELS, AND MIXING THEM PUT THE ARROWS IN
-            // THE WRONG PLACE AT EVERY RESOLUTION BUT ONE. Everything above this line is in real
-            // screen pixels, because that is what `WorldToScreenPoint` returns.
-            // `anchoredPosition` is not: this canvas runs a `CanvasScaler` against a 1920x1080
-            // reference, so a half-extent taken from `Screen.width/height` only equals the
-            // canvas's own at exactly that size.
-            //
-            // The error is proportional and it goes both ways. In a 1280x720 window the old
-            // maths pushed to 600 units where the canvas edge is 920, so both arrows hovered two
-            // thirds of the way out and read as floating markers rather than as edge pointers.
-            // Wider than 1920 it overshot and pushed them off the frame entirely, so the arrow
-            // went missing exactly when the target was furthest away, which is when it is the
-            // only thing telling you where your tsinelas went.
-            //
-            // ⚠️ `AspectSafeCanvas` MAKES THIS WORSE RATHER THAN BETTER, which is why it is
-            // worth fixing now. `ScreenMatchMode.Expand` deliberately lets the canvas grow WIDER
-            // than 1920 reference units on anything narrower than 16:9, so the gap between the
-            // pixel number and the canvas number is no longer even a fixed ratio.
-            //
-            // ⚠️ `dir` NEEDS NO CONVERSION. A `CanvasScaler` applies ONE uniform scale to both
-            // axes, so a normalised direction is the same vector in pixels and in canvas units.
-            // Only the magnitude has to change frame of reference.
-            Vector2 canvas = _canvasRect != null ? _canvasRect.rect.size : viewport;
-            Vector2 half = canvas * 0.5f - Vector2.one * EdgeMargin;
-            float scaleX = Mathf.Abs(dir.x) > 0.0001f ? half.x / Mathf.Abs(dir.x) : float.MaxValue;
-            float scaleY = Mathf.Abs(dir.y) > 0.0001f ? half.y / Mathf.Abs(dir.y) : float.MaxValue;
-            float t = Mathf.Min(scaleX, scaleY);
-
-            arrow.anchoredPosition = dir * t;
-
-            // The glyph points up at rotation 0, and atan2 is measured from +X, so it needs
-            // the quarter turn to line up with `dir`.
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90.0f;
-            arrow.localRotation = Quaternion.Euler(0.0f, 0.0f, angle);
+            // The glyph points up at rotation 0, and the bearing is measured from +X, so it
+            // needs the quarter turn to line up.
+            arrow.localRotation =
+                Quaternion.Euler(0.0f, 0.0f, track.Bearing * Mathf.Rad2Deg - 90.0f);
         }
     }
 }
