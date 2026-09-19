@@ -373,7 +373,7 @@ minutes.
 
 ## What is open right now
 
-Twenty-four sections, and this list is the whole of it. ⚠️ **§ 150 CLOSED on 2026-09-06 and is in the archive**; § 151 is the pass that closed it and its own row is above. Everything else in this repository's history
+This list is the whole of it, and it carries no count on purpose: `CLAUDE.md` has twice been caught with a number that outlived its list, and the person adding the next row edits the row and not the sentence above it. **The list is the authority.** ⚠️ **§ 150 CLOSED on 2026-09-06 and is in the archive**; § 151 is the pass that closed it and its own row is above. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 ⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
@@ -384,6 +384,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **154** | The recall mark, and ownership becomes a lock | 🧑: *"create a prompt where the image icon will pop up in a player's screen after their slippers get thrown"* and *"we should disable being able to take other people's tsinelas when you are attacking"*. ⚠️⚠️ **Both are built, and the pass found two faults older than it**: a non-host player had **never seen a landed rim at all** (every route into `Slipper.Land` is host-gated), and `Hud.UpdateIndicators` ran a `FindObjectsByType` on every frame of every taya round. ⚠️ **Open: the render, a probe that can fail, and his eye on what the lock does to a four-player match.** § 154 |
 | **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 |
 | **151** | The nationals fun pass: ears at the player, an impact frame one peer got, and a slide nobody could see or hear | ⚠️⚠️ **Seven player-perceivable defects, all closed**: the only `AudioListener` in the game sat at world origin so every 3D cue panned from the middle of the map; thirteen call sites faked a position to work around it; the throw wind-up and the committed slide were audible to the one player who already knew, while the VISIBLE half of the wind-up was relayed on purpose; the hit freeze on the lata knockdown fired **on the host alone** and `audit_presentation_reach.py` had no pattern that could see a time-scale freeze; the pisonet booth played the SCORE STING and ducked the music while awarding nothing; and the committed retrieval slide, the one move this brief is about, had **three** at once (the first-person arm stopped animating on it the day before this pass, the wire announces it as a lunge, and three players out of four cannot hear it). ⚠️ **What is open is three human calls and no code**: the ear on the listener, the eye on the jeepney, and the slide's own feel. `Attention.md` § 17.2 and § 18 |
 | **149** | The fresh-audit follow-up: movement budget, re-admission, the one-shot requests | ⚠️⚠️ **Six confirmed defects, five of them competitive or release-integrity, all closed with a regression each.** § 149.4 to § 149.8 are what is left, and § 149 carries the brief as well as the record |
@@ -500,6 +501,162 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 154 · THE RECALL MARK, AND OWNERSHIP BECOMES A LOCK ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`
+
+🧑, with a reference frame of a ringed button cap sitting on a target: *"i need you to create a
+prompt where the image icon will pop up in a player's screen after their slippers get thrown.
+this should have a tracking logic based on the tsinelas location."* Then, in the same message:
+*"and we should disable being able to take other people's tsinelas when you are attacking. other
+player's tsinelas does not get highlighted now. only yours."*
+
+**They are one request.** The mark answers *"where is mine"* and the lock is what makes *"mine"*
+a rule rather than a label, so a marker over a rival's shoe would point at a thing the grab is
+now going to refuse.
+
+### 154.1 ⚠️⚠️ THE GAME'S OWN THESIS HAD NOTHING ON SCREEN ABOUT IT ✅ DONE
+
+`docs/VISION.md` § 0 and `Slipper`'s class note both say the tension is the retrieval and not the
+throw. What the HUD actually said about a retrieval was two things with a hole between them:
+
+| | When it spoke | What it said |
+|---|---|---|
+| `OffscreenIndicators` slipper arrow | only while the shoe was OFF frame | a `▲` on the screen edge |
+| `Hud.UpdatePickupPrompt` / `TumpMatchReadout.Prompts` | only inside `Balance.PickupRadius`, 1.75 m | `[X]  PICK UP` |
+
+**Between those two is most of every retrieval**, and it is exactly the stretch where the player
+is deciding whether to commit. `SlipperRecall` fills it: a ring that sits ON the tsinelas while
+it is on screen, clamps to the edge with a chevron when it is not, and carries the live GRAB
+binding inside it once the shoe is actually takeable.
+
+- **It replaced the edge arrow rather than joining it.** The arrow hid the moment the shoe came
+  into frame and the mark appears there, so keeping both would have been two markers for one
+  target with a seam in the middle, which is `CLAUDE.md` § 6.3's *"NEVER ADD A SECOND DOOR TO FIX
+  A FINDABILITY PROBLEM"* built in.
+- ⚠️ **The projection was lifted out whole rather than copied.** `ScreenTrack` is the maths that
+  used to live in `OffscreenIndicators.UpdateOne`, and it carries three corrections that were
+  each measured once: the behind-camera point that comes back mirrored through the frame centre,
+  the edge push that has to be in canvas units rather than pixels (in a 1280x720 window the pixel
+  version pushed to 600 units where the canvas edge is 920), and the normalised direction that
+  must not be converted at all. The lata arrow and the mark both ask it now.
+- ⚠️ **The cap is the live binding and it is nothing at all on touch.** `Hud.KeyLabelFor` plus
+  `InputGlyphs.For`, cached on `Rebinding.Revision` and `LastInputDevice.Revision`, so a rebind
+  and a pad picked up mid-match both follow. On a phone the ring still tracks and
+  `TouchHud.Emphasise` pulses the GRAB button instead, which is `Hud`'s own § A PROMPT ON A PHONE
+  NAMES THE ACTION rule and 🧑 2026-09-03's *"why the fuck does it have keybinds theres no keys in
+  mobile"*.
+- ⚠️ **In flight the ring draws alone.** There is nothing to press yet, and a cap over a shoe
+  still in the air is the prompt promising something the carrier would refuse. The state clause
+  is `Slipper.IsGrabbableIgnoringReach`, the same function the grab asks.
+- ⚠️⚠️ **IT GOES OUT THE MOMENT THE GRAB IS IN REACH, AND THE RENDER IS WHAT FORCED THAT.** The
+  first build had an "in range" state, a thicker yellow ring inside `PickupRadius`, and the frame
+  of it drew straight through the middle card of the ability deck: § 6.2b's fourth row, *"chrome
+  does not know about a screen added after it"*. **The hand-off costs almost nothing and that is
+  arithmetic rather than taste**: the FPP camera is about 1.55 m up at a 95 degree field of view,
+  so a tsinelas on the road leaves the bottom of the frame (with the mark's own radius reserved)
+  at about **1.69 m**, and `Balance.PickupRadius` is **1.75 m**. The only range at which the mark
+  would have to clamp downward is the range at which `TumpMatchReadout` is already printing
+  `[X] Pick up` under the crosshair. `SlipperRecallShots` asserts the absence.
+
+### 154.2 ⚠️⚠️ OWNERSHIP IS A LOCK NOW, AND THIS IS THE THIRD CALL ON THAT RULE ✅ DONE
+
+All three are recorded in `Slipper.OwnerSlot` and in `docs/Design.md` § 5.2, whole, because none
+of them was a correction of a mistake: 2026-08-01 morning LOCKED, 2026-08-01 evening OPEN,
+2026-09-19 LOCKED again.
+
+⚠️ **What it costs, so nobody rediscovers it as a bug:** the evening call's three-way contest
+over a loose shoe is gone and nothing replaces it. What it buys is that "which one is mine" stops
+being decoration, and that an attacker can no longer be deleted from a round by a rival walking
+off with their ammunition.
+
+- **One clause, in `IsGrabbableIgnoringReach`, which is the only place it could go.** Seven call
+  sites ask that question (the walk-up, the slide's predicate and its sweep, the host's re-check
+  of a client request, both HUD prompts and the recall mark). § 94.1 is what a second answer to
+  *"whose shoe is this"* costs.
+- ⚠️⚠️ **THE TEST IS `owner >= 0 && owner != who`, NEVER `owner != who`, AND THE DIFFERENCE IS A
+  WHOLE GAME MODE.** `SliceRunner.EquipOwnedSlippers` writes `OwnerSlot = -1` in two cases that
+  look identical through the field: the taya's shoe, which is deactivated and refused anyway, and
+  an **absent seat's spare**, left in the street on purpose. With the practice lobby set to NONE
+  that is three of the four tsinelas, and `SoloPracticeTests` fails outright if they stop being
+  retrievable.
+- **No wire change.** The host already re-checked `CanBeGrabbedBy` on every grab request, so the
+  rule is enforced host-side with no protocol field and `NetSession.ProtocolVersion` does not
+  move (`CLAUDE.md` § 4a).
+- **The bots were already compliant.** The live fetch path is `AIController.MySlipper`, which has
+  always been owner-scoped, so nothing had to change and no bot can stall on a shoe it may not
+  take.
+
+### 154.3 ⚠️⚠️ ONLY YOURS LIGHTS, AND FIXING THAT FOUND A HOST-ONLY FEATURE ✅ DONE
+
+The landed rim is gated on `_glowOn`, which is already the per-peer answer to *"is this mine"*
+that `MatchInstaller` and `MatchRpc` maintain. A second derivation from `OwnerSlot` inside
+`Slipper` would have been a third place to keep in step with a seat that moves on a rejoin, and
+§ 78.1 is what a stale answer to that question already cost once.
+
+⚠️⚠️ **AND A NON-HOST PLAYER HAD NEVER SEEN A LANDED RIM AT ALL.** `Slipper.Land` is the only
+thing that can light it and every route into `Land` is inside a `NetAuthority.ShouldResolve()`
+gate, so for the whole life of § THE LANDED HIGHLIGHT it was a host-only feature wearing the name
+of a player one. Nothing failed and nothing logged: a client threw their tsinelas and it came to
+rest unlit, which reads as the setting being broken. `ApplySnapshotState` lights it on the
+InFlight-to-Loose edge now.
+
+⚠️ **One case diverges from the host and it diverges the helpful way.** A tsinelas the host
+RECOVERS rather than lands (stranded on a roof, lost under the world) passes `fromFlight: false`
+and is deliberately unlit. A client sees one InFlight-to-Loose edge and cannot tell them apart,
+so it lights them. It is still this player's own shoe, still Loose, and the rim is still saying
+where it is. Putting the distinction on the wire costs a field and a `ProtocolVersion` bump for a
+cosmetic tie-break.
+
+### 154.4 What else this pass found and fixed
+
+- ⚠️ **`Carrier.TryPickup` addressed the grab request by `OwnerSlot` and `MatchRpc.FindSlipper`
+  reads `SeatOfOrigin`.** § 78.1 one call site further along. They agree for an owned shoe, which
+  is why nobody saw it, and they do not agree for an unowned one: `FindSlipper(-1)` returns null
+  and the request was dropped in silence. The lock makes spares the only cross-owner pickup left,
+  so the latent case is now the interesting one. The parameter is named for the field it wants.
+- ⚠️⚠️ **THE PROJECTION MIXED SCREEN PIXELS WITH CANVAS UNITS THE MOMENT IT WAS GIVEN A MARGIN,
+  AND THE PROBE IS WHAT CAUGHT IT.** `OffscreenIndicators` never hit this because its edge test
+  used a margin of zero, where the two units cannot disagree. The recall mark has to reserve its
+  own radius, and the first version tested the edge in pixels while pushing in canvas units, so
+  one number meant two distances in one expression: `recall-2-loose-at-range.png` came back with
+  the tsinelas dead centre of frame and the ring clamped to the top-right corner. `ScreenTrack`
+  converts once, at the top, and everything after it is canvas units.
+- ⚠️ **AND IT READ `Screen` RATHER THAN THE CAMERA'S OWN PIXEL RECT**, which is the same fault
+  one layer down and is invisible in play. `WorldToScreenPoint` answers in the camera's pixels;
+  the instant a camera is given a target texture those stop being the window's, and **every
+  render probe in this repository works exactly that way**. A marker measured against `Screen`
+  during a probe is measured against a frame that is not the one being photographed, which is
+  § 6.2b's *"over the real background"* made into an arithmetic error.
+- ⚠️ **`Hud.UpdateIndicators` ran a `FindObjectsByType<Slipper>` on every frame of every taya
+  round.** The cache is only kept while it still answers to this seat, and a taya answers to no
+  slipper, so the rescan loop found nothing and ran again next frame for the whole round. It is
+  on `UpdatePickupPrompt`'s own 0.20 s cadence now. `CLAUDE.md` § 7.1 records what per-frame HUD
+  work costs this project.
+
+### 154.5 NOT DONE, named rather than left implied
+
+- [x] **The render.** `SlipperRecallShots` writes `Logs/shots-recall/`: in flight, loose at range,
+  the in-reach hand-off, and clamped to the edge with the chevron, over the real street, at
+  1920 x 1080 and at the short wide window he actually plays in. It asserts the mark was drawing
+  (or deliberately gone) and that the tsinelas was in the state the filename claims, so a run
+  that photographs an empty street goes red. **It found two faults nothing else could**: the unit
+  mix below, and the ring drawn through the ability deck.
+- [ ] **His eye on those frames.** `CLAUDE.md` § 6.2c is four questions about every rectangle and
+  all four are human calls. A green probe is not a good screen: `PlayerHubLayoutProbe` was green
+  through seven readability faults at once. `Attention.md` § 19.2.
+- [ ] **A probe that asserts the mark still tracks after a REBIND or a device change.** The cap is
+  cached on `Rebinding.Revision` and `LastInputDevice.Revision` and nothing exercises either.
+  The shots probe would photograph a stale `X` quite happily.
+- [ ] **`AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` are dead code.**
+  They exist only to soften the evening call's any-attacker rule (stop bots converging on, and
+  repeatedly stealing, a human's shoe) and **they were already unreachable before this change**:
+  the live fetch path is `MySlipper`. The lock did not strand them and removing them is not part
+  of this entry, but under the lock they can never come back, so they are a deletion somebody
+  should take deliberately rather than a thing to leave looking load-bearing.
+- [ ] **Human judgement on what the lock does to a four-player match.** The contest it removes was
+  real and was argued for by name on 2026-08-01. Nobody has played a match under the locked rule.
 
 ---
 

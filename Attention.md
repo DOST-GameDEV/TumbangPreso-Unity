@@ -709,3 +709,62 @@ is the right one.**
    (`docs/TODO.md` § 151.11). It had to stop playing `score_award`, which claimed points and ducked
    the music bed; whether a pitched-up click is a good *coin clink* is a different question and it
    is yours. It is one line if you want something else.
+
+---
+
+## 19 · The recall mark, and what the ownership lock does to a four-player match
+
+**`docs/TODO.md` § 154.** Two things you asked for on 2026-09-19 are built. **Two of the three
+calls left are yours and neither can be measured from a command line.**
+
+**Already done, so do not redo it:** the mark is drawn, it tracks the tsinelas on screen and
+clamps to the edge with a chevron when it leaves the frame, it carries the live GRAB binding
+(a keyboard cap, a pad face button, nothing at all on a phone where the thumb control pulses
+instead), and it draws only for your own tsinelas. The lock is one clause in one function, it
+needs no protocol change, and the bots never had to change because their fetch path was already
+owner-scoped. `Logs/shots-recall/` carries frames of every state: in flight, loose at range, the
+moment it hands over to the `PICK UP` prompt, and clamped to the edge, at 1920 x 1080 and at the
+short wide window you actually play in.
+
+### 19.1 ⚠️⚠️ THE LOCK REMOVES A CONTEST THAT WAS ARGUED FOR BY NAME, AND NOBODY HAS PLAYED UNDER IT
+
+**This is the one that matters and it is not a bug report.** You have now called this rule three
+times and all three are written down whole in `docs/Design.md` § 5.2, because the middle one was
+not a mistake:
+
+* **2026-08-01 morning:** *"Opponents cannot pick up or tamper with another player's slipper."*
+* **2026-08-01 evening:** *"allow bots and humans to pick up the slippers of others"*, then *"let
+  ai grab other slippers too but make it so that they dont perma take from me, they can take from
+  me tho but not all the time"*.
+* **2026-09-19:** *"we should disable being able to take other people's tsinelas when you are
+  attacking."*
+
+The evening call's argument was that **a slipper you can lose to a rival is more contested than
+one nobody may touch**, and the rule that is shipping now deletes that. What it buys is that
+"which one is mine" stops being decoration: your marker, your glow and your rim all point at
+something the grab actually enforces, and nobody can take your round away by picking your shoe up
+first.
+
+**What is asked of you:** play one four-player match and say whether the attackers' half still has
+enough going on between the throws. If it feels flatter, the middle call is one clause away and
+the reasoning is already written; if it feels cleaner, this entry closes.
+
+### 19.2 ⚠️ LOOK AT THE MARK, BECAUSE A PROBE CANNOT TELL YOU IT READS WELL
+
+The probe asserts the mark is on screen in the state the filename claims. **It cannot tell you
+whether it is the right size, whether the chevron reads as a direction, or whether a ring around
+your tsinelas is one thing too many on a screen that already has a crosshair and a prompt under
+it.** `CLAUDE.md` § 6.2c is four questions about every rectangle and all four are yours here.
+
+The frames are in `Logs/shots-recall/`. The reference you sent is a yellow cap in a ring with a
+chevron; this is drawn in the game's own palette (cream while the shoe is still travelling, the
+theme's yellow once it can be picked up, olive ink underneath) rather than copied, because
+`CLAUDE.md` § 6.4 rules out that reference's own colours.
+
+### 19.3 ⚠️ ONE THING THE PASS FOUND THAT YOU MAY HAVE SEEN AND NOT REPORTED
+
+**If you have ever thrown your tsinelas while JOINING somebody else's game and found it came to
+rest with no coloured rim on it, that was real and it is fixed.** The landed highlight could only
+ever be lit by the host: every route that turned it on sat inside a host-only gate, so for the
+whole life of that feature a joining player's own shoe landed unlit and the setting looked broken.
+Nothing logged it. Worth a glance next time you join rather than host.
