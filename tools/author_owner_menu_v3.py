@@ -51,6 +51,20 @@ SKY = np.array([136.0, 200.0, 119.0])
 # a box cropped tight to the leaf makes the leaf its own median road colour.
 LEAF = (1022, 928, 140, 62)
 
+# The skyline. Everything above this is wall, houses and canopy; the street is
+# below it. Read off her own plate: the kerb on the right meets the road at 545
+# and the wall's foot on the left at 612, so 560 clears both without eating the
+# top of the road.
+HORIZON = 560
+
+# Her caption on 46.png, which is the box `HomeCourtView.Caption` draws the live
+# line into. x, y, width, height in the plate's own 1920x1080 pixels.
+CAPTION = (580, 960, 760, 110)
+
+# Her tree, top right, where the leaves come from. Read for its colour ramp
+# only; the leaf's shape stays the one she painted lying in the road.
+CANOPY = (1470, 20, 440, 220)
+
 
 def load(name):
     return np.array(Image.open(SOURCE / name).convert('RGB')).astype(float)
@@ -121,18 +135,40 @@ def cut_cloud(lit, plate, opening):
     # ⚠️ SEEDING MATTERS AS MUCH AS BLURRING. Starting from the source left a
     # tan ghost of the pole and a green one of the palm that then travelled
     # with the cloud, and it pulled sky green in through the sprite's border.
+    # ⚠⚠ COARSE TO FINE, BECAUSE FORTY PASSES AT ONE SIGMA CANNOT CROSS A PALM
+    # FROND. Diffusion at sigma 3 carries colour about three pixels a pass, so
+    # the hole left by the pole closed and the ones left by the fronds did not:
+    # the finished sprite kept a tan ghost of the post and a green one of the
+    # palm, and both TRAVELLED with the cloud, which is the one thing a cloud
+    # may not do. Relaxing the wide holes first and refining after closes them
+    # for the same total work, and her own pixels are still pinned every pass.
     nearest = ndimage.distance_transform_edt(
         ~crop_body, return_distances=False, return_indices=True)
     rgb = crop_lit[nearest[0], nearest[1]]
-    for _ in range(40):
-        rgb = np.dstack([ndimage.gaussian_filter(rgb[..., c], 3) for c in range(3)])
-        rgb[crop_body] = crop_lit[crop_body]
+    for sigma, passes in ((14, 18), (8, 14), (4, 12), (2, 10)):
+        for _ in range(passes):
+            rgb = np.dstack([ndimage.gaussian_filter(rgb[..., c], sigma) for c in range(3)])
+            rgb[crop_body] = crop_lit[crop_body]
 
     # Alpha from how far the paint is from the flat sky, normalised by the
     # cloud's own body, so her brushed rim survives instead of a cut-out.
     reach = np.abs(crop_lit - SKY).max(axis=2)
     scale = max(np.percentile(reach[crop_body], 70), 1)
     alpha = np.clip(reach / scale, 0, 1)
+    # ⚠⚠ THE HOLES ARE FILLED IN ALPHA TOO, AND FORGETTING THAT IS WHAT MADE THE
+    # POLE VISIBLE. The colour under the pole and the fronds was repainted
+    # above, but the alpha floor here was `max(alpha, .9)`: a flat ten per cent
+    # dip in exactly their shape. At runtime that lets her green sky through in
+    # the outline of a telephone pole and a palm frond, and the outline TRAVELS
+    # with the cloud. 🧑 on that build: *"the clouds are absolute dog water"*.
+    # A normalised convolution carries the surrounding cloud's own alpha across
+    # each hole instead, so the mass is solid where she painted it solid and
+    # still fades at the brushed rim she drew.
+    hole = crop_healed & ~crop_body
+    known = (crop_healed & ~hole).astype(np.float64)
+    carried = (ndimage.gaussian_filter(alpha * known, 9.0)
+               / np.maximum(ndimage.gaussian_filter(known, 9.0), 1e-6))
+    alpha = np.where(hole, np.maximum(alpha, carried), alpha)
     alpha = np.where(crop_healed, np.maximum(alpha, .9), 0)
 
     # ⚠️ The mass is cut off flat by the rooflines, which is invisible while it
@@ -186,15 +222,76 @@ def cut_shadow(lit, plate, opening):
     luma = plate @ np.array([.299, .587, .114])
     edges = ndimage.gaussian_gradient_magnitude(luma, 1.0) > 6
     unreliable = ndimage.binary_dilation(edges | (projection < -.02), iterations=3)
+    # Her caption is type she added to 46 and it lies flat on the road, so it
+    # passes every reliability test above and comes out as a dark stencil of the
+    # words. Calling it unreliable lets the diffusion below carry the road's own
+    # dapple straight through it; zeroing it afterwards left a visible rectangle.
+    unreliable[CAPTION[1]:CAPTION[1] + CAPTION[3], CAPTION[0]:CAPTION[0] + CAPTION[2]] = True
     reliable = (opening < .05) & ~unreliable
-    nearest = ndimage.distance_transform_edt(
-        ~reliable, return_distances=False, return_indices=True)
-    strength = strength[nearest[0], nearest[1]]
+
+    # ⚠⚠ THE HOLES ARE FILLED BY DIFFUSION, NOT BY THE NEAREST PIXEL, AND THAT
+    # DIFFERENCE IS THE WHOLE LOOK OF THE SCREEN. This used to be a
+    # `distance_transform_edt`, which gives every unreliable pixel the value of
+    # the single CLOSEST reliable one: a Voronoi stamp. `edges` is every
+    # gradient over 6 in a PAINTING dilated three pixels, so most of the frame
+    # is unreliable, and her soft leaf dapple came back as flat hard-edged slabs
+    # tiled across the road. Measured against her own darkening, 46 minus 48:
+    # her dapple carries 0.0121 of edge energy on the road and the stamped mask
+    # carried 0.0167, which is 38 per cent MORE edge than she painted, while
+    # over the whole frame it came back 1.4x SOFTER than hers because of the two
+    # pixel blur underneath. Both at once is why it read as mush.
+    #
+    # A coarse normalised convolution seeds the holes with the weighted AVERAGE
+    # of the reliable pixels around them, then a few finer relaxation passes
+    # settle the seam. Her own pixels are pinned back after every pass, so
+    # nothing she painted is ever averaged with anything.
+    weight = reliable.astype(np.float64)
+    seed = (ndimage.gaussian_filter(strength * weight, 12.0)
+            / np.maximum(ndimage.gaussian_filter(weight, 12.0), 1e-6))
+    field = np.where(reliable, strength, seed)
+    for sigma in (6.0, 3.0, 1.5):
+        for _ in range(8):
+            field = ndimage.gaussian_filter(field, sigma)
+            field[reliable] = strength[reliable]
+    strength = field
+
+    # ⚠⚠ THE DAPPLE IS RESTRICTED TO THE GROUND SHE PAINTED IT ON, AND WITHOUT
+    # THIS THE MASK IS A LIGHTING DIFFERENCE RATHER THAN A SHADOW. 46 is not 48
+    # plus a cast shadow: it is a separate export, lit slightly differently over
+    # the WHOLE frame, with her caption typed into it. So the raw difference
+    # reported 48 per cent of the wall and the entire sari-sari block as
+    # shadowed, the words "to continue" came out as a dark stencil across the
+    # road, and all of it was then multiplied over her painting by a blue tint.
+    # 🧑, opening that build: *"WHY IS THIS SHIT SO BLURRY WHAT DID U DOOOO"*.
+    # He also said it plainly: **46 was just reference.**
+    #
+    # ⚠️ SO THE ONE PART OF THAT DIFFERENCE THAT IS REAL IS KEPT AND THE REST IS
+    # DROPPED. A cast shadow on the street is on the STREET; the road is one
+    # connected warm plane under the horizon and it is found rather than typed,
+    # so a re-export that shifts the composition does not silently re-cut it.
+    road_colour = np.median(plate[880:1040, 600:1400].reshape(-1, 3), axis=0)
+    near_road = np.abs(plate - road_colour).max(axis=2) < 46
+    near_road[:HORIZON] = False
+    labels, count = ndimage.label(ndimage.binary_closing(near_road, np.ones((9, 9))))
+    if count:
+        sizes = np.bincount(labels.ravel())
+        sizes[0] = 0
+        ground_plane = ndimage.binary_fill_holes(labels == sizes.argmax())
+    else:
+        ground_plane = near_road
+    # A hair of feather so the dapple does not stop at a hard line on the kerb.
+    ground_plane = ndimage.gaussian_filter(ground_plane.astype(np.float64), 3.0)
+    strength *= np.clip(ground_plane * 1.15, 0, 1)
+
     strength[~(opening < .05)] = 0
     # ⚠️ Re-encoding noise between two exports of one painting sits under 0.06.
     # Without this floor the whole street carries a faint travelling veil.
     strength[strength < .06] = 0
-    strength = ndimage.gaussian_filter(strength, 2.0)
+    # ⚠️ HALF A PIXEL, NOT TWO. The 2.0 was covering for the slab edges the stamp
+    # produced; with the fill continuous there is nothing left to hide, and two
+    # pixels of blur across a 1920 wide mask is what turned her dapple into
+    # weather. This only takes the aliasing off the reliable-to-filled boundary.
+    strength = ndimage.gaussian_filter(strength, 0.5)
     Image.fromarray(np.uint8(np.clip(strength * 255, 0, 255))).save(TARGET / 'main2-shadow.png')
     print(f'main2-shadow.png  tint {tint.round(4)}  covers '
           f'{(strength > .15).mean() * 100:.1f}% of the frame')
@@ -214,7 +311,56 @@ def cut_leaf(plate):
     alpha = np.where(ndimage.binary_dilation(keep, iterations=1), alpha, 0)
     ys, xs = np.nonzero(alpha > .05)
     y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-    rgba = np.dstack((np.uint8(np.clip(crop[y0:y1, x0:x1], 0, 255)),
+    blade = crop[y0:y1, x0:x1]
+    mask = alpha[y0:y1, x0:x1] > .5
+
+    # ⚠⚠ THE SHAPE IS HER FALLEN LEAF AND THE COLOUR IS HER TREE, BECAUSE A LEAF
+    # FALLS OUT OF THE TREE IT CAME FROM. Cut raw, this blade is her road
+    # litter: measured (174, 84, 39) against the litter beside it at
+    # (162, 75, 38), so the cut is exact. But the canopy it falls out of is
+    # (126, 132, 77), and five burnt-orange leaves tumbling out of a green tree
+    # is the first thing anybody notices. 🧑: *"the leaves arent even the same
+    # color"*.
+    #
+    # ⚠️ BOTH ENDS OF THIS ARE HERS AND NOTHING IS INVENTED. The silhouette and
+    # its shading are the leaf she painted; the palette is the ramp measured off
+    # HER canopy, dark to light. Her own light-to-dark modelling on the blade is
+    # what indexes into it, so the leaf keeps the form she drew and wears the
+    # colour of the tree above it. This is not `CLAUDE.md` § 6.0's ban on
+    # repainting sourced art: that is about an authored asset shipping as
+    # delivered, and her plate does, byte for byte. This is one derived sprite
+    # being cut from the right part of the same painting.
+    canopy = plate[CANOPY[1]:CANOPY[1] + CANOPY[3], CANOPY[0]:CANOPY[0] + CANOPY[2]]
+    foliage = canopy.reshape(-1, 3)
+    foliage = foliage[np.abs(foliage - SKY).max(axis=1) > 30]
+    # ⚠️ A RAMP, NOT A SORTED PILE OF PIXELS. Sorting her canopy by luma and
+    # indexing straight into it picks a different hue for every neighbouring
+    # value, because the tree carries red-brown branch strokes at the same
+    # brightness as its leaves: the first leaf out of that came back speckled
+    # with orange. Binning by luma and taking the MEDIAN hue in each bin throws
+    # the branch strokes out, and smoothing across the bins leaves one
+    # continuous dark-to-light green.
+    foliage_luma = foliage @ np.array([.299, .587, .114])
+    bins = np.linspace(foliage_luma.min(), foliage_luma.max(), 24)
+    ramp = []
+    for lo, hi in zip(bins[:-1], bins[1:]):
+        band = foliage[(foliage_luma >= lo) & (foliage_luma <= hi)]
+        if len(band):
+            ramp.append(np.median(band, axis=0))
+    ramp = np.array(ramp) if ramp else foliage[:1]
+    if len(ramp) > 4:
+        ramp = np.stack([ndimage.uniform_filter1d(ramp[:, c], 5, mode='nearest')
+                         for c in range(3)], axis=1)
+
+    luma = blade @ np.array([.299, .587, .114])
+    if mask.any():
+        low, high = np.percentile(luma[mask], (4, 96))
+    else:
+        low, high = luma.min(), luma.max()
+    index = np.clip((luma - low) / max(high - low, 1e-6), 0, 1)
+    picked = ramp[np.clip((index * (len(ramp) - 1)).astype(int), 0, len(ramp) - 1)]
+
+    rgba = np.dstack((np.uint8(np.clip(picked, 0, 255)),
                       np.uint8(np.clip(alpha[y0:y1, x0:x1] * 255, 0, 255))))
     Image.fromarray(rgba).save(TARGET / 'main2-leaf.png')
     print(f'main2-leaf.png  {rgba.shape[1]}x{rgba.shape[0]}')
