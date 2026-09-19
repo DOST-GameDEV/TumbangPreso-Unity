@@ -202,6 +202,10 @@ GROUPS = [
         "MsaaResolveProbe", "NationalsShowcaseProbe", "ImprovementEvidenceProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
         "ReplayCaptureProbe", "AbilityStressProbe", "KuroIdleReviewProbe", "KuroMapClearanceProbe", "MapExperienceProbe",
+        # ⚠️ § 154's shot pass, placed the day it landed. It loads Eskinita, runs a match and
+        # writes PNGs of the recall mark, which is `GameplayShots`' shape exactly: a fixture
+        # that replaces cameras belongs beside the others that do.
+        "SlipperRecallShots",
     ]),
 
     ("services", """
