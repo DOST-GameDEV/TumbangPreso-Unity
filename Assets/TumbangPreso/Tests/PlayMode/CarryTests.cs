@@ -126,16 +126,24 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
 
+            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
+            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
+            // and this harness used to take whatever `FindObjectsByType` handed back first, which
+            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
+            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
+            // about ownership at all; the fixture was simply relying on a rule that is gone.
             Slipper slipper = null;
 
             foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
-                if (s.State != SlipperState.Loose) continue;
+                if (s.State != SlipperState.Loose || s.OwnerSlot != carrier.PlayerSlot) continue;
                 slipper = s;
                 break;
             }
 
-            Assert.IsNotNull(slipper, "no loose slipper in the arena");
+            Assert.IsNotNull(slipper,
+                $"seat {carrier.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
+                $"allowed to pick up");
 
             // ⚠️ THE SLIPPER MOVES ONTO THE CARRIER, NOT THE OTHER WAY AROUND. `Confine` clamps a
             // unit back into the box every step, so walking the capsule to a slipper that happens
@@ -281,16 +289,24 @@ namespace TumbangPreso.PlayTests
             var mine = rig.Following;
             Assert.IsNotNull(mine, "the rig is following no character");
 
+            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
+            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
+            // and this harness used to take whatever `FindObjectsByType` handed back first, which
+            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
+            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
+            // about ownership at all; the fixture was simply relying on a rule that is gone.
             Slipper loose = null;
 
             foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
-                if (s.State != SlipperState.Loose) continue;
+                if (s.State != SlipperState.Loose || s.OwnerSlot != mine.PlayerSlot) continue;
                 loose = s;
                 break;
             }
 
-            Assert.IsNotNull(loose, "no loose slipper in the arena");
+            Assert.IsNotNull(loose,
+                $"seat {mine.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
+                $"allowed to pick up");
 
             mine.RoundActive = true;
             loose.transform.position = mine.transform.position;
@@ -444,16 +460,24 @@ namespace TumbangPreso.PlayTests
 
             Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
 
+            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
+            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
+            // and this harness used to take whatever `FindObjectsByType` handed back first, which
+            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
+            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
+            // about ownership at all; the fixture was simply relying on a rule that is gone.
             Slipper slipper = null;
 
             foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
-                if (s.State != SlipperState.Loose) continue;
+                if (s.State != SlipperState.Loose || s.OwnerSlot != carrier.PlayerSlot) continue;
                 slipper = s;
                 break;
             }
 
-            Assert.IsNotNull(slipper, "no loose slipper in the arena");
+            Assert.IsNotNull(slipper,
+                $"seat {carrier.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
+                $"allowed to pick up");
 
             var stand = carrier.transform.position;
             slipper.transform.position = new Vector3(stand.x, slipper.transform.position.y, stand.z);

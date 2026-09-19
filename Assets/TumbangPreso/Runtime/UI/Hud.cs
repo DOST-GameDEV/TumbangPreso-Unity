@@ -2677,14 +2677,28 @@ namespace TumbangPreso.UI
         {
             if (_indicators == null) return;
 
-            var carrier = _local.GetComponent<Carrier>();
-
             // Your own slipper is the one that answers to your seat. `OwnerSlot` is what makes
             // "yours" well-defined at all.
-            if (_ownSlipper == null ||
-                !_ownSlipper.gameObject.activeInHierarchy ||
-                _ownSlipper.OwnerSlot != _local.PlayerSlot)
+            //
+            // ⚠️⚠️ THE RESCAN IS RATE-LIMITED AND IT USED TO RUN EVERY FRAME OF EVERY TAYA ROUND.
+            // The cache is only kept while it still answers to this seat, and a taya answers to
+            // no slipper at all (`SliceRunner.EquipOwnedSlippers` disowns theirs with
+            // `OwnerSlot = -1`), so the loop below found nothing and ran again on the next frame,
+            // for the whole round, forever. A `FindObjectsByType` on the frame is the exact shape
+            // of the fault `CLAUDE.md` § 7.1 records costing the probe an eighth of its frames,
+            // and `UpdatePickupPrompt` already answers it the same way: the SET is refreshed on a
+            // cadence and only the cheap questions are re-asked.
+            //
+            // ⚠️ 0.20 s IS `UpdatePickupPrompt`'S OWN NUMBER rather than a new one. A slipper
+            // changing owner is a round boundary, which is seconds apart, so the cadence bounds
+            // how stale the answer can be at a fifth of a second either way.
+            bool stale = _ownSlipper == null
+                         || !_ownSlipper.gameObject.activeInHierarchy
+                         || _ownSlipper.OwnerSlot != _local.PlayerSlot;
+
+            if (stale && Time.time >= _ownSlipperScanAt)
             {
+                _ownSlipperScanAt = Time.time + 0.20f;
                 _ownSlipper = null;
 
                 foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
@@ -2695,12 +2709,28 @@ namespace TumbangPreso.UI
                     break;
                 }
             }
-
-            Transform mine = _ownSlipper != null ? _ownSlipper.transform : null;
+            else if (stale)
+            {
+                _ownSlipper = null;
+            }
 
             var lata = GameServices.Round?.Lata;
-            _indicators.UpdateArrows(_local, carrier, mine, lata != null ? lata.transform : null);
+            _indicators.UpdateArrows(_local, lata != null ? lata.transform : null);
+
+            // ⚠️ THE RECALL MARK TAKES THE SLIPPER ITSELF RATHER THAN ITS TRANSFORM, because it
+            // asks the object three questions the transform cannot answer: what state it is in,
+            // whose it is, and whether the grab would take it right now. The arrows only ever
+            // needed a point in space, which is why they still take one.
+            //
+            // ⚠️ AND THE CARRIER IS NOT PASSED ON. "An arrow pointing at your own hand is noise"
+            // was the arrow's rule and it is still the mark's, but the mark asks the SLIPPER who
+            // is holding it instead of asking the hand what it holds: `Carrier.Held` and
+            // `Slipper.Holder` are two halves of one relationship (`Slipper.HostGrab`'s note),
+            // and reading the half the marker is about cannot go stale against the other.
+            _recall?.Track(_local, _ownSlipper);
         }
+
+        private float _ownSlipperScanAt = -99.0f;
 
         // -------------------------------------------------------------------
         // BUILD. The arrangement and every offset are `HUD.tscn`'s.

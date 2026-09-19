@@ -721,7 +721,16 @@ namespace TumbangPreso
 
             if (NetAuthority.ShouldRequest())
             {
-                Net.MatchRpc.Instance?.RequestGrabServerRpc(_motor.PlayerSlot, best.OwnerSlot);
+                // ⚠️⚠️ `SeatOfOrigin`, NOT `OwnerSlot`, AND THIS WAS § 78.1 ONE CALL SITE FURTHER
+                // ALONG. `MatchRpc.FindSlipper` addresses a tsinelas BY `SeatOfOrigin` and says
+                // so; this line handed it an `OwnerSlot`. The two agree for an owned shoe, which
+                // is why it worked, and they do not agree for an unowned one: an absent seat's
+                // spare carries `OwnerSlot = -1`, `FindSlipper(-1)` returns null, and the request
+                // was dropped in silence. § THE OWNERSHIP LOCK makes those spares the only shoe a
+                // player can ever pick up that is not their own, so the latent case is now the
+                // interesting one. `Slipper.SeatOfOrigin`: *"an identity must not be a piece of
+                // mutable state."*
+                Net.MatchRpc.Instance?.RequestGrabServerRpc(_motor.PlayerSlot, best.SeatOfOrigin);
                 return true;
             }
 

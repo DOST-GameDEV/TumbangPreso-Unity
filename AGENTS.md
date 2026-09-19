@@ -1,5 +1,11 @@
 # Working instructions for ChatGPT / Codex
 
+**EVERY ICON IN THE GAME IS A PLACEHOLDER, owner, 2026-09-19:** *"the icons we used
+are only placeholders"*. None of the icon art currently in the build is final or
+signed off, and nothing may be built on the assumption that it is. The rule, what
+it does and does not cover, and what it asks of you is in
+[Product and creative authority](#icons-are-placeholders-2026-09-19).
+
 **FINAL login references, newest owner message:** TUMP (7).png is sign-up and
 TUMP (8).png is sign-in. Copy their layout and supplied crossed-eye icons in
 password fields. NO EMAIL: sign-up uses username/password/confirm password;
@@ -556,6 +562,47 @@ override dated scope notes, not unrelated safety, data or gameplay contracts.
   input/data contracts still apply.
 
 ## Product and creative authority
+
+### Icons are placeholders, 2026-09-19
+
+Owner: *"the icons we used are only placeholders"*.
+
+**No icon currently in this build is final art.** Every glyph, emblem, pictogram and
+button cap the project draws for itself is standing in until real art arrives. Treat
+them as legible stand-ins, not as decisions.
+
+**What this covers**, so nobody has to guess which ones: the ability and hero glyphs
+(`AbilityIcons`, `HeroGlyphs`, `TumpAbilitySymbol`), the thumb-control verb icons
+(`VerbIcons`, `TumpVerbSymbol`), the ladder rank emblems and state glyphs
+(`RankIcons`), the recurring brand marks (`BrandMarks`), the navigation and street
+symbols (`NavigationSymbol`, `StreetIcon`, `TumpSymbol`), the key caps and pad face
+buttons (`InputGlyphs`, which is a sourced pack recoloured on import), and the
+world-tracking markers drawn in code (`SlipperRecallMark`, `TumpTargetPointer`).
+
+⚠️⚠️ **WHAT THIS DOES NOT COVER, AND GETTING THIS BACKWARDS WOULD DESTROY FINISHED
+WORK.** The owner's own supplied artwork and his girlfriend's supplied artwork are
+NOT placeholders and are explicitly finalized elsewhere in this file: the main-menu
+background and buttons, the login plates and their crossed-eye icons, the pennants,
+the logo, the controller screen's artwork and callouts. **Placeholder means "the
+project drew this for itself", never "somebody handed this over".** If you are not
+certain which a given file is, check `ArtSource/` and the owner-brand source folders
+before touching it.
+
+**What it asks of you:**
+
+* **Do not report an icon pass as finished art.** It is finished PLUMBING at best.
+  Say which icons are still standing in when you hand work back.
+* **Keep them swappable.** One lookup per family, keyed by id, so replacing the art
+  is an asset change rather than a hunt through call sites. Do not scatter a glyph
+  choice across screens.
+* **Do not spend a pass polishing them.** Legibility, correct size and correct
+  meaning are worth fixing because those are contracts the game relies on; making a
+  placeholder prettier is work that is about to be thrown away.
+* **Do not let a placeholder become a constraint.** If a layout only works at a
+  placeholder's exact shape, the layout is the bug.
+* **It changes nothing about the rules they must still satisfy.** A placeholder is
+  still held to the brand palette, still has to read at the size it is drawn, and
+  still may not carry a distinction by hue alone.
 
 **Latest ability direction:** after current maps/UI work, audit every ability but
 preserve ones that are already polished. Improve or rebuild weak mechanics and

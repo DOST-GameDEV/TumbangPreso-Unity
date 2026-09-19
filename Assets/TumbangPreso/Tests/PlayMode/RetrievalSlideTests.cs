@@ -405,8 +405,14 @@ namespace TumbangPreso.PlayTests
 
             var who = Attacker(1);
 
+            // ⚠️⚠️ BOTH BELONG TO THE SLIDING SEAT, AND THE SECOND USED TO BE SEAT 2'S.
+            // § THE OWNERSHIP LOCK refuses a rival's tsinelas outright, so the old pair would
+            // still have produced `held == 1` and would have proved the LOCK rather than the
+            // thing this test is named for: that a sweep passing over two ELIGIBLE shoes takes
+            // one. A test that keeps passing for a different reason is worse than one that goes
+            // red, because nobody reads it again.
             var first = BuildSlipper(1);
-            var second = BuildSlipper(2);
+            var second = BuildSlipper(1);
 
             Place(first, who, Balance.PickupRadius + 0.3f);
             Place(second, who, Balance.PickupRadius + 0.9f);
@@ -703,16 +709,26 @@ namespace TumbangPreso.PlayTests
                                                          who.transform.forward, out _),
                 "Loose and ahead: the control case for the two below.");
 
-            // Somebody else is holding it. ⚠️ THE OTHER BODY HAS TO BE STANDING AT THE SHOE
-            // FIRST: `HostGrab` re-asks `CanBeGrabbedBy`, which measures a real distance, so a
-            // grab from the next lane would fail and the test would pass for the wrong reason.
+            // Somebody else is holding it.
+            //
+            // ⚠️⚠️ PUT IN THE HAND BY `HostForceEquip` AND NO LONGER BY `HostGrab`, BECAUSE
+            // § THE OWNERSHIP LOCK MAKES THE OLD FIXTURE IMPOSSIBLE. Seat 2 walking over and
+            // grabbing seat 1's tsinelas is exactly the move the lock now refuses, so the
+            // fixture line would fail and take this test down with it while the thing it
+            // asserts is untouched. `HostForceEquip` bypasses `CanBeGrabbedBy` on purpose (it is
+            // the round-start hand-over, and its own note says so), which is what lets a
+            // synthetic "held by somebody else" state still be built.
+            //
+            // ⚠️ AND THE ASSERTION BELOW IS UNCHANGED ON PURPOSE. The rule under test is that a
+            // slide reads `IsGrabbableIgnoringReach` rather than restating one clause of it, and
+            // a tsinelas in a hand must be refused whatever route put it there.
             other.transform.position = new Vector3(shoe.transform.position.x,
                                                    other.transform.position.y,
                                                    shoe.transform.position.z);
             Physics.SyncTransforms();
             yield return null;
 
-            Assert.IsTrue(shoe.HostGrab(other), "The fixture needs the grab to have taken.");
+            Assert.IsTrue(shoe.HostForceEquip(other), "The fixture needs the hand-over to have taken.");
             yield return null;
 
             Assert.AreNotEqual(SlipperState.Loose, shoe.State);

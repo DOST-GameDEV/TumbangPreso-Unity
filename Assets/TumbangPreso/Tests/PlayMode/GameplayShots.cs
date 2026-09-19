@@ -641,9 +641,22 @@ namespace TumbangPreso.PlayTests
         /// ⚠️ NOTHING ELSE ABOUT IT MOVED. The default keeps `GameplayShots`' own output folder,
         /// so every existing caller behaves exactly as it did.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ THE SHOT SIZE IS A PARAMETER AND IT DEFAULTS TO WHAT IT ALWAYS WAS.
+        /// `CLAUDE.md` § 6.2b: *"AT THE SHAPE HE ACTUALLY PLAYS AT. `Fullscreen` is false in his
+        /// `settings.json`. He plays in a short wide window, and all nine probe resolutions are
+        /// taller than it."* A UI shot that only exists at 16:9 is a shot of a screen nobody in
+        /// this room has seen, and the layout fault that rule was written for (a column of
+        /// offsets collapsing into a heap) is invisible at the reference resolution. Every
+        /// existing caller passes nothing and gets the same 1920 x 1080 file it always did.
+        /// </summary>
         internal static IEnumerator Render(Camera cam, string name, bool flipCanvases,
-                                           string outDir = null,CharacterMotor observedSubject=null)
+                                           string outDir = null,CharacterMotor observedSubject=null,
+                                           int width = 0, int height = 0)
         {
+            if (width <= 0) width = Width;
+            if (height <= 0) height = Height;
+
             // ⚠️⚠️ AN HDR TARGET, AND THE LDR ONE MADE THESE SHOTS LIE ABOUT THE ONE THING THEY
             // WERE BEING USED TO JUDGE. `ColourGrade` runs an ACES roll-off in `OnRenderImage`,
             // which receives the camera's TARGET — and assigning an ARGB32 target overrides
@@ -654,7 +667,7 @@ namespace TumbangPreso.PlayTests
             bool hdr = cam.allowHDR;
             var format = hdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.ARGB32;
 
-            var rt = new RenderTexture(Width, Height, 24, format,
+            var rt = new RenderTexture(width, height, 24, format,
                 hdr ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.Default);
 
             var prev = cam.targetTexture;
@@ -669,7 +682,7 @@ namespace TumbangPreso.PlayTests
             // font atlas was rasterised at that small size, and the whole thing was then scaled
             // up into the shot. The glyphs were never blurry in the game; they were photographed
             // at the wrong resolution and enlarged.
-            var resolved = RenderTexture.GetTemporary(Width, Height, 0,
+            var resolved = RenderTexture.GetTemporary(width, height, 0,
                 RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
 
             // ⚠️⚠️ THE UI GETS ITS OWN CAMERA, AND HANGING IT OFF THE SCENE CAMERA MADE EVERY UI
@@ -799,8 +812,8 @@ namespace TumbangPreso.PlayTests
 
             RenderTexture.active = resolved;
 
-            var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
-            tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
+            var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             tex.Apply();
 
             RenderTexture.active = null;

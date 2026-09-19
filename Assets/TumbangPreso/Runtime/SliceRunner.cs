@@ -181,11 +181,20 @@ namespace TumbangPreso
             // ownership at a round change, it runs host-side for every peer, and the loop below
             // only ever looked at the slipper whose INDEX matches the defender's seat.
             //
-            // ⚠️ WHICH COULD NEVER HAVE BEEN ENOUGH, because `OwnerSlot` is a label and not a
-            // lock (`Slipper`'s own note, and `docs/TODO.md` § 79.9 records that being chosen
-            // deliberately and reaffirmed). Any attacker may pick up any tsinelas, so the seat
-            // about to become taya is routinely holding somebody else's, which the loop below
+            // ⚠️ WHICH COULD NEVER HAVE BEEN ENOUGH WHEN IT WAS WRITTEN, because `OwnerSlot` was
+            // a label and not a lock (`docs/TODO.md` § 79.9 records that being chosen
+            // deliberately and reaffirmed). Any attacker could pick up any tsinelas, so the seat
+            // about to become taya was routinely holding somebody else's, which the loop below
             // leaves active and equipped by construction.
+            //
+            // ⚠️⚠️ § THE OWNERSHIP LOCK (2026-09-19) NARROWED THAT AND THIS DISARM STAYS ANYWAY.
+            // An attacker can only be holding their own shoe now, so the case above is the one
+            // that survives: the incoming taya is holding the very slipper this loop is about to
+            // disown. It would still have been holding it. Two other routes also put a tsinelas
+            // in a hand without asking the lock (`HostForceEquip` here, and a snapshot applied on
+            // a client), so **deleting this because the lock makes it look unnecessary would be
+            // reasoning from the rule rather than from the code.** `Slipper.OwnerSlot` carries
+            // the rule and all three times it has been called.
             //
             // ⚠️ IT RUNS BEFORE THE LOOP so the shoe it frees is still available to be re-homed
             // to its real owner in the same pass, rather than being left loose on the road.

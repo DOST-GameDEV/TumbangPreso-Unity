@@ -24,11 +24,38 @@ namespace TumbangPreso.UI
         private bool _captureReference;
         private readonly HeroAbility[] _skills = new HeroAbility[3];
         private static readonly string[] Actions = { "Skill1", "Skill2", "Ultimate" };
+        /// <summary>
+        /// § WHERE THE DECK SITS, for anything else that draws near the bottom of the match.
+        ///
+        /// ⚠️⚠️ THEY ARE CONSTANTS BECAUSE A SECOND READER ARRIVED AND THE ALTERNATIVE IS A COPY.
+        /// `SlipperRecall` clamps a world-tracking marker to the screen edge and the bottom edge
+        /// is this rectangle, so it has to know where the deck ends. The build call below uses
+        /// these same three numbers, which is what stops the two from drifting: `CLAUDE.md` § 5's
+        /// rule about a number living in two places is not only about balance values, and
+        /// `docs/TODO.md` § 94.1 is what a second answer to one question costs here.
+        ///
+        /// ⚠️ ASK <see cref="DeckVisible"/> BEFORE USING THEM. The deck is switched off for a
+        /// seat with no hero kit, which is every seat in Classic, and a marker that dodges a
+        /// rectangle nobody can see is a marker sitting in the wrong place for half the game.
+        /// </summary>
+        public const float DeckLift = 112.0f;
+        public const float DeckWidth = 470.0f;
+        public const float DeckHeight = 194.0f;
+
+        /// <summary>Canvas units from the BOTTOM of the canvas to the top of the deck.</summary>
+        public const float DeckTop = DeckLift + DeckHeight * 0.5f;
+
+        public const float DeckHalfWidth = DeckWidth * 0.5f;
+
+        /// <summary>True while the deck is actually drawn. See the note on the constants.</summary>
+        public bool DeckVisible => _deck != null && _deck.gameObject.activeInHierarchy;
+
         private void BuildPreviousDeck(Transform root)
         {
             var f = TumpUiTheme.Current;
             _deck = TumpUiFactory.Rect(root, "PowerSeals");
-            TumpUiFactory.Anchor(_deck, new Vector2(.5f, 0), new Vector2(0, 112), new Vector2(470, 194));
+            TumpUiFactory.Anchor(_deck, new Vector2(.5f, 0), new Vector2(0, DeckLift),
+                                 new Vector2(DeckWidth, DeckHeight));
             for (int i = 0; i < 3; i++)
             {
                 float size = i == 2 ? 114 : 96;

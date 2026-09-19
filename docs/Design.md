@@ -378,28 +378,52 @@ on the last frame of the reset channel.
 
 ### 5.2 · Retrieval and vulnerability
 
-* ⚠️⚠️ **ANY ATTACKER MAY PICK UP ANY SLIPPER. OWNERSHIP IS A LABEL, NOT A LOCK.**
-  Reversed **twice** on 2026-08-01 and both instructions are kept here on purpose,
-  because the second one is not a correction of a mistake — it is a different call on
-  the same trade-off, and whoever reads this next should see that it was weighed:
-  * Morning: *"Each slipper is uniquely color-coded and tied strictly to its owner.
-    Opponents cannot pick up or tamper with another player's slipper."* The argument
-    was that an any-attacker rule deletes the three-way rivalry — if any slipper serves
-    any attacker, the nearest is always correct and there is nothing to contest.
-  * Evening: *"allow bots and humans to pick up the slippers of others, make sure this
-    works in multiplayer"*, then *"let ai grab other slippers too but make it so that
-    they dont perma take from me, they can take from me tho but not all the time"*.
-  **The second version keeps the contest and moves it.** A slipper you can lose to a
-  rival is more contested than one nobody else may touch; what the lock actually bought
-  was that the contest could never happen. The failure mode the morning rule feared —
-  everyone converging on the nearest slipper — is real, and it is answered in the AI by
-  a claim rule (`ai_controller.gd::_is_nearest_claimant`: only the nearest eligible
-  attacker goes for it) plus a **3.5 m distance handicap on a human's own slipper**
-  (`HUMAN_SLIPPER_BIAS`), so a bot takes yours when it is clearly the better play and
-  not merely when it is a metre nearer.
+* ⚠️⚠️ **AN OWNED SLIPPER MAY ONLY BE PICKED UP BY ITS OWNER. OWNERSHIP IS A LOCK.**
+  Called **three times** now, and all three are kept here on purpose, because none of
+  them is a correction of a mistake. They are three calls on one trade-off, and whoever
+  reads this next should see that it was weighed rather than drifted:
+  * **2026-08-01 morning, LOCKED:** *"Each slipper is uniquely color-coded and tied
+    strictly to its owner. Opponents cannot pick up or tamper with another player's
+    slipper."* The argument against it was that an any-attacker rule is what creates
+    the three-way rivalry: if any slipper serves any attacker, the nearest is always
+    correct and there is nothing to contest.
+  * **2026-08-01 evening, OPEN:** *"allow bots and humans to pick up the slippers of
+    others, make sure this works in multiplayer"*, then *"let ai grab other slippers too
+    but make it so that they dont perma take from me, they can take from me tho but not
+    all the time"*. A slipper you can lose to a rival is more contested than one nobody
+    else may touch. The failure mode the morning rule feared, everyone converging on the
+    nearest slipper, was answered in the AI instead: a claim rule
+    (`ai_controller.gd::_is_nearest_claimant`) plus a **3.5 m distance handicap on a
+    human's own slipper** (`HUMAN_SLIPPER_BIAS`).
+  * **2026-09-19, LOCKED AGAIN, and this is the shipped rule:** *"we should disable
+    being able to take other people's tsinelas when you are attacking."*
+  ⚠️ **What call 3 costs, stated plainly:** the evening call's contest is gone and
+  nothing replaces it. What it buys is that "which one is mine" becomes the rule rather
+  than decoration: the owner glow, the recall mark and the landed rim all answer a
+  question the grab now enforces, and an attacker can no longer be deleted from a round
+  by a rival walking off with their ammunition.
+  ⚠️ **The evening call's two AI softeners are dead rather than deleted.**
+  `AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` existed only
+  to keep bots from converging on, and repeatedly stealing, a human's shoe. They were
+  **already unreachable before the lock** (the live fetch path is `MySlipper`, which has
+  always been owner-scoped), so the lock did not strand them. `docs/TODO.md` § 154.
+* ⚠️⚠️ **AN UNOWNED SLIPPER IS STILL FREE, AND THAT IS THE PRACTICE LOBBY RATHER THAN A
+  LOOPHOLE.** `SliceRunner.EquipOwnedSlippers` writes `owner_slot = -1` in two cases
+  that look identical through the field and are opposite in intent: the taya's shoe,
+  which is **deactivated** and refused on the first line of the grab gate anyway, and an
+  **absent seat's spare**, which is left lying in the street deliberately. With the
+  practice lobby set to NONE that is three of the four tsinelas, and `SoloPracticeTests`
+  fails outright if they stop being retrievable. The test is therefore
+  `owner_slot >= 0 && owner_slot != who`, never `owner_slot != who`.
 * **`owner_slot` still exists and is still assigned at round start.** It is what the
-  foot arrow and the owner glow read — "which one is mine" is still a well-defined
-  question. It simply no longer gates `can_be_grabbed_by()`.
+  recall mark and the owner glow read. It is no longer only a label: it gates
+  `can_be_grabbed_by()`. ⚠️ It is still **not an address**. `SeatOfOrigin` is the
+  identity, because `owner_slot` is rewritten every round.
+* ⚠️ **ONLY YOUR OWN TSINELAS IS HIGHLIGHTED.** 🧑 2026-09-19: *"other player's tsinelas
+  does not get highlighted now. only yours."* The landed rim (§ THE LANDED HIGHLIGHT)
+  is gated on the same per-peer "is this mine" flag the owner glow uses, so a rival's
+  shoe draws neither. Under the lock a rival's shoe is not ammunition this player can
+  ever use, and lighting it pointed at a thing the grab is going to refuse.
 * ⚠️ **Contested pickups resolve HOST-SIDE.** `host_grab()` runs only on the host,
   re-checks `can_be_grabbed_by()` there and broadcasts; the first grab moves the
   slipper out of `LOOSE` so a same-frame second grab fails its first line. There is no
