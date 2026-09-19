@@ -925,7 +925,20 @@ namespace TumbangPreso.PlayTests
 
                 c.renderMode = RenderMode.ScreenSpaceCamera;
                 c.worldCamera = cam;
-                c.planeDistance = 1.0f;
+                // ⚠⚠ AT THE NEAR PLANE, NOT AT ONE UNIT, AND A HARD 1.0 PUT A ROAD THROUGH THE
+                // LOADOUT SCREEN. A flattened canvas is ordinary transparent geometry at its own
+                // plane, so anything in the 3D scene NEARER than that plane draws over the UI:
+                // `Picker-from-lobby-brand-v1.png` came back with a pale plank sagging across the
+                // whole screen, over the character tiles and the model, and it cost a sweep of
+                // every graphic in that canvas to find that nothing in the UI draws it.
+                // `Logs/shots-runtime/Picker-sceneonly.png` is the main camera with no canvas
+                // touched at all, and the plank is the elevated road of the map standing behind
+                // the lobby. **A player never sees it**: an overlay canvas draws last, always.
+                // Nothing closer than the near plane survives clipping, so nothing can get in
+                // front of a canvas placed there. Six probes in this folder already do it this
+                // way and `CustomCharacterScreenProbe` carries the same receipt for co-planar
+                // canvases bleeding into each other.
+                c.planeDistance = cam.nearClipPlane + 0.01f;
             }
 
             Canvas.ForceUpdateCanvases();

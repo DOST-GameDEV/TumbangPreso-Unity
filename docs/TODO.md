@@ -718,6 +718,30 @@ placing the first of them cost two full runs.
 menu scene went active and got her login, because a first boot meets `_atBoot` and `BootGuest`
 before it meets the street. It walks the guest door now.
 
+### 153.16 The plank across the loadout screen was the capture, not the screen: CLOSED 2026-09-19
+
+`Logs/shots-runtime/Picker-from-lobby-brand-v1.png` came back with a pale plank sagging across the
+whole width, drawn over the character tiles and over the model, with the reading card on top of
+it. It looked exactly like a mis-sized decoration, and it is not in the game at all.
+
+- **Nothing in the UI draws it.** A sweep of every `Graphic` in `OwnerLoadoutCanvas` wider than
+  900 units returns two objects: the brown `CollectionColourField` and `HeaderRule`, which is
+  1768x2. Every other element on that screen is confined to its own column.
+- **`Logs/shots-runtime/Picker-sceneonly.png` is the answer**: the main camera rendered with no
+  canvas touched, which an overlay canvas is invisible to. The plank is **the elevated road of the
+  map standing behind the lobby**, a 3D object, with the houses and the power lines beyond it.
+- ⚠⚠ **AND THE REASON IT REACHED THE PICTURE IS `UiRuntimeShots.Capture`'s HARD-CODED
+  `planeDistance = 1.0f`.** A canvas flipped to `ScreenSpaceCamera` is ordinary transparent
+  geometry at its own plane, so anything in the scene nearer than that plane draws over it. **A
+  player can never see this**: an overlay canvas draws last, always. It is at
+  `nearClipPlane + 0.01f` now, where nothing survives clipping in front of it, which is what six
+  other probes in that folder already do; `CustomCharacterScreenProbe` carries the same receipt
+  for co-planar canvases bleeding into each other, and `GameplayShots` still holds the old 1.0.
+
+⚠️ **The lesson is the one § 6.2b is already about, one level down**: a capture is a picture of
+the harness as much as of the screen, and a fault that appears only in a shot is a fault in the
+shot until the scene-only frame says otherwise.
+
 ### 153.14 The five fixtures beside those three, and the one real fault under them: CLOSED 2026-09-19
 
 Running the suites around § 153.11 turned up five more red, and they were measured rather than
