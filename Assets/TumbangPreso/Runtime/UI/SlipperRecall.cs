@@ -227,13 +227,59 @@ namespace TumbangPreso.UI
             }
 
             if (!_mark.gameObject.activeSelf) _mark.gameObject.SetActive(true);
-            _mark.anchoredPosition = track.Anchored;
+            _mark.anchoredPosition = track.Clamped ? ClearOfTheDeck(track.Anchored, canvas)
+                                                   : track.Anchored;
 
             _ring.Bearing = track.Clamped ? track.Bearing : (float?)null;
             _ring.SetVerticesDirty();
 
             PaintCap(mine.IsGrabbableIgnoringReach(local));
         }
+
+        /// <summary>
+        /// Lifts a mark clamped to the bottom edge above the ability deck.
+        ///
+        /// ⚠️⚠️ THE RENDER IS WHY THIS EXISTS AND NOTHING ELSE COULD HAVE FOUND IT.
+        /// `recall-4-clamped.png` put the ring through *"Hold TAB for skills"* and between two
+        /// ability cards: a tsinelas directly behind you clamps to the BOTTOM CENTRE, which is
+        /// the one part of this screen that is already full. `CLAUDE.md` § 6.2b's fourth row is
+        /// this exactly, and its own lesson is the general one: *"chrome does not know about a
+        /// screen added after it"*, so the screen added after it has to ask.
+        ///
+        /// ⚠️ IT ASKS `TumpPowerReadout` RATHER THAN CARRYING ITS OWN COPY OF THE DECK'S RECT,
+        /// including whether the deck is drawn at all: it is switched off for a seat with no hero
+        /// kit, which is every seat in Classic, and dodging a rectangle nobody can see would put
+        /// the mark in the wrong place for half the game.
+        ///
+        /// ⚠️ ONLY THE HEIGHT MOVES. The X stays exactly where the clamp put it, so the chevron
+        /// still points along the true bearing to the tsinelas; what changes is the one thing
+        /// that was making it unreadable.
+        /// </summary>
+        private Vector2 ClearOfTheDeck(Vector2 at, Vector2 canvas)
+        {
+            if (_deck == null) _deck = FindFirstObjectByType<TumpPowerReadout>();
+            if (_deck == null || !_deck.DeckVisible) return at;
+
+            // ⚠️ THE CHEVRON'S REACH IS IN BOTH BOUNDS, AND LEAVING IT OUT OF THE HEIGHT WAS
+            // VISIBLE IN THE VERY NEXT RENDER: the ring lifted clear and its chevron still poked
+            // down between two ability cards. `SlipperRecallMark.ChevronReach` owns that number.
+            // ⚠️ AND THE THEME'S OWN GAP ON TOP, rather than landing exactly on the deck's edge.
+            // `TumpUiTheme.Gap` is the front end's standard breathing space and is already owned
+            // somewhere else, which is the point: a clearance that just touches reads as a near
+            // miss, and inventing a private number for the distance between two controls is how
+            // this front end ended up with hand-written offsets in the first place (§ 92.1).
+            float reach = RingRadius + SlipperRecallMark.ChevronReach + TumpUiTheme.Current.Gap;
+
+            if (Mathf.Abs(at.x) > TumpPowerReadout.DeckHalfWidth + reach) return at;
+
+            float clear = -(canvas.y * 0.5f) + TumpPowerReadout.DeckTop + reach;
+            if (at.y > clear) return at;
+
+            at.y = clear;
+            return at;
+        }
+
+        private TumpPowerReadout _deck;
 
         /// <summary>
         /// ⚠️ ONE REVISION PAIR FOR THE CAP, WHICH IS THE PATTERN `Hud.RefreshKeyCaps` ALREADY

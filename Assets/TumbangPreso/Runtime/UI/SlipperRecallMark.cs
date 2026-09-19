@@ -48,6 +48,19 @@ namespace TumbangPreso.UI
 
         private const int Segments = 44;
         private const float ChevronSize = 22.0f;
+        private const float ChevronGap = 11.0f;
+
+        /// <summary>
+        /// How far past the ring's own radius the chevron's tip reaches.
+        ///
+        /// ⚠️ IT IS PUBLIC BECAUSE THE CLEARANCE THAT KEEPS A CLAMPED MARK OFF THE ABILITY DECK
+        /// HAS TO INCLUDE IT, AND THE FIRST VERSION DID NOT. `SlipperRecall.ClearOfTheDeck` lifted
+        /// the RING clear and the render still showed the chevron poking down into the cards
+        /// underneath it, which is the same fault one component smaller. Deriving it from the two
+        /// numbers below rather than restating it is what stops the next change to the chevron
+        /// silently un-fixing that.
+        /// </summary>
+        public const float ChevronReach = ChevronGap + ChevronSize;
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -71,8 +84,9 @@ namespace TumbangPreso.UI
             if (!Bearing.HasValue) return;
 
             float bearing = Bearing.Value;
-            Chevron(vh, centre, bearing, radius + 9.0f, ChevronSize + 3.0f, theme.DeepOlive);
-            Chevron(vh, centre, bearing, radius + 11.0f, ChevronSize, face);
+            Chevron(vh, centre, bearing, radius + ChevronGap - 2.0f, ChevronSize + 3.0f,
+                    theme.DeepOlive);
+            Chevron(vh, centre, bearing, radius + ChevronGap, ChevronSize, face);
         }
 
         private static void Ring(VertexHelper vh, Vector2 centre, float outer, float inner,

@@ -616,6 +616,15 @@ cosmetic tie-break.
   is why nobody saw it, and they do not agree for an unowned one: `FindSlipper(-1)` returns null
   and the request was dropped in silence. The lock makes spares the only cross-owner pickup left,
   so the latent case is now the interesting one. The parameter is named for the field it wants.
+- ⚠️⚠️ **A MARK CLAMPED TO THE BOTTOM EDGE LANDED ON THE ABILITY DECK, AND ONLY THE RENDER SAID
+  SO.** A tsinelas directly behind you clamps to the bottom CENTRE, which is the one part of this
+  screen that is already full: the frame has the ring through *"Hold TAB for skills"* and between
+  two ability cards. It lifts clear now, height only, so the chevron still points along the true
+  bearing. ⚠️ **It asks `TumpPowerReadout` for the deck's rect and for whether the deck is drawn
+  at all** rather than carrying a copy: the deck is switched off for a seat with no hero kit,
+  which is every seat in Classic, and dodging a rectangle nobody can see would be the wrong place
+  for half the game. The three numbers are constants there now and the deck's own build call uses
+  them, so the two cannot drift.
 - ⚠️⚠️ **THE PROJECTION MIXED SCREEN PIXELS WITH CANVAS UNITS THE MOMENT IT WAS GIVEN A MARGIN,
   AND THE PROBE IS WHAT CAUGHT IT.** `OffscreenIndicators` never hit this because its edge test
   used a margin of zero, where the two units cannot disagree. The recall mark has to reserve its
