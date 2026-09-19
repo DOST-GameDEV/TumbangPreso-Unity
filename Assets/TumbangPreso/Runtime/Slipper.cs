@@ -37,17 +37,54 @@ namespace TumbangPreso
 
 
         /// <summary>
-        /// ⚠️⚠️ OWNERSHIP IS A LABEL, NOT A LOCK. Any attacker may pick up any slipper. This
-        /// was reversed twice in one day and BOTH instructions are worth knowing, because the
-        /// second is not a correction of a mistake, it is a different call on the same
-        /// trade-off. The strict version deletes the three-way rivalry: if any slipper serves
-        /// any attacker the nearest is always correct and there is nothing to contest. The
-        /// open version keeps the contest and moves it, because a slipper you can LOSE to a
-        /// rival is more contested than one nobody may touch.
+        /// § THE OWNERSHIP LOCK. An OWNED tsinelas may only be picked up by the seat that owns
+        /// it; an UNOWNED one is free to anybody who may act.
         ///
-        /// `OwnerSlot` still exists and is still assigned at round start: it is what the foot
-        /// arrow and the owner glow read, so "which one is mine" stays a well-defined
-        /// question. It simply does not gate <see cref="CanBeGrabbedBy"/>.
+        /// ⚠️⚠️ THIS RULE HAS NOW BEEN CALLED THREE TIMES AND ALL THREE ARE KEPT HERE, BECAUSE
+        /// NONE OF THEM WAS A MISTAKE BEING CORRECTED. They are three calls on one trade-off and
+        /// whoever reads this next should see that it was weighed rather than drifted.
+        ///
+        ///  1. **2026-08-01 morning, LOCKED.** *"Each slipper is uniquely color-coded and tied
+        ///     strictly to its owner. Opponents cannot pick up or tamper with another player's
+        ///     slipper."*
+        ///  2. **2026-08-01 evening, OPEN.** *"allow bots and humans to pick up the slippers of
+        ///     others"*, then *"let ai grab other slippers too but make it so that they dont
+        ///     perma take from me, they can take from me tho but not all the time"*. The
+        ///     argument was that a slipper you can LOSE to a rival is more contested than one
+        ///     nobody may touch, and the converging-on-the-nearest failure the morning rule
+        ///     feared was answered in the AI instead, by a claim rule plus a distance handicap
+        ///     on a human's own shoe.
+        ///  3. **2026-09-19, LOCKED AGAIN, and this is the shipped rule.** 🧑: *"we should
+        ///     disable being able to take other people's tsinelas when you are attacking."*
+        ///
+        /// ⚠️⚠️ WHAT CALL 3 COSTS, STATED PLAINLY SO NOBODY REDISCOVERS IT AS A BUG: call 2's
+        /// contest is gone. The three-way rivalry over a loose shoe was real and it is not being
+        /// replaced by anything. What it buys is that "which one is mine" stops being decoration
+        /// and becomes the rule: the owner glow, the recall mark and the landed rim all answer a
+        /// question the grab now actually enforces, and an attacker can no longer be deleted
+        /// from a round by a rival walking off with their ammunition.
+        ///
+        /// ⚠️⚠️ AND THE AI'S TWO SOFTENERS FOR CALL 2 ARE DEAD RATHER THAN DELETED.
+        /// `AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` exist only
+        /// to stop bots converging on, and repeatedly stealing, a human's shoe. **They were
+        /// already unreachable before this change** (the live fetch path is `MySlipper`, which
+        /// has always been owner-scoped), so this rule did not strand them and removing them is
+        /// not part of it. `docs/TODO.md` § 154 carries that as its own item.
+        ///
+        /// ⚠️⚠️ AN UNOWNED TSINELAS IS STILL FREE AND THAT IS NOT A LOOPHOLE, IT IS THE PRACTICE
+        /// LOBBY. `SliceRunner.EquipOwnedSlippers` sets `OwnerSlot = -1` in two cases that look
+        /// identical through this field and are opposite in intent: the taya's shoe, which is
+        /// **deactivated** and therefore refused on the first line of
+        /// <see cref="IsGrabbableIgnoringReach"/> anyway, and an ABSENT seat's spare, which stays
+        /// on the road on purpose. That file's own note: *"a seat that does not exist has simply
+        /// left its slippers in the street, which is what an empty practice lobby is"*, and
+        /// `SoloPracticeTests` fails outright if those stop being retrievable.
+        ///
+        /// `OwnerSlot` is still assigned at round start and is still what the recall mark and
+        /// the owner glow read. It is no longer only a label.
+        ///
+        /// ⚠️ IT IS STILL NOT AN ADDRESS. <see cref="SeatOfOrigin"/> below is the identity and
+        /// that argument is unchanged: this field is rewritten every round.
         /// </summary>
         public int OwnerSlot { get => _ownerSlot; set => _ownerSlot = value; }
 
@@ -209,7 +246,25 @@ namespace TumbangPreso
         /// </summary>
         private void RefreshHighlight()
         {
+            // ⚠️⚠️ § ONLY YOURS LIGHTS. 🧑 2026-09-19: *"other player's tsinelas does not get
+            // highlighted now. only yours."*
+            //
+            // ⚠️⚠️ THE GATE IS `_glowOn`, WHICH IS ALREADY THE PER-PEER ANSWER TO "IS THIS MINE",
+            // rather than a second read of `OwnerSlot` here. `MatchInstaller.BuildSlipper`,
+            // `MatchInstaller.RebindLocalSeat` and `MatchRpc` all write it, on every peer, and
+            // every one of them writes `slipper.OwnerSlot == seat`. A second derivation in this
+            // file would be a third place to keep in step with a seat that moves on a rejoin,
+            // and `docs/TODO.md` § 78.1 is what a stale answer to that question already cost
+            // once: every non-host peer drew the taya carrying a shoe for a whole round.
+            //
+            // ⚠️⚠️ AND IT IS FAITHFUL TO WHAT THIS RIM IS FOR, WHICH IS WHY IT IS A GATE AND NOT
+            // A SECOND COLOUR. The note below already says the landed highlight answers *"where
+            // did the one YOU just threw end up"*: that question has never had a meaning on
+            // somebody else's tsinelas, and under § THE OWNERSHIP LOCK a rival's shoe is not
+            // ammunition this player can ever use, so lighting it was pointing at a thing the
+            // grab is going to refuse.
             bool landed = _landedHighlightOn
+                          && _glowOn
                           && Settings.SlipperHighlights.Enabled(
                                  Settings.SettingsStore.Current.SlipperHighlight);
 
@@ -479,12 +534,32 @@ namespace TumbangPreso
         /// ⚠️ THE REACH IS THE ONLY THING A SLIDE RELAXES, and it relaxes it to a SEGMENT rather
         /// than a bigger circle: the ground the body actually covers. Everything else on this
         /// method applies to a slide exactly as it applies to a walk-up.
+        ///
+        /// ⚠️⚠️ AND § THE OWNERSHIP LOCK IS ENFORCED HERE, WHICH IS THE ONLY PLACE IT COULD BE.
+        /// Seven call sites ask this question (the walk-up, the retrieval slide's predicate and
+        /// its sweep, the host's re-check of a client's request, both HUD prompts and the
+        /// recall mark), and `docs/TODO.md` § 94.1 is what a second answer to *"whose shoe is
+        /// this"* costs. <see cref="OwnerSlot"/> carries the rule and the three times it has been
+        /// called.
         /// </summary>
         public bool IsGrabbableIgnoringReach(CharacterMotor who)
         {
             if(!gameObject.activeInHierarchy)return false;
             if (State != SlipperState.Loose || who == null) return false;
             if (who.IsDefender) return false;   // the taya has the tag, not the ammunition
+
+            // § THE OWNERSHIP LOCK. 🧑 2026-09-19: *"we should disable being able to take other
+            // people's tsinelas when you are attacking."*
+            //
+            // ⚠️⚠️ THE TEST IS "OWNED BY SOMEBODY ELSE", NOT "NOT OWNED BY ME", AND THE
+            // DIFFERENCE IS A WHOLE GAME MODE. A negative `OwnerSlot` is an UNOWNED shoe, and an
+            // empty practice lobby is made almost entirely of them: with the bot seats set to
+            // NONE, three of the four tsinelas belong to seats that were never built and are left
+            // lying in the street deliberately. Writing this as `!= who.PlayerSlot` takes every
+            // one of them away and leaves the single human with nothing to practise retrieving,
+            // which `SoloPracticeTests` asserts against by name.
+            if (_ownerSlot >= 0 && _ownerSlot != who.PlayerSlot) return false;
+
             // The same empty-hand rule as Carrier's local pickup route. A delayed
             // remote grab must not overwrite a newer, already accepted possession.
             if(who.HoldingSlipper) return false;
@@ -623,10 +698,13 @@ namespace TumbangPreso
         /// at the end of a throw.
         ///
         /// ⚠️ SO IT IS NOT ONLY THE TAYA'S OWN SHOE, WHICH IS WHY DEACTIVATING BY INDEX COULD
-        /// NEVER HAVE FIXED IT. `OwnerSlot` is a label and not a lock — this class says so in as
-        /// many words and `docs/TODO.md` § 79.9 records the decision being taken deliberately and
-        /// twice — so the incoming taya is frequently holding somebody ELSE'S tsinelas, which
-        /// that loop leaves active and equipped by construction.
+        /// NEVER HAVE FIXED IT. `OwnerSlot` was a label and not a lock when this was written
+        /// (`docs/TODO.md` § 79.9 records that decision being taken deliberately and twice), so
+        /// the incoming taya was frequently holding somebody ELSE'S tsinelas, which that loop
+        /// leaves active and equipped by construction. ⚠️ § THE OWNERSHIP LOCK closed that route
+        /// on 2026-09-19 and this method is still needed: the taya is still holding THEIR OWN
+        /// shoe at the whistle, and `HostForceEquip` still puts one in a hand without asking the
+        /// lock at all.
         ///
         /// ⚠️ AND THE VIEWMODEL IS A SEPARATE MESH, so even for a matching index, switching the
         /// world object off left the first-person copy in frame. `Carrier.NotifyHolding(null)`
@@ -725,7 +803,31 @@ namespace TumbangPreso
                 transform.SetPositionAndRotation(position, rotation);
             }
 
+            // ⚠️⚠️ THE LANDED RIM IS LIT HERE TOO, AND UNTIL 2026-09-19 A CLIENT NEVER SAW ONE
+            // AT ALL. `Land` is the only thing that can turn it on and `Land` is reached only
+            // from inside a `NetAuthority.ShouldResolve()` gate, so for the whole life of
+            // § THE LANDED HIGHLIGHT it was a host-only feature wearing the name of a player
+            // one. Nothing failed and nothing logged: a non-host player simply threw their
+            // tsinelas and it came to rest unlit, which reads as the setting being broken.
+            // This is `docs/TODO.md` § 38's thesis on one more object.
+            //
+            // ⚠️ THE TRANSITION IS THE SIGNAL, because that is the only thing a client is told.
+            // `SetState` clears the flag on every move out of Loose, so this has to be written
+            // AFTER it for the same reason `Land` writes it last.
+            //
+            // ⚠️ ONE CASE DIVERGES FROM THE HOST AND IT DIVERGES THE HELPFUL WAY. A tsinelas the
+            // host RECOVERS rather than lands (stranded on a roof, or lost under the world)
+            // passes `fromFlight: false` and is deliberately not lit, because the rim would point
+            // at a place the throw never reached. The client cannot tell those apart from one
+            // InFlight-to-Loose edge, so it lights them. It is still this player's own shoe, it
+            // is still Loose, and the rim is still telling them where it is. Putting the
+            // distinction on the wire would cost a field and a `ProtocolVersion` bump
+            // (`CLAUDE.md` § 4a) for a cosmetic tie-break, and the two halves of the game have to
+            // be rebuilt and shipped together whenever that number moves.
+            bool landedNow = State == SlipperState.InFlight && state == SlipperState.Loose;
+
             SetState(state);
+            if (landedNow && !NetAuthority.ShouldResolve()) SetLandedHighlight(true);
             Holder = state == SlipperState.Held ? holder : null;
             _velocity = state == SlipperState.InFlight ? velocity : Vector3.zero;
             PektusSpin = state == SlipperState.InFlight

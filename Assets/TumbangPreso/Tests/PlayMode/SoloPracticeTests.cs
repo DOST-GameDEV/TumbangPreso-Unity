@@ -108,20 +108,46 @@ namespace TumbangPreso.PlayTests
             var carrier = me.GetComponent<Carrier>();
             Assert.IsNotNull(carrier);
 
-            // Start empty-handed whatever the equip did, so the pickup is what is measured.
             var slippers = Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None);
             Assert.Greater(slippers.Length, 0, "the arena built no tsinelas at all");
+
+            // ⚠️⚠️ THE HAND IS EMPTIED, AND THIS LINE SAID IT WAS FOR MONTHS WITHOUT DOING IT.
+            // The comment here read *"Start empty-handed whatever the equip did, so the pickup is
+            // what is measured"* and the code below it only skipped HELD slippers when choosing a
+            // target: nothing ever emptied the seat. `SliceRunner.EquipOwnedSlippers` puts this
+            // attacker's own tsinelas in their hand at the whistle, and
+            // `Slipper.IsGrabbableIgnoringReach` refuses everything to a body that is already
+            // holding one, so `CanBeGrabbedBy` answered false and this test failed on a pickup
+            // that works perfectly in the player.
+            //
+            // ⚠️ IT WAS FAILING BEFORE § THE OWNERSHIP LOCK AND IS NOT CAUSED BY IT, which was
+            // established by running this fixture alone on the commit before that change: same
+            // assertion, same message, `owner=-1`, which is a value the lock's clause cannot
+            // refuse. Recorded because a red test next to a new rule reads like the new rule's
+            // fault, and this one is not.
+            foreach (var s in slippers)
+                if (s.Holder == me) s.HostDisarm();
+
+            yield return new WaitForFixedUpdate();
 
             Slipper target = null;
             foreach (var s in slippers)
             {
-                if (s.Holder != null) continue;
+                if (s.Holder != null || !s.gameObject.activeInHierarchy) continue;
                 target = s;
                 break;
             }
 
             Assert.IsNotNull(target,
                 $"every one of the {slippers.Length} tsinelas is held, so there is none to fetch");
+
+            // ⚠️⚠️ THIS FIXTURE IS THE GUARD ON § THE OWNERSHIP LOCK'S ONE CARVE-OUT. With the
+            // practice lobby set to NONE, three of the four tsinelas belong to seats that were
+            // never built and carry `OwnerSlot = -1`, and `SliceRunner.EquipOwnedSlippers` leaves
+            // them in the street deliberately: *"a seat that does not exist has simply left its
+            // slippers in the street, which is what an empty practice lobby is."* The lock's test
+            // is therefore `owner >= 0 && owner != who` and never `owner != who`. **If this goes
+            // red with `owner=-1` after somebody tightens that clause, the clause is the bug.**
 
             // ⚠️ PUT IT AT HIS FEET RATHER THAN WALKING HIM TO IT. The question is whether the
             // grab CONNECTS, not whether the AI-free seat can pathfind, and `CanBeGrabbedBy`

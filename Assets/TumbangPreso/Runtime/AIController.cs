@@ -3977,10 +3977,14 @@ namespace TumbangPreso
         /// Where a taya waits for a retrieval: between a loose slipper in its box and the
         /// attacker who has to come and get it.
         ///
-        /// ⚠️ WHOEVER IS ACTUALLY COMING, NOT WHOEVER OWNS IT. Any attacker may pick up any
-        /// slipper, so camping the OWNER's bearing puts the taya on an approach nobody is
-        /// using — and it skips a spare slipper with no owner entirely, which is every spare
-        /// slipper in a short-handed match.
+        /// ⚠️ WHOEVER IS ACTUALLY COMING, NOT WHOEVER OWNS IT, AND § THE OWNERSHIP LOCK DID NOT
+        /// CHANGE THAT. The lock (2026-09-19, `Slipper.OwnerSlot`) means an owned shoe is only
+        /// ever fetched by its owner, so for those two the answer now agrees either way. It still
+        /// has to be asked of the approach rather than of the label, because **a spare slipper
+        /// has no owner at all** and is still free to anybody: `SliceRunner.EquipOwnedSlippers`
+        /// leaves an absent seat's tsinelas in the street with `OwnerSlot = -1`, which is every
+        /// spare slipper in a short-handed match, and camping a bearing that does not exist puts
+        /// the taya nowhere.
         /// </summary>
         private bool TryCoverPoint(out Vector3 point)
         {

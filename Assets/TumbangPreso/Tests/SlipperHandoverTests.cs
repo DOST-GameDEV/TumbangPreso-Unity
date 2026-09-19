@@ -62,6 +62,15 @@ namespace TumbangPreso.Tests
         {
             Assert.IsTrue(_shoes[1].HostForceEquip(_players[1]));
             _shoes[2].transform.position=_players[1].transform.position;
+
+            // ⚠️⚠️ THE SECOND SHOE IS HANDED TO THIS SEAT FIRST, OR THIS TEST STOPS BEING ABOUT
+            // THE OCCUPIED HAND. § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a
+            // rival's tsinelas on an earlier line than the empty-hand clause, so leaving shoe 2
+            // owned by seat 2 would keep this assertion GREEN for a reason that has nothing to do
+            // with what it is named for. `docs/TODO.md` § 154 has the rule; a test that passes
+            // for the wrong reason is worse than one that goes red, because nobody reads it again.
+            _shoes[2].OwnerSlot=_players[1].PlayerSlot;
+
             Assert.IsFalse(_shoes[2].HostGrab(_players[1]),"A delayed grab displaced newer possession.");
             Assert.AreSame(_shoes[1],_players[1].GetComponent<Carrier>().Held);
             Assert.IsNull(_shoes[2].Holder);

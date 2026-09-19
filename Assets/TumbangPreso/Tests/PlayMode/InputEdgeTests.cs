@@ -110,17 +110,29 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️ ANY ATTACKER, ANY SLIPPER. 🧑: *"make sure the slippers can actually be picked up by
-        /// anyone"*. Ownership deliberately does NOT gate the pickup: `OwnerSlot` decides whose
-        /// glow and whose skin a tsinelas wears and nothing else, so an attacker who reaches
-        /// somebody else's slipper first is entitled to it.
+        /// § THE OWNERSHIP LOCK, from both sides, plus the press that proves the lock did not
+        /// simply break the pickup.
         ///
-        /// ⚠️ THE TAYA IS THE ONE EXCEPTION AND IT IS NOT A BUG. `carrier.gd::_step_grab` returns
-        /// early on `is_defender`, because the defender's verbs are the tag and the reset
+        /// ⚠️⚠️ THIS TEST USED TO ASSERT THE OPPOSITE AND THE OLD VERSION IS WORTH KNOWING ABOUT.
+        /// It was `AnyAttackerCanPickUpAnySlipper`, it deliberately hunted for a slipper the
+        /// attacker did NOT own, and its note read *"ownership deliberately does NOT gate the
+        /// pickup"*, against 🧑's own *"make sure the slippers can actually be picked up by
+        /// anyone"*. That instruction was reversed on 2026-09-19: *"we should disable being able
+        /// to take other people's tsinelas when you are attacking."* `Slipper.OwnerSlot` carries
+        /// all three calls on that rule and why none of them was a mistake.
+        ///
+        /// ⚠️⚠️ BOTH SIDES, BECAUSE A LOCK THAT REFUSES EVERYTHING PASSES HALF OF IT. The
+        /// dangerous version of this change is one that quietly makes retrieval stop working, so
+        /// the OWN case is asserted through the real press and the rival case through the same
+        /// predicate the grab itself asks. `SoloPracticeTests` holds the third case, the unowned
+        /// spare an absent seat leaves in the street, which must stay free.
+        ///
+        /// ⚠️ THE TAYA IS STILL REFUSED AND IT IS STILL NOT A BUG. `carrier.gd::_step_grab`
+        /// returns early on `is_defender`, because the defender's verbs are the tag and the reset
         /// channel. Asserted here so nobody "fixes" it later.
         /// </summary>
         [UnityTest]
-        public IEnumerator AnyAttackerCanPickUpAnySlipper()
+        public IEnumerator AnAttackerTakesTheirOwnTsinelasAndNobodyElses()
         {
             yield return LoadArena();
 
@@ -170,33 +182,40 @@ namespace TumbangPreso.PlayTests
             // already existed for it and it turns off BOTH.
             //
             // ⚠️ IT SURFACED AS AN ORDER-DEPENDENT FLAKE rather than a hard failure, which is why
-            // it survived: `AnyAttackerCanPickUpAnySlipper` passes on its own and fails after
-            // `BotBehaviourProbe` has run, because what actually moved was which body the
-            // unsorted find returned first.
+            // it survived: this test (then named `AnyAttackerCanPickUpAnySlipper`) passes on its
+            // own and fails after `BotBehaviourProbe` has run, because what actually moved was
+            // which body the unsorted find returned first.
             var seatBot = attacker.GetComponent<AIController>();
             var seatReader = attacker.GetComponent<PlayerInputReader>();
             Silence(attacker);
             for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
 
-            // Somebody else's slipper, so the test is about eligibility rather than ownership.
+            // ⚠️ THE HAND IS EMPTIED FIRST, BECAUSE THE ROUND MAY ALREADY HAVE FILLED IT.
+            // `SliceRunner.EquipOwnedSlippers` hands every attacker their own tsinelas at the
+            // whistle, and `IsGrabbableIgnoringReach` refuses anything to a body that is already
+            // holding one. Disarming is what puts this seat back in the state a retrieval starts
+            // from, which is the state this test is about.
+            foreach (var s in slippers)
+                if (s.Holder == attacker) s.HostDisarm();
+
+            yield return new WaitForFixedUpdate();
+
+            // THIS attacker's own tsinelas. Under § THE OWNERSHIP LOCK it is the only owned one
+            // they may take.
             Slipper target = null;
+            Slipper rival = null;
 
             foreach (var s in slippers)
             {
-                if (s.State != SlipperState.Loose) continue;
-                if (s.OwnerSlot == attacker.PlayerSlot) continue;
-                target = s;
-                break;
+                if (s.State != SlipperState.Loose || !s.gameObject.activeInHierarchy) continue;
+
+                if (s.OwnerSlot == attacker.PlayerSlot) { if (target == null) target = s; }
+                else if (s.OwnerSlot >= 0 && rival == null) rival = s;
             }
 
-            if (target == null)
-                foreach (var s in slippers)
-                    if (s.State == SlipperState.Loose) { target = s; break; }
-
-            Assert.IsNotNull(target, "no loose slipper to pick up");
-
-            Assert.IsTrue(target.OwnerSlot != attacker.PlayerSlot || slippers.Length == 1,
-                "wanted a slipper this attacker does not own, to prove ownership is not a gate");
+            Assert.IsNotNull(target,
+                $"this attacker owns no loose tsinelas out of {slippers.Length}, so there is " +
+                $"nothing for them to retrieve and the lock cannot be tested from either side");
 
             // ⚠️ THE SLIPPER MOVES, NOT THE CHARACTER. Putting the attacker on the slipper looks
             // equivalent and is not: `CharacterMotor.Confine` clamps X and Z back into the
@@ -222,6 +241,30 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(target.CanBeGrabbedBy(defender),
                     "the taya must not be able to pick up ammunition: carrier.gd::_step_grab " +
                     "returns early on is_defender");
+
+            // § THE OWNERSHIP LOCK, the refusing half. The rival's shoe is put at the SAME feet,
+            // so the only thing separating the two answers is whose it is: a test that left it
+            // where it lay would pass on the reach and prove nothing about the rule.
+            if (rival != null)
+            {
+                Vector3 mine = target.transform.position;
+                rival.transform.position = new Vector3(stand.x, rival.transform.position.y, stand.z);
+                yield return new WaitForFixedUpdate();
+
+                float rivalReach = Vector3.Distance(attacker.transform.position,
+                                                    rival.transform.position);
+
+                Assert.IsFalse(rival.CanBeGrabbedBy(attacker),
+                    $"an attacker in seat {attacker.PlayerSlot} reached seat {rival.OwnerSlot}'s " +
+                    $"tsinelas at {rivalReach:0.00} m and was allowed to take it. 🧑 2026-09-19: " +
+                    $"\"we should disable being able to take other people's tsinelas when you " +
+                    $"are attacking.\"");
+
+                // Out of the way again, so the press below can only possibly collect the one
+                // this test is about.
+                rival.transform.position = mine + Vector3.forward * 40.0f;
+                yield return new WaitForFixedUpdate();
+            }
 
             // ⚠️⚠️ THE KEY IS RE-ASSERTED EVERY FRAME, BECAUSE THAT IS WHAT HOLDING ONE DOES.
             // `PlayerInputReader.Update` writes the whole verb table on every frame a human is

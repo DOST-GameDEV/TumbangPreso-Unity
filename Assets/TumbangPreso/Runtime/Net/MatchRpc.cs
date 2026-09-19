@@ -2466,12 +2466,18 @@ namespace TumbangPreso.Net
         // one that had never been called was always going to be that one.
         // `tools/audit_request_call_sites.py` is what found them and is what stops the next pair.
 
-        public void RequestGrabServerRpc(int slot, int slipperOwnerSlot)
+        /// <summary>
+        /// ⚠️ THE SECOND ARGUMENT IS A `SeatOfOrigin` AND IT USED TO BE NAMED FOR THE WRONG
+        /// FIELD. `FindSlipper` addresses by the stable identity; the only caller was passing
+        /// `OwnerSlot`, which is rewritten every round. `Carrier.TryPickup` carries the fix and
+        /// the reasoning, and the name here is what stops the next caller repeating it.
+        /// </summary>
+        public void RequestGrabServerRpc(int slot, int slipperSeatOfOrigin)
         {
             if (NetAuthority.IsHost)
             {
                 var who = Unit(slot);
-                var slipper = FindSlipper(slipperOwnerSlot);
+                var slipper = FindSlipper(slipperSeatOfOrigin);
                 if (who != null && slipper != null && slipper.CanBeGrabbedBy(who))
                 {
                     who.GetComponent<Carrier>()?.HostPickUp(slipper);
@@ -2482,7 +2488,7 @@ namespace TumbangPreso.Net
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             using var writer = new FastBufferWriter(16, Allocator.Temp);
             writer.WriteValueSafe(slot);
-            writer.WriteValueSafe(slipperOwnerSlot);
+            writer.WriteValueSafe(slipperSeatOfOrigin);
             _nm.CustomMessagingManager.SendNamedMessage("ReqGrab", NetworkManager.ServerClientId, writer);
         }
 
@@ -2490,10 +2496,10 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
             reader.ReadValueSafe(out int slot);
-            reader.ReadValueSafe(out int slipperOwnerSlot);
+            reader.ReadValueSafe(out int slipperSeatOfOrigin);
 
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            var slipper = FindSlipper(slipperOwnerSlot);
+            var slipper = FindSlipper(slipperSeatOfOrigin);
             if (who != null && slipper != null && slipper.CanBeGrabbedBy(who))
             {
                 who.GetComponent<Carrier>()?.HostPickUp(slipper);
