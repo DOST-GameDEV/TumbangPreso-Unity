@@ -290,6 +290,27 @@ namespace TumbangPreso.PlayTests
                 // excuse the control: after scrolling it must still take the raycast and still
                 // be the topmost hit. A button genuinely covered by a graphic inside the scroll
                 // panel fails exactly as it did before, which is the case the probe exists for.
+                // ⚠️⚠️ A CONTROL INSIDE A CANVAS GROUP THAT TAKES NO RAYCASTS IS NOT ON SCREEN,
+                // AND READING IT AS A BLOCKED BUTTON IS THE SAME MISTAKE THE TYPING PROBES MADE.
+                // `LobbyChat.SetPresented(false)` sets alpha 0, `interactable` false and
+                // `blocksRaycasts` false, and does NOT deactivate the object, because the chat
+                // has to stay subscribed to incoming room messages while it is shut. So a sweep
+                // that excludes inactive objects finds CHAT's own controls, clicks where they
+                // are, and correctly reports that the press landed on the seat button behind
+                // them. The lobby opens with the chat closed on purpose (§ 114: an empty log is
+                // a promise, not a screen element), so that press is nobody's bug.
+                //
+                // ⚠️ THE GROUP HAS TO BE BOTH INVISIBLE AND NON-BLOCKING TO BE SKIPPED. A
+                // control that is drawn and still refuses the pointer is exactly the fault this
+                // probe exists for and is judged as before.
+                var group = button.GetComponentInParent<CanvasGroup>();
+                if (group != null && !group.blocksRaycasts && group.alpha <= 0.01f)
+                {
+                    report.AppendLine($"   {Path(button.transform)}: hidden (CanvasGroup alpha "
+                                      + $"{group.alpha:0.00}, blocksRaycasts off)");
+                    continue;
+                }
+
                 ScrollIntoView(rect);
 
                 // The centre of the control, in screen space. An overlay canvas needs a null

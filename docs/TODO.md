@@ -1098,8 +1098,8 @@ than re-deriving it.
 | `BrandPreparationTests` (2) | `CharacterButton` | `LoadoutButton` |
 | `SettingsScrollProbe`, `SettingsWheelProbe`, `TumpNativeSettingsTests` (3), `PhaseSurfaceLayoutProbe.TheTelemetryRow…`, `UiRuntimeShots.TheSettingsPanelDraws` | `ConvertedSettingsPanel` and `<Name>Row` / `TelemetryNote` | `TumpSettingsView`, five `Sections`, rows named by key (`Telemetry`, `PlayerName`), notes named `Note` |
 | `PhaseSurfaceLayoutProbe` (2) | `SplashCanvas`, `ResultCanvas` | the painted equivalents |
-| `UiRuntimeShots.TheLobbyDraws` | `HubClose` | `ClosePlayerHub` (§ 153.11 already recorded this rename and two more fixtures still hold it) |
-| `UiClickProbe.EveryButtonIsReachable` | a press at the chat's controls | the chat is CLOSED by design, so the press lands on the seat buttons behind it, exactly as the typing probes did before they pressed CHAT first |
+| `UiRuntimeShots.TheLobbyDraws` | ~~`HubClose`~~ **closed**, then `LobbyChrome.BuildSettingsChip`'s drawer toggle | the painted lobby has no match-settings DRAWER: `SettingsButton` opens the settings screen and `CustomGameButton` opens the rules sheet, both on the face of the lobby |
+| `UiClickProbe.EveryButtonIsReachable` | the retired `CreditsPanel` overlay, opened over the title | **the credits door moved to the SETTINGS screen** (`TumpSettingsView.Workspace` builds `TumpCreditsView`), and the painted credits draw on `OwnerCreditsCanvas` with their own sorting order. The authored node the probe switches on has no canvas, so it renders under the title's full-screen press target and reports as blocked. ⚠️ **Its three chat entries are closed**: a control inside a `CanvasGroup` with alpha 0 and `blocksRaycasts` off is not on screen |
 | `HudOverflowProbe` | the legacy worst-case line set (`ROUND 8 / 8   ·   DEFENDER: <14 chars>`) measured against the painted `RoundLabel`'s 620-unit box | `TumpMatchReadout` writes `Round 8 / 8`, which fits. **The string it fails on is one the painted HUD never draws** |
 | `PaperPurityProbe.NothingOnTheInventoryDisappeared` | a baseline of the whole CONVERTED front end, by node name | see below |
 

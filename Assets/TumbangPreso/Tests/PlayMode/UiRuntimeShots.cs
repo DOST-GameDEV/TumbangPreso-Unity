@@ -657,10 +657,15 @@ namespace TumbangPreso.PlayTests
             // navigation into a column down the left: the first button is PROFILE now, so the old
             // line would have pressed a TAB and then photographed the screen it was trying to
             // leave. `PlayerHub.BuildRailFooter` names the node for exactly this reason.
-            var close = Find("HubClose")?.GetComponent<Button>();
+            // ⚠️ `ClosePlayerHub`, AND `HubClose` IS THE RAIL FOOTER UNDER IT. § 153.11 already
+            // recorded this rename for `HomeFlowTests` and two more fixtures still held the old
+            // one: `PlayerHub.OwnerPainted` draws the way out, and `PlayerHub.BuildRailFooter`
+            // is the builder it replaced. Both are accepted; the claim is that the hub HAS a
+            // named way out, not what that node is called this month.
+            var close = (Find("ClosePlayerHub") ?? Find("HubClose"))?.GetComponent<Button>();
             Assert.IsNotNull(close,
                 "the hub must have a named way out. It is the last thing in the identity rail; "
-                + "see PlayerHub.BuildRailFooter.");
+                + "see PlayerHub.OwnerPainted and PlayerHub.BuildRailFooter.");
             close.onClick.Invoke();
             yield return new WaitForSecondsRealtime(0.4f);
 
