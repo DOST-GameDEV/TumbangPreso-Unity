@@ -386,7 +386,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 |---|---|---|
 | **155** | The recall beam, and the one question two features now share | 🧑, with a frame of a Fortnite loot beam: *"create a prompt that creates this beam when your tsinelas is in the ground ... there shouldnt be any conflict with the slipperRecall"*. ⚠️⚠️ **The no-conflict requirement was met by SHARING rather than by avoiding**: whose it is, the colour, Off, and when to stand down are each decided once and read twice. The rim pass had to learn to skip an effect parented to a prop. ⚠️ **Open: his eye on a column standing in a fight, and nothing measures the frame fraction against `AbilityShowcaseProbe`'s 12 per cent.** § 155 |
 | **154** | The recall mark, and ownership becomes a lock | 🧑: *"create a prompt where the image icon will pop up in a player's screen after their slippers get thrown"* and *"we should disable being able to take other people's tsinelas when you are attacking"*. ⚠️⚠️ **Both are built, and the pass found two faults older than it**: a non-host player had **never seen a landed rim at all** (every route into `Slipper.Land` is host-gated), and `Hud.UpdateIndicators` ran a `FindObjectsByType` on every frame of every taya round. ⚠️ **Open: the render, a probe that can fail, and his eye on what the lock does to a four-player match.** § 154 |
-| **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 |
+| **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 | ⚠️ **And § 153.18 to § 153.20: the gate ran for the first time (392 cases, 61 red, the same red set twice), the three red core cases are closed, and what is left is a renamed-surface worklist.**
 | **151** | The nationals fun pass: ears at the player, an impact frame one peer got, and a slide nobody could see or hear | ⚠️⚠️ **Seven player-perceivable defects, all closed**: the only `AudioListener` in the game sat at world origin so every 3D cue panned from the middle of the map; thirteen call sites faked a position to work around it; the throw wind-up and the committed slide were audible to the one player who already knew, while the VISIBLE half of the wind-up was relayed on purpose; the hit freeze on the lata knockdown fired **on the host alone** and `audit_presentation_reach.py` had no pattern that could see a time-scale freeze; the pisonet booth played the SCORE STING and ducked the music while awarding nothing; and the committed retrieval slide, the one move this brief is about, had **three** at once (the first-person arm stopped animating on it the day before this pass, the wire announces it as a lunge, and three players out of four cannot hear it). ⚠️ **What is open is three human calls and no code**: the ear on the listener, the eye on the jeepney, and the slide's own feel. `Attention.md` § 17.2 and § 18 |
 | **149** | The fresh-audit follow-up: movement budget, re-admission, the one-shot requests | ⚠️⚠️ **Six confirmed defects, five of them competitive or release-integrity, all closed with a regression each.** § 149.4 to § 149.8 are what is left, and § 149 carries the brief as well as the record |
 | **147** | The game records its own good moments and nothing draws them | Markers exist, are deduplicated, are deterministic and name a replay window. **No screen reads them.** § 147.3 lists the three cheapest readers, in order |
@@ -1081,6 +1081,37 @@ false, and does NOT deactivate the object, so a sweep that excludes inactive obj
 live `ChatInput` a player cannot type into and is right about the letter of it. The lobby opens
 with the chat closed on purpose (§ 114: an empty log is a promise, not a screen element), so
 both typing probes press CHAT first, through the door, exactly as `OwnerPreparationTests` does.
+
+### 153.20 What is still red after this pass, and why each one is: OPEN
+
+Every fixture below is on the same fault as the rest of § 153.18 and is **not** a report about
+the shipping game: the owner-painted pass renamed the surface under it. They are listed with
+what they ask for and what the game builds, so the next session starts from the mapping rather
+than re-deriving it.
+
+| Fixture | Asks for | The game builds |
+|---|---|---|
+| `LoadoutSurfaceProbe` (5) | `LoadoutDoor`, `LoadoutBoard`, four tiles and three heads at once | `TumpSkills` into `TumpSkillView`, **one slot at a time**: `TumpSkillSlot0..2`, `VariantChoices`, `TumpVariant_<id>`, `TumpEquipSkill` |
+| `BrandPickerTests` (2) | `CharacterButton`, `RosterChoices`, `RosterChoice<n>`, `Category<n>`, `ConfirmButton` | `LoadoutButton`, `OwnerRosterGrid`, `Portrait_<id>`, `TumpCategory<n>`, `TumpUseLoadout` |
+| `ModelPreviewTests.HeroCharacterSelect…` | all three abilities named on the picker, under `TraitRows` | the picker has a SKILLS door and the kit is named behind it |
+| `HeroPickerLayoutProbe` | `AbilityRow_0` on the picker | same |
+| `BrandPreparationTests` (2) | `CharacterButton` | `LoadoutButton` |
+| `SettingsScrollProbe`, `SettingsWheelProbe`, `TumpNativeSettingsTests` (3), `PhaseSurfaceLayoutProbe.TheTelemetryRow…`, `UiRuntimeShots.TheSettingsPanelDraws` | `ConvertedSettingsPanel` and `<Name>Row` / `TelemetryNote` | `TumpSettingsView`, five `Sections`, rows named by key (`Telemetry`, `PlayerName`), notes named `Note` |
+| `PhaseSurfaceLayoutProbe` (2) | `SplashCanvas`, `ResultCanvas` | the painted equivalents |
+| `UiRuntimeShots.TheLobbyDraws` | `HubClose` | `ClosePlayerHub` (§ 153.11 already recorded this rename and two more fixtures still hold it) |
+| `UiClickProbe.EveryButtonIsReachable` | a press at the chat's controls | the chat is CLOSED by design, so the press lands on the seat buttons behind it, exactly as the typing probes did before they pressed CHAT first |
+| `HudOverflowProbe` | the legacy worst-case line set (`ROUND 8 / 8   ·   DEFENDER: <14 chars>`) measured against the painted `RoundLabel`'s 620-unit box | `TumpMatchReadout` writes `Round 8 / 8`, which fits. **The string it fails on is one the painted HUD never draws** |
+| `PaperPurityProbe.NothingOnTheInventoryDisappeared` | a baseline of the whole CONVERTED front end, by node name | see below |
+
+⚠️⚠️ **THE INVENTORY ONE IS THE ONLY ENTRY HERE THAT NEEDS A DECISION RATHER THAN A RENAME, AND
+IT IS 🧑'S.** Its baseline was captured before the painted pass and holds every control of the
+converted front end, including the rebind keycaps, the settings dropdowns and the browser rows.
+Matching by the WORD a control says as well as by its node name (added this pass) clears the
+straightforward renames; what is left is **149 rows whose screens were REPLACED rather than
+renamed**. Three honest options, and none of them should be taken quietly: re-walk the painted
+screens so the live side sees the rows it is being compared against, re-baseline and record what
+is genuinely gone, or retire the gate. **Re-baselining silently would delete the only record of
+what the old front end could do**, which is the thing he asked for by name.
 
 ### 153.17 The PlayMode gate could not run at all, and the reason was a list: CLOSED 2026-09-19
 
