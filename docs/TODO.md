@@ -839,6 +839,14 @@ with a crisp outline of the thing it was supposed to erase. `opening > .97` is t
   window puts a travelling bright band on it. `OwnerMenuAir` mirrors in the shader instead, and a
   mirror only reads as a mirror if you cross it.
 - Two cloud banks, both her one painted mass, near at 1.0 and far at 0.70 and higher.
+  ⚠️⚠️ **THEIR SPEED DOUBLED ON 2026-09-19, TO 8.4 AND 4.4, AND HE CHOSE THE MULTIPLIER.**
+  🧑, naming a reference: *"it was supposed to be subtle like slay the spire 2's main menu"*. At
+  4.2 the near bank travelled about 4 per cent of the screen in twenty seconds of looking and
+  crossed in ten minutes, which is below the threshold of noticing rather than at it, and the
+  street read as a still painting. **The shadow and the dust were offered the same multiplier
+  and deliberately left alone**: the cast shadow dapples the WHOLE road, so at twice the rate it
+  reads as flicker rather than as a cloud passing, and the dust already changes 22,705 pixels
+  between two frames 0.8 s apart.
 - **Five leaves, not a particle system**, cut from the litter already lying in her road, so a
   falling leaf and a fallen leaf are the same object.
 - The three periods, 74 s, 101 s and 43 s, are deliberately not multiples of each other.

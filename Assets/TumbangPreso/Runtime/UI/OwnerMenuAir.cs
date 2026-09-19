@@ -49,7 +49,22 @@ namespace TumbangPreso.UI
         // weather rather than as a repeat.
         private const float CloudWidth = 532, CloudHeight = 269;
         private const float NearScale = 1f, FarScale = .70f;
-        private const float NearSpeed = 4.2f, FarSpeed = 2.2f;
+        // ⚠️⚠️ DOUBLED ON 2026-09-19, ON HIS INSTRUCTION, AND THE OLD PAIR WAS 4.2 AND 2.2.
+        // 🧑, naming the reference: *"it was supposed to be subtle like slay the spire 2's main
+        // menu"*. At 4.2 the near bank travels about 4 per cent of the screen in twenty seconds
+        // of looking and takes ten minutes to cross, which is below the threshold of noticing
+        // rather than at it: the street read as a still painting with a caption on it. At 8.4 a
+        // cloud moves about 9 per cent in the same twenty seconds and crosses in five.
+        //
+        // ⚠️ THE RATIO IS KEPT AT ROUGHLY 2 : 1 BECAUSE IT IS THE DEPTH. The far bank is the
+        // same painted mass smaller, higher and slower; equalising the speeds would flatten the
+        // sky into one layer drawn twice.
+        //
+        // ⚠️ AND NOTHING ELSE MOVED. He was offered the same multiplier on the shadow and the
+        // dust and left the call here: the cast shadow dapples the WHOLE road, so at twice the
+        // rate it reads as flicker rather than as a cloud passing, and `OwnerRoadDust` already
+        // changes 22,705 pixels between two frames 0.8 s apart, which is visible motion at 1x.
+        private const float NearSpeed = 8.4f, FarSpeed = 4.4f;
         private const float NearTop = 28, FarTop = -10;
 
         private RawImage _image;

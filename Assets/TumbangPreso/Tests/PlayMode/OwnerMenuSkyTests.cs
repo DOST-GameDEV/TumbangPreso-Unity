@@ -22,7 +22,7 @@ namespace TumbangPreso.PlayTests
     /// ⚠️ THE CLAIMS ARE UNCHANGED AND THEY ARE 🧑'S: *"make sure all main menu effects are
     /// subtle"*. `OwnerMenuAir` carries the numbers (§ 153.3): the cast shadow sways 46 source
     /// pixels over 74 seconds, about 1.2 px a second at the fastest part of the cycle, the near
-    /// cloud bank crosses at 4.2 units a second and the far one at 2.2, and reduced motion
+    /// cloud bank crosses at 8.4 units a second and the far one at 4.4, and reduced motion
     /// parks both at the x she drew them at, which reproduces 46.png exactly.
     /// </summary>
     public sealed class OwnerMenuSkyTests
@@ -64,7 +64,7 @@ namespace TumbangPreso.PlayTests
                 sky.enabled=false;
                 yield return TumpUiCapture.Capture("OwnerSky-matte-v11-rest",canvas,1920,1080,false);
                 // ⚠️ THE BANK IS MOVED BY HAND RATHER THAN BY WAITING. The near bank crosses at
-                // 4.2 units a second by design, so a test that waited for a visible difference
+                // 8.4 units a second by design, so a test that waited for a visible difference
                 // would sit on this screen for the better part of a minute; setting the position
                 // the component would have reached is the same picture, sooner.
                 material.SetVector("_CloudNear",new Vector4(1243-420,28,532,269));
