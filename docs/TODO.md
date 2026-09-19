@@ -718,6 +718,26 @@ placing the first of them cost two full runs.
 menu scene went active and got her login, because a first boot meets `_atBoot` and `BootGuest`
 before it meets the street. It walks the guest door now.
 
+### 153.17 The PlayMode gate could not run at all, and the reason was a list: CLOSED 2026-09-19
+
+`python tools/playmode_suite.py --gate` is the number `CLAUDE.md` § 7 says to quote, and it
+refused to run: **fifty-two of the 138 fixtures were in no group**, and `--plan` correctly fails a
+partition with a fixture in none rather than silently skipping it. Every fixture added since the
+partition was written had gone unplaced, so the tool that is supposed to answer "is the suite
+green" could not answer anything, and nobody had noticed because the targeted `-testFilter` runs
+everybody actually uses still work.
+
+They were placed by what each fixture LOADS rather than by its name: a screen scene and no arena
+is a screen, an arena or a match installer is a match. ⚠️ **A group is an isolation boundary and
+not a claim about correctness**, so a wrong placement costs noise inside one group rather than a
+wrong verdict, and a fixture that turns out to share a world with another one should just be
+moved. `screens` went from 27 to 45 and `match` from 36 to 70.
+
+⚠⚠ **THIS IS § 124.11'S SHAPE ONE LEVEL UP: A LIST A HUMAN HAS TO REMEMBER TO EDIT.** The
+partition is DISCOVERED from the source and then checked against a hand-written table, which is
+the right design; what is missing is anything that makes adding a fixture without placing it
+*inconvenient* at the moment it happens rather than at the moment somebody next runs the gate.
+
 ### 153.16 The plank across the loadout screen was the capture, not the screen: CLOSED 2026-09-19
 
 `Logs/shots-runtime/Picker-from-lobby-brand-v1.png` came back with a pale plank sagging across the

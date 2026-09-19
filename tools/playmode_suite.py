@@ -141,6 +141,21 @@ GROUPS = [
         "QueueCardLayoutProbe", "SettingsScrollProbe", "SettingsWheelProbe",
         "UiClickProbe", "UiRuntimeShots", "WardrobeSheetProbe", "ModelPreviewProbe",
         "ModelPreviewTests", "MatchRecordIdentityProbe",
+
+        # ⚠⚠ THE FIFTY-TWO BELOW AND IN THE OTHER GROUPS WERE IN NO GROUP AT ALL ON
+        # 2026-09-19, WHICH MEANT THE GATE COULD NOT RUN AT ALL. `--plan` refuses a partition
+        # with a fixture in none, by design and correctly, so every one of them had to be placed
+        # before this tool could answer anything. They were sorted by what each fixture actually
+        # loads rather than by its name: a screen scene and no arena is a screen, an arena or a
+        # match installer is a match. A wrong placement costs noise inside one group, not a wrong
+        # verdict about the code, so a fixture that turns out to share a world with another one
+        # should simply be moved.
+        "BrandPickerTests", "BrandPreparationTests", "BrandSettingsTests", "CloseFeedbackViewProbe",
+        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
+        "OwnerPlayerHubTests", "OwnerPreparationTests", "OwnerUiAuthoringTests",
+        "PlayHeadingScaleTests", "ReducedActionFocusProbe", "SwimmingNameplateTests",
+        "TumpNativeFrontEndTests", "TumpNativeJoinTests", "TumpNativePickerTests",
+        "TumpNativeSettingsTests",
     ]),
 
     ("match", """
@@ -160,6 +175,21 @@ GROUPS = [
         "SessionRestartTests", "SoloPracticeTests", "SteeringTests", "StunFrostTests",
         "TrainingStreetProbe", "TutorialDefenderProbe", "TutorialLessonHonestyProbe",
         "VolcanicZoneTests", "InputEdgeTests", "InputReaderTests", "MatchSoakProbe", "ScoreIdempotencyTests",
+
+        # Placed 2026-09-19 with the note in the screens group above. Every one of these installs
+        # an arena, runs a round, or drives a body inside one.
+        "AmbientLifeProbe", "BlackIceFootingProbe", "CheskaNovaSlipperProbe",
+        "ClassicCosmeticMotorProbe", "ClientRoundBoundaryProbe", "DanteStompContractProbe",
+        "EquipmentIntegrationProbe", "FootSupportProbe", "FppHandsReviewProbe",
+        "FppSlipperShadowProbe", "IceWorldSnapshotProbe", "MapGraphicsReviewProbe",
+        "MovementSnapshotProbe", "OwnerTrainingUiTests", "PendingPreparationTests",
+        "PendingPresentationProbe", "PhaisterRitualContractProbe", "PickupPressOwnershipProbe",
+        "PinnedFetchProbe", "RecoveryDeviceProbe", "RecoveryMenuBoundaryProbe",
+        "ResidentLaundrySceneTests", "RooftopRecoveryProbe", "RooftopSwimmingProbe",
+        "SeanSkillTimingProbe", "SlipperLookupCostProbe", "SpectatorReplayOwnershipProbe",
+        "SplitSpiresPassageProbe", "ThrowAimIntegrationProbe", "ThrowMotionReviewProbe",
+        "TumpNativeHudTests", "TumpNativeResultTests", "ZackKitAcceptanceProbe",
+        "ZackSkillPresentationProbe",
     ]),
 
     ("capture", """
