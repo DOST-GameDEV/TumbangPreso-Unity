@@ -934,6 +934,31 @@ screen at all:
   out of a `.tscn`. `ConvertedScreen.Start` dresses every `InputField` under a converted screen
   now, which is § 4a's construction rule rather than a fourth call site to remember.
 
+⚠️⚠️ **AND THE TYPING PROBES FOUND A REAL ONE UNDERNEATH THE CLOSED DRAWER, WHICH IS THE
+BEST ARGUMENT IN THIS ENTRY FOR REPOINTING A FIXTURE RATHER THAN MUTING IT.** With the chat
+open, `LobbyTypingProbe` reported *"join card: JoinCode loses focus to BackButton within 10
+frames"*: click the join code, and the LOBBY's `ScreenFocus` took the caret back to its own
+first control. **That is 🧑's *"hindi maka input ng code and lobby code sa lobby"* exactly**,
+and it is invisible in a screenshot and to every click probe, because the click lands and the
+field is selected for one frame.
+
+⚠️⚠️ **THE CAUSE IS THAT THE PAINTED SCREENS ARE SIBLINGS RATHER THAN CHILDREN, AND
+`ScreenFocus.AdoptSelection` ONLY KNEW ABOUT CHILDREN.** `OwnerUiLayout.Canvas` builds its root
+with `Rect(null, name)` and moves it into the scene, binding lifetime through `CanvasLifetime`
+rather than parentage, because § 111.2: a canvas nested inside another canvas silently ignores
+its own `CanvasScaler`. The nested case was already handled (a dropdown's popup IS a child, so
+the outer screen returns early); two screens at the scene root fought over the caret and the
+player lost. **A selection held by any OTHER live `ScreenFocus` is left alone now**, and both
+typing probes are green.
+
+⚠️⚠️ **AND THAT SAME SENTENCE IS WHY SIX MORE CASES SAID "THE SCREEN BUILT NOTHING".**
+`ModelPreviewTests`, `AspectRatioProbes`, `PreviewDragProbe`, both HUD probes and
+`NestedCanvasProbe` all asked a component for a descendant: `panel.GetComponentInChildren<
+ModelPreview>()`, `hud.GetComponentsInChildren<Canvas>()`. Every one of those screens draws
+perfectly well, one object over, at the scene root. **`UiClickProbe`'s own dump is the
+receipt**: a `--- CharacterSelectPanel ---` section with no controls under it, on a build whose
+picker works.
+
 ⚠️⚠️ **AND TWO CASES WERE MEASURING A CLOSED DRAWER AND CALLING IT A DEAD CONTROL.**
 `LobbyChat.SetPresented(false)` sets alpha 0, `interactable` false and `_field.interactable`
 false, and does NOT deactivate the object, so a sweep that excludes inactive objects finds a

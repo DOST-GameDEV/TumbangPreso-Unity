@@ -130,7 +130,18 @@ namespace TumbangPreso.PlayTests
             var hud = Object.FindFirstObjectByType<Hud>();
             Assert.IsNotNull(hud, "no HUD in the arena, so there is nothing to measure.");
 
+            // ⚠️⚠️ SCENE-ROOT SIBLING, NOT A CHILD. `OwnerUiLayout.Canvas` builds
+            // `OwnerMatchCanvas` at the root and binds its lifetime to the Hud through
+            // `CanvasLifetime`, because § 111.2: a nested canvas ignores its own `CanvasScaler`.
+            // Asking the Hud for a child canvas answered null about a HUD that draws fine.
             var canvas = hud.GetComponentInChildren<Canvas>(true);
+
+            if (canvas == null)
+                foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
+                                                                    FindObjectsSortMode.None))
+                    if (c != null && (c.name == "OwnerMatchCanvas" || c.name == "TumpMatchCanvas"
+                                      || c.name == "HudCanvas"))
+                    { canvas = c; break; }
             Assert.IsNotNull(canvas, "the HUD built no canvas.");
 
             var camera = Camera.main;
@@ -147,7 +158,15 @@ namespace TumbangPreso.PlayTests
             canvas.planeDistance = camera.nearClipPlane + 0.01f;
 
             var canvasRt = (RectTransform)canvas.transform;
-            var labels = new List<Text>(hud.GetComponentsInChildren<Text>(true));
+            // ⚠️ THE LABELS COME OFF THE CANVAS, NOT OFF THE HUD COMPONENT, FOR THE REASON THE
+            // canvas lookup above records: `OwnerMatchCanvas` is a scene-root sibling bound to
+            // the Hud by `CanvasLifetime`, so nothing the player reads is a descendant of the
+            // Hud's own GameObject any more.
+            var labels = new List<Text>(canvas.GetComponentsInChildren<Text>(true));
+
+            foreach (var label in hud.GetComponentsInChildren<Text>(true))
+                if (!labels.Contains(label)) labels.Add(label);
+
             Assert.IsNotEmpty(labels, "the HUD built no labels at all.");
 
             var report = new StringBuilder();

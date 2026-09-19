@@ -172,6 +172,18 @@ namespace TumbangPreso.UI
             // ⚠️ THE CARET HAS TO BE ASKED FOR EXPLICITLY. `caretColor` is ignored entirely
             // unless `customCaretColor` is true, so assigning it alone is a silent no-op and the
             // caret keeps drawing in the text colour.
+            //
+            // ⚠️⚠️ AND ONLY ON A FIELD THAT HAS A TEXT COMPONENT, BECAUSE THE CARET IS BUILT
+            // OUT OF IT. `InputField.GenerateCaret` reads `m_TextComponent` with no null check,
+            // so a field with none throws a `NullReferenceException` inside
+            // `Canvas.SendWillRenderCanvases` the first time it takes focus: no stack of ours in
+            // it, nothing on screen, and the test that happened to be standing there fails. The
+            // authored hierarchies have such fields, and `ConvertedScreen.Start` dresses every
+            // field it finds rather than the four that were built in code.
+            // ⚠️ AND A TEXT COMPONENT WITH NO FONT IS THE SAME HOLE ONE LEVEL DOWN: the caret is
+            // measured off `cachedTextGenerator`, which a fontless label never fills.
+            if (field.textComponent == null || field.textComponent.font == null) return field;
+
             field.customCaretColor = true;
             field.caretColor = UiTheme.PaperInk;
 

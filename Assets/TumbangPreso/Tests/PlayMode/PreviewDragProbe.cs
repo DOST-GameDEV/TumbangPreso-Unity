@@ -123,7 +123,15 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < 20; i++) yield return null;
 
-            var preview = panel.GetComponentInChildren<ModelPreview>(true);
+            // ⚠️⚠️ THE PICKER'S CANVAS IS A SCENE-ROOT SIBLING OF THE PANEL, NOT A CHILD OF IT, AND
+            // THAT IS WHY THIS ANSWERED NULL. `OwnerUiLayout.Canvas` builds its root with
+            // `Rect(null, name)` and moves it into the scene, binding its LIFETIME to the owner
+            // through `CanvasLifetime` rather than its parentage, because § 111.2: a canvas
+            // nested inside another canvas silently ignores its own `CanvasScaler`. So
+            // `TumpPickerView` draws `OwnerLoadoutCanvas` beside `CharacterSelectPanel` and a
+            // `GetComponentInChildren` from the panel reaches none of it. The screen builds
+            // perfectly well; the lookup was asking the wrong object.
+            var preview = Object.FindFirstObjectByType<ModelPreview>(FindObjectsInactive.Include);
             Assert.IsNotNull(preview, "no ModelPreview on the character panel");
             Assert.IsNotNull(preview.Subject, "nothing to look at");
 

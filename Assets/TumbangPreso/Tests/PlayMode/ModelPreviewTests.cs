@@ -68,7 +68,15 @@ namespace TumbangPreso.PlayTests
             // layout pass, and re-frames on the frame after a subject is shown.
             for (int i = 0; i < 20; i++) yield return null;
 
-            var preview = panel.GetComponentInChildren<ModelPreview>(true);
+            // ⚠️⚠️ THE PICKER'S CANVAS IS A SCENE-ROOT SIBLING OF THE PANEL, NOT A CHILD OF IT, AND
+            // THAT IS WHY THIS ANSWERED NULL. `OwnerUiLayout.Canvas` builds its root with
+            // `Rect(null, name)` and moves it into the scene, binding its LIFETIME to the owner
+            // through `CanvasLifetime` rather than its parentage, because § 111.2: a canvas
+            // nested inside another canvas silently ignores its own `CanvasScaler`. So
+            // `TumpPickerView` draws `OwnerLoadoutCanvas` beside `CharacterSelectPanel` and a
+            // `GetComponentInChildren` from the panel reaches none of it. The screen builds
+            // perfectly well; the lookup was asking the wrong object.
+            var preview = Object.FindFirstObjectByType<ModelPreview>(FindObjectsInactive.Include);
             Assert.IsNotNull(preview, "The character panel built no ModelPreview.");
 
             Assert.IsNotNull(preview.Subject,
@@ -242,7 +250,7 @@ namespace TumbangPreso.PlayTests
 
             for (int i = 0; i < 20; i++) yield return null;
 
-            var preview = panel.GetComponentInChildren<ModelPreview>(true);
+            var preview = Object.FindFirstObjectByType<ModelPreview>(FindObjectsInactive.Include); // scene-root canvas, see above
             Assert.IsNotNull(preview, "The character panel built no ModelPreview.");
 
             var book = RosterBook.Load();
@@ -352,7 +360,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(name, "Classic select has no character name label.");
             Assert.AreEqual("BERTO", name.text, "Classic select did not open on the Classic roster.");
 
-            var preview = panel.GetComponentInChildren<ModelPreview>(true);
+            var preview = Object.FindFirstObjectByType<ModelPreview>(FindObjectsInactive.Include); // scene-root canvas, see above
             Assert.IsNotNull(preview?.Subject, "Classic select built no preview subject.");
             StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name,
                 "Classic index zero is not the Godot BERTO model.");

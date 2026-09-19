@@ -981,12 +981,30 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>How many rows and section headings the open tab actually built.</summary>
+        /// <summary>
+        /// How many rows the open page actually drew.
+        ///
+        /// ⚠️⚠️ TWO NAMING CONVENTIONS, BECAUSE THE PAINTED HUB USES A SUFFIX AND `UiRows` USED
+        /// A PREFIX. `UiRows` named a row `Row_<something>` and a group `Section_<something>`;
+        /// `RecordFields.Row` names it `<key>Row` (`NameRow`, `ChangePasswordRow`) and hangs it
+        /// under `HubRows`. Counting only the prefix answered zero on a PROFILE page that draws
+        /// perfectly well, which is this file's own lesson about a probe reporting a screen as
+        /// missing rather than itself as stale. ⚠️ The claim is unchanged and is the one worth
+        /// keeping: chrome can draw perfectly with nothing in it, so count the CONTENT.
+        /// </summary>
         private static int Rows()
         {
             int found = 0;
             foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude,
                                                                   FindObjectsSortMode.None))
-                if (t.name.StartsWith("Row_") || t.name.StartsWith("Section_")) found++;
+            {
+                bool legacy = t.name.StartsWith("Row_") || t.name.StartsWith("Section_");
+                bool painted = t.name.EndsWith("Row")
+                               || (t.parent != null && t.parent.name == "HubRows");
+
+                if (legacy || painted) found++;
+            }
+
             return found;
         }
 
