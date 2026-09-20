@@ -96,12 +96,17 @@ Buildv5 passed on7bc1964c,1156MB/78s, guard d2343174275b.
 Inputs/log are Logs/catch-build-v5; artifact Builds/catch-presentation-v5.
 The native23264 and three-peer17768/23604/9308 jobs completed; handles75993/46955
 retired. Results: Logs/net-catch-v2 and Logs/catch-native-v5. No player left running.
-Source60509753: busy/close-call/audio run completed5/6; both35s busy modes and2
-close-call cases passed. Voice fixture assumed an absent taya recording; correcting
-it to actual clock/count/result assets. Busy Hero captured10 repeated block events
-in.18s from continuous overlap; fixing contact episode separation/thrower attribution.
+Sourceac356ee4: block/audio/busy run5/5 PASS, guardabbrev pending receipt below.
+Continuous contact now deflects once; separation re-arms; thrower attribution reaches
+feed. New voice priority test uses shipped countdown/clock/result assets. Optional
+taya/ayos/tumbang recordings are absent, so no new spoken calls are claimed.
+Earlier busyv2 retained10 block events/.18s and a missing-VO fixture failure5/6.
+Busyv3 captured both-mode real knockdown/retrieval/restore/tag sequences, but the
+followed bot inherited mouse steering. Correct the observation to Movement aim;
+other bots' accepted events remain valid. New catch shot selects open side/falls
+back when both sides are cramped. Neither new change qualified yet.
 Core chain rules6/6 passed on60509753 in Logs/action-chains-v2; live awards/messages
-remain gated by C4. Next snapshot includes block regression and corrected voice test.
+remain gated by C4.
 Tests can serialize whitespace and change QualitySettings from a selected
 profile. Preserve the diff, restore only proven test-generated changes after exit,
 and record an exact base/input manifest before the next build. Never restore the

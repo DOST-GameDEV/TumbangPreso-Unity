@@ -23,6 +23,8 @@ namespace TumbangPreso.CameraSystem
         private RawImage _picture;
         private Text _caption;
         private float _contact, _began, _duration;
+        private float _shotSide;
+        private readonly RaycastHit[] _shotHits = new RaycastHit[32];
         private int _round;
         private bool _pending;
         private int _pendingActor, _pendingVictim, _pendingRound;
@@ -109,6 +111,16 @@ namespace TumbangPreso.CameraSystem
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
             _actorFacing = _actorCopy.Root.transform.rotation; _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
+            Vector3 forward = _victimContact - _actorContact; forward.y = 0;
+            if (forward.sqrMagnitude < .01f) forward = _victimFacing * Vector3.forward;
+            forward.Normalize();
+            Vector3 focus = (_actorContact + _victimContact) * .5f + Vector3.up * .9f;
+            float right = ShotDistance(focus, ShotOffset(forward, 1));
+            float left = ShotDistance(focus, ShotOffset(forward, -1));
+            _shotSide = left > right + .2f ? -1 : 1;
+            // A cramped contact gets the normal recovery view rather than a camera
+            // pushed into a face. Pick once so moving contacts cannot flip the shot.
+            if (Mathf.Max(left, right) < 1.65f) { End(); return; }
             _stage.SetActive(true);
             BuildView();
         }
@@ -181,20 +193,31 @@ namespace TumbangPreso.CameraSystem
             Vector3 a = _actorCopy.Root.transform.position, b = _victimCopy.Root.transform.position;
             Vector3 forward = b - a; forward.y = 0;
             if (forward.sqrMagnitude < .01f) forward = _victimCopy.Root.transform.forward;
-            forward.Normalize(); Vector3 side = Vector3.Cross(Vector3.up, forward);
+            forward.Normalize();
             Vector3 focus = (a + b) * .5f + Vector3.up * .9f;
-            Vector3 wanted = focus + side * 2.9f + forward * .85f + Vector3.up * .30f;
-            Vector3 offset = wanted - focus; float distance = offset.magnitude;
-            foreach (var hit in Physics.RaycastAll(focus, offset.normalized, distance, ~0, QueryTriggerInteraction.Ignore))
-            {
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
-                distance = Mathf.Min(distance, Mathf.Max(.5f, hit.distance - .18f));
-            }
+            Vector3 offset = ShotOffset(forward, _shotSide);
+            float distance = ShotDistance(focus, offset);
+            if (distance < 1.65f) { End(); return; }
             _camera.transform.position = focus + offset.normalized * distance;
             _camera.transform.LookAt(focus);
             _picture.color = new Color(1, 1, 1, Mathf.Clamp01((_duration - elapsed) / .18f));
             try { RenderOnlyCopies(); }
             catch (System.Exception error) { End(); Debug.LogException(error); }
+        }
+        private static Vector3 ShotOffset(Vector3 forward, float side)
+            => Vector3.Cross(Vector3.up, forward) * (2.9f * side) + forward * .85f + Vector3.up * .30f;
+        private float ShotDistance(Vector3 focus, Vector3 offset)
+        {
+            float distance = offset.magnitude;
+            int count = Physics.RaycastNonAlloc(focus, offset.normalized, _shotHits, distance, ~0, QueryTriggerInteraction.Ignore);
+            if (count == _shotHits.Length) return 0; // Unknown occlusion is not a clear shot.
+            for (int i = 0; i < count; i++)
+            {
+                var hit = _shotHits[i];
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                distance = Mathf.Min(distance, Mathf.Max(0, hit.distance - .18f));
+            }
+            return distance;
         }
         private void RenderOnlyCopies()
         {

@@ -38,6 +38,31 @@ namespace TumbangPreso.PlayTests
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(can + new Vector3(-5, 0, i * 2));
         }
         [UnityTest]
+        public IEnumerator CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup()
+        {
+            yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
+            var taya = GameServices.Round.PlayerAt(0);
+            var victim = GameServices.Round.PlayerAt(1);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.name = "CatchShotRightOcclusion";
+            wall.transform.position = new Vector3(1.25f, 1.2f, -2.2f);
+            wall.transform.localScale = new Vector3(.15f, 3, 4);
+            Physics.SyncTransforms();
+            Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position, taya.transform.forward));
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.IsTrue(view.Playing);
+            var camera = GameObject.Find("~CatchPlaybackCamera").GetComponent<Camera>();
+            Assert.Less(camera.transform.position.x, -.5f, "The wall-facing side must not force a tight camera through the bodies.");
+            var otherWall = Object.Instantiate(wall);
+            otherWall.transform.position = new Vector3(-1.25f, 1.2f, -2.2f);
+            Physics.SyncTransforms(); yield return null;
+            Assert.IsFalse(view.Playing, "If neither shot is clear, keep the live recovery view.");
+            Assert.IsFalse(victim.CanAct(), "Occlusion fallback cannot alter the tag penalty.");
+            Object.Destroy(wall); Object.Destroy(otherWall);
+        }
+
+        [UnityTest]
         public IEnumerator TenActualCatchesPreserveTayaAndReturnBeforeControl()
         {
             yield return Open();

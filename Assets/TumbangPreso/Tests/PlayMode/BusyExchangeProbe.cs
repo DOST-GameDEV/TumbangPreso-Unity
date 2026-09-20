@@ -27,6 +27,9 @@ namespace TumbangPreso.PlayTests
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, mode);
             var round = GameServices.Round; var subject = round.PlayerAt(2);
             var rig = Camera.main.GetComponent<CameraRig>(); rig.Follow(subject, true);
+            // AI emits world-space movement. A mouse-follow rig would reinterpret
+            // that bot's directions as body-relative and change the play we observe.
+            rig.SetAimSource(AimSource.Movement);
             var witness = new GameObject("BusyExchangeWitness").AddComponent<Camera>();
             witness.CopyFrom(Camera.main); witness.enabled = false; witness.tag = "Untagged";
             witness.cullingMask &= ~(1 << 5); witness.fieldOfView = 60;
