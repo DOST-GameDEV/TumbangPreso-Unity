@@ -225,12 +225,12 @@ namespace TumbangPreso.Visual
                 return Mathf.Abs(dt) < 0.0001f ? 0.0f : (keys[i + 1].y - keys[i - 1].y) / dt;
             }
 
-            public AnimationClip Build()
+            public AnimationClip Build(bool legacy = false)
             {
                 var clip = new AnimationClip
                 {
                     name = _name,
-                    legacy = false,
+                    legacy = legacy,
                     wrapMode = WrapMode.Once,
                 };
 

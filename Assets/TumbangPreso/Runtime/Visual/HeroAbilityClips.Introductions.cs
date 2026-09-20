@@ -75,7 +75,9 @@ namespace TumbangPreso.Visual
                     break;
                 default: return null;
             }
-            var clip = b.Build();
+            // SetCurve is supported in native players only for legacy clips.
+            // This clip is sampled on a render copy, never put in the live Animator.
+            var clip = b.Build(legacy: true);
             GroundIntroduction(clip, root, paths["root"]);
             return clip;
         }
@@ -86,7 +88,11 @@ namespace TumbangPreso.Visual
         {
             b.KeyPos(t, 0, y, 0);
             b.KeyRot("torso", t, torso.x, torso.y, torso.z); b.KeyRot("head", t, head.x, head.y, head.z);
-            b.KeyRot("arm-left", t, left.x, left.y, left.z); b.KeyRot("arm-right", t, right.x, right.y, right.z);
+            // The retained GLB rigs are authored in a T-pose. Drop the shoulder
+            // before pitching it, matching tools/glb_action.py's ARM_DROP and
+            // Unity's imported handedness. Raw X on a T-pose only twists the arm.
+            b.KeyRot("arm-left", t, left.x, left.y, 80 - left.z);
+            b.KeyRot("arm-right", t, right.x, right.y, -80 - right.z);
             b.KeyRot("leg-left", t, leftLeg.x, leftLeg.y, leftLeg.z); b.KeyRot("leg-right", t, rightLeg.x, rightLeg.y, rightLeg.z);
         }
     }
