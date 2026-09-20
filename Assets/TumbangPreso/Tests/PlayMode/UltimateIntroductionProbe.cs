@@ -1,5 +1,8 @@
 using System;
 using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.CameraSystem;
@@ -34,6 +37,12 @@ namespace TumbangPreso.PlayTests
                 new Vector3(-2.4f, 1.3f, 3.6f), new Vector3(2.2f, 1.2f, 3.8f),
                 new Vector3(-2.7f, 1.0f, 4), new Vector3(1.4f, 1.3f, 3.4f) };
             string[] heroes = { "sean", "phaister", "zack", "nemu", "dante", "cheska" };
+            // Reuse the existing editor motion-strip geometry audit rather than
+            // validating root keys against a copy of the new grounding calculation.
+            var audit = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("TumbangPreso.EditorTools.ClipMotionStrip")).First(t => t != null);
+            const BindingFlags privateStatic = BindingFlags.NonPublic | BindingFlags.Static;
+            var measure = audit.GetMethod("Measure", privateStatic);
+            var report = new StringBuilder("Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.\n");
             try
             {
                 for (int i = 0; i < heroes.Length; i++)
@@ -59,12 +68,29 @@ namespace TumbangPreso.PlayTests
                     if (held != null) held.gameObject.SetActive(false); // Body study only; no floating live prop.
                     visual.Model.SetActive(false); stage.SetActive(true); copy.ShowOnlyForCapture(true);
                     camera.transform.position = at + offsets[i]; camera.transform.LookAt(at + Vector3.up * .9f);
+                    clip.SampleAnimation(copy.Root, 0);
+                    var box = (Bounds)audit.GetMethod("WorldBox", privateStatic).Invoke(null, new object[] { copy.Root });
+                    audit.GetMethod("Calibrate", privateStatic).Invoke(null, new object[] { copy.Root, box.size.y, report, hero });
+                    float Low(float age)
+                    {
+                        var sample = measure.Invoke(null, new object[] { copy.Root, age });
+                        return (float)sample.GetType().GetField("LowestVertex").GetValue(sample);
+                    }
+                    float floor = Low(0), lowest = 0, highest = 0;
                     try
                     {
                         Assert.IsEmpty(stage.GetComponentsInChildren<MonoBehaviour>(true));
                         Assert.IsEmpty(stage.GetComponentsInChildren<Collider>(true));
                         yield return ImprovementEvidenceProbe.Record(camera, hero + "-introduction-body", 2.8f,
-                            drive: age => clip.SampleAnimation(copy.Root, Mathf.Min(age, 2.8f)));
+                            drive: age =>
+                            {
+                                clip.SampleAnimation(copy.Root, Mathf.Min(age, 2.8f));
+                                float clearance = Low(age) - floor;
+                                lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
+                            });
+                        report.AppendLine(FormattableString.Invariant($"{hero}: clearance {lowest:F5} to {highest:F5} metres"));
+                        Assert.GreaterOrEqual(lowest, -.015f, hero + " penetrated its standing support plane.");
+                        Assert.LessOrEqual(highest, .015f, hero + " floated above its standing support plane.");
                         Assert.AreEqual(at, actor.transform.position);
                         Assert.AreEqual(score, GameServices.Match.ScoreFor(1));
                     }
@@ -76,7 +102,12 @@ namespace TumbangPreso.PlayTests
                     }
                 }
             }
-            finally { sourceCamera.SetActive(true); Object.Destroy(camera.gameObject); }
+            finally
+            {
+                string folder = Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/improvement-baseline-v1";
+                Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "introduction-grounding.txt"), report.ToString());
+                sourceCamera.SetActive(true); Object.Destroy(camera.gameObject);
+            }
         }
     }
 }

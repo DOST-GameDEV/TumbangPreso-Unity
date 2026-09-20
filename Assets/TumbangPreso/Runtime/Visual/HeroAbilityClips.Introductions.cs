@@ -75,7 +75,9 @@ namespace TumbangPreso.Visual
                     break;
                 default: return null;
             }
-            return b.Build();
+            var clip = b.Build();
+            GroundIntroduction(clip, root, paths["root"]);
+            return clip;
         }
 
         private static Vector3 V(float x, float y, float z) => new Vector3(x, y, z);
