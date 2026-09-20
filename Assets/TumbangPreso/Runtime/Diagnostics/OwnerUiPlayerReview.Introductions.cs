@@ -75,14 +75,20 @@ namespace TumbangPreso.Diagnostics
                     camera.transform.position = actor.transform.position + new Vector3(i == 2 || i == 4 ? -2.4f : 2, 1.2f, 3.8f);
                     camera.transform.LookAt(actor.transform.position + Vector3.up * .9f);
                     HeroIntroductionScene scene = null;
+                    ReviewAudioCapture audio = null;
+                    string motionName = hero + (withScene ? "-introduction-scene-motion" : "-introduction-motion");
                     try
                     {
                         if (withScene)
                         {
                             scene = new HeroIntroductionScene(stage.transform, hero, actor);
                             scene.SetVisibleForCapture(true);
+                            var listener = Object.FindAnyObjectByType<AudioListener>();
+                            if (listener == null) throw new InvalidOperationException("No game listener for sound review");
+                            audio = listener.gameObject.AddComponent<ReviewAudioCapture>(); audio.Begin();
+                            if (!scene.StartSound()) throw new InvalidOperationException(hero + " has no retained theme source");
                         }
-                        var movie = StartCoroutine(RecordCatchMotion(hero + (withScene ? "-introduction-scene-motion" : "-introduction-motion"), 2.8f));
+                        var movie = StartCoroutine(RecordCatchMotion(motionName, 2.8f));
                         float began = Time.realtimeSinceStartup;
                         while (Time.realtimeSinceStartup - began < 2.8f)
                         {
@@ -96,9 +102,11 @@ namespace TumbangPreso.Diagnostics
                             yield return null;
                         }
                         yield return movie;
+                        if (audio != null) audio.Save(System.IO.Path.Combine(_folder, motionName));
                     }
                     finally
                     {
+                        if (audio != null) { audio.enabled = false; Object.Destroy(audio); }
                         scene?.Dispose();
                         visual.Model.SetActive(true);
                         if (held != null) held.gameObject.SetActive(heldActive);

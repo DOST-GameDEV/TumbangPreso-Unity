@@ -62,7 +62,8 @@ namespace TumbangPreso.Visual
             _clip=Resources.Load<AnimationClip>("KuroRageInhale");
             if(_clip!=null)
             {
-                var animator=actor.GetComponent<Animator>()??actor.AddComponent<Animator>();
+                var animator=actor.GetComponent<Animator>();
+                if(animator==null)animator=actor.AddComponent<Animator>();
                 animator.applyRootMotion=false;animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
                 _graph=PlayableGraph.Create("Kuro authored rage");_graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
                 _motion=AnimationClipPlayable.Create(_graph,_clip);_motion.SetApplyFootIK(false);_motion.SetSpeed(0);

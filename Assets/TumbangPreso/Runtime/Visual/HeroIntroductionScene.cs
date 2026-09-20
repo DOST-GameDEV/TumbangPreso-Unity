@@ -28,6 +28,7 @@ namespace TumbangPreso.Visual
         private KuroRagePresentation _rage;
         private Vector3 _kuroScale;
         private Renderer[] _renderers;
+        private AudioSource _sound;
         public GameObject Root => _root;
 
         public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source)
@@ -111,10 +112,22 @@ namespace TumbangPreso.Visual
         private static float Ease(float from, float to, float time)
         { float u = Mathf.InverseLerp(from, to, time); return u * u * (3 - 2 * u); }
 
+        public bool StartSound()
+        {
+            if (_sound != null) return true;
+            var clip = Resources.Load<AudioClip>("Sfx/sfx_ult_theme_" + _hero);
+            if (clip == null) return false;
+            _sound = _root.AddComponent<AudioSource>(); _sound.playOnAwake = false;
+            _sound.spatialBlend = 0; _sound.loop = false; _sound.clip = clip;
+            _sound.volume = 0; _sound.Play();
+            return true;
+        }
+
         public void Sample(float seconds)
         {
             float t = Mathf.Clamp(seconds, 0, HeroAbilityClips.IntroductionSeconds);
             float enter = Ease(.15f, .65f, t), leave = 1 - Ease(2.38f, 2.8f, t);
+            if (_sound != null) _sound.volume = Settings.SettingsStore.Current.SfxGain * .60f * Ease(0, .15f, t) * leave;
             switch (_hero)
             {
                 case "sean":
@@ -187,6 +200,7 @@ namespace TumbangPreso.Visual
         { if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible; }
         public void Dispose()
         {
+            if (_sound != null) _sound.Stop();
             _rage?.Dispose(); _rage = null;
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }
         }
