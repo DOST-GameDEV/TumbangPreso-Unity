@@ -87,7 +87,13 @@ namespace TumbangPreso.CameraSystem
             if ((victim.transform.position - _pendingAt).sqrMagnitude < .25f)
             { a.Record(Time.time); b.Record(Time.time); contact = Time.time; }
             _pending = false;
-            Begin(a, b, victim, rig, contact);
+            try { Begin(a, b, victim, rig, contact); }
+            catch (System.Exception error)
+            {
+                End(); Debug.LogException(error);
+                // An allocation/asset failure must not interrupt the accepted
+                // tag callback before authority finishes its teleport and penalty.
+            }
         }
         private void Begin(MatchPoseHistory.Track actor, MatchPoseHistory.Track victimTrack,
                            CharacterMotor victim, CameraRig rig, float contact)
@@ -187,7 +193,8 @@ namespace TumbangPreso.CameraSystem
             _camera.transform.position = focus + offset.normalized * distance;
             _camera.transform.LookAt(focus);
             _picture.color = new Color(1, 1, 1, Mathf.Clamp01((_duration - elapsed) / .18f));
-            RenderOnlyCopies();
+            try { RenderOnlyCopies(); }
+            catch (System.Exception error) { End(); Debug.LogException(error); }
         }
         private void RenderOnlyCopies()
         {

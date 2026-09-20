@@ -83,13 +83,17 @@ namespace TumbangPreso.CameraSystem
             public Copy Clone(Transform inactiveParent)
             {
                 if (!Ready || Source == null) return null;
+                foreach (var bone in _bones) if (bone == null) return null;
                 // Copy rendering data, never GameObjects carrying scripts.
                 // Disabling a cloned MonoBehaviour would not prevent its Awake
                 // when the stage activates. Shared meshes/materials stay owned
                 // by the live assets; only these transforms/renderers are new.
                 var map = new System.Collections.Generic.Dictionary<Transform, Transform>(_bones.Length);
                 foreach (var bone in _bones)
-                    map[bone] = new GameObject(bone.name).transform;
+                {
+                    var copied = new GameObject(bone.name).transform;
+                    copied.SetParent(inactiveParent, false); map[bone] = copied;
+                }
                 for (int i = 0; i < _bones.Length; i++)
                 {
                     var source = _bones[i]; var target = map[source];
