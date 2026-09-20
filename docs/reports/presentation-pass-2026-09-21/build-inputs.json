@@ -1,0 +1,31 @@
+{
+  "base": "cde9a55cd9f35dcc16128501c0bc67a18e2fe527",
+  "patchSha256": "ae189f7915665aec8bec661d498232103739c42f7d51b6a14e89dc55331c6044",
+  "generatedChanges": [
+    {
+      "path": "Assets/TumbangPreso/Resources/Models/FppDetails/inday_left_arm.asset",
+      "sha256": "db18468f2b84340722b7fa0952c5f47a9337fc0e38fc57f2ec64739182f2d948",
+      "whitespaceOnly": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/Models/FppDetails/inday_right_arm.asset",
+      "sha256": "9a643e9c7850d9205c4caa607b388ed1effb8d32aa160f6addd52df6059e00a5",
+      "whitespaceOnly": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/composition-redesign/home-court.png.meta",
+      "sha256": "803347800e98b99a0867c1ecded886c0fbe9b34708f3c096482f5d3e29001143",
+      "whitespaceOnly": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Resources/UI/composition-redesign/loading-street.png.meta",
+      "sha256": "ff76ab3e2fec0bd39df869aa2c694a8e100a1701944f7102f0050dd1c8a9c190",
+      "whitespaceOnly": true
+    },
+    {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "sha256": "878baa95561d63031efd0e7d05bef4208d6351b72fd78f2a43c78901972c4c2d",
+      "whitespaceOnly": false
+    }
+  ]
+}

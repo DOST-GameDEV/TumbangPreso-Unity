@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.4290962">
+  <test-suite type="TestSuite" id="1596" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="450" result="Failed" site="Child" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.429096" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1590" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="450" result="Failed" site="Child" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.417897" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24160" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1591" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="450" result="Failed" site="Child" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.415943" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1592" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="450" result="Failed" site="Child" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.414429" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1056" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.392050" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1060" name="RemoteSmoothingLagsTheMeshAndThenCatchesUp" fullname="TumbangPreso.PlayTests.CarryTests.RemoteSmoothingLagsTheMeshAndThenCatchesUp" methodname="RemoteSmoothingLagsTheMeshAndThenCatchesUp" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="655863552" result="Failed" start-time="2026-09-20 20:38:20Z" end-time="2026-09-20 20:38:24Z" duration="3.365078" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Turning smoothing off left the mesh offset from its body.
+  Expected: less than 9.99999975E-05f
+  But was:  0.066269815f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarryTests+<RemoteSmoothingLagsTheMeshAndThenCatchesUp>d__5.MoveNext () [0x002a0] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\CarryTests.cs:410
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

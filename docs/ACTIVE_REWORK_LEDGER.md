@@ -41,27 +41,31 @@ and assess in normal gameplay. Existing Mac tests are historical, not Windows pr
 
 ## Jobs / tested snapshot / next action
 
-Baseline f4c819f9 SlipperRecallShots PASS 1/1, 8.74s test execution; first isolated
-import took several minutes. Inspected beam-witness: column competes with standing
-players. Validation workspace C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation.
-Profile presentation-validation-20260921. Baseline guard 61dc59bf8a2f; session1748 retired.
-Outputs Logs/presentation-baseline and Logs/shots-recall in validation workspace.
+Verified exchange: cde9a55cd9f35dcc16128501c0bc67a18e2fe527 plus the normal build's
+SlipperBeam shader registration (now recovered to development). Exact generated
+input patch, file hashes, XML and native receipts are in
+[the report](reports/presentation-pass-2026-09-21/README.md).
+Final focused exchange3/3PASS; prior related selection14/15, one remote-smoothing
+failure also reproduced on untouched f4c819f9. Preserve that inherited limitation.
+Low beacon, can/down/restored captures and native restored-can image inspected.
 
-Development checkpoint 3694d67c has .48m low beacon, compact tin contact instead of
-routine confetti/global hitstop, scorer-only camera/hitmarker, bounded side feed,
-state-aware can marker, stable player colours/numbers and correct can-gated danger.
-Source compiled. First focused exchange run 0/2: fixture hit the still-protected
-initial can and correctly received no points. Log/XML retained at Logs/exchange-tests-v1,
-guard383d90273892, session17025 retired. Fix the fixture to await actual protection
-expiry, not the gameplay guard. No visual acceptance or native proof yet.
+Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation.
+Windows Builds/exchange-presentation-v1/TumbangPreso.exe,1156MB/161s, build guard
+82bc2b266774. Native Logs/exchange-native-v1 PASS actual both-mode menu-to-game
+control routes. Shared input unchanged. PID17392 retired. All owned jobs stopped.
+Earlier guards/results: baseline61dc59bf8a2f; failed fixture383d90273892;
+related3a2e581940b5; baseline smoothingbb9cfaa43a0e; final exchange886bd206eba7.
 
-Unverified follow-on: ownership guard now also covers force-equip/throw and confines
-ownerless stock to guided/one-seat offline training. Null-thrower environmental
-ability displacement remains legal. New regression covers foreign force-equip/throw.
+Development dirty follow-on: Camera/MatchPoseHistory.cs and CatchReconstruction.cs
+with meta files; Hud.Native.cs hooks them into real matches. Eight-second bounded
+transform history; victim-only recorded copies, no collider/authority logic, no
+live camera/aim transform change, 1.1s maximum ending before remaining recovery.
+NOT COMPILED/TESTED, NOT in the current build. Next: add lifecycle/contact/deadline
+regressions and inspect actual catch motion, including duplicate renderer restore.
+Do not transfer prior build passes to this source. Preserve initial unrelated dirty
+files listed in Logs/presentation-pass-2026-09-21/intake.json.
 
-Next: commit test/ownership increment, sync stopped validation workspace, run focused
-exchange, pickup/practice and locator captures. Inspect exact frames, then build and
-exercise the internal native route. Continue signature moments and full scoped pass;
-C4 network ownership remains a real dependency, not permission to stop independent work.
+Owner still requires autonomous continuous implementation, no questions or resets.
+Continue full scoped pass after checkpoints. C4 dependency remains reserved.
 
 [Earlier ledger and evidence](reports/presentation-pass-2026-09-21/intake/ACTIVE_REWORK_LEDGER.md).
