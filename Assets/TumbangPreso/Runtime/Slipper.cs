@@ -137,21 +137,8 @@ namespace TumbangPreso
         /// </summary>
         private void SetState(SlipperState next)
         {
-            // ⚠️⚠️ § THE RECALL BEAM IS DRIVEN FROM HERE AND THE RIM IS NOT, WHICH LOOKS
-            // INCONSISTENT AND IS NOT. `SetLandedHighlight(false)` above returns on its first
-            // line when the flag is already false, so it is not a reliable "the state moved"
-            // signal: a tsinelas going from Held to Loose with no landed rim on it repaints
-            // nothing at all. The beam stands on ANY loose tsinelas of yours, so it needs the
-            // transition itself. `Visual.SlipperBeam` carries why the two differ.
-            //
-            // ⚠️ ON A REAL CHANGE ONLY. `ApplySnapshotState` calls this on every reliable state
-            // packet including keepalives, and a repaint per packet would rebuild four materials
-            // at the wire's cadence.
-            bool changed = State != next;
-
             State = next;
             if (next != SlipperState.Loose) SetLandedHighlight(false);
-            if (changed) RefreshBeam();
         }
 
         public CharacterMotor Holder { get; private set; }
@@ -307,15 +294,6 @@ namespace TumbangPreso
 
             foreach (var r in GetComponentsInChildren<Renderer>())
             {
-                // ⚠️⚠️ AN EFFECT PARENTED TO THIS PROP IS NOT PART OF THIS PROP, AND THE RIM PASS
-                // HAD NO WAY TO KNOW THAT UNTIL § THE RECALL BEAM ARRIVED. `VfxRenderTag`'s own
-                // note makes this argument for `InputEdgeTests`' toon-outline sweep one level up:
-                // the rule is *"is this part of the model"* rather than a skip list somebody has
-                // to remember to extend. Writing rim properties into a beam's block is harmless
-                // today, because its material carries none of them, and it is the shape of the
-                // fault that put a landed-rim assertion on the wrong renderer.
-                if (r.GetComponent<Visual.VfxRenderTag>() != null) continue;
-
                 var block = new MaterialPropertyBlock();
                 r.GetPropertyBlock(block);
 
@@ -325,52 +303,7 @@ namespace TumbangPreso
 
                 r.SetPropertyBlock(block);
             }
-
-            // Every input the beam reads has just been re-decided, so it follows from here as
-            // well as from the state. See `RefreshBeam`.
-            RefreshBeam();
         }
-
-        /// <summary>
-        /// § THE RECALL BEAM, decided. `Visual.SlipperBeam` draws it; this owns whether it draws
-        /// at all and in what colour.
-        ///
-        /// ⚠️⚠️ THE THREE CLAUSES ARE THE SAME THREE THE REST OF THE PRESENTATION ALREADY ASKS,
-        /// WHICH IS THE WHOLE REASON THE BEAM CANNOT ARGUE WITH ANYTHING. **Mine** is `_glowOn`,
-        /// the per-peer flag `MatchInstaller` and `MatchRpc` maintain, not a second reading of
-        /// `OwnerSlot`. **On** is the player's own `SlipperHighlight` setting, so Off silences the
-        /// rim, the screen mark's colour source and this together rather than leaving one lit.
-        /// **Loose** is the state, asked here rather than restated anywhere else.
-        ///
-        /// ⚠️ IT IS BROADER THAN THE LANDED RIM ON PURPOSE. The rim answers *"where did the one
-        /// you just threw end up"* and is therefore cleared by a recovery that teleports the shoe
-        /// home; the beam answers *"your tsinelas is lying over there"*, which is true however it
-        /// got there. 🧑 asked for it *"when your tsinelas is in the ground"*.
-        ///
-        /// ⚠️ NOTHING IS BUILT UNTIL SOMETHING IS LIT. `SlipperBeam.Attach` is only reached on the
-        /// frame a beam is actually wanted, so three of the four tsinelas in a round never carry
-        /// one.
-        /// </summary>
-        private void RefreshBeam()
-        {
-            int pick = Settings.SettingsStore.Current.SlipperHighlight;
-
-            bool lit = State == SlipperState.Loose
-                       && _glowOn
-                       && gameObject.activeInHierarchy
-                       && Settings.SlipperHighlights.Enabled(pick);
-
-            if (!lit)
-            {
-                if (_beam != null) _beam.Set(false, Color.white);
-                return;
-            }
-
-            if (_beam == null) _beam = Visual.SlipperBeam.Attach(this);
-            if (_beam != null) _beam.Set(true, Settings.SlipperHighlights.ColourOf(pick));
-        }
-
-        private Visual.SlipperBeam _beam;
 
         /// <summary>
         /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:
