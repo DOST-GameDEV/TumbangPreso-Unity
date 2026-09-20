@@ -8,8 +8,8 @@ resets, no delegation/other chats, no Desktop replacement. The owner's latest
 correction requires a thorough plan/new order and doc cleanup before further
 runtime edits. Implementation progress is preserved; do not restart it.
 
-Current phase: planning correction written and checked; commit/publish it, then
-resume the first bounded implementation item. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+Current phase: detailed planning correction is committed in b06236b4 and checked.
+Publish the checkpoint, then resume the first bounded implementation item. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
 [Only execution queue](TODO.md#current-implementation-queue).
 [Original brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
 
