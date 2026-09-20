@@ -1,5 +1,50 @@
 # TODO: Tumbang Preso Unity
 
+## CURRENT IMPLEMENTATION QUEUE
+
+Owner direction 2026-09-21: autonomously implement the gameplay-feel/watchability
+pass, inspect it in motion and iterate in this conversation. No questions, paid
+services, resets or delegation. [Exact resume state](ACTIVE_REWORK_LEDGER.md).
+
+- [ ] **PRESENTATION-1 / 154 / 155 / 152.4: Complete ordinary exchange.** Retain
+  integrated own-only retrieval and strengthen practice/force-equip boundaries.
+  Integrate/refine friend's shader locator to a low readable beacon; coherent
+  player identity, can state and side feed; improve actual throw/contact/landing/
+  pickup/restore/block/whiff/escape with sound and body/FPP continuity. One existing
+  arena, active opponents, both modes. Required evidence: real route, focused
+  ownership/state checks and meaningful owner/observer captures.
+- [ ] **PRESENTATION-2 / 152.4: Signature catch and chains.** Faithful pre-teleport
+  victim reconstruction inside remaining recovery; taya keeps control. Independent
+  per-player throw and distinct-victim chains, modest capped authoritative bonuses,
+  separate milestones, no extra ultimate charge. Relevant authority/network tests.
+- [ ] **PRESENTATION-3 / 152.4: Six complete hero performances.** Preserve/refine
+  existing eighteen slots. Authored accepted-cast ultimate scenes, shared bounded
+  phase, real live warning/counterplay and payoff; simultaneous/consecutive casts,
+  interruption and cleanup. C4 networking dependency remains explicitly reserved.
+- [ ] **PRESENTATION-4 / 134.20: Watchability and halftime.** Extend existing
+  director/recorder; retain complete early-round candidates, faithful reconstruction,
+  all-player canonical halftime playback with bounded transfer/fallback and score
+  context. Shorter ordinary transitions; manual spectator remains in control.
+- [ ] **PRESENTATION-5: Integrated qualification.** Exact Windows artifact, both
+  modes, real peers for touched contracts, repeated/busy matches and motion/audio
+  review. Human taste/device evidence stays pending rather than invented.
+
+**Deferred:** broad existing-map beautification (MAP_FINAL_PASS), Rafi/seventh hero
+and lagoon village, Inday reconstruction/FPP study, U8 secondary/device matrix,
+broad unrelated outage/rejoin permutations, speculative optimization. Preserve
+existing functionality/concepts and repair only blockers relevant to this pass.
+**Retired from automatic pick-next:** C2 old lunge-ratio investigation (retain fix),
+C3 speculative registry (retain measured no-rewrite result), already-qualified v37
+spectator entry/manual replay/control cases and finalized menu work. Reopen only
+for a relevant change/regression. C1 exact 48-penalty attribution is historical
+unresolved, not fixed or a prerequisite. C1-C3 files have been handed back.
+**Reserved:** C4 / 149.4 request-safety files per its lane; do not silently cross.
+
+All numbered tasks, approvals, alternatives and evidence below are retained as
+reference. Their old scheduling does not override this queue.
+
+## Preserved previous checkpoint notes
+
 **Sean debris polish:** oversized square fire debris in the owner landing view is
 replaced by smaller angular ember chips. Original model, gesture, timing, core,
 footprint and other styles remain. Focused real-press render passed and owner/body
@@ -129,7 +174,7 @@ necessary validation are satisfied and evidence is pushed. Partial, unverified,
 blocked and unexplained historical defects stay open. Do not close parent152.4
 or all151.9 for a completed subtask. All other work remains with Codex.
 
-## CURRENT IMPLEMENTATION QUEUE
+## Historical September 15 demo queue (superseded)
 
 **Owner reprioritized this queue on September15 for a demo tomorrow, September16.**
 The goal is still the ENTIRE to-do list. Prioritize what the audience will see,

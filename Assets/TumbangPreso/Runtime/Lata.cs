@@ -417,48 +417,16 @@ namespace TumbangPreso
             if (nowUpright)
             {
                 GameServices.Voice?.OnLataRestored();
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
                 return;
             }
 
-            // ⚠️⚠️ THE IMPACT FRAME, ON EVERY SCREEN RATHER THAN ON THE HOST'S. It used to sit
-            // in `HostKnockDown` behind the authority gate; see the note there for why that made
-            // the loudest moment in a round land flat for three players out of four.
-            //
-            // ⚠️ THE NUMBERS ARE UNCHANGED AND THAT IS DELIBERATE. 0.045 s at 0.10 scale is what
-            // shipped and what the host has been feeling all along; this pass is fixing WHO gets
-            // it, not how hard it is. `Attention.md` is where "is it heavy enough" belongs, since
-            // only a person can answer it and only against a build where all four peers agree.
-            //
-            // ⚠️ RE-ENTRANT CALLS ARE IGNORED BY `Hitstop` ITSELF, so the listen host, which
-            // reaches this through `SetUpright` and never through `ApplySnapshotState`, cannot
-            // stack two freezes even if that ever changed.
-            Hitstop.Trigger(0.045f, 0.10f);
-
+            // Tin contact belongs at the can, below the next retrieval sightline.
+            // The accepted flair event supplies personal confirmation to the scorer.
+            // Ordinary contact adds no global pause or broadcast confetti.
             GameServices.Voice?.OnLataKnocked();
-            const string callout = "CAN DOWN!";
-            Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
-            UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
-            Visual.ImpactBurst.SpawnAt(transform.position);
-            Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
-
-            if (UnityEngine.Camera.main == null) return;
-
-            var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
-            if (rig == null) return;
-
-            Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
-            rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
+            Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .18f);
         }
 
-        /// <summary>
-        /// ⚠️ A TOPPLED CAN IS LIFTED BY ITS OWN RADIUS, AND THAT IS LOAD-BEARING. The tilt
-        /// rotates the visual about its BASE, so a lying-down cylinder's axis would sit at
-        /// floor level and half the can would be underground. That was reported from play as
-        /// "the cans are phasing thru the floor". Measure the lift off the mesh bounds so it
-        /// follows the skin rather than assuming a radius, because the four cans span 0.108
-        /// to 0.143 and the default is the slimmest of them.
-        /// </summary>
         private void Update()
         {
             StepStatePresentation();

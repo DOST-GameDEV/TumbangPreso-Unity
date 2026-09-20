@@ -275,7 +275,7 @@ namespace TumbangPreso.Visual
             if (_character == null) return;
 
             bool isDefense = _character.IsDefender;
-            _roleColor = isDefense ? UiTheme.Defense : UiTheme.Offense;
+            _roleColor = PlayerIdentity.Colour(_character.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S MARKER IS A RING AND AN ATTACKER'S IS A DISC, AND THAT IS THE ONLY
             // PLACE THE ROLE IS CARRIED BY SOMETHING OTHER THAN HUE ON THE FLOOR.
@@ -344,8 +344,8 @@ namespace TumbangPreso.Visual
             // fact worth naming in the world, it changes every round, and a player who has just
             // rotated needs to find them before the colour rule has re-registered.
             _label.text = isDefense
-                ? $"{_character.DisplayName()} · TAYA"
-                : _character.DisplayName();
+                ? $"{PlayerIdentity.Label(_character.PlayerSlot)} · TAYA"
+                : PlayerIdentity.Label(_character.PlayerSlot);
             _label.color = _roleColor;
         }
 

@@ -56,39 +56,13 @@ namespace TumbangPreso.Visual
     [DisallowMultipleComponent]
     public sealed class SlipperBeam : MonoBehaviour
     {
-        /// <summary>
-        /// ⚠️ 2.2 m, WHICH IS ABOUT A DOORWAY AND IS CHOSEN AGAINST THE MAPS RATHER THAN AGAINST
-        /// THE REFERENCE. The frame this was drawn from is a third-person game with open sky over
-        /// most of it. Two of this game's three arenas are built UNDER things (a bridge, a roof),
-        /// so a column tall enough to look impressive outdoors is a column that punches through a
-        /// ceiling indoors. A little over head height clears the props a tsinelas actually hides
-        /// behind, which is what it is for.
-        /// </summary>
-        public const float Height = 2.2f;
-
-        /// <summary>
-        /// ⚠️⚠️ WIDER THAN THE MESH VERSION'S BASE, AND THE SHADER IS WHY IT CAN BE. That one
-        /// tapered by shrinking six cylinders, so every centimetre of width was a centimetre of
-        /// hard silhouette and it had to stay thin to avoid reading as a pipe. This column has no
-        /// silhouette at all: `_Rim` puts the brightness at the edges and the middle is nearly
-        /// clear, so a wider shaft reads as MORE light rather than as more plastic, and a wider
-        /// one is what can be seen from across an arena.
-        /// </summary>
-        public const float Diameter = 0.52f;
-
-        public const float PoolDiameter = 0.95f;
-
-        /// <summary>
-        /// ⚠️⚠️ THE ALPHAS ARE LOW ON PURPOSE AND `AbilityShowcaseProbe` IS WHY THERE IS A NUMBER
-        /// TO POINT AT. That probe FAILS a run in which one effect blows more than 12 per cent of
-        /// the frame to white, and it caught Zack's ultimate at 62.8 per cent. A beam is thin, but
-        /// it is also the one effect in the game a player deliberately walks up to and stands
-        /// under, so it is the effect most able to fill a first-person frame. The shader clamps
-        /// its own output for the same reason: an additive blend with no ceiling is exactly the
-        /// shape of that failure.
-        /// </summary>
-        public const float BaseAlpha = 0.52f;
-        public const float PoolAlpha = 0.30f;
+        // A low locator leaves the can, feet and chase visible. The shader keeps
+        // the friend's soft taper and rising light, without a head-height column.
+        public const float Height = 0.48f;
+        public const float Diameter = 0.24f;
+        public const float PoolDiameter = 0.48f;
+        public const float BaseAlpha = 0.58f;
+        public const float PoolAlpha = 0.20f;
 
         /// <summary>
         /// How far above <see cref="Balance.PickupRadius"/> the beam is at full strength.
@@ -99,7 +73,7 @@ namespace TumbangPreso.Visual
         /// `Slipper.IsGrabbableIgnoringReach`, and this asks no question about eligibility at all.
         /// `CombatVerbs.SlideMayStartFrom` makes the same distinction for the slide.
         ///
-        /// ⚠️ AND IT IS A FADE RATHER THAN A CUT BECAUSE THIS GAME IS FIRST PERSON. A 2.2 m
+        /// ⚠️ AND IT IS A FADE RATHER THAN A CUT BECAUSE THIS GAME IS FIRST PERSON. A low
         /// column vanishing on a frame boundary as you step over your own shoe reads as a glitch;
         /// one metre of falloff is about three walking steps.
         /// </summary>
@@ -234,10 +208,10 @@ namespace TumbangPreso.Visual
             // reads as drawn over the scene rather than as standing in it.
             var lampGo = new GameObject("Glow");
             lampGo.transform.SetParent(_column, false);
-            lampGo.transform.localPosition = new Vector3(0.0f, floor + 0.35f, 0.0f);
+            lampGo.transform.localPosition = new Vector3(0.0f, floor + 0.12f, 0.0f);
             _lamp = lampGo.AddComponent<Light>();
             _lamp.type = LightType.Point;
-            _lamp.range = 2.4f;
+            _lamp.range = 0.65f;
             _lamp.shadows = LightShadows.None;
         }
 
@@ -330,7 +304,7 @@ namespace TumbangPreso.Visual
             if (_lamp != null)
             {
                 _lamp.color = _colour;
-                _lamp.intensity = 0.55f * strength;
+                _lamp.intensity = 0.10f * strength;
             }
         }
 

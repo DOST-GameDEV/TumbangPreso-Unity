@@ -33,6 +33,10 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class MatchFlair
     {
+        // Every peer observes the same accepted event. Subscribers present it;
+        // they never award score or infer an outcome from a camera effect.
+        public static event System.Action<Kind, int, int, Vector3, float> Presented;
+
         /// <summary>
         /// What happened. ⚠️ THE VALUES ARE ON THE WIRE, so appending is free and reordering is
         /// a protocol break. `NetSession.ProtocolVersion` is what makes that safe.
@@ -140,6 +144,7 @@ namespace TumbangPreso.Visual
             // ⚠️ IT AWARDS NOTHING. `Diagnostics.MatchHighlights` cannot reach `AddScore` and no
             // caller of it can either, which is `docs/VISION.md` § 4 kept rather than restated.
             RecordHighlight(kind, actor, subject, at, strength);
+            Presented?.Invoke(kind, actor, subject, at, strength);
 
             switch (kind)
             {
@@ -163,6 +168,7 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.LataDown:
+                    PlayCanConfirmation(Seat(actor), at);
                     break;
 
                 case Kind.Throw:
@@ -221,6 +227,15 @@ namespace TumbangPreso.Visual
         /// for and which nothing else on `LataDown` was using. Measuring it here from the actor's
         /// CURRENT position would be measuring where the thrower has run to since.
         /// </summary>
+        private static void PlayCanConfirmation(CharacterMotor scorer, Vector3 at)
+        {
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
+            if (scorer == null || rig == null || !rig.IsFollowing(scorer)) return;
+            UI.Hud.TriggerHitmarker(UI.UiTheme.Offense);
+            Vector3 towardCan = at - scorer.transform.position;
+            rig.ImpactPunch(towardCan.sqrMagnitude > .01f ? towardCan.normalized : scorer.transform.forward, .22f);
+        }
+
         private static void RecordHighlight(Kind kind, int actor, int subject, Vector3 at,
                                             float strength)
         {

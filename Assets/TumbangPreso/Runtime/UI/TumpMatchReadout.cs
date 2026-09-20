@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
             _round.text = match.IsWarmupBuffer ? "Warm up · Scores paused" : $"Round {Mathf.Max(1, match.RoundNumber)} / {match.TotalRounds}";
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
-            Can(local, training); Personal(local, spectating);
+            Can(local, training, spectating); Personal(local, spectating);
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
@@ -199,7 +199,8 @@ namespace TumbangPreso.UI
             {
                 int slot = order[i]; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
-                _names[i].text = SeatLabel.ForBoard(slot); _scores[i].text = match.ScoreFor(slot).ToString();
+                _names[i].text = PlayerIdentity.Label(slot) + " · " + SeatLabel.ForBoard(slot);
+                _names[i].color = PlayerIdentity.Colour(slot); _scores[i].text = match.ScoreFor(slot).ToString();
                 bool defender = slot == match.DefenderSlot;
                 string state = defender ? "Defender" : "";
                 if (!spectating && local != null && slot == local.PlayerSlot) state = string.IsNullOrEmpty(state) ? "You" : "You · Defender";
@@ -222,14 +223,16 @@ namespace TumbangPreso.UI
                 if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
             }
         }
-        private void Can(CharacterMotor local, bool training)
+        private void Can(CharacterMotor local, bool training, bool spectating)
         {
+            // Players have one world-tracking marker and their local action
+            // prompt. The operator retains a corner readout during free flight.
             var lata = GameServices.Round.Lata;
-            _canRoot.gameObject.SetActive(!training && lata != null && GameServices.Round.RoundActive); if (lata == null) return;
+            _canRoot.gameObject.SetActive(spectating && !training && lata != null && GameServices.Round.RoundActive);
+            if (lata == null || !spectating) return;
             _canState.text = lata.IsUpright ? "Can upright" : "Can down";
-            _canHint.text = lata.IsProtected ? $"Protected · {lata.ProtectionLeft:0.0}s" : local == null
-                ? lata.IsUpright ? "Defender may tag" : "Retrieve or reset"
-                : !lata.IsUpright ? local.IsDefender ? "Reset the can" : "Retrieve your slipper" : "";
+            _canHint.text = lata.IsProtected ? "Can protected · Defender may tag" :
+                lata.IsUpright ? "Defender may tag" : "Retrieve or reset";
             _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : OwnerUiTheme.Current.Lime;
         }
         private void Personal(CharacterMotor local, bool spectating)
@@ -295,7 +298,7 @@ namespace TumbangPreso.UI
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
-            if (local.IsTaggable()) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Lime; }
+            if (local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Lime; }
             else _prompt.color = OwnerUiTheme.Current.Pale;
             if (!local.IsDefender && !local.HoldingSlipper)
             {

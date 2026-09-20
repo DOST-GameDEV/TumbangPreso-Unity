@@ -887,6 +887,11 @@ namespace TumbangPreso.UI
             // your screen. The SOUND is the match reacting, and the original plays it off
             // `score_changed` without asking whose slot it was.
             int points = MatchRules.PointsFor(e);
+            bool ordinaryContact = e == ScoreEvent.LataKnocked || e == ScoreEvent.Tag;
+            bool personal = _local != null && _local.PlayerSlot == slot;
+            // Contact already has a positional sound. Only the scorer hears its
+            // personal score sting; other listeners keep hearing the chase.
+            if (ordinaryContact && !personal) return;
             GameServices.Audio?.PlayUiVaried("score_award",
                                              points < 0 ? 0.78f : 0.96f,
                                              points < 0 ? 0.86f : 1.04f,
@@ -914,6 +919,9 @@ namespace TumbangPreso.UI
                 InputLayer.Rumble.LataKnocked();
             else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
 
+            // Routine attribution lives in the side feed; reserve the centre for
+            // recovery, required instructions and genuinely exceptional moments.
+            if (_nativeReadout != null && ordinaryContact) return;
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 

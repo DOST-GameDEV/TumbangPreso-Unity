@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
             BuildCourtScores(); BuildCourtClock(); BuildCourtCan(); BuildCourtPersonal(); BuildCourtPrompts();
+            MatchEventFeed.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
             _toast = Ink(_root, "MatchToast", "", 36, true);
             Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -191), new Vector2(1080, 78)); _toast.enabled = false;
