@@ -46,7 +46,7 @@ namespace TumbangPreso.CameraSystem
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
             if (kind != MatchFlair.Kind.Tag || _history == null || Panel.AnyOpen ||
-                Settings.SettingsStore.Current.ReducedUiMotion) return;
+                (Settings.SettingsStore.Current.ReducedUiMotion || !Settings.SettingsStore.Current.CinematicCameraMotion)) return;
             var round = GameServices.Round;
             var victim = round != null ? round.PlayerAt(subject) : null;
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;

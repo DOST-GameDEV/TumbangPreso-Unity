@@ -132,7 +132,7 @@ namespace TumbangPreso.Audio
 
         public void Play(string lineId)
         {
-            if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0) return;
+            if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0 || VoiceVolume() <= .0001f) return;
 
             if (_cooldownUntil.TryGetValue(lineId, out float until) && Time.unscaledTime < until)
                 return;
@@ -155,15 +155,11 @@ namespace TumbangPreso.Audio
             GameServices.Music?.Duck(DuckDb, Mathf.Max(DuckMinHold, takes[index].length));
         }
 
-        /// <summary>
-        /// ⚠️ THE ANNOUNCER RIDES THE SFX SLIDER, NOT ITS OWN. There are three sliders —
-        /// master, SFX and music — and adding a fourth for voice would mean a player who
-        /// turned SFX down still gets shouted at. The trim keeps it above the scenery.
-        /// </summary>
+        /// <summary>Independent announcer fader under master, separate from world SFX.</summary>
         private static float VoiceVolume()
         {
             var s = Settings.SettingsStore.Current;
-            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.SfxGain;
+            return Mathf.Pow(10.0f, TrimDb / 20.0f) * s.AnnouncerGain;
         }
 
         private void Update()

@@ -794,7 +794,7 @@ namespace TumbangPreso
             // constant for that case rather than the FPP eye height, so a bot's throw and a
             // probe's throw leave from the same place.
             return rig != null && rig.IsFollowing(_motor)
-                ? rig.transform.position
+                ? rig.AimEye
                 : transform.position + Vector3.up * 0.9f;
         }
 

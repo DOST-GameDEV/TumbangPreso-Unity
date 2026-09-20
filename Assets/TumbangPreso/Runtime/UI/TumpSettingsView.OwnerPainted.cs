@@ -76,6 +76,7 @@ namespace TumbangPreso.UI
             AudioSlider("MasterVolume","Master volume",s.MasterVolume,v=>s.MasterVolume=v);
             AudioSlider("SoundVolume","Sound effects",s.SfxVolume,v=>s.SfxVolume=v);
             AudioSlider("MusicVolume","Music",s.MusicVolume,v=>s.MusicVolume=v);
+            AudioSlider("AnnouncerVolume","Announcer",s.AnnouncerVolume,v=>s.AnnouncerVolume=v);
         }
         private void AudioSlider(string name,string label,float value,Action<float> set)
             =>SettingsWorkspaceRows.Slider(Row(name,label),name+"Value",value,0,1,v=>{set(v);_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
@@ -119,6 +120,9 @@ namespace TumbangPreso.UI
         {
             var s=SettingsStore.Current;
             Toggle("ReducedUiMotion","Reduce interface motion",s.ReducedUiMotion,v=>s.ReducedUiMotion=v);
+            AudioSlider("CameraShake","Camera shake",s.CameraShake,v=>s.CameraShake=v);
+            Toggle("CinematicCameraMotion","Cinematic camera movement",s.CinematicCameraMotion,v=>s.CinematicCameraMotion=v);
+            AudioSlider("FlashIntensity","Flash intensity",s.FlashIntensity,v=>s.FlashIntensity=v);
             Choice("SlipperHighlight","Slipper highlight",SlipperHighlights.All.Select(p=>p.Label).ToArray(),s.SlipperHighlight,v=>s.SlipperHighlight=v);
             Toggle("Rumble","Controller vibration",s.Rumble,v=>s.Rumble=v,()=>Rumble.Enabled=s.Rumble);
             Note("Interface motion can be reduced while gameplay movement stays visible.");

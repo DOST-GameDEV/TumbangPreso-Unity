@@ -234,6 +234,7 @@ namespace TumbangPreso.Settings
         public float MasterVolume = DefaultVolume;
         public float SfxVolume = DefaultVolume;
         public float MusicVolume = DefaultVolume;
+        public float AnnouncerVolume = DefaultVolume;
 
         public const float DefaultVolume = 0.8f;
 
@@ -283,6 +284,7 @@ namespace TumbangPreso.Settings
 
         /// <summary>The music bed's amplitude, on the same rule as <see cref="SfxGain"/>.</summary>
         public float MusicGain => Gain(MusicVolume) * Gain(MasterVolume);
+        public float AnnouncerGain => Gain(AnnouncerVolume) * Gain(MasterVolume);
 
         // -------------------------------------------------------------------
         // CAMERA
@@ -293,6 +295,9 @@ namespace TumbangPreso.Settings
 
         /// <summary>Stops decorative interface movement without changing gameplay animation.</summary>
         public bool ReducedUiMotion = false;
+        public float CameraShake = 1f;
+        public bool CinematicCameraMotion = true;
+        public float FlashIntensity = 1f;
 
         // -------------------------------------------------------------------
         // DISPLAY
@@ -572,6 +577,9 @@ namespace TumbangPreso.Settings
             MasterVolume = Mathf.Clamp01(MasterVolume);
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
+            AnnouncerVolume = Mathf.Clamp01(AnnouncerVolume);
+            CameraShake = Mathf.Clamp01(CameraShake);
+            FlashIntensity = Mathf.Clamp01(FlashIntensity);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
             FrameRateLimit = FrameRateOptions.Normalize(FrameRateLimit);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);

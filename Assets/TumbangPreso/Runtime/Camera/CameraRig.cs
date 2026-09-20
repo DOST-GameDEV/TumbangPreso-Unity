@@ -175,6 +175,10 @@ namespace TumbangPreso.CameraSystem
         private UnityEngine.Camera _camera;
 
         private float _pitchDeg;
+        private Vector3 _cosmeticOffset, _holdAimAnchor;
+        // Gameplay aims through the unshaken eye. Presentation intensity is not
+        // another way of changing an accepted throw's origin or target.
+        public Vector3 AimEye => _holding ? _holdAimAnchor : transform.position - _cosmeticOffset;
         private float _tppPitchDeg = TppBasePitchDeg;
         private float _tppSpringLength = TppBaseSpringLength;
 
@@ -470,6 +474,7 @@ namespace TumbangPreso.CameraSystem
             _groundRumbleAge=3;_groundRumbleStrength=0;GroundRumbleOffset=Vector3.zero;
 
             _character = character;
+            _cosmeticOffset = Vector3.zero;
             _mode = CameraMode.Fpp;
 
             if (_character == null) return;
@@ -1154,7 +1159,7 @@ namespace TumbangPreso.CameraSystem
             GroundRumbleOffset=Vector3.zero;
             if(_groundRumbleAge>=2.4f){_groundRumbleStrength=0;return;}
             _groundRumbleAge+=Time.deltaTime;
-            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength;
+            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength*Settings.SettingsStore.Current.CameraShake;
             // Small smooth translation, no aim rotation, time scaling or gameplay RNG.
             GroundRumbleOffset=transform.right*(Mathf.Sin(_groundRumbleAge*50.27f)*.010f*amount)
                 +Vector3.up*(Mathf.Sin(_groundRumbleAge*73.8f+.8f)*.004f*amount);
@@ -1234,6 +1239,7 @@ namespace TumbangPreso.CameraSystem
 
             if (!_holding)
             {
+                _holdAimAnchor = transform.position - _cosmeticOffset;
                 _holding = true;
                 _holdAnchor = transform.position;
             }
@@ -1249,25 +1255,25 @@ namespace TumbangPreso.CameraSystem
 
         private void StepShake()
         {
+            Vector3 eye = transform.position;
+            float level = Settings.SettingsStore.Current.CameraShake;
             StepGroundRumble();
-            if (_impactPunchLeft > 0.0f)
+            if (_impactPunchLeft > 0)
             {
                 _impactPunchLeft -= Time.deltaTime;
-                float punchRatio = Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration);
-                transform.position += _impactPunchOffset * punchRatio;
+                transform.position += _impactPunchOffset * Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration) * level;
             }
-
-            if (_shakeLeft <= 0.0f) return;
-
-            _shakeLeft -= Time.deltaTime;
-            float k = Mathf.Clamp01(_shakeLeft) * _shakeStrength;
-
-            transform.position += new Vector3(
-                (Random.value - 0.5f) * 2.0f * k * 0.1f,
-                (Random.value - 0.5f) * 2.0f * k * 0.1f,
-                0.0f);
-
-            if (_shakeLeft <= 0.0f) _shakeStrength = 0.0f;
+            if (_shakeLeft > 0)
+            {
+                _shakeLeft -= Time.deltaTime;
+                float amount = Mathf.Clamp01(_shakeLeft) * _shakeStrength * level * .1f;
+                float clock = Time.unscaledTime;
+                // Deterministic cosmetic oscillation does not consume simulation
+                // random values or differ because a viewer disabled shake.
+                transform.position += new Vector3(Mathf.Sin(clock * 93.11f), Mathf.Sin(clock * 117.7f + .8f), 0) * amount;
+                if (_shakeLeft <= 0) _shakeStrength = 0;
+            }
+            _cosmeticOffset = transform.position - eye;
         }
 
         /// <summary>A punch of the arms toward the player on an action, so a verb is felt.</summary>
@@ -1515,7 +1521,7 @@ namespace TumbangPreso.CameraSystem
                 // metres away throws AT the lata rather than at a point twenty metres past it.
                 // A fixed projection makes every close-range throw overshoot, and the aiming
                 // arc drawn from it lands somewhere the slipper never goes.
-                var sight = new Ray(transform.position, transform.forward);
+                var sight = new Ray(AimEye, transform.forward);
 
                 if (Physics.Raycast(sight, out var hit, AimRayLength, ~0,
                                     QueryTriggerInteraction.Ignore)
@@ -1524,11 +1530,11 @@ namespace TumbangPreso.CameraSystem
                     return hit.point;
                 }
 
-                return transform.position + transform.forward * AimRayLength;
+                return AimEye + transform.forward * AimRayLength;
             }
 
             var ground = new Plane(Vector3.up, _character.transform.position);
-            var ray = new Ray(transform.position, transform.forward);
+            var ray = new Ray(AimEye, transform.forward);
 
             return ground.Raycast(ray, out float enter)
                 ? ray.GetPoint(enter)
