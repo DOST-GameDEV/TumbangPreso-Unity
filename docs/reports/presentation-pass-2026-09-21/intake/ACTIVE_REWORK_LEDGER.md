@@ -160,6 +160,6 @@ theme, no pasted pattern across everything; dark settings and Darumadrop heading
 ## Full history
 
 The complete prior ledger, with all decisions, failed runs and receipts, is
-[ACTIVE_REWORK_LEDGER_HISTORY_20260915T181506Z.md](ACTIVE_REWORK_LEDGER_HISTORY_20260915T181506Z.md). It remains beside this file so its relative
+[ACTIVE_REWORK_LEDGER_HISTORY_20260915T181506Z.md](../../../ACTIVE_REWORK_LEDGER_HISTORY_20260915T181506Z.md). It remains beside this file so its relative
 links still resolve. Historical CURRENT headings/PIDs are archival, not live work.
 Read exact older sections only when needed; this current pointer is authoritative.

@@ -81,7 +81,7 @@ historical instructions to display a corner version number on every screen.
 **Current parallel-work reservation, September15:** the owner will manually give
 Claude a bounded engineering assignment on a different PC/account. Its exclusive
 scope, files and completion criteria are in
-[docs/CLAUDE_ENGINEERING_LANE.md](docs/CLAUDE_ENGINEERING_LANE.md).
+[docs/CLAUDE_ENGINEERING_LANE.md](../../../CLAUDE_ENGINEERING_LANE.md).
 Codex must not implement or independently investigate those reserved tasks until
 the owner releases them or Claude explicitly hands them back through the repo.
 This permits the manual assignment only, not spawning agents or contacting chats.

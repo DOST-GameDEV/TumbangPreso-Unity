@@ -1439,7 +1439,7 @@ namespace TumbangPreso
             {
                 lata.UprightChanged += up =>
                 {
-                    hud.SetDownedFlash(!up);
+                    if (!hud.NativePresentation) hud.SetDownedFlash(!up);
 
                     // ⚠️⚠️ THE CAN-RESET RUMBLE IS HERE RATHER THAN IN THE HUD, BECAUSE THIS
                     // LAMBDA IS THE ONE OWNER OF THIS EDGE AND THE FILE SAYS SO. `Hud`'s
@@ -1456,7 +1456,7 @@ namespace TumbangPreso
                     if (up)
                     {
                         InputLayer.Rumble.CanReset();
-                        hud.ShowToast("LATA IS BACK UP", 1.2f);
+                        if (!hud.NativePresentation) hud.ShowToast("LATA IS BACK UP", 1.2f);
                         return;
                     }
 

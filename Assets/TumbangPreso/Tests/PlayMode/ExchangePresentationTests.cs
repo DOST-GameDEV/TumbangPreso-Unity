@@ -57,7 +57,9 @@ namespace TumbangPreso.PlayTests
             var me = round.PlayerAt(1); var other = round.PlayerAt(2); var taya = round.PlayerAt(match.DefenderSlot);
             Assert.IsNotNull(me); Assert.IsNotNull(other); Assert.IsNotNull(taya);
             var lata = round.Lata;
-            me.Teleport(lata.transform.position + new Vector3(0, 0, -3));
+            me.Teleport(lata.transform.position + new Vector3(0, 0, -4));
+            taya.Teleport(lata.transform.position + new Vector3(2, 0, 0));
+            other.Teleport(lata.transform.position + new Vector3(-4, 0, 3));
             me.transform.rotation = Quaternion.identity;
             yield return null;
             var feed = Object.FindAnyObjectByType<MatchEventFeed>(); Assert.IsNotNull(feed);
@@ -83,14 +85,15 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(marker.CanMarkerVisible);
             Assert.AreEqual("DOWN", marker.CanMarkerState);
             Assert.AreNotEqual("You can be tagged", Label("ActionPrompt").text, "A down can does not permit tags.");
-            yield return GameplayShots.Render(Camera.main, mode + "-can-down", true, outDir: "Logs/exchange-presentation-v1");
+            yield return GameplayShots.Render(Camera.main, mode + "-can-down", true, outDir: "Logs/exchange-presentation-v2");
 
             lata.HostRestore(); yield return null;
             Assert.AreEqual("P1  RESTORED LATA", feed.Entry(0));
+            Assert.IsFalse(Label("MatchToast").enabled, "Restore attribution belongs to the side feed.");
             Assert.AreEqual("CAN PROTECTED", marker.CanMarkerState);
             Assert.AreEqual("You can be tagged", Label("ActionPrompt").text,
                 "Can protection does not protect an armed attacker inside the box.");
-            yield return GameplayShots.Render(Camera.main, mode + "-restored-danger", true, outDir: "Logs/exchange-presentation-v1");
+            yield return GameplayShots.Render(Camera.main, mode + "-restored-danger", true, outDir: "Logs/exchange-presentation-v2");
             int count = feed.Count;
             MatchFlair.Play(MatchFlair.Kind.Throw, 1, -1, me.transform.position);
             Assert.AreEqual(count, feed.Count, "The feed excludes routine release spam.");

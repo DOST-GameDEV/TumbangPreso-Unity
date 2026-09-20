@@ -199,7 +199,7 @@ namespace TumbangPreso.UI
             {
                 int slot = order[i]; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
-                _names[i].text = PlayerIdentity.Label(slot) + " · " + SeatLabel.ForBoard(slot);
+                _names[i].text = PlayerIdentity.Label(slot) + " · " + SeatLabel.Raw(slot);
                 _names[i].color = PlayerIdentity.Colour(slot); _scores[i].text = match.ScoreFor(slot).ToString();
                 bool defender = slot == match.DefenderSlot;
                 string state = defender ? "Defender" : "";

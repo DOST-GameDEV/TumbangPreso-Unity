@@ -9,7 +9,8 @@ namespace TumbangPreso.UI
     {
         private Image _danger, _caught;
         private Material _dangerMaterial, _caughtMaterial;
-        private float _flash, _coverage;
+        private float _flash, _coverage, _threatCue;
+        private bool _wasThreatened;
         public void Build(Transform root)
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
@@ -29,15 +30,22 @@ namespace TumbangPreso.UI
         {
             float dt = Time.unscaledDeltaTime;
             var f = OwnerUiTheme.Current;
-            bool held = !spectator && local != null && (local.IsDefender
-                ? GameServices.Round != null && GameServices.Round.RoundActive && GameServices.Round.Lata != null && !GameServices.Round.Lata.IsUpright
-                : local.IsTaggable());
+            var round = GameServices.Round;
+            bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
+                && round != null && round.Lata != null && round.Lata.IsUpright;
+            if (threatened && !_wasThreatened) _threatCue = .36f;
+            if (!threatened) _threatCue = 0;
+            _wasThreatened = threatened;
+            _threatCue = Mathf.Max(0, _threatCue - dt);
             _flash = Mathf.Max(0, _flash - dt);
             if (_danger != null)
             {
-                float alpha = spectator ? 0 : Mathf.Max(held ? Hud.DangerHoldAlpha : 0,
-                    Settings.SettingsStore.Current.ReducedUiMotion ? 0 : _flash / Hud.DownedFlashTime * Hud.DownedFlashPeak);
-                _danger.enabled = alpha > .001f; _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
+                // A brief peripheral cue marks danger returning. The persistent
+                // action prompt carries the state without a continuous red screen.
+                float alpha = spectator || Settings.SettingsStore.Current.ReducedUiMotion ? 0 :
+                    Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
+                _danger.enabled = alpha > .001f;
+                _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
             }
             float target = !spectator && local != null && local.IsStunned && !local.IsTripped
                 ? Mathf.Clamp01(local.StunLeft / Hud.FrostThawTime) : 0;

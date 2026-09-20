@@ -59,14 +59,14 @@ DELIVERED:** final TUMP7/TUMP8 login, no email, password confirmation, copied ey
 Terms checkmark, centered tab/Guest labels, woven background, equal OR lines,
 separate generated clouds with precise foreground matting, and masked wind over
 the full sand plane. Four focused checks and native Windowsv22 passed. See
-[final UI report](reports/owner-final-ui-2026-09-15/README.md). Owner approval is
+[final UI report](../../owner-final-ui-2026-09-15/README.md). Owner approval is
 pending while asleep. Continue gameplay now. Never use usage reset credits.
 
 
 **Latest motion revision:** v20 dust was too faint for the owner. Stronger ground
 particles and newly requested slow clouds are now qualified in Windows v21 and a
 12-second1080p MP4 is delivered for review. See
-[menu motion](reports/owner-menu-motion-2026-09-15/README.md). Original source art,
+[menu motion](../../owner-menu-motion-2026-09-15/README.md). Original source art,
 fixed foreground and reduced-motion behavior are preserved. Continue gameplay;
 C4 remains reserved and the full project is not complete.
 
@@ -74,7 +74,7 @@ C4 remains reserved and the full project is not complete.
 **September15 owner menu checkpoint COMPLETE:** supplied clean background/buttons,
 updated login art, source-preserving extraction, uniform hover/press, ground dust,
 and music delayed until visible home are qualified locally and in Windowsv20.
-See [owner-menu report](reports/owner-menu-edits-2026-09-15/README.md). Continue the
+See [owner-menu report](../../owner-menu-edits-2026-09-15/README.md). Continue the
 saved gameplay queue now; this does not close the larger project. C4 networking
 is still reserved to the separate Claude PC, whose paths must be discovered.
 
@@ -195,7 +195,7 @@ The uncommitted gate/form split was withdrawn and all login source restored to
 **Current D1 redesign,2026-09-15:** home/play/loading have independent native
 compositions with selected supplemental court/street artwork. Two focused checks
 pass; home and Hero Play cover ten PC viewport sizes. Report:
-[reports/ui-composition-d1/README.md](reports/ui-composition-d1/README.md).
+[reports/ui-composition-d1/README.md](../../ui-composition-d1/README.md).
 This is an initial visual review, not owner acceptance or UI completion. Account,
 preparation, selection/equipment, settings and remaining screens continue next,
 then U8 native motion/routes qualification and the gameplay bookmark.
@@ -224,7 +224,7 @@ input/routes and internal-player validation before the gameplay bookmark.
 Reports owner-ui-u1/u2/u3/u4/u5/u6/u7 carry exact
 qualification and limits. Latest ACTIVE_REWORK_LEDGER owns the next concrete step.
 
-**Gameplay interruption bookmark:** [GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md)
+**Gameplay interruption bookmark:** [GAMEPLAY_RESUME_AFTER_UI.md](../../../GAMEPLAY_RESUME_AFTER_UI.md)
 separates saved work, partial verification and untouched tasks. The owner explicitly
 requested this so the gameplay queue can resume after the new UI overhaul.
 
