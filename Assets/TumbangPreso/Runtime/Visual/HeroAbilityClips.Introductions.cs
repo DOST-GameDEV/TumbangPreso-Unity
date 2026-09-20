@@ -93,7 +93,9 @@ namespace TumbangPreso.Visual
             // Unity's imported handedness. Raw X on a T-pose only twists the arm.
             b.KeyRot("arm-left", t, left.x, left.y, 80 - left.z);
             b.KeyRot("arm-right", t, right.x, right.y, -80 - right.z);
-            b.KeyRot("leg-left", t, leftLeg.x, leftLeg.y, leftLeg.z); b.KeyRot("leg-right", t, rightLeg.x, rightLeg.y, rightLeg.z);
+            // Spread away from the centre in Unity's imported handedness.
+            b.KeyRot("leg-left", t, leftLeg.x, leftLeg.y, -leftLeg.z);
+            b.KeyRot("leg-right", t, rightLeg.x, rightLeg.y, -rightLeg.z);
         }
     }
 }

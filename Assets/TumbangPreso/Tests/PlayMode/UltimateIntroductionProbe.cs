@@ -67,6 +67,13 @@ namespace TumbangPreso.PlayTests
                     bool heldActive = held != null && held.gameObject.activeSelf;
                     if (held != null) held.gameObject.SetActive(false); // Body study only; no floating live prop.
                     visual.Model.SetActive(false); stage.SetActive(true); copy.ShowOnlyForCapture(true);
+                    // The study has only this camera. Give the isolated copy a
+                    // real contact shadow and place its neutral feet on this street.
+                    clip.SampleAnimation(copy.Root, 0);
+                    var surfaces = copy.Root.GetComponentsInChildren<Renderer>();
+                    float low = surfaces.Min(r => r.bounds.min.y);
+                    stage.transform.position += Vector3.up * (Slipper.GroundY(actor.transform.position) - low);
+                    foreach (var surface in surfaces) surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                     camera.transform.position = at + offsets[i]; camera.transform.LookAt(at + Vector3.up * .9f);
                     clip.SampleAnimation(copy.Root, 0);
                     var box = (Bounds)audit.GetMethod("WorldBox", privateStatic).Invoke(null, new object[] { copy.Root });
@@ -98,7 +105,7 @@ namespace TumbangPreso.PlayTests
                     {
                         visual.Model.SetActive(active);
                         if (held != null) held.gameObject.SetActive(heldActive);
-                        Object.Destroy(stage); Object.Destroy(clip);
+                        stage.SetActive(false); Object.Destroy(stage); Object.Destroy(clip);
                     }
                 }
             }
