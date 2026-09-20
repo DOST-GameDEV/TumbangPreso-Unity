@@ -16,6 +16,29 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator AnnouncerHasOneLineAndEssentialCallsInterruptChatter()
+        {
+            var voice = new GameObject("VoicePriorityTest").AddComponent<VoiceDirector>();
+            Settings.SettingsStore.Current.MasterVolume = 1;
+            Settings.SettingsStore.Current.AnnouncerVolume = 1;
+            yield return null;
+            voice.OnAttackerTagged();
+            var sources = voice.GetComponentsInChildren<AudioSource>();
+            Assert.AreEqual(1, sources.Count(s => s.isPlaying));
+            var first = sources.First(s => s.isPlaying).clip;
+            voice.OnLataKnocked();
+            Assert.AreEqual(first, sources.First(s => s.isPlaying).clip, "Routine chatter must not interrupt a current line.");
+            voice.PlayCountdown("3");
+            Assert.AreEqual(1, sources.Count(s => s.isPlaying));
+            Assert.IsTrue(sources.First(s => s.isPlaying).clip.name.StartsWith("vo_count_3"));
+            voice.PlayCountdown("2");
+            Assert.IsTrue(sources.First(s => s.isPlaying).clip.name.StartsWith("vo_count_2"), "A long take must not swallow the next count.");
+            voice.OnMatchWon(1);
+            Assert.IsTrue(sources.First(s => s.isPlaying).clip.name.StartsWith("vo_match_win"));
+            Object.Destroy(voice.gameObject);
+        }
+
+        [UnityTest]
         public IEnumerator DistinctShoveAndLungeDoNotUseGameplayRandomOrReplayTheirTell()
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));

@@ -609,6 +609,8 @@ namespace TumbangPreso
         /// this"* costs. <see cref="OwnerSlot"/> carries the rule and the three times it has been
         /// called.
         /// </summary>
+        // This shared identity gate also applies to force equip and credited
+        // throws. Ownerless equipment is an explicit training exception.
         public bool OwnershipAllows(CharacterMotor who)
         {
             if (who == null) return false;

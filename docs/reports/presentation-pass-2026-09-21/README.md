@@ -102,3 +102,16 @@ refinement remain open. C4 request/compatibility files remain reserved; no handb
 was found. Continue independent work and keep exact transport dependencies explicit.
 
 Use ../../ACTIVE_REWORK_LEDGER.md and ../../TODO.md for active state and priorities.
+
+
+## Current playable checkpoint closure
+
+Snapshot7bc1964c (runtime117ff426), internal Windows buildv5 succeeded1156MB/78s,
+guardd2343174275b. Validation workspace Logs/net-catch-v2 passed with three real
+players: victim16 playback samples, host/other0, taya travelled3.54m, same accepted
+tag seen by all. No network spectator or link impairment claim. Shared input unchanged.
+Logs/catch-native-v5 passed both modes through native menu/control paths and staged
+victim reconstruction. Catch and return frames inspected; plain recovery no longer
+shows an elemental frost overlay. Timestamped movies retain the measured2.77s/2.76s
+spacing (29Classic/62Hero frames). No frame-performance claim under synchronous capture.
+Owned players exited. The next close-call/audio edits are newer than this evidence.

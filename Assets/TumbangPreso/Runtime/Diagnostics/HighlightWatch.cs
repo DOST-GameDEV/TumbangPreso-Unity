@@ -17,7 +17,7 @@ namespace TumbangPreso.Diagnostics
     /// and `MatchHighlights` is a local record by design. Nothing here awards, moves or decides.
     ///
     /// ⚠️ IT COSTS ONE DISTANCE PER ATTACKER PER FRAME, three of them, and no allocation:
-    /// `RoundDirector.Players` is the list the game already walks and the state is four floats.
+    /// `RoundDirector.Players` is the list the game already walks and the state is a fixed four-seat set.
     /// `HudPerformanceProbe` exists because a single HUD string rebuilt per frame cost the 6x
     /// probe an eighth of its frames, so the budget for a per-frame watcher is stated rather than
     /// assumed.
@@ -25,79 +25,90 @@ namespace TumbangPreso.Diagnostics
     [DefaultExecutionOrder(200)]
     public sealed class HighlightWatch : MonoBehaviour
     {
-        /// <summary>
-        /// How close each attacker has been to the taya since it last became "near".
-        ///
-        /// ⚠️⚠️ THE MINIMUM IS WHAT MAKES THE MARKER HONEST. Reporting the distance at the moment
-        /// the attacker leaves the radius would report 1.30 m every single time, because that IS
-        /// the radius; what a person watching calls a close call is how close it actually got, and
-        /// that number is only knowable by keeping the minimum while it was inside.
-        /// </summary>
+        // One episode per attacker. The wider exit boundary prevents distance jitter
+        // from inventing repeated escapes. All timing is simulation time.
         private readonly float[] _closest = new float[Balance.PlayerCount];
         private readonly bool[] _inside = new bool[Balance.PlayerCount];
+        private readonly Vector3[] _previous = new Vector3[Balance.PlayerCount];
+        private readonly bool[] _sampled = new bool[Balance.PlayerCount];
+        private RoundDirector _round;
+        private Vector3 _previousTaya;
+        private bool _tayaSampled;
+        private int _roundNumber = -1, _tayaSlot = -1;
+        private const float ExitMargin = .45f;
 
         private void OnEnable()
         {
-            for (int i = 0; i < _closest.Length; i++)
-            {
-                _closest[i] = float.MaxValue;
-                _inside[i] = false;
-            }
+            Clear();
+            Visual.MatchFlair.Presented += OnPresented;
+        }
+        private void OnDisable()
+        {
+            Visual.MatchFlair.Presented -= OnPresented;
+            Clear();
+        }
+        private void Clear()
+        {
+            _tayaSampled = false;
+            for (int i = 0; i < _inside.Length; i++)
+            { ClearSeat(i); _sampled[i] = false; }
+        }
+        private void ClearSeat(int slot)
+        { _inside[slot] = false; _closest[slot] = float.MaxValue; }
+        private void OnPresented(Visual.MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+        {
+            if (kind != Visual.MatchFlair.Kind.Tag || subject < 0 || subject >= _inside.Length) return;
+            // Tag teleport is not an escape, regardless of event/state arrival order.
+            ClearSeat(subject);
+            MatchHighlights.ResetEvasion(subject);
         }
 
         private void Update()
         {
             var round = GameServices.Round;
-            if (round == null || !round.RoundActive) return;
-
-            var taya = Taya(round);
-            if (taya == null) return;
-
+            int number = GameServices.Match != null ? GameServices.Match.RoundNumber : -1;
+            var taya = round != null ? Taya(round) : null;
+            if (_round != round || _roundNumber != number || _tayaSlot != (taya != null ? taya.PlayerSlot : -1))
+            {
+                Clear(); MatchHighlights.ResetEvasions();
+                _round = round; _roundNumber = number; _tayaSlot = taya != null ? taya.PlayerSlot : -1;
+            }
+            // IsTaggable alone deliberately excludes the can rule. Actual tags require
+            // the upright can and an able taya as well. Protection only protects the can.
+            if (round == null || !round.RoundActive || round.Lata == null || !round.Lata.IsUpright ||
+                taya == null || !taya.CanAct()) { Clear(); return; }
+            if (Time.deltaTime <= 0) return;
+            if (_tayaSampled && Vector3.Distance(taya.transform.position, _previousTaya) > Mathf.Max(1f, Time.deltaTime * 24f)) Clear();
+            _previousTaya = taya.transform.position; _tayaSampled = true;
+            var combat = taya.GetComponent<CombatVerbs>();
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
                 var unit = round.PlayerAt(slot);
-                if (unit == null || unit.IsDefender)
+                if (unit == null || unit.IsDefender) { ClearSeat(slot); continue; }
+                Vector3 position = unit.transform.position;
+                bool jumped = _sampled[slot] && Vector3.Distance(position, _previous[slot]) >
+                    Mathf.Max(1f, Time.deltaTime * 24f);
+                _previous[slot] = position; _sampled[slot] = true;
+                if (jumped) { ClearSeat(slot); continue; }
+                Vector3 to = position - taya.transform.position; to.y = 0;
+                float d = to.magnitude;
+                bool safeExit = !unit.IsInsideBox() && unit.HoldingSlipper && !unit.IsStunned;
+                if (!unit.IsTaggable() && !safeExit) { ClearSeat(slot); continue; }
+                if (_inside[slot])
                 {
-                    _inside[slot] = false;
-                    continue;
+                    _closest[slot] = Mathf.Min(_closest[slot], d);
+                    if (safeExit || d >= HighlightRules.CloseCallMetres + ExitMargin)
+                    {
+                        float closest = _closest[slot]; ClearSeat(slot);
+                        MatchHighlights.NoteCloseCall(slot, taya.PlayerSlot, closest);
+                    }
                 }
-
-                // ⚠️⚠️ ONLY WHILE THEY COULD ACTUALLY HAVE BEEN CAUGHT. `IsTaggable` is the same
-                // question the tag itself asks, so a player standing next to the taya during a
-                // respawn, a stun or the warm-up buffer is not "escaping" anything. Without this
-                // the first frame of every round would report four close calls.
-                if (!unit.IsTaggable())
+                else if (!safeExit && d <= HighlightRules.CloseCallMetres && combat != null &&
+                    combat.PunchCooldownLeft <= 0 &&
+                    Combat.InCone(d, Vector3.Angle(taya.transform.forward, to), Balance.PunchRange, Balance.PunchArcDeg))
                 {
-                    _inside[slot] = false;
-                    _closest[slot] = float.MaxValue;
-                    continue;
+                    _inside[slot] = true; _closest[slot] = d;
                 }
-
-                Vector3 a = unit.transform.position;
-                Vector3 b = taya.transform.position;
-                a.y = 0.0f;
-                b.y = 0.0f;
-
-                float d = Vector3.Distance(a, b);
-
-                if (d <= HighlightRules.CloseCallMetres)
-                {
-                    _inside[slot] = true;
-                    if (d < _closest[slot]) _closest[slot] = d;
-                    continue;
-                }
-
-                // ⚠️ THE MARKER FIRES ON THE WAY OUT, NOT ON THE WAY IN, because that is the frame
-                // the claim becomes true: while they are still inside it, the taya may yet catch
-                // them and the moment is a tag rather than an escape.
-                if (!_inside[slot]) continue;
-
-                _inside[slot] = false;
-                float closest = _closest[slot];
-                _closest[slot] = float.MaxValue;
-
-                if (closest <= HighlightRules.CloseCallMetres)
-                    MatchHighlights.NoteCloseCall(slot, taya.PlayerSlot, closest);
             }
         }
 

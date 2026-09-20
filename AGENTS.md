@@ -16,6 +16,11 @@ before further gameplay edits. The detailed design lives in
 Preserve implemented progress. Once this planning correction is complete, continue
 through the canonical queue without another approval gate for ordinary in-scope work.
 
+**Latest AFK instruction,2026-09-21:** the owner is at school all day and asks for
+autonomous work, with questions saved for later. Continue from the completed plan.
+Record non-routine decisions/dependencies in the ledger for their return. This does
+not authorize paid work, resets, delegation or crossing contributor reservations.
+
 ## Start and resume
 
 Read [active ledger](docs/ACTIVE_REWORK_LEDGER.md), then the

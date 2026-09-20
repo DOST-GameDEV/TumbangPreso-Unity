@@ -2,14 +2,17 @@
 
 ## Owner direction and current phase
 
+Latest owner message: AFK at school all day; continue autonomously and save questions
+for their return. Record unresolved decisions without interrupting ordinary work.
+
 Original assignment: implement the full gameplay-feel/watchability brief in this
 conversation. Autonomous continuation, no questions, no paid tools/credits, no
 resets, no delegation/other chats, no Desktop replacement. The owner's latest
 correction requires a thorough plan/new order and doc cleanup before further
 runtime edits. Implementation progress is preserved; do not restart it.
 
-Current phase: detailed planning correction is committed in b06236b4 and checked.
-Publish the checkpoint, then resume the first bounded implementation item. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+Current phase: detailed plan/doc correction and playable checkpoint closed.
+Implementing honest close-call episodes/sparse voice and observing four active players. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
 [Only execution queue](TODO.md#current-implementation-queue).
 [Original brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
 
@@ -24,9 +27,10 @@ in separate safe workspaces; unrelated old investigations do not take priority.
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
 branch ASTRAReworks. Implementation source HEAD 117ff426bb6d58e14f76b9f1187eed5ad267cbcc.
 The planning commit may be newer with documentation/comment-only differences.
-Last verified remote: f1265af29a860b183d673175f4c6962fbe7b84f5; later code is local.
+Last verified remote:7bc1964c07dcf1cd6c10096a1148106dc0b7ebb8, including the current
+implementation and detailed plan. Unfinished status remains explicit.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached 117ff426; Unity 6000.5.8f1, Test Framework 1.7.0. Every Editor launch remains
+detached7bc1964c; Unity 6000.5.8f1, Test Framework 1.7.0. Every Editor launch remains
 under tools/run_unity_guarded.py with profile presentation-validation-20260921.
 
 Initial 24 modified + 2 untracked files were byte-preserved under
@@ -74,8 +78,12 @@ Build v4 source 130af331 compiled 1156 MB/60s, guard ffceba45e4c0. Its three-pee
 FAILED fixture setup: victim stayed at spawn after initialization overwrote a one-
 time teleport; accepted punch correctly missed. Observer included one pre-seating
 sample. Logs/net-catch-v1 preserves CSV/log/results; shared input unchanged.
-Corrected 117ff426 witness awaits actual seating/readiness and walks the owning
-client through normal replication. It has not been run natively yet.
+Corrected 117ff426 witness waits for actual seating/readiness and walks the owning
+client through normal replication. Real3-peer v2 PASS: victim16 playback samples,
+others0; taya moved3.54m; every peer received tag; profiles/input preserved.
+Latest native v5 both-mode controls/catch PASS on7bc1964c. Engine captures inspect
+catch/contact and plain recovery (no frost). CSV-timed movies encoded; Classic
+capture29frames/2.77s, Hero62/2.76s. These are staged cases, not busy free play.
 
 Inherited remote-smoothing test failure reproduced on untouched f4c819f9; retained,
 not fixed/suppressed. No full-match, real network-spectator or human approval claim.
@@ -83,16 +91,20 @@ not fixed/suppressed. No full-match, real network-spectator or human approval cl
 
 ## Jobs and next concrete action
 
-No owned Unity/native/encoder jobs running; the last audio/catch handle 7644 is
-retired. Tests can serialize whitespace and change QualitySettings from a selected
+Buildv5 passed on7bc1964c,1156MB/78s, guard d2343174275b.
+Inputs/log are Logs/catch-build-v5; artifact Builds/catch-presentation-v5.
+The native23264 and three-peer17768/23604/9308 jobs completed; handles75993/46955
+retired. Results: Logs/net-catch-v2 and Logs/catch-native-v5. No player left running.
+Next pinned job: close-call/audio focused tests plus35s four-bot capture per mode.
+Tests can serialize whitespace and change QualitySettings from a selected
 profile. Preserve the diff, restore only proven test-generated changes after exit,
 and record an exact base/input manifest before the next build. Never restore the
 initial unrelated development changes or touch real profiles.
 
 1. Planning checks passed: 47 current local links, 44 introduced/updated links and
    anchors, required design sections and all six hero directions, and git diff --check.
-   Commit/publish the doc correction; no Unity rerun is required for these doc edits.
-2. Resume checkpoint closure: build current source with reviewed validation inputs,
-   then run the corrected three-peer witness and actual native both-mode/engine
-   movie route. Inspect results; fix only demonstrated causes and publish evidence.
+   Published through7bc1964c. No Unity rerun was required for the documentation.
+2. Qualify new close-call threat/episode and per-player recognition fixes; one voice
+   at a time with essential priority. Capture busy exchange with all four inputs active.
+   No reserved network files changed. Do not transfer v5 evidence to these new edits.
 3. Continue the ordered outcomes above. Do not claim the full pass from this slice.

@@ -59,6 +59,8 @@ namespace TumbangPreso.Audio
 
         private AudioSource[] _voices;
         private int _next;
+        private float _busyUntil;
+        private int _priority;
 
         /// <summary>Round-scoped, so the clock warnings fire once each rather than on every
         /// frame the timer sits at or below the threshold.</summary>
@@ -134,6 +136,11 @@ namespace TumbangPreso.Audio
         {
             if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0 || VoiceVolume() <= .0001f) return;
 
+            int priority = lineId.StartsWith("count_") || lineId.StartsWith("match_") ? 3 :
+                lineId.StartsWith("clock_") ? 2 : 1;
+            // Never queue stale commentary. Timing/result calls can interrupt chatter;
+            // ordinary events wait for a quiet opening and are otherwise left to world SFX.
+            if (Time.unscaledTime < _busyUntil && priority < 3 && priority <= _priority) return;
             if (_cooldownUntil.TryGetValue(lineId, out float until) && Time.unscaledTime < until)
                 return;
 
@@ -148,6 +155,9 @@ namespace TumbangPreso.Audio
             var voice = _voices[_next];
             _next = (_next + 1) % _voices.Length;
 
+            foreach (var source in _voices) source.Stop();
+            _priority = priority;
+            _busyUntil = Time.unscaledTime + takes[index].length + (priority == 1 ? 1.2f : 0);
             voice.clip = takes[index];
             voice.volume = VoiceVolume();
             voice.Play();
@@ -203,11 +213,7 @@ namespace TumbangPreso.Audio
 
         public void OnLataRestored() => Play("lata_restored");
 
-        /// <summary>Both lines, deliberately: the tag is the taya's moment.</summary>
-        public void OnAttackerTagged()
-        {
-            Play("taya");
-            Play("ayos");
-        }
+        /// <summary>One short call leaves the physical contact audible.</summary>
+        public void OnAttackerTagged() => Play("taya");
     }
 }
