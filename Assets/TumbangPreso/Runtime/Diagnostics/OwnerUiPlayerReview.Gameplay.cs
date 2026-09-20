@@ -48,6 +48,7 @@ namespace TumbangPreso.Diagnostics
                     actor.Teleport(new Vector3(6, .12f, -10 + actor.PlayerSlot * 5));
                 }
                 yield return DirectVerbs(who, label);
+                yield return ReviewVictimCatch(who, label);
                 var pause = Panel.Open<PausePanel>(watcher); pause.Local = who;
                 yield return WaitFor(() => Find("LeaveMatch") != null);
                 yield return Click("LeaveMatch");
