@@ -86,6 +86,29 @@ namespace TumbangPreso.PlayTests
             finally { Settings.SettingsStore.Current.ReducedUiMotion = reduced; view.End(); }
         }
         [UnityTest]
+        public IEnumerator EventBeforeRecoveryWaitsForStateAndTimesOutSafely()
+        {
+            yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
+            var round = GameServices.Round; var victim = round.PlayerAt(1);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var contact = victim.transform.position;
+            MatchFlair.Play(MatchFlair.Kind.Tag, 0, 1, contact);
+            Assert.IsFalse(view.Playing, "A cosmetic event alone cannot create a recovery window.");
+            yield return new WaitForSecondsRealtime(.1f);
+            victim.ApplyStagger(Balance.TagStunTime);
+            victim.Teleport(round.SafeZonePointFor(victim));
+            yield return null;
+            Assert.IsTrue(view.Playing, "Later authoritative recovery should unlock retained contact, not a new penalty.");
+            victim.ClearStun(); yield return null; Assert.IsFalse(view.Playing);
+            Stage(); yield return new WaitForSeconds(.4f);
+            MatchFlair.Play(MatchFlair.Kind.Tag, 0, 1, victim.transform.position);
+            yield return new WaitForSecondsRealtime(.8f);
+            victim.ApplyStagger(Balance.TagStunTime); victim.Teleport(round.SafeZonePointFor(victim));
+            yield return null;
+            Assert.IsFalse(view.Playing, "An expired event must not attach itself to a later recovery.");
+        }
+
+        [UnityTest]
         public IEnumerator IndependentCameraControlKeepsRecoveryInFirstPerson()
         {
             yield return Open(); Stage(); yield return new WaitForSeconds(.4f);

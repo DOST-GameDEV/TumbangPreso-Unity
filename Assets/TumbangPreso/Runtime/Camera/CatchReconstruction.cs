@@ -24,6 +24,10 @@ namespace TumbangPreso.CameraSystem
         private Text _caption;
         private float _contact, _began, _duration;
         private int _round;
+        private bool _pending;
+        private int _pendingActor, _pendingVictim, _pendingRound;
+        private Vector3 _pendingAt;
+        private float _pendingUntil, _pendingStun;
         private Vector3 _actorContact, _victimContact;
         private Quaternion _actorFacing, _victimFacing;
         private readonly List<Renderer> _hidden = new List<Renderer>();
@@ -45,21 +49,44 @@ namespace TumbangPreso.CameraSystem
         private void OnDestroy() => End();
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
-            if (kind != MatchFlair.Kind.Tag || _history == null || Panel.AnyOpen ||
-                (Settings.SettingsStore.Current.ReducedUiMotion || !Settings.SettingsStore.Current.CinematicCameraMotion)) return;
+            if (kind != MatchFlair.Kind.Tag) return;
             var round = GameServices.Round;
             var victim = round != null ? round.PlayerAt(subject) : null;
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
-            if (victim == null || rig == null || !rig.IsFollowing(victim) || victim.StunLeft <= .3f) return;
+            if (victim == null || rig == null || !rig.IsFollowing(victim)) return;
             if (Playing && _victim == victim) return;
-            var a = _history.ForSeat(actor); var b = _history.ForSeat(subject);
+            _pending = false;
+            if (_history == null || Panel.AnyOpen || !round.RoundActive || GameServices.Match == null ||
+                Settings.SettingsStore.Current.ReducedUiMotion || !Settings.SettingsStore.Current.CinematicCameraMotion) return;
+            // Flair and state use different transport paths. Wait briefly for the
+            // authoritative recovery/teleport rather than starting a fresh penalty
+            // or dropping a legitimate client catch because its state is later.
+            _pending = true; _pendingActor = actor; _pendingVictim = subject; _pendingAt = at;
+            _pendingRound = GameServices.Match.RoundNumber; _pendingUntil = Time.unscaledTime + .65f;
+            _pendingStun = victim.StunLeft;
+            TryPending();
+        }
+        private void TryPending()
+        {
+            if (!_pending) return;
+            var round = GameServices.Round; var match = GameServices.Match;
+            if (round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
+                Time.unscaledTime > _pendingUntil || Panel.AnyOpen || Settings.SettingsStore.Current.ReducedUiMotion ||
+                !Settings.SettingsStore.Current.CinematicCameraMotion)
+            { _pending = false; return; }
+            var victim = round.PlayerAt(_pendingVictim);
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
+            if (victim == null || rig == null || !rig.IsFollowing(victim)) { _pending = false; return; }
+            if (victim.StunLeft <= .3f) return;
+            if (_pendingStun <= .3f && (victim.StunTotal < Core.Balance.TagStunTime - .1f ||
+                (victim.transform.position - _pendingAt).sqrMagnitude < 1f)) return;
+            var a = _history.ForSeat(_pendingActor); var b = _history.ForSeat(_pendingVictim);
             if (a == null || b == null || !a.Ready || !b.Ready) return;
-            // The host emits before teleport. A late remote event must locate
-            // recorded contact, not photograph the already-teleported body.
-            float contact = b.ContactTime(at);
-            if (contact < 0) return;
-            if ((victim.transform.position - at).sqrMagnitude < .25f)
+            float contact = b.ContactTime(_pendingAt);
+            if (contact < 0) { _pending = false; return; }
+            if ((victim.transform.position - _pendingAt).sqrMagnitude < .25f)
             { a.Record(Time.time); b.Record(Time.time); contact = Time.time; }
+            _pending = false;
             Begin(a, b, victim, rig, contact);
         }
         private void Begin(MatchPoseHistory.Track actor, MatchPoseHistory.Track victimTrack,
@@ -127,10 +154,12 @@ namespace TumbangPreso.CameraSystem
         }
         private void LateUpdate()
         {
+            TryPending();
             if (!Playing) return;
             float elapsed = Time.unscaledTime - _began;
             if (_victim == null || _rig == null || !_rig.IsFollowing(_victim) || _victim.StunLeft <= .18f ||
-                _victim.CanAct() || Panel.AnyOpen || GameServices.Round == null || !GameServices.Round.RoundActive ||
+                _victim.CanAct() || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
+                Settings.SettingsStore.Current.ReducedUiMotion || GameServices.Round == null || !GameServices.Round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round || elapsed >= _duration)
             { End(); return; }
             float recordedTime = elapsed < .30f ? _contact - .22f + elapsed / .30f * .22f :
@@ -194,6 +223,7 @@ namespace TumbangPreso.CameraSystem
         }
         public void End()
         {
+            _pending = false;
             if (_camera != null) _camera.targetTexture = null;
             if (_canvas != null) Destroy(_canvas.gameObject);
             if (_target != null) { _target.Release(); Destroy(_target); }

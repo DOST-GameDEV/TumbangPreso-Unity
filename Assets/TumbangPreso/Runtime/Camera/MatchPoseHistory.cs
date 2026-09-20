@@ -74,7 +74,7 @@ namespace TumbangPreso.CameraSystem
                 for (int n = 0; n < _count; n++)
                 {
                     var frame = _frames[(_cursor + Samples - 1 - n) % Samples];
-                    if (Newest - frame.Time > 1f) break;
+                    if (Newest - frame.Time > Core.Balance.TagStunTime) break;
                     Vector3 delta = frame.Position[0] - at; delta.y = 0;
                     if (delta.sqrMagnitude < best) { best = delta.sqrMagnitude; time = frame.Time; }
                 }

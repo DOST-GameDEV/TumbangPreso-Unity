@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
                 _danger.enabled = alpha > .001f;
                 _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
             }
-            float target = !spectator && local != null && local.IsStunned && !local.IsTripped
+            float target = !spectator && local != null && local.IsStunned && !local.IsTripped && local.StunElement != StunElement.None
                 ? Mathf.Clamp01(local.StunLeft / Hud.FrostThawTime) : 0;
             _coverage = Mathf.MoveTowards(_coverage, target, dt / (target > _coverage ? Hud.FrostRampIn : Hud.FrostRampOut));
             if (_caught == null) return;
