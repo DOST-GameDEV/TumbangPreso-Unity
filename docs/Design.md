@@ -407,14 +407,13 @@ on the last frame of the reset channel.
   to keep bots from converging on, and repeatedly stealing, a human's shoe. They were
   **already unreachable before the lock** (the live fetch path is `MySlipper`, which has
   always been owner-scoped), so the lock did not strand them. `docs/TODO.md` § 154.
-* ⚠️⚠️ **AN UNOWNED SLIPPER IS STILL FREE, AND THAT IS THE PRACTICE LOBBY RATHER THAN A
-  LOOPHOLE.** `SliceRunner.EquipOwnedSlippers` writes `owner_slot = -1` in two cases
-  that look identical through the field and are opposite in intent: the taya's shoe,
-  which is **deactivated** and refused on the first line of the grab gate anyway, and an
-  **absent seat's spare**, which is left lying in the street deliberately. With the
-  practice lobby set to NONE that is three of the four tsinelas, and `SoloPracticeTests`
-  fails outright if they stop being retrievable. The test is therefore
-  `owner_slot >= 0 && owner_slot != who`, never `owner_slot != who`.
+* **Ownerless stock is only training equipment.** The 2026-09-21 pass keeps the
+  absent seats' spare slippers usable in an offline one-seat practice lobby and
+  the guided tutorial. `OwnershipAllows` refuses ownerless stock in live multiplayer
+  and populated matches. This preserves practice without creating an ownership
+  bypass. The same identity gate protects force equip and credited throws;
+  environmental ability displacement with no thrower still moves loose slippers.
+  The taya's own slipper remains parked. `SeatOfOrigin` remains the stable address.
 * **`owner_slot` still exists and is still assigned at round start.** It is what the
   recall mark and the owner glow read. It is no longer only a label: it gates
   `can_be_grabbed_by()`. ⚠️ It is still **not an address**. `SeatOfOrigin` is the

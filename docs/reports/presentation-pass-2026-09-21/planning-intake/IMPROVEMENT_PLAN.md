@@ -1,16 +1,15 @@
 # Game improvement plan
 
-**Current routing,2026-09-21:** this file preserves detailed P1-P10 reference work.
-The only active order is [TODO](TODO.md#current-implementation-queue); the current
-feature design is [NATIONALS_POLISH](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
-Old UI-cancelled, maps-first, demo-day and transfer-stop scheduling below is historical.
-Standing art, profile and ownership protections remain. Do not restart completed work.
+**Current scope,2026-09-14:** owner removed the remaining UI work from this
+active queue. Earlier finish-UI ordering below is historical. Preserve UI source
+and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
+
 
 **Standing art constraint, owner 2026-09-10:** every new model must look like it
 came from TUMP. Preserve the clean cute/blocky visual language; avoid overly
 detailed, realistic or noisy assets. This applies across all character, pet,
 ability, FPP, prop and map deliverables. See
-[Art_Direction.md section0](Art_Direction.md#0--new-models-must-belong-to-tump).
+[Art_Direction.md section0](../../../Art_Direction.md#0--new-models-must-belong-to-tump).
 Stronger animation also includes better casting and skill VFX, with distinct
 sequences for different actions. Do not repeat generic animations unless reuse
 is necessary. Better weight/contact/timing is one part of that broader scope;
@@ -43,20 +42,20 @@ all recovery-mash contexts and device/network paths as part of this expanded sco
 Latest delivery instruction: wrap up the current work, verify/commit/push it and
 provide a thorough continuation handoff in chat. The owner explicitly permits
 unfinished map work in that handoff. The full scope below remains open. Current
-map implementation and remaining review are in [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md).
+map implementation and remaining review are in [MAP_FINAL_PASS.md](../../../MAP_FINAL_PASS.md).
 Kuro's matching purple forms/expressions and their verification are recorded in
-[kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md),
+[kuro-matching-forms.md](../../improvement-2026-09-10/kuro-matching-forms.md),
 pushed at864cead. Do not confuse local tests with final release/taste approval.
 
 Thorough networking repair is required. The owner also authorizes changing or
 replacing boring abilities and making every existing loadout alternative justify
 its slot. Whole-kit planning and acceptance are in
-[HERO_KIT_REWORK_DECISIONS.md](HERO_KIT_REWORK_DECISIONS.md), with cultural direction
-in [PHILIPPINE_ABILITY_DIRECTION.md](PHILIPPINE_ABILITY_DIRECTION.md). This overrides
+[HERO_KIT_REWORK_DECISIONS.md](../../../HERO_KIT_REWORK_DECISIONS.md), with cultural direction
+in [PHILIPPINE_ABILITY_DIRECTION.md](../../../PHILIPPINE_ABILITY_DIRECTION.md). This overrides
 older presentation-only or blanket no-mechanic-change restrictions for the existing
 ability slots. Preserve the core game, six heroes, both modes and loadout structure.
 Keep the current approved people models; do not reopen their redesign queue.
-Current execution and failures are in [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md).
+Current execution and failures are in [ACTIVE_REWORK_LEDGER.md](../../../ACTIVE_REWORK_LEDGER.md).
 
 
 Current state: CLEANED CAST KEPT BY OWNER; MODEL REDESIGNS STOPPED; ANIMATION, DEEP SKILL AND REMAINING GAMEPLAY/MAP WORK OPEN; FINAL QUALIFICATION PENDING.
@@ -64,7 +63,7 @@ Starting checkpoint: `4623348069eb0be9d9a00f429fd97c9252cf1fc3` on `ASTRAReworks
 Execution ledger: TODO section 152. This plan is not a claim that all phases are done.
 
 **Latest owner decisions and exact current execution state:**
-[ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md). Read it after the required
+[ACTIVE_REWORK_LEDGER.md](../../../ACTIVE_REWORK_LEDGER.md). Read it after the required
 CLAUDE/VISION/TODO order. The owner explicitly requested that planning survive
 compactions. The rejected first model refinement is not a completed deliverable. The later
 rounded Berto draft was also rejected and restored. Keep cute blocky forms, simple
@@ -124,7 +123,7 @@ contact and recovery, coherent graphics, stronger Philippine place identity and
 more intentional maps and characters. Cultural character should come through
 materials, architecture, clothing details, gestures and sound, rather than forced
 symbols or Tagalog slogans. Player-facing copy is English; proper names retain
-identity. [LORE.md](../LORE.md) connects the existing world as a major spectator sport
+identity. [LORE.md](../../../../LORE.md) connects the existing world as a major spectator sport
 with the Philippines as its cultural home and a leading competitor. It need not
 be explained wholesale in the game. No killing/gun narrative.
 
@@ -593,7 +592,7 @@ human decisions still needed. Re-plan from evidence whenever that produces a bet
 ### Current checkpoint evidence
 
 The current presentation batch is described in
-[the report](reports/improvement-2026-09-10/presentation-batch.md), with all eighteen
+[the report](../../improvement-2026-09-10/presentation-batch.md), with all eighteen
 accepted cast rows, owner/body reels, complete cast turnarounds and matched map views.
 Core 559/559, EditMode 467/467, targeted capture/navigation 18 passed plus one skip,
 clock/AI diagnostics 3/3, PersonSwapProbe PASS, fourteen gating audits clean.

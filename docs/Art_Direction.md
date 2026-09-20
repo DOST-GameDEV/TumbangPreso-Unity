@@ -1,5 +1,12 @@
 # Art Direction — the laws
 
+**Current presentation identity,2026-09-21:** stable seat colour/number remains
+consistent when roles rotate. The taya is a separate badge/shape, so older
+role-only hue restrictions do not govern these identity accents. Elemental powers
+retain their own themes. This does not reopen approved bodies or supplied menu art.
+See [the current design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+
+
 **Current PC UI rule, September15:** headings use Darumadrop. Keep readable body
 labels such as Speed/Power/Grit in the existing Lydian face. Prefer recognizable
 icons for navigation/categories/rotation; keep words and numbers only where they

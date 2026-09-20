@@ -1,199 +1,39 @@
-# Nationals polish: the current implementation design
-
-## Current delivery design, 2026-09-21
-
-The owner requested a thorough plan and documentation cleanup before further game changes. This section is that design, grounded in the actual checkout. It is not a completion claim. The single execution order/status lives in [TODO](TODO.md#current-implementation-queue); the exact next action, revisions, owned jobs and blockers live in [the ledger](ACTIVE_REWORK_LEDGER.md). The [full brief](reports/presentation-pass-2026-09-21/implementation-brief.md) defines the intended experience. Ordinary creative/engineering decisions are already authorized. Improve this design when observation warrants it and record the reason.
-
-### The finished experience
-
-Classic and Hero Strike both make the same exchange compelling: a responsive throw hits tin, the shoe settles somewhere readable, its owner retrieves it, the restored can makes the return dangerous, and the taya's reach ends in a clear escape or catch. A new viewer should understand that danger before reading a celebration. Hero Strike adds six distinct character performances without obscuring that game. Halftime shows a retained, understandable play to every participant, then returns everyone to the next round together. No hype currency, power rewards for streaks, new movement verb, fake collision, prolonged tag penalty or extra taya lockout.
-
-### What the current game already supplies
-
-Source was reconciled from 3b9c28d6 through upstream 2c89eb50 and friend shader commit f4c819f9. The camera/lifecycle branch at fe9baa16 and ability branch at dd44acd1 were already ancestors. Their useful implementation stays; this is not a blank project. Own-only normal pickups, recall UI, distinct body/FPP skill clips, extensive six-kit work, spectator direction, manual replay, score/flair/audio dispatch and guarded native runners already existed. Eighteen default hero actions have now accepted actual input in a capture run; that proves the selected route, not artistic finish.
-
-The first local increments added a low shader locator, compact tin contact, personal hit confirmation, side feed, objective marker, stable seat colours/numbers, ownership guards, victim reconstruction, comfort settings and shove/lunge sound distinctions. Keep those changes, finish their qualification, and refine weaknesses. Do not restart them to enact this plan in chronological order. Exact implementation/verification status belongs in the queue, ledger and report.
-
-The actual base hit/tag awards are 100; both modes default to eight 90-second rounds. The ordinary buffer is currently 5 seconds. Phaister's real ritual warning is 1.55 seconds. The current network protocol is 42. Recheck these facts if dependencies change; none is permission to restore an older implementation or downgrade a later version.
-
-### Dependency order and why
-
-1. Finish the current coherent exchange/catch checkpoint, including the corrected real-peer witness and newest audio changes. Preserve the known native fallback.
-2. Complete the ordinary exchange with other players active: release-to-flight, landing-to-pickup, restore-to-threat, lunge/block/whiff, escape and catch. Settle public identity and remove conflicting messages as part of the same story.
-3. Establish accepted-event identity, throw episodes, exact contact data and shared simulation-time ownership. These are concrete dependencies for chains, ultimate scenes and replay, not a separate general framework project.
-4. Wire capped chain rewards and the central milestone channel. Where ownership permits, prove the common ultimate phase with Sean and Phaister. They expose physical launch and preserved live-warning risks early.
-5. Complete the six authored ultimate profiles and refine each hero's two ordinary skills where actual captures show a gap. Follow with Zack, Nemu, Dante and Cheska; change that sequence when a discovered dependency warrants it.
-6. Extend the same history into retained candidate clips, canonical participant playback and halftime. Refine the existing spectator director around the developing exchange, not the most recent score event.
-7. Qualify coherent full matches and repeated use on the actual Windows artifact, with relevant peers, settings and views. Human taste remains a distinct review.
-
-Work can overlap across safe files/workspaces. A needed feature dependency comes first; unrelated historical investigations, a perfect map and the entire device cross-product do not. Do not accumulate a large dependent rewrite on a failing base.
-
-### A. Complete exchange and truthful readability
-
-**Possession.** Keep one shared ownership predicate in Slipper. Normal/slide pickup, force equip, credited throw, AI selection, host requests, disarm, round changes, reconnect, Zack's recall, practice and tutorial must agree. SeatOfOrigin is stable identity; OwnerSlot is mutable ownership. Ownerless stock is deliberate one-seat offline/guided training equipment, never a general live-match exception. Environmental displacement with no credited thrower remains legitimate.
-
-**Locator and identity.** Refine the integrated shader beam instead of adding a competing marker. The current 0.48 m / 0.24 m low form and small ground pool are the starting implementation. It follows loose relevance, holding/flight/parking, depth and near-pickup fading. Preserve Off and the personal highlight preference as an accessibility accent. Public seat identity stays stable across world, feed and scoreboard; local preference must not recolour other players' elemental powers. Add a compact shared identity mark where number/colour alone fails in real views, without turning placeholder icons into another illustration project. The taya badge is separate from player identity.
-
-**Objective.** One tracked can marker owns upright/down/restoring/protected state; the local prompt separately owns whether this player can throw, pick up or restore. Protection belongs to the can, not to an armed attacker. Use a close can collar, not a bubble suggesting area safety. Reuse the complete real tag predicates, including can upright, immunity, role, possession, round and confinement. Stun is not automatically immunity.
-
-**Throw.** Preserve the sight-line launch, movement/early-hold accuracy behaviour, Pektus and the guide's intended uncertainty. Fit hand/body preparation, wrist release, short trail and follow-through to the accepted action. Preserve underlying aim and launch origin under all shake/impact settings. Fix the visual hand-to-flight connection without moving authority's projectile through walls.
-
-**Tin contact.** Keep a compact metal/rubber transient, a low contact accent, real can toppling and short aftermath. The scorer gets personal confirmation; others get the world event and attribution. No routine confetti, victim-style camera punch on everyone, stacked global pauses or multiple words for one knockdown. Protected contact, a body block and a miss have different meanings and cues.
-
-**Landing and pickup.** Finish the short trail into an honest settle/contact, then hand attention to the low locator. Accepted pickup aligns reach, sound, held shoe and disappearing locator while preserving running/slide movement. No success cue on a refused grab. Keep actual reach, carrier, motor and FPP state consistent.
-
-**Restore and chase.** Tin snap, marker transition and taya motion must read together, without a celebration lock. An attacker gets a catch warning only when actually catchable. Use a brief peripheral transition and readable persistent action information. Preserve footsteps and restore sound. No omniscient proximity radar or permanent full-screen danger wash.
-
-**Block, lunge and whiff.** Distinguish preparation, committed reach, actual contact or miss and recovery. Preserve human reach/speed/cooldown rules. The lunge rush differs from the short shove swipe and slide scrape. Observer action replication supplies the same tell; pose restoration must not replay an onset. A whiff has no success impact. The redirected slipper remains locatable.
-
-**Escape and close call.** Extend HighlightWatch/MatchHighlights rather than add another cosmetic counter. Ordinary safe exit gives local relief. Exceptional recognition requires a recent legally threatening committed attempt, actual catchability, unobstructed relevant contact geometry and successful exit. Distance to an idle taya or a down can is insufficient. Bind one retrieval episode to its accepted throw, so dropping/regrabbing or repeatedly crossing the boundary cannot farm recognition. Tag/new round/new throw closes or resets the episode. No automatic close-call score bonus is planned.
-
-**Checkpoint.** Use the same Eskinita exchange in both modes with P3/P4 active, including legal block, genuine whiff, protected-can contact, restore while armed inside, ordinary escape and actual catch. Include body/owner views and recorded timing. A staged capture is labelled staged; it is not freeform evidence.
-
-### B. Accepted moments, time and contact
-
-Extend accepted gameplay producers and MatchFlair rather than create another score or ability authority. A small immutable moment record carries match/round identity, event/attempt/cast sequence, actor/subject, authoritative timing, contact position/direction and outcome. Extra fields belong only to events that need them. Input/prediction can present preparation; only accepted outcomes celebrate success, award points or label a successful play.
-
-Record a real release origin/attempt when HostThrow accepts a credited throw. Use it for distance and accuracy; the thrower's later position is not the origin. Keep the can's upright-cycle identity separate from throw and round identity. Capture exact tag contact before teleport, including both root/pose states and the held item. Use existing network state for recovery rather than inventing a timer.
-
-The current body recorder has eight seconds of bounded transform history. Its pure render copies cannot run gameplay scripts/colliders or own live meshes/materials. Extend this foundation with necessary props/events. It is not yet a complete world replay recorder. Keep exact event keyframes and recorded intermediate poses; never rerun physics to rediscover the outcome.
-
-Use active simulation time for chain windows, cooldowns and round rules; presentation/network time for synchronized phase deadlines; and a separate replay clock. Retain mapping to existing manual replay wall-clock timestamps instead of silently changing their meaning. Correlate records by event identity, not by comparing incompatible clocks.
-
-### C. Victim catch, taya confirmation and return
-
-The current 1.1-second reconstruction is a prototype starting point, not a locked duration. Show a short recorded lead-in, accepted contact and actual follow-through/reaction from a readable three-quarter view. Reanchor reaction at contact rather than depicting teleport as another hit. Retain real blocky bodies and the held shoe. No invented slam, tackle, anatomy or authoritative rewind. Choose a side from approach/hand geometry and occlusion; avoid a decorative orbit.
-
-Only the victim's existing non-actionable recovery can host a takeover. Clamp playback to remaining recovery and end before control returns. Late events do not restart five seconds. Bounded event-before-state handling needs real-peer proof; simulated ordering alone does not establish delivery. Exact authoritative contact metadata replaces nearest-history heuristics where latency prevents faithful reconstruction.
-
-The taya keeps the normal camera, contact sound, hand follow-through, score and earned milestone, with no extra lockout. Other participants get world reaction and attribution. The spectator follows the live consequence instead of abandoning a second developing chase for the victim's replay.
-
-Playback never invokes score, abilities, announcer events or gameplay callbacks. Restore visibility on allocation/render failure, disable, role/camera switch, round/match end and scene teardown. Reduced/cinematic-camera settings change the view, never the penalty. Plain physical recovery does not inherit elemental frost graphics.
-
-Required checks: repeated catches; real actor/victim/uninvolved participant and spectator paths; late/duplicate events; short remaining recovery; taya movement/next catch; held-item visibility; body/pose fidelity; camera/input/lens restoration; interrupted playback and repeated-match cleanup.
-
-### D. Chains, points and separate HUD channels
-
-Keep deterministic rules in the engine-free Core package, owned by MatchDirector and accepted gameplay events. The feed and replay selector are never score authorities.
-
-For each attacker, a legal credited direct throw knockdown advances once. A true miss or defensive block resets that player's sequence. Another player's score does not erase it. A non-scoring flight whose original can cycle was consumed can be no-contest; an actual later legal knockdown still counts. Do not prematurely void a live shot. Resolve once with explicit hit/block/no-contest/miss precedence and no duplicate can-cycle award. Invalid input is not a launched miss. Tag/new round resets. Ultimate/field knockdowns keep base rewards without masquerading as accurate throws.
-
-For the taya, retain distinct victim identities and last qualifying active-play time. Start with 8 seconds between different catches. The same victim neither advances nor refreshes the chain. A can knockdown need not erase it. Round/role changes reset it; three distinct victims is the natural ceiling.
-
-Start rewards at 0 for the first action; +10 for a second hit/catch; +20 for a third consecutive throw hit; +25 maximum for fourth/later throw hits; +25 for a third distinct catch. Tune from actual scoring influence. No multipliers, power buffs or extra ultimate charge. A base action advances normal resources once.
-
-Use explicit appended bonus reasons through MatchDirector.AddScore, preserving existing enum values. Replicated totals remain authoritative. Correlate awards/milestones with accepted event IDs so duplicate delivery cannot repeat recognition. Reason/value and actual count must reach clients consistently. Do not infer a bonus from two snapshots or emit another fake Tag/LataKnocked event. Wire/compatibility changes are a named C4 integration dependency.
-
-The side feed has at most three recent short entries with expiry/dedupe, without footsteps, passive ticks, routine releases or stale pickup messages. Central milestones sit under the timer, away from the crosshair. Start with third/fifth-hit accuracy milestones and double/triple catches; higher milestones replace lower ones. Threat, recovery and cast information outrank celebration. Longer streak milestones can be tuned for rarity while the per-hit bonus remains capped.
-
-Close-call recognition stays separate from points. Lead changes need anti-flutter handling for ties/passive ticks. Use a short escalating motif and sparse voice, not more volume or a permanent excitement bar.
-
-Required checks: independent players, intervening scorers, misses/blocks, consumed cycles, duplicate contacts/messages, tag/round reset, repeated victim, eight-second boundary during pause, caps, exact client totals, unchanged base ultimate gain, and replay/recognition unable to award score.
-
-### E. Shared ultimate phase and authored performances
-
-Choose one host-owned presentation phase rather than stretching Hitstop. It has match/round/phase identity, authoritative start/end and accepted cast records. Acceptance validates and commits cost once; actual ability execution waits for release. Do not create a live hazard first and pretend the movie preceded it. Preserve the full existing playable warning afterward.
-
-Start with one common 2.8-second phase: distinct hero composition/performance until roughly 2.4 seconds, then about 0.4 seconds returning each viewer to the saved battlefield/aim. These are authoring targets. A common boundary simplifies simultaneous casts without requiring identical choreography.
-
-Collect casts accepted in the same authoritative simulation boundary into one cohort before closing its interval. Preserve every accepted cost/effect and resolution order. No four-movie playlist or deadline extension for later requests. Once closed, new ultimate requests during pause are explicitly refused without cost. Clear discrete buffered actions and require fresh release/press; held movement can resume normally. UI/menu/network processing stays responsive. Reduced-camera viewers get the same pause and no extra live aiming time.
-
-Audit concrete writers/consumers: Hitstop, CameraRig, pause menus, spectator clock control, round/anti-stall clocks, motor/physics, slipper flight, cooldowns, statuses, windups and ongoing fields. One phase owner coordinates them and restores the correct prior/current requested clock state, including spectator pause/slow rate. Never blindly restore1.0. Network/UI/presentation continues appropriately while simulation timers stop together. Bound cleanup/timeouts on round/match end, disconnect, late join, scene change and presentation failure.
-
-A late client joins the current phase age or a truthful reduced fallback with the same end, rather than starting another full scene. Reconnect restores state without replaying an old intro. Match/round/phase IDs reject stale messages. The request-refusal/prediction findings matter where they intersect this path; resolve that narrow dependency with its owner, not a duplicate full C4 audit.
-
-For valid back-to-back casts after resume, preserve acceptance/effect timing. Within a short repeat window use the full-duration in-world/cut-in treatment with less camera travel. This reduces camera whiplash but not cumulative pause time. Measure cast frequency and paused time per representative match, state the tradeoff and refine presentation without inventing an ability cooldown.
-
-**Sean.** A low planted compression, inward heat and tightening sound, then a loaded launch silhouette. End at the pose entering the actual leap, without a fake complete jump first. Real descent, grounded impact, displacement and fire field carry the main payoff. Preserve physical phase timing and routes.
-
-**Phaister.** Clear witch silhouette, deliberate gesture and one growing eclipse composition. The final gesture becomes the full existing 1.55-second playable ritual, without idle reset or an already-harmful frozen circle. Distinguish build, completed boundary, actual curse pulses and leaving the field.
-
-**Zack.** Only the accepted committed aimed release gets the scene. Use an angular medium composition, fine electrical buildup, controlled stillness and one decisive release. Reorient to the public committed area, then preserve live warning/contact. A miss stays a miss; charged throws remain a distinct aftermath.
-
-**Nemu.** Frame Nemu with retained small Kuro. A held exchange and inward motion lead into the existing monster form, then the live anchor/pull and readable escape direction. Preserve the approved cute/blocky ghost. No realistic horror, invented props or generic explosion.
-
-**Dante.** Frame planted feet, torso and ground; load weight into the forward strike. A tightening ground response leads into the actual traveling fissure and affected players. Preserve footprint/collision truth and the protector baseline. Fitted details stay separate from the fissure's form language.
-
-**Cheska.** Controlled stillness, readable hand silhouette and fine ice formation following one precise gesture. A crisp release enters the outward nova. Show actual freezes/displacement, including slippers, while keeping can/routes visible. No whiteout as a substitute for contact.
-
-For each, author/review body and FPP preparation, shot, sound phrase, moving geometry, return pose, live execution, miss/refusal/interruption and consequence. Caster, others and spectator can have different compositions but one phase boundary. Do not reveal private pre-commit aim or unseen opponents through a cut. The two ordinary skills retain distinct clips/jobs and receive targeted refinements where complete interactions are weak. Never replace a good kit because an old table calls it a candidate.
-
-Required checks: accepted/invalid/uncommitted input, preserved warning, all six default kits, relevant roles, simultaneous cohort, rapid succession, resource/score invariants, interrupted/late state, reduced settings and busy play. One phase prototype or finished hero does not close this workstream.
-
-### F. Canonical highlights and halftime
-
-Choose shared state/event clips rendered locally as the primary delivery path. Reuse body reconstruction for meaningful alternate angles without requiring every participant to have recorded the same camera. Keep captured-frame manual replay as an honest fallback/reference, not final quality merely because its overlay is larger.
-
-Extend bounded history with can pose/state/protection, slipper identity/pose/state/holder, relevant accepted ability/field transitions, identities, exact contacts and necessary audio. Preserve recorded state and interpolate; never simulate physics/scoring/abilities in playback. Exact contact/transition keyframes survive compression. Copy only render data.
-
-Host events/episodes create windows with roughly 2 seconds of lead-in and sufficient aftermath. Preserve complete data into a small shortlist, initially three clips, before rolling history overwrites it. Retain the shortlist across rounds through halftime; raw rolling history can reset safely. Clear on match/rematch identity change, not every round.
-
-Rank story completeness/readability before spectacle: actual dangerous retrieval/outcome, bank hit with consequence, restore into different catches, meaningful lead change or ultimate conversion. MatchHighlights remains metadata; a timestamp alone is not a retained clip. Do not label an incomplete montage as a full triple catch or speed up an incomprehensible long chain.
-
-Use stable roster/rig/prop references plus changed transform channels/events, not transmitted mesh assets. Start with 20 Hz body samples rendered smoothly at display rate and exact contact keys. Measure fidelity/size on the real rigs before final compression. Initial budgets: three retained candidates, 2 MiB per encoded clip and bounded assembly/transfer queues. If a candidate cannot fit without losing truthful contact, choose a suitable complete one or a still/standings fallback. Never silently lower quality to an unusable buffer. Record dedicated/headless-render limitations.
-
-Pre-stage candidate content during play through bounded reliable chunks and readiness acknowledgements. Identify match/round/clip/version and verify payloads. Host chooses the canonical clip; clients do not select from incomplete local logs. Late/incomplete/unsupported content gets a truthful contact still, explanation and standings at the same phase times, never indefinite loading. Chunk/bandwidth limits must respect and be measured against the installed transport.
-
-Replay has its own world-sound route, retaining material/contact cues and variation without relaying them or replaying announcer/award callbacks. Show REPLAY, stable identity and one concise reason. Preserve setup, contact and consequence; slow only the useful key moment. Do not replay the entire frozen ultimate introduction as active-play footage.
-
-For default eight rounds, halftime follows round 4 and lasts about 10 seconds total: one complete replay package, brief standings and next-taya orientation. It replaces the ordinary transition, including card/countdown. Ordinary gaps target 3 seconds; initial loading/readiness stays independent. Custom matches of 6+ rounds matches use the middle non-final break; shorter custom matches keep ordinary transitions. No new control/settings burden. Eight rounds target 28 seconds of total between-round time rather than 35.
-
-Refine SpectatorDirector's existing interests/stories around can, taya, retriever, shoe and safety. Stable wide orientation first; tighter shots only when helpful. No automatic live replay, new spectator-induced global pause or cuts on every score. Manual input keeps ownership until autopilot is requested again.
-
-Required checks: round-one retention to halftime; actual participant delivery; late/missing/corrupt fallback; custom lengths/no final-round halftime; shared end; faithful contacts/possession/fields; no score/resource changes; separate audio/UI; manual takeover; memory/readback/queue bounds and rematch cleanup.
-
-### G. Sound, comfort and physical continuity
-
-Keep world event, personal feedback and sparse broadcast recognition separate. Material/action signatures need attack/body/tail without three layers sounding like three hits. Preserve sources/licences and mix headroom. New short shove and lunge rush are starting refinements; listen to the mix rather than just inspect a waveform or successful lookup. Review throw, landing, pickup, protected tin, restore, block, lunge whiff, tag and escape together.
-
-Independent shake, cinematic camera, flash and announcer controls preserve alternative threat information and authoritative timing. Cosmetic offsets do not own aim/origin. Audio/camera/replay variation uses presentation-owned randomness. No repeated full-screen flashes, roll, FOV pumping, permanent tension wash or constant crowd/announcer chatter.
-
-Movement, stops, feet, jump/landing, grip, charge cancellation, pickup, slide, shove, punch, lunge, stagger and recovery connect at ordinary speed in body/FPP. Preserve rigs, simple hands, approved models and mappings. Add no rooting/input delay to fit a pose. Reuse clips only for actually shared actions, not unrelated hero powers.
-
-### Implementation ownership map
-
-- Exchange work extends Slipper, Carrier, CombatVerbs, Lata, CharacterAnimator,
-  ViewmodelArms and the current native HUD. No parallel possession/feedback system.
-- Catch/replay extends MatchPoseHistory and CatchReconstruction, then existing
-  MatchHighlights/HighlightWatch, SpectatorCamera and SpectatorDirector. Current
-  body history must gain prop/event retention before it can serve full highlights.
-- Chain rules live in Core; MatchDirector/RoundDirector and accepted Slipper/CombatVerbs
-  outcomes own awards and reset boundaries. HUD/audio only consume accepted results.
-- Ultimate orchestration integrates HeroKit, HeroAbility and HeroAbilitySystem with
-  a small shared phase owner, existing time/camera/input handling and six authored
-  profiles. It does not replace kits or create another generic game manager.
-- Existing MatchRpc message registration and NetSession compatibility need bounded
-  C4 handback. Existing WorldEffectSnapshot is a reference for reconstructable
-  public fields, not a reason to duplicate its authority.
-- Pacing integrates MatchDirector/SliceRunner, RoleSwapCard, BufferSkipVote and the
-  existing balance/rules definitions. Initial readiness stays separate.
-
-### H. Validation and delivery gates
-
-Use development ASTRAReworks and the detached validation worktree already created. Freeze coherent inputs and record base/patch/new files, selected cases, command/profile, logs/XML/artifact and owned handle. No live sync. Restore only identified test/importer rewrites, especially QualitySettings, after owned jobs stop. Keep writable caches/profiles/outputs isolated. One heavy workload is default; bounded real-peer tests use known headroom, not performance certification under competing capture jobs.
-
-Choose checks by actual risk: Core for deterministic chain rules, focused PlayMode for action/camera/state/lifecycle, native builds for assets and real routes, actual peers for delivery/authority. Require fresh nonzero XML with intended cases. Preserve baseline and fixture failures separately. Reuse unchanged valid evidence; no automatic full-suite/rebuild matrix.
-
-At integration, inspect busy Classic/Hero Strike matches, repeated catch/ultimate comfort, cumulative cinematic time, relevant overlap, compressed/muted footage, sound identities, Low effects and representative PC aspects. Check control return, role/round/rematch changes, memory/queue cleanup and frame-time spikes. Staged captures, spawning and source inspection are not human feel approval.
-
-Deliver exact tested build/source identities, ordinary-speed clips/captures and concise receipts. Separate later unverified edits and retain a tested fallback. Push scoped checkpoints to ASTRAReworks, preserving unrelated dirty work and friend authorship. Never replace Desktop or publish main.
-
-### Ownership dependencies and deferred work
-
-C1-C3 have an explicit handback. Old ratio/registry investigations are retired from automatic execution; the exact 48-idle attribution is historical unresolved, not a prerequisite. Preserve fixes and the measured no-rewrite result.
-
-C4/149.4 remains reserved; no later handback was found in branch/history/doc checks. Necessary score/event/phase/replay registration and compatibility touch MatchRpc.cs/NetSession.cs. Record those exact dependencies. Do not overwrite the lane, create a competing admission system or block unrelated work on the whole audit. Core rules, authoring, local presentation and bounded presentation witnesses outside those files can advance. No questions or other worker/chat contact is currently requested. On an actual documented release, implement the narrow dependency and its tests, not the entire old inventory.
-
-Defer broad map beautification/new maps, Rafi/seventh hero/water-village expansion, Inday reconstruction, broad U8/device matrices, unrelated outage permutations and speculative optimizations. Preserve assets, concepts, IDs and useful rejected alternatives. A concrete collision/retrieval/occlusion/performance blocker can receive a bounded repair. No redesign of completed menu/login/controller artwork.
-
-## Preserved earlier direction and evidence
-
-The sections below retain useful recipes, rejected alternatives and historical evidence. Their demo-day, map-first and UI-out-of-scope scheduling is superseded by this design and the canonical TODO. Historical anchors stay valid. The exact prior file is preserved in [planning intake](reports/presentation-pass-2026-09-21/planning-intake/NATIONALS_POLISH.md).
+# Nationals polish: coherence, identity and memorable play
+
+**Owner clarification:** still try to complete the ENTIRE to-do list. Visibility
+changes priority, not scope. Secure a tested demo candidate, then continue the rest
+immediately as time allows, including before tomorrow. Do not stop at the candidate
+or wait for the demo date. Record completed/verified/pending-playtest states in
+TODO.md, ACTIVE_REWORK_LEDGER.md and DEMO_PLAYTEST_CHECKLIST.md.
+
+
+**LATEST owner priority, September15: demo tomorrow, September16.** Follow the new
+ordered CURRENT IMPLEMENTATION QUEUE in docs/TODO.md. First fix main-route blockers,
+prove both modes in a fresh native player, check visible existing-hero gameplay,
+validate needed LAN continuity, then freeze/rehearse a versioned demo candidate.
+This supersedes finishing all UI before any gameplay. Broad polish, exhaustive
+network/device matrices, deferred Inday and the seventh hero/map remain saved later.
+Keep working through stable checkpoints. Preserve original login,8-round defaults,
+dark settings and all existing creative constraints. No agents, paid fallback,
+Figma, resets or Desktop-build update. Primary assumed demo is Windows offline bots;
+LAN is secondary until the owner says otherwise.
+
+
+**Standing owner art requirement, 2026-09-10:** all new/reworked models must look
+like they came from TUMP. Keep clean chunky forms and purposeful detail consistent
+with the actual game. Visual fidelity must not drift into realistic anatomy or
+surface noise. Motion can gain weight and precision while the models stay cute
+and blocky. [Art_Direction.md section0](../../../Art_Direction.md#0--new-models-must-belong-to-tump)
+defines the rule and review criteria. Section0.1 also requires animation polish
+to include casting and skill VFX, with distinct action sequences and no repeated
+animation unless reuse is necessary.
 
 ## 0. MISSION
 
-Historical mission context follows. Current order is in TODO.md; current source,
-jobs and next action are in ACTIVE_REWORK_LEDGER.md.
+Current execution is being wrapped up at the owner's request, with unfinished
+maps explicitly permitted in the chat handoff. This roadmap remains the broader
+goal, not a completion claim. Use MAP_FINAL_PASS.md and the newest execution
+pointer in ACTIVE_REWORK_LEDGER.md for the actual checkpoint and remaining work.
 
 The current strategic roadmap for game feel, presentation and Nationals polish.
 The systems-expansion era has supplied enough machinery. The next win is making a
@@ -202,16 +42,16 @@ player remember the moment they ran back for a slipper with the taya closing in.
 Classic remains the tournament ruleset unless the human changes that decision.
 
 This file decides **what matters next and why**. It is not another execution queue.
-When an increment is selected, engineering belongs in [TODO.md](TODO.md), animation
-and Blender work in [ASTRA.md](../ASTRA.md), and human judgments in
-[Attention.md](../Attention.md). Reuse the existing entry where one exists. Do not
+When an increment is selected, engineering belongs in [TODO.md](../../../TODO.md), animation
+and Blender work in [ASTRA.md](../../../../ASTRA.md), and human judgments in
+[Attention.md](../../../../Attention.md). Reuse the existing entry where one exists. Do not
 copy this whole roadmap into those queues or track completion here. ASTRA and
 CLAUDE below are ownership lanes, not instructions to contact another conversation.
 
-The former UI/HUD exclusion is superseded for gameplay HUD, milestones and replay.
-New modes, heroes, meters, controls and progression remain outside this pass. [FUTURE.md](FUTURE.md) is the retired systems-era roadmap;
-[INSPIRATION.md](INSPIRATION.md) remains research and reasoning, not a next-work order.
-[AGENTS.md](../AGENTS.md) governs repository work and [VISION.md](VISION.md) governs
+UI/HUD design is outside this roadmap. So are new modes, heroes, abilities, meters,
+controls and progression. [FUTURE.md](../../../FUTURE.md) is the retired systems-era roadmap;
+[INSPIRATION.md](../../../INSPIRATION.md) remains research and reasoning, not a next-work order.
+[CLAUDE.md](../../../../CLAUDE.md) governs repository work and [VISION.md](../../../VISION.md) governs
 the product. Existing balance and authority contracts stay intact.
 
 **Evidence boundary, revised 2026-09-09 from `58e0f57f`, game source still
@@ -249,7 +89,7 @@ play, not a longer list of closed issues.
   deduplication rather than replacing the stack.
 - **Animation is authored, not absent.** All eighteen hero actions are on their
   respective rigs and both custom rigs; all twenty shipped character entries carry
-  `slide`. [Roster import evidence](reports/roster-clip-import-v5.json) resolves the
+  `slide`. [Roster import evidence](../../roster-clip-import-v5.json) resolves the
   serialized clips. The six motion identities in ASTRA.md are meaningfully different
   in their pose design. This proves coverage and import, not excellence in motion.
 - **There is already a Filipino world to finish.** Lata label art, sourced tsinelas,
@@ -531,7 +371,7 @@ Judge the live ability rather than polish a probe-only effect.
 Follow VISION § 2: normal skill radius guidance is **1.6-2.3 m**; trails are governed
 by their live cap, not one disc. The older sourcing document's radius range is not
 the current bar. Preserve authoritative per-ability geometry; compare to the
-[commit-stamped footprint report](reports/ability-footprint-8327a1ec7671.md) and
+[commit-stamped footprint report](../../ability-footprint-8327a1ec7671.md) and
 refresh it only when that geometry changes. Keep the **12% white-frame ceiling**,
 but also demand visible lata, chalk, players and loose slippers in overlapping
 effects. Passing a luminance bound alone does not establish readability.
@@ -593,7 +433,7 @@ replacement. A new rendering feature needs visible benefit and measured cost on
 target hardware, including the supported lower setting. Warm probe cost alone
 cannot approve it. Cooler shadow does not mean saturated defense-blue streets.
 
-Read [Art_Direction.md](Art_Direction.md) before choosing new environment colors:
+Read [Art_Direction.md](../../../Art_Direction.md) before choosing new environment colors:
 offense orange and defense blue identify roles, not decoration. Preserve authored
 assets under CLAUDE § 6.0, including the jeepney's original materials and livery;
 do not recolor or decimate it to enforce a generic palette. Some old art/map prose
@@ -653,7 +493,7 @@ reveal metal without road darkness or glare. Avoid a neon reskin. A subdued urba
 bed yields to footsteps, while the existing rare train provides the interruption.
 
 **Foundation concern is retrieval continuity.** The
-[six-seed report](reports/bot-sweep-2fde55d32246.md), on its recorded commit, has
+[six-seed report](../../bot-sweep-2fde55d32246.md), on its recorded commit, has
 0-48 idle penalties in Hero Strike on Ilalim, with almost all the dead time in one
 seed. That is a location to investigate, not proof of an unreachable slipper or
 broken map. Trace that recorded outlier before polishing the implicated retrieval
@@ -676,9 +516,6 @@ first. One meaningful shop response can earn A tier; another decorative backgrou
 motion accent remains C. No automatic traffic, moving everything or hidden players.
 
 ## 8. REVISED NATIONALS PRIORITIES
-
-Historical tiers: the current TODO order supersedes their scheduling. Map-wide
-art direction below is deferred, not the second active task.
 
 ### Two layers, one quality reference
 
@@ -748,10 +585,6 @@ serve S/A, while another background accent can wait. Remove tasks whose only val
 is being measurable or whose addition duplicates an existing beat.
 
 ### DO NOT DO BEFORE NATIONALS
-
-The former blanket HUD/scoring/freeze exclusions below are historical. The owner
-now authorizes own-only retrieval, capped chains, gameplay HUD, shared cinematic
-phases and halftime. Unrelated new mechanics/destructive changes remain outside scope.
 
 No new modes, heroes, abilities, meters, controls, progression, hazards or UI/HUD;
 no wholesale roster, audio-library or renderer replacement; speculative pooling,

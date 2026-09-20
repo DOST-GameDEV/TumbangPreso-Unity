@@ -1,6 +1,48 @@
 # Presentation pass, 2026-09-21
 
-## Current verified exchange checkpoint
+## Planning correction and subsequent source
+
+The owner clarified that the compact priority list was insufficient and requested
+thorough planning/document cleanup before further game edits. The chosen design
+now lives in [NATIONALS_POLISH](../../NATIONALS_POLISH.md#current-delivery-design-2026-09-21),
+with one ordered TODO queue and one compact resume ledger. Prior planning files
+and the obsolete TODO startup block are preserved under planning-intake. Current
+routing, HUD/identity scope, map/expansion deferrals and C1-C3/C4 ownership now agree.
+47 current local links and44 introduced/updated links/anchors passed checks; no
+Unity test was warranted for the documentation change.
+
+Current implementation source is117ff426. Subsequent receipts are in the validation
+workspace Logs directories named below; they are not transferred pass claims for
+later source changes:
+
+- comfort-tests-v1:3/3 EditMode PASS.
+- camera-integration-v1:7/7 PlayMode PASS for catch, throw aim and camera hold.
+- exchange-comfort-final:4/4 PASS for both-mode exchange/ownership and the separate
+  cinematic-camera preference. The protection collar was visually inspected.
+- catch-ordering-v1:4/4 PASS for render-only copies, ten repeated catches, remaining
+  recovery, delayed-state ordering, expiry and reduced-camera handling.
+- audio-catch-v1:5/5 PASS on117ff426, including actual imported shove/lunge cues,
+  private audio randomness and silence when restoring an action pose.
+- hero-intake-20260921:1/1 capture run accepted all18default skill slots in271.46s;
+  selected ultimate samples inspected. Isolated body/owner capture is not full
+  busy-match or artistic acceptance.
+- catch-native-v3: actual Windows both-mode controls and staged victim reconstruction
+  PASS on30b2e7a3; taya moved while the victim watched and recovery remained afterward.
+  Timestamped engine-frame clips are1280x720. These predate the latest ordering,
+  render-copy and audio changes. An occluded window recording was discarded.
+- net-catch-v1: three real native peers on buildv4 FAILED fixture setup. The client
+  remained at spawn after initialization overwrote a one-time fixture teleport; the
+  accepted punch correctly missed, producing no tag. One observer sample preceded
+  seating. No network-presentation pass is claimed. The117ff426 fixture now awaits
+  seating/readiness and walks the owner through normal replication; native rerun pending.
+
+The latest buildv4 compiled source130af331,1156MB/60s. Current117ff426 needs a new
+native build/run for its latest code/audio and corrected peer fixture. The C4
+reservation remains unresolved; shared ultimate time, new chain rewards/messages
+and canonical halftime delivery remain unimplemented. The current queue/ledger
+supersede the older continuation paragraph at the end of this report.
+
+## Earlier verified exchange checkpoint
 
 The low shader locator replaces the 2.2 m starter with a .48 m cue. Tin contact
 uses compact debris at the can instead of routine confetti and global hitstop.
@@ -51,7 +93,7 @@ assessment, multiplayer certification or completion of the full prompt. Audio
 listening, compression/motion reviews and a native explicit shader assertion remain
 open. Do not transfer these passes to subsequent catch-reconstruction source.
 
-## Still active
+## Earlier continuation note
 
 Victim catch reconstruction is being authored against shared bounded body history.
 It is unverified and not in this build. Six ultimate performances/shared phase,

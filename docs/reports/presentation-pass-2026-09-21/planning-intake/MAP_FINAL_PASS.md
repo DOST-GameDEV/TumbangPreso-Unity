@@ -1,9 +1,4 @@
-> Deferred by the owner's2026-09-21 presentation-first order. Preserve this plan,
-> assets, approvals and unfinished work. Broad map reconstruction is not an active
-> prerequisite. Only a concrete current collision/retrieval/occlusion/performance
-> blocker permits a bounded repair. Follow [the current queue](TODO.md#current-implementation-queue).
-
-**Newest owner playtest corrections:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
+**Newest owner playtest corrections:** [OWNER_PLAYTEST_REVISION.md](../../../OWNER_PLAYTEST_REVISION.md).
 Current implementation/run state is the newest active ledger pointer.
 
 # Final map improvement pass
@@ -13,8 +8,8 @@ Use AGENTS.md and the newest active-ledger pointer. The saved/reopened two-run
 semantic comparison now passes on all three maps (16667 normalized rows, zero
 changes). The isolated flight/carrier defects have4/4 focused regressions, with
 the historical48-idle outlier still unattributed. See
-[map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md) and
-[map-repeatability.md](reports/improvement-2026-09-12/map-repeatability.md).
+[map-retrieval.md](../../improvement-2026-09-12/map-retrieval.md) and
+[map-repeatability.md](../../improvement-2026-09-12/map-repeatability.md).
 Composition, route/idle and real FPP/exact-player review remain open. The older
 Eskinita side-eye captures at x=+/-10 are outside its8.1m wall; do not call them
 legal first-person views. Current real FPP uses the live1.25m offset and95-degree
@@ -42,7 +37,7 @@ mark the whole map plan complete. The rows below remain the continuation goal.
 Final checkpoint verification:489/489 EditMode,8/8 editor checks,14/14 source
 audits and1/1 ordinary Classic capture covering all three maps. Unity is closed;
 17 existing profile files were restored. No new final Windows build was made.
-See [map-checkpoint.md](reports/improvement-2026-09-10/map-checkpoint.md) for
+See [map-checkpoint.md](../../improvement-2026-09-10/map-checkpoint.md) for
 before/after images, precise evidence and unresolved work. The slipper runtime
 experiment was reverted; its source/patch survive as non-compiled investigation
 text. Finish broader composition, route/edge/idle and exact-player review later.
@@ -67,7 +62,7 @@ the inventory is unsuitable. Trees are an explicit owner deliverable.
 
 ## Reference and composition
 
-The earlier [world direction](reports/improvement-2026-09-10/world-direction.md)
+The earlier [world direction](../../improvement-2026-09-10/world-direction.md)
 records observed Philippine reference photographs and the main composition.
 Additional primary references inform this pass:
 

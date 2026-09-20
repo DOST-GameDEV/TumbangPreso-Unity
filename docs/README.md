@@ -8,28 +8,13 @@ add its row here in the same commit.
 
 ## Read these, in this order
 
-The current compact action plan is [EXECUTION_PLAN.md](EXECUTION_PLAN.md), written
-at the owner's request for compaction-safe continuation. Read it with the newest
-active-ledger pointer after AGENTS/VISION/TODO.
-
-For the current continuation, read [ACTIVE_REWORK_LEDGER.md](ACTIVE_REWORK_LEDGER.md)
-after the required rulebook/VISION/TODO order. [MAP_FINAL_PASS.md](MAP_FINAL_PASS.md)
-tracks the unfinished map pass, references and verified iterations. The owner now
-permits unfinished maps in the requested wrap-up handoff. Kuro's latest source,
-expressions, tests and limitations are in
-[kuro-matching-forms.md](reports/improvement-2026-09-10/kuro-matching-forms.md).
-The partial map implementation and its explicit limitations are in
-[map-checkpoint.md](reports/improvement-2026-09-10/map-checkpoint.md).
-The new continuation's isolated flight correction and saved-authoring verification
-are in [map-retrieval.md](reports/improvement-2026-09-12/map-retrieval.md) and
-[map-repeatability.md](reports/improvement-2026-09-12/map-repeatability.md).
-
-The active 2026-09-09 improvement pass also uses
-[IMPROVEMENT_PLAN.md](IMPROVEMENT_PLAN.md) for durable progress,
-[CALM_FRONT_END.md](CALM_FRONT_END.md) for the supplied UI direction and flow,
-and [LORE.md](../LORE.md) for the sporting world and character/place connections.
-[FONT_USAGE.md](FONT_USAGE.md) records the supplied faces, their roles and import fixes.
-They preserve the required rulebook, VISION and TODO read order below.
+Start with [AGENTS](../AGENTS.md), the [active ledger](ACTIVE_REWORK_LEDGER.md)
+and [current TODO queue](TODO.md#current-implementation-queue). Then read the relevant
+section of the [current implementation design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21)
+and its topic references. EXECUTION_PLAN/GAMEPLAY_RESUME are routing pointers.
+Older demo/UI/maps-first scheduling is preserved history, not another startup order.
+MAP_FINAL_PASS and BADJAO_EXPANSION are deferred. Read historical reports only when
+the selected work needs their evidence or rejected alternatives.
 
 | File | What it is |
 |---|---|
@@ -49,7 +34,7 @@ They preserve the required rulebook, VISION and TODO read order below.
 | [`Hero_Strike_UI.md`](Hero_Strike_UI.md) | **What Hero Strike puts on screen and what it deliberately does not.** The ability bar, the charge readout and the cooldown language, measured against the same `VISION.md` § 2 readability budget the abilities themselves are. |
 | [`Hero_Strike_Balance.md`](Hero_Strike_Balance.md) | **What `Design.md` § 13 hands off.** § 1 is the per-ability floor footprint table, measured against the `VISION.md` § 2 readability budget, and it is the only place that table has ever existed. § 2 is the cooldown and ultimate economy as shipped. §§ 3 and 4 are the rework proposal and are **not built**. |
 | [`Front_End_Design.md`](Front_End_Design.md) | **The five front-end screens, designed: one theme, and five screens that are not each other.** `CLAUDE.md` § 6.2, § 6.2b, § 6.2c and § 6.3 plus `FUTURE.md` § 0.5b, applied to the lobby, settings, character select, login and profile for `docs/TODO.md` § 133. Carries the split that resolves 🧑's two pulling briefs (**repeat the chrome, never the composition**), the recurring marks that guide without teaching, each screen's anchor colour and borrowed archetype, the two-face type rule with the measurement that decided where ALL CAPS may go, the palette's six roles, and every journey walked out loud with its press count. ⚠️ **The in-match layer is not in it and must not be touched in that pass.** |
-| [`Art_Direction.md`](Art_Direction.md) | **Start with section0: new models must match TUMP's cute blocky style and avoid excessive detail.** Then the colour law, the scale and height laws, arena geometry, and which tool produces which asset.** § 1 is the one that never bends: **orange is OFFENSE, blue is DEFENCE**, and nothing else in the frame may sit near those hues. Read before adding anything the player looks at. |
+| [`Art_Direction.md`](Art_Direction.md) | **Start with section0: new models must match TUMP's cute blocky style and avoid excessive detail.** Then the colour law, the scale and height laws, arena geometry, and which tool produces which asset. The current presentation design keeps seat identity stable and the role badge separate; older role-only hue rules are qualified by the latest owner direction. Read before adding visuals. |
 | [`Asset_Sourcing.md`](Asset_Sourcing.md) | **The verified zero-cost source list for the Hero Strike VFX and SFX replacement pass.** Maps every one of the eighteen abilities to specific CC0 art, lists recorded CC0 sound sources, records public-repository licence limits, and keeps later building/map candidates without touching the existing characters. ⚠️ **The implementation is `TODO.md` § 131**, and three tools carry it: `tools/fetch_asset_sources.py` rebuilds the gitignored download cache without an account, `tools/build_vfx_sheets.py` recolours the art into `UiTheme`'s own hero families, and `tools/build_ability_audio.py` replaces the cues. The licence for what actually ships travels with the art in `Assets/TumbangPreso/Resources/Vfx/SOURCES.txt`. |
 | [`HUMAN.md`](HUMAN.md) | **The standing instructions in his own words**, which is the record of what has already been asked for and what has already been rejected. Check it before proposing something that sounds new. |
 | [`art_refs/`](art_refs/) | The reference art the props were drawn from. ⚠️ `Art_Direction.md` § 4a records that the drawing-derived slippers were deleted and must not be rebuilt. |
@@ -58,8 +43,8 @@ They preserve the required rulebook, VISION and TODO read order below.
 
 | File | What it is |
 |---|---|
-| [`../AGENTS.md`](../AGENTS.md) | **Small agent routing guide.** Points to the canonical read order, polish roadmap and existing ownership queues; `CLAUDE.md` wins on conflicts. |
-| [`NATIONALS_POLISH.md`](NATIONALS_POLISH.md) | **The current strategic roadmap for game feel, presentation and Nationals polish.** What matters next and why, the quality bar, priority tiers and bounded first batch. Execution remains in `TODO.md`, `../ASTRA.md` and `../Attention.md`; UI/HUD design is out of scope. |
+| [`../AGENTS.md`](../AGENTS.md) | **Small agent routing guide.** Points to the canonical read order, polish roadmap and existing ownership queues; Current owner instructions and `AGENTS.md` govern; `CLAUDE.md` preserves historical detail. |
+| [`NATIONALS_POLISH.md`](NATIONALS_POLISH.md) | **The current strategic roadmap for game feel, presentation and Nationals polish.** What matters next and why, the quality bar, priority tiers and bounded first batch. Execution order/status stays in `TODO.md` and `ACTIVE_REWORK_LEDGER.md`. Gameplay HUD, chains, shared ultimates and halftime are in the current scope. |
 | [`FUTURE.md`](FUTURE.md) | **The retired systems-era roadmap.** Historical phases, prompts and reasoning for the live-service and competitive systems. Preserved section references remain valid; its prompts are no longer the default next-work order. See `NATIONALS_POLISH.md` for current priorities. |
 | [`INSPIRATION.md`](INSPIRATION.md) | **What to steal from thirty other games, and what it becomes in a four-player street game with a rotating taya.** The WHY behind `FUTURE.md`'s WHAT. Game by game with a "what it becomes here" for each, plus the queue-versus-mode structure (ranked is its own menu entry, not a third ruleset), the loadout and challenge-unlock design, achievements, and the problems a four-player free for all has that no borrowed system solves: **three of four players lose every match**, and a player far behind at the final round has nothing to play for. Carries ten paste-ready prompts in its § 8, a rejected register in § 10 recording every idea he has killed and why and a combined 27-step order with `FUTURE.md`'s phases in § 8.6. ⚠️ **Historical research and priorities, not the current implementation order; see `NATIONALS_POLISH.md`.** |
 

@@ -1,9 +1,9 @@
 # Deferred seventh hero and water-village expansion
 
-**Deferred by the2026-09-21 presentation-first order.** Preserve selected concepts,
-models, kit/lore drafts and the stilt-village direction. Do not resume expansion
-from an old scheduling paragraph. Revisit after the current presentation pass or
-an explicit new priority. [Current queue](TODO.md#current-implementation-queue).
+**Current scope,2026-09-14:** owner removed the remaining UI work from this
+active queue. Earlier finish-UI ordering below is historical. Preserve UI source
+and references; continue non-UI work, deferred Inday, then expansion LAST LAST.
+
 
 **SELECTED by the owner, 2026-09-14: character B + map C.** Use the tied-hair,
 rolled green shirt and practical boatcraft direction, with a central court

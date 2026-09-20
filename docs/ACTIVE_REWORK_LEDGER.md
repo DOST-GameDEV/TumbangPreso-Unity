@@ -1,71 +1,98 @@
 # Active TUMP rework ledger
 
-## Current assignment, 2026-09-21
+## Owner direction and current phase
 
-Owner is asleep and explicitly requires autonomous continuation, no questions,
-no stopping at ordinary checkpoints. Complete the implementation prompt in this
-conversation. No credits/paid tools, resets, delegation or Desktop replacement.
-[Queue](TODO.md#current-implementation-queue), [full brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
+Original assignment: implement the full gameplay-feel/watchability brief in this
+conversation. Autonomous continuation, no questions, no paid tools/credits, no
+resets, no delegation/other chats, no Desktop replacement. The owner's latest
+correction requires a thorough plan/new order and doc cleanup before further
+runtime edits. Implementation progress is preserved; do not restart it.
+
+Current phase: planning correction written and checked; commit/publish it, then
+resume the first bounded implementation item. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+[Only execution queue](TODO.md#current-implementation-queue).
+[Original brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
+
+Order: current checkpoint qualification -> complete busy ordinary exchange ->
+shared accepted-event/contact/time contracts -> capped chains and shared ultimate
+phase -> all six performances/default kits -> canonical retained highlights and
+halftime -> integrated match/peer/comfort qualification. Dependencies can overlap
+in separate safe workspaces; unrelated old investigations do not take priority.
+
+## Workspaces and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-ASTRAReworks. Intake HEAD 3b9c28d6; fetched and safely fast-forwarded upstream
-2c89eb50, then friend's f4c819f924b101798993cec55a974e25fdd1bdfe (shader locator).
-No source changes overwritten. Initial 24 modified plus 2 untracked files are
-byte-preserved with SHA256 manifest at Logs/presentation-pass-2026-09-21/intake.json
-and intake-files. They include UI/probe/Sean diagnostic work and Inday assets;
-not authored or qualified by this assignment, do not sweep into commits.
+branch ASTRAReworks. Implementation source HEAD 117ff426bb6d58e14f76b9f1187eed5ad267cbcc.
+The planning commit may be newer with documentation/comment-only differences.
+Last verified remote: f1265af29a860b183d673175f4c6962fbe7b84f5; later code is local.
+Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
+detached 117ff426; Unity 6000.5.8f1, Test Framework 1.7.0. Every Editor launch remains
+under tools/run_unity_guarded.py with profile presentation-validation-20260921.
 
-## Friend-work intake
+Initial 24 modified + 2 untracked files were byte-preserved under
+Logs/presentation-pass-2026-09-21/intake-files with intake.json hashes. They include
+unrelated UI/probes/Sean diagnostic work and Inday assets. They remain outside this
+assignment's commits, including selected owned hunks in otherwise dirty files.
+Current extra uncommitted work is documentation cleanup and a Slipper comment.
 
-Owner says check all three branches. camera-feel-lifecycle-pass at fe9baa16 and
-abilities-rework at dd44acd1 are already ancestors of integration HEAD (zero
-unmerged commits). Preserve their camera/lifecycle/ability/control work; improve
-relevant behavior in place. feature/slipper-beam-shader f4c819f9 was one unmerged
-commit based on current upstream; now fast-forward integrated with original
-provenance. Shader and actual runtime hook/build inclusion/tests came together.
-Own-only rule 42fb4d45 and recall UI are already integrated. Beam is functional
-starter, 2.2 m tall, local-owner colour/settings; refine to the requested low cue
-and assess in normal gameplay. Existing Mac tests are historical, not Windows proof.
+## Friend-work and ownership
 
-## Decisions and actual state
+All three requested branches checked: camera-feel-lifecycle-pass(fe9baa16) and
+abilities-rework(dd44acd1) were already integrated ancestors. Shader beacon
+feature/slipper-beam-shader(f4c819f9) was fast-forwarded with original authorship,
+then refined in place. Normal ownership/recall implementation 42fb4d45 was retained
+and extended rather than duplicated. Original tall beam is now a low cue.
 
-- Documentation now routes through one queue/ledger. Original AGENTS, execution
-  plan, resume and dirty ledger preserved whole in current report/intake.
-- C1-C3 explicit handback verified at lane end. C4 MatchRpc.cs/NetSession.cs remains
-  reserved; shared cinematic/replay transport may need that dependency. Do not
-  duplicate the audit. Continue independent presentation/ownership work.
-- Unity 6000.5.8f1 exists at C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe.
-  Test Framework 1.7.0. No Unity/game/blender/python process existed at intake.
-- Current implemented source is NOT newly tested. Historical v37/manual spectator
-  and source reports remain in archived ledger; no inherited pass for new changes.
+C1-C3 explicit handback verified. C4/149.4 remains reserved; no later release was
+found. New score/event/phase/replay registration and compatibility need MatchRpc.cs/
+NetSession.cs work under a bounded handback. No competing admission system or
+cross-chat coordination. Independent core/art/presentation work can continue.
+Maps/expansion/Inday reconstruction/broad U8 and unrelated matrices stay deferred.
 
-## Jobs / tested snapshot / next action
+## Implemented versus verified
 
-Verified exchange: cde9a55cd9f35dcc16128501c0bc67a18e2fe527 plus the normal build's
-SlipperBeam shader registration (now recovered to development). Exact generated
-input patch, file hashes, XML and native receipts are in
-[the report](reports/presentation-pass-2026-09-21/README.md).
-Final focused exchange3/3PASS; prior related selection14/15, one remote-smoothing
-failure also reproduced on untouched f4c819f9. Preserve that inherited limitation.
-Low beacon, can/down/restored captures and native restored-can image inspected.
+Implemented: low shader locator, own-use guards including force equip/throw and
+bounded training exceptions; compact tin contact, personal confirmation, stable
+seat identity, side feed, can marker/collar and truthful danger; bounded victim
+reconstruction using render-only bodies/held item, recovery cutoff and event-before-
+state handling; independent comfort/announcer settings; aim/RNG isolation; distinct
+shove/lunge cues. Full chains, shared ultimate phase/profiles and halftime are open.
 
-Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation.
-Windows Builds/exchange-presentation-v1/TumbangPreso.exe,1156MB/161s, build guard
-82bc2b266774. Native Logs/exchange-native-v1 PASS actual both-mode menu-to-game
-control routes. Shared input unchanged. PID17392 retired. All owned jobs stopped.
-Earlier guards/results: baseline61dc59bf8a2f; failed fixture383d90273892;
-related3a2e581940b5; baseline smoothingbb9cfaa43a0e; final exchange886bd206eba7.
+Latest focused source 117ff426: audio/catch 5/5 PASS, 32.10s,
+validation Logs/audio-catch-v1, guard 08d5cf43dc2e. Earlier relevant passes include
+comfort 3/3, camera/throw/hold/catch 7/7, collar/preference 4/4 and ordering/copies 4/4.
+Default hero input capture 1/1 covered all 18 slots at 30b2e7a3; selected ultimate frames
+inspected. These do not establish full six-hero artistic or busy-match acceptance.
 
-Development dirty follow-on: Camera/MatchPoseHistory.cs and CatchReconstruction.cs
-with meta files; Hud.Native.cs hooks them into real matches. Eight-second bounded
-transform history; victim-only recorded copies, no collider/authority logic, no
-live camera/aim transform change, 1.1s maximum ending before remaining recovery.
-NOT COMPILED/TESTED, NOT in the current build. Next: add lifecycle/contact/deadline
-regressions and inspect actual catch motion, including duplicate renderer restore.
-Do not transfer prior build passes to this source. Preserve initial unrelated dirty
-files listed in Logs/presentation-pass-2026-09-21/intake.json.
+Latest actual both-mode native pass: source 30b2e7a3, Builds/catch-presentation-v3,
+1156 MB/51s, guard c1ff4ca4fa33. Logs/catch-native-v3 contains passing controls/catch
+receipts and timestamped 1280x720 engine movies. They predate latest pure-copy,
+ordering, plain-stun and audio changes. Window-based capture was discarded because
+it captured occluding app pixels. Use engine frames and recorded timing only.
 
-Owner still requires autonomous continuous implementation, no questions or resets.
-Continue full scoped pass after checkpoints. C4 dependency remains reserved.
+Build v4 source 130af331 compiled 1156 MB/60s, guard ffceba45e4c0. Its three-peer witness
+FAILED fixture setup: victim stayed at spawn after initialization overwrote a one-
+time teleport; accepted punch correctly missed. Observer included one pre-seating
+sample. Logs/net-catch-v1 preserves CSV/log/results; shared input unchanged.
+Corrected 117ff426 witness awaits actual seating/readiness and walks the owning
+client through normal replication. It has not been run natively yet.
 
-[Earlier ledger and evidence](reports/presentation-pass-2026-09-21/intake/ACTIVE_REWORK_LEDGER.md).
+Inherited remote-smoothing test failure reproduced on untouched f4c819f9; retained,
+not fixed/suppressed. No full-match, real network-spectator or human approval claim.
+[Detailed receipts/history](reports/presentation-pass-2026-09-21/README.md).
+
+## Jobs and next concrete action
+
+No owned Unity/native/encoder jobs running; the last audio/catch handle 7644 is
+retired. Tests can serialize whitespace and change QualitySettings from a selected
+profile. Preserve the diff, restore only proven test-generated changes after exit,
+and record an exact base/input manifest before the next build. Never restore the
+initial unrelated development changes or touch real profiles.
+
+1. Planning checks passed: 47 current local links, 44 introduced/updated links and
+   anchors, required design sections and all six hero directions, and git diff --check.
+   Commit/publish the doc correction; no Unity rerun is required for these doc edits.
+2. Resume checkpoint closure: build current source with reviewed validation inputs,
+   then run the corrected three-peer witness and actual native both-mode/engine
+   movie route. Inspect results; fix only demonstrated causes and publish evidence.
+3. Continue the ordered outcomes above. Do not claim the full pass from this slice.

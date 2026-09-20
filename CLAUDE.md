@@ -1,5 +1,12 @@
 # CLAUDE.md
 
+> Historical detailed instructions and incident receipts. Current routing and standing
+> constraints are in [AGENTS.md](AGENTS.md); current order/state are in
+> [TODO](docs/TODO.md#current-implementation-queue) and [the ledger](docs/ACTIVE_REWORK_LEDGER.md).
+> C1-C3 have a documented handback; C4 remains reserved. Older scheduling below
+> cannot override the2026-09-21 presentation-first plan or newer owner instructions.
+
+
 **Additional separate-PC assignment, September15:** TODO149.4 request safety is
 reserved under docs/CLAUDE_REQUEST_SAFETY_LANE.md. Read that file for C4 ownership,
 machine discovery and honest completion criteria. This does not reopen animation,

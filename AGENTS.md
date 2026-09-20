@@ -4,17 +4,24 @@
 
 The owner asked to implement the full gameplay-feel/watchability prompt and then
 said: "DO NOT ask me questions do not stop for any reason and just get this done".
-They are asleep. Continue autonomously in THIS conversation through coherent
+Continue autonomously while the owner is away in THIS conversation through coherent
 implementation, runtime inspection and refinement. Do not stop at a plan, one hero,
 a passing test or a checkpoint. Record a real blocker and continue independent work.
 No paid services, usage resets, subagents, other conversations or Desktop replacement.
 Do not infer permission to spend credits from the autonomous-work instruction.
 
+**Latest steering:** complete the thorough plan and documentation reconciliation
+before further gameplay edits. The detailed design lives in
+[the current Nationals plan](docs/NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+Preserve implemented progress. Once this planning correction is complete, continue
+through the canonical queue without another approval gate for ordinary in-scope work.
+
 ## Start and resume
 
 Read [active ledger](docs/ACTIVE_REWORK_LEDGER.md), then the
 [current queue](docs/TODO.md#current-implementation-queue). They are the only active
-resume/task pointers. Read topic details as needed: [vision](docs/VISION.md),
+resume/task pointers. The Nationals plan owns detailed feature design, not a second
+status queue. Read topic details as needed: [vision](docs/VISION.md),
 [play feel](docs/PLAY_FEEL_REWORK_PLAN.md), [ability plan](docs/ABILITY_REWORK_PLAN.md),
 [kit decisions](docs/HERO_KIT_REWORK_DECISIONS.md),
 [ability direction](docs/PHILIPPINE_ABILITY_DIRECTION.md), [art](docs/Art_Direction.md),
