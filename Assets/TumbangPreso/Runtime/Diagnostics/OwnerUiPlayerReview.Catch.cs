@@ -4,7 +4,6 @@ using System.Linq;
 using TumbangPreso.CameraSystem;
 using TumbangPreso.UI;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Object = UnityEngine.Object;
 
 namespace TumbangPreso.Diagnostics
@@ -15,6 +14,9 @@ namespace TumbangPreso.Diagnostics
         {
             Stage(label + " staged native victim catch and taya continuation");
             var round = GameServices.Round;
+            var tayaReader = taya.GetComponent<PlayerInputReader>();
+            bool readerEnabled = tayaReader != null && tayaReader.enabled;
+            if (tayaReader != null) tayaReader.enabled = false;
             var victim = round.Players.First(p => p != null && !p.IsDefender);
             var rig = Camera.main.GetComponent<CameraRig>(); var followed = rig.Following;
             bool motion = Settings.SettingsStore.Current.CinematicCameraMotion;
@@ -40,7 +42,7 @@ namespace TumbangPreso.Diagnostics
                 var reconstruction = Object.FindAnyObjectByType<CatchReconstruction>();
                 if (reconstruction == null || !reconstruction.Playing) throw new InvalidOperationException("Native victim reconstruction did not start");
                 if (!taya.CanAct()) throw new InvalidOperationException("Reconstruction locked the taya");
-                Keys(Key.W); yield return new WaitForSecondsRealtime(.22f); Keys();
+                taya.Intent.Move = Vector2.up; yield return new WaitForSecondsRealtime(.22f); taya.Intent.Clear();
                 if (Vector3.Distance(taya.transform.position, before) < .15f)
                     throw new InvalidOperationException("Taya did not continue moving while the victim watched the catch");
                 yield return Shot(label + "-native-victim-catch");
@@ -51,7 +53,9 @@ namespace TumbangPreso.Diagnostics
             }
             finally
             {
-                Keys(); rig.Follow(followed, true); Hud.Instance.Bind(taya);
+                taya.Intent.Clear();
+                if (tayaReader != null) tayaReader.enabled = readerEnabled;
+                rig.Follow(followed, true); Hud.Instance.Bind(taya);
                 victim.Intent.Clear(); victim.Intent.Parked = true;
                 Settings.SettingsStore.Current.CinematicCameraMotion = motion;
                 Settings.SettingsStore.Current.ReducedUiMotion = reduced;
