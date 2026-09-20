@@ -64,6 +64,19 @@ namespace TumbangPreso.PlayTests
             var round = GameServices.Round;
             Assert.IsNotNull(round, "the arena registered no round");
 
+            // ⚠️⚠️ THE HIGHLIGHT COLOUR IS SET EXPLICITLY, AND THE FIRST RUN OF THE BEAM FRAMES
+            // IS WHY. `SettingsStore.Current` persists to disk, so these shots were taken in
+            // whatever colour this machine happened to have chosen last: the witness frame came
+            // back RED while the shipped default is Blue. `LandedHighlightTests` opens the same
+            // way and records the same reason, that a stale `settings.json` must not be able to
+            // decide what a test measures or what a render shows.
+            //
+            // ⚠️ RAISED AS WELL AS WRITTEN. Setting the field alone leaves every listener on
+            // whatever it last cached, which for the beam means a column already standing in the
+            // old colour.
+            Settings.SettingsStore.Current.SlipperHighlight = Settings.SlipperHighlights.Default;
+            Settings.SettingsStore.RaiseSlipperHighlightChanged();
+
             // ⚠️⚠️ THE ROUND IS STARTED, AND NOT DOING SO COST THIS PROBE TWO RUNS. A freshly
             // loaded arena sits in the READY window: the HUD reads *"Warm up freely. Powers start
             // with the round"*, `RoundActive` is false, and `CharacterMotor.CanAct()` is
@@ -182,7 +195,43 @@ namespace TumbangPreso.PlayTests
 
             yield return Settle(mine, me, inward, 6.0f, faceShoe: true);
 
+            // § THE RECALL BEAM, which is the world half of the same question and is asserted in
+            // the same frame the screen mark is, on purpose: *"there shouldnt be any conflict
+            // with the slipperRecall"* is a claim about the two of them TOGETHER, and a picture
+            // of each on its own cannot show it.
+            var beam = mine.GetComponent<Visual.SlipperBeam>();
+            Assert.IsNotNull(beam,
+                "no beam was built for a loose tsinelas this seat owns, with the highlight on");
+            Assert.IsTrue(beam.Drawing,
+                $"the beam is not standing. state={mine.State} owner={mine.OwnerSlot} " +
+                $"seat={me.PlayerSlot} setting={Settings.SettingsStore.Current.SlipperHighlight}");
+
+            Color want = Settings.SlipperHighlights.ColourOf(
+                Settings.SettingsStore.Current.SlipperHighlight);
+
+            Assert.AreEqual(want.r, beam.Colour.r, 0.01f, "beam red");
+            Assert.AreEqual(want.g, beam.Colour.g, 0.01f, "beam green");
+            Assert.AreEqual(want.b, beam.Colour.b, 0.01f, "beam blue");
+
+            // ⚠️⚠️ THE SHADER IS ASSERTED SEPARATELY FROM THE PICTURE BECAUSE THE PICTURE CANNOT
+            // SHOW THE DIFFERENCE RELIABLY. 🧑 asked for this effect to be *"a shader not a
+            // model"*, and `VfxMaterial.Beam`'s fallback is a flat coloured cylinder standing in
+            // the same place at the same height: from the player's own eyes looking down at the
+            // road the two frames are very nearly identical, and one of them is the version he
+            // rejected. A lookup that fails in a player and nowhere else is exactly the split
+            // `GameBuilder.EnsureRuntimeShaders` exists to prevent, so this is the editor-side
+            // guard for it.
+            Assert.IsTrue(beam.Shaded,
+                "the beam fell back to a flat column, so TumbangPreso/SlipperBeam did not load");
+
             yield return Shot(mine, me, "recall-2-loose-at-range", SlipperState.Loose);
+
+            // ⚠️ A SIDE CAMERA, BECAUSE A COLUMN CANNOT BE JUDGED FROM ABOVE IT. The frames above
+            // are the player's own eyes looking down at the road, which is the right view for the
+            // ring and the wrong one for a 2.2 m vertical: § 127.3 records the identical finding
+            // about a floor marker caught only edge-on. This is the one that shows its height
+            // against a body.
+            yield return Witness(mine, me, "beam-witness");
 
             // The same frame at his own window, which is the shape § 6.2b says nobody has seen.
             yield return Shot(mine, me, "recall-2-loose-at-range-shortwide",
@@ -207,6 +256,15 @@ namespace TumbangPreso.PlayTests
                 $"radius={Balance.PickupRadius} holding={me.HoldingSlipper} " +
                 $"owner={mine.OwnerSlot} seat={me.PlayerSlot} canAct={me.CanAct()}");
 
+            // ⚠️⚠️ BOTH STAND DOWN, AND ASSERTING ONLY ONE OF THEM WOULD MISS THE POINT OF THE
+            // WHOLE HAND-OFF. The mark leaves the screen and the beam leaves the world, on the
+            // same `Balance.PickupRadius`, so the player standing over their own tsinelas sees
+            // `[X] Pick up` and nothing else competing with it.
+            Assert.IsFalse(beam.Drawing,
+                $"the beam is still standing inside the pickup radius. " +
+                $"d={Vector3.Distance(me.transform.position, mine.transform.position):0.00} " +
+                $"radius={Balance.PickupRadius} fade={Visual.SlipperBeam.FadeMetres}");
+
             yield return Shot(mine, me, "recall-3-in-reach-handover", SlipperState.Loose,
                               drawing: false);
 
@@ -222,6 +280,40 @@ namespace TumbangPreso.PlayTests
 
             if (reader != null) reader.enabled = true;
             if (bot != null) bot.enabled = true;
+        }
+
+        /// <summary>
+        /// A camera beside the tsinelas rather than above it, so a vertical reads as a vertical.
+        ///
+        /// ⚠️ IT FRAMES THE SHOE AND THE PLAYER TOGETHER. A column photographed alone has no
+        /// scale in it, and the one thing a person has to judge here is whether 2.2 m is right
+        /// next to a body, which is the number `SlipperBeam.Height` picked against the two maps
+        /// that are built under a roof.
+        /// </summary>
+        private static IEnumerator Witness(Slipper mine, CharacterMotor me, string name)
+        {
+            Vector3 shoe = mine.transform.position;
+            Vector3 mid = (shoe + me.transform.position) * 0.5f;
+
+            Vector3 along = me.transform.position - shoe;
+            along.y = 0.0f;
+            if (along.sqrMagnitude < 0.01f) along = Vector3.forward;
+            along.Normalize();
+
+            // Off to the side of the line between the two, so neither hides the other.
+            Vector3 side = Vector3.Cross(Vector3.up, along);
+
+            var go = new GameObject("BeamWitnessCam");
+            var cam = go.AddComponent<Camera>();
+            cam.fieldOfView = 45.0f;
+            cam.nearClipPlane = 0.05f;
+            cam.farClipPlane = 200.0f;
+            cam.transform.position = mid + side * 5.5f + Vector3.up * 1.7f;
+            cam.transform.LookAt(shoe + Vector3.up * 1.0f);
+
+            yield return GameplayShots.Render(cam, name, flipCanvases: false, outDir: OutDir);
+
+            Object.DestroyImmediate(go);
         }
 
         /// <summary>

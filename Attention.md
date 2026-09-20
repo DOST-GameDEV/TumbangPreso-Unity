@@ -768,3 +768,62 @@ rest with no coloured rim on it, that was real and it is fixed.** The landed hig
 ever be lit by the host: every route that turned it on sat inside a host-only gate, so for the
 whole life of that feature a joining player's own shoe landed unlit and the setting looked broken.
 Nothing logged it. Worth a glance next time you join rather than host.
+
+---
+
+## 20 · The recall beam: is a column standing on your shoe help, or clutter in a fight?
+
+**`docs/TODO.md` § 155, branch `feature/slipper-beam-shader`.** Built, photographed and green.
+**The things left are yours and none of them can be measured from a command line.**
+
+**Already done, so do not redo it:** the beam stands on your own loose tsinelas in the colour you
+picked in settings, it is drawn by a shader rather than built out of tubes as you asked, it tapers
+to nothing before the top with no cut-off edge, it fades away as you come into reach so the
+`[X] Pick up` prompt has the moment to itself, and it turns off entirely when the slipper highlight
+setting is Off. It shares every decision with the screen mark rather than keeping a second copy:
+whose tsinelas it is, the colour, Off, and when to stand down. `Logs/shots-recall/` has it from the
+player's own eyes and from a witness camera beside it.
+
+### 20.1 ⚠️⚠️ THE ONE THAT NEEDS A MATCH, NOT A SCREENSHOT
+
+A frame can show that the column is the right colour and the right height next to a body. **It
+cannot show whether a 2.2 m column standing in the middle of a fight is help or noise.** The two
+specific things to watch for:
+
+1. **Under a roof.** 2.2 m was picked against the maps rather than against the reference frame you
+   sent, because two of the three arenas are built under things and a taller column punches
+   through a ceiling. Throw your tsinelas under the bridge and on the rooftop map and say whether
+   it looks right or whether it needs to be shorter there.
+2. **During a scrap.** You are the only person who sees your own beam, so the question is whether
+   it pulls your eye at the wrong moment while the taya is coming at you.
+
+If either is wrong, the height, the width, the taper and the brightness are one number each in
+`SlipperBeam` and in the shader's properties.
+
+### 20.2 ⚠️ THE FRAME FRACTION IS ARGUED AND NOT MEASURED
+
+`AbilityShowcaseProbe` fails a run in which one effect blows more than **12 per cent** of the frame
+to white, and it caught Zack's ultimate at **62.8**. The beam's alphas were chosen against that
+bound, but **the beam is not in that probe's cast**, so nobody has actually measured it. It is the
+one effect in the game a player deliberately walks up to and stands under, and the shader version
+adds light rather than tinting what is behind it, which makes this **more** worth measuring than it
+was before, not less. That one is engineering, not a judgement call, and it is in `docs/TODO.md`
+§ 155.5.
+
+### 20.3 ⚠️ NOBODY HAS WATCHED A SECOND PEER'S SCREEN
+
+The beam is per-peer by construction: it reads the same "this one is mine" flag the owner glow
+uses and nothing about it crosses the wire, so another player should never see your column. That
+is an argument rather than an observation, and it is the same gap `docs/TODO.md` § 126.11 records
+for crossplay. **If you are already doing the two-machine check in § 1, glance at this while you
+are there.**
+
+### 20.4 ⚠️⚠️ IT HAS NEVER BEEN IN A PLAYER, AND THAT IS THE ONE THAT COULD BITE QUIETLY
+
+This Mac has no Windows Standalone module, so the shader has only ever run in the editor. A shader
+nothing in a scene references is stripped out of a build unless it is named in
+`GameBuilder.EnsureRuntimeShaders`, and it is named there, **but that line has not been exercised
+yet**. If it were ever wrong, the failure is not a magenta column: the painter falls back to a flat
+tube, which is the version you rejected, in the .exe only, with the editor still correct. **Look at
+your own tsinelas in the first Windows build off this branch**; if the column reads as coloured
+plastic rather than as light, that is what happened.

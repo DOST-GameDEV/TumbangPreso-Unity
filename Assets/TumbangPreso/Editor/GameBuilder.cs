@@ -869,6 +869,15 @@ namespace TumbangPreso.EditorTools
                 // playtest. That is worse than pink, not better.
                 "TumbangPreso/VolcanicRock",
                 "TumbangPreso/FrostSurface",
+
+                // ⚠️⚠️ § THE RECALL BEAM, AND ITS MISS PATH IS THE VOLCANIC ONE EXACTLY: A
+                // REGRESSION RATHER THAN A HOLE. `VfxMaterial.Beam` reaches it through
+                // `Shader.Find` and nothing in any scene references it, which is this list's own
+                // case. Stripped, the painter falls back to `Ghost` and the column comes back as
+                // the flat alpha-blended tube 🧑 rejected on 2026-09-20 when he asked for a shader
+                // instead of a model. The editor would be fixed and the .exe would show the
+                // original complaint, with one warning in a log nobody reads during a playtest.
+                "TumbangPreso/SlipperBeam",
             };
 
             var settings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset");

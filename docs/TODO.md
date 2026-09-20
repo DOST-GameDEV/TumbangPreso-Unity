@@ -384,6 +384,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **155** | The recall beam, drawn by a shader rather than built out of tubes | 🧑, with a frame of a Fortnite loot beam: *"make this a shader not a model ... the highlighted beam will be in sync with the player's settings for the slipper highlights"*. ⚠️⚠️ **The mesh version of this effect was reverted whole rather than edited**: geometry can only give a column an edge, and the taper, the edge brightening, the additive blend and the climbing streaks are all per-pixel. **The no-conflict requirement with `SlipperRecall` was met by SHARING rather than by avoiding.** ⚠️ **Open: his eye on a column standing in a fight, the frame fraction against `AbilityShowcaseProbe`'s 12 per cent, and a real player build.** § 155 |
 | **154** | The recall mark, and ownership becomes a lock | 🧑: *"create a prompt where the image icon will pop up in a player's screen after their slippers get thrown"* and *"we should disable being able to take other people's tsinelas when you are attacking"*. ⚠️⚠️ **Both are built, and the pass found two faults older than it**: a non-host player had **never seen a landed rim at all** (every route into `Slipper.Land` is host-gated), and `Hud.UpdateIndicators` ran a `FindObjectsByType` on every frame of every taya round. ⚠️ **Open: the render, a probe that can fail, and his eye on what the lock does to a four-player match.** § 154 |
 | **153** | The title street and the login, redrawn by her and put in motion | Her clouds, her cast shadow and her leaves are lifted out of 46 minus 48 rather than drawn; the title is one press by his instruction and **has no settings, tutorial or quit door until the next menu pass**; Paalalabas replaces Kawit; validation enforces UGS's real rules rather than the mock's. ⚠️ **Open: his eye, a full-size export of her green valid mark, and password recovery.** § 153 | ⚠️ **And § 153.18 to § 153.20: the gate ran for the first time (392 cases, 61 red, the same red set twice), the three red core cases are closed, and what is left is a renamed-surface worklist.**
 | **151** | The nationals fun pass: ears at the player, an impact frame one peer got, and a slide nobody could see or hear | ⚠️⚠️ **Seven player-perceivable defects, all closed**: the only `AudioListener` in the game sat at world origin so every 3D cue panned from the middle of the map; thirteen call sites faked a position to work around it; the throw wind-up and the committed slide were audible to the one player who already knew, while the VISIBLE half of the wind-up was relayed on purpose; the hit freeze on the lata knockdown fired **on the host alone** and `audit_presentation_reach.py` had no pattern that could see a time-scale freeze; the pisonet booth played the SCORE STING and ducked the music while awarding nothing; and the committed retrieval slide, the one move this brief is about, had **three** at once (the first-person arm stopped animating on it the day before this pass, the wire announces it as a lunge, and three players out of four cannot hear it). ⚠️ **What is open is three human calls and no code**: the ear on the listener, the eye on the jeepney, and the slide's own feel. `Attention.md` § 17.2 and § 18 |
@@ -503,6 +504,160 @@ taht again"*.
    title as well as by number.**
 
 ---
+
+## 155 · THE RECALL BEAM, DRAWN BY A SHADER RATHER THAN BUILT OUT OF TUBES ⚠️ IN PROGRESS, 2026-09-20, branch `feature/slipper-beam-shader`
+
+🧑, with a frame of a Fortnite loot beam: *"create a beam coming off of a slipper that is thrown
+off the ground. this will be similar to the items on ground in fortnite. make this a shader not a
+model and just get it from the internet for similar outputs. the highlighted beam will be in sync
+with the player's settings for the slipper highlights."*
+
+⚠️⚠️ **THIS IS THE SECOND BUILD OF THIS EFFECT AND THE FIRST ONE WAS REMOVED WHOLE.** `d098597f`
+stacked six primitive cylinders at six alphas to fake a taper and animated three cubes up it for
+motes; it is reverted on `ASTRAReworks` by "Take the mesh column back off the tsinelas" rather than
+edited into this one, because the owner asked for the commit to go. **It is not on `main` and never
+was.** The reasoning from that pass is kept below wherever it survived the rewrite, because most of
+it was about the GAME rather than about the geometry.
+
+### 155.1 The shader ✅ DONE
+
+`Shaders/SlipperBeam.shader`, one pass, no texture, no depth texture, built-in pipeline.
+`VfxMaterial.Beam` paints with it; `Visual.SlipperBeam` stands it on the shoe.
+
+⚠️⚠️ **THE ARGUMENT FOR A SHADER IS A RENDER RATHER THAN AN OPINION, BUT IT IS NOT THE MESH
+VERSION'S RENDER.** That commit was reverted whole before this work started and its frames were not
+opened from here; what its own message records is that its FIRST build was one cylinder and
+*"rendered as a length of plastic pipe"*, and that the stack of six was the attempt to answer that
+in geometry. **What was seen here is `beam-witness` v1 of this shader**, which kept a constant
+width and made the same mistake one level up: the walls stay parallel, the near and far sides
+converge into a bright ellipse where the mesh ends, and it reads as a cut pipe however the alpha
+falls off. **Geometry can only ever give a column an edge.** Every property that makes a beam read
+as light is per-pixel:
+
+| What light does | Where it now comes from | What the mesh version did instead |
+|---|---|---|
+| Tapers with no seam and no top edge | `_Falloff` over the fragment's own height, and `_Tip` closing the walls into a cone in the vertex shader | six alphas on six fixed widths |
+| Is brighter at its edges than through its middle, and that moves as you walk round it | `_Rim`, a view-dependent term | nothing; one flat alpha per segment |
+| Never darkens what is behind it | `Blend SrcAlpha One` | `Standard` in Fade mode, so the column subtracted the road's colour before adding its own, which is exactly why it read as tinted plastic |
+| Moves | `_Scroll` on a procedural streak field, no objects and no per-frame C# | three cube transforms animated from `Update` |
+
+- **2.2 m, chosen against the maps rather than against the reference.** The frame it was drawn
+  from is a third-person game with open sky; two of this game's three arenas are built UNDER
+  things. A column tall enough to look impressive outdoors punches through a ceiling indoors.
+- ⚠️ **It is WIDER than the mesh column was (0.52 m at the road against 0.17, closing to 46 per cent of that at the tip) and the shader is why it can
+  be.** That one tapered by shrinking cylinders, so every centimetre of width was a centimetre of
+  hard silhouette. This one has no silhouette: a wider shaft reads as more light rather than as
+  more plastic, and a wider one is what can be seen from across an arena.
+- ⚠️ **The alphas are low and `AbilityShowcaseProbe` is why there is a number to point at.** That
+  probe fails a run in which one effect blows more than **12 per cent** of the frame to white, and
+  it caught Zack's ultimate at **62.8**. The shader clamps its own output for the same reason: an
+  additive blend with no ceiling is that failure's exact shape.
+- ⚠️ **The point light stayed, and it is the one part a shader cannot do.** A shader lights its own
+  pixels and nothing else, so without it the road under the shoe stays exactly as dark as the road
+  beside it, and a beam that does not spill on what it stands on reads as drawn over the scene
+  rather than as standing in it.
+- ⚠️ **The column is forced upright every frame rather than trusted to be.** It is a child of a
+  THROWN object: `SpinInFlight` tumbles the shoe and `Land` is the only thing that puts the
+  rotation back, so the routes that put a slipper down without landing it (the owner-mark
+  recovery, a snapshot applied on a client) are exactly the routes that would leave a beam lying
+  on its side.
+- ⚠️ **Blue is legal here and is the shipped default.** `CLAUDE.md` § 6.4 bans blue from UI
+  chrome; this is a world effect wearing a colour the player chose, and `SlipperHighlights`'
+  own note records blue being picked because *"the arena is warm dust and wood"*.
+
+⚠️⚠️ **IT IS IN `GameBuilder.EnsureRuntimeShaders` AND ITS MISS PATH IS A REGRESSION RATHER THAN A
+HOLE.** `VfxMaterial.Beam` reaches it through `Shader.Find` and nothing in any scene references it.
+Stripped, the painter falls back to `Ghost` and the column comes back as **the flat tube the owner
+rejected**, in the player only, with the editor still correct.
+`SlipperRecallShots` asserts `beam.Shaded` for that reason: from the player's own eyes looking down
+at the road, a render cannot tell the two apart.
+
+### 155.2 ⚠️⚠️ "NO CONFLICT WITH SLIPPERRECALL" IS A DESIGN CONSTRAINT AND IT WAS MET BY SHARING RATHER THAN BY AVOIDING ✅ DONE
+
+Carried whole from the first pass; none of it is about geometry. The two answer the same question,
+*"where is mine"*, and differ in what they can do: a screen mark points at something you cannot see
+and a beam cannot; a beam is a landmark you read out of the corner of your eye and a mark is not.
+**Everything they could have disagreed about is one thing asked twice rather than two things kept
+in step:**
+
+| What could have diverged | Where it is decided, once |
+|---|---|
+| Whose tsinelas this is | `Slipper`'s per-peer owner flag, the one `MatchInstaller` and `MatchRpc` maintain |
+| The colour | `SlipperHighlights.ColourOf`, the same call the landed rim makes. That is 🧑's *"in sync with the player's settings"*, met by asking rather than by copying |
+| Off | the one `SlipperHighlight` setting silences the rim, the beam and the mark's cap colour together |
+| When to stand down | both fade out as the grab comes into reach, keyed off `Balance.PickupRadius`, and `TumpMatchReadout` takes over with `[X] Pick up` |
+| Who owns a renderer | `VfxMaterial.Beam` attaches `VfxRenderTag`, which is what keeps the rim pass and the toon-outline sweep off an effect parented to a prop |
+
+⚠️⚠️ **AND THE RIM PASS HAD TO LEARN THE LAST ROW.** `Slipper.RefreshHighlight` wrote rim
+properties into EVERY child renderer, which now includes the beam's. It is harmless today, because
+its material carries none of those properties, and it is the shape of the fault that would put a
+landed-rim assertion on the wrong renderer: `LandedHighlightTests` reads
+`GetComponentInChildren<Renderer>()`. It skips tagged renderers now, which is `VfxRenderTag`'s own
+rule (*"is this part of the model"*) applied one system further in.
+
+⚠️ **THE FADE IS PRESENTATION AND IS NOT A SECOND COPY OF THE PICKUP RULE.** It reads
+`Balance.PickupRadius` so the beam cannot stand down at a distance the grab disagrees with, and it
+asks no question about eligibility at all. The rule still lives only in
+`Slipper.IsGrabbableIgnoringReach`. `CombatVerbs.SlideMayStartFrom` draws the same line.
+
+### 155.3 ⚠️ THE BEAM IS BROADER THAN THE LANDED RIM, DELIBERATELY
+
+The rim answers *"where did the one you just threw end up"*, so it is cleared by a recovery that
+teleports the shoe home rather than lighting a place the throw never reached. The beam answers
+*"your tsinelas is lying over there"*, which is true however it got there. **They therefore have
+different lifetimes on purpose**, and a reader finding one lit without the other has not found a
+bug.
+
+### 155.4 ⚠️ `SetState` DRIVES IT AND `SetLandedHighlight` COULD NOT
+
+`SetLandedHighlight(false)` returns on its first line when the flag is already false, so it is not
+a reliable "the state moved" signal: a tsinelas going from Held to Loose with no landed rim on it
+repaints nothing at all. The beam stands on ANY loose tsinelas of yours, so it needs the transition
+itself. ⚠️ **On a real change only**: `ApplySnapshotState` calls `SetState` on every reliable state
+packet including keepalives.
+
+### 155.6 The faults the builds had, kept because the next one could reintroduce them
+
+- ⚠️⚠️ **THE SHADER TOOK THREE RENDERS AND THE FIRST TWO WERE WRONG IN WAYS THE SOURCE COULD
+  NOT SHOW.** v1 had a constant width and faded on alpha alone: **still a cut pipe**, because the
+  walls stay parallel and the near and far sides converge into a bright ellipse where the mesh
+  ends. An alpha curve cannot remove a silhouette; only moving the vertices can, which is `_Tip`.
+  v2 added the cone and then faded so hard (`_Falloff` 2.6) that **only the bottom 0.7 m of a
+  2.2 m column survived against a pale house**, measured off the frame rather than judged: the
+  luminance lift died by two thirds of the way up. It is 1.35 now and the cone does the work of
+  ending the column. ⚠️ **Both faults were invisible in the source and obvious in a picture**,
+  which is `CLAUDE.md` § 6.1 for the third time on this one effect.
+
+- ⚠️⚠️ **THE PER-FRAME PAINT WAS BUILDING A MATERIAL PER RENDERER PER FRAME.** `Paint` ran from
+  `Update` and called `VfxMaterial.Ghost`, which does `new Material(template)` and hands it to
+  `VfxRenderTag.Own`. At sixty frames a second that is sixty materials per renderer per second
+  added to a list only emptied when the slipper dies: **the exact leak `VfxRenderTag.Own` was
+  written to close**, reintroduced one call site later. **The shader version is structurally
+  immune and that is not an accident**: everything that used to be repainted is now a fragment
+  term, so the entire per-frame cost of this feature is one `SetFloat` per renderer.
+- ⚠️ **THE FIRST FRAMES CAME BACK RED WHILE THE SHIPPED DEFAULT IS BLUE**, because
+  `SettingsStore.Current` persists to disk and the probe took whatever this machine last chose.
+  `SlipperRecallShots` sets the default explicitly and raises the event, which is what
+  `LandedHighlightTests` already did and for the reason it records.
+
+### 155.5 NOT DONE, named rather than left implied
+
+- [ ] **His eye on it in play.** The frames say it draws; they cannot say whether a column standing
+  on your shoe during a fight is help or clutter, or whether 2.2 m is right under the bridge.
+  `Attention.md` § 20.
+- [ ] **Nothing measures the frame fraction.** `AbilityShowcaseProbe`'s 12 per cent bound is the
+  number this was written against and the beam is not in that probe's cast, so the claim that a
+  beam cannot blow out a first-person frame is argued rather than measured. ⚠️ **The additive
+  blend makes this MORE worth measuring than it was for the mesh version, not less.**
+- [ ] **No peer has watched another peer's screen.** The beam is per-peer by construction and
+  nothing about it crosses the wire, which is an argument rather than an observation. It is the
+  same gap § 126.11 records for crossplay.
+- [ ] **Not built into a player.** This Mac has no Windows Standalone module, so the shader has
+  never been through `GameBuilder` and the `EnsureRuntimeShaders` entry above is unexercised.
+  § 145.5.
+
+---
+
 
 ## 154 · THE RECALL MARK, AND OWNERSHIP BECOMES A LOCK ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`
 
