@@ -7,6 +7,7 @@ using NUnit.Framework;
 using TumbangPreso.CameraSystem;
 using TumbangPreso.Core;
 using TumbangPreso.Visual;
+using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
