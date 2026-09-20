@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.IO;
+using System.Text;
 using TumbangPreso.CameraSystem;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -10,6 +12,24 @@ namespace TumbangPreso.Diagnostics
 {
     public sealed partial class OwnerUiPlayerReview
     {
+        private IEnumerator RecordCatchMotion(string name, float seconds)
+        {
+            string folder = Path.Combine(_folder, name); Directory.CreateDirectory(folder);
+            var csv = new StringBuilder("frame,real_seconds\n");
+            float start = Time.realtimeSinceStartup, next = 0; int frame = 0;
+            while (Time.realtimeSinceStartup - start < seconds)
+            {
+                yield return new WaitForEndOfFrame();
+                float age = Time.realtimeSinceStartup - start;
+                if (age < next) continue;
+                var image = ScreenCapture.CaptureScreenshotAsTexture();
+                File.WriteAllBytes(Path.Combine(folder, frame.ToString("00000") + ".jpg"), image.EncodeToJPG(93));
+                Destroy(image); csv.AppendLine(FormattableString.Invariant($"{frame},{age:F6}"));
+                next = age + 1f / 30; frame++;
+            }
+            File.WriteAllText(Path.Combine(folder, "frames.csv"), csv.ToString());
+        }
+
         private IEnumerator ReviewVictimCatch(CharacterMotor taya, string label)
         {
             Stage(label + " staged native victim catch and taya continuation");
@@ -36,6 +56,8 @@ namespace TumbangPreso.Diagnostics
                 rig.Follow(victim, true); Hud.Instance.Bind(victim);
                 yield return new WaitForSeconds(.5f);
                 if (!victim.IsTaggable() || !round.Lata.IsUpright) throw new InvalidOperationException("Victim fixture was not catchable");
+                var movie = StartCoroutine(RecordCatchMotion(label + "-catch-motion", 2.8f));
+                yield return new WaitForSecondsRealtime(.35f);
                 Vector3 before = taya.transform.position;
                 if (!taya.GetComponent<CombatVerbs>().HostResolvePunch(before, taya.transform.forward))
                     throw new InvalidOperationException("Native catch was refused");
@@ -49,6 +71,7 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(() => !reconstruction.Playing, 2);
                 if (victim.CanAct()) throw new InvalidOperationException("Catch playback shortened the real penalty");
                 yield return Shot(label + "-native-victim-return");
+                yield return movie;
                 Stage(label + " native victim view returned inside recovery; taya kept moving");
             }
             finally

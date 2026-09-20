@@ -597,19 +597,16 @@ namespace TumbangPreso
             SetRim(0.0f);
         }
 
+        private float _protectionPulse;
         private void BuildProtectionShell()
         {
             if (_protectionShell != null) return;
-
-            _protectionShell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            _protectionShell.name = "LataRestoreShield";
-            _protectionShell.transform.SetParent(transform, false);
-            _protectionShell.transform.localPosition = new Vector3(0.0f, 0.22f, 0.0f);
-            _protectionShell.transform.localScale = Vector3.one * 0.72f;
+            // A close collar protects this can, without making a shield bubble
+            // around nearby attackers. The marker supplies the explicit state.
+            _protectionShell = Visual.VfxShapes.Lay(transform, "LataRestoreShield",
+                Visual.VfxShapes.Collar(24, .025f, .88f), .30f, .025f);
             Visual.VfxMaterial.Ghost(_protectionShell.GetComponent<Renderer>(),
-                new Color(UI.UiTheme.Defense.r, UI.UiTheme.Defense.g, UI.UiTheme.Defense.b, 0.28f),
-                2.0f);
-            Visual.VfxMaterial.StripCollider(_protectionShell);
+                new Color(1f, .83f, .45f, .55f), .9f);
         }
 
         private void ClearProtectionShell()
@@ -621,7 +618,7 @@ namespace TumbangPreso
         private void PulseProtection()
         {
             BuildProtectionShell();
-            if (_protectionShell != null) _protectionShell.transform.localScale = Vector3.one * 0.92f;
+            _protectionPulse = 1f;
             // ⚠️ NO WORD. `PulseProtection` fires on every refresh of the throw-restore window,
             // and the lata card carries `PROTECTED 1.2s` as a live countdown for the whole of it.
             // The shell is the signal; the countdown is the number. A callout on top of both was
@@ -638,10 +635,9 @@ namespace TumbangPreso
 
                 if (_protectionShell != null)
                 {
-                    float pulse = 0.72f + (Mathf.Sin(Time.time * 18.0f) * 0.5f + 0.5f) * 0.10f;
-                    _protectionShell.transform.localScale = Vector3.one * pulse;
-                    _protectionShell.transform.Rotate(0.0f, 120.0f * Time.deltaTime, 0.0f,
-                                                       Space.Self);
+                    _protectionPulse = Mathf.Max(0, _protectionPulse - Time.deltaTime * 5);
+                    float radius = .30f + .05f * _protectionPulse;
+                    _protectionShell.transform.localScale = new Vector3(radius, 1, radius);
                 }
 
                 if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
