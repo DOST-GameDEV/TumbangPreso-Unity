@@ -20,7 +20,7 @@ namespace TumbangPreso.Visual
     /// - leg-left/leg-right: -X swings forward, +X swings back.
     /// - root position: Y lifts/crouches, Z moves forward/back in model units.
     /// </summary>
-    public static class HeroAbilityClips
+    public static partial class HeroAbilityClips
     {
         private static readonly string[] Bones =
         {

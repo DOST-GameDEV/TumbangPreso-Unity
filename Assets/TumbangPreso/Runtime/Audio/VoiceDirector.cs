@@ -35,7 +35,7 @@ namespace TumbangPreso.Audio
         public const int DefaultCooldownMs = 4000;
 
         /// <summary>
-        /// Per-line cooldowns, so two different lines never silence each other.
+        /// Per-line repetition limits, applied after the shared priority gate.
         ///
         /// ⚠️⚠️ THE COUNTDOWN LINES MUST BE 0 AND THE DEFAULT WOULD BREAK THEM. They are
         /// separate ids so the 4 s default never applies BETWEEN them — but anything that
@@ -112,8 +112,8 @@ namespace TumbangPreso.Audio
         }
 
         /// <summary>
-        /// Two voices, so a line landing on top of another steals the older one rather than
-        /// allocating. Nothing in gameplay may allocate an AudioSource on a hot path.
+        /// Retain the small preallocated source pool. Priority replacement stops the
+        /// current voice before starting the next; nothing allocates on a cue path.
         /// </summary>
         private void BuildVoices()
         {
