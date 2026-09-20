@@ -20,7 +20,7 @@ try:
    if source.is_file() and source.suffix!='.log':
     backup=out/'private-profiles'/name/source.relative_to(profile);backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,backup)
     backups.append((source,backup,hashlib.sha256(source.read_bytes()).hexdigest()))
-  command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-autostart','3','-tp-map','Eskinita','-tp-profile',profile_name,'-tp-catchtrace',str(out/(name+'.csv')),'-logFile',str(out/(name+'.log'))]
+  command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-autostart','3','-tp-map','Eskinita','-tp-profile',profile_name,'-tp-catchseat',str(index),'-tp-catchtrace',str(out/(name+'.csv')),'-logFile',str(out/(name+'.log'))]
   command+=['-tp-host',str(port)] if index==0 else ['-tp-join','127.0.0.1',str(port)]
   commands.append(command);processes.append(subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
   print(name,'PID',processes[-1].pid,flush=True)
@@ -55,7 +55,7 @@ for seat,name in enumerate(['host','victim','observer']):
    after=[r for r in rows if float(r['real'])>float(playing[-1]['real'])+.1 and int(r['tags'])]
    if not after or int(after[0]['playing']) or float(after[0]['stun'])<=0:errors.append('victim: did not return inside real recovery')
  if seen and any(int(r['tayaCanAct'])==0 for r in seen):errors.append(name+': taya became unable to act')
- movement=[r for r in rows if 8<=float(r['elapsed'])<=9.1]
+ movement=[r for r in rows if 10<=float(r['elapsed'])<=11.1]
  travel=max((float(r['tayaZ']) for r in movement),default=0)-min((float(r['tayaZ']) for r in movement),default=0)
  if travel<.25:errors.append(name+': taya movement was not observed')
  measured[name]={'rows':len(rows),'tagSamples':len(seen),'playbackSamples':len(playing),'tayaTravel':travel}
