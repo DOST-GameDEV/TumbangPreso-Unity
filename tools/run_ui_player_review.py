@@ -37,6 +37,7 @@ def main():
     parser.add_argument('--gameplay-only',action='store_true',help='Exercise shipped keyboard/mouse verbs in both modes with staged legal targets.')
     parser.add_argument('--spectator-only',action='store_true',help='Exercise the real spectator entry, camera controls and manual replay.')
     parser.add_argument('--introduction-bodies-only',action='store_true',help='Render six authored introduction body studies in the native player; no shared phase claim.')
+    parser.add_argument('--introduction-scenes',action='store_true',help='Include the private scene effects in the introduction art route.')
     args=parser.parse_args()
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
@@ -61,6 +62,7 @@ def main():
     if args.recovery_only:command.append('-tp-recovery-review-only')
     if args.gameplay_only:command.append('-tp-gameplay-review-only')
     if args.introduction_bodies_only:command.append('-tp-introduction-bodies-only')
+    if args.introduction_scenes:command.append('-tp-introduction-scenes')
     if args.spectator_only:command.append('-tp-spectator-review-only')
     process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
     print('Started internal UI review, process',process.pid,flush=True)

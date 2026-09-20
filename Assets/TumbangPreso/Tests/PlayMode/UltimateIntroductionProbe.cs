@@ -66,6 +66,7 @@ namespace TumbangPreso.PlayTests
                     var held = actor.GetComponent<Carrier>().Held;
                     bool heldActive = held != null && held.gameObject.activeSelf;
                     if (held != null) held.gameObject.SetActive(false); // Body study only; no floating live prop.
+                    if (visual.Companion != null) visual.Companion.gameObject.SetActive(false);
                     visual.Model.SetActive(false); stage.SetActive(true); copy.ShowOnlyForCapture(true);
                     // The study has only this camera. Give the isolated copy a
                     // real contact shadow and place its neutral feet on this street.
@@ -84,14 +85,31 @@ namespace TumbangPreso.PlayTests
                         return (float)sample.GetType().GetField("LowestVertex").GetValue(sample);
                     }
                     float floor = Low(0), lowest = 0, highest = 0;
+                    HeroIntroductionScene scene = null;
+                    bool withScene = Environment.GetEnvironmentVariable("TUMP_INTRO_SCENE") == "1";
                     try
                     {
                         Assert.IsEmpty(stage.GetComponentsInChildren<MonoBehaviour>(true));
                         Assert.IsEmpty(stage.GetComponentsInChildren<Collider>(true));
-                        yield return ImprovementEvidenceProbe.Record(camera, hero + "-introduction-body", 2.8f,
+                        if (withScene)
+                        {
+                            var random = UnityEngine.Random.state;
+                            scene = new HeroIntroductionScene(stage.transform, hero, actor);
+                            Assert.AreEqual(random, UnityEngine.Random.state, "Scene construction changed gameplay RNG.");
+                            Assert.IsEmpty(scene.Root.GetComponentsInChildren<CharacterMotor>(true));
+                            Assert.IsEmpty(scene.Root.GetComponentsInChildren<Abilities.HeroAbilitySystem>(true));
+                            Assert.IsTrue(scene.Root.GetComponentsInChildren<Collider>(true).All(c => !c.enabled));
+                            scene.SetVisibleForCapture(true);
+                        }
+                        yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), 2.8f,
                             drive: age =>
                             {
                                 clip.SampleAnimation(copy.Root, Mathf.Min(age, 2.8f));
+                                if (scene != null)
+                                {
+                                    scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens);
+                                    camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                }
                                 float clearance = Low(age) - floor;
                                 lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
                             });
@@ -103,8 +121,10 @@ namespace TumbangPreso.PlayTests
                     }
                     finally
                     {
+                        scene?.Dispose();
                         visual.Model.SetActive(active);
                         if (held != null) held.gameObject.SetActive(heldActive);
+                        if (visual.Companion != null) visual.Companion.gameObject.SetActive(true);
                         stage.SetActive(false); Object.Destroy(stage); Object.Destroy(clip);
                     }
                 }

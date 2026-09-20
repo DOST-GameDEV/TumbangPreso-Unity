@@ -14,7 +14,8 @@ namespace TumbangPreso.Diagnostics
     {
         private IEnumerator IntroductionBodiesOnly()
         {
-            Stage("native render-only introduction body study, not a live cinematic phase");
+            bool withScene = Environment.GetCommandLineArgs().Contains("-tp-introduction-scenes");
+            Stage("native render-only introduction " + (withScene ? "scene" : "body") + " study, not a live cinematic phase");
             yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 80);
             if (Find("GuestAccount") != null) yield return Click("GuestAccount");
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
@@ -73,16 +74,32 @@ namespace TumbangPreso.Diagnostics
                     foreach (var surface in surfaces) surface.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                     camera.transform.position = actor.transform.position + new Vector3(i == 2 || i == 4 ? -2.4f : 2, 1.2f, 3.8f);
                     camera.transform.LookAt(actor.transform.position + Vector3.up * .9f);
+                    HeroIntroductionScene scene = null;
                     try
                     {
-                        var movie = StartCoroutine(RecordCatchMotion(hero + "-introduction-motion", 2.8f));
+                        if (withScene)
+                        {
+                            scene = new HeroIntroductionScene(stage.transform, hero, actor);
+                            scene.SetVisibleForCapture(true);
+                        }
+                        var movie = StartCoroutine(RecordCatchMotion(hero + (withScene ? "-introduction-scene-motion" : "-introduction-motion"), 2.8f));
                         float began = Time.realtimeSinceStartup;
                         while (Time.realtimeSinceStartup - began < 2.8f)
-                        { clip.SampleAnimation(copy.Root, Time.realtimeSinceStartup - began); yield return null; }
+                        {
+                            float age = Time.realtimeSinceStartup - began;
+                            clip.SampleAnimation(copy.Root, age);
+                            if (scene != null)
+                            {
+                                scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens);
+                                camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                            }
+                            yield return null;
+                        }
                         yield return movie;
                     }
                     finally
                     {
+                        scene?.Dispose();
                         visual.Model.SetActive(true);
                         if (held != null) held.gameObject.SetActive(heldActive);
                         if (visual.Companion != null) visual.Companion.gameObject.SetActive(true);
