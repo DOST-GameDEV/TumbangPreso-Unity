@@ -609,6 +609,23 @@ namespace TumbangPreso
         /// this"* costs. <see cref="OwnerSlot"/> carries the rule and the three times it has been
         /// called.
         /// </summary>
+        public bool OwnershipAllows(CharacterMotor who)
+        {
+            if (who == null) return false;
+            if (_ownerSlot >= 0) return _ownerSlot == who.PlayerSlot;
+            // Ownerless equipment is deliberate training stock, never a live
+            // multiplayer escape from the ownership rule. The absent seat is
+            // still its stable address; it does not become the human's identity.
+            if (!PracticeSandbox.Allowed) return false;
+            if (GameLaunch.GuidedTutorial) return true;
+            var round = GameServices.Round;
+            if (round == null || SeatOfOrigin < 0 || SeatOfOrigin >= Balance.PlayerCount ||
+                round.PlayerAt(SeatOfOrigin) != null) return false;
+            int seated = 0;
+            for (int i = 0; i < Balance.PlayerCount; i++) if (round.PlayerAt(i) != null) seated++;
+            return seated == 1 && round.PlayerAt(who.PlayerSlot) == who;
+        }
+
         public bool IsGrabbableIgnoringReach(CharacterMotor who)
         {
             if(!gameObject.activeInHierarchy)return false;
@@ -625,7 +642,7 @@ namespace TumbangPreso
             // lying in the street deliberately. Writing this as `!= who.PlayerSlot` takes every
             // one of them away and leaves the single human with nothing to practise retrieving,
             // which `SoloPracticeTests` asserts against by name.
-            if (_ownerSlot >= 0 && _ownerSlot != who.PlayerSlot) return false;
+            if (!OwnershipAllows(who)) return false;
 
             // The same empty-hand rule as Carrier's local pickup route. A delayed
             // remote grab must not overwrite a newer, already accepted possession.
@@ -727,7 +744,7 @@ namespace TumbangPreso
         public bool HostForceEquip(CharacterMotor who)
         {
             if (!NetAuthority.ShouldResolve()) return false;
-            if (who == null || who.IsDefender) return false;
+            if (who == null || who.IsDefender || !OwnershipAllows(who)) return false;
 
             // A warmup grab or a recall may already occupy this hand. Replacing
             // only Carrier.Held leaves the displaced shoe claiming the same holder,
@@ -980,6 +997,9 @@ namespace TumbangPreso
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            // Null identifies an environmental ability displacement, which may
+            // move any loose shoe without granting somebody else's shot credit.
+            if (thrower != null && !OwnershipAllows(thrower)) return;
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;

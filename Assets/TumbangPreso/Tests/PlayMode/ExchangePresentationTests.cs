@@ -18,6 +18,27 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator ClassicExchangeUsesTruthfulStateAndPersonalConfirmation() => Exchange(GameMode.Classic);
         [UnityTest] public IEnumerator HeroExchangeUsesTruthfulStateAndPersonalConfirmation() => Exchange(GameMode.HeroStrike);
 
+        [UnityTest]
+        public IEnumerator ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper()
+        {
+            SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            yield return SceneManager.LoadSceneAsync("Eskinita"); yield return null;
+            foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
+            Object.FindAnyObjectByType<SliceRunner>().Begin(); yield return null;
+            var round = GameServices.Round; var owner = round.PlayerAt(1); var stranger = round.PlayerAt(2);
+            var shoe = Object.FindObjectsByType<Slipper>().First(s => s.OwnerSlot == owner.PlayerSlot);
+            var held = shoe.Holder; var state = shoe.State; var position = shoe.transform.position;
+            Assert.IsFalse(shoe.HostForceEquip(stranger));
+            shoe.HostThrow(stranger, Vector3.up * 20, Vector3.up * 5);
+            Assert.AreEqual(state, shoe.State); Assert.AreEqual(held, shoe.Holder);
+            Assert.AreEqual(position, shoe.transform.position);
+            Assert.IsFalse(shoe.OwnershipAllows(stranger));
+            Assert.IsTrue(shoe.OwnershipAllows(owner));
+            shoe.OwnerSlot = -1;
+            Assert.IsFalse(shoe.OwnershipAllows(owner), "An ownerless object is not free stock in a four-seat match.");
+            shoe.OwnerSlot = owner.PlayerSlot;
+        }
+
         private static IEnumerator Exchange(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
@@ -44,6 +65,11 @@ namespace TumbangPreso.PlayTests
             var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             Text Label(string name) => canvas.GetComponentsInChildren<Text>(true).First(t => t.name == name);
             int points = match.ScoreFor(me.PlayerSlot);
+            // Round-start restore deliberately protects the can. Exercise a
+            // legal contact after that expires, not the refused warmup contact.
+            float readyBy = Time.unscaledTime + 3;
+            while (lata.IsProtected && Time.unscaledTime < readyBy) yield return null;
+            Assert.IsFalse(lata.IsProtected, "Initial can protection did not expire.");
             float beforeScale = Time.timeScale;
             lata.HostKnockDown(me.PlayerSlot);
             Assert.AreEqual(beforeScale, Time.timeScale, "A normal tin contact must not pause unrelated players.");

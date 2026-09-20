@@ -41,14 +41,27 @@ and assess in normal gameplay. Existing Mac tests are historical, not Windows pr
 
 ## Jobs / tested snapshot / next action
 
-Validation workspace: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached f4c819f9, independent caches. Baseline SlipperRecallShots running under
-exec session 1748, guarded named profile presentation-validation-20260921;
-Logs/presentation-baseline/job.json, unity.log, results.xml in validation tree.
-Initial import may take time. Development remains separately editable. Low-beacon
-prototype now .48 m tall/.24 m wide with .48 m ground pool and restrained spill.
-No new result yet; compare captures before accepting.
-Next: inspect existing shader/recall/ownership contracts, refine low beacon in the
-real exchange, focus runtime tests/captures, then continue the remaining full pass.
+Baseline f4c819f9 SlipperRecallShots PASS 1/1, 8.74s test execution; first isolated
+import took several minutes. Inspected beam-witness: column competes with standing
+players. Validation workspace C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation.
+Profile presentation-validation-20260921. Baseline guard 61dc59bf8a2f; session1748 retired.
+Outputs Logs/presentation-baseline and Logs/shots-recall in validation workspace.
+
+Development checkpoint 3694d67c has .48m low beacon, compact tin contact instead of
+routine confetti/global hitstop, scorer-only camera/hitmarker, bounded side feed,
+state-aware can marker, stable player colours/numbers and correct can-gated danger.
+Source compiled. First focused exchange run 0/2: fixture hit the still-protected
+initial can and correctly received no points. Log/XML retained at Logs/exchange-tests-v1,
+guard383d90273892, session17025 retired. Fix the fixture to await actual protection
+expiry, not the gameplay guard. No visual acceptance or native proof yet.
+
+Unverified follow-on: ownership guard now also covers force-equip/throw and confines
+ownerless stock to guided/one-seat offline training. Null-thrower environmental
+ability displacement remains legal. New regression covers foreign force-equip/throw.
+
+Next: commit test/ownership increment, sync stopped validation workspace, run focused
+exchange, pickup/practice and locator captures. Inspect exact frames, then build and
+exercise the internal native route. Continue signature moments and full scoped pass;
+C4 network ownership remains a real dependency, not permission to stop independent work.
 
 [Earlier ledger and evidence](reports/presentation-pass-2026-09-21/intake/ACTIVE_REWORK_LEDGER.md).
