@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
         {
             _nativeReadout = gameObject.AddComponent<TumpMatchReadout>();
             _nativeReadout.Build(transform); _canvas = _nativeReadout.Canvas; _root = (RectTransform)_canvas.transform;
+            CameraSystem.CatchReconstruction.Attach(gameObject);
             _trainingChrome = GameLaunch.GuidedTutorial;
             var indicators = new GameObject("NativeTargetIndicators"); indicators.transform.SetParent(transform, false);
             _indicators = indicators.AddComponent<OffscreenIndicators>();
