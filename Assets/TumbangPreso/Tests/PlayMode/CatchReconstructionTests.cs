@@ -67,6 +67,7 @@ namespace TumbangPreso.PlayTests
                     yield return new WaitForSecondsRealtime(.18f);
                     var copies = GameObject.Find("~CatchPlaybackCopies"); Assert.IsNotNull(copies);
                     Assert.IsEmpty(copies.GetComponentsInChildren<Collider>(true));
+                    Assert.IsEmpty(copies.GetComponentsInChildren<MonoBehaviour>(true), "Recorded bodies cannot execute gameplay scripts.");
                     Assert.IsTrue(copies.GetComponentsInChildren<Renderer>(true).All(r => r.forceRenderingOff),
                         "Copies must stay invisible to ordinary world cameras.");
                     if (n == 0)
@@ -96,14 +97,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(view.Playing, "A cosmetic event alone cannot create a recovery window.");
             yield return new WaitForSecondsRealtime(.1f);
             victim.ApplyStagger(Balance.TagStunTime);
-            victim.Teleport(round.SafeZonePointFor(victim));
+            victim.Teleport(victim.SpawnPosition);
             yield return null;
             Assert.IsTrue(view.Playing, "Later authoritative recovery should unlock retained contact, not a new penalty.");
             victim.ClearStun(); yield return null; Assert.IsFalse(view.Playing);
             Stage(); yield return new WaitForSeconds(.4f);
             MatchFlair.Play(MatchFlair.Kind.Tag, 0, 1, victim.transform.position);
             yield return new WaitForSecondsRealtime(.8f);
-            victim.ApplyStagger(Balance.TagStunTime); victim.Teleport(round.SafeZonePointFor(victim));
+            victim.ApplyStagger(Balance.TagStunTime); victim.Teleport(victim.SpawnPosition);
             yield return null;
             Assert.IsFalse(view.Playing, "An expired event must not attach itself to a later recovery.");
         }

@@ -83,20 +83,61 @@ namespace TumbangPreso.CameraSystem
             public Copy Clone(Transform inactiveParent)
             {
                 if (!Ready || Source == null) return null;
-                // The inactive parent prevents copied visual scripts from enabling.
-                var model = Object.Instantiate(Source, inactiveParent, true);
-                model.name = "RecordedBody-P" + (Actor.PlayerSlot + 1);
-                foreach (var behavior in model.GetComponentsInChildren<Behaviour>(true))
-                { behavior.enabled = false; Object.Destroy(behavior); }
-                foreach (var collider in model.GetComponentsInChildren<Collider>(true))
-                { collider.enabled = false; Object.Destroy(collider); }
-                foreach (var body in model.GetComponentsInChildren<Rigidbody>(true))
-                { body.isKinematic = true; body.detectCollisions = false; Object.Destroy(body); }
-                foreach (var particles in model.GetComponentsInChildren<ParticleSystem>(true))
-                { particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); Object.Destroy(particles); }
-                var result = new Copy(model);
-                if (result.Bones.Length != _bones.Length) { Object.Destroy(model); return null; }
+                // Copy rendering data, never GameObjects carrying scripts.
+                // Disabling a cloned MonoBehaviour would not prevent its Awake
+                // when the stage activates. Shared meshes/materials stay owned
+                // by the live assets; only these transforms/renderers are new.
+                var map = new System.Collections.Generic.Dictionary<Transform, Transform>(_bones.Length);
+                foreach (var bone in _bones)
+                    map[bone] = new GameObject(bone.name).transform;
+                for (int i = 0; i < _bones.Length; i++)
+                {
+                    var source = _bones[i]; var target = map[source];
+                    target.SetParent(i == 0 ? inactiveParent : map[source.parent], false);
+                    target.gameObject.layer = source.gameObject.layer;
+                    target.gameObject.SetActive(source.gameObject.activeSelf);
+                }
+                GameObject root = map[_bones[0]].gameObject;
+                root.name = "RecordedBody-P" + (Actor.PlayerSlot + 1);
+                foreach (var bone in _bones)
+                {
+                    var target = map[bone].gameObject;
+                    var skin = bone.GetComponent<SkinnedMeshRenderer>();
+                    if (skin != null)
+                    {
+                        var rendered = target.AddComponent<SkinnedMeshRenderer>();
+                        rendered.sharedMesh = skin.sharedMesh; rendered.localBounds = skin.localBounds;
+                        var bones = skin.bones; var copiedBones = new Transform[bones.Length];
+                        for (int i = 0; i < bones.Length; i++)
+                        {
+                            if (bones[i] == null || !map.TryGetValue(bones[i], out copiedBones[i]))
+                            { Object.Destroy(root); return null; }
+                        }
+                        rendered.bones = copiedBones;
+                        if (skin.rootBone != null && map.TryGetValue(skin.rootBone, out var copiedRoot)) rendered.rootBone = copiedRoot;
+                        rendered.updateWhenOffscreen = true;
+                        if (skin.sharedMesh != null)
+                            for (int n = 0; n < skin.sharedMesh.blendShapeCount; n++) rendered.SetBlendShapeWeight(n, skin.GetBlendShapeWeight(n));
+                        CopySurface(skin, rendered);
+                    }
+                    var mesh = bone.GetComponent<MeshFilter>(); var surface = bone.GetComponent<MeshRenderer>();
+                    if (mesh != null && surface != null)
+                    {
+                        target.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
+                        CopySurface(surface, target.AddComponent<MeshRenderer>());
+                    }
+                }
+                var result = new Copy(root);
+                if (result.Bones.Length != _bones.Length) { Object.Destroy(root); return null; }
                 return result;
+            }
+            private static void CopySurface(Renderer source, Renderer target)
+            {
+                target.sharedMaterials = source.sharedMaterials; target.enabled = source.enabled;
+                target.sortingLayerID = source.sortingLayerID; target.sortingOrder = source.sortingOrder;
+                var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); target.SetPropertyBlock(properties);
+                target.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                target.forceRenderingOff = true;
             }
             public void Apply(Copy copy, float time)
             {
