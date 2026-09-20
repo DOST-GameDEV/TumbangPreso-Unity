@@ -22,11 +22,15 @@ namespace TumbangPreso.PlayTests
             Settings.SettingsStore.Current.MasterVolume = 1;
             Settings.SettingsStore.Current.AnnouncerVolume = 1;
             yield return null;
+            // This checkout ships countdown/clock/result recordings. Optional
+            // taya/ayos/tumbang recordings are absent and must stay a silent no-op.
             voice.OnAttackerTagged();
+            Assert.IsFalse(voice.GetComponentsInChildren<AudioSource>().Any(s => s.isPlaying));
+            voice.Play("clock_30");
             var sources = voice.GetComponentsInChildren<AudioSource>();
             Assert.AreEqual(1, sources.Count(s => s.isPlaying));
             var first = sources.First(s => s.isPlaying).clip;
-            voice.OnLataKnocked();
+            voice.Play("clock_10");
             Assert.AreEqual(first, sources.First(s => s.isPlaying).clip, "Routine chatter must not interrupt a current line.");
             voice.PlayCountdown("3");
             Assert.AreEqual(1, sources.Count(s => s.isPlaying));

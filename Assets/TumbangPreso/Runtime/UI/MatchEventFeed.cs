@@ -75,7 +75,7 @@ namespace TumbangPreso.UI
             {
                 case MatchFlair.Kind.LataDown: Add(actor, "DOWNED LATA", "can"); break;
                 case MatchFlair.Kind.Tag: Add(actor, "CAUGHT " + PlayerIdentity.Label(subject), "tag" + subject); break;
-                case MatchFlair.Kind.Block: Add(subject, "BLOCKED " + PlayerIdentity.Label(actor), "block" + actor); break;
+                case MatchFlair.Kind.Block: Add(subject, actor >= 0 ? "BLOCKED " + PlayerIdentity.Label(actor) : "DEFLECTED SLIPPER", "block" + actor); break;
             }
         }
         private void Add(int actor, string words, string kind)

@@ -25,7 +25,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Observe(GameMode mode)
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, mode);
-            var round = GameServices.Round; var subject = round.PlayerAt(1);
+            var round = GameServices.Round; var subject = round.PlayerAt(2);
             var rig = Camera.main.GetComponent<CameraRig>(); rig.Follow(subject, true);
             var witness = new GameObject("BusyExchangeWitness").AddComponent<Camera>();
             witness.CopyFrom(Camera.main); witness.enabled = false; witness.tag = "Untagged";
@@ -40,6 +40,8 @@ namespace TumbangPreso.PlayTests
             }
             var events = new StringBuilder("game_seconds,kind,actor,subject,x,y,z\n");
             int acceptedThrows = 0;
+            bool upright = round.Lata.IsUpright;
+            var heldStates = round.Players.Select(p => p.HoldingSlipper).ToArray();
             void Event(MatchFlair.Kind kind, int actor, int target, Vector3 at, float strength)
             {
                 if (kind == MatchFlair.Kind.Throw) acceptedThrows++;
@@ -52,14 +54,24 @@ namespace TumbangPreso.PlayTests
             {
                 yield return ImprovementEvidenceProbe.Record(witness, name, 35, subject, _ =>
                 {
+                    if (round.Lata.IsUpright != upright)
+                    {
+                        upright = round.Lata.IsUpright;
+                        events.AppendLine(FormattableString.Invariant($"{Time.time:F4},{(upright ? "Restore" : "CanDownState")},0,-1,0,0,0"));
+                    }
                     foreach (var player in round.Players)
                     {
                         int seat = player.PlayerSlot;
+                        if (heldStates[seat] != player.HoldingSlipper)
+                        {
+                            heldStates[seat] = player.HoldingSlipper;
+                            events.AppendLine(FormattableString.Invariant($"{Time.time:F4},{(heldStates[seat] ? "Possession" : "Released")},{seat},-1,0,0,0"));
+                        }
                         float step = Vector3.Distance(previous[seat], player.transform.position);
                         if (step < 1) travel[seat] += step; // Exclude catch teleport from travel.
                         previous[seat] = player.transform.position;
                     }
-                }, new Vector3(5, 4, -6), 1);
+                }, new Vector3(3, 2.2f, -4), 1);
                 Assert.AreEqual(4, round.Players.Count);
                 Assert.IsTrue(travel.All(metres => metres > 2), "Every participant must actually move in the busy observation.");
                 Assert.Greater(acceptedThrows, 0, "The busy observation produced no actual releases.");

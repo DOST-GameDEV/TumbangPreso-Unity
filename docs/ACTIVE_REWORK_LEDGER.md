@@ -37,7 +37,8 @@ Initial 24 modified + 2 untracked files were byte-preserved under
 Logs/presentation-pass-2026-09-21/intake-files with intake.json hashes. They include
 unrelated UI/probes/Sean diagnostic work and Inday assets. They remain outside this
 assignment's commits, including selected owned hunks in otherwise dirty files.
-Current extra uncommitted work is documentation cleanup and a Slipper comment.
+Current next increment: honest close-call episodes, sparse voice priority, body-block
+contact separation and credited thrower, plus a busy four-player observation.
 
 ## Friend-work and ownership
 
@@ -95,7 +96,12 @@ Buildv5 passed on7bc1964c,1156MB/78s, guard d2343174275b.
 Inputs/log are Logs/catch-build-v5; artifact Builds/catch-presentation-v5.
 The native23264 and three-peer17768/23604/9308 jobs completed; handles75993/46955
 retired. Results: Logs/net-catch-v2 and Logs/catch-native-v5. No player left running.
-Next pinned job: close-call/audio focused tests plus35s four-bot capture per mode.
+Source60509753: busy/close-call/audio run completed5/6; both35s busy modes and2
+close-call cases passed. Voice fixture assumed an absent taya recording; correcting
+it to actual clock/count/result assets. Busy Hero captured10 repeated block events
+in.18s from continuous overlap; fixing contact episode separation/thrower attribution.
+Core chain rules6/6 passed on60509753 in Logs/action-chains-v2; live awards/messages
+remain gated by C4. Next snapshot includes block regression and corrected voice test.
 Tests can serialize whitespace and change QualitySettings from a selected
 profile. Preserve the diff, restore only proven test-generated changes after exit,
 and record an exact base/input manifest before the next build. Never restore the

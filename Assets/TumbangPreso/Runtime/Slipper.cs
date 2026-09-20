@@ -173,6 +173,8 @@ namespace TumbangPreso
         private float _airborneTotal;
         private int _throwerSlot = -1;
         private float _throwerIgnoreLeft;
+        // Contact episodes, not a timed immunity: separation re-arms this body.
+        private int _bodyContacts;
         private int _bankCount;
         private float _closestCanFlat = float.PositiveInfinity;
         private bool _nearMissReported;
@@ -937,6 +939,7 @@ namespace TumbangPreso
             _flightTime = 0.0f;
             _airborneTotal = 0.0f;
             _throwerIgnoreLeft = 0.0f;
+            _bodyContacts = 0;
             _bankCount = 0;
             _closestCanFlat = float.PositiveInfinity;
             _nearMissReported = false;
@@ -1042,6 +1045,7 @@ namespace TumbangPreso
 
             // You cannot block your own throw on release.
             _throwerIgnoreLeft = Balance.ThrowerIgnoreTime;
+            _bodyContacts = 0;
 
             if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
 
@@ -1252,6 +1256,9 @@ namespace TumbangPreso
             if (transform.position.y < Balance.VoidY) { Land(fromFlight: false); return; }
 
             var round = GameServices.Round;
+            if (round != null && _bodyContacts != 0)
+                foreach (var player in round.Players)
+                    if (player != null && !HitsBody(player)) _bodyContacts &= ~(1 << player.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
             // 🧑 2026-08-29: *"make sure defender cna block too"*, and *"feels like shit get past
@@ -1276,7 +1283,11 @@ namespace TumbangPreso
                 {
                     if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
-
+                    // Keep simulating the rebound, but don't restart its lift, body
+                    // impulse, sound and flair on every step spent inside one body.
+                    int contactBit = 1 << p.PlayerSlot;
+                    if ((_bodyContacts & contactBit) != 0) return;
+                    _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
@@ -1308,7 +1319,11 @@ namespace TumbangPreso
                 {
                     if (p == null || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
-
+                    // Keep simulating the rebound, but don't restart its lift, body
+                    // impulse, sound and flair on every step spent inside one body.
+                    int contactBit = 1 << p.PlayerSlot;
+                    if ((_bodyContacts & contactBit) != 0) return;
+                    _bodyContacts |= contactBit;
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
@@ -1668,7 +1683,7 @@ namespace TumbangPreso
             // unpressed verb means three players out of four blocked a throw with no sign that
             // anything happened. See `Visual.MatchFlair`.
             Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Block,
-                                       -1, blocker.PlayerSlot, transform.position,
+                                       _throwerSlot, blocker.PlayerSlot, transform.position,
                                        _velocity.magnitude);
 
             // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
