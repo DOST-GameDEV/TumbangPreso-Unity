@@ -1342,6 +1342,12 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepFallView()
         {
+            if (!Settings.SettingsStore.Current.CinematicCameraMotion)
+            {
+                if (_fallView) { _fallView = false; EndEmoteView(); }
+                return;
+            }
+
             // ⚠️⚠️ AN ELEMENT STUN EARNS THE CAMERA FOR THE SAME REASON A FALL DOES, and the
             // rule quoted above is what admits it rather than a second exception. `docs/
             // Hero_Strike_Balance.md` § 8.6: an event takes the camera when the body the player

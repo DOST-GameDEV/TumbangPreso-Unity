@@ -86,6 +86,26 @@ namespace TumbangPreso.PlayTests
             finally { Settings.SettingsStore.Current.ReducedUiMotion = reduced; view.End(); }
         }
         [UnityTest]
+        public IEnumerator IndependentCameraControlKeepsRecoveryInFirstPerson()
+        {
+            yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
+            var victim = GameServices.Round.PlayerAt(1);
+            bool previous = Settings.SettingsStore.Current.CinematicCameraMotion;
+            try
+            {
+                Settings.SettingsStore.Current.CinematicCameraMotion = false;
+                GameServices.Round.ResolveTag(GameServices.Round.PlayerAt(0), victim);
+                yield return new WaitForSecondsRealtime(.3f);
+                Assert.IsFalse(Object.FindAnyObjectByType<CatchReconstruction>().Playing);
+                Assert.Greater(victim.StunLeft, 4, "Comfort controls cannot shorten recovery.");
+                var eye = victim.transform.position + Vector3.up * (CameraRig.PersonCapsuleHeight * .5f + CameraRig.FppEyeHeight);
+                Assert.Less(Vector3.Distance(Camera.main.transform.position, eye), .05f,
+                    "Disabling cinematic camera movement also suppresses the automatic recovery orbit.");
+            }
+            finally { Settings.SettingsStore.Current.CinematicCameraMotion = previous; }
+        }
+
+        [UnityTest]
         public IEnumerator LateEventsAndReducedMotionNeverExtendRecovery()
         {
             yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
