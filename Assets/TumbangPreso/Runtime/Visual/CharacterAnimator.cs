@@ -1018,6 +1018,7 @@ namespace TumbangPreso.Visual
 
         // Rejoining an accepted preparation resumes its existing authored body/FPP
         // gesture; it does not emit a new gameplay cast or ultimate introduction.
+        private bool _restoringAction;
         public void PlayActionAt(string action,string viewmodelAction,float elapsed,bool onlyWhileClipRunning=false)
         {
             if(onlyWhileClipRunning)
@@ -1025,7 +1026,9 @@ namespace TumbangPreso.Visual
                 var runningClip=ResolveChain(ActionClips,action);
                 if(runningClip==null || elapsed>=ClipLength(runningClip)) return;
             }
-            PlayAction(action,viewmodelAction);
+            bool restoring = _restoringAction; _restoringAction = true;
+            try { PlayAction(action,viewmodelAction); }
+            finally { _restoringAction = restoring; }
             var clip=ResolveChain(ActionClips,action);
             if(clip!=null && _current==clip && _graph.IsValid())
             {
@@ -1073,6 +1076,10 @@ namespace TumbangPreso.Visual
             // throw, grab, shove, punch and lunge all reach the viewmodel for free — and a verb
             // added later cannot forget to.
             CameraSystem.CameraRig.PlayViewmodelAction(_motor, viewmodelAction);
+            // This entry already reaches owner, host and observers exactly once.
+            // Restoration seeks the pose silently; a live lunge earns its rush.
+            if (!_restoringAction && action == "lunge")
+                GameServices.Audio?.PlayAtVaried("dash", transform.position, .95f, 1.03f, .8f);
 
             var releaseFrom=(_chargePosing || _chargeOffsetsApplied) ? _lastThrowPose : ThrowGesture.Rest;
             if(ThrowGesture.IsThrow(action))

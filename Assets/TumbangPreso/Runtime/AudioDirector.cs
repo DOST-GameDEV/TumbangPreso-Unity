@@ -32,6 +32,9 @@ namespace TumbangPreso
         }
 
         private readonly Dictionary<string, Cue> _cues = new Dictionary<string, Cue>();
+        private readonly System.Random _variation = new System.Random(0x54554d50);
+        private float PresentationPitch(float a, float b)
+            => Mathf.Min(a, b) + (float)_variation.NextDouble() * Mathf.Abs(b - a);
 
         /// <summary>
         /// ⚠️⚠️ WITHOUT AN AudioListener THE WHOLE GAME IS SILENT, AND NOTHING WARNS YOU.
@@ -302,8 +305,7 @@ namespace TumbangPreso
 
             voice.transform.position = position;
             voice.clip = cue.Clip;
-            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
-                                       Mathf.Max(pitchMin, pitchMax));
+            voice.pitch = PresentationPitch(pitchMin, pitchMax);
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
 
@@ -356,8 +358,7 @@ namespace TumbangPreso
             var voice = TakeUiVoice();
 
             voice.clip = cue.Clip;
-            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
-                                       Mathf.Max(pitchMin, pitchMax));
+            voice.pitch = PresentationPitch(pitchMin, pitchMax);
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
 

@@ -25,7 +25,6 @@ namespace TumbangPreso.Audio
             new Dictionary<string, string>
             {
                 { "hit_body",       "bump" },
-                { "bump_swing",     "dash" },
                 { "can_knockdown",  "lata_knockdown" },
                 { "reset_complete", "reset_channel_complete" },
                 { "pickup",         "grab" },
@@ -148,6 +147,7 @@ namespace TumbangPreso.Audio
                 { "ui_click",       -3.0f },
                 { "slipper_land",   -3.0f },
                 { "dash",           -3.0f },
+                { "bump_swing",     -6.0f },
                 { "lata_impact",     0.0f },
                 { "lata_seal",       0.0f },
                 { "match_win",       0.0f },
@@ -369,7 +369,7 @@ namespace TumbangPreso.Audio
             "sfx_var_nemu_fade", "sfx_var_nemu_leash",
             "sfx_var_phaister_brand", "sfx_var_phaister_stride",
 
-            // The shove and the block, via aliases.
+            // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
             "hit_body", "bump_swing",
 
             // The slipper.
