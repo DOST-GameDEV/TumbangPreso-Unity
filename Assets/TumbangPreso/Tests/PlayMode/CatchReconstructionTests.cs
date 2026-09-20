@@ -70,7 +70,12 @@ namespace TumbangPreso.PlayTests
                     Assert.IsTrue(copies.GetComponentsInChildren<Renderer>(true).All(r => r.forceRenderingOff),
                         "Copies must stay invisible to ordinary world cameras.");
                     if (n == 0)
-                        yield return GameplayShots.Render(Camera.main, "victim-catch", true, outDir: "Logs/catch-reconstruction-v1");
+                        yield return GameplayShots.Render(Camera.main, "victim-catch", true, outDir: "Logs/catch-reconstruction-v2");
+                    if (n == 0)
+                    {
+                        yield return new WaitForSecondsRealtime(.30f);
+                        yield return GameplayShots.Render(Camera.main, "victim-followthrough", true, outDir: "Logs/catch-reconstruction-v2");
+                    }
                     yield return new WaitForSecondsRealtime(1.1f);
                     Assert.IsFalse(view.Playing); Assert.IsFalse(victim.CanAct(), "Camera exit does not cancel the tag penalty.");
                     Assert.IsTrue(rig.IsFollowing(victim)); Assert.AreEqual(lens, Camera.main.fieldOfView, .1f);

@@ -24,6 +24,8 @@ namespace TumbangPreso.CameraSystem
         private Text _caption;
         private float _contact, _began, _duration;
         private int _round;
+        private Vector3 _actorContact, _victimContact;
+        private Quaternion _actorFacing, _victimFacing;
         private readonly List<Renderer> _hidden = new List<Renderer>();
         private readonly List<bool> _previous = new List<bool>();
         private readonly List<Renderer> _scratch = new List<Renderer>();
@@ -71,6 +73,8 @@ namespace TumbangPreso.CameraSystem
             _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(1.1f, victim.StunLeft - .18f);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             actor.Apply(_actorCopy, contact); victimTrack.Apply(_victimCopy, contact);
+            _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
+            _actorFacing = _actorCopy.Root.transform.rotation; _victimFacing = _victimCopy.Root.transform.rotation;
             CopyHeldItem(victimTrack, _victimCopy);
             _stage.SetActive(true);
             BuildView();
@@ -129,14 +133,22 @@ namespace TumbangPreso.CameraSystem
                 _victim.CanAct() || Panel.AnyOpen || GameServices.Round == null || !GameServices.Round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round || elapsed >= _duration)
             { End(); return; }
-            float recordedTime = _contact - .28f + Mathf.Clamp01(elapsed / .48f) * .28f;
+            float recordedTime = elapsed < .30f ? _contact - .22f + elapsed / .30f * .22f :
+                _contact + Mathf.Min(.18f, (elapsed - .30f) * .6f);
             _actorTrack.Apply(_actorCopy, recordedTime); _victimTrack.Apply(_victimCopy, recordedTime);
+            if (recordedTime >= _contact)
+            {
+                // Retain actual post-contact bone motion while keeping the
+                // reconstruction at contact, not following the penalty teleport.
+                _actorCopy.Root.transform.SetPositionAndRotation(_actorContact, _actorFacing);
+                _victimCopy.Root.transform.SetPositionAndRotation(_victimContact, _victimFacing);
+            }
             Vector3 a = _actorCopy.Root.transform.position, b = _victimCopy.Root.transform.position;
             Vector3 forward = b - a; forward.y = 0;
             if (forward.sqrMagnitude < .01f) forward = _victimCopy.Root.transform.forward;
             forward.Normalize(); Vector3 side = Vector3.Cross(Vector3.up, forward);
             Vector3 focus = (a + b) * .5f + Vector3.up * .9f;
-            Vector3 wanted = focus + side * 2.7f - forward * .7f + Vector3.up * .35f;
+            Vector3 wanted = focus + side * 2.9f + forward * .85f + Vector3.up * .30f;
             Vector3 offset = wanted - focus; float distance = offset.magnitude;
             foreach (var hit in Physics.RaycastAll(focus, offset.normalized, distance, ~0, QueryTriggerInteraction.Ignore))
             {
