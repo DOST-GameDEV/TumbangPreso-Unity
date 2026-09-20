@@ -23,6 +23,8 @@ namespace TumbangPreso.PlayTests
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
+            foreach (var other in GameServices.Round.Players)
+                if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
             var camera = new GameObject("IntroductionArtWitness").AddComponent<Camera>();
             camera.CopyFrom(Camera.main); camera.enabled = false; camera.tag = "Untagged";
             camera.fieldOfView = 45; camera.cullingMask &= ~(1 << 5);
@@ -40,9 +42,9 @@ namespace TumbangPreso.PlayTests
                     actor.CharacterIndex = Roster.IndexIn(Roster.GetPeople(GameMode.HeroStrike), hero);
                     var art = RosterBook.Load().People.First(p => p.Id == hero);
                     visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
-                    actor.Teleport(new Vector3(0, .1f, -4)); actor.transform.rotation = Quaternion.identity;
+                    actor.Teleport(new Vector3(0, actor.transform.position.y, -4)); actor.transform.rotation = Quaternion.identity;
                     actor.Intent.Clear(); actor.Intent.Parked = true;
-                    yield return null;
+                    yield return new WaitForFixedUpdate(); yield return new WaitForFixedUpdate();
                     var track = new MatchPoseHistory.Track(actor, visual.Model);
                     track.Record(Time.time); track.Record(Time.time + .05f);
                     var stage = new GameObject("IntroductionRenderCopy"); stage.SetActive(false);
@@ -52,6 +54,9 @@ namespace TumbangPreso.PlayTests
                     Assert.IsNotNull(clip); Assert.AreEqual(2.8f, clip.length, .01f);
                     int score = GameServices.Match.ScoreFor(1); Vector3 at = actor.transform.position;
                     bool active = visual.Model.activeSelf;
+                    var held = actor.GetComponent<Carrier>().Held;
+                    bool heldActive = held != null && held.gameObject.activeSelf;
+                    if (held != null) held.gameObject.SetActive(false); // Body study only; no floating live prop.
                     visual.Model.SetActive(false); stage.SetActive(true); copy.ShowOnlyForCapture(true);
                     camera.transform.position = at + offsets[i]; camera.transform.LookAt(at + Vector3.up * .9f);
                     try
@@ -65,7 +70,9 @@ namespace TumbangPreso.PlayTests
                     }
                     finally
                     {
-                        visual.Model.SetActive(active); Object.Destroy(stage); Object.Destroy(clip);
+                        visual.Model.SetActive(active);
+                        if (held != null) held.gameObject.SetActive(heldActive);
+                        Object.Destroy(stage); Object.Destroy(clip);
                     }
                 }
             }
