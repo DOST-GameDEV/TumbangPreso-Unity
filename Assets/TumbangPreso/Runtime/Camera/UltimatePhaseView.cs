@@ -55,6 +55,9 @@ namespace TumbangPreso.CameraSystem
                     track.Record(Time.time); track.Record(Time.time + .05f);
                     var actorStage = new GameObject("RecordedCast-P" + (commit.Seat + 1));
                     actorStage.transform.SetParent(_stage.transform,false);
+                    // MatchPoseHistory.Clone assigns meshes and their mapped bones
+                    // separately. Keep that hierarchy inactive until both exist.
+                    actorStage.SetActive(false);
                     var body = track.Clone(actorStage.transform); if (body == null) continue;
                     track.Apply(body, track.Newest);
                     body.Root.SetActive(true); // The committed caster is shown even if a prior power hid their live model.
@@ -63,6 +66,7 @@ namespace TumbangPreso.CameraSystem
                     entry.Clip = HeroAbilityClips.BuildUltimateIntroduction(body.Root.transform, actor.AbilitySystem.HeroId,
                         actor.GetComponent<Carrier>().Held != null);
                     if (entry.Clip == null) continue;
+                    actorStage.SetActive(true);
                     entry.Clip.SampleAnimation(body.Root, 0);
                     if (actor.IsGrounded)
                     {

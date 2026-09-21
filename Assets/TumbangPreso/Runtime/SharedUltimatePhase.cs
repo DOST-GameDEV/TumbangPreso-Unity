@@ -53,7 +53,7 @@ namespace TumbangPreso
             && Unity.Netcode.NetworkManager.Singleton.IsListening ? Unity.Netcode.NetworkManager.Singleton.ServerTime.Time : Time.realtimeSinceStartupAsDouble;
         public bool CanAccept(int seat)
         {
-            if (!NetAuthority.ShouldResolve() || GameServices.Match == null || GameServices.Round == null
+            if (!isActiveAndEnabled || !NetAuthority.ShouldResolve() || GameServices.Match == null || GameServices.Round == null
                 || !GameServices.Round.RoundActive || GameServices.Match.IsWarmupBuffer) return false;
             if (!Active) return PresentationClock.RequestedScale > 0;
             if (_sealed || _frame != Time.frameCount || _commits.Count >= 4) return false;
@@ -76,6 +76,7 @@ namespace TumbangPreso
         {
             if (NetAuthority.ShouldResolve() || phase <= 0 || commits == null || commits.Length < 1 || commits.Length > 4
                 || match != Net.MatchRpc.Instance?.PresentationMatchId || double.IsNaN(began) || double.IsInfinity(began) || began > Now + .5) return;
+            if (GameServices.Match != null && GameServices.Match.RoundNumber > round) return;
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
             if (phase <= _lastReceived) return;
             _lastReceived = phase;
