@@ -113,6 +113,11 @@ superseded designs do not override the current queue or justify repeating done w
 
 ## Standing product and art contracts
 
+- Latest map feedback2026-09-21: blank/poorly textured buildings and empty skies
+  require thorough material/sky refinement on every map. Plan construction-specific
+  treatments; do not spam one texture/noise across all buildings. Shaders are allowed.
+  Keep native style, supplied imagery, different map identities and readable action.
+
 - Both modes ship. Both default to eight rounds; custom lengths remain configurable.
   Classic people are cosmetic with neutral stats. No Street Hype mechanic or meter.
 - Preserve approved cute blocky people, flat faces, simple no-thumb hands, rigs,

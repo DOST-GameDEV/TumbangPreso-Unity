@@ -17,6 +17,13 @@ external dependency. An old OPEN heading alone is not proof code is missing, but
 neither may a task be skipped because it is old, inconvenient or previously deferred.
 No broad parent gets checked while any actionable child remains unfinished.
 
+**Latest map feedback:** the owner says maps/buildings feel blank or poorly textured,
+and the sky is too empty. Thorough material and sky refinement is an explicit part
+of152.4/MAP_FINAL_PASS, not an optional later polish task. Plan surfaces by actual
+construction and purpose across every map/building; do not stamp one noise/texture
+on everything. Improve sky/clouds/atmosphere with suitable shaders or authored art,
+preserving native style, supplied signs/livery, gameplay clarity and Low settings.
+
 ### Full remaining execution order
 
 The presentation outcomes below retain their completed software/evidence states.
@@ -2884,7 +2891,16 @@ there and had gone stale, so nobody puts one back.
   against the rig in front of you. Deleting the number without noticing that would have left a
   narrower claim reading like a wider one.
 
-### 151.19 ⚠️⚠️ OPEN, AND IT IS AN ARCHIVED ENTRY COMING BACK WITH EVIDENCE: THE EIGHTEEN PROCEDURAL HERO CASTS PROBABLY DO NOT ANIMATE IN A BUILD
+### 151.19 CLOSED: authored hero casts are observed in the Windows player
+
+Current reconciliation2026-09-21: CharacterAnimator now compiles the procedural
+HeroAbilityClips fallback only under UNITY_EDITOR. Shipping roster clips remain
+serialized. The presentation pass's native twelve ordinary skill routes and six
+live ultimate performances supply the previously missing built-player observation.
+See [current receipts](reports/presentation-pass-2026-09-21/current-candidate-receipts.json),
+ordinary-skills-native-v29 and round-clean-live-native-v33, and the report's acceptance
+mapping. The historical reasoning below is retained; this no longer needs a new
+fallback rewrite or another single-cast proof.
 
 **`docs/TODO_Archive.md` § 80.8 was archived while still OPEN**, in a sweep that listed
 it among ten entries that survived. It is being surfaced here because two things changed:
@@ -5207,7 +5223,13 @@ pretending the match continues, a stated reason, and a working way back.
 says a drop and a quit are the same event on the wire; whether a bracket match is replayed,
 resumed or forfeited is `Attention.md`.
 
-### 143.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF
+### 143.10 CLOSED: the footprint rule derives its percentage from its radius
+
+Current reconciliation2026-09-21: VISION.md now states1.6-2.3m and the corresponding
+4.1-8.5% of196m², explains the old contradiction and treats bounded trails separately.
+The current source-derived report is
+[ability-footprint-41a62d947077.md](reports/ability-footprint-41a62d947077.md).
+The historical report below is preserved; its contradictory wording is not current.
 
 The arena is `CONFINEMENT_RADIUS` 7.0, so 14 m by 14 m = **196 m²**. Rule 1 reads *"about 1.8 to
 2.5 m of radius, which is 3 to 8 per cent of the box"*. Both halves cannot be true:
@@ -5225,14 +5247,24 @@ the observed thing and the percentages are the arithmetic that was never done. *
 first**: rule 1's own text also says these two are measured as discs and played as corridors, which
 is § 143.11.
 
-### 143.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES
+### 143.11 CLOSED for the current six-hero source: regenerated footprint report
+
+Current reconciliation2026-09-21: measure_ability_footprint.py regenerated all18
+default entries from41a62d947077. [Report](reports/ability-footprint-41a62d947077.md).
+This is declared source geometry, not rendered coverage or balance approval. Charge
+abilities correctly have zero cooldown. Regenerate this existing report when the
+seventh kit changes its input; do not quote old81.9%/27.2% figures as current.
 
 `Hero_Strike_Balance.md` and `VISION.md` § 2 carry a **81.9%** worst credible frame and a **27.2%**
 Zack corridor. Both were measured before the ability retune that put Bolt Sprint on 46 s and Flame
 Rush on 50 s, and before Thunderstrike became aimed. **They are history, not measurements of this
 commit**, and nothing regenerates them.
 
-### 143.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS
+### 143.12 CLOSED: ability constructor/comment drift audit
+
+Current reconciliation2026-09-21: audit_ability_stat_drift.py reports18constructors
+across16files and0findings. The earlier five corrections and audit limitations
+below remain evidence; no new production change was necessary.
 
 Confirmed by reading both on `e85b0fc`:
 

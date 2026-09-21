@@ -456,8 +456,11 @@
     {
       "lineAtIntake": 2887,
       "heading": "### 151.19 ⚠️⚠️ OPEN, AND IT IS AN ARCHIVED ENTRY COMING BACK WITH EVIDENCE: THE EIGHTEEN PROCEDURAL HERO CASTS PROBABLY DO NOT ANIMATE IN A BUILD",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "complete with current evidence",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs: UNITY_EDITOR fallback; serialized roster actions",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json: ordinary-skills-native-v29; round-clean-live-native-v33"
+      ]
     },
     {
       "lineAtIntake": 2940,
@@ -864,20 +867,26 @@
     {
       "lineAtIntake": 5210,
       "heading": "### 143.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "complete with current evidence",
+      "evidence": [
+        "docs/VISION.md: normal skill footprint rule, radius-derived 4.1-8.5%"
+      ]
     },
     {
       "lineAtIntake": 5228,
       "heading": "### 143.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "complete with current evidence",
+      "evidence": [
+        "docs/reports/ability-footprint-41a62d947077.md: 18 current default ability entries; source geometry only"
+      ]
     },
     {
       "lineAtIntake": 5235,
       "heading": "### 143.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "complete with current evidence",
+      "evidence": [
+        "tools/audit_ability_stat_drift.py: 18 constructors, 16 files, 0 findings on 2026-09-21"
+      ]
     },
     {
       "lineAtIntake": 5267,

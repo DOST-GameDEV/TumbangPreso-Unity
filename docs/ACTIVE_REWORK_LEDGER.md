@@ -96,10 +96,54 @@ lagoon expansion. Keep the exact ordered tasks in TODO, designs in their topic
 files, and evidence in reports. Do not resurrect obsolete work solely because an
 old heading says OPEN. Source checkpoint10fa4cad preserves all previous delivery.
 
-Current owned job: guarded validation Editor session68830, existing MapExperience
-legal-owner-view baseline, source db976126. Logs/full-backlog-maps-baseline-v1.xml/
-.log and capture folder of the same name. Profile presentation-validation-20260921.
-No other owned player/proxy/encoder/browser/preview. Development edits remain in
-the separate checkout. Full-backlog report has the366-heading intake inventory.
-Next: inspect baseline four-map frames, reconcile still-current composition/route
-gaps and implement them. Keepv33 as tested fallback; no docs-only rebuild.
+Current development scope publication41a62d94. New SaBubong skyline author is
+edited in development and copied into pinned validationdb976126. Authorv1 passed:
+0protected scene changes,0repeat differences/4977rows and all-map geometry gate.
+Legal roof owner capture50frames passed; inspected court/edge views. The42owned
+skyline scene/mesh/material/meta outputs were recovered selectively to development.
+Baseline all4maps also passed1/1/200frames. No new native build yet; keepv33 fallback.
+
+All-map route job finished:1/1,533.399s,8map/mode grids,27232clear shoe samples,
+0unreachable samples and62/62actual pickups. Guard7c694ff22f34. Dead any-shoe bot
+selector and retired Nemu floor-vortex factory/probe entries removed in dev/validation;
+live owner fetch/Kuro intake preserved. Existing lunge audio classification was
+missing from its source audit; traced and added, now21calls/0findings.
+
+Inday retained source arms are already the same geometry as HEAD; original dirty
+differences are only whitespace, and both files remain byte-identical to intake.
+Existing quick/held/moving throw review plus pickup and live Kuro cleanup passed
+3/3,25.311s in full-backlog-inday-and-cleanup-v1. Inspect its motion frames next.
+The new explicit154.5rebind/device marker regression is drafted in development only.
+That Editor exited and restored its named profile; no owned player/proxy/browser.
+Full-backlog report retains366numbered headings. First verified stale leaves
+151.19/143.10/143.11/143.12 are reconciled; broad parents are not closed.
+
+LATEST OWNER STEERING: all maps/buildings look blank or poorly textured and skies
+are empty. Thorough construction-specific materials and varied sky/cloud/atmosphere
+are now explicit active map acceptance, not optional polish. Owner further requires
+thorough detail across every environment object, even if it takes time, and a plan
+that survives compaction. MAP_FINAL_PASS now records the full surface/prop/ground/
+vegetation/water/sky design, per-map differences, technical route and batch gates.
+
+Read-only surface inventoryv2 passed for all4maps:2686enabled scene renderers;
+1964have no texture reference (coverage fact, not a quality verdict). Exact group/
+material counts and raw paths/hashes are in full-backlog report surface-inventory-
+summary.json. Commercial buildings use one mesh/colormap; a blanket atlas texture
+would affect unrelated parts. Plan uses validated surface-role masks plus distinct
+material families, preserving imported source geometry and existing NearFade.
+
+Inventoryv1 did not execute because the new recall test used removed GetInstanceID;
+changed its identity assertion to direct object identity. Failure log retained.
+Recall-bindingv1 then reproduced an actual rebinding bug: TryRebind reads a captured
+/Keyboard1/f10 as though it were <Keyboard>/f10 and refuses the valid choice.
+Current dev/validation fix canonicalizes supported control-layout paths, preserves
+pad vs desktop families, and permits keyboard/mouse cross-binding within desktop.
+RebindSession also retains the previous override when the replacement is refused.
+No GenericPadBridge/MenuNav or controller artwork changes.
+
+Current guarded job session41431: full-backlog-recall-binding-v2.xml/.log, two
+focused tests for live marker device changes and real interactive accept/conflict/
+cancel behavior. Named profilepresentation-validation-20260921. Next: inspect this
+result and publish the verified source batch. The detailed full-environment plan
+is complete in MAP_FINAL_PASS; shader/material implementation has NOT begun. Resume
+there with representative surface-role samples and authored skies, then full TODO.
