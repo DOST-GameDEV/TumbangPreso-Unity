@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Linq;
+using UnityEngine.UI;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -20,6 +22,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator DuplicateStaleAndLowerPriorityMomentsCannotChangeScoresOrReplayRecognition()
         {
             yield return MapRetrievalProbe.Load("Eskinita");
+            Hud.Instance.ShowReadyPrompt(false);
             var match = GameServices.Match; var banner = Object.FindAnyObjectByType<MatchMomentBanner>();
             Assert.IsNotNull(banner); int points = match.ScoreFor(1), events = 0;
             match.MomentPresented += _ => events++;
@@ -34,6 +37,12 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 11, match.RoundNumber, 2, MatchMomentKind.LeadChange)));
             yield return new WaitForSecondsRealtime(.1f);
             Assert.AreEqual("TRIPLE CATCH", banner.Phrase, "A lower-priority same-frame phrase cannot replace the major catch.");
+            Canvas.ForceUpdateCanvases();
+            var title = banner.GetComponentsInChildren<Text>().First(t => t.name == "MomentTitle");
+            Assert.Greater(title.cachedTextGenerator.vertexCount, 0, "An accepted string is not enough: the display title must generate visible geometry.");
+            Assert.LessOrEqual(title.preferredWidth, title.rectTransform.rect.width);
+            Assert.IsNotNull(banner.GetComponent<CanvasRenderer>(), "The plate needs its own renderer.");
+            yield return GameplayShots.Render(Camera.main, "triple-catch-visible-banner", true, outDir: "Logs/chain-awards-v2");
             Assert.AreEqual(2, events); Assert.AreEqual(points, match.ScoreFor(1), "Recognition cannot award points locally.");
             Hud.Instance.SetCleanFeed(true); yield return null;
             Hud.Instance.SetCleanFeed(false); yield return null; yield return null;

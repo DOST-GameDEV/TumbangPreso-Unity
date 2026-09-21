@@ -21,21 +21,23 @@ namespace TumbangPreso.UI
         public static MatchMomentBanner Create(RectTransform parent)
         {
             var rect = OwnerUiLayout.Rect(parent, "EarnedMoment");
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, .76f);
-            rect.sizeDelta = new Vector2(800, 134);
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .76f); rect.pivot = new Vector2(.5f, .5f);
+            rect.sizeDelta = new Vector2(800, 148);
             var banner = rect.gameObject.AddComponent<MatchMomentBanner>(); banner._rect = rect;
             banner._group = rect.gameObject.AddComponent<CanvasGroup>(); banner._group.blocksRaycasts = false;
             banner._group.interactable = false; banner._group.alpha = 0;
             rect.gameObject.AddComponent<MomentPlate>().raycastTarget = false;
-            banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 64, OwnerUiLayout.TypeRole.Display);
+            banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 54, OwnerUiLayout.TypeRole.Display);
             banner._title.alignment = TextAnchor.MiddleCenter; banner._title.raycastTarget = false;
             banner._title.color = OwnerUiTheme.Current.Pale; banner._title.supportRichText = false;
-            OwnerUiLayout.Place(banner._title.rectTransform, 24, 1, 752, 84);
+            banner._title.horizontalOverflow = HorizontalWrapMode.Overflow;
+            banner._title.verticalOverflow = VerticalWrapMode.Overflow;
+            OwnerUiLayout.Place(banner._title.rectTransform, 24, 0, 752, 98);
             banner._detail = OwnerUiLayout.Text(rect, "MomentPlayer", "", 28, OwnerUiLayout.TypeRole.Reading);
             banner._detail.alignment = TextAnchor.MiddleCenter; banner._detail.raycastTarget = false;
-            banner._detail.supportRichText = false; OwnerUiLayout.Place(banner._detail.rectTransform, 24, 84, 752, 39);
+            banner._detail.supportRichText = false; OwnerUiLayout.Place(banner._detail.rectTransform, 24, 98, 752, 39);
             banner._accent = OwnerUiLayout.Rect(rect, "PlayerAccent").gameObject.AddComponent<Image>();
-            banner._accent.raycastTarget = false; OwnerUiLayout.Place(banner._accent.rectTransform, 70, 127, 660, 4);
+            banner._accent.raycastTarget = false; OwnerUiLayout.Place(banner._accent.rectTransform, 70, 141, 660, 4);
             banner.Bind(); return banner;
         }
         private void Bind()
@@ -96,6 +98,7 @@ namespace TumbangPreso.UI
             _rect.localScale = Vector3.one * (reduced ? 1 : 1 + .07f * (1 - arrive));
             _rect.localRotation = Quaternion.Euler(0, 0, reduced ? 0 : -3 * (1 - arrive));
         }
+        [RequireComponent(typeof(CanvasRenderer))]
         private sealed class MomentPlate : MaskableGraphic
         {
             protected override void OnPopulateMesh(VertexHelper helper)

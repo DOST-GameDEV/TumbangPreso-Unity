@@ -16,6 +16,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Open(GameMode mode)
         {
             yield return MapRetrievalProbe.Load("Eskinita", mode);
+            UI.Hud.Instance.ShowReadyPrompt(false);
             foreach (var player in GameServices.Round.Players)
                 player.Teleport(new Vector3(5, player.transform.position.y, -5 + player.PlayerSlot * 3));
         }
