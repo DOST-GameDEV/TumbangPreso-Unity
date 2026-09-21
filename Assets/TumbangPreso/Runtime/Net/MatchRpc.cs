@@ -1736,7 +1736,7 @@ namespace TumbangPreso.Net
 
         private void OnSubmitFamiliarMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(!NetAuthority.ShouldResolve())return;
+            if(!NetAuthority.ShouldResolve() || PresentationClock.Held)return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out Vector3 position);

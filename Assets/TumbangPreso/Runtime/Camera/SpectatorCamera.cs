@@ -710,6 +710,7 @@ namespace TumbangPreso.CameraSystem
             // correct reading rather than a workaround: a spectator has no rig, no body and
             // no seat, so for as long as this component exists there is no other legitimate
             // owner of the view.
+            if (PresentationClock.Held) { StepBroadcastKeys(); return; }
             ReclaimView();
 
             StepAutopilotKey();
@@ -932,7 +933,7 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            if (Fired(_mark))
+            if (!PresentationClock.Held && Fired(_mark))
             {
                 _bookmarkPosition = transform.position;
                 _bookmarkRotation = transform.rotation;
@@ -941,7 +942,7 @@ namespace TumbangPreso.CameraSystem
                 UI.Hud.Instance?.ShowToast($"CAMERA MARK SAVED  ·  {BoundKey("SpectatorRecall")} TO RECALL", 1.2f);
             }
 
-            if (Fired(_recall) && _hasBookmark)
+            if (!PresentationClock.Held && Fired(_recall) && _hasBookmark)
             {
                 _follow = null;
                 _followIndex = -1;
@@ -1393,6 +1394,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StartReplay(string reason)
         {
+            if (PresentationClock.Held) return;
             if (_replaying) return;
 
             if (_broadcastPaused)

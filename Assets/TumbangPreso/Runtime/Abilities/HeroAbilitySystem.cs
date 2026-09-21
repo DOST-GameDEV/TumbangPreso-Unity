@@ -1070,7 +1070,7 @@ namespace TumbangPreso.Abilities
 
             // Dante's pressure cue precedes the hit. The camera kick belongs to
             // the actual ground contact, not a long chromatic blast on keypress.
-            if (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack")) return;
+            if (afterIntroduction || (Kit != null && (Kit.HeroId == "dante" || Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "zack"))) return;
 
             var camera = UnityEngine.Camera.main;
             if (camera == null) return;

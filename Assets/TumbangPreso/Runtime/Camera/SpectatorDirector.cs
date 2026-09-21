@@ -328,6 +328,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void LateUpdate()
         {
+            if (PresentationClock.Held) return;
             if (!_engaged || _camera == null) return;
             if (UI.Panel.AnyOpen) return;
 

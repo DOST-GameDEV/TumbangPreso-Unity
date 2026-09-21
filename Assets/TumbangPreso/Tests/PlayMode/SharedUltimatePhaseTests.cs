@@ -14,13 +14,19 @@ namespace TumbangPreso.PlayTests
     public sealed class SharedUltimatePhaseTests
     {
         private bool _cameraMotion, _reduced;
+        private float _ritualStart = -1;
+        private double _ritualStartedAt;
+        private void Started(CharacterMotor actor, HeroKit kit, HeroAbility ability)
+        { if (kit.HeroId == "phaister") { _ritualStart = ability.WindupRemaining; _ritualStartedAt = Time.timeAsDouble; } }
         [UnitySetUp] public IEnumerator Before()
         {
             _cameraMotion=Settings.SettingsStore.Current.CinematicCameraMotion; _reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             yield return PlayModeWorld.Reset();
+            _ritualStart = -1; HeroAbilitySystem.UltimateStarted += Started;
         }
         [UnityTearDown] public IEnumerator After()
         {
+            HeroAbilitySystem.UltimateStarted -= Started;
             SharedUltimatePhase.Instance?.Cancel(); PresentationClock.RequestScale(1);
             Settings.SettingsStore.Current.CinematicCameraMotion=_cameraMotion; Settings.SettingsStore.Current.ReducedUiMotion=_reduced;
             yield return PlayModeWorld.Reset();
@@ -68,7 +74,8 @@ namespace TumbangPreso.PlayTests
             while(phase.Active&&Time.realtimeSinceStartup-started<4)yield return null;
             Assert.IsFalse(phase.Active);Assert.AreEqual(.5f,Time.timeScale);
             Assert.That(Time.realtimeSinceStartup-started,Is.InRange(2.65f,3.1f));
-            Assert.AreEqual(1.55f,phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.08f);
+            Assert.AreEqual(1.55f,_ritualStart,.001f,"Measure the actual execution boundary, before the next frame legitimately advances its warning.");
+            Assert.AreEqual(Mathf.Max(0,1.55f-(float)(Time.timeAsDouble-_ritualStartedAt)),phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.02f);
             Assert.IsFalse(phaister.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);
             Assert.Greater(sean.AbilitySystem.Kit.Ultimate.WindupRemaining,.2f);
             yield return new WaitForSecondsRealtime(.35f);
