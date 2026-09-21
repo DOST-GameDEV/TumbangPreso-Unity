@@ -26,6 +26,9 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator NemuKeepsBothCharactersFramedAcrossGrowthAndAspect()
             => Study(new[] { "nemu" }, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CheskaStagesIceAtTheFreeHandWhileKeepingHerSlipper()
+            => Study(new[] { "cheska" }, false);
         private static IEnumerator Study(string[] heroes, bool checkFraming)
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);

@@ -48,6 +48,14 @@ namespace TumbangPreso.Visual
             }
             if (_rightHand != null)
             { _leftPalm = _rightHand.localPosition; _leftPalm.x = -_leftPalm.x; }
+            // Outfits can be asymmetric. Use this rig's real free-hand surface,
+            // with the mirrored point only as the same missing-rig fallback.
+            foreach (var skin in body.Root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                int left = Array.IndexOf(skin.bones, _leftArm);
+                if (left >= 0 && CharacterVisual.PalmCentre(skin, left, out var palm))
+                { _leftPalm = palm; break; }
+            }
             _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
             _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
             _root = new GameObject("IntroductionScene-" + hero);
@@ -164,6 +172,7 @@ namespace TumbangPreso.Visual
         private Vector3 BothPalms => _rightHand != null && _leftArm != null
             ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
             : new Vector3(0, .7f, .5f);
+        private Vector3 FreePalm => _leftArm != null ? _root.transform.InverseTransformPoint(_leftArm.TransformPoint(_leftPalm)) : BothPalms;
         private void Add(string name, Mesh mesh, Color color)
         {
             var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
@@ -246,9 +255,10 @@ namespace TumbangPreso.Visual
                     break;
                 case "cheska":
                     float form = Ease(.4f, 1.85f, t);
+                    Vector3 gatherAt = _heldItem != null ? FreePalm : BothPalms;
                     for (int i = 0; i < 3; i++)
-                        Place(i, BothPalms + new Vector3((i - 1) * Mathf.Lerp(.2f, .09f, form), .09f + Mathf.Abs(i - 1) * .04f, .12f),
-                            new Vector3(.085f, .28f, .085f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
+                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form), .12f + Mathf.Abs(i - 1) * .04f, .20f),
+                            new Vector3(.10f, .36f, .10f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
                     break;
             }
         }
@@ -262,7 +272,7 @@ namespace TumbangPreso.Visual
                 case "zack": offset = new Vector3(-2.8f, 1.35f, 4.6f); fov = 44; break;
                 case "nemu": offset = new Vector3(2.8f, 1.5f, 5.6f); look.x = -.75f; look.y = 1.4f; fov = 50; break;
                 case "dante": offset = new Vector3(-3, 1, 4.3f); look.y = .8f; fov = 50; break;
-                case "cheska": offset = new Vector3(1.8f, 1.3f, 4); look.y = 1.1f; fov = 43; break;
+                case "cheska": offset = new Vector3(_heldItem != null ? -1.8f : 1.8f, 1.3f, 4); look.y = 1.1f; fov = 43; break;
                 default: offset = new Vector3(2.2f, 1.1f, 4.5f); break;
             }
             offset = Vector3.Lerp(offset, offset * .94f, Ease(.35f, 2.25f, seconds));
