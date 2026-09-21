@@ -5,7 +5,7 @@ from presentation_peer_link import PresentationLink,arguments as link_arguments
 from run_unity_guarded import profile_root,unity_environment
 from run_ui_player_review import read_input_preferences
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);link_arguments(p);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);p.add_argument('--fault',choices=['none','missing','corrupt'],default='none');link_arguments(p);a=p.parse_args()
 exe=a.exe.resolve();out=a.out.resolve()
 assert exe.is_file() and exe.is_relative_to(ROOT/'Builds')
 assert out.is_relative_to(ROOT/'Logs') and out!=ROOT/'Logs'
@@ -25,6 +25,8 @@ try:
     backups.append((source,backup,hashlib.sha256(source.read_bytes()).hexdigest()))
   command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-autostart','3','-tp-map','Eskinita','-tp-profile',profile_name,'-tp-replayseat',str(index),'-tp-replaytrace',str(out/(name+'.csv')),'-logFile',str(out/(name+'.log'))]
   command+=['-tp-replaymode',a.mode]
+  if index==2 and a.fault!='none':command+=['-tp-replay-fault',a.fault]
+  if index==0 and a.fault=='corrupt':command+=['-tp-replay-ready-peers','1']
   command+=['-tp-host',str(port)] if index==0 else ['-tp-join','127.0.0.1',str(join_port)]
   commands.append(command);processes.append(subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
   print(name,'PID',processes[-1].pid,flush=True)
@@ -61,7 +63,9 @@ for seat,name in enumerate(['host','scorer','observer']):
  half=[r for r in rows if int(r['half'])==1]
  views=[r for r in half if int(r['view'])==1]
  if len(half)<60:errors.append(name+': shared halftime missing')
- if len(views)<20:errors.append(name+': canonical playback missing')
+ if name=='observer' and a.fault!='none':
+  if views or not any(int(r.get('fault','0')) and int(r['fallback']) for r in half):errors.append(name+': requested content fault did not produce truthful fallback')
+ elif len(views)<20:errors.append(name+': canonical playback missing')
  if half and max(float(r['sim']) for r in half)-min(float(r['sim']) for r in half)>.04:errors.append(name+': live simulation advanced during halftime')
  if len({int(r['score1']) for r in half})!=1:errors.append(name+': score changed during replay')
  if not any(int(r['round'])==5 and int(r['held'])==0 for r in rows):errors.append(name+': halftime did not release into round5')
@@ -76,6 +80,6 @@ if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
  if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. No impaired-network or freeform-play claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'fault':a.fault,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. Link settings and packet-count log specify simulated conditions; no WAN or freeform-play claim.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)

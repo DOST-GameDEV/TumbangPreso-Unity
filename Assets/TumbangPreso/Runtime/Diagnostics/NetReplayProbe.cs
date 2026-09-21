@@ -13,7 +13,7 @@ namespace TumbangPreso.Diagnostics
     {
         private StreamWriter _trace;
         private float _started,_next,_finished=-1;
-        private bool _running,_shot;
+        private bool _running,_shot,_faultInjected;
         private static string Argument(string key)
         {var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:null;}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -25,7 +25,7 @@ namespace TumbangPreso.Diagnostics
             string path=Argument("-tp-replaytrace");if(path==null)return;
             var root=new GameObject("~NetReplayProbe");DontDestroyOnLoad(root);var probe=root.AddComponent<NetReplayProbe>();probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback");
+            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault");
         }
         private void OnDisable(){_trace?.Dispose();_trace=null;}
         private void Update()
@@ -40,6 +40,20 @@ namespace TumbangPreso.Diagnostics
             var ready=FindAnyObjectByType<ReadyGate>();
             if(NetAuthority.IsHost&&!_running&&round.RoundActive&&!match.IsWarmupBuffer&&(ready==null||!ready.CountingDown)&&SceneFlow.SelectedRoundSeconds-round.TimeLeft>3)
             {_running=true;StartCoroutine(Exchange());}
+            if(expected==2&&!_faultInjected)
+            {
+                var rpc=Net.MatchRpc.Instance;var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                if(Argument("-tp-replay-fault")=="missing")
+                {
+                    var clips=(System.Collections.IList)typeof(Net.MatchRpc).GetField("_receivedClips",flags).GetValue(rpc);
+                    if(clips.Count>0){clips.Clear();_faultInjected=true;Debug.Log("[ReplayProbe] discarded complete local clip for missing-content fallback");}
+                }
+                else if(Argument("-tp-replay-fault")=="corrupt")
+                {
+                    var incoming=typeof(Net.MatchRpc).GetField("_clipReceive",flags).GetValue(rpc);
+                    if(incoming!=null){var hash=(byte[])incoming.GetType().GetField("Hash").GetValue(incoming);hash[0]^=0x40;_faultInjected=true;Debug.Log("[ReplayProbe] corrupted assembly digest before completion");}
+                }
+            }
             var phase=HalftimePresentation.Instance;
             if(phase?.HasReplay==true&&!_shot){_shot=true;StartCoroutine(Shot());}
             if(match.RoundNumber==5&&_finished<0)_finished=Time.realtimeSinceStartup;
@@ -47,7 +61,7 @@ namespace TumbangPreso.Diagnostics
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.05f;
             var archive=FindAnyObjectByType<MatchReplayArchive>();long clip=phase?.ClipId??0;
             if(clip==0&&archive?.Clips.Count>0)clip=archive.Clips[0].Clip.Id;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)}"));
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)}"));
         }
         private IEnumerator Shot()
         {
@@ -70,9 +84,10 @@ namespace TumbangPreso.Diagnostics
             var archive=FindAnyObjectByType<MatchReplayArchive>();
             if(archive==null||archive.Clips.Count==0)throw new InvalidOperationException("Replay not retained: "+archive?.LastSkip);
             var retained=archive.Clips[0];Debug.Log("[NetReplay] clip="+retained.Clip.Id+" bytes="+retained.Bytes.Length+" fields="+retained.Clip.FieldFrames.Max(f=>f.Fields.Length));
+            int required=int.TryParse(Argument("-tp-replay-ready-peers"),out int peers)?Mathf.Clamp(peers,1,2):2;
             double untilReady=SharedUltimatePhase.Now+35;
-            while(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<2&&SharedUltimatePhase.Now<untilReady)yield return null;
-            if(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<2)throw new InvalidOperationException("Both participants did not verify the clip");
+            while(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<required&&SharedUltimatePhase.Now<untilReady)yield return null;
+            if(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<required)throw new InvalidOperationException("Both participants did not verify the clip");
             while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();Net.MatchRpc.Instance.BroadcastWorldSnapshot();yield return new WaitForSecondsRealtime(.35f);}
             round.EndRound();match.BeginIntermission();Net.MatchRpc.Instance.BroadcastWorldSnapshot();
         }
