@@ -46,6 +46,7 @@ namespace TumbangPreso.Diagnostics
                 for (int i = 0; i < heroes.Length; i++)
                 {
                     string hero = heroes[i]; Stage(hero + " native introduction body");
+                    actor.CharacterIndex = Roster.IndexIn(Roster.GetPeople(GameMode.HeroStrike), hero);
                     var art = RosterBook.Load().People.First(p => p.Id == hero);
                     visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
                     actor.Teleport(new Vector3(0, actor.transform.position.y, -4)); actor.transform.rotation = Quaternion.identity;
@@ -96,7 +97,7 @@ namespace TumbangPreso.Diagnostics
                             clip.SampleAnimation(copy.Root, age);
                             if (scene != null)
                             {
-                                scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens);
+                                scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens, camera.aspect);
                                 camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
                             }
                             yield return null;

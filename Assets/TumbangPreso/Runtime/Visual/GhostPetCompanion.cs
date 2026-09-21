@@ -46,6 +46,7 @@ namespace TumbangPreso.Visual
         private bool _ownerVisible = true;
         private bool _mirrored;
         private Vector3 _baseScale = Vector3.one;
+        internal Vector3 RestScale => _baseScale;
         private float _timeOffset;
         private System.Random _idleRandom = new System.Random(1709);
         private bool _reactingToEmote;

@@ -31,11 +31,14 @@ namespace TumbangPreso.Visual
         private readonly Transform _rightHand, _leftArm;
         private readonly Vector3 _leftPalm;
         private Renderer[] _renderers;
+        private readonly Renderer[] _bodyRenderers;
+        private Renderer[] _kuroRenderers;
         private AudioSource _sound;
         public GameObject Root => _root;
 
         public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body)
         {
+            _bodyRenderers = body.Root.GetComponentsInChildren<Renderer>(true);
             foreach (var bone in body.Bones)
             {
                 if (bone.name == "HandAnchor") _rightHand = bone;
@@ -80,7 +83,9 @@ namespace TumbangPreso.Visual
                         track.Apply(_kuro, .05f); _kuro.Root.SetActive(true);
                         _kuro.Root.transform.localPosition = new Vector3(-.95f, .65f, .15f);
                         _kuro.Root.transform.localRotation = Quaternion.Euler(0, -18, 0);
-                        _kuroScale = _kuro.Root.transform.localScale;
+                        // The live pet's idle fidget can stretch its current scale.
+                        // Use the same canonical base as the actual devour, not that transient pose.
+                        _kuroScale = companion.RestScale;
                         Vector3 face = companion.MouthPosition - companion.transform.position; face.y = 0;
                         Vector3 localFace = companion.transform.InverseTransformDirection(face.normalized);
                         _kuroFront = localFace.sqrMagnitude > .01f ? Quaternion.FromToRotation(localFace, Vector3.forward) : Quaternion.identity;
@@ -94,6 +99,7 @@ namespace TumbangPreso.Visual
                             if (bone.name == "KuroEyeWisp")
                             { bone.gameObject.SetActive(false); bone.SetParent(_root.transform, false); ObjectDestroy(bone.gameObject); }
                         _rage = new KuroRagePresentation(_kuro.Root, calm, rage);
+                        _kuroRenderers = _kuro.Root.GetComponentsInChildren<Renderer>(true);
                         break;
                     case "dante":
                         for (int i = 0; i < 3; i++)
@@ -212,7 +218,7 @@ namespace TumbangPreso.Visual
             }
         }
 
-        public void Shot(float seconds, out Vector3 position, out Vector3 focus, out float fov)
+        public void Shot(float seconds, out Vector3 position, out Vector3 focus, out float fov, float aspect = 16f / 9)
         {
             Vector3 offset; Vector3 look = Vector3.up * 1.05f; fov = 46;
             switch (_hero)
@@ -226,6 +232,42 @@ namespace TumbangPreso.Visual
             }
             offset = Vector3.Lerp(offset, offset * .94f, Ease(.35f, 2.25f, seconds));
             position = _ground + _facing * offset; focus = _ground + _facing * look;
+            if (_hero == "nemu" && TryCharacterBounds(out var bounds))
+            {
+                Vector3 backward = (position - focus).normalized;
+                float distance = Vector3.Distance(position, focus);
+                // A controlled reveal changes composition as Kuro grows, keeping
+                // the lens constant and retaining both Nemu and the whole familiar.
+                focus = Vector3.Lerp(focus, bounds.center, Ease(1.05f, 2.25f, seconds));
+                var rotation = Quaternion.LookRotation(-backward, Vector3.up);
+                var inverse = Quaternion.Inverse(rotation);
+                float vertical = Mathf.Tan(fov * Mathf.Deg2Rad * .5f) * .82f;
+                float horizontal = vertical * Mathf.Max(.5f, aspect);
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    Vector3 at = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                        (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                    Vector3 view = inverse * (at - focus);
+                    distance = Mathf.Max(distance, Mathf.Max(Mathf.Abs(view.x) / horizontal - view.z + .1f,
+                        Mathf.Abs(view.y) / vertical - view.z + .1f));
+                }
+                position = focus + backward * distance;
+            }
+        }
+        public bool TryCharacterBounds(out Bounds bounds)
+        {
+            bounds = default; bool found = false; Bounds result = default;
+            void Include(Renderer[] renderers)
+            {
+                if (renderers == null) return;
+                foreach (var renderer in renderers)
+                {
+                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy || renderer.name == "KuroEyeWisp") continue;
+                    if (!found) { result = renderer.bounds; found = true; } else result.Encapsulate(renderer.bounds);
+                }
+            }
+            Include(_bodyRenderers); Include(_kuroRenderers); bounds = result;
+            return found;
         }
         public void SetVisibleForCapture(bool visible)
         { if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible; }

@@ -22,6 +22,11 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         [UnityTest, Timeout(90000)]
         public IEnumerator SixDistinctRenderOnlyIntroductionPerformances()
+            => Study(new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska" }, false);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator NemuKeepsBothCharactersFramedAcrossGrowthAndAspect()
+            => Study(new[] { "nemu" }, true);
+        private static IEnumerator Study(string[] heroes, bool checkFraming)
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
@@ -30,13 +35,12 @@ namespace TumbangPreso.PlayTests
                 if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
             var camera = new GameObject("IntroductionArtWitness").AddComponent<Camera>();
             camera.CopyFrom(Camera.main); camera.enabled = false; camera.tag = "Untagged";
-            camera.fieldOfView = 45; camera.cullingMask &= ~(1 << 5);
+            camera.fieldOfView = 45; camera.aspect = 16f / 9; camera.cullingMask &= ~(1 << 5);
             camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
             var sourceCamera = Camera.main.GetComponent<CameraRig>(); sourceCamera.SetActive(false);
             Vector3[] offsets = { new Vector3(2.2f, 1.1f, 3.8f), new Vector3(1.7f, 1.2f, 4),
                 new Vector3(-2.4f, 1.3f, 3.6f), new Vector3(2.2f, 1.2f, 3.8f),
                 new Vector3(-2.7f, 1.0f, 4), new Vector3(1.4f, 1.3f, 3.4f) };
-            string[] heroes = { "sean", "phaister", "zack", "nemu", "dante", "cheska" };
             // Reuse the existing editor motion-strip geometry audit rather than
             // validating root keys against a copy of the new grounding calculation.
             var audit = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("TumbangPreso.EditorTools.ClipMotionStrip")).First(t => t != null);
@@ -86,7 +90,7 @@ namespace TumbangPreso.PlayTests
                     }
                     float floor = Low(0), lowest = 0, highest = 0;
                     HeroIntroductionScene scene = null;
-                    bool withScene = Environment.GetEnvironmentVariable("TUMP_INTRO_SCENE") == "1";
+                    bool withScene = checkFraming || Environment.GetEnvironmentVariable("TUMP_INTRO_SCENE") == "1";
                     try
                     {
                         Assert.IsEmpty(stage.GetComponentsInChildren<MonoBehaviour>(true));
@@ -108,8 +112,30 @@ namespace TumbangPreso.PlayTests
                                 clip.SampleAnimation(copy.Root, Mathf.Min(age, 2.8f));
                                 if (scene != null)
                                 {
-                                    scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens);
+                                    scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens, camera.aspect);
                                     camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                    if (checkFraming)
+                                    {
+                                        Assert.IsTrue(scene.TryCharacterBounds(out var bounds));
+                                        foreach (float aspect in new[] { 4f / 3, 16f / 9, 21f / 9 })
+                                        {
+                                            camera.aspect = aspect;
+                                            scene.Shot(age, out eye, out target, out lens, aspect);
+                                            camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                            for (int corner = 0; corner < 8; corner++)
+                                            {
+                                                var atCorner = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                                                    (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                                                var screen = camera.WorldToViewportPoint(atCorner);
+                                                Assert.Greater(screen.z, camera.nearClipPlane);
+                                                Assert.That(screen.x, Is.InRange(.075f, .925f), "Horizontal silhouette cropped at " + aspect);
+                                                Assert.That(screen.y, Is.InRange(.075f, .925f), "Vertical silhouette cropped at " + aspect);
+                                            }
+                                        }
+                                        camera.aspect = 16f / 9;
+                                        scene.Shot(age, out eye, out target, out lens, camera.aspect);
+                                        camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                    }
                                 }
                                 float clearance = Low(age) - floor;
                                 lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
