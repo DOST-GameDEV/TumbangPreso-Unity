@@ -33,7 +33,7 @@ namespace TumbangPreso.UI
                 row.supportRichText = false; row.horizontalOverflow = HorizontalWrapMode.Wrap;
                 OwnerUiLayout.Place(row.rectTransform, 0, i * 42, 450, 40);
                 var edge = row.gameObject.AddComponent<Outline>();
-                edge.effectColor = new Color(.035f, .06f, .045f, .95f); edge.effectDistance = new Vector2(1.5f, -1.5f);
+                edge.effectColor = new Color(.137f, .114f, .129f, .95f); edge.effectDistance = new Vector2(1.5f, -1.5f);
                 feed._rows[i] = row; row.enabled = false;
             }
             return feed;

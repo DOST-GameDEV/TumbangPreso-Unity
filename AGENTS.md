@@ -21,6 +21,16 @@ autonomous work, with questions saved for later. Continue from the completed pla
 Record non-routine decisions/dependencies in the ledger for their return. This does
 not authorize paid work, resets, delegation or crossing contributor reservations.
 
+## UI correction, 2026-09-21
+
+The owner rejected the authored UI, especially the green full-screen halftime
+board: halftime should be a popup over the game. Use image generation for visual
+ideation as explicitly requested, then implement a compact animated treatment.
+Keep the court visible. Remove the green backdrop and full-screen standings page.
+Preserve the shared replay/timing/gameplay work and all remaining task IDs; this
+correction changes presentation, not the authorized gameplay scope. Use the
+built-in image tool; do not switch to a paid API/CLI path or spend reset credits.
+
 ## Start and resume
 
 Read [active ledger](docs/ACTIVE_REWORK_LEDGER.md), then the

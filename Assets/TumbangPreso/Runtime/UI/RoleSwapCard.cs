@@ -92,9 +92,9 @@ namespace TumbangPreso.UI
                 // `ControllerSupportTests` guard the whole runtime by reading it as text: a
                 // twelfth screen added next month with its own `GetKeyDown(KeyCode.Escape)` is
                 // exactly as silent as the eleven were, so the check has to be on the shape.
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
+                if (!HalftimePresentation.Playing && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
                     || InputLayer.MenuNav.PadSubmitPressed
-                    || InputLayer.MenuNav.CancelPressed)
+                    || InputLayer.MenuNav.CancelPressed))
                 {
                     DismissAndPractice();
                 }

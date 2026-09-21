@@ -6,42 +6,82 @@ namespace TumbangPreso.UI
 {
     public sealed partial class TumpRoundSwapView
     {
+        private RectTransform _popup;
+        private CanvasGroup _popupFade;
+        private Text _nextRound,_notice;
+        private readonly CourtPopupGraphic[] _tickets=new CourtPopupGraphic[4];
+        private float _entered,_remaining=3;
+        private int _nextRoundNumber;
+        private bool _popupBuilt;
         public void Build(Transform owner,Action dismiss)
         {
-            Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",220);
-            if(Hud.Instance!=null){Canvas.transform.SetParent(Hud.Instance.CleanFeedRoot,false);OwnerUiLayout.Fill((RectTransform)Canvas.transform);}
-            var shade=OwnerUiLayout.Rect(Canvas.transform,"CourtBreakShade").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(shade.rectTransform);shade.color=new Color32(17,29,27,255);shade.raycastTarget=false;
-            var root=OwnerUiLayout.DesignArea(Canvas.transform,"RoundComposition");
-            _round=OwnerUiLayout.Text(root,"RoundHeadline","",72,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_round.rectTransform,98,52,1715,123);_round.color=new Color32(245,218,169,255);
-            var next=OwnerUiLayout.Text(root,"NextRole","NEXT DEFENDER",31,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(next.rectTransform,98,257,668,75);next.color=new Color32(198,218,135,255);
-            _portrait=OwnerUiLayout.Rect(root,"NextDefenderPortrait").gameObject.AddComponent<Image>();
-            _portrait.preserveAspect=true;_portrait.raycastTarget=false;OwnerUiLayout.Place(_portrait.rectTransform,119,352,544,390);
-            _name=OwnerUiLayout.Text(root,"NextDefenderName","",49,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_name.rectTransform,98,766,697,104);_name.color=new Color32(247,235,210,255);
-            var divider=OwnerUiLayout.Rect(root,"BreakDivider").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(divider.rectTransform,831,271,2,587);divider.color=new Color32(196,206,179,80);divider.raycastTarget=false;
-            var title=OwnerUiLayout.Text(root,"StandingsTitle","SCORE SO FAR",31,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(title.rectTransform,903,257,877,75);title.color=new Color32(198,218,135,255);
+            Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",260);
+            var focus=Canvas.GetComponent<InputLayer.ScreenFocus>();if(focus!=null)focus.enabled=false;
+            // Passive graphic over the court. It does not open a page or need a click.
+            _popup=OwnerUiLayout.Rect(Canvas.transform,"CourtBreakPopup");
+            _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,0);_popup.pivot=new Vector2(.5f,0);
+            _popup.sizeDelta=new Vector2(1120,238);_popup.anchoredPosition=new Vector2(0,76);
+            _popupFade=_popup.gameObject.AddComponent<CanvasGroup>();_popupFade.blocksRaycasts=false;_popupFade.interactable=false;
+            Plate(_popup,"HeadlineShadow",8,5,552,103,CourtPresentationPalette.Ink,true);
+            Plate(_popup,"HalftimeBrush",0,0,552,100,CourtPresentationPalette.Red,true);
+            _round=Label(_popup,"RoundHeadline","HALFTIME",74,CourtPresentationPalette.Paper);
+            OwnerUiLayout.Place(_round.rectTransform,33,0,438,100);
+            _round.rectTransform.localRotation=Quaternion.Euler(0,0,2);
+            var can=OwnerUiLayout.Rect(_popup,"TinCanMark").gameObject.AddComponent<TumpSymbol>();can.Kind=TumpSymbol.Icon.Can;
+            can.color=CourtPresentationPalette.Paper;can.raycastTarget=false;OwnerUiLayout.Place(can.rectTransform,478,22,43,55);
+            can.rectTransform.localRotation=Quaternion.Euler(0,0,-12);
+            Plate(_popup,"NextTayaTicket",553,10,370,82,CourtPresentationPalette.DeepRed);
+            var next=Label(_popup,"NextRole","NEXT TAYA",22,CourtPresentationPalette.Gold);
+            OwnerUiLayout.Place(next.rectTransform,629,13,270,29);
+            _portrait=OwnerUiLayout.Rect(_popup,"NextDefenderPortrait").gameObject.AddComponent<Image>();
+            _portrait.preserveAspect=true;_portrait.raycastTarget=false;OwnerUiLayout.Place(_portrait.rectTransform,574,19,47,62);
+            _name=Label(_popup,"NextDefenderName","",29,CourtPresentationPalette.Paper);
+            OwnerUiLayout.Place(_name.rectTransform,629,42,278,43);
+            Plate(_popup,"ReturnTimer",935,10,185,82,CourtPresentationPalette.Ink);
+            _nextRound=Label(_popup,"NextRound","ROUND 5",22,CourtPresentationPalette.Paper);
+            OwnerUiLayout.Place(_nextRound.rectTransform,953,13,149,28);_nextRound.alignment=TextAnchor.MiddleCenter;
+            _buffer=Label(_popup,"WarmupTime","4s",42,CourtPresentationPalette.Gold);
+            OwnerUiLayout.Place(_buffer.rectTransform,953,39,149,52);_buffer.alignment=TextAnchor.MiddleCenter;
             for(int i=0;i<4;i++)
             {
-                float y=364+i*122;
-                var place=OwnerUiLayout.Text(root,"Place"+i,(i+1).ToString(),38,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(place.rectTransform,905,y,68,86);place.color=new Color32(188,195,174,255);
-                _portraits[i]=OwnerUiLayout.Rect(root,"StandingPortrait"+i).gameObject.AddComponent<Image>();
-                _portraits[i].preserveAspect=true;_portraits[i].raycastTarget=false;OwnerUiLayout.Place(_portraits[i].rectTransform,993,y,93,93);
-                _names[i]=OwnerUiLayout.Text(root,"StandingName"+i,"",36,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(_names[i].rectTransform,1125,y,452,87);_names[i].color=new Color32(247,235,210,255);
-                _scores[i]=OwnerUiLayout.Text(root,"StandingScore"+i,"",42,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(_scores[i].rectTransform,1608,y,184,87);_scores[i].alignment=TextAnchor.MiddleRight;_scores[i].color=new Color32(245,218,169,255);
+                float x=i*282;
+                Plate(_popup,"ScoreShadow"+i,x+4,113,273,100,CourtPresentationPalette.Ink);
+                _tickets[i]=Plate(_popup,"ScoreTicket"+i,x,108,273,100,CourtPresentationPalette.Paper);
+                _portraits[i]=OwnerUiLayout.Rect(_popup,"StandingPortrait"+i).gameObject.AddComponent<Image>();
+                _portraits[i].preserveAspect=true;_portraits[i].raycastTarget=false;OwnerUiLayout.Place(_portraits[i].rectTransform,x+16,128,50,64);
+                _names[i]=Label(_popup,"StandingName"+i,"",23,CourtPresentationPalette.Ink);
+                OwnerUiLayout.Place(_names[i].rectTransform,x+76,115,183,33);
+                _names[i].resizeTextForBestFit=true;_names[i].resizeTextMinSize=21;_names[i].resizeTextMaxSize=23;
+                _scores[i]=Label(_popup,"StandingScore"+i,"",44,CourtPresentationPalette.Ink);
+                OwnerUiLayout.Place(_scores[i].rectTransform,x+75,146,180,55);
             }
-            var go=OwnerTextAction.Create(root,"ContinueWarmup","KEEP WARMING UP",dismiss,1322,949,476,88,31);
-            _continueLabel=go.GetComponentInChildren<Text>();
-            _continueLabel.color=new Color32(198,218,135,255);
-            _buffer=OwnerUiLayout.Text(root,"WarmupTime","",29);_buffer.color=new Color32(227,224,207,255);
-            OwnerUiLayout.Place(_buffer.rectTransform,104,956,1158,75);
+            _notice=Label(_popup,"ReplayNotice","",23,CourtPresentationPalette.Paper);
+            OwnerUiLayout.Place(_notice.rectTransform,12,210,1096,28);_notice.alignment=TextAnchor.MiddleCenter;
+            _popupBuilt=true;
+        }
+        private static Text Label(Transform parent,string name,string text,int size,Color colour)
+        {
+            var label=OwnerUiLayout.Text(parent,name,text,size,OwnerUiLayout.TypeRole.Display);
+            label.color=colour;label.raycastTarget=false;label.alignment=TextAnchor.MiddleLeft;
+            label.horizontalOverflow=HorizontalWrapMode.Overflow;label.verticalOverflow=VerticalWrapMode.Overflow;return label;
+        }
+        private static CourtPopupGraphic Plate(Transform parent,string name,float x,float y,float width,float height,Color colour,bool brush=false)
+        {
+            var plate=OwnerUiLayout.Rect(parent,name).gameObject.AddComponent<CourtPopupGraphic>();
+            plate.Brush=brush;plate.color=colour;plate.raycastTarget=false;OwnerUiLayout.Place(plate.rectTransform,x,y,width,height);return plate;
+        }
+        private void LateUpdate()
+        {
+            if(!_popupBuilt||Canvas==null||!Canvas.gameObject.activeSelf)return;
+            float age=Time.unscaledTime-_entered;
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            float appear=reduced?1:Mathf.Clamp01(age/.28f);
+            float settle=1-Mathf.Pow(1-appear,3);
+            float exit=Mathf.SmoothStep(0,1,Mathf.Clamp01(_remaining/.2f));
+            _popupFade.alpha=settle*exit;
+            _popup.anchoredPosition=new Vector2(0,76+(reduced?0:(1-settle)*-24));
+            float pop=reduced?1:1+.025f*Mathf.Sin(appear*Mathf.PI)*(1-appear);
+            _popup.localScale=Vector3.one*pop;
         }
     }
 }

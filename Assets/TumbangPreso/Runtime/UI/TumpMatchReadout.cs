@@ -151,6 +151,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
+            Canvas.enabled=!HalftimePresentation.Playing;
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) _toast.enabled = false; }
             if (_hitLeft > 0) { _hitLeft -= dt; if (_hitLeft <= 0) _hit.enabled = false; }
@@ -249,7 +250,7 @@ namespace TumbangPreso.UI
             if (stock != null && stock.Live && !local.IsDefender) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
             _stamina.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(local.Stamina.Ratio), 1);
             _stamina.enabled = local.Stamina.Ratio > .001f;
-            _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Lime;
+            _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
             StatusStack.Collect(local, local.GetComponent<Carrier>(), local.GetComponent<CombatVerbs>(), _statusRows);
             int index = 0;
             foreach (var row in _statusRows)

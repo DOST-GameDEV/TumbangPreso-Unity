@@ -427,3 +427,97 @@ routes,7.5sscreen/audio captures in Logs/shared-live-native-v15; player21044/
 handle63989exited. Staged hero/round fixture, not human freeform or impaired-link
 evidence. Full late-join, prediction-refusal, retained/canonical replay and the
 remaining complete presentation gates are still open.
+
+### Retained clips and halftime qualification, source8acdf404
+
+Replay retention v1 failed compile on ambiguous CompressionLevel (fixedac62edbe).
+V2/v3failed because the can history included a temporary protection child that
+was destroyed.7b3dd2e2records stable prop models and exact contact keys instead.
+V4then exposed the valid default skin -1being rejected by the codec (fixed).
+V5rendered the real court replay, then failed a fixture dependency on the new
+round ring being warm. The detached replay now uses fresh render-only source
+clones, independent of next-round rolling history. All failures retained.
+
+`Logs/replay-retention-v6`:3/3passed24.142s, guard2bb18b2307a1, source8acdf404.
+Actual physical knockdown retained across round reset, exact contact samples,
+codec corruption rejection, score/live-pose isolation, seven actual field
+renderers without colliders/hazards, three-second ordinary break, ten-second
+halftime, immutable shared end and final-round exclusion. Retained still inspected
+at `Logs/replay-retained-view/contact.png`; fixture is parked actors, not busy play.
+Classic fixture8objects/3.4s compressed8288bytes, not a busy-scene worst case.
+
+New protocol45delivery uses paced768-bytechunks, SHA256, bounded assembly and
+three-clip storage. Current implementation supports body/prop/audio plus seven
+persistent field families. Ultimate-active windows still require expanded visual
+state coverage and are deliberately ineligible, not claimed complete. Native
+v16build onb60f0b70 completed guarded80b38050dc03; real peer checks ongoing.
+
+Native replay Classicv1 (b60f0b70): FAILall three viewers fell back despite ready
+clip acknowledgements. All3agreedclip1/epoch,100score, zero clock drift and sampled
+9.954/10.016/10.018s halftime. Actual44client refused; profiles/input preserved.
+The recorded can's gameplay stats rotate without rebuilding its visible art, and
+the new taya's shoe becomes inactive. Playback now checks stable mesh signatures
+and includes parked source shoes instead of relying on current role/skin state.
+V7compile failed a missing probe namespace (fixed30f444c4); v8exposed Unity fake
+null in the mesh signature helper (fixedf2e3d812); v9proved the parked-shoe case
+needed an inactive-inclusive lookup. New v10includes that regression and immutable
+player labels/prop status. None of these failed runs is reported as visual success.
+
+V10compile failed an unqualified identity formatter (fixed5b444adc). Replay
+v11on5b444adc passed1/1 in7.274s, guard3d9190e0ed91: actual replay renders both
+before and AFTER the next taya's shoe parks and can stats rotate. Nativev17build
+is now running from this exact source; includes the unchanged-behavior F1/F2
+real-peer reproduction route.
+
+Nativev17/5b444adc built1156MB/60s, guardd665f92aed8b. Classic3-peer v2still
+FAILED: host actually entered replay83samples, both clients fell back; all3shared
+clip1/100score/zero clock drift/10s. Investigating exact participant view refusal.
+Batch ScreenCapture was black; v18captures the actual replay render target rather
+than treating a hidden batch application's backbuffer as visual evidence. The
+ordinary UI/audio route is separate and now authored for both modes.
+
+C4F1/F2real-peer reproduction on unchanged request behavior in v17:
+Logs/net-prediction-baseline-v1. F1: host and observer new cast active, owner inactive
+after older refused request. F2: owner temporarily regained a charge at9.158/9.238s,
+while host stayed0; next SyncAbility lowered it. The original evaluator waited
+until10.2s and missed this transient; original FAILreceipt retained. Corrected
+evaluation of SAMEtrace in result-reevaluated.json confirms both bugs; no new
+run claimed. Request IDs, round/match-scoped receipts, exact resource results and
+pre-mutation eligibility are implemented in746c0e43, protocol46. Focusedv1failed
+a test's write to an internal setter; testv2on aa238ecb passed1/1 in3.691s,
+guardd5dd6f06b33d. New runtime nativev18on51e406c4built, guarda43935503963;
+real-peer regression and participant replay diagnosis underway.
+
+C4fixed-v1on nativev18/51e406c4: PASSthree real Windows peers. Newer cast stays
+active on host/owner/observer; refused recall stays0charges on all3through the
+actual receipt window. No profile/input change. This is the same explicit fault
+fixture, not a general network or freeform-play certification.
+
+ReplayClassicv3v18still FAILclients, now isolated: their can asset was rebuilt
+by replicated skin state, unlike the host's visible model.9793966badds original
+prop lookup from the asset catalogue using stable geometry signatures; no mesh
+data is transmitted and only render components are copied. reskin-v1passed1/1
+7.775s (guard785926a6e36d), including replacement of the current can model.
+Nativev19/9689aad5built1156MB/57s, guard17bdcd58fd23. Includes normal UI halftime
+route and protocol46receipts. Corrected native Classic/Hero validation follows.
+
+Nativev19/9689aad5: `net-replay-classic-v4` PASSED3real peers, canonicalclip1
+retained from round1to halftime4,83/82/83view samples,0clock drift,100score,
+9.973/9.969/9.972s sampled holds, clean round5return. Client render target inspected.
+`net-replay-hero-impaired-v1` also PASSED: actual ice/hex fields retained,7733bytes,
+3x83view samples,0clock drift,100score,9.929/10.016/10.042s sampled holds. Link
+75ms one-way/20msjitter/2% configured loss, seed52009; proxy actually forwarded2846
+and dropped72packets (2.5%). This is one local simulated link, not WAN/device
+certification. Players/proxy exited and input/profiles preserved.
+Stable checkpoint4b0ac096published and remote verified. Later48128844adds exact
+recorded caught/elemental coat and hit-flash state; not yet validated.
+
+Nativev19C4prediction impaired-v1 PASSsame three-peer fault cases under75ms
+one-way/20ms jitter/2% loss, seed52009;3909forwarded/91dropped (2.3%).
+Normal native halftime-v19 PASSboth modes through actual menu entry, legal staged
+tag and recorded playback, standings/next-taya and round5return.11.5s screen/game
+audio captures305/280frames, encoded at recorded timestamps with audio. Player7040
+exited, input unchanged. Actual images revealed live HUD bleeding through the
+standings and the wrong warmup button; source d23200bc corrects those and stable
+seat labels/countdown. Body coat/flash capture48128844is also under targeted
+validation. Passing route assertions did not establish finished art.

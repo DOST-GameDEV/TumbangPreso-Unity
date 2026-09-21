@@ -63,32 +63,39 @@ namespace TumbangPreso.UI
             _buffer = TumpUiFactory.Text(root, "WarmupTime", "", 26);
             TumpUiFactory.Place(_buffer.rectTransform, 104, 960, 710, 66);
         }
-        public void Show(int nextRound, int defender)
+        public void Show(int nextRound,int defender)
         {
-            _round.text = "Round " + Mathf.Max(1, nextRound - 1) + " complete";
-            var who = GameServices.Round?.PlayerAt(defender);
-            _name.text = PlayerIdentity.Label(defender)+" · "+SeatLabel.Raw(defender);
-            _portrait.sprite = Portrait(who); _portrait.enabled = _portrait.sprite != null;
-            var match = GameServices.Match;
-            if (match != null)
+            _entered=Time.unscaledTime;_nextRoundNumber=nextRound;_halftime=HalftimePresentation.Playing;_fallback=null;
+            _round.text=_halftime?"HALFTIME":"NEXT ROUND";
+            var who=GameServices.Round?.PlayerAt(defender);
+            _name.text=PlayerIdentity.Label(defender)+" · "+SeatLabel.Raw(defender);
+            _portrait.sprite=Portrait(who);_portrait.enabled=_portrait.sprite!=null;
+            if(_nextRound!=null)_nextRound.text="ROUND "+nextRound;
+            if(_notice!=null)_notice.text="";
+            var match=GameServices.Match;
+            if(match!=null)
             {
-                var order = match.Ranking();
-                for (int i = 0; i < 4; i++)
+                var order=match.Ranking();bool uniqueLeader=match.ScoreFor(order[0])>match.ScoreFor(order[1]);
+                for(int i=0;i<4;i++)
                 {
-                    var actor = GameServices.Round?.PlayerAt(order[i]);
-                    _names[i].text = PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
-                    _names[i].color=PlayerIdentity.Colour(order[i]);
-                    _scores[i].text = match.ScoreFor(order[i]).ToString();
-                    _portraits[i].sprite = Portrait(actor); _portraits[i].enabled = _portraits[i].sprite != null;
+                    var actor=GameServices.Round?.PlayerAt(order[i]);bool leader=i==0&&uniqueLeader;
+                    _names[i].text=PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
+                    _names[i].color=_scores[i].color=leader?CourtPresentationPalette.Red:CourtPresentationPalette.Ink;
+                    _scores[i].text=match.ScoreFor(order[i]).ToString();
+                    _portraits[i].sprite=Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
+                    if(_tickets[i]!=null)_tickets[i].color=CourtPresentationPalette.Paper;
                 }
             }
-            Canvas.gameObject.SetActive(true); Canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
+            Canvas.gameObject.SetActive(true);
         }
         private bool _halftime;private string _fallback;
         public void SetBreakContext(bool halftime,string fallback)
-        {_halftime=halftime;_fallback=fallback;if(halftime)_round.text="HALFTIME  /  "+_round.text;
-            if(_continueLabel!=null)_continueLabel.text=halftime?"HIDE STANDINGS":"KEEP WARMING UP";}
-        public void Remaining(float seconds) => _buffer.text = (_fallback!=null?_fallback+" · ":_halftime?"Back to the court · ":"Next round · ") + Mathf.CeilToInt(seconds) + "s";
+        {
+            _halftime=halftime;_fallback=fallback;_round.text=halftime?"HALFTIME":"NEXT ROUND";
+            if(_notice!=null)_notice.text=fallback!=null?"HIGHLIGHT UNAVAILABLE":"";
+        }
+        public void Remaining(float seconds)
+        {_remaining=seconds;_buffer.text=Mathf.CeilToInt(seconds)+"s";}
         private static Sprite Portrait(CharacterMotor actor)
         {
             if (actor == null) return null;

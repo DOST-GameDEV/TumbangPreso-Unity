@@ -228,6 +228,14 @@ Required checks: accepted/invalid/uncommitted input, preserved warning, all six 
 
 ### F. Canonical highlights and halftime
 
+**Owner visual correction, 2026-09-21:** halftime is a popup over the visible court,
+not a separate full-screen standings page. The green treatment was rejected.
+Use image-generated ideation to choose a compact, authored graphic treatment with
+clear hierarchy, automatic entrance/settle/exit and concise scores/next-taya
+orientation. Preserve canonical replay and shared deadlines underneath; replace
+the presentation without dropping their implementation or qualification tasks.
+
+
 Choose shared state/event clips rendered locally as the primary delivery path. Reuse body reconstruction for meaningful alternate angles without requiring every participant to have recorded the same camera. Keep captured-frame manual replay as an honest fallback/reference, not final quality merely because its overlay is larger.
 
 Extend bounded history with can pose/state/protection, slipper identity/pose/state/holder, relevant accepted ability/field transitions, identities, exact contacts and necessary audio. Preserve recorded state and interpolate; never simulate physics/scoring/abilities in playback. Exact contact/transition keyframes survive compression. Copy only render data.

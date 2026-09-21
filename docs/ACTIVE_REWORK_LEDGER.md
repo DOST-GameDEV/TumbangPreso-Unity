@@ -110,22 +110,48 @@ not a new run. Native v15/3c2482cc built1156MB/61s, and six actual input-to-shar
 scene-to-effect routes captured7.5s each with game audio; six movies encoded.
 No human/freeform/device/poor-network completeness claim.
 
-Current feature: retained world clips and all-player halftime. ac62edbe has bounded
-body/prop retention, codec and focused test. replay-retention-v1 failed compile
-(CompressionLevel ambiguity, fixed); v2 failed actual prop window retention.
-V2guard1269bfd9e3c6, process25140/handle21832 exited. Investigating exact prop
-coverage before wiring replay. Uncommitted owned files add exact world cue
-recording and a separate replay voice pool; not qualified yet. Hero exclusion is
-temporary while relevant field/state recording is completed, not a finished mode.
+Latest owner steering at06:47UTC: existing UI is ugly, especially green full-screen
+halftime. Replace it with a compact animated popup over the visible court. Owner
+explicitly requested image-generation ideation. Built-in imagegen contact sheet
+(A warm red/cream, B punchy red/yellow, C ink/blue) is pending toolcell728; prompt
+and result are stored in functions session keys tump_halftime_ideation_prompt /
+tump_halftime_ideation_result. Read/inspect the result before implementing the
+visual direction. No paid API/CLI fallback. Do not stop the original full task.
 
-Next: fix recording; exact contact/state keys; render-only world/audio playback;
-bounded canonical clip distribution/readiness; shared halftime10s and ordinary3s
-transitions. Then phase late/disconnect/impaired and generic prediction-refusal
-identity/refund fixes, integrated native participant/busy/comfort qualification.
-Full PRESENTATION1-5 remains open where queue says so. Do not stop at a foundation.
+Current feature: full replay/halftime refinement. Developmentcc67cab9, validation89f7b343 for nativev20. Verified remote4b0ac0964892608c4238b6f76d0f06ebd214f9e8.
+Nativev19/9689aad5:1156MB/57s, guard17bdcd58fd23. Classicpeer-v4 PASSall3actual
+viewers; Hero-impaired-v1 PASSall3with captured ice/hex fields,75ms each direction,
+20ms jitter,2% configured loss, actual2846forwarded/72dropped. Sameclip/scores,
+zero live clock drift, ~10s shared breaks and round5return. Frames inspected.
+C4prediction fixes: v18normalPASS; v19impairedPASSsame75/20/2%, actual3909forwarded/
+91dropped. New legal cast preserved; refused free recall never gained a charge.
+
+Normal native UI route v19PASSboth modes: actual legal catch -> retained halftime
+replay -> standings/next-taya -> round5. 11.5s native screen+game audio movies,
+Logs/halftime-native-v19,305/280frames, both timestamped movies encoded. Player7040
+and handle32779retired. Contact/standings captures inspected. Native review exposed
+HUD showing through standings and wrong warmup labels; d23200bc fixes backdrop,
+seat identities, halftime countdown/skip prompt and button text.48128844 also
+records actual caught/elemental coats and hit flash; not yet runtime qualified.
+
+replay-coat-break-v1 atd23200bc PASSED3/3 in28.504s, guardba2719fc8bd9.
+Nativev20/89f7b343 built1156MB/57s, guardeaf41d76acaa. Refined native halftime-v20
+PASSboth modes (player6728/53924retired), contact/standings inspected. One live
+can marker still overlaid the board; cc67cab9 hides live can/recall markers during
+holds, dismisses an old role card on late phase receipt, isolates replay world
+voice mix and adds recorded victim identity. These changes need targeted/runtime
+qualification. b8a9b667also refines spectator own-shoe recovery and drops caught
+victim teleport tracking; two concrete tests authored, not run yet.
+
+Active native job: Logs/net-replay-corrupt-v1, nativev20,3peers+75ms/20ms/2% proxy,
+explicit observer digest corruption with1ready-peer requirement. Session in tool
+state. After: missing-content fallback; shared ultimate impaired; focused
+SpectatorExchangeTests and changed replay/audio/marker cases; final native pass.
+Complete remaining hero active-window retained coverage and exchange/busy/comfort
+refinements. Full queue open; do not final an incomplete checkpoint.
 
 Original dirty work remains excluded (intake26files,20byte-identical; six shared
 files have selected owned hooks). Stage shared hooks from HEAD through the index;
 do not stage unrelated Sean/UI/art/test edits. Keep validation isolated/cached,
-use guarded named profile, one heavy job. No owned job currently running. No
+use guarded named profile, one heavy job. Track the active native peer job above. No
 browser/preview opened by latest batch; preserve user tabs/apps and Desktop build.

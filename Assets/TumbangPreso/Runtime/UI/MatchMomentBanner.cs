@@ -103,7 +103,7 @@ namespace TumbangPreso.UI
         {
             protected override void OnPopulateMesh(VertexHelper helper)
             {
-                helper.Clear(); var r = GetPixelAdjustedRect(); Color c = new Color(.055f, .10f, .078f, .92f);
+                helper.Clear(); var r = GetPixelAdjustedRect(); Color c = new Color(.137f, .114f, .129f, .92f);
                 helper.AddVert(new Vector2(r.xMin+25,r.yMin),c,Vector2.zero);
                 helper.AddVert(new Vector2(r.xMax-20,r.yMin+5),c,Vector2.zero);
                 helper.AddVert(new Vector2(r.xMax,r.yMax-8),c,Vector2.zero);

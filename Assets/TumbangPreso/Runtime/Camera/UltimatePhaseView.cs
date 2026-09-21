@@ -88,7 +88,7 @@ namespace TumbangPreso.CameraSystem
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
                 header.anchoredPosition=new Vector2(0,-32); header.sizeDelta=new Vector2(1100,145);
-                var plate = header.gameObject.AddComponent<Image>(); plate.color=new Color(.035f,.07f,.05f,.88f); plate.raycastTarget=false;
+                var plate = header.gameObject.AddComponent<Image>(); plate.color=new Color(.137f,.114f,.129f,.88f); plate.raycastTarget=false;
                 var title=OwnerUiLayout.Text(header,"UltimateName",_primary?.Actor.AbilitySystem.Kit.Ultimate.Name ?? "ULTIMATE",58,OwnerUiLayout.TypeRole.Display);
                 title.alignment=TextAnchor.MiddleCenter; title.color=OwnerUiTheme.Current.Pale;
                 title.horizontalOverflow=HorizontalWrapMode.Overflow; title.verticalOverflow=VerticalWrapMode.Overflow;

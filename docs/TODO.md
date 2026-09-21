@@ -10,13 +10,17 @@ contains the chosen approach, dependencies, hero direction and acceptance gates.
 [ACTIVE_REWORK_LEDGER](ACTIVE_REWORK_LEDGER.md) is the only exact resume/status pointer.
 Continue autonomously within authorization. No questions, paid work, resets or delegation.
 
+Latest UI correction: replace the rejected green full-screen halftime page with a
+compact animated popup over the visible court. Image-generated ideation comes
+before this redesign. Retain every gameplay/replay task below.
+
 ### Execution order
 
 1. Merge and check the research expansion in the existing plan/queue/ledger. Preserve
    current implementations and all task IDs. The native v6 gameplay and v9 private
    scene studies are retained evidence; neither closes the whole assignment.
-2. Close the current loose ends: host-chain bookkeeping validation/publication and
-   Nemu's cropped native framing. Then compose the rich ordinary exchange in both
+2. Retain the now qualified/published host-chain and Nemu framing fixes. Finish
+   the rich ordinary exchange in both
    modes with the other players active, through body/FPP/VFX/SFX/UI together.
 3. Finish shared accepted-moment/throw/contact contracts and coordinate the existing
    feedback channels. Use that foundation for earned recognition, capped rewards and
@@ -52,15 +56,16 @@ Continue autonomously within authorization. No questions, paid work, resets or d
     real throw IDs, can-consumption serials, epoch reset, hits/misses/no-contest and
     distinct catches. Source7a1bb8dd,4/4 pass22.65s, Logs/host-chains-v1. This is not
     bonus award/message completion; points and ultimate charge are unchanged.
-  - [ ] **PRESENTATION-2.2:** Integrate capped rewards and accepted milestone identity
+  - [x] **PRESENTATION-2.2:** Integrate capped rewards and accepted milestone identity
     through the score/transport authority, with first/accuracy/catch/late/lead recognition
-    where their facts qualify. Use the released C4 integration path; never infer or guess participant totals.
+    where their facts qualify. Published through ce0e83cf; Core/PlayMode and real3-peer Classic/Hero receipts establish exact capped totals and unique recognition. See the current report.
   - [ ] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
     bystander/spectator reactions and return, with exact contact/held props, interruption,
     repeated-use comfort and no added taya lockout or victim penalty.
 - [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
-  have accepted-input evidence. Six private introduction bodies/scenes and native sound
-  movies exist; the live shared phase and complete transitions are not implemented.
+  have accepted-input evidence. Six distinct introductions now run through the live
+  shared phase and real abilities, with native v15screen/audio evidence. Remaining
+  qualifications/refinements below stay open; private studies alone did not close them.
   - [ ] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
     ownership and compatible participant delivery. Owner handback2026-09-21 assigns this integration here.
   - [ ] **PRESENTATION-3.2:** Author all six distinct whole performances, including

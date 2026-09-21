@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
             Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -82), new Vector2(620, 140));
             var face = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(face.rectTransform, 157, 0, 306, 92); face.color = new Color32(25, 40, 31, 218); face.raycastTarget = false;
+            OwnerUiLayout.Place(face.rectTransform, 157, 0, 306, 92); face.color = new Color32(35, 29, 33, 218); face.raycastTarget = false;
             _clock = Ink(_clockRoot, "TimeLeft", "", 60, true); OwnerUiLayout.Place(_clock.rectTransform, 170, 0, 280, 89);
             _round = Ink(_clockRoot, "RoundLabel", "", 28, true); OwnerUiLayout.Place(_round.rectTransform, 0, 96, 620, 44);
         }

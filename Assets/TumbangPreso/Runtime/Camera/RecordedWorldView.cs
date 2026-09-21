@@ -81,13 +81,22 @@ namespace TumbangPreso.CameraSystem
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
-                var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=new Vector2(0,1);band.anchorMax=Vector2.one;band.pivot=new Vector2(.5f,1);band.sizeDelta=new Vector2(0,100);
-                var plate=band.gameObject.AddComponent<Image>();plate.color=new Color(.035f,.07f,.06f,.94f);plate.raycastTarget=false;
-                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+(clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):""),34,OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=OwnerUiTheme.Current.Pale;
-                var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=Vector2.zero;footer.anchorMax=new Vector2(1,0);footer.pivot=new Vector2(.5f,0);footer.sizeDelta=new Vector2(0,62);
-                var footerPlate=footer.gameObject.AddComponent<Image>();footerPlate.color=new Color(.035f,.07f,.06f,.92f);footerPlate.raycastTarget=false;
-                _state=OwnerUiLayout.Text(footer,"RecordedCanState","",27,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);_state.alignment=TextAnchor.MiddleCenter;_state.color=OwnerUiTheme.Current.Pale;
+                var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=band.anchorMax=new Vector2(0,1);band.pivot=new Vector2(0,1);
+                band.anchoredPosition=new Vector2(42,-28);band.sizeDelta=new Vector2(426,62);
+                var plate=band.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.Red;plate.raycastTarget=false;
+                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME / REPLAY",30,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=CourtPresentationPalette.Paper;
+                var credit=OwnerUiLayout.Rect(_canvas.transform,"RecordedCredit");credit.anchorMin=credit.anchorMax=new Vector2(0,1);credit.pivot=new Vector2(0,1);
+                credit.anchoredPosition=new Vector2(48,-96);credit.sizeDelta=new Vector2(980,44);
+                var words=OwnerUiLayout.Text(credit,"ReplayOutcome",PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+
+                    (clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):" / "+clip.Reason),28,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Fill(words.rectTransform);words.color=CourtPresentationPalette.Paper;
+                var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=CourtPresentationPalette.Ink;outline.effectDistance=new Vector2(1.5f,-1.5f);
+                var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=footer.anchorMax=Vector2.zero;footer.pivot=Vector2.zero;
+                footer.anchoredPosition=new Vector2(48,26);footer.sizeDelta=new Vector2(480,48);
+                var footerPlate=footer.gameObject.AddComponent<CourtPopupGraphic>();footerPlate.color=CourtPresentationPalette.Ink;footerPlate.raycastTarget=false;
+                _state=OwnerUiLayout.Text(footer,"RecordedCanState","",25,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);
+                _state.alignment=TextAnchor.MiddleCenter;_state.color=CourtPresentationPalette.Paper;
                 _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;
             }
