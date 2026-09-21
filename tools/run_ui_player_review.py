@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--exe',required=True)
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
+    parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
@@ -62,6 +63,7 @@ def main():
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.whole_matches:command.append('-tp-whole-matches')
     if args.frame_poll:command.append('-tp-review-frame-poll')
     if args.menu_only:command.append('-tp-menu-review-only')
     if args.recovery_only:command.append('-tp-recovery-review-only')
@@ -77,7 +79,7 @@ def main():
     process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
     print('Started internal UI review, process',process.pid,flush=True)
     try:
-        code=process.wait(timeout=420)
+        code=process.wait(timeout=2300 if args.whole_matches else 420)
     except subprocess.TimeoutExpired:
         process.terminate();process.wait(timeout=15);code=1
     finally:

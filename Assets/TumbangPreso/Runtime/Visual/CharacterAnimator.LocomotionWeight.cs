@@ -57,10 +57,16 @@ namespace TumbangPreso.Visual
 
             // Never bend an authored cast/recovery or manufacture a braking pose from
             // a teleport. Only the torso/head move; root, legs and collision stay exact.
-            if (!ordinary || teleported || !_weightSampled) _locomotionLean = Vector2.zero;
+            if (!ordinary || teleported || !_weightSampled)
+            { _locomotionLean = Vector2.zero; _weightVelocity = velocity; }
             else if (dt > 0)
             {
-                Vector3 acceleration = Vector3.ClampMagnitude((velocity - _weightVelocity) / Mathf.Max(.01f, dt), 24);
+                // Physics velocity changes only on fixed ticks. Filtering the measured
+                // velocity spreads that impulse over real time instead of losing almost
+                // all of it in one 500-fps render sample (or amplifying a slow frame).
+                Vector3 observed=Vector3.Lerp(_weightVelocity,velocity,1-Mathf.Exp(-18*Mathf.Min(dt,.1f)));
+                Vector3 acceleration = Vector3.ClampMagnitude((observed - _weightVelocity) / Mathf.Max(.0001f, dt), 24);
+                _weightVelocity=observed;
                 var localAcceleration = transform.InverseTransformDirection(acceleration);
                 var localVelocity = transform.InverseTransformDirection(velocity);
                 float turning = Mathf.Clamp(Mathf.DeltaAngle(_weightYaw, yaw) / Mathf.Max(.01f, dt), -240, 240);
@@ -70,7 +76,7 @@ namespace TumbangPreso.Visual
                     Mathf.Clamp(-localAcceleration.x * .22f - turning * .014f * Mathf.Clamp01(velocity.magnitude / 2), -5, 5)) * carry;
                 _locomotionLean = Vector2.Lerp(_locomotionLean, target, 1 - Mathf.Exp(-13 * Mathf.Min(dt, .1f)));
             }
-            _weightVelocity = velocity; _weightPosition = position; _weightYaw = yaw; _weightSampled = true;
+            _weightPosition = position; _weightYaw = yaw; _weightSampled = true;
             if (!ordinary || _locomotionLean.sqrMagnitude < .00001f) return;
             _weightTorsoRest = _weightTorso.localRotation;
             _weightTorso.localRotation = _weightTorsoRest * Quaternion.Euler(_locomotionLean.x, 0, _locomotionLean.y);
