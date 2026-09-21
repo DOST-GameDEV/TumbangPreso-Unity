@@ -264,6 +264,7 @@ namespace TumbangPreso.UI
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
             _prompt.color = OwnerUiTheme.Current.Pale;
+            if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {

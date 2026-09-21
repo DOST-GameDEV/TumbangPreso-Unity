@@ -82,7 +82,7 @@ namespace TumbangPreso.CameraSystem
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
                 var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=new Vector2(0,1);band.anchorMax=Vector2.one;band.pivot=new Vector2(.5f,1);band.sizeDelta=new Vector2(0,100);
                 var plate=band.gameObject.AddComponent<Image>();plate.color=new Color(.035f,.07f,.06f,.94f);plate.raycastTarget=false;
-                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+(focus.Track.DisplayName??PlayerIdentity.Label(clip.Actor))+" · "+SeatLabel.Raw(clip.Actor),34,OwnerUiLayout.TypeRole.Display);
+                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER"),34,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=OwnerUiTheme.Current.Pale;
                 var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=Vector2.zero;footer.anchorMax=new Vector2(1,0);footer.pivot=new Vector2(.5f,0);footer.sizeDelta=new Vector2(0,62);
                 var footerPlate=footer.gameObject.AddComponent<Image>();footerPlate.color=new Color(.035f,.07f,.06f,.92f);footerPlate.raycastTarget=false;

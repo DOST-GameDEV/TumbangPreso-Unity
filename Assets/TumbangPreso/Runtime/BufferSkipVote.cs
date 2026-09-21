@@ -110,7 +110,7 @@ namespace TumbangPreso
         {
             var match = GameServices.Match;
 
-            if (match == null || !match.IsWarmupBuffer)
+            if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing)
             {
                 Showing = false;
                 return;
@@ -154,7 +154,7 @@ namespace TumbangPreso
             if (!NetAuthority.IsHost) return;
 
             var match = GameServices.Match;
-            if (match == null || !match.IsWarmupBuffer) return;
+            if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing) return;
 
             _votes.Add(peerId);
             Votes = _votes.Count;
@@ -178,7 +178,7 @@ namespace TumbangPreso
             _votes.Remove(peerId);
 
             var match = GameServices.Match;
-            if (match == null || !match.IsWarmupBuffer) return;
+            if (match == null || !match.IsWarmupBuffer || HalftimePresentation.Playing) return;
 
             VotesNeeded = Needed();
             Votes = _votes.Count;

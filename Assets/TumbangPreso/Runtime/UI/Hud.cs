@@ -1642,7 +1642,7 @@ namespace TumbangPreso.UI
                 // would be putting one of them straight back. See `BufferSkipVote`.
                 string skip = OnTouch ? "READY TO SKIP" : $"[{KeyLabel("ReadyUp")}] SKIP";
 
-                _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
+                _round.text = HalftimePresentation.Playing ? "HALFTIME · BACK TO THE COURT IN "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s" : BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
                     ? $"{WarmupLine}   ·   {skip}  " +
                       $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
                     : BufferSkipVote.Showing

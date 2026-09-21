@@ -11,7 +11,7 @@ namespace TumbangPreso.UI
             Canvas=OwnerUiLayout.Canvas(owner,"OwnerRoundSwapCanvas",220);
             if(Hud.Instance!=null){Canvas.transform.SetParent(Hud.Instance.CleanFeedRoot,false);OwnerUiLayout.Fill((RectTransform)Canvas.transform);}
             var shade=OwnerUiLayout.Rect(Canvas.transform,"CourtBreakShade").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(shade.rectTransform);shade.color=new Color32(17,29,27,220);shade.raycastTarget=false;
+            OwnerUiLayout.Fill(shade.rectTransform);shade.color=new Color32(17,29,27,255);shade.raycastTarget=false;
             var root=OwnerUiLayout.DesignArea(Canvas.transform,"RoundComposition");
             _round=OwnerUiLayout.Text(root,"RoundHeadline","",72,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_round.rectTransform,98,52,1715,123);_round.color=new Color32(245,218,169,255);

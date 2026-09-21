@@ -67,7 +67,7 @@ namespace TumbangPreso.UI
         {
             _round.text = "Round " + Mathf.Max(1, nextRound - 1) + " complete";
             var who = GameServices.Round?.PlayerAt(defender);
-            _name.text = who != null ? who.DisplayName() : "P" + (defender + 1);
+            _name.text = PlayerIdentity.Label(defender)+" · "+SeatLabel.Raw(defender);
             _portrait.sprite = Portrait(who); _portrait.enabled = _portrait.sprite != null;
             var match = GameServices.Match;
             if (match != null)
@@ -76,7 +76,8 @@ namespace TumbangPreso.UI
                 for (int i = 0; i < 4; i++)
                 {
                     var actor = GameServices.Round?.PlayerAt(order[i]);
-                    _names[i].text = actor != null ? actor.DisplayName() : "P" + (order[i] + 1);
+                    _names[i].text = PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
+                    _names[i].color=PlayerIdentity.Colour(order[i]);
                     _scores[i].text = match.ScoreFor(order[i]).ToString();
                     _portraits[i].sprite = Portrait(actor); _portraits[i].enabled = _portraits[i].sprite != null;
                 }

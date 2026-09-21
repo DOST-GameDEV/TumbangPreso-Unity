@@ -158,7 +158,7 @@ namespace TumbangPreso.CameraSystem
                 if(pose!=null&&pending.ContactPoses.TryGetValue(track,out var key))pose=pose.WithKey(key);
                 if(actor==null||pose==null){LastSkip="Incomplete body lead-in or aftermath";return;}
                 objects.Add(new RecordedObjectTrack{Kind=RecordedObjectKind.Player,Seat=seat,Skin=actor.CharacterIndex,
-                    Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),DisplayName=UI.PlayerIdentity.Label(seat),VisualKey=VisualKey(track.Source),Pose=pose});
+                    Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),DisplayName=UI.SeatLabel.Raw(seat),VisualKey=VisualKey(track.Source),Pose=pose});
             }
             foreach(var prop in _props)
             {
