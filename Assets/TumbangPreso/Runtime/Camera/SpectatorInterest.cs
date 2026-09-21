@@ -183,7 +183,7 @@ namespace TumbangPreso.CameraSystem
         public SpectatorInterest(SpectatorBeat beat, CharacterMotor main, CharacterMotor secondary,
                                  Vector3 objective, bool hasObjective, ShotType shot,
                                  float startedAt, float expectedSeconds, float commitSeconds,
-                                 string reason)
+                                 string reason, Slipper retrievalShoe = null)
         {
             Beat = beat;
             Main = main;
