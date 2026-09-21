@@ -97,6 +97,7 @@ namespace TumbangPreso.PlayTests
                     MeshFilter[] copiedShoe = null;
                     TumbangPreso.Tests.HeadSurfaceVolume head = default;
                     int shoeInsideHead = 0;
+                    bool recordedGather = false;
                     bool withScene = checkFraming || Environment.GetEnvironmentVariable("TUMP_INTRO_SCENE") == "1";
                     try
                     {
@@ -130,6 +131,15 @@ namespace TumbangPreso.PlayTests
                                 {
                                     scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens, camera.aspect);
                                     camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                    if (hero == "cheska" && !recordedGather && age >= 1.4f)
+                                    {
+                                        recordedGather = true;
+                                        var leftArm = copy.Bones.First(b => b.name == "arm-left");
+                                        var rightHand = copy.Bones.First(b => b.name == "HandAnchor");
+                                        report.AppendLine($"Gather staging: left shoulder {leftArm.position}, right palm {rightHand.position}, left palm local {typeof(HeroIntroductionScene).GetField("_leftPalm", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(scene)}");
+                                        foreach (var part in scene.Root.GetComponentsInChildren<Renderer>())
+                                            report.AppendLine($"{part.name}: bounds {part.bounds}, viewport {camera.WorldToViewportPoint(part.bounds.center)}, scale {part.transform.lossyScale}, hidden {part.forceRenderingOff}");
+                                    }
                                     if (copiedShoe != null)
                                     {
                                         Assert.AreEqual(Vector3.zero, copiedGrip.localPosition, "The shoe must follow its sampled hand, not a frozen world pose.");
