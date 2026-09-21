@@ -73,7 +73,12 @@ for seat,name in enumerate(['host','scorer','observer']):
  clip_ids={int(r['clip']) for r in half}
  if len(epochs)!=1 or min(epochs)<=0:errors.append(name+': invalid match identity')
  if len(clip_ids)!=1 or min(clip_ids)<=0:errors.append(name+': no canonical clip identity')
- measured[name]={'rows':len(rows),'epoch':list(epochs),'clip':list(clip_ids),'halfSamples':len(half),'viewSamples':len(views),'duration':float(half[-1]['real'])-float(half[0]['real']) if half else 0,'clockDrift':max((float(r['sim']) for r in half),default=0)-min((float(r['sim']) for r in half),default=0),'score1':int(rows[-1]['score1'])}
+ if a.mode=='hero':
+  before_fields=[int(r.get('liveFields','-1')) for r in rows if int(r['round'])==1]
+  after_fields=[int(r.get('liveFields','-1')) for r in rows if int(r['round'])>=2]
+  if not before_fields or max(before_fields)<3:errors.append(name+': live field setup was not replicated before the boundary')
+  if not after_fields or max(after_fields)!=0:errors.append(name+': a previous-round field survived retirement')
+ measured[name]={'rows':len(rows),'epoch':list(epochs),'clip':list(clip_ids),'halfSamples':len(half),'viewSamples':len(views),'duration':float(half[-1]['real'])-float(half[0]['real']) if half else 0,'clockDrift':max((float(r['sim']) for r in half),default=0)-min((float(r['sim']) for r in half),default=0),'score1':int(rows[-1]['score1']),'maxLiveFieldsBefore':max((int(r.get('liveFields','-1')) for r in rows if int(r['round'])==1),default=-1),'maxLiveFieldsAfter':max((int(r.get('liveFields','-1')) for r in rows if int(r['round'])>=2),default=-1)}
 if len(measured)==3 and len({m['epoch'][0] for m in measured.values()})!=1:errors.append('peers disagree about match identity')
 if len(measured)==3 and len({m['clip'][0] for m in measured.values() if m['clip']})!=1:errors.append('peers disagree about canonical clip')
 if a.old_exe:

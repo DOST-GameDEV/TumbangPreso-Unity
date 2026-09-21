@@ -25,7 +25,7 @@ namespace TumbangPreso.Diagnostics
             string path=Argument("-tp-replaytrace");if(path==null)return;
             var root=new GameObject("~NetReplayProbe");DontDestroyOnLoad(root);var probe=root.AddComponent<NetReplayProbe>();probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault");
+            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault,liveFields");
         }
         private void OnDisable(){_trace?.Dispose();_trace=null;}
         private void Update()
@@ -61,7 +61,7 @@ namespace TumbangPreso.Diagnostics
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.05f;
             var archive=FindAnyObjectByType<MatchReplayArchive>();long clip=phase?.ClipId??0;
             if(clip==0&&archive?.Clips.Count>0)clip=archive.Clips[0].Clip.Id;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)}"));
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count}"));
         }
         private IEnumerator Shot()
         {
@@ -74,7 +74,15 @@ namespace TumbangPreso.Diagnostics
             var round=GameServices.Round;var match=GameServices.Match;
             foreach(var actor in round.Players)actor.Teleport(new Vector3(6,Slipper.GroundY(new Vector3(6,0,-5+actor.PlayerSlot*3))+.1f,-5+actor.PlayerSlot*3));
             if(SceneFlow.SelectedMode==GameMode.HeroStrike)
-            {Abilities.HeroHazards.SpawnIceSheet(new Vector3(3,0,2),1.2f,8,1,1,silent:true);Abilities.HeroHazards.SpawnHexSigil(new Vector3(-3,0,2),1.2f,8,2,1,silent:true);}
+            {
+                // Long fixture lifetimes distinguish round cleanup from ordinary expiry.
+                Abilities.HeroHazards.SpawnIceSheet(new Vector3(3,0,2),1.2f,30,1,1,silent:true);
+                Abilities.HeroHazards.SpawnHexSigil(new Vector3(-3,0,2),1.2f,30,2,1,silent:true);
+                Visual.DanteFissurePillar.Create(new Vector3(4,0,4),Vector3.forward,1,30);
+                var send=typeof(Net.MatchRpc).GetMethod("SendWorldFieldSnapshot",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                foreach(var peer in Unity.Netcode.NetworkManager.Singleton.ConnectedClientsIds)
+                    send.Invoke(Net.MatchRpc.Instance,new object[]{peer});
+            }
             yield return new WaitForSeconds(2.5f);
             var thrower=round.PlayerAt(1);var shoe=FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
             int serial=round.Lata.HostKnockdownSerial;shoe.HostThrow(thrower,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
