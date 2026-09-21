@@ -126,6 +126,24 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(1,phase.Commits.Count);
         }
         [UnityTest]
+        public IEnumerator BlockedSceneShotFallsBackWithoutChangingTheSharedDuration()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            var actor=GameServices.Round.PlayerAt(1);Hero(actor,"sean");
+            actor.Teleport(new Vector3(0,.18f,-5));actor.transform.rotation=Quaternion.identity;
+            Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.name="IntroductionCameraBlocker";
+            wall.transform.position=new Vector3(0,2,-3);wall.transform.localScale=new Vector3(12,4,.3f);
+            Physics.SyncTransforms();yield return null;
+            Press(actor,Verb.Ultimate);yield return null;yield return null;
+            var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);
+            var image=GameObject.Find("UltimateScene").GetComponent<UnityEngine.UI.RawImage>();
+            Assert.IsFalse(image.enabled,"Both blocked camera sides must retain the live view under the shared card.");
+            Assert.IsTrue(PresentationClock.Held);Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
+            phase.Cancel();Object.Destroy(wall);yield return null;
+            Assert.IsFalse(PresentationClock.Held);Assert.IsNull(GameObject.Find("SharedUltimateCanvas"));
+        }
+        [UnityTest]
         public IEnumerator ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);

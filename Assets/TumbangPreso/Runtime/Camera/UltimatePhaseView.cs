@@ -34,6 +34,8 @@ namespace TumbangPreso.CameraSystem
         private ActorScene _primary;
         private Slipper[] _slippers;
         private bool _handedOff;
+        private readonly RaycastHit[] _shotHits = new RaycastHit[32];
+        private bool _mirrorShot, _safeShot = true;
         public bool SoundPlayed { get; private set; }
 
         public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits)
@@ -42,7 +44,7 @@ namespace TumbangPreso.CameraSystem
             {
                 var liveCamera = Camera.main;
                 int watching = liveCamera?.GetComponent<CameraRig>()?.Following?.PlayerSlot ?? NetAuthority.LocalSlot;
-                _stage = new GameObject("~UltimateRenderCopies"); _stage.SetActive(false);
+                _stage = new GameObject("~UltimateRenderCopies");
                 _stage.transform.SetParent(owner, false);
                 foreach (var commit in commits)
                 {
@@ -51,16 +53,25 @@ namespace TumbangPreso.CameraSystem
                     if (visual?.Model == null) continue;
                     var track = new MatchPoseHistory.Track(actor, visual.Model);
                     track.Record(Time.time); track.Record(Time.time + .05f);
-                    var body = track.Clone(_stage.transform); if (body == null) continue;
+                    var actorStage = new GameObject("RecordedCast-P" + (commit.Seat + 1));
+                    actorStage.transform.SetParent(_stage.transform,false);
+                    var body = track.Clone(actorStage.transform); if (body == null) continue;
                     track.Apply(body, track.Newest);
+                    body.Root.SetActive(true); // The committed caster is shown even if a prior power hid their live model.
                     var entry = new ActorScene { Actor = actor, Body = body };
                     _actors.Add(entry);
                     entry.Clip = HeroAbilityClips.BuildUltimateIntroduction(body.Root.transform, actor.AbilitySystem.HeroId,
                         actor.GetComponent<Carrier>().Held != null);
                     if (entry.Clip == null) continue;
                     entry.Clip.SampleAnimation(body.Root, 0);
+                    if (actor.IsGrounded)
+                    {
+                        var surfaces=body.Renderers.Where(r=>r.enabled&&r.gameObject.activeInHierarchy).ToArray();
+                        if(surfaces.Length>0)
+                            actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y));
+                    }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
-                    entry.Scene = new HeroIntroductionScene(_stage.transform, actor.AbilitySystem.HeroId, actor, body);
+                    entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body);
                     if (_primary == null || commit.Seat == watching) _primary = entry;
                 }
                 _stage.SetActive(true);
@@ -91,6 +102,7 @@ namespace TumbangPreso.CameraSystem
                     int width=Mathf.Clamp(Screen.width,960,1920), height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
                     _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32) { name="SharedUltimateFrame" };
                     _target.Create(); _camera.targetTexture=_target; _picture.texture=_target;
+                    ChooseShot();
                     SoundPlayed=_primary.Scene.StartSound();
                 }
             }
@@ -112,9 +124,10 @@ namespace TumbangPreso.CameraSystem
             float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.4f,2.8f,age));
             _fade.alpha=returnBlend;
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion;
-            _picture.enabled=moving && _camera!=null && _primary?.Scene!=null;
+            _picture.enabled=moving && _safeShot && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
             _primary.Scene.Shot(age,out var eye,out var target,out var fov,_camera.aspect);
+            if(_mirrorShot)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
             _hidden.Clear();_wasHidden.Clear();_seen.Clear();
             foreach(var actor in GameServices.Round.Players)
@@ -132,6 +145,31 @@ namespace TumbangPreso.CameraSystem
                 _primary.Body.ShowOnlyForCapture(false);_primary.Scene.SetVisibleForCapture(false);
                 for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_wasHidden[i];
             }
+        }
+        private void ChooseShot()
+        {
+            // Judge both sides at the largest/revealed composition once. A tight
+            // alley gets the same-duration low-motion card, not a camera inside a wall.
+            _primary.Clip.SampleAnimation(_primary.Body.Root,2.35f);_primary.Scene.Sample(2.35f);
+            _primary.Scene.Shot(2.35f,out var eye,out var target,out var fov,_camera.aspect);
+            Vector3 alternate=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
+            bool first=ClearShot(target,eye),second=ClearShot(target,alternate);
+            _mirrorShot=!first&&second;_safeShot=first||second;
+            _primary.Clip.SampleAnimation(_primary.Body.Root,0);_primary.Scene.Sample(0);
+        }
+        private bool ClearShot(Vector3 focus,Vector3 eye)
+        {
+            Vector3 line=eye-focus;float length=line.magnitude;if(length<.1f)return false;
+            int count=Physics.RaycastNonAlloc(focus,line/length,_shotHits,length,~0,QueryTriggerInteraction.Ignore);
+            if(count==_shotHits.Length)return false;
+            for(int i=0;i<count;i++)
+            {
+                var collider=_shotHits[i].collider;if(collider==null)continue;
+                if(collider.GetComponentInParent<CharacterMotor>()!=null||collider.GetComponentInParent<Slipper>()!=null
+                    ||collider.GetComponentInParent<Lata>()!=null)continue;
+                return false;
+            }
+            return true;
         }
         private void Hide(Transform root)
         {

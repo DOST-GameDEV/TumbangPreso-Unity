@@ -193,6 +193,10 @@ namespace TumbangPreso.UI
                                               HeroAbility ultimate)
         {
             if (caster == null || kit == null || ultimate == null) return;
+            // The full shared introduction has already named this accepted cast.
+            // Keep the legacy card for legacy/restore routes without covering the
+            // personal HUD again when the actual warning/effect starts.
+            if (caster.AbilitySystem?.DeliveringSharedIntroduction == true) return;
 
             // See `DuplicateWindow`.
             int seat = caster.PlayerSlot;

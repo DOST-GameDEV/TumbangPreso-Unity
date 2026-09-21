@@ -7,6 +7,7 @@ namespace TumbangPreso.Abilities
         private long _pendingUltimateRequest;
         private float _pendingUltimateUntil;
         public bool UltimateRequestPending => _pendingUltimateRequest > 0;
+        internal bool DeliveringSharedIntroduction { get; private set; }
         private HeroKit.CastOutcome SubmitSharedUltimate()
         {
             if (Kit == null || _motor == null) return HeroKit.CastOutcome.Missing;
@@ -67,7 +68,9 @@ namespace TumbangPreso.Abilities
             if (NetAuthority.IsNetworked)
             { using (NetCue.SuppressRelay()) Kit.Ultimate.BeginReservedActivation(context); }
             else Kit.Ultimate.BeginReservedActivation(context);
-            PlayCastConfirm(Slot.Ultimate, context, afterIntroduction: true);
+            DeliveringSharedIntroduction = true;
+            try { PlayCastConfirm(Slot.Ultimate, context, afterIntroduction: true); }
+            finally { DeliveringSharedIntroduction = false; }
         }
         internal void CancelSharedUltimate()
         { Kit?.Ultimate?.CancelIntroductionReservation(); _pendingUltimateRequest = 0; }
