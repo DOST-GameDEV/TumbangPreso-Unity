@@ -27,6 +27,24 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.ReducedUiMotion=_reduced;
         }
         [UnityTest]
+        public IEnumerator ResultsRetireWorldMarkersEvenWhenHudTrackingStops()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            Hud.Instance.ShowReadyPrompt(false);
+            var actor=GameServices.Round.PlayerAt(1);var shoe=actor.GetComponent<Carrier>().Held;
+            Assert.IsNotNull(shoe);shoe.HostDisarm();shoe.transform.position=actor.transform.position+actor.transform.forward*4;
+            var markers=Object.FindAnyObjectByType<OffscreenIndicators>();var recall=Object.FindAnyObjectByType<SlipperRecall>();
+            Assert.IsNotNull(markers);Assert.IsNotNull(recall);
+            markers.UpdateArrows(actor,GameServices.Round.Lata.transform);recall.Track(actor,shoe);
+            Assert.IsTrue(markers.CanMarkerVisible);Assert.IsTrue(recall.Drawing);
+            GameServices.Round.EndRound();Object.FindAnyObjectByType<MatchResult>().OnMatchWon(-1);
+            yield return null;yield return null;
+            Assert.IsFalse(markers.CanMarkerVisible,"Live can marker remained over results.");
+            Assert.IsFalse(recall.Drawing,"Last pickup ring remained over results after tracking stopped.");
+            yield return GameplayShots.Render(Camera.main,"results-with-loose-shoe",true,"Logs/finish-performance",width:1280,height:720);
+        }
+
+        [UnityTest]
         public IEnumerator WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,GameMode.HeroStrike);

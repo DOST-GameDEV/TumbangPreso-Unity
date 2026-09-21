@@ -53,6 +53,14 @@ namespace TumbangPreso.UI
         public string CanMarkerState => _markerState != null ? _markerState.text : "";
 
         private void Awake() => BuildNative();
+        private void HideMarker(){if(_canArrow!=null)_canArrow.gameObject.SetActive(false);}
+        private void OnDisable()=>HideMarker();
+        private void LateUpdate()
+        {
+            // The canvas has an independent lifetime. A finished match can stop
+            // HUD tracking altogether, leaving its last projected mark otherwise.
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen)HideMarker();
+        }
 
         private void BuildNative()
         {
@@ -164,7 +172,7 @@ namespace TumbangPreso.UI
         public void UpdateArrows(CharacterMotor local, Transform can)
         {
             var cam = UnityEngine.Camera.main;
-            if (PresentationClock.Held || cam == null || local == null)
+            if (PresentationClock.Held || ScreenTakeover.AnyOpen || cam == null || local == null)
             {
                 _canArrow.gameObject.SetActive(false);
                 return;

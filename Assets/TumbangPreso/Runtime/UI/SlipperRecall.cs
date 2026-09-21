@@ -129,6 +129,12 @@ namespace TumbangPreso.UI
         {
             if (_canvasRect != null) _canvasRect.gameObject.SetActive(visible);
         }
+        private void HideMarker(){if(_mark!=null)_mark.gameObject.SetActive(false);}
+        private void OnDisable()=>HideMarker();
+        private void LateUpdate()
+        {
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen)HideMarker();
+        }
 
         /// <summary>
         /// Whether the mark is on screen right now, for anything that has to check.
@@ -161,7 +167,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void Track(CharacterMotor local, Slipper mine)
         {
-            if(PresentationClock.Held){if(_mark!=null)_mark.gameObject.SetActive(false);return;}
+            if(PresentationClock.Held||ScreenTakeover.AnyOpen){HideMarker();return;}
             if (_mark == null) return;
 
             var cam = UnityEngine.Camera.main;
