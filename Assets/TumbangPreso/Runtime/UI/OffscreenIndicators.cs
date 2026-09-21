@@ -152,7 +152,7 @@ namespace TumbangPreso.UI
                              taya.GetComponent<Carrier>()?.ChannelRatio > 0;
             string state = lata == null ? "" : !lata.IsUpright ? (restoring ? "RESETTING" : "DOWN") :
                 lata.IsProtected ? "CAN PROTECTED" : "";
-            colour = lata != null && !lata.IsUpright ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
+            colour = lata != null && !lata.IsUpright ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
             _direction.GetComponent<TumpTargetPointer>().color = colour;
             if (_markerState != null) { _markerState.text = state; _markerState.color = colour; }
             if (_canSymbol != null)

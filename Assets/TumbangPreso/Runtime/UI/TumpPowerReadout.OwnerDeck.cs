@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
                 if(_symbols[i].Glyph!=skill.Glyph){_symbols[i].Glyph=skill.Glyph;_symbols[i].SetVerticesDirty();}
                 bool ready=!kit.PracticeMode && (i==2?kit.IsUltimateReady:skill.IsReady);
                 float ratio=i==2?kit.UltimateRatio:skill.IsActive?skill.DurationRatio:1-skill.CooldownRatio;
-                _ownerDials[i].State(ratio,ready,skill.IsActive,i==2);_symbols[i].color=ready?theme.Lime:theme.Pale;
+                _ownerDials[i].State(ratio,ready,skill.IsActive,i==2);_symbols[i].color=ready?CourtPresentationPalette.Gold:theme.Pale;
                 string state=kit.PracticeMode?"Wait":skill.IsActive?skill.CanReactivate?"Again":skill.DurationRemaining.ToString("0.0"):
                     i==2?ready?"":Mathf.FloorToInt(kit.UltimateRatio*100)+"%":
                     skill.UsesCharges?skill.ChargesRemaining.ToString():skill.CooldownRemaining>0?AbilityDeckHud.CooldownLabel(skill.CooldownRemaining):"";

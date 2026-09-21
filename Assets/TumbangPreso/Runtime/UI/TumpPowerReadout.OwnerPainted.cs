@@ -13,12 +13,12 @@ namespace TumbangPreso.UI
             var canvas=_detail.gameObject.AddComponent<Canvas>();canvas.vertexColorAlwaysGammaSpace=true;
             _detail.gameObject.AddComponent<OwnerUiCanvas>();
             var paper=OwnerUiLayout.Rect(_detail,"ReferencePaper").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(paper.rectTransform);paper.color=new Color32(25,40,31,242);paper.raycastTarget=false;
+            OwnerUiLayout.Fill(paper.rectTransform);paper.color=new Color32(35,29,33,242);paper.raycastTarget=false;
             for(int i=0;i<3;i++)
             {
                 float x=42+i*573;
                 _detailSymbols[i]=OwnerUiLayout.Rect(_detail,"DetailIcon"+i).gameObject.AddComponent<TumpAbilitySymbol>();
-                _detailSymbols[i].color=OwnerUiTheme.Current.Lime;_detailSymbols[i].raycastTarget=false;
+                _detailSymbols[i].color=CourtPresentationPalette.Gold;_detailSymbols[i].raycastTarget=false;
                 OwnerUiLayout.Place(_detailSymbols[i].rectTransform,x,19,86,86);
                 _names[i]=OwnerUiLayout.Text(_detail,"PowerName"+i,"",34,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Place(_names[i].rectTransform,x+110,14,424,99);_names[i].color=OwnerUiTheme.Current.Pale;

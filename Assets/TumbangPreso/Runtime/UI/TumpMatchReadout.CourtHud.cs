@@ -78,9 +78,9 @@ namespace TumbangPreso.UI
             _stock = Ink(_personalRoot, "SlipperState", "", 28, false); _stock.alignment = TextAnchor.MiddleLeft;
             OwnerUiLayout.Place(_stock.rectTransform, 0, 62, 500, 54);
             var track = OwnerUiLayout.Rect(_personalRoot, "StaminaTrack").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 0, 136, 338, 12); track.color = new Color32(25, 40, 31, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 0, 136, 338, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
             _stamina = OwnerUiLayout.Rect(track.transform, "StaminaFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = OwnerUiTheme.Current.Lime; _stamina.raycastTarget = false;
+            OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = CourtPresentationPalette.Gold; _stamina.raycastTarget = false;
             var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 353, 121, 142, 42);
             for (int i = 0; i < 4; i++)
             {
@@ -95,9 +95,9 @@ namespace TumbangPreso.UI
             _prompt = Ink(_promptRoot, "ActionPrompt", "", 36, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(25, 40, 31, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
             _progress = OwnerUiLayout.Rect(track.transform, "ProgressFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = OwnerUiTheme.Current.Lime; _progress.raycastTarget = false;
+            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = CourtPresentationPalette.Gold; _progress.raycastTarget = false;
             track.gameObject.SetActive(false);
         }
     }

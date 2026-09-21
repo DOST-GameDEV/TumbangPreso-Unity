@@ -215,7 +215,7 @@ namespace TumbangPreso.UI
                     if (!string.IsNullOrEmpty(activity)) state += (state.Length > 0 ? " · " : "") + activity;
                 }
                 _roles[i].text = state;
-                _roles[i].color = defender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
+                _roles[i].color = defender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
                 var people = Roster.GetPeople(actor.Mode);
                 var portrait = actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
                     ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
@@ -236,7 +236,7 @@ namespace TumbangPreso.UI
             _canState.text = lata.IsUpright ? "Can upright" : "Can down";
             _canHint.text = lata.IsProtected ? "Can protected · Defender may tag" :
                 lata.IsUpright ? "Defender may tag" : "Retrieve or reset";
-            _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : OwnerUiTheme.Current.Lime;
+            _canState.color = lata.IsUpright ? OwnerUiTheme.Current.Pale : CourtPresentationPalette.Gold;
         }
         private void Personal(CharacterMotor local, bool spectating)
         {
@@ -245,7 +245,7 @@ namespace TumbangPreso.UI
             foreach (var text in _status) text.enabled = false;
             if (!show) return;
             _role.text = local.IsDefender ? "Defender" : "Attacker";
-            _role.color = local.IsDefender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
+            _role.color = local.IsDefender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
             _stock.text = local.HoldingSlipper ? "Slipper in hand" : local.IsDefender ? "Guard the can" : "Slipper away";
             bool piloting=PilotingFamiliar(local);
             if(piloting)
@@ -328,7 +328,7 @@ namespace TumbangPreso.UI
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
-            if (local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Lime; }
+            if (local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
             else _prompt.color = OwnerUiTheme.Current.Pale;
             if (!local.IsDefender && !local.HoldingSlipper)
             {

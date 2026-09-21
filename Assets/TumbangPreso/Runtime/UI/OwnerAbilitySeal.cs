@@ -27,7 +27,7 @@ namespace TumbangPreso.UI
             helper.AddVert(rect.center,theme.DeepInk,Vector2.zero);
             for(int i=0;i<count;i++)helper.AddVert(rect.center+Outline(Mathf.PI*.5f-i*Mathf.PI*2/count,radius-2),theme.DeepInk,Vector2.zero);
             for(int i=0;i<count;i++)helper.AddTriangle(0,i+1,(i+1)%count+1);
-            Color ink=_active?theme.Orange:_ready?theme.Lime:theme.Pale;
+            Color ink=_active?theme.Orange:_ready?CourtPresentationPalette.Gold:theme.Pale;
             for(int i=0;i<count;i++)
             {
                 float a=Mathf.PI*.5f-i*Mathf.PI*2/count,b=Mathf.PI*.5f-(i+1)*Mathf.PI*2/count;
