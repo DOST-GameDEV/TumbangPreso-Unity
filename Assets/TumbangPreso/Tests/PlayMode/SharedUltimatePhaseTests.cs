@@ -179,6 +179,41 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(PresentationClock.Held);Assert.IsNull(GameObject.Find("SharedUltimateCanvas"));
         }
         [UnityTest]
+        public IEnumerator FourCastersShareOneDeadlineAndASecondCohortDoesNotAccumulateState()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            var actors=GameServices.Round.Players.ToArray();string[] heroes={"sean","dante","cheska","phaister"};
+            for(int i=0;i<4;i++)Hero(actors[i],heroes[i]);
+            Settings.SettingsStore.Current.CinematicCameraMotion=false;Settings.SettingsStore.Current.ReducedUiMotion=true;
+            float warm=Time.realtimeSinceStartup+4;
+            while(!PhaisterRitualWarmup.Ready&&Time.realtimeSinceStartup<warm)yield return null;
+            int starts=0;void Count(CharacterMotor actor,HeroKit kit,HeroAbility ability)=>starts++;
+            HeroAbilitySystem.UltimateStarted+=Count;
+            try
+            {
+                long previous=0;
+                for(int run=0;run<2;run++)
+                {
+                    if(run>0)
+                    {
+                        GameServices.Round.EndRound();GameServices.Match.AdvanceRound();
+                        foreach(var actor in actors){actor.ClearStun();actor.ClearTrip();actor.AbilitySystem.Kit.AddUltimateCharge(100);actor.Intent.Set(Verb.Ultimate,false);actor.Intent.CommitFrame();}
+                        yield return null;
+                    }
+                    foreach(var actor in actors)Press(actor,Verb.Ultimate);
+                    float until=Time.realtimeSinceStartup+1;while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<until)yield return null;
+                    var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);Assert.AreEqual(4,phase.Commits.Count);Assert.Greater(phase.PhaseId,previous);
+                    previous=phase.PhaseId;double began=phase.Began;
+                    foreach(var actor in actors)Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
+                    while(phase.Active&&SharedUltimatePhase.Now-began<4)yield return null;
+                    Assert.IsFalse(phase.Active);Assert.That(phase.ReleasedAt-began,Is.InRange(2.79,3.05));Assert.AreEqual((run+1)*4,starts);
+                    Assert.IsFalse(PresentationClock.Held);Assert.IsEmpty(phase.Commits);
+                }
+            }
+            finally{HeroAbilitySystem.UltimateStarted-=Count;}
+        }
+
+        [UnityTest]
         public IEnumerator ReducedViewAndRoundCancellationReleaseOnlyTheirOwnClockHold()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
