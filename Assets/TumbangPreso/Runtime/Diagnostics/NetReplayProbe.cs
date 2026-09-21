@@ -79,6 +79,7 @@ namespace TumbangPreso.Diagnostics
                 Abilities.HeroHazards.SpawnIceSheet(new Vector3(3,0,2),1.2f,30,1,1,silent:true);
                 Abilities.HeroHazards.SpawnHexSigil(new Vector3(-3,0,2),1.2f,30,2,1,silent:true);
                 Visual.DanteFissurePillar.Create(new Vector3(4,0,4),Vector3.forward,1,30);
+                Net.MatchRpc.Instance.BroadcastWorldSnapshot();
                 var send=typeof(Net.MatchRpc).GetMethod("SendWorldFieldSnapshot",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 foreach(var peer in Unity.Netcode.NetworkManager.Singleton.ConnectedClientsIds)
                     send.Invoke(Net.MatchRpc.Instance,new object[]{peer});
