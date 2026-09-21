@@ -182,6 +182,7 @@ namespace TumbangPreso.UI
 
         private void LateUpdate()
         {
+            PaintScoreMoments();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
             var view=UnityEngine.Camera.main;
@@ -197,7 +198,7 @@ namespace TumbangPreso.UI
             var match = GameServices.Match; var order = match.Ranking();
             for (int i = 0; i < 4; i++)
             {
-                int slot = order[i]; var actor = GameServices.Round.PlayerAt(slot);
+                int slot = order[i]; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
                 _names[i].text = PlayerIdentity.Label(slot) + " · " + SeatLabel.Raw(slot);
                 _names[i].color = PlayerIdentity.Colour(slot); _scores[i].text = match.ScoreFor(slot).ToString();

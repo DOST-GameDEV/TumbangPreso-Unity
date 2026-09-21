@@ -35,7 +35,8 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 4; i++)
             {
                 var row = OwnerUiLayout.Rect(_scoreRoot, "ScoreRow" + i); OwnerUiLayout.Place(row, 0, i * 80, 530, 78); _scoreRows[i] = row;
-                row.gameObject.AddComponent<OwnerScoreStrip>().raycastTarget = false;
+                _scoreAccents[i] = row.gameObject.AddComponent<OwnerScoreStrip>();
+                _scoreAccents[i].raycastTarget = false;
                 _portraits[i] = OwnerPortraitArt.Create(row, "PlayerPortrait", ""); OwnerUiLayout.Place(_portraits[i].rectTransform, 8, 5, 65, 65);
                 _names[i] = Ink(row, "PlayerName", "", 28, true); _names[i].alignment = TextAnchor.MiddleLeft;
                 OwnerUiLayout.Place(_names[i].rectTransform, 83, 1, 318, 43);
