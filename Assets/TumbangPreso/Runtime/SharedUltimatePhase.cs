@@ -33,6 +33,8 @@ namespace TumbangPreso
         public int Round { get; private set; }
         public double Began { get; private set; }
         public float FrozenRoundTime {get;private set;}
+        public double ReleasedAt {get;private set;}
+        public double ActivationMilliseconds {get;private set;}
         private float _deferredRoundTime;
         public IReadOnlyList<UltimateCommit> Commits => _commits;
         private readonly List<UltimateCommit> _commits = new List<UltimateCommit>(4);
@@ -68,7 +70,7 @@ namespace TumbangPreso
             {
                 MatchId = GameServices.Match.PresentationMatchId; Round = GameServices.Match.RoundNumber;
                 PhaseId = ++_sequence; Began = Now; _frame = Time.frameCount;
-                FrozenRoundTime=_deferredRoundTime=GameServices.Round.TimeLeft;
+                FrozenRoundTime=_deferredRoundTime=GameServices.Round.TimeLeft;ReleasedAt=ActivationMilliseconds=0;
                 _commits.Clear(); Active = true; _sealed = false; _actorsReady = true;
                 _scene = SceneManager.GetActiveScene();
                 PresentationClock.Hold();
@@ -167,9 +169,11 @@ namespace TumbangPreso
             if(!NetAuthority.ShouldResolve())round?.ApplyPresentationTime(_deferredRoundTime);
             bool themePlayed = _view != null && _view.SoundPlayed;
             _view?.Dispose(); _view=null;
+            ReleasedAt=Now;double activationBegan=Time.realtimeSinceStartupAsDouble;
             Active=false; _sealed=false; _viewAttempted=false; PresentationClock.Release();
             foreach (var cast in accepted)
                 round?.PlayerAt(cast.Seat)?.AbilitySystem?.ExecuteSharedUltimate(cast, themePlayed);
+            ActivationMilliseconds=(Time.realtimeSinceStartupAsDouble-activationBegan)*1000;
             _commits.Clear();
             if (NetAuthority.ShouldResolve()) Net.MatchRpc.Instance?.BroadcastWorldSnapshot();
         }

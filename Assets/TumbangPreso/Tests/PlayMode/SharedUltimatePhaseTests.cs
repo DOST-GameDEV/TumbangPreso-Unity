@@ -136,6 +136,7 @@ namespace TumbangPreso.PlayTests
             PresentationClock.RequestScale(.5f);Assert.AreEqual(0,Time.timeScale);
             while(phase.Active&&Time.realtimeSinceStartup-started<4)yield return null;
             Assert.IsFalse(phase.Active);Assert.AreEqual(.5f,Time.timeScale);
+            Debug.Log($"[SharedClock] input-to-accept={phase.Began-started:F4} hold={phase.ReleasedAt-phase.Began:F4} activation-ms={phase.ActivationMilliseconds:F3} observed={Time.realtimeSinceStartup-started:F4}");
             Assert.That(Time.realtimeSinceStartup-started,Is.InRange(2.65f,3.1f));
             Assert.AreEqual(1.55f,_ritualStart,.001f,"Measure the actual execution boundary, before the next frame legitimately advances its warning.");
             Assert.AreEqual(Mathf.Max(0,1.55f-(float)(Time.timeAsDouble-_ritualStartedAt)),phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,.02f);
