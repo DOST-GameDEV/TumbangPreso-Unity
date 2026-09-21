@@ -46,11 +46,11 @@ namespace TumbangPreso.PlayTests
             try
             {
                 input.Move=Vector2.up;yield return Sample("start",.7f);
-                yield return GameplayShots.Render(witness,"start",false,Output);
+                yield return GameplayShots.Render(witness,"start",false,Output,who);
                 input.Move=Vector2.zero;yield return Sample("brake",.4f);
-                yield return GameplayShots.Render(witness,"brake",false,Output);
+                yield return GameplayShots.Render(witness,"brake",false,Output,who);
                 input.Move=Vector2.right;input.Facing=Vector3.right;yield return Sample("turn",.45f);
-                yield return GameplayShots.Render(witness,"turn",false,Output);
+                yield return GameplayShots.Render(witness,"turn",false,Output,who);
                 Assert.Greater(forward,1,"The actual moving rig never loaded into its start.");
                 Assert.Less(braking,-.15f,"Braking had no visible opposing chest response.");
                 Assert.Greater(side,.35f,"Turning/side acceleration produced no lateral weight shift.");
