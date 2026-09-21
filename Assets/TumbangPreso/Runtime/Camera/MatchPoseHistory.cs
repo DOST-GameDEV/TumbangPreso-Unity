@@ -14,6 +14,7 @@ namespace TumbangPreso.CameraSystem
         private readonly Track[] _tracks = new Track[Core.Balance.PlayerCount];
         private float _next;
         private int _round;
+        public event System.Action<float> Sampled;
         public Track ForSeat(int seat) => seat >= 0 && seat < _tracks.Length ? _tracks[seat] : null;
 
         private void LateUpdate()
@@ -31,6 +32,7 @@ namespace TumbangPreso.CameraSystem
                     _tracks[i] = new Track(actor, visual.Model);
                 _tracks[i].Record(Time.time);
             }
+            Sampled?.Invoke(Time.time);
         }
 
         public sealed class Track
@@ -42,6 +44,7 @@ namespace TumbangPreso.CameraSystem
             private int _cursor, _count;
             public bool Ready => _count >= 2;
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
+            public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
             public Track(CharacterMotor actor, GameObject source)
             {
                 Actor = actor; Source = source; _bones = source.GetComponentsInChildren<Transform>(true);
@@ -67,6 +70,36 @@ namespace TumbangPreso.CameraSystem
             {
                 int index = System.Array.IndexOf(_bones, source);
                 return index >= 0 && index < copy.Bones.Length ? copy.Bones[index] : null;
+            }
+            public RecordedPoseTrack Retain(float start,float end)
+            {
+                if(!Ready||end<=start||start<Oldest||end>Newest||Source==null)return null;
+                var paths=new string[_bones.Length];
+                for(int i=0;i<_bones.Length;i++)
+                {
+                    if(_bones[i]==null)return null;
+                    var parts=new System.Collections.Generic.List<string>();
+                    for(var bone=_bones[i];bone!=Source.transform;bone=bone.parent)
+                    {if(bone==null)return null;parts.Add(bone.name);}
+                    parts.Reverse();paths[i]=string.Join("/",parts);
+                }
+                int oldest=(_cursor+Samples-_count)%Samples;
+                int from=0,to=_count-1;
+                for(int i=0;i<_count;i++)
+                {
+                    float time=_frames[(oldest+i)%Samples].Time;
+                    if(time<=start)from=i;
+                    if(time>=end){to=i;break;}
+                }
+                var result=new RecordedPoseTrack.Sample[to-from+1];
+                for(int i=from;i<=to;i++)
+                {
+                    var frame=_frames[(oldest+i)%Samples];
+                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,
+                        Positions=(Vector3[])frame.Position.Clone(),Rotations=(Quaternion[])frame.Rotation.Clone(),
+                        Scales=(Vector3[])frame.Scale.Clone(),Active=(bool[])frame.Active.Clone()};
+                }
+                return new RecordedPoseTrack(paths,result);
             }
             public float ContactTime(Vector3 at)
             {

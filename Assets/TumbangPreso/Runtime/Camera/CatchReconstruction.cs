@@ -43,6 +43,9 @@ namespace TumbangPreso.CameraSystem
         public static void Attach(GameObject owner)
         {
             var history = owner.GetComponent<MatchPoseHistory>() ?? owner.AddComponent<MatchPoseHistory>();
+            var archive = owner.GetComponent<MatchReplayArchive>();
+            if (archive == null) archive = owner.AddComponent<MatchReplayArchive>();
+            archive.Bind(history);
             var view = owner.GetComponent<CatchReconstruction>() ?? owner.AddComponent<CatchReconstruction>();
             view._history = history;
         }
