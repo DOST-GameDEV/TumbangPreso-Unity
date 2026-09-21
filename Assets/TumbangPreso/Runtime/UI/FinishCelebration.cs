@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
         private bool _applied;
         public void Bind(ModelPreview preview)
         {
-            Restore();_preview=preview;_torso=_head=_left=_right=null;_began=Time.unscaledTime;
+            Restore();_preview=preview;_torso=_head=_left=_right=null;_began=-1;
             if(preview.Subject==null)return;
             foreach(var bone in preview.Subject.GetComponentsInChildren<Transform>(true))
             {
@@ -38,6 +38,7 @@ namespace TumbangPreso.UI
         private void LateUpdate()
         {
             if(_preview==null||!_preview.isActiveAndEnabled||_torso==null)return;
+            if(_began<0)_began=Time.unscaledTime;
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             _preview.AnimateSubject=!reduced;
             float age=reduced?1.2f:Time.unscaledTime-_began;

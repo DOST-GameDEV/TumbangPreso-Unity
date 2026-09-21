@@ -150,6 +150,10 @@ namespace TumbangPreso.PlayTests
                         records.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4}",stage,who.transform.position.y,sole,support,who.IsGrounded));
                         if(planted && Mathf.Abs(support-sole)>.025f)
                         {
+                            var animator=who.GetComponent<CharacterAnimator>();var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                            foreach(string field in new[]{"_contactFeet","_contactRoot","_contactLift","_oneShotLeft","_introductionBones","_current"})
+                            {var value=typeof(CharacterAnimator).GetField(field,flags)?.GetValue(animator);Debug.Log("[FootSupport] "+field+"="+(value is System.Array array?array.Length.ToString():value));}
+                            Debug.Log("[FootSupport] supportAvailable="+who.GetComponent<CharacterVisual>().TryGetGroundSupport(out float supportHeight)+" height="+supportHeight+" stunned="+who.IsStunned+" tripped="+who.IsTripped+" swim="+who.IsSwimming);
                             foreach(var skin in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null&&b.name=="leg-left")))
                             {
                                 var vertices=skin.sharedMesh.vertices;var weights=skin.sharedMesh.boneWeights;var binds=skin.sharedMesh.bindposes;
