@@ -157,18 +157,22 @@ namespace TumbangPreso.PlayTests
                             foreach(var skin in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null&&b.name=="leg-left")))
                             {
                                 var vertices=skin.sharedMesh.vertices;var weights=skin.sharedMesh.boneWeights;var binds=skin.sharedMesh.bindposes;
-                                float manual=float.PositiveInfinity;
+                                float manual=float.PositiveInfinity;string lowestBones="";
                                 for(int v=0;v<vertices.Length;v++)
                                 {
                                     var weight=weights[v];var world=Vector3.zero;
                                     world+=Point(weight.boneIndex0,weight.weight0);world+=Point(weight.boneIndex1,weight.weight1);
                                     world+=Point(weight.boneIndex2,weight.weight2);world+=Point(weight.boneIndex3,weight.weight3);
-                                    manual=Mathf.Min(manual,world.y);
+                                    if(world.y<manual)
+                                    {
+                                        manual=world.y;
+                                        lowestBones=skin.bones[weight.boneIndex0].name+":"+weight.weight0+"/"+skin.bones[weight.boneIndex1].name+":"+weight.weight1+"/"+skin.bones[weight.boneIndex2].name+":"+weight.weight2+"/"+skin.bones[weight.boneIndex3].name+":"+weight.weight3;
+                                    }
                                     Vector3 Point(int index,float amount)=>amount<=0?Vector3.zero:skin.bones[index].TransformPoint(binds[index].MultiplyPoint3x4(vertices[v]))*amount;
                                 }
                                 skin.BakeMesh(mesh,true);float scaled=float.PositiveInfinity;
                                 foreach(var v in mesh.vertices)scaled=Mathf.Min(scaled,skin.transform.TransformPoint(v).y);
-                                Debug.Log("[FootSupport] skin="+skin.name+" scale="+skin.transform.lossyScale+" manualSkinMin="+manual+" compensatedBakeMin="+scaled);
+                                Debug.Log("[FootSupport] skin="+skin.name+" scale="+skin.transform.lossyScale+" manualSkinMin="+manual+" compensatedBakeMin="+scaled+" lowestWeights="+lowestBones);
                             }
                             foreach(var part in who.GetComponentsInChildren<Transform>())
                                 if(part.name=="Visual"||part.name=="root"||part.name=="leg-left"||part.name=="leg-right")
