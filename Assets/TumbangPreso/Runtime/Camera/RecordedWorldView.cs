@@ -38,7 +38,10 @@ namespace TumbangPreso.CameraSystem
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 foreach(var track in clip.Objects)
                 {
-                    GameObject source=Source(track);if(source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1);return;}
+                    GameObject source=Source(track);
+                    if(source==null){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1)+" skin="+track.Skin+" person="+track.Person;return;}
+                    string visualKey=MatchReplayArchive.VisualKey(source);
+                    if(visualKey!=track.VisualKey){UnavailableReason="Changed recorded art: "+track.Kind+" P"+(track.Seat+1)+" expected="+track.VisualKey+" actual="+visualKey;return;}
                     var history=new MatchPoseHistory.Track(GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
                     history.Record(Time.time);history.Record(Time.time+.05f);
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}

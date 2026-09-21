@@ -309,6 +309,7 @@ namespace TumbangPreso.Net
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
+            _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             ClearReplayTransfer();
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
@@ -371,6 +372,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
+            cm.RegisterNamedMessageHandler("CastAccepted", OnCastAccepted);
             cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
@@ -3029,6 +3031,8 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            PrepareSkillReceipts();long request=++_skillRequestSequence;
+            Unit(claimedSlot)?.AbilitySystem?.TrackSkillRequest(abilitySlot,request);
             using var writer = new FastBufferWriter(128, Allocator.Temp);
             writer.WriteValueSafe(claimedSlot);
             writer.WriteValueSafe(abilitySlot);
@@ -3038,12 +3042,13 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(heldSeconds);
             writer.WriteValueSafe(hasFamiliar);
             writer.WriteValueSafe(familiarPosition);
+            writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);
             _nm.CustomMessagingManager.SendNamedMessage("ReqAbility", NetworkManager.ServerClientId, writer);
         }
 
         private void OnReqAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !reader.TryBeginRead(81)) return;
 
             reader.ReadValueSafe(out int claimedSlot);
             reader.ReadValueSafe(out int abilitySlot);
@@ -3053,11 +3058,21 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float heldSeconds);
             reader.ReadValueSafe(out bool hasFamiliar);
             reader.ReadValueSafe(out Vector3 familiarPosition);
+            reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
+            if(match!=PresentationMatchId||round!=GameServices.Match?.RoundNumber||request<=0)return;
+            PrepareSkillReceipts();
+            if(_lastSkillRequest.TryGetValue(senderClientId,out var previous)&&request<=previous.request)
+            {
+                if(request==previous.request&&abilitySlot==previous.slot)
+                {if(previous.accepted)AcceptSkillReceipt(senderClientId,claimedSlot,abilitySlot,request);else HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);}
+                return;
+            }
+            _lastSkillRequest[senderClientId]=(request,abilitySlot,false);
             if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
-            { HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot); return; }
+            { HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request); return; }
 
             // ⚠️⚠️ FROM HERE DOWN EVERY REFUSAL ANSWERS THE SENDER. Above this line the message is
             // malformed or is claiming a seat it does not hold, and the host cannot know what the
@@ -3067,7 +3082,7 @@ namespace TumbangPreso.Net
             if (!PlausibleIntentPose(unit, position) || !Finite(forward) ||
                 !Finite(aimPoint) || !Finite(heldSeconds))
             {
-                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);
                 return;
             }
 
@@ -3075,16 +3090,18 @@ namespace TumbangPreso.Net
             var system = unit.AbilitySystem;
             if (system == null)
             {
-                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);
                 return;
             }
 
+            if(system.CheckNetworkSkill((Abilities.HeroAbilitySystem.Slot)abilitySlot,position,forward,aimPoint,heldSeconds)!=Abilities.HeroKit.CastOutcome.Cast)
+            {HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);return;}
             var pet=Familiar(claimedSlot);
             if(pet!=null && pet.IsPossessed && abilitySlot>0)
             {
                 if(!hasFamiliar || !pet.AcceptFlightPose(familiarPosition,pet.transform.eulerAngles.y))
                 {
-                    HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot);
+                    HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);
                     return;
                 }
                 familiarPosition=pet.transform.position;
@@ -3094,7 +3111,7 @@ namespace TumbangPreso.Net
                 // A following pet is host-derived, never a client-selected remote
                 // ultimate target. The client anchor is only trusted during flight.
                 if(pet==null || !Finite(familiarPosition))
-                {HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot);return;}
+                {HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);return;}
                 familiarPosition=pet.transform.position;
             }
             var slot = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
@@ -3107,22 +3124,25 @@ namespace TumbangPreso.Net
                 // if it ever becomes reachable, the client having spent nothing means the refund
                 // is a no-op rather than a gift. Refusing everything that is not `Cast` keeps the
                 // rule "the host answers every request it did not run" true without a list.
-                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                HostDenyAbilityCast(senderClientId,claimedSlot,abilitySlot,request);
                 return;
             }
 
+            _lastSkillRequest[senderClientId]=(request,abilitySlot,true);
             BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
-                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition);
+                                 aimPoint, heldSeconds, senderClientId, hasFamiliar, familiarPosition,request);
+            AcceptSkillReceipt(senderClientId,claimedSlot,abilitySlot,request);
             BroadcastAbilityState(claimedSlot, unit);
         }
 
         /// <summary>Host announcement. Every observer runs presentation; only the host resolves.</summary>
         public void BroadcastAbilityCast(int slot, int abilitySlot, Vector3 position,
                                          Vector3 forward, Vector3 aimPoint, float heldSeconds,
-                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default)
+                                         ulong? exceptClientId, bool hasFamiliar=false, Vector3 familiarPosition=default,long request=0)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
 
+            PrepareSkillReceipts();long eventId=++_skillEventSequence;
             bool confirmRitualOwner = abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate &&
                 Unit(slot)?.AbilitySystem?.HeroId == "phaister";
             bool confirmWorldOwner = Unit(slot)?.AbilitySystem?.NeedsOwnerEffectConfirmation(
@@ -3142,13 +3162,14 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(heldSeconds);
             writer.WriteValueSafe(hasFamiliar);
             writer.WriteValueSafe(familiarPosition);
+                writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match?.RoundNumber??0);writer.WriteValueSafe(request);writer.WriteValueSafe(eventId);
                 _nm.CustomMessagingManager.SendNamedMessage("PlayAbility", clientId, writer);
             }
         }
 
         private void OnPlayAbilityMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId) return;
+            if (NetAuthority.IsHost || senderClientId != NetworkManager.ServerClientId || !reader.TryBeginRead(89)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int abilitySlot);
@@ -3158,6 +3179,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float heldSeconds);
             reader.ReadValueSafe(out bool hasFamiliar);
             reader.ReadValueSafe(out Vector3 familiarPosition);
+            reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);reader.ReadValueSafe(out long eventId);
 
             if (slot < 0 || slot >= Balance.PlayerCount || abilitySlot < 0 || abilitySlot > 2)
                 return;
@@ -3168,11 +3190,14 @@ namespace TumbangPreso.Net
             if (!Finite(position) || !Finite(forward) || !Finite(aimPoint) || !Finite(heldSeconds))
                 return;
 
+            if(match!=PresentationMatchId||round!=GameServices.Match?.RoundNumber||eventId<=0||request<0)return;
+            PrepareSkillReceipts();if(eventId<=_lastSkillEvent[slot])return;_lastSkillEvent[slot]=eventId;
             if (slot == NetAuthority.LocalSlot)
             {
                 // This owner already performed and paid for the cast. Only release
                 // the world payload/sky that deliberately awaited host acceptance.
                 var system = Unit(slot)?.AbilitySystem;
+                if(request>0&&system?.MatchesSkillRequest(abilitySlot,request)!=true)return;
                 system?.ConfirmPredictedWorldEffect((Abilities.HeroAbilitySystem.Slot)abilitySlot,
                     position, forward, aimPoint, heldSeconds);
                 system?.ConfirmPredictedCastPresentation(
@@ -3225,7 +3250,7 @@ namespace TumbangPreso.Net
         // -------------------------------------------------------------------
 
         /// <summary>Tells one client the cast it predicted was refused, so it can take it back.</summary>
-        public void HostDenyAbilityCast(ulong clientId, int slot, int abilitySlot)
+        public void HostDenyAbilityCast(ulong clientId, int slot, int abilitySlot,long request=0)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
 
@@ -3235,16 +3260,19 @@ namespace TumbangPreso.Net
             if (clientId == _nm.LocalClientId) return;
 
             var unit=Unit(slot);
-            if(unit==null)return;
+            var ability=Skill(unit,abilitySlot);if(unit==null||ability==null||request<=0)return;
             Vector3 position=unit.transform.position;float yaw=unit.transform.eulerAngles.y;
             int epoch=_movementEpochs[slot];
-            using var writer = new FastBufferWriter(40, Allocator.Temp);
+            using var writer = new FastBufferWriter(80, Allocator.Temp);
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe(abilitySlot);
             writer.WriteValueSafe(position);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(epoch);
+            writer.WriteValueSafe(PresentationMatchId);writer.WriteValueSafe(GameServices.Match.RoundNumber);writer.WriteValueSafe(request);
+            writer.WriteValueSafe(ability.CooldownRemaining);writer.WriteValueSafe(ability.ChargesRemaining);writer.WriteValueSafe(SharedUltimatePhase.Now);
             _nm.CustomMessagingManager.SendNamedMessage("CastDenied", clientId, writer);
+
         }
 
         private void OnCastDeniedMsg(ulong senderClientId, FastBufferReader reader)
@@ -3252,13 +3280,16 @@ namespace TumbangPreso.Net
             // ⚠️ THE HOST IS ITS OWN CLIENT AND ONLY THE HOST MAY REFUSE. The first half keeps a
             // listen host out of a path that would roll back authoritative state; the second is
             // the rule every "play this" handler in this file carries (`FromHost`).
-            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || !reader.TryBeginRead(64)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int abilitySlot);
             reader.ReadValueSafe(out Vector3 position);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out int epoch);
+            reader.ReadValueSafe(out long match);reader.ReadValueSafe(out int round);reader.ReadValueSafe(out long request);
+            reader.ReadValueSafe(out float cooldown);reader.ReadValueSafe(out int charges);reader.ReadValueSafe(out double at);
+            if(!ValidSkillReceipt(match,round,slot,abilitySlot,request,cooldown,charges,at))return;
 
             if (!ValidSlot(slot) || abilitySlot < 0 || abilitySlot > 2 || !Finite(position) || !Finite(yaw)) return;
 
@@ -3268,13 +3299,14 @@ namespace TumbangPreso.Net
             if (slot != NetAuthority.LocalSlot) return;
 
             var unit=Unit(slot);
+            if(unit?.AbilitySystem?.PendingSkillReceipt(abilitySlot,request)!=true)return;
             if(unit!=null && unit.RefuseAbilityTeleport(abilitySlot) && epoch>=unit.MovementEpoch)
             {
                 unit.AdoptMovementEpoch(epoch);
                 unit.ApplyNetworkTransform(position,unit.transform.eulerAngles.y,Vector3.zero,true,false,true);
             }
-            unit?.AbilitySystem?.RollBackPredictedCast(
-                (Abilities.HeroAbilitySystem.Slot)abilitySlot);
+            unit.AbilitySystem.ResolveSkillReceipt(abilitySlot,request,false,Mathf.Max(0,cooldown-(float)System.Math.Max(0,SharedUltimatePhase.Now-at)),charges);
+            RequestWorldSnapshot();
         }
 
         // -------------------------------------------------------------------
@@ -5848,6 +5880,7 @@ namespace TumbangPreso.Net
             // told about.
             _identified.Remove(peerId);
             _lastUltimateRequest.Remove((ulong)peerId);
+            _lastSkillRequest.Remove((ulong)peerId);
 
             // ⚠️ THE PER-PEER RATE BUDGETS ARE KEYED BY TRANSPORT ID AND MUST BE DROPPED WITH IT.
             // Client ids are handed out monotonically rather than reused, so a lobby that runs

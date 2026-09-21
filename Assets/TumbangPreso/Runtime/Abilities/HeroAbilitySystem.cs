@@ -835,7 +835,7 @@ namespace TumbangPreso.Abilities
         /// that is not this peer's own; the guard here is the second half of that pair, so a
         /// future caller cannot roll back somebody else's kit.
         /// </summary>
-        public void RollBackPredictedCast(Slot slot)
+        public void RollBackPredictedCast(Slot slot, bool refundResources = true)
         {
             if (Kit == null || _motor == null) return;
             if (NetAuthority.IsHost) return;
@@ -848,7 +848,7 @@ namespace TumbangPreso.Abilities
             // THIS FILE. `EndEarly` reaches `OnEnd`, and some `OnEnd` bodies play a cue; relaying
             // those outward would have a client asking the host to announce the end of an effect
             // the host never started.
-            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);
+            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context,refundResources);
             if (slot == Slot.Ultimate) _pendingUltimateSky = false;
             _motor.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction(ability.CastAction,ability.ViewmodelAction);
 
@@ -1383,6 +1383,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public void ResetKit()
         {
+            ClearSkillReceipts();
             Kit?.ResetForRound(_context);
             _motor?.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction();
             ClearBuffers();
@@ -1391,6 +1392,7 @@ namespace TumbangPreso.Abilities
         /// <summary>Empties the bank as well. For the start of a whole match, not a round.</summary>
         public void ResetKitForMatch()
         {
+            ClearSkillReceipts();
             Kit?.ResetForMatch(_context);
             _motor?.GetComponent<Visual.CharacterAnimator>()?.CancelHeroAction();
             ClearBuffers();

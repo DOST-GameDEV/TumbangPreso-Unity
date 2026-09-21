@@ -298,34 +298,20 @@ namespace TumbangPreso.Abilities
         internal void AdoptUltimateReservation()
         { Ultimate?.ReserveForIntroduction(); UltimateCharge = 0; }
 
+        internal CastOutcome CheckSkill(int slot,AbilityContext ctx)=>CheckFire(slot==0?Skill1:Skill2,ctx);
+        private CastOutcome CheckFire(HeroAbility ability,AbilityContext ctx)
+        {
+            if(ability==null)return CastOutcome.Missing;
+            if(ability.IsActive&&ability.CanReactivate)return CastOutcome.Cast;
+            if(PracticeMode)return CastOutcome.NotYet;
+            if(!ability.IsReady)return CastOutcome.Cooling;
+            if(ctx?.Motor!=null&&!ctx.Motor.CanAct())return CastOutcome.CannotAct;
+            return ability.CanActivate(ctx)?CastOutcome.Cast:CastOutcome.CannotAct;
+        }
         private CastOutcome Fire(HeroAbility ability, AbilityContext ctx)
         {
-            if (ability == null) return CastOutcome.Missing;
-
-            // ⚠️ A REACTIVATION IS NOT GATED ON THE COOLDOWN. Nemu's Astral Projection is one
-            // press out and one press back, and the return trip has to be available for the
-            // whole time the decoy is alive even though the ability is very much not "ready".
-            //
-            // ⚠️⚠️ AND IT SITS ABOVE THE WARM-UP GATE ON PURPOSE. A decoy that is already out
-            // when the round ends has to be recallable, or the hero spends the buffer as a
-            // projection with the return press refused. Ending something already running is not
-            // starting something new, which is the only thing the gate below is stopping.
-            if (ability.IsActive && ability.CanReactivate)
-            {
-                ability.Reactivate(ctx);
-                return CastOutcome.Cast;
-            }
-
-            // ⚠️⚠️ NO POWER STARTS WHILE THE ROUND CLOCK IS STOPPED. See
-            // <see cref="PracticeMode"/> for the report and why this is a refusal rather than a
-            // discount.
-            if (PracticeMode) return CastOutcome.NotYet;
-
-            if (!ability.IsReady) return CastOutcome.Cooling;
-            if (ctx != null && ctx.Motor != null && !ctx.Motor.CanAct()) return CastOutcome.CannotAct;
-            if (!ability.CanActivate(ctx)) return CastOutcome.CannotAct;
-
-            ability.Activate(ctx);
+            var allowed=CheckFire(ability,ctx);if(allowed!=CastOutcome.Cast)return allowed;
+            if(ability.IsActive&&ability.CanReactivate)ability.Reactivate(ctx);else ability.Activate(ctx);
             return CastOutcome.Cast;
         }
 

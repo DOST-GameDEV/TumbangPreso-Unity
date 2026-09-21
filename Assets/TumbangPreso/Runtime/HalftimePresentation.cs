@@ -75,7 +75,7 @@ namespace TumbangPreso
                     catch(Exception failure){Debug.LogWarning("[Replay] View unavailable: "+failure.Message);}
                 }
                 if(_view?.Ready!=true)
-                { _view?.Dispose();_view=null;FallbackReason=ClipId==0?"No complete highlight this half":"Replay unavailable on this screen"; }
+                { Debug.Log("[Replay] clip="+ClipId+" unavailable: "+(_clip==null?"canonical bytes missing":_view?.UnavailableReason??"view preference or scene"));_view?.Dispose();_view=null;FallbackReason=ClipId==0?"No complete highlight this half":"Replay unavailable on this screen"; }
             }
             if(_view?.Ready==true&&age<5.8f)
             {

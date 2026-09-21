@@ -55,7 +55,7 @@ for seat,name in enumerate(['host','scorer','observer']):
  path=out/(name+'.csv');rows=list(csv.DictReader(path.open())) if path.exists() else []
  if len(rows)<20 or any(int(r['local'])!=seat for r in rows):errors.append(name+': insufficient trace or wrong seat');continue
  newer=[r for r in rows if 5.4<=float(r['elapsed'])<=6.1]
- recall=[r for r in rows if 10.2<=float(r['elapsed'])<=11.2]
+ recall=[r for r in rows if 9.0<=float(r['elapsed'])<=10.3]
  if not newer or not recall:errors.append(name+': missing scenario windows')
  measured[name]={'rows':len(rows),'newerActive':any(int(r['active1'])==1 for r in newer),'recallCharges':max((int(r['charge2']) for r in recall),default=-1)}
 if len(measured)==3:

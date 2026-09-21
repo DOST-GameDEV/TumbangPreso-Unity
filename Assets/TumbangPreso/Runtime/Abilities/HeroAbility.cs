@@ -858,7 +858,7 @@ namespace TumbangPreso.Abilities
         /// ⚠️ THE CAP IS REAL. `GrantCharge` clamps to `MaxCharges` and this goes through it, so a
         /// duplicated or replayed refusal cannot mint charges.
         /// </summary>
-        public void RollBackPredictedCast(AbilityContext ctx)
+        public void RollBackPredictedCast(AbilityContext ctx, bool refundResources = true)
         {
             ReleaseRoot();
             WindupRemaining = 0.0f;
@@ -866,8 +866,8 @@ namespace TumbangPreso.Abilities
 
             CancelActive(ctx);
 
-            if (UsesCharges) GrantCharge();
-            else CooldownRemaining = 0.0f;
+            if(refundResources) { if (UsesCharges) GrantCharge();
+            else CooldownRemaining = 0.0f; }
         }
 
         public void EndEarly(AbilityContext ctx)
