@@ -16,6 +16,8 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Item> _items=new List<Item>(13);
         private readonly List<Renderer> _hidden=new List<Renderer>();
         private readonly List<bool> _previous=new List<bool>();
+        private readonly List<Canvas> _hiddenCanvases=new List<Canvas>();
+        private readonly List<bool> _canvasWasEnabled=new List<bool>();
         private readonly List<Light> _hiddenLights=new List<Light>();
         private readonly List<bool> _lightWasEnabled=new List<bool>();
         private readonly RecordedMatchClip _clip;
@@ -167,7 +169,7 @@ namespace TumbangPreso.CameraSystem
                 if(audible&&cue.Time>=_lastTime)
                 {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain*Mathf.Clamp01(1-(Vector3.Distance(_camera.transform.position,cue.Position)-2)/30),Mathf.Clamp(p.x*2-1,-1,1));}
             }
-            _lastTime=time;_hidden.Clear();_previous.Clear();_hiddenLights.Clear();_lightWasEnabled.Clear();
+            _lastTime=time;_hidden.Clear();_previous.Clear();_hiddenLights.Clear();_lightWasEnabled.Clear();_hiddenCanvases.Clear();_canvasWasEnabled.Clear();
             RecordedFieldFrame frame=null,nextFrame=null;
             foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time){nextFrame=snapshot;break;}frame=snapshot;}
             _visibleTrails.Clear();
@@ -201,6 +203,8 @@ namespace TumbangPreso.CameraSystem
             }
             foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
             foreach(var field in RecordedSpecialFields.Capture())if(field.Source!=null)Hide(field.Source);
+            foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())if(!effect.transform.IsChildOf(_stage.transform))Hide(effect.gameObject);
+            foreach(var callout in Object.FindObjectsByType<ComicPopup>())Hide(callout.gameObject);
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
@@ -209,11 +213,12 @@ namespace TumbangPreso.CameraSystem
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
             try{using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
-            finally{foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {
             foreach(var r in root.GetComponentsInChildren<Renderer>(true)){if(_hidden.Contains(r))continue;_hidden.Add(r);_previous.Add(r.forceRenderingOff);r.forceRenderingOff=true;}
+            foreach(var canvas in root.GetComponentsInChildren<Canvas>(true)){if(_hiddenCanvases.Contains(canvas))continue;_hiddenCanvases.Add(canvas);_canvasWasEnabled.Add(canvas.enabled);canvas.enabled=false;}
             foreach(var light in root.GetComponentsInChildren<Light>(true)){if(_hiddenLights.Contains(light))continue;_hiddenLights.Add(light);_lightWasEnabled.Add(light.enabled);light.enabled=false;}
         }
         public void Dispose()
