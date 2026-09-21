@@ -1,10 +1,11 @@
 """Qualify canonical retained replay and halftime delivery on three real local players."""
 import argparse,csv,hashlib,json,os,shutil,socket,subprocess,time
 from pathlib import Path
+from presentation_peer_link import PresentationLink,arguments as link_arguments
 from run_unity_guarded import profile_root,unity_environment
 from run_ui_player_review import read_input_preferences
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);link_arguments(p);a=p.parse_args()
 exe=a.exe.resolve();out=a.out.resolve()
 assert exe.is_file() and exe.is_relative_to(ROOT/'Builds')
 assert out.is_relative_to(ROOT/'Logs') and out!=ROOT/'Logs'
@@ -13,7 +14,9 @@ with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as port_test:
  port_test.bind(('127.0.0.1',0));port=port_test.getsockname()[1]
 processes=[];backups=[];before=read_input_preferences();commands=[]
 startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
+link=PresentationLink(ROOT,out,a)
 try:
+ join_port=link.start(port)
  for index,name in enumerate(['host','scorer','observer']):
   profile_name=out.name+'-'+name;profile=profile_root(['-tp-profile',profile_name])
   for source in profile.rglob('*'):
@@ -22,7 +25,7 @@ try:
     backups.append((source,backup,hashlib.sha256(source.read_bytes()).hexdigest()))
   command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-autostart','3','-tp-map','Eskinita','-tp-profile',profile_name,'-tp-replayseat',str(index),'-tp-replaytrace',str(out/(name+'.csv')),'-logFile',str(out/(name+'.log'))]
   command+=['-tp-replaymode',a.mode]
-  command+=['-tp-host',str(port)] if index==0 else ['-tp-join','127.0.0.1',str(port)]
+  command+=['-tp-host',str(port)] if index==0 else ['-tp-join','127.0.0.1',str(join_port)]
   commands.append(command);processes.append(subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
   print(name,'PID',processes[-1].pid,flush=True)
   (out/'job.json').write_text(json.dumps({'exe':str(exe),'port':port,'commands':commands,'pids':[x.pid for x in processes]},indent=2))
@@ -45,6 +48,7 @@ try:
  deadline=time.monotonic()+112
  for process in processes:process.wait(timeout=max(1,deadline-time.monotonic()))
 finally:
+ link.close()
  for process in processes:
   if process.poll() is None:process.terminate();process.wait(timeout=15)
  for source,backup,digest in backups:
@@ -70,8 +74,8 @@ if len(measured)==3 and len({m['epoch'][0] for m in measured.values()})!=1:error
 if len(measured)==3 and len({m['clip'][0] for m in measured.values() if m['clip']})!=1:errors.append('peers disagree about canonical clip')
 if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
- if 'version mismatch' not in old_log.lower() and 'protocol 45' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
+ if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. No impaired-network or freeform-play claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: physical contact retained in round1, bounded verified transport, canonical participant playback at round4, shared halftime clock and round5 return. Optional old44client refusal. No impaired-network or freeform-play claim.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)
