@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.7533971">
+  <test-suite type="TestSuite" id="1672" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="505" result="Failed" site="Child" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.753397" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1666" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="505" result="Failed" site="Child" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.734021" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24356" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1667" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="505" result="Failed" site="Child" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.725229" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1668" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="505" result="Failed" site="Child" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.715969" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1545" name="SlipperRecallShots" fullname="TumbangPreso.PlayTests.SlipperRecallShots" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:25Z" duration="3.673250" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1547" name="CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies" fullname="TumbangPreso.PlayTests.SlipperRecallShots.CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies" methodname="CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" seed="1561329818" result="Failed" start-time="2026-09-21 14:17:21Z" end-time="2026-09-21 14:17:22Z" duration="0.289045" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: Conflict
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperRecallShots+<CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies>d__6.MoveNext () [0x001d5] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\SlipperRecallShots.cs:156
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1546" name="LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding" fullname="TumbangPreso.PlayTests.SlipperRecallShots.LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding" methodname="LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding" classname="TumbangPreso.PlayTests.SlipperRecallShots" runstate="Runnable" seed="233680713" result="Failed" start-time="2026-09-21 14:17:22Z" end-time="2026-09-21 14:17:25Z" duration="3.364516" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: KeyboardMouse
+  But was:  Touch
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperRecallShots+<LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding>d__5.MoveNext () [0x0057f] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\SlipperRecallShots.cs:119
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 914 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

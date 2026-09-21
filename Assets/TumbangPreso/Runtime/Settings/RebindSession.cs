@@ -45,6 +45,7 @@ namespace TumbangPreso.Settings
         private int _index;
         private Action<RebindOutcome, string> _finished;
         private bool _closed;
+        private InputBinding _originalBinding;
 
         /// <summary>
         /// Why <paramref name="action"/> cannot be rebound on <paramref name="device"/>, or null
@@ -99,6 +100,7 @@ namespace TumbangPreso.Settings
                 Action = action,
                 _target = target,
                 _index = index,
+                _originalBinding = target.bindings[index],
                 _finished = finished,
             };
 
@@ -144,11 +146,12 @@ namespace TumbangPreso.Settings
             // check has to run against the other actions and report a refusal rather than leave
             // two verbs sharing one control.
             _target.RemoveBindingOverride(_index);
+            _target.ApplyBindingOverride(_index,_originalBinding);
 
             // ⚠️ THE LINE ABOVE IS A BINDING CHANGE TOO, even though it is undoing one, and
             // `Rebinding.Revision` is what lets a screen cache a key label. The net effect is zero
-            // only when `TryRebind` goes on to accept; on a refusal this is the write that
-            // restores the original control.
+            // only when `TryRebind` goes on to accept; on a refusal restore the
+            // previous override, not the shipped default underneath it.
             Rebinding.Invalidate();
 
             string conflict = Rebinding.TryRebind(asset, Action, control);

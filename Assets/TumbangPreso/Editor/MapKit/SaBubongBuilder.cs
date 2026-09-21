@@ -23,6 +23,47 @@ namespace TumbangPreso.EditorTools.MapKit
             Build();EditorApplication.Exit(0);
         }
 
+        // A skyline revision must not regenerate the playable deck or its authored
+        // pool/recovery/laundry state. Keep a saved semantic proof of that boundary.
+        public static void RefreshSkyline()
+        {
+            string output=Environment.GetEnvironmentVariable("TUMP_ROOF_SKYLINE")??"Logs/roof-skyline-v1";
+            Directory.CreateDirectory(output);
+            var scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
+            var before=MapRepeatabilityCheck.Capture(scene);
+            MapRepeatabilityCheck.Write(output,"SaBubong","before",before);
+            SortedDictionary<string,string> previous=null;
+            for(int run=1;run<=2;run++)
+            {
+                var dressing=GameObject.Find("SaBubong/Dressing").transform;
+                var old=dressing.Find("Metro rooftops");int sibling=old.GetSiblingIndex();
+                Object.DestroyImmediate(old.gameObject);
+                Concrete=AssetDatabase.LoadAssetAtPath<Material>(Folder+"/Warmroofconcrete.mat");
+                if(Concrete==null)throw new InvalidOperationException("Missing retained roof concrete");
+                Skyline(dressing);dressing.Find("Metro rooftops").SetSiblingIndex(sibling);
+                EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
+                scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
+                var current=MapRepeatabilityCheck.Capture(scene);
+                MapRepeatabilityCheck.Write(output,"SaBubong","run"+run,current);
+                var protectedChanges=MapRepeatabilityCheck.Differences(OutsideSkyline(before),OutsideSkyline(current));
+                File.WriteAllLines(Path.Combine(output,"protected-differences-"+run+".txt"),protectedChanges);
+                if(protectedChanges.Count!=0)throw new InvalidOperationException("Skyline edit changed protected scene state");
+                if(previous!=null)
+                {
+                    var changes=MapRepeatabilityCheck.Differences(previous,current);
+                    File.WriteAllLines(Path.Combine(output,"repeat-differences.txt"),changes);
+                    File.WriteAllText(Path.Combine(output,"report.txt"),$"Protected scene changes:0; repeat changes:{changes.Count}; rows:{current.Count}\n");
+                    if(changes.Count!=0)throw new InvalidOperationException("Skyline author is not repeatable");
+                }
+                previous=current;
+            }
+            EditorApplication.Exit(MapGeometryCheck.Execute(true)?0:1);
+        }
+
+        private static SortedDictionary<string,string> OutsideSkyline(SortedDictionary<string,string> rows)
+            =>new SortedDictionary<string,string>(rows.Where(p=>!p.Key.Contains("/Metro rooftops[")&&!p.Key.StartsWith("Asset/",StringComparison.Ordinal))
+                .ToDictionary(p=>p.Key,p=>p.Value),StringComparer.Ordinal);
+
         public static void Repeatability()
         {
             string output=Environment.GetEnvironmentVariable("TUMP_ROOF_REPEAT")??"Logs/sa-bubong-repeatability-v1";
@@ -312,7 +353,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 var asset=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/models/kits/commercial/"+model+".glb");
                 if(asset==null)throw new InvalidOperationException("Missing retained skyline model "+model);
                 var building=(GameObject)PrefabUtility.InstantiatePrefab(asset);building.name="CityBlock_"+i;
-                building.transform.SetParent(city,false);building.transform.localRotation=Quaternion.Euler(0,(i%4)*90,0);
+                // Face the occupied facade toward the court rather than presenting
+                // the kit's plain service gable at several of the legal owner views.
+                float facing=Mathf.Round(Mathf.Atan2(-sites[i].x,-sites[i].z)*Mathf.Rad2Deg/90)*90;
+                building.transform.SetParent(city,false);building.transform.localRotation=Quaternion.Euler(0,facing,0);
                 var renderers=building.GetComponentsInChildren<Renderer>();var b=renderers[0].bounds;
                 foreach(var renderer in renderers)b.Encapsulate(renderer.bounds);
                 float scale=Mathf.Min(sites[i].y/b.size.y,20/b.size.x,20/b.size.z);
@@ -323,15 +367,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 occupied.Add(DrawnBounds(building));
                 building.isStatic=true;
             }
-            var ground=Box(city,"Distant city ground",new Vector3(0,-26.45f,0),new Vector3(220,.8f,220),Concrete);
+            DistantResidentialBlocks(city);
+            var ground=Box(city,"Distant city ground",new Vector3(0,-26.45f,0),new Vector3(360,.8f,360),Concrete);
             ground.isStatic=true;
             var asphalt=Mat("City asphalt",new Color(.42f,.42f,.39f));
             asphalt.mainTexture=AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/TumbangPreso/Art/models/textures/asphalt.png");EditorUtility.SetDirty(asphalt);
             var roads=Group(city,"Connected city roads");var roadMeshes=new List<Mesh>();
             foreach(float x in new[]{-52f,-23.5f,23.5f,52f})
-                CityRoad(roads,new Vector3(x,-26.025f,0),new Vector3(5.7f,.04f,190),asphalt,roadMeshes);
+                CityRoad(roads,new Vector3(x,-26.025f,0),new Vector3(5.7f,.04f,340),asphalt,roadMeshes);
             foreach(float z in new[]{-52f,-26.5f,26.5f,52f})
-                CityRoad(roads,new Vector3(0,-26.024f,z),new Vector3(190,.04f,5.7f),asphalt,roadMeshes);
+                CityRoad(roads,new Vector3(0,-26.024f,z),new Vector3(340,.04f,5.7f),asphalt,roadMeshes);
             Bake(roads,"CityRoads");foreach(var mesh in roadMeshes)Object.DestroyImmediate(mesh);
             var houses=Group(city,"Street frontages");int houseIndex=0,attempt=0;
             // Buildings face actual streets, with a setback for the footpath.
@@ -370,6 +415,52 @@ namespace TumbangPreso.EditorTools.MapKit
                 occupied.Add(footprint);trees++;
             }
             Debug.Log("[Sa Bubong] "+trees+" small planted sites in clear city lots, away from roads and building footprints.");
+        }
+
+        private static void DistantResidentialBlocks(Transform city)
+        {
+            // Broken clusters beyond the existing streets supply a layered city
+            // horizon. They are supported 3D scenery, with no gameplay colliders.
+            // Explicit sites preserve open sky and keep the pool/court sight lines.
+            var sites=new[]{new Vector3(-127,51,-112),new Vector3(-99,42,-129),new Vector3(-75,58,-121),
+                new Vector3(12,49,-139),new Vector3(39,62,-130),new Vector3(116,47,-113),
+                new Vector3(139,55,-76),new Vector3(130,43,29),new Vector3(122,62,103),
+                new Vector3(91,47,125),new Vector3(13,57,139),new Vector3(-17,45,132),
+                new Vector3(-110,61,117),new Vector3(-136,46,83),new Vector3(-138,52,-7)};
+            var walls=new[]{Mat("Skyline warm plaster",new Color(.65f,.61f,.51f)),
+                Mat("Skyline clay plaster",new Color(.55f,.38f,.29f)),Mat("Skyline grey plaster",new Color(.44f,.49f,.48f))};
+            var recess=Mat("Skyline window recess",new Color(.22f,.29f,.30f));
+            var ledge=Mat("Skyline sunlit ledge",new Color(.68f,.65f,.57f));
+            for(int i=0;i<sites.Length;i++)
+            {
+                var group=Group(city,"Residential skyline "+i);
+                group.localPosition=new Vector3(sites[i].x,-26.049f,sites[i].z);
+                float width=12+(i%3)*2,depth=12+(i%2)*3,height=sites[i].y;
+                var wall=walls[i%walls.Length];
+                Box(group,"Occupied tower",new Vector3(0,height*.5f,0),new Vector3(width,height,depth),wall);
+                for(float y=3;y<height-2;y+=3.3f)
+                {
+                    // Broad inset bays and projecting ledges read at distance;
+                    // individual tiny windows would only make the ink pass noisy.
+                    foreach(float side in new[]{-1f,1f})
+                    {
+                        Box(group,"Shaded balcony bay",new Vector3(0,y,side*(depth*.5f+.035f)),new Vector3(width-2.0f,1.7f,.07f),recess);
+                        Box(group,"Balcony ledge",new Vector3(0,y-.96f,side*(depth*.5f+.20f)),new Vector3(width-1.35f,.23f,.6f),ledge);
+                        Box(group,"Side window bay",new Vector3(side*(width*.5f+.035f),y,0),new Vector3(.07f,1.6f,depth-2.4f),recess);
+                    }
+                }
+                // A modest service head and parapet silhouette, not a repeated
+                // office spire. The shorter adjacent wing varies the block's mass.
+                Box(group,"Lift head",new Vector3(-width*.19f,height+1.5f,0),new Vector3(width*.42f,3,depth*.48f),wall);
+                Box(group,"Roof coping",new Vector3(0,height+.12f,0),new Vector3(width+.3f,.24f,depth+.3f),ledge);
+                if(i%3==0)
+                {
+                    float wingHeight=height*.60f;
+                    Box(group,"Lower wing",new Vector3(width*.72f,wingHeight*.5f,0),new Vector3(width*.44f,wingHeight,depth*.83f),wall);
+                    Box(group,"Wing coping",new Vector3(width*.72f,wingHeight+.12f,0),new Vector3(width*.44f+.2f,.24f,depth*.83f+.2f),ledge);
+                }
+                Bake(group,"ResidentialSkyline"+i);
+            }
         }
 
         private static void CityRoad(Transform parent,Vector3 at,Vector3 size,Material material,List<Mesh> meshes)

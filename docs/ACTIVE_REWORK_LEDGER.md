@@ -141,9 +141,18 @@ pad vs desktop families, and permits keyboard/mouse cross-binding within desktop
 RebindSession also retains the previous override when the replacement is refused.
 No GenericPadBridge/MenuNav or controller artwork changes.
 
-Current guarded job session41431: full-backlog-recall-binding-v2.xml/.log, two
-focused tests for live marker device changes and real interactive accept/conflict/
-cancel behavior. Named profilepresentation-validation-20260921. Next: inspect this
-result and publish the verified source batch. The detailed full-environment plan
-is complete in MAP_FINAL_PASS; shader/material implementation has NOT begun. Resume
-there with representative surface-role samples and authored skies, then full TODO.
+Recall-bindingv2 failed test staging (frame count shorter than Unity's50ms candidate
+settle and synthetic keyboard activation/current selection). Assertions retained;
+v3uses wall-clock waiting and explicit owned-device setup.2/2passed3.360s, guard
+18460a1dee9e. Binding accept/conflict/cancel and live marker tracking/device changes
+are qualified as software, not physical-input certification.154.5specific leaves
+and131.6dead vortex removal are now done; broad parents remain open.
+
+Detailed environment plan published0d9abfca. Sky prototype now authored in
+NeighbourhoodSky.shader and MapAtmosphereAuthor.cs, copied to validation: separate
+per-map cloud banks/wisps, sun and existing weather tint/exposure. Static form first;
+motion/recording remains part of the full plan. Current guarded job session87302:
+map-cloud-materials-v1.log refreshes only the4referenced sky materials. Inspect
+shader compile, then capture legal owner views before keeping the result. Do not
+copy its new materials back until inspected. Building surface shader/masks are not
+yet implemented; follow MAP_FINAL_PASS next, then every remaining TODO item.

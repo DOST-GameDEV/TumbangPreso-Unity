@@ -64,12 +64,8 @@ namespace TumbangPreso
         /// question the grab now actually enforces, and an attacker can no longer be deleted
         /// from a round by a rival walking off with their ammunition.
         ///
-        /// ⚠️⚠️ AND THE AI'S TWO SOFTENERS FOR CALL 2 ARE DEAD RATHER THAN DELETED.
-        /// `AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` exist only
-        /// to stop bots converging on, and repeatedly stealing, a human's shoe. **They were
-        /// already unreachable before this change** (the live fetch path is `MySlipper`, which
-        /// has always been owner-scoped), so this rule did not strand them and removing them is
-        /// not part of it. `docs/TODO.md` § 154 carries that as its own item.
+        /// The obsolete any-shoe bot selector and human-distance handicap were
+        /// removed under TODO154.5. The live fetch path remains owner-scoped MySlipper.
         ///
         /// ⚠️⚠️ AN UNOWNED TSINELAS IS STILL FREE AND THAT IS NOT A LOOPHOLE, IT IS THE PRACTICE
         /// LOBBY. `SliceRunner.EquipOwnedSlippers` sets `OwnerSlot = -1` in two cases that look

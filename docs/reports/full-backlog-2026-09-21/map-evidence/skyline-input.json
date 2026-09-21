@@ -1,0 +1,6 @@
+{
+  "base": "db9761260600664f7f7482ecb5721a6265e2cb4b",
+  "changedAuthor": "Assets/TumbangPreso/Editor/MapKit/SaBubongBuilder.cs",
+  "authorSha256": "01aa66ca4be450549d39e98cee498ed0a1971386dbcdb390407bd2f59af2cf90",
+  "purpose": "Complete retained rooftop skyline composition; preserve every non-skyline scene component and verify saved repeatability."
+}

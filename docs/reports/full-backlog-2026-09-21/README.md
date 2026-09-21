@@ -119,3 +119,22 @@ the replacement. The current small fix resolves stable device-family paths,
 preserves the other input family and restores the prior override on conflict.
 Two focused real-input-operation/marker tests are running as recall-bindingv2;
 no pass or native control claim is inferred yet. GenericPadBridge/MenuNav unchanged.
+
+Recall-bindingv2 failed both cases during test staging: the empty-scene20frame wait
+could expire before Unity's documented50ms candidate settle, and the synthetic
+keyboard was not selected/enabled reliably after changing unattended-input settings.
+The assertions remain. The fixture now uses a real one-second deadline, explicitly
+enables only its own synthetic devices and selects its return keyboard. Input state
+and binding preferences restore in finally and through the external guard.
+
+Recall-bindingv3 passed2/2 in3.360s, guard18460a1dee9e. Actual interactive conflict
+retainsF10, acceptedF9 persists as a layout path, mouse-to-keyboard binding stays in
+the desktop family, the gamepad binding survives, unsupported pad fullscreen refuses
+and cancel preserves the choice. The same live recall marker updates after rebind,
+tracks the moved shoe, changes to a pad glyph, hides the cap for touch and restores
+the rebound keyboard cap. These establish software input routing, not physical devices.
+
+Sky draft now exists in NeighbourhoodSky/MapAtmosphereAuthor: static layered cloud
+form, per-map color/coverage/layout, restrained sun and compatibility with existing
+weather tint/exposure. It is not yet visually qualified or copied into development
+materials. Current guarded author job: map-cloud-materials-v1, validation only.

@@ -14,7 +14,6 @@ RULES={
  ("Abilities/HeroAbilitySystem.cs","PlayUltimatePresentation"):("EVERY-PEER","Accepted cast presentation runs locally and through ApplyNetworkCast."),
  ("Abilities/HeroHazards.cs","SpawnIceBarricade"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
  ("Abilities/HeroHazards.cs","SpawnIceSheet"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
- ("Abilities/HeroHazards.cs","SpawnSeanceVoid"):("EVERY-PEER","Legacy visual builder; the live ultimate uses KuroUnbound."),
  ("Abilities/HeroHazards.cs","SpawnKuroUnbound"):("EVERY-PEER","The actual replicated Nemu ultimate creates this effect."),
  ("Abilities/HeroHazards.cs","SpawnHexSigil"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
  ("Audio/NetCue.cs","Play"):("RELAY-BRIDGE","Local sound followed by the guarded relay."),
@@ -31,6 +30,7 @@ RULES={
  ("Visual/GhostPetCompanion.cs","BeginPossession"):("EVERY-PEER","Kit activation enters possession on each peer."),
  ("Visual/GhostPetCompanion.cs","EndPossession"):("EVERY-PEER","Kit end restores the companion on each peer."),
  ("Visual/MotionFoley.cs","LateUpdate"):("EVERY-PEER","Observed grounded displacement; never an input-only proximity cue."),
+ ("Visual/CharacterAnimator.cs","PlayAction"):("EVERY-PEER","Live replicated lunge action owns its rush; restoring a pose suppresses sound."),
 }
 SIG=re.compile(r"(?:public|private|protected|internal)\s+(?:static\s+)?[\w<>,.?\[\]]+\s+(\w+)\s*\(")
 seen=set();errors=[];lines=[]

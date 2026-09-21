@@ -560,10 +560,17 @@ cosmetic tie-break.
 - [ ] **His eye on those frames.** `CLAUDE.md` § 6.2c is four questions about every rectangle and
   all four are human calls. A green probe is not a good screen: `PlayerHubLayoutProbe` was green
   through seven readability faults at once. `Attention.md` § 19.2.
-- [ ] **A probe that asserts the mark still tracks after a REBIND or a device change.** The cap is
+- [x] **A probe that asserts the mark still tracks after a REBIND or a device change.** Closed2026-09-21:
+  full-backlog-recall-binding-v3 passed2/2, including a real captured rebind, the same
+  marker's movement and keyboard/gamepad/touch/keyboard changes. It found and fixed
+  device-instance path refusal; conflicts now preserve the previous override. This is
+  synthetic-device software evidence, not physical pad certification. The cap is
   cached on `Rebinding.Revision` and `LastInputDevice.Revision` and nothing exercises either.
   The shots probe would photograph a stale `X` quite happily.
-- [ ] **`AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` are dead code.**
+- [x] **`AIController.ChooseSlipper`, `IsNearestClaimant` and `HumanSlipperBias` are dead code.**
+  Removed2026-09-21 with their unused ClaimSlack/IsHumanSlot helpers; all-code search
+  confirms no remaining callers. Live owner-scoped fetch is unchanged; real pickup
+  and Kuro cleanup/Inday review passed3/3, with the all-map62pickup proof retained.
   They exist only to soften the evening call's any-attacker rule (stop bots converging on, and
   repeatedly stealing, a human's shoe) and **they were already unreachable before this change**:
   the live fetch path is `MySlipper`. The lock did not strand them and removing them is not part
@@ -8406,7 +8413,10 @@ factor of nineteen; no wording of *"no bots, open to anybody with the code"* clo
   in Zack's ultimate. `ability_blast_thunder_eye_v55.png`: the drawn impact reads, and the flat
   plane under it is still `VISION.md` § 2 rule 3's puddle. It is `VfxShapes.Star`, so it is a
   silhouette rather than a primitive, which is why it survived this pass.
-- ⚠️ **`SpawnSeanceVoid` is dead code.** `NemuHeroKit` builds `SpawnKuroUnbound`; only
+- [x] **`SpawnSeanceVoid` was dead code.** Removed2026-09-21 with its obsolete showcase/
+  stress calls and stale audio classification. The live Kuro builder and shared
+  intake simulation remain; ResetSeanceRemovesTheLivePullImmediately passed in the
+  3-case full-backlog-inday-and-cleanup-v1 run. Historical reason: `NemuHeroKit` builds `SpawnKuroUnbound`; only
   `AbilityShowcaseProbe` still reaches the old zone. It is deliberately NOT dressed with sourced
   art (§ 130.7's `MapPreview` argument), and it should be deleted or the probe should stop
   photographing it.

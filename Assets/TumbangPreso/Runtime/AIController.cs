@@ -231,22 +231,6 @@ namespace TumbangPreso
         /// value made bots jitter on arrival instead of settling on their mark.
         private const float ArriveSlop = AiTuning.ArriveSlop;
 
-        /// <summary>
-        /// ⚠️ THE ANSWER TO "EVERY BOT CONVERGES ON THE NEAREST SLIPPER". Only the nearest
-        /// eligible attacker goes for a loose slipper, so three bots do not stack on one.
-        /// </summary>
-        private const float ClaimSlack = 0.5f;
-
-        /// <summary>
-        /// ⚠️⚠️ A DISTANCE HANDICAP ON A HUMAN'S OWN SLIPPER, NOT A BAN. Any attacker may take
-        /// any slipper, which is what keeps the three-way rivalry real. But without this a bot
-        /// takes a human's slipper whenever it is one metre nearer, which reads as being
-        /// griefed rather than contested. The instruction was explicit: bots may take from
-        /// you, but not all the time. So a human's own slipper is treated as further away than
-        /// it is, and a bot only goes for it when that is CLEARLY the better play.
-        /// </summary>
-        private const float HumanSlipperBias = 3.5f;
-
         private CharacterMotor _motor;
         private Carrier _carrier;
         private float _repathTimer;
@@ -1154,8 +1138,7 @@ namespace TumbangPreso
         //
         // ⚠️⚠️ IT IS DERIVED, NOT NEGOTIATED, WHICH IS WHY THERE IS NO SHARED STATE ANYWHERE.
         // Every bot runs the identical comparison over the identical world and reaches the
-        // identical answer, exactly as `ClaimSlack` already does for "only the nearest attacker
-        // goes for a loose slipper". A claim held in a static would be a channel between bots
+        // identical answer. A claim held in a static would be a channel between bots
         // that a human is not on, and `CLAUDE.md` § 4's *"a bot presses the same buttons a human
         // does"* is about there being no second path. Reading the board is not a second path: a
         // human can see the same three bodies.
@@ -2864,55 +2847,6 @@ namespace TumbangPreso
 
         /// <summary>One coin flip per wind-up, at the tier's mistake rate.</summary>
         private bool Blunder() => UnityEngine.Random.value < Me.Mistake;
-
-        private Slipper ChooseSlipper()
-        {
-            Slipper best = null;
-            float bestScore = float.MaxValue;
-
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-            {
-                if (s.State != SlipperState.Loose) continue;
-
-                float d = Vector3.Distance(transform.position, s.transform.position);
-
-                // A human's own slipper is treated as further than it is.
-                if (s.OwnerSlot >= 0 && IsHumanSlot(s.OwnerSlot)) d += HumanSlipperBias;
-
-                if (!IsNearestClaimant(s, d)) continue;
-                if (d >= bestScore) continue;
-
-                bestScore = d;
-                best = s;
-            }
-
-            return best;
-        }
-
-        private bool IsNearestClaimant(Slipper s, float myDistance)
-        {
-            var round = GameServices.Round;
-            if (round == null) return true;
-
-            foreach (var p in round.Players)
-            {
-                if (p == null || p == _motor || p.IsDefender) continue;
-                if (p.GetComponent<AIController>() == null) continue; // only defer to other bots
-                if (p.HoldingSlipper) continue;
-
-                float theirs = Vector3.Distance(p.transform.position, s.transform.position);
-                if (theirs + ClaimSlack < myDistance) return false;
-            }
-
-            return true;
-        }
-
-        private static bool IsHumanSlot(int slot)
-        {
-            var round = GameServices.Round;
-            var who = round?.PlayerAt(slot);
-            return who != null && who.GetComponent<AIController>() == null;
-        }
 
         // -------------------------------------------------------------------
 

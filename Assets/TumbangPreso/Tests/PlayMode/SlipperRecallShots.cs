@@ -4,6 +4,11 @@ using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
+using TumbangPreso.InputLayer;
+using TumbangPreso.Settings;
 
 namespace TumbangPreso.PlayTests
 {
@@ -52,6 +57,144 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private const int ShortWide = 1600;
         private const int ShortHigh = 720;
+
+        [UnityTest]
+        public IEnumerator LiveRecallFollowsRebindingAndDeviceChangesWithoutRebuilding()
+        {
+            var asset=Resources.Load<InputActionAsset>("TumbangPreso");
+            string overrides=asset.SaveBindingOverridesAsJson();
+            var oldDevice=LastInputDevice.Current;
+            bool oldTouch=TouchInput.Active;var oldMove=TouchInput.Move;
+            bool bots=GameLaunch.AllBots,spectator=GameLaunch.Spectator,pinned=UI.SceneFlow.RulesPinned;
+            int seat=GameLaunch.SoloSeat;var rules=UI.SceneFlow.SelectedRules.Clone();
+            var keyboard=InputSystem.AddDevice<Keyboard>();var pad=InputSystem.AddDevice<Gamepad>();
+            var inputSettings=InputSystem.settings;var background=inputSettings.backgroundBehavior;var editorInput=inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.EnableDevice(keyboard);InputSystem.EnableDevice(pad);
+            try
+            {
+                yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
+                GameServices.Round.BeginRound();
+                var who=GameServices.Round.PlayerAt(1);
+                who.Teleport(new Vector3(0,.12f,-10));who.transform.rotation=Quaternion.identity;
+                Object.FindFirstObjectByType<CameraSystem.CameraRig>().Follow(who);
+                var mine=who.GetComponent<Carrier>().Held;Assert.IsNotNull(mine);
+                Assert.IsTrue(mine.HostDisarm());
+                mine.transform.position=new Vector3(0,mine.RestHeight,-4);
+                var recall=Object.FindFirstObjectByType<UI.SlipperRecall>();Assert.IsNotNull(recall);
+                TouchInput.Active=false;TouchInput.Move=Vector2.zero;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F10));InputSystem.Update();keyboard.MakeCurrent();LastInputDevice.Sample();
+                yield return null;
+                recall.Track(who,mine);Assert.IsTrue(recall.Drawing);
+                var cap=GameObject.Find("RecallKeyCap").GetComponent<Image>();
+                var label=GameObject.Find("RecallKeyLabel").GetComponent<Text>();
+                var marker=(RectTransform)cap.transform.parent;
+                var before=marker.anchoredPosition;
+
+                Assert.IsNull(Rebinding.TryRebind(asset,"Grab",keyboard.f10Key));
+                recall.Track(who,mine);
+                Assert.AreEqual("F10",UI.Hud.KeyLabelFor("Grab"));
+                var f10=UI.InputGlyphs.For("F10",onDark:true);
+                Assert.IsTrue(f10!=null?cap.enabled&&cap.sprite==f10:label.enabled&&label.text=="F10",
+                    "The live mark retained its previous binding after a successful rebind.");
+                var keyboardSprite=cap.sprite;
+                mine.transform.position+=Vector3.right*1.25f;recall.Track(who,mine);
+                Assert.Greater(Vector2.Distance(before,marker.anchoredPosition),1,"Rebinding stopped world tracking.");
+
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());
+                InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));
+                InputSystem.Update();LastInputDevice.Sample();recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.Gamepad,LastInputDevice.Current);
+                Assert.IsTrue(cap.enabled&&cap.sprite!=null&&!label.enabled,"Gamepad pickup glyph was not visible.");
+                Assert.AreNotSame(keyboardSprite,cap.sprite,"Device change left the keyboard cap cached.");
+
+                InputSystem.QueueStateEvent(pad,new GamepadState());InputSystem.Update();
+                TouchInput.Active=true;TouchInput.Move=Vector2.right;LastInputDevice.Sample();recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.Touch,LastInputDevice.Current);
+                Assert.IsTrue(recall.Drawing);Assert.IsFalse(cap.enabled||label.enabled,"Touch retained a keyboard/pad instruction.");
+
+                TouchInput.Active=false;TouchInput.Move=Vector2.zero;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F10));InputSystem.Update();
+                Assert.IsTrue(keyboard.f10Key.isPressed,"The synthetic return key did not reach the Input System.");
+                keyboard.MakeCurrent();LastInputDevice.Sample();
+                recall.Track(who,mine);
+                Assert.AreEqual(InputDeviceKind.KeyboardMouse,LastInputDevice.Current);
+                Assert.IsTrue(f10!=null?cap.enabled&&cap.sprite==f10:label.enabled&&label.text=="F10");
+                Assert.AreSame(marker,cap.transform.parent,"The test must exercise the existing cached mark.");
+                Assert.IsTrue(recall.Drawing);
+            }
+            finally
+            {
+                asset.LoadBindingOverridesFromJson(overrides);Rebinding.Invalidate();Rebinding.Save(asset);
+                TouchInput.Active=oldTouch;TouchInput.Move=oldMove;
+                InputSystem.RemoveDevice(pad);InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior=background;inputSettings.editorInputBehaviorInPlayMode=editorInput;
+                typeof(LastInputDevice).GetMethod("Set",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null,new object[]{oldDevice});
+                GameLaunch.AllBots=bots;GameLaunch.Spectator=spectator;GameLaunch.SoloSeat=seat;
+                UI.SceneFlow.AdoptRemoteRules(rules);if(pinned)UI.SceneFlow.PinSelectedRules(rules);else UI.SceneFlow.UnpinSelectedRules();
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CapturedRebindConflictsPreservePriorOverridesAndDeviceFamilies()
+        {
+            var shared=Resources.Load<InputActionAsset>("TumbangPreso");string saved=shared.SaveBindingOverridesAsJson();
+            var asset=Object.Instantiate(shared);asset.RemoveAllBindingOverrides();
+            var keyboard=InputSystem.AddDevice<Keyboard>();var pad=InputSystem.AddDevice<Gamepad>();
+            var settings=InputSystem.settings;var background=settings.backgroundBehavior;var editorInput=settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.EnableDevice(keyboard);InputSystem.EnableDevice(pad);
+            RebindSession session=null;
+            try
+            {
+                Assert.IsTrue(Rebinding.ResolveBindingIndexFor(asset,"Grab",InputDeviceKind.KeyboardMouse,out var grab,out int index));
+                grab.ApplyBindingOverride(index,"<Keyboard>/f10");
+                RebindOutcome? outcome=null;
+                session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                Assert.IsNotNull(session);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Space));InputSystem.Update();
+                // Unity's interactive operation deliberately waits50ms after a
+                // candidate. Empty batch frames are not a wall-clock deadline.
+                for(float end=Time.realtimeSinceStartup+1;!outcome.HasValue&&Time.realtimeSinceStartup<end;)yield return null;
+                Assert.AreEqual(RebindOutcome.Conflict,outcome);
+                Assert.AreEqual("<Keyboard>/f10",grab.bindings[index].effectivePath,"A refused replacement erased the player's previous key.");
+                Assert.IsTrue(grab.enabled);
+                session.Dispose();session=null;
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());InputSystem.Update();yield return null;
+
+                outcome=null;
+                session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.F9));InputSystem.Update();
+                for(float end=Time.realtimeSinceStartup+1;!outcome.HasValue&&Time.realtimeSinceStartup<end;)yield return null;
+                Assert.AreEqual(RebindOutcome.Bound,outcome);
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+                Assert.AreEqual("<Gamepad>/buttonWest",Rebinding.PathFor(asset,"Grab",InputDeviceKind.Gamepad));
+                session.Dispose();session=null;
+
+                Assert.IsNull(Rebinding.TryRebind(asset,"SpecialAbility",keyboard.f8Key),"A keyboard key must be accepted for a mouse action on the same controls page.");
+                Assert.AreEqual("<Keyboard>/f8",Rebinding.PathFor(asset,"SpecialAbility",InputDeviceKind.KeyboardMouse));
+                Assert.AreEqual("<Gamepad>/rightTrigger",Rebinding.PathFor(asset,"SpecialAbility",InputDeviceKind.Gamepad));
+                Assert.IsNull(Rebinding.TryRebind(asset,"Grab",pad.buttonWest));
+                Assert.AreEqual("<Gamepad>/buttonWest",Rebinding.PathFor(asset,"Grab",InputDeviceKind.Gamepad));
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+
+                string fullscreen=Rebinding.PathFor(asset,"ToggleFullscreen",InputDeviceKind.KeyboardMouse);
+                Assert.IsNotNull(Rebinding.TryRebind(asset,"ToggleFullscreen",pad.rightStickButton));
+                Assert.AreEqual(fullscreen,Rebinding.PathFor(asset,"ToggleFullscreen",InputDeviceKind.KeyboardMouse));
+                outcome=null;session=RebindSession.Begin(asset,"Grab",InputDeviceKind.KeyboardMouse,(result,_)=>outcome=result);
+                session.Cancel();Assert.AreEqual(RebindOutcome.Cancelled,outcome);
+                Assert.AreEqual("<Keyboard>/f9",grab.bindings[index].effectivePath);
+            }
+            finally
+            {
+                session?.Dispose();InputSystem.RemoveDevice(pad);InputSystem.RemoveDevice(keyboard);Object.Destroy(asset);
+                settings.backgroundBehavior=background;settings.editorInputBehaviorInPlayMode=editorInput;
+                shared.LoadBindingOverridesFromJson(saved);Rebinding.Invalidate();Rebinding.Save(shared);
+            }
+        }
 
         [UnityTest]
         public IEnumerator TheRecallMarkIsPhotographedInEveryState()

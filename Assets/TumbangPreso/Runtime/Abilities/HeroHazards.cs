@@ -1030,208 +1030,8 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // -------------------------------------------------------------------
-        // SEANCE VOID ZONE (Nemu Ultimate)
-        // -------------------------------------------------------------------
-        public static GameObject SpawnSeanceVoid(Vector3 position, float radius = 3.2f, float duration = 5.0f, int ownerSlot = -1)
-        {
-            var go = new GameObject("SeanceVoidZone");
-            go.transform.position = position;
-
-            // ⚠️⚠️ THE VOID IS DARK IN THE MIDDLE AND BRIGHT AT THE RIM, AND IT USED TO BE THE
-            // EXACT OPPOSITE. `Logs/shots-abilities/ability_seance_void_v1.png` is the evidence
-            // and there is no kind way to describe what it showed: a violet ring around a disc
-            // of pure 255,255,255 white with a solid purple ball sitting in it, which reads as a
-            // cartoon EYEBALL and not as a hole in the world. It was the worst-looking effect in
-            // the game and it had never been rendered on its own.
-            //
-            // Three separate faults, all of them the same mistake made three times:
-            //  * `VortexInner` was `HeroSpiritBright` at 0.70 alpha and 0.8 emission, which
-            //    clips past white before `ColourGrade` ever sees it, so the brightest part of
-            //    the effect was its CENTRE;
-            //  * `SingularityCore` was a 1.54 m sphere at 0.95 alpha, which is opaque, so the
-            //    "singularity" was a beach ball;
-            //  * a 4.5-intensity light 1.2 m up then lit all of it at once.
-            //
-            // ⚠️ A THING THAT PULLS YOU IN HAS TO LOOK LIKE IT GOES DOWN. That is the whole read
-            // and it is what `docs/VISION.md` § 2 rule 3 means by spending the budget on detail:
-            // the darkest point is the middle, the rim is where the light is, and the shards
-            // lean inward so the eye is carried toward the centre rather than around the edge.
-            // It also lets the void be SMALLER (2.8 m, down from 3.2) without reading as weaker.
-
-            // ⚠️⚠️ IT HOVERS. A BLACK HOLE LYING FLAT ON THE ROAD IS A MANHOLE. 🧑 2026-08-25:
-            // *"make make blackhole float, its on the floor"*. Every other effect in this file
-            // is ground-level because every other effect IS ground: a scorch, a fracture, a
-            // frozen patch. This one is a tear in the world, and the one thing that separates it
-            // from a painted circle is that the street carries on underneath it.
-            //
-            // ⚠️ THE HOVER IS ALSO WHY IT IS THE ONLY ROUND SHAPE LEFT. Every other effect got
-            // its own silhouette on 2026-08-25 because they were all discs (see
-            // `SpawnFireTrail`). A vortex is genuinely radial and a circle is the honest shape
-            // for it, so instead of changing the outline it changes AXIS: horizontal versus
-            // vertical is a bigger difference than any two outlines on the same plane.
-            const float Hover = 1.35f;
-
-            var core = new GameObject("VoidCore");
-            core.transform.SetParent(go.transform, false);
-            core.transform.localPosition = new Vector3(0.0f, Hover, 0.0f);
-
-            // ⚠️⚠️ ONE FUNNEL, NOT THREE STACKED DISCS, AND THE THREE DISCS ARE WHY THIS READ AS
-            // A PANCAKE. What stood here was a mouth, a throat and a lip, each a
-            // `PrimitiveType.Cylinder` scaled flat and offset a centimetre from the last. The
-            // comment they carried said *"two steps down reads as a funnel where one step reads
-            // as a lid"*, and `ability_seance_void_v11.png` says otherwise in one frame: three
-            // discs of decreasing size stack into ONE lilac plate with a darker ellipse painted
-            // in the middle. Concentric flat rings are a target, not a hole. No arrangement of
-            // discs is a funnel, because every one of them is parallel to the road.
-            //
-            // ⚠️⚠️ 🧑, 2026-08-26, naming the class this belongs to: *"the same logic and code was
-            // used to generate all of them"*. This is the purest case of it in the file. Four
-            // objects, four scaled cylinders, and the effect that is supposed to be a tear in the
-            // world was built out of exactly the primitive the § 8 silhouette pass was written to
-            // get rid of, in the one ability that never got the pass.
-            //
-            // `VfxShapes.Funnel` is a surface with a vertical PROFILE: unit radius at the lip,
-            // deepest at the centre, falling on a power curve so the wall is near vertical at the
-            // rim and most of the depth lives in the inner half. It is one mesh, one renderer and
-            // one draw where three stood, and it is the only thing in the frame the eye reads as
-            // going down.
-            //
-            // ⚠️ THE DEPTH IS TIED TO THE RADIUS BUT NOT EQUAL TO IT. At `radius * 0.40` a 2.8 m
-            // void is 0.62 m deep, which is under half the 1.35 m hover, so the bottom of the
-            // funnel stays clear of the road it is supposed to be floating above. Uniform scaling
-            // would put it through the street.
-            var outer = VfxShapes.Stand(core.transform, "VoidMouth",
-                                        VfxShapes.Funnel(5, 12, 0.55f, 0.08f, 2.4f),
-                                        radius, heightScale: radius * 0.40f);
-            VfxMaterial.Ghost(outer.GetComponent<Renderer>(), new Color(0.06f, 0.01f, 0.11f, 0.93f), 0.0f);
-
-            // The event horizon: a thin bright collar at the LIP, which is the only lit part.
-            // A `Prism` ring rather than a fourth disc, so the rim has a real edge standing proud
-            // of the mouth instead of another translucent plate blending into it.
-            var lip = VfxShapes.Stand(core.transform, "VoidLip",
-                                      VfxShapes.Collar(14, 1.0f, 0.945f, 0.0f, 0.0f, 3),
-                                      radius * 1.05f, heightScale: 0.10f, lift: -0.02f);
-            VfxMaterial.Ghost(lip.GetComponent<Renderer>(),
-                              new Color(0.62f, 0.20f, 0.98f, 0.60f), 0.30f);
-            VfxMaterial.StripCollider(lip);
-
-            // ⚠️⚠️ AND THE GROUND STILL HAS TO SAY WHERE THE DANGER IS, WHICH IS THE HALF A
-            // HOVERING EFFECT BREAKS. The hazard resolves by distance on the FLOOR
-            // (`SeanceVoidComponent` compares flat positions), so lifting the art off the floor
-            // without leaving a mark would put the gameplay circle somewhere the player cannot
-            // see it. That is the exact fault `HeroAbility.TelegraphRadius` exists to stop: a
-            // telegraph that lies is worse than no telegraph.
-            //
-            // ⚠️⚠️ A DASHED RING, NOT A FILLED DISC, AND THE FILLED DISC WAS THE SINGLE LARGEST
-            // PAINTED AREA IN THE GAME. This telegraph was a `Cylinder` at the FULL radius at
-            // 0.42 alpha, so a 2.8 m void laid a 24.6 m² violet plate on a 196 m² court: 12.5 per
-            // cent of the box for a marker whose entire job is to say where the edge is. It is
-            // most of the purple in `ability_worstframe_v11.png` and most of the reason the void
-            // reads as a puddle rather than as a hole.
-            //
-            // ⚠️ THE INFORMATION IS THE RADIUS, AND A RING CARRIES IT. `HeroAbility.TelegraphRadius`
-            // exists so a telegraph cannot lie about where the danger is, and the note above is
-            // right that a hovering effect must still mark the floor. None of that requires
-            // filling the circle in. Sixteen short plates at the rim say exactly the same thing
-            // over about a twelfth of the area, and a broken ring reads as a boundary rather than
-            // as a surface a player might think they can stand on.
-            //
-            // ⚠️⚠️ IT IS A CONTINUOUS RING, AND `Wedges` WAS THE WRONG BUILDER FOR IT. The
-            // fracture builder was the first answer here because it is cheap and it made the
-            // area small, which was the actual problem with the filled disc. But
-            // `ability_seance_void_eye_v15.png` shows what it costs at eye height: eighteen
-            // separate plates, each at its own angle and depth, read as PURPLE LITTER strewn
-            // across the road rather than as the edge of anything. A boundary has to be
-            // continuous to be read as a boundary, and Dante's crust wants the opposite because
-            // broken ground genuinely is in pieces. Same shape budget, right builder.
-            //
-            // ⚠️ 0.93 INNER RATIO IS A 7 PER CENT BAND: about 1.1 m² at a 2.8 m void, against the
-            // 24.6 m² the filled `Cylinder` painted. That is the whole point of the change and it
-            // is unaffected by which builder draws it.
-            var pull = VfxShapes.Lay(go.transform, "VoidGroundPull",
-                                     VfxShapes.Collar(24, 0.02f, 0.93f, 0.0f, 0.0f, 5),
-                                     radius, 0.015f);
-            VfxMaterial.Ghost(pull.GetComponent<Renderer>(),
-                              new Color(0.42f, 0.13f, 0.76f, 0.42f), 0.16f);
-            VfxMaterial.StripCollider(pull);
-
-            // ⚠️ THE SHARDS ARE THE PULL, AND THEY ARE WHAT THE OLD CORE ORB SHOULD HAVE BEEN.
-            // Eight chips of debris caught mid-fall, leaning in and tipped down toward the
-            // centre. They say "this drags things" in a still frame, which a rotating disc
-            // cannot, and they are cubes for the same reason the fire trail's embers are: the
-            // cast and the props are voxel art and a smooth effect is the thing that looks
-            // wrong. `SeanceVoidComponent` spins the parent, so they orbit for free.
-            for (int s = 0; s < 8; s++)
-            {
-                var shard = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                shard.name = $"VoidShard_{s}";
-                shard.transform.SetParent(go.transform, false);
-
-                // ⚠️ THE SHARDS SPAN THE GAP BETWEEN THE ROAD AND THE HOVERING CORE, which is
-                // what sells the hover: debris caught partway UP is the only thing in the frame
-                // that says the vortex is lifting rather than that the art is floating by
-                // mistake. Heights are spread across the whole 0.2 m to 1.5 m column on purpose.
-                float a = s * 45.0f * Mathf.Deg2Rad;
-                float rr = radius * Random.Range(0.55f, 0.92f);
-                shard.transform.localPosition = new Vector3(Mathf.Cos(a) * rr,
-                                                            Random.Range(0.20f, 1.50f),
-                                                            Mathf.Sin(a) * rr);
-
-                // Tipped toward the middle, which is the half of this that carries the meaning.
-                shard.transform.localRotation = Quaternion.Euler(Random.Range(28.0f, 52.0f),
-                                                                 -a * Mathf.Rad2Deg,
-                                                                 Random.Range(-20.0f, 20.0f));
-                float sc = Random.Range(0.10f, 0.20f);
-                shard.transform.localScale = new Vector3(sc, sc * Random.Range(1.2f, 2.4f), sc);
-
-                VfxMaterial.Solid(shard.GetComponent<Renderer>(),
-                                  new Color(0.55f, 0.28f, 0.85f), 0.22f);
-                VfxMaterial.StripCollider(shard);
-            }
-
-            // Pulsing violet gravity light
-            var lightGo = new GameObject("VoidLight");
-            lightGo.transform.SetParent(go.transform, false);
-            // ⚠️ RAISED AND CUT TO A QUARTER. See the ice sheet's light: at 4.5 sitting 1.2 m
-            // over its own disc, this lit the void rather than the street, which is how a hole
-            // in the world ended up being the brightest thing in the frame.
-            lightGo.transform.localPosition = new Vector3(0, 2.1f, 0);
-            var light = lightGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.color = UiTheme.HeroSpiritBright;
-            light.range = radius * 2.6f;
-            light.intensity = 1.1f * .40f; // Keep the effect readable without bleaching nearby bodies.
-
-            // ⚠️ THE VORTEX EMITS FOR ITS WHOLE LIFE, not just at the moment it opens. It is
-            // a 5 s zone that DRAGS people in, so it has to keep looking dangerous the whole
-            // time; a one-shot burst at cast leaves four seconds of a flat purple disc.
-            AbilityVfx.AttachAura(go.transform, AbilityVfx.Aura.VoidWisp, duration);
-
-            // ⚠️ A TEAR IN THE WORLD IS NOT A BOMB. This played `ability_bagsak_bomb`, so Nemu's
-            // ultimate opened with the same detonation as Sean's and Dante's. `sfx_possess_enter`
-            // is the rising, sucking shape written for her possession and it is the same gesture
-            // a vortex makes: something being pulled through.
-            GameServices.Audio?.PlayAt("sfx_possess_enter", position);
-
-            HazardVolume.Attach(go, radius, ownerSlot);
-
-            var comp = go.AddComponent<SeanceVoidComponent>();
-            comp.Radius = radius;
-            comp.Duration = duration;
-            comp.OwnerSlot = ownerSlot;
-
-            // ⚠️⚠️ NOTHING SOURCED IS DRESSED ONTO THIS ONE, AND IT IS THE ONLY EFFECT IN THE
-            // FILE THAT WAS DELIBERATELY LEFT OUT OF `docs/TODO.md` § 131's PASS.
-            // `SpawnSeanceVoid` is no longer cast by anything: `NemuHeroKit` builds
-            // `SpawnKuroUnbound` and only `AbilityShowcaseProbe` still reaches this, which
-            // `grep -rn SpawnSeanceVoid` says in one line. Devouring Seance's sourced implosion
-            // is in `SpawnKuroUnbound`, where the ultimate actually is. Putting art on a zone
-            // the game cannot produce is § 130.7's dead `MapPreview` with a fresh coat on it.
-
-            return go;
-        }
-
+        // Kuro's live intake simulation. The retired floor-vortex factory was
+        // removed under TODO131.6; recorded fields and the familiar still use this component.
         public sealed class SeanceVoidComponent : MonoBehaviour
         {
             public float Radius = 7.5f;
@@ -1241,8 +1041,7 @@ namespace TumbangPreso.Abilities
             /// <summary>
             /// How hard a body is dragged toward the centre, in impulse per second.
             ///
-            /// ⚠️ THE DEFAULT IS THE OLD CONSTANT, so `SpawnSeanceVoid` keeps exactly the
-            /// behaviour it was measured with. Only Kuro Unbound raises it: see § THE PULL.
+            /// SpawnKuroUnbound supplies the live ultimate's pull strength explicitly.
             /// </summary>
             public float PullStrength = 4.0f;
 
@@ -1251,9 +1050,7 @@ namespace TumbangPreso.Abilities
             ///
             /// ⚠️ IT IS A MULTIPLIER ON TOP OF `PullStrength` RATHER THAN A SECOND STRENGTH, so
             /// the rim of every zone using this component keeps the force it was tuned with and
-            /// only the inside gains. Nemu's SKILL-tier Seance Void and her ULTIMATE share this
-            /// class, and a skill that suddenly funnelled like an ultimate would be the
-            /// *"reads as a one time"* complaint in another costume.
+            /// only the inside gains. Recorded Kuro fields restore the same intake profile.
             /// </summary>
             public float CentreBite = 2.2f;
 

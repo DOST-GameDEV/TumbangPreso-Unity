@@ -407,7 +407,6 @@ namespace TumbangPreso.PlayTests
 
             HeroHazards.SpawnIceSheet(new Vector3(-3.4f, 0.0f, 2.2f), 2.3f, EffectLife, 2); calls++;
             HeroHazards.SpawnCrackedLavaDecal(new Vector3(3.2f, 0.0f, 2.6f), 2.2f, EffectLife); calls++;
-            HeroHazards.SpawnSeanceVoid(new Vector3(3.6f, 0.0f, -3.0f), 2.8f, EffectLife, 3); calls++;
             HeroHazards.SpawnIceBarricade(new Vector3(-2.6f, 0.0f, -2.4f), Vector3.forward, EffectLife); calls++;
             HeroHazards.SpawnHexSigil(new Vector3(0.0f, 0.0f, 4.4f), 2.4f, EffectLife, 5); calls++;
             HeroHazards.SpawnEarthPillar(new Vector3(-5.0f, 0.0f, -1.0f), EffectLife); calls++;

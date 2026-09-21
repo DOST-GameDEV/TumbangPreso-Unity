@@ -689,8 +689,15 @@ namespace TumbangPreso.Settings
 
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
-            string path = control.path;
-            string device = DeviceOf(path);
+            if(control==null)return LabelFor(action);
+            // Captured controls use /Keyboard1/f10, while persistent bindings use
+            // layout paths. An instance name neither matches DeviceOf nor survives
+            // reconnecting a device. Keep generic gamepad mappings across pad models.
+            string layout=control.device is Gamepad?GamepadDevice:
+                control.device is Keyboard?"<Keyboard>":control.device is Mouse?"<Mouse>":null;
+            if(layout==null)return LabelFor(action);
+            string path=layout+control.path.Substring(control.device.path.Length);
+            var kind=control.device is Gamepad?InputDeviceKind.Gamepad:InputDeviceKind.KeyboardMouse;
 
             foreach (string other in RebindableActions)
             {
@@ -709,7 +716,7 @@ namespace TumbangPreso.Settings
                 if (otherAction == null) continue;
 
                 foreach (int otherIndex in otherIndices)
-                    if (otherAction.bindings[otherIndex].effectivePath == path)
+                    if (string.Equals(otherAction.bindings[otherIndex].effectivePath,path,System.StringComparison.OrdinalIgnoreCase))
                         return LabelFor(other);
             }
 
@@ -725,7 +732,9 @@ namespace TumbangPreso.Settings
 
             foreach (int candidate in indices)
             {
-                if (DeviceOf(target.bindings[candidate].effectivePath) != device) continue;
+                // Keyboard and mouse are one settings page/control family; a
+                // mouse-bound action can be moved to a key without touching its pad.
+                if (!PathIsFor(target.bindings[candidate].effectivePath,kind)) continue;
 
                 index = candidate;
                 break;
