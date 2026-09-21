@@ -521,3 +521,26 @@ exited, input unchanged. Actual images revealed live HUD bleeding through the
 standings and the wrong warmup button; source d23200bc corrects those and stable
 seat labels/countdown. Body coat/flash capture48128844is also under targeted
 validation. Passing route assertions did not establish finished art.
+
+### Owner UI correction and native popup
+
+The owner rejected the green full-screen halftime page and requested image-based
+ideation for a popup. Two built-in generated concepts are saved in ui-ideation;
+the chosen red/cream direction is an agent implementation choice, not owner
+approval. No specific image-model version was claimed and no paid API fallback
+was used. ea364d24replaces the page with a compact automatic popup, live scores,
+original portraits, next-taya and one timer; presentation chrome uses warm ink.
+
+Popup-spectator-v1failed compile on a missing constructor argument (fixed130b5bbc).
+V2passed3/4; recovery fixture threw into initial can protection. After waiting
+for that protection, v3passed recovery but exposed the camera's new, incorrect
+assumption that restore protection prevents tags. Actual rules protect the CAN
+from another knockdown.597e8bbecorrects the camera gate; catch-v4passed1/1 in
+2.990s (guard5eec2077337f). All failures preserved.
+
+Nativepopup-v21/597e8bbe built1156MB/65s (guarda645804f549d). Normal menu-to-
+halftime route passed both modes, profile/input preserved, player17016exited.
+Actual1280x720stills show a compact red/cream strip over the court, no full-screen
+board/button, and no live can marker bleeding over it.308/277screen frames over
+11.48/11.49s with actual game audio were encoded at their recorded spacing.
+The owner has seen the actual Classic/Hero popup images; no acceptance is inferred.
