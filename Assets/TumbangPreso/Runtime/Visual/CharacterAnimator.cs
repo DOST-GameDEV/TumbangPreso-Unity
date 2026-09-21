@@ -26,7 +26,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     [RequireComponent(typeof(CharacterMotor))]
     [DefaultExecutionOrder(-50)]
-    public sealed class CharacterAnimator : MonoBehaviour
+    public sealed partial class CharacterAnimator : MonoBehaviour
     {
         /// <summary>Names as they appear in the shipped GLBs. Verified by ModelProbe.</summary>
         private const string Idle = "idle";
@@ -464,6 +464,7 @@ namespace TumbangPreso.Visual
 
         private void ReleaseGraph()
         {
+            ClearIntroductionPose();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
@@ -485,6 +486,7 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            RestoreIntroductionPose();
             if (!_graph.IsValid()) return;
 
             RestoreChargeOffsets();
@@ -909,36 +911,41 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
-            // Remove last frame's offsets even when the graph is paused or a clip
-            // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
-            RestoreChargeOffsets();
-            if (!_chargePosing && _throwReleaseTime < 0 && _throwCancelTime < 0) return;
-            if (_chargeBone==null && !ResolveChargeBone()) return;
-            bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
-            var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
-                : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
-            // A state update can arrive after Update but before this render.
-            // Retain the last held pose until StepChargePose starts its return;
-            // otherwise this one frame replaces the return's source with Rest.
-            if (_chargePosing && _throwPreparing && !throwing) pose = _lastThrowPose;
-            if (_throwCancelTime >= 0) pose = ThrowGesture.Pose.Lerp(_throwCancelFrom,ThrowGesture.Rest,
-                Mathf.SmoothStep(0,1,_throwCancelTime/ThrowGesture.CancelSeconds));
-            _chargeBoneRest=_chargeBone.localRotation;
-            if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
-            if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
-            if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
-            var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
-            var drawn=_throwCancelTime>=0
-                ? ThrowGesture.Pose.Apply(basis,pose)
-                : _throwReleaseTime>=0
-                ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
-                : throwing ? ThrowGesture.Pose.Apply(basis,pose)
-                : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
-            _chargeBone.localRotation=drawn.Right;
-            if(_chargeTorso!=null)_chargeTorso.localRotation=drawn.Torso;
-            if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
-            if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
-            _chargeOffsetsApplied=true;_lastThrowPose=pose;
+            RestoreIntroductionPose();
+            try
+            {
+                // Remove last frame's offsets even when the graph is paused or a clip
+                // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
+                RestoreChargeOffsets();
+                if (!_chargePosing && _throwReleaseTime < 0 && _throwCancelTime < 0) return;
+                if (_chargeBone==null && !ResolveChargeBone()) return;
+                bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
+                var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
+                    : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
+                // A state update can arrive after Update but before this render.
+                // Retain the last held pose until StepChargePose starts its return;
+                // otherwise this one frame replaces the return's source with Rest.
+                if (_chargePosing && _throwPreparing && !throwing) pose = _lastThrowPose;
+                if (_throwCancelTime >= 0) pose = ThrowGesture.Pose.Lerp(_throwCancelFrom,ThrowGesture.Rest,
+                    Mathf.SmoothStep(0,1,_throwCancelTime/ThrowGesture.CancelSeconds));
+                _chargeBoneRest=_chargeBone.localRotation;
+                if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
+                if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
+                if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
+                var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
+                var drawn=_throwCancelTime>=0
+                    ? ThrowGesture.Pose.Apply(basis,pose)
+                    : _throwReleaseTime>=0
+                    ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
+                    : throwing ? ThrowGesture.Pose.Apply(basis,pose)
+                    : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
+                _chargeBone.localRotation=drawn.Right;
+                if(_chargeTorso!=null)_chargeTorso.localRotation=drawn.Torso;
+                if(_chargeHead!=null)_chargeHead.localRotation=drawn.Head;
+                if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
+                _chargeOffsetsApplied=true;_lastThrowPose=pose;
+            }
+            finally { ApplyIntroductionPose(); }
         }
 
         private void RestoreChargeOffsets()
@@ -1088,6 +1095,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void PlayAction(string action, string viewmodelAction)
         {
+            if (_introductionAbility != null && action != _introductionAbility.CastAction) ClearIntroductionPose();
             // ⚠️⚠️ THE FIRST-PERSON ARM IS DRIVEN FROM HERE, AND FROM NOWHERE ELSE.
             // `character_visual.gd::play_action` opens with exactly this call and says why:
             // *"the third-person model has always animated here; in FIRST person the player sees

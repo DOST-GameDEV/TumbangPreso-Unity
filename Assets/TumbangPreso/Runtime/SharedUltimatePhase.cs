@@ -10,10 +10,11 @@ namespace TumbangPreso
     {
         public readonly int Seat;
         public readonly long Request;
-        public readonly Vector3 Position, Forward, Aim;
+        public readonly Vector3 Position, Forward, Aim, FamiliarPosition;
+        public readonly bool HasFamiliar;
         public readonly float Held;
-        public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held)
-        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; }
+        public UltimateCommit(int seat, long request, Vector3 position, Vector3 forward, Vector3 aim, float held, bool hasFamiliar = false, Vector3 familiarPosition = default)
+        { Seat=seat; Request=request; Position=position; Forward=forward; Aim=aim; Held=held; HasFamiliar=hasFamiliar; FamiliarPosition=familiarPosition; }
     }
 
     // One accepted cohort, one shared boundary. The reservation spends resources;
@@ -78,7 +79,11 @@ namespace TumbangPreso
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
             if (phase <= _lastReceived) return;
             _lastReceived = phase;
-            if (Now >= began + Duration) { Net.MatchRpc.Instance?.RequestWorldSnapshot(); return; }
+            if (Now >= began + Duration)
+            {
+                foreach (var cast in commits) GameServices.Round?.PlayerAt(cast.Seat)?.AbilitySystem?.AcknowledgeSharedUltimate(cast.Request);
+                Net.MatchRpc.Instance?.RequestWorldSnapshot(); return;
+            }
             Cancel(); MatchId=match; Round=round; PhaseId=phase; Began=began;
             _commits.Clear(); _commits.AddRange(commits); Active=true; _sealed=true; _actorsReady=false;
             PresentationClock.RequestScale(resume); PresentationClock.Hold();
@@ -89,7 +94,11 @@ namespace TumbangPreso
             if (match == null || round == null || match.PresentationMatchId != MatchId || match.RoundNumber != Round || !round.RoundActive) return false;
             foreach (var cast in _commits) if (round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit?.Ultimate == null) return false;
             foreach (var cast in _commits)
-                round.PlayerAt(cast.Seat).AbilitySystem.AdoptSharedUltimate(cast.Request);
+            {
+                var actor = round.PlayerAt(cast.Seat);
+                if (cast.HasFamiliar) actor.GetComponent<Visual.CharacterVisual>()?.Companion?.ApplyCastAnchor(cast.FamiliarPosition);
+                actor.AbilitySystem.AdoptSharedUltimate(cast.Request);
+            }
             _scene = SceneManager.GetActiveScene(); _actorsReady=true; ClearActions(); return true;
         }
         private void ClearActions()

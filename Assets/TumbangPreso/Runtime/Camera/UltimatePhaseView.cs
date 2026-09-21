@@ -33,6 +33,7 @@ namespace TumbangPreso.CameraSystem
         private RawImage _picture;
         private ActorScene _primary;
         private Slipper[] _slippers;
+        private bool _handedOff;
         public bool SoundPlayed { get; private set; }
 
         public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits)
@@ -101,6 +102,12 @@ namespace TumbangPreso.CameraSystem
             {
                 if (entry.Clip == null || entry.Body.Root == null) continue;
                 entry.Clip.SampleAnimation(entry.Body.Root,age); entry.Scene?.Sample(age);
+            }
+            if (!_handedOff && age >= 2.4f)
+            {
+                _handedOff = true;
+                foreach (var entry in _actors)
+                    entry.Actor.GetComponent<CharacterAnimator>()?.StageIntroductionPose(entry.Body.Root, entry.Actor.AbilitySystem.Kit.Ultimate);
             }
             float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.4f,2.8f,age));
             _fade.alpha=returnBlend;

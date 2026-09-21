@@ -42,6 +42,43 @@ namespace TumbangPreso.PlayTests
         private static void Press(CharacterMotor actor, Verb verb)
         { actor.Intent.Set(verb,true); actor.Intent.BufferPress(verb); }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator SixDefaultUltimatesReservePresentAndResumeTheirActualAbility()
+        {
+            foreach (string hero in new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska" })
+            {
+                yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+                Hud.Instance.ShowReadyPrompt(false); var actor=GameServices.Round.PlayerAt(1); Hero(actor,hero);
+                actor.Teleport(new Vector3(0,.18f,-5));
+                foreach(var other in GameServices.Round.Players)
+                    if(other!=actor)other.Teleport(new Vector3(6,other.transform.position.y,-6+other.PlayerSlot*3));
+                Camera.main.GetComponent<CameraRig>().Follow(actor,true);
+                Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
+                yield return new WaitForSecondsRealtime(.15f);
+                var ultimate=actor.AbilitySystem.Kit.Ultimate;
+                Press(actor,Verb.Ultimate);
+                if(ultimate.HoldToAim)
+                {yield return new WaitForSecondsRealtime(.2f);actor.Intent.Set(Verb.Ultimate,false);}
+                float until=Time.realtimeSinceStartup+1;
+                while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<until)yield return null;
+                var phase=SharedUltimatePhase.Instance;
+                Assert.IsTrue(phase!=null&&phase.Active,hero+" did not enter the real shared route.");
+                Assert.AreEqual(1,phase.Commits.Count);Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
+                Assert.IsTrue(ultimate.ReservedForIntroduction);Assert.AreEqual(0,ultimate.WindupRemaining);
+                yield return new WaitForSecondsRealtime(.7f);
+                yield return GameplayShots.Render(Camera.main,hero+"-live-introduction",true,outDir:"Logs/shared-six-v1");
+                until=Time.realtimeSinceStartup+4;
+                while(phase.Active&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
+                Assert.IsFalse(ultimate.ReservedForIntroduction);Assert.IsTrue(ultimate.IsWindingUp||ultimate.IsActive);
+                yield return new WaitForSeconds(ultimate.Windup+.2f);
+                Assert.IsFalse(ultimate.IsWindingUp,hero+" did not reach its real effect.");
+                if(ultimate.Duration>.3f)Assert.IsTrue(ultimate.IsActive,hero+" lost its real active duration.");
+                yield return GameplayShots.Render(Camera.main,hero+"-live-execution",true,outDir:"Logs/shared-six-v1");
+                actor.Intent.Clear();
+            }
+        }
+
         [UnityTest, Timeout(60000)]
         public IEnumerator TwoAcceptedCastsShareOnePhaseAndPreserveTheFullLiveWarning()
         {

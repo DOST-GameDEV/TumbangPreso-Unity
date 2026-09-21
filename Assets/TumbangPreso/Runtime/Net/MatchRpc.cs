@@ -490,7 +490,7 @@ namespace TumbangPreso.Net
         private bool AcceptMove(int slot, CharacterMotor unit, Vector3 position,
                                 float yaw, Vector3 velocity)
         {
-            if (PresentationClock.Held) return false;
+            if (PresentationClock.BlocksInput) return false;
             if (unit == null || !Finite(position) || !Finite(yaw) || !Finite(velocity)) return false;
 
             if (Mathf.Abs(position.x) > AIController.PlayableHalfX + 1.0f ||
@@ -5839,6 +5839,7 @@ namespace TumbangPreso.Net
             // tally, no picks, no world snapshot, and a peer standing in an arena it was never
             // told about.
             _identified.Remove(peerId);
+            _lastUltimateRequest.Remove((ulong)peerId);
 
             // ⚠️ THE PER-PEER RATE BUDGETS ARE KEYED BY TRANSPORT ID AND MUST BE DROPPED WITH IT.
             // Client ids are handed out monotonically rather than reused, so a lobby that runs

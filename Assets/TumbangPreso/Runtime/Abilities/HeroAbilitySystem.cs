@@ -353,7 +353,9 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
-            if (SharedUltimatePhase.BlocksActions) { ClearPresentationInput(); return; }
+            if (_pendingUltimateRequest > 0 && Time.unscaledTime > _pendingUltimateUntil)
+            { _pendingUltimateRequest = 0; Net.MatchRpc.Instance?.RequestWorldSnapshot(); }
+            if (PresentationClock.BlocksInput) { ClearPresentationInput(); return; }
             if (Kit == null || _motor == null) return;
 
             float dt = PresentationClock.Held ? 0 : Time.deltaTime;
@@ -671,6 +673,8 @@ namespace TumbangPreso.Abilities
             var ability = AbilityFor(slot);
             if (ability == null) return HeroKit.CastOutcome.Missing;
 
+            if (authoritative && PresentationClock.BlocksInput) return HeroKit.CastOutcome.CannotAct;
+            float previousHeld = ability.HeldSecondsOnCast;
             ability.HeldSecondsOnCast = Mathf.Max(0.0f, heldSeconds);
             var context = new AbilityContext(_motor, _carrier, _verbs,
                                              position, forward, aimPoint);
@@ -690,6 +694,7 @@ namespace TumbangPreso.Abilities
             }
 
             if (outcome == HeroKit.CastOutcome.Cast) PlayCastConfirm(slot, context);
+            else ability.HeldSecondsOnCast = previousHeld;
             return outcome;
         }
 

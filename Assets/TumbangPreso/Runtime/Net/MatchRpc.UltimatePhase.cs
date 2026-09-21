@@ -15,7 +15,8 @@ namespace TumbangPreso.Net
         {
             if (_nm?.CustomMessagingManager == null || !ValidSlot(seat)) return 0;
             long request = ++_ultimateRequestSequence;
-            var cast = new UltimateCommit(seat, request, position, forward, aim, held);
+            var pet = Familiar(seat);
+            var cast = new UltimateCommit(seat, request, position, forward, aim, held, pet != null, pet != null ? pet.transform.position : Vector3.zero);
             if (NetAuthority.ShouldResolve())
             { Unit(seat)?.AbilitySystem?.AcceptSharedUltimate(cast); return request; }
             using var writer = new FastBufferWriter(96, Allocator.Temp);
@@ -29,20 +30,23 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(cast.Seat); writer.WriteValueSafe(cast.Request);
             writer.WriteValueSafe(cast.Position); writer.WriteValueSafe(cast.Forward);
             writer.WriteValueSafe(cast.Aim); writer.WriteValueSafe(cast.Held);
+            writer.WriteValueSafe(cast.HasFamiliar); writer.WriteValueSafe(cast.FamiliarPosition);
         }
         private static UltimateCommit ReadUltimateCommit(ref FastBufferReader reader)
         {
             reader.ReadValueSafe(out int seat); reader.ReadValueSafe(out long request);
             reader.ReadValueSafe(out Vector3 position); reader.ReadValueSafe(out Vector3 forward);
             reader.ReadValueSafe(out Vector3 aim); reader.ReadValueSafe(out float held);
-            return new UltimateCommit(seat, request, position, forward, aim, held);
+            reader.ReadValueSafe(out bool hasFamiliar); reader.ReadValueSafe(out Vector3 familiarPosition);
+            return new UltimateCommit(seat, request, position, forward, aim, held, hasFamiliar, familiarPosition);
         }
         private static bool ValidUltimateCommit(UltimateCommit cast) => ValidSlot(cast.Seat) && cast.Request >= 0
             && Finite(cast.Position) && Finite(cast.Forward) && cast.Forward.sqrMagnitude > .001f
-            && Finite(cast.Aim) && Finite(cast.Held) && cast.Held >= 0 && cast.Held <= 30;
+            && Finite(cast.Aim) && Finite(cast.Held) && cast.Held >= 0 && cast.Held <= 30
+            && (!cast.HasFamiliar || Finite(cast.FamiliarPosition));
         private void OnReqUltimateMsg(ulong sender, FastBufferReader reader)
         {
-            if (!NetAuthority.ShouldResolve() || !reader.TryBeginRead(64)) return;
+            if (!NetAuthority.ShouldResolve() || !reader.TryBeginRead(77)) return;
             reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int round);
             var cast = ReadUltimateCommit(ref reader);
             if (!SenderOwnsClaimedSeat(sender, cast.Seat, out var actor)) return;
@@ -52,11 +56,24 @@ namespace TumbangPreso.Net
             if (_lastUltimateRequest.TryGetValue(sender, out long last) && cast.Request <= last)
             {
                 var phase = SharedUltimatePhase.Instance;
-                if (phase != null && phase.Active && cast.Request == last) BroadcastUltimatePhase(phase, sender);
+                bool accepted = false;
+                if (phase != null && phase.Active && cast.Request == last)
+                    foreach (var prior in phase.Commits) if (prior.Request == cast.Request && prior.Seat == cast.Seat) accepted = true;
+                if (accepted) BroadcastUltimatePhase(phase, sender);
                 else DenySharedUltimate(sender, cast.Request, cast.Seat);
                 return;
             }
             _lastUltimateRequest[sender] = cast.Request;
+            if (actor.AbilitySystem?.CheckSharedUltimate(cast) != HeroKit.CastOutcome.Cast)
+            { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
+            var pet = Familiar(cast.Seat);
+            if (pet != null)
+            {
+                if (pet.IsPossessed && (!cast.HasFamiliar || !pet.AcceptFlightPose(cast.FamiliarPosition, pet.transform.eulerAngles.y)))
+                { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
+                cast = new UltimateCommit(cast.Seat, cast.Request, cast.Position, cast.Forward, cast.Aim, cast.Held, true, pet.transform.position);
+            }
+            else if (cast.HasFamiliar) { DenySharedUltimate(sender, cast.Request, cast.Seat); return; }
             var outcome = actor.AbilitySystem?.AcceptSharedUltimate(cast) ?? HeroKit.CastOutcome.Missing;
             if (outcome != HeroKit.CastOutcome.Cast) DenySharedUltimate(sender, cast.Request, cast.Seat);
             else BroadcastAbilityState(cast.Seat, actor);
@@ -95,7 +112,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float resume); reader.ReadValueSafe(out int count);
             if (match != PresentationMatchId || round < 1 || round > 64 || phase <= 0
                 || double.IsNaN(began) || double.IsInfinity(began) || !Finite(resume) || resume < 0 || resume > 1
-                || count < 1 || count > 4 || !reader.TryBeginRead(count * 52)) return;
+                || count < 1 || count > 4 || !reader.TryBeginRead(count * 65)) return;
             var commits = new UltimateCommit[count]; int seats = 0;
             for (int i = 0; i < count; i++)
             {

@@ -1128,6 +1128,7 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            if (PresentationClock.Held) return;
             float dt = Time.deltaTime > 0.0f ? Time.deltaTime : Time.unscaledDeltaTime;
             if (dt <= 0.0f) dt = 0.016f;
             dt = Mathf.Min(dt, 0.10f);

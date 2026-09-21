@@ -1430,7 +1430,7 @@ namespace TumbangPreso
         // the HUD and the rule that acts must never be able to disagree.
         // -------------------------------------------------------------------
 
-        public bool CanAct() => RoundActive && !IsStunned && !SharedUltimatePhase.BlocksActions;
+        public bool CanAct() => RoundActive && !IsStunned && !PresentationClock.BlocksInput;
 
         // -------------------------------------------------------------------
         // § COMMITMENT
