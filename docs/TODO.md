@@ -26,6 +26,13 @@ preserving native style, supplied signs/livery, gameplay clarity and Low setting
 
 ### Latest active additions, 2026-09-22
 
+- [x] **152.4 / complete environment surface pass:** account for all2686active
+  renderers with19construction-specific families or explicit retained imagery,
+  livery, markings, food, transparency and custom water/court. Qualify persistent
+  authoring, full generators, all native map/mode/quality routes and Low overlap.
+  v39receipts are in reports/full-backlog-2026-09-21. Human taste/device checks and
+  the wider152.4/gameplay backlog stay separately open.
+
 - [x] **152.4 / animated sky:** add slow cloud movement with per-map pace, stable
   horizon/sun, pause/slow-motion respect and recorded-frame/return continuity.
   Retain the revised cloud forms and every existing map-detail requirement.
@@ -2471,6 +2478,14 @@ applies to spawners too: **an unmeasured optimisation is a pure loss**, and this
 future session cites when it decides to leave `HeroHazards` alone.
 
 ### 151.9 THE MULTI-SEED SWEEP, RUN, AND THE PACING IT MEASURES
+
+**Current reconciliation,2026-09-22:** C1/C2 are already implemented and remain wired
+through `AIController` to `AiRetrievalRules`, `AiStuckWatch` and `AiLungeRules`.
+The preserved September15 report contains deterministic failed-before/passed-after
+pinned fetches, the final18-match sweep and lunge outcomes. Do not repeat or retune
+these merely because this heading remains open. Human slide-feel judgment stays
+unverified. The older contributor reservation below is historical and superseded by
+the owner's sole-agent handback in AGENTS; it is not an implementation blocker.
 
 **September15 ownership:** the Ilalim idle trace and bot lunge investigation are
 reserved to Claude as C1/C2 in CLAUDE_ENGINEERING_LANE.md. Codex must not work

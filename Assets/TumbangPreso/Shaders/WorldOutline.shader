@@ -154,6 +154,8 @@ Shader "TumbangPreso/WorldOutline"
             // deliberately NOT applied. The mask is the same number for every sub-sample of one
             // output pixel, so it is sampled once outside the loop instead of N² times.
             // -----------------------------------------------------------------------------
+            float4 _NormalDetailFade;
+
             float EdgeAt (float2 duv, float2 offset)
             {
                 // ⚠️ A ROBERTS CROSS, NOT A SOBEL, AND THE REASON IS THE TAP COUNT. Roberts is
@@ -276,6 +278,13 @@ Shader "TumbangPreso/WorldOutline"
                 // ⚠️ COMBINED WITH `max`, NOT ADDED. A silhouette fires BOTH terms, and adding
                 // them would make the outer border of every object twice the strength of the
                 // creases inside it. Godot's hull draws one ink at one opacity everywhere.
+                float metres = nearest * _ProjectionParams.z;
+                // The depth-normal prepass is single-sampled even under MSAA.
+                // Tiny distant bevels otherwise become strong isolated ink dots.
+                // Scale by projected size relative to the95degree player lens;
+                // depth silhouettes and all nearby competitive geometry remain.
+                float apparentDistance=metres*_ViewRay.y/1.0913085*_NormalDetailFade.w;
+                normalEdge*=lerp(1,1-smoothstep(_NormalDetailFade.x,_NormalDetailFade.y,apparentDistance),_NormalDetailFade.z);
                 float edge = max(depthEdge, normalEdge);
                 if (edge <= 0.0) return 0.0;
 
@@ -297,7 +306,6 @@ Shader "TumbangPreso/WorldOutline"
                 // ⚠️ AND IT USES THE NEAREST TAP. At a building's edge against the far sky, the
                 // centre and half the taps sit on the sky at the far plane; fading by those
                 // would delete the silhouette of every building in the game.
-                float metres = nearest * _ProjectionParams.z;
                 float span = max(_FadeEnd - _FadeStart, 0.001);
                 edge *= 1.0 - saturate((metres - _FadeStart) / span);
 
@@ -460,6 +468,9 @@ Shader "TumbangPreso/WorldOutline"
             Name "OUTLINE_MASK"
             Cull Back
             ZWrite Off
+            // Partial fade masks must never erase a stronger actor/thin-prop mask.
+            Blend One One
+            BlendOp Max
 
             // ⚠️⚠️ `ZTest Always` PLUS A MANUAL DEPTH COMPARE IN THE FRAGMENT, RATHER THAN A
             // REAL DEPTH TEST. The mask is drawn into its own render target, so there is no
@@ -480,10 +491,13 @@ Shader "TumbangPreso/WorldOutline"
 
             sampler2D _CameraDepthNormalsTexture;
             float _MaskDepthTolerance;
+            // Command-buffer global, intentionally not a Material property.
+            float4 _WorldOutlineNearFadeBand;
 
             struct appdata_mask
             {
                 float4 vertex : POSITION;
+                float3 normal : NORMAL;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -492,6 +506,8 @@ Shader "TumbangPreso/WorldOutline"
                 float4 pos : SV_POSITION;
                 float4 screen : TEXCOORD0;
                 float depth : TEXCOORD1;
+                float3 world : TEXCOORD2;
+                float3 normal : TEXCOORD3;
             };
 
             v2f_mask vert (appdata_mask v)
@@ -505,6 +521,8 @@ Shader "TumbangPreso/WorldOutline"
                 // Linear 0..1, matching what `DecodeDepthNormal` hands back: eye depth over the
                 // far plane. `_ProjectionParams.w` is 1/far.
                 o.depth = -UnityObjectToViewPos(v.vertex).z * _ProjectionParams.w;
+                o.world=mul(unity_ObjectToWorld,v.vertex).xyz;
+                o.normal=UnityObjectToWorldNormal(v.normal);
                 return o;
             }
 
@@ -528,7 +546,19 @@ Shader "TumbangPreso/WorldOutline"
                 // noise alone. See the far-plane note on `Visual.WorldOutline`.
                 if (i.depth > scene + _MaskDepthTolerance) discard;
 
-                return fixed4(1, 1, 1, 1);
+                float coverage=1;
+                if(_WorldOutlineNearFadeBand.z>.5)
+                {
+                    // Match NearFade's radial band and geometric floor guard.
+                    // Source normal maps never turn the floor into an occluder.
+                    float visible=smoothstep(_WorldOutlineNearFadeBand.y,_WorldOutlineNearFadeBand.x,
+                        distance(i.world,_WorldSpaceCameraPos));
+                    float ground=smoothstep(.45,.55,normalize(i.normal).y)*
+                        smoothstep(.80,1.10,_WorldSpaceCameraPos.y-i.world.y);
+                    coverage=(1-visible)*(1-ground);
+                    clip(coverage-.001);
+                }
+                return fixed4(coverage,coverage,coverage,coverage);
             }
             ENDCG
         }

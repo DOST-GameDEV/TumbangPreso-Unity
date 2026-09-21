@@ -16,6 +16,7 @@ namespace TumbangPreso.EditorTools.MapKit
     {
         private const string Folder="Assets/TumbangPreso/Art/EnvironmentSurfaces";
         private const string SourceTag="TumpSurfaceSource";
+        private const string SourceNameTag="TumpSurfaceName";
         private static readonly Dictionary<(Mesh,Vector3,bool),Mesh> RoleMeshes=new Dictionary<(Mesh,Vector3,bool),Mesh>();
         private static readonly Dictionary<string,Material> SurfaceMaterials=new Dictionary<string,Material>(StringComparer.Ordinal);
 
@@ -54,32 +55,29 @@ namespace TumbangPreso.EditorTools.MapKit
                 var filter=renderer.GetComponent<MeshFilter>();if(filter==null||filter.sharedMesh==null)continue;
                 var original=OriginalMesh(filter.sharedMesh);string asset=AssetDatabase.GetAssetPath(original);
                 string model=Path.GetFileNameWithoutExtension(asset);
-                bool paletteBuilding=(asset.Contains("/kits/commercial/")||asset.Contains("/kits/city/"))&&model.StartsWith("building-",StringComparison.Ordinal);
-                bool paletteParts=paletteBuilding||asset.Contains("/kits/commercial/")&&model.StartsWith("low-detail-building-",StringComparison.Ordinal)||
-                    asset.Contains("/kits/industrial/")&&model=="building-g"||asset.Contains("/kits/roads/")&&
-                    (model=="road-bridge"||model=="light-square-double"||model=="electricity-pole-single")||
-                    asset.Contains("/kits/train/")&&model=="track-detailed";
+                bool paletteParts=HasPartRoles(asset,model);
                 var materials=renderer.sharedMaterials;bool mapped=false,write=filter.sharedMesh!=original;
                 filter.sharedMesh=original;
                 for(int i=0;i<materials.Length;i++)
                 {
                     var source=OriginalMaterial(materials[i]);if(source==null)continue;
                     write|=materials[i]!=source;materials[i]=source;
-                    string name=source.name.ToLowerInvariant();
+                    string name=SourceName(source).ToLowerInvariant();
                     int kind=paletteParts&&(name.Contains("colormap")||name.StartsWith("utility_original_aged",StringComparison.Ordinal))?1:Family(name);
                     if(kind==0)kind=ModelFamily(asset,model,name);
+                    kind=ContextFamily(name,model,renderer.transform,kind);
                     string decision;
-                    if(kind==0)decision="retained/unassigned "+source.name;
+                    if(kind==0)decision=RetentionReason(name,renderer.transform)+" "+SourceName(source);
                     else
                     {
                         string context=map+"/"+Hierarchy(renderer.transform)+"/"+i;
                         var variant=Variant(PersistentSource(source,context),kind,paletteParts,map,renderer.bounds.min.y);
-                        if(variant==null)decision="retained transparent/procedural "+source.name;
+                        if(variant==null)decision="retained transparent/procedural "+SourceName(source);
                         else
                         {
                             materials[i]=variant;mapped=true;write=true;
                             filter.sharedMesh=DetailMesh(original,renderer.transform.lossyScale,paletteParts);
-                            decision=(paletteParts?"authored part roles":"family "+kind)+" "+source.name;
+                            decision=(paletteParts?"authored part roles":"family "+kind)+" "+SourceName(source);
                         }
                     }
                     decisions[decision]=decisions.TryGetValue(decision,out int count)?count+1:1;
@@ -110,7 +108,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
                     var before=MapRepeatabilityCheck.Capture(scene);
-                    FinishLoadedScene(map,new StringBuilder());EditorSceneManager.MarkSceneDirty(scene);
+                    int mappedBefore=Object.FindObjectsByType<MeshRenderer>().Count(r=>r.enabled&&r.sharedMaterials.Any(m=>m!=null&&m.HasProperty("_SurfaceKind")&&m.GetFloat("_SurfaceKind")>0));
+                    int mappedAfter=FinishLoadedScene(map,new StringBuilder());
+                    if(mappedBefore!=mappedAfter)throw new InvalidOperationException(map+" lost or changed finish coverage during repeatability: "+mappedBefore+" -> "+mappedAfter);EditorSceneManager.MarkSceneDirty(scene);
                     EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
                     scene=EditorSceneManager.OpenScene(scene.path,OpenSceneMode.Single);
                     var current=MapRepeatabilityCheck.Capture(scene);MapRepeatabilityCheck.Write(output,map,"run"+run,current);
@@ -143,9 +143,24 @@ namespace TumbangPreso.EditorTools.MapKit
                 if(filter.sharedMesh==null)continue;filter.sharedMesh=OriginalMesh(filter.sharedMesh);
                 var renderer=filter.GetComponent<MeshRenderer>();if(renderer==null)continue;
                 renderer.sharedMaterials=renderer.sharedMaterials.Select(OriginalMaterial).ToArray();
+                foreach(var material in renderer.sharedMaterials)
+                    if(material!=null&&!string.IsNullOrEmpty(material.GetTag(SourceNameTag,false)))material.name=SourceName(material);
                 if(PrefabUtility.IsPartOfPrefabInstance(filter))PrefabUtility.RecordPrefabInstancePropertyModifications(filter);
                 if(PrefabUtility.IsPartOfPrefabInstance(renderer))PrefabUtility.RecordPrefabInstancePropertyModifications(renderer);
             }
+        }
+
+        private static bool HasPartRoles(string asset,string model)
+        {
+            if((asset.Contains("/kits/commercial/")||asset.Contains("/kits/city/"))&&model.StartsWith("building-",StringComparison.Ordinal))return true;
+            if(asset.Contains("/kits/commercial/")&&model.StartsWith("low-detail-building-",StringComparison.Ordinal))return true;
+            if(asset.Contains("/kits/industrial/")&&new[]{"building-a","building-e","building-g","building-p","building-q","building-r","building-t","chimney-medium","chimney-large"}.Contains(model))return true;
+            if(asset.Contains("/kits/car/")&&new[]{"sedan","van","delivery","taxi","truck"}.Contains(model))return true;
+            if(asset.Contains("/kits/roads/")&&new[]{"road-bridge","light-square-double","light-square","light-curved","electricity-pole-single","sign-highway-detailed","sign-highway-wide","traffic-light"}.Contains(model))return true;
+            if(asset.Contains("/kits/town/")&&model=="lantern")return true;
+            if(asset.Contains("/kits/city/")&&model=="planter")return true;
+            if(asset.Contains("/kits/factory/")&&(model=="box-small"||model=="box-wide"))return true;
+            return asset.Contains("/kits/train/")&&new[]{"track-detailed","train-electric-city-a","train-electric-city-b","train-electric-city-c","train-diesel-a"}.Contains(model);
         }
 
         private static int ModelFamily(string asset,string model,string material)
@@ -154,20 +169,73 @@ namespace TumbangPreso.EditorTools.MapKit
             // vehicles, trains and utility poles keep their authored parts until
             // an explicit per-face assignment exists; hue is not a material type.
             if(asset.Contains("/kits/roads/")&&model=="bridge-pillar-wide")return 2;
+            if(asset.Contains("/kits/roads/")&&model=="construction-fence")return 8;
+            if(asset.Contains("/kits/factory/")&&(model.StartsWith("pipe-",StringComparison.Ordinal)||model=="hopper-high-square"))return 8;
+            if(asset.Contains("/kits/industrial/")&&model=="detail-tank")return 8;
             if(asset.Contains("/kits/town/"))
             {
                 if(model=="stall-bench"||model=="stall-stool"||model=="planks")return 4;
                 if(model=="hedge")return 15;
             }
             if(asset.Contains("/kits/forest/")&&model=="plant")return 15;
-            if(asset.Contains("/kits/factory/")&&(model=="box-small"||model=="box-wide"))return 4;
+            if(asset.Contains("/kits/train/")&&model.StartsWith("train-carriage-",StringComparison.Ordinal))return 8;
             return 0;
+        }
+
+        private static int ContextFamily(string name,string model,Transform item,int fallback)
+        {
+            if(name=="cream goods"||name=="oxblood goods")
+            {
+                if(model=="retained-house-o-details")return 9; // Actual hanging towels.
+                if(model=="retained-house-a-details")return 16; // Sealed sachets.
+            }
+            if(name=="stock_paper"||name=="stock_green"||name=="stock_oxblood")
+            {
+                string context=Hierarchy(item).ToLowerInvariant();
+                if(context.Contains("bread loaf")||context.Contains("serving dish"))return 0;
+                if(context.Contains("folded laundry")||context.Contains("folded stock"))return 9;
+                if(context.Contains("barber chair")&&name=="stock_oxblood")return 11;
+                if(context.Contains("washing machine"))return 8;
+                if(context.Contains("photocopier"))return 16;
+                return 18; // Supported boxes, packaging and paper reams.
+            }
+            return fallback;
+        }
+
+        private static string RetentionReason(string name,Transform item)
+        {
+            string context=Hierarchy(item).ToLowerInvariant();
+            if(context.Contains("_jeepney"))return "retained supplied jeepney livery/finish";
+            if(name=="ilalim_padbase")return "retained gameplay pad presentation";
+            if(name.Contains("chalk")||name.Contains("crossing")||name.Contains("mark")||name=="score"||name.Contains("sign")||name.Contains("banner")||name.Contains("plaque")||name.Contains("mural")||
+                name.Contains("lanedash")||name.Contains("throwline")||name.Contains("wall_paint")||name.Contains("rgbbar")||name=="piso_led_timer"||name=="piso_screen")return "retained readable artwork/marking";
+            if(name.Contains("bread")||name.Contains("snacks")||name.Contains("watermelon")||name.Contains("sauce")||context.Contains("bread loaf")||context.Contains("serving dish"))return "retained stylized food form/palette";
+            if(name=="mountain")return "retained supplied mountain art";
+            if(name.Contains("poolwater")||name.Contains("poolceramic")||name=="recreationcourtcoating")return "retained authored water/ceramic/court";
+            if(name.Contains("oilstain")||name.Contains("skid_")||name=="plaza_joint"||name=="ilalim_north"||name=="ilalim_south"||name=="ilalim_east"||name=="ilalim_west")return "retained authored ground marking/contact";
+            if(name=="env_sari_sari_store_dark"||name=="env_church_facade_dark")return "retained recess shadow";
+            return "retained/unassigned";
         }
 
         private static int Family(string name)
         {
             // Protect readable painted imagery and game markings. The coverage
             // report exposes every unmatched family instead of coating it blindly.
+            if(name=="soil"||name=="potting soil"||name=="town_yards")return 17;
+            if(name=="residentgreentile")return 19;
+            if(name=="piso_trim")return 16;
+            if(name=="env_sari_sari_store_tarp"||name=="env_sari_sari_store_stripe")return 9;
+            if(name=="substantial dark window trim"||name=="band"||name=="edge"||name=="post"||name=="frame"||name=="trim"||name.StartsWith("sign_backing_",StringComparison.Ordinal))return 8;
+            if(name=="mat_floor")return 2;
+            if(name.StartsWith("dark cookware",StringComparison.Ordinal))return 8;
+            if(name.StartsWith("sauce bottle",StringComparison.Ordinal))return 16;
+            if(name.StartsWith("ilalim_arm_",StringComparison.Ordinal)||name.Contains("backlotpipetrestle")||name.Contains("guttergrate")||name.Contains("manholecover")||name.Contains("hoardingmast"))return 8;
+            if(name.Contains("backgroundsidewalk")||name.Contains("apron"))return 13;
+            if(name.Contains("backgroundcrossroad")||name.Contains("roadcontinuation")||name.Contains("fargroundplate")||name.Contains("manholecollar"))return 12;
+            if(name.Contains("roadsubbase"))return 2;
+            if(name.StartsWith("ilalim_cord",StringComparison.Ordinal))return name.Contains("tape")?16:11;
+            if(name=="ilalim_extensionblock")return 16;
+            if(name=="drum")return 8;
             if(name.Contains("mural"))return 0;
             if(name.Contains("chalk")||name.Contains("crossing")||name.Contains("mark")||name.Contains("sign")||name=="score"||name.Contains("banner"))return 0;
             if(name.Contains("skylinewindow")||name.Contains("glass")||name.Contains("glazing")||name=="stock_screen"||name=="quietwindow")return 7;
@@ -215,6 +283,84 @@ namespace TumbangPreso.EditorTools.MapKit
             return path;
         }
 
+        private static string SourceName(Material source)
+        {
+            string name=source.GetTag(SourceNameTag,false);
+            if(!string.IsNullOrEmpty(name))return name;
+            if(AssetDatabase.GetAssetPath(source).StartsWith(Folder+"/Sources/",StringComparison.Ordinal))
+                throw new InvalidOperationException("Recover the original semantic name before reauthoring "+AssetDatabase.GetAssetPath(source));
+            return source.name;
+        }
+
+        private static string SourcePath(string context)
+        {
+            string key;using(var sha=SHA256.Create())key=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(context))).Replace("-","").Substring(0,20);
+            return Folder+"/Sources/"+key+".mat";
+        }
+
+        public static void RecoverSourceNames()
+        {
+            const string baselines="Assets/TumbangPreso/TempSurfaceNameBaseline/";
+            string output=Environment.GetEnvironmentVariable("TUMP_SURFACE_NAMES_OUTPUT")??"Logs/surface-source-names-v1";
+            Directory.CreateDirectory(output);var report=new StringBuilder();int updated=0;
+            foreach(string map in UI.SceneFlow.Maps)
+            {
+                EditorSceneManager.OpenScene(baselines+map+".unity",OpenSceneMode.Single);
+                foreach(var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include,FindObjectsSortMode.None))
+                {
+                    var mats=renderer.sharedMaterials;
+                    for(int i=0;i<mats.Length;i++)
+                    {
+                        var original=mats[i];if(original==null)continue;
+                        string path=SourcePath(map+"/"+Hierarchy(renderer.transform)+"/"+i);
+                        var saved=AssetDatabase.LoadAssetAtPath<Material>(path);if(saved==null)continue;
+                        if(!SameSurfaceProperties(original,saved))throw new InvalidOperationException("Baseline source mismatch: "+map+"/"+Hierarchy(renderer.transform)+" -> "+path);
+                        saved.SetOverrideTag(SourceNameTag,original.name);EditorUtility.SetDirty(saved);updated++;
+                        report.AppendLine(path+" | "+original.name);
+                    }
+                }
+            }
+            AssetDatabase.SaveAssets();
+            var unresolved=new SortedSet<string>(StringComparer.Ordinal);
+            foreach(string map in UI.SceneFlow.Maps)
+            {
+                EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                foreach(var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include,FindObjectsSortMode.None))
+                foreach(var mat in renderer.sharedMaterials)
+                {
+                    var source=OriginalMaterial(mat);if(source==null)continue;
+                    string path=AssetDatabase.GetAssetPath(source);
+                    if(path.StartsWith(Folder+"/Sources/",StringComparison.Ordinal)&&string.IsNullOrEmpty(source.GetTag(SourceNameTag,false)))unresolved.Add(path);
+                }
+            }
+            File.WriteAllText(Path.Combine(output,"recovered.txt"),report.ToString());File.WriteAllLines(Path.Combine(output,"unresolved.txt"),unresolved);
+            Debug.Log("[Surface source names] recovered="+updated+" unresolved="+unresolved.Count);
+            if(unresolved.Count!=0)throw new InvalidOperationException("Some currently referenced source names could not be recovered");
+            EditorApplication.Exit(0);
+        }
+
+        private static bool SameSurfaceProperties(Material a,Material b)
+        {
+            if(a.shader!=b.shader)return false;
+            for(int i=0;i<ShaderUtil.GetPropertyCount(a.shader);i++)
+            {
+                string property=ShaderUtil.GetPropertyName(a.shader,i);
+                switch(ShaderUtil.GetPropertyType(a.shader,i))
+                {
+                    case ShaderUtil.ShaderPropertyType.Color:
+                        if(Vector4.Distance(a.GetColor(property),b.GetColor(property))>.000001f)return false;break;
+                    case ShaderUtil.ShaderPropertyType.Vector:
+                        if(Vector4.Distance(a.GetVector(property),b.GetVector(property))>.000001f)return false;break;
+                    case ShaderUtil.ShaderPropertyType.Float:
+                    case ShaderUtil.ShaderPropertyType.Range:
+                        if(Mathf.Abs(a.GetFloat(property)-b.GetFloat(property))>.000001f)return false;break;
+                    case ShaderUtil.ShaderPropertyType.TexEnv:
+                        if(a.GetTexture(property)!=b.GetTexture(property)||a.GetTextureScale(property)!=b.GetTextureScale(property)||a.GetTextureOffset(property)!=b.GetTextureOffset(property))return false;break;
+                }
+            }
+            return true;
+        }
+
         private static Material PersistentSource(Material source,string context)
         {
             if(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(source,out string _,out long _))return source;
@@ -222,10 +368,10 @@ namespace TumbangPreso.EditorTools.MapKit
             // Preserve an exact source copy instead of losing its settings or
             // claiming a transient instance has a stable asset GUID.
             Directory.CreateDirectory(Folder+"/Sources");
-            string key;using(var sha=SHA256.Create())key=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(context))).Replace("-","").Substring(0,20);
-            string path=Folder+"/Sources/"+key+".mat";var saved=AssetDatabase.LoadAssetAtPath<Material>(path);
-            if(saved==null){saved=new Material(source){name=source.name};AssetDatabase.CreateAsset(saved,path);}
-            else{EditorUtility.CopySerialized(source,saved);EditorUtility.SetDirty(saved);}
+            string path=SourcePath(context);var saved=AssetDatabase.LoadAssetAtPath<Material>(path);
+            string name=SourceName(source);
+            if(saved==null){saved=new Material(source);saved.SetOverrideTag(SourceNameTag,name);AssetDatabase.CreateAsset(saved,path);}
+            else{EditorUtility.CopySerialized(source,saved);saved.SetOverrideTag(SourceNameTag,name);EditorUtility.SetDirty(saved);}
             return saved;
         }
         private static T Resolve<T>(string identity) where T:Object
@@ -256,6 +402,16 @@ namespace TumbangPreso.EditorTools.MapKit
             bool At(float column)=>Mathf.Abs(u-column)<.018f;
             if(source.Contains("/kits/roads/"))
             {
+                if(model=="sign-highway-detailed"||model=="sign-highway-wide")
+                {
+                    if(uv.y>=.5f&&(At(.21875f)||At(.34375f)))return 0; // Sign-face colors stay clean.
+                    if(At(.34375f)||At(.46875f)||At(.59375f))return 8;
+                }
+                if(model=="traffic-light")
+                {
+                    if(At(.59375f)||At(.71875f)||At(.96875f))return 0; // Preserve the three signal lenses.
+                    if(At(.21875f)||At(.34375f)||At(.46875f)||At(.84375f))return 8;
+                }
                 if(model=="road-bridge")
                 {
                     if(At(.34375f)||At(.46875f))return 2;
@@ -268,11 +424,60 @@ namespace TumbangPreso.EditorTools.MapKit
                     if(At(.34375f))return 8;
                     if(At(.46875f))return position.y<.15f?2:8;
                 }
-                if(model=="light-square-double")
+                if(model=="light-square-double"||model=="light-square"||model=="light-curved")
                 {
                     if(At(.46875f))return 8;
                     if(At(.53125f))return 0; // Retain the light emitter.
                 }
+            }
+            else if(source.Contains("/kits/city/")&&model=="planter")
+            {
+                if(At(.09375f))return 2;
+                if(At(.21875f))return 15;
+                if(At(.59375f))return 17;
+            }
+            else if(source.Contains("/kits/town/")&&model=="lantern")
+            {
+                if(At(.21875f))return 8;
+                if(At(.34375f))return 7;
+                if(At(.96875f))return 2;
+            }
+            else if(source.Contains("/kits/factory/")&&(model=="box-small"||model=="box-wide"))
+            {
+                if(At(.71875f))return 18;
+                if(At(.96875f))return 16; // Measured raised packing tape.
+            }
+            else if(source.Contains("/kits/car/"))
+            {
+                // Verified UV rows: glass/lenses0, dark running gear1, paint2.
+                // A palette column alone would confuse body paint with plates.
+                int row=Mathf.FloorToInt(uv.y*4);
+                if(row==0&&(At(.09375f)||At(.21875f)||At(.34375f)))return 7;
+                if(row==1)
+                {
+                    if(At(.34375f))return 11;
+                    if(At(.46875f)||At(.71875f))return 8;
+                    if(At(.84375f))return 0; // Preserve plates/white markings.
+                }
+                if(row==2&&(At(.46875f)||At(.59375f)||At(.84375f)||At(.96875f)))return 8;
+            }
+            else if(source.Contains("/kits/industrial/"))
+            {
+                if(model.StartsWith("chimney-",StringComparison.Ordinal))
+                {
+                    if(At(.09375f))return 8;
+                    if(At(.46875f)||At(.21875f))return 2;
+                }
+                if(At(.09375f))return 8; // Pipes, flashing and window frames.
+                if(At(.21875f))return uv.y>=.25f&&uv.y<.5f?1:0; // Retain small authored door/vent regions.
+                if(At(.46875f)||At(.59375f))return 2; // Concrete base/stack and measured steps.
+                if(At(.71875f))return 7;
+            }
+            else if(source.Contains("/kits/train/")&&(model.StartsWith("train-electric-city-",StringComparison.Ordinal)||model=="train-diesel-a"))
+            {
+                if(At(.09375f))return 7;
+                if(At(.84375f))return 0; // Authored dark grille/marking regions.
+                if(At(.21875f)||At(.34375f)||At(.59375f)||At(.71875f)||At(.96875f))return 8;
             }
             else if(source.Contains("/kits/train/")&&model=="track-detailed")
             {
@@ -349,7 +554,7 @@ namespace TumbangPreso.EditorTools.MapKit
             copy.SetFloat("_SurfaceStrength",map=="IlalimNgTulay"?1.15f:map=="SaBubong"?.80f:1);
             copy.SetFloat("_SurfaceBaseY",city?-26.049f:map=="IlalimNgTulay"?.212f:.1f);
             copy.SetFloat("_SurfaceDebug",0);copy.SetOverrideTag(SourceTag,Identity(source));
-            copy.name=source.name+" / "+(roles?"architectural parts":"surface "+kind);
+            copy.name=SourceName(source)+" / "+(roles?"architectural parts":"surface "+kind);
             var saved=AssetDatabase.LoadAssetAtPath<Material>(path);
             if(saved==null){AssetDatabase.CreateAsset(copy,path);saved=copy;}
             else{EditorUtility.CopySerialized(copy,saved);Object.DestroyImmediate(copy);EditorUtility.SetDirty(saved);}
@@ -385,7 +590,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var instance=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(path));
                 var renderers=instance.GetComponentsInChildren<MeshRenderer>();
                 var bounds=renderers[0].bounds;foreach(var r in renderers)bounds.Encapsulate(r.bounds);
-                instance.transform.localScale*=3.2f/bounds.size.y;
+                instance.transform.localScale*=3.2f/Mathf.Max(bounds.size.x,Mathf.Max(bounds.size.y,bounds.size.z));
                 bounds=renderers[0].bounds;foreach(var r in renderers)bounds.Encapsulate(r.bounds);
                 instance.transform.position-=new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);
                 var filters=instance.GetComponentsInChildren<MeshFilter>();
@@ -416,7 +621,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     foreach(int side in new[]{1,-1})
                     {
                         camera.transform.position=new Vector3(side*4.6f,3.5f,side*5.4f);
-                        camera.transform.LookAt(new Vector3(0,1.5f,0));
+                        camera.transform.LookAt(new Vector3(0,bounds.size.y*.5f,0));
                         Capture(camera,Path.Combine(output,model+(pass==0?"-source":"-uv-columns")+(side>0?"-front":"-back")+".png"));
                     }
                 }

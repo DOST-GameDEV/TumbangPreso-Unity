@@ -69,13 +69,20 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             string output=Environment.GetEnvironmentVariable("TUMP_ROOF_REPEAT")??"Logs/sa-bubong-repeatability-v1";
             Directory.CreateDirectory(output);SortedDictionary<string,string> first=null;
+            var initialScene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
+            var initial=MapRepeatabilityCheck.Capture(initialScene);
+            MapRepeatabilityCheck.Write(output,"SaBubong","before",initial);
+            File.Copy(ScenePath,Path.Combine(output,"SaBubong-before.unity"),true);
             for(int run=1;run<=2;run++)
             {
                 Build();
                 var scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
                 var current=MapRepeatabilityCheck.Capture(scene);
                 MapRepeatabilityCheck.Write(output,"SaBubong","run"+run,current);
-                if(run==1){first=current;continue;}
+                if(run==1)
+                {
+                    first=current;File.WriteAllLines(Path.Combine(output,"baseline-differences.txt"),MapRepeatabilityCheck.Differences(initial,current));continue;
+                }
                 var changes=MapRepeatabilityCheck.Differences(first,current);
                 File.WriteAllLines(Path.Combine(output,"differences.txt"),changes);
                 string report=$"SaBubong: {changes.Count} changed rows; {current.Count} compared rows";

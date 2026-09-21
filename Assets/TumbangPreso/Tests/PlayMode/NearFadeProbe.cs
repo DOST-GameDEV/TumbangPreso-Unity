@@ -1,5 +1,6 @@
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.Visual;
@@ -62,7 +63,7 @@ namespace TumbangPreso.PlayTests
             // actually carries a renderer.
             Transform post = null;
 
-            foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).OrderBy(t=>t.name,System.StringComparer.Ordinal))
             {
                 if (!t.name.StartsWith("Poste")) continue;
                 if (t.GetComponentInChildren<MeshRenderer>(true) == null) continue;
@@ -132,6 +133,7 @@ namespace TumbangPreso.PlayTests
             var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
             cam.targetTexture = rt;
             cam.Render();
+            report.AppendLine($"near-fade mask draws at {metres:F2}m: {outline.NearFadeMaskDraws}");
 
             RenderTexture.active = rt;
             var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
@@ -143,6 +145,18 @@ namespace TumbangPreso.PlayTests
             string path = Path.Combine(OutDir, $"post_{metres:F2}m.png");
             File.WriteAllBytes(path, tex.EncodeToPNG());
             report.AppendLine($"wrote {path}");
+            if(System.Environment.GetEnvironmentVariable("TUMP_NEAR_FADE_COMPARE")=="1")
+            {
+                outline.FadeOccluderOutlines=false;cam.targetTexture=rt;cam.Render();RenderTexture.active=rt;
+                tex.ReadPixels(new Rect(0,0,Width,Height),0,0);tex.Apply();RenderTexture.active=null;cam.targetTexture=null;
+                string oldMask=Path.Combine(OutDir,$"post_{metres:F2}m-fade-mask-off.png");
+                File.WriteAllBytes(oldMask,tex.EncodeToPNG());report.AppendLine($"wrote {oldMask}");
+                outline.FadeOccluderOutlines=true;
+                outline.enabled=false;cam.targetTexture=rt;cam.Render();RenderTexture.active=rt;
+                tex.ReadPixels(new Rect(0,0,Width,Height),0,0);tex.Apply();RenderTexture.active=null;cam.targetTexture=null;
+                string comparison=Path.Combine(OutDir,$"post_{metres:F2}m-no-outline.png");
+                File.WriteAllBytes(comparison,tex.EncodeToPNG());report.AppendLine($"wrote {comparison}");
+            }
 
             Object.DestroyImmediate(tex);
             rt.Release();

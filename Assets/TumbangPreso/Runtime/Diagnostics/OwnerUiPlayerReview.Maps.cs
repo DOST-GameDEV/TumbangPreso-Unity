@@ -39,15 +39,22 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>Find("GuestAccount")!=null||Find("ContinueAccount")!=null||Find("StartButton")!=null,80);
             if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
             else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
+            string aa=Environment.GetEnvironmentVariable("TUMP_NATIVE_AA");
+            if(!string.IsNullOrEmpty(aa))
+            {
+                if(!int.TryParse(aa,out int mode)||mode<0||mode>=AntiAliasModes.All.Length)throw new InvalidOperationException("Unknown native AA mode");
+                SettingsStore.Current.AntiAliasMode=mode;AntiAliasModes.Apply(mode);
+            }
             SettingsStore.Current.Fullscreen=false;Screen.SetResolution(1920,1080,FullScreenMode.Windowed);
             yield return WaitFor(()=>Screen.width==1920&&Screen.height==1080,8);
-            var evidence=new StringBuilder("map,mode,quality,view,static_batch_renderers,finished_materials\n");
+            var evidence=new StringBuilder("map,mode,quality,view,static_batch_renderers,finished_materials,near_fade_mask_draws\n");
             File.WriteAllText(Path.Combine(_folder,"map-scope.txt"),
                 "Exact native player at 1920x1080. Legal staged owner poses, both modes and all graphics profiles.\n"+
                 "Cost windows freeze simulation and compare identical cameras with authored detail disabled/enabled; no image encoding during measurement.\n"+
                 "Frame times are process-level measurements on this host, not isolated GPU timings or device certification.\n");
             string selected=Environment.GetEnvironmentVariable("TUMP_NATIVE_MAP");
             if(!string.IsNullOrEmpty(selected)&&!SceneFlow.Maps.Contains(selected))throw new InvalidOperationException("Unknown native map filter");
+            File.AppendAllText(Path.Combine(_folder,"map-scope.txt"),"AA mode: "+AntiAliasModes.LabelOf(SettingsStore.Current.AntiAliasMode)+Environment.NewLine);
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
             foreach(string map in SceneFlow.Maps.Where(m=>string.IsNullOrEmpty(selected)||m==selected))
             {
@@ -103,7 +110,7 @@ namespace TumbangPreso.Diagnostics
                                 yield return null;
                                 if(!rig.IsLocalFpp||!rig.IsFollowing(who))throw new InvalidOperationException("Review lost the ordinary owner camera");
                                 string view=station+(facing==0?"-court":"-edge");yield return Shot(label+"-"+view);
-                                evidence.AppendLine($"{map},{mode},{quality},{view},{batches},{surfaces.Length}");
+                                evidence.AppendLine($"{map},{mode},{quality},{view},{batches},{surfaces.Length},{rig.Camera.GetComponent<Visual.WorldOutline>()?.NearFadeMaskDraws??0}");
                             }
                         }
                         // Same frozen scene and camera, alternate order between modes.

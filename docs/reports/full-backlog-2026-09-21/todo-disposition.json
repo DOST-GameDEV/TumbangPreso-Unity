@@ -378,8 +378,14 @@
     {
       "lineAtIntake": 2441,
       "heading": "### 151.9 THE MULTI-SEED SWEEP, RUN, AND THE PACING IT MEASURES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "C1/C2 software fixes implemented with retained evidence and current live callers; human slide-feel judgment remains open",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/AIController.cs: current AiRetrievalRules/AiStuckWatch/AiLungeRules callers",
+        "Assets/TumbangPreso/Runtime/AiRetrievalRules.cs",
+        "Assets/TumbangPreso/Runtime/AiStuckWatch.cs",
+        "Assets/TumbangPreso/Runtime/AiLungeRules.cs",
+        "docs/reports/claude-engineering-2026-09-15/README.md and its preserved C1/C2 raw receipts"
+      ]
     },
     {
       "lineAtIntake": 2603,

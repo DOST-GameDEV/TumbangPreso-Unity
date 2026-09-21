@@ -10,6 +10,23 @@ Current implementation/run state is the newest active ledger pointer.
 
 ## Active material and sky revision,2026-09-21
 
+**Software acceptance checkpoint,2026-09-22:** the full surface/sky revision below
+is implemented and qualified in internal Windows environment-v39. All2686active
+renderer families are accounted for:19distinct construction finishes plus explicit
+retained signs/livery/markings/food/transparent/custom water and court surfaces.
+No generic texture was stamped across every object. Native96views cover all4maps,
+both modes and3quality profiles;8walks, cloud motion and mixed-caster Low owner/
+spectator captures are preserved. Existing source shapes/colors/colliders remain.
+
+Authoring now preserves semantic material names through saved source copies.
+All-map surface repeats have0protected/0repeat changes; full generators are stable
+with exact comparison. The observed chalk-scale drift was fixed rather than hiding
+it behind a looser test. Near-camera ghost outlines are masked only in the actual
+fade band; distant normal-crease dots are softened by projected size while silhouettes
+remain. Existing user AA/HDR choices stay intact. These are implementation/runtime
+facts, not human aesthetic approval or a claim that the entire TODO is finished.
+See reports/full-backlog-2026-09-21 for exact receipts and failed attempts.
+
 Owner feedback after current captures: everything feels blank or poorly textured;
 give all buildings considered materials, avoid repeating one treatment, and improve
 the empty sky. This adds explicit surface/sky acceptance to the full map task.
@@ -246,6 +263,23 @@ WebGL2 platforms; no global batching disable or camera-fade rewrite is needed.
 Diagnostic color studies are temporary inspection views, not replacement building
 art. The owner asked about their purple/blue/yellow thumbnails; explain them before
 showing any further study. All saved game surface materials use_SurfaceDebug0.
+
+### Native edge-artifact follow-up, 2026-09-22
+
+The first material/animated-sky batch is published e50f8c37 and verified in the
+internal Windows v37 player. It does not close all map refinement. Its real High
+roof views show speckled thin window/ledge edges, and the close near-fade post
+capture retains thin outline remnants. Investigate two distinct causes:
+
+1. Same-camera outline-on/off near-fade captures at2.50/1.10/0.20m. If the compositor
+   is responsible, mask only the actual fade band, preserve distant world outlines,
+   and cull candidates so the new materials do not add thousands of mask draws.
+2. Matched rooftop views with outline and shadows disabled independently. Separate
+   depth/shadow/specular/edge aliasing before adjusting a shader or source geometry.
+   Compare normal-speed movement as well as stills and retain Low/High cost evidence.
+
+Do not mark the material/map parent done from coverage counts, code or screenshots
+alone. The full family coverage, generator hooks and wider TODO remain assigned.
 
 ### Execution batches and exact completion rules
 

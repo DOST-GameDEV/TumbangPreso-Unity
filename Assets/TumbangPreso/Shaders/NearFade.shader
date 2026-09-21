@@ -134,15 +134,12 @@ Shader "TumbangPreso/NearFade"
         // pixel outside 1.8 m looks exactly as it does today, and 1.8 m is where the feature is
         // doing its job in the first place.
         //
-        // ⚠️⚠️ THE ACTUAL FIX IS ONE LINE AND IT IS NOT IN THIS FILE. `WorldOutline.IsToonSurface`
-        // already answers "does this renderer draw its own ink, so keep the screen-space pass off
-        // it" by comparing `material.shader.name` against `TumbangPreso/Toon`. A prop on this
-        // shader belongs in that same set for the same reason inverted from the other side: it
-        // must NOT be inked because its silhouette is a lie while it is dissolving. Widening that
-        // one comparison to also accept `NearFade.ShaderName` masks the ghost while KEEPING the
-        // prop in depth-normals, which is the behaviour both columns above are trying to buy and
-        // neither can. `WorldOutline.cs` is owned elsewhere this cycle, so this is recorded here
-        // and in `docs/TODO.md` § 63 rather than done.
+        // WorldOutline now masks only the actual near-camera fade band. It uses
+        // this shader's radial range and geometric floor guard, with cached bounds
+        // to avoid drawing the entire dressed map into that extra mask. Distant
+        // architecture keeps its normal world outline; the faded pole loses its
+        // false silhouette. Merely treating every NearFade surface as a Toon
+        // exclusion would remove all of those distant outlines as well.
         Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
         LOD 200
 

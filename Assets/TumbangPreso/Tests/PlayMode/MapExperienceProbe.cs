@@ -53,6 +53,79 @@ namespace TumbangPreso.PlayTests
             if (_pinned) SceneFlow.PinSelectedRules(_rules); else SceneFlow.UnpinSelectedRules();
         }
 
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RooftopFacadeDepthAndFinishComparison()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Mouse);
+            var at=new Vector3(0,0,-8.8f);at.y=Slipper.GroundY(at);who.Teleport(at);who.transform.rotation=Quaternion.LookRotation(Vector3.back);
+            GraphicsProfiles.Apply(2);yield return new WaitForFixedUpdate();yield return null;Time.timeScale=0;
+            var target=GameObject.Find("SaBubong/Dressing/Metro rooftops/CityBlock_13").GetComponent<MeshRenderer>();
+            Assert.IsNotNull(target);
+            var camera=new GameObject("Diagnostic facade zoom, not owner FOV").AddComponent<Camera>();camera.CopyFrom(rig.Camera);camera.enabled=false;
+            camera.transform.position=rig.Camera.transform.position;camera.fieldOfView=22;
+            var point=target.bounds.center;point.y=target.bounds.max.y-6;camera.transform.LookAt(point);
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var hands=rig.Camera.GetComponentsInChildren<Renderer>();var hidden=hands.Select(r=>r.forceRenderingOff).ToArray();
+            var lights=Object.FindObjectsByType<Light>().Where(l=>l.type==LightType.Directional).ToArray();var shadows=lights.Select(l=>l.shadows).ToArray();
+            var mats=target.sharedMaterials.Where(m=>m!=null&&m.HasProperty("_SurfaceKind")).ToArray();
+            var kinds=mats.Select(m=>m.GetFloat("_SurfaceKind")).ToArray();var roles=mats.Select(m=>m.GetFloat("_SurfaceVertexRoles")).ToArray();
+            try
+            {
+                foreach(var hand in hands)hand.forceRenderingOff=true;foreach(var light in lights)light.shadows=LightShadows.None;
+                foreach(float near in new[]{.05f,.3f,1f})
+                {
+                    camera.nearClipPlane=near;
+                    yield return GameplayShots.Render(camera,"facade-finished-near-"+near.ToString("F2",System.Globalization.CultureInfo.InvariantCulture),false,Output);
+                }
+                camera.nearClipPlane=.05f;
+                foreach(var mat in mats){mat.SetFloat("_SurfaceKind",0);mat.SetFloat("_SurfaceVertexRoles",0);}
+                yield return GameplayShots.Render(camera,"facade-without-finish",false,Output);
+                File.WriteAllText(Path.Combine(Output,"facade-scope.txt"),"Diagnostic22degree view; shadows/outline disabled, same geometry. Camera "+camera.transform.position+" target "+point+"; targetMesh="+target.GetComponent<MeshFilter>().sharedMesh.name+"."+System.Environment.NewLine);
+            }
+            finally
+            {
+                for(int i=0;i<mats.Length;i++){mats[i].SetFloat("_SurfaceKind",kinds[i]);mats[i].SetFloat("_SurfaceVertexRoles",roles[i]);}
+                for(int i=0;i<hands.Length;i++)if(hands[i]!=null)hands[i].forceRenderingOff=hidden[i];
+                for(int i=0;i<lights.Length;i++)if(lights[i]!=null)lights[i].shadows=shadows[i];
+                Time.timeScale=1;Object.Destroy(camera.gameObject);
+            }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RooftopThinEdgesSeparateOutlineAndShadowContributions()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who);rig.SetAimSource(AimSource.Mouse);
+            GraphicsProfiles.Apply(2);var outline=rig.Camera.GetComponent<WorldOutline>();Assert.IsNotNull(outline);
+            var lights=Object.FindObjectsByType<Light>().Where(l=>l.type==LightType.Directional).ToArray();
+            var shadows=lights.Select(l=>l.shadows).ToArray();Assert.Greater(lights.Length,0);
+            var stations=new[]{new Vector3(0,0,-8.8f),new Vector3(7.2f,0,0)};
+            try
+            {
+                for(int i=0;i<stations.Length;i++)
+                {
+                    Time.timeScale=1;var at=stations[i];at.y=Slipper.GroundY(at);who.Teleport(at);
+                    who.transform.rotation=Quaternion.LookRotation(i==0?Vector3.back:Vector3.left);
+                    yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();Time.timeScale=0;yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"roof-edge-"+i+"-baseline",false,Output);
+                    outline.FadeDistantNormalDetail=false;yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"roof-edge-"+i+"-legacy-normal-detail",false,Output);
+                    outline.FadeDistantNormalDetail=true;yield return null;
+                    outline.enabled=false;yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"roof-edge-"+i+"-no-outline",false,Output);
+                    outline.enabled=true;foreach(var light in lights)light.shadows=LightShadows.None;yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"roof-edge-"+i+"-no-shadows",false,Output);
+                    outline.enabled=false;yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"roof-edge-"+i+"-neither",false,Output);
+                    outline.enabled=true;for(int j=0;j<lights.Length;j++)lights[j].shadows=shadows[j];
+                }
+            }
+            finally{Time.timeScale=1;outline.enabled=true;for(int j=0;j<lights.Length;j++)if(lights[j]!=null)lights[j].shadows=shadows[j];}
+        }
+
         [UnityTest, Timeout(600000)]
         public IEnumerator LegalFirstPersonViewsAtMatchedQualityProfiles()
         {

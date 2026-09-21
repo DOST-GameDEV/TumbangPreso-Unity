@@ -33,7 +33,7 @@ void TumpEnvironmentSurface(float3 world,float3 normal,float4 roles,float2 coord
         o.Albedo=roles.rgb*.6;o.Emission=roles.rgb*.4;o.Metallic=0;o.Smoothness=0;return;
     }
     float kind=_SurfaceVertexRoles>.5?floor(roles.r*32+.5):_SurfaceKind;
-    if(kind<.5||kind>16.5)return;
+    if(kind<.5||kind>19.5)return;
     if(_SurfaceDebug>.5)
     {
         o.Albedo=frac(float3(.37,.61,.83)*kind);o.Emission=o.Albedo*.25;
@@ -143,9 +143,26 @@ void TumpEnvironmentSurface(float3 world,float3 normal,float4 roles,float2 coord
     {
         shade=(TumpSurfaceNoise((p.xz+p.y*.37)*1.6)-.5)*.10;smoothness=.16;
     }
-    if(kind>=15.5) // Molded plastic: smooth broad variation; no plaster cracks or wood grain.
+    if(kind>=15.5&&kind<16.5) // Molded plastic: smooth broad variation; no plaster cracks or wood grain.
     {
         shade=(TumpSurfaceNoise(uv*1.1)-.5)*.04;smoothness=.38;
+    }
+    if(kind>=16.5&&kind<17.5) // Loose potting earth: broad crumbs, quiet dry micro-grain.
+    {
+        shade=(TumpSurfaceNoise(uv*4.3)-.5)*.16+(TumpSurfaceNoise(uv*35)-.5)*.055*fine;
+        smoothness=.04;
+    }
+    if(kind>=17.5&&kind<18.5) // Paper/cardboard: dry fibre, without invented wood boards.
+    {
+        shade=(TumpSurfaceNoise(uv*2.1)-.5)*.055+(TumpSurfaceNoise(uv*48)-.5)*.035*fine;
+        smoothness=.06;
+    }
+    if(kind>=18.5) // Glazed ceramic slabs on the small resident shade roof.
+    {
+        float2 tile=uv/.30;
+        float grout=max(TumpSurfaceJoint(tile.x,.006),TumpSurfaceJoint(tile.y,.006));
+        shade=(TumpSurfaceHash(floor(tile))-.5)*.045-grout*.11;
+        smoothness=.38;
     }
     o.Albedo*=max(.55,1+shade*_SurfaceStrength);
     o.Smoothness=lerp(o.Smoothness,smoothness,saturate(_SurfaceStrength));

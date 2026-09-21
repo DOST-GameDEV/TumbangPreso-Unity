@@ -53,7 +53,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static AmbientLife.Animal Animal(string id,Vector3[] route,bool bird)
         {
             string path=Folder+"/"+id+".glb";
-            var clips=AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().ToArray();
+            var clips=AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().OrderBy(c=>c.name,StringComparer.Ordinal).ToArray();
             foreach(string name in bird?new[]{"idle","peck","fly"}:new[]{"idle","walk","run","alert"})
                 if(!clips.Any(c=>c.name==name&&!c.legacy&&c.length>0))throw new InvalidOperationException(id+" lacks a nonzero Mecanim "+name);
             var size=bird?new NativeSize():JsonUtility.FromJson<NativeSize>(File.ReadAllText("MapSource/environment/ambient-life/street-animals/study-v7/"+id+".json"));

@@ -1,0 +1,10 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "HeroStrike-owner-busy-native-low-comfort-mixed-casters-staged-meters",
+        "HeroStrike-spectator-busy-native-low-comfort-mixed-casters-staged-meters",
+        "Mixed four-caster owner/spectator overlap captures with staged starting meters"
+    ],
+    "frameWindows": []
+}

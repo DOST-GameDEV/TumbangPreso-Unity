@@ -190,6 +190,27 @@ GROUPS = [
         "SplitSpiresPassageProbe", "ThrowAimIntegrationProbe", "ThrowMotionReviewProbe",
         "TumpNativeHudTests", "TumpNativeResultTests", "ZackKitAcceptanceProbe",
         "ZackSkillPresentationProbe",
+        # Presentation and preview-transition contracts install real arenas and
+        # assert accepted state/lifecycle outcomes; their occasional images are evidence.
+        "ActionChainIntegrationTests",
+        "BlockContactTests",
+        "CatchReconstructionTests",
+        "CloseCallPresentationTests",
+        "ExchangeAudioTests",
+        "ExchangeMotionTests",
+        "ExchangePresenceTests",
+        "ExchangePresentationTests",
+        "FamiliarReadoutTests",
+        "MapPreviewTransitionTests",
+        "MatchFinishPresentationTests",
+        "MatchMomentTests",
+        "RecordedEffectsTests",
+        "ReplayRetentionTests",
+        "RoundFieldCleanupTests",
+        "ScoreFeedbackTests",
+        "SharedUltimatePhaseTests",
+        "SkillReceiptTests",
+        "SpectatorExchangeTests",
     ]),
 
     ("capture", """
@@ -206,6 +227,8 @@ GROUPS = [
         # writes PNGs of the recall mark, which is `GameplayShots`' shape exactly: a fixture
         # that replaces cameras belongs beside the others that do.
         "SlipperRecallShots",
+        # These three own continuous render/camera capture routes.
+        "BusyExchangeProbe", "ThrowCancellationProbe", "UltimateIntroductionProbe",
     ]),
 
     ("services", """

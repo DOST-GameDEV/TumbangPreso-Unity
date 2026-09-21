@@ -25,7 +25,10 @@ namespace TumbangPreso.EditorTools.MapKit
             Directory.CreateDirectory(output);
             var report = new StringBuilder();
             bool passed = true;
-            foreach (string map in new[] { "Eskinita", "BayanPlaza", "IlalimNgTulay" })
+            var maps=new[]{"Eskinita","BayanPlaza","IlalimNgTulay"};
+            string selected=Environment.GetEnvironmentVariable("TUMP_MAP_REPEAT_MAP");
+            if(!string.IsNullOrEmpty(selected)&&!maps.Contains(selected))throw new InvalidOperationException("Unknown neighborhood repeatability map "+selected);
+            foreach (string map in maps.Where(m=>string.IsNullOrEmpty(selected)||m==selected))
             {
                 string path = "Assets/TumbangPreso/Scenes/Maps/" + map + ".unity";
                 File.Copy(path, Path.Combine(output, map + "-before.unity"), true);

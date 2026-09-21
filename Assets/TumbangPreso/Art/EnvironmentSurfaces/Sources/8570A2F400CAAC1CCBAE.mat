@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 8570A2F400CAAC1CCBAE
+  m_Name: colormap_tumbang-warm-a
   m_Shader: {fileID: 4800000, guid: 99fa998bbbed3408aafa652b466d261d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -20,6 +20,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap:
     RenderType: Opaque
+    TumpSurfaceName: colormap_tumbang-warm-a
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:

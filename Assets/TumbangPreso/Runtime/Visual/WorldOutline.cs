@@ -263,6 +263,8 @@ namespace TumbangPreso.Visual
         private static readonly int MaskId = Shader.PropertyToID("_WorldOutlineMask");
         private static readonly int MaskStrengthId = Shader.PropertyToID("_MaskStrength");
         private static readonly int MaskToleranceId = Shader.PropertyToID("_MaskDepthTolerance");
+        private static readonly int NearFadeMaskId = Shader.PropertyToID("_WorldOutlineNearFadeBand");
+        private static readonly int NormalDetailFadeId = Shader.PropertyToID("_NormalDetailFade");
         private static readonly int ViewRayId = Shader.PropertyToID("_ViewRay");
         private static readonly int SupersampleId = Shader.PropertyToID("_Supersample");
 
@@ -294,6 +296,15 @@ namespace TumbangPreso.Visual
         private bool _missing;
 
         private readonly List<Renderer> _excluded = new List<Renderer>();
+        private readonly List<NearFadeMask> _nearFade = new List<NearFadeMask>();
+        private struct NearFadeMask
+        {
+            public Renderer Renderer;public Bounds Bounds;public bool Stationary;
+            public int Submesh;public float Start,End;
+        }
+        public int NearFadeMaskDraws { get; private set; }
+        public bool FadeOccluderOutlines { get; set; } = true;
+        public bool FadeDistantNormalDetail { get; set; } = true;
         private float _nextScan;
 
         private void Awake()
@@ -437,7 +448,7 @@ namespace TumbangPreso.Visual
 
         private void Rescan()
         {
-            _excluded.Clear();
+            _excluded.Clear();_nearFade.Clear();
 
             if (_exclusion == Exclusion.Overlap) return;
 
@@ -452,6 +463,17 @@ namespace TumbangPreso.Visual
                 if (!wanted) wanted = IsTooThinToOutline(renderer);
 
                 if (wanted) _excluded.Add(renderer);
+                else
+                {
+                    var materials=renderer.sharedMaterials;
+                    for(int i=0;i<materials.Length;i++)
+                    {
+                        var material=materials[i];
+                        if(material==null||material.shader==null||material.shader.name!=NearFade.ShaderName)continue;
+                        _nearFade.Add(new NearFadeMask{Renderer=renderer,Bounds=renderer.bounds,Stationary=renderer.gameObject.isStatic,
+                            Submesh=i,Start=material.GetFloat("_NearFadeStart"),End=material.GetFloat("_NearFadeEnd")});
+                    }
+                }
             }
         }
 
@@ -531,6 +553,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void OnPreRender()
         {
+            NearFadeMaskDraws=0;
             // ⚠️⚠️ THE DEPTH-NORMALS REQUEST IS REPEATED HERE BECAUSE `LateUpdate` DOES NOT RUN IN
             // EDIT MODE, AND WITHOUT THIS THE WHOLE PASS IS A SILENT NO-OP IN EVERY PROBE. Unity
             // does not tick `Update`/`LateUpdate` on a component outside play mode, but it DOES
@@ -578,6 +601,7 @@ namespace TumbangPreso.Visual
             _maskBuffer.ClearRenderTarget(false, true, Color.black);
 
             _maskMaterial.SetFloat(MaskToleranceId, _maskDepthTolerance);
+            _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
 
             foreach (var renderer in _excluded)
             {
@@ -635,6 +659,22 @@ namespace TumbangPreso.Visual
             // `CurrentActive` means "whatever was bound before this buffer ran", which is the
             // intermediate, at its own size, which is the actual restore this line was written to
             // perform.
+            // Only nearby occluders need this extra mask. Static map bounds and
+            // material/submesh bindings are cached by the normal rescan; distant
+            // city geometry neither loses its ink nor adds a draw every frame.
+            Vector3 eye=_camera.transform.position;
+            if(FadeOccluderOutlines)foreach(var item in _nearFade)
+            {
+                var renderer=item.Renderer;if(renderer==null)continue;
+                var bounds=item.Stationary?item.Bounds:renderer.bounds;
+                if(bounds.SqrDistance(eye)>item.Start*item.Start)continue;
+                if(!renderer.enabled||!renderer.gameObject.activeInHierarchy||renderer.forceRenderingOff||
+                    renderer.shadowCastingMode==ShadowCastingMode.ShadowsOnly)continue;
+                _maskBuffer.SetGlobalVector(NearFadeMaskId,new Vector4(item.Start,item.End,1,0));
+                _maskBuffer.DrawRenderer(renderer,_maskMaterial,item.Submesh,MaskPass);NearFadeMaskDraws++;
+            }
+            _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);
+
             _maskBuffer.SetRenderTarget(BuiltinRenderTextureType.CurrentActive);
 
             if (!_bufferAttached)
@@ -821,6 +861,10 @@ namespace TumbangPreso.Visual
             _material.SetFloat(DepthBiasId, _depthBias);
             _material.SetFloat(NormalSensitivityId, _normalSensitivity);
             _material.SetFloat(NormalBiasId, _normalBias);
+            // Keep silhouette depth edges. Only normal creases which shrink below
+            // useful detail in the distant city fade; zoomed/orthographic previews
+            // retain their detail instead of inheriting a fixed distance penalty.
+            _material.SetVector(NormalDetailFadeId,new Vector4(30,80,FadeDistantNormalDetail?1:0,_camera.orthographic?0:1));
 
             // ⚠️ WRITTEN AS A FLOAT, AND THE SHADER ROUNDS IT BACK. A float uniform is the one
             // kind every graphics API in this project's build set agrees about without a

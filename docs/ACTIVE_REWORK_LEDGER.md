@@ -1,158 +1,109 @@
 # Active TUMP rework ledger
 
-## Owner direction
+## Owner direction and resume contract
 
-Complete EVERY unfinished, autonomously actionable requirement in the preserved
-[TODO](TODO.md), including remaining maps, UI, kits, qualification, Rafi and lagoon.
-The owner rejected two premature stops and explicitly said a phase/checkpoint is
-not completion. Keep working in this conversation without needing another continue.
-The current goal is ACTIVE. Preserve task IDs, prior implementation and failures.
-No questions while the owner sleeps, no agents/other chats, paid services, resets,
-main edits or Desktop replacement. [AGENTS](../AGENTS.md) holds the full contract.
-
-Latest additions: animate cloud movement, and remove Inday's pogo-like arm props/
-guards in every model/FPP view in favour of normal brown arms. Her latest instruction
-supersedes preserving the old guards. Other body parts, rigs and animations stay.
+Complete EVERY unfinished autonomously actionable requirement in [TODO](TODO.md).
+Do not stop at a phase or close the overall goal while implementation remains.
+Keep working in this conversation, sole agent, while the owner sleeps. Preserve
+all task IDs, prior implementation, original dirty work and failed evidence.
+No questions, other chats, subagents, paid services, resets, main edits or Desktop
+replacement. [AGENTS](../AGENTS.md) contains the complete current contract.
 
 ## Workspace and source
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Last fetched development and origin HEAD:
-79bf5c26ffdc6b38d9315135a1371e654acb9b3c. New map/sky/Inday/preview-fix work is uncommitted.
+branch ASTRAReworks. Last published and verified origin HEAD e50f8c372b2acd079e87493a8328e92ea39c1d5a.
+The final19-family surface/generator/outline batch is ready to publish next.
 
 Validation: sibling TumbangPreso-Unity-validation, detached db976126 with explicitly
-copied owned changes and generated assets. Independent Assets/Library/Temp/obj.
-Use one heavy job and keep warm caches. Every Editor launch goes through
-`python tools/run_unity_guarded.py`, profile `presentation-validation-20260921`.
-Unity is 6000.5.8f1. No unguarded launches. Never change validation inputs mid-job.
-
-Protocol remains48, replay schema10. Latest verified internal candidate is environment-v37:
-validation/Builds/environment-v37/TumbangPreso.exe,1180MB/50s, guard9f36f40872e7.
-It contains the preview-transition fix and passed the full native map and busy-Low
-routes. Its stamp honestly says db976126 dirty with copied inputs; this is not the
-final all-TODO candidate. Previous presentation-v33 remains. Desktop was untouched.
+copied owned inputs; independent Assets/Library/Temp/obj. One heavy job at a time.
+Every Editor launch uses python tools/run_unity_guarded.py with named profile
+presentation-validation-20260921 and installed Unity6000.5.8f1. Keep warm caches;
+do not mutate validation inputs during a job. Protocol48, replay schema10 unchanged.
 
 ## Exact current action
 
-No owned processes or tabs remain. Native v37 map and busy-Low routes passed;
-NearFadeProbe passed1/1,3.300s, guard949277914ccc, and its three images were inspected.
-Eleven timestamped movies have been encoded and hashed in native-environment-media.json.
-Publishing this owned verified batch is the immediate next action. Preserve all
-failed receipts and the original unrelated dirty work. The full goal stays active.
+NO owned jobs, players, Editors, encoding processes or browser tabs remain.
+Final internal candidate: validation/Builds/environment-v39/TumbangPreso.exe,
+1192MB/85s, guard80aa3ba39f21. Native full map route and busy-Low route both passed,
+shared input unchanged and two existing profile files restored in each route.
+96map/mode/quality/view rows,48paired frozen-scene process-frame windows,
+8walks,12s sky drift,30s each owner/spectator mixed-caster Low footage. All11movies
+encoded from actual frames.csv timestamps. Receipt native-environment-v39-media.json
+contains binary/movie/timing hashes. Audio captured but not listened to. Actual
+v39Eskinita High edge and SaBubong Low court inspected, following v37/v38 studies.
+Median process-frame delta vs v38 +0.157ms; max p95 14.106ms on RX6600/Ryzen52600.
+This is one-host diagnostic evidence, not isolatedGPU/device/live-match certification.
+The build honestly retains db976126 dirty stamp; not final whole-backlog delivery.
 
-Next map investigation: distant rooftop window/ledge speckles and thin outline
-remnants in the near-fade0.20m image. WorldOutline.IsToonSurface currently recognizes
-only the Toon shader; the historical NearFade comment describes the missing fade-mask
-integration. Do not simply exclude every NearFade surface at all distances: that
-would erase world outlines and add thousands of mask draws. Investigate a bounded
-near-band mask/candidate route, compare actual frames and measure cost. Distinguish
-far-edge aliasing/shadow/specular causes before editing. Also finish remaining material
-families and geometry-generator hooks, then continue the entire preserved TODO.
+Next: stage explicit Logs/environment-final-owned-paths.txt plus these final receipts,
+review ownership, commit --quiet -F, fetch/push ASTRAReworks only, verify remote HEAD.
+Then immediately continue existing-kit/movement/UI/network reconciliation and Rafi/
+lagoon implementation. Do not finalize the assignment at this checkpoint.
 
-Verification/publishing checklist:
+## Completed final map batch and preserved failures
 
-1. Read the native result and runner-result JSON. Preserve any failure and fix its cause.
-2. The exact native map route command is: `python tools/run_ui_player_review.py --exe
-   Builds/environment-v37/TumbangPreso.exe --out Logs/environment-v37-native
-   --profile presentation-native-environment-20260922 --map-surfaces-only`.
-   Clear TUMP_NATIVE_MAP for all maps. That env var can isolate SaBubong if needed.
-3. Require all96 map/mode/quality/view rows,8 walking sequences,48 paired process
-   frame-time windows and12s native sky motion. Inspect actual images and errors.
-   Run the existing Low/comfort mixed-caster busy route on the same artifact.
-   Then run the existing NearFadeProbe into fresh TUMP_NEAR_FADE_EVIDENCE output and
-   inspect its three band-distance captures; the optional-output test change is dev-only.
-4. Encode timestamped footage with tools/encode_motion_evidence.py only after the
-   player exits. Preserve failed34/35/36 receipts and mark their coverage honestly.
-5. Publish the verified owned batch, fetch before push and verify origin HEAD.
-   Then continue remaining material-family/hook checks and the ENTIRE TODO.
-   A successful map batch does not finish the assignment.
+19construction families account for all2686active renderers; mapped counts E711,
+B262,I1335,Sa179, with explicit retained imagery/livery/markings/special surfaces.
+No retained/unassigned roles. Original source geometry/colors/UV0/UV1 preserved.
+CreateAsset renamed material copies and broke role classification after reload;
+TumpSurfaceName semantic tags now persist,381original names safely recovered with
+zero unresolved. Strong repeatability checks preserve FIRST-pass coverage as well
+as all27917rows. Full E/I generator repeatability passes; initial Bayan failed on
+8tiny chalk-scale drifts. SeatCourtPaint canonicalization fixes it, Bayan rerun
+0/3777. SaBubong full builder passes0/5025 plus geometry gate. Final200owner-view
+frames passed1/1,64.804s. No default AA/HDR setting changed.
 
-## Preview transition defect, current fix
+Near-fade geometric mask removes ghost outline in the actual dither band; final
+native route uses1..8extra mask draws. Distance-faded normal creases reduce distant
+roof dots while keeping depth silhouettes and near detail. Exact before/after,
+failed generator and compile receipts remain in the report. Final dependency closure
+recovered4132files/107387663bytes, recorded in surface-assets-final-v7.json.
 
-Nativev34 failed at the second map because the review wrote SelectedMap directly;
-the setup screen owns its own index and overwrote it. The route now uses the actual
-MapNextButton. Nativev35 then completed three Classic maps but timed out at rooftop
-ready. V36 added target-scene ready/HUD diagnostics and passed an isolated roof run
-in both modes, yet the complete route failed on its eighth map.
+Already published e50:4CC0PolyHaven cloud skies with scaled-time motion and replay
+rewind/return tests; both Inday source models/plain brown FPP arms with unchanged
+rigs/animations and original backups; preview-to-match race fix. Preview race had
+failed-before/passed-after regression and now all v37/v38/v39native routes pass.
 
-V36's failed SaBubong-ready-boundary.png shows the setup screen still visible over
-an empty preview. State: active sceneSaBubong, HUDfalse, gatefalse, scale1,
-RoundActivetrue. Do not erase this with the isolated roof pass.
+## Next existing backlog work
 
-The new deterministic test calls SceneFlow.StartMatch while an actual additive
-preview load holds MatchInstaller.PreviewOnly. Before-fix it failed1/1 in20.429s
-because that flag remained true (guard3a1678661441). MapPreviewSurface's coroutine
-was cancelled when its setup scene was replaced, leaving the real installer disabled.
+The PlayMode partition initially rejected22recent fixtures;19arena/lifecycle and
+3continuous capture fixtures are now assigned. All161fixtures assigned exactly
+once, plan passes. This is a partition check, NOT a full-suite run.
 
-Fix: MapPreviewSurface.DeferTransition drains ongoing preview work before a scene
-change, blocks new swaps during exit, honours the latest destination, and owns/
-releases the preview flag through finally and OnDestroy. SceneFlow.Go calls it
-before LoadScene. First unchanged regression passed1/1 in6.853s, guard2cdd64da0ed7.
-Files: Runtime/UI/MapPreviewSurface.cs, Runtime/UI/SceneFlow.cs and new
-Tests/PlayMode/MapPreviewTransitionTests.cs. Native qualification is still required.
+Original dirty UI work still needs coherent review/integration: PaintedScreens.cs
+and stale fixture migrations; settings note-height fix; RoundLine/HUD catalog and
+extra halftime label; opt-in SeanVisualOnly route. Preserve compact halftime and
+original supplied art/input. Do not copy a shared hook without its companion method.
+151.9C1/C2 actual AI helpers/callers and historical failed-before/passed-after18match
+zero-idle evidence are reconciled; only specifically human feel remains there.
 
-## Current implemented map and arm batch
+Remaining order: whole-kit alternatives/movement/equipment; existing primary and
+secondary UI/rebind/native routes and network/rejoin qualification; selected RafiB
+and sheltered-lagoonC with native rig/FPP/animation, Crosscurrent/Mirrorwake/Breakwater,
+full gameplay/network/replay, supported decks/houses/water recovery in both modes;
+final coherent source/build/peer matches and every TODO disposition.
+Rafi/lagoon implementation HAS NOT BEGUN. Do not call it external review.
 
-- Sixteen distinct opt-in construction finishes in EnvironmentSurface.cginc and
-  NearFade.shader, including preserved normal maps. Palette mesh roles separate
-  wall/roof/trim/glass/door/step and reviewed bridge/track/pole parts. Original
-  geometry, colors, UV0/UV1 remain. Metre coordinates in UV3 survive static batching.
-  Shader target3.5 is necessary; previous parser/interpolator failures are retained.
-- MapSurfaceAuthor v3 assigns689/257/870/179 renderers in E/B/I/Sa. All-map owner
-  capturev3 passed1/1,70.310s,200frames. Surface repeatabilityv2 passed with zero
-  protected changes and zero repeat differences across27508 normalized rows,
-  guard6d710041d5f7. NearFade checks passed15/15,0.564s.
-- Four verified CC0 Poly Haven2K pure-sky HDRs, provenance in
-  ArtSource/environment/skies/polyhaven. Cloud shapes use map colors, fixed sun/
-  horizon and slow per-map drift. NeighbourhoodSkyMotion uses scaled Time.time;
-  RecordedWorldView temporarily samples existing clip timestamps. No new wire bytes.
-  Pause/reverse/error restoration and actual rendered-pixel drift/rewind checks pass.
-- Inday's character-female-a and team-inday GLBs now have brown arms and retained
-  simple hands. Raw backups: ArtSource/inday/before-plain-arms-20260922.
-  tools/inday_plain_arms.py verifies non-arm data, nodes/skins/materials and all33/32
-  animation samples unchanged. See inday-plain-arms.json for hashes. V1 pinched wrist
-  was corrected in V2 by extending the forearm under the hand centre. Three arm
-  audits passed1.253s; quick/held/moving body+FPP review passed1/1,17.931s.
-  FppGuardAuthor and guard assets are removed. Both FppDetails and RosterArms updated.
-  Inspected Editor/native frames show continuous brown arms without attachments.
-- Current generated asset closure has been recovered to development:1971 files,
-  73,284,138bytes, exact paths/hashes in surface-assets.json. Only referenced final
-  assets were recovered; orphan prototype assets remain in validation. This includes
-  current4scenes,409meshes,566materials,4HDRs and988metadata files.
+## Original dirty work / publishing
 
-## Preservation and publishing
+Initial26files backed up in Logs/presentation-pass-2026-09-21/intake.18remain byte-identical.
+Six shared paths retain original work; two old Inday arm meshes deliberately changed
+by latest owner instruction. Keep original UI PNG metas, tests and PaintedScreens,
+OwnerUiPlayerReview.Gameplay.cs, OwnerUiPlayerReview.cs, TumpMatchReadout.cs,
+TumpSettingsView.OwnerPainted.cs and tools/run_ui_player_review.py outside map staging.
+Map-only hook is already in e50; original Sean hook stays unstaged until next batch.
+No git add-all, reset, clean, force or attribution trailers. Use explicit path list,
+git -c core.safecrlf=false add, commit --quiet -F; fetch before push.
 
-Original26 dirty files are backed up in Logs/presentation-pass-2026-09-21/intake.
-Eighteen remain byte-identical. Six shared files retain original work; two previously
-unchanged Inday arm files are now deliberately changed by the latest owner request.
-Do not stage unrelated UI tests, PNG metas or the original untracked PaintedScreens.
+## Evidence and design pointers
 
-Logs/environment-owned-paths.txt lists2059 owned paths from before the preview fix;
-regenerate it to include that fix, its new test/meta and new receipts. Stage shared
-OwnerUiPlayerReview.cs and tools/run_ui_player_review.py using HEAD plus ONLY the
-new map-review hook/argument, not whole working files. Their original SeanVisualOnly
-changes depend on a separate original dirty file. Accidentally copying those into
-validation caused repeatabilityv1's compile failure, which remains preserved.
-Validation's OwnerUiPlayerReview.cs intentionally contains HEAD plus only our map hook.
-
-Use explicit staging, git commit -F, sole author, no trailers, no force/reset/clean.
-Commit/push stable verified batches to ASTRAReworks only. Preserve all old failures.
-
-## Remaining full scope
-
-Continue material-family coverage and geometry-generator hooks, remaining existing
-kit/movement/equipment work, actual UI routes and stale qualification fixtures,
-network/rejoin qualification, then selected RafiB / sheltered-lagoonC expansion and
-final coherent delivery. Rafi/lagoon implementation has NOT begun. Do not disguise
-unimplemented work as a human-review blocker. Physical devices, unavailable audio
-listening, human taste and separate-machine checks remain specifically unverified.
-
-Detailed design: MAP_FINAL_PASS.md, NATIONALS_POLISH.md and BADJAO_EXPANSION.md.
-Full backlog report: reports/full-backlog-2026-09-21/README.md; disposition index
-preserves366 historical numbered headings. Prior presentation software,59 movies,
-real3-peer checks and default8-round matches remain preserved in the presentation
-report. Prior skyline/rebind/dead-code batch was published79bf5c26.
-
-Earlier chronology and exact prototype failures are archived in
-reports/full-backlog-2026-09-21/ledger-through-preview-race-20260922.md and
-material-prototype-ledger-20260922.md. Resume this current action, not their old jobs.
+[Full backlog report](reports/full-backlog-2026-09-21/README.md), todo-disposition.json
+preserves366historical numbered headings. MAP_FINAL_PASS.md owns map design;
+NATIONALS_POLISH.md and BADJAO_EXPANSION.md own remaining design contracts.
+Earlier exact chronology is archived in ledger-through-final-map-v39-20260922.md,
+ledger-through-preview-race-20260922.md and material-prototype-ledger-20260922.md.
+Resume THIS action, not archived jobs. Prior presentation software,59movies, real
+3peer checks and default8round Classic/Hero matches remain preserved. Human taste,
+audio listening, physical devices and separate-machine/WAN review are specifically
+unverified; they do not justify skipping remaining implementation.

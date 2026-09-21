@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 08FA1FC31DF2B8395DAB / surface 2
+  m_Name: colormap_tumbang-warm-a / surface 2
   m_Shader: {fileID: 4800000, guid: 9e26b4f70c8a51d4b83f5a71c6042de9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

@@ -271,3 +271,69 @@ Eleven movies were encoded at recorded timing. Native-environment-media.json rec
 exact executable/runtime-assembly and movie hashes plus their source timing CSVs.
 This completes the explicit animated-sky and plain-Inday-arm requests as software;
 it does not close the broader map finish or the full project backlog.
+
+
+## Further graphics and material authoring, after e50f8c37
+
+The published first batch remains e50f8c37. New graphics refinement is in progress.
+Matched near-fade mask-on/off/no-outline images identify and remove the dissolved
+pole's false outline only within its fade band. Native v38 completed all96 views;
+only0..7 additional mask draws were submitted in the sampled native poses. Median
+cross-run process-frame difference versus v37 was+0.0677ms, largest p95=14.1115ms.
+The phase remains scoped; no isolated GPU-cost guarantee is inferred.
+
+A native roof AA3 comparison confirmed Forward/LDR4xMSAA+FXAA actually reached the
+frame, but the small dark normal-prepass dots remained. Source geometry and new
+finishes were separately compared at near planes.05/.3/1m and diagnostic22degree
+FOV; no material/depth defect was demonstrated. A draft fades distant normal crease
+edges by projected size while retaining depth silhouettes. Matched Editor1/1,
+5.596s(guardaf87aa18ea4a) visibly reduces the distant tower dots. Native qualification
+of this additional refinement is still pending; the user's AA/HDR default stays.
+
+The remaining-parts study produced60source/UV images for15mixed-atlas assets,
+guard63c129b06c65. New roles cover car lens/rubber/paint/plate regions, six industrial
+models, a city train, streetlight emitters/housings, barriers and metal service parts.
+A seventeenth family gives potting earth its own quiet matte grain.
+
+Authorv4 then exposed a persistence defect: Unity renamed saved copies of inline
+materials to their hash filenames, so later classification could silently lose
+surface assignments. Semantic source names now live in an explicit material tag,
+independent of filenames; an untagged saved source fails rather than degrades silently.
+Recovery from the exact preserved79bf5c26scenes matched hierarchy/submesh context and
+shader/color/vector/scalar/texture values before writing tags.381names recovered,
+zero unresolved references, guardccb7a26bfc1c. Disposable baseline copies were cleaned.
+New tags and final assignments have not yet been recovered to development; authorv5
+and subsequent saved-repeatability/visual checks are required before publication.
+
+
+## Final environment v39 acceptance
+
+The complete19family pass covers all2686active renderer families with explicit
+finish/retention and zero unassigned categories. Surface-only repeated authoring
+preserves mapped coverage and has0protected/0repeat differences over27917rows.
+Complete neighborhood generators passed on E/I; the initial overall run failed on
+8Bayan chalk-scale rows. Canonicalizing the2mm thickness calculation fixed that
+floating feedback drift, with the strict comparison unchanged; Bayan then passed
+0/3777rows. Full SaBubong generator passed0/5025rows plus geometry validation. Its
+only baseline change was sibling order of existing dressing children. Original
+assets, color palettes, gameplay colliders and routes are retained.
+
+Final Editor owner views passed1/1,64.804s/200frames. Referenced final dependencies
+were recovered selectively:4132files/107,387,663bytes, exact hashes in
+surface-assets-final-v7.json. Native environment-v39 built1192MB in85s with guarded
+profile restoration. Full native route passed96unique views,8map/mode pairs and
+48timing windows;1..8near-band mask draws in the sampled poses. Median process-frame
+change against v38 was+0.1572ms, maxp95=14.1064ms on RX6600/Ryzen2600. These are scoped
+frozen-scene process measurements, not an all-device/live-match performance claim.
+
+The same v39 passed30s owner and30s spectator mixed-caster Low/comfort captures.
+All native runners exited0 with shared input unchanged and2existing named-profile
+files restored. Audio was captured, not personally listened to. Human taste,
+physical/separate-device checks and broader gameplay/new-character work stay open.
+The full backlog goal remains active after this environment checkpoint.
+
+The test partition was also repaired:22new presentation/preview fixtures had not
+been registered and prevented --plan from succeeding.19arena/lifecycle fixtures
+were placed in match and3continuous-camera capture fixtures in capture. All161
+fixtures are now assigned exactly once. This is partition validation, not a full
+suite execution; preserved before/after plan logs make that boundary explicit.

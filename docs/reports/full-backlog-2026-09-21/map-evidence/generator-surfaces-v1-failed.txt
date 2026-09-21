@@ -1,0 +1,1081 @@
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=304
+Eskinita: replaced 9 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 2 retained mountain paintings as distant landscape without altering their artwork.
+  residential lot Bahay_0_W Center: (-12.27, 2.18, 22.01), Extents: (2.57, 2.08, 3.25)
+  residential lot Bahay_1_E Center: (12.27, 2.68, 16.12), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_1_W Center: (-12.27, 2.68, 14.70), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_2_E Center: (12.27, 2.94, 8.80), Extents: (2.57, 2.84, 3.25)
+  residential lot Bahay_3_E Center: (12.27, 2.68, 1.28), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_3_W Center: (-12.27, 2.18, 0.67), Extents: (2.57, 2.08, 3.25)
+  residential lot Bahay_4_W Center: (-12.55, 2.94, -8.18), Extents: (2.85, 2.84, 4.57)
+  residential lot Bahay_5_E Center: (12.27, 2.94, -12.19), Extents: (2.57, 2.84, 3.18)
+  residential lot Bahay_5_W Center: (-12.27, 2.94, -16.77), Extents: (2.57, 2.84, 3.18)
+  residential lot Bahay_6_E Center: (12.27, 2.94, -20.60), Extents: (2.57, 2.84, 3.25)
+  residential lot Sasakyan_0_E Center: (12.11, 1.28, 22.59), Extents: (2.41, 1.18, 1.31)
+  residential lot Sasakyan_2_W Center: (-12.54, 1.54, 7.79), Extents: (2.84, 1.44, 1.31)
+  residential lot Sasakyan_4_E Center: (12.28, 1.24, -5.58), Extents: (2.58, 1.14, 1.31)
+  residential lot Sasakyan_6_W Center: (-11.93, 1.24, -23.03), Extents: (2.23, 1.14, 1.31)
+  neighborhood back/corner houses:26
+Eskinita utilities:12 retained hardware posts with measured trunk collision;50 connected44mm conductors on authored insulator anchors; original baked span meshes inactive.
+Eskinita neighborhood draft:10 retained-family homes,4 grounded private parking plots; aligned closed fronts and rebuilt corner/back street layers. Spatial/art review remains open.
+Eskinita: ground paths 61/54 samples, aspin-tan and pusakal-tabby
+Eskinita: 5 ambient animals, private cosmetic visits, no gameplay colliders
+Eskinita: 711 renderers receive explicit surface roles.
+  57 | authored part roles colormap
+  5 | family 11 rubber
+  1 | family 12 asphalt 1
+  4 | family 12 continued_asphalt
+  4 | family 13 continued_pavement
+  14 | family 13 yard_paving
+  9 | family 14 tree_bark
+  8 | family 15 colormap
+  2 | family 15 leaf
+  9 | family 15 tree_foliage
+  9 | family 15 tree_new_growth
+  9 | family 15 tree_shaded_foliage
+  2 | family 16 Cream goods
+  2 | family 16 Oxblood goods
+  6 | family 16 plastic
+  2 | family 17 soil
+  1 | family 2 Mat_floor
+  2 | family 2 Warm concrete
+  3 | family 2 Warm concrete.001
+  2 | family 2 concrete
+  2 | family 2 env_sari_sari_store_concrete
+  56 | family 2 lot_concrete
+  4 | family 4 Timber course joints
+  4 | family 4 Timber upper quiet
+  4 | family 4 Timber upper warm
+  4 | family 4 Warm aged timber
+  3 | family 4 Warm aged timber.001
+  16 | family 4 Wooden clothespins
+  24 | family 4 Wooden clothespins.001
+  8 | family 4 Wooden clothespins.002
+  2 | family 4 colormap
+  2 | family 4 env_sari_sari_store_timber
+  16 | family 4 timber
+  3 | family 5 Galvanized shade roof.001
+  1 | family 5 roof
+  7 | family 8 Dull painted steel
+  3 | family 8 Dull painted steel.001
+  2 | family 8 Substantial dark window trim
+  2 | family 8 band
+  12 | family 8 drum
+  1 | family 8 frame
+  418 | family 8 lot_steel
+  8 | family 8 painted_steel
+  4 | family 8 rim
+  14 | family 8 rust
+  2 | family 8 tin
+  1 | family 8 trim
+  1 | family 8 utility_wire
+  12 | family 8 wire
+  1 | family 9 Cotton 0
+  3 | family 9 Cotton 0.001
+  1 | family 9 Cotton 0.002
+  2 | family 9 Cotton 1
+  3 | family 9 Cotton 1.001
+  2 | family 9 Cotton 2.001
+  1 | family 9 Cotton 2.002
+  2 | family 9 Cotton 3
+  2 | family 9 Cotton 3.001
+  1 | family 9 Cotton 4
+  2 | family 9 Cotton 4.001
+  2 | family 9 Cotton 5
+  1 | family 9 Cotton 5.002
+  2 | family 9 Cream goods
+  2 | family 9 Oxblood goods
+  3 | family 9 Worn braided line
+  6 | family 9 Worn braided line.001
+  3 | family 9 Worn braided line.002
+  2 | family 9 env_sari_sari_store_stripe
+  2 | family 9 env_sari_sari_store_tarp
+  16 | retained readable artwork/marking Mat_chalk
+  2 | retained recess shadow env_sari_sari_store_dark
+  2 | retained supplied mountain art Mountain
+Eskinita: final-pass renderers=9
+Eskinita baseline-to-run1: 1 changed rows
+  authored default mesh=default triangles=2244
+  authored default mesh=default triangles=2244
+  finish renderers=304
+Eskinita: replaced 9 cone/conifer trees; 6 reachable trunks have collision.
+Eskinita: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+Eskinita: grouped 24 non-solid plants/tyres/edge pieces; 17 excess pieces retained inactive.
+Eskinita: staged 2 retained mountain paintings as distant landscape without altering their artwork.
+  residential lot Bahay_0_W Center: (-12.27, 2.18, 22.01), Extents: (2.57, 2.08, 3.25)
+  residential lot Bahay_1_E Center: (12.27, 2.68, 16.12), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_1_W Center: (-12.27, 2.68, 14.70), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_2_E Center: (12.27, 2.94, 8.80), Extents: (2.57, 2.84, 3.25)
+  residential lot Bahay_3_E Center: (12.27, 2.68, 1.28), Extents: (2.57, 2.58, 3.22)
+  residential lot Bahay_3_W Center: (-12.27, 2.18, 0.67), Extents: (2.57, 2.08, 3.25)
+  residential lot Bahay_4_W Center: (-12.55, 2.94, -8.18), Extents: (2.85, 2.84, 4.57)
+  residential lot Bahay_5_E Center: (12.27, 2.94, -12.19), Extents: (2.57, 2.84, 3.18)
+  residential lot Bahay_5_W Center: (-12.27, 2.94, -16.77), Extents: (2.57, 2.84, 3.18)
+  residential lot Bahay_6_E Center: (12.27, 2.94, -20.60), Extents: (2.57, 2.84, 3.25)
+  residential lot Sasakyan_0_E Center: (12.11, 1.28, 22.59), Extents: (2.41, 1.18, 1.31)
+  residential lot Sasakyan_2_W Center: (-12.54, 1.54, 7.79), Extents: (2.84, 1.44, 1.31)
+  residential lot Sasakyan_4_E Center: (12.28, 1.24, -5.58), Extents: (2.58, 1.14, 1.31)
+  residential lot Sasakyan_6_W Center: (-11.93, 1.24, -23.03), Extents: (2.23, 1.14, 1.31)
+  neighborhood back/corner houses:26
+Eskinita utilities:12 retained hardware posts with measured trunk collision;50 connected44mm conductors on authored insulator anchors; original baked span meshes inactive.
+Eskinita neighborhood draft:10 retained-family homes,4 grounded private parking plots; aligned closed fronts and rebuilt corner/back street layers. Spatial/art review remains open.
+Eskinita: ground paths 61/54 samples, aspin-tan and pusakal-tabby
+Eskinita: 5 ambient animals, private cosmetic visits, no gameplay colliders
+Eskinita: 711 renderers receive explicit surface roles.
+  57 | authored part roles colormap
+  5 | family 11 rubber
+  1 | family 12 asphalt 1
+  4 | family 12 continued_asphalt
+  4 | family 13 continued_pavement
+  14 | family 13 yard_paving
+  9 | family 14 tree_bark
+  8 | family 15 colormap
+  2 | family 15 leaf
+  9 | family 15 tree_foliage
+  9 | family 15 tree_new_growth
+  9 | family 15 tree_shaded_foliage
+  2 | family 16 Cream goods
+  2 | family 16 Oxblood goods
+  6 | family 16 plastic
+  2 | family 17 soil
+  1 | family 2 Mat_floor
+  2 | family 2 Warm concrete
+  3 | family 2 Warm concrete.001
+  2 | family 2 concrete
+  2 | family 2 env_sari_sari_store_concrete
+  56 | family 2 lot_concrete
+  4 | family 4 Timber course joints
+  4 | family 4 Timber upper quiet
+  4 | family 4 Timber upper warm
+  4 | family 4 Warm aged timber
+  3 | family 4 Warm aged timber.001
+  16 | family 4 Wooden clothespins
+  24 | family 4 Wooden clothespins.001
+  8 | family 4 Wooden clothespins.002
+  2 | family 4 colormap
+  2 | family 4 env_sari_sari_store_timber
+  16 | family 4 timber
+  3 | family 5 Galvanized shade roof.001
+  1 | family 5 roof
+  7 | family 8 Dull painted steel
+  3 | family 8 Dull painted steel.001
+  2 | family 8 Substantial dark window trim
+  2 | family 8 band
+  12 | family 8 drum
+  1 | family 8 frame
+  418 | family 8 lot_steel
+  8 | family 8 painted_steel
+  4 | family 8 rim
+  14 | family 8 rust
+  2 | family 8 tin
+  1 | family 8 trim
+  1 | family 8 utility_wire
+  12 | family 8 wire
+  1 | family 9 Cotton 0
+  3 | family 9 Cotton 0.001
+  1 | family 9 Cotton 0.002
+  2 | family 9 Cotton 1
+  3 | family 9 Cotton 1.001
+  2 | family 9 Cotton 2.001
+  1 | family 9 Cotton 2.002
+  2 | family 9 Cotton 3
+  2 | family 9 Cotton 3.001
+  1 | family 9 Cotton 4
+  2 | family 9 Cotton 4.001
+  2 | family 9 Cotton 5
+  1 | family 9 Cotton 5.002
+  2 | family 9 Cream goods
+  2 | family 9 Oxblood goods
+  3 | family 9 Worn braided line
+  6 | family 9 Worn braided line.001
+  3 | family 9 Worn braided line.002
+  2 | family 9 env_sari_sari_store_stripe
+  2 | family 9 env_sari_sari_store_tarp
+  16 | retained readable artwork/marking Mat_chalk
+  2 | retained recess shadow env_sari_sari_store_dark
+  2 | retained supplied mountain art Mountain
+Eskinita: final-pass renderers=9
+Eskinita run1-to-run2: 0 changed rows; 4763 compared rows
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=2404
+  authored default mesh=default triangles=3232
+  finish renderers=44
+BayanPlaza: replaced 9 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+  town house 0 a Center: (-26.67, 2.18, -12.50), Extents: (2.57, 2.08, 3.25)
+  town house 1 e Center: (-36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 2 c Center: (-28.57, 2.68, -4.50), Extents: (2.57, 2.58, 3.22)
+  town house 3 o Center: (-36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 4 e Center: (-26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.25)
+  town house 5 c Center: (-36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 6 o Center: (-26.67, 2.94, 11.50), Extents: (2.57, 2.84, 3.18)
+  town house 7 a Center: (-36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 8 c Center: (-26.67, 2.68, 19.50), Extents: (2.57, 2.58, 3.22)
+  town house 9 c Center: (-36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 10 c Center: (26.67, 2.68, -12.50), Extents: (2.57, 2.58, 3.22)
+  town house 11 e Center: (36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 12 e Center: (26.67, 2.94, -4.50), Extents: (2.57, 2.84, 3.25)
+  town house 13 o Center: (36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 14 o Center: (26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.18)
+  town house 15 c Center: (36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 16 c Center: (28.57, 2.68, 11.50), Extents: (2.57, 2.58, 3.22)
+  town house 17 a Center: (36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 18 a Center: (26.67, 2.18, 19.50), Extents: (2.57, 2.08, 3.25)
+  town house 19 c Center: (36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 20 a Center: (-43.50, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 21 c Center: (-35.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 22 e Center: (-27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 23 o Center: (-10.80, 2.94, -28.67), Extents: (3.18, 2.84, 2.57)
+  town house 24 c Center: (-3.60, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 25 a Center: (3.60, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 26 c Center: (10.80, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 27 e Center: (27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 28 o Center: (35.50, 2.94, -28.67), Extents: (3.17, 2.84, 2.57)
+  town house 29 c Center: (43.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 30 a Center: (-43.50, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 31 c Center: (-35.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 32 e Center: (-27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 33 o Center: (-10.80, 2.94, 37.97), Extents: (3.18, 2.84, 2.57)
+  town house 34 c Center: (-3.60, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 35 a Center: (3.60, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 36 c Center: (10.80, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 37 e Center: (27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 38 o Center: (35.50, 2.94, 37.97), Extents: (3.17, 2.84, 2.57)
+  town house 39 c Center: (43.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+Bayan civic draft:6m texture repeat with1.5m slabs; connected four-street grid;40 retained chunky houses in frontage/back/corner blocks;2 recessed vendor pockets. Whole-place critique remains open.
+BayanPlaza: ground paths 32/37 samples, aspin-cream and pusakal-ginger
+BayanPlaza: 5 ambient animals, private cosmetic visits, no gameplay colliders
+BayanPlaza: 262 renderers receive explicit surface roles.
+  44 | authored part roles colormap
+  8 | family 1 civic_lime_plaster
+  1 | family 1 env_municipal_hall_body
+  3 | family 11 Dark vinyl seats
+  1 | family 11 Rubber
+  1 | family 11 Rubber.001
+  3 | family 11 Tyres and grips
+  1 | family 12 town_asphalt
+  2 | family 13 civic_approach
+  1 | family 13 civic_paving
+  5 | family 13 terminal_paving
+  15 | family 14 tree_bark
+  8 | family 15 colormap
+  4 | family 15 leaf
+  4 | family 15 leaf_dark
+  15 | family 15 tree_foliage
+  15 | family 15 tree_new_growth
+  15 | family 15 tree_shaded_foliage
+  2 | family 16 Cream goods
+  2 | family 16 Oxblood goods
+  1 | family 16 Sauce bottle
+  2 | family 17 town_yards
+  2 | family 2 Warm concrete
+  4 | family 2 Warm concrete.001
+  4 | family 2 concrete
+  4 | family 2 coping
+  1 | family 2 env_bell_tower_band
+  1 | family 2 env_municipal_hall_band
+  1 | family 2 env_municipal_hall_plinth
+  1 | family 2 step
+  25 | family 3 civic_window_stone
+  1 | family 3 env_bell_tower_stone
+  1 | family 3 env_church_facade_stone
+  42 | family 3 plaza_limestone
+  1 | family 3 stone
+  2 | family 4 Warm aged timber
+  4 | family 4 Warm aged timber.001
+  1 | family 4 Worn timber
+  1 | family 4 Worn timber.001
+  2 | family 4 board
+  68 | family 4 civic_window_timber
+  17 | family 4 colormap
+  1 | family 4 env_church_facade_timber
+  6 | family 4 terminal_shade_timber
+  4 | family 5 Galvanized shade roof.001
+  1 | family 5 env_bell_tower_roof
+  1 | family 5 env_municipal_hall_roof
+  1 | family 5 terminal_shade_roof
+  1 | family 6 civic_roof_clay
+  3 | family 7 Headlamp lens
+  3 | family 7 Smoked windscreen
+  1 | family 7 env_bell_tower_window
+  1 | family 7 env_municipal_hall_window
+  3 | family 8 Brushed sheet metal
+  1 | family 8 Dark cookware
+  2 | family 8 Dull painted steel
+  4 | family 8 Dull painted steel.001
+  1 | family 8 Dull stainless steel
+  1 | family 8 Dull stainless steel.001
+  1 | family 8 Muted oxblood cart
+  3 | family 8 Terminal oxblood paint
+  2 | family 8 edge
+  2 | family 8 hoop_bracket
+  2 | family 8 post
+  2 | family 8 ring
+  1 | family 9 Green shade
+  1 | family 9 Green shade.001
+  1 | family 9 Plum shade
+  1 | family 9 Plum shade.001
+  3 | family 9 Warm canopy
+  1 | family 9 Warm cloth
+  1 | family 9 Warm cloth.001
+  2 | retained authored ground marking/contact plaza_joint
+  11 | retained readable artwork/marking Mat_chalk
+  1 | retained readable artwork/marking civic_crossing
+  1 | retained readable artwork/marking plaque
+  4 | retained readable artwork/marking terminal_bay_marks
+  1 | retained recess shadow env_church_facade_dark
+  1 | retained stylized food form/palette Dark sauce
+  1 | retained stylized food form/palette Fishballs and bread
+  1 | retained stylized food form/palette Fried golden snacks
+  1 | retained stylized food form/palette Fried golden snacks.001
+  1 | retained stylized food form/palette Watermelon flesh.001
+  1 | retained stylized food form/palette Watermelon rind.001
+  1 | retained transparent/procedural Display glass.001
+BayanPlaza: final-pass renderers=41
+BayanPlaza baseline-to-run1: 9 changed rows
+  authored default mesh=default triangles=3232
+  authored default mesh=default triangles=2024
+  authored default mesh=default triangles=2404
+  finish renderers=44
+BayanPlaza: replaced 9 cone/conifer trees; 0 reachable trunks have collision.
+BayanPlaza: grouped 12 non-solid furniture pieces beyond the playable walls; excess seats retained inactive.
+BayanPlaza: grouped 16 non-solid plants/tyres/edge pieces; 10 excess pieces retained inactive.
+Bayan: inward-facing east/west hoops; 4 perimeter lanterns; open monument approach; 3 original passenger tricycles in a marked roadside bay with shaded waiting, clear of tree trunks.
+  town house 0 a Center: (-26.67, 2.18, -12.50), Extents: (2.57, 2.08, 3.25)
+  town house 1 e Center: (-36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 2 c Center: (-28.57, 2.68, -4.50), Extents: (2.57, 2.58, 3.22)
+  town house 3 o Center: (-36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 4 e Center: (-26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.25)
+  town house 5 c Center: (-36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 6 o Center: (-26.67, 2.94, 11.50), Extents: (2.57, 2.84, 3.18)
+  town house 7 a Center: (-36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 8 c Center: (-26.67, 2.68, 19.50), Extents: (2.57, 2.58, 3.22)
+  town house 9 c Center: (-36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 10 c Center: (26.67, 2.68, -12.50), Extents: (2.57, 2.58, 3.22)
+  town house 11 e Center: (36.07, 2.94, -12.15), Extents: (2.57, 2.84, 3.25)
+  town house 12 e Center: (26.67, 2.94, -4.50), Extents: (2.57, 2.84, 3.25)
+  town house 13 o Center: (36.07, 2.94, -4.15), Extents: (2.57, 2.84, 3.18)
+  town house 14 o Center: (26.67, 2.94, 3.50), Extents: (2.57, 2.84, 3.18)
+  town house 15 c Center: (36.07, 2.68, 3.85), Extents: (2.57, 2.58, 3.22)
+  town house 16 c Center: (28.57, 2.68, 11.50), Extents: (2.57, 2.58, 3.22)
+  town house 17 a Center: (36.07, 2.18, 11.85), Extents: (2.57, 2.08, 3.25)
+  town house 18 a Center: (26.67, 2.18, 19.50), Extents: (2.57, 2.08, 3.25)
+  town house 19 c Center: (36.07, 2.68, 19.85), Extents: (2.57, 2.58, 3.22)
+  town house 20 a Center: (-43.50, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 21 c Center: (-35.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 22 e Center: (-27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 23 o Center: (-10.80, 2.94, -28.67), Extents: (3.18, 2.84, 2.57)
+  town house 24 c Center: (-3.60, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 25 a Center: (3.60, 2.18, -28.67), Extents: (3.25, 2.08, 2.57)
+  town house 26 c Center: (10.80, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 27 e Center: (27.50, 2.94, -28.67), Extents: (3.25, 2.84, 2.57)
+  town house 28 o Center: (35.50, 2.94, -28.67), Extents: (3.17, 2.84, 2.57)
+  town house 29 c Center: (43.50, 2.68, -28.67), Extents: (3.22, 2.58, 2.57)
+  town house 30 a Center: (-43.50, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 31 c Center: (-35.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 32 e Center: (-27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 33 o Center: (-10.80, 2.94, 37.97), Extents: (3.18, 2.84, 2.57)
+  town house 34 c Center: (-3.60, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 35 a Center: (3.60, 2.18, 37.97), Extents: (3.25, 2.08, 2.57)
+  town house 36 c Center: (10.80, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+  town house 37 e Center: (27.50, 2.94, 37.97), Extents: (3.25, 2.84, 2.57)
+  town house 38 o Center: (35.50, 2.94, 37.97), Extents: (3.17, 2.84, 2.57)
+  town house 39 c Center: (43.50, 2.68, 37.97), Extents: (3.22, 2.58, 2.57)
+Bayan civic draft:6m texture repeat with1.5m slabs; connected four-street grid;40 retained chunky houses in frontage/back/corner blocks;2 recessed vendor pockets. Whole-place critique remains open.
+BayanPlaza: ground paths 32/37 samples, aspin-cream and pusakal-ginger
+BayanPlaza: 5 ambient animals, private cosmetic visits, no gameplay colliders
+BayanPlaza: 262 renderers receive explicit surface roles.
+  44 | authored part roles colormap
+  8 | family 1 civic_lime_plaster
+  1 | family 1 env_municipal_hall_body
+  3 | family 11 Dark vinyl seats
+  1 | family 11 Rubber
+  1 | family 11 Rubber.001
+  3 | family 11 Tyres and grips
+  1 | family 12 town_asphalt
+  2 | family 13 civic_approach
+  1 | family 13 civic_paving
+  5 | family 13 terminal_paving
+  15 | family 14 tree_bark
+  8 | family 15 colormap
+  4 | family 15 leaf
+  4 | family 15 leaf_dark
+  15 | family 15 tree_foliage
+  15 | family 15 tree_new_growth
+  15 | family 15 tree_shaded_foliage
+  2 | family 16 Cream goods
+  2 | family 16 Oxblood goods
+  1 | family 16 Sauce bottle
+  2 | family 17 town_yards
+  2 | family 2 Warm concrete
+  4 | family 2 Warm concrete.001
+  4 | family 2 concrete
+  4 | family 2 coping
+  1 | family 2 env_bell_tower_band
+  1 | family 2 env_municipal_hall_band
+  1 | family 2 env_municipal_hall_plinth
+  1 | family 2 step
+  25 | family 3 civic_window_stone
+  1 | family 3 env_bell_tower_stone
+  1 | family 3 env_church_facade_stone
+  42 | family 3 plaza_limestone
+  1 | family 3 stone
+  2 | family 4 Warm aged timber
+  4 | family 4 Warm aged timber.001
+  1 | family 4 Worn timber
+  1 | family 4 Worn timber.001
+  2 | family 4 board
+  68 | family 4 civic_window_timber
+  17 | family 4 colormap
+  1 | family 4 env_church_facade_timber
+  6 | family 4 terminal_shade_timber
+  4 | family 5 Galvanized shade roof.001
+  1 | family 5 env_bell_tower_roof
+  1 | family 5 env_municipal_hall_roof
+  1 | family 5 terminal_shade_roof
+  1 | family 6 civic_roof_clay
+  3 | family 7 Headlamp lens
+  3 | family 7 Smoked windscreen
+  1 | family 7 env_bell_tower_window
+  1 | family 7 env_municipal_hall_window
+  3 | family 8 Brushed sheet metal
+  1 | family 8 Dark cookware
+  2 | family 8 Dull painted steel
+  4 | family 8 Dull painted steel.001
+  1 | family 8 Dull stainless steel
+  1 | family 8 Dull stainless steel.001
+  1 | family 8 Muted oxblood cart
+  3 | family 8 Terminal oxblood paint
+  2 | family 8 edge
+  2 | family 8 hoop_bracket
+  2 | family 8 post
+  2 | family 8 ring
+  1 | family 9 Green shade
+  1 | family 9 Green shade.001
+  1 | family 9 Plum shade
+  1 | family 9 Plum shade.001
+  3 | family 9 Warm canopy
+  1 | family 9 Warm cloth
+  1 | family 9 Warm cloth.001
+  2 | retained authored ground marking/contact plaza_joint
+  11 | retained readable artwork/marking Mat_chalk
+  1 | retained readable artwork/marking civic_crossing
+  1 | retained readable artwork/marking plaque
+  4 | retained readable artwork/marking terminal_bay_marks
+  1 | retained recess shadow env_church_facade_dark
+  1 | retained stylized food form/palette Dark sauce
+  1 | retained stylized food form/palette Fishballs and bread
+  1 | retained stylized food form/palette Fried golden snacks
+  1 | retained stylized food form/palette Fried golden snacks.001
+  1 | retained stylized food form/palette Watermelon flesh.001
+  1 | retained stylized food form/palette Watermelon rind.001
+  1 | retained transparent/procedural Display glass.001
+BayanPlaza: final-pass renderers=41
+BayanPlaza run1-to-run2: 8 changed rows; 3777 compared rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: ground paths 18/27 samples, aspin-patched and pusakal-tuxedo
+IlalimNgTulay: 5 ambient animals, private cosmetic visits, no gameplay colliders
+IlalimNgTulay: 1335 renderers receive explicit surface roles.
+  22 | authored part roles colormap
+  69 | authored part roles colormap_tumbang-lrt
+  144 | authored part roles colormap_tumbang-warm-a
+  73 | authored part roles colormap_tumbang-warm-b
+  69 | authored part roles colormap_tumbang-warm-c
+  28 | authored part roles utility_original_aged_0
+  22 | family 1 shop_plaster_0
+  23 | family 1 shop_plaster_1
+  18 | family 1 shop_plaster_2
+  1 | family 11 Ilalim_CordCoil_0
+  1 | family 11 Ilalim_CordCoil_1
+  1 | family 11 Ilalim_CordCoil_2
+  1 | family 11 Ilalim_Cord_-1
+  1 | family 11 Ilalim_Cord_0
+  1 | family 11 Ilalim_Cord_1
+  1 | family 11 Rubber
+  1 | family 11 Rubber.001
+  1 | family 11 Rubber.002
+  4 | family 11 rubber
+  2 | family 11 service_cord
+  2 | family 11 stock_oxblood
+  1 | family 11 utility_cable
+  1 | family 12 AsphaltRoad_IlalimNgTulay
+  1 | family 12 Asphalt_BackgroundCrossroad_-1_-1
+  1 | family 12 Asphalt_BackgroundCrossroad_-1_1
+  1 | family 12 Asphalt_BackgroundCrossroad_1_-1
+  1 | family 12 Asphalt_BackgroundCrossroad_1_1
+  1 | family 12 Ilalim_BackgroundCrossroad_-1_-1
+  1 | family 12 Ilalim_BackgroundCrossroad_-1_1
+  1 | family 12 Ilalim_BackgroundCrossroad_1_-1
+  1 | family 12 Ilalim_BackgroundCrossroad_1_1
+  1 | family 12 Ilalim_FarGroundPlate
+  1 | family 12 Ilalim_ManholeCollar_0
+  1 | family 12 Ilalim_ManholeCollar_1
+  1 | family 12 Ilalim_ManholeCollar_2
+  1 | family 12 Ilalim_ManholeCollar_3
+  1 | family 12 Ilalim_ManholeCollar_4
+  1 | family 12 Ilalim_ManholeCollar_5
+  1 | family 12 Ilalim_RoadContinuationNorth
+  1 | family 12 Ilalim_RoadContinuationSouth
+  168 | family 12 asphalt
+  1 | family 13 Ilalim_ApronEast
+  1 | family 13 Ilalim_ApronWest
+  1 | family 13 Ilalim_BackgroundSidewalk_-1_-1
+  1 | family 13 Ilalim_BackgroundSidewalk_-1_1
+  1 | family 13 Ilalim_BackgroundSidewalk_1_-1
+  1 | family 13 Ilalim_BackgroundSidewalk_1_1
+  4 | family 13 pavement_extension
+  11 | family 13 shop_floor
+  1 | family 14 tree_bark
+  2 | family 15 leaf
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+  1 | family 16 Ilalim_CordTape
+  1 | family 16 Ilalim_ExtensionBlock
+  1 | family 16 Sauce bottle
+  1 | family 16 Sauce bottle.002
+  2 | family 16 piso_bezel
+  2 | family 16 piso_chair_red
+  2 | family 16 piso_trim
+  4 | family 16 plastic
+  1 | family 16 stock_paper
+  2 | family 17 soil
+  29 | family 18 stock_green
+  28 | family 18 stock_oxblood
+  30 | family 18 stock_paper
+  1 | family 2 Ilalim_RoadSubBase
+  32 | family 2 bridge_bearing
+  14 | family 2 bridge_cast_concrete
+  24 | family 2 colormap_tumbang-warm-a
+  147 | family 2 concrete
+  33 | family 2 shop_concrete
+  1 | family 4 Worn timber
+  1 | family 4 Worn timber.001
+  1 | family 4 Worn timber.003
+  2 | family 4 piso_wood
+  8 | family 4 timber
+  10 | family 5 roof_laundry_steel
+  9 | family 7 stock_screen
+  1 | family 8 Dark cookware
+  1 | family 8 Dark cookware.002
+  1 | family 8 Dark cookware.003
+  1 | family 8 Dull stainless steel
+  1 | family 8 Dull stainless steel.001
+  1 | family 8 Dull stainless steel.002
+  1 | family 8 Dull stainless steel.003
+  11 | family 8 Ilalim_Arm_0
+  11 | family 8 Ilalim_Arm_1
+  11 | family 8 Ilalim_Arm_2
+  1 | family 8 Ilalim_BacklotPipeTrestle_0_-19
+  1 | family 8 Ilalim_BacklotPipeTrestle_0_-25
+  1 | family 8 Ilalim_BacklotPipeTrestle_1_-10
+  1 | family 8 Ilalim_BacklotPipeTrestle_1_-16
+  1 | family 8 Ilalim_BacklotPipeTrestle_2_-1
+  1 | family 8 Ilalim_BacklotPipeTrestle_2_-7
+  1 | family 8 Ilalim_BacklotPipeTrestle_3_2
+  1 | family 8 Ilalim_BacklotPipeTrestle_3_8
+  1 | family 8 Ilalim_BacklotPipeTrestle_4_11
+  1 | family 8 Ilalim_BacklotPipeTrestle_4_17
+  1 | family 8 Ilalim_BacklotPipeTrestle_5_20
+  1 | family 8 Ilalim_BacklotPipeTrestle_5_26
+  1 | family 8 Ilalim_GutterGrate_E_0
+  1 | family 8 Ilalim_GutterGrate_E_1
+  1 | family 8 Ilalim_GutterGrate_E_2
+  1 | family 8 Ilalim_GutterGrate_E_3
+  1 | family 8 Ilalim_GutterGrate_E_4
+  1 | family 8 Ilalim_GutterGrate_W_0
+  1 | family 8 Ilalim_GutterGrate_W_1
+  1 | family 8 Ilalim_GutterGrate_W_2
+  1 | family 8 Ilalim_GutterGrate_W_3
+  1 | family 8 Ilalim_GutterGrate_W_4
+  1 | family 8 Ilalim_HoardingMast_0_-2.3
+  1 | family 8 Ilalim_HoardingMast_0_2.3
+  1 | family 8 Ilalim_HoardingMast_1_-2.5
+  1 | family 8 Ilalim_HoardingMast_1_2.5
+  1 | family 8 Ilalim_HoardingMast_2_-2.0
+  1 | family 8 Ilalim_HoardingMast_2_2.0
+  1 | family 8 Ilalim_HoardingMast_3_-2.3
+  1 | family 8 Ilalim_HoardingMast_3_2.3
+  1 | family 8 Ilalim_HoardingMast_4_-2.1
+  1 | family 8 Ilalim_HoardingMast_4_2.1
+  1 | family 8 Ilalim_HoardingMast_5_-2.0
+  1 | family 8 Ilalim_HoardingMast_5_2.0
+  1 | family 8 Ilalim_ManholeCover_0
+  1 | family 8 Ilalim_ManholeCover_1
+  1 | family 8 Ilalim_ManholeCover_2
+  1 | family 8 Ilalim_ManholeCover_3
+  1 | family 8 Ilalim_ManholeCover_4
+  1 | family 8 Ilalim_ManholeCover_5
+  1 | family 8 Ilalim_RoofAerial_E0
+  1 | family 8 Ilalim_RoofAerial_E1
+  1 | family 8 Ilalim_RoofAerial_E2
+  1 | family 8 Ilalim_RoofAerial_E3
+  1 | family 8 Ilalim_RoofAerial_E4
+  1 | family 8 Ilalim_RoofAerial_E5
+  1 | family 8 Ilalim_RoofAerial_W0
+  1 | family 8 Ilalim_RoofAerial_W1
+  1 | family 8 Ilalim_RoofAerial_W2
+  1 | family 8 Ilalim_RoofAerial_W3
+  1 | family 8 Ilalim_RoofAerial_W4
+  1 | family 8 Muted oxblood cart
+  1 | family 8 Muted oxblood cart.002
+  1 | family 8 Muted oxblood cart.003
+  3 | family 8 band
+  8 | family 8 bridge_drain
+  36 | family 8 colormap
+  10 | family 8 colormap_tumbang-lrt
+  7 | family 8 colormap_tumbang-warm-a
+  3 | family 8 colormap_tumbang-warm-b
+  2 | family 8 piso_coinbox
+  4 | family 8 rim
+  2 | family 8 rust
+  1 | family 8 service_metal
+  75 | family 8 shop_dark_frame
+  1 | family 8 sign_backing_Bakery
+  1 | family 8 sign_backing_Barber
+  3 | family 8 sign_backing_Clothing
+  1 | family 8 sign_backing_Hardware
+  3 | family 8 sign_backing_Laundry
+  1 | family 8 sign_backing_Load
+  1 | family 8 sign_backing_PC_Express
+  1 | family 8 sign_backing_Pares
+  1 | family 8 sign_backing_Pisonet
+  1 | family 8 sign_backing_Print
+  1 | family 8 sign_backing_Repair
+  13 | family 8 stock_metal
+  3 | family 8 stock_paper
+  2 | family 8 tin
+  1 | family 9 Green shade
+  1 | family 9 Green shade.001
+  1 | family 9 Green shade.002
+  1 | family 9 Green shade.003
+  1 | family 9 Plum shade
+  1 | family 9 Plum shade.001
+  1 | family 9 Plum shade.002
+  1 | family 9 Plum shade.003
+  1 | family 9 Warm cloth
+  1 | family 9 Warm cloth.001
+  1 | family 9 Warm cloth.002
+  1 | family 9 Warm cloth.003
+  5 | family 9 cloth
+  5 | family 9 cloth_grey
+  5 | family 9 cloth_mint
+  5 | family 9 cloth_pale
+  5 | family 9 stock_green
+  6 | family 9 stock_oxblood
+  4 | family 9 stock_paper
+  1 | retained authored ground marking/contact Ilalim_East
+  1 | retained authored ground marking/contact Ilalim_North
+  1 | retained authored ground marking/contact Ilalim_OilStain_0
+  1 | retained authored ground marking/contact Ilalim_OilStain_1
+  1 | retained authored ground marking/contact Ilalim_OilStain_2
+  1 | retained authored ground marking/contact Ilalim_Skid_N_0
+  1 | retained authored ground marking/contact Ilalim_Skid_N_1
+  1 | retained authored ground marking/contact Ilalim_Skid_N_2
+  1 | retained authored ground marking/contact Ilalim_Skid_S_0
+  1 | retained authored ground marking/contact Ilalim_Skid_S_1
+  1 | retained authored ground marking/contact Ilalim_Skid_S_2
+  1 | retained authored ground marking/contact Ilalim_South
+  1 | retained authored ground marking/contact Ilalim_West
+  1 | retained gameplay pad presentation Ilalim_PadBase
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_0
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_1
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_10
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_11
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_12
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_13
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_14
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_15
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_16
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_2
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_3
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_4
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_5
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_6
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_7
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_8
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_9
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_0
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_1
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_10
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_11
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_12
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_13
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_14
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_15
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_16
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_2
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_3
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_4
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_5
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_6
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_7
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_8
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_9
+  1 | retained readable artwork/marking Ilalim_RgbBar_0
+  1 | retained readable artwork/marking Ilalim_RgbBar_1
+  1 | retained readable artwork/marking Ilalim_RgbBar_2
+  1 | retained readable artwork/marking Ilalim_ThrowLineNorth
+  1 | retained readable artwork/marking Ilalim_ThrowLineSouth
+  1 | retained readable artwork/marking mark
+  2 | retained readable artwork/marking piso_led_timer
+  2 | retained readable artwork/marking piso_screen
+  96 | retained readable artwork/marking score
+  1 | retained readable artwork/marking sign_face_Bakery
+  1 | retained readable artwork/marking sign_face_Barber
+  1 | retained readable artwork/marking sign_face_Clothing
+  1 | retained readable artwork/marking sign_face_Hardware
+  1 | retained readable artwork/marking sign_face_Laundry
+  1 | retained readable artwork/marking sign_face_Load
+  1 | retained readable artwork/marking sign_face_PC_Express
+  1 | retained readable artwork/marking sign_face_Pares
+  1 | retained readable artwork/marking sign_face_Pisonet
+  1 | retained readable artwork/marking sign_face_Print
+  1 | retained readable artwork/marking sign_face_Repair
+  2 | retained readable artwork/marking wall_paint_Bawal
+  1 | retained readable artwork/marking wall_paint_laro
+  30 | retained readable artwork/marking worn_crossing
+  1 | retained stylized food form/palette Dark sauce
+  1 | retained stylized food form/palette Fishballs and bread
+  1 | retained stylized food form/palette Fried golden snacks
+  1 | retained stylized food form/palette Fried golden snacks.001
+  1 | retained stylized food form/palette Watermelon flesh.001
+  1 | retained stylized food form/palette Watermelon rind.001
+  18 | retained stylized food form/palette stock_paper
+  4 | retained supplied jeepney livery/finish blinn1SG_finish
+  1 | retained supplied jeepney livery/finish blinn2SG_finish
+  1 | retained supplied jeepney livery/finish blinn3SG_finish
+  1 | retained supplied jeepney livery/finish blinn4SG_finish
+  1 | retained supplied jeepney livery/finish blinn6SG_finish
+  1 | retained supplied jeepney livery/finish blinn7SG_finish
+  1 | retained supplied jeepney livery/finish blinn8SG_finish
+  1 | retained supplied jeepney livery/finish initialShadingGroup_finish
+  1 | retained supplied jeepney livery/finish lambert11SG_finish
+  1 | retained supplied jeepney livery/finish lambert12SG_finish
+  1 | retained supplied jeepney livery/finish lambert14SG_finish
+  1 | retained supplied jeepney livery/finish lambert7SG_finish
+  1 | retained supplied jeepney livery/finish lambert8SG_finish
+  1 | retained supplied jeepney livery/finish maya_sofa_skin_shadermaya_sofa_skin_shaderSG
+  1 | retained supplied jeepney livery/finish mi_car_paint_phen_x2SG_finish
+  1 | retained supplied jeepney livery/finish mia_material_x3SG_finish
+  1 | retained supplied jeepney livery/finish silver_shader4Silver_SG_finish
+  1 | retained transparent/procedural Display glass.001
+  11 | retained transparent/procedural shop_glazing
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay baseline-to-run1: 18 changed rows
+  finish renderers=54
+IlalimNgTulay: replaced 1 cone/conifer trees; 0 reachable trunks have collision.
+IlalimNgTulay: grouped 18 non-solid plants/tyres/edge pieces; 4 excess pieces retained inactive.
+  utility poles: 28 retained at absX9.80 with mesh collision; conductor endpoints regenerated afterward.
+  vendor FishballCart bounds=Center: (-10.44, 1.50, -11.34), Extents: (1.13, 1.29, 1.25)
+  vendor FruitCart bounds=Center: (-10.44, 1.50, 11.96), Extents: (1.13, 1.29, 1.25)
+  vendor ClothesAndCases bounds=Center: (10.42, 1.50, -15.36), Extents: (1.13, 1.29, 1.27)
+  vendor ParesCounter bounds=Center: (10.44, 1.50, -3.46), Extents: (1.13, 1.29, 1.25)
+Ilalim place draft:11 retained building bodies with substantial recessed frontages;2 indoor pisonets;4 original street vendors; new sign faces; old crossing ladders and former-hazard decoration retired. Whole-place critique remains open.
+Ilalim: 78 connected conductor spans,44mm visual diameter, no oversized tube bundles.
+IlalimNgTulay: ground paths 18/27 samples, aspin-patched and pusakal-tuxedo
+IlalimNgTulay: 5 ambient animals, private cosmetic visits, no gameplay colliders
+IlalimNgTulay: 1335 renderers receive explicit surface roles.
+  22 | authored part roles colormap
+  69 | authored part roles colormap_tumbang-lrt
+  144 | authored part roles colormap_tumbang-warm-a
+  73 | authored part roles colormap_tumbang-warm-b
+  69 | authored part roles colormap_tumbang-warm-c
+  28 | authored part roles utility_original_aged_0
+  22 | family 1 shop_plaster_0
+  23 | family 1 shop_plaster_1
+  18 | family 1 shop_plaster_2
+  1 | family 11 Ilalim_CordCoil_0
+  1 | family 11 Ilalim_CordCoil_1
+  1 | family 11 Ilalim_CordCoil_2
+  1 | family 11 Ilalim_Cord_-1
+  1 | family 11 Ilalim_Cord_0
+  1 | family 11 Ilalim_Cord_1
+  1 | family 11 Rubber
+  1 | family 11 Rubber.001
+  1 | family 11 Rubber.002
+  4 | family 11 rubber
+  2 | family 11 service_cord
+  2 | family 11 stock_oxblood
+  1 | family 11 utility_cable
+  1 | family 12 AsphaltRoad_IlalimNgTulay
+  1 | family 12 Asphalt_BackgroundCrossroad_-1_-1
+  1 | family 12 Asphalt_BackgroundCrossroad_-1_1
+  1 | family 12 Asphalt_BackgroundCrossroad_1_-1
+  1 | family 12 Asphalt_BackgroundCrossroad_1_1
+  1 | family 12 Ilalim_BackgroundCrossroad_-1_-1
+  1 | family 12 Ilalim_BackgroundCrossroad_-1_1
+  1 | family 12 Ilalim_BackgroundCrossroad_1_-1
+  1 | family 12 Ilalim_BackgroundCrossroad_1_1
+  1 | family 12 Ilalim_FarGroundPlate
+  1 | family 12 Ilalim_ManholeCollar_0
+  1 | family 12 Ilalim_ManholeCollar_1
+  1 | family 12 Ilalim_ManholeCollar_2
+  1 | family 12 Ilalim_ManholeCollar_3
+  1 | family 12 Ilalim_ManholeCollar_4
+  1 | family 12 Ilalim_ManholeCollar_5
+  1 | family 12 Ilalim_RoadContinuationNorth
+  1 | family 12 Ilalim_RoadContinuationSouth
+  168 | family 12 asphalt
+  1 | family 13 Ilalim_ApronEast
+  1 | family 13 Ilalim_ApronWest
+  1 | family 13 Ilalim_BackgroundSidewalk_-1_-1
+  1 | family 13 Ilalim_BackgroundSidewalk_-1_1
+  1 | family 13 Ilalim_BackgroundSidewalk_1_-1
+  1 | family 13 Ilalim_BackgroundSidewalk_1_1
+  4 | family 13 pavement_extension
+  11 | family 13 shop_floor
+  1 | family 14 tree_bark
+  2 | family 15 leaf
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+  1 | family 16 Ilalim_CordTape
+  1 | family 16 Ilalim_ExtensionBlock
+  1 | family 16 Sauce bottle
+  1 | family 16 Sauce bottle.002
+  2 | family 16 piso_bezel
+  2 | family 16 piso_chair_red
+  2 | family 16 piso_trim
+  4 | family 16 plastic
+  1 | family 16 stock_paper
+  2 | family 17 soil
+  29 | family 18 stock_green
+  28 | family 18 stock_oxblood
+  30 | family 18 stock_paper
+  1 | family 2 Ilalim_RoadSubBase
+  32 | family 2 bridge_bearing
+  14 | family 2 bridge_cast_concrete
+  24 | family 2 colormap_tumbang-warm-a
+  147 | family 2 concrete
+  33 | family 2 shop_concrete
+  1 | family 4 Worn timber
+  1 | family 4 Worn timber.001
+  1 | family 4 Worn timber.003
+  2 | family 4 piso_wood
+  8 | family 4 timber
+  10 | family 5 roof_laundry_steel
+  9 | family 7 stock_screen
+  1 | family 8 Dark cookware
+  1 | family 8 Dark cookware.002
+  1 | family 8 Dark cookware.003
+  1 | family 8 Dull stainless steel
+  1 | family 8 Dull stainless steel.001
+  1 | family 8 Dull stainless steel.002
+  1 | family 8 Dull stainless steel.003
+  11 | family 8 Ilalim_Arm_0
+  11 | family 8 Ilalim_Arm_1
+  11 | family 8 Ilalim_Arm_2
+  1 | family 8 Ilalim_BacklotPipeTrestle_0_-19
+  1 | family 8 Ilalim_BacklotPipeTrestle_0_-25
+  1 | family 8 Ilalim_BacklotPipeTrestle_1_-10
+  1 | family 8 Ilalim_BacklotPipeTrestle_1_-16
+  1 | family 8 Ilalim_BacklotPipeTrestle_2_-1
+  1 | family 8 Ilalim_BacklotPipeTrestle_2_-7
+  1 | family 8 Ilalim_BacklotPipeTrestle_3_2
+  1 | family 8 Ilalim_BacklotPipeTrestle_3_8
+  1 | family 8 Ilalim_BacklotPipeTrestle_4_11
+  1 | family 8 Ilalim_BacklotPipeTrestle_4_17
+  1 | family 8 Ilalim_BacklotPipeTrestle_5_20
+  1 | family 8 Ilalim_BacklotPipeTrestle_5_26
+  1 | family 8 Ilalim_GutterGrate_E_0
+  1 | family 8 Ilalim_GutterGrate_E_1
+  1 | family 8 Ilalim_GutterGrate_E_2
+  1 | family 8 Ilalim_GutterGrate_E_3
+  1 | family 8 Ilalim_GutterGrate_E_4
+  1 | family 8 Ilalim_GutterGrate_W_0
+  1 | family 8 Ilalim_GutterGrate_W_1
+  1 | family 8 Ilalim_GutterGrate_W_2
+  1 | family 8 Ilalim_GutterGrate_W_3
+  1 | family 8 Ilalim_GutterGrate_W_4
+  1 | family 8 Ilalim_HoardingMast_0_-2.3
+  1 | family 8 Ilalim_HoardingMast_0_2.3
+  1 | family 8 Ilalim_HoardingMast_1_-2.5
+  1 | family 8 Ilalim_HoardingMast_1_2.5
+  1 | family 8 Ilalim_HoardingMast_2_-2.0
+  1 | family 8 Ilalim_HoardingMast_2_2.0
+  1 | family 8 Ilalim_HoardingMast_3_-2.3
+  1 | family 8 Ilalim_HoardingMast_3_2.3
+  1 | family 8 Ilalim_HoardingMast_4_-2.1
+  1 | family 8 Ilalim_HoardingMast_4_2.1
+  1 | family 8 Ilalim_HoardingMast_5_-2.0
+  1 | family 8 Ilalim_HoardingMast_5_2.0
+  1 | family 8 Ilalim_ManholeCover_0
+  1 | family 8 Ilalim_ManholeCover_1
+  1 | family 8 Ilalim_ManholeCover_2
+  1 | family 8 Ilalim_ManholeCover_3
+  1 | family 8 Ilalim_ManholeCover_4
+  1 | family 8 Ilalim_ManholeCover_5
+  1 | family 8 Ilalim_RoofAerial_E0
+  1 | family 8 Ilalim_RoofAerial_E1
+  1 | family 8 Ilalim_RoofAerial_E2
+  1 | family 8 Ilalim_RoofAerial_E3
+  1 | family 8 Ilalim_RoofAerial_E4
+  1 | family 8 Ilalim_RoofAerial_E5
+  1 | family 8 Ilalim_RoofAerial_W0
+  1 | family 8 Ilalim_RoofAerial_W1
+  1 | family 8 Ilalim_RoofAerial_W2
+  1 | family 8 Ilalim_RoofAerial_W3
+  1 | family 8 Ilalim_RoofAerial_W4
+  1 | family 8 Muted oxblood cart
+  1 | family 8 Muted oxblood cart.002
+  1 | family 8 Muted oxblood cart.003
+  3 | family 8 band
+  8 | family 8 bridge_drain
+  36 | family 8 colormap
+  10 | family 8 colormap_tumbang-lrt
+  7 | family 8 colormap_tumbang-warm-a
+  3 | family 8 colormap_tumbang-warm-b
+  2 | family 8 piso_coinbox
+  4 | family 8 rim
+  2 | family 8 rust
+  1 | family 8 service_metal
+  75 | family 8 shop_dark_frame
+  1 | family 8 sign_backing_Bakery
+  1 | family 8 sign_backing_Barber
+  3 | family 8 sign_backing_Clothing
+  1 | family 8 sign_backing_Hardware
+  3 | family 8 sign_backing_Laundry
+  1 | family 8 sign_backing_Load
+  1 | family 8 sign_backing_PC_Express
+  1 | family 8 sign_backing_Pares
+  1 | family 8 sign_backing_Pisonet
+  1 | family 8 sign_backing_Print
+  1 | family 8 sign_backing_Repair
+  13 | family 8 stock_metal
+  3 | family 8 stock_paper
+  2 | family 8 tin
+  1 | family 9 Green shade
+  1 | family 9 Green shade.001
+  1 | family 9 Green shade.002
+  1 | family 9 Green shade.003
+  1 | family 9 Plum shade
+  1 | family 9 Plum shade.001
+  1 | family 9 Plum shade.002
+  1 | family 9 Plum shade.003
+  1 | family 9 Warm cloth
+  1 | family 9 Warm cloth.001
+  1 | family 9 Warm cloth.002
+  1 | family 9 Warm cloth.003
+  5 | family 9 cloth
+  5 | family 9 cloth_grey
+  5 | family 9 cloth_mint
+  5 | family 9 cloth_pale
+  5 | family 9 stock_green
+  6 | family 9 stock_oxblood
+  4 | family 9 stock_paper
+  1 | retained authored ground marking/contact Ilalim_East
+  1 | retained authored ground marking/contact Ilalim_North
+  1 | retained authored ground marking/contact Ilalim_OilStain_0
+  1 | retained authored ground marking/contact Ilalim_OilStain_1
+  1 | retained authored ground marking/contact Ilalim_OilStain_2
+  1 | retained authored ground marking/contact Ilalim_Skid_N_0
+  1 | retained authored ground marking/contact Ilalim_Skid_N_1
+  1 | retained authored ground marking/contact Ilalim_Skid_N_2
+  1 | retained authored ground marking/contact Ilalim_Skid_S_0
+  1 | retained authored ground marking/contact Ilalim_Skid_S_1
+  1 | retained authored ground marking/contact Ilalim_Skid_S_2
+  1 | retained authored ground marking/contact Ilalim_South
+  1 | retained authored ground marking/contact Ilalim_West
+  1 | retained gameplay pad presentation Ilalim_PadBase
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_0
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_1
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_10
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_11
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_12
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_13
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_14
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_15
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_16
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_2
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_3
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_4
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_5
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_6
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_7
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_8
+  1 | retained readable artwork/marking Ilalim_LaneDash_E_9
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_0
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_1
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_10
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_11
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_12
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_13
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_14
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_15
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_16
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_2
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_3
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_4
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_5
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_6
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_7
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_8
+  1 | retained readable artwork/marking Ilalim_LaneDash_W_9
+  1 | retained readable artwork/marking Ilalim_RgbBar_0
+  1 | retained readable artwork/marking Ilalim_RgbBar_1
+  1 | retained readable artwork/marking Ilalim_RgbBar_2
+  1 | retained readable artwork/marking Ilalim_ThrowLineNorth
+  1 | retained readable artwork/marking Ilalim_ThrowLineSouth
+  1 | retained readable artwork/marking mark
+  2 | retained readable artwork/marking piso_led_timer
+  2 | retained readable artwork/marking piso_screen
+  96 | retained readable artwork/marking score
+  1 | retained readable artwork/marking sign_face_Bakery
+  1 | retained readable artwork/marking sign_face_Barber
+  1 | retained readable artwork/marking sign_face_Clothing
+  1 | retained readable artwork/marking sign_face_Hardware
+  1 | retained readable artwork/marking sign_face_Laundry
+  1 | retained readable artwork/marking sign_face_Load
+  1 | retained readable artwork/marking sign_face_PC_Express
+  1 | retained readable artwork/marking sign_face_Pares
+  1 | retained readable artwork/marking sign_face_Pisonet
+  1 | retained readable artwork/marking sign_face_Print
+  1 | retained readable artwork/marking sign_face_Repair
+  2 | retained readable artwork/marking wall_paint_Bawal
+  1 | retained readable artwork/marking wall_paint_laro
+  30 | retained readable artwork/marking worn_crossing
+  1 | retained stylized food form/palette Dark sauce
+  1 | retained stylized food form/palette Fishballs and bread
+  1 | retained stylized food form/palette Fried golden snacks
+  1 | retained stylized food form/palette Fried golden snacks.001
+  1 | retained stylized food form/palette Watermelon flesh.001
+  1 | retained stylized food form/palette Watermelon rind.001
+  18 | retained stylized food form/palette stock_paper
+  4 | retained supplied jeepney livery/finish blinn1SG_finish
+  1 | retained supplied jeepney livery/finish blinn2SG_finish
+  1 | retained supplied jeepney livery/finish blinn3SG_finish
+  1 | retained supplied jeepney livery/finish blinn4SG_finish
+  1 | retained supplied jeepney livery/finish blinn6SG_finish
+  1 | retained supplied jeepney livery/finish blinn7SG_finish
+  1 | retained supplied jeepney livery/finish blinn8SG_finish
+  1 | retained supplied jeepney livery/finish initialShadingGroup_finish
+  1 | retained supplied jeepney livery/finish lambert11SG_finish
+  1 | retained supplied jeepney livery/finish lambert12SG_finish
+  1 | retained supplied jeepney livery/finish lambert14SG_finish
+  1 | retained supplied jeepney livery/finish lambert7SG_finish
+  1 | retained supplied jeepney livery/finish lambert8SG_finish
+  1 | retained supplied jeepney livery/finish maya_sofa_skin_shadermaya_sofa_skin_shaderSG
+  1 | retained supplied jeepney livery/finish mi_car_paint_phen_x2SG_finish
+  1 | retained supplied jeepney livery/finish mia_material_x3SG_finish
+  1 | retained supplied jeepney livery/finish silver_shader4Silver_SG_finish
+  1 | retained transparent/procedural Display glass.001
+  11 | retained transparent/procedural shop_glazing
+IlalimNgTulay: final-pass renderers=2
+IlalimNgTulay run1-to-run2: 0 changed rows; 14352 compared rows
+SEMANTIC REPEATABILITY FAIL
