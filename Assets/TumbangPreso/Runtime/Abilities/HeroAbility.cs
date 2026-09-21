@@ -191,17 +191,20 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private bool _reservedForIntroduction;
         public bool ReservedForIntroduction => _reservedForIntroduction;
+        protected bool HadSharedIntroduction { get; private set; }
         public bool IsReady => !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
         internal void ReserveForIntroduction()
         {
             if (_reservedForIntroduction) return;
             _reservedForIntroduction = true;
+            HadSharedIntroduction = false;
             if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
             else CooldownRemaining = Cooldown;
         }
         internal void BeginReservedActivation(AbilityContext context)
         {
             if (!_reservedForIntroduction) return;
+            HadSharedIntroduction = true;
             // Invoke the real override only now. Phaister's override creates the
             // ritual, so reserving through Activate would start her warning early.
             Activate(context);
@@ -717,6 +720,7 @@ namespace TumbangPreso.Abilities
             // this is written as a branch rather than relying on that to stay true.
             if (!_reservedForIntroduction)
             {
+                HadSharedIntroduction = false;
                 if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
                 else CooldownRemaining = Cooldown;
             }

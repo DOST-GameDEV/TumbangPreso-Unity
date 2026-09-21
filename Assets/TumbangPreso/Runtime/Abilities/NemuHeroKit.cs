@@ -301,7 +301,7 @@ namespace TumbangPreso.Abilities
                 // with the authoritative ghost/ability clock, even at high latency.
                 if(_field!=null){_field.SetActive(false);UnityEngine.Object.Destroy(_field);}
                 _field=HeroHazards.SpawnKuroUnbound(position,4,remaining,ctx.Motor.PlayerSlot,true,false);
-                _familiar=pet;pet.transform.rotation=_castFacing;pet.RestoreDevour(position,Duration,remaining);
+                _familiar=pet;pet.transform.rotation=_castFacing;pet.RestoreDevour(position,Duration,remaining,true);
                 ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
                 RestoreLiveClock(remaining);
             }
@@ -330,6 +330,11 @@ namespace TumbangPreso.Abilities
                 if(towardsCaster.sqrMagnitude<.01f)towardsCaster=-ctx.Forward;
                 _castFacing=Quaternion.LookRotation(towardsCaster.normalized,Vector3.up);
                 base.Activate(ctx);
+                if(HadSharedIntroduction && _familiar!=null)
+                {
+                    _approaching=false;
+                    _familiar.PreviewRevealedInvocation(_castAnchor,_castFacing);
+                }
             }
 
             public override void Tick(AbilityContext ctx,float dt)
@@ -382,7 +387,7 @@ namespace TumbangPreso.Abilities
                     // first-person view sees the maw instead of a giant's back.
                     companion.ApplyCastAnchor(at+Vector3.up*.9f);
                     companion.transform.rotation=_castFacing;
-                    companion.Devour(Duration);
+                    companion.Devour(Duration,HadSharedIntroduction);
                     // Devour ends the ride without teleporting Nemu. Close its
                     // ability timer too, so a stale E recast cannot act as a ride.
                     ctx.Motor.AbilitySystem?.Kit?.Skill2?.EndEarly(ctx);

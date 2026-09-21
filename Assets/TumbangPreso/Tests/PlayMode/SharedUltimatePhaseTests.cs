@@ -44,8 +44,13 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest, Timeout(90000)]
         public IEnumerator SixDefaultUltimatesReservePresentAndResumeTheirActualAbility()
+            => Profiles(new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska" });
+        [UnityTest, Timeout(30000)]
+        public IEnumerator NemuDoesNotRepeatHisRevealedTransformation()
+            => Profiles(new[] { "nemu" });
+        private static IEnumerator Profiles(string[] heroes)
         {
-            foreach (string hero in new[] { "sean", "phaister", "zack", "nemu", "dante", "cheska" })
+            foreach (string hero in heroes)
             {
                 yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
                 Hud.Instance.ShowReadyPrompt(false); var actor=GameServices.Round.PlayerAt(1); Hero(actor,hero);
@@ -58,6 +63,8 @@ namespace TumbangPreso.PlayTests
                 float readyBy=Time.realtimeSinceStartup+4;
                 while(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)==null&&Time.realtimeSinceStartup<readyBy)yield return null;
                 Assert.IsNotNull(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null),hero+" failed to prewarm its real rig.");
+                var familiar=actor.GetComponent<CharacterVisual>().Companion;
+                float familiarBefore=familiar!=null?familiar.transform.localScale.magnitude:0;
                 var ultimate=actor.AbilitySystem.Kit.Ultimate;
                 Press(actor,Verb.Ultimate);
                 if(ultimate.HoldToAim)
@@ -75,8 +82,16 @@ namespace TumbangPreso.PlayTests
                 while(phase.Active&&Time.realtimeSinceStartup<until)yield return null;
                 Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
                 Assert.IsFalse(ultimate.ReservedForIntroduction);Assert.IsTrue(ultimate.IsWindingUp||ultimate.IsActive);
+                float revealedScale=0;
+                if(hero=="nemu")
+                {
+                    Assert.IsFalse(familiar.IsDevouring,"The revealed visual cannot start the gameplay field early.");
+                    revealedScale=familiar.transform.localScale.magnitude;
+                    Assert.Greater(revealedScale,familiarBefore*6,"Kuro cannot shrink back to idle after the full introduction.");
+                }
                 yield return new WaitForSeconds(ultimate.Windup+.2f);
                 Assert.IsFalse(ultimate.IsWindingUp,hero+" did not reach its real effect.");
+                if(hero=="nemu")Assert.Greater(familiar.transform.localScale.magnitude,revealedScale*.92f,"Live activation repeated the grow-from-small reveal.");
                 if(ultimate.Duration>.3f)Assert.IsTrue(ultimate.IsActive,hero+" lost its real active duration.");
                 yield return GameplayShots.Render(Camera.main,hero+"-live-execution",true,outDir:"Logs/shared-six-v1");
                 actor.Intent.Clear();

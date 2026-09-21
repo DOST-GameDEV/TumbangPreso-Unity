@@ -115,7 +115,7 @@ namespace TumbangPreso.Visual
         {
             if (_devourTotal <= 0) return;
             _devourLeft=Mathf.Max(0,_devourTotal-seconds);
-            float open=Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
+            float open=_devourStartsRevealed?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.65f));
             float grown=Mathf.Lerp(1,DevourScale,open);
             float breath=1+Mathf.Sin(seconds*9f)*.018f*open;
             _devourStretch=_ragePresentation!=null?Vector3.one:
@@ -183,6 +183,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void StopDevouring()
         {
+            ClearInvocationPreview();
             if (!IsDevouring) return;
             _devourLeft=0;
             BeginReturn();
@@ -190,19 +191,36 @@ namespace TumbangPreso.Visual
 
         public Vector3 DevourGround=>_devourGround;
         public float DevourRemaining=>_devourLeft;
-        public void RestoreDevour(Vector3 ground,float duration,float remaining)
+        public void RestoreDevour(Vector3 ground,float duration,float remaining,bool fullyRevealed=false)
         {
             if(!IsDevouring)
             {
                 transform.localScale=_baseScale;RestoreFace();
-                transform.position=ground;Devour(duration);
+                transform.position=ground;Devour(duration,fullyRevealed);
             }
             _devourGround=VfxShapes.GroundPoint(ground);_devourTotal=duration;
             StepTo(Mathf.Clamp(duration-remaining,0,duration));
         }
 
-        public void Devour(float seconds)
+        private bool _devourStartsRevealed, _invocationPreview;
+        public void PreviewRevealedInvocation(Vector3 ground,Quaternion facing)
         {
+            FindFace();
+            if(IsPossessed)EndPossession(teleportNemu:false);
+            _invocationPreview=true;_devourGround=VfxShapes.GroundPoint(ground);
+            transform.SetPositionAndRotation(_devourGround,facing);
+            transform.localScale=_baseScale*DevourScale;
+            PoseDevourFace(1);PoseDevourBody(1);
+        }
+        private void ClearInvocationPreview()
+        {
+            if(!_invocationPreview)return;
+            _invocationPreview=false;transform.localScale=_baseScale;
+            RestoreFace();PoseDevourBody(0);
+        }
+        public void Devour(float seconds,bool fullyRevealed=false)
+        {
+            ClearInvocationPreview();_devourStartsRevealed=fullyRevealed;
             FindFace();_devourStartPosition=transform.position;
             _devourLeft = Mathf.Max(0.5f, seconds);
             _devourTotal = _devourLeft;
@@ -253,6 +271,7 @@ namespace TumbangPreso.Visual
 
             // Prefer the real court under an overhead bridge, just as ground skills do.
             _devourGround=VfxShapes.GroundPoint(transform.position);
+            if(fullyRevealed)StepTo(0);
         }
 
         /// <summary>Where the road is under the maw. Written once, at the cast.</summary>
