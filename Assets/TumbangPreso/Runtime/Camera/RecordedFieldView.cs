@@ -71,7 +71,10 @@ namespace TumbangPreso.CameraSystem
             }
             else throw new ArgumentException("Unsupported recorded field");
             _renderers=_ward!=null?new System.Collections.Generic.List<Renderer>(_ward.VisiblePieces).ToArray():Root.GetComponentsInChildren<Renderer>(true);_lights=Root.GetComponentsInChildren<Light>(true);Visible(false);
-            if(Root.GetComponentsInChildren<Collider>(true).Length!=0)throw new InvalidOperationException("Recorded field has a collider");
+            // The shared pure-visual builders disable primitive colliders immediately
+            // and Unity removes them at this frame's end. Never admit an active one.
+            foreach(var collider in Root.GetComponentsInChildren<Collider>(true))
+                if(collider.enabled)throw new InvalidOperationException("Recorded "+field.Type+" has an active collider: "+collider.name);
             }
             catch{Dispose();throw;}
             finally{UnityEngine.Random.state=random;}

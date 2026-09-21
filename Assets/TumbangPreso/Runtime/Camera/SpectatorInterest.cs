@@ -547,6 +547,7 @@ namespace TumbangPreso.CameraSystem
                         return !interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
                             &&interest.RetrievalShoe.OwnerSlot==interest.Main.PlayerSlot
                             &&Flat(interest.Main.transform.position,interest.RetrievalShoe.transform.position)<7;
+                    if(round.Lata==null||!round.Lata.IsUpright||interest.Secondary==null||!interest.Secondary.CanAct())return false;
                     return interest.Main.IsTaggable() || interest.Age < OutcomeGrace;
 
                 case SpectatorBeat.Ultimate:

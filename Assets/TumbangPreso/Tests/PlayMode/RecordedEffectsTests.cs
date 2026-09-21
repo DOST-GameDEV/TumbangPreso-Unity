@@ -45,13 +45,15 @@ namespace TumbangPreso.PlayTests
             var body=track.Clone(stage.transform);Assert.IsNotNull(body);track.Apply(body,track.Newest);stage.SetActive(true);
             int score=GameServices.Match.ScoreFor(1),hazards=Object.FindObjectsByType<HazardVolume>().Length,actors=Object.FindObjectsByType<CharacterMotor>().Length,pets=Object.FindObjectsByType<GhostPetCompanion>().Length;
             var random=Random.state;
-            foreach(var field in fields)
+            var views=new System.Collections.Generic.List<RecordedFieldView>();
+            try
             {
-                Assert.IsTrue(RecordedSpecialFields.Valid(field));
-                using(var view=new RecordedFieldView(stage.transform,field,field.Type==RecordedSpecialFields.Ward?body.Root:null))
+                foreach(var field in fields)
                 {
+                    Assert.IsTrue(RecordedSpecialFields.Valid(field));
+                    var view=new RecordedFieldView(stage.transform,field,field.Type==RecordedSpecialFields.Ward?body.Root:null);views.Add(view);
                     view.Sample(field,0);view.Visible(true);
-                    Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>(true));
+                    Assert.IsTrue(view.Root.GetComponentsInChildren<Collider>(true).All(c=>!c.enabled),"No recorded collider may enter physics, even in its construction frame");
                     Assert.IsEmpty(view.Root.GetComponentsInChildren<HazardVolume>(true));
                     Assert.AreEqual(hazards,Object.FindObjectsByType<HazardVolume>().Length);
                     Assert.AreEqual(actors,Object.FindObjectsByType<CharacterMotor>().Length);
@@ -59,7 +61,10 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual(score,GameServices.Match.ScoreFor(1));Assert.AreEqual(random,Random.state);
                     Assert.AreEqual(fields.Count,RecordedSpecialFields.Capture().Count,"Render copies cannot enter the live effect capture registry");
                 }
+                yield return null;
+                foreach(var view in views)Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>(true),"Deferred primitive collider removal must finish before playback continues");
             }
+            finally{foreach(var view in views)view.Dispose();}
             Object.Destroy(stage);
         }
         [Test]
