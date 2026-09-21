@@ -26,6 +26,7 @@ namespace TumbangPreso.Diagnostics
             SettingsStore.Current.Fullscreen = false;
             bool lowComfort=Environment.GetCommandLineArgs().Contains("-tp-review-low-comfort");
             bool muted=Environment.GetCommandLineArgs().Contains("-tp-review-muted");
+            bool casterRoster=Environment.GetCommandLineArgs().Contains("-tp-review-caster-roster");
             if(muted){SettingsStore.Current.MasterVolume=0;SettingsStore.Current.Apply();}
             if(lowComfort)
             {
@@ -33,12 +34,13 @@ namespace TumbangPreso.Diagnostics
                 settings.CinematicCameraMotion=false;settings.CameraShake=0;settings.FlashIntensity=0;settings.AnnouncerVolume=0;settings.Apply();
             }
             Screen.SetResolution(lowComfort?1920:1280,lowComfort?1080:720,FullScreenMode.Windowed);
-            foreach (var mode in new[] { GameMode.Classic, GameMode.HeroStrike })
+            foreach (var mode in casterRoster?new[]{GameMode.HeroStrike}:new[] { GameMode.Classic, GameMode.HeroStrike })
             foreach (bool spectatorView in new[] { false, true })
             {
                 string label = mode + (spectatorView ? "-spectator" : "-owner") + "-busy-native";
                 if(lowComfort)label+="-low-comfort";
                 if(muted)label+="-muted";
+                if(casterRoster)label+="-mixed-casters-staged-meters";
                 Stage(label);
                 SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode)); SceneFlow.SelectedMap = SceneFlow.BayanPlaza;
                 yield return Click("StartButton"); yield return Click(mode == GameMode.Classic ? "ClassicButton" : "HeroStrikeButton");
@@ -56,6 +58,18 @@ namespace TumbangPreso.Diagnostics
                     if (brain == null) brain = actor.gameObject.AddComponent<AIController>();
                     brain.enabled = true;
                 }
+                if(casterRoster)
+                {
+                    string[] heroes={"sean","phaister","nemu","cheska"};
+                    foreach(var actor in round.Players)
+                    {
+                        string hero=heroes[actor.PlayerSlot];actor.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,hero);
+                        var art=RosterBook.Load().FindPersonArt(hero);
+                        actor.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                        actor.AbilitySystem.BindHero(hero);actor.AbilitySystem.Kit.AddUltimateCharge(100);
+                    }
+                    yield return new WaitForSecondsRealtime(.6f);
+                }
                 if (spectatorView)
                 {
                     var director = Object.FindAnyObjectByType<SpectatorDirector>();
@@ -69,7 +83,8 @@ namespace TumbangPreso.Diagnostics
                 }
                 var listener = Object.FindObjectsByType<AudioListener>().FirstOrDefault(l => l.enabled && l.gameObject.activeInHierarchy);
                 if (listener == null) throw new InvalidOperationException("No active game listener");
-                var audio = listener.gameObject.AddComponent<ReviewAudioCapture>(); audio.Begin(25);
+                float captureSeconds=casterRoster?30:20;
+                var audio = listener.gameObject.AddComponent<ReviewAudioCapture>(); audio.Begin(8);
                 var events = new StringBuilder("real_seconds,game_seconds,kind,actor,target,x,y,z\n");
                 float began = Time.realtimeSinceStartup; int throws = 0; bool sawTrail = false;
                 var last = round.Players.Select(p => p.transform.position).ToArray(); var travel = new float[4];
@@ -82,8 +97,8 @@ namespace TumbangPreso.Diagnostics
                 MatchFlair.Presented += Event;
                 try
                 {
-                    var movie = StartCoroutine(RecordCatchMotion(label, 20));
-                    while (Time.realtimeSinceStartup - began < 20)
+                    var movie = StartCoroutine(RecordCatchMotion(label, captureSeconds));
+                    while (Time.realtimeSinceStartup - began < captureSeconds)
                     {
                         foreach (var actor in round.Players)
                         {
@@ -101,7 +116,9 @@ namespace TumbangPreso.Diagnostics
                     }
                     yield return movie;
                     string output = Path.Combine(_folder, label);
-                    audio.Save(output); File.WriteAllText(Path.Combine(output, "events.csv"), events.ToString());
+                    audio.Save(output);
+                    if(casterRoster)File.WriteAllText(Path.Combine(output,"scope.txt"),"Staged Sean/Phaister/Nemu/Cheska roster and full starting meters; four normal AI input writers afterward. This is overlap stress, not natural cast-frequency evidence.\n");
+                    File.WriteAllText(Path.Combine(output, "events.csv"), events.ToString());
                     File.WriteAllText(Path.Combine(output, "participants.txt"), string.Join("\n", travel.Select((m, i) => $"P{i+1}: {m:F2} metres")));
                     if (throws < 1 || !sawTrail || travel.Any(m => m < 2)) throw new InvalidOperationException("Busy capture lacked a real release, supported stroke or four active players");
                 }
@@ -110,7 +127,7 @@ namespace TumbangPreso.Diagnostics
                 yield return WaitFor(() => Find("LeaveMatch") != null); yield return Click("LeaveMatch");
                 yield return WaitFor(() => GameObject.Find("OwnerHomeCanvas") != null);
             }
-            Stage("Both modes: native owner and live spectator captures with all four participants and actual game audio");
+            Stage(casterRoster?"Mixed four-caster owner/spectator overlap captures with staged starting meters":"Both modes: native owner and live spectator captures with all four participants and actual game audio");
         }
     }
 }
