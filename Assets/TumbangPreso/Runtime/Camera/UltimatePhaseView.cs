@@ -87,15 +87,19 @@ namespace TumbangPreso.CameraSystem
                 OwnerUiLayout.Fill(_picture.rectTransform); _picture.raycastTarget = false;
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
-                header.anchoredPosition=new Vector2(0,-32); header.sizeDelta=new Vector2(1100,145);
-                var plate = header.gameObject.AddComponent<Image>(); plate.color=new Color(.137f,.114f,.129f,.88f); plate.raycastTarget=false;
-                var title=OwnerUiLayout.Text(header,"UltimateName",_primary?.Actor.AbilitySystem.Kit.Ultimate.Name ?? "ULTIMATE",58,OwnerUiLayout.TypeRole.Display);
-                title.alignment=TextAnchor.MiddleCenter; title.color=OwnerUiTheme.Current.Pale;
+                bool twoRows=commits.Count>2;
+                header.anchoredPosition=new Vector2(0,-32); header.sizeDelta=new Vector2(900,twoRows?152:116);
+                var plate = header.gameObject.AddComponent<CourtPopupGraphic>(); plate.Brush=true;plate.color=CourtPresentationPalette.DeepRed; plate.raycastTarget=false;
+                var title=OwnerUiLayout.Text(header,"UltimateName",_primary?.Actor.AbilitySystem.Kit.Ultimate.Name ?? "ULTIMATE",50,OwnerUiLayout.TypeRole.Display);
+                title.alignment=TextAnchor.MiddleCenter; title.color=CourtPresentationPalette.Paper;title.supportRichText=false;
                 title.horizontalOverflow=HorizontalWrapMode.Overflow; title.verticalOverflow=VerticalWrapMode.Overflow;
-                OwnerUiLayout.Place(title.rectTransform,20,0,1060,92);
-                var castNames=OwnerUiLayout.Text(header,"CohortNames",string.Join("  +  ",commits.Select(c=>PlayerIdentity.Label(c.Seat)+" · "+SeatLabel.Raw(c.Seat))),28);
-                castNames.alignment=TextAnchor.MiddleCenter; castNames.color=_primary != null && commits.Count == 1 ? PlayerIdentity.Colour(_primary.Actor.PlayerSlot) : OwnerUiTheme.Current.Pale;
-                OwnerUiLayout.Place(castNames.rectTransform,20,94,1060,43);
+                OwnerUiLayout.Place(title.rectTransform,35,0,830,74);
+                var identities=commits.Select(c=>PlayerIdentity.Label(c.Seat)+" · "+SeatLabel.Raw(c.Seat)).ToArray();
+                string names=twoRows?string.Join("  +  ",identities.Take(2))+"\n"+string.Join("  +  ",identities.Skip(2)):string.Join("  +  ",identities);
+                var castNames=OwnerUiLayout.Text(header,"CohortNames",names,25);
+                castNames.alignment=TextAnchor.MiddleCenter;castNames.supportRichText=false;
+                castNames.color=_primary != null && commits.Count == 1 ? PlayerIdentity.Colour(_primary.Actor.PlayerSlot) : CourtPresentationPalette.Paper;
+                OwnerUiLayout.Place(castNames.rectTransform,35,74,830,twoRows?70:35);
                 if (liveCamera != null && _primary != null)
                 {
                     var go=new GameObject("UltimateSceneCamera"); go.transform.SetParent(_stage.transform,false);

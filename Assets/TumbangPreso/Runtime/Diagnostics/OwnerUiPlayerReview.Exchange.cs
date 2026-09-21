@@ -25,6 +25,8 @@ namespace TumbangPreso.Diagnostics
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
             SettingsStore.Current.Fullscreen = false;
             bool lowComfort=Environment.GetCommandLineArgs().Contains("-tp-review-low-comfort");
+            bool muted=Environment.GetCommandLineArgs().Contains("-tp-review-muted");
+            if(muted){SettingsStore.Current.MasterVolume=0;SettingsStore.Current.Apply();}
             if(lowComfort)
             {
                 var settings=SettingsStore.Current;settings.GraphicsQuality=0;settings.ReducedUiMotion=true;
@@ -36,6 +38,7 @@ namespace TumbangPreso.Diagnostics
             {
                 string label = mode + (spectatorView ? "-spectator" : "-owner") + "-busy-native";
                 if(lowComfort)label+="-low-comfort";
+                if(muted)label+="-muted";
                 Stage(label);
                 SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode)); SceneFlow.SelectedMap = SceneFlow.BayanPlaza;
                 yield return Click("StartButton"); yield return Click(mode == GameMode.Classic ? "ClassicButton" : "HeroStrikeButton");

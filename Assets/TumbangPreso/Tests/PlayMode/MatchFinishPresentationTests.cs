@@ -51,6 +51,7 @@ namespace TumbangPreso.PlayTests
             CollectionAssert.AreEqual(scores,Enumerable.Range(0,4).Select(GameServices.Match.ScoreFor).ToArray());
             GameServices.Match.AddScore(2,ScoreEvent.LataKnocked);result.OnMatchWon(-1);yield return null;
             Assert.IsFalse(figure.activeSelf,"Draw retained a false winner figure.");
+            Assert.IsFalse(preview.PreviewCamera.enabled,"Hidden result figure kept rendering its isolated stage.");
             Assert.AreEqual("EVEN AT THE TOP",caption.text);
             Assert.IsNotNull(GameObject.Find("DrawCan"));
             yield return GameplayShots.Render(Camera.main,"draw-16x10",true,"Logs/finish-performance",width:1280,height:800);

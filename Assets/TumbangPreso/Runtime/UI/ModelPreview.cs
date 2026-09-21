@@ -423,6 +423,7 @@ namespace TumbangPreso.UI
             camGo.transform.SetParent(_pivot, false);
 
             _camera = camGo.AddComponent<UnityEngine.Camera>();
+            _camera.enabled=isActiveAndEnabled;
             _camera.clearFlags = CameraClearFlags.SolidColor;
 
             // Transparent, so the panel's own wood shows through behind the model rather than
@@ -1196,8 +1197,14 @@ namespace TumbangPreso.UI
             foreach (Transform child in go.transform) SetLayerRecursively(child.gameObject, layer);
         }
 
+        private void OnEnable()
+        {
+            if(_camera!=null)_camera.enabled=true;
+        }
+
         private void OnDisable()
         {
+            if(_camera!=null)_camera.enabled=false;
             RestoreAmbient();
         }
 
