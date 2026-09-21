@@ -19,6 +19,7 @@ namespace TumbangPreso.Diagnostics
         private double _firstPhase=-1;
         private bool _prepared,_sent,_joined,_lateRequest,_resent,_oldResent,_pickSent,_picksApplied;
         private int[] _starts=new int[4];
+        private bool _disconnected;
         private float _initialWarning;
         private long _savedMatch,_savedPhase;
         private int _savedRound;
@@ -42,7 +43,7 @@ namespace TumbangPreso.Diagnostics
             probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
             probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,server,local,round,clock,phase,id,count,scale,requested,charge0,charge1,charge2,starts0,starts1,starts2,warning1,initialWarning,hero1");
+            probe._trace.WriteLine("real,server,local,round,clock,phase,id,count,scale,requested,charge0,charge1,charge2,starts0,starts1,starts2,warning1,initialWarning,hero1,bot1,activeUlt1");
         }
         private void OnEnable()=>HeroAbilitySystem.UltimateStarted+=Started;
         private void OnDisable(){HeroAbilitySystem.UltimateStarted-=Started;_trace?.Dispose();_trace=null;}
@@ -97,6 +98,11 @@ namespace TumbangPreso.Diagnostics
                 if(_firstPhase<0)_firstPhase=phase.Began;
                 if(_saved==null){_saved=phase.Commits.ToArray();_savedMatch=phase.MatchId;_savedPhase=phase.PhaseId;_savedRound=phase.Round;_savedBegan=phase.Began;_savedClock=phase.FrozenRoundTime;}
                 double age=SharedUltimatePhase.Now-phase.Began;
+                if(local==1&&!_disconnected&&Arg("-tp-ult-disconnect")=="caster"&&age>.7)
+                {
+                    _disconnected=true;Debug.Log("[UltimateProbe] accepted caster disconnecting during shared hold");_trace?.Flush();
+                    NetSession.Instance.Stop();Application.Quit();return;
+                }
                 if(local==2&&!_lateRequest&&age>.6)
                 {
                     _lateRequest=true;var actor=round.PlayerAt(2);
@@ -110,11 +116,12 @@ namespace TumbangPreso.Diagnostics
                 _oldResent=true;
                 if(NetAuthority.IsHost){MatchRpc.Instance.HostSetTimeScale(.5f);SendOldPhase();}
             }
-            if(_firstPhase>=0&&SharedUltimatePhase.Now-_firstPhase>7){Application.Quit();return;}
+            if(_firstPhase>=0&&SharedUltimatePhase.Now-_firstPhase>(Arg("-tp-ult-latejoin")=="1"?20:7)){Application.Quit();return;}
+            if(local==3&&Time.realtimeSinceStartup-_started>18){Application.Quit();return;}
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.035f;
             float Charge(int seat)=>round.PlayerAt(seat)?.AbilitySystem?.Kit?.UltimateCharge??-1;
             var remote=round.PlayerAt(1)?.AbilitySystem;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{SharedUltimatePhase.Now:F4},{local},{match.RoundNumber},{round.TimeLeft:F4},{(phase!=null&&phase.Active?1:0)},{phase?.PhaseId??0},{phase?.Commits.Count??0},{Time.timeScale:F3},{PresentationClock.RequestedScale:F3},{Charge(0):F3},{Charge(1):F3},{Charge(2):F3},{_starts[0]},{_starts[1]},{_starts[2]},{remote?.Kit?.Ultimate?.WindupRemaining??0:F4},{_initialWarning:F4},{remote?.HeroId}"));
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F4},{SharedUltimatePhase.Now:F4},{local},{match.RoundNumber},{round.TimeLeft:F4},{(phase!=null&&phase.Active?1:0)},{phase?.PhaseId??0},{phase?.Commits.Count??0},{Time.timeScale:F3},{PresentationClock.RequestedScale:F3},{Charge(0):F3},{Charge(1):F3},{Charge(2):F3},{_starts[0]},{_starts[1]},{_starts[2]},{remote?.Kit?.Ultimate?.WindupRemaining??0:F4},{_initialWarning:F4},{remote?.HeroId},{(round.PlayerAt(1)?.IsBot==true?1:0)},{(remote?.Kit?.Ultimate?.IsActive==true?1:0)}"));
         }
         private void SendOldPhase()
         {

@@ -5,7 +5,7 @@ from presentation_peer_link import PresentationLink,arguments as link_arguments
 from run_unity_guarded import profile_root,unity_environment
 from run_ui_player_review import read_input_preferences
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);link_arguments(p);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('--out',type=Path,required=True);p.add_argument('--mode',choices=['classic','hero'],default='classic');p.add_argument('--old-exe',type=Path);p.add_argument('--disconnect-caster',action='store_true');p.add_argument('--late-join',action='store_true');link_arguments(p);a=p.parse_args()
 exe=a.exe.resolve();out=a.out.resolve()
 assert exe.is_file() and exe.is_relative_to(ROOT/'Builds')
 assert out.is_relative_to(ROOT/'Logs') and out!=ROOT/'Logs'
@@ -24,7 +24,8 @@ try:
     backup=out/'private-profiles'/name/source.relative_to(profile);backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,backup)
     backups.append((source,backup,hashlib.sha256(source.read_bytes()).hexdigest()))
   command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-autostart','3','-tp-map','Eskinita','-tp-profile',profile_name,'-tp-ultseat',str(index),'-tp-ulttrace',str(out/(name+'.csv')),'-logFile',str(out/(name+'.log'))]
-  command+=[]
+  if index==1 and a.disconnect_caster:command+=['-tp-ult-disconnect','caster']
+  if a.late_join:command+=['-tp-ult-latejoin','1']
   command+=['-tp-host',str(port)] if index==0 else ['-tp-join','127.0.0.1',str(join_port)]
   commands.append(command);processes.append(subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
   print(name,'PID',processes[-1].pid,flush=True)
@@ -36,6 +37,21 @@ try:
     log=out/'scorer.log'
     if log.exists() and 'LocalSlot=1' in log.read_text(errors='replace'):break
     time.sleep(.25)
+ if a.late_join:
+  deadline=time.monotonic()+50
+  while time.monotonic()<deadline:
+   trace=out/'host.csv'
+   if trace.exists() and any(r.get('phase')=='1' for r in csv.DictReader(trace.open())):break
+   time.sleep(.05)
+  else:raise RuntimeError('Host phase did not begin before late-join dispatch')
+  name='late';profile_name=out.name+'-'+name;profile=profile_root(['-tp-profile',profile_name])
+  for source in profile.rglob('*'):
+   if source.is_file() and source.suffix!='.log':
+    backup=out/'private-profiles'/name/source.relative_to(profile);backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,backup)
+    backups.append((source,backup,hashlib.sha256(source.read_bytes()).hexdigest()))
+  late_command=[str(exe),'-batchmode','-screen-width','960','-screen-height','540','-screen-fullscreen','0','-tp-framecap','30','-tp-profile',profile_name,'-tp-join','127.0.0.1',str(join_port),'-tp-ultseat','3','-tp-ulttrace',str(out/'late.csv'),'-tp-ult-latejoin','1','-logFile',str(out/'late.log')]
+  processes.append(subprocess.Popen(late_command,cwd=ROOT,env=unity_environment(),startupinfo=startup,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
+  (out/'late-job.json').write_text(json.dumps({'pid':processes[-1].pid,'command':late_command},indent=2));print('late peer PID',processes[-1].pid,flush=True)
  if a.old_exe:
   old=a.old_exe.resolve();assert old.is_file() and old.is_relative_to(ROOT/'Builds')
   old_profile=profile_root(['-tp-profile',out.name+'-old'])
@@ -57,7 +73,10 @@ finally:
 unchanged=before==read_input_preferences();errors=[];measured={}
 for seat,name in enumerate(['host','scorer','observer']):
  path=out/(name+'.csv');rows=list(csv.DictReader(path.open())) if path.exists() else []
- if len(rows)<50 or any(int(r['local'])!=seat for r in rows):errors.append(name+': insufficient trace or wrong seat');continue
+ if len(rows)<(8 if name=='scorer' and a.disconnect_caster else 50) or any(int(r['local'])!=seat for r in rows):errors.append(name+': insufficient trace or wrong seat');continue
+ if name=='scorer' and a.disconnect_caster:
+  if not any(int(r['phase']) and int(r['count'])==2 for r in rows):errors.append('caster did not enter the phase before departure')
+  measured[name]={'disconnectedDuringPhase':True,'rows':len(rows)};continue
  active=[r for r in rows if int(r['phase'])]
  if len(active)<20:errors.append(name+': no sustained shared phase');continue
  if max(int(r['count']) for r in active)!=2:errors.append(name+': accepted cohort did not contain both casters')
@@ -73,12 +92,22 @@ for seat,name in enumerate(['host','scorer','observer']):
  baseline=float(rows[0]['charge2'])
  if baseline<=0 or any(abs(float(r['charge2'])-baseline)>.001 for r in rows):errors.append(name+': refused caster changed its actual initial meter')
  if abs(float(last['requested'])-.5)>.001:errors.append(name+': stale phase changed requested speed')
+ if a.disconnect_caster and int(last.get('bot1','0'))!=1:errors.append(name+': departed caster did not receive bot handover')
  measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'frozenClock':float(stable[0]['clock']),'cohort':max(int(r['count']) for r in active),'initialWarning':float(last['initialWarning']),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
-if len(measured)==3 and max(m['frozenClock'] for m in measured.values())-min(m['frozenClock'] for m in measured.values())>.01:errors.append('peers disagree about the canonical frozen round clock')
+clocks=[m['frozenClock'] for m in measured.values() if 'frozenClock' in m]
+if len(clocks)>=2 and max(clocks)-min(clocks)>.01:errors.append('peers disagree about the canonical frozen round clock')
+if a.late_join:
+ path=out/'late.csv';rows=list(csv.DictReader(path.open())) if path.exists() else []
+ if len(rows)<20 or any(int(r['local'])!=3 for r in rows):errors.append('late peer did not join the actual running match')
+ elif not any(int(r.get('activeUlt1','0')) for r in rows):errors.append('late peer did not receive the current live ultimate state')
+ active=[r for r in rows if int(r['phase'])]
+ if active and float(active[-1]['server'])-float(active[0]['server'])>2.9:errors.append('late peer restarted an entire expired phase')
+ if rows and float(rows[-1]['scale'])==0:errors.append('late peer remained frozen')
+ measured['late']={'rows':len(rows),'phaseSamples':len(active),'liveUltimateSamples':sum(int(r.get('activeUlt1','0')) for r in rows)}
 if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
  if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. Link settings and packet-count log specify simulated conditions; no late-join or WAN claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'disconnectCaster':a.disconnect_caster,'lateJoin':a.late_join,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. Link settings and packet-count log specify simulated conditions; no late-join or WAN claim.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)
