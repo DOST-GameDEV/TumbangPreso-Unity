@@ -46,10 +46,11 @@ instructions do not control the current queue.
 - Work/deliver on ASTRAReworks. Fetch and inspect dirty/diverged state. Never edit,
   merge into or push main; never reset, clean, force-push or discard another's work.
   Relevant friend branches may be read, tested and scoped-integrated. Preserve authorship.
-- C1-C3 have an explicit handback in [their lane](docs/CLAUDE_ENGINEERING_LANE.md).
-  C4 [request safety](docs/CLAUDE_REQUEST_SAFETY_LANE.md) remains reserved: MatchRpc.cs,
-  NetSession.cs and request-guard helpers/tests. Do not duplicate its audit or edit
-  those files without an actual handback. Record exact dependencies and keep working.
+- Owner handback2026-09-21: "get everything done u are the only agent working on this".
+  All remaining implementation is assigned to this task. The old C4 contributor
+  reservation no longer blocks necessary MatchRpc/NetSession/authority integration.
+  Preserve its evidence and already completed work; fix feature-relevant defects
+  and qualify compatibility. This does not authorize delegation or unrelated audits.
 - Preserve controller backend ownership: GenericPadBridge, MenuNav and mapping.
   Keep the controller artwork, callouts and connections. No input backend replacement.
 - Preserve all profiles, saves, IDs, source art, unfinished local work and unrelated apps.

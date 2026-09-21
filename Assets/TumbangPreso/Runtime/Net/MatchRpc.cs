@@ -307,6 +307,7 @@ namespace TumbangPreso.Net
             // A new transport session owns a new snapshot sequence. Never reject
             // its generation one because this process previously joined another host.
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
+            PresentationMatchId = 0; _pendingMoments.Clear();
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
@@ -374,6 +375,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("MatchMoment", OnMatchMomentMsg);
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
             cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
@@ -3742,6 +3744,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            PreparePresentationMatch();
             lobby?.StartMatch();
             _lobbyReady.Clear();
 
@@ -3764,6 +3767,7 @@ namespace TumbangPreso.Net
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
                 using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(PresentationMatchId);
                 _nm.CustomMessagingManager.SendNamedMessageToAll("StartMatch", writer);
             }
             OnMatchStarted?.Invoke();
@@ -3778,6 +3782,9 @@ namespace TumbangPreso.Net
             // had just produced. See § THE LOOPBACK.
             if (NetAuthority.IsHost) return;
 
+            if (!reader.TryBeginRead(8)) return;
+            reader.ReadValueSafe(out long presentationMatch);
+            if (!AdoptPresentationMatch(presentationMatch)) return;
             OnMatchStarted?.Invoke();
             UI.SceneFlow.StartMatch();
         }
@@ -4934,6 +4941,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(round != null ? round.TayaCampSeconds : 0.0f);
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
                 writer.WriteValueSafe(round != null ? round.AttackerIdleSeconds(slot) : 0.0f);
+            writer.WriteValueSafe(EnsurePresentationMatch());
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncWorld", writer);
         }
 
@@ -5438,6 +5446,8 @@ namespace TumbangPreso.Net
             var attackerIdle = new float[Balance.PlayerCount];
             for (int slot = 0; slot < attackerIdle.Length; slot++)
                 reader.ReadValueSafe(out attackerIdle[slot]);
+            reader.ReadValueSafe(out long presentationMatch);
+            if (!AdoptPresentationMatch(presentationMatch)) return;
 
             // ⚠️ THE ROUND CLOCK AND THE TWO ANTI-STALL CLOCKS. A NaN in `timeLeft` is a round
             // whose remaining time compares false against every bound, so the HUD reads blank and

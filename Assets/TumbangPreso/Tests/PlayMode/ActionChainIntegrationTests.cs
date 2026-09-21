@@ -56,13 +56,24 @@ namespace TumbangPreso.PlayTests
             float charge = kit != null ? kit.UltimateCharge : 0;
             yield return Hit(1);
             Assert.AreEqual(2, match.HostAccuracyChainFor(1));
-            Assert.AreEqual(10, match.LastHostChainResult.Bonus, "The rule result is ready for future accepted bonus transport.");
-            Assert.AreEqual(first + 2 * MatchRules.PointsFor(ScoreEvent.LataKnocked), match.ScoreFor(1),
-                "Pending chain integration must not quietly add unreplicated points.");
+            Assert.AreEqual(10, match.LastHostChainResult.Bonus, "The second accurate throw earns the capped10point award.");
+            Assert.AreEqual(first + 2 * MatchRules.PointsFor(ScoreEvent.LataKnocked) + 10, match.ScoreFor(1),
+                "The bonus must be awarded once through the score authority.");
             Assert.AreEqual(second + MatchRules.PointsFor(ScoreEvent.LataKnocked), match.ScoreFor(2));
             if (mode == GameMode.HeroStrike)
                 Assert.AreEqual(Mathf.Min(kit.UltimateCost, charge + Balance.UltimateChargeLataKnock), kit.UltimateCharge, .001f);
 
+            yield return Hit(1);
+            Assert.AreEqual(first + 3 * MatchRules.PointsFor(ScoreEvent.LataKnocked) + 30, match.ScoreFor(1));
+            Assert.AreEqual(MatchMomentKind.AccurateThree, match.LastMoment.Kind);
+            Assert.AreEqual(1, match.LastMoment.Actor); Assert.AreEqual(20, match.LastMoment.Bonus);
+            yield return new WaitForSecondsRealtime(.08f);
+            Assert.AreEqual("THREE ON TARGET", Object.FindAnyObjectByType<UI.MatchMomentBanner>().Phrase);
+            yield return GameplayShots.Render(Camera.main, mode + "-accuracy-milestone", true, outDir: "Logs/chain-awards-v1");
+
+            int catchBonuses = 0;
+            void Bonus(int seat, ScoreEvent score) { if (MatchRules.IsChainBonus(score) && seat == 0) catchBonuses += MatchRules.PointsFor(score); }
+            match.Scored += Bonus;
             round.Lata.HostRestore();
             var taya = round.PlayerAt(0); var a = round.PlayerAt(1); var b = round.PlayerAt(2);
             Assert.IsTrue(OwnShoe(1).HostForceEquip(a));
@@ -79,6 +90,11 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position, Vector3.forward));
             Assert.AreEqual(2, match.LastHostChainResult.Count);
             Assert.AreEqual(ChainMilestone.DoubleCatch, match.LastHostChainResult.Milestone);
+            Assert.AreEqual(10, catchBonuses);
+            Assert.AreEqual(MatchMomentKind.DoubleCatch, match.LastMoment.Kind);
+            yield return new WaitForSecondsRealtime(.08f);
+            yield return GameplayShots.Render(Camera.main, mode + "-double-catch-milestone", true, outDir: "Logs/chain-awards-v1");
+            match.Scored -= Bonus;
             round.EndRound(); match.AdvanceRound();
             Assert.AreEqual(0, match.HostAccuracyChainFor(1)); Assert.AreEqual(0, match.HostAccuracyChainFor(2));
             Assert.IsFalse(match.LastHostChainResult.Applied);

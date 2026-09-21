@@ -1,6 +1,11 @@
-# Reserved request-safety work for the separate Claude PC
+# Request-safety work and preserved contributor evidence
 
-Owner requested another non-animation assignment on2026-09-15. Status: IN PROGRESS,
+Owner2026-09-21: "get everything done u are the only agent working on this".
+The owner assigned all remaining work to this task, releasing the old exclusive
+reservation for necessary implementation. Preserve the evidence below; C4.2/C4.3
+remain unfinished checks rather than another-agent ownership blockers.
+
+Historical assignment: owner requested non-animation work on2026-09-15. Status then: IN PROGRESS,
 C4.1 complete, C4.2 and C4.3 open (see the progress log). This is a manual handoff; no agent or other chat has been contacted.
 The existing C1/C2/C3 reservation and its remaining historical limits stay separate.
 

@@ -362,7 +362,9 @@ namespace TumbangPreso.Net
         // snapshot. Internal protocol39 players cannot decode this TimedKit field.
         // 41 carries remaining sprint/rush emitter state after its world-field batch.
         // 42 preserves missing wake time slots when a movement snapshot arrives late.
-        public const int ProtocolVersion = 42;
+        // 43 carries match-scoped accepted presentation identity and capped chain awards.
+        // StartMatch/SyncWorld append the host epoch; mixed clients must be refused.
+        public const int ProtocolVersion = 43;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -854,6 +854,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void OnScored(int slot, ScoreEvent e)
         {
+            if (MatchRules.IsChainBonus(e)) return; // The earned-moment channel owns bonus recognition.
             if (e == ScoreEvent.DefenseTick) return;
 
             // ⚠️⚠️ AND THE TWO TOURNAMENT PENALTIES ARE TICKS TOO, WHICH THE GUARD ABOVE MISSED.

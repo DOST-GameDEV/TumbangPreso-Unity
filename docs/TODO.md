@@ -20,10 +20,10 @@ Continue autonomously within authorization. No questions, paid work, resets or d
    modes with the other players active, through body/FPP/VFX/SFX/UI together.
 3. Finish shared accepted-moment/throw/contact contracts and coordinate the existing
    feedback channels. Use that foundation for earned recognition, capped rewards and
-   the signature catch. Resolve the narrow C4 dependency before reserved-file edits.
+   the signature catch. Owner sole-worker handback clears the C4 ownership dependency; qualify those edits.
 4. Join the shared ultimate phase to complete Sean/Phaister performances and live
    warnings/payoffs, then Zack/Nemu/Dante/Cheska. Refine their ordinary skills and
-   transitions too. Continue independent authoring where the network lane is blocked.
+   transitions too. Continue through shared delivery and complete performances in this task.
 5. Join the same recording foundation to live spectator storytelling, retained
    canonical clips, all-player halftime and truthful round/match punctuation.
 6. Qualify dense overlaps, control, comfort, Low/small views, real peers and the exact
@@ -54,7 +54,7 @@ Continue autonomously within authorization. No questions, paid work, resets or d
     bonus award/message completion; points and ultimate charge are unchanged.
   - [ ] **PRESENTATION-2.2:** Integrate capped rewards and accepted milestone identity
     through the score/transport authority, with first/accuracy/catch/late/lead recognition
-    where their facts qualify. C4 is a specific dependency, not permission for guessed totals.
+    where their facts qualify. Use the released C4 integration path; never infer or guess participant totals.
   - [ ] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
     bystander/spectator reactions and return, with exact contact/held props, interruption,
     repeated-use comfort and no added taya lockout or victim penalty.
@@ -62,7 +62,7 @@ Continue autonomously within authorization. No questions, paid work, resets or d
   have accepted-input evidence. Six private introduction bodies/scenes and native sound
   movies exist; the live shared phase and complete transitions are not implemented.
   - [ ] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
-    ownership and compatible participant delivery. C4 handback is still required.
+    ownership and compatible participant delivery. Owner handback2026-09-21 assigns this integration here.
   - [ ] **PRESENTATION-3.2:** Author all six distinct whole performances, including
     better native framing, purposeful shot changes, held props, body/FPP, sound/VFX,
     optional character cut-ins and the return to the actual ability.
@@ -103,9 +103,10 @@ old spectator/manual-control/menu rechecks retain their fixes, findings and IDs.
 Reopen for an actual relevant regression. C1's exact idle attribution stays historical
 unresolved. No research task silently deletes an existing task or marks it complete.
 
-**Reserved:** C4/149.4 per CLAUDE_REQUEST_SAFETY_LANE.md. MatchRpc/NetSession registration,
-accepted identities and compatibility need a bounded handback. No new request audit,
-competing admission system or another chat/agent. Continue independent work.
+**Ownership handback2026-09-21:** owner says "get everything done u are the only
+agent working on this". Necessary C4/network integration is assigned to this task.
+Preserve its report/tests and unfinished149.4 checks; no task is deleted or
+automatically completed. No delegation or cross-chat work.
 
 The numbered topic entries below are preserved byte-for-byte by this queue merge.
 They retain task IDs, deferred work, approvals, alternatives and historical evidence;

@@ -37,8 +37,7 @@ namespace TumbangPreso
             if (!result.Applied) return;
             LastHostChainActor = seat; LastHostChainResult = result;
             LastHostChainEventId = ++_chainEventSequence; LastHostChainIsCatch = false;
-            // No score, charge or network event here yet. The C4-gated accepted
-            // identity/bonus transport must join MatchDirector.AddScore exactly once.
+            AwardHostChain(seat, result, false);
         }
         internal void RecordHostTagChain(int taya, int victim)
         {
@@ -47,6 +46,7 @@ namespace TumbangPreso
             if (!result.Applied) return;
             LastHostChainActor = taya; LastHostChainResult = result;
             LastHostChainEventId = ++_chainEventSequence; LastHostChainIsCatch = true;
+            AwardHostChain(taya, result, true);
         }
     }
 }

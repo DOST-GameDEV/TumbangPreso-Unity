@@ -110,8 +110,10 @@ namespace TumbangPreso
             if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
+            int previousLeader = _scores.WinningSlot();
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);
+            HostScoreMoment(slot, e, previousLeader);
 
             // ⚠️⚠️ THE AWARD IS ANNOUNCED, NOT ONLY RECORDED, AND THAT IS THE HALF THAT WAS
             // MISSING FROM EVERY CLIENT. The SCORE reaches a peer inside `SyncWorld` and the
@@ -245,6 +247,7 @@ namespace TumbangPreso
 
         public void StartMatch()
         {
+            BeginPresentationMatch();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;

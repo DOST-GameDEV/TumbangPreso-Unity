@@ -11,6 +11,9 @@ The existing plan already does; no plan/queue edit was needed for that question.
 
 No paid services/credits, resets, other chats/subagents, Desktop replacement or
 crossing contributor reservations. No approval gate for ordinary authorized work.
+Owner correction: a status/design question never pauses this implementation.
+Latest owner says "get everything done u are the only agent working on this";
+all remaining work is assigned here, including required networking integration.
 Do not stop at a single prototype or call partial implementation complete.
 
 [Only queue](TODO.md#current-implementation-queue).
@@ -23,7 +26,7 @@ Research/order mergecc01b97f is published. All5PRESENTATION parents,19child chec
 and the full legacy TODO body remain. TODO is unchanged since that merge.
 Order remains ordinary exchange -> accepted-event/contact contracts -> capped
 chains/shared phase -> full6performances -> canonical clips/halftime -> integrated
-qualification. Independent art/recording can advance while C4 remains reserved.
+qualification. Networking dependencies are now in this task after the explicit sole-worker handback.
 
 ## Workspace, source and preservation
 
@@ -45,11 +48,11 @@ preserve manifests and investigate actual QualitySettings changes before any bui
 
 All3friend branches checked: camera/lifecyclefe9baa16 and abilitiesdd44acd1 were
 ancestors; shaderf4c819f9 integrated with authorship. Own-only42fb4d45 retained.
-C1-C3 handback exists. C4/149.4 remains reserved under
-[its lane](CLAUDE_REQUEST_SAFETY_LANE.md). MatchRpc.cs/NetSession.cs/request guards
-are untouched. Protocol42was last verified. Accepted IDs/bonus reasons/shared
-phase/canonical clip transport and compatibility require actual handback. No
-parallel admission/protocol workaround. Park questions until owner returns.
+C1-C3 handback exists. Owner2026-09-21 confirmed this is the only agent working
+and assigned completion of everything here. This releases the old C4 reservation
+for required integration. Preserve the request-safety report and reproduce/fix
+feature-relevant defects, with protocol compatibility validation. No other tasks
+or agents are contacted. Protocol42is current baseline.
 
 ## Implemented and evidence limits
 
@@ -92,14 +95,19 @@ ultimate claim. Those remain substantive work, not completed by these studies.
 
 ## Jobs and next action
 
+New work in progress: actual chain bonuses and accepted central moments. Core6/6
+passed; runtime awards, epoch-bearing transport and protocol43, central banner and
+focused integration tests are authored but not yet compiled/runtime-qualified.
+After this coherent batch, integrate shared ultimate phase and retained replay.
+
 No owned Unity/player/encoder job remains. Latest player19188/handle9108 and
 encoder55571 exited; named profiles/shared input preserved. Native v11 is the
 qualified gameplay fallback; v12adds private-scene work only. Desktop unchanged.
 
 The private-scene/docs batch is published. Continue ordinary contact/feedback
 composition and independent retained-world recording work in the
-existing queue. Integrate the shared ultimate/reward/replay contracts only after
-C4 handback. Full P1-P5 pass is unfinished. Do not repeat unchanged full suites.
+existing queue. Integrate the shared ultimate/reward/replay contracts now that the owner has
+assigned the formerly reserved dependency here. Full P1-P5 pass is unfinished. Do not repeat unchanged full suites.
 
 Earlier browser video tab2 was closed. Hidden temporary error tab1 could not be
 selected/closed because policy blocks its generated data URL; it is unmarked and
