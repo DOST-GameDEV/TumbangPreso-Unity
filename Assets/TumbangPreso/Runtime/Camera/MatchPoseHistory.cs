@@ -55,7 +55,7 @@ namespace TumbangPreso.CameraSystem
             public void Record(float time)
             {
                 if (Source == null || _frames.Length == 0) return;
-                var frame = _frames[_cursor]; frame.Time = time;
+                var frame = _frames[_cursor]; frame.Time = time;ReadState(out frame.State,out frame.Holder);
                 for (int i = 0; i < _bones.Length; i++)
                 {
                     var bone = _bones[i]; if (bone == null) { _count = 0; return; }
@@ -79,7 +79,16 @@ namespace TumbangPreso.CameraSystem
                     sample.Scales[i]=i==0?bone.lossyScale:bone.localScale;
                     sample.Active[i]=bone.gameObject.activeSelf;
                 }
+                ReadState(out sample.State,out sample.Holder);
                 return sample;
+            }
+            private void ReadState(out int state,out int holder)
+            {
+                state=0;holder=-1;
+                var can=Source.GetComponentInParent<Lata>();
+                if(can!=null){state=(can.IsUpright?1:0)|(can.IsProtected?2:0);return;}
+                var shoe=Source.GetComponentInParent<Slipper>();
+                if(shoe!=null){state=(int)shoe.State|((int)shoe.Affinity<<8);holder=shoe.Holder!=null?shoe.Holder.PlayerSlot:-1;}
             }
             public Transform CopiedBone(Copy copy, Transform source)
             {
@@ -110,7 +119,7 @@ namespace TumbangPreso.CameraSystem
                 for(int i=from;i<=to;i++)
                 {
                     var frame=_frames[(oldest+i)%Samples];
-                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,
+                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,State=frame.State,Holder=frame.Holder,
                         Positions=(Vector3[])frame.Position.Clone(),Rotations=(Quaternion[])frame.Rotation.Clone(),
                         Scales=(Vector3[])frame.Scale.Clone(),Active=(bool[])frame.Active.Clone()};
                 }
@@ -216,6 +225,7 @@ namespace TumbangPreso.CameraSystem
         private sealed class Frame
         {
             public float Time;
+            public int State,Holder=-1;
             public readonly Vector3[] Position, Scale;
             public readonly Quaternion[] Rotation;
             public readonly bool[] Active;

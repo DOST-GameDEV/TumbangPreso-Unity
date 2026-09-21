@@ -21,11 +21,13 @@ namespace TumbangPreso.CameraSystem
         private Canvas _canvas;
         private Camera _camera;
         private RenderTexture _target;
+        private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
         private readonly HashSet<int> _visibleFields=new HashSet<int>();
         private int _sound;
         private float _lastTime;
         public bool Ready {get;private set;}
+        public string UnavailableReason {get;private set;}
         public RenderTexture Target=>_target;
         public RecordedWorldView(Transform owner,RecordedMatchClip clip)
         {
@@ -36,11 +38,11 @@ namespace TumbangPreso.CameraSystem
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 foreach(var track in clip.Objects)
                 {
-                    GameObject source=Source(track);if(source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey)return;
+                    GameObject source=Source(track);if(source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1);return;}
                     var history=new MatchPoseHistory.Track(GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
                     history.Record(Time.time);history.Record(Time.time+.05f);
-                    var copy=history.Clone(_stage.transform);if(copy==null)return;
-                    var bones=track.Pose.Bind(copy.Root);if(bones==null)return;
+                    var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
+                    var bones=track.Pose.Bind(copy.Root);if(bones==null){UnavailableReason="Recorded pose binding changed: "+track.Kind;return;}
                     _items.Add(new Item{Track=track,Copy=copy,Bones=bones});
                     track.Pose.Apply(bones,clip.Contact);
                 }
@@ -63,7 +65,7 @@ namespace TumbangPreso.CameraSystem
                     eye=centre+(Quaternion.AngleAxis(shot*45,Vector3.up)*side)*distance+Vector3.up*(distance*.6f);
                     if(Clear(centre,eye)){clear=true;break;}
                 }
-                if(!clear)return;
+                if(!clear){UnavailableReason="No clear replay angle";return;}
                 _camera.transform.position=eye;_camera.transform.LookAt(centre);
                 int width=Mathf.Clamp(Screen.width,960,1920),height=Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width));
                 _target=new RenderTexture(width,Mathf.Max(540,height),24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame"};_target.Create();_camera.targetTexture=_target;
@@ -73,8 +75,11 @@ namespace TumbangPreso.CameraSystem
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
                 var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=new Vector2(0,1);band.anchorMax=Vector2.one;band.pivot=new Vector2(.5f,1);band.sizeDelta=new Vector2(0,100);
                 var plate=band.gameObject.AddComponent<Image>();plate.color=new Color(.035f,.07f,.06f,.94f);plate.raycastTarget=false;
-                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+PlayerIdentity.Label(clip.Actor)+" · "+SeatLabel.Raw(clip.Actor),34,OwnerUiLayout.TypeRole.Display);
+                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+(focus.Track.DisplayName??PlayerIdentity.Label(clip.Actor))+" · "+SeatLabel.Raw(clip.Actor),34,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=OwnerUiTheme.Current.Pale;
+                var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=Vector2.zero;footer.anchorMax=new Vector2(1,0);footer.pivot=new Vector2(.5f,0);footer.sizeDelta=new Vector2(0,62);
+                var footerPlate=footer.gameObject.AddComponent<Image>();footerPlate.color=new Color(.035f,.07f,.06f,.92f);footerPlate.raycastTarget=false;
+                _state=OwnerUiLayout.Text(footer,"RecordedCanState","",27,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);_state.alignment=TextAnchor.MiddleCenter;_state.color=OwnerUiTheme.Current.Pale;
                 Ready=true;
             }
             catch{Dispose();throw;}
@@ -87,7 +92,7 @@ namespace TumbangPreso.CameraSystem
                 return actor!=null&&actor.CharacterIndex==track.Skin&&Core.Roster.PersonIdAt(actor.Mode,actor.CharacterIndex)==track.Person?actor.GetComponent<CharacterVisual>()?.Model:null;
             if(track.Kind==RecordedObjectKind.Familiar)return actor?.GetComponent<CharacterVisual>()?.Companion?.gameObject;
             if(track.Kind==RecordedObjectKind.Can)return round.Lata!=null?MatchReplayArchive.PropModel(round.Lata.gameObject):null;
-            foreach(var shoe in Object.FindObjectsByType<Slipper>())if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
+            foreach(var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
             return null;
         }
         private static bool Clear(Vector3 centre,Vector3 eye)
@@ -100,6 +105,8 @@ namespace TumbangPreso.CameraSystem
         {
             if(!Ready)return;
             time=Mathf.Clamp(time,_clip.Start,_clip.End);
+            var can=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Can);
+            if(can!=null&&_state!=null){int state=can.Track.Pose.StateAt(time).State;_state.text=(state&2)!=0?"CAN PROTECTED":(state&1)!=0?"CAN UPRIGHT":"CAN DOWN  /  RETRIEVE YOUR TSINELAS";}
             foreach(var item in _items)item.Track.Pose.Apply(item.Bones,time);
             if(time<_lastTime){_sound=0;GameServices.Audio?.StopReplayCues();}
             while(_sound<_clip.Sounds.Length&&_clip.Sounds[_sound].Time<=time)

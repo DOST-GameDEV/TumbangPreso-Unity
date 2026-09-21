@@ -13,14 +13,14 @@ namespace TumbangPreso.CameraSystem
     {
         public RecordedObjectKind Kind;
         public int Seat, Skin;
-        public string Person,VisualKey;
+        public string Person,VisualKey,DisplayName;
         public RecordedPoseTrack Pose;
     }
     public struct RecordedWorldCue
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=2;
+        public const int WireVersion=3;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -42,12 +42,12 @@ namespace TumbangPreso.CameraSystem
                 writer.Write(Start);writer.Write(End);writer.Write(Contact);writer.Write(Objects.Length);
                 foreach(var item in Objects)
                 {
-                    writer.Write((byte)item.Kind);writer.Write(item.Seat);writer.Write(item.Skin);WriteText(writer,item.Person??"",64);WriteText(writer,item.VisualKey??"",64);
+                    writer.Write((byte)item.Kind);writer.Write(item.Seat);writer.Write(item.Skin);WriteText(writer,item.Person??"",64);WriteText(writer,item.VisualKey??"",64);WriteText(writer,item.DisplayName??"",96);
                     var pose=item.Pose;writer.Write(pose.Paths.Length);writer.Write(pose.Samples.Length);
                     foreach(string path in pose.Paths)WriteText(writer,path,512);
                     foreach(var sample in pose.Samples)
                     {
-                        writer.Write(sample.Time);
+                        writer.Write(sample.Time);writer.Write(sample.State);writer.Write(sample.Holder);
                         for(int b=0;b<pose.Paths.Length;b++)
                         {
                             Write(writer,sample.Positions[b]);Write(writer,sample.Rotations[b]);Write(writer,sample.Scales[b]);writer.Write(sample.Active[b]);
@@ -99,7 +99,7 @@ namespace TumbangPreso.CameraSystem
                 int totalSamples=0;
                 for(int i=0;i<count;i++)
                 {
-                    var item=new RecordedObjectTrack{Kind=(RecordedObjectKind)reader.ReadByte(),Seat=reader.ReadInt32(),Skin=reader.ReadInt32(),Person=ReadText(reader,64),VisualKey=ReadText(reader,64)};
+                    var item=new RecordedObjectTrack{Kind=(RecordedObjectKind)reader.ReadByte(),Seat=reader.ReadInt32(),Skin=reader.ReadInt32(),Person=ReadText(reader,64),VisualKey=ReadText(reader,64),DisplayName=ReadText(reader,96)};
                     if(!Enum.IsDefined(typeof(RecordedObjectKind),item.Kind)||item.Seat< -1||item.Seat>=4||item.Skin< -1||item.Skin>128)throw new InvalidDataException("Invalid recorded object");
                     int bones=Count(reader,1,MatchPoseHistory.TransformLimit),frames=Count(reader,2,MatchPoseHistory.Samples);
                     totalSamples+=bones*frames;if(totalSamples>RawByteLimit/41)throw new InvalidDataException("Pose allocation exceeds its budget");
@@ -110,9 +110,10 @@ namespace TumbangPreso.CameraSystem
                     var samples=new RecordedPoseTrack.Sample[frames];float previous=float.NegativeInfinity;
                     for(int f=0;f<frames;f++)
                     {
-                        float time=reader.ReadSingle();
+                        float time=reader.ReadSingle();int state=reader.ReadInt32(),holder=reader.ReadInt32();
+                        if(state<0||state>2048||holder< -1||holder>=4)throw new InvalidDataException("Invalid recorded prop state");
                         if(!Finite(time)||time<=previous||time<result.Start-.3f||time>result.End+.3f)throw new InvalidDataException("Invalid pose time");
-                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
+                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
                         for(int b=0;b<bones;b++)
                         {
                             sample.Positions[b]=ReadVector(reader,10000);sample.Rotations[b]=ReadRotation(reader);sample.Scales[b]=ReadVector(reader,100);

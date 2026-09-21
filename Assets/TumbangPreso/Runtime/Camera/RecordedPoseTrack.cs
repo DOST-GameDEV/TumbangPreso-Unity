@@ -10,6 +10,7 @@ namespace TumbangPreso.CameraSystem
         public sealed class Sample
         {
             public float Time;
+            public int State,Holder=-1;
             public Vector3[] Positions, Scales;
             public Quaternion[] Rotations;
             public bool[] Active;
@@ -39,6 +40,8 @@ namespace TumbangPreso.CameraSystem
             }
             return bones;
         }
+        public Sample StateAt(float time)
+        {var result=Samples[0];foreach(var sample in Samples){if(sample.Time>time)break;result=sample;}return result;}
         public void Apply(Transform[] bones,float time)
         {
             if(bones==null||bones.Length!=Paths.Length||Samples.Length==0)return;
