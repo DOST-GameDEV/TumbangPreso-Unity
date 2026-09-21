@@ -143,7 +143,10 @@ namespace TumbangPreso.CameraSystem
                 foreach (var entry in _actors)
                     entry.Actor.GetComponent<CharacterAnimator>()?.StageIntroductionPose(entry.Body.Root, entry.Actor.AbilitySystem.Kit.Ultimate);
             }
-            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.4f,2.8f,age));
+            // Keep one readable 3D view until the last beat. A full .4s dissolve
+            // stacked two different court perspectives and washed out the handoff.
+            // Pose staging still starts at2.4; shared time and live warning do not change.
+            float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.68f,2.8f,age));
             _fade.alpha=returnBlend;
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion;
             _picture.enabled=moving && _safeShot && _camera!=null && _primary?.Scene!=null;
