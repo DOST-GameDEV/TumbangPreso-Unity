@@ -206,10 +206,14 @@ namespace TumbangPreso.PlayTests
                     yield return null;
                     var title=GameObject.Find("UltimateName");Assert.IsNotNull(title);
                     Assert.AreEqual("ULTIMATES INCOMING",title.GetComponent<UnityEngine.UI.Text>().text);
+                    Canvas.ForceUpdateCanvases();
                     foreach(var actor in actors)
                     {
                         var label=GameObject.Find("CohortAbility"+actor.PlayerSlot);Assert.IsNotNull(label);
                         Assert.AreEqual(actor.AbilitySystem.Kit.Ultimate.Name,label.GetComponent<UnityEngine.UI.Text>().text,"A shared phase mislabeled another accepted ability as the primary one.");
+                        var identity=GameObject.Find("CohortSeat"+actor.PlayerSlot).GetComponent<UnityEngine.UI.Text>();
+                        Assert.Greater(identity.cachedTextGenerator.vertexCount,4,"The caster name exists as a string but is clipped out of the rendered card.");
+                        Assert.Greater(label.GetComponent<UnityEngine.UI.Text>().cachedTextGenerator.vertexCount,4,"The accepted ability label generated no visible glyphs.");
                     }
                     previous=phase.PhaseId;double began=phase.Began;
                     foreach(var actor in actors)Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);

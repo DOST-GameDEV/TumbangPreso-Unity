@@ -88,7 +88,7 @@ namespace TumbangPreso.CameraSystem
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
                 bool together=commits.Count>1;
-                header.anchoredPosition=new Vector2(0,-32);header.sizeDelta=new Vector2(900,together?(commits.Count>2?232:157):116);
+                header.anchoredPosition=new Vector2(0,-32);header.sizeDelta=new Vector2(900,together?(commits.Count>2?248:164):128);
                 var plate=header.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.DeepRed;plate.raycastTarget=false;
                 string NameForCast(int seat)
                 {
@@ -104,15 +104,17 @@ namespace TumbangPreso.CameraSystem
                     int seat=commits[i].Seat;
                     float x=together?35+(i%2)*430:35;
                     if(commits.Count==3&&i==2)x=250;
-                    float y=74+(i/2)*75,width=together?400:830;
+                    float y=74+(i/2)*84,width=together?400:830;
                     var name=OwnerUiLayout.Text(header,"CohortSeat"+seat,SeatLabel.WithIdentity(seat),25,OwnerUiLayout.TypeRole.Display);
                     name.alignment=TextAnchor.MiddleCenter;name.supportRichText=false;name.color=PlayerIdentity.Colour(seat);
-                    OwnerUiLayout.Place(name.rectTransform,x,y,width,35);
+                    name.verticalOverflow=VerticalWrapMode.Overflow;
+                    OwnerUiLayout.Place(name.rectTransform,x,y,width,42);
                     if(together)
                     {
                         var abilityName=OwnerUiLayout.Text(header,"CohortAbility"+seat,NameForCast(seat),23);
                         abilityName.alignment=TextAnchor.MiddleCenter;abilityName.supportRichText=false;abilityName.color=CourtPresentationPalette.Paper;
-                        OwnerUiLayout.Place(abilityName.rectTransform,x,y+33,width,34);
+                        abilityName.verticalOverflow=VerticalWrapMode.Overflow;
+                        OwnerUiLayout.Place(abilityName.rectTransform,x,y+39,width,40);
                     }
                 }
                 if (liveCamera != null && _primary != null)
