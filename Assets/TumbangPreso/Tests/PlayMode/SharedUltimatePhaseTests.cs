@@ -130,7 +130,9 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSecondsRealtime(.3f);
             Assert.AreEqual(clock,round.TimeLeft,.001f);Assert.AreEqual(at,sean.transform.position);
             Assert.AreEqual(later.AbilitySystem.Kit.UltimateCost,later.AbilitySystem.Kit.UltimateCharge,.001f);
-            yield return GameplayShots.Render(Camera.main,"shared-sean-phaister-introduction",true,outDir:"Logs/shared-phase-v1");
+            // Native six-hero screen/audio captures cover presentation. Synchronous
+            // PNG encoding inside this deadline test would itself stall the player.
+            // Keep the original duration bound and measure ordinary frame updates.
             PresentationClock.RequestScale(.5f);Assert.AreEqual(0,Time.timeScale);
             while(phase.Active&&Time.realtimeSinceStartup-started<4)yield return null;
             Assert.IsFalse(phase.Active);Assert.AreEqual(.5f,Time.timeScale);
