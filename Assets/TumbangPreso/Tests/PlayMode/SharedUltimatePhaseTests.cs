@@ -55,6 +55,9 @@ namespace TumbangPreso.PlayTests
                 Camera.main.GetComponent<CameraRig>().Follow(actor,true);
                 Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
                 yield return new WaitForSecondsRealtime(.15f);
+                float readyBy=Time.realtimeSinceStartup+4;
+                while(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)==null&&Time.realtimeSinceStartup<readyBy)yield return null;
+                Assert.IsNotNull(UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null),hero+" failed to prewarm its real rig.");
                 var ultimate=actor.AbilitySystem.Kit.Ultimate;
                 Press(actor,Verb.Ultimate);
                 if(ultimate.HoldToAim)
@@ -65,6 +68,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(phase!=null&&phase.Active,hero+" did not enter the real shared route.");
                 Assert.AreEqual(1,phase.Commits.Count);Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
                 Assert.IsTrue(ultimate.ReservedForIntroduction);Assert.AreEqual(0,ultimate.WindupRemaining);
+                Assert.IsNotNull(GameObject.Find("UltimateScene").GetComponent<UnityEngine.UI.RawImage>().texture,hero+" fell back because its prepared clip was missing.");
                 yield return new WaitForSecondsRealtime(.7f);
                 yield return GameplayShots.Render(Camera.main,hero+"-live-introduction",true,outDir:"Logs/shared-six-v1");
                 until=Time.realtimeSinceStartup+4;

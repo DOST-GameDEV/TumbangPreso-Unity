@@ -46,6 +46,7 @@ namespace TumbangPreso.Diagnostics
                 actor.Intent.Parked=false;actor.Intent.Set(Verb.Ultimate,false);actor.Intent.CommitFrame();
                 Hud.Instance.Bind(actor);Hud.Instance.ShowReadyPrompt(false);
                 yield return new WaitForSecondsRealtime(.2f);
+                yield return WaitFor(()=>UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)!=null,4);
                 var listener=Object.FindObjectsByType<AudioListener>().FirstOrDefault(l=>l.enabled&&l.gameObject.activeInHierarchy);
                 if(listener==null)throw new InvalidOperationException("No actual game output listener");
                 var sound=listener.gameObject.AddComponent<ReviewAudioCapture>();sound.Begin(8);

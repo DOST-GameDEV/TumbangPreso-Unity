@@ -9,22 +9,22 @@ namespace TumbangPreso.Visual
     // scene's short shared deadline. The cache owns these clips; views borrow them.
     public static class UltimateIntroductionCache
     {
-        private static readonly Dictionary<(int source,string hero,bool held),AnimationClip> Clips=new Dictionary<(int,string,bool),AnimationClip>(24);
-        private static readonly Queue<(int source,string hero,bool held)> Order=new Queue<(int,string,bool)>(24);
-        private static (int source,string hero,bool held) Key(CharacterMotor actor,bool held)
+        private static readonly Dictionary<(GameObject source,string hero,bool held),AnimationClip> Clips=new Dictionary<(GameObject,string,bool),AnimationClip>(24);
+        private static readonly Queue<(GameObject source,string hero,bool held)> Order=new Queue<(GameObject,string,bool)>(24);
+        private static (GameObject source,string hero,bool held) Key(CharacterMotor actor,bool held)
         {
             var visual=actor!=null?actor.GetComponent<CharacterVisual>():null;
             return visual?.SourceModel==null||visual.Model==null||actor.AbilitySystem?.Kit==null?default:
-                (visual.SourceModel.GetInstanceID(),actor.AbilitySystem.HeroId,held);
+                (visual.SourceModel,actor.AbilitySystem.HeroId,actor.AbilitySystem.HeroId=="cheska"&&held);
         }
         public static AnimationClip Find(CharacterMotor actor,bool held)
-        {var key=Key(actor,held);return key.source!=0&&Clips.TryGetValue(key,out var clip)?clip:null;}
+        {var key=Key(actor,held);return key.source!=null&&Clips.TryGetValue(key,out var clip)?clip:null;}
         public static bool WarmOne(CharacterMotor actor)
         {
             if(actor==null||actor.AbilitySystem?.Kit==null)return false;
             for(int pass=0;pass<2;pass++)
             {
-                bool held=pass==1;var key=Key(actor,held);if(key.source==0)return false;
+                bool carrying=actor.GetComponent<Carrier>()?.Held!=null;bool held=pass==0?carrying:!carrying;var key=Key(actor,held);if(key.source==null)return false;
                 if(Clips.TryGetValue(key,out var existing)&&existing!=null)continue;
                 var stage=new GameObject("~IntroductionPrewarm");stage.SetActive(false);
                 try
