@@ -96,71 +96,36 @@ ultimate claim. Those remain substantive work, not completed by these studies.
 
 ## Jobs and next action
 
-Chain awards and central milestones now work end-to-end on protocol43. Source
-1ba35c92: Core6/6, PlayMode5/5 plus title/plate rendering correction1/1. Native v13
-build1156MB/59s, guard39f9082ab6be. Three-real-process Classic and Hero runs PASS:
-all peers agree600base+105bonus=705after6hits,3unique milestones, duplicate/old-round
-rejection. Real42client refused. Logs/net-moment-classic-v1 and net-moment-hero-v1.
-All players exited; profiles/input preserved. This batch is published and remote1ba35c92was verified.
+Sole worker owner handback applies to all remaining implementation. C4 is released
+for feature-relevant authority/transport integration. No subagents/other chats.
+Current branch ASTRAReworks; development/validation HEAD ac62edbe. Last published
+and verified remote ce0e83cf includes protocol44 shared ultimates and live capped
+chain awards. Detailed receipts/failures: current presentation report README.
 
-Current authoring: shared ultimate phase, protocol44. New PresentationClock,
-SharedUltimatePhase, UltimatePhaseView, ability reservation/request/cohort paths,
-fresh-action release gating, requested clock routing and focused tests. Core shared route now compiled and2/2focused cases passed8.15s on58f2e1dd,
-guard1e39c4303b2f. Same-boundary Sean/Phaister casts share2.8s, pay once, preserve
-full1.55warning and require fresh input after resume. Reduced view/cancellation
-retain requested pause/speed. V1compile failure and V2/V3observation/fixture
-failures are preserved. New9acec06b adds frozen familiar anchors, fresh/expired
-request handling, source-pose handoff and native real-peer phase probe. These
-source9acec06b passed3/3 in40.13s(all6actual input/cinematic/live ability routes
-plus2contract cases), guard67b74fdf15db; selected intro/live frames inspected.
-Subsequent29c00f47 grounds copied feet, suppresses redundant legacy ult cards,
-adds blocked-camera fallback and native7.5s/live-ultimate capture route.
-Visual-v1 FAILED2/2 on cloned-rig activation before the bone map existed
-(guard0a9c675db394). Fixedcc6e2107; visual-v2 passed2/2 in8.02s, guardb8b28d8ee344, handle69120retired.
-Native v14/cc6e2107 built1156MB/55s, guardf1161bc617bf, whitespace-only
-inputs. Native peer phase-v1 FAILEDits Phaister/20meter assumptions: actual replicated
-hero1wasNemu and untouched observer cost17. Host held2.7406s with0clock drift;
-clients received the phase late, only about2.07s visible, with scorer19samples.
-Correct fixture selection uses real SelectLobbyPick+confirmed SyncPicks; do not
-weaken to accept the wrong hero. Preparing clips inside the deadline caused
-noticeable cold work;47a8a25f prewarms bounded cached clips before casts.
-Prewarm-v1failed on deprecated GetInstanceID; fixedcdb19dfe uses model
-references, shares identical non-Cheska clips and prioritizes current grip.
-Prewarm-v2passed4/4 in42.55s, guardf029926bd2bd; real render targets checked.
-Nemu handoff3c2482cc passed1/1 in7.04s, guard15d81363cb84: fully revealed visual
-persists without early devour gameplay or a second grow-from-small. Image inspected.
-Native v15built1156MB/61s, guardde3ef1894e4e. Net-phase-v2behavior PASS on corrected evaluator: actualPhaistercost13remained13
-on every observer sample; first evaluator incorrectly assumed20, retained as
-result-original-evaluator.json. Re-evaluation saved separately, no new run claimed.
-All3peers:2casters, zero clock drift,1.55warning, effects once, refused late cast,
-duplicate/stale phase and previous43client refusal. Hosts/client sampled holds
-2.75/2.67/2.70s; normal capture interval/receipt delay remains explicit.
-Native live-v15 PASSall6actual InputIntent-to-shared-scene-to-real-effect routes,
-7.5s screen/audio captures, Logs/shared-live-native-v15. Player21044/63989exited.
-Next encode/inspect native motion, publish44coherent batch, then retained-world
-highlights/halftime and remaining late-join/prediction qualification. Full pass open.
-Handle24355 retired. Native44peer/live6tools are authored and await this pass. Next build protocol44for real peers
-and actual native6hero execution; remainingNemu continuity remains explicit.
-Current known remaining details: real-peer phase delivery/late cleanup, Nemu
-live-growth continuity, camera obstruction fallback, full native flow, remaining
-C4prediction refusal cases and complete retained/canonical replay.
-Do not call the six private studies or this unverified integration finished.
+Qualified: protocol43 three-real-peer Classic/Hero chain awards (705=600+105),
+protocol44 shared two-caster phase on three peers with zero clock drift, full
+1.55s Phaister warning, duplicate/late request refusal and previous-client refusal.
+The phase meter evaluator correction is a re-evaluation of the original trace,
+not a new run. Native v15/3c2482cc built1156MB/61s, and six actual input-to-shared-
+scene-to-effect routes captured7.5s each with game audio; six movies encoded.
+No human/freeform/device/poor-network completeness claim.
 
-No owned Unity/player job remains. Phase-v2players1300/8500/9776/6668and
-handle6269are retired; native63989/21044also exited. Original user files remain
-excluded. Encoding, retained recording and next integration continue here. Native v13
-chain award peers exited cleanly; v11remains the earlier complete control/catch
-fallback, v12private scenes and v13awards are separate qualified evidence.
-Desktop remains unchanged. Next build/prove protocol44after focused cases pass.
+Current feature: retained world clips and all-player halftime. ac62edbe has bounded
+body/prop retention, codec and focused test. replay-retention-v1 failed compile
+(CompressionLevel ambiguity, fixed); v2 failed actual prop window retention.
+V2guard1269bfd9e3c6, process25140/handle21832 exited. Investigating exact prop
+coverage before wiring replay. Uncommitted owned files add exact world cue
+recording and a separate replay voice pool; not qualified yet. Hero exclusion is
+temporary while relevant field/state recording is completed, not a finished mode.
 
-The private-scene/docs batch is published. Continue ordinary contact/feedback
-composition and independent retained-world recording work in the
-existing queue. Integrate the shared ultimate/reward/replay contracts now that the owner has
-assigned the formerly reserved dependency here. Full P1-P5 pass is unfinished. Do not repeat unchanged full suites.
+Next: fix recording; exact contact/state keys; render-only world/audio playback;
+bounded canonical clip distribution/readiness; shared halftime10s and ordinary3s
+transitions. Then phase late/disconnect/impaired and generic prediction-refusal
+identity/refund fixes, integrated native participant/busy/comfort qualification.
+Full PRESENTATION1-5 remains open where queue says so. Do not stop at a foundation.
 
-Earlier browser video tab2 was closed. Hidden temporary error tab1 could not be
-selected/closed because policy blocks its generated data URL; it is unmarked and
-should auto-close at turn end. Do not bypass browser policy or touch user tabs.
-Final inventory confirms only that task-owned temporary error tab remains in IAB;
-no successful page/preview tab remains. User Chrome tabs were untouched. No browser
-or preview server was opened by the latest implementation batch.
+Original dirty work remains excluded (intake26files,20byte-identical; six shared
+files have selected owned hooks). Stage shared hooks from HEAD through the index;
+do not stage unrelated Sean/UI/art/test edits. Keep validation isolated/cached,
+use guarded named profile, one heavy job. No owned job currently running. No
+browser/preview opened by latest batch; preserve user tabs/apps and Desktop build.

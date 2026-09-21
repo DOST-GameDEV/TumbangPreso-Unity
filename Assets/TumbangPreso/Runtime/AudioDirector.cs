@@ -237,6 +237,27 @@ namespace TumbangPreso
 
         public void PlayAt(string id, Vector3 position)
             => PlayAtVaried(id, position, 1.0f, 1.0f, 1.0f);
+        public static event System.Action<string,Vector3,float,float> WorldCuePlayed;
+        private readonly AudioSource[] _replayVoices=new AudioSource[8];
+        private int _replayVoice;
+
+        public void PlayReplayCue(string id,float pitch,float gain,float pan)
+        {
+            if(!_cues.TryGetValue(id,out var cue))return;
+            int index=_replayVoice++%_replayVoices.Length;
+            var voice=_replayVoices[index];
+            if(voice==null)
+            {
+                var go=new GameObject("ReplayVoice"+index);go.transform.SetParent(transform,false);
+                voice=go.AddComponent<AudioSource>();voice.playOnAwake=false;voice.spatialBlend=0;voice.dopplerLevel=0;
+                _replayVoices[index]=voice;
+            }
+            voice.Stop();voice.clip=cue.Clip;voice.pitch=Mathf.Clamp(pitch,.25f,3);
+            voice.panStereo=Mathf.Clamp(pan,-1,1);voice.volume=Mathf.Clamp01(gain*SfxScale());voice.Play();
+            // Deliberately no relay, world-record callback, award or announcer path.
+        }
+        public void StopReplayCues()
+        {foreach(var voice in _replayVoices)if(voice!=null)voice.Stop();}
 
         /// <summary>
         /// The clip and its authored mix level, for a caller that has to drive its own
@@ -309,6 +330,7 @@ namespace TumbangPreso
             voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
             voice.Play();
 
+            WorldCuePlayed?.Invoke(id,position,voice.pitch,cue.Volume*Mathf.Clamp(volumeScale,0,1.25f));
             DuckIfAnnouncement(id);
         }
 

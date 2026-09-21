@@ -15,6 +15,8 @@ namespace TumbangPreso.CameraSystem
         public string Person;
         public RecordedPoseTrack Pose;
     }
+    public struct RecordedWorldCue
+    { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
         public const int WireVersion=1;
@@ -26,6 +28,7 @@ namespace TumbangPreso.CameraSystem
         public string Map,Reason;
         public float Start,End,Contact;
         public RecordedObjectTrack[] Objects;
+        public RecordedWorldCue[] Sounds=Array.Empty<RecordedWorldCue>();
         public float Duration=>End-Start;
         public byte[] Encode()
         {
@@ -50,6 +53,8 @@ namespace TumbangPreso.CameraSystem
                     }
                     if(raw.Length>RawByteLimit)throw new InvalidDataException("Recorded clip exceeds its raw budget");
                 }
+                writer.Write(Sounds.Length);
+                foreach(var cue in Sounds){writer.Write(cue.Time);WriteText(writer,cue.Id,64);Write(writer,cue.Position);writer.Write(cue.Pitch);writer.Write(cue.Gain);}
             }
             using var packed=new MemoryStream();
             using(var deflate=new DeflateStream(packed,System.IO.Compression.CompressionLevel.Fastest,true))
@@ -104,6 +109,15 @@ namespace TumbangPreso.CameraSystem
                     }
                     if(samples[0].Time>result.Start+.001f||samples[frames-1].Time<result.End-.001f)throw new InvalidDataException("Incomplete object window");
                     item.Pose=new RecordedPoseTrack(paths,samples);result.Objects[i]=item;
+                }
+                int soundCount=Count(reader,0,256);result.Sounds=new RecordedWorldCue[soundCount];
+                float soundTime=float.NegativeInfinity;
+                for(int i=0;i<soundCount;i++)
+                {
+                    var cue=new RecordedWorldCue{Time=reader.ReadSingle(),Id=ReadText(reader,64),Position=ReadVector(reader,10000),Pitch=reader.ReadSingle(),Gain=reader.ReadSingle()};
+                    if(!Finite(cue.Time)||cue.Time<soundTime||cue.Time<result.Start||cue.Time>result.End||!Finite(cue.Pitch)||cue.Pitch<.25f||cue.Pitch>3
+                        ||!Finite(cue.Gain)||cue.Gain<0||cue.Gain>2)throw new InvalidDataException("Invalid recorded audio cue");
+                    soundTime=cue.Time;result.Sounds[i]=cue;
                 }
                 if(raw.Position!=raw.Length)throw new InvalidDataException("Unexpected trailing clip data");
                 clip=result;return true;

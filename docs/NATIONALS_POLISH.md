@@ -288,7 +288,7 @@ Deliver exact tested build/source identities, ordinary-speed clips/captures and 
 
 C1-C3 have an explicit handback. Old ratio/registry investigations are retired from automatic execution; the exact 48-idle attribution is historical unresolved, not a prerequisite. Preserve fixes and the measured no-rewrite result.
 
-C4/149.4 remains reserved; no later handback was found in branch/history/doc checks. Necessary score/event/phase/replay registration and compatibility touch MatchRpc.cs/NetSession.cs. Record those exact dependencies. Do not overwrite the lane, create a competing admission system or block unrelated work on the whole audit. Core rules, authoring, local presentation and bounded presentation witnesses outside those files can advance. No questions or other worker/chat contact is currently requested. On an actual documented release, implement the narrow dependency and its tests, not the entire old inventory.
+Owner handback 2026-09-21 ("get everything done u are the only agent working on this") assigns the remaining C4 dependencies here. Complete the necessary score/event/phase/replay authority and compatibility work while preserving earlier evidence. Fix concrete prediction-refusal defects and validate their real transport paths; the historical audit is not a second backlog or a reason to stop independent work.
 
 Defer broad map beautification/new maps, Rafi/seventh hero/water-village expansion, Inday reconstruction, broad U8/device matrices, unrelated outage permutations and speculative optimizations. Preserve assets, concepts, IDs and useful rejected alternatives. A concrete collision/retrieval/occlusion/performance blocker can receive a bounded repair. No redesign of completed menu/login/controller artwork.
 

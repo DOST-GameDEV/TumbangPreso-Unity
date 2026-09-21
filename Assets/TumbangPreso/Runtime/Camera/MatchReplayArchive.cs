@@ -34,6 +34,7 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Prop> _props=new List<Prop>(9);
         private readonly List<Retained> _clips=new List<Retained>(Capacity);
         private readonly List<Pending> _pending=new List<Pending>(Capacity);
+        private readonly List<RecordedWorldCue> _sounds=new List<RecordedWorldCue>(256);
         private long _match,_sequence;
         private int _round;
         private float _unsafeAt=-100;
@@ -45,15 +46,22 @@ namespace TumbangPreso.CameraSystem
             if(_history!=null)_history.Sampled-=Sample;
             _history=history;if(_history!=null)_history.Sampled+=Sample;
         }
-        private void OnEnable()=>MatchFlair.Presented+=Moment;
-        private void OnDisable(){MatchFlair.Presented-=Moment;Bind(null);_props.Clear();_pending.Clear();_clips.Clear();}
+        private void OnEnable(){MatchFlair.Presented+=Moment;AudioDirector.WorldCuePlayed+=RecordSound;}
+        private void OnDisable(){MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;Bind(null);_props.Clear();_pending.Clear();_clips.Clear();}
         private void Update()=>CheckIdentity();
         private void CheckIdentity()
         {
             var match=GameServices.Match;
             long identity=match!=null&&(match.MatchInProgress||match.RoundNumber>0)?match.PresentationMatchId:0;int round=match!=null?match.RoundNumber:0;
-            if(identity!=_match){_match=identity;_sequence=0;_clips.Clear();_pending.Clear();}
-            if(round!=_round){_round=round;_props.Clear();_pending.Clear();_unsafeAt=-100;}
+            if(identity!=_match){_match=identity;_sequence=0;_clips.Clear();_pending.Clear();_sounds.Clear();}
+            if(round!=_round){_round=round;_props.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;}
+        }
+        private void RecordSound(string id,Vector3 position,float pitch,float gain)
+        {
+            if(!NetAuthority.ShouldResolve()||PresentationClock.Held||GameServices.Round?.RoundActive!=true)return;
+            float now=Time.time;_sounds.RemoveAll(c=>c.Time<now-8);
+            if(_sounds.Count>=512)_sounds.RemoveAt(0);
+            _sounds.Add(new RecordedWorldCue{Time=now,Id=id,Position=position,Pitch=pitch,Gain=gain});
         }
         private void Sample(float time)
         {
@@ -115,12 +123,13 @@ namespace TumbangPreso.CameraSystem
             foreach(var prop in _props)
             {
                 var pose=prop.Track.Retain(pending.Start,pending.End);
-                if(pose==null){LastSkip="Incomplete prop lead-in or aftermath";return;}
+                if(pose==null){LastSkip=$"Incomplete {prop.Kind} P{prop.Seat+1}: source={prop.Source!=null}, ready={prop.Track.Ready}, recorded={prop.Track.Oldest:F3}..{prop.Track.Newest:F3}, needed={pending.Start:F3}..{pending.End:F3}";return;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,Pose=pose});
             }
             var clip=new RecordedMatchClip{MatchId=_match,Id=++_sequence,Round=_round,Actor=pending.Actor,Subject=pending.Subject,
                 Mode=UI.SceneFlow.SelectedMode,Map=SceneManager.GetActiveScene().name,Reason=pending.Reason,
-                Start=pending.Start,End=pending.End,Contact=pending.Contact,Objects=objects.ToArray()};
+                Start=pending.Start,End=pending.End,Contact=pending.Contact,Objects=objects.ToArray(),
+                Sounds=_sounds.Where(c=>c.Time>=pending.Start&&c.Time<=pending.End).ToArray()};
             try
             {
                 var retained=new Retained(clip,clip.Encode(),pending.Importance);
