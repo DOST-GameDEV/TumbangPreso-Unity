@@ -813,6 +813,20 @@ namespace TumbangPreso.Visual
         private float _frostLevel;
 
         /// <summary>0 = normal, 1 = fully iced.</summary>
+        private MaterialPropertyBlock _recordedAccentRead;
+        public bool CaptureRecordedAccent(out float strength,out Color colour)
+        {
+            strength=0;colour=Color.white;if(_renderers==null)return false;
+            _recordedAccentRead??=new MaterialPropertyBlock();
+            foreach(var renderer in _renderers)
+            {
+                if(renderer==null)continue;renderer.GetPropertyBlock(_recordedAccentRead);
+                if(!_recordedAccentRead.HasFloat("_RimStrength"))continue;
+                strength=_recordedAccentRead.GetFloat("_RimStrength");
+                colour=_recordedAccentRead.HasColor("_RimColor")?_recordedAccentRead.GetColor("_RimColor"):Color.white;return true;
+            }
+            return false;
+        }
         public float FrostLevel => _frostLevel;
         public void CaptureRecordedCoat(out float frost,out float flash,out StunElement element)
         {frost=_frostLevel;flash=_flashTime<=0?0:Mathf.Clamp01(_flashLeft/_flashTime);element=_stunElement;}

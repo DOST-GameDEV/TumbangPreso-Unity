@@ -11,12 +11,21 @@ namespace TumbangPreso.Visual
         private Renderer _source;
         private readonly LineRenderer[] _poles = new LineRenderer[2];
         private float _age;
+        public float RecordedAge=>_age;
+        public Slipper RecordedShoe=>_shoe;
+        public MeshFilter RecordedTarget {get;private set;}
+        public bool RecordedWorld=>_shoe!=null&&RecordedTarget!=null&&RecordedTarget.transform.IsChildOf(_shoe.transform);
 
-        public static void Ensure(MeshFilter target, Slipper shoe, ZackHeroKit kit)
+        public static void Ensure(MeshFilter target,Slipper shoe,ZackHeroKit kit)
         {
-            if (target == null || target.sharedMesh == null || shoe == null || shoe.Holder == null || kit == null
-                || (!kit.IsOverchargeThrowActive && !kit.IsThunderstrikeActive)) return;
-            if (target.GetComponentInChildren<ZackMagnetCharge>() != null) return;
+            if(target==null||target.sharedMesh==null||shoe==null||shoe.Holder==null||kit==null||(!kit.IsOverchargeThrowActive && !kit.IsThunderstrikeActive))return;
+            if(target.GetComponentInChildren<ZackMagnetCharge>()!=null)return;
+            var visual=CreateVisual(target);visual._kit=kit;visual._shoe=shoe;visual._carrier=shoe.Holder.GetComponent<Carrier>();
+        }
+        public static ZackMagnetCharge Recorded(MeshFilter target)
+        {var visual=CreateVisual(target);visual.enabled=false;return visual;}
+        private static ZackMagnetCharge CreateVisual(MeshFilter target)
+        {
             var go = new GameObject("MagnetChargePoles"); go.layer = target.gameObject.layer;
             go.transform.SetParent(target.transform, false);
             var bounds = target.sharedMesh.bounds; var size = bounds.size;
@@ -26,7 +35,7 @@ namespace TumbangPreso.Visual
             go.transform.localPosition = bounds.center; go.transform.localRotation = Quaternion.LookRotation(along, normal);
             go.transform.localScale = Vector3.one * Mathf.Max(size.x, size.y, size.z) / .46f;
             var charge = go.AddComponent<ZackMagnetCharge>();
-            charge._kit = kit; charge._shoe = shoe; charge._carrier = shoe.Holder.GetComponent<Carrier>();
+            charge.RecordedTarget=target;
             charge._source = target.GetComponent<Renderer>();
             for (int i = 0; i < 2; i++)
             {
@@ -41,6 +50,7 @@ namespace TumbangPreso.Visual
                 line.numCornerVertices = 0; line.numCapVertices = 0;
                 VfxMaterial.Ghost(line, Color.white, .3f); charge._poles[i] = line;
             }
+            return charge;
         }
 
         private void Update()
@@ -48,7 +58,11 @@ namespace TumbangPreso.Visual
             if (_kit == null || (!_kit.IsOverchargeThrowActive && !_kit.IsThunderstrikeActive)
                 || _carrier == null || _carrier.Held != _shoe || _carrier.GetComponent<HeroAbilitySystem>()?.Kit != _kit)
             { gameObject.SetActive(false); Destroy(gameObject); return; }
-            _age += Time.deltaTime;
+            StepTo(_age+Time.deltaTime);
+        }
+        public void StepTo(float seconds)
+        {
+            _age=seconds;
             for (int i = 0; i < 2; i++)
             {
                 float pulse = .52f + .30f * Mathf.Pow(Mathf.Max(0, Mathf.Sin(_age * 6.5f + i * Mathf.PI)), 4);

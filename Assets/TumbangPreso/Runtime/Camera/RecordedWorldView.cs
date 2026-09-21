@@ -29,6 +29,8 @@ namespace TumbangPreso.CameraSystem
         private RenderTexture _target;
         private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
+        private readonly Dictionary<int,RecordedFlightStroke> _trails=new Dictionary<int,RecordedFlightStroke>();
+        private readonly HashSet<int> _visibleTrails=new HashSet<int>();
         private readonly HashSet<int> _visibleFields=new HashSet<int>();
         private readonly MaterialPropertyBlock _coatBlock=new MaterialPropertyBlock();
         private int _sound;
@@ -148,7 +150,11 @@ namespace TumbangPreso.CameraSystem
                 bool ability=state.Element!=StunElement.None;var coat=StunCoat.For(state.Element);
                 foreach(var surface in item.Copy.Renderers)
                 {
-                    surface.GetPropertyBlock(_coatBlock);_coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.FlashIntensity));
+                    surface.GetPropertyBlock(_coatBlock);
+                    var material=surface.sharedMaterial;
+                    _coatBlock.SetFloat("_RimStrength",state.HasAccent?state.RimStrength:material!=null&&material.HasProperty("_RimStrength")?material.GetFloat("_RimStrength"):0);
+                    _coatBlock.SetColor("_RimColor",state.HasAccent?state.RimColour:material!=null&&material.HasProperty("_RimColor")?material.GetColor("_RimColor"):Color.white);
+                    _coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.FlashIntensity));
                     _coatBlock.SetFloat("_CaughtAmount",ability?0:state.Frost);_coatBlock.SetFloat("_FrostAmount",ability?state.Frost:0);
                     if(ability){_coatBlock.SetColor("_FrostColor",coat.Body);_coatBlock.SetColor("_FrostRimColor",coat.Rim);}
                     surface.SetPropertyBlock(_coatBlock);
@@ -164,6 +170,14 @@ namespace TumbangPreso.CameraSystem
             _lastTime=time;_hidden.Clear();_previous.Clear();_hiddenLights.Clear();_lightWasEnabled.Clear();
             RecordedFieldFrame frame=null,nextFrame=null;
             foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time){nextFrame=snapshot;break;}frame=snapshot;}
+            _visibleTrails.Clear();
+            if(frame!=null)foreach(var trail in frame.Trails)
+            {
+                _visibleTrails.Add(trail.Id);if(!_trails.TryGetValue(trail.Id,out var view))_trails[trail.Id]=view=new RecordedFlightStroke(_stage.transform,trail);
+                RecordedTrail? later=null;if(nextFrame!=null)foreach(var candidate in nextFrame.Trails)if(candidate.Id==trail.Id){later=candidate;break;}
+                view.Sample(trail,later,nextFrame!=null?Mathf.InverseLerp(frame.Time,nextFrame.Time,time):0);
+            }
+            foreach(int id in _trails.Keys.ToArray())if(!_visibleTrails.Contains(id)){_trails[id].Dispose();_trails.Remove(id);}
             _visibleFields.Clear();
             if(frame!=null)foreach(var field in frame.Fields)
             {
@@ -171,7 +185,7 @@ namespace TumbangPreso.CameraSystem
                 _visibleFields.Add(field.Id);
                 if(_fields.TryGetValue(field.Id,out var existing)&&!existing.Matches(field.State)){existing.Dispose();_fields.Remove(field.Id);}
                 if(!_fields.TryGetValue(field.Id,out var view))
-                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==field.State.Owner)?.Copy.Root);
+                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==field.State.Owner)?.Copy.Root,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Slipper&&i.Track.Seat==field.State.Owner)?.Copy.Root);
                 var state=field.State;
                 if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward))
                 {
@@ -188,13 +202,14 @@ namespace TumbangPreso.CameraSystem
             foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
             foreach(var field in RecordedSpecialFields.Capture())if(field.Source!=null)Hide(field.Source);
             foreach(var field in _fields.Values)field.Visible(true);
+            foreach(var trail in _trails.Values)trail.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
             if(GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
             try{using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
-            finally{for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {
@@ -209,6 +224,7 @@ namespace TumbangPreso.CameraSystem
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;
             if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
+            foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
             _items.Clear();foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
         }
     }

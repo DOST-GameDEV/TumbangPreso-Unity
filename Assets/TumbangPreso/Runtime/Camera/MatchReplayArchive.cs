@@ -40,7 +40,7 @@ namespace TumbangPreso.CameraSystem
         private int _fieldSequence;
         private long _match,_sequence;
         private int _round;
-        private float _unsafeAt=-100;
+        private float _unsafeAt=-100,_propsScanAt;
         public IReadOnlyList<Retained> Clips=>_clips;
         public event Action<Retained> RetainedClip;
         public string LastSkip {get;private set;}
@@ -70,14 +70,17 @@ namespace TumbangPreso.CameraSystem
         {
             CheckIdentity();
             if(!NetAuthority.ShouldResolve()||_history==null||_match<=0||GameServices.Round==null)return;
-            if(_props.Count==0)BindProps();
+            if(_props.Count==0||time>=_propsScanAt){_propsScanAt=time+.2f;BindProps();}
             foreach(var prop in _props)if(prop.Source!=null)prop.Track.Record(time);
             _fields.Add(CaptureFields(time));if(_fields.Count>MatchPoseHistory.Samples)_fields.RemoveAt(0);
-            // Unsupported active performances need their own recorded visual state.
-            // Ordinary Hero exchanges and the seven recorded field families are eligible.
+            // All six shipped kits have recorded body/prop, status, weather,
+            // persistent field and distinctive held/flight presentation paths.
+            // Unknown future kits require a coverage decision before nomination.
             foreach(var actor in GameServices.Round.Players)
             {
-                if(actor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp==true||actor?.AbilitySystem?.Kit?.Ultimate?.IsActive==true)_unsafeAt=time;
+                var kit=actor?.AbilitySystem?.Kit;if(kit==null)continue;
+                string hero=kit.HeroId;
+                if(hero!="sean"&&hero!="zack"&&hero!="nemu"&&hero!="phaister"&&hero!="cheska"&&hero!="dante")_unsafeAt=time;
             }
             for(int i=0;i<_pending.Count;)
             {
@@ -112,25 +115,27 @@ namespace TumbangPreso.CameraSystem
                 if(!_fieldIds.TryGetValue(state.Source,out int id))_fieldIds[state.Source]=id=++_fieldSequence;
                 state.Source=null;fields[i]=new RecordedField{Id=id,State=state};
             }
-            return new RecordedFieldFrame{Time=time,Fields=fields,Lighting=RecordedEnvironment.Capture()};
+            return new RecordedFieldFrame{Time=time,Fields=fields,Lighting=RecordedEnvironment.Capture(),Trails=RecordedTrail.Capture()};
         }
         private void BindProps()
         {
-            var round=GameServices.Round;
-            foreach(var shoe in FindObjectsByType<Slipper>())
+            var round=GameServices.Round;var desired=new List<Prop>(13);bool changed=false;
+            void Add(GameObject source,RecordedObjectKind kind,int seat,int skin,string person,GameObject model)
             {
-                int seat=shoe.SeatOfOrigin;
-                _props.Add(new Prop{Source=shoe.gameObject,Kind=RecordedObjectKind.Slipper,Seat=seat,Skin=shoe.SkinIndex,
-                    Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),PropModel(shoe.gameObject))});
+                var entry=_props.FirstOrDefault(p=>p.Source==source&&p.Track.Source==model);
+                if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
+                    Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),model)};}
+                desired.Add(entry);
             }
-            if(round.Lata!=null)_props.Add(new Prop{Source=round.Lata.gameObject,Kind=RecordedObjectKind.Can,Seat=-1,Skin=round.Lata.SkinIndex,
-                Track=new MatchPoseHistory.Track(round.PlayerAt(0),PropModel(round.Lata.gameObject))});
+            foreach(var shoe in FindObjectsByType<Slipper>())Add(shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject));
+            if(round.Lata!=null)Add(round.Lata.gameObject,RecordedObjectKind.Can,-1,round.Lata.SkinIndex,null,PropModel(round.Lata.gameObject));
             foreach(var actor in round.Players)
             {
                 var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet==null)continue;
-                _props.Add(new Prop{Source=pet.gameObject,Kind=RecordedObjectKind.Familiar,Seat=actor.PlayerSlot,Skin=0,Person=actor.AbilitySystem?.HeroId,
-                    Track=new MatchPoseHistory.Track(actor,pet.gameObject)});
+                Add(pet.gameObject,RecordedObjectKind.Familiar,actor.PlayerSlot,0,actor.AbilitySystem?.HeroId,pet.gameObject);
             }
+            if(_props.Count>0&&(changed||desired.Count!=_props.Count))_unsafeAt=Time.time;
+            _props.Clear();_props.AddRange(desired);
         }
         private void Moment(MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
         {

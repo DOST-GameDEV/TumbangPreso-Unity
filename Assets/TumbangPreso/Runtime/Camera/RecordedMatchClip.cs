@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=8;
+        public const int WireVersion=10;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -48,6 +48,7 @@ namespace TumbangPreso.CameraSystem
                     foreach(var sample in pose.Samples)
                     {
                         writer.Write(sample.Time);writer.Write(sample.State);writer.Write(sample.Holder);writer.Write(sample.Epoch);
+                        writer.Write(sample.HasAccent);writer.Write(sample.RimStrength);WriteColour(writer,sample.RimColour);
                         writer.Write(sample.HasCoat);writer.Write(sample.Frost);writer.Write(sample.Flash);writer.Write((byte)sample.Element);
                         for(int b=0;b<pose.Paths.Length;b++)
                         {
@@ -59,7 +60,14 @@ namespace TumbangPreso.CameraSystem
                 writer.Write(FieldFrames.Length);
                 foreach(var frame in FieldFrames)
                 {
-                    writer.Write(frame.Time);frame.Lighting.Write(writer);writer.Write(frame.Fields.Length);
+                    writer.Write(frame.Time);frame.Lighting.Write(writer);
+                    writer.Write(frame.Trails.Length);
+                    foreach(var trail in frame.Trails)
+                    {
+                        writer.Write(trail.Id);writer.Write(trail.Kind);writer.Write(trail.Width);WriteColour(writer,trail.Head);WriteColour(writer,trail.Tail);
+                        writer.Write(trail.Points.Length);foreach(var point in trail.Points)Write(writer,point);
+                    }
+                    writer.Write(frame.Fields.Length);
                     foreach(var item in frame.Fields)
                     {
                         var f=item.State;writer.Write(item.Id);writer.Write((byte)f.Type);Write(writer,f.Position);Write(writer,f.Forward);
@@ -112,11 +120,13 @@ namespace TumbangPreso.CameraSystem
                     for(int f=0;f<frames;f++)
                     {
                         float time=reader.ReadSingle();int state=reader.ReadInt32(),holder=reader.ReadInt32(),epoch=reader.ReadInt32();
+                        bool accent=reader.ReadBoolean();float rim=reader.ReadSingle();Color rimColour=ReadColour(reader);
+                        if(!Finite(rim)||rim<0||rim>10)throw new InvalidDataException("Invalid recorded rim");
                         bool coat=reader.ReadBoolean();float frost=reader.ReadSingle(),flash=reader.ReadSingle();var element=(StunElement)reader.ReadByte();
                         if(!Finite(frost)||!Finite(flash)||frost<0||frost>1||flash<0||flash>1||!Enum.IsDefined(typeof(StunElement),element))throw new InvalidDataException("Invalid recorded body coat");
                         if(state<0||state>2048||holder< -1||holder>=4||epoch< -1)throw new InvalidDataException("Invalid recorded prop state");
                         if(!Finite(time)||time<=previous||time<result.Start-.3f||time>result.End+.3f)throw new InvalidDataException("Invalid pose time");
-                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,Epoch=epoch,HasCoat=coat,Frost=frost,Flash=flash,Element=element,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
+                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,Epoch=epoch,HasCoat=coat,HasAccent=accent,RimStrength=rim,RimColour=rimColour,Frost=frost,Flash=flash,Element=element,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
                         for(int b=0;b<bones;b++)
                         {
                             sample.Positions[b]=ReadVector(reader,10000);sample.Rotations[b]=ReadRotation(reader);sample.Scales[b]=ReadVector(reader,100);
@@ -131,9 +141,17 @@ namespace TumbangPreso.CameraSystem
                 result.FieldFrames=new RecordedFieldFrame[fieldFrameCount];
                 for(int n=0;n<fieldFrameCount;n++)
                 {
-                    float time=reader.ReadSingle();var lighting=RecordedEnvironment.Read(reader);int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
+                    float time=reader.ReadSingle();var lighting=RecordedEnvironment.Read(reader);
+                    int trailsCount=Count(reader,0,16);var trails=new RecordedTrail[trailsCount];var trailIds=new System.Collections.Generic.HashSet<int>();
+                    for(int t=0;t<trailsCount;t++)
+                    {
+                        var trail=new RecordedTrail{Id=reader.ReadInt32(),Kind=reader.ReadInt32(),Width=reader.ReadSingle(),Head=ReadColour(reader),Tail=ReadColour(reader)};
+                        if(trail.Id<0||trail.Id>=16||trail.Kind<0||trail.Kind>3||trail.Id%4!=trail.Kind||!trailIds.Add(trail.Id)||!Finite(trail.Width)||trail.Width<=0||trail.Width>.5f)throw new InvalidDataException("Invalid recorded flight stroke");
+                        int points=Count(reader,2,32);trail.Points=new Vector3[points];for(int q=0;q<points;q++)trail.Points[q]=ReadVector(reader,10000);trails[t]=trail;
+                    }
+                    int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
                     if(!Finite(time)||time<=fieldTime||time<result.Start-.3f||time>result.End+.3f||totalFields>32768)throw new InvalidDataException("Invalid field window");
-                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields],Lighting=lighting};var ids=new System.Collections.Generic.HashSet<int>();
+                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields],Lighting=lighting,Trails=trails};var ids=new System.Collections.Generic.HashSet<int>();
                     for(int i=0;i<fields;i++)
                     {
                         int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();
@@ -167,6 +185,12 @@ namespace TumbangPreso.CameraSystem
         {var bytes=Encoding.UTF8.GetBytes(text??"");if(bytes.Length>limit)throw new InvalidDataException("Clip string too long");writer.Write((ushort)bytes.Length);writer.Write(bytes);}
         private static string ReadText(BinaryReader reader,int limit)
         {int count=reader.ReadUInt16();if(count>limit)throw new InvalidDataException("Clip string too long");var bytes=reader.ReadBytes(count);if(bytes.Length!=count)throw new EndOfStreamException();return new UTF8Encoding(false,true).GetString(bytes);}
+        private static void WriteColour(BinaryWriter w,Color c){w.Write(c.r);w.Write(c.g);w.Write(c.b);w.Write(c.a);}
+        private static Color ReadColour(BinaryReader r)
+        {
+            var c=new Color(r.ReadSingle(),r.ReadSingle(),r.ReadSingle(),r.ReadSingle());
+            if(!Finite(c.r)||!Finite(c.g)||!Finite(c.b)||!Finite(c.a)||c.r<0||c.g<0||c.b<0||c.r>4||c.g>4||c.b>4||c.a<0||c.a>1)throw new InvalidDataException("Invalid stroke colour");return c;
+        }
         private static void Write(BinaryWriter w,Vector3 p){w.Write(p.x);w.Write(p.y);w.Write(p.z);}
         private static void Write(BinaryWriter w,Quaternion p){w.Write(p.x);w.Write(p.y);w.Write(p.z);w.Write(p.w);}
         private static Vector3 ReadVector(BinaryReader r,float bound)

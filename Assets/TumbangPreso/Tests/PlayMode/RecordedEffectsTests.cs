@@ -68,6 +68,37 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(stage);
         }
         [UnityTest]
+        public IEnumerator EveryShippedHeroCanRetainARealExchangeDuringTheirUltimate()
+        {
+            foreach(string hero in new[]{"sean","phaister","zack","nemu","dante","cheska"})
+            {
+                yield return PlayModeWorld.Reset();
+                yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+                var round=GameServices.Round;var caster=round.PlayerAt(1);Hero(caster,hero);yield return null;
+                foreach(var actor in round.Players)actor.Teleport(new Vector3(7,.12f,-6+actor.PlayerSlot*3));
+                caster.Teleport(new Vector3(0,.12f,-4));caster.transform.forward=Vector3.forward;
+                yield return new WaitForSeconds(2.7f);
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.Kit.CastUltimate(Context(caster)),hero+" real ultimate was refused");
+                yield return new WaitForSeconds(.2f);
+                var scorer=round.PlayerAt(3);var shoe=Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include).First(s=>s.SeatOfOrigin==3);
+                int serial=round.Lata.HostKnockdownSerial;
+                shoe.HostThrow(scorer,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
+                float until=Time.time+2;while(round.Lata.IsUpright&&Time.time<until)yield return null;
+                Assert.AreEqual(serial+1,round.Lata.HostKnockdownSerial,hero+" contact did not resolve");
+                yield return new WaitForSeconds(1.6f);
+                var archive=Object.FindAnyObjectByType<MatchReplayArchive>();Assert.Greater(archive.Clips.Count,0,hero+": "+archive.LastSkip);
+                Assert.IsTrue(RecordedMatchClip.TryDecode(archive.Clips[0].Bytes,out var clip,out var error),hero+": "+error);
+                if(hero=="nemu")Assert.IsTrue(clip.Objects.Any(o=>o.Kind==RecordedObjectKind.Familiar&&o.Seat==1),"Kuro must be in Nemu's clip");
+                using(var view=new RecordedWorldView(archive.transform,clip))
+                {
+                    Assert.IsTrue(view.Ready,hero+": "+view.UnavailableReason);int score=GameServices.Match.ScoreFor(3);
+                    view.Draw(clip.Contact,false);view.Draw(clip.End,false);Assert.AreEqual(score,GameServices.Match.ScoreFor(3));
+                }
+                Debug.Log("[HeroReplay] "+hero+" bytes="+archive.Clips[0].Bytes.Length+" objects="+clip.Objects.Length+" max-fields="+clip.FieldFrames.Max(f=>f.Fields.Length));
+            }
+        }
+
+        [UnityTest]
         public IEnumerator RecordedWeatherRestoresTheLiveWorldEvenWhenRenderingFails()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);

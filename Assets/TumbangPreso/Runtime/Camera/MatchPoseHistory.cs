@@ -70,7 +70,7 @@ namespace TumbangPreso.CameraSystem
             {
                 if (Source == null || _frames.Length == 0) return;
                 var frame = _frames[_cursor]; frame.Time = time;ReadState(out frame.State,out frame.Holder);
-                frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();
+                frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();frame.HasAccent=ReadAccent(out frame.RimStrength,out frame.RimColour);
                 for (int i = 0; i < _bones.Length; i++)
                 {
                     var bone = _bones[i]; if (bone == null) { _count = 0; return; }
@@ -95,8 +95,13 @@ namespace TumbangPreso.CameraSystem
                     sample.Active[i]=bone.gameObject.activeSelf;
                 }
                 ReadState(out sample.State,out sample.Holder);
-                sample.HasCoat=ReadCoat(out sample.Frost,out sample.Flash,out sample.Element);sample.Epoch=ReadEpoch();
+                sample.HasCoat=ReadCoat(out sample.Frost,out sample.Flash,out sample.Element);sample.Epoch=ReadEpoch();sample.HasAccent=ReadAccent(out sample.RimStrength,out sample.RimColour);
                 return sample;
+            }
+            private bool ReadAccent(out float strength,out Color colour)
+            {
+                strength=0;colour=Color.white;var visual=Source.GetComponentInParent<CharacterVisual>();
+                return visual!=null&&visual.Model==Source&&visual.CaptureRecordedAccent(out strength,out colour);
             }
             private int ReadEpoch()
             {var motor=Source.GetComponentInParent<CharacterMotor>();return motor!=null?motor.MovementEpoch:-1;}
@@ -143,7 +148,7 @@ namespace TumbangPreso.CameraSystem
                 for(int i=from;i<=to;i++)
                 {
                     var frame=_frames[(oldest+i)%Samples];
-                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,State=frame.State,Holder=frame.Holder,Epoch=frame.Epoch,HasCoat=frame.HasCoat,Frost=frame.Frost,Flash=frame.Flash,Element=frame.Element,
+                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,State=frame.State,Holder=frame.Holder,Epoch=frame.Epoch,HasCoat=frame.HasCoat,HasAccent=frame.HasAccent,RimStrength=frame.RimStrength,RimColour=frame.RimColour,Frost=frame.Frost,Flash=frame.Flash,Element=frame.Element,
                         Positions=(Vector3[])frame.Position.Clone(),Rotations=(Quaternion[])frame.Rotation.Clone(),
                         Scales=(Vector3[])frame.Scale.Clone(),Active=(bool[])frame.Active.Clone()};
                 }
@@ -250,7 +255,7 @@ namespace TumbangPreso.CameraSystem
         {
             public float Time;
             public int State,Holder=-1,Epoch=-1;
-            public bool HasCoat;public float Frost,Flash;public StunElement Element;
+            public bool HasCoat,HasAccent;public float Frost,Flash,RimStrength;public StunElement Element;public Color RimColour;
             public readonly Vector3[] Position, Scale;
             public readonly Quaternion[] Rotation;
             public readonly bool[] Active;

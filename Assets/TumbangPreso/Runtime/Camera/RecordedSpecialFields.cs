@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TumbangPreso.Abilities;
 using TumbangPreso.Net;
 using TumbangPreso.Visual;
@@ -15,6 +16,8 @@ namespace TumbangPreso.CameraSystem
         public const WorldEffectSnapshot.Kind Seismic=(WorldEffectSnapshot.Kind)103;
         public const WorldEffectSnapshot.Kind Nova=(WorldEffectSnapshot.Kind)104;
         public const WorldEffectSnapshot.Kind Ward=(WorldEffectSnapshot.Kind)105;
+        public const WorldEffectSnapshot.Kind Ignition=(WorldEffectSnapshot.Kind)106;
+        public const WorldEffectSnapshot.Kind Charge=(WorldEffectSnapshot.Kind)107;
         public static List<WorldEffectSnapshot.Field> Capture()
         {
             var fields=WorldEffectSnapshot.Capture();
@@ -44,12 +47,23 @@ namespace TumbangPreso.CameraSystem
                 if(ward.isActiveAndEnabled&&ward.RecordedVisible&&ward.RecordedOwner!=null&&ward.RecordedAge<ward.LifeSeconds)
                     fields.Add(new WorldEffectSnapshot.Field{Type=Ward,Source=ward.gameObject,Position=ward.RecordedOwner.transform.position,Forward=ward.RecordedOwner.transform.forward,
                         Duration=ward.LifeSeconds,Remaining=ward.LifeSeconds-ward.RecordedAge,Radius=1,FirstScale=ward.RecordedHeavy?1:0,SecondScale=ward.RecordedFront,Owner=ward.RecordedOwner.PlayerSlot});
+            foreach(var ember in Object.FindObjectsByType<SeanIgnitionVisual>())
+                if(ember.isActiveAndEnabled&&ember.RecordedWorld)AddWeapon(fields,Ignition,ember.gameObject,ember.RecordedShoe,ember.RecordedTarget,ember.RecordedAge);
+            foreach(var charge in Object.FindObjectsByType<ZackMagnetCharge>())
+                if(charge.isActiveAndEnabled&&charge.RecordedWorld)AddWeapon(fields,Charge,charge.gameObject,charge.RecordedShoe,charge.RecordedTarget,charge.RecordedAge);
             return fields;
+        }
+        public static MeshFilter[] PropMeshes(GameObject root)=>MatchPoseHistory.StableTransforms(root).Select(t=>t.GetComponent<MeshFilter>()).Where(m=>m!=null).ToArray();
+        private static void AddWeapon(List<WorldEffectSnapshot.Field> fields,WorldEffectSnapshot.Kind kind,GameObject source,Slipper shoe,MeshFilter target,float age)
+        {
+            int mesh=System.Array.IndexOf(PropMeshes(MatchReplayArchive.PropModel(shoe.gameObject)),target);if(mesh<0)return;
+            fields.Add(new WorldEffectSnapshot.Field{Type=kind,Source=source,Position=shoe.transform.position,Forward=Vector3.forward,
+                Duration=1,Remaining=1,Radius=1,Owner=shoe.SeatOfOrigin,FirstScale=age,SecondScale=mesh});
         }
         public static bool Valid(WorldEffectSnapshot.Field f)
         {
             if(WorldEffectSnapshot.Valid(f))return true;
-            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward)return false;
+            if(f.Type!=Coven&&f.Type!=Kuro&&f.Type!=Seismic&&f.Type!=Nova&&f.Type!=Ward&&f.Type!=Ignition&&f.Type!=Charge)return false;
             bool Finite(float n)=>!float.IsNaN(n)&&!float.IsInfinity(n);
             if(!Finite(f.Position.x)||!Finite(f.Position.y)||!Finite(f.Position.z)||f.Position.sqrMagnitude>10000*10000
                 ||!Finite(f.Forward.sqrMagnitude)||(f.Type==Kuro?f.Forward.sqrMagnitude>10000*10000:f.Forward.sqrMagnitude<.5f||f.Forward.sqrMagnitude>1.5f)
@@ -57,6 +71,7 @@ namespace TumbangPreso.CameraSystem
                 ||!Finite(f.Radius)||f.Radius<=0||f.Radius>15||!Finite(f.FirstScale)||!Finite(f.SecondScale)||f.Owner< -1||f.Owner>=4)return false;
             if(f.Type==Coven)return f.FirstScale>=0&&f.FirstScale<=3&&f.FirstScale<f.Duration;
             if(f.Type==Kuro)return f.Owner>=0;
+            if(f.Type==Ignition||f.Type==Charge)return f.Owner>=0&&f.FirstScale>=0&&f.FirstScale<=600&&f.SecondScale>=0&&f.SecondScale<128&&f.SecondScale==(int)f.SecondScale;
             if(f.Type==Ward)return f.Owner>=0&&(f.FirstScale==0||f.FirstScale==1)&&(f.SecondScale==1||f.SecondScale==-1);
             return f.Type!=Seismic||((f.FirstScale==0||f.FirstScale==1)&&(f.SecondScale==0||f.SecondScale==1));
         }

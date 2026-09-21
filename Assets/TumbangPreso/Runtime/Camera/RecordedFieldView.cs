@@ -7,7 +7,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     public struct RecordedField {public int Id;public WorldEffectSnapshot.Field State;}
-    public sealed class RecordedFieldFrame {public float Time;public RecordedField[] Fields;public RecordedEnvironment Lighting;}
+    public sealed class RecordedFieldFrame {public float Time;public RecordedField[] Fields;public RecordedEnvironment Lighting;public RecordedTrail[] Trails=Array.Empty<RecordedTrail>();}
     // The seven persistent field families reuse their authored visual builders.
     // No gameplay factory, collider, hazard registry or expiry callback is invoked.
     public sealed class RecordedFieldView : IDisposable
@@ -18,8 +18,9 @@ namespace TumbangPreso.CameraSystem
         private Light[] _lights;
         private Transform _mouth;
         private DanteCarapaceVisual _ward;
+        private GameObject _attached;
         private WorldEffectSnapshot.Field _built;
-        public RecordedFieldView(Transform parent,WorldEffectSnapshot.Field field,GameObject recordedOwnerModel=null)
+        public RecordedFieldView(Transform parent,WorldEffectSnapshot.Field field,GameObject recordedOwnerModel=null,GameObject recordedPropModel=null)
         {
             var random=UnityEngine.Random.state;
             try
@@ -69,8 +70,17 @@ namespace TumbangPreso.CameraSystem
                 _ward=DanteCarapaceVisual.Recorded(recordedOwnerModel,Root.transform,field.FirstScale>0,field.Duration,field.SecondScale);
                 if(_ward==null)throw new ArgumentException("Recorded armor torso was not found");_step=_ward.StepTo;
             }
+            else if(field.Type==RecordedSpecialFields.Ignition||field.Type==RecordedSpecialFields.Charge)
+            {
+                if(recordedPropModel==null)throw new ArgumentException("Recorded weapon effect requires its recorded prop");
+                var meshes=RecordedSpecialFields.PropMeshes(recordedPropModel);int index=(int)field.SecondScale;
+                if(index<0||index>=meshes.Length)throw new ArgumentException("Recorded weapon surface is missing");
+                if(field.Type==RecordedSpecialFields.Ignition)
+                {var fx=SeanIgnitionVisual.Recorded(meshes[index]);_attached=fx.gameObject;_step=fx.StepTo;}
+                else {var fx=ZackMagnetCharge.Recorded(meshes[index]);_attached=fx.gameObject;_step=fx.StepTo;}
+            }
             else throw new ArgumentException("Unsupported recorded field");
-            _renderers=_ward!=null?new System.Collections.Generic.List<Renderer>(_ward.VisiblePieces).ToArray():Root.GetComponentsInChildren<Renderer>(true);_lights=Root.GetComponentsInChildren<Light>(true);Visible(false);
+            _renderers=_ward!=null?new System.Collections.Generic.List<Renderer>(_ward.VisiblePieces).ToArray():_attached!=null?_attached.GetComponentsInChildren<Renderer>(true):Root.GetComponentsInChildren<Renderer>(true);_lights=Root.GetComponentsInChildren<Light>(true);Visible(false);
             // The shared pure-visual builders disable primitive colliders immediately
             // and Unity removes them at this frame's end. Never admit an active one.
             foreach(var collider in Root.GetComponentsInChildren<Collider>(true))
@@ -81,8 +91,8 @@ namespace TumbangPreso.CameraSystem
         }
         public bool Matches(WorldEffectSnapshot.Field field)=>field.Type==_built.Type&&field.Split==_built.Split;
         public void Sample(WorldEffectSnapshot.Field field,float elapsed)
-        {if(_ward!=null)Root.transform.SetPositionAndRotation(field.Position,Quaternion.LookRotation(field.Forward));if(_mouth!=null)_mouth.position=field.Forward;_step?.Invoke(Mathf.Clamp(field.Duration-field.Remaining+elapsed,0,field.Duration));}
+        {if(_ward!=null)Root.transform.SetPositionAndRotation(field.Position,Quaternion.LookRotation(field.Forward));if(_mouth!=null)_mouth.position=field.Forward;_step?.Invoke(field.Type==RecordedSpecialFields.Ignition||field.Type==RecordedSpecialFields.Charge?field.FirstScale+elapsed:Mathf.Clamp(field.Duration-field.Remaining+elapsed,0,field.Duration));}
         public void Visible(bool on){foreach(var renderer in _renderers)if(renderer!=null)renderer.forceRenderingOff=!on;foreach(var light in _lights)if(light!=null)light.enabled=on;}
-        public void Dispose(){if(_ward!=null)UnityEngine.Object.Destroy(_ward.gameObject);_ward=null;if(Root!=null)UnityEngine.Object.Destroy(Root);Root=null;}
+        public void Dispose(){if(_attached!=null)UnityEngine.Object.Destroy(_attached);_attached=null;if(_ward!=null)UnityEngine.Object.Destroy(_ward.gameObject);_ward=null;if(Root!=null)UnityEngine.Object.Destroy(Root);Root=null;}
     }
 }
