@@ -35,23 +35,23 @@ before this redesign. Retain every gameplay/replay task below.
 
 ### Active outcomes and retained task IDs
 
-- [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Retain the low
+- [x] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Retain the low
   locator/ownership/can/feed/identity work, native v6 controls and busy v4 evidence.
   The target is now a coordinated, expressive exchange, not merely reduced noise.
-  - [ ] **PRESENTATION-1.1:** Compose throw, tin contact, flight, landing, retrieval,
+  - [x] **PRESENTATION-1.1:** Compose throw, tin contact, flight, landing, retrieval,
     restore and chase as one body/FPP/VFX/SFX/UI sequence in Classic and Hero Strike.
-  - [ ] **PRESENTATION-1.2:** Refine starts/stops/turns, carrying, grip/cancel, slide,
+  - [x] **PRESENTATION-1.2:** Refine starts/stops/turns, carrying, grip/cancel, slide,
     shove, punch/lunge whiff, stagger, get-up and their grounded sound/contact timing.
-  - [ ] **PRESENTATION-1.3:** Complete contextual state communication: own slipper,
+  - [x] **PRESENTATION-1.3:** Complete contextual state communication: own slipper,
     can state/protection, legal danger and next action, with stable identity/glyphs.
-  - [ ] **PRESENTATION-1.4:** Coordinate material sound, personal confirmation, world
+  - [x] **PRESENTATION-1.4:** Coordinate material sound, personal confirmation, world
     reactions, score-row accents and the earned graphics shared with PRESENTATION-2.
-  - [ ] **PRESENTATION-1.5:** Add useful character/crowd/prop/atmosphere reactions on
+  - [x] **PRESENTATION-1.5:** Add useful character/crowd/prop/atmosphere reactions on
     existing maps and review the full mix. Broad map art and expansion remain deferred.
-  - [ ] **PRESENTATION-1.6:** Judge normal/busy play and Low/reduced/small-view clarity;
+  - [x] **PRESENTATION-1.6:** Judge normal/busy play and Low/reduced/small-view clarity;
     scale decorative layers without removing important states, boundaries or impact.
-- [ ] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction and
-  core chain rules exist. Live capped bonus awards and shared central milestones remain open.
+- [x] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction and
+  core chain rules exist. Live capped bonus awards and shared central milestones are integrated and peer-qualified.
   - [x] **PRESENTATION-2.1:** Host accepted-outcome bookkeeping and focused integration:
     real throw IDs, can-consumption serials, epoch reset, hits/misses/no-contest and
     distinct catches. Source7a1bb8dd,4/4 pass22.65s, Logs/host-chains-v1. This is not
@@ -59,41 +59,61 @@ before this redesign. Retain every gameplay/replay task below.
   - [x] **PRESENTATION-2.2:** Integrate capped rewards and accepted milestone identity
     through the score/transport authority, with first/accuracy/catch/late/lead recognition
     where their facts qualify. Published through ce0e83cf; Core/PlayMode and real3-peer Classic/Hero receipts establish exact capped totals and unique recognition. See the current report.
-  - [ ] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
+  - [x] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
     bystander/spectator reactions and return, with exact contact/held props, interruption,
     repeated-use comfort and no added taya lockout or victim penalty.
-- [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
+- [x] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
   have accepted-input evidence. Six distinct introductions now run through the live
-  shared phase and real abilities, with native v15screen/audio evidence. Remaining
-  qualifications/refinements below stay open; private studies alone did not close them.
-  - [ ] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
+  shared phase and real abilities, with native v15screen/audio evidence. The live/native qualifications below replace the earlier private-study-only status.
+  Human taste and broader device review remain explicitly separate in5.2.
+  - [x] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
     ownership and compatible participant delivery. Owner handback2026-09-21 assigns this integration here.
-  - [ ] **PRESENTATION-3.2:** Author all six distinct whole performances, including
+  - [x] **PRESENTATION-3.2:** Author all six distinct whole performances, including
     better native framing, purposeful shot changes, held props, body/FPP, sound/VFX,
     optional character cut-ins and the return to the actual ability.
-  - [ ] **PRESENTATION-3.3:** Preserve live warning time and communicate real contact,
+  - [x] **PRESENTATION-3.3:** Preserve live warning time and communicate real contact,
     miss, interruption, ongoing fields and aftermath. Avoid duplicate theme/morph cues.
     Refine each hero's two ordinary skills through the same complete-action lens.
-  - [ ] **PRESENTATION-3.4:** Finish role/view differences, simultaneous/back-to-back
+  - [x] **PRESENTATION-3.4:** Finish role/view differences, simultaneous/back-to-back
     cases, reduced-camera treatment, scene/round/disconnect cleanup and resource invariants.
-- [ ] **PRESENTATION-4 /134.20: Watchability and halftime.** Retain the existing
+- [x] **PRESENTATION-4 /134.20: Watchability and halftime.** Retain the existing
   director/manual replay; body history alone is not complete retained world footage.
-  - [ ] **PRESENTATION-4.1:** Record necessary bodies/props/events/audio, retain complete
+  - [x] **PRESENTATION-4.1:** Record necessary bodies/props/events/audio, retain complete
     candidates across rounds and deliver the canonical clip/fallback to all participants.
-  - [ ] **PRESENTATION-4.2:** Refine live spectator shot selection, attribution and
+  - [x] **PRESENTATION-4.2:** Refine live spectator shot selection, attribution and
     larger earned graphics around the developing exchange, preserving manual takeover.
-  - [ ] **PRESENTATION-4.3:** Deliver the halftime replay/standings/next-taya package,
+  - [x] **PRESENTATION-4.3:** Deliver the halftime replay/standings/next-taya package,
     ordinary-gap pacing and truthful round/match-end pose/UI punctuation.
 - [ ] **PRESENTATION-5: Integrated qualification.** Preserve existing passing receipts
   and failed attempts; prove the new complete experience on the exact delivered source.
-  - [ ] **PRESENTATION-5.1:** Four active players, overlapping important events and
+  - [x] **PRESENTATION-5.1:** Four active players, overlapping important events and
     representative Classic/Hero matches across owner/opponent/participant/spectator views.
   - [ ] **PRESENTATION-5.2:** Audio and muted review, ordinary-speed/short replay,
     compression,720p/1080p/relevant aspect, Low and comfort controls; verify information
     survives and the richer presentation still has its intended character.
-  - [ ] **PRESENTATION-5.3:** Relevant native/LAN late/duplicate/interrupted cases,
+  - [x] **PRESENTATION-5.3:** Relevant native/LAN late/duplicate/interrupted cases,
     score/resource/control invariants, bounded costs and cleanup. Human taste and
     physical-device evidence stay explicit; do not replace them with test counts.
+
+### Delivery evidence and meaning of the checks
+
+Source043d1e3d/internal Windowsv25 implements the current functional presentation
+scope. Checked outcomes mean implementation plus the bounded evidence in the
+[current report](reports/presentation-pass-2026-09-21/README.md#current-delivery-source-043d1e3d),
+not human taste approval or a claim that every subphrase received new animation.
+Existing good movement/action clips, protector art, animal proximity reactions
+and truthful result handling were retained. New cancel/flight/contact/recognition,
+catch, six-hero/shared-time and retained replay work composes with them.1.5 includes
+character/prop reactions and hero atmosphere; no new crowd asset system was needed.
+
+5.1 is four-active-bot native owner/spectator exchanges plus real participant
+transport cases, not a full human-match claim.5.3 is the recorded native local-peer
+fault cases, not separate-machine LAN/WAN certification.5.2 remains open for human
+listening/taste, full human matches and unavailable physical-device/aspect checks.
+The available720p/1080p/Low/comfort/capture/encoding work is complete and preserved.
+The inherited remote-smoothing test failure remains separately open in its earlier
+record; it was reproduced on the unchanged intake baseline, not erased here.
+No older task, reservation history, deferred feature or failed receipt is deleted.
 
 ### Deferred, retired and owned work
 

@@ -1,5 +1,88 @@
 # Presentation pass, 2026-09-21
 
+## Current delivery, source 043d1e3d
+
+The full gameplay presentation implementation is in the internal Windows candidate
+`TumbangPreso-Unity-validation/Builds/presentation-v25/TumbangPreso.exe`.
+Build SUCCEEDED,1156MB/62s, guard824ba191933f. The source is
+043d1e3d19746a7035d766da07077918c6822ded with only whitespace differences in
+build-generated inputs. [Exact receipts and executable/runtime hashes](delivery-receipts.json)
+identify this candidate. The older sections below are chronological evidence;
+their words "current", "pending" and "unimplemented" describe those earlier dates.
+
+**Visible UI correction:** the rejected green full-screen halftime board is gone.
+The court remains behind a compact red/cream popup: actual portraits and scores,
+next taya and a single automatic countdown. It has no dismiss button or extra
+page. Two [image-generated directions and exact prompts](ui-ideation/README.md)
+guided the implementation. The tool did not expose a selectable image-model
+version. The large earned-moment panel is now a smaller red brush treatment;
+replay uses compact corner labels. Approved menu art and player identity colors
+were preserved. Source043d1e3d is the later refinement, not the rejected board.
+
+**Delivered scope:** ordinary throw/contact/retrieval/restore/chase feedback;
+fixed ownership, stable identity, contextual locators/feed and earned recognition;
+correctly capped host awards; victim-only recorded catches; six distinct shared
+ultimate performances that return into real effects; retained body/prop/field/
+trail/weather/audio footage and canonical participant halftime playback.
+Protocol47 synchronizes the frozen round clock; schema10 includes the shipped six
+hero effect families. Skill receipts prevent a stale refusal from canceling a
+newer cast or granting a free-recall charge. Original rigs, ordinary clips,
+Dante protectors, neighborhood animal reactions and match result facts remain
+part of the composed game, not newly authored systems claimed by this pass.
+
+**Newest qualification:**
+
+- `final-regressions-v1`:3/3 PASS,19.211s, source043d1e3d. Four casters share one
+  deadline, two successive cohorts do not accumulate state, round cancellation
+  restores time ownership, and actual replay rendering suppresses/restores live
+  effects and world labels. Earlier invariants are reused where unchanged.
+- `hero-replays-final-v25`:PASS. Six real accepted InputIntent ultimate routes,
+  each with7.5s native screen/game-audio capture, then a physical can exchange
+  retained and played for4.4s. Profile/input restored; process25040 retired.
+  Phaister's native replay now excludes the live CURSED text that leaked into v24.
+- `busy-final-native-v25`:PASS. Four20s native routes, Classic/Hero owner/spectator,
+  four active AI input writers,547/537/547/555captured frames. Real throws, can
+  hits, tags, blocks and Hero effects occurred. Red earned graphics inspected
+  over actual play; process13460 retired. These are controlled bot exchanges,
+  not human full-match acceptance or an exhaustive performance benchmark.
+- `replay-final-hero-v25`:PASSthree actual Windows peers at75ms one-way delay,
+ 20ms jitter,2% configured loss;2892packets forwarded/72dropped. Same canonical
+  clip and100score,0round-clock drift,83/82/79rendered-view samples, automatic
+  shared return to round5. Observer joined later in the sampled hold;9.700s is
+  its observation window, not a different host deadline.
+- `net-ultimate-disconnect-v1` and `net-ultimate-latejoin-v1` on nativev24/87da7b6a:
+  PASSwith the same75/20/2% link. Actual accepted caster departed during hold;
+  survivors kept one deadline, once-only effects, full1.55s warning and bot
+  takeover. Actual fourth process launched during hold and loaded after it,
+  seeing197live-ultimate samples and no old intro/stuck freeze. This does not
+  claim it rendered an intro while still loading.
+- `busy-low-comfort-native-v24`:PASSfour1080p routes on Low, reduced UI motion,
+  no cinematic camera travel, shake, flash or announcer. Nativecan/player/state
+  information inspected. UI-only red-banner changes are separately seen in v25;
+  no claim that every v25pixel was rechecked under every option.
+- Nativepopup-v21 remains valid for the unchanged popup: both modes, automatic
+  replay-to-popup-to-round5,308/277frames and actual game audio. Both actual
+  stills were shown to the owner; no taste approval is inferred.
+
+Twenty new review movies (six live ultimates, six retained exchanges, four busy
+routes and four Low/comfort routes) are encoded using their measured frame
+spacing and captured48kHz stereo audio. Peaks.135-.405,zero clipped samples in
+these captures. This establishes captured signal/headroom, not listening quality.
+The earlier both-mode popup movies are retained beside their original evidence.
+
+**Remaining evidence limits:** human listening/taste and a full human match,
+physical controller/touch, separate-machine LAN/WAN and additional device/aspect
+coverage have not been performed. The old remote-smoothing return-to-rest test
+still has its separately reproduced baseline failure; this pass did not hide or
+weaken it. No implementation fix is inferred from a probable dynamic-ground
+fixture interaction. Original reports and failures remain available.
+
+**Preservation:** all three friend branches were inspected; beam shader authorship
+is retained, camera/lifecycle and ability starters were already integrated.
+Twenty of26original dirty files remain byte-identical; six shared files retain
+unrelated unstaged edits behind selected owned commits. No main/desktop/profile
+replacement, reset, paid API fallback, delegation or cross-chat work occurred.
+
 ## Planning correction and subsequent source
 
 The owner clarified that the compact priority list was insufficient and requested
@@ -544,3 +627,35 @@ Actual1280x720stills show a compact red/cream strip over the court, no full-scre
 board/button, and no live can marker bleeding over it.308/277screen frames over
 11.48/11.49s with actual game audio were encoded at their recorded spacing.
 The owner has seen the actual Classic/Hero popup images; no acceptance is inferred.
+
+### Recorded hero state and shared-clock hardening
+
+Protocol47adds the host frozen round clock. Impaired-v3onv21caught0.12s observer
+clock correction during the hold. Nativev22/75298f3dthen eliminated that drift but
+exposed a20ms cross-peer mismatch: Unity had already queued a physics callback
+when the hold arrived.7e976becguards the round FixedUpdate explicitly. Native
+v23/6bf08f1c (1156MB/58s, guardc11642fb00e4) `net-ultimate-clock-impaired-v5`
+PASS: all3frozen83.821,0drift, two casters, one execution each,1.55s full warning,
+unchanged refused meter and restored0.5requested rate.75ms one-way/20ms jitter/
+2%loss seed52009. Old46client refusal was witnessed on v22. Earlier failures stay.
+
+The isolated cold phase tests initially measured~3.18s from input through release;
+removing PNG I/O alone did not fix this. Instrumentation separates input/hold/
+activation. Roster setup now warms the pure ritual path once. Cold-process v5
+passed7.752s overall with original duration assertion (guard95f7d2e072b3); an
+instrumented integrated run measured2.802s hold,52.765ms activation,2.873s observed.
+
+Recorded effects: coven, Kuro mouth flow, seismic/nova, fitted/orbiting armor,
+charged held props, actual flight stroke samples, body coats/rims/flashes, teleport
+epochs and temporary recorded weather. Renderer scopes restore live lighting even
+on exceptions. No gameplay factories are replayed. Primitive visual builders
+disable colliders immediately and remove them at end-of-frame; tests require no
+active physics and zero remaining collider components after that frame.
+
+`hero-replay-v1`on e62d9df9passed4/5: all6actual ultimate exchanges retained and
+rendered, with8-9objects and10-32KB clips. Sean13636B, Phaister10018B, Zack10803B,
+Nemu32001B (including Kuro), Dante10657B, Cheska10697B. Isolation/RNG and fast
+motion/teleport tests passed. Weather failed because Unity ambientLight aliases
+ambientSkyColor;6bf08f1c fixes the duplicate write, focused weather-v2passed1/1
+in3.290s (guardff51874a1bb2). This is functional fidelity evidence, not finished
+visual approval. Native six-hero recorded footage is the next visual check.
