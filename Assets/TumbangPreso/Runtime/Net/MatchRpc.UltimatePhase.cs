@@ -99,19 +99,20 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(512, Allocator.Temp);
             writer.WriteValueSafe(phase.MatchId); writer.WriteValueSafe(phase.Round);
             writer.WriteValueSafe(phase.PhaseId); writer.WriteValueSafe(phase.Began);
-            writer.WriteValueSafe(PresentationClock.RequestedScale); writer.WriteValueSafe(phase.Commits.Count);
+            writer.WriteValueSafe(PresentationClock.RequestedScale);writer.WriteValueSafe(phase.FrozenRoundTime); writer.WriteValueSafe(phase.Commits.Count);
             foreach (var cast in phase.Commits) WriteUltimateCommit(writer, cast);
             if (client.HasValue) _nm.CustomMessagingManager.SendNamedMessage("UltimatePhase", client.Value, writer);
             else _nm.CustomMessagingManager.SendNamedMessageToAll("UltimatePhase", writer);
         }
         private void OnUltimatePhaseMsg(ulong sender, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(sender) || !reader.TryBeginRead(36)) return;
+            if (NetAuthority.IsHost || !FromHost(sender) || !reader.TryBeginRead(40)) return;
             reader.ReadValueSafe(out long match); reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out long phase); reader.ReadValueSafe(out double began);
-            reader.ReadValueSafe(out float resume); reader.ReadValueSafe(out int count);
+            reader.ReadValueSafe(out float resume);reader.ReadValueSafe(out float frozen); reader.ReadValueSafe(out int count);
             if (match != PresentationMatchId || round < 1 || round > 64 || phase <= 0
                 || double.IsNaN(began) || double.IsInfinity(began) || !Finite(resume) || resume < 0 || resume > 1
+                || !Finite(frozen)||frozen<0||frozen>Core.CustomGameRules.MaxRoundSeconds
                 || count < 1 || count > 4 || !reader.TryBeginRead(count * 65)) return;
             var commits = new UltimateCommit[count]; int seats = 0;
             for (int i = 0; i < count; i++)
@@ -120,7 +121,7 @@ namespace TumbangPreso.Net
                 if (!ValidUltimateCommit(cast) || (seats & (1 << cast.Seat)) != 0) return;
                 seats |= 1 << cast.Seat; commits[i] = cast;
             }
-            SharedUltimatePhase.Ensure()?.Receive(match, round, phase, began, resume, commits);
+            SharedUltimatePhase.Ensure()?.Receive(match, round, phase, began, resume, commits,frozen);
         }
     }
 }

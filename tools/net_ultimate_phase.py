@@ -73,11 +73,12 @@ for seat,name in enumerate(['host','scorer','observer']):
  baseline=float(rows[0]['charge2'])
  if baseline<=0 or any(abs(float(r['charge2'])-baseline)>.001 for r in rows):errors.append(name+': refused caster changed its actual initial meter')
  if abs(float(last['requested'])-.5)>.001:errors.append(name+': stale phase changed requested speed')
- measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'cohort':max(int(r['count']) for r in active),'initialWarning':float(last['initialWarning']),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
+ measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'frozenClock':float(stable[0]['clock']),'cohort':max(int(r['count']) for r in active),'initialWarning':float(last['initialWarning']),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
+if len(measured)==3 and max(m['frozenClock'] for m in measured.values())-min(m['frozenClock'] for m in measured.values())>.01:errors.append('peers disagree about the canonical frozen round clock')
 if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
  if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. No impaired link/late join claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. Link settings and packet-count log specify simulated conditions; no late-join or WAN claim.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)

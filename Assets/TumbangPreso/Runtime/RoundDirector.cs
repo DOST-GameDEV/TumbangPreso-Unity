@@ -113,6 +113,9 @@ namespace TumbangPreso
         /// state: a player who disconnected as an attacker may be the current taya when they
         /// return.
         /// </summary>
+        internal void ApplyPresentationTime(float timeLeft)
+        {if(float.IsFinite(timeLeft))TimeLeft=Mathf.Clamp(timeLeft,0,RoundLength);}
+
         public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
                                   bool matchInProgress = true)
         {
@@ -123,7 +126,8 @@ namespace TumbangPreso
             // to a number the HOST sent**, so a 120 second round would have arrived correct and
             // been cut to 90 on every client: the clock would read 01:30 while the host counted
             // 02:00, and it would look like a desync rather than like a clamp.
-            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, RoundLength);
+            float incoming=Mathf.Clamp(timeLeft,0,RoundLength);
+            TimeLeft=SharedUltimatePhase.Instance!=null?SharedUltimatePhase.Instance.HoldSnapshotClock(incoming,roundActive,matchInProgress):incoming;
             RoundActive = roundActive;
 
             // The accepted snapshot owns the client's buffer state too. Do not raise the

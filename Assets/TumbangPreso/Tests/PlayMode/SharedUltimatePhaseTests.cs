@@ -121,6 +121,11 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(0,phaister.AbilitySystem.Kit.Ultimate.WindupRemaining,"The playable ritual must not start inside the introduction.");
             Assert.IsTrue(phaister.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);
             float clock=round.TimeLeft;Vector3 at=sean.transform.position;
+            Assert.AreEqual(clock,phase.FrozenRoundTime,.001f);
+            round.ApplySnapshot(clock+.2f,true,GameServices.Match.DefenderSlot,true);
+            Assert.AreEqual(clock,round.TimeLeft,.001f,"An older snapshot cannot move the frozen presentation clock");
+            round.ApplySnapshot(clock-.12f,true,GameServices.Match.DefenderSlot,true);
+            Assert.AreEqual(clock,round.TimeLeft,.001f,"An already resumed host snapshot waits until local presentation release");
             Press(later,Verb.Ultimate);sean.Intent.Move=Vector2.up;
             yield return new WaitForSecondsRealtime(.3f);
             Assert.AreEqual(clock,round.TimeLeft,.001f);Assert.AreEqual(at,sean.transform.position);

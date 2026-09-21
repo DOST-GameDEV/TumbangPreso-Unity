@@ -23,6 +23,7 @@ namespace TumbangPreso.Diagnostics
         private long _savedMatch,_savedPhase;
         private int _savedRound;
         private double _savedBegan;
+        private float _savedClock;
         private UltimateCommit[] _saved;
         private static string Arg(string key)
         {var a=Environment.GetCommandLineArgs();int at=Array.IndexOf(a,key);return at>=0&&at+1<a.Length?a[at+1]:null;}
@@ -94,7 +95,7 @@ namespace TumbangPreso.Diagnostics
             if(phase!=null&&phase.Active&&phase.Sealed)
             {
                 if(_firstPhase<0)_firstPhase=phase.Began;
-                if(_saved==null){_saved=phase.Commits.ToArray();_savedMatch=phase.MatchId;_savedPhase=phase.PhaseId;_savedRound=phase.Round;_savedBegan=phase.Began;}
+                if(_saved==null){_saved=phase.Commits.ToArray();_savedMatch=phase.MatchId;_savedPhase=phase.PhaseId;_savedRound=phase.Round;_savedBegan=phase.Began;_savedClock=phase.FrozenRoundTime;}
                 double age=SharedUltimatePhase.Now-phase.Began;
                 if(local==2&&!_lateRequest&&age>.6)
                 {
@@ -120,7 +121,7 @@ namespace TumbangPreso.Diagnostics
             if(_saved==null)return;
             using var writer=new FastBufferWriter(512,Allocator.Temp);
             writer.WriteValueSafe(_savedMatch);writer.WriteValueSafe(_savedRound);writer.WriteValueSafe(_savedPhase);writer.WriteValueSafe(_savedBegan);
-            writer.WriteValueSafe(1f);writer.WriteValueSafe(_saved.Length);
+            writer.WriteValueSafe(1f);writer.WriteValueSafe(_savedClock);writer.WriteValueSafe(_saved.Length);
             foreach(var cast in _saved)
             {
                 writer.WriteValueSafe(cast.Seat);writer.WriteValueSafe(cast.Request);writer.WriteValueSafe(cast.Position);

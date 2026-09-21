@@ -32,6 +32,8 @@ namespace TumbangPreso
         public long MatchId { get; private set; }
         public int Round { get; private set; }
         public double Began { get; private set; }
+        public float FrozenRoundTime {get;private set;}
+        private float _deferredRoundTime;
         public IReadOnlyList<UltimateCommit> Commits => _commits;
         private readonly List<UltimateCommit> _commits = new List<UltimateCommit>(4);
         private long _sequence, _lastReceived;
@@ -66,15 +68,17 @@ namespace TumbangPreso
             {
                 MatchId = GameServices.Match.PresentationMatchId; Round = GameServices.Match.RoundNumber;
                 PhaseId = ++_sequence; Began = Now; _frame = Time.frameCount;
+                FrozenRoundTime=_deferredRoundTime=GameServices.Round.TimeLeft;
                 _commits.Clear(); Active = true; _sealed = false; _actorsReady = true;
                 _scene = SceneManager.GetActiveScene();
                 PresentationClock.Hold();
             }
             _commits.Add(cast);
         }
-        internal void Receive(long match, int round, long phase, double began, float resume, UltimateCommit[] commits)
+        internal void Receive(long match, int round, long phase, double began, float resume, UltimateCommit[] commits, float frozenRoundTime)
         {
             if (NetAuthority.ShouldResolve() || phase <= 0 || commits == null || commits.Length < 1 || commits.Length > 4
+                || !float.IsFinite(frozenRoundTime)||frozenRoundTime<0||frozenRoundTime>Core.CustomGameRules.MaxRoundSeconds
                 || match != Net.MatchRpc.Instance?.PresentationMatchId || double.IsNaN(began) || double.IsInfinity(began) || began > Now + .5) return;
             if (GameServices.Match != null && GameServices.Match.RoundNumber > round) return;
             if (MatchId != match) { Cancel(); _lastReceived = 0; }
@@ -86,8 +90,18 @@ namespace TumbangPreso
                 Net.MatchRpc.Instance?.RequestWorldSnapshot(); return;
             }
             Cancel(); MatchId=match; Round=round; PhaseId=phase; Began=began;
+            FrozenRoundTime=_deferredRoundTime=frozenRoundTime;
             _commits.Clear(); _commits.AddRange(commits); Active=true; _sealed=true; _actorsReady=false;
             PresentationClock.RequestScale(resume); PresentationClock.Hold();
+            if(GameServices.Match?.RoundNumber==Round)GameServices.Round?.ApplyPresentationTime(FrozenRoundTime);
+        }
+        internal float HoldSnapshotClock(float incoming,bool roundActive,bool inProgress)
+        {
+            if(!Active||!roundActive||!inProgress||GameServices.Match?.PresentationMatchId!=MatchId||GameServices.Match.RoundNumber!=Round)return incoming;
+            // An in-flight snapshot must not move the displayed frozen clock.
+            // Keep a later, lower host clock for the shared release boundary.
+            _deferredRoundTime=Mathf.Min(_deferredRoundTime,incoming);
+            return FrozenRoundTime;
         }
         private bool PrepareActors()
         {
@@ -150,6 +164,7 @@ namespace TumbangPreso
             var round = GameServices.Round;
             ClearActions();
             var accepted = _commits.ToArray();
+            if(!NetAuthority.ShouldResolve())round?.ApplyPresentationTime(_deferredRoundTime);
             bool themePlayed = _view != null && _view.SoundPlayed;
             _view?.Dispose(); _view=null;
             Active=false; _sealed=false; _viewAttempted=false; PresentationClock.Release();
