@@ -203,6 +203,14 @@ namespace TumbangPreso.PlayTests
                     foreach(var actor in actors)Press(actor,Verb.Ultimate);
                     float until=Time.realtimeSinceStartup+1;while(!SharedUltimatePhase.BlocksActions&&Time.realtimeSinceStartup<until)yield return null;
                     var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);Assert.AreEqual(4,phase.Commits.Count);Assert.Greater(phase.PhaseId,previous);
+                    yield return null;
+                    var title=GameObject.Find("UltimateName");Assert.IsNotNull(title);
+                    Assert.AreEqual("ULTIMATES TOGETHER",title.GetComponent<UnityEngine.UI.Text>().text);
+                    foreach(var actor in actors)
+                    {
+                        var label=GameObject.Find("CohortAbility"+actor.PlayerSlot);Assert.IsNotNull(label);
+                        Assert.AreEqual(actor.AbilitySystem.Kit.Ultimate.Name,label.GetComponent<UnityEngine.UI.Text>().text,"A shared phase mislabeled another accepted ability as the primary one.");
+                    }
                     previous=phase.PhaseId;double began=phase.Began;
                     foreach(var actor in actors)Assert.AreEqual(0,actor.AbilitySystem.Kit.UltimateCharge);
                     while(phase.Active&&SharedUltimatePhase.Now-began<4)yield return null;

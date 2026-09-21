@@ -87,19 +87,34 @@ namespace TumbangPreso.CameraSystem
                 OwnerUiLayout.Fill(_picture.rectTransform); _picture.raycastTarget = false;
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
-                bool twoRows=commits.Count>2;
-                header.anchoredPosition=new Vector2(0,-32); header.sizeDelta=new Vector2(900,twoRows?152:116);
-                var plate = header.gameObject.AddComponent<CourtPopupGraphic>(); plate.Brush=true;plate.color=CourtPresentationPalette.DeepRed; plate.raycastTarget=false;
-                var title=OwnerUiLayout.Text(header,"UltimateName",_primary?.Actor.AbilitySystem.Kit.Ultimate.Name ?? "ULTIMATE",50,OwnerUiLayout.TypeRole.Display);
-                title.alignment=TextAnchor.MiddleCenter; title.color=CourtPresentationPalette.Paper;title.supportRichText=false;
-                title.horizontalOverflow=HorizontalWrapMode.Overflow; title.verticalOverflow=VerticalWrapMode.Overflow;
+                bool together=commits.Count>1;
+                header.anchoredPosition=new Vector2(0,-32);header.sizeDelta=new Vector2(900,together?(commits.Count>2?232:157):116);
+                var plate=header.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.DeepRed;plate.raycastTarget=false;
+                string NameForCast(int seat)
+                {
+                    var actor=GameServices.Round?.PlayerAt(seat);
+                    return actor!=null?actor.AbilitySystem?.Kit?.Ultimate?.Name??"ULTIMATE":"ULTIMATE";
+                }
+                var title=OwnerUiLayout.Text(header,"UltimateName",together?"ULTIMATES TOGETHER":NameForCast(commits[0].Seat),50,OwnerUiLayout.TypeRole.Display);
+                title.alignment=TextAnchor.MiddleCenter;title.color=CourtPresentationPalette.Paper;title.supportRichText=false;
+                title.horizontalOverflow=HorizontalWrapMode.Overflow;title.verticalOverflow=VerticalWrapMode.Overflow;
                 OwnerUiLayout.Place(title.rectTransform,35,0,830,74);
-                var identities=commits.Select(c=>PlayerIdentity.Label(c.Seat)+" · "+SeatLabel.Raw(c.Seat)).ToArray();
-                string names=twoRows?string.Join("  +  ",identities.Take(2))+"\n"+string.Join("  +  ",identities.Skip(2)):string.Join("  +  ",identities);
-                var castNames=OwnerUiLayout.Text(header,"CohortNames",names,25);
-                castNames.alignment=TextAnchor.MiddleCenter;castNames.supportRichText=false;
-                castNames.color=_primary != null && commits.Count == 1 ? PlayerIdentity.Colour(_primary.Actor.PlayerSlot) : CourtPresentationPalette.Paper;
-                OwnerUiLayout.Place(castNames.rectTransform,35,74,830,twoRows?70:35);
+                for(int i=0;i<commits.Count;i++)
+                {
+                    int seat=commits[i].Seat;
+                    float x=together?35+(i%2)*430:35;
+                    if(commits.Count==3&&i==2)x=250;
+                    float y=74+(i/2)*75,width=together?400:830;
+                    var name=OwnerUiLayout.Text(header,"CohortSeat"+seat,PlayerIdentity.Label(seat)+" · "+SeatLabel.Raw(seat),25,OwnerUiLayout.TypeRole.Display);
+                    name.alignment=TextAnchor.MiddleCenter;name.supportRichText=false;name.color=PlayerIdentity.Colour(seat);
+                    OwnerUiLayout.Place(name.rectTransform,x,y,width,35);
+                    if(together)
+                    {
+                        var abilityName=OwnerUiLayout.Text(header,"CohortAbility"+seat,NameForCast(seat),23);
+                        abilityName.alignment=TextAnchor.MiddleCenter;abilityName.supportRichText=false;abilityName.color=CourtPresentationPalette.Paper;
+                        OwnerUiLayout.Place(abilityName.rectTransform,x,y+33,width,34);
+                    }
+                }
                 if (liveCamera != null && _primary != null)
                 {
                     var go=new GameObject("UltimateSceneCamera"); go.transform.SetParent(_stage.transform,false);
