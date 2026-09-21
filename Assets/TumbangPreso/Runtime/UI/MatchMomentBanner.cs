@@ -12,6 +12,7 @@ namespace TumbangPreso.UI
         private CanvasGroup _group;
         private Text _title, _detail;
         private Image _accent;
+        private CourtPopupGraphic _plate;
         private MatchDirector _match;
         private MatchMoment _moment;
         private float _began, _duration;
@@ -22,22 +23,22 @@ namespace TumbangPreso.UI
         {
             var rect = OwnerUiLayout.Rect(parent, "EarnedMoment");
             rect.anchorMin = rect.anchorMax = new Vector2(.5f, .76f); rect.pivot = new Vector2(.5f, .5f);
-            rect.sizeDelta = new Vector2(800, 148);
+            rect.sizeDelta = new Vector2(660, 116);
             var banner = rect.gameObject.AddComponent<MatchMomentBanner>(); banner._rect = rect;
             banner._group = rect.gameObject.AddComponent<CanvasGroup>(); banner._group.blocksRaycasts = false;
             banner._group.interactable = false; banner._group.alpha = 0;
-            rect.gameObject.AddComponent<MomentPlate>().raycastTarget = false;
-            banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 54, OwnerUiLayout.TypeRole.Display);
+            banner._plate=rect.gameObject.AddComponent<CourtPopupGraphic>();banner._plate.Brush=true;banner._plate.color=CourtPresentationPalette.DeepRed;banner._plate.raycastTarget=false;
+            banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 44, OwnerUiLayout.TypeRole.Display);
             banner._title.alignment = TextAnchor.MiddleCenter; banner._title.raycastTarget = false;
-            banner._title.color = OwnerUiTheme.Current.Pale; banner._title.supportRichText = false;
+            banner._title.color = CourtPresentationPalette.Paper; banner._title.supportRichText = false;
             banner._title.horizontalOverflow = HorizontalWrapMode.Overflow;
             banner._title.verticalOverflow = VerticalWrapMode.Overflow;
-            OwnerUiLayout.Place(banner._title.rectTransform, 24, 0, 752, 98);
-            banner._detail = OwnerUiLayout.Text(rect, "MomentPlayer", "", 28, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Place(banner._title.rectTransform, 24, 0, 612, 73);
+            banner._detail = OwnerUiLayout.Text(rect, "MomentPlayer", "", 25, OwnerUiLayout.TypeRole.Display);
             banner._detail.alignment = TextAnchor.MiddleCenter; banner._detail.raycastTarget = false;
-            banner._detail.supportRichText = false; OwnerUiLayout.Place(banner._detail.rectTransform, 24, 98, 752, 39);
+            banner._detail.supportRichText = false; OwnerUiLayout.Place(banner._detail.rectTransform, 24, 72, 612, 36);
             banner._accent = OwnerUiLayout.Rect(rect, "PlayerAccent").gameObject.AddComponent<Image>();
-            banner._accent.raycastTarget = false; OwnerUiLayout.Place(banner._accent.rectTransform, 70, 141, 660, 4);
+            banner._accent.raycastTarget = false; OwnerUiLayout.Place(banner._accent.rectTransform, 55, 109, 550, 3);
             banner.Bind(); return banner;
         }
         private void Bind()
@@ -72,6 +73,7 @@ namespace TumbangPreso.UI
             if (_duration > 0 && Time.unscaledTime - _began < .7f && moment.Priority < _moment.Priority) return;
             _moment = moment; _began = Time.unscaledTime; _duration = moment.Priority >= 2 ? 1.65f : 1.25f;
             _title.text = Title(moment.Kind);
+            _plate.color=moment.Priority>=2?CourtPresentationPalette.Red:CourtPresentationPalette.DeepRed;
             _detail.text = PlayerIdentity.Label(moment.Actor) + " · " + SeatLabel.Raw(moment.Actor)
                 + (moment.Bonus > 0 ? "   +" + moment.Bonus + " CHAIN BONUS" : "");
             _detail.color = _accent.color = PlayerIdentity.Colour(moment.Actor);
@@ -97,19 +99,6 @@ namespace TumbangPreso.UI
             _rect.anchoredPosition = reduced ? Vector2.zero : new Vector2(-28 * (1 - arrive), -8 * (1 - leave));
             _rect.localScale = Vector3.one * (reduced ? 1 : 1 + .07f * (1 - arrive));
             _rect.localRotation = Quaternion.Euler(0, 0, reduced ? 0 : -3 * (1 - arrive));
-        }
-        [RequireComponent(typeof(CanvasRenderer))]
-        private sealed class MomentPlate : MaskableGraphic
-        {
-            protected override void OnPopulateMesh(VertexHelper helper)
-            {
-                helper.Clear(); var r = GetPixelAdjustedRect(); Color c = new Color(.137f, .114f, .129f, .92f);
-                helper.AddVert(new Vector2(r.xMin+25,r.yMin),c,Vector2.zero);
-                helper.AddVert(new Vector2(r.xMax-20,r.yMin+5),c,Vector2.zero);
-                helper.AddVert(new Vector2(r.xMax,r.yMax-8),c,Vector2.zero);
-                helper.AddVert(new Vector2(r.xMin,r.yMax),c,Vector2.zero);
-                helper.AddTriangle(0,1,2); helper.AddTriangle(0,2,3);
-            }
         }
     }
 }
