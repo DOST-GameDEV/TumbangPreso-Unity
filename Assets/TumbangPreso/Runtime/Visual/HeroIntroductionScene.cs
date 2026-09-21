@@ -87,6 +87,12 @@ namespace TumbangPreso.Visual
                         var calm = GhostPetCompanion.FindForm(_kuro.Root.transform, "CalmForm");
                         var rage = GhostPetCompanion.FindForm(_kuro.Root.transform, "RageForm");
                         if (calm == null || rage == null) throw new InvalidOperationException("Retained Kuro calm/rage forms are missing.");
+                        // The live helper has already made six inactive eye wisps.
+                        // Copies of those have no timeline; the private helper below
+                        // owns fresh ones. Do not grow dormant source spheres too.
+                        foreach (var bone in _kuro.Bones)
+                            if (bone.name == "KuroEyeWisp")
+                            { bone.gameObject.SetActive(false); bone.SetParent(_root.transform, false); ObjectDestroy(bone.gameObject); }
                         _rage = new KuroRagePresentation(_kuro.Root, calm, rage);
                         break;
                     case "dante":
