@@ -18,6 +18,7 @@ namespace TumbangPreso.CameraSystem
         private readonly List<bool> _previous=new List<bool>();
         private readonly RecordedMatchClip _clip;
         private GameObject _stage;
+        private IDisposable _audioMix;
         private Canvas _canvas;
         private Camera _camera;
         private RenderTexture _target;
@@ -82,11 +83,12 @@ namespace TumbangPreso.CameraSystem
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
                 var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=new Vector2(0,1);band.anchorMax=Vector2.one;band.pivot=new Vector2(.5f,1);band.sizeDelta=new Vector2(0,100);
                 var plate=band.gameObject.AddComponent<Image>();plate.color=new Color(.035f,.07f,.06f,.94f);plate.raycastTarget=false;
-                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER"),34,OwnerUiLayout.TypeRole.Display);
+                var label=OwnerUiLayout.Text(band,"ReplayLabel","HALFTIME REPLAY  /  "+clip.Reason+"  /  "+PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+(clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):""),34,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(label.rectTransform);label.alignment=TextAnchor.MiddleCenter;label.color=OwnerUiTheme.Current.Pale;
                 var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=Vector2.zero;footer.anchorMax=new Vector2(1,0);footer.pivot=new Vector2(.5f,0);footer.sizeDelta=new Vector2(0,62);
                 var footerPlate=footer.gameObject.AddComponent<Image>();footerPlate.color=new Color(.035f,.07f,.06f,.92f);footerPlate.raycastTarget=false;
                 _state=OwnerUiLayout.Text(footer,"RecordedCanState","",27,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);_state.alignment=TextAnchor.MiddleCenter;_state.color=OwnerUiTheme.Current.Pale;
+                _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;
             }
             catch{Dispose();throw;}
@@ -139,7 +141,7 @@ namespace TumbangPreso.CameraSystem
             {
                 var cue=_clip.Sounds[_sound++];
                 if(audible&&cue.Time>=_lastTime)
-                {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain,Mathf.Clamp(p.x*2-1,-1,1));}
+                {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain*Mathf.Clamp01(1-(Vector3.Distance(_camera.transform.position,cue.Position)-2)/30),Mathf.Clamp(p.x*2-1,-1,1));}
             }
             _lastTime=time;_hidden.Clear();_previous.Clear();
             RecordedFieldFrame frame=null;
@@ -168,7 +170,7 @@ namespace TumbangPreso.CameraSystem
         {foreach(var r in root.GetComponentsInChildren<Renderer>(true)){if(_hidden.Contains(r))continue;_hidden.Add(r);_previous.Add(r.forceRenderingOff);r.forceRenderingOff=true;}}
         public void Dispose()
         {
-            Ready=false;GameServices.Audio?.StopReplayCues();
+            Ready=false;GameServices.Audio?.StopReplayCues();_audioMix?.Dispose();_audioMix=null;
             if(_camera!=null)_camera.targetTexture=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;

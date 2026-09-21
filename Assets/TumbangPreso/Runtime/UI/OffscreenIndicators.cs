@@ -164,7 +164,7 @@ namespace TumbangPreso.UI
         public void UpdateArrows(CharacterMotor local, Transform can)
         {
             var cam = UnityEngine.Camera.main;
-            if (cam == null || local == null)
+            if (PresentationClock.Held || cam == null || local == null)
             {
                 _canArrow.gameObject.SetActive(false);
                 return;

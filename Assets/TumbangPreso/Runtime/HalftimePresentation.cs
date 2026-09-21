@@ -52,7 +52,7 @@ namespace TumbangPreso
             if(SharedUltimatePhase.Now-began>=(halftime?10:3))return false;
             End(false);MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
             _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;FallbackReason=null;
-            if(halftime){PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();}
+            if(halftime){FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();}
             return true;
         }
         private void Update()

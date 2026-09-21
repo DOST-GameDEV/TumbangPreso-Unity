@@ -241,6 +241,26 @@ namespace TumbangPreso
         private readonly AudioSource[] _replayVoices=new AudioSource[8];
         private int _replayVoice;
 
+        private int _replayMixDepth;
+        private readonly Dictionary<AudioSource,bool> _replayMuted=new Dictionary<AudioSource,bool>();
+        public System.IDisposable EnterReplayMix()
+        {
+            if(_replayMixDepth++==0)foreach(var voice in _voices)if(voice!=null){_replayMuted[voice]=voice.mute;voice.mute=true;}
+            return new ReplayMixLease(this);
+        }
+        private sealed class ReplayMixLease:System.IDisposable
+        {
+            private AudioDirector _owner;
+            public ReplayMixLease(AudioDirector owner)=>_owner=owner;
+            public void Dispose()
+            {
+                if(_owner==null)return;
+                if(--_owner._replayMixDepth==0)
+                {foreach(var entry in _owner._replayMuted)if(entry.Key!=null)entry.Key.mute=entry.Value;_owner._replayMuted.Clear();}
+                _owner=null;
+            }
+        }
+
         public void PlayReplayCue(string id,float pitch,float gain,float pan)
         {
             if(!_cues.TryGetValue(id,out var cue))return;
@@ -547,6 +567,7 @@ namespace TumbangPreso
                 made.minDistance = 2.0f;
                 made.maxDistance = 32.0f;
 
+                if(_replayMixDepth>0){_replayMuted[made]=made.mute;made.mute=true;}
                 _voices.Add(made);
                 return made;
             }

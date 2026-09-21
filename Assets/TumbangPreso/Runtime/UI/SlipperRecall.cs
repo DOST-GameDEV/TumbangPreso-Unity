@@ -161,6 +161,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void Track(CharacterMotor local, Slipper mine)
         {
+            if(PresentationClock.Held){if(_mark!=null)_mark.gameObject.SetActive(false);return;}
             if (_mark == null) return;
 
             var cam = UnityEngine.Camera.main;

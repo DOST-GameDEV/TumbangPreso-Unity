@@ -55,6 +55,7 @@ namespace TumbangPreso.PlayTests
             match.SkipBuffer();Assert.IsFalse(match.SkipRequested,"Halftime has one shared end");
             yield return new WaitForSecondsRealtime(.4f);
             Assert.AreEqual(time,Time.time);Assert.IsNotNull(phase.FallbackReason);Assert.AreEqual(score,match.ScoreFor(1));
+            Assert.IsTrue(Object.FindObjectsByType<UI.OffscreenIndicators>().All(i=>!i.CanMarkerVisible),"Live world markers cannot paint over halftime footage or standings");
             // Join the same deadline late; duplicates cannot restart its ten seconds.
             Assert.IsFalse(phase.Receive(phase.MatchId,phase.CompletedRound,phase.NextTaya,SharedUltimatePhase.Now,0,true,1));
             double end=phase.Began+10;
