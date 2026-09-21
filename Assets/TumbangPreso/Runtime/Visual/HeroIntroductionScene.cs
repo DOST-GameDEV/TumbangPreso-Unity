@@ -118,7 +118,7 @@ namespace TumbangPreso.Visual
                         break;
                     case "cheska":
                         for (int i = 0; i < 3; i++)
-                            Add("GatheredIce" + i, VfxShapes.Spire(6, .12f, 0, i * 3), new Color(.46f, .86f, .94f, .62f));
+                            Add("GatheredIce" + i, VfxShapes.Spire(6, .12f, 0, i * 3), new Color(.18f, .65f, .92f, .88f));
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
@@ -257,7 +257,7 @@ namespace TumbangPreso.Visual
                     float form = Ease(.4f, 1.85f, t);
                     Vector3 gatherAt = _heldItem != null ? FreePalm : BothPalms;
                     for (int i = 0; i < 3; i++)
-                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form), .35f + Mathf.Abs(i - 1) * .04f, .35f),
+                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form) - (_heldItem != null ? .15f : 0), .14f + Mathf.Abs(i - 1) * .04f, .17f),
                             new Vector3(.10f, .36f, .10f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
                     break;
             }

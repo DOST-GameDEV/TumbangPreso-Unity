@@ -66,7 +66,7 @@ namespace TumbangPreso.PlayTests
                     var stage = new GameObject("IntroductionRenderCopy"); stage.SetActive(false);
                     var copy = track.Clone(stage.transform); Assert.IsNotNull(copy);
                     track.Apply(copy, track.Newest);
-                    var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero);
+                    var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero, actor.GetComponent<Carrier>().Held != null);
                     Assert.IsNotNull(clip); Assert.IsTrue(clip.legacy, "Runtime-authored sampling must work in the native player."); Assert.AreEqual(2.8f, clip.length, .01f);
                     int score = GameServices.Match.ScoreFor(1); Vector3 at = actor.transform.position;
                     bool active = visual.Model.activeSelf;

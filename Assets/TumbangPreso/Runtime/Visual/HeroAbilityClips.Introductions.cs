@@ -10,7 +10,7 @@ namespace TumbangPreso.Visual
         public const float IntroductionSeconds = 2.8f;
         public const float IntroductionReturnSeconds = .4f;
 
-        public static AnimationClip BuildUltimateIntroduction(Transform root, string hero)
+        public static AnimationClip BuildUltimateIntroduction(Transform root, string hero, bool holdingSlipper = false)
         {
             var paths = ResolvePaths(root);
             if (paths == null) return null;
@@ -67,11 +67,11 @@ namespace TumbangPreso.Visual
                 case "cheska":
                     // Still shoulders make the small precise hand phrase legible.
                     // Gathering ice belongs between the hands, not over the face.
-                    PoseKey(b, .55f, 0, V(0, 8, 0), V(8, -8, 0), V(-65, 16, 18), V(-30, -12, -16));
-                    PoseKey(b, 1.25f, 0, V(0, 4, 0), V(7, -4, 0), V(-70, 18, 24), V(-70, -18, -24));
-                    PoseKey(b, 1.90f, -.02f, V(3, 0, 0), V(4, 0, 0), V(-55, 30, 15), V(-55, -30, -15));
-                    PoseKey(b, 2.35f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, 42), V(-85, 8, -42));
-                    PoseKey(b, 2.8f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, 42), V(-85, 8, -42));
+                    PoseKey(b, .55f, 0, V(0, 8, 0), V(8, -8, 0), V(-65, 16, holdingSlipper ? 35 : 18), V(-30, -12, -16));
+                    PoseKey(b, 1.25f, 0, V(0, 4, 0), V(7, -4, 0), V(-70, 18, holdingSlipper ? 55 : 24), V(-70, -18, -24));
+                    PoseKey(b, 1.90f, -.02f, V(3, 0, 0), V(4, 0, 0), V(-55, 30, holdingSlipper ? 60 : 15), V(-55, -30, -15));
+                    PoseKey(b, 2.35f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
+                    PoseKey(b, 2.8f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
                     break;
                 default: return null;
             }

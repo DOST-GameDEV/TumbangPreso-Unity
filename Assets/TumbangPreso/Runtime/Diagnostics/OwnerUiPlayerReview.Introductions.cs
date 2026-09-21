@@ -55,7 +55,7 @@ namespace TumbangPreso.Diagnostics
                     track.Record(Time.time); track.Record(Time.time + .05f);
                     var stage = new GameObject("NativeIntroductionRenderCopy"); stage.SetActive(false);
                     var copy = track.Clone(stage.transform); track.Apply(copy, track.Newest);
-                    var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero);
+                    var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero, actor.GetComponent<Carrier>().Held != null);
                     if (clip == null || !clip.legacy || clip.length < 2.79f) throw new InvalidOperationException(hero + " native clip was empty or unsupported");
                     var arm = copy.Bones.First(b => b.name == "arm-right");
                     clip.SampleAnimation(copy.Root, 0); var rest = arm.localRotation;
