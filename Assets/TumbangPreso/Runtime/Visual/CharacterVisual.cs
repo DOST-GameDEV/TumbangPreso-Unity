@@ -543,10 +543,6 @@ namespace TumbangPreso.Visual
         private CharacterController _supportController;
         private readonly RaycastHit[] _supportHits=new RaycastHit[16];
         private float _groundContact;
-        private bool _groundSupportValid;
-        private float _groundSupportHeight;
-        public bool TryGetGroundSupport(out float height)
-        { height=_groundSupportHeight;return isActiveAndEnabled&&_groundSupportValid&&_motor!=null&&_motor.IsGrounded; }
 
         private Vector3 _smoothedWorld;
         private float _smoothedYawDeg;
@@ -587,7 +583,6 @@ namespace TumbangPreso.Visual
         public void SnapRemoteTransform()
         {
             _groundContact=0;
-            _groundSupportValid=false;
             _smoothedWorld = transform.position;
             _smoothedYawDeg = transform.eulerAngles.y;
             _smoothing = true;
@@ -653,7 +648,6 @@ namespace TumbangPreso.Visual
 
         private Vector3 GroundContactOffset(Vector3 drawnBody,float dt)
         {
-            _groundSupportValid=false;
             if(_motor==null)_motor=GetComponent<CharacterMotor>();
             if(_supportController==null)_supportController=GetComponent<CharacterController>();
             float target=0;
@@ -672,7 +666,6 @@ namespace TumbangPreso.Visual
                     if(hit.collider==null || hit.normal.y<.5f || hit.distance>=nearest)continue;
                     if(hit.collider.GetComponentInParent<CharacterMotor>()!=null || hit.collider.GetComponentInParent<Slipper>()!=null)continue;
                     nearest=hit.distance;target=Mathf.Clamp(feet.y-hit.point.y,0,skin+.002f);
-                    _groundSupportHeight=hit.point.y;_groundSupportValid=true;
                 }
             }
             _groundContact=Mathf.MoveTowards(_groundContact,target,Mathf.Max(0,dt)*2f);

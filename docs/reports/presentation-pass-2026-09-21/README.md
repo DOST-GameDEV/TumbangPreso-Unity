@@ -695,3 +695,10 @@ leg vertices and existing support, leaving collision/aim unchanged. It is pendin
 validation while the full native match runs. This interpretation follows the
 [Unity BakeMesh scale-compensation contract](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/SkinnedMeshRenderer.BakeMesh.html)
 and the independent numerical comparison, not the docs alone. No tolerance was widened.
+
+Further f0c5880e evidence corrects the earlier foot interpretation: the minimum
+is arm-left(weight1), not a sole. Actual feet already meet support. The exploratory
+FootContact runtime layer is removed; the test selects actual leg-weighted vertices
+and compensates scale without widening its.025m assertion. Earlier conclusions
+and failures remain in history. This is a measurement fix, not a claimed new
+runtime foot-grounding fix.

@@ -151,3 +151,11 @@ input restored. Failure preserved; no full-match pass. The route now assigns its
 explicit completed flag. This changes only the opt-in probe, not match timings.
 No job remains running. Next freeze the current foot/finish/probe fixes, run their
 focused checks and buildv27, then rerun full native matches. Keep continuing work.
+
+Foot diagnosis corrected: f0c5880e identifies the minimum as arm-left(weight1), not
+a leg. Actual foot geometry already meets support. Remove only this task's
+unnecessary FootContact experiment, preserve original live grounding, and measure
+leg-weighted compensated vertices with the SAME tolerance. The smoothing fixture
+now waits for time-based floor seating before its strict rest comparison. Both
+probe corrections are pending. A wrong-source v3launch was stopped after the
+commit helper hit an existing UTF-8 comment; guard restored the profile. No pass.

@@ -89,6 +89,6 @@ namespace TumbangPreso.Visual
             _weightApplied = true;
         }
 
-        private void OnDisable() { ClearFootContact(); ClearLocomotionWeight(); }
+        private void OnDisable() => ClearLocomotionWeight();
     }
 }

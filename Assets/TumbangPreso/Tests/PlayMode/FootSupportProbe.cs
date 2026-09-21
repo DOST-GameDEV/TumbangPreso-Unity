@@ -145,40 +145,9 @@ namespace TumbangPreso.PlayTests
                     {
                         float sole=float.PositiveInfinity;
                         foreach(var body in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null && b.name=="leg-left")))
-                        {body.BakeMesh(mesh,true);foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);}
+                        {sole=Mathf.Min(sole,RenderedSole(body,mesh));}
                         float support=Slipper.GroundY(who.transform.position);
                         records.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4}",stage,who.transform.position.y,sole,support,who.IsGrounded));
-                        if(planted && Mathf.Abs(support-sole)>.025f)
-                        {
-                            var animator=who.GetComponent<CharacterAnimator>();var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
-                            foreach(string field in new[]{"_contactFeet","_contactRoot","_contactLift","_oneShotLeft","_introductionBones","_current"})
-                            {var value=typeof(CharacterAnimator).GetField(field,flags)?.GetValue(animator);Debug.Log("[FootSupport] "+field+"="+(value is System.Array array?array.Length.ToString():value));}
-                            Debug.Log("[FootSupport] supportAvailable="+who.GetComponent<CharacterVisual>().TryGetGroundSupport(out float supportHeight)+" height="+supportHeight+" stunned="+who.IsStunned+" tripped="+who.IsTripped+" swim="+who.IsSwimming);
-                            foreach(var skin in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null&&b.name=="leg-left")))
-                            {
-                                var vertices=skin.sharedMesh.vertices;var weights=skin.sharedMesh.boneWeights;var binds=skin.sharedMesh.bindposes;
-                                float manual=float.PositiveInfinity;string lowestBones="";
-                                for(int v=0;v<vertices.Length;v++)
-                                {
-                                    var weight=weights[v];var world=Vector3.zero;
-                                    world+=Point(weight.boneIndex0,weight.weight0);world+=Point(weight.boneIndex1,weight.weight1);
-                                    world+=Point(weight.boneIndex2,weight.weight2);world+=Point(weight.boneIndex3,weight.weight3);
-                                    if(world.y<manual)
-                                    {
-                                        manual=world.y;
-                                        lowestBones=skin.bones[weight.boneIndex0].name+":"+weight.weight0+"/"+skin.bones[weight.boneIndex1].name+":"+weight.weight1+"/"+skin.bones[weight.boneIndex2].name+":"+weight.weight2+"/"+skin.bones[weight.boneIndex3].name+":"+weight.weight3;
-                                    }
-                                    Vector3 Point(int index,float amount)=>amount<=0?Vector3.zero:skin.bones[index].TransformPoint(binds[index].MultiplyPoint3x4(vertices[v]))*amount;
-                                }
-                                skin.BakeMesh(mesh,true);float scaled=float.PositiveInfinity;
-                                foreach(var v in mesh.vertices)scaled=Mathf.Min(scaled,skin.transform.TransformPoint(v).y);
-                                Debug.Log("[FootSupport] skin="+skin.name+" scale="+skin.transform.lossyScale+" manualSkinMin="+manual+" compensatedBakeMin="+scaled+" lowestWeights="+lowestBones);
-                            }
-                            foreach(var part in who.GetComponentsInChildren<Transform>())
-                                if(part.name=="Visual"||part.name=="root"||part.name=="leg-left"||part.name=="leg-right")
-                                    Debug.Log("[FootSupport] "+part.name+" parent="+part.parent?.name+" world="+part.position.ToString("F4")+" local="+part.localPosition.ToString("F4"));
-                            Debug.Log("[FootSupport] body="+who.transform.position.ToString("F4")+" model="+who.GetComponent<CharacterVisual>().ModelRoot.localPosition.ToString("F4")+" velocity="+who.Velocity);
-                        }
                         if(planted)Assert.AreEqual(support,sole,.025f,stage+" foot lost contact.");
                         else Assert.Greater(sole,support+.1f,"Ground contact correction pinned the jumping body to the floor.");
                     }
@@ -188,6 +157,23 @@ namespace TumbangPreso.PlayTests
                 while(!done)yield return null;
                 if(failure!=null)throw failure;
             }
+        }
+
+        // BakeMesh(true) compensates renderer scale before TransformPoint. The
+        // old minimum over the whole body measured a hanging HAND on some rigs.
+        // Read only vertices predominantly attached to the actual leg bones.
+        private static float RenderedSole(SkinnedMeshRenderer skin,Mesh baked)
+        {
+            skin.BakeMesh(baked,true);var vertices=baked.vertices;var weights=skin.sharedMesh.boneWeights;
+            var bones=skin.bones;float lowest=float.PositiveInfinity;
+            bool Leg(int index)=>index>=0&&index<bones.Length&&bones[index]!=null&&(bones[index].name=="leg-left"||bones[index].name=="leg-right");
+            for(int i=0;i<vertices.Length;i++)
+            {
+                var w=weights[i];float leg=(Leg(w.boneIndex0)?w.weight0:0)+(Leg(w.boneIndex1)?w.weight1:0)
+                    +(Leg(w.boneIndex2)?w.weight2:0)+(Leg(w.boneIndex3)?w.weight3:0);
+                if(leg>.5f)lowest=Mathf.Min(lowest,skin.transform.TransformPoint(vertices[i]).y);
+            }
+            return lowest;
         }
 
         [DefaultExecutionOrder(-300)]

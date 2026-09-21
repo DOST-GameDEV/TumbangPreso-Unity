@@ -373,6 +373,9 @@ namespace TumbangPreso.PlayTests
             // the capsule, and the smoothing adds to that rather than replacing it. Comparing to
             // zero asserts the alignment away, which is how the first run of this test "failed"
             // at a residual of exactly the drop.
+            // Floor seating advances in seconds; a fixed load-frame count can
+            // end inside that transient at a high batch frame rate.
+            yield return new WaitForSeconds(.2f);
             Vector3 rest = root.localPosition;
 
             visual.SmoothRemote = true;

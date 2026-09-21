@@ -465,7 +465,6 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearIntroductionPose();
-            ClearFootContact();
             ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
@@ -489,7 +488,6 @@ namespace TumbangPreso.Visual
         private void Update()
         {
             RestoreIntroductionPose();
-            RestoreFootContact();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
@@ -916,7 +914,6 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             RestoreIntroductionPose();
-            RestoreFootContact();
             RestoreLocomotionWeight();
             try
             {
@@ -951,7 +948,7 @@ namespace TumbangPreso.Visual
                 if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
             }
-            finally { ApplyLocomotionWeight(); ApplyFootContact(); ApplyIntroductionPose(); }
+            finally { ApplyLocomotionWeight(); ApplyIntroductionPose(); }
         }
 
         private void RestoreChargeOffsets()
