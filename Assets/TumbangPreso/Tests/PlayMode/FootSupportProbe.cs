@@ -68,8 +68,8 @@ namespace TumbangPreso.PlayTests
                                 Assert.IsNotEmpty(bodies,"No real foot-bearing body mesh found.");
                                 foreach(var body in bodies)
                                 {
-                                    body.BakeMesh(mesh,true);bounds=Mathf.Min(bounds,body.bounds.min.y);
-                                    foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);
+                                    bounds=Mathf.Min(bounds,body.bounds.min.y);
+                                    sole=Mathf.Min(sole,RenderedSole(body,mesh));
                                 }
                                 float support=Slipper.GroundY(who.transform.position),gap=sole-support;
                                 rows.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4:F4},{5:F4},{6:F4},{7:F4},{8}",

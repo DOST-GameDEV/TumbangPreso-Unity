@@ -567,7 +567,7 @@ namespace TumbangPreso.Visual
 
                 // Turning it off returns the mesh to the body immediately; leaving the offset
                 // behind would park every character permanently beside itself.
-                if (!_smoothRemote) SnapRemoteTransform();
+                if (!_smoothRemote) SnapRemotePose(false);
             }
         }
 
@@ -580,16 +580,20 @@ namespace TumbangPreso.Visual
         /// the body without walking it, and a visual that glides to the new spot crosses the
         /// whole arena in front of everybody. The Godot side records this as its own rule.
         /// </summary>
-        public void SnapRemoteTransform()
+        public void SnapRemoteTransform() => SnapRemotePose(true);
+
+        private void SnapRemotePose(bool reseatGround)
         {
-            _groundContact=0;
+            // A teleport must sample its new surface. Merely changing who owns
+            // smoothing keeps the current foot seating instead of popping upward.
+            if(reseatGround)_groundContact=0;
             _smoothedWorld = transform.position;
             _smoothedYawDeg = transform.eulerAngles.y;
             _smoothing = true;
 
             if (_modelRoot == null || _modelRoot == transform) return;
 
-            _modelRoot.localPosition = _alignedLocal;
+            _modelRoot.localPosition = _alignedLocal+transform.InverseTransformVector(Vector3.down*_groundContact);
             _modelRoot.localRotation = Quaternion.identity;
         }
 

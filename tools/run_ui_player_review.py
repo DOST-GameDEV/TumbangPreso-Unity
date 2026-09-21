@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--exe',required=True)
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
+    parser.add_argument('--ordinary-skills',action='store_true',help='Capture all twelve default ordinary skills through accepted input and actual game audio.')
     parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
@@ -63,6 +64,7 @@ def main():
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.ordinary_skills:command.append('-tp-ordinary-skills')
     if args.whole_matches:command.append('-tp-whole-matches')
     if args.frame_poll:command.append('-tp-review-frame-poll')
     if args.menu_only:command.append('-tp-menu-review-only')

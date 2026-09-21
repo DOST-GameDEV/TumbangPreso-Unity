@@ -419,6 +419,8 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-ordinary-skills"))
+            {yield return OrdinarySkillsOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-whole-matches"))
             {yield return WholeMatchesOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-halftime-only"))
