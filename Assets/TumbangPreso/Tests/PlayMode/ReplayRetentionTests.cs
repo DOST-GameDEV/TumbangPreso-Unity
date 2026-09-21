@@ -120,7 +120,19 @@ namespace TumbangPreso.PlayTests
             using(var view=new RecordedWorldView(archive.transform,clip))
             {
                 Assert.IsTrue(view.Ready,"A clear actual-court replay angle must render");
-                view.Draw(clip.Contact,false);Assert.IsTrue(view.Target.IsCreated());
+                var liveEffect=GameObject.CreatePrimitive(PrimitiveType.Sphere);liveEffect.name="LiveEffectIsolationProof";
+                liveEffect.GetComponent<Collider>().enabled=false;Visual.VfxRenderTag.Attach(liveEffect);
+                Visual.ComicPopup.Spawn(Vector3.up*2,"CURRENT WORLD",Color.magenta,2);
+                yield return null;
+                var liveCanvases=Object.FindObjectsByType<Visual.ComicPopup>().SelectMany(p=>p.GetComponentsInChildren<Canvas>()).ToArray();
+                bool observed=false;
+                void BeforeRender(Camera camera)
+                {if(camera.name!="RecordedWorldCamera")return;observed=true;Assert.IsTrue(liveEffect.GetComponent<Renderer>().forceRenderingOff);Assert.IsTrue(liveCanvases.All(c=>!c.enabled));}
+                Camera.onPreRender+=BeforeRender;
+                try{view.Draw(clip.Contact,false);}
+                finally{Camera.onPreRender-=BeforeRender;}
+                Assert.IsTrue(observed);Assert.IsFalse(liveEffect.GetComponent<Renderer>().forceRenderingOff);Assert.IsTrue(liveCanvases.All(c=>c.enabled));Object.Destroy(liveEffect);
+                Assert.IsTrue(view.Target.IsCreated());
                 var capture=new Texture2D(view.Target.width,view.Target.height,TextureFormat.RGB24,false);
                 var previous=RenderTexture.active;RenderTexture.active=view.Target;capture.ReadPixels(new Rect(0,0,view.Target.width,view.Target.height),0,0);capture.Apply();RenderTexture.active=previous;
                 System.IO.Directory.CreateDirectory("Logs/replay-retained-view");System.IO.File.WriteAllBytes("Logs/replay-retained-view/contact.png",capture.EncodeToPNG());Object.Destroy(capture);
