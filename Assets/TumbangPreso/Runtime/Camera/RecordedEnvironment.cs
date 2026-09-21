@@ -32,7 +32,10 @@ namespace TumbangPreso.CameraSystem
         private void Apply(ColourGrade grade,Material sky,Light sun,Light fill)
         {
             RenderSettings.ambientMode=Ambient;RenderSettings.ambientSkyColor=Sky;RenderSettings.ambientEquatorColor=Equator;
-            RenderSettings.ambientGroundColor=Ground;RenderSettings.ambientLight=Flat;RenderSettings.fog=Fog;RenderSettings.fogMode=FogMode;
+            RenderSettings.ambientGroundColor=Ground;
+            // ambientLight aliases ambientSkyColor in Unity; writing both would
+            // overwrite the recorded sky value when restoring a different look.
+            RenderSettings.fog=Fog;RenderSettings.fogMode=FogMode;
             RenderSettings.fogColor=FogColour;RenderSettings.fogStartDistance=FogStart;RenderSettings.fogEndDistance=FogEnd;RenderSettings.fogDensity=FogDensity;
             if(sun!=null&&HasSun){sun.color=SunColour;sun.intensity=SunPower;}
             if(sky!=null){if(HasExposure&&sky.HasProperty("_Exposure"))sky.SetFloat("_Exposure",Exposure);if(HasTint&&sky.HasProperty("_Tint"))sky.SetColor("_Tint",SkyTint);}
