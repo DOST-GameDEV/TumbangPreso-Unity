@@ -34,7 +34,7 @@ namespace TumbangPreso.CameraSystem
             _clip=clip;_lastTime=clip.Start;
             try
             {
-                if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name)return;
+                if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name){UnavailableReason="Camera or map not ready: camera="+(Camera.main!=null)+" scene="+UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+" clip="+clip.Map;return;}
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 foreach(var track in clip.Objects)
                 {

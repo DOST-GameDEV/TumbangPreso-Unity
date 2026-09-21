@@ -52,7 +52,8 @@ namespace TumbangPreso.Diagnostics
         private IEnumerator Shot()
         {
             yield return new WaitForSecondsRealtime(1.5f);yield return new WaitForEndOfFrame();
-            var image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.ChangeExtension(Argument("-tp-replaytrace"),".png"),image.EncodeToPNG());Destroy(image);
+            var target=HalftimePresentation.Instance?.ReplayFrame;if(target==null)yield break;
+            var image=new Texture2D(target.width,target.height,TextureFormat.RGB24,false);var previous=RenderTexture.active;RenderTexture.active=target;image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();RenderTexture.active=previous;File.WriteAllBytes(Path.ChangeExtension(Argument("-tp-replaytrace"),".png"),image.EncodeToPNG());Destroy(image);
         }
         private IEnumerator Exchange()
         {

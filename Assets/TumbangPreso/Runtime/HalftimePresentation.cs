@@ -20,6 +20,7 @@ namespace TumbangPreso
         public float Duration=>IsHalftime?10:3;
         public float Remaining=>Active?Mathf.Max(0,Duration-(float)(SharedUltimatePhase.Now-Began)):0;
         public bool HasReplay=>_view?.Ready==true;
+        public RenderTexture ReplayFrame=>_view?.Target;
         public string FallbackReason {get;private set;}
         private RecordedWorldView _view;
         private RecordedMatchClip _clip;
