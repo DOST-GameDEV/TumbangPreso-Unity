@@ -20,6 +20,14 @@ namespace TumbangPreso.CameraSystem
         public float End => Samples.Length>0?Samples[Samples.Length-1].Time:0;
         public RecordedPoseTrack(string[] paths,Sample[] samples)
         {Paths=paths;Samples=samples;}
+        public RecordedPoseTrack WithKey(Sample key)
+        {
+            if(key==null||key.Time<Start||key.Time>End)return this;
+            var samples=new System.Collections.Generic.List<Sample>(Samples.Length+1);
+            foreach(var sample in Samples)if(Mathf.Abs(sample.Time-key.Time)>.00001f)samples.Add(sample);
+            samples.Add(key);samples.Sort((a,b)=>a.Time.CompareTo(b.Time));
+            return new RecordedPoseTrack(Paths,samples.ToArray());
+        }
         public Transform[] Bind(GameObject renderOnlyRoot)
         {
             if(renderOnlyRoot==null)return null;

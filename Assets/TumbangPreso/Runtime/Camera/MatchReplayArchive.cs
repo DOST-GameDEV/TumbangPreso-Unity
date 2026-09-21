@@ -22,7 +22,7 @@ namespace TumbangPreso.CameraSystem
             public MatchPoseHistory.Track Track;
         }
         private struct Pending
-        {public float Contact,Start,End;public int Actor,Subject,Importance;public string Reason;}
+        {public float Contact,Start,End;public int Actor,Subject,Importance;public string Reason;public Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample> ContactPoses;}
         public sealed class Retained
         {
             public readonly RecordedMatchClip Clip;
@@ -78,6 +78,7 @@ namespace TumbangPreso.CameraSystem
                 _pending.RemoveAt(i);Retain(pending);
             }
         }
+        public static GameObject PropModel(GameObject root)=>root.transform.Find("Visual")?.gameObject??root;
         private void BindProps()
         {
             var round=GameServices.Round;
@@ -85,10 +86,10 @@ namespace TumbangPreso.CameraSystem
             {
                 int seat=shoe.SeatOfOrigin;
                 _props.Add(new Prop{Source=shoe.gameObject,Kind=RecordedObjectKind.Slipper,Seat=seat,Skin=shoe.SkinIndex,
-                    Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),shoe.gameObject)});
+                    Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),PropModel(shoe.gameObject))});
             }
             if(round.Lata!=null)_props.Add(new Prop{Source=round.Lata.gameObject,Kind=RecordedObjectKind.Can,Seat=-1,Skin=round.Lata.SkinIndex,
-                Track=new MatchPoseHistory.Track(round.PlayerAt(0),round.Lata.gameObject)});
+                Track=new MatchPoseHistory.Track(round.PlayerAt(0),PropModel(round.Lata.gameObject))});
             foreach(var actor in round.Players)
             {
                 var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet==null)continue;
@@ -105,7 +106,10 @@ namespace TumbangPreso.CameraSystem
             float now=Time.time;
             if(_pending.Any(p=>Mathf.Abs(p.Contact-now)<.03f&&p.Actor==actor&&p.Subject==subject))return;
             if(_pending.Count>=Capacity)_pending.RemoveAt(0);
-            _pending.Add(new Pending{Contact=now,Start=now-2,End=now+1.4f,Actor=actor,Subject=subject,
+            var contactPoses=new Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample>();
+            for(int seat=0;seat<4;seat++){var track=_history?.ForSeat(seat);if(track!=null)contactPoses[track]=track.Capture(now);}
+            foreach(var prop in _props)contactPoses[prop.Track]=prop.Track.Capture(now);
+            _pending.Add(new Pending{ContactPoses=contactPoses,Contact=now,Start=now-2,End=now+1.4f,Actor=actor,Subject=subject,
                 Importance=kind==MatchFlair.Kind.Tag?2:1,Reason=kind==MatchFlair.Kind.Tag?"CATCH":"CAN KNOCKDOWN"});
         }
         private void Retain(Pending pending)
@@ -116,6 +120,7 @@ namespace TumbangPreso.CameraSystem
             {
                 var actor=round.PlayerAt(seat);var track=_history.ForSeat(seat);
                 var pose=track?.Retain(pending.Start,pending.End);
+                if(pose!=null&&pending.ContactPoses.TryGetValue(track,out var key))pose=pose.WithKey(key);
                 if(actor==null||pose==null){LastSkip="Incomplete body lead-in or aftermath";return;}
                 objects.Add(new RecordedObjectTrack{Kind=RecordedObjectKind.Player,Seat=seat,Skin=actor.CharacterIndex,
                     Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),Pose=pose});
@@ -123,6 +128,7 @@ namespace TumbangPreso.CameraSystem
             foreach(var prop in _props)
             {
                 var pose=prop.Track.Retain(pending.Start,pending.End);
+                if(pose!=null&&pending.ContactPoses.TryGetValue(prop.Track,out var key))pose=pose.WithKey(key);
                 if(pose==null){LastSkip=$"Incomplete {prop.Kind} P{prop.Seat+1}: source={prop.Source!=null}, ready={prop.Track.Ready}, recorded={prop.Track.Oldest:F3}..{prop.Track.Newest:F3}, needed={pending.Start:F3}..{pending.End:F3}";return;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,Pose=pose});
             }

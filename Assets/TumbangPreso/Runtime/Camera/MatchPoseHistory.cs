@@ -66,6 +66,21 @@ namespace TumbangPreso.CameraSystem
                 }
                 _cursor = (_cursor + 1) % Samples; _count = Mathf.Min(Samples, _count + 1);
             }
+            public RecordedPoseTrack.Sample Capture(float time)
+            {
+                if(Source==null||_frames.Length==0)return null;
+                var sample=new RecordedPoseTrack.Sample{Time=time,Positions=new Vector3[_bones.Length],
+                    Rotations=new Quaternion[_bones.Length],Scales=new Vector3[_bones.Length],Active=new bool[_bones.Length]};
+                for(int i=0;i<_bones.Length;i++)
+                {
+                    var bone=_bones[i];if(bone==null)return null;
+                    sample.Positions[i]=i==0?bone.position:bone.localPosition;
+                    sample.Rotations[i]=i==0?bone.rotation:bone.localRotation;
+                    sample.Scales[i]=i==0?bone.lossyScale:bone.localScale;
+                    sample.Active[i]=bone.gameObject.activeSelf;
+                }
+                return sample;
+            }
             public Transform CopiedBone(Copy copy, Transform source)
             {
                 int index = System.Array.IndexOf(_bones, source);
