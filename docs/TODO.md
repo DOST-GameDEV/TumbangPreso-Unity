@@ -2,6 +2,62 @@
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+**Latest owner correction,2026-09-21:** "finish everything note yet done". The owner
+rejected stopping at the presentation-only boundary. All genuinely unfinished,
+autonomously actionable project work is assigned here, including the map/character/
+Inday/UI work previously deferred below. Earlier deferrals are ordering history,
+not permission to stop. Preserve every task ID, implementation and failed receipt.
+
+**Explicit full-file mandate:** "i want every single thing in todo to be done pls
+mark that in todo and shit". Every unfinished item in this entire TODO is in scope,
+including the preserved numbered backlog, not only the presentation section or
+the categories listed next. Maintain an item-by-item disposition: implemented with
+evidence, superseded by a specific completed replacement, or blocked by a specific
+external dependency. An old OPEN heading alone is not proof code is missing, but
+neither may a task be skipped because it is old, inconvenient or previously deferred.
+No broad parent gets checked while any actionable child remains unfinished.
+
+### Full remaining execution order
+
+The presentation outcomes below retain their completed software/evidence states.
+Continue through the following existing scope in this same assignment:
+
+1. **152.4 / MAP_FINAL_PASS / owner map revisions:** reconcile current scene/source
+   with the saved map checkpoint; finish actual remaining architecture/vegetation,
+   street life, material/lighting, readable routes and Sa Bubong pool/edge/resident
+   gaps. Keep implemented swimming, recovery, laundry and map palettes. Use current
+   normal-speed owner views, physical route checks and repeatable authoring to
+   distinguish defects from stale notes. Do not restart the completed map foundation.
+2. **151.9/151.19 / remaining movement, equipment and whole-kit alternatives:**
+   retain qualified default actions/six ultimate performances. Audit actual remaining
+   alternative skills, body/FPP/contact/cancel continuity and graphics controls from
+   the preserved gameplay queue. Implement unmet contracts; close stale claims only
+   with specific later source/evidence. No speculative optimization or full-suite loop.
+3. **153 / U8 / remaining existing UI and 149.4/145/143 qualification:** finish
+   actionable primary/secondary routes, prompt rebind/device-state behavior, native
+   preview/layout and feature-relevant authority/rejoin gaps. Preserve supplied art,
+   input mapping and unrelated dirty work. Physical hardware, external services and
+   human judgment remain separately named checks; they do not block independent work.
+4. **Inday source-arm framing:** resume the retained source-copy candidate and its
+   carrying/throw/body/FPP review. Keep actual arm geometry, proportions and palette;
+   remove obsolete reconstruction only after its replacement is verified.
+5. **BADJAO_EXPANSION, selected character B and map C:** implement the retained
+   Sama Dilaut athlete (working name Rafi), native model/rig/FPP/animations, distinct
+   Crosscurrent/Mirrorwake/Breakwater kit and complete gameplay/presentation/network/
+   replay/roster integration. Build the sheltered-lagoon community court with solid
+   supported houses/decks, generous routes and fair water/edge recovery for every
+   character in both modes. No new resource bar or mandatory swimming passive.
+6. **152 / final delivery:** qualify changed contracts, all playable maps/roster
+   routes, native controls, representative full matches and real peer cases on a
+   coherent Windows candidate. Publish verified batches on ASTRAReworks. Audit every
+   remaining open entry against implementation/evidence or an exact external blocker.
+   The overall goal ends only after all independent actionable work is exhausted.
+
+Detailed existing designs stay in MAP_FINAL_PASS.md, OWNER_PLAYTEST_REVISION.md,
+BADJAO_EXPANSION.md and the preserved gameplay/UI plans. The ledger is the exact
+current action pointer. Old scheduling, rejected designs and completed repairs are
+not new implementation tasks; the reconciliation must state why they are superseded.
+
 Latest owner direction, 2026-09-21: improve the current plan substantially through
 research into Sepak U, Blue Lock and related games. Many complementary layers and
 animations are welcome. Merge improvements into this queue; preserve every existing
@@ -122,13 +178,13 @@ No historical/deferred task is silently closed. Map/new-character/Inday/broad-U8
 work below retains its original scope and status. This pass is not a claim that
 the entire historical TODO is empty or that the owner approved the art by silence.
 
-### Deferred, retired and owned work
+### Earlier deferrals, retired work and ownership
 
-**Deferred:** all existing map/new-map/Rafi/seventh-hero/water-village tasks, Inday
-reconstruction/FPP study, broad U8 secondary/device coverage, unrelated outage/rejoin
-matrices and speculative optimization. Their original tasks, concepts and evidence
-remain below and in their topic docs. Event-responsive existing scenery in1.5 does
-not promote the whole map backlog.
+**Reactivated by the latest owner correction:** existing map/new-map/Rafi/seventh-
+hero/water-village tasks, Inday's retained FPP study, remaining U8 secondary coverage
+and applicable outstanding network qualification. Their original tasks, concepts
+and evidence remain below and in topic docs. Speculative optimization and obsolete
+test permutations are not deliverables; fix concrete remaining acceptance gaps.
 
 **Retired from automatic pick-next:** unchanged C2 lunge-ratio/C3 registry work and
 old spectator/manual-control/menu rechecks retain their fixes, findings and IDs.

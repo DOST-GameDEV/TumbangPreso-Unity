@@ -1,7 +1,7 @@
-> Deferred by the owner's2026-09-21 presentation-first order. Preserve this plan,
-> assets, approvals and unfinished work. Broad map reconstruction is not an active
-> prerequisite. Only a concrete current collision/retrieval/occlusion/performance
-> blocker permits a bounded repair. Follow [the current queue](TODO.md#current-implementation-queue).
+> ACTIVE again after the owner's2026-09-21 "finish everything note yet done"
+> correction. Resume actual unfinished work from current source/evidence; preserve
+> completed map foundations. Old checkpoint/scheduling statements below are history.
+> Follow [the current queue](TODO.md#current-implementation-queue).
 
 **Newest owner playtest corrections:** [OWNER_PLAYTEST_REVISION.md](OWNER_PLAYTEST_REVISION.md).
 Current implementation/run state is the newest active ledger pointer.

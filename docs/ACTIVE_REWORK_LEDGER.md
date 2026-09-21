@@ -9,6 +9,15 @@ or Desktop replacement. The owner was deeply disappointed by two premature stops
 [AGENTS.md](../AGENTS.md#two-premature-stops-explicit-owner-correction) records the
 exact correction and continuation rule. The accidental Stop was explicitly resumed.
 
+Latest correction: the owner rejected closing the presentation-only goal and
+said "finish everything note yet done". The replacement goal is ACTIVE and covers
+all remaining actionable backlog, including formerly deferred maps, Rafi/seventh
+hero, lagoon village, Inday and UI/qualification. These are unfinished implementable
+features, not external review blockers. A phase completion is not overall completion.
+Owner clarified: EVERY unfinished item in the entire TODO is assigned, including
+the preserved numbered backlog. The execution categories are an order, not a scope
+filter. Maintain per-item disposition and never check a parent over unfinished work.
+
 Resume from this verified work; do not restart or lose earlier features.4dee8e71
 had overclosed broader outcomes using partial evidence; those statuses were corrected
 before further work. No subsequent pass erases failed attempts or substitutes for
@@ -73,14 +82,24 @@ Cheska scene no longer contains the previous round's solid pillars.
 
 ## Remaining and next action
 
-No independent implementation item remains in this active presentation pass.
+The presentation software checkpoint is complete, not the whole assignment.
 1.5's full listening judgment and5.2's human listening/taste, full human play,
 physical controller/touch and separate-machine/device validation stay unchecked.
 Direct audio input was attempted and explicitly unsupported by this interface.
 Do not claim those checks, human approval, WAN certification or all historical TODO
-completion. Deferred map/new-character/Inday/broad secondary work remains intact.
+completion. Previously deferred map/new-character/Inday/secondary work is ACTIVE.
 
-No owned job remains: all players/proxies/Editors/encoders exited. No task-owned
-browser or preview server. Final publication/checks are documentation/source steps;
-do not rebuild for docs. Use the existing artifact/recordings for remaining external
-review and resume exact affected work if actual feedback identifies a defect.
+Resume: reconcile the preserved backlog against current source and receipts, then
+finish existing-map composition/graphics/life and route gaps, remaining existing
+gameplay/kit/UI work, Inday's retained source-arm framing, and the selected B hero/C
+lagoon expansion. Keep the exact ordered tasks in TODO, designs in their topic
+files, and evidence in reports. Do not resurrect obsolete work solely because an
+old heading says OPEN. Source checkpoint10fa4cad preserves all previous delivery.
+
+Current owned job: guarded validation Editor session68830, existing MapExperience
+legal-owner-view baseline, source db976126. Logs/full-backlog-maps-baseline-v1.xml/
+.log and capture folder of the same name. Profile presentation-validation-20260921.
+No other owned player/proxy/encoder/browser/preview. Development edits remain in
+the separate checkout. Full-backlog report has the366-heading intake inventory.
+Next: inspect baseline four-map frames, reconcile still-current composition/route
+gaps and implement them. Keepv33 as tested fallback; no docs-only rebuild.

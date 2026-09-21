@@ -2,6 +2,23 @@
 
 ## Current owner direction, 2026-09-21
 
+### Full remaining backlog, latest correction
+
+The owner rejected ending the goal at the presentation-only boundary and said
+"finish everything note yet done". Complete the remaining actionable project
+backlog, including the formerly deferred maps, Rafi/seventh hero and lagoon map,
+Inday work, and remaining UI/qualification. Earlier "later" labels determine
+order, not exclusion from this assignment. Preserve completed work and task IDs.
+Never close the overall goal merely because a phase, build or checkpoint passed.
+Reconcile old open entries with actual source/evidence; do not redo superseded
+designs or count unimplemented features as human-review blockers. Continue every
+independent implementable item before stopping for genuine external dependencies.
+This correction supersedes the narrower presentation-only queue and stop rule.
+The owner then made the scope explicit: "i want every single thing in todo to be
+done pls mark that in todo and shit". The full TODO, including preserved numbered
+entries, is assigned. Account for every unfinished requirement with implementation
+and evidence or a concrete external dependency; no silent exclusions by section.
+
 ### Two premature stops: explicit owner correction
 
 On 2026-09-21 the owner said they were deeply disappointed that this agent stopped
@@ -72,10 +89,10 @@ status queue. Read topic details as needed: [vision](docs/VISION.md),
 Prioritize the complete throw, can, retrieval, restore, chase, escape/tag exchange;
 ownership/identity/locators/feed; victim catch reconstruction and capped chains;
 all six heroes' distinct full ultimate performances; spectator and all-player
-halftime highlights; integrated Classic and Hero Strike validation. Maps, new
-characters, Inday reconstruction and broad secondary/device UI coverage are deferred.
-Preserve their work. Historical demo-day, maps-first and empty-the-entire-TODO
-instructions do not control the current queue.
+halftime highlights; integrated Classic and Hero Strike validation. That software
+checkpoint is retained. Maps, new characters, Inday and remaining secondary UI
+work now follow it in the same assignment. Historical demo-day scheduling and
+superseded designs do not override the current queue or justify repeating done work.
 
 ## Workspace, ownership and delivery
 

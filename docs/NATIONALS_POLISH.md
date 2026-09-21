@@ -298,7 +298,12 @@ C1-C3 have an explicit handback. Old ratio/registry investigations are retired f
 
 Owner handback 2026-09-21 ("get everything done u are the only agent working on this") assigns the remaining C4 dependencies here. Complete the necessary score/event/phase/replay authority and compatibility work while preserving earlier evidence. Fix concrete prediction-refusal defects and validate their real transport paths; the historical audit is not a second backlog or a reason to stop independent work.
 
-Defer broad map beautification/new maps, Rafi/seventh hero/water-village expansion, Inday reconstruction, broad U8/device matrices, unrelated outage permutations and speculative optimizations. Preserve assets, concepts, IDs and useful rejected alternatives. A concrete collision/retrieval/occlusion/performance blocker can receive a bounded repair. No redesign of completed menu/login/controller artwork.
+The later2026-09-21 owner correction resumes every genuinely unfinished TODO,
+including broad map work, Rafi/seventh hero/water-village expansion, retained Inday
+FPP work and remaining U8/network qualification. These follow the saved presentation
+checkpoint in the canonical TODO order; the earlier deferral is no longer a scope
+exclusion. Preserve assets, concepts, IDs and rejected-alternative evidence. Do not
+redo completed menu/login/controller artwork or revive speculative optimizations.
 
 ## Preserved earlier direction and evidence
 

@@ -1,0 +1,2203 @@
+{
+  "source": "10fa4cad1db17075e1bae7583c07bdf881b1fec0",
+  "scope": "Every genuinely unfinished requirement in the entire TODO, including previously deferred work. Title status is historical, not current proof.",
+  "todoSha256": "47620b6ee9093846b63dbafa4b243474c0afd1097f283bb68cb273c0a817a85d",
+  "numberedHeadings": [
+    {
+      "lineAtIntake": 251,
+      "heading": "## 155 · THE RECALL BEAM, DRAWN BY A SHADER RATHER THAN BUILT OUT OF TUBES ⚠️ IN PROGRESS, 2026-09-20, branch `feature/slipper-beam-shader`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 265,
+      "heading": "### 155.1 The shader ✅ DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 318,
+      "heading": "### 155.2 ⚠️⚠️ \"NO CONFLICT WITH SLIPPERRECALL\" IS A DESIGN CONSTRAINT AND IT WAS MET BY SHARING RATHER THAN BY AVOIDING ✅ DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 346,
+      "heading": "### 155.3 ⚠️ THE BEAM IS BROADER THAN THE LANDED RIM, DELIBERATELY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 354,
+      "heading": "### 155.4 ⚠️ `SetState` DRIVES IT AND `SetLandedHighlight` COULD NOT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 362,
+      "heading": "### 155.6 The faults the builds had, kept because the next one could reintroduce them",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 386,
+      "heading": "### 155.5 NOT DONE, named rather than left implied",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 405,
+      "heading": "## 154 · THE RECALL MARK, AND OWNERSHIP BECOMES A LOCK ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 417,
+      "heading": "### 154.1 ⚠️⚠️ THE GAME'S OWN THESIS HAD NOTHING ON SCREEN ABOUT IT ✅ DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 461,
+      "heading": "### 154.2 ⚠️⚠️ OWNERSHIP IS A LOCK NOW, AND THIS IS THE THIRD CALL ON THAT RULE ✅ DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 489,
+      "heading": "### 154.3 ⚠️⚠️ ONLY YOURS LIGHTS, AND FIXING THAT FOUND A HOST-ONLY FEATURE ✅ DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 510,
+      "heading": "### 154.4 What else this pass found and fixed",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 545,
+      "heading": "### 154.5 NOT DONE, named rather than left implied",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 570,
+      "heading": "## 153 · THE TITLE STREET AND THE LOGIN, REDRAWN BY HER AND PUT IN MOTION ⚠️ IN PROGRESS, 2026-09-18, branch `ASTRAReworks`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 584,
+      "heading": "### 153.1 The three plates are an animation, not three drafts",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 599,
+      "heading": "### 153.2 Three things in that difference are not shadow, and all three travelled",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 624,
+      "heading": "### 153.3 Subtle is a number",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 646,
+      "heading": "### 153.4 The title screen is one press and it has no other doors: STATED, NOT FORGOTTEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 666,
+      "heading": "### 153.5 The login: her element sheet is the source, her compositions are the ruler",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 687,
+      "heading": "### 153.6 Type and colour were measured, not chosen",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 707,
+      "heading": "### 153.7 Validation is live, and it enforces the rules the SERVICE has",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 733,
+      "heading": "### 153.8 Four sounds for four states that had none",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 742,
+      "heading": "### 153.9 The green tick is the one drawn mark, and what would close it: OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 749,
+      "heading": "### 153.10 What is not done: OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 763,
+      "heading": "### 153.11 The three red `HomeFlowTests` were four stale names and one race: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 793,
+      "heading": "### 153.18 The gate's first real number, and the fifty-three it found: IN PROGRESS 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 875,
+      "heading": "### 153.20 What is still red after this pass, and why each one is: OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 906,
+      "heading": "### 153.17 The PlayMode gate could not run at all, and the reason was a list: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 926,
+      "heading": "### 153.16 The plank across the loadout screen was the capture, not the screen: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 950,
+      "heading": "### 153.14 The five fixtures beside those three, and the one real fault under them: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 980,
+      "heading": "### 153.15 Password recovery, built as far as UGS allows: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1024,
+      "heading": "### 153.21 The three moving layers were each wrong in their own way: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1065,
+      "heading": "### 153.22 Her login answered a press and ignored everything up to it: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1092,
+      "heading": "### 153.19 The three red core cases were three different kinds of stale, and two were product faults: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1140,
+      "heading": "### 153.13 The crop was still protecting the can, and it cost the logo: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1158,
+      "heading": "### 153.12 Her valid mark is not `Lime`, measured: CLOSED 2026-09-19",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1179,
+      "heading": "## 152 · Coherent game improvement and release verification: IN PROGRESS, 2026-09-09",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1214,
+      "heading": "### 152.4 Repeated play must feel substantially better: OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1640,
+      "heading": "## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, merged to `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1657,
+      "heading": "### 142.1 ⚠️⚠️ EVERY BACK-OUT IN THE GAME WAS KEYBOARD-ONLY, SO A PAD COULD REACH EVERY SCREEN AND LEAVE NONE OF THEM",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1697,
+      "heading": "### 142.2 ⚠️⚠️ THERE WAS NO PAUSE ON A PAD, AND `SpectatorPause` HAD TO MOVE FOR THERE TO BE ONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1717,
+      "heading": "### 142.3 THE MENU HE ASKED FOR: `InputLayer.ControllerMapScreen`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1771,
+      "heading": "### 142.3b ⚠️⚠️ THE EMOTE WHEEL OPENED ON A PAD AND COULD NOT BE STEERED BY ONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1786,
+      "heading": "### 142.3c ⚠️⚠️ THE PAD IS A REAL ILLUSTRATION NOW, AND IT IS CC0 RATHER THAN \"OFF GOOGLE\"",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1834,
+      "heading": "### 142.3d ⚠️⚠️ THE PAD IS THE DUALSHOCK 4 LAYOUT NOW, AND THE LEADERS BEND",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1892,
+      "heading": "### 142.3e ⚠️ A TILTED PAD WAS BUILT AND REVERTED, AND THIS IS THE RECORD SO NOBODY REDOES THE HUNT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1919,
+      "heading": "### 142.3f ⚠️⚠️ THE PAD GLYPHS ARE PS4 PROMPTS NOW, AND THE OLD ONES WERE XBOX ON A DUALSHOCK",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1973,
+      "heading": "### 142.3g ⚠️⚠️ THE DEVICE SWAP WAS ONLY HALF WIRED, AND ANSWERING \"DOES IT WORK\" FOUND THREE HOLES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1982,
+      "heading": "#### 142.3g.1 ⚠️⚠️ THE DETECTION NEVER RAN IN THE MENUS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 1998,
+      "heading": "#### 142.3g.2 ⚠️ THE ICONS ONLY SWAPPED IN THE TUTORIAL",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2018,
+      "heading": "#### 142.3g.3 ⚠️ AN XBOX PAD WAS SHOWN PLAYSTATION GLYPHS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2033,
+      "heading": "### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2075,
+      "heading": "### 142.4b ⚠️ HOW THIS PASS WAS VERIFIED, AND THE ONE SUITE THAT COULD NOT BE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2106,
+      "heading": "### 142.5 ⚠️ WHAT IS STILL OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2144,
+      "heading": "## 151 · THE NATIONALS FUN PASS: EARS AT THE PLAYER, AN IMPACT FRAME ONE PEER GOT, AND A SLIDE NOBODY COULD SEE OR HEAR ⚠️ IN PROGRESS, 2026-09-06, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2156,
+      "heading": "### 151.1 ⚠️⚠️ P1 CONFIRMED AND FIXED, CLOSING § 150.7: THE LISTENER RIDES THE CAMERA NOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2205,
+      "heading": "### 151.2 ⚠️⚠️ THE MANDATORY SECOND HALF: THIRTEEN CALL SITES FAKED A POSITION, AND FOUR INVENTED THE SAME WORKAROUND",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2262,
+      "heading": "### 151.3 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE IMPACT FRAME ON THE BIGGEST PAYOFF IN THE GAME WAS THE HOST'S ALONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2286,
+      "heading": "### 151.4 ⚠️⚠️ AND `audit_presentation_reach.py` COULD NOT SEE IT, WHICH IS WHY IT SURVIVED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2305,
+      "heading": "### 151.5 ⚠️⚠️ FIXED AND MEASURED, CLOSING § 144.8: THE JEEPNEY HAS A FINISH AND SOMETHING TO REFLECT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2355,
+      "heading": "### 151.7 ⚠️⚠️ CONFIRMED AND FIXED: THE RETRIEVAL SLIDE HAD NO NUMBER ANYWHERE IN THE REPOSITORY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2377,
+      "heading": "### 151.8 THE MAXIMUM-EFFECTS FRAME, MEASURED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2441,
+      "heading": "### 151.9 THE MULTI-SEED SWEEP, RUN, AND THE PACING IT MEASURES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2603,
+      "heading": "### 151.10 ⚠️ WHAT WAS AUDITED AND FOUND ALREADY CORRECT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2622,
+      "heading": "### 151.11 ⚠️⚠️ CONFIRMED AND FIXED: THE PISONET BOOTH PLAYED THE SCORE STING AND DUCKED THE MUSIC",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2643,
+      "heading": "### 151.13 ⚠️⚠️ THE COMMITTED RETRIEVAL SLIDE, THE ONE MOVE THIS BRIEF IS ABOUT, HAD THREE PRESENTATION DEFECTS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2649,
+      "heading": "#### 151.13a ⚠️⚠️ THE FIRST-PERSON ARM STOPPED ANIMATING ON THE SLIDE, AND IT BROKE ON 2026-09-05",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2699,
+      "heading": "#### 151.13b ⚠️⚠️ THE SLIDE IS ANNOUNCED ON THE WIRE AS A LUNGE, IN TWO PLACES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2716,
+      "heading": "#### 151.13c ⚠️⚠️ THREE PLAYERS OUT OF FOUR CANNOT HEAR A SLIDE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2735,
+      "heading": "### 151.14 ⚠️ FIVE FREQUENT CUES HAD NO PITCH WINDOW, AND THE CODEBASE ALREADY BELIEVES THEY SHOULD",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2766,
+      "heading": "### 151.16 ⚠️⚠️ FIXED 2026-09-09: `ClipMotionStrip` PHOTOGRAPHS A CLIP ACROSS ITS LENGTH, AND CALIBRATING IT FOUND A SILENT 2.38x",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2800,
+      "heading": "### 151.16b ⚠️⚠️ THE PROBE'S FIRST OUTPUT WAS WRONG IN A WAY THAT WOULD HAVE SURVIVED REVIEW, AND THE CALIBRATION IS THE FIX",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2834,
+      "heading": "### 151.16c What the strip deliberately does NOT do",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2846,
+      "heading": "### 151.20 ⚠️⚠️ FIXED 2026-09-09: THE CLIP-SET CHECK IS A SUPERSET ONE NOW, AND THE STALE 32 IS OUT OF EIGHT PLACES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2869,
+      "heading": "### 151.20b The stale 32, and the two places it was deliberately left alone",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2887,
+      "heading": "### 151.19 ⚠️⚠️ OPEN, AND IT IS AN ARCHIVED ENTRY COMING BACK WITH EVIDENCE: THE EIGHTEEN PROCEDURAL HERO CASTS PROBABLY DO NOT ANIMATE IN A BUILD",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2940,
+      "heading": "### 151.17 ✅ EVERY REGRESSION THIS PASS ADDED HAS BEEN SEEN RED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2957,
+      "heading": "### 151.12 ⚠️ WHAT WAS DELIBERATELY NOT DONE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 2984,
+      "heading": "## 149 · THE FRESH-AUDIT FOLLOW-UP: MOVEMENT BUDGET, RE-ADMISSION, AND THE ONE-SHOT REQUESTS ⚠️⚠️ IN PROGRESS, 2026-09-05, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3001,
+      "heading": "### 149.1 ⚠️⚠️ P0 CONFIRMED AND FIXED: PACKET FREQUENCY BOUGHT DISTANCE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3090,
+      "heading": "### 149.2 ⚠️⚠️ P0 CONFIRMED AND FIXED: IT COULD, UNDER A TOKEN THE CLIENT CHOSE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3155,
+      "heading": "### 149.3 ✅ P1 CONFIRMED AND FIXED: THE BUFFER-SKIP VOTE HAD A JOIN RACE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3202,
+      "heading": "### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3228,
+      "heading": "### 149.5 ⚠️ P2: REPEATED SCENE LOOKUPS IN NETWORK HOT PATHS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3290,
+      "heading": "### 149.6 ✅ P2 MEASURED: THE COMMENT WAS FALSE, AND THE PREDICATE IS CORRECTED ANYWAY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3337,
+      "heading": "### 149.8 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SINGLE EXIT FROM A MATCH CLEARED NOTHING",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3393,
+      "heading": "### 149.9 ⚠️⚠️ P1 CONFIRMED AND FIXED: A SPECTATOR COULD SET `Time.timeScale` TO NaN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3452,
+      "heading": "### 149.11 ⚠️⚠️ FOUND WHILE VERIFYING: EVERY UNITY RUN DIRTIED A TRACKED FILE, SO THE GATE COULD NEVER PASS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3480,
+      "heading": "### 149.10 ✅ THE ACCEPTANCE BAR FOR THIS SECTION",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3489,
+      "heading": "## 148 · THE 2026-09-05 NATIONALS BATCH ✅ CLOSED, and archived in the commit that wrote it",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3536,
+      "heading": "## 147 · THE GAME NOTICES ITS OWN GOOD MOMENTS AND WRITES THEM DOWN ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3549,
+      "heading": "### 147.1 ✅ WHAT LANDED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3579,
+      "heading": "### 147.2 ⚠️ THE DEDUPE RULE IS THE PART WITH TEETH",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3592,
+      "heading": "## 146 · CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3601,
+      "heading": "### 146.1 ✅ IT ADDS NO BUTTON, AND THE ONE IT USES WAS DEAD",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3612,
+      "heading": "### 146.2 ✅ EVERY NUMBER IS SOLVED FROM ONE THE GAME ALREADY HAD",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3637,
+      "heading": "### 146.3 ✅ THE PUNISHMENT IS COMMITMENT, NOT A STATUS EFFECT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3647,
+      "heading": "### 146.4 ✅ HOST-AUTHORITATIVE, AND THE PICKUP RULE IS NOT RESTATED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3660,
+      "heading": "### 146.4b ✅ AND AN AUDIT CAUGHT A DOUBLE AWARD ON THE RUN IT WAS WRITTEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3680,
+      "heading": "### 146.4c ⚠️ AND THE FIXTURE'S OWN FIRST RED WAS A TRAP WORTH WRITING DOWN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3708,
+      "heading": "### 146.5 ✅ THE BOT IS TAUGHT IT, DELIBERATELY, AND ONLY WHERE A PERSON WOULD",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3720,
+      "heading": "### 146.6 ⚠️ OPEN: THE ART, AND THE NUMBERS AFTER A HUMAN HAS FELT THEM",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3735,
+      "heading": "## 145 · THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3741,
+      "heading": "### 145.1 ✅ A QUALIFICATION MAY NOT CERTIFY A TREE IT CANNOT TIE TO A COMMIT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3767,
+      "heading": "### 145.2 ✅ THE BUILD-SIDE DIRTY FLAG WAS A HEURISTIC THAT COULD NOT SEE AN ORDINARY EDIT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3786,
+      "heading": "### 145.3 ✅ THE TOURNAMENT AUDIT COULD NOT SEE SWITCH NUMBER NINE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3812,
+      "heading": "### 145.4 ✅ THE REFEREE VERIFIER PRINTED MORE THAN IT GATED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3840,
+      "heading": "### 145.6 ✅ THE BOT SWEEP CAN ANSWER \"DID THIS CHANGE MOVE ANYTHING\", WHICH IT COULD NOT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 3878,
+      "heading": "### 145.4b ✅ MEASURED AND FIXED: THE ROSTERS AGREED; `IsBot` WAS BEING GATED AS IF IT WERE CONSTANT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4031,
+      "heading": "### 145.7 ✅ `net_matrix.py` PRINTED `DIVERGED` AND EXITED 0",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4062,
+      "heading": "### 145.8 ✅ THE COLD START PROVED HERO STRIKE ON macOS, NOT CLASSIC ON WINDOWS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4126,
+      "heading": "### 145.9 ✅ AN UNTRACKED SOURCE FILE WAS NOT A DIRTY TREE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4162,
+      "heading": "### 145.10 ✅ A DIRTY ARTIFACT COULD QUALIFY, AND UGS IDENTITY WAS NOT PART OF CROSSPLAY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4182,
+      "heading": "### 145.11 ⚠️⚠️ P0 CLOSED: THE RETRIEVAL SLIDE WAS A FREE DASH OVER THE WIRE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4207,
+      "heading": "### 145.12 ⚠️⚠️ P0 CLOSED: THE SLIDE'S REFUSAL COULD NEVER BE ROLLED BACK",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4220,
+      "heading": "### 145.13 ✅ `cold_start --clean-profile` COULD DELETE THE ONLY BACKUP",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4243,
+      "heading": "### 145.14 ✅ THE AUDIT OF THE GRADERS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4257,
+      "heading": "### 145.5 ⚠️ OPEN: `qualify.py` STILL HAS TO RUN ON A WINDOWS MACHINE FOR A NATIONALS CANDIDATE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4269,
+      "heading": "## 144 · THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4275,
+      "heading": "### 144.1 ✅ THE SIXTEEN RECORDINGS, AND 42 CUES THAT WERE SYNTHESISED ARE SOURCED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4302,
+      "heading": "### 144.2 ✅ THE GENERATOR DECAYED A CUE BY ITS OWN GAIN ON EVERY RE-RUN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4318,
+      "heading": "### 144.3 ⚠️⚠️ OPEN: BOTH AUDIO GATES WERE READING A DIRECTORY THE GAME CANNOT LOAD FROM",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4348,
+      "heading": "### 144.3b ✅ MEASURED 2026-09-05: IT IS A MIRROR, THREE GENERATORS WERE STILL FEEDING IT, AND IT HAS DRIFTED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4397,
+      "heading": "### 144.4 ✅ THE JEEPNEY SHIPS AS DELIVERED, AND § 6.0 EXISTS BECAUSE THE FIRST ATTEMPT DID NOT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4458,
+      "heading": "### 144.5 ✅ THE LOBBY'S CHARACTERS AND MAP WERE ONE 960 x 540 TEXTURE STRETCHED ACROSS THE SCREEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4495,
+      "heading": "### 144.6 ✅ THE LOGO IS ALREADY THE LOGO, AND THE FILE HE SENT IS BYTE-IDENTICAL TO THE ONE IN THE REPO",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4521,
+      "heading": "### 144.7 ✅ CLOSED 2026-09-05: THE SEAT HANDOVER'S RATING TRAVELS, AND IT COST `ProtocolVersion` 24",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4592,
+      "heading": "### 144.8 ⚠️⚠️ OPEN, AND HANDED TO ANOTHER SESSION: THE JEEPNEY'S METAL FINISH DOES NOT SHOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4698,
+      "heading": "### 143.15 ✅ CLOSED 2026-09-05: THE COLD START RAN, AND THE FIRST RUN FOUND A HOLE IN THE HARNESS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4742,
+      "heading": "### 143.15b ✅ CLOSED 2026-09-05: THE STEP ASSERTS A ROUND RAN, AND IT IS A SEPARATE ROW NOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4820,
+      "heading": "## 143 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4846,
+      "heading": "### 143.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY \"RUN IT TWICE\" WOULD NOT HAVE HELPED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4905,
+      "heading": "### 143.1a ✅ THE WHOLE GATE RAN ON `0ae070e`, AND THE COMPARISON IS THE ENTRY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4936,
+      "heading": "### 143.1b ⚠️⚠️ THE COVERAGE CHECK'S FIRST RUN FAILED THE GATE OVER SEVEN FIXTURES THAT WERE MEANT TO BE SILENT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4968,
+      "heading": "### 143.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 4986,
+      "heading": "### 143.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5012,
+      "heading": "### 143.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5044,
+      "heading": "### 143.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5056,
+      "heading": "### 143.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5091,
+      "heading": "### 143.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5125,
+      "heading": "### 143.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5143,
+      "heading": "### 143.8 ✅ THE AUDITS ARE A GATE NOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5150,
+      "heading": "### 143.9 ✅ CLOSED 2026-09-05: HOST LOSS IS ONE OUTCOME ON EVERY PEER, AND ONE EXPRESSION WAS THE HOLE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5210,
+      "heading": "### 143.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5228,
+      "heading": "### 143.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5235,
+      "heading": "### 143.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5267,
+      "heading": "### 143.18 ⚠️⚠️ OPEN: ENTERING MATCH SETUP OVERWRITES THE SELECTED RULE SET WITH WHATEVER THE PLAYER LAST SAVED, AND THAT REACHES THE TOURNAMENT PRESET",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5327,
+      "heading": "### 143.19 ✅ CLOSED 2026-09-04: THE HERO PICKER SPENT ITS ONE SENTENCE ON THE WRONG STRING",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5363,
+      "heading": "### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5382,
+      "heading": "### 143.13 to 143.16",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5389,
+      "heading": "## 141 · SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5400,
+      "heading": "### 141.1 WHAT THE SCREENSHOT SHOWS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5414,
+      "heading": "### 141.2 ✅ VERIFIED: F1, F2, F3 AND F4 EACH HAVE TWO READERS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5441,
+      "heading": "### 141.3 ✅ THE CAUSE, AND IT IS NOT THE KEY COLLISION",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5478,
+      "heading": "### 141.4 ✅ THE KEY COLLISION, AND WHAT IS STILL OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5486,
+      "heading": "### 141.5 ✅ THE `#7645` IS OFF THE IN-MATCH LABEL",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5507,
+      "heading": "### 141.7 ✅ 2026-09-05: THE INVARIANT MODEL CAN NOW EXPRESS BOTH FAULTS, WHICH IT COULD NOT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5552,
+      "heading": "### 141.8 ✅ 2026-09-05: THE DUPLICATE NAME, AND WHY IT IS NOT ONE FAULT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5592,
+      "heading": "### 141.6 ✅ AND NO TWO SEATS CAN READ THE SAME, WHICH IS THE TOURNAMENT QUESTION",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5650,
+      "heading": "## 140 · THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5656,
+      "heading": "### 140.1 FIRST, THE CHECK: NOTHING WAS BROKEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5672,
+      "heading": "### 140.2 ⚠️⚠️ THE GAP: THERE IS NO CONNECTION READOUT OF ANY KIND",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5694,
+      "heading": "### 140.3 ✅ THE MEASURABLE HALF IS BUILT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5714,
+      "heading": "### 140.4 ⚠️ WHAT IS NOT BUILT: THE SCREEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5740,
+      "heading": "### 140.5 ⚠️⚠️ AND THE ONE NOBODY CAN FIX WITHOUT DECIDING SOMETHING: A DROP AND A QUIT ARE THE SAME EVENT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5755,
+      "heading": "## 139 · SETTINGS IS FOUR PAGES NOW, AND THE RENDERS FOUND THREE FAULTS THAT HAD SHIPPED FOR THE WHOLE PORT ⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5762,
+      "heading": "### 139.1 THE BASELINE, AND ALL THREE COMPLAINTS ARE VISIBLE IN ONE PICTURE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5775,
+      "heading": "### 139.2 ⚠️⚠️ \"MAKE IT REBINDABLE IN CONTROLLER\" WAS ALREADY BUILT, AND SAYING SO MATTERS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5790,
+      "heading": "### 139.3 WHAT LANDED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5812,
+      "heading": "### 139.4 ⚠️⚠️ THREE FAULTS THE RENDERS FOUND, ALL THREE OLDER THAN THIS PASS, ALL THREE INVISIBLE UNTIL NOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5830,
+      "heading": "### 139.5 ⚠️⚠️ AND ONE FAULT THE TEST FOUND, WHICH IS THE HALF A RENDER COULD NOT HAVE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5846,
+      "heading": "### 139.6 THE RENDERS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5856,
+      "heading": "### 139.7 ⚠️ WHAT IS STILL OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5877,
+      "heading": "## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5891,
+      "heading": "### 138.1 HOW A PAD REACHES A UNITY GAME, IN FOUR STEPS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5905,
+      "heading": "### 138.2 ⚠️⚠️ WHAT THAT MEANS HERE, AND IT IS EVERY CONTROLLER PATH AT ONCE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5923,
+      "heading": "### 138.3 ⚠️ HOW BIG IS THIS ACTUALLY, BECAUSE THE ANSWER IS \"SMALLER THAN IT SOUNDS ON WINDOWS\"",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5941,
+      "heading": "### 138.4 WHAT DONE LOOKS LIKE, IN THE ORDER THAT PAYS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5985,
+      "heading": "### 138.5 ⚠️ AND CROSSPLAY IS NOT AFFECTED, WHICH IS WORTH SAYING BEFORE SOMEBODY WORRIES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 5996,
+      "heading": "## 134 · THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6014,
+      "heading": "### 134.1 ⚠️⚠️ THE TOUCH LAYER WAS PAINTING KEYBOARD KEYS, AND THE CAUSE WAS A FIELD TYPE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6088,
+      "heading": "### 134.2 ⚠️⚠️ THE ATTACKER SHOVE: FOUR FAULTS THAT PRODUCED ONE BEHAVIOUR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6185,
+      "heading": "### 134.3 ⚠️ BASELINE: WHAT THE SPECTATOR AUTOPILOT ACTUALLY DID BEFORE THIS PASS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6220,
+      "heading": "### 134.4 ⚠️ BASELINE: WHAT MANUAL REPLAY ACTUALLY SHOWED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6253,
+      "heading": "### 134.5 THE SHOT VOCABULARY, THE EVENT INTEREST MODEL AND WHAT THE AUTOPILOT DOES NOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6354,
+      "heading": "### 134.6 THE REPLAY MARKERS AND THE EVENT WINDOW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6443,
+      "heading": "### 134.7 THE ULTIMATE INTRODUCTIONS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6490,
+      "heading": "### 134.8 ⚠️ REJECTED APPROACHES, AND WHY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6505,
+      "heading": "### 134.9 ✅ CLOSED 2026-09-04: A PHONE IN PRACTICE CAN TURN COOLDOWNS OFF",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6553,
+      "heading": "### 134.10 ⚠️ OPEN: THERE IS NO REDUCED-EFFECTS OR FLASH-REDUCTION SETTING TO RESPECT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6569,
+      "heading": "### 134.12 ✅ CLOSED 2026-09-05: THE REPLAY CAPTURE IS ASYNCHRONOUS, BOUNDED AND POOLED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6667,
+      "heading": "### 134.13 ✅ THE CASTER RAIL IS THREE CHARACTERS ON A ROW THAT ALREADY EXISTED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6700,
+      "heading": "### 134.14 ✅ ESKINITA WAS THE ONLY MAP THE GEOMETRY CHECK DID NOT GATE, AND IT HAD TEN FINDINGS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6739,
+      "heading": "### 134.15 ⚠️ OPEN: THE MAP SOURCES IN `Asset_Sourcing.md` § 7 ARE NOT IN THE REPOSITORY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6763,
+      "heading": "### 134.16 ⚠️ THE CONTROLLED DIAGNOSTIC RAN AND REPORTED ZERO SHOVES, AND THE FIRST READING OF THAT WAS UNREADABLE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6846,
+      "heading": "### 134.17 ⚠️⚠️ THE CAPTURE PROBE HUNG THE RUN AND WOULD HAVE GONE GREEN OVER AN EMPTY FOLDER",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6885,
+      "heading": "### 134.18 ⚠️⚠️ WHAT THE FIRST REAL CAPTURE FOUND, AND ALL FOUR WERE INVISIBLE IN THE SOURCE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6924,
+      "heading": "### 134.19 · THE CAPTURE, AND WHAT FOUR RUNS OF IT MEASURED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6975,
+      "heading": "### 134.20 · VERIFIED: actual native replay overlay, 2026-09-16",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 6986,
+      "heading": "### 134.11 · VERIFIED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7082,
+      "heading": "## 133 · ONE FONT IS DOING EVERY JOB, AND IT IS A DISPLAY FACE ⚠️⚠️ OPEN, 2026-09-03, NEXT SESSION'S BRIEF",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7104,
+      "heading": "### 133.1 What the next session is being asked for",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7163,
+      "heading": "### 133.2 What that session must read before touching anything",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7176,
+      "heading": "### 133.3 ⚠️ The trap, named in advance",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7189,
+      "heading": "### 133.4 ⚠️⚠️ THE SCOPE, AND IT IS A HARD LINE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7220,
+      "heading": "### 133.5 ⚠️⚠️ NO LEFTOVER UI, AND THERE IS ALREADY A GATE FOR IT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7242,
+      "heading": "### 133.6 THE BRIEF ITSELF: BETTER, NOT REARRANGED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7269,
+      "heading": "### 133.7 THE FEELING, IN HIS WORDS, AND IT IS TWO THINGS AT ONCE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7305,
+      "heading": "### 133.8 ⚠️⚠️ AND IT HAS TO BE FINDABLE WITHOUT BEING TAUGHT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7357,
+      "heading": "### 133.9 What he added while the pass was running, 2026-09-03",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7371,
+      "heading": "### 133.10 ✅ What landed 2026-09-03, and the two numbers worth keeping",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7534,
+      "heading": "### 133.12 ⚠️⚠️ THE SECOND BATCH: HE LOOKED AT THE FONT PASS AND ASKED FOR THE ACTUAL OVERHAUL",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7615,
+      "heading": "### 133.13 ⚠️⚠️ REJECTED. THE 2026-09-03 PASS WAS A RE-SKIN AND HE SENT IT BACK",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7659,
+      "heading": "### 133.14 EVERYTHING HE ASKED FOR, IN HIS OWN WORDS, IN ONE PLACE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7687,
+      "heading": "### 133.15 ⚠⚠ THE SECOND ATTEMPT AT § 133.13, 2026-09-03, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7862,
+      "heading": "### 133.11 ⚠️ What is still open, and nothing in it is blocked",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7927,
+      "heading": "## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7940,
+      "heading": "### 132.1 ✅ Twelve default readings that said \"as tuned\"",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7965,
+      "heading": "### 132.2 ✅ The ultimate was not on the loadout board at all",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 7986,
+      "heading": "### 132.3 ✅ A build was invisible the moment the match started, which is most of why they felt the same",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8013,
+      "heading": "### 132.4 What was checked and found NOT to be wrong",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8028,
+      "heading": "### 132.6 ✅ The TAB tray printed every ability's name twice",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8077,
+      "heading": "### 132.7 ✅ The capture frame had been photographing a third of the tray",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8111,
+      "heading": "### 132.8 ✅ The probe was reporting a blur the game does not have",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8145,
+      "heading": "### 132.5 ⚠️ WHAT IS STILL OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8170,
+      "heading": "## 131 · Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8182,
+      "heading": "### 131.1 The style is the game's, not the downloaded pack's",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8194,
+      "heading": "### 131.2 Done looks like",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8214,
+      "heading": "### 131.3 ✅ THE SOURCED ART IS IN, AND FIVE OF THE SIX FAMILIES ARE WIRED, 2026-09-03, branch `abilities-rework`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8248,
+      "heading": "### 131.4 Four faults the renders found and no test could",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8281,
+      "heading": "### 131.5 ✅ The source pass changed twenty-seven cues; twenty-four remain, and the rest are a credential",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8304,
+      "heading": "### 131.5b ✅ THREE OF THE TWENTY-SEVEN WERE REJECTED BY EAR AND THE OLD CUES ARE BACK",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8329,
+      "heading": "### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8363,
+      "heading": "### 131.6 ⚠️ WHAT IS STILL OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8389,
+      "heading": "## 130 · Crossplay, the boot ANR, and the lobby that was drawn in a different language ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8397,
+      "heading": "### 130.1 ✅ The crossplay ARCHITECTURE was already right, and nothing on the wire needed to move",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8408,
+      "heading": "### 130.2 ⚠️⚠️ A FAILED SIGN-IN WAS CACHED FOR THE LIFE OF THE PROCESS, AND ON A PHONE THAT IS FATAL",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8447,
+      "heading": "### 130.3 ✅ The second UGS sign-in in the test suite, which is § 126.11's other bullet AND part of § 126.8",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8467,
+      "heading": "### 130.4 ⚠️⚠️ CASUAL QUICK MATCH BANDED BY PLATFORM, SO A PHONE AND A PC COULD NEVER MEET THROUGH THE FRONT DOOR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8486,
+      "heading": "### 130.5 ✅ `Shader.WarmupAllShaders()` is gone, which is § 126.10's ANR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8536,
+      "heading": "### 130.6 ⚠️⚠️ THE LOBBY AND MAP SELECT WERE DRAWN WITHOUT THE INK OUTLINE, AND THIS IS THE THIRD CAMERA IT HAS HAPPENED TO",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8565,
+      "heading": "### 130.7 ✅ `MapPreview.cs` was dead code that looked exactly like the live class, and it is gone",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8602,
+      "heading": "### 130.8 ⚠️ NOT DONE: nobody has still watched a phone and a PC join each other",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8614,
+      "heading": "### 130.9 ✅ § 129.3: the YOU card row is measured now, on its fourth report",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8633,
+      "heading": "### 130.10 ✅ § 126.8: the five named fixtures tear their world down, and the cause was one line",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8672,
+      "heading": "### 130.11 ✅ § 126.13: two of the three `Fit(..., 14)` floors did not need an exemption at all",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8694,
+      "heading": "### 130.12 ✅ Phase 12: map rotation and the map vote, which § 128.2 called the cheapest unbuilt thing",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8739,
+      "heading": "### 130.13 ✅ LAST TSINELAS STANDING HAS A MATCH HALF, AND IT COST THE PROTOCOL BUMP THIS ENTRY PREDICTED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8864,
+      "heading": "### 130.14 ✅ CLOSED 2026-09-03: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` WAS DETERMINISTICALLY RED, AND § 130.14b IS WHY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8892,
+      "heading": "### 130.14b ✅ FIXED 2026-09-03, AND THE STEERING WAS NEVER WRONG. THE TEST BURIED ITS OWN SEAT IN THE FLOOR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8959,
+      "heading": "### 130.17 ✅ EVERY ANDROID REBUILD ON THIS MACHINE FAILED, AND IT IS THE SAME GUARD BEING TOO NARROW FOR THE THIRD TIME",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 8992,
+      "heading": "### 130.18 ✅ § 130.12's ballot, built on a bump somebody else was already paying for",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9054,
+      "heading": "### 130.16 · Verified",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9083,
+      "heading": "### 130.19 · Verified, the second batch on this branch",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9129,
+      "heading": "### 130.15 ⚠️ `AspectRatioProbes` IS NARROWED TO ONE OPEN QUESTION NOW, AND IT IS § 121.8",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9151,
+      "heading": "## 128 · Phases 11 and 12 are almost entirely built, and this entry was wrong about it once ⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9172,
+      "heading": "### 128.1 What is actually built, so nobody rebuilds it",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9189,
+      "heading": "### 128.2 ⚠️ What is genuinely open in Phase 12",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9214,
+      "heading": "## 127 · Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9223,
+      "heading": "### 127.1 Half of that claim was already stale, and the half that was not is the one that matters",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9241,
+      "heading": "### 127.2 A shape, not a second colour, and it costs less floor rather than more",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9263,
+      "heading": "### 127.3 ⚠️ OPEN: what is left of Phase 16",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9338,
+      "heading": "## 88 · Accounts and identity ⚠️ IN PROGRESS 2026-08-31",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9366,
+      "heading": "### 88.1 · Three things the first pass got wrong, found by running its own tests",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9452,
+      "heading": "### 88.2 · The UGS project belongs to somebody else, and the service half is blocked on that",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9513,
+      "heading": "### 88.3 · What the new project actually needed, which was one click and not five",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9545,
+      "heading": "### 88.4 · ✅ The service half is done. Phase 1 is complete.",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9591,
+      "heading": "## 89 · The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9629,
+      "heading": "### 89.1 · \"Retrievals under pressure\" needed a threshold, and it is derived rather than picked",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9659,
+      "heading": "### 89.2 · \"Longest survival as last attacker\" is an interpretation, because nothing is eliminated",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9674,
+      "heading": "### 89.3 · ⚠️⚠️ EACH PEER SUBMITS ITS OWN LINE, WHICH DEPARTS FROM THE LETTER OF § 19.2",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9701,
+      "heading": "### 89.4 · What § 2.1 asks for that is not on the screen, and which phase owns each",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9717,
+      "heading": "### 89.5 · The protocol is 15, and § 88.4's probe duplication is resolved",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9751,
+      "heading": "### 89.6 · `ProfileRules` is written twice, in C# and in JavaScript",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9766,
+      "heading": "### 89.7 · The offline path, and the LAN run it must not regress",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9792,
+      "heading": "### 89.8 · Verified",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9829,
+      "heading": "### 89.9 · Two things found by reviewing this phase rather than by running it",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9854,
+      "heading": "## 126 · The full PlayMode suite had never been run on this commit, and it was 42 red ⚠️⚠️ 2026-09-03, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9867,
+      "heading": "### 126.1 One probe threw, left the thumb layer switched on, and twenty suites reported other people's bugs",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9905,
+      "heading": "### 126.2 The thumb floor was unreachable by construction, because padding cannot make room",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 9968,
+      "heading": "### 126.3 The move stick drew as a square because `Mathf.SmoothStep` is not `smoothstep`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10007,
+      "heading": "### 126.4 The six stored quality levels are asserted now, and the note that protected them is stale",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10036,
+      "heading": "### 126.5 Nothing scrolled a focused control into view, and the scrollbar was carrying it",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10055,
+      "heading": "### 126.6 The rebind list is two pages now, and the panel used to show a pad player a list of keys",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10100,
+      "heading": "### 126.7 Rumble, on the four moments that change the player's own situation",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10140,
+      "heading": "### 126.8 ⚠️⚠️ OPEN: THE FULL PLAYMODE SUITE IS NOT A RELIABLE GATE ON THIS BRANCH, AND TARGETED RUNS ARE WHY NOBODY KNEW",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10199,
+      "heading": "### 126.8b ⚠️⚠️ THE THIRD FULL RUN, 2026-09-03: 56 RED, AND THE EXECUTION ORDER NAMES THE CAUSE IN ONE LINE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10275,
+      "heading": "### 126.8c ⚠️⚠️ THE FIRST VERSION OF THE SWEEP RAN THE WHOLE SUITE AND THEN WROTE AN EMPTY `.xml`, WHICH IS A NEW INSTANCE OF § 7'S RULE",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10318,
+      "heading": "### 126.8d ❌ THE PERSISTENT-SCREEN SWEEP WAS BUILT, MEASURED AND WITHDRAWN, AND THE MEASUREMENT IS THE POINT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10367,
+      "heading": "### 126.9 The four reds that are about the game rather than about the suite",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10432,
+      "heading": "### 126.10 The .apk was built, installed and run for the first time, and two of its settings were never taking",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10515,
+      "heading": "### 126.11 ⚠️ NOT DONE: crossplay is still argued rather than demonstrated",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10533,
+      "heading": "### 126.12 · Verified",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10575,
+      "heading": "### 126.13 ⚠️ OPEN: what THAT batch did NOT do (the `Fit` floors are resolved in § 130.11)",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10598,
+      "heading": "## 121 · The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10626,
+      "heading": "### 121.1 ⚠️⚠️ THE ONE FINDING THAT EXPLAINS FIVE OF HIS NOTES: THE PRIMARY IS THE ONLY CONTROL IN THE PAPER FRONT END STILL DRAWN IN WOOD, AND ITS SHADOW IS GREY",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10691,
+      "heading": "### 121.2 ⚠️⚠️ THE STUCK HOVER, AND IT IS A CACHE KEY WITH ONE FIELD MISSING ✅ CAUSE FOUND",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10727,
+      "heading": "### 121.2b ⚠️⚠️ THE AMBER FOCUS RING, WHICH HE REJECTED THREE TIMES IN ONE SITTING ON THREE DIFFERENT CONTROLS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10754,
+      "heading": "### 121.2c The wordmark on the login card: half its own sign was empty brown",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10779,
+      "heading": "### 121.3 The lobby, five notes",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10807,
+      "heading": "### 121.4 The login screen, two notes, and the first is not what it looks like",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10842,
+      "heading": "### 121.5 The character select, three notes, and one of them is the blue arrows",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10876,
+      "heading": "### 121.6 The player hub, which is § 120.7's own open item and the largest piece",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10909,
+      "heading": "### 121.7 What this pass must NOT do",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10925,
+      "heading": "### 121.8 The 16-unit caption question, which § 120.9 left open on purpose",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 10995,
+      "heading": "### 121.10 ⚠️⚠️ WHAT THE RENDERS CHANGED, AND THREE OF THESE REVERSED A DECISION TAKEN ONE RENDER EARLIER",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11018,
+      "heading": "### 121.11 What is NOT done, named rather than left implied",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11073,
+      "heading": "### 121.9 Acceptance",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11088,
+      "heading": "## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11107,
+      "heading": "### 119.1 ⚠️⚠️ THE DIAGNOSIS IS HIS AND IT IS MEASURABLE: THE UI AND THE WORLD ARE THE SAME COLOUR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11127,
+      "heading": "### 119.2 The two new files, and why they are new files rather than an edit",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11139,
+      "heading": "### 119.3 ⚠️⚠️ THE CONTROL INVENTORY. NOTHING ON THIS LIST MAY DISAPPEAR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11196,
+      "heading": "### 119.4 The lobby new composition: one room, two rails",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11233,
+      "heading": "### 119.5 Each screen gets its own device, because the repetition complaint is about method",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11249,
+      "heading": "### 119.6 ⚠️⚠️ `PaperPurityProbe` IS THE GATE ON \"NO LEFTOVER OLD UI\", AND IT IS THE POINT",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11267,
+      "heading": "### 119.7 Acceptance",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11278,
+      "heading": "### 119.8 ⚠️⚠️ THE REDUNDANCY 🧑 FOUND, AND THE LADDER THAT HAD NO DOOR",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11322,
+      "heading": "### 119.9 ⚠️⚠️ FIVE FAULTS THE RENDERS FOUND AND NO PROBE COULD, AND ONE OF THEM TOOK THREE PASSES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11337,
+      "heading": "### 119.10 What 🧑 rejected by eye, with the number that agreed with him each time",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11350,
+      "heading": "### 119.11 What is NOT done, named rather than left implied ✅ CLOSED BY § 120, 2026-09-02",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11380,
+      "heading": "## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11392,
+      "heading": "### 118.1 The eight things that still read badly, ranked by how much they cost",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11405,
+      "heading": "### 118.2 ⚠️⚠️ THE METHOD, AND IT IS NOT \"MAKE IT PRETTIER\"",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11417,
+      "heading": "### 118.3 Other games, which 🧑 asked for by name, and what actually transfers",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11433,
+      "heading": "### 118.4 What NOT to do, because it has already been decided",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11449,
+      "heading": "### 118.5 Acceptance",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11462,
+      "heading": "## 96 · OPEN: he has never found the way into the hub ⚠️⚠️",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11501,
+      "heading": "## 95b · OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11520,
+      "heading": "## 72 · Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11568,
+      "heading": "## 68 · The lobby is a form, and it should be a room ⚠️ OPEN, PLANNED 2026-08-28",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11583,
+      "heading": "### 68.0 The four decisions, taken 2026-08-28 before any code",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11594,
+      "heading": "### 68.1 What the two screens actually are today",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11610,
+      "heading": "### 68.2 ⚠️⚠️ THE LOBBY WORK ADDS NO WIRE CHANGE. CHAT IS THE ONLY ONE, AND IT BUMPS THE PROTOCOL",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11626,
+      "heading": "### 68.3 ⚠️⚠️ THE OLD CHROME IS KEPT AND SWITCHABLE, NOT DELETED",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11645,
+      "heading": "### 68.4 ⚠️⚠️ RE-SKIN, DO NOT RENAME",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11654,
+      "heading": "### 68.5 The navigation change, and the third lobby state it creates",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11676,
+      "heading": "### 68.6 ⚠️⚠️ HOST → LEAVE → JOIN IN ONE LAUNCH IS THE PATH THIS FEATURE LIVES OR DIES ON",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11684,
+      "heading": "### 68.7 The arrangement: PUBG Mobile's chrome, PC PUBG's line-up",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11718,
+      "heading": "### 68.8 The cast, which is the whole feature and the only real engineering",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11754,
+      "heading": "### 68.9 Nameplates",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11774,
+      "heading": "### 68.10 Everything togglable, and the greying that is missing today",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11805,
+      "heading": "### 68.11 The join panel, lifted rather than rewritten",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11841,
+      "heading": "### 68.12 Organisation, so nothing lives in two places",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11861,
+      "heading": "### 68.13 What must NOT be touched",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11870,
+      "heading": "### 68.14 Done looks like",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11903,
+      "heading": "### 68.15 Order of work, so the screen is never half-broken",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11914,
+      "heading": "### 68.17 What landed on the `PUBG` branch, and the five things the renders found",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11982,
+      "heading": "### 68.18 The second pass, 2026-08-28: navigation, the settings panel, and one rail per side",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 11999,
+      "heading": "#### 68.18.1 Navigation: two screens left the path, and one panel was deleted",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12021,
+      "heading": "#### 68.18.2 ⚠️⚠️ THE MATCH SETTINGS PANEL WAS UGLY FOR ONE MEASURABLE REASON",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12036,
+      "heading": "#### 68.18.3 ⚠️⚠️ ONE RAIL PER SIDE, AND THAT IS A STRUCTURAL FIX RATHER THAN BETTER NUMBERS",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12075,
+      "heading": "#### 68.18.4 The player card, and where character select went",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12098,
+      "heading": "#### 68.18.5 The names, on every machine",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12116,
+      "heading": "#### 68.18.6 The cast's third character did not move, and no test could see it",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12131,
+      "heading": "#### 68.18.7 The Ilalim ng Tulay pillars, and why a camera angle was not the fix",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12159,
+      "heading": "#### 68.18.8 ⚠️⚠️ ONE PRESS WAS FIRING THE CLICK UP TO THREE TIMES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12187,
+      "heading": "#### 68.18.9 What is verified, and what still is not",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12199,
+      "heading": "#### 68.18.10 ✅ THE CHAT IS PROVEN, ON TWO REAL PROCESSES",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12233,
+      "heading": "#### 68.18.11 The lobby log opens on demand",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12263,
+      "heading": "### 68.19 The picker was bleeding, the chat still grew, and the roster had four slippers",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12329,
+      "heading": "## 69 · The game has no chat, in the lobby or in a match ⚠️ OPEN, PLANNED 2026-08-28",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12336,
+      "heading": "### 69.1 ⚠️⚠️ THIS IS THE ONE THING IN BOTH SECTIONS THAT MOVES `ProtocolVersion`, 5 → 6",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12342,
+      "heading": "### 69.2 Shape",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12356,
+      "heading": "### 69.3 In the lobby",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12361,
+      "heading": "### 69.4 In the match, where the rules are different",
+      "disposition": "unreviewed",
+      "evidence": []
+    },
+    {
+      "lineAtIntake": 12380,
+      "heading": "### 69.5 Done looks like",
+      "disposition": "unreviewed",
+      "evidence": []
+    }
+  ]
+}
