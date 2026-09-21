@@ -145,7 +145,8 @@ namespace TumbangPreso.Visual
         public bool StartSound()
         {
             if (_sound != null) return true;
-            var clip = Resources.Load<AudioClip>("Sfx/sfx_ult_theme_" + _hero);
+            string cue = Abilities.HeroAbilitySystem.ThemeFor(_hero);
+            var clip = !string.IsNullOrEmpty(cue) ? Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(cue)) : null;
             if (clip == null) return false;
             _sound = _root.AddComponent<AudioSource>(); _sound.playOnAwake = false;
             _sound.spatialBlend = 0; _sound.loop = false; _sound.clip = clip;

@@ -909,7 +909,7 @@ namespace TumbangPreso.Abilities
         /// (*"Sean's Supernova was spawning Dante's magma"*) in the other medium, and 🧑 has now
         /// reported that class of thing twice.
         /// </summary>
-        private static string ThemeFor(string heroId)
+        internal static string ThemeFor(string heroId)
         {
             switch (heroId)
             {

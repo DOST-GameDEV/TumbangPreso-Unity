@@ -99,6 +99,7 @@ namespace TumbangPreso.PlayTests
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<CharacterMotor>(true));
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<Abilities.HeroAbilitySystem>(true));
                             Assert.IsTrue(scene.Root.GetComponentsInChildren<Collider>(true).All(c => !c.enabled));
+                            Assert.IsTrue(scene.StartSound(), hero + " must resolve its retained theme mapping.");
                             scene.SetVisibleForCapture(true);
                         }
                         yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), 2.8f,
