@@ -261,3 +261,45 @@ new metadata checked. V2 passed4/4 in12.75s, guard7bd2f0397aa7, including existi
 Classic/Hero exchange tests and ranking/comfort/hidden/round cleanup.
 Native review of this newest score accent and recheck of the corrected Nemu shot
 remain next. V10 is the current native gameplay candidate, not the final delivery.
+
+
+Windows v11/2a11c726 built1156MB/76s, guard974c23cf4ca4, with only whitespace
+input differences. Both-mode native real-key/mouse/staged-target controls and
+catch review PASS in Logs/exchange-native-v11. Player26236/58469 exited. All6
+private scenes and their actual game audio also PASS, Logs/introduction-native-v11;
+player26028/97916 exited. Both runners preserved input/profile. Nemu frame50 now
+retains complete Kuro/Nemu framing. Classic lunge-tag frame shows the credited
+P2row accent after it ranks first. No live shared-ultimate or held-prop scene
+completion: the next independent art iteration adds the actual held shoe.
+
+Selected native impact squares are the retained UiTheme.Impact (#f468a8),
+not evidence of a missing-material magenta defect; both candidate shaders are
+retained by GameBuilder. Avoid changing material routing from colour alone.
+A close Hero owner frame shows a partially offscreen BONK caption; retain it as
+a composition refinement candidate, not a proven transport or shader bug.
+
+
+## Held equipment in private introductions
+
+Source2de0416b copies only the actual held shoe meshes/materials/property blocks
+onto the sampled hand, retains grip/scale, excludes VFX/inactive parts and destroys
+its owned render objects on scene disposal. No Slipper, physics or ownership
+component is cloned. Editor study passed1/1 covering all6heroes in22.76s,
+guard3de9dd198802, Logs/introduction-held-v1;0held vertices inside head surfaces
+and ground contact within0.00005m. Selected frames of all6 were inspected.
+
+Cheska's gathered ice remained hard to distinguish against her glove. Candidate
+v2ec3785b3 measured the real free-hand surface, moved gathering to that hand when
+carrying and used the other side of the shot; geometry1/1 passed6.23s,
+guardf7dc5fcba71a, but the visual issue remained. V3f8de4f04 instrumented one
+mid-performance sample: visible, nonzero-size ice projected at approximately
+viewport(0.5,0.36), within the glove composition. Its completion guardfa9ad7b4a67d
+is retained. V450cf488f raised the gather;1/1 passed6.17s/guard72b07ef9e248, but
+frame25 put ice across the face, so that visual candidate is rejected.
+V589a7a0ed authors a wider free-hand pose for held-slipper Cheska, stages the ice
+to that side and differentiates its blue facets. Passed1/1 in6.21s, guard
+e145cd0e555e; frames25/35 visually retain face and readable free-hand ice.
+Empty-hand variant52f29fa5 passed1/1 in6.20s, guard0b315bbc691e; frame25 keeps
+the two-hand gather. Temporary staging instrumentation removed after diagnosis.
+This is independent render-only choreography; it has not enabled a live shared
+phase or earned its native held-prop qualification.

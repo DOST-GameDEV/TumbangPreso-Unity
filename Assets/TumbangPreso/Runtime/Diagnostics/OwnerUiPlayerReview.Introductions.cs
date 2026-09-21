@@ -83,6 +83,14 @@ namespace TumbangPreso.Diagnostics
                         if (withScene)
                         {
                             scene = new HeroIntroductionScene(stage.transform, hero, actor, copy);
+                            if (held != null)
+                            {
+                                var prop = copy.Root.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "IntroductionHeldSlipper");
+                                if (prop == null || prop.GetComponentsInChildren<MeshFilter>(true).Length == 0
+                                    || prop.GetComponentsInChildren<Slipper>(true).Length != 0
+                                    || prop.GetComponentsInChildren<Collider>(true).Length != 0)
+                                    throw new InvalidOperationException(hero + " native held shoe violated render-only grip contract");
+                            }
                             scene.SetVisibleForCapture(true);
                             var listener = Object.FindObjectsByType<AudioListener>().FirstOrDefault(l => l.enabled && l.gameObject.activeInHierarchy);
                             if (listener == null) throw new InvalidOperationException("No game listener for sound review");
@@ -117,7 +125,8 @@ namespace TumbangPreso.Diagnostics
                 }
             }
             finally { rig.SetActive(true); Hud.Instance.gameObject.SetActive(true); Object.Destroy(camera.gameObject); }
-            Stage("all six native body curves sampled and captured; shared phase/VFX/held props remain separate work");
+            Stage(withScene ? "all six native scenes and held shoe copies captured; live shared phase remains separate work"
+                : "all six native body curves sampled and captured; live shared phase remains separate work");
         }
     }
 }

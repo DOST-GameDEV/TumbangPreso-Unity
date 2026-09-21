@@ -28,19 +28,22 @@ advance while the narrow C4 dependency remains reserved. Full pass is unfinished
 ## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest implementation source51931eff. Last verified remote cc01b97f;
+branch ASTRAReworks. Latest implementation source52f29fa5. Last verified remote2a11c726;
 research merge and tested host counters are published. Nemu framing is committed
 and passed its focused Editor probe; native recheck remains pending.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached51931eff, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached52f29fa5, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
 Initial24modified+2untracked files are byte-preserved under development
 Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
 Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
 Shared dirty files used selected owned hunks; never stage them wholesale or restore
-those user changes. Current owned work: score-row feedback committed54fae7fd plus metadata repair51931eff,4/4 passed.
-Flight/can/cancellation and native capture route committed61463750.
+those user changes. Current owned work: held-equipment copies in private hero scenes2de0416b passed
+all6 body/prop checks; selected frames inspected. Cheska gather refinements89a7a0ed and empty-hand check52f29fa5 passed and were
+visually inspected; native held-equipment qualification is next, not published yet.
+Score-row feedback51931eff qualified4/4 and published in2a11c726.
+Flight/can/cancellation and native capture route are published.
 Original unrelated dirty hunks remain excluded; selected shared-file hooks only.
 Validation importer rewrites are predominantly whitespace. Tests can also rewrite
 QualitySettings from the chosen profile: preserve diffs, restore only proven test
@@ -147,9 +150,26 @@ owner/spectator frames inspected; input/profile preserved. Player20784/tool60136
 retired. Motion is automated, not human freeform or listening acceptance.
 Score feedback v1 failed compilation due to new33character GUID; fixed51931eff.
 V2 4/4 PASS12.75s, guard7bd2f0397aa7, Logs/score-feedback-v2; handle49484 retired.
-No owned runtime job. Publish then build v11 for native score/control/catch,
-six-scene Nemu framing and final busy review. Keep new milestones/shared phase
-reserved dependencies explicit; these increments do not close P1-P5.
+Windows v11 source2a11c726 built1156MB/76s, guard974c23cf4ca4; input diff
+whitespace-only. Native controls/catch PASS both modes, Logs/exchange-native-v11,
+player26236/tool58469 exited, input/profile preserved. All6private scenes also PASS nativev11, Logs/introduction-native-v11; player26028/
+handle97916 exited, input/profile preserved. Nemu frame50 inspected: full growing
+Kuro and Nemu fit. Classic native tag frame shows seat-accent on the credited row.
+These scenes predate the new held-item addition.
+Held-scene v1 passed1/1(all6)22.76s, guard3de9dd198802, Logs/introduction-held-v1;
+zero head penetration and grounded poses. Source2de0416b. Adding the prop exposed
+weak Cheska ice visibility. V2ec3785b3 used actual free-hand measurement/opposite
+shot but the ice still merged with the glove. V3f8de4f04 measured actual world and
+viewport placement. V450cf488f raised it but visually crossed the face: reject
+that staging despite the geometry test passing. V5source52f29fa5 now gives the
+held version a wider free-hand gesture, clearer side staging and bluer opaque
+facets. V5 passed1/1 in6.21s, guarde145cd0e555e; inspected frames25/35 keep the blue
+ice clearly at the free hand and face clear. Empty-hand variant52f29fa5 passed
+1/1 in6.20s, guard0b315bbc691e, Logs/cheska-empty-gather-v1; frame25 inspected.
+Temporary gathering instrumentation removed; durable grip/head/ground checks stay.
+No running job. Next one native build for actual held copies/variant curve support,
+then preserve motion/audio movies and publish this private-scene increment.
+V11 remains the qualified playable artifact; its6private scenes predate held props. New milestones/shared phase reservations remain; P1-P5 are open.
 Sources/observed timestamps are in
 reports/presentation-pass-2026-09-21/reference-research.md. Browser video tab2 was
 closed. Owned hidden error tab1 cannot be selected/closed because the browser's
