@@ -24,6 +24,19 @@ namespace TumbangPreso
         private Actor[] _actors;
         private System.Random _random;
         private Material _peeMaterial;
+        public int ImpactReactions { get; private set; }
+        private void OnEnable() => Visual.MatchFlair.Presented += OnImpact;
+        private void OnDisable() => Visual.MatchFlair.Presented -= OnImpact;
+        private void OnImpact(Visual.MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
+        {
+            if (_actors == null || GameServices.Round == null || !GameServices.Round.RoundActive) return;
+            float radius = kind == Visual.MatchFlair.Kind.LataDown ? 6 :
+                kind == Visual.MatchFlair.Kind.Thunder ? 12 : kind == Visual.MatchFlair.Kind.IceShatter ? 5 : 0;
+            if (radius <= 0) return;
+            // Existing peer-visible accepted outcomes, not speculative input or replay
+            // callbacks. Per-animal quiet time keeps repeated field pulses from spam.
+            foreach (var animal in _actors) if (animal.ReactToImpact(at,radius)) ImpactReactions++;
+        }
         public int VisibleAnimals
         {
             get{int count=0;if(_actors!=null)foreach(var actor in _actors)if(actor.Visible)count++;return count;}
@@ -79,6 +92,7 @@ namespace TumbangPreso
             private Vector3 _flightFrom,_flightTo;
             private float _flightTime,_flightDuration;
             private float _peeCooldown,_peeTime;
+            private float _impactQuietUntil;
             private float _raisedLegSide=1;
             private bool _peeing;
             private LineRenderer _peeLine;
@@ -145,6 +159,26 @@ namespace TumbangPreso
                     if(distance<best){best=distance;nearest=body;found=true;}
                 }
                 return found;
+            }
+            public bool ReactToImpact(Vector3 at,float radius)
+            {
+                if (!Visible || Time.time < _impactQuietUntil || (_root.position-at).sqrMagnitude > radius*radius) return false;
+                if (_data.Bird)
+                {
+                    if (_birdPhase != 1 && _birdPhase != 2) return false;
+                    BeginFlight(_root.position,_data.Route[_data.Route.Length-1],3);
+                }
+                else
+                {
+                    if (_panic > 0) return false;
+                    if (_peeing) EndDogPause();
+                    int before=Mathf.Clamp(_target-_direction,0,_data.Route.Length-1);
+                    if ((_data.Route[before]-at).sqrMagnitude > (_data.Route[_target]-at).sqrMagnitude)
+                    { _target=before; _direction=-_direction; }
+                    _panic=1.15f; _wait=0;
+                }
+                _impactQuietUntil=Time.time+4;
+                return true;
             }
             public void Step(float dt)
             {

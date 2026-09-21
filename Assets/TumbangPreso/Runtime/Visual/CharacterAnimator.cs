@@ -465,6 +465,7 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearIntroductionPose();
+            ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
             if (_graph.IsValid()) _graph.Destroy();
@@ -487,6 +488,7 @@ namespace TumbangPreso.Visual
         private void Update()
         {
             RestoreIntroductionPose();
+            RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
             RestoreChargeOffsets();
@@ -912,6 +914,7 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             RestoreIntroductionPose();
+            RestoreLocomotionWeight();
             try
             {
                 // Remove last frame's offsets even when the graph is paused or a clip
@@ -945,7 +948,7 @@ namespace TumbangPreso.Visual
                 if(_chargeOff!=null)_chargeOff.localRotation=drawn.Left;
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
             }
-            finally { ApplyIntroductionPose(); }
+            finally { ApplyLocomotionWeight(); ApplyIntroductionPose(); }
         }
 
         private void RestoreChargeOffsets()

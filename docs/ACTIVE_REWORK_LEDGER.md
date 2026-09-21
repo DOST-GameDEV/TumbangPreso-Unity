@@ -60,16 +60,34 @@ peaks.135-.405;zero clipped samples. This is not human listening approval.
 
 ## Remaining and next action
 
-Implementation outcomes are checked in TODO with explicit reused-work/evidence
-limits. PRESENTATION-5.2 stays open: human taste/listening/full human match,
-physical controller/touch and wider device/aspect checks are unavailable here.
-Separate-machine LAN/WAN is not certified by local impaired peers. The inherited
-remote-smoothing return-to-rest test also remains an earlier reproduced baseline
-failure; no assertion was weakened to hide it. Full details/failures remain.
+Owner follow-up: "is this done? whyd u stop this is done with all todo?"
+The previous stop was premature.4dee8e71 overclosed broader presentation tasks
+using partial implementation/fixture evidence. TODO reopens those items; working
+code, exact earlier receipts and all historical/deferred task IDs remain intact.
+Do not call the complete presentation scope done or wait for human taste while
+independent implementation/qualification remains.
 
-No owned job remains: encoder34878 and all players exited. No task-owned browser,
-preview server or Editor remains. All20movies exist;20of26intake files remain
-byte-identical and the complete historical/deferred TODO tail is unchanged.
-The runtime batch is published; current delivery docs are the only later changes.
-Use the existing candidate/recordings for the outstanding human/device review.
-Do not rebuild for documentation-only changes or infer UI acceptance from passes.
+Current focus: ordinary motion/ambient accepted-event reactions, then ordinary
+hero-skill complete-action review and match-end punctuation. Add native whole-match
+capture/measurement rather than treating20s exchanges as complete matches.
+Use the existing warmed validation workspace, named profile and guarded runner.
+No owned job is currently running. Runtimebase043d1e3d/docbase4dee8e71; preserve
+original dirty files. Next inspect existing animation/event seams, implement a
+coherent visible improvement and qualify it before advancing through the queue.
+
+## Exact continuation checkpoint
+
+Latest owner instruction: pick up exactly where this task ended; do not lose
+progress or forget unfinished work. Baseline remains4dee8e71 (runtime043d1e3d).
+All earlier features/builds/receipts remain. Only overstated statuses were reopened.
+Logs/presentation-continuation-2026-09-21/resume.json and working.patch record the
+continuation;20original unrelated dirty files are still byte-identical.
+
+New unverified edits: CharacterAnimator.LocomotionWeight.cs and its existing
+animator hooks add bounded torso/head anticipation for start/brake/turn, gated
+away from throws/casts/recovery; no root/leg/hitbox changes. AmbientLife uses
+existing accepted MatchFlair outcomes for nearby animal startle/flight with quiet
+time and no replay callbacks. Next add focused runtime/visual interruption and
+lifecycle checks, commit a frozen validation snapshot, then add complete-match
+native observation. Existing gait/grip/throw/catch/ultimate/replay work stays.
+No validation process is running yet; no new pass or completion is claimed.

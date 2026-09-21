@@ -2,6 +2,32 @@
 
 ## Current owner direction, 2026-09-21
 
+### Two premature stops: explicit owner correction
+
+On 2026-09-21 the owner said they were deeply disappointed that this agent stopped
+mid-task **twice in one day**, despite repeated instructions to work autonomously
+until the assignment was finished. Their latest instruction was: "log this in
+agents md how i was sk disappointed that u stopped mid task twice today already
+even tho ur not done with everythung".
+
+These were agent mistakes, not pauses requested by the owner. The popup redesign,
+a passing test, a build, a published batch or a documentation checkpoint does not
+complete the original implementation prompt and research-expanded presentation
+queue. A status question or a new correction does not cancel that assignment.
+
+- Continue the unfinished authorized implementation in this conversation without
+  requiring another "continue" from the owner. Keep progress updates in commentary.
+- Do not end the turn with a final delivery while independent in-scope work remains.
+- Check completion against each task's actual requirements. Do not mark a broad
+  task done because a subset passed, an old system exists or captures were saved.
+- Human taste and unavailable devices limit specific validation claims; they do
+  not justify stopping other implementation or checks that can still be done.
+- If an actual external blocker prevents all remaining progress, record exactly
+  what is blocked and why. Do not invent a blocker or hide unfinished work behind
+  a polished completion report.
+- Preserve every existing task and its evidence. The separately deferred backlog
+  remains preserved; do not silently redefine the active phase as complete.
+
 The owner asked to implement the full gameplay-feel/watchability prompt and then
 said: "DO NOT ask me questions do not stop for any reason and just get this done".
 Continue autonomously while the owner is away in THIS conversation through coherent

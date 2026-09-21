@@ -1,8 +1,16 @@
 # Presentation pass, 2026-09-21
 
+## Completion correction after owner follow-up
+
+The popup and the bounded v25 checks below are delivered. The entire presentation
+assignment is not complete.4dee8e71 overmarked broader TODO outcomes based on
+subset evidence and retained systems. The current TODO reopens these items.
+Implementation and full-match qualification continue; no earlier passing receipt
+is withdrawn or expanded into a claim it did not establish.
+
 ## Current delivery, source 043d1e3d
 
-The full gameplay presentation implementation is in the internal Windows candidate
+The implemented presentation checkpoint is in the internal Windows candidate
 `TumbangPreso-Unity-validation/Builds/presentation-v25/TumbangPreso.exe`.
 Build SUCCEEDED,1156MB/62s, guard824ba191933f. The source is
 043d1e3d19746a7035d766da07077918c6822ded with only whitespace differences in

@@ -35,20 +35,20 @@ before this redesign. Retain every gameplay/replay task below.
 
 ### Active outcomes and retained task IDs
 
-- [x] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Retain the low
+- [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Retain the low
   locator/ownership/can/feed/identity work, native v6 controls and busy v4 evidence.
   The target is now a coordinated, expressive exchange, not merely reduced noise.
   - [x] **PRESENTATION-1.1:** Compose throw, tin contact, flight, landing, retrieval,
     restore and chase as one body/FPP/VFX/SFX/UI sequence in Classic and Hero Strike.
-  - [x] **PRESENTATION-1.2:** Refine starts/stops/turns, carrying, grip/cancel, slide,
+  - [ ] **PRESENTATION-1.2:** Refine starts/stops/turns, carrying, grip/cancel, slide,
     shove, punch/lunge whiff, stagger, get-up and their grounded sound/contact timing.
   - [x] **PRESENTATION-1.3:** Complete contextual state communication: own slipper,
     can state/protection, legal danger and next action, with stable identity/glyphs.
-  - [x] **PRESENTATION-1.4:** Coordinate material sound, personal confirmation, world
+  - [ ] **PRESENTATION-1.4:** Coordinate material sound, personal confirmation, world
     reactions, score-row accents and the earned graphics shared with PRESENTATION-2.
-  - [x] **PRESENTATION-1.5:** Add useful character/crowd/prop/atmosphere reactions on
+  - [ ] **PRESENTATION-1.5:** Add useful character/crowd/prop/atmosphere reactions on
     existing maps and review the full mix. Broad map art and expansion remain deferred.
-  - [x] **PRESENTATION-1.6:** Judge normal/busy play and Low/reduced/small-view clarity;
+  - [ ] **PRESENTATION-1.6:** Judge normal/busy play and Low/reduced/small-view clarity;
     scale decorative layers without removing important states, boundaries or impact.
 - [x] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction and
   core chain rules exist. Live capped bonus awards and shared central milestones are integrated and peer-qualified.
@@ -62,58 +62,57 @@ before this redesign. Retain every gameplay/replay task below.
   - [x] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
     bystander/spectator reactions and return, with exact contact/held props, interruption,
     repeated-use comfort and no added taya lockout or victim penalty.
-- [x] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
+- [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
   have accepted-input evidence. Six distinct introductions now run through the live
   shared phase and real abilities, with native v15screen/audio evidence. The live/native qualifications below replace the earlier private-study-only status.
   Human taste and broader device review remain explicitly separate in5.2.
   - [x] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
     ownership and compatible participant delivery. Owner handback2026-09-21 assigns this integration here.
-  - [x] **PRESENTATION-3.2:** Author all six distinct whole performances, including
+  - [ ] **PRESENTATION-3.2:** Author all six distinct whole performances, including
     better native framing, purposeful shot changes, held props, body/FPP, sound/VFX,
     optional character cut-ins and the return to the actual ability.
-  - [x] **PRESENTATION-3.3:** Preserve live warning time and communicate real contact,
+  - [ ] **PRESENTATION-3.3:** Preserve live warning time and communicate real contact,
     miss, interruption, ongoing fields and aftermath. Avoid duplicate theme/morph cues.
     Refine each hero's two ordinary skills through the same complete-action lens.
-  - [x] **PRESENTATION-3.4:** Finish role/view differences, simultaneous/back-to-back
+  - [ ] **PRESENTATION-3.4:** Finish role/view differences, simultaneous/back-to-back
     cases, reduced-camera treatment, scene/round/disconnect cleanup and resource invariants.
-- [x] **PRESENTATION-4 /134.20: Watchability and halftime.** Retain the existing
+- [ ] **PRESENTATION-4 /134.20: Watchability and halftime.** Retain the existing
   director/manual replay; body history alone is not complete retained world footage.
   - [x] **PRESENTATION-4.1:** Record necessary bodies/props/events/audio, retain complete
     candidates across rounds and deliver the canonical clip/fallback to all participants.
   - [x] **PRESENTATION-4.2:** Refine live spectator shot selection, attribution and
     larger earned graphics around the developing exchange, preserving manual takeover.
-  - [x] **PRESENTATION-4.3:** Deliver the halftime replay/standings/next-taya package,
+  - [ ] **PRESENTATION-4.3:** Deliver the halftime replay/standings/next-taya package,
     ordinary-gap pacing and truthful round/match-end pose/UI punctuation.
 - [ ] **PRESENTATION-5: Integrated qualification.** Preserve existing passing receipts
   and failed attempts; prove the new complete experience on the exact delivered source.
-  - [x] **PRESENTATION-5.1:** Four active players, overlapping important events and
+  - [ ] **PRESENTATION-5.1:** Four active players, overlapping important events and
     representative Classic/Hero matches across owner/opponent/participant/spectator views.
   - [ ] **PRESENTATION-5.2:** Audio and muted review, ordinary-speed/short replay,
     compression,720p/1080p/relevant aspect, Low and comfort controls; verify information
     survives and the richer presentation still has its intended character.
-  - [x] **PRESENTATION-5.3:** Relevant native/LAN late/duplicate/interrupted cases,
+  - [ ] **PRESENTATION-5.3:** Relevant native/LAN late/duplicate/interrupted cases,
     score/resource/control invariants, bounded costs and cleanup. Human taste and
     physical-device evidence stay explicit; do not replace them with test counts.
 
-### Delivery evidence and meaning of the checks
+### Completion correction, owner follow-up
 
-Source043d1e3d/internal Windowsv25 implements the current functional presentation
-scope. Checked outcomes mean implementation plus the bounded evidence in the
-[current report](reports/presentation-pass-2026-09-21/README.md#current-delivery-source-043d1e3d),
-not human taste approval or a claim that every subphrase received new animation.
-Existing good movement/action clips, protector art, animal proximity reactions
-and truthful result handling were retained. New cancel/flight/contact/recognition,
-catch, six-hero/shared-time and retained replay work composes with them.1.5 includes
-character/prop reactions and hero atmosphere; no new crowd asset system was needed.
+The owner correctly challenged the stop after the popup delivery.4dee8e71 closed
+several broader items on evidence for only their implemented subset. Those items
+are reopened without undoing working code or deleting any task. Existing
+animations/ambient reactions are useful retained work, not proof that the planned
+refinement and full mix review were completed. Twenty-second bot exchanges and
+single-event peer fixtures do not close full-match qualification. All saved
+passes remain valid within their stated scope.
 
-5.1 is four-active-bot native owner/spectator exchanges plus real participant
-transport cases, not a full human-match claim.5.3 is the recorded native local-peer
-fault cases, not separate-machine LAN/WAN certification.5.2 remains open for human
-listening/taste, full human matches and unavailable physical-device/aspect checks.
-The available720p/1080p/Low/comfort/capture/encoding work is complete and preserved.
-The inherited remote-smoothing test failure remains separately open in its earlier
-record; it was reproduced on the unchanged intake baseline, not erased here.
-No older task, reservation history, deferred feature or failed receipt is deleted.
+Next work in dependency order: finish expressive ordinary motion and event-aware
+existing-world reactions (1.2/1.4/1.5), then ordinary hero-skill/complete-performance
+review (3.2/3.3), truthful match-end presentation (4.3), and normal complete-match
+qualification with overlap/cast-frequency/cleanup observations (1.6/3.4/5.1/5.3).
+5.2 remains open; do all available audio/muted/aspect/native review before declaring
+anything unavailable. Physical-device and human taste limits remain explicit.
+This continuation stays in the authorized presentation phase. Deferred map/new-
+character and unrelated historical tasks below are preserved, not silently closed.
 
 ### Deferred, retired and owned work
 
