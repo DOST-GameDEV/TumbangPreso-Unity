@@ -115,3 +115,90 @@ victim reconstruction. Catch and return frames inspected; plain recovery no long
 shows an elemental frost overlay. Timestamped movies retain the measured2.77s/2.76s
 spacing (29Classic/62Hero frames). No frame-performance claim under synchronous capture.
 Owned players exited. The next close-call/audio edits are newer than this evidence.
+
+## Busy exchange, close-call and block iteration
+
+60509753: Logs/busy-exchange-v2 passed both 35s observations and both close-call
+regressions, but the VO test assumed an absent optional recording (5/6). Its Hero
+trace recorded 10 Block events within 0.18s. Slipper.HostBlockedBy restarted lift
+and impulse every fixed step within continuous overlap and always emitted actor -1.
+The fix re-arms on actual separation/new throw, preserves later blocks and emits
+the real thrower. Uncredited deflections get a neutral feed label.
+ac356ee4: block/audio/busy 5/5 PASS, guard 73fcd43d5e12. Shipped VO is countdown,
+clock and result recordings; optional tag/ayos/tumbang calls remain silent when absent.
+
+The first observations inherited mouse steering for their followed bot. Those bot
+views are limited evidence; other participants' accepted events remain useful.
+a505d954: corrected Movement-mode observation, camera occlusion and ordinary exchange
+6/6 PASS, 84.94s, guard f38dcd875f3e, Logs/busy-exchange-v4. Every player moved; the
+followed retriever completed throws/pickups/catches. Can-down/restore/possession
+transitions are in events.csv. 585 Classic and 543 Hero frames per view, 35s each,
+timestamp-encoded movies. Selected retrieval/restore/catch sequences inspected.
+These omit overlay HUD and are automated bot observations, not human freeform play
+or performance evidence. Catch cameras choose an open side once and return to
+live recovery if both sides become cramped; the penalty remains unchanged.
+
+Native v6 on a505d954: build succeeded 1156 MB/77s, guard f2fd27be1f89, and both-mode
+controls/catch route passed, Logs/exchange-build-v6 and Logs/exchange-native-v6 in
+validation. Owned player exited and shared input was unchanged.
+Core ActionChains 6/6 passed in 20ms at 60509753, development Logs/action-chains-v2.
+It is not connected to scoring: accepted IDs/bonus messages/compatibility still
+need the C4 handback. Introduction body clips are the next private art study,
+not a claim that the shared cinematic phase has been implemented.
+
+
+## Six introduction bodies and private scene authoring
+
+The new introductions are not registered as live abilities. C4 still gates the
+accepted shared phase. These studies preserve the original rigs, materials and
+live ability clips. They do not award points, drive characters or alter match time.
+
+Body study v1 failed a fixture assertion before floor settling (0.10 to 0.18m).
+v2 passed all six in20.05s. v3 added ground support measured by the existing
+ClipMotionStrip deformed-vertex audit:1/1 case covers all six,21.08s,
+guardc3255e8c8159. v4 corrected the retained GLB T-pose shoulder convention and
+used legacy clips:1/1 passed21.90s, guard950281b95925. Timed poses were inspected.
+The clips are runtime sampled on render copies; Unity documents that SetCurve
+works at runtime only for legacy clips: [official API reference](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AnimationClip.SetCurve.html).
+The existing live clip fallback remains unchanged. Native bodyv7 on8d415f90
+passed actual curve motion for all six and generated six2.8s engine movies.
+Build1156MB/69s, guardaefc7a7e7f45; Logs/introduction-native-v7; shared input unchanged.
+
+Private scenes then added inward heat, a single eclipse, fine electrical arcs,
+retained Kuro calm/rage forms, low ground pressure and gathered ice. Scenev1 found
+Kuro's existing Animator lookup using null-coalescing on Unity fake-null objects.
+An explicit Unity null check creates the missing component on the rendering copy.
+Failed guard060ac98a0813 is retained. Scenev2 passed22.33s, guard87945e632c1e,
+and images exposed visual problems rather than being treated as artistic approval:
+hidden heat, ice across the face, small Kuro, and an unbalanced stance.
+Scenev3 on dccf63f1 passed21.92s, guard13aea0a06c82, after moving cues to recorded
+hands, using the same7.4 Kuro growth, stabilizing the eclipse surface and planting
+Dante's feet. All six timed frames were inspected. A remaining purple ground blob
+was cloned inactive KuroEyeWisp spheres without their original timeline. The
+private scene now discards those copies before creating its own wisp sampler.
+
+Native scene+sound buildv8 on53f3ae76 succeeded1156MB/67s, guardbcc88b96e80a.
+The current native review is Logs/introduction-native-v8. Audio capture records
+only the game's output stream, without modifying output, accessing a microphone or
+recording desktop apps. It is bounded and records channel/rate/peak/RMS and clocks.
+Retained hero themes supply the study's sound; their sources are not replaced.
+Frame/callback clocks let the encoder create ordinary-speed review movies with
+actual game audio. This is not sample-accurate latency or listening certification.
+
+Still open: shared accepted-cast pause/resume and cohorts, held props, first-person
+handoff/reduced-camera treatment, preserving each full live warning, and avoiding
+repeated theme/morph cues when private scenes join the actual ultimates. In
+particular Nemu's transformation must hand off once instead of morphing twice.
+No private study closes the six-hero performance or multiplayer workstream.
+
+
+Native v8 stopped at the Phaister theme: it is named sfx_coven_summon. Sean audio
+capture and mux already worked. Source0f962cc4 now uses the existing
+HeroAbilitySystem.ThemeFor plus AudioCues.FileStemFor instead of assuming a filename.
+Native v9 build passed1156MB/81s, guard18fdd3cb3d8c, and all six private scene/audio
+routes passed. Logs/introduction-native-v9 has actual48kHz stereo WAVs, timing and
+level receipts, CSV-timed frames and six ordinary-speed movies with captured audio.
+Peaks range.185-.309; RMS.032-.054 in this mix. No clipping occurred in these captures;
+this is not listening approval or a representative full-match mix qualification.
+Native Nemu/Cheska/Phaister frames were inspected, including the removed duplicate
+Kuro helper blob. All owned players exited and shared input was unchanged.

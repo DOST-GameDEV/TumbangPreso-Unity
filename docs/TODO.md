@@ -10,9 +10,9 @@ Continue autonomously within authorization. No questions, paid work, resets or d
 
 ### Execution order
 
-1. Close the current bounded exchange/catch/audio checkpoint: newest native proof,
-   corrected real-peer witness, actual captures and source/build identity. Retain the
-   tested fallback. This completes the current increment, not the entire pass.
+1. Closed bounded checkpoint: source a505d954 is pushed, native v6 passes both modes,
+   and the earlier real three-peer catch witness passes. Keep this tested fallback.
+   The full pass remains open; continue the next outcomes.
 2. Complete PRESENTATION-1's ordinary exchange with other players active in both modes.
    Fit sound/body/FPP/feedback together; repair only demonstrated relevant blockers.
 3. Establish common accepted-event/throw/contact/time contracts for PRESENTATION-2/3/4.
@@ -31,18 +31,22 @@ Continue autonomously within authorization. No questions, paid work, resets or d
 - [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Low shader locator,
   ownership guards, can marker/collar, side feed, personal contact and stable seat
   colours/numbers are implemented in the current checkpoint. New shove/lunge cues
-  and private audio randomness pass focused tests. Finish latest native/peer proof,
-  full release/landing/pickup/restore/block/whiff/escape continuity and busy owner/
-  observer review. Extend the existing close-call path with legal-threat/episode truth.
+  and private audio randomness pass focused tests. Native v6 passes both modes and
+  busy v4 records all four active players. Legal close-call episodes and continuous
+  block contact are fixed. Complete the remaining full mix/low-settings review and
+  refine demonstrated continuity issues; no broad unrelated regression matrix.
 - [ ] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction is
   integrated with bounded history/render-only copies and recovery cutoff. Earlier
   native source passed both modes; newest ordering/copy/audio source passes local
-  tests but still needs its corrected real-peer/native case. Capped chain logic,
-  rewards and authoritative central milestones are not implemented. Follow design C/D;
+  tests and real-peer/native cases. Capped chain
+  rules are implemented in Core (6/6 focused tests), but live bonus awards/messages
+  and authoritative central milestones still need integration. Follow design C/D;
   preserve one score authority and no bonus-generated ultimate charge.
 - [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** Existing18default
   actions accepted input in a captured run. That is a retained foundation, not the
-  requested new full cinematic pass. Implement shared accepted-cast phase, authored
+  requested new full cinematic pass. Six private introduction body performances
+  are authored, grounded and pass private native scene/sound capture; they do not yet change
+  live ultimate activation. Implement shared accepted-cast phase, authored
   six-profile performances, preserved live warning/payoff, interruption/overlap and
   relevant roles. Sean/Phaister first expose distinct risks. C4 transport/compatibility
   ownership remains unresolved; do not silently cross it or call local-only scenes done.

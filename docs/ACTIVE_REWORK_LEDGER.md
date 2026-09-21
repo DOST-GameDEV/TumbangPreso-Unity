@@ -1,121 +1,126 @@
 # Active TUMP rework ledger
 
-## Owner direction and current phase
+## Current direction
 
-Latest owner message: AFK at school all day; continue autonomously and save questions
-for their return. Record unresolved decisions without interrupting ordinary work.
+Owner is AFK at school all day: work autonomously in this conversation, save
+questions for their return, do not stop at checkpoints. No paid work/credits,
+resets, other chats/subagents, Desktop replacement or contributor-lane crossing.
+The requested thorough plan and doc cleanup were completed and published through
+7bc1964c. Preserve progress; do not restart or endlessly replan.
 
-Original assignment: implement the full gameplay-feel/watchability brief in this
-conversation. Autonomous continuation, no questions, no paid tools/credits, no
-resets, no delegation/other chats, no Desktop replacement. The owner's latest
-correction requires a thorough plan/new order and doc cleanup before further
-runtime edits. Implementation progress is preserved; do not restart it.
+[Only queue](TODO.md#current-implementation-queue).
+[Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
+[Full owner brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
+[Detailed evidence and failed attempts](reports/presentation-pass-2026-09-21/README.md).
 
-Current phase: detailed plan/doc correction and playable checkpoint closed.
-Implementing honest close-call episodes/sparse voice and observing four active players. [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
-[Only execution queue](TODO.md#current-implementation-queue).
-[Original brief](reports/presentation-pass-2026-09-21/implementation-brief.md).
+Order: coherent ordinary exchange -> accepted-event/contact/time contracts ->
+capped chains/shared ultimate phase -> all six performances -> retained canonical
+clips/halftime -> integrated peer/comfort qualification. Independent authoring can
+advance while the narrow C4 dependency remains reserved. Full pass is unfinished.
 
-Order: current checkpoint qualification -> complete busy ordinary exchange ->
-shared accepted-event/contact/time contracts -> capped chains and shared ultimate
-phase -> all six performances/default kits -> canonical retained highlights and
-halftime -> integrated match/peer/comfort qualification. Dependencies can overlap
-in separate safe workspaces; unrelated old investigations do not take priority.
-
-## Workspaces and source identity
+## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Implementation source HEAD 117ff426bb6d58e14f76b9f1187eed5ad267cbcc.
-The planning commit may be newer with documentation/comment-only differences.
-Last verified remote:7bc1964c07dcf1cd6c10096a1148106dc0b7ebb8, including the current
-implementation and detailed plan. Unfinished status remains explicit.
+branch ASTRAReworks. Latest local source0f962cc4. Last verified remotea505d954;
+the qualified playable checkpoint is pushed. Newer art commits await native proof.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached7bc1964c; Unity 6000.5.8f1, Test Framework 1.7.0. Every Editor launch remains
-under tools/run_unity_guarded.py with profile presentation-validation-20260921.
+detached0f962cc4, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
-Initial 24 modified + 2 untracked files were byte-preserved under
-Logs/presentation-pass-2026-09-21/intake-files with intake.json hashes. They include
-unrelated UI/probes/Sean diagnostic work and Inday assets. They remain outside this
-assignment's commits, including selected owned hunks in otherwise dirty files.
-Current next increment: honest close-call episodes, sparse voice priority, body-block
-contact separation and credited thrower, plus a busy four-player observation.
+Initial24modified+2untracked files are byte-preserved under development
+Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
+Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
+Shared dirty files used selected owned hunks; never stage them wholesale or restore
+those user changes. Current owned unstaged work adds host-only accepted throw/tag chain bookkeeping
+and focused integration tests, plus ledger/report/TODO updates. No bonus awards
+or network payload changes are enabled.
+Validation importer rewrites are predominantly whitespace. Tests can also rewrite
+QualitySettings from the chosen profile: preserve diffs, restore only proven test
+changes after owned jobs stop, and capture the exact input manifest before building.
 
-## Friend-work and ownership
+## Integrated and reserved work
 
-All three requested branches checked: camera-feel-lifecycle-pass(fe9baa16) and
-abilities-rework(dd44acd1) were already integrated ancestors. Shader beacon
-feature/slipper-beam-shader(f4c819f9) was fast-forwarded with original authorship,
-then refined in place. Normal ownership/recall implementation 42fb4d45 was retained
-and extended rather than duplicated. Original tall beam is now a low cue.
+All three friend branches checked. Camera/lifecyclefe9baa16 and abilitiesdd44acd1
+were already ancestors. Shaderf4c819f9 was fast-forwarded with original authorship,
+then refined to the low cue. Own-only42fb4d45 was retained and extended.
+C1-C3 have an explicit handback. C4/149.4 remains reserved under
+[the lane](CLAUDE_REQUEST_SAFETY_LANE.md): MatchRpc.cs/NetSession.cs and request-guard
+helpers/tests. No later handback found, including latest fetch. New accepted IDs,
+bonus reasons, shared phase and clip delivery/compatibility need a bounded handback.
+No competing admission system or cross-chat contact. Maps/expansion/Inday/broad U8
+and unrelated matrices remain deferred, with original work preserved.
 
-C1-C3 explicit handback verified. C4/149.4 remains reserved; no later release was
-found. New score/event/phase/replay registration and compatibility need MatchRpc.cs/
-NetSession.cs work under a bounded handback. No competing admission system or
-cross-chat coordination. Independent core/art/presentation work can continue.
-Maps/expansion/Inday reconstruction/broad U8 and unrelated matrices stay deferred.
+## Implemented and current evidence
 
-## Implemented versus verified
+Playable: low shader locator, own-use guards/training exceptions, compact tin
+contact, stable seat identity, side feed/can marker/collar/truthful danger; victim
+body reconstruction with recovery cutoff/render-only copies/order handling;
+independent comfort/announcer controls and aim/RNG isolation; distinct shove/lunge
+cues; legal close-call episodes/per-player evasion recognition; single-priority
+announcer; body blocks once per contact with real thrower attribution; clear-side
+catch camera and cramped-space fallback.
 
-Implemented: low shader locator, own-use guards including force equip/throw and
-bounded training exceptions; compact tin contact, personal confirmation, stable
-seat identity, side feed, can marker/collar and truthful danger; bounded victim
-reconstruction using render-only bodies/held item, recovery cutoff and event-before-
-state handling; independent comfort/announcer settings; aim/RNG isolation; distinct
-shove/lunge cues. Full chains, shared ultimate phase/profiles and halftime are open.
+Latest qualified playable source a505d954:
+- Native Windows v6 succeeded1156MB/77s, build guardf2fd27be1f89. Both-mode real UI/
+  controls/staged catch PASS, validation Logs/exchange-build-v6 and exchange-native-v6.
+  Player16688/handle46331 exited; shared input unchanged. Internal artifact:
+  Builds/exchange-presentation-v6/TumbangPreso.exe. Desktop unchanged.
+- Busy v4/camera/ordinary exchange6/6 PASS84.94s, guardf38dcd875f3e. Both35s captures
+  have all four bots active and corrected world-space steering.585Classic/543Hero
+  frames per view, CSV-timed movies; selected retrieval/restore/catch frames inspected.
+  These omit overlay HUD and are automated observations, not human freeform approval.
+- Block/audio/busy5/5 onac356ee4, guard73fcd43d5e12; close-call2/2 on60509753.
+  Earlier Hero capture showed10block events/.18s; fixed continuous overlap. Earlier
+  voice test assumed absent optional assets. Shipped VO is clock/count/result only.
+- Three real local peers passed catch-v2 on runtime117ff426: victim16playback samples,
+  others0, taya3.54m travel, tag received by all, input preserved. Not a network
+  spectator/link-impairment claim. New clear-side camera does not change transport.
+- Core ActionChains6/6 PASS20ms on60509753, development Logs/action-chains-v2.
+  Live award/message integration is still pending C4; no bonus points active yet.
 
-Latest focused source 117ff426: audio/catch 5/5 PASS, 32.10s,
-validation Logs/audio-catch-v1, guard 08d5cf43dc2e. Earlier relevant passes include
-comfort 3/3, camera/throw/hold/catch 7/7, collar/preference 4/4 and ordering/copies 4/4.
-Default hero input capture 1/1 covered all 18 slots at 30b2e7a3; selected ultimate frames
-inspected. These do not establish full six-hero artistic or busy-match acceptance.
+Inherited remote-smoothing failure reproduced on untouchedf4c819f9 is retained,
+not fixed/suppressed. Prior focused comfort/camera/audio/ordering receipts remain
+in the report. Default18hero slots accepted in intake30b2e7a3; selected existing
+ultimate body frames reviewed. That is not acceptance of six new complete scenes.
 
-Latest actual both-mode native pass: source 30b2e7a3, Builds/catch-presentation-v3,
-1156 MB/51s, guard c1ff4ca4fa33. Logs/catch-native-v3 contains passing controls/catch
-receipts and timestamped 1280x720 engine movies. They predate latest pure-copy,
-ordering, plain-stun and audio changes. Window-based capture was discarded because
-it captured occluding app pixels. Use engine frames and recorded timing only.
+## Running job and next action
 
-Build v4 source 130af331 compiled 1156 MB/60s, guard ffceba45e4c0. Its three-peer witness
-FAILED fixture setup: victim stayed at spawn after initialization overwrote a one-
-time teleport; accepted punch correctly missed. Observer included one pre-seating
-sample. Logs/net-catch-v1 preserves CSV/log/results; shared input unchanged.
-Corrected 117ff426 witness waits for actual seating/readiness and walks the owning
-client through normal replication. Real3-peer v2 PASS: victim16 playback samples,
-others0; taya moved3.54m; every peer received tag; profiles/input preserved.
-Latest native v5 both-mode controls/catch PASS on7bc1964c. Engine captures inspect
-catch/contact and plain recovery (no frost). CSV-timed movies encoded; Classic
-capture29frames/2.77s, Hero62/2.76s. These are staged cases, not busy free play.
+Current authoring checkpoint adds six2.8s introduction bodies and private scenes.
+NOT registered as live actions; shared time/accepted casts, held props, FPP/live
+handoff, sound mix acceptance and multiplayer integration remain open.
+Body v7 native8d415f90 PASS all six actual curves/captures, build1156MB/69s,
+guardaefc7a7e7f45, Logs/introduction-native-v7, player20656/tool33363 retired.
+Six movies encoded with actual frame timestamps. Earlier Editor bodyv3/v4 passed
+ground mesh audit (21.08/21.90s); T-pose shoulders and leg spread corrected using
+retained GLB authoring conventions. New runtime clips are legacy for SetCurve.
+Current scenes: inward heat, one eclipse, fine arcs, retained Kuro transformation,
+loaded ground, gathered ice; each has its own bounded shot. Optional native sound
+uses retained hero themes and captures game output only, no microphone/desktop.
+Scenev1 failed when Kuro's helper used ?? on Unity's fake-null Animator; explicit
+component creation fixes it. Failure guard060ac98a0813 retained. Scenev2 passed all
+six22.33s, guard87945e632c1e. Timed frames exposed hidden Sean heat, ice across
+Cheska's face, small Kuro and an unbalanced Dante stance; corrections now use
+recorded hand anchors, full shared7.4 Kuro growth and matching feet. Scenev3 passed21.92s, guard13aea0a06c82; all six timed frames inspected. Private
+Kuro inherited source helper spheres with no sampler; those are removed before
+creating its own wisp timeline. No approved source geometry was changed.
+Native buildv8 on53f3ae76 passed1156MB/67s, guardbcc88b96e80a. Its review
+FAILED at Phaister: the theme is sfx_coven_summon, not the generic filename pattern.
+Sean's actual output did capture: stereo48kHz/2.795s, peak.309/RMS.054; the encoder
+successfully produced its timed movie with captured audio. Profile/input preserved;
+player8736/tool92952 exited. Source0f962cc4 reuses HeroAbilitySystem.ThemeFor and
+AudioCues.FileStemFor. No replacement or invented theme asset.
+Native buildv9 on0f962cc4 passed1156MB/81s, guard18fdd3cb3d8c. Native six-scene
+review PASS, Logs/introduction-native-v9, player624/tool80486 exited. All six
+actual48kHz stereo game-output captures succeeded, peaks.185-.309 and RMS.032-.054.
+Encoded six ordinary-speed movies with sound. Selected native Nemu/Cheska/Phaister
+frames inspected; duplicate Kuro ground blob is gone. Profile/input unchanged.
+These are private art scenes, not live shared phases or listening approval.
+Next independent work: host accepted throw/tag bookkeeping using the tested Core
+chain model. Real launch IDs, can-consumption serials and round epochs; points,
+ultimate charge and wire stay unchanged pending C4. Tests are drafted, not run yet.
+Nativev6/a505d954 remains the qualified gameplay fallback.
 
-Inherited remote-smoothing test failure reproduced on untouched f4c819f9; retained,
-not fixed/suppressed. No full-match, real network-spectator or human approval claim.
-[Detailed receipts/history](reports/presentation-pass-2026-09-21/README.md).
-
-## Jobs and next concrete action
-
-Buildv5 passed on7bc1964c,1156MB/78s, guard d2343174275b.
-Inputs/log are Logs/catch-build-v5; artifact Builds/catch-presentation-v5.
-The native23264 and three-peer17768/23604/9308 jobs completed; handles75993/46955
-retired. Results: Logs/net-catch-v2 and Logs/catch-native-v5. No player left running.
-Sourceac356ee4: block/audio/busy run5/5 PASS, guardabbrev pending receipt below.
-Continuous contact now deflects once; separation re-arms; thrower attribution reaches
-feed. New voice priority test uses shipped countdown/clock/result assets. Optional
-taya/ayos/tumbang recordings are absent, so no new spoken calls are claimed.
-Earlier busyv2 retained10 block events/.18s and a missing-VO fixture failure5/6.
-Busyv3 captured both-mode real knockdown/retrieval/restore/tag sequences, but the
-followed bot inherited mouse steering. Correct the observation to Movement aim;
-other bots' accepted events remain valid. New catch shot selects open side/falls
-back when both sides are cramped. Neither new change qualified yet.
-Core chain rules6/6 passed on60509753 in Logs/action-chains-v2; live awards/messages
-remain gated by C4.
-Tests can serialize whitespace and change QualitySettings from a selected
-profile. Preserve the diff, restore only proven test-generated changes after exit,
-and record an exact base/input manifest before the next build. Never restore the
-initial unrelated development changes or touch real profiles.
-
-1. Planning checks passed: 47 current local links, 44 introduced/updated links and
-   anchors, required design sections and all six hero directions, and git diff --check.
-   Published through7bc1964c. No Unity rerun was required for the documentation.
-2. Qualify new close-call threat/episode and per-player recognition fixes; one voice
-   at a time with essential priority. Capture busy exchange with all four inputs active.
-   No reserved network files changed. Do not transfer v5 evidence to these new edits.
-3. Continue the ordered outcomes above. Do not claim the full pass from this slice.
+Then update this state and TODO narrowly, commit/push owned verified work, verify
+remote HEAD, and continue independent authored performances/recording work. Keep
+C4 dependencies for the owner's return; no questions now. Do not claim the full
+pass from the bounded exchange checkpoint or from private art previews.
