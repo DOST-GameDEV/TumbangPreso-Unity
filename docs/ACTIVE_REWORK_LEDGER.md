@@ -28,8 +28,8 @@ qualification. Independent art/recording can advance while C4 remains reserved.
 ## Workspace, source and preservation
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest runtime/private-scene source460b88fa; documentation
-publication follows. Last verified remote2a11c726 before this documentation batch.
+branch ASTRAReworks. Latest runtime/private-scene source460b88fa is published. Verified remote72301099
+contains this source and the consolidated evidence ledger.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
 detached460b88fa. Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 Every Editor launch uses run_unity_guarded.py and presentation-validation-20260921.
@@ -96,12 +96,14 @@ No owned Unity/player/encoder job remains. Latest player19188/handle9108 and
 encoder55571 exited; named profiles/shared input preserved. Native v11 is the
 qualified gameplay fallback; v12adds private-scene work only. Desktop unchanged.
 
-Publish current verified private-scene/docs batch, then continue the ordinary
-contact/feedback composition and independent retained-world recording work in the
+The private-scene/docs batch is published. Continue ordinary contact/feedback
+composition and independent retained-world recording work in the
 existing queue. Integrate the shared ultimate/reward/replay contracts only after
 C4 handback. Full P1-P5 pass is unfinished. Do not repeat unchanged full suites.
 
 Earlier browser video tab2 was closed. Hidden temporary error tab1 could not be
 selected/closed because policy blocks its generated data URL; it is unmarked and
 should auto-close at turn end. Do not bypass browser policy or touch user tabs.
-No browsers or preview servers were opened by the latest implementation batch.
+Final inventory confirms only that task-owned temporary error tab remains in IAB;
+no successful page/preview tab remains. User Chrome tabs were untouched. No browser
+or preview server was opened by the latest implementation batch.
