@@ -1967,6 +1967,8 @@ namespace TumbangPreso.Net
             if (!batch.Finish(generation, out var fields) || GameServices.Match == null || GameServices.Match.RoundNumber != _worldFieldRound
                 || _worldFieldScene != UnityEngine.SceneManagement.SceneManager.GetActiveScene().name) return;
             _lastWorldFieldGeneration = generation;
+            if(GameServices.Round!=null&&!GameServices.Round.RoundActive)
+            {WorldEffectSnapshot.ClearPersistentFields();return;}
             float elapsed = Mathf.Max(0, (float)_nm.ServerTime.Time - _worldFieldSentAt);
             using (NetCue.SuppressRelay()) WorldEffectSnapshot.Apply(fields, elapsed);
         }

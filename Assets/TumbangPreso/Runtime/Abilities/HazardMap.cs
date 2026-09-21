@@ -56,11 +56,12 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// ⚠️ CALLED FROM `ResetWorld`. Hazards are destroyed with the round, but a destroyed
-        /// object that never ran OnDisable (a scene teardown, a probe tearing the arena down
-        /// between rounds) would leave a null in the list forever.
+        /// Complete scene/test teardown. Round resets use PruneInactive instead,
+        /// because authored map hazards remain alive across role rotations.
         /// </summary>
         public static void Clear() => Live.Clear();
+        /// <summary>Keep authored map obstacles when a round retires only temporary abilities.</summary>
+        public static void PruneInactive() => Live.RemoveAll(volume=>volume==null||!volume.isActiveAndEnabled);
 
         /// <summary>
         /// The disc most in the way of a walk from <paramref name="from"/> to

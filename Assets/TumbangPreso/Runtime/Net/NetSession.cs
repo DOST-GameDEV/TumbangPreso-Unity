@@ -365,7 +365,8 @@ namespace TumbangPreso.Net
         // 43 carries match-scoped accepted presentation identity and capped chain awards.
         // StartMatch/SyncWorld append the host epoch; mixed clients must be refused.
         // 44 adds accepted ultimate requests/cohorts; owners no longer predict ultimate effects.
-        public const int ProtocolVersion = 47;
+        // Round retirement must remove solid ability fields on every peer.
+        public const int ProtocolVersion = 48;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

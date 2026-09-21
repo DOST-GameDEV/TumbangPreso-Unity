@@ -128,6 +128,7 @@ namespace TumbangPreso
             // 02:00, and it would look like a desync rather than like a clamp.
             float incoming=Mathf.Clamp(timeLeft,0,RoundLength);
             TimeLeft=SharedUltimatePhase.Instance!=null?SharedUltimatePhase.Instance.HoldSnapshotClock(incoming,roundActive,matchInProgress):incoming;
+            if(RoundActive&&!roundActive)Net.WorldEffectSnapshot.ClearPersistentFields();
             RoundActive = roundActive;
 
             // The accepted snapshot owns the client's buffer state too. Do not raise the
@@ -251,6 +252,7 @@ namespace TumbangPreso
         {
             RoundActive = false;
             foreach (var p in _players) p.RoundActive = false;
+            Net.WorldEffectSnapshot.ClearPersistentFields();
 
             // ⚠️⚠️ THE WEATHER IS PUT BACK HERE, AND IT IS THE ONE PIECE OF AN ABILITY THAT CAN
             // OUTLIVE THE ROUND THAT CAST IT. `Visual.SkyEvent` writes `RenderSettings`, which is

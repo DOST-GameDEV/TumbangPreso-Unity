@@ -119,18 +119,7 @@ namespace TumbangPreso.Net
         {
             if (fields == null || fields.Count > MaxFields || !Finite(elapsed) || elapsed < 0) return false;
             foreach (var field in fields) if (!Valid(field)) return false;
-            // Replace only snapshot-owned persistent fields. Familiars, sky and
-            // cast state use their own authoritative paths and remain untouched.
-            foreach (var sheet in Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None))
-            { sheet.gameObject.SetActive(false); Object.Destroy(sheet.gameObject); }
-            foreach (var wall in Object.FindObjectsByType<HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
-            { wall.gameObject.SetActive(false); Object.Destroy(wall.gameObject); }
-            Retire<HeroHazards.FireTrailComponent>();
-            Retire<HeroHazards.ShockTrailComponent>();
-            Retire<HeroHazards.SupernovaCraterComponent>();
-            Retire<HeroHazards.HexSigilComponent>();
-            Retire<DanteFissurePillar>();
-            Physics.SyncTransforms();
+            ClearPersistentFields();
             foreach (var field in fields)
             {
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
@@ -189,6 +178,21 @@ namespace TumbangPreso.Net
                 else if(player.AbilitySystem?.Kit is SeanHeroKit sean) sean.AdoptMovementFields(player.PlayerSlot);
             }
             return true;
+        }
+
+        // Own the same finite set for snapshot replacement and round retirement.
+        // Map hazards and render-only replay copies are deliberately outside it.
+        public static void ClearPersistentFields()
+        {
+            Retire<HeroHazards.IceSheetComponent>();
+            Retire<HeroHazards.IceBarricadeComponent>();
+            Retire<HeroHazards.FireTrailComponent>();
+            Retire<HeroHazards.ShockTrailComponent>();
+            Retire<HeroHazards.SupernovaCraterComponent>();
+            Retire<HeroHazards.HexSigilComponent>();
+            // Render-only fissures have no gameplay lifetime component.
+            Retire<HeroHazards.EarthPillarComponent>();
+            Physics.SyncTransforms();
         }
 
         private static void Retire<T>() where T : Component

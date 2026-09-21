@@ -406,11 +406,9 @@ namespace TumbangPreso
                 if (plate != null) { plate.ApplySizing(); plate.Refresh(); }
             }
 
-            // ⚠️ THE HAZARD MAP IS EMPTIED WITH THE ROUND. Hazard objects are destroyed at a
-            // round boundary and each unregisters itself in OnDisable, but a teardown that skips
-            // OnDisable would leave the bots steering around patches of empty road for the rest
-            // of the match. Clearing here costs nothing and cannot go stale.
-            Abilities.HazardMap.Clear();
+            // Round retirement disables temporary ability fields. Authored map
+            // obstacles remain active and must remain in the bots' avoidance map.
+            Abilities.HazardMap.PruneInactive();
 
             if (Lata != null)
             {
