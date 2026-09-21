@@ -79,7 +79,7 @@ namespace TumbangPreso.Diagnostics
             {
                 _prepared=true;
                 foreach(var actor in round.Players)
-                {actor.Intent.Clear();actor.Intent.Parked=false;actor.AbilitySystem?.Kit?.AddUltimateCharge(100);}
+                {actor.Intent.Clear();actor.Intent.Parked=false;if(local!=3)actor.AbilitySystem?.Kit?.AddUltimateCharge(100);}
                 MatchRpc.Instance?.BroadcastWorldSnapshot();
             }
             var phase=SharedUltimatePhase.Instance;

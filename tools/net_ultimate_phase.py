@@ -108,6 +108,6 @@ if a.old_exe:
  old_log=(out/'old.log').read_text(errors='replace') if (out/'old.log').exists() else ''
  if 'version mismatch' not in old_log.lower():errors.append('old protocol client refusal not witnessed')
 if not unchanged:errors.append('shared input preferences changed')
-result={'passed':not errors,'errors':errors,'measured':measured,'disconnectCaster':a.disconnect_caster,'lateJoin':a.late_join,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three real local Windows peers: remote ultimate request plus same-host-frame cohort, frozen round clock, costs, full warning, denied late cast, duplicate and stale phase. Link settings and packet-count log specify simulated conditions; no late-join or WAN claim.'}
+result={'passed':not errors,'errors':errors,'measured':measured,'disconnectCaster':a.disconnect_caster,'lateJoin':a.late_join,'link':{'delayMs':a.delay,'jitterMs':a.jitter,'loss':a.loss,'seed':a.seed},'sharedInputUnchanged':unchanged,'scope':'Three original Windows peers with optional actual fourth join or accepted-caster departure; enabled fixture flags define coverage. Remote ultimate request, shared cohort/clock, costs, full warning, denied late cast and duplicate/stale phase. Link settings and packet-count log specify simulated conditions; no WAN claim.'}
 (out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result),flush=True)
 raise SystemExit(0 if result['passed'] else 1)

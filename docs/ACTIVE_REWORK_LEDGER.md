@@ -30,8 +30,8 @@ remaining gameplay/VFX/SFX/animation/replay work and existing task IDs.
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
 branch ASTRAReworks. Validation: sibling TumbangPreso-Unity-validation, detached,
 independent Assets/Library/Temp/obj/outputs. Never share writable caches.
-Development/validation current HEAD597e8bbe. Last verified published remote:
-4b0ac0964892608c4238b6f76d0f06ebd214f9e8. Fetch/inspect before every push.
+Current source/job revision details are below. Last verified published remote:
+2c42a8c3f53909e0411830b297e968ea0f8c8a4c. Fetch/inspect before every push.
 
 Original26dirty files were preserved in Logs/presentation-pass-2026-09-21/intake.
 Twenty remain byte-identical; shared diagnostics, TumpMatchReadout and runner
@@ -78,29 +78,43 @@ that to match real rules. Focused spectator-catch-v4PASS1/1 in2.990s, guard
 
 ## Active job and next step
 
-Native popup-v21at597e8bbebuilt1156MB/65s, guarda645804f549d. Normal native
-halftime-popup-native-v21PASSboth modes with actual screen/audio; player17016 /
-69193exited, profile/input preserved. Classic and Hero popup stills inspected.
-The court remains visible, full-screen board/buttons are gone, marker overlay
-is suppressed, original portraits/live scores retained.308/277frames encoded at
-actual timestamps with game audio. This is not a claim of owner visual approval.
+Popup correction is published at2c42a8c3f53909e0411830b297e968ea0f8c8a4c. Native
+popup-v21/597e8bbe (1156MB/65s) passed both modes with actual screen/audio,308/277
+frames encoded at original timing. Both actual popup stills shown to owner; no
+approval inferred. All UI review processes exited and profile/input preserved.
 
-One owned job: net-ultimate-impaired-v3using popup-v21,75ms each direction,
-20ms jitter,2% loss. Exec handle in current tool state. After completion, finish
-remaining phase/lifecycle and recorded hero-state work, and integrate dense/Low/
-comfort review. UI screenshot/runtime evidence is now available; do not stop here.
-No pending image jobs; concepts are saved in the report. No task browser/preview
-opened in this batch. Preserve unrelated apps and user Chrome tabs.
+Current development52db0140plus the small late-join fixture correction; validation
+6bf08f1c. Protocol47pins a canonical frozen round clock. Real impaired-v3found
+observer snapshot drift; v22impaired-v4then found a20ms difference from a physics
+callback already queued at pause receipt.7e976becguards RoundDirector.FixedUpdate
+against Held. Required actual peer rerun remains. Old46client refusal did occur.
+Cold timing v1/v2exceeded the old total bound (~3.18s); removing screenshot IO did
+not solve it alone. Instrumented warmed run measured2.804s hold/66ms activation.
+75298f3dwarms the pure ritual visual path in roster setup; cold-process focused
+v5passed7.752s with original timing bound. Nativev22built after that; do not claim
+its impaired clock result passed until the queued-tick fix is rerun.
 
-Uncommitted owned continuation (parked while fixing the rejected UI):
-HeroHazards.cs, Visual/DanteSeismicVisual.cs, FrostSurfacePresentation.cs,
-KuroIntakePresentation.cs, and new Camera/RecordedSpecialFields.cs/meta.
-They prepare render-only/recordable coven, Kuro, seismic and nova helpers but are
-NOT wired into the clip codec/view yet and are NOT qualified. Do not lose them or
-claim them complete. Active-ultimate replay windows remain deliberately excluded
-until their necessary visuals/state are covered.
+Recorded replay coverage is now implemented through schema10: coven, Kuro mouth
+flow, seismic/nova, fitted/orbiting armor, charge/ignition props, actual native
+trail positions, body coat/rim/flash, teleport epochs and weather. No live gameplay
+factories are run in playback. Archive accepts shipped six-hero active windows.
+At e62d9df9, hero-replay-v1passed4/5 in48.085s: all6real active-ultimate exchanges
+retained/rendered,8-9objects,10-32KB; effect isolation/RNG and fast-motion/teleport
+checks passed. Weather test failed because ambientLight aliases ambientSkyColor;
+6bf08f1c fixes duplicate writing. Earlier recorded-effects-v4passed2/2 in9.541s.
+Primitive visual colliders are immediately disabled and removed at frame end;
+checks require never-active physics and zero colliders after that frame.
 
-After the popup is inspected: finish the remaining recorded hero-state coverage,
-shared ultimate impaired/late/disconnect/repeat cases, integrated busy/comfort/
-Low/native validation and any remaining ordinary-exchange refinements. Keep the
-full queue alive and do not end after a single successful build or UI prototype.
+One owned job: exec94297 runs recorded-weather-v2at6bf08f1c, then (only if it
+passes) native complete-replay-v23build. Logs/recorded-weather-v2 and
+Logs/complete-replay-v23-build; output Builds/complete-replay-v23/TumbangPreso.exe.
+New52db0140fixture adds actual accepted-caster departure and fourth-peer late join,
+not in v23yet. No other owned job or pending image generation. No task browser/
+preview was opened. Preserve unrelated apps and user tabs.
+
+Next: inspect weather/build; real impaired frozen-clock/compatibility verification
+on v23; targeted late/disconnect/four-cast coverage; native hero replay visuals;
+final integrated busy/Low/comfort and remaining ordinary-exchange refinement.
+No uncommitted implementation foundation is parked now: only original unowned
+files plus the small fixture correction/docs remain. Keep full queue alive and
+do not stop after another individual passing build or prototype.
