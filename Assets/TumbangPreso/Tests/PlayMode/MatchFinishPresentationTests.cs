@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
@@ -58,14 +59,16 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(preview.Subject.GetComponentsInChildren<Collider>(true));
             var caption=GameObject.Find("WinnerCaption").GetComponent<Text>();Assert.AreEqual("MATCH WINNER",caption.text);
             var arm=preview.Subject.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-right");
-            yield return new WaitForSecondsRealtime(.13f);var before=arm.localRotation;
-            yield return new WaitForSecondsRealtime(.36f);
-            Assert.Greater(Quaternion.Angle(before,arm.localRotation),8,"Winner acknowledgement did not animate while the match clock was stopped.");
+            var sampler=figure.AddComponent<FinishPoseSample>();Quaternion before=Quaternion.identity,after=Quaternion.identity;
+            yield return new WaitForSecondsRealtime(.13f);yield return Sample(()=>before=arm.localRotation);
+            yield return new WaitForSecondsRealtime(.36f);yield return Sample(()=>after=arm.localRotation);
+            Assert.Greater(Quaternion.Angle(before,after),8,"Winner acknowledgement did not animate while the match clock was stopped.");
             yield return GameplayShots.Render(Camera.main,"winner-720",true,"Logs/finish-performance",width:1280,height:720);
             var scores=Enumerable.Range(0,4).Select(GameServices.Match.ScoreFor).ToArray();
             SettingsStore.Current.ReducedUiMotion=true;yield return null;yield return null;
-            before=arm.localRotation;yield return new WaitForSecondsRealtime(.35f);
-            Assert.Less(Quaternion.Angle(before,arm.localRotation),.01f,"Reduced-motion result kept animating the rig.");
+            yield return Sample(()=>before=arm.localRotation);yield return new WaitForSecondsRealtime(.35f);
+            yield return Sample(()=>after=arm.localRotation);
+            Assert.Less(Quaternion.Angle(before,after),.01f,"Reduced-motion result kept animating the rig.");
             CollectionAssert.AreEqual(scores,Enumerable.Range(0,4).Select(GameServices.Match.ScoreFor).ToArray());
             GameServices.Match.AddScore(2,ScoreEvent.LataKnocked);result.OnMatchWon(-1);yield return null;
             Assert.IsFalse(figure.activeSelf,"Draw retained a false winner figure.");
@@ -73,6 +76,18 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("EVEN AT THE TOP",caption.text);
             Assert.IsNotNull(GameObject.Find("DrawCan"));
             yield return GameplayShots.Render(Camera.main,"draw-16x10",true,"Logs/finish-performance",width:1280,height:800);
+            IEnumerator Sample(Action read)
+            {
+                bool done=false;sampler.Read=()=>{read();done=true;};
+                while(!done)yield return null;
+            }
+        }
+        // Sample the presented pose after its overlay, not the temporarily
+        // restored imported idle pose between Update and LateUpdate.
+        [DefaultExecutionOrder(10000)] private sealed class FinishPoseSample:MonoBehaviour
+        {
+            public Action Read;
+            private void LateUpdate(){var read=Read;Read=null;read?.Invoke();}
         }
     }
 }

@@ -26,7 +26,7 @@ namespace TumbangPreso.Diagnostics
             public string scope="Default eight-round normal-speed match; four real bot input writers; no staged hits, score grants, forced round advancement or human-play claim.";
         }
         private sealed class WholeCapture
-        { public string Name,Error;public float Began;public bool Done; }
+        { public string Name,Error;public float Began,Seconds=12;public bool Done; }
 
         private IEnumerator WholeMatchesOnly()
         {
@@ -80,7 +80,7 @@ namespace TumbangPreso.Diagnostics
                     events.AppendLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-began:F4},{match.RoundNumber},{kind},{actor},{subject}"));
                 }
                 void Cast(CharacterMotor actor,HeroKit kit,HeroAbility ability){receipt.ultimateExecutions++;}
-                void End(int winner){receipt.winner=winner;ended=true;}
+                void End(int winner){receipt.winner=winner;ended=true;if(resultSmoke&&(capture==null||capture.Done))Window("result",2.8f);}
                 MatchFlair.Presented+=Outcome;HeroAbilitySystem.UltimateStarted+=Cast;match.MatchEnded+=End;
                 void SaveProgress()
                 {
@@ -91,9 +91,9 @@ namespace TumbangPreso.Diagnostics
                     File.WriteAllText(Path.Combine(_folder,mode+"-whole-state.csv"),states.ToString());
                 }
                 StartFrameWindow(mode+"-whole-match");
-                void Window(string name)
+                void Window(string name,float seconds=12)
                 {
-                    capture=new WholeCapture{Name=mode+"-whole-"+name,Began=Time.realtimeSinceStartup};
+                    capture=new WholeCapture{Name=mode+"-whole-"+name,Began=Time.realtimeSinceStartup,Seconds=seconds};
                     StartCoroutine(WholeMatchWindow(capture));
                 }
                 Window("opening");
@@ -124,7 +124,7 @@ namespace TumbangPreso.Diagnostics
                     }
                     receipt.realSeconds=Time.realtimeSinceStartup-began;receipt.rounds=seenRounds.Count;
                     receipt.phases=phases.Count;receipt.halftimes=halves.Count;receipt.scores=Enumerable.Range(0,4).Select(match.ScoreFor).ToArray();
-                    if(capture!=null)yield return WaitFor(()=>capture.Done,20);
+                    if(capture!=null){yield return WaitFor(()=>capture.Done,20);if(capture.Error!=null)throw new InvalidOperationException(capture.Error);}
                     yield return WaitFor(()=>Find("ResultMainMenu")!=null,8);
                     yield return null;
                     var canMarker=Object.FindAnyObjectByType<OffscreenIndicators>();var recallMarker=Object.FindAnyObjectByType<SlipperRecall>();
@@ -154,7 +154,7 @@ namespace TumbangPreso.Diagnostics
             var sound=listener.gameObject.AddComponent<ReviewAudioCapture>();sound.Begin(8);
             try
             {
-                yield return RecordCatchMotion(capture.Name,12);
+                yield return RecordCatchMotion(capture.Name,capture.Seconds);
                 try{sound.Save(Path.Combine(_folder,capture.Name));}catch(Exception error){capture.Error=error.ToString();}
             }
             finally{sound.enabled=false;Object.Destroy(sound);capture.Done=true;}
