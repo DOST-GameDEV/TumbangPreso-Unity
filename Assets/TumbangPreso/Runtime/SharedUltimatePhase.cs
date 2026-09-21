@@ -35,7 +35,8 @@ namespace TumbangPreso
         private readonly List<UltimateCommit> _commits = new List<UltimateCommit>(4);
         private long _sequence, _lastReceived;
         private bool _sealed, _actorsReady, _viewAttempted;
-        private int _frame, _scene;
+        private int _frame;
+        private Scene _scene;
         private CameraSystem.UltimatePhaseView _view;
 
         public static SharedUltimatePhase Ensure()
@@ -65,7 +66,7 @@ namespace TumbangPreso
                 MatchId = GameServices.Match.PresentationMatchId; Round = GameServices.Match.RoundNumber;
                 PhaseId = ++_sequence; Began = Now; _frame = Time.frameCount;
                 _commits.Clear(); Active = true; _sealed = false; _actorsReady = true;
-                _scene = SceneManager.GetActiveScene().handle;
+                _scene = SceneManager.GetActiveScene();
                 PresentationClock.Hold();
             }
             _commits.Add(cast);
@@ -89,7 +90,7 @@ namespace TumbangPreso
             foreach (var cast in _commits) if (round.PlayerAt(cast.Seat)?.AbilitySystem?.Kit?.Ultimate == null) return false;
             foreach (var cast in _commits)
                 round.PlayerAt(cast.Seat).AbilitySystem.AdoptSharedUltimate(cast.Request);
-            _scene = SceneManager.GetActiveScene().handle; _actorsReady=true; ClearActions(); return true;
+            _scene = SceneManager.GetActiveScene(); _actorsReady=true; ClearActions(); return true;
         }
         private void ClearActions()
         {
@@ -105,7 +106,7 @@ namespace TumbangPreso
             var match = GameServices.Match; var round = GameServices.Round;
             if (_actorsReady && (match == null || !match.MatchInProgress || match.RoundNumber != Round
                 || match.PresentationMatchId != MatchId || round == null || !round.RoundActive
-                || SceneManager.GetActiveScene().handle != _scene)) { Cancel(); return; }
+                || SceneManager.GetActiveScene() != _scene)) { Cancel(); return; }
             if (!_sealed)
             {
                 _sealed = true; ClearActions();

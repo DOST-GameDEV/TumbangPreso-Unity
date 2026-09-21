@@ -51,7 +51,7 @@ namespace TumbangPreso.Abilities
             var context = new AbilityContext(_motor, _carrier, _verbs, cast.Position, cast.Forward, cast.Aim);
             Kit.Ultimate.HeldSecondsOnCast = cast.Held;
             if (NetAuthority.IsNetworked)
-            { using (Audio.NetCue.SuppressRelay()) Kit.Ultimate.BeginReservedActivation(context); }
+            { using (NetCue.SuppressRelay()) Kit.Ultimate.BeginReservedActivation(context); }
             else Kit.Ultimate.BeginReservedActivation(context);
             PlayCastConfirm(Slot.Ultimate, context, afterIntroduction: true);
         }
