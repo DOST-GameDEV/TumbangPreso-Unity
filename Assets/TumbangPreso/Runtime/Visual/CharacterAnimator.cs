@@ -334,6 +334,9 @@ namespace TumbangPreso.Visual
 
             _graph.Play();
             Play(Idle, loop: true, force: true);
+            // Seat the model against the neutral pose it will actually display,
+            // not an importer's unanimated bounds with a different leg position.
+            _graph.Evaluate(0);
         }
 
         /// <summary>

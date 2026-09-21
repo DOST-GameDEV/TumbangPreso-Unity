@@ -285,8 +285,6 @@ namespace TumbangPreso.Visual
             ToonSkin.Apply(_instance, person ? ToonSkin.PersonOutlineWidth
                                              : ToonSkin.PropOutlineWidth, palette);
 
-            AlignToCapsuleFloor();
-
             if (petModel != null)
             {
                 var petParent = _modelRoot != null && _modelRoot.parent != null ? _modelRoot.parent : transform;
@@ -310,6 +308,7 @@ namespace TumbangPreso.Visual
             var anim = GetComponent<CharacterAnimator>();
             if (anim == null) anim = gameObject.AddComponent<CharacterAnimator>();
             if (_instance != null) anim.Bind(_instance, clips);
+            AlignToCapsuleFloor();
 
             // ⚠️⚠️ NO SECONDARY CLOTH SOLVER ON THE BODY EITHER. DELETED 2026-08-27 along with
             // `BaggyClothingPhysics` and the first-person `ViewmodelClothPhysics`.
@@ -726,7 +725,8 @@ namespace TumbangPreso.Visual
             if (!any) return;
 
             float capsuleBase = transform.position.y;
-            float drop = combined.min.y - capsuleBase;
+            float sole=AnimatedSoleHeight();
+            float drop = (float.IsPositiveInfinity(sole)?combined.min.y:sole) - capsuleBase;
 
             if (Mathf.Abs(drop) > 0.0005f)
                 _modelRoot.position -= new Vector3(0.0f, drop, 0.0f);
@@ -734,6 +734,32 @@ namespace TumbangPreso.Visual
             // The alignment is the model root's resting place, and the remote smoothing offsets
             // from it rather than replacing it. See StepRemoteSmoothing.
             _alignedLocal = _modelRoot == transform ? Vector3.zero : _modelRoot.localPosition;
+        }
+
+        private float AnimatedSoleHeight()
+        {
+            if(_instance==null)return float.PositiveInfinity;
+            float sole=float.PositiveInfinity;var baked=new Mesh();
+            try
+            {
+                foreach(var skin in _instance.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if(skin.sharedMesh==null)continue;
+                    var bones=skin.bones;var weights=skin.sharedMesh.boneWeights;
+                    if(weights.Length==0)continue;
+                    skin.BakeMesh(baked,true);var vertices=baked.vertices;
+                    if(weights.Length!=vertices.Length)continue;
+                    bool Leg(int index)=>index>=0&&index<bones.Length&&bones[index]!=null&&(bones[index].name=="leg-left"||bones[index].name=="leg-right");
+                    for(int i=0;i<vertices.Length;i++)
+                    {
+                        var w=weights[i];float leg=(Leg(w.boneIndex0)?w.weight0:0)+(Leg(w.boneIndex1)?w.weight1:0)
+                            +(Leg(w.boneIndex2)?w.weight2:0)+(Leg(w.boneIndex3)?w.weight3:0);
+                        if(leg>.5f)sole=Mathf.Min(sole,skin.transform.TransformPoint(vertices[i]).y);
+                    }
+                }
+            }
+            finally{if(Application.isPlaying)Destroy(baked);else DestroyImmediate(baked);}
+            return sole;
         }
 
         /// <summary>
