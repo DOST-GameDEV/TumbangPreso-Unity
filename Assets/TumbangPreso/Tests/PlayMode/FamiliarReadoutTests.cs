@@ -36,7 +36,7 @@ namespace TumbangPreso.PlayTests
             actor.Intent.Set(Verb.Skill2,false);yield return new WaitForSeconds(.12f);
             Assert.IsTrue(visual.Companion.IsPossessed,"The real projection was not accepted.");
             var readout=Object.FindAnyObjectByType<TumpMatchReadout>();readout.Tick(actor,false,false,false,false);
-            Text Label(string name)=>readout.GetComponentsInChildren<Text>(true).First(t=>t.name==name);
+            Text Label(string name)=>readout.Canvas.GetComponentsInChildren<Text>(true).First(t=>t.name==name);
             Assert.AreEqual("Controlling Kuro",Label("LocalRole").text);
             StringAssert.Contains("Nemu's body",Label("SlipperState").text);
             StringAssert.Contains("Bring Nemu to Kuro",Label("ActionPrompt").text);
