@@ -33,6 +33,8 @@ namespace TumbangPreso.Visual
         private Renderer[] _renderers;
         private readonly Renderer[] _bodyRenderers;
         private Renderer[] _kuroRenderers;
+        private GameObject _heldItem;
+        private Renderer[] _heldRenderers;
         private AudioSource _sound;
         public GameObject Root => _root;
 
@@ -52,6 +54,7 @@ namespace TumbangPreso.Visual
             _root.transform.SetParent(parent, false); _root.transform.SetPositionAndRotation(_ground, _facing);
             try
             {
+                CopyHeldItem(source);
                 switch (hero)
                 {
                     case "sean":
@@ -126,6 +129,38 @@ namespace TumbangPreso.Visual
             mesh.normals = normals; return mesh;
         }
         private Vector3 RightPalm => _rightHand != null ? _root.transform.InverseTransformPoint(_rightHand.position) : new Vector3(-.4f, 1.2f, .3f);
+        private void CopyHeldItem(CharacterMotor actor)
+        {
+            var held = actor.GetComponent<Carrier>()?.Held;
+            var liveHand = actor.GetComponent<CharacterVisual>()?.HandAnchor;
+            if (held == null || liveHand == null || _rightHand == null) return;
+            // Preserve the actual selected shoe and fitted grip from the live rig.
+            // Only mesh/material data is copied, never Slipper/physics/ownership.
+            _heldItem = new GameObject("IntroductionHeldSlipper");
+            _heldItem.transform.SetParent(_rightHand, false);
+            var surfaces = new List<Renderer>();
+            foreach (var source in held.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (!source.enabled || source.GetComponent<VfxRenderTag>() != null) continue;
+                bool activePart = true;
+                for (var part = source.transform; part != held.transform; part = part.parent)
+                    if (!part.gameObject.activeSelf) { activePart = false; break; }
+                if (!activePart) continue;
+                var mesh = source.GetComponent<MeshFilter>();
+                if (mesh == null || mesh.sharedMesh == null) continue;
+                var go = new GameObject("HeldShoeSurface"); go.transform.SetParent(_heldItem.transform, false);
+                go.transform.localPosition = liveHand.InverseTransformPoint(source.transform.position);
+                go.transform.localRotation = Quaternion.Inverse(liveHand.rotation) * source.transform.rotation;
+                Vector3 scale = source.transform.lossyScale, parentScale = liveHand.lossyScale;
+                go.transform.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+                go.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
+                var copy = go.AddComponent<MeshRenderer>(); copy.sharedMaterials = source.sharedMaterials;
+                var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); copy.SetPropertyBlock(properties);
+                copy.shadowCastingMode = ShadowCastingMode.On; copy.forceRenderingOff = true;
+                surfaces.Add(copy);
+            }
+            _heldRenderers = surfaces.ToArray();
+        }
         private Vector3 BothPalms => _rightHand != null && _leftArm != null
             ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
             : new Vector3(0, .7f, .5f);
@@ -266,15 +301,19 @@ namespace TumbangPreso.Visual
                     if (!found) { result = renderer.bounds; found = true; } else result.Encapsulate(renderer.bounds);
                 }
             }
-            Include(_bodyRenderers); Include(_kuroRenderers); bounds = result;
+            Include(_bodyRenderers); Include(_kuroRenderers); Include(_heldRenderers); bounds = result;
             return found;
         }
         public void SetVisibleForCapture(bool visible)
-        { if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible; }
+        {
+            if (_renderers != null) foreach (var r in _renderers) if (r != null) r.forceRenderingOff = !visible;
+            if (_heldRenderers != null) foreach (var r in _heldRenderers) if (r != null) r.forceRenderingOff = !visible;
+        }
         public void Dispose()
         {
             if (_sound != null) _sound.Stop();
             _rage?.Dispose(); _rage = null;
+            if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }
         }
         private static void ObjectDestroy(UnityEngine.Object value)

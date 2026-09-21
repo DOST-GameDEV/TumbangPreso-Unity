@@ -90,6 +90,10 @@ namespace TumbangPreso.PlayTests
                     }
                     float floor = Low(0), lowest = 0, highest = 0;
                     HeroIntroductionScene scene = null;
+                    Transform copiedGrip = null;
+                    MeshFilter[] copiedShoe = null;
+                    TumbangPreso.Tests.HeadSurfaceVolume head = default;
+                    int shoeInsideHead = 0;
                     bool withScene = checkFraming || Environment.GetEnvironmentVariable("TUMP_INTRO_SCENE") == "1";
                     try
                     {
@@ -99,6 +103,15 @@ namespace TumbangPreso.PlayTests
                         {
                             var random = UnityEngine.Random.state;
                             scene = new HeroIntroductionScene(stage.transform, hero, actor, copy);
+                            if (held != null)
+                            {
+                                copiedGrip = copy.Root.GetComponentsInChildren<Transform>(true).First(t => t.name == "IntroductionHeldSlipper");
+                                copiedShoe = copiedGrip.GetComponentsInChildren<MeshFilter>(true);
+                                Assert.IsNotEmpty(copiedShoe, hero + " lost its actual held equipment in the scene.");
+                                Assert.IsEmpty(copiedGrip.GetComponentsInChildren<MonoBehaviour>(true));
+                                Assert.IsEmpty(copiedGrip.GetComponentsInChildren<Collider>(true));
+                                head = new TumbangPreso.Tests.HeadSurfaceVolume(copy.Root.transform);
+                            }
                             Assert.AreEqual(random, UnityEngine.Random.state, "Scene construction changed gameplay RNG.");
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<CharacterMotor>(true));
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<Abilities.HeroAbilitySystem>(true));
@@ -114,6 +127,18 @@ namespace TumbangPreso.PlayTests
                                 {
                                     scene.Sample(age); scene.Shot(age, out var eye, out var target, out var lens, camera.aspect);
                                     camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                    if (copiedShoe != null)
+                                    {
+                                        Assert.AreEqual(Vector3.zero, copiedGrip.localPosition, "The shoe must follow its sampled hand, not a frozen world pose.");
+                                        foreach (var part in copiedShoe)
+                                        {
+                                            var toHead = head.Bone.worldToLocalMatrix * part.transform.localToWorldMatrix;
+                                            int inside = 0;
+                                            foreach (var vertex in part.sharedMesh.vertices)
+                                                if (head.Contains(toHead.MultiplyPoint3x4(vertex))) inside++;
+                                            shoeInsideHead = Mathf.Max(shoeInsideHead, inside);
+                                        }
+                                    }
                                     if (checkFraming)
                                     {
                                         Assert.IsTrue(scene.TryCharacterBounds(out var bounds));
@@ -141,6 +166,8 @@ namespace TumbangPreso.PlayTests
                                 lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
                             });
                         report.AppendLine(FormattableString.Invariant($"{hero}: clearance {lowest:F5} to {highest:F5} metres"));
+                        report.AppendLine($"{hero}: maximum held-shoe vertices inside rigid head surfaces: {shoeInsideHead}");
+                        Assert.AreEqual(0, shoeInsideHead, hero + " put held equipment through its face.");
                         Assert.GreaterOrEqual(lowest, -.015f, hero + " penetrated its standing support plane.");
                         Assert.LessOrEqual(highest, .015f, hero + " floated above its standing support plane.");
                         Assert.AreEqual(at, actor.transform.position);
