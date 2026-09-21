@@ -1,0 +1,371 @@
+{
+  "source": "d51d414948d8348f2f79c134a1bc8004d6ab35c3",
+  "artifact": "Builds/presentation-v27/TumbangPreso.exe",
+  "nativeBuild": {
+    "MB": 1156,
+    "seconds": 58,
+    "guard": "04c3e0214bb8"
+  },
+  "matches": {
+    "Classic": {
+      "mode": "Classic",
+      "view": "owner",
+      "completed": true,
+      "rounds": 8,
+      "winner": 3,
+      "throws": 204,
+      "canHits": 46,
+      "tags": 158,
+      "ultimateExecutions": 0,
+      "phases": 0,
+      "halftimes": 1,
+      "realSeconds": 759.0582885742188,
+      "ultimateHoldSeconds": 0.0,
+      "scores": [
+        7020,
+        6690,
+        6675,
+        7485
+      ],
+      "scope": "Default eight-round normal-speed match; four real bot input writers; no staged hits, score grants, forced round advancement or human-play claim."
+    },
+    "HeroStrike": {
+      "mode": "HeroStrike",
+      "view": "live spectator",
+      "completed": true,
+      "rounds": 8,
+      "winner": 2,
+      "throws": 167,
+      "canHits": 44,
+      "tags": 107,
+      "ultimateExecutions": 13,
+      "phases": 13,
+      "halftimes": 1,
+      "realSeconds": 792.09326171875,
+      "ultimateHoldSeconds": 36.58514404296875,
+      "scores": [
+        5585,
+        3930,
+        6390,
+        4895
+      ],
+      "scope": "Default eight-round normal-speed match; four real bot input writers; no staged hits, score grants, forced round advancement or human-play claim.",
+      "observedHoldPercent": 4.6187924845596156
+    }
+  },
+  "ordinary": {
+    "runner": {
+      "exitCode": 0,
+      "sharedInputUnchanged": true,
+      "profile": "presentation-validation-20260921",
+      "existingFilesRestored": 4,
+      "reviewPassed": true,
+      "error": ""
+    },
+    "casts": [
+      {
+        "hero": "sean",
+        "slot": "1",
+        "body": "hero-sean-dash",
+        "fpp": "thrust-fire",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "sean",
+        "slot": "2",
+        "body": "hero-sean-ignite",
+        "fpp": "ignite",
+        "seconds": "10.00",
+        "accepted": "True",
+        "contact_events": "1"
+      },
+      {
+        "hero": "phaister",
+        "slot": "1",
+        "body": "hero-phaister-hex",
+        "fpp": "cast-hex",
+        "seconds": "8.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "phaister",
+        "slot": "2",
+        "body": "hero-phaister-blink",
+        "fpp": "blink",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "zack",
+        "slot": "1",
+        "body": "hero-zack-sprint",
+        "fpp": "sprint-electric",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "zack",
+        "slot": "2",
+        "body": "hero-zack-charge",
+        "fpp": "overcharge",
+        "seconds": "10.00",
+        "accepted": "True",
+        "contact_events": "1"
+      },
+      {
+        "hero": "nemu",
+        "slot": "1",
+        "body": "hero-nemu-ghoststep",
+        "fpp": "ghost-step",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "nemu",
+        "slot": "2",
+        "body": "hero-nemu-project",
+        "fpp": "project-spirit",
+        "seconds": "8.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "dante",
+        "slot": "1",
+        "body": "hero-dante-stomp",
+        "fpp": "stomp-heavy",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "dante",
+        "slot": "2",
+        "body": "hero-dante-roar",
+        "fpp": "carapace-guard",
+        "seconds": "6.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "cheska",
+        "slot": "1",
+        "body": "hero-cheska-frostwave",
+        "fpp": "frost-sweep",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      },
+      {
+        "hero": "cheska",
+        "slot": "2",
+        "body": "hero-cheska-raise",
+        "fpp": "raise-barricade",
+        "seconds": "5.00",
+        "accepted": "True",
+        "contact_events": "0"
+      }
+    ]
+  },
+  "visualFailure": "Classic result image has stale world markers; retained evidence, fix6102594a awaiting verification.",
+  "matchRunner": {
+    "exitCode": 0,
+    "sharedInputUnchanged": true,
+    "profile": "presentation-validation-20260921",
+    "existingFilesRestored": 4,
+    "reviewPassed": true,
+    "error": ""
+  },
+  "audioCaptures": {
+    "Logs\\whole-matches-native-v27\\Classic-whole-halftime": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1153024",
+      "seconds": "12.010667",
+      "dsp_start": "406.549333",
+      "first_callback_real": "398.023984",
+      "peak": "0.238368",
+      "rms": "0.030104"
+    },
+    "Logs\\whole-matches-native-v27\\Classic-whole-opening": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1153024",
+      "seconds": "12.010667",
+      "dsp_start": "32.512000",
+      "first_callback_real": "23.918827",
+      "peak": "0.251251",
+      "rms": "0.029585"
+    },
+    "Logs\\whole-matches-native-v27\\HeroStrike-whole-first-ultimate": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1153024",
+      "seconds": "12.010667",
+      "dsp_start": "915.029333",
+      "first_callback_real": "906.529424",
+      "peak": "0.274533",
+      "rms": "0.054348"
+    },
+    "Logs\\whole-matches-native-v27\\HeroStrike-whole-halftime": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1157120",
+      "seconds": "12.053333",
+      "dsp_start": "1186.773333",
+      "first_callback_real": "1178.278687",
+      "peak": "0.277913",
+      "rms": "0.047165"
+    },
+    "Logs\\whole-matches-native-v27\\HeroStrike-whole-opening": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "1155072",
+      "seconds": "12.032000",
+      "dsp_start": "797.482667",
+      "first_callback_real": "788.974371",
+      "peak": "0.287730",
+      "rms": "0.029322"
+    },
+    "Logs\\ordinary-skills-native-v27\\cheska-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "93.269333",
+      "first_callback_real": "92.550858",
+      "peak": "0.296468",
+      "rms": "0.056191"
+    },
+    "Logs\\ordinary-skills-native-v27\\cheska-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "98.581333",
+      "first_callback_real": "97.858347",
+      "peak": "0.238922",
+      "rms": "0.050109"
+    },
+    "Logs\\ordinary-skills-native-v27\\dante-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "481280",
+      "seconds": "5.013333",
+      "dsp_start": "81.685333",
+      "first_callback_real": "80.949695",
+      "peak": "0.262942",
+      "rms": "0.054791"
+    },
+    "Logs\\ordinary-skills-native-v27\\dante-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "579584",
+      "seconds": "6.037333",
+      "dsp_start": "86.933333",
+      "first_callback_real": "86.211986",
+      "peak": "0.246753",
+      "rms": "0.053033"
+    },
+    "Logs\\ordinary-skills-native-v27\\nemu-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "483328",
+      "seconds": "5.034667",
+      "dsp_start": "68.053333",
+      "first_callback_real": "67.329484",
+      "peak": "0.224500",
+      "rms": "0.040801"
+    },
+    "Logs\\ordinary-skills-native-v27\\nemu-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "772096",
+      "seconds": "8.042667",
+      "dsp_start": "73.322667",
+      "first_callback_real": "72.599811",
+      "peak": "0.283304",
+      "rms": "0.051169"
+    },
+    "Logs\\ordinary-skills-native-v27\\phaister-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "772096",
+      "seconds": "8.042667",
+      "dsp_start": "38.762667",
+      "first_callback_real": "38.039178",
+      "peak": "0.295447",
+      "rms": "0.041429"
+    },
+    "Logs\\ordinary-skills-native-v27\\phaister-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "481280",
+      "seconds": "5.013333",
+      "dsp_start": "47.104000",
+      "first_callback_real": "46.369569",
+      "peak": "0.276356",
+      "rms": "0.042638"
+    },
+    "Logs\\ordinary-skills-native-v27\\sean-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "481280",
+      "seconds": "5.013333",
+      "dsp_start": "23.018667",
+      "first_callback_real": "22.278856",
+      "peak": "0.237981",
+      "rms": "0.030811"
+    },
+    "Logs\\ordinary-skills-native-v27\\sean-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "962560",
+      "seconds": "10.026667",
+      "dsp_start": "28.309333",
+      "first_callback_real": "27.585238",
+      "peak": "0.222346",
+      "rms": "0.030325"
+    },
+    "Logs\\ordinary-skills-native-v27\\zack-ordinary-1": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "481280",
+      "seconds": "5.013333",
+      "dsp_start": "52.416000",
+      "first_callback_real": "51.673004",
+      "peak": "0.228771",
+      "rms": "0.039690"
+    },
+    "Logs\\ordinary-skills-native-v27\\zack-ordinary-2": {
+      "rate": "48000",
+      "channels": "2",
+      "samples": "958464",
+      "seconds": "9.984000",
+      "dsp_start": "57.706667",
+      "first_callback_real": "56.966896",
+      "peak": "0.249461",
+      "rms": "0.040313"
+    }
+  },
+  "focused": {
+    "total": "7",
+    "passed": "7",
+    "duration": "61.7258553",
+    "names": [
+      "TumbangPreso.PlayTests.CarryTests.RemoteSmoothingLagsTheMeshAndThenCatchesUp",
+      "TumbangPreso.PlayTests.ExchangePresenceTests.NearbyAcceptedImpactScattersExistingBirdOnceWithoutChangingTheMatch",
+      "TumbangPreso.PlayTests.ExchangePresenceTests.RealStartBrakeTurnYieldsToThrowAndTeleportWithoutLosingTheGrip",
+      "TumbangPreso.PlayTests.FootSupportProbe.ContactSurvivesKerbJumpAndTeleportWithoutMovingTheCapsule",
+      "TumbangPreso.PlayTests.FootSupportProbe.PlantedFeetAgainstActualSupportAndControllerSkin",
+      "TumbangPreso.PlayTests.MatchFinishPresentationTests.WinnerUsesOriginalRigDrawRemovesItAndReducedMotionStaysStill",
+      "TumbangPreso.PlayTests.NemuKitContractProbe.ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment"
+    ]
+  }
+}

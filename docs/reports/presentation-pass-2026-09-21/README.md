@@ -1,5 +1,57 @@
 # Presentation pass, 2026-09-21
 
+## Current verified software checkpoint: native v33
+
+**Runtime source:**db9761260600664f7f7482ecb5721a6265e2cb4b, protocol48,
+replay schema10. **Runnable artifact:**
+[Windows player](C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/presentation-v33/TumbangPreso.exe).
+Build1156MB/51s, guard94885ac16b8e; only whitespace-generated input drift.
+[Exact hashes, results and59movie paths](current-candidate-receipts.json) and
+[complete-match receipts](continuation-v27-receipts.json) retain the limits of each run.
+Later delivery-doc commits do not change this runtime.
+
+The resumed implementation adds grounded start/brake/turn presence, event-aware
+existing animals, actual winner-rig acknowledgement and true draws, clear Kuro
+control/body/return information, consistent red/cream/gold gameplay UI, single
+player identity labels, visible multi-caster/ability labels, shorter camera-view
+blending, and cleanup of hidden previews and result markers. All earlier ordinary
+exchange, victim catch, six-hero shared performance, capped awards, canonical
+replay and compact halftime work is retained. Approved art/rigs/input mapping remain.
+
+A late visual review caught persistent solid fields crossing round boundaries.
+The final code retires live ability fields on host and replica boundaries,
+including a missed inactive snapshot, preserves permanent map hazards and retained
+render geometry, and rejects stale inactive-round field batches. Old47clients are
+refused by48. The first impaired connection attempt never started and remains
+FAILED; its separately observed version refusal is not relabeled as a full pass.
+
+Final field checks:10/10on57aece8c,4/4onba907a52. Actual three-peer normal AND
+75ms/20ms/2% impaired runs onv33 saw3live fields before the boundary and0after,
+with canonical replay on all peers, unchanged100score,0clock drift and round5return.
+Impaired link forwarded2902/dropped73packets. The current shared-phase peer run
+also passed: identical83.821frozen clock,0drift, two once-only activations, full
+1.55s warning and restoration of requested0.5speed. Nativev33six live performances
+passed; the actual Cheska frame is now unobstructed after Dante's field cleanup.
+The v27default8-round runs and v29mute/Low/mixed/ordinary/result evidence remain
+valid for their unchanged domains, rather than becoming blanket latest-build passes.
+
+**Remaining:**1.5's full listening judgment and5.2's human listening/taste,
+full human play and physical-device/separate-machine validation remain unchecked.
+Audio input was actually attempted and is unsupported by this interface. Signal,
+headroom, routing and mute were checked; no hearing claim is made. The historical
+map/new-character/Inday/secondary backlog is still deliberately deferred and retained.
+This is not a claim that every historical TODO is finished or that the owner approved
+art by silence. All independent software work for this active presentation pass is
+implemented and its available checks are recorded; no additional code task is being
+hidden behind those review limits.
+
+All task-owned players, proxies, Editors and encoders have exited. No task-owned
+browser or preview server remains. Original20unrelated dirty files were hash-checked
+unchanged; shared-file edits were staged selectively and original untracked work kept.
+
+The rest of this file is chronological evidence, including failures and superseded
+interpretations. Its older "current" or "pending" statements describe those snapshots.
+
 ## Completion correction after owner follow-up
 
 The popup and the bounded v25 checks below are delivered. The entire presentation
@@ -702,3 +754,114 @@ FootContact runtime layer is removed; the test selects actual leg-weighted verti
 and compensates scale without widening its.025m assertion. Earlier conclusions
 and failures remain in history. This is a measurement fix, not a claimed new
 runtime foot-grounding fix.
+
+
+Continuation qualification: integrated-v5passed5/6. The corrected sole matrix
+found real floating feet on Bayan/KuyaBoy (+.2437m), unlike the earlier hand
+measurement. d51d4149 evaluates neutral animation before one-time actual-sole
+alignment at model binding; no per-frame root-lift layer remains. The smoothing
+failure was a separate real visual pop: switching off smoothing cleared the
+existing floor offset.4daa71f1 preserves that offset for ownership-only changes,
+while real teleports still reseat. Integrated-v6on d51d4149passed7/7 in61.726s,
+guardb25e9392a3fc, including full roster/skin matrix, kerb/jump/teleport, strict
+smoothing, Nemu rebind, winner/draw/reduced motion and both presence cases.
+No assertion tolerance was widened. Nativev27build follows this snapshot; whole
+matches and twelve ordinary native skill captures remain pending execution.
+
+
+Nativev27/d51d4149built1156MB/58s, guard04c3e0214bb8. The complete default native
+matches finished: Classic8rounds/759.06s,204throws,46can hits,158tags, one halftime,
+winnerP4with7485; Hero8rounds/792.09s,167throws,44can hits,107tags, one halftime,
+winnerP3with6390. Hero naturally executed13ultimates in13phases,36.585s total
+observed hold (~4.62% of match observation). Normal default90s rounds, no score
+grants, forced hits or round skips. Four real bot input writers; Classic owner,
+Hero live spectator. Hero's selected roster was two Dante/two Zack, so a separate
+explicit mixed-caster stress capture covers the remaining four heroes. No
+human-gameplay, universal cast-frequency or hardware-LAN claim follows.
+
+Actual Classic result screenshot revealed stale live can and pickup markers over
+standings. This visible failure remains despite the completed-flow receipt.
+6102594agives their independent canvases takeover/disable cleanup; the updated
+fixture first makes both markers visible and then ends tracking. Native short
+supported one-round result smoke is added for the corrected artifact. The original
+full-match footage is not relabeled as visually passing. Owner's accidental Stop
+was explicitly resumed; the native process continued and its progress was retained.
+
+
+Nativev28/46665fa0built1156MB/89s, guard937b5f300e16. All six scoped native routes
+passed: both natural30s result smoke modes, four muted busy views, two mixed-caster
+views, the same onLow/comfort1080p, all12ordinary casts and all6live ultimate titles.
+Inputs/profile preserved; all players exited. Result screenshots establish marker
+cleanup. Muted game-audio peaks/RMS are exactly0. Mixed stress deliberately grants
+initial meters and uses Sean/Phaister/Nemu/Cheska, while the whole-match frequency
+receipt remains the unforcedv27run. It is not a claim that all possible overlaps or
+hardware targets are qualified.
+
+Observed refinements afterv28: repeated P labels on duplicate-hero result rows
+(the prior replace had not applied), remaining green HUD accents, and a washed-out
+.4s dual-view return during an ultimate. f3023533 centralizes explicit seat labels;
+29402c69 uses gold/ink in gameplayUI; c1ba1b61 keeps a clear shot until a final.12s
+blend. It does not change the2.8s shared deadline,2.4s body handoff or live warnings.
+These newer changes require their own targeted/native evidence.
+
+
+## Current acceptance mapping for the resumed work
+
+This maps implementation to the original active IDs. It does not silently close
+the deferred historical backlog or replace the canonical TODO queue.
+
+- **1.1/1.2/1.3:** ordinary accepted throw/tin/flight/pickup/restore/chase feedback,
+  body/FPP cancellation, distinct contact/whiff sounds, score attribution and stable
+  identity are integrated. New start/brake/turn weight, all-roster animated foot
+  seating and smoothing-owner transition fix have focused evidence. Real eight-
+  round Classic/Hero bot matches add complete-round progression evidence. The
+  Kuro HUD now distinguishes controlled familiar, body risk/stamina and recast.
+- **1.4/1.5:** coordinated contact/recognition, prioritized cues, responsive existing
+  animals and character/prop/hero-atmosphere reactions are implemented. Actual
+  audio routing/capture/headroom and master mute were checked. Human listening
+  remains separate: direct audio review explicitly returned that this interface
+  does not support audio input. No claim that the mix was heard or taste-approved.
+- **1.6/3.2/3.3:** normal and Low/comfort owner/spectator captures, six real ultimate
+  routes and twelve real ordinary casts cover the implemented choreography. Six
+  authored body/scene/audio identities return into actual abilities. Original good
+  action clips, rigs and protector art were retained; no claim that every retained
+  clip was newly authored. Native frames revealed and drove concrete UI refinements.
+- **2.1/2.2/2.3/3.1/3.4:** previously qualified host chains, capped awards, victim-only
+  catches, once-only shared cohorts, resource/clock/warning invariants and real
+  peer refusal/disconnect/late cases remain valid where unchanged. Current work
+  changes presentation, not those wire contracts. Four-caster/repeated-cohort and
+  relevant cleanup tests were exercised again with the new labels.
+- **4.1/4.2/4.3:** retained canonical footage, spectator direction/manual takeover,
+  automatic halfway replay/popup/return, real final winner/draw, standings, map
+  choice and rematch are integrated. Complete natural matches exposed stale result
+  markers; targeted reproduction and native one-round actual endings qualify their
+  cleanup. The actual winner rig is animated without cloning gameplay logic.
+- **5.1/5.3:** full default bot matches and scoped native peer/lifecycle cases provide
+  software evidence, with explicit selected-roster/fixture limits. Mixed caster
+  stress starts with assigned heroes/full meters and is NOT used to claim natural
+  cast frequency. The natural Hero run's observed hold share was about4.62%.
+- **5.2:** ordinary-speed timestamped videos, sampled native visual review, captured
+  audio measurements, mute,720p/1080p and targeted alternate-aspect UI checks are
+  available. Human listening/taste, full human matches and physical controller/
+  touch/separate-machine LAN/WAN operation have not been performed. These limits
+  are not a reason to leave independent implementation undone.
+
+The newest c1ba1b61changes passed5/5targeted tests in23.763s (guardbc708da5af1c).
+Nativev29built1156MB/68s (guard02399efcc83e). Final native results and media index
+are recorded below once the running candidate review completes. No completion
+is inferred from merely having reached this report section.
+
+
+Final-frame review continued beyond passing routes. bf27a660fixes missing caster
+subtitles with actual glyph-geometry assertions;1/1passed12.257s, guardbed04334996c.
+Nativev30built1156MB/94s, guard9ffd5709e557, and its six-hero route passed with
+visible identity inspected. Fifty-three continuation movies are encoded.
+
+The same footage exposed another genuine gap: Dante's solid five-second pillars
+survived the round boundary, so a subsequent Cheska introduction selected its
+occlusion fallback. Resetting a kit did not own detached fields, and HazardMap.Clear
+only forgot avoidance entries.57aece8cretire persistent gameplay fields at the
+boundary and on replica inactive edges, preserves map obstacles and pure recorded
+geometry, and rejects late field batches outside live rounds. Protocol48 prevents
+mixed cleanup semantics with old47clients. Qualification remains pending; original
+obstructed footage is retained and not relabeled as a successful full scene.
