@@ -85,6 +85,20 @@ namespace TumbangPreso.CameraSystem
                 _pending.RemoveAt(i);Retain(pending);
             }
         }
+        public static string VisualKey(GameObject root)
+        {
+            // Gameplay can stats rotate with the taya while the installed art stays.
+            // Compare the actual stable rendering assets, not the gameplay skin index.
+            var text=new System.Text.StringBuilder();
+            foreach(var transform in root.GetComponentsInChildren<Transform>(true))
+            {
+                var mesh=transform.GetComponent<MeshFilter>()?.sharedMesh??transform.GetComponent<SkinnedMeshRenderer>()?.sharedMesh;
+                if(mesh==null)continue;
+                text.Append(transform.name).Append('/').Append(mesh.name).Append(':').Append(mesh.vertexCount).Append(':').Append(mesh.subMeshCount).Append(';');
+            }
+            using var sha=System.Security.Cryptography.SHA256.Create();
+            return BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(text.ToString()))).Replace("-","");
+        }
         public static GameObject PropModel(GameObject root)=>root.transform.Find("Visual")?.gameObject??root;
         private RecordedFieldFrame CaptureFields(float time)
         {
@@ -143,14 +157,14 @@ namespace TumbangPreso.CameraSystem
                 if(pose!=null&&pending.ContactPoses.TryGetValue(track,out var key))pose=pose.WithKey(key);
                 if(actor==null||pose==null){LastSkip="Incomplete body lead-in or aftermath";return;}
                 objects.Add(new RecordedObjectTrack{Kind=RecordedObjectKind.Player,Seat=seat,Skin=actor.CharacterIndex,
-                    Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),Pose=pose});
+                    Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),VisualKey=VisualKey(track.Source),Pose=pose});
             }
             foreach(var prop in _props)
             {
                 var pose=prop.Track.Retain(pending.Start,pending.End);
                 if(pose!=null&&pending.ContactPoses.TryGetValue(prop.Track,out var key))pose=pose.WithKey(key);
                 if(pose==null){LastSkip=$"Incomplete {prop.Kind} P{prop.Seat+1}: source={prop.Source!=null}, ready={prop.Track.Ready}, recorded={prop.Track.Oldest:F3}..{prop.Track.Newest:F3}, needed={pending.Start:F3}..{pending.End:F3}";return;}
-                objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,Pose=pose});
+                objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,VisualKey=VisualKey(prop.Track.Source),Pose=pose});
             }
             int from=_fields.FindLastIndex(f=>f.Time<=pending.Start),to=_fields.FindIndex(f=>f.Time>=pending.End);
             if(from<0||to<from){LastSkip="Incomplete field history";return;}

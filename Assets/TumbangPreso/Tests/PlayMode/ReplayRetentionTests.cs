@@ -104,6 +104,8 @@ namespace TumbangPreso.PlayTests
             round.EndRound();match.AdvanceRound();yield return new WaitForSeconds(.2f);
             Assert.AreEqual(1,archive.Clips.Count,"A round reset cannot delete the halftime shortlist.");
             CollectionAssert.AreEqual(bytes,archive.Clips[0].Bytes);
+            using(var laterView=new RecordedWorldView(archive.transform,clip))
+            {Assert.IsTrue(laterView.Ready,"Recorded art remains playable after the can rule stats rotate");laterView.Draw(clip.Contact,false);}
             var pose=clip.Objects.First(o=>o.Kind==RecordedObjectKind.Player&&o.Seat==1).Pose;
             var history=Object.FindAnyObjectByType<MatchPoseHistory>();
             var stage=new GameObject("RetainedRenderOnlyProof");stage.SetActive(false);

@@ -36,7 +36,7 @@ namespace TumbangPreso.CameraSystem
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 foreach(var track in clip.Objects)
                 {
-                    GameObject source=Source(track);if(source==null)return;
+                    GameObject source=Source(track);if(source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey)return;
                     var history=new MatchPoseHistory.Track(GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
                     history.Record(Time.time);history.Record(Time.time+.05f);
                     var copy=history.Clone(_stage.transform);if(copy==null)return;
@@ -86,8 +86,8 @@ namespace TumbangPreso.CameraSystem
             if(track.Kind==RecordedObjectKind.Player)
                 return actor!=null&&actor.CharacterIndex==track.Skin&&Core.Roster.PersonIdAt(actor.Mode,actor.CharacterIndex)==track.Person?actor.GetComponent<CharacterVisual>()?.Model:null;
             if(track.Kind==RecordedObjectKind.Familiar)return actor?.GetComponent<CharacterVisual>()?.Companion?.gameObject;
-            if(track.Kind==RecordedObjectKind.Can)return round.Lata!=null&&round.Lata.SkinIndex==track.Skin?MatchReplayArchive.PropModel(round.Lata.gameObject):null;
-            foreach(var shoe in Object.FindObjectsByType<Slipper>())if(shoe.SeatOfOrigin==track.Seat&&shoe.SkinIndex==track.Skin)return MatchReplayArchive.PropModel(shoe.gameObject);
+            if(track.Kind==RecordedObjectKind.Can)return round.Lata!=null?MatchReplayArchive.PropModel(round.Lata.gameObject):null;
+            foreach(var shoe in Object.FindObjectsByType<Slipper>())if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
             return null;
         }
         private static bool Clear(Vector3 centre,Vector3 eye)
