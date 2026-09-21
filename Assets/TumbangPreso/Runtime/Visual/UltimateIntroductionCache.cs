@@ -22,6 +22,7 @@ namespace TumbangPreso.Visual
         public static bool WarmOne(CharacterMotor actor)
         {
             if(actor==null||actor.AbilitySystem?.Kit==null)return false;
+            if(PhaisterRitualWarmup.WarmIfNeeded(actor))return true;
             for(int pass=0;pass<2;pass++)
             {
                 bool carrying=actor.GetComponent<Carrier>()?.Held!=null;bool held=pass==0?carrying:!carrying;var key=Key(actor,held);if(key.source==null)return false;

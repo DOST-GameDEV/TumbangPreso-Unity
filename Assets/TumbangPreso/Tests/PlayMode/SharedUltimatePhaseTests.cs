@@ -110,6 +110,12 @@ namespace TumbangPreso.PlayTests
             Camera.main.GetComponent<CameraRig>().Follow(sean,true);
             Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
             yield return null;
+            // Rebinding heroes above is fixture setup. Wait for the same setup
+            // warmup that the ordinary ready window gives the selected roster.
+            float readyUntil=Time.realtimeSinceStartup+4;
+            while((!PhaisterRitualWarmup.Ready||UltimateIntroductionCache.Find(sean,sean.GetComponent<Carrier>().Held!=null)==null||
+                UltimateIntroductionCache.Find(phaister,phaister.GetComponent<Carrier>().Held!=null)==null)&&Time.realtimeSinceStartup<readyUntil)yield return null;
+            Assert.IsTrue(PhaisterRitualWarmup.Ready);
             float started=Time.realtimeSinceStartup;
             Press(sean,Verb.Ultimate);Press(phaister,Verb.Ultimate);
             float limit=Time.realtimeSinceStartup+1;
