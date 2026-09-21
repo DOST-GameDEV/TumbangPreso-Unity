@@ -178,6 +178,7 @@ namespace TumbangPreso.CameraSystem
 
         /// <summary>Why the director chose this. Written to the capture log, never to the screen.</summary>
         public readonly string Reason;
+        public readonly Slipper RetrievalShoe;
 
         public SpectatorInterest(SpectatorBeat beat, CharacterMotor main, CharacterMotor secondary,
                                  Vector3 objective, bool hasObjective, ShotType shot,
@@ -194,6 +195,7 @@ namespace TumbangPreso.CameraSystem
             ExpectedSeconds = expectedSeconds;
             CommitSeconds = commitSeconds;
             Reason = reason;
+            RetrievalShoe = retrievalShoe;
         }
 
         public bool Valid => Main != null;
@@ -333,6 +335,7 @@ namespace TumbangPreso.CameraSystem
         private float _tagAt = -99.0f;
         private CharacterMotor _tagDefender;
         private CharacterMotor _tagVictim;
+        private Vector3 _tagPoint;
 
         private float _slipperAt = -99.0f;
         private Vector3 _slipperPoint;
@@ -386,6 +389,8 @@ namespace TumbangPreso.CameraSystem
 
             Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateStarted;
             Abilities.HeroAbilitySystem.UltimateStarted += OnUltimateStarted;
+            Visual.MatchFlair.Presented -= OnPublicFlair;
+            Visual.MatchFlair.Presented += OnPublicFlair;
         }
 
         public void Unhook()
@@ -395,6 +400,7 @@ namespace TumbangPreso.CameraSystem
             if (_hookedLata != null) _hookedLata.UprightChanged -= OnLataUpright;
             Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateStarted;
 
+            Visual.MatchFlair.Presented -= OnPublicFlair;
             _hookedRound = null;
             _hookedMatch = null;
             _hookedLata = null;
@@ -433,6 +439,13 @@ namespace TumbangPreso.CameraSystem
                     _tagDefender = SeatOf(round, slot);
                     break;
             }
+        }
+
+        private void OnPublicFlair(Visual.MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
+        {
+            if(kind!=Visual.MatchFlair.Kind.Tag)return;
+            var round=GameServices.Round;if(round==null)return;
+            _tagAt=Time.unscaledTime;_tagDefender=SeatOf(round,actor);_tagVictim=SeatOf(round,subject);_tagPoint=at;
         }
 
         private void OnTagged(int defenderSlot, int attackerSlot)
@@ -527,6 +540,13 @@ namespace TumbangPreso.CameraSystem
             switch (interest.Beat)
             {
                 case SpectatorBeat.Retrieval:
+                    // A caught body has already been sent home. Follow the live
+                    // consequence, never drag the broadcast camera to that teleport.
+                    if(interest.Main.IsStunned||interest.Main.IsTripped)return false;
+                    if(interest.RetrievalShoe!=null)
+                        return !interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
+                            &&interest.RetrievalShoe.OwnerSlot==interest.Main.PlayerSlot
+                            &&Flat(interest.Main.transform.position,interest.RetrievalShoe.transform.position)<7;
                     return interest.Main.IsTaggable() || interest.Age < OutcomeGrace;
 
                 case SpectatorBeat.Ultimate:
@@ -570,6 +590,7 @@ namespace TumbangPreso.CameraSystem
         {
             float now = Time.unscaledTime;
             var taya = DefenderOf(round);
+            ScanSlippers(now);
 
             // ---- 1. a retrieval with the taya closing ---------------------------------
             CharacterMotor bestRetriever = null;
@@ -609,6 +630,24 @@ namespace TumbangPreso.CameraSystem
             }
 
             // ---- 2. an ultimate ---------------------------------------------------------
+            // While the can is down/protected, show an actual own-shoe recovery
+            // near the taya's reset, without describing a currently illegal tag.
+            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null
+                &&Flat(taya.transform.position,LataPoint(round))<=NearLata&&_slippers!=null)
+            {
+                Slipper nearest=null;CharacterMotor retriever=null;float gap=6;
+                foreach(var shoe in _slippers)
+                {
+                    if(shoe==null||shoe.State!=SlipperState.Loose||shoe.OwnerSlot<0)continue;
+                    var owner=SeatOf(round,shoe.OwnerSlot);
+                    if(owner==null||owner==taya||owner.HoldingSlipper||owner.IsStunned||owner.IsTripped)continue;
+                    float distance=Flat(owner.transform.position,shoe.transform.position);
+                    if(distance>=gap)continue;gap=distance;nearest=shoe;retriever=owner;
+                }
+                if(nearest!=null)return new SpectatorInterest(SpectatorBeat.Retrieval,retriever,taya,nearest.transform.position,true,
+                    ShotType.RetrievalTwoShot,now,RetrievalSeconds,MinCommit,"own tsinelas recovery while the taya returns to the can",nearest);
+            }
+
             var casting = LiveUltimate(round);
             if (casting != null)
             {
@@ -645,10 +684,9 @@ namespace TumbangPreso.CameraSystem
             if (now - _tagAt < TagSeconds && _tagDefender != null)
             {
                 return new SpectatorInterest(
-                    SpectatorBeat.Tag, _tagVictim != null ? _tagVictim : _tagDefender,
-                    _tagDefender, LataPoint(round), round.Lata != null,
-                    ShotType.Recovery, _tagAt, TagSeconds, MinCommit,
-                    "tag landed");
+                    SpectatorBeat.Tag, _tagDefender, null, _tagPoint, true,
+                    ShotType.Defender, _tagAt, TagSeconds, MinCommit,
+                    "catch landed; the taya continues");
             }
 
             if (taya != null && LungeCharging(taya))
