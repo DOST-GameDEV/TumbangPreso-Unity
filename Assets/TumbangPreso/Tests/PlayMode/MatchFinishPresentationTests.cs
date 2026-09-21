@@ -50,6 +50,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,GameMode.HeroStrike);
             GameServices.Match.AddScore(1,ScoreEvent.LataKnocked);
+            var winner=GameServices.Round.PlayerAt(1);winner.LabelSuffix="";string winnerName=winner.DisplayName();winner.LabelSuffix=" P2";
             SettingsStore.Current.ReducedUiMotion=false;
             var result=Object.FindAnyObjectByType<MatchResult>();Assert.IsNotNull(result);
             GameServices.Round.EndRound();result.OnMatchWon(1);yield return null;
@@ -58,6 +59,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(4,Object.FindObjectsByType<CharacterMotor>().Length,"Result spawned a fifth gameplay actor.");
             Assert.IsEmpty(preview.Subject.GetComponentsInChildren<Collider>(true));
             var caption=GameObject.Find("WinnerCaption").GetComponent<Text>();Assert.AreEqual("MATCH WINNER",caption.text);
+            Assert.AreEqual("P2 · "+winnerName,GameObject.Find("FinisherName0").GetComponent<Text>().text,"A seat-prefixed row repeated the engine's duplicate-name suffix.");
             var arm=preview.Subject.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-right");
             var sampler=figure.AddComponent<FinishPoseSample>();Quaternion before=Quaternion.identity,after=Quaternion.identity;
             yield return new WaitForSecondsRealtime(.13f);yield return Sample(()=>before=arm.localRotation);

@@ -50,7 +50,7 @@ namespace TumbangPreso.UI
                 bool best=hasWinner&&order[i]==winner;
                 _finishTickets[i].color=best?CourtPresentationPalette.DeepRed:new Color32(255,244,222,255);
                 foreach(var cell in _rows[i])cell.color=best?CourtPresentationPalette.Paper:CourtPresentationPalette.Ink;
-                _rows[i][1].text=PlayerIdentity.Label(order[i])+" · "+NameFor(order[i]);
+                _rows[i][1].text=SeatLabel.WithIdentity(order[i]);
             }
             TickFinishPerformance();
         }

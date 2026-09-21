@@ -38,6 +38,19 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class SeatLabel
     {
+        /// <summary>For surfaces already naming the seat, include its identity once.</summary>
+        public static string WithIdentity(int slot)
+        {
+            var who=GameServices.Round?.PlayerAt(slot);string label=Raw(slot);
+            string suffix=who!=null?who.LabelSuffix:"";
+            // Strip only the suffix the engine explicitly added. A player's own
+            // name ending in "P2" must survive unchanged.
+            if(!string.IsNullOrEmpty(suffix)&&label.EndsWith(suffix,System.StringComparison.Ordinal))
+                label=label.Substring(0,label.Length-suffix.Length);
+            string identity=PlayerIdentity.Label(slot);
+            return label==identity?identity:identity+" · "+label;
+        }
+
         /// <summary>
         /// What that seat is called, with the seat named too when another seat answers the same.
         ///

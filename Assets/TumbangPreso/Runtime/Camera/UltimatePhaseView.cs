@@ -105,7 +105,7 @@ namespace TumbangPreso.CameraSystem
                     float x=together?35+(i%2)*430:35;
                     if(commits.Count==3&&i==2)x=250;
                     float y=74+(i/2)*75,width=together?400:830;
-                    var name=OwnerUiLayout.Text(header,"CohortSeat"+seat,PlayerIdentity.Label(seat)+" · "+SeatLabel.Raw(seat),25,OwnerUiLayout.TypeRole.Display);
+                    var name=OwnerUiLayout.Text(header,"CohortSeat"+seat,SeatLabel.WithIdentity(seat),25,OwnerUiLayout.TypeRole.Display);
                     name.alignment=TextAnchor.MiddleCenter;name.supportRichText=false;name.color=PlayerIdentity.Colour(seat);
                     OwnerUiLayout.Place(name.rectTransform,x,y,width,35);
                     if(together)
