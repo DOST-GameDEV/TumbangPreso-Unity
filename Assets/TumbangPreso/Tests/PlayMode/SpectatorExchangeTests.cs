@@ -19,6 +19,7 @@ namespace TumbangPreso.PlayTests
             foreach(var actor in round.Players)actor.Teleport(new Vector3(8,.12f,-7+actor.PlayerSlot*3));
             taya.Teleport(new Vector3(1.5f,.12f,0));owner.Teleport(new Vector3(0,.12f,-3));
             var shoe=Object.FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
+            while(round.Lata.IsProtected)yield return null;
             shoe.HostThrow(owner,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
             float until=Time.time+3;while((round.Lata.IsUpright||shoe.State!=SlipperState.Loose)&&Time.time<until)yield return null;
             Assert.IsFalse(round.Lata.IsUpright);Assert.AreEqual(SlipperState.Loose,shoe.State);

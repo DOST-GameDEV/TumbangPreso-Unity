@@ -599,7 +599,8 @@ namespace TumbangPreso.CameraSystem
             foreach (var unit in round.Players)
             {
                 if (unit == null || !unit.RoundActive || unit == taya) continue;
-                if (!unit.IsTaggable()) continue;
+                if (!unit.IsTaggable() || unit.IsStunned || unit.IsTripped || round.Lata==null || !round.Lata.IsUpright
+                    || round.Lata.IsProtected || taya==null || !taya.CanAct() || taya.IsTripped) continue;
 
                 float gap = taya != null
                     ? Flat(unit.transform.position, taya.transform.position)
