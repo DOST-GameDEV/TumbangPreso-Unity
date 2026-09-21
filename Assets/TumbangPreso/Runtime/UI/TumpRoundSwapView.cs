@@ -83,7 +83,10 @@ namespace TumbangPreso.UI
             }
             Canvas.gameObject.SetActive(true); Canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
         }
-        public void Remaining(float seconds) => _buffer.text = "Warmup · " + Mathf.CeilToInt(seconds) + "s until the next round";
+        private bool _halftime;private string _fallback;
+        public void SetBreakContext(bool halftime,string fallback)
+        {_halftime=halftime;_fallback=fallback;if(halftime)_round.text="HALFTIME  /  "+_round.text;}
+        public void Remaining(float seconds) => _buffer.text = (_fallback!=null?_fallback+" · ":_halftime?"Back to the court · ":"Next round · ") + Mathf.CeilToInt(seconds) + "s";
         private static Sprite Portrait(CharacterMotor actor)
         {
             if (actor == null) return null;

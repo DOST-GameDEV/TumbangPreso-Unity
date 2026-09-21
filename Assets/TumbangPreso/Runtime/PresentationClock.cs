@@ -8,7 +8,7 @@ namespace TumbangPreso
     {
         public static bool Held { get; private set; }
         private static float _resumeScale = 1;
-        public static bool BlocksInput => SharedUltimatePhase.BlocksActions || (!SharedUltimatePhase.Collecting && RequestedScale <= 0);
+        public static bool BlocksInput => (Held && !SharedUltimatePhase.Collecting) || SharedUltimatePhase.BlocksActions || (!SharedUltimatePhase.Collecting && RequestedScale <= 0);
         public static float RequestedScale => Held ? _resumeScale : Time.timeScale;
         public static void RequestScale(float scale)
         {

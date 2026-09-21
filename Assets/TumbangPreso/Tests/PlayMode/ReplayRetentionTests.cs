@@ -34,6 +34,15 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(1,clip.Objects.Count(o=>o.Kind==RecordedObjectKind.Can));
             Assert.GreaterOrEqual(clip.Objects.Count(o=>o.Kind==RecordedObjectKind.Slipper),3);
             Assert.AreEqual(1,clip.Round);Assert.AreEqual("CAN KNOCKDOWN",clip.Reason);
+            Assert.IsTrue(clip.Objects.All(o=>o.Pose.Samples.Any(s=>Mathf.Abs(s.Time-clip.Contact)<.00001f)),"Exact contact keys survive compression");
+            using(var view=new RecordedWorldView(archive.transform,clip))
+            {
+                Assert.IsTrue(view.Ready,"A clear actual-court replay angle must render");
+                view.Draw(clip.Contact,false);Assert.IsTrue(view.Target.IsCreated());
+                var capture=new Texture2D(view.Target.width,view.Target.height,TextureFormat.RGB24,false);
+                var previous=RenderTexture.active;RenderTexture.active=view.Target;capture.ReadPixels(new Rect(0,0,view.Target.width,view.Target.height),0,0);capture.Apply();RenderTexture.active=previous;
+                System.IO.Directory.CreateDirectory("Logs/replay-retained-view");System.IO.File.WriteAllBytes("Logs/replay-retained-view/contact.png",capture.EncodeToPNG());Object.Destroy(capture);
+            }
             round.EndRound();match.AdvanceRound();yield return new WaitForSeconds(.2f);
             Assert.AreEqual(1,archive.Clips.Count,"A round reset cannot delete the halftime shortlist.");
             CollectionAssert.AreEqual(bytes,archive.Clips[0].Bytes);

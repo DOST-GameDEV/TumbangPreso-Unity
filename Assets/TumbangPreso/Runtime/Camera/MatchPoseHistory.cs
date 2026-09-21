@@ -150,7 +150,7 @@ namespace TumbangPreso.CameraSystem
                     target.gameObject.SetActive(source.gameObject.activeSelf);
                 }
                 GameObject root = map[_bones[0]].gameObject;
-                root.name = "RecordedBody-P" + (Actor.PlayerSlot + 1);
+                root.name = "RecordedBody-P" + (Actor != null ? Actor.PlayerSlot + 1 : 0);
                 foreach (var bone in _bones)
                 {
                     var target = map[bone].gameObject;

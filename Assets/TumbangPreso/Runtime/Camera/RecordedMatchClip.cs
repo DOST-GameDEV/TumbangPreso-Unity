@@ -87,7 +87,7 @@ namespace TumbangPreso.CameraSystem
                 for(int i=0;i<count;i++)
                 {
                     var item=new RecordedObjectTrack{Kind=(RecordedObjectKind)reader.ReadByte(),Seat=reader.ReadInt32(),Skin=reader.ReadInt32(),Person=ReadText(reader,64)};
-                    if(!Enum.IsDefined(typeof(RecordedObjectKind),item.Kind)||item.Seat< -1||item.Seat>=4||item.Skin<0||item.Skin>128)throw new InvalidDataException("Invalid recorded object");
+                    if(!Enum.IsDefined(typeof(RecordedObjectKind),item.Kind)||item.Seat< -1||item.Seat>=4||item.Skin< -1||item.Skin>128)throw new InvalidDataException("Invalid recorded object");
                     int bones=Count(reader,1,MatchPoseHistory.TransformLimit),frames=Count(reader,2,MatchPoseHistory.Samples);
                     totalSamples+=bones*frames;if(totalSamples>RawByteLimit/41)throw new InvalidDataException("Pose allocation exceeds its budget");
                     var paths=new string[bones];

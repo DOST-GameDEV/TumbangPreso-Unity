@@ -76,7 +76,7 @@ namespace TumbangPreso.UI
         {
             if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
             {
-                _bufferRemaining = Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
+                _bufferRemaining = HalftimePresentation.Instance?.Active==true ? HalftimePresentation.Instance.Remaining : Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
                 _nativeSwap?.Remaining(_bufferRemaining);
                 if (_bufferPrompt != null)
                 {
@@ -111,10 +111,17 @@ namespace TumbangPreso.UI
 
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
+            if (HalftimePresentation.Playing) { _canvas.gameObject.SetActive(false); return; }
+            ShowScheduledBreak(nextRound,nextDefenderSlot,3,null);
+        }
+
+        public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
+        {
             if (_nativeSwap != null)
             {
-                _bufferRemaining = Core.Balance.WarmupBufferDuration; _isBufferActive = true;
+                _bufferRemaining = remaining; _isBufferActive = true;
                 _nativeSwap.Show(nextRound, nextDefenderSlot); _nativeSwap.Remaining(_bufferRemaining);
+                _nativeSwap.SetBreakContext(HalftimePresentation.Playing, fallback);
                 GameServices.Audio?.PlayUi("round_end"); return;
             }
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";
@@ -134,7 +141,7 @@ namespace TumbangPreso.UI
             _swapPanel.alpha = 0.0f;
             _standingsPanel.alpha = 0.0f;
 
-            _bufferRemaining = Core.Balance.WarmupBufferDuration;
+            _bufferRemaining = remaining;
             _isBufferActive = true;
 
             GameServices.Audio?.PlayUi("round_end");

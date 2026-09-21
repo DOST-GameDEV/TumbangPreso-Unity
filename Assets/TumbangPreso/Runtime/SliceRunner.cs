@@ -285,11 +285,11 @@ namespace TumbangPreso
 
         private void OnIntermission(int nextRound, int nextDefenderSlot)
         {
+            CancelInvoke(nameof(Advance));
+            if (HalftimePresentation.Playing) return;
             ResetWorld(nextDefenderSlot);
             EquipOwnedSlippers(nextDefenderSlot);
-
-            CancelInvoke(nameof(Advance));
-            Invoke(nameof(Advance), Balance.WarmupBufferDuration);
+            // HalftimePresentation owns the authoritative unscaled deadline.
         }
 
         private void Advance() => GameServices.Match.AdvanceRound();

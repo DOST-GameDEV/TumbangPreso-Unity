@@ -320,6 +320,7 @@ namespace TumbangPreso
 
             IsWarmupBuffer = true;
             SkipRequested = false;
+            HalftimePresentation.Ensure()?.BeginHost(next, MatchRules.DefenderSlotFor(next));
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
         }
 
@@ -351,7 +352,7 @@ namespace TumbangPreso
 
         public void SkipBuffer()
         {
-            if (!IsWarmupBuffer || SkipRequested) return;
+            if (!IsWarmupBuffer || SkipRequested || HalftimePresentation.Playing) return;
 
             SkipRequested = true;
             BufferSkipRequested?.Invoke();

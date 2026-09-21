@@ -49,6 +49,7 @@ namespace TumbangPreso.Net
         }
         private void Update()
         {
+            TickReplayTransfer();
             for (int i = 0; i < _pendingMoments.Count;)
             {
                 var entry = _pendingMoments[i]; var match = GameServices.Match;

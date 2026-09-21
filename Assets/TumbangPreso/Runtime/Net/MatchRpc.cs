@@ -309,6 +309,7 @@ namespace TumbangPreso.Net
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
             PresentationMatchId = 0; _pendingMoments.Clear();
             _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
+            ClearReplayTransfer();
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
@@ -380,6 +381,11 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqUltimate", OnReqUltimateMsg);
             cm.RegisterNamedMessageHandler("UltDenied", OnUltimateDeniedMsg);
             cm.RegisterNamedMessageHandler("UltimatePhase", OnUltimatePhaseMsg);
+            cm.RegisterNamedMessageHandler("ReplayBegin", OnReplayBegin);
+            cm.RegisterNamedMessageHandler("ReplayChunk", OnReplayChunk);
+            cm.RegisterNamedMessageHandler("ReplayEnd", OnReplayEnd);
+            cm.RegisterNamedMessageHandler("ReplayReady", OnReplayReady);
+            cm.RegisterNamedMessageHandler("MatchBreak", OnMatchBreak);
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
             cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
@@ -5290,6 +5296,7 @@ namespace TumbangPreso.Net
             SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, timeLeft, scores,
                                        match.MatchInProgress, roundActive);
             BroadcastMatchState();
+            BroadcastBreak();
             if (SharedUltimatePhase.Instance != null && SharedUltimatePhase.Instance.Active)
                 BroadcastUltimatePhase(SharedUltimatePhase.Instance);
 
@@ -5740,6 +5747,7 @@ namespace TumbangPreso.Net
                 SendTimedKitSnapshot(slot, (ulong)peerId);
                 SendPreparationSnapshot(slot,(ulong)peerId);
             }
+            SendReplayShortlist((ulong)peerId);
             SendSkySnapshot((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;
             SendWorldFieldSnapshot((ulong)peerId);
