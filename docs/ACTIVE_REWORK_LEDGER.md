@@ -2,11 +2,18 @@
 
 ## Current direction
 
-Owner is AFK at school all day: work autonomously in this conversation, save
-questions for their return, do not stop at checkpoints. No paid work/credits,
-resets, other chats/subagents, Desktop replacement or contributor-lane crossing.
-The requested thorough plan and doc cleanup were completed and published through
-7bc1964c. Preserve progress; do not restart or endlessly replan.
+Owner is AFK at school and requests autonomous work, questions later. Latest
+steering: a major research-based improvement of the plan using Sepak U/Blue Lock;
+many complementary effects are welcome, and animations may improve any relevant
+player/spectator experience. Merge this into the existing TODO, preserve all tasks
+and IDs, reconsider order, then continue the implementation already underway.
+No paid work/credits, resets, other chats/subagents, Desktop replacement or crossing
+contributor reservations. The earlier detailed plan/doc cleanup is preserved.
+
+Current phase: research/plan merge complete and checked in the canonical Nationals
+plan and TODO; publishing it, then resuming the reordered implementation. About3,096words were added to
+the existing design; all legacy TODO content from the preserved-notes marker onward
+is byte-identical. Five PRESENTATION parents remain, with explicit child checks.
 
 [Only queue](TODO.md#current-implementation-queue).
 [Detailed chosen design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21).
@@ -21,19 +28,20 @@ advance while the narrow C4 dependency remains reserved. Full pass is unfinished
 ## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest local source0f962cc4. Last verified remotea505d954;
-the qualified playable checkpoint is pushed. Newer art commits await native proof.
+branch ASTRAReworks. Latest local source7a1bb8dd. Last verified remote d76171c3;
+private scene art through0f962cc4 and its receipts are pushed. New research docs
+and the tested host counters await the next scoped publication.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached0f962cc4, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached7a1bb8dd, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
 Initial24modified+2untracked files are byte-preserved under development
 Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
 Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
 Shared dirty files used selected owned hunks; never stage them wholesale or restore
-those user changes. Current owned unstaged work adds host-only accepted throw/tag chain bookkeeping
-and focused integration tests, plus ledger/report/TODO updates. No bonus awards
-or network payload changes are enabled.
+those user changes. Current owned unstaged work is the research merge in NATIONALS_POLISH/TODO/ledger,
+plus reference-research.md. Host counters are committed in7a1bb8dd. No bonuses or
+new network payloads are enabled.
 Validation importer rewrites are predominantly whitespace. Tests can also rewrite
 QualitySettings from the chosen profile: preserve diffs, restore only proven test
 changes after owned jobs stop, and capture the exact input manifest before building.
@@ -115,12 +123,20 @@ actual48kHz stereo game-output captures succeeded, peaks.185-.309 and RMS.032-.0
 Encoded six ordinary-speed movies with sound. Selected native Nemu/Cheska/Phaister
 frames inspected; duplicate Kuro ground blob is gone. Profile/input unchanged.
 These are private art scenes, not live shared phases or listening approval.
-Next independent work: host accepted throw/tag bookkeeping using the tested Core
-chain model. Real launch IDs, can-consumption serials and round epochs; points,
-ultimate charge and wire stay unchanged pending C4. Tests are drafted, not run yet.
+Host accepted throw/tag bookkeeping is now committed7a1bb8dd. Three integration
+cases plus the body-contact regression passed4/4 in22.65s, guard6d846f0592ae,
+validation Logs/host-chains-v1. Base points/ultimate gain remain unchanged; live
+bonus/recognition transport is still C4-gated. Tool11249 retired, no Unity/player job.
+Nemu's native v9 shot still clips the growing head near the upper edge. Adaptive
+bounds framing and canonical companion scale are the next bounded art correction;
+this has been planned, not implemented. Do not silently call that view finished.
 Nativev6/a505d954 remains the qualified gameplay fallback.
 
-Then update this state and TODO narrowly, commit/push owned verified work, verify
-remote HEAD, and continue independent authored performances/recording work. Keep
-C4 dependencies for the owner's return; no questions now. Do not claim the full
-pass from the bounded exchange checkpoint or from private art previews.
+Research checks passed:17local links, unchanged legacy TODO body, all five existing
+PRESENTATION parents and19explicit child checks. Publish and continue the new order:
+finish Nemu framing, then the coordinated ordinary exchange and its feedback layers. Sources/observed timestamps are in
+reports/presentation-pass-2026-09-21/reference-research.md. Browser video tab2 was
+closed. Owned hidden error tab1 cannot be selected/closed because the browser's
+URL policy blocks its generated data error-page URL; it is unmarked/temporary and
+should auto-close at turn end. Do not bypass browser policy or disturb user tabs.
+C4 questions wait for the owner's return. No full-pass or human-approval claim.

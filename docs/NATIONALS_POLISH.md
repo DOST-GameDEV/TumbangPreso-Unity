@@ -2,7 +2,113 @@
 
 ## Current delivery design, 2026-09-21
 
-The owner requested a thorough plan and documentation cleanup before further game changes. This section is that design, grounded in the actual checkout. It is not a completion claim. The single execution order/status lives in [TODO](TODO.md#current-implementation-queue); the exact next action, revisions, owned jobs and blockers live in [the ledger](ACTIVE_REWORK_LEDGER.md). The [full brief](reports/presentation-pass-2026-09-21/implementation-brief.md) defines the intended experience. Ordinary creative/engineering decisions are already authorized. Improve this design when observation warrants it and record the reason.
+The owner requested a thorough plan and documentation cleanup, then a major research-driven expansion using Sepak U and Blue Lock, with complementary spectacle and animation throughout play. This section is that design, grounded in the actual checkout. It is not a completion claim. The single execution order/status lives in [TODO](TODO.md#current-implementation-queue); the exact next action, revisions, owned jobs and blockers live in [the ledger](ACTIVE_REWORK_LEDGER.md). The [full brief](reports/presentation-pass-2026-09-21/implementation-brief.md) defines the intended experience. Ordinary creative/engineering decisions are already authorized. Improve this design when observation warrants it and record the reason.
+
+### Research-driven presentation direction
+
+The owner's latest direction is a major creative expansion: add or refine animation, VFX, SFX, cameras, UI and supporting reactions wherever they make play more expressive and easier to understand. Many things may happen together when they complement one another. **Do not interpret readability as a request for a quiet or minimal game.** Noticeable sports graphics, striking character performances and busy action are intentional. Preserve the simple rules and give their consequences more personality.
+
+The [research receipt](reports/presentation-pass-2026-09-21/reference-research.md) distinguishes inspected footage, developer statements and our proposals. Sepak U's sampled scoring frame combines large type, score, impact geometry, a bright ball and movement residue; its following rally frame gives attention back to the ball and bodies. Blue Lock: Rivals offers character-specific presentation and ability identity. Team Reptile's limited-animation direction and Odyssey's emphasis on cohesive sporting actions support stronger authored poses and material interactions. These observations guide TUMP; they are not recipes to copy wholesale.
+
+The current private introductions are useful studies, not the new quality ceiling. A pose plus a small effect and one camera is not automatically a complete character moment. Build the relationship between anticipation, action, contact, consequence and recognition. Connect the cinematic to the real battlefield and the next decision. Keep the approved blocky cast, familiar faces and street-game identity.
+
+#### How simultaneous layers cooperate
+
+Every layer must answer at least one useful question: who acted, what moved, where it will matter, when it becomes active, what actually connected, what changed, or why this moment deserves attention. Multiple layers may answer the same question in different senses: a planted shoulder, sharp rubber slap, compressed hit shape and brief personal camera impulse can reinforce one contact. Several unrelated bursts, full-screen messages and unrelated tones competing for different claims cannot.
+
+Compose three scales together. The **physical event** belongs to the body, shoe or can. **Directional support** describes travel, force and relevant space. **Recognition** adds the player identity, credited change or exceptional achievement. The screen can be dense at a decisive moment, but its brightest shapes, fastest motion and strongest sound should lead to the important action rather than pull toward different corners.
+
+Use distinct phases: readable preparation, decisive accent, visible aftermath and a deliberate handoff to the next action. A broad trail can coexist with compact debris and bold type if they occupy different space and decay at useful times. Begin with roughly 60–120ms for the sharpest visual accent, a few tenths of a second for the physical tail, and about 0.8–1.3s for earned recognition. These are authoring ranges, not extra input delays or mandatory durations. Tune them against actual play.
+
+The mix and compositor must arbitrate **emphasis**, not delete all simultaneous events. Several heroes can retain their silhouettes and truthful warning boundaries while decorative haze gets quieter near the can or a threatened player. Keep one dominant central announcement, with parallel world consequences and the existing side feed. Higher importance may replace a lower banner; stale banners should not wait in a long queue. Source identity, shape, depth, frequency range and timing are all tools before removing content.
+
+Keep seat identity separate from elemental color. Use persistent player number/color for attribution, the actual hero's shape/material/motion for powers, and role/state symbols for danger. Color alone must not mean all three. Lower settings preserve actionable information and the intended punch; reduce secondary debris, translucent coverage or light cost before erasing the effect's meaning.
+
+#### One signature ordinary exchange
+
+Author a complete Classic exchange first, with the other players active, and carry the same physical language into Hero Strike. This is the first showcase of the richer plan, not a plain prerequisite before all excitement is reserved for ultimates.
+
+**Set and throw.** Give the body a grounded weight shift and a clear throwing silhouette. Let the FPP hand visibly secure the slipper, load it and release with the real input. A short directional smear and air displacement can reinforce the release; their source is the moving shoe/hand, not a generic screen burst. The charge indicator settles with the existing aim rules. Cancellation unwinds to the actual held state without a fake throw, resource spend or success sound. Keep the unshaken aim origin and established sight-line launch.
+
+**Rubber meets tin.** At accepted contact, synchronize can rotation/wobble, a sharp material transient, a short directional shape, bounded flecks, personal hit confirmation and score-row attribution. A low body sound and tin resonance can give weight without making three sounds feel like three hits. Retain the compact tin-contact foundation and refine it in motion. A routine hit need not fill the entire screen, but it should feel authored and satisfying. The effect's opening points along actual incoming/rebound motion; the player can still see where the slipper goes.
+
+**First or exceptional knockdown.** The first credited knockdown of a round can earn a larger FIRST KNOCKDOWN treatment. A bank, late play or lead-changing hit may use its own short stamped phrase when the recorded facts support it. Use assertive type, a player accent, a brief score accent and a coordinated sound phrase. In active FPP, place the graphic clear of the aim/retrieval path; in spectator/replay it can be larger and partially staged behind the action. This is recognition of an accepted outcome, not a new reward or invented rally win. A can knockdown starts TUMP's next chase; do not pause everybody to admire it.
+
+**Flight, landing and pickup.** Preserve a clear leading shoe and a shorter, less dominant trail behind it. Let the trail give way to a material landing scuff, brief settling motion and the low owner locator. Keep the real silhouette visible. The pickup has a reach, grip and carry-settle linked to accepted possession; the local locator resolves into the held state, not a celebratory flare that hides the taya. A failed or out-of-range pickup gives concise private refusal feedback, not a successful grab animation. Distinguish ordinary grip, retrieval slide and Zack's recall.
+
+**Restore reverses the situation.** Make the taya's body and hands explain the reset channel. The can steadies into an upright contact beat; the collar and marker change with the actual protection/state. Give the restore a recognizable sound that survives a busy mix. The armed attacker inside the square should feel the reversal through a brief danger-entry cue, the taya's approach and a changed contextual prompt. Do not suggest that can protection makes the attacker safe.
+
+**Chase, escape or catch.** Couple foot plants, cloth/rubber movement and the taya's actual approach. A lunge has a clear preparation/commitment silhouette and directional rush; a whiff has a short air tail and honest recovery, without a hit burst. A successful block has one body response and one deflection episode, not repeated impulses while colliders overlap. An earned close call gets a small release of tension, with larger recognition reserved for a qualifying episode/run. The catch gets a distinct contact signature, the victim's recorded reconstruction and the taya's immediate ability to continue.
+
+Review the sequence with sound, muted and at ordinary speed. A muted viewer should still understand possession and the restore-to-danger reversal; an audio listener should distinguish throw, tin contact, landing, restore, block, whiff and tag without needing a different announcer sentence for every action.
+
+#### Animation throughout the experience
+
+Animation is allowed wherever it carries intent, state, personality or consequence. It is not limited to six ultimates. Prioritize connected transitions and physical reactions over adding isolated flourishes.
+
+- **Locomotion:** starts, braking, turns, strafe/backpedal, sprint fatigue, jump/landing and carrying versus empty hands. Plant feet and align surface sounds/dust with contact. Express effort through the rig's actual capabilities; these rigs have no knees, so root lowering must use the measured support solution rather than burying feet.
+- **Object work:** grip adjustment, charge, release, cancel, normal pickup, slide pickup, recall arrival, disarm and can restoration. Body, FPP and possession must agree. Preserve the simple hands, approved rigs, bone paths, GUIDs and animation bindings.
+- **Confrontation:** taya readiness, punch/lunge follow-through, block recoil, rival shove, directional stagger, trip/get-up and escape relief. Match actual force, allowed recovery and input. A more dramatic pose must not move the live hitbox or add a lockout.
+- **Character presence:** short idle/focus/recovery attitudes, restrained head/torso attention toward visible relevant play, and existing emote/companion reactions. Kuro can use its established expression system. Do not introduce an unrelated facial or roster redesign just to force a cinematic close-up.
+- **Gameplay UI:** animated arrival and resolution of a pickup prompt, a stateful can icon, score-row credit, a chain milestone, a role handoff, countdown and replay transition. Current totals stay authoritative/readable; an animated badge can travel into a score row without showing fictitious live totals.
+- **Round and match punctuation:** orient toward the next taya, a brief character response to a earned result, a winner tableau with the actual winner and a clean path back to play. Keep the existing menu/login artwork intact; animation may improve transitions without repainting approved art or altering controller mappings.
+
+For every action, specify start, committed/active portion, contact if any, interruption and return. Reuse the same clock and state facts in body/FPP/world presentation. Author strong poses, asymmetry and timing contrast; do not make every action the same smooth hand raise. Camera shake is not a substitute for motion in the body or prop.
+
+#### Gameplay UI and the two recognition channels
+
+The side feed remains the compact record of accepted events. Its three rows, short expiry and dedupe are useful because it should not become a delayed transcript. The central channel is deliberately expressive. It tells players and viewers why a moment matters: first knockdown, a qualifying accuracy milestone, double/triple catch, a meaningful late play or a stable lead change. Exact triggers and bonus rules remain in section D; no new hype meter is introduced.
+
+Give central graphics an authored entrance, a readable hold and a purposeful exit. Use the approved type family with a clear supporting face. A larger word, player accent, motion stroke and compact score badge can coexist when they form one composition. Do not put a big opaque rectangle over the local throw line, important warning or return route. Threat, recovery and readiness information can temporarily outrank a celebratory graphic without erasing the world event.
+
+At each point of the exchange, the player should be able to answer: which slipper is mine, do I have it, can I be tagged now, what is the can doing, who caused that, and what is my next legal action? Let prompts change with those answers. Use current input-action glyphs, not hardcoded keys. Preserve controller/touch behavior and public role identity. No inference of a chain bonus from two score snapshots, and no repeated celebration when a reliable event is delivered again.
+
+Build a small set of coherent moment treatments in the existing HUD/presentation path rather than an unrelated notification framework. Shared cues can coordinate a graphic, material sound, camera/body response and world reaction; each viewer chooses the appropriate composition from the same accepted facts.
+
+#### Six performances, with distinct motion and payoff
+
+Keep the common phase boundary in section E, but make the scenes more than six colored variants. Each needs its own silhouette, shot purpose, material behavior, sound phrase and transition into the real ability. Existing private bodies/effects/audio captures are prototypes to build on, not permission to skip live integration or choreography.
+
+**Sean: compression and explosive direction.** Set the weight, draw heat toward the body, hold a loaded silhouette, then hand off into the actual launch. Use a low/medium composition that contains the support and release direction. The main payoff belongs to the live descent, grounded impact, displacement and fire aftermath. Distinguish rush, empowered slipper and ultimate through their motion and material scale. No fake complete jump before the real one, and no camera shake that substitutes for a readable landing.
+
+**Phaister: deliberate control of a growing eclipse.** Use a readable face/hat silhouette and an asymmetric gesture becoming a larger overhead composition. Tie its movement to the hands and the live ritual destination. A short identity treatment can reinforce the held command. The existing full 1.55-second live warning must remain after the shared phase; the private scene must not secretly consume it. Make boundary completion, actual curse pulses and exit from the field visually different states. Avoid turning every secondary cue into another rune-covered disc.
+
+**Zack: precision, stillness and a sudden break.** Build fine electricity from the actual conducting hand, hold tension, then make one decisive release toward the publicly committed action. Use angular composition and a sharp timing change instead of constant jitter. Preserve aim commitment and the actual warning/contact; a cinematic cannot guarantee a hit. Keep sprint/footwork, magnetic recall/charged slipper behavior and the ultimate distinguishable in FPP, body and sound.
+
+**Nemu: a relationship becomes an imposing presence.** Stage Nemu and the retained small Kuro together: look, offer/draw inward, transformation and the live anchor/pull. The full form must remain recognizably Kuro and fit the shot. Frame actual rendered bounds rather than shrinking the approved form or clipping its head. Preserve an escape direction and the meaningful field boundary when play resumes. Hand the form over once; replaying the growth after the intro would weaken the transformation. Keep veil, possession and unbound behavior distinct, with truthful return/control cues.
+
+**Dante: weight and ground response.** Set a stable stance, load the torso and striking shoulder, then make ground pressure build toward the actual traveling fissure. The camera should communicate feet, weight and direction. Show propagation and affected bodies rather than hiding them under one explosion. Retain the approved orbiting protectors; their assembly/break state is a different idea from a fissure. His ordinary actions need their own preparation/contact/settle, not the ultimate rendered smaller.
+
+**Cheska: precise formation followed by a clean release.** Keep the shoulders controlled and place readable ice between the actual hands, away from the face. Let discrete formation clicks and a restrained movement phrase accumulate into the outward nova. The live result is the truth: freezing/displacing affected bodies and slippers, with the can/routes still visible. Distinguish sheet, barricade and nova by orientation, build sequence and aftermath. No full white wash standing in for impact.
+
+For all six, include caster, affected opponent, uninvolved participant and spectator compositions. Preserve held props and aim on entry/exit. Add close inserts, cut-ins or a stylized impact frame only when they clarify that hero's performance and fit the shared timing/comfort contract. Do not force the same number of cuts or identical camera travel onto every character. Simultaneous casts share one interval and preserve all accepted outcomes; prioritize composition without playing four full introductions in a row.
+
+#### Sound, crowd and the existing street
+
+Plan each important action as a sound phrase: preparation, material contact/body, tail and the opening it leaves for the next cue. World sound, personal feedback and broadcast recognition have different jobs. More layers are welcome when they create one recognizable action. Avoid several peaks making one collision sound like several hits, or every skill competing in the same frequency range.
+
+Use the retained recordings, hero identities and source attribution first. The current native capture path records actual game output and aligns it with frame timestamps; use that for mix review rather than assuming a waveform or successful cue lookup sounds good. A clean peak measurement is not listening approval. Independent master/SFX/music/announcer controls and muted-feedback alternatives remain necessary. Optional spoken lines that are absent from the repository remain absent; no synthetic claim that new VO was recorded.
+
+Recognition can use short tonal/drum accents, a restrained crowd swell or an existing announcer line with priority. Repeated routine actions need material variation and motion detail more than another sentence. In a dense overlap, preserve contact/danger transients, soften competing beds, and let lower-priority tails finish or fade. During an ultimate, shape tension into the live release; do not repeat the same theme/morph when control returns.
+
+Add small reactions to existing spaces where they help: nearby bystanders looking/leaning/reacting to an earned moment, a bounded dust response, cloth or light responding to a strong effect, and a brief atmosphere change that resolves. Keep those reactions outside gameplay collision and the important silhouettes. This is a targeted life/response pass on current maps, not a reopening of map expansion or permission to replace approved environment art.
+
+#### Spectator storytelling and all-player highlights
+
+A spectator needs the developing play, not merely the newest event. Establish the square, can, taya and relevant slipper; then show the retriever's commitment, restoration and chase outcome. Prefer a stable shot that includes a second threat over a decorative close-up that misses it. Use clear player/role attribution and larger earned graphics where they help explain the exchange. Manual camera input retains ownership until autopilot is requested again.
+
+The live view and replay have different editorial freedom. Replays may show alternate angles, a short reaction insert, selective slow motion and a stronger impact composition, but must preserve the actual contact, possession, actor identity and result. Build the full retained state/event clip and its canonical delivery as section F specifies; a timestamp or an enlarged low-quality frame buffer is not completion.
+
+Halftime should package a complete play with a concise reason it matters, then standings and next-taya orientation. Keep the total pacing budget and all participants synchronized. Missing/corrupt/late content gets a truthful fallback at the same deadline. Round/match-end poses and UI transitions can be emphatic because they sit at a real break; ordinary can hits must keep the next chase readable.
+
+#### How the plan merges into the existing backlog
+
+Keep PRESENTATION-1 through PRESENTATION-5 and their linked legacy IDs. Add concrete child checks beneath them, never replace the queue with a separate research list. Preserve every existing numbered task, deferred map/new-character/Inday/U8 entry, reservation and historical receipt. Update the active order in TODO and exact continuation in the ledger. The reference receipt records findings only.
+
+Finish a representative rich ordinary exchange and the shared moment/feedback contracts before expanding disconnected flourishes. Qualify the already committed host-chain bookkeeping. Then connect truthful recognition/rewards and the shared ultimate phase where C4 permits, carry complete performances across all six kits and their ordinary skills, and join them to spectator/replay/halftime. Independent art can continue while a specific network handback is pending; a local preview must not be mislabeled as the shared feature.
+
+Use a review test with four active players and overlapping important actions, not only isolated hero showcases. At minimum, inspect normal speed with game audio, muted playback, a compressed small view, Low/reduced settings and the relevant owner/opponent/spectator views. Check whether an unfamiliar viewer can identify the can state, slipper ownership, legal danger, acting player and consequence. Also check preserved control, physics, scores/resources, exact warning time, repeated-use comfort and cleanup. The target is a vivid readable match, not an empty screen and not an effects-count target.
+
 
 ### The finished experience
 
@@ -12,7 +118,7 @@ Classic and Hero Strike both make the same exchange compelling: a responsive thr
 
 Source was reconciled from 3b9c28d6 through upstream 2c89eb50 and friend shader commit f4c819f9. The camera/lifecycle branch at fe9baa16 and ability branch at dd44acd1 were already ancestors. Their useful implementation stays; this is not a blank project. Own-only normal pickups, recall UI, distinct body/FPP skill clips, extensive six-kit work, spectator direction, manual replay, score/flair/audio dispatch and guarded native runners already existed. Eighteen default hero actions have now accepted actual input in a capture run; that proves the selected route, not artistic finish.
 
-The first local increments added a low shader locator, compact tin contact, personal hit confirmation, side feed, objective marker, stable seat colours/numbers, ownership guards, victim reconstruction, comfort settings and shove/lunge sound distinctions. Keep those changes, finish their qualification, and refine weaknesses. Do not restart them to enact this plan in chronological order. Exact implementation/verification status belongs in the queue, ledger and report.
+The first local increments added a low shader locator, compact tin contact, personal hit confirmation, side feed, objective marker, stable seat colours/numbers, ownership guards, victim reconstruction, comfort settings and shove/lunge sound distinctions. Keep those changes and their qualified checkpoints, and refine weaknesses against the expanded creative direction. Do not restart them to enact this plan in chronological order. Exact implementation/verification status belongs in the queue, ledger and report.
 
 The actual base hit/tag awards are 100; both modes default to eight 90-second rounds. The ordinary buffer is currently 5 seconds. Phaister's real ritual warning is 1.55 seconds. The current network protocol is 42. Recheck these facts if dependencies change; none is permission to restore an older implementation or downgrade a later version.
 

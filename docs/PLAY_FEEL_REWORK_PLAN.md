@@ -1,5 +1,7 @@
 # Play-feel and equipment rework after the maps
 
+Current presentation direction: [research-driven Nationals design](NATIONALS_POLISH.md#research-driven-presentation-direction). The owner welcomes bold, simultaneous complementary layers and animation throughout player/spectator experiences. Preserve existing work and use [TODO](TODO.md#current-implementation-queue) for the merged execution order.
+
 ## Current continuation status, 2026-09-16
 
 This is an active but partially implemented plan. The dated scope/NOT implemented

@@ -1,5 +1,7 @@
 # Art Direction — the laws
 
+Current presentation direction: [research-driven Nationals design](NATIONALS_POLISH.md#research-driven-presentation-direction). The owner welcomes bold, simultaneous complementary layers and animation throughout player/spectator experiences. Preserve existing work and use [TODO](TODO.md#current-implementation-queue) for the merged execution order.
+
 **Current presentation identity,2026-09-21:** stable seat colour/number remains
 consistent when roles rotate. The taya is a separate badge/shape, so older
 role-only hue restrictions do not govern these identity accents. Elemental powers

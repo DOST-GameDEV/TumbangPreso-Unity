@@ -2,82 +2,114 @@
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-Owner's latest correction,2026-09-21: finish the thorough design/order and documentation
-cleanup before further gameplay edits. The [current implementation design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21)
+Latest owner direction, 2026-09-21: improve the current plan substantially through
+research into Sepak U, Blue Lock and related games. Many complementary layers and
+animations are welcome. Merge improvements into this queue; preserve every existing
+task/ID and unfinished feature. Continue implementation afterward. The [current implementation design](NATIONALS_POLISH.md#current-delivery-design-2026-09-21)
 contains the chosen approach, dependencies, hero direction and acceptance gates.
 [ACTIVE_REWORK_LEDGER](ACTIVE_REWORK_LEDGER.md) is the only exact resume/status pointer.
 Continue autonomously within authorization. No questions, paid work, resets or delegation.
 
 ### Execution order
 
-1. Closed bounded checkpoint: source a505d954 is pushed, native v6 passes both modes,
-   and the earlier real three-peer catch witness passes. Keep this tested fallback.
-   The full pass remains open; continue the next outcomes.
-2. Complete PRESENTATION-1's ordinary exchange with other players active in both modes.
-   Fit sound/body/FPP/feedback together; repair only demonstrated relevant blockers.
-3. Establish common accepted-event/throw/contact/time contracts for PRESENTATION-2/3/4.
-   Resolve the narrow C4 ownership dependency before touching reserved files. Independent
-   authoring/core logic can proceed; do not invent a second protocol authority.
-4. Deliver capped chains and their separate central milestones (PRESENTATION-2), then
-   prove the shared ultimate phase with Sean/Phaister and carry it across the six kits
-   (PRESENTATION-3). Parallelize only independent work in this conversation/workspaces.
-5. Deliver retained canonical clips, all-player halftime and spectator/pacing refinements
-   (PRESENTATION-4), reusing the common recording foundation.
-6. Complete integrated normal/busy-match and relevant LAN/comfort qualification
-   (PRESENTATION-5). Testing occurs at coherent increments throughout, not only at the end.
+1. Merge and check the research expansion in the existing plan/queue/ledger. Preserve
+   current implementations and all task IDs. The native v6 gameplay and v9 private
+   scene studies are retained evidence; neither closes the whole assignment.
+2. Close the current loose ends: host-chain bookkeeping validation/publication and
+   Nemu's cropped native framing. Then compose the rich ordinary exchange in both
+   modes with the other players active, through body/FPP/VFX/SFX/UI together.
+3. Finish shared accepted-moment/throw/contact contracts and coordinate the existing
+   feedback channels. Use that foundation for earned recognition, capped rewards and
+   the signature catch. Resolve the narrow C4 dependency before reserved-file edits.
+4. Join the shared ultimate phase to complete Sean/Phaister performances and live
+   warnings/payoffs, then Zack/Nemu/Dante/Cheska. Refine their ordinary skills and
+   transitions too. Continue independent authoring where the network lane is blocked.
+5. Join the same recording foundation to live spectator storytelling, retained
+   canonical clips, all-player halftime and truthful round/match punctuation.
+6. Qualify dense overlaps, control, comfort, Low/small views, real peers and the exact
+   delivered Windows artifact. Test at coherent increments, not as a giant final matrix.
 
-### Active outcomes and what remains
+### Active outcomes and retained task IDs
 
-- [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Low shader locator,
-  ownership guards, can marker/collar, side feed, personal contact and stable seat
-  colours/numbers are implemented in the current checkpoint. New shove/lunge cues
-  and private audio randomness pass focused tests. Native v6 passes both modes and
-  busy v4 records all four active players. Legal close-call episodes and continuous
-  block contact are fixed. Complete the remaining full mix/low-settings review and
-  refine demonstrated continuity issues; no broad unrelated regression matrix.
-- [ ] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction is
-  integrated with bounded history/render-only copies and recovery cutoff. Earlier
-  native source passed both modes; newest ordering/copy/audio source passes local
-  tests and real-peer/native cases. Capped chain
-  rules are implemented in Core (6/6 focused tests), but live bonus awards/messages
-  and authoritative central milestones still need integration. Follow design C/D;
-  preserve one score authority and no bonus-generated ultimate charge.
-- [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** Existing18default
-  actions accepted input in a captured run. That is a retained foundation, not the
-  requested new full cinematic pass. Six private introduction body performances
-  are authored, grounded and pass private native scene/sound capture; they do not yet change
-  live ultimate activation. Implement shared accepted-cast phase, authored
-  six-profile performances, preserved live warning/payoff, interruption/overlap and
-  relevant roles. Sean/Phaister first expose distinct risks. C4 transport/compatibility
-  ownership remains unresolved; do not silently cross it or call local-only scenes done.
-- [ ] **PRESENTATION-4 /134.20: Watchability and halftime.** Existing director/manual
-  replay remain. The new body history is not a full retained world-clip system yet.
-  Add required props/events, complete candidates surviving early rounds, canonical
-  participant delivery/fallback and halftime/ordinary-gap pacing. Preserve manual control.
-- [ ] **PRESENTATION-5: Integrated qualification.** Preserve bounded passing receipts.
-  Finish the exact delivered Windows source/artifact, busy Classic/Hero matches, changed
-  owner/observer/spectator/LAN paths, repeated use, comfort, audio and bounded resource
-  costs. Human taste/physical-device evidence remains external review, not an invented pass.
+- [ ] **PRESENTATION-1 /154/155/152.4: Complete ordinary exchange.** Retain the low
+  locator/ownership/can/feed/identity work, native v6 controls and busy v4 evidence.
+  The target is now a coordinated, expressive exchange, not merely reduced noise.
+  - [ ] **PRESENTATION-1.1:** Compose throw, tin contact, flight, landing, retrieval,
+    restore and chase as one body/FPP/VFX/SFX/UI sequence in Classic and Hero Strike.
+  - [ ] **PRESENTATION-1.2:** Refine starts/stops/turns, carrying, grip/cancel, slide,
+    shove, punch/lunge whiff, stagger, get-up and their grounded sound/contact timing.
+  - [ ] **PRESENTATION-1.3:** Complete contextual state communication: own slipper,
+    can state/protection, legal danger and next action, with stable identity/glyphs.
+  - [ ] **PRESENTATION-1.4:** Coordinate material sound, personal confirmation, world
+    reactions, score-row accents and the earned graphics shared with PRESENTATION-2.
+  - [ ] **PRESENTATION-1.5:** Add useful character/crowd/prop/atmosphere reactions on
+    existing maps and review the full mix. Broad map art and expansion remain deferred.
+  - [ ] **PRESENTATION-1.6:** Judge normal/busy play and Low/reduced/small-view clarity;
+    scale decorative layers without removing important states, boundaries or impact.
+- [ ] **PRESENTATION-2 /152.4: Catch and capped chains.** Victim reconstruction and
+  core chain rules exist. Live capped bonus awards and shared central milestones remain open.
+  - [x] **PRESENTATION-2.1:** Host accepted-outcome bookkeeping and focused integration:
+    real throw IDs, can-consumption serials, epoch reset, hits/misses/no-contest and
+    distinct catches. Source7a1bb8dd,4/4 pass22.65s, Logs/host-chains-v1. This is not
+    bonus award/message completion; points and ultimate charge are unchanged.
+  - [ ] **PRESENTATION-2.2:** Integrate capped rewards and accepted milestone identity
+    through the score/transport authority, with first/accuracy/catch/late/lead recognition
+    where their facts qualify. C4 is a specific dependency, not permission for guessed totals.
+  - [ ] **PRESENTATION-2.3:** Refine the complete victim catch, taya confirmation,
+    bystander/spectator reactions and return, with exact contact/held props, interruption,
+    repeated-use comfort and no added taya lockout or victim penalty.
+- [ ] **PRESENTATION-3 /152.4: Six complete hero performances.** All18default actions
+  have accepted-input evidence. Six private introduction bodies/scenes and native sound
+  movies exist; the live shared phase and complete transitions are not implemented.
+  - [ ] **PRESENTATION-3.1:** Shared accepted-cast phase, cohort handling, clock/input
+    ownership and compatible participant delivery. C4 handback is still required.
+  - [ ] **PRESENTATION-3.2:** Author all six distinct whole performances, including
+    better native framing, purposeful shot changes, held props, body/FPP, sound/VFX,
+    optional character cut-ins and the return to the actual ability.
+  - [ ] **PRESENTATION-3.3:** Preserve live warning time and communicate real contact,
+    miss, interruption, ongoing fields and aftermath. Avoid duplicate theme/morph cues.
+    Refine each hero's two ordinary skills through the same complete-action lens.
+  - [ ] **PRESENTATION-3.4:** Finish role/view differences, simultaneous/back-to-back
+    cases, reduced-camera treatment, scene/round/disconnect cleanup and resource invariants.
+- [ ] **PRESENTATION-4 /134.20: Watchability and halftime.** Retain the existing
+  director/manual replay; body history alone is not complete retained world footage.
+  - [ ] **PRESENTATION-4.1:** Record necessary bodies/props/events/audio, retain complete
+    candidates across rounds and deliver the canonical clip/fallback to all participants.
+  - [ ] **PRESENTATION-4.2:** Refine live spectator shot selection, attribution and
+    larger earned graphics around the developing exchange, preserving manual takeover.
+  - [ ] **PRESENTATION-4.3:** Deliver the halftime replay/standings/next-taya package,
+    ordinary-gap pacing and truthful round/match-end pose/UI punctuation.
+- [ ] **PRESENTATION-5: Integrated qualification.** Preserve existing passing receipts
+  and failed attempts; prove the new complete experience on the exact delivered source.
+  - [ ] **PRESENTATION-5.1:** Four active players, overlapping important events and
+    representative Classic/Hero matches across owner/opponent/participant/spectator views.
+  - [ ] **PRESENTATION-5.2:** Audio and muted review, ordinary-speed/short replay,
+    compression,720p/1080p/relevant aspect, Low and comfort controls; verify information
+    survives and the richer presentation still has its intended character.
+  - [ ] **PRESENTATION-5.3:** Relevant native/LAN late/duplicate/interrupted cases,
+    score/resource/control invariants, bounded costs and cleanup. Human taste and
+    physical-device evidence stay explicit; do not replace them with test counts.
 
 ### Deferred, retired and owned work
 
-**Deferred:** broad existing-map beautification (MAP_FINAL_PASS), Rafi/seventh hero
-and lagoon village, Inday reconstruction/FPP study, U8 secondary/device matrix,
-unrelated broad outage/rejoin permutations and speculative optimization. Preserve
-functioning work/concepts. Revisit only after this pass or for a concrete current blocker.
+**Deferred:** all existing map/new-map/Rafi/seventh-hero/water-village tasks, Inday
+reconstruction/FPP study, broad U8 secondary/device coverage, unrelated outage/rejoin
+matrices and speculative optimization. Their original tasks, concepts and evidence
+remain below and in their topic docs. Event-responsive existing scenery in1.5 does
+not promote the whole map backlog.
 
-**Retired from automatic pick-next:** C2 old lunge-ratio investigation (retain fix),
-C3 speculative registry (retain measured no-rewrite result), named unchanged v37
-spectator/manual replay/control checks and finalized menu work. Reopen for a relevant
-change/regression. C1 exact48-penalty attribution is historical unresolved, not fixed
-or a prerequisite. C1-C3 files have an explicit handback.
+**Retired from automatic pick-next:** unchanged C2 lunge-ratio/C3 registry work and
+old spectator/manual-control/menu rechecks retain their fixes, findings and IDs.
+Reopen for an actual relevant regression. C1's exact idle attribution stays historical
+unresolved. No research task silently deletes an existing task or marks it complete.
 
-**Reserved:** C4/149.4 per CLAUDE_REQUEST_SAFETY_LANE.md. Relevant score/event/phase/
-replay registration and protocol compatibility require a bounded documented handback.
-No other chat/agent is contacted. Complete independent work without duplicating its audit.
+**Reserved:** C4/149.4 per CLAUDE_REQUEST_SAFETY_LANE.md. MatchRpc/NetSession registration,
+accepted identities and compatibility need a bounded handback. No new request audit,
+competing admission system or another chat/agent. Continue independent work.
 
-The numbered topic entries below preserve IDs, detailed reasoning, approvals and
-alternatives. Their former scheduling does not compete with this queue.
+The numbered topic entries below are preserved byte-for-byte by this queue merge.
+They retain task IDs, deferred work, approvals, alternatives and historical evidence;
+the execution order above is authoritative for this assignment.
 
 ## Preserved previous checkpoint notes
 
