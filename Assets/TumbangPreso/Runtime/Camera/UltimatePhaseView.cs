@@ -63,8 +63,7 @@ namespace TumbangPreso.CameraSystem
                     body.Root.SetActive(true); // The committed caster is shown even if a prior power hid their live model.
                     var entry = new ActorScene { Actor = actor, Body = body };
                     _actors.Add(entry);
-                    entry.Clip = HeroAbilityClips.BuildUltimateIntroduction(body.Root.transform, actor.AbilitySystem.HeroId,
-                        actor.GetComponent<Carrier>().Held != null);
+                    entry.Clip = UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held != null);
                     if (entry.Clip == null) continue;
                     actorStage.SetActive(true);
                     entry.Clip.SampleAnimation(body.Root, 0);
@@ -189,7 +188,7 @@ namespace TumbangPreso.CameraSystem
             if(_camera!=null)_camera.targetTexture=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);
             if(_target!=null){_target.Release();Object.Destroy(_target);}
-            foreach(var entry in _actors){entry.Scene?.Dispose();if(entry.Clip!=null)Object.Destroy(entry.Clip);}
+            foreach(var entry in _actors)entry.Scene?.Dispose();
             _actors.Clear();if(_stage!=null)Object.Destroy(_stage);
             _stage=null;_canvas=null;_target=null;_camera=null;_primary=null;
         }

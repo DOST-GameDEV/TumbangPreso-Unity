@@ -112,7 +112,12 @@ namespace TumbangPreso
         }
         private void LateUpdate()
         {
-            if (!Active) return;
+            if (!Active)
+            {
+                if(GameServices.Round!=null && UI.SceneFlow.SelectedMode==Core.GameMode.HeroStrike)
+                    foreach(var actor in GameServices.Round.Players)if(Visual.UltimateIntroductionCache.WarmOne(actor))break;
+                return;
+            }
             var match = GameServices.Match; var round = GameServices.Round;
             if (_actorsReady && (match == null || !match.MatchInProgress || match.RoundNumber != Round
                 || match.PresentationMatchId != MatchId || round == null || !round.RoundActive

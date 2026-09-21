@@ -136,6 +136,7 @@ namespace TumbangPreso
             Audio = _root.AddComponent<AudioDirector>();
             Match = _root.AddComponent<MatchDirector>();
             Round = _root.AddComponent<RoundDirector>();
+            _root.AddComponent<SharedUltimatePhase>();
 
             // ⚠️ AFTER BOTH DIRECTORS, because `LastTsinelasDirector.OnEnable` subscribes to
             // `Match.RoundStarted` and `Round.Tagged`, and `AddComponent` runs `OnEnable`

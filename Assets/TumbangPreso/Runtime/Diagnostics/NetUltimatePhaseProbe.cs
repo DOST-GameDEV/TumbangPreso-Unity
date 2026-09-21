@@ -17,7 +17,7 @@ namespace TumbangPreso.Diagnostics
         private StreamWriter _trace;
         private float _started,_next;
         private double _firstPhase=-1;
-        private bool _prepared,_sent,_joined,_lateRequest,_resent,_oldResent;
+        private bool _prepared,_sent,_joined,_lateRequest,_resent,_oldResent,_pickSent,_picksApplied;
         private int[] _starts=new int[4];
         private float _initialWarning;
         private long _savedMatch,_savedPhase;
@@ -51,8 +51,21 @@ namespace TumbangPreso.Diagnostics
         {
             if(Time.realtimeSinceStartup-_started>60){Application.Quit();return;}
             var round=GameServices.Round;var match=GameServices.Match;
-            if(!NetAuthority.IsNetworked||round==null||match==null||!round.RoundActive||match.IsWarmupBuffer)return;
-            if(!int.TryParse(Arg("-tp-ultseat"),out int local)||NetAuthority.LocalSlot!=local)return;
+            if(!NetAuthority.IsNetworked||!int.TryParse(Arg("-tp-ultseat"),out int local)||NetAuthority.LocalSlot!=local)return;
+            int pick=Roster.IndexIn(Roster.HeroPeople,"phaister");
+            if(!_pickSent&&MatchRpc.Instance!=null)
+            {
+                var settings=Settings.SettingsStore.Current;
+                MatchRpc.Instance.SelectLobbyPickServerRpc(pick,settings.CanPick,settings.SlipperPick);_pickSent=true;
+            }
+            if(NetAuthority.IsHost&&!_picksApplied&&round?.PlayerAt(2)!=null&&MatchRpc.Instance!=null
+                &&Enumerable.Range(0,3).All(i=>MatchRpc.Instance.GetSeatInfo(i)?.CharacterPick==pick))
+            {
+                _picksApplied=true;MatchRpc.Instance.SyncPicksClientRpc(new[]{0,pick,-1,-1,1,pick,-1,-1,2,pick,-1,-1});
+                MatchRpc.Instance.BroadcastPicks();
+            }
+            if(round==null||match==null||!round.RoundActive||match.IsWarmupBuffer)return;
+            if(Enumerable.Range(0,3).Any(i=>round.PlayerAt(i)?.AbilitySystem?.HeroId!="phaister"))return;
             foreach(var ai in FindObjectsByType<AIController>())ai.enabled=false;
             foreach(var reader in FindObjectsByType<PlayerInputReader>())reader.enabled=false;
             foreach(var switcher in FindObjectsByType<DebugPlayerSwitcher>())switcher.enabled=false;
