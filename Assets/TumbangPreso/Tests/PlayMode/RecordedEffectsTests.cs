@@ -67,6 +67,34 @@ namespace TumbangPreso.PlayTests
             finally{foreach(var view in views)view.Dispose();}
             Object.Destroy(stage);
         }
+        [UnityTest]
+        public IEnumerator RecordedWeatherRestoresTheLiveWorldEvenWhenRenderingFails()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            SkyEvent.Play(SkyEvent.Look.Eclipse,8);yield return new WaitForSeconds(.2f);
+            var before=RecordedEnvironment.Capture();var savedSky=RenderSettings.skybox;
+            var copy=savedSky!=null?new Material(savedSky):null;
+            var root=new GameObject("RecordedWeatherProof");var camera=root.AddComponent<Camera>();camera.enabled=false;
+            var grade=root.AddComponent<ColourGrade>();grade.AdoptFromScene();var fillRoot=new GameObject("RecordedFillProof");var fill=fillRoot.AddComponent<Light>();fill.enabled=false;
+            var recorded=before;recorded.Sky=Color.red;recorded.FogColour=Color.blue;recorded.FillColour=Color.magenta;recorded.FillOn=true;
+            try
+            {
+                try
+                {
+                    using(recorded.Use(grade,copy,fill))
+                    {Assert.AreEqual(Color.red,RenderSettings.ambientSkyColor);Assert.IsTrue(fill.enabled);throw new System.InvalidOperationException("intentional renderer failure");}
+                }
+                catch(System.InvalidOperationException failure){Assert.AreEqual("intentional renderer failure",failure.Message);}
+                Assert.AreEqual(before.Sky,RenderSettings.ambientSkyColor);Assert.AreEqual(before.FogColour,RenderSettings.fogColor);
+                Assert.AreSame(savedSky,RenderSettings.skybox);Assert.IsFalse(fill.enabled);
+                if(SkyEvent.RecordedFill!=null)Assert.AreEqual(before.FillOn,SkyEvent.RecordedFill.enabled);
+                using var stream=new System.IO.MemoryStream();using(var writer=new System.IO.BinaryWriter(stream,System.Text.Encoding.UTF8,true))recorded.Write(writer);
+                stream.Position=0;using var reader=new System.IO.BinaryReader(stream);var decoded=RecordedEnvironment.Read(reader);
+                Assert.AreEqual(recorded.Sky,decoded.Sky);Assert.AreEqual(recorded.FillPosition,decoded.FillPosition);
+            }
+            finally{Object.Destroy(root);Object.Destroy(fillRoot);if(copy!=null)Object.Destroy(copy);SkyEvent.StopAll();}
+        }
+
         [Test]
         public void FastRecordedMotionInterpolatesButAuthoritativeTeleportsDoNot()
         {

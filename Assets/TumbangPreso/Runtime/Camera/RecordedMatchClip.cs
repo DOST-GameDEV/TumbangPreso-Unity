@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=7;
+        public const int WireVersion=8;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -59,7 +59,7 @@ namespace TumbangPreso.CameraSystem
                 writer.Write(FieldFrames.Length);
                 foreach(var frame in FieldFrames)
                 {
-                    writer.Write(frame.Time);writer.Write(frame.Fields.Length);
+                    writer.Write(frame.Time);frame.Lighting.Write(writer);writer.Write(frame.Fields.Length);
                     foreach(var item in frame.Fields)
                     {
                         var f=item.State;writer.Write(item.Id);writer.Write((byte)f.Type);Write(writer,f.Position);Write(writer,f.Forward);
@@ -131,9 +131,9 @@ namespace TumbangPreso.CameraSystem
                 result.FieldFrames=new RecordedFieldFrame[fieldFrameCount];
                 for(int n=0;n<fieldFrameCount;n++)
                 {
-                    float time=reader.ReadSingle();int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
+                    float time=reader.ReadSingle();var lighting=RecordedEnvironment.Read(reader);int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
                     if(!Finite(time)||time<=fieldTime||time<result.Start-.3f||time>result.End+.3f||totalFields>32768)throw new InvalidDataException("Invalid field window");
-                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields]};var ids=new System.Collections.Generic.HashSet<int>();
+                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields],Lighting=lighting};var ids=new System.Collections.Generic.HashSet<int>();
                     for(int i=0;i<fields;i++)
                     {
                         int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();

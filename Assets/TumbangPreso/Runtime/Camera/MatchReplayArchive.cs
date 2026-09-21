@@ -112,7 +112,7 @@ namespace TumbangPreso.CameraSystem
                 if(!_fieldIds.TryGetValue(state.Source,out int id))_fieldIds[state.Source]=id=++_fieldSequence;
                 state.Source=null;fields[i]=new RecordedField{Id=id,State=state};
             }
-            return new RecordedFieldFrame{Time=time,Fields=fields};
+            return new RecordedFieldFrame{Time=time,Fields=fields,Lighting=RecordedEnvironment.Capture()};
         }
         private void BindProps()
         {

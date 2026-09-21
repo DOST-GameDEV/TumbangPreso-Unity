@@ -7,7 +7,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     public struct RecordedField {public int Id;public WorldEffectSnapshot.Field State;}
-    public sealed class RecordedFieldFrame {public float Time;public RecordedField[] Fields;}
+    public sealed class RecordedFieldFrame {public float Time;public RecordedField[] Fields;public RecordedEnvironment Lighting;}
     // The seven persistent field families reuse their authored visual builders.
     // No gameplay factory, collider, hazard registry or expiry callback is invoked.
     public sealed class RecordedFieldView : IDisposable

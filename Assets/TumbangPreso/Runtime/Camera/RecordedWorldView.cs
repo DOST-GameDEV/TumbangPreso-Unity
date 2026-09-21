@@ -23,6 +23,9 @@ namespace TumbangPreso.CameraSystem
         private IDisposable _audioMix;
         private Canvas _canvas;
         private Camera _camera;
+        private ColourGrade _grade;
+        private Material _sky;
+        private Light _skyFill;
         private RenderTexture _target;
         private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
@@ -61,7 +64,10 @@ namespace TumbangPreso.CameraSystem
                 var cameraGo=new GameObject("RecordedWorldCamera");cameraGo.transform.SetParent(_stage.transform,false);
                 _camera=cameraGo.AddComponent<Camera>();_camera.CopyFrom(Camera.main);_camera.enabled=false;_camera.tag="Untagged";
                 _camera.cullingMask&=~(1<<5);_camera.nearClipPlane=.08f;_camera.fieldOfView=58;
-                cameraGo.AddComponent<ColourGrade>().AdoptFromScene();
+                _grade=cameraGo.AddComponent<ColourGrade>();_grade.AdoptFromScene();
+                if(RenderSettings.skybox!=null)_sky=new Material(RenderSettings.skybox){name="RecordedSky"};
+                var fill=new GameObject("RecordedWeatherFill");fill.transform.SetParent(_stage.transform,false);_skyFill=fill.AddComponent<Light>();
+                _skyFill.type=LightType.Point;_skyFill.shadows=LightShadows.None;_skyFill.enabled=false;
                 var focus=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Actor);
                 var subject=_items.FirstOrDefault(i=>clip.Subject>=0?i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject:i.Track.Kind==RecordedObjectKind.Can);
                 if(focus==null||subject==null)return;
@@ -187,7 +193,7 @@ namespace TumbangPreso.CameraSystem
             if(GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
-            try{_camera.Render();}
+            try{using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
             finally{for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
@@ -201,6 +207,7 @@ namespace TumbangPreso.CameraSystem
             if(_camera!=null)_camera.targetTexture=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;
+            if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
             _items.Clear();foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
         }

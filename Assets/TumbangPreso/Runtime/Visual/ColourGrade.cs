@@ -107,6 +107,8 @@ namespace TumbangPreso.Visual
         // second opinion about how far through it is would show up as the frame and the world
         // disagreeing for a frame or two at each end.
 
+        public float RecordedBrightness=>_eventBrightness;
+        public float RecordedSaturation=>_eventSaturation;
         private float _eventBrightness = 1.0f;
         private float _eventSaturation = 1.0f;
 

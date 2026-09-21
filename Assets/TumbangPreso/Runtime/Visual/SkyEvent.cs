@@ -166,6 +166,8 @@ namespace TumbangPreso.Visual
             return _live;
         }
 
+        public static Light RecordedSun=>_live!=null&&_live._sun!=null?_live._sun:RenderSettings.sun!=null?RenderSettings.sun:FindDirectional();
+        public static Light RecordedFill=>_live!=null?_live._fill:null;
         public static bool CaptureTimeline(out Look look, out float age, out float lifetime)
         {
             look = _live != null ? _live._look : default;
