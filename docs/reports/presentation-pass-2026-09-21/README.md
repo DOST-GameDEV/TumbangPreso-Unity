@@ -202,3 +202,38 @@ Peaks range.185-.309; RMS.032-.054 in this mix. No clipping occurred in these ca
 this is not listening approval or a representative full-match mix qualification.
 Native Nemu/Cheska/Phaister frames were inspected, including the removed duplicate
 Kuro helper blob. All owned players exited and shared input was unchanged.
+
+
+## Exchange motion and cancellation, 2026-09-21
+
+Research merge cc01b97f preserved all prior queue tasks and added the expanded
+choreography/feedback design in place. Nemu adaptive framing f616f6ac passed its
+focused Editor aspect/grounding probe,1/1 in7.51s, guard df37942c486e. Native remains
+unqualified until the next private-scene run.
+
+Flight/can accents548d458d: busy Classic/Hero captures passed with4active players,
+611/552 frames per view across35s, game events and29-71m actual travel per actor.
+Ordinary-speed owner/observer movies use recorded frame intervals. They omit overlay
+HUD/audio. This run also FAILED both lifecycle tests: native TrailRenderer.Clear
+retained2vertices synchronously. Immediate renderer hiding plus next-frame empty
+checks fixed the lifecycle issue. V1 failure remains under validation
+Logs/exchange-motion-v1, guard423e10e02d42.
+
+Exchange v2/f8f99fca:4/4 PlayMode cases passed14.69s, guard b73a373d1670.
+No EditMode continuity cases were discovered in that PlayMode selection; those
+are not counted. Native replica state entry, corrections, Low stroke retention,
+held/loose/disabled cleanup, repeated can edges and flash-off were checked.
+This provider seam is not a real transport test.
+
+The first cancellation timer test passed but timed images showed a snap. A state
+change after Update replaced the saved charged pose with Rest before the return
+started.5573b5b0 retains that last rendered pose across the late state edge;
+strengthened actual-bone test passed1/1 in6.20s, guard8ae63afd360d,
+Logs/throw-cancel-v3. Rendered arm X moved -50.96,-40.33,-18.33,-1.15,0 degrees
+through sampled cancellation frames while the same slipper stayed held. This is
+observed-charge seam evidence, not a complete new input/network qualification.
+
+Next native route captures real HUD, live spectator direction and game-only audio
+with four real bot input writers in both modes. Existing native controls/catch and
+six private introductions will be checked on the same internal artifact. No
+Desktop replacement or live ultimate-phase completion is implied.

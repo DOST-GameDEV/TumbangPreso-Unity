@@ -28,20 +28,20 @@ advance while the narrow C4 dependency remains reserved. Full pass is unfinished
 ## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest local source f616f6ac. Last verified remote cc01b97f;
+branch ASTRAReworks. Latest implementation source5573b5b0. Last verified remote cc01b97f;
 research merge and tested host counters are published. Nemu framing is committed
 and passed its focused Editor probe; native recheck remains pending.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached f616f6ac, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached5573b5b0, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
 Initial24modified+2untracked files are byte-preserved under development
 Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
 Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
 Shared dirty files used selected owned hunks; never stage them wholesale or restore
-those user changes. Current owned unstaged work: SlipperMotionAccent/CanContactAccent, their Slipper/Lata
-state-edge wiring and focused ExchangeMotionTests, plus this ledger. These are not
-yet validated. Host counters remain bookkeeping only; no new network payloads.
+those user changes. Current owned work: native BusyExchange review partial and selected flag additions
+to existing dirty diagnostic/runner, plus report/ledger. Flight/can and cancellation
+source is committed. Original unrelated dirty hunks remain excluded.
 Validation importer rewrites are predominantly whitespace. Tests can also rewrite
 QualitySettings from the chosen profile: preserve diffs, restore only proven test
 changes after owned jobs stop, and capture the exact input manifest before building.
@@ -136,7 +136,13 @@ Nativev6/a505d954 remains the qualified gameplay fallback.
 Research checks passed:17local links, unchanged legacy TODO body, all five existing
 PRESENTATION parents and19explicit child checks. Current work: coordinated ordinary
 exchange flight/contact, followed by four-player busy captures and native review.
-No running job at this checkpoint. Sources/observed timestamps are in
+Current focused results: busy v1 both modes PASS; its2trail cleanup failures fixed
+in v2 (4/4 pass14.69s, guardb73a373d1670). Cancellation rendered snap discovered
+during inspection despite timer pass; late-pose fix5573b5b0 passed actual-bone
+check1/1 in6.20s, guard8ae63afd360d. No Editor job running at this checkpoint.
+Next: one internal Windows build, native controls/catch, all6private scenes, and
+new20s owner/live-spectator captures with HUD/audio for each mode.
+Sources/observed timestamps are in
 reports/presentation-pass-2026-09-21/reference-research.md. Browser video tab2 was
 closed. Owned hidden error tab1 cannot be selected/closed because the browser's
 URL policy blocks its generated data error-page URL; it is unmarked/temporary and
