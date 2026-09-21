@@ -18,7 +18,7 @@ namespace TumbangPreso.Visual
         private void Build()
         {
             var go = new GameObject("SlipperMotionStroke"); go.transform.SetParent(transform, false);
-            _trail = go.AddComponent<TrailRenderer>(); _trail.emitting = false;
+            _trail = go.AddComponent<TrailRenderer>(); _trail.emitting = false; _trail.enabled = false;
             _trail.minVertexDistance = .06f; _trail.numCapVertices = 2;
             _trail.widthCurve = new AnimationCurve(new Keyframe(0, 1), new Keyframe(.35f, .65f), new Keyframe(1, 0));
             _trail.shadowCastingMode = ShadowCastingMode.Off; _trail.receiveShadows = false;
@@ -29,7 +29,9 @@ namespace TumbangPreso.Visual
         {
             _flying = false;
             if (_trail == null) return;
-            _trail.emitting = false; _trail.Clear();
+            // Clear's native vertex bookkeeping may finish on the next renderer
+            // update. Hide immediately before Carrier reparents the held shoe.
+            _trail.emitting = false; _trail.enabled = false; _trail.Clear();
         }
         private void OnDisable() => ClearFlight();
         private void LateUpdate()
@@ -46,7 +48,7 @@ namespace TumbangPreso.Visual
             // A network correction/recovery cannot draw a false route across the court.
             float plausibleStep = Mathf.Max(2, _shoe.Velocity.magnitude * Time.deltaTime * 3 + .5f);
             if (!_flying || Vector3.Distance(transform.position, _lastPosition) > plausibleStep) _trail.Clear();
-            _lastPosition = transform.position; _flying = true; _trail.emitting = true;
+            _lastPosition = transform.position; _flying = true; _trail.enabled = true; _trail.emitting = true;
         }
     }
 }

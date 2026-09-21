@@ -488,6 +488,12 @@ namespace TumbangPreso.Visual
             if (!_graph.IsValid()) return;
 
             RestoreChargeOffsets();
+            if (_throwCancelTime >= 0)
+            {
+                _throwCancelTime += Time.deltaTime;
+                if (_throwCancelTime >= ThrowGesture.CancelSeconds || _motor.IsStunned || _motor.IsTripped || !_motor.HoldingSlipper)
+                    _throwCancelTime = -1;
+            }
             if (_throwReleaseTime >= 0)
             {
                 _throwReleaseTime += Time.deltaTime;
@@ -845,6 +851,9 @@ namespace TumbangPreso.Visual
         private ThrowGesture.Pose _lastThrowPose=ThrowGesture.Rest,_throwReleaseFrom=ThrowGesture.Rest;
         private ThrowGesture.Pose _throwCarryBasis=ThrowGesture.Rest;
         private float _throwReleaseTime=-1,_throwReleaseSpin;
+        private float _throwCancelTime=-1;
+        private bool _throwPreparing;
+        private ThrowGesture.Pose _throwCancelFrom=ThrowGesture.Rest;
 
         /// <summary>
         /// The wind-up, written onto the arm bone so OPPONENTS can read the commitment.
@@ -875,10 +884,19 @@ namespace TumbangPreso.Visual
 
             if (!winding)
             {
-                if (_chargePosing) ClearChargePose();
+                if (_chargePosing)
+                {
+                    bool returnToCarry = _throwPreparing && _throwReleaseTime < 0
+                        && _motor.HoldingSlipper && !_motor.IsStunned && !_motor.IsTripped;
+                    var from = _lastThrowPose;
+                    ClearChargePose();
+                    if (returnToCarry) { _throwCancelFrom = from; _throwCancelTime = 0; }
+                }
                 return false;
             }
 
+            _throwCancelTime = -1;
+            _throwPreparing = _carrier != null && _carrier.Held != null && _carrier.ObservedChargePower >= 0;
             if (!_chargePosing)
             {
                 if (!ResolveChargeBone()) return false;
@@ -894,17 +912,21 @@ namespace TumbangPreso.Visual
             // Remove last frame's offsets even when the graph is paused or a clip
             // leaves a bone unkeyed. Carrier then reads this frame's posed hand.
             RestoreChargeOffsets();
-            if (!_chargePosing && _throwReleaseTime < 0) return;
+            if (!_chargePosing && _throwReleaseTime < 0 && _throwCancelTime < 0) return;
             if (_chargeBone==null && !ResolveChargeBone()) return;
             bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
             var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
                 : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
+            if (_throwCancelTime >= 0) pose = ThrowGesture.Pose.Lerp(_throwCancelFrom,ThrowGesture.Rest,
+                Mathf.SmoothStep(0,1,_throwCancelTime/ThrowGesture.CancelSeconds));
             _chargeBoneRest=_chargeBone.localRotation;
             if(_chargeTorso!=null)_torsoRest=_chargeTorso.localRotation;
             if(_chargeHead!=null)_headRest=_chargeHead.localRotation;
             if(_chargeOff!=null)_offRest=_chargeOff.localRotation;
             var basis=new ThrowGesture.Pose(_torsoRest,_headRest,_chargeBoneRest,_offRest);
-            var drawn=_throwReleaseTime>=0
+            var drawn=_throwCancelTime>=0
+                ? ThrowGesture.Pose.Apply(basis,pose)
+                : _throwReleaseTime>=0
                 ? ThrowGesture.Release(_throwCarryBasis,_throwReleaseFrom,basis,_throwReleaseTime,_throwReleaseSpin)
                 : throwing ? ThrowGesture.Pose.Apply(basis,pose)
                 : new ThrowGesture.Pose(_torsoRest*pose.Torso,_headRest*pose.Head,_chargeBoneRest*pose.Right,_offRest*pose.Left);
@@ -978,6 +1000,7 @@ namespace TumbangPreso.Visual
         private void ClearChargePose()
         {
             RestoreChargeOffsets();
+            _throwCancelTime = -1; _throwPreparing = false;
             _chargePosing = false;
             _chargeBone = _chargeTorso = _chargeHead = _chargeOff = null;
 
@@ -1084,6 +1107,7 @@ namespace TumbangPreso.Visual
             var releaseFrom=(_chargePosing || _chargeOffsetsApplied) ? _lastThrowPose : ThrowGesture.Rest;
             if(ThrowGesture.IsThrow(action))
             {
+                _throwCancelTime=-1;
                 bool hadPose=_chargeOffsetsApplied;
                 if(_chargeBone!=null || ResolveChargeBone())
                 {

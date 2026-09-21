@@ -941,10 +941,14 @@ namespace TumbangPreso.CameraSystem
 
         public void SetCharge(float power, float spin=0)
         {
+            // A refused/cancelled wind-up keeps the real held shoe and unwinds.
+            // A subsequent accepted action clears this return in PlayAction.
+            if (_charge >= 0 && power < 0 && _carrying && _clip == null && !_heroAction)
+                BeginActionReturn(Visual.ThrowGesture.CancelSeconds);
             _charge = power < 0.0f ? -1.0f : Mathf.Clamp01(power);
             _chargeSpin=_charge>=0 ? Mathf.Clamp(spin,-1,1) : 0;
 
-            if (_charge >= 0.0f && !_heroAction) _clip = null;
+            if (_charge >= 0.0f && !_heroAction) { _clip = null; _actionReturnLeft = 0; }
         }
 
         /// <summary>Pose the held placement gesture without starting or paying for a cast.</summary>

@@ -56,6 +56,8 @@ namespace TumbangPreso.PlayTests
                 "A normal Hero throw must not retain the previous second trail.");
             Assert.IsTrue(shoe.HostForceEquip(owner));
             Assert.IsFalse(accent.Emitting, "Accepted possession clears flight before the next render.");
+            Assert.IsFalse(shoe.GetComponentInChildren<TrailRenderer>().enabled);
+            yield return null; yield return null;
             Assert.AreEqual(0, shoe.GetComponentInChildren<TrailRenderer>().positionCount);
 
             // Exercise the existing replica state entry, without pretending this
@@ -78,12 +80,16 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(vertices.All(p => Vector3.Distance(p, shoe.transform.position) < 1),
                 "A correction cannot leave a fabricated cross-court route.");
             Snapshot(SlipperState.Loose, new Vector3(6, shoe.RestHeight, 4));
-            Assert.IsFalse(accent.Emitting); Assert.AreEqual(0, trail.positionCount);
+            Assert.IsFalse(accent.Emitting); Assert.IsFalse(trail.enabled);
+            yield return null; yield return null;
+            Assert.AreEqual(0, trail.positionCount);
             Snapshot(SlipperState.InFlight, new Vector3(0, 2, -4));
             yield return null; yield return null;
             Assert.IsTrue(accent.Emitting);
             accent.enabled = false;
-            Assert.IsFalse(accent.Emitting); Assert.AreEqual(0, trail.positionCount);
+            Assert.IsFalse(accent.Emitting); Assert.IsFalse(trail.enabled);
+            yield return null; yield return null;
+            Assert.AreEqual(0, trail.positionCount);
         }
 
         [UnityTest] public IEnumerator CanEdgesExpireAndRepeatedStateDoesNotReplayContact()

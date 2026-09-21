@@ -7,6 +7,7 @@ namespace TumbangPreso.Visual
     public static class ThrowGesture
     {
         public const float ReleaseSeconds=.54f;
+        public const float CancelSeconds=.18f;
         public const float ContactSeconds=.055f;
         public const float FollowSeconds=.18f;
         public static string Action(float spin) => spin < -.05f ? "throw-pektus-left"
