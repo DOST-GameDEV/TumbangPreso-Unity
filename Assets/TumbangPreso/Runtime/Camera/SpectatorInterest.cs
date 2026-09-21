@@ -600,7 +600,7 @@ namespace TumbangPreso.CameraSystem
             {
                 if (unit == null || !unit.RoundActive || unit == taya) continue;
                 if (!unit.IsTaggable() || unit.IsStunned || unit.IsTripped || round.Lata==null || !round.Lata.IsUpright
-                    || round.Lata.IsProtected || taya==null || !taya.CanAct() || taya.IsTripped) continue;
+                    || taya==null || !taya.CanAct()) continue;
 
                 float gap = taya != null
                     ? Flat(unit.transform.position, taya.transform.position)
@@ -631,8 +631,9 @@ namespace TumbangPreso.CameraSystem
             }
 
             // ---- 2. an ultimate ---------------------------------------------------------
-            // While the can is down/protected, show an actual own-shoe recovery
-            // near the taya's reset, without describing a currently illegal tag.
+            // Show a real own-shoe recovery near the taya's reset. Can restore
+            // protection prevents another knockdown, not a tag on a shoe holder;
+            // legal chases above still take priority during that protection.
             if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null
                 &&Flat(taya.transform.position,LataPoint(round))<=NearLata&&_slippers!=null)
             {
