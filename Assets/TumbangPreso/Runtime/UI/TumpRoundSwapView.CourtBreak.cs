@@ -38,7 +38,8 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(_scores[i].rectTransform,1608,y,184,87);_scores[i].alignment=TextAnchor.MiddleRight;_scores[i].color=new Color32(245,218,169,255);
             }
             var go=OwnerTextAction.Create(root,"ContinueWarmup","KEEP WARMING UP",dismiss,1322,949,476,88,31);
-            go.GetComponentInChildren<Text>().color=new Color32(198,218,135,255);
+            _continueLabel=go.GetComponentInChildren<Text>();
+            _continueLabel.color=new Color32(198,218,135,255);
             _buffer=OwnerUiLayout.Text(root,"WarmupTime","",29);_buffer.color=new Color32(227,224,207,255);
             OwnerUiLayout.Place(_buffer.rectTransform,104,956,1158,75);
         }

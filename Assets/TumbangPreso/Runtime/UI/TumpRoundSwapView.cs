@@ -9,7 +9,7 @@ namespace TumbangPreso.UI
     public sealed partial class TumpRoundSwapView : MonoBehaviour
     {
         public Canvas Canvas { get; private set; }
-        private Text _round, _name, _buffer;
+        private Text _round, _name, _buffer, _continueLabel;
         private Image _portrait;
         private readonly Text[] _names = new Text[4], _scores = new Text[4];
         private readonly Image[] _portraits = new Image[4];
@@ -85,7 +85,8 @@ namespace TumbangPreso.UI
         }
         private bool _halftime;private string _fallback;
         public void SetBreakContext(bool halftime,string fallback)
-        {_halftime=halftime;_fallback=fallback;if(halftime)_round.text="HALFTIME  /  "+_round.text;}
+        {_halftime=halftime;_fallback=fallback;if(halftime)_round.text="HALFTIME  /  "+_round.text;
+            if(_continueLabel!=null)_continueLabel.text=halftime?"HIDE STANDINGS":"KEEP WARMING UP";}
         public void Remaining(float seconds) => _buffer.text = (_fallback!=null?_fallback+" · ":_halftime?"Back to the court · ":"Next round · ") + Mathf.CeilToInt(seconds) + "s";
         private static Sprite Portrait(CharacterMotor actor)
         {

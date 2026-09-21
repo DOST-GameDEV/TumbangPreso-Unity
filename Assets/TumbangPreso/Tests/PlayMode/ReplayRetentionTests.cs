@@ -12,6 +12,29 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator RetainedCatchPreservesVictimCoatHeldPropAndSeparateWorldAudio()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita");
+            var round=GameServices.Round;var taya=round.PlayerAt(0);var victim=round.PlayerAt(1);
+            foreach(var actor in round.Players)actor.Teleport(new Vector3(6,.12f,-6+actor.PlayerSlot*3));
+            taya.Teleport(new Vector3(0,.12f,-4));victim.Teleport(new Vector3(0,.12f,-3));taya.transform.forward=Vector3.forward;
+            var shoe=Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include).First(s=>s.SeatOfOrigin==1);shoe.gameObject.SetActive(true);Assert.IsTrue(shoe.HostForceEquip(victim));
+            yield return new WaitForSeconds(2.5f);
+            Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(taya.transform.position,taya.transform.forward));
+            yield return new WaitForSeconds(1.6f);
+            var archive=Object.FindAnyObjectByType<MatchReplayArchive>();Assert.AreEqual(1,archive.Clips.Count,archive.LastSkip);
+            Assert.IsTrue(RecordedMatchClip.TryDecode(archive.Clips[0].Bytes,out var clip,out var error),error);
+            Assert.AreEqual("CATCH",clip.Reason);Assert.AreEqual(1,clip.Subject);
+            var body=clip.Objects.First(o=>o.Kind==RecordedObjectKind.Player&&o.Seat==1);
+            Assert.IsTrue(body.Pose.Samples.Any(s=>s.HasCoat&&s.Frost>.3f),"The actual caught coat survives into the retained aftermath");
+            Assert.IsTrue(clip.Objects.First(o=>o.Kind==RecordedObjectKind.Slipper&&o.Seat==1).Pose.Samples.Any(s=>s.Holder==1));
+            Assert.IsTrue(clip.Sounds.Any(s=>s.Id=="tag"||s.Id=="downed"),"The accepted contact sound is retained");
+            int recorded=0;void Heard(string id,Vector3 at,float pitch,float gain)=>recorded++;
+            AudioDirector.WorldCuePlayed+=Heard;
+            try{var sound=clip.Sounds[0];GameServices.Audio.PlayReplayCue(sound.Id,sound.Pitch,sound.Gain,0);Assert.AreEqual(0,recorded,"Replay sound cannot record/relay itself");}
+            finally{AudioDirector.WorldCuePlayed-=Heard;GameServices.Audio.StopReplayCues();}
+        }
+        [UnityTest]
         public IEnumerator ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound()
         {
             Assert.IsFalse(HalftimePresentation.IsMiddleBreak(2,4));
