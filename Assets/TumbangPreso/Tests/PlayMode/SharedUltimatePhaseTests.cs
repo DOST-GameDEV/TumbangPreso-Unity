@@ -83,7 +83,9 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(later.AbilitySystem.Kit.UltimateCost,later.AbilitySystem.Kit.UltimateCharge,.001f);
             later.Intent.Set(Verb.Ultimate,false);yield return null;
             Press(later,Verb.Ultimate);yield return null;yield return null;
-            Assert.IsTrue(phase.Active,"Fresh input after resume must still work.");
+            Assert.IsTrue(later.AbilitySystem.IsAiming(HeroAbilitySystem.Slot.Ultimate),"Zack must retain his aimed hold before release.");
+            later.Intent.Set(Verb.Ultimate,false);yield return null;yield return null;
+            Assert.IsTrue(phase.Active,"Fresh aimed input after resume must still work.");
             Assert.AreEqual(1,phase.Commits.Count);
         }
         [UnityTest]
