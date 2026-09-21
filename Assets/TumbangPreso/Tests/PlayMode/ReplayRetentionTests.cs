@@ -104,6 +104,11 @@ namespace TumbangPreso.PlayTests
             round.EndRound();match.AdvanceRound();yield return new WaitForSeconds(.2f);
             Assert.AreEqual(1,archive.Clips.Count,"A round reset cannot delete the halftime shortlist.");
             CollectionAssert.AreEqual(bytes,archive.Clips[0].Bytes);
+            // Remote clients rebuild the can art when its replicated skin changes.
+            // Simulate that actual source replacement, not just a rotated stat.
+            var oldModel=MatchReplayArchive.PropModel(round.Lata.gameObject);oldModel.name="RetiredCanArt";oldModel.SetActive(false);
+            var replacement=Object.Instantiate(RosterBook.Load().Cans.Last().Model,round.Lata.transform);replacement.name="Visual";
+            Object.Destroy(oldModel);yield return null;
             using(var laterView=new RecordedWorldView(archive.transform,clip))
             {Assert.IsTrue(laterView.Ready,"Recorded art remains playable after the can stats and parked shoe rotate: "+laterView.UnavailableReason);laterView.Draw(clip.Contact,false);}
             var pose=clip.Objects.First(o=>o.Kind==RecordedObjectKind.Player&&o.Seat==1).Pose;

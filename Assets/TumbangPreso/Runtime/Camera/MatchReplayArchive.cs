@@ -95,7 +95,7 @@ namespace TumbangPreso.CameraSystem
                 var filter=transform.GetComponent<MeshFilter>();var skin=transform.GetComponent<SkinnedMeshRenderer>();
                 var mesh=filter!=null?filter.sharedMesh:skin!=null?skin.sharedMesh:null;
                 if(mesh==null)continue;
-                text.Append(transform.name).Append('/').Append(mesh.name).Append(':').Append(mesh.vertexCount).Append(':').Append(mesh.subMeshCount).Append(';');
+                text.Append(transform==root.transform?"":transform.name).Append('/').Append(mesh.name).Append(':').Append(mesh.vertexCount).Append(':').Append(mesh.subMeshCount).Append(';');
             }
             using var sha=System.Security.Cryptography.SHA256.Create();
             return BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(text.ToString()))).Replace("-","");

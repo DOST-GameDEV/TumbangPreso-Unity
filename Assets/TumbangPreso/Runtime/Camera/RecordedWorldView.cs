@@ -39,6 +39,8 @@ namespace TumbangPreso.CameraSystem
                 foreach(var track in clip.Objects)
                 {
                     GameObject source=Source(track);
+                    if((source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey)&&
+                        (track.Kind==RecordedObjectKind.Can||track.Kind==RecordedObjectKind.Slipper))source=CataloguedProp(track);
                     if(source==null){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1)+" skin="+track.Skin+" person="+track.Person;return;}
                     string visualKey=MatchReplayArchive.VisualKey(source);
                     if(visualKey!=track.VisualKey){UnavailableReason="Changed recorded art: "+track.Kind+" P"+(track.Seat+1)+" expected="+track.VisualKey+" actual="+visualKey;return;}
@@ -46,6 +48,7 @@ namespace TumbangPreso.CameraSystem
                     history.Record(Time.time);history.Record(Time.time+.05f);
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
                     var bones=track.Pose.Bind(copy.Root);if(bones==null){UnavailableReason="Recorded pose binding changed: "+track.Kind;return;}
+                    if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,ToonSkin.PropOutlineWidth);
                     _items.Add(new Item{Track=track,Copy=copy,Bones=bones});
                     track.Pose.Apply(bones,clip.Contact);
                 }
@@ -86,6 +89,14 @@ namespace TumbangPreso.CameraSystem
                 Ready=true;
             }
             catch{Dispose();throw;}
+        }
+        private static GameObject CataloguedProp(RecordedObjectTrack track)
+        {
+            var book=RosterBook.Load();if(book==null)return null;
+            var entries=track.Kind==RecordedObjectKind.Can?book.Cans:book.Slippers;
+            foreach(var entry in entries)
+                if(entry!=null&&entry.Model!=null&&MatchReplayArchive.VisualKey(entry.Model)==track.VisualKey)return entry.Model;
+            return null;
         }
         private static GameObject Source(RecordedObjectTrack track)
         {
