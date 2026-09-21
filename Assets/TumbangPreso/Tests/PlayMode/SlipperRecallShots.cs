@@ -367,6 +367,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(beam.Shaded,
                 "the beam fell back to a flat column, so TumbangPreso/SlipperBeam did not load");
 
+            MeasureBeamFrameFraction(beam, "range", 1280, 720);
+
             yield return Shot(mine, me, "recall-2-loose-at-range", SlipperState.Loose);
 
             // ⚠️ A SIDE CAMERA, BECAUSE A COLUMN CANNOT BE JUDGED FROM ABOVE IT. The frames above
@@ -379,6 +381,13 @@ namespace TumbangPreso.PlayTests
             // The same frame at his own window, which is the shape § 6.2b says nobody has seen.
             yield return Shot(mine, me, "recall-2-loose-at-range-shortwide",
                               SlipperState.Loose, ShortWide, ShortHigh);
+
+            foreach (float fade in new[] { .15f, .5f, 1f })
+            {
+                yield return Settle(mine, me, inward, Balance.PickupRadius + fade, faceShoe: true);
+                MeasureBeamFrameFraction(beam, "fade-" + Mathf.RoundToInt(fade * 100), 1280, 720);
+                MeasureBeamFrameFraction(beam, "fade-wide-" + Mathf.RoundToInt(fade * 100), ShortWide, ShortHigh);
+            }
 
             // ---- 3 · IN REACH, WHERE THE MARK HANDS OVER ----------------------------------
             // ⚠️⚠️ THIS FRAME ASSERTS AN ABSENCE, AND IT IS THE MOST VALUABLE ONE HERE. The first
@@ -512,6 +521,54 @@ namespace TumbangPreso.PlayTests
             look.y = 0.0f;
             if (look.sqrMagnitude < 0.0001f) return;
             who.transform.rotation = Quaternion.LookRotation(look.normalized);
+        }
+
+        private static void MeasureBeamFrameFraction(Visual.SlipperBeam beam, string label, int width, int height)
+        {
+            // Same-camera, same-frame A/B includes the column, pool, lamp and bloom.
+            // Count changed pixels, not just white ones: a saturated blue wash can
+            // obscure play without turning white. This is visual coverage, not GPU cost.
+            Assert.IsTrue(beam.Drawing, label + ": there is no beam to measure");
+            var camera = Camera.main;
+            var oldTarget = camera.targetTexture; var oldActive = RenderTexture.active;
+            var target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            var pixels = new Texture2D(width, height, TextureFormat.RGB24, false);
+            var colour = beam.Colour;
+            string folder = System.Environment.GetEnvironmentVariable("TUMP_BEAM_EVIDENCE");
+            if (string.IsNullOrWhiteSpace(folder))
+                folder = System.IO.Path.Combine(OutDir, "beam-fraction-" + System.DateTime.UtcNow.Ticks);
+            System.IO.Directory.CreateDirectory(folder);
+            try
+            {
+                camera.targetTexture = target;
+                beam.Set(false, colour); camera.Render(); RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
+                var before = pixels.GetPixels32();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, label + "-off.png"), pixels.EncodeToPNG());
+                beam.Set(true, colour); camera.Render(); RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, width, height), 0, 0); pixels.Apply();
+                var after = pixels.GetPixels32();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder, label + "-on.png"), pixels.EncodeToPNG());
+                int changed = 0, newlyWhite = 0;
+                for (int i = 0; i < before.Length; i++)
+                {
+                    int delta = Mathf.Abs(after[i].r - before[i].r) + Mathf.Abs(after[i].g - before[i].g) + Mathf.Abs(after[i].b - before[i].b);
+                    if (delta > 9) changed++;
+                    if (after[i].r > 245 && after[i].g > 245 && after[i].b > 245
+                        && (before[i].r <= 245 || before[i].g <= 245 || before[i].b <= 245)) newlyWhite++;
+                }
+                float fraction = changed / (float)before.Length, white = newlyWhite / (float)before.Length;
+                string row = System.FormattableString.Invariant($"{label},{width},{height},{changed},{fraction:F6},{newlyWhite},{white:F6}");
+                System.IO.File.AppendAllText(System.IO.Path.Combine(folder, "coverage.csv"), row + "\n");
+                Debug.Log("[RecallBeamCoverage] " + row);
+                Assert.Greater(changed, 0, label + ": the beam never contributed visible pixels");
+                Assert.Less(fraction, .12f, label + ": recall effect exceeds the 12-percent frame budget");
+            }
+            finally
+            {
+                beam.Set(true, colour); camera.targetTexture = oldTarget; RenderTexture.active = oldActive;
+                target.Release(); Object.Destroy(target); Object.Destroy(pixels);
+            }
         }
 
         /// <summary>

@@ -77,6 +77,7 @@ namespace TumbangPreso.InputLayer
         }
 
         private static readonly List<Bridge> Bridges = new List<Bridge>();
+        private static bool _syncing, _syncAgain;
 
         /// <summary>True while at least one controller is being driven by the guess.</summary>
         public static bool Active => Bridges.Count > 0;
@@ -126,6 +127,20 @@ namespace TumbangPreso.InputLayer
         /// Brings the bridge list into step with what is attached. Idempotent and cheap.
         /// </summary>
         public static void Sync()
+        {
+            // Adding/removing our virtual Gamepad synchronously raises onDeviceChange.
+            // Finish recording that bridge before handling the nested notification;
+            // otherwise the same Joystick creates an unbounded chain of mirrors.
+            if (_syncing) { _syncAgain = true; return; }
+            _syncing = true;
+            try
+            {
+                do { _syncAgain = false; SyncDevices(); } while (_syncAgain);
+            }
+            finally { _syncing = false; }
+        }
+
+        private static void SyncDevices()
         {
             for (int i = Bridges.Count - 1; i >= 0; i--)
             {

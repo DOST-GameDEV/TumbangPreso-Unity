@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -480,32 +481,42 @@ namespace TumbangPreso.PlayTests
 
             yield return new WaitForSecondsRealtime(2.0f);
 
-            var panel = Find("SettingsPanel");
-            Assert.IsNotNull(panel, "MainMenu must carry the settings panel.");
-
-            panel.SetActive(true);
+            PaintedScreens.ShowSettings();
             yield return new WaitForSecondsRealtime(0.8f);
 
-            var settings = panel.GetComponentInChildren<UI.ConvertedSettingsPanel>(true);
-            Assert.IsNotNull(settings, "the settings panel must carry its own component.");
+            var settings = Object.FindFirstObjectByType<UI.TumpSettingsView>();
+            Assert.IsNotNull(settings, "the settings door must open a settings screen.");
+            var canvas = PaintedScreens.Settings();
 
-            // âš ï¸ THE STALE-NAME CHECK RUNS HERE RATHER THAN IN ITS OWN TEST, because it needs a
-            // BUILT panel and this is the one place that has one. A tab node name that no longer
-            // resolves is silent: `ShowTab` skips a null, so the row is simply never shown on any
-            // page and nothing says so.
-            var missing = settings.MissingTabNodes();
-            Assert.IsEmpty(missing,
-                           "every settings tab must own nodes that exist: " +
-                           string.Join(", ", missing));
-
-            for (int tab = 0; tab < UI.ConvertedSettingsPanel.TabCount; tab++)
+            // ⚠️⚠️ THE STALE-NAME CHECK USED TO RUN HERE AND IT WAS ASKING THE RETIRED
+            // PANEL. `ConvertedSettingsPanel.MissingTabNodes` walks `Tabs`, which lists the
+            // CONVERTED screen's node names (`VIDEO/RenderStyleRow`, `PLAYER/TelemetryNote` and
+            // seven more). That screen is not built any more: the class is four lines that add
+            // `TumpSettingsView` and open it, and the painted screen names its rows after the
+            // SETTING (`RenderStyle`, `Telemetry`) with notes called `Note`. So the check
+            // reported nine missing nodes on a healthy screen, every run, and it could not have
+            // reported anything else. **The claim it was making is worth keeping**, which is that
+            // no page is silently empty, so it is made against what the screen actually builds:
+            // every section puts controls of its own under its own heading.
+            for (int section = 0; section < UI.TumpSettingsView.Sections.Length; section++)
             {
-                settings.ShowTab(tab);
+                settings.ShowSection(section);
                 yield return new WaitForSecondsRealtime(0.5f);
-                yield return Capture($"Settings-{ShotVersion}-{UI.ConvertedSettingsPanel.TabTitle(tab)}");
+
+                string title = UI.TumpSettingsView.Sections[section];
+                Assert.IsNotEmpty(canvas.GetComponentsInChildren<Selectable>()
+                        .Where(control => control.isActiveAndEnabled
+                                          && !control.name.StartsWith("SettingsSection")
+                                          && control.name != "TumpSettingsBack"
+                                          && control.name != "SettingsCredits"
+                                          && control.name != "TumpSaveSettings")
+                        .Select(control => control.name).ToArray(),
+                    title + " drew no controls of its own, so the page is a heading over nothing.");
+
+                yield return Capture($"Settings-{ShotVersion}-{title}");
             }
 
-            panel.SetActive(false);
+            canvas.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -669,33 +680,48 @@ namespace TumbangPreso.PlayTests
             close.onClick.Invoke();
             yield return new WaitForSecondsRealtime(0.4f);
 
-            // Both drawers are part of the requested composition checkpoint. Photographing only
-            // the clean collapsed state previously let clipped rows and merged network actions
-            // survive review unnoticed.
-            // âš ï¸ BY THE TOGGLE'S OWN NAME, NOT BY ITS HOST'S. It used to look up `SettingsDrawer`
-            // and take the first `Button` under it, which stopped finding anything the moment the
-            // left-hand furniture became one rail (`LobbyChrome.BuildLeftRail`): the host is
-            // `LobbyLeftRail` now and its first button would be whichever the layout ordered first.
-            // The failure was silent, because the shot is taken inside an `if`.
-            var settingsToggle = Find("SettingsDrawerToggle")?.GetComponent<Button>();
-            Assert.IsNotNull(settingsToggle,
-                "the match-settings drawer has no toggle to open, so the open state cannot be "
-                + "photographed. See LobbyChrome.BuildSettingsChip.");
+            // The lobby's own doors, open and shut. Photographing only the clean collapsed
+            // state previously let clipped rows and merged network actions survive review.
+            // ⚠️ THE RETIRED CHROME'S LESSON, KEPT: its drawer was looked up by its HOST
+            // (`SettingsDrawer`, then `LobbyLeftRail`) and the first `Button` under it, which
+            // stopped finding anything the moment the furniture became one rail and picked
+            // whichever button the layout ordered first after that. **Look a control up by its
+            // own name.** Both failures were silent, because the shot was taken inside an `if`.
+            // ⚠️⚠️ THERE IS NO MATCH-SETTINGS DRAWER ON THIS LOBBY ANY MORE, AND THAT IS A
+            // DESIGN DECISION RATHER THAN A MISSING CONTROL. `LobbyChrome.BuildSettingsChip`
+            // built `SettingsDrawerToggle` on the retired chrome, where the rules lived in a
+            // drawer that slid out of a chip. The painted lobby puts both doors on its FACE:
+            // `SettingsButton` opens the settings screen and `CustomGameButton` opens the rules
+            // sheet. That is `CLAUDE.md` § 6.3 applied, *"never add a second door to fix a
+            // findability problem"* read the other way round, so the shot pass follows the
+            // controls rather than asserting the drawer back into existence.
+            var gameSettings = Find("SettingsButton")?.GetComponent<Button>();
+            Assert.IsNotNull(gameSettings,
+                "the lobby must have a door to the settings screen. It is the only one a player "
+                + "has since the title lost its pennants; see OwnerPreparationView.Court.");
 
-            if (settingsToggle != null)
-            {
-                settingsToggle.onClick.Invoke();
-                yield return new WaitForSecondsRealtime(0.25f);
-                yield return Capture($"LobbySettings-{ShotVersion}");
-                settingsToggle.onClick.Invoke();
-            }
+            var rules = Find("CustomGameButton")?.GetComponent<Button>();
+            Assert.IsNotNull(rules,
+                "the lobby must have a door to the custom rules. Without it the score target, "
+                + "the round count and the slipper stock cannot be changed at all.");
 
-            // âš ï¸âš ï¸ THE THREE DRAWERS ARE THREE CHIPS ON THE BOTTOM RAIL NOW, AND EVERY ONE OF
-            // THEM IS A STATE `CLAUDE.md` Â§ 6.2b SAYS MUST BE PHOTOGRAPHED. The old screen had two
-            // drawer toggles in two corners; this one has QUICK MATCH, JOIN and CHAT in one row,
-            // each opening a sheet directly above the column it belongs to. A shot of the shut
-            // lobby is a shot of one of four states.
-            var joinChip = Find("JoinChip")?.GetComponent<Button>();
+            rules.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(0.4f);
+            yield return Capture($"LobbyRules-{ShotVersion}");
+            rules.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(0.25f);
+
+            // ⚠️⚠️ AND THE THREE CHIPS AND THE THREE TABS WERE RENAMED WITH THE REST OF THE
+            // LOBBY, SO EVERY BLOCK BELOW WAS QUIETLY DOING NOTHING. Each one is guarded by an
+            // `if (x != null)`, which is why none of them failed and why nine states have been
+            // going unphotographed with the fixture green: JOIN, CHAT, RANKED, the queue, the
+            // long name and the three modes. `OwnerPreparationView.Court` builds `ChatButton`,
+            // `JoinRoomButton`, `PracticeRoute`, `FriendsRoute`, `RankedRoute` and one
+            // `PrimaryButton` whose label follows the mode. **A silent skip in a shot pass is
+            // the same fault as a green probe for a screen nobody can reach** (§ 124.11); the
+            // guards stay, because a mode genuinely removed should warn rather than fail, but
+            // the names they guard now exist.
+            var joinChip = Find("JoinRoomButton")?.GetComponent<Button>();
             if (joinChip != null)
             {
                 joinChip.onClick.Invoke();
@@ -704,7 +730,7 @@ namespace TumbangPreso.PlayTests
                 joinChip.onClick.Invoke();
             }
 
-            var chatChip = Find("ChatChip")?.GetComponent<Button>();
+            var chatChip = Find("ChatButton")?.GetComponent<Button>();
             if (chatChip != null)
             {
                 chatChip.onClick.Invoke();
@@ -726,14 +752,14 @@ namespace TumbangPreso.PlayTests
             // way through and reads as a broken 110-unit button with its label clipped across it;
             // ðŸ§‘ saw that frame and said *"this start match button ugly"*. **A shot taken during an
             // animation is a shot of a state no player looks at.**
-            var rankedTab = Find("RankedTab")?.GetComponent<Button>();
+            var rankedTab = Find("RankedRoute")?.GetComponent<Button>();
             if (rankedTab != null)
             {
                 rankedTab.onClick.Invoke();
                 yield return new WaitForSecondsRealtime(1.5f);
                 yield return Capture($"LobbyRanked-{ShotVersion}");
 
-                var rankedButton = Find("RankedButton")?.GetComponent<Button>();
+                var rankedButton = Find("PrimaryButton")?.GetComponent<Button>();
                 if (rankedButton != null)
                 {
                     rankedButton.onClick.Invoke();
@@ -746,20 +772,20 @@ namespace TumbangPreso.PlayTests
                 }
             }
 
-            var practiceTab = Find("PracticeTab")?.GetComponent<Button>();
+            var practiceTab = Find("PracticeRoute")?.GetComponent<Button>();
             if (practiceTab != null)
             {
                 practiceTab.onClick.Invoke();
                 yield return new WaitForSecondsRealtime(1.5f);
                 yield return Capture($"LobbyPractice-{ShotVersion}");
 
-                var customTab = Find("CustomTab")?.GetComponent<Button>();
+                var customTab = Find("FriendsRoute")?.GetComponent<Button>();
                 if (customTab != null) customTab.onClick.Invoke();
                 yield return new WaitForSecondsRealtime(0.4f);
             }
 
             // The join card over the top of it, which is the other half of this screen.
-            var open = Find("OpenJoinButton");
+            var open = Find("JoinRoomButton") ?? Find("OpenJoinButton");
             var panel = Find("LobbyJoinPanel");
 
             if (open != null && panel != null)
@@ -898,6 +924,7 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         internal static IEnumerator Capture(string name, int width, int height)
         {
+            Directory.CreateDirectory(OutDir);
             var cam = UnityEngine.Camera.main;
             if (cam == null)
             {

@@ -996,8 +996,12 @@ namespace TumbangPreso.InputLayer
         /// </summary>
         private static string Opening()
         {
-            string watch = ControllerWatch.StatusLine();
-            if (watch.Length > 0) return watch;
+            // This is already the map. Use a concise status in its one-line
+            // footer instead of the general notice telling players to open it.
+            if (ControllerWatch.HasUnrecognised && !GenericPadBridge.Enabled)
+                return "Unrecognised controllers are off. Change this in Settings / Controls.";
+            if (GenericPadBridge.Active)
+                return "Using a generic controller layout. Check its controls above.";
 
             return Gamepad.current != null
                 ? "Reading " + Gamepad.current.displayName + "."

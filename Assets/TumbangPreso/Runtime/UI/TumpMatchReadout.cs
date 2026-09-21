@@ -148,6 +148,33 @@ namespace TumbangPreso.UI
         public void Toast(string words, float duration)
         { _toast.text = words; _toastLeft = duration; _toast.enabled = true; }
         public void Countdown(string words) { _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words); }
+        /// <summary>
+        /// The two things `RoundLabel` can ever say, and the widest form of each.
+        ///
+        /// ⚠️⚠️ THIS EXISTS SO A LAYOUT PROBE READS THE SHIPPING FORMATTER RATHER THAN A
+        /// STRING TYPED INTO A TEST. `HudOverflowProbe` was fed `Hud.TopCentreLines()`, which is
+        /// the LEGACY hud's worst case: `ROUND n / N   ·   DEFENDER: &lt;14 chars&gt;`, about 704
+        /// units of text. **The painted readout never draws that line.** It writes the round and
+        /// the total, and the defender is named on its own row, so the probe reported nine
+        /// overflows across nine resolutions about a sentence this HUD cannot produce. A probe
+        /// fed a guess measures the guess, which is the same warning `Hud.TopCentreLines`'s own
+        /// header carries one HUD earlier.
+        /// </summary>
+        public static IEnumerable<string> RoundLabelLines()
+        {
+            yield return WarmupRoundLine;
+
+            // ⚠️ EIGHT OF EIGHT IS THE WIDEST LEGAL ROUND LINE, not a round number anybody
+            // plays: `CustomGameRules` caps the count at eight, and one digit either side is
+            // the longest this string gets.
+            yield return RoundLine(8, 8);
+        }
+
+        internal const string WarmupRoundLine = "Warm up · Scores paused";
+
+        internal static string RoundLine(int round, int total)
+            => $"Round {Mathf.Max(1, round)} / {total}";
+
         public void Hit(Color color) { _hit.color = color; _hit.enabled = true; _hitLeft = .25f; }
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
@@ -163,7 +190,7 @@ namespace TumbangPreso.UI
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
             _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Pale;
-            _round.text = match.IsWarmupBuffer ? "Warm up · Scores paused" : $"Round {Mathf.Max(1, match.RoundNumber)} / {match.TotalRounds}";
+            _round.text = match.IsWarmupBuffer ? WarmupRoundLine : RoundLine(match.RoundNumber, match.TotalRounds);
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
             Can(local, training, spectating); Personal(local, spectating);

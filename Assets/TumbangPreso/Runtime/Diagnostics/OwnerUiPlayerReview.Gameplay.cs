@@ -13,6 +13,50 @@ namespace TumbangPreso.Diagnostics
 {
     public sealed partial class OwnerUiPlayerReview
     {
+        private IEnumerator SeanVisualOnly()
+        {
+            Stage("Sean native visual review through real selection");
+            yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 80);
+            if (Find("GuestAccount") != null) yield return Click("GuestAccount");
+            else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            yield return Click("StartButton"); yield return Click("HeroStrikeButton"); yield return Click("PracticeButton");
+            yield return Click("LoadoutButton"); yield return Click("Portrait_sean"); yield return Click("TumpUseLoadout");
+            yield return Click("PrimaryButton"); yield return StartReadyRound();
+            foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
+            foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
+            var who = Object.FindAnyObjectByType<PauseWatcher>().Local;
+            if (!(who.AbilitySystem.Kit is Abilities.SeanHeroKit)) throw new InvalidOperationException("Sean selection did not reach the real player kit");
+            foreach (var actor in GameServices.Round.Players)
+                if (actor != who)
+                {
+                    actor.Intent.Clear(); actor.Intent.Parked = true;
+                    actor.AbilitySystem?.ResetKit();
+                }
+            who.IsBot = true; // Controlled review charge must not write unlock progress.
+            who.Intent.Clear(); who.Intent.Parked = false;
+            who.AbilitySystem.Kit.AddUltimateCharge(100);
+            who.Intent.Set(Verb.Ultimate, true); yield return new WaitForSecondsRealtime(.4f);
+            who.Intent.Set(Verb.Ultimate, false);
+            bool HasEmbers()
+            {
+                foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
+                    if (mesh.sharedMesh != null && mesh.sharedMesh.name == "Sean fractured ember") return true;
+                return false;
+            }
+            yield return WaitFor(() => who.IsGrounded && GameObject.Find("SupernovaCrater") != null && HasEmbers(), 8);
+            foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
+            {
+                if (mesh.sharedMesh == null || mesh.sharedMesh.name != "Sean fractured ember") continue;
+                var renderer = mesh.GetComponent<Renderer>();
+                if (mesh.sharedMesh.vertexCount != 12 || renderer == null || renderer.sharedMaterial == null || !renderer.sharedMaterial.shader.isSupported)
+                    throw new InvalidOperationException("Native fire debris mesh/material is invalid");
+            }
+            yield return Shot("sean-native-landing");
+            yield return new WaitForSecondsRealtime(.5f); yield return Shot("sean-native-recovery");
+            Stage("native Sean ultimate produced the corrected ember geometry with supported material");
+        }
+
         // Controlled native input fixture. Scene entry is through the real UI. Positions,
         // target availability and a role advance are staged; verb outcomes are never injected.
         private IEnumerator GameplayOnly()

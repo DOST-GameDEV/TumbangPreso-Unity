@@ -23,6 +23,7 @@ namespace TumbangPreso.UI
         private InputDeviceKind _device = InputDeviceKind.KeyboardMouse;
         private Action _back, _controller, _touch;
         private bool _suspended;
+        private bool _genericSupportShown;
         private TumpChoice _frameCap;
         private Text _frameReason;
         public static readonly string[] Sections = { "Controls", "Audio", "Graphics", "Player", "Accessibility" };
@@ -46,6 +47,9 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (_suspended || _canvas == null || !_canvas.gameObject.activeSelf) return;
+            if (_tab == 0 && _device != InputDeviceKind.Touch && !_session.Listening
+                && SettingsOptionMenu.OpenOption == null && _genericSupportShown != ControllerWatch.HasUnrecognised)
+                ShowSection(0);
             if (!MenuNav.CancelPressed || ScreenTakeover.EscapeIsSpokenExcept(this)) return;
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }

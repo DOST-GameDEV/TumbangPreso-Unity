@@ -417,17 +417,25 @@ packet including keepalives.
 
 ### 155.5 NOT DONE, named rather than left implied
 
+Current reconciliation2026-09-22: the inherited2.2m beam was refined to the current
+0.48m shader landmark during the presentation work and shipped through multiple
+Windows candidates, including environment-v39. Frame coverage now has actual-camera
+same-frame A/B evidence:7Eskinita views at1280x720/1600x720, range and the pickup-fade
+band, maximum0.265percent changed pixels and zero newly white pixels. This closes
+the previously unmeasured12percent bound for those views (beam-and-flare-v1,2/2).
+Human visual judgment and explicit peer-render ownership remain separate below.
+
 - [ ] **His eye on it in play.** The frames say it draws; they cannot say whether a column standing
   on your shoe during a fight is help or clutter, or whether 2.2 m is right under the bridge.
   `Attention.md` § 20.
-- [ ] **Nothing measures the frame fraction.** `AbilityShowcaseProbe`'s 12 per cent bound is the
+- [x] **Frame fraction measured for the current landmark.** Historical gap: `AbilityShowcaseProbe`'s 12 per cent bound is the
   number this was written against and the beam is not in that probe's cast, so the claim that a
   beam cannot blow out a first-person frame is argued rather than measured. ⚠️ **The additive
   blend makes this MORE worth measuring than it was for the mesh version, not less.**
 - [ ] **No peer has watched another peer's screen.** The beam is per-peer by construction and
   nothing about it crosses the wire, which is an argument rather than an observation. It is the
   same gap § 126.11 records for crossplay.
-- [ ] **Not built into a player.** This Mac has no Windows Standalone module, so the shader has
+- [x] **Built into current Windows candidates.** Historical gap: This Mac has no Windows Standalone module, so the shader has
   never been through `GameBuilder` and the `EnsureRuntimeShaders` entry above is unexercised.
   § 145.5.
 
@@ -912,6 +920,22 @@ with the chat closed on purpose (§ 114: an empty log is a promise, not a screen
 both typing probes press CHAT first, through the door, exactly as `OwnerPreparationTests` does.
 
 ### 153.20 What is still red after this pass, and why each one is: OPEN
+
+Current reconciliation2026-09-22: migrated painted-screen fixtures and actual
+capability routes now pass the combined screens group:113passed,0failed,1expected
+batch-mode UGS identity skip, all45fixtures present,463.937s. Original338inventory
+rows are preserved and mapped explicitly; the former149unmatched rows are no longer
+silently outstanding. Settings note sizing and capture lifecycle defects were
+reproduced/corrected. Native review is being refreshed against current title layers
+and routes; this is not yet the final full-project gate. See full-backlog report's
+existing-ui-plan.md, ui-evidence and control-inventory-migration.tsv.
+
+Later manual tracing corrected a false Button_ON mapping and found the missing
+unrecognised-controller toggle plus a real hotplug recursion in GenericPadBridge.
+Both are repaired with failed-before evidence; corrected inventory/save-discard
+passes, the exposed960x540controller status clip is fixed, and controller contracts
+pass11/11. Nativev41will qualify these additions. The earlier green inventory alone
+must not be used as proof that the lost toggle had already existed.
 
 Every fixture below is on the same fault as the rest of § 153.18 and is **not** a report about
 the shipping game: the owner-painted pass renamed the surface under it. They are listed with
@@ -3256,6 +3280,18 @@ and that is right for them: they carry no "it was delivered" claim to be wrong a
 gameplay verb pressed during the join window is a verb pressed before the player has a body.
 
 ### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP
+
+Current reconciliation2026-09-22: the former C4 file reservation was released by
+owner handback. F1/F2 are now reproduced and fixed: match/round-scoped skill request
+receipts preserve a newer cast when an older cast is refused, and free recall cannot
+refund a charge. Actual three-peer failed-before/passed-after evidence is retained in
+the presentation report (net-prediction-baseline-v1 and corrected receipt-window run).
+F3 eligibility no longer mutates hold time: CheckNetworkSkill and refused
+ApplyNetworkCast restore it, covered by SkillReceiptTests. F4 stale rejoin warmup is
+covered by ClientRoundBoundaryProbe and its September16 report. These four software
+faults are no longer open implementation. The exact final candidate's broader
+request/rehost/outage matrix remains part of final qualification, not proof supplied
+by a single cast test. Historical reports below retain their original findings.
 
 **September15 ownership:** reserved to the separate Claude PC as C4 in
 CLAUDE_REQUEST_SAFETY_LANE.md. Do not duplicate that work here. Preserve cleared
@@ -12633,7 +12669,12 @@ This is not a recolor pass. Existing map corrections remain first; the other
 movement/equipment/network/graphics/TODO scope remains open.
 # Deferred by owner, 2026-09-14
 
-- [ ] Finish Inday's FPP arms LATER. Owner explicitly moved this below other
+- [x] Finish Inday's FPP arms. Superseded and completed2026-09-22: both original
+  Inday models and both FPP routes now use plain brown arms with simple hands,
+  per the latest owner correction. Published e50f8c37; source/rig/animation audits,
+  quick/held/moving casts and nativev37/v39 views pass. Original arm backups and
+  earlier failed studies are retained. The following describes the old candidate,
+  not unfinished work: owner explicitly moved this below other
   project work. Keep her actual restored left/right arm meshes, not the rejected
   reconstructed guards or red mittens/purple bands. Source-copy v1 passed the
   character-switch and quick/held/moving throw checks, but its sleeve ends showed

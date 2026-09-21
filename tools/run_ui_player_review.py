@@ -32,6 +32,8 @@ def main():
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
     parser.add_argument('--ordinary-skills',action='store_true',help='Capture all twelve default ordinary skills through accepted input and actual game audio.')
+    parser.add_argument('--skill-variants',action='store_true',help='Capture all 24 existing-kit choices in both roles, including resource-preserving role refusals.')
+    parser.add_argument('--variant-observer',action='store_true',help='Observe the staged skill-variant route from another actual body instead of the caster.')
     parser.add_argument('--result-end-only',action='store_true',help='Run supported one-round/30-second bot matches to check natural result cleanup in both modes.')
     parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
@@ -46,10 +48,13 @@ def main():
     parser.add_argument('--busy-exchange-only',action='store_true',help='Record native owner and live spectator views with four active bots and game audio in both modes.')
     parser.add_argument('--gameplay-only',action='store_true',help='Exercise shipped keyboard/mouse verbs in both modes with staged legal targets.')
     parser.add_argument('--spectator-only',action='store_true',help='Exercise the real spectator entry, camera controls and manual replay.')
+    parser.add_argument('--sean-visual-only',action='store_true',help='Qualify the refined fire debris through Sean selection and a real ultimate.')
     parser.add_argument('--introduction-bodies-only',action='store_true',help='Render six authored introduction body studies in the native player; no shared phase claim.')
     parser.add_argument('--introduction-scenes',action='store_true',help='Include the private scene effects in the introduction art route.')
     parser.add_argument('--map-surfaces-only',action='store_true',help='Inspect all native map finishes, matched quality views and isolated detail-cost windows.')
     args=parser.parse_args()
+    if args.variant_observer and not args.skill_variants:
+        parser.error('--variant-observer requires --skill-variants')
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
         raise SystemExit('Use an existing internal Builds/... player, never the Desktop build.')
@@ -69,7 +74,9 @@ def main():
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
     if args.map_surfaces_only:command.append('-tp-map-surfaces-only')
-    if args.ordinary_skills:command.append('-tp-ordinary-skills')
+    if args.ordinary_skills or args.skill_variants:command.append('-tp-ordinary-skills')
+    if args.skill_variants:command.append('-tp-skill-variants')
+    if args.variant_observer:command.append('-tp-variant-observer')
     if args.result_end_only:command+=['-tp-whole-matches','-tp-result-end']
     if args.whole_matches:command.append('-tp-whole-matches')
     if args.frame_poll:command.append('-tp-review-frame-poll')
@@ -86,10 +93,11 @@ def main():
     if args.introduction_bodies_only:command.append('-tp-introduction-bodies-only')
     if args.introduction_scenes:command.append('-tp-introduction-scenes')
     if args.spectator_only:command.append('-tp-spectator-review-only')
+    if args.sean_visual_only:command.append('-tp-sean-visual-review-only')
     process=subprocess.Popen(command,cwd=ROOT,env=unity_environment(),startupinfo=startup)
     print('Started internal UI review, process',process.pid,flush=True)
     try:
-        code=process.wait(timeout=2300 if args.whole_matches else 420)
+        code=process.wait(timeout=2300 if args.whole_matches else 900 if args.skill_variants else 420)
     except subprocess.TimeoutExpired:
         process.terminate();process.wait(timeout=15);code=1
     finally:

@@ -17,58 +17,86 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
+        /// <summary>
+        /// ⚠️⚠️ EVERY CONTROL THIS FIXTURE NAMED WAS RENAMED BY THE PAINTED PASS AND NONE OF
+        /// THEM WAS DELETED, WHICH IS § 153.18'S ONE FAULT REPEATED. The mapping, so the next
+        /// reader starts from it: `CharacterButton` is `LoadoutButton` (one door to the picker
+        /// since the loadout moved onto it, § 122.5), `RosterChoices` is `OwnerRosterGrid`,
+        /// `RosterChoice&lt;n&gt;` is `Portrait_&lt;id&gt;` because a tile is named after the fighter rather
+        /// than its place in a list that reorders, `Category&lt;n&gt;` is `TumpCategory&lt;n&gt;`,
+        /// `ConfirmButton` is `TumpUseLoadout` and `BackButton` is `TumpBack`.
+        /// `TumpPickerView.Collection.cs` is the authority.
+        /// </summary>
         [UnityTest]
         public IEnumerator RosterPreviewCanBeCancelledOrExplicitlySaved()
         {
             yield return Open(GameMode.Classic);
-            var picker = Object.FindFirstObjectByType<ConvertedCharacterSelect>();
             var settings = Settings.SettingsStore.Current;
             int saved = settings.CharacterPick;
             int chosen = (saved + 1) % Roster.ClassicPeople.Count;
-            Assert.AreEqual(Roster.ClassicPeople.Count, GameObject.Find("RosterChoices").transform.childCount);
-            Press(Find("RosterChoice" + chosen));
+            Assert.AreEqual(Roster.ClassicPeople.Count, GameObject.Find("OwnerRosterGrid").transform.childCount);
+            Press(Find(Tile(Roster.ClassicPeople[chosen].Id)));
             Assert.AreEqual(saved, settings.CharacterPick, "Preview must not save before explicit confirmation.");
-            yield return UiRuntimeShots.Capture("Picker-brand-v4-people", 1920, 1080);
-            Press(picker.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+            yield return UiRuntimeShots.Capture("Picker-brand-v5-people", 1920, 1080);
+            Press(Find("TumpBack"));
             yield return null;
             Assert.AreEqual(saved, settings.CharacterPick);
-            Press(Find("CharacterButton"));
+            Press(Find("LoadoutButton"));
             yield return null;
-            Press(Find("RosterChoice" + chosen));
-            Press(Find("ConfirmButton"));
+            Press(Find(Tile(Roster.ClassicPeople[chosen].Id)));
+            Press(Find("TumpUseLoadout"));
             yield return null;
             Assert.AreEqual(chosen, settings.CharacterPick);
-            Press(Find("CharacterButton"));
+            Press(Find("LoadoutButton"));
             yield return null;
             for (int category = 1; category <= 2; category++)
             {
-                Press(Find("Category" + category));
+                Press(Find("TumpCategory" + category));
                 yield return null;
-                Assert.Greater(GameObject.Find("RosterChoices").transform.childCount, 0);
-                yield return UiRuntimeShots.Capture("Picker-brand-v4-category" + category, 1280, 720);
+                Assert.Greater(GameObject.Find("OwnerRosterGrid").transform.childCount, 0);
+                yield return UiRuntimeShots.Capture("Picker-brand-v5-category" + category, 1280, 720);
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE SKILLS SCREEN SHOWS ONE SLOT AT A TIME AND THAT IS THE DESIGN, SO THE
+        /// FIXTURE'S OLD SHAPE COULD NOT HAVE PASSED. It asked for a `LoadoutBoard` behind a
+        /// `LoadoutDoor` carrying four tiles and three heads at once. `TumpSkillView` is
+        /// `TumpSkills` on the picker opening one pane per slot: `TumpSkillSlot0` to
+        /// `TumpSkillSlot2`, a `VariantChoices` column of `TumpVariant_&lt;id&gt;`, and one
+        /// `TumpEquipSkill`.
+        ///
+        /// ⚠️ `TumpSkillSlot0` IS THE ULTIMATE, NOT THE FIRST SKILL. The tabs are built
+        /// SKILL 1, SKILL 2, ULTIMATE and numbered 1, 2, 0, because the slot index is the
+        /// ability's own and the ultimate is slot zero everywhere else in the game. That is why
+        /// the equip control disappears on it: an ultimate has no variants to choose between.
+        /// </summary>
         [UnityTest]
         public IEnumerator HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath()
         {
             yield return Open(GameMode.HeroStrike);
-            yield return UiRuntimeShots.Capture("Picker-brand-v4-hero", 1920, 1080);
-            Press(Find("LoadoutDoor"));
+            yield return UiRuntimeShots.Capture("Picker-brand-v5-hero", 1920, 1080);
+            Press(Find("TumpSkills"));
             yield return null;
-            Assert.IsNotNull(GameObject.Find("LoadoutBoard"));
-            yield return UiRuntimeShots.Capture("Skills-brand-v4-slot1", 1920, 1080);
-            Press(Find("SkillCategory2"));
+            Assert.IsNotNull(GameObject.Find("VariantChoices"),
+                "the skills screen must draw the variant column for the slot it is on.");
+            yield return UiRuntimeShots.Capture("Skills-brand-v5-slot1", 1920, 1080);
+            Press(Find("TumpSkillSlot2"));
             yield return null;
-            yield return UiRuntimeShots.Capture("Skills-brand-v4-slot2", 1280, 720);
-            Press(Find("SkillCategory0"));
+            yield return UiRuntimeShots.Capture("Skills-brand-v5-slot2", 1280, 720);
+            Press(Find("TumpSkillSlot0"));
             yield return null;
-            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None).Any(b => b.name == "EquipSelectedVariant"));
-            yield return UiRuntimeShots.Capture("Skills-brand-v4-ultimate", 1200, 900);
-            Press(Find("LoadoutClose"));
+            Assert.IsFalse(Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
+                    .Any(b => b.name == "TumpEquipSkill" && b.isActiveAndEnabled),
+                "an ultimate has no variants, so nothing on its pane may offer to equip one.");
+            yield return UiRuntimeShots.Capture("Skills-brand-v5-ultimate", 1200, 900);
+            Press(Find("TumpSkillBack"));
             yield return null;
-            Assert.IsTrue(Find("ConfirmButton").isActiveAndEnabled);
+            Assert.IsTrue(Find("TumpUseLoadout").isActiveAndEnabled);
         }
+
+        /// <summary>A roster tile is named after the fighter, `TumpPickerView.BuildCollectionChoice`.</summary>
+        private static string Tile(string id) => "Portrait_" + id;
 
         private static IEnumerator Open(GameMode mode)
         {
@@ -79,7 +107,7 @@ namespace TumbangPreso.PlayTests
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
             yield return new WaitForSecondsRealtime(.6f);
             Assert.AreEqual(mode, SceneFlow.SelectedMode);
-            Press(Find("CharacterButton"));
+            Press(Find("LoadoutButton"));
             yield return null;
         }
 

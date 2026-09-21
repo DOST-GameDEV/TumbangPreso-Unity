@@ -325,9 +325,9 @@ namespace TumbangPreso.Abilities
                 // Sean is the one whose near miss still counts. `docs/Hero_Strike_Balance.md`
                 // § 4.4.
                 : base("sean_skill2", "IGNITION CANNON",
-                       "Loads your next throw with fire. Wherever that slipper lands it goes off, so a near miss still counts.",
+                       "While attacking, loads your next throw with fire. Wherever that slipper lands it goes off, so a near miss still counts.",
                        0.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.SeanIgnite,
-                       summary: "Your next throw explodes where it lands.",
+                       summary: "Attacker only. Your next throw explodes where it lands.",
                        castAction: "hero-sean-ignite",
                        viewmodelAction: "ignite",
                        castCue: "sfx_cast_sean_cannon",
@@ -336,6 +336,11 @@ namespace TumbangPreso.Abilities
             {
                 _kit = kit;
             }
+
+            // Defenders restore/tag instead of throwing. Do not spend one of
+            // their finite uses on a charge that this role cannot release.
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
 
             protected override void OnActivate(AbilityContext ctx)
             {

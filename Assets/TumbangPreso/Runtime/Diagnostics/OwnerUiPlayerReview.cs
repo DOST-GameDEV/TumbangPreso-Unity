@@ -163,47 +163,56 @@ namespace TumbangPreso.Diagnostics
         }
         private IEnumerator Motion(string name,bool reduced)
         {
-            var folder=Path.Combine(_folder,name+"-frames");Directory.CreateDirectory(folder);
-            var csv=new System.Text.StringBuilder("frame,real_seconds,art_scale,target_scale,dust_vertices,cloud_x,cloud_y\n");
-            var control=Find("SettingsButton");var pointer=Pointer(control);
-            var motion=control.GetComponentInChildren<OwnerUiMotion>();
-            if(!(control is OwnerPaintedAction)||motion==null)throw new InvalidOperationException("Painted home feedback missing.");
+            var canvas=GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
+            var control=Find("StartButton");
+            var air=canvas.GetComponentInChildren<OwnerMenuAir>();
+            var dust=canvas.GetComponentInChildren<OwnerRoadDust>();
+            var scene=canvas.GetComponentInChildren<HomeCourtScene>();
+            if(control==null || air==null || dust==null || scene==null || scene.Drift!=0)
+                throw new InvalidOperationException("Current title layers or stationary supplied plate missing.");
+            var material=air.GetComponent<RawImage>().material;
+            if(material.shader.name!="TumbangPreso/UI/OwnerMenuAir" || !material.shader.isSupported
+                || material.GetTexture("_Cloud")==null || material.GetTexture("_Shadow")==null)
+                throw new InvalidOperationException("Current title air shader/assets missing from player.");
             Settings.SettingsStore.Current.ReducedUiMotion=reduced;
             EventSystem.current.SetSelectedGameObject(null);
-            ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerExitHandler);
-            yield return new WaitForSecondsRealtime(.4f);
-            float start=Time.realtimeSinceStartup,nextImage=0,min=1,max=1;int frame=0;
-            bool hover=false,down=false,up=false;
-            var dust=UnityEngine.Object.FindFirstObjectByType<OwnerRoadDust>();
-            var clouds=UnityEngine.Object.FindFirstObjectByType<OwnerMenuClouds>();
-            if(clouds==null || clouds.GetComponent<RawImage>().material.GetTexture("_SkyMask")==null)
-                throw new InvalidOperationException("Cloud motion data missing from the built player.");
-            var skyMaterial=clouds.GetComponent<RawImage>().material;
-            while(Time.realtimeSinceStartup-start<(reduced?4:12))
+            yield return new WaitForSecondsRealtime(.3f);
+            float firstNear=material.GetVector("_CloudNear").x;
+            float seconds=reduced?4:12,start=Time.realtimeSinceStartup;
+            var csv=new System.Text.StringBuilder("real_seconds,dust_vertices,cloud_near_x,cloud_far_x,shadow_x,shadow_y\n");
+            var movie=StartCoroutine(RecordCatchMotion(name+"-frames",seconds));
+            while(Time.realtimeSinceStartup-start<seconds)
             {
-                float age=Time.realtimeSinceStartup-start;
-                if(age>.5f&&!hover){hover=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerEnterHandler);}
-                if(age>1.5f&&!down){down=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerDownHandler);}
-                if(age>1.9f&&!up){up=true;ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerUpHandler);EventSystem.current.SetSelectedGameObject(null);ExecuteEvents.Execute(control.gameObject,pointer,ExecuteEvents.pointerExitHandler);}
                 yield return new WaitForEndOfFrame();
-                float scale=motion.transform.localScale.x;min=Mathf.Min(min,scale);max=Mathf.Max(max,scale);
-                int vertices=dust!=null?dust.canvasRenderer.GetMesh().vertexCount:0;
-                if(Mathf.Abs(control.transform.localScale.x-1)>.001f || Mathf.Abs(scale-motion.transform.localScale.y)>.001f)
-                    throw new InvalidOperationException("Supplied artwork stretched or its hit target moved.");
-                if(reduced && (Mathf.Abs(scale-1)>.001f || vertices!=0))throw new InvalidOperationException("Reduced menu still animates.");
-                if(!reduced && vertices==0)throw new InvalidOperationException("Background dust has no rendered geometry.");
-                var cloudShift=skyMaterial.GetVector("_CloudDrift");
-                if(reduced && cloudShift!=Vector4.zero)throw new InvalidOperationException("Reduced motion still moves clouds.");
-                csv.AppendLine(FormattableString.Invariant($"{frame},{Time.realtimeSinceStartup-start:F6},{scale:F6},{control.transform.localScale.x:F6},{vertices},{cloudShift.x:F6},{cloudShift.y:F6}"));
-                if(age>=nextImage)
-                {
-                    var image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(folder,frame.ToString("00000")+".jpg"),image.EncodeToJPG(93));Destroy(image);nextImage=age+1f/15f;
-                }
-                frame++;
+                int vertices=dust.canvasRenderer.GetMesh()?.vertexCount??0;
+                var near=material.GetVector("_CloudNear");var far=material.GetVector("_CloudFar");
+                var shadow=material.GetVector("_ShadowDrift");
+                if(Mathf.Abs(control.transform.localScale.x-1)>.001f || Mathf.Abs(control.transform.localScale.y-1)>.001f)
+                    throw new InvalidOperationException("The title press target stretched.");
+                if(reduced && (vertices!=0 || Mathf.Abs(near.x-1243)>.01f || Mathf.Abs(far.x-1243)>.01f
+                    || Mathf.Abs(shadow.x)>.001f || Mathf.Abs(shadow.y)>.001f))
+                    throw new InvalidOperationException("Reduced title motion did not park the supplied composition.");
+                if(!reduced && vertices==0)throw new InvalidOperationException("Title dust has no rendered geometry.");
+                csv.AppendLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-start:F6},{vertices},{near.x:F4},{far.x:F4},{shadow.x:F4},{shadow.y:F4}"));
             }
-            File.WriteAllText(Path.Combine(folder,"frames.csv"),csv.ToString());
-            if(!reduced && (max<1.015f || min>.99f))throw new InvalidOperationException("Hover/press feedback did not respond.");
-            Stage(reduced?"reduced home motion verified":"normal home artwork and ground dust verified");
+            yield return movie;
+            File.WriteAllText(Path.Combine(_folder,name+"-title-motion.csv"),csv.ToString());
+            if(!reduced && Mathf.Abs(material.GetVector("_CloudNear").x-firstNear)<10)
+                throw new InvalidOperationException("Current title clouds did not move.");
+            Stage(reduced?"reduced current title layers verified":"current title cloud/shadow/dust motion verified");
+        }
+
+        private IEnumerator EnterSettingsFromHome()
+        {
+            yield return Click("StartButton");yield return Click("ClassicButton");yield return Click("PracticeButton");
+            yield return WaitFor(()=>GameObject.Find("OwnerPreparationCanvas")!=null);
+            yield return Click("SettingsButton");
+        }
+        private IEnumerator ReturnHomeFromSettings()
+        {
+            yield return Click("TumpSettingsBack");yield return Click("BackButton");
+            yield return WaitFor(()=>GameObject.Find("OwnerPlayCanvas")!=null);
+            yield return Click("BackButton");yield return WaitFor(()=>GameObject.Find("OwnerHomeCanvas")!=null);
         }
         private IEnumerator ReducedTextAction()
         {
@@ -366,9 +375,9 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>Screen.width==1920&&Screen.height==1080,8);
             yield return Motion("normal",false);yield return Motion("reduced",true);
             Settings.SettingsStore.Current.ReducedUiMotion=false;
-            yield return Click("SettingsButton");yield return Click("SettingsCredits");
+            yield return EnterSettingsFromHome();yield return Click("SettingsCredits");
             yield return WaitFor(()=>GameObject.Find("OwnerCreditsCanvas")!=null);
-            yield return Click("CreditsBack");yield return Click("TumpSettingsBack");
+            yield return Click("CreditsBack");yield return ReturnHomeFromSettings();
             yield return Click("StartButton");yield return WaitFor(()=>GameObject.Find("OwnerPlayCanvas")!=null);
             yield return Click("BackButton");
             Stage("settings credits and Play/Back remain reachable");
@@ -433,6 +442,8 @@ namespace TumbangPreso.Diagnostics
             {yield return BusyExchangeOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-introduction-bodies-only"))
             {yield return IntroductionBodiesOnly();yield break;}
+            if(Environment.GetCommandLineArgs().Contains("-tp-sean-visual-review-only"))
+            {yield return SeanVisualOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-spectator-review-only"))
             {yield return SpectatorOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-gameplay-review-only"))
@@ -454,10 +465,23 @@ namespace TumbangPreso.Diagnostics
             else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
             yield return WaitFor(()=>GameObject.Find("OwnerHomeCanvas")!=null);yield return new WaitForSecondsRealtime(.5f);
             yield return Shot("02-home");yield return Motion("normal",false);
-            Stage("settings and reduced motion");yield return Click("SettingsButton");yield return Click("SettingsSection4");
+            Stage("settings and reduced motion");yield return EnterSettingsFromHome();yield return Click("SettingsSection4");
             if(!(Find("ReducedUiMotionValue") is Toggle))throw new InvalidOperationException("Motion toggle missing.");
             yield return Shot("03-settings");
-            yield return Click("SettingsSection0");yield return Click("ControllerMapAction");
+            yield return Click("SettingsSection3");
+            foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1280,960)})
+            {
+                Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);
+                yield return WaitFor(()=>Screen.width==size.x&&Screen.height==size.y,8);
+                yield return Shot("Settings-player-"+size.x+"x"+size.y);
+                var note=GameObject.Find("OwnerSettingsCanvas").GetComponentsInChildren<Text>()
+                    .Single(t=>t.name=="Note"&&t.text.Contains("No names, chat"));
+                if(note.rectTransform.rect.height+1<note.preferredHeight)
+                    throw new InvalidOperationException("Native telemetry disclosure is clipped.");
+            }
+            Screen.SetResolution(1366,768,FullScreenMode.Windowed);
+            yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
+            yield return Click("SettingsSection0");yield return ReviewGenericControllerSwitch();yield return Click("ControllerMapAction");
             var controller=GameObject.Find("ControllerMapCanvas").GetComponent<Canvas>();
             if(controller.GetComponentsInChildren<ControllerCalloutButton>().Count(b=>b.name.StartsWith("Callout_"))!=18
                 || controller.transform.Find("Leaders").Cast<Transform>().Count(t=>t.name.StartsWith("Leader_"))<18)
@@ -471,7 +495,7 @@ namespace TumbangPreso.Diagnostics
             Screen.SetResolution(1366,768,FullScreenMode.Windowed);
             yield return WaitFor(()=>Screen.width==1366&&Screen.height==768,8);
             yield return Click("Done");yield return Shot("Controller-bindings");
-            yield return Click("TumpSettingsBack");Stage("controller diagram and settings return verified");
+            yield return ReturnHomeFromSettings();Stage("controller diagram and settings return verified");
             // Compare rendering without writing the shared standalone binding preferences.
             bool reducedBefore=Settings.SettingsStore.Current.ReducedUiMotion;Settings.SettingsStore.Current.ReducedUiMotion=true;
             yield return Motion("reduced",true);Settings.SettingsStore.Current.ReducedUiMotion=reducedBefore;

@@ -415,7 +415,7 @@ def partition_problems(fixtures):
     return problems
 
 
-def run_group(group, members, log_suffix=""):
+def run_group(group, members, log_suffix="", profile="playmode-suite-validation"):
     """
     One Unity launch, one group.
 
@@ -433,8 +433,8 @@ def run_group(group, members, log_suffix=""):
     OUT.mkdir(parents=True, exist_ok=True)
     xml = OUT / f"{group}{log_suffix}.xml"
     log = OUT / f"{group}{log_suffix}.log"
-    if xml.exists():
-        xml.unlink()
+    if xml.exists() or log.exists():
+        raise SystemExit(f"Evidence already exists for {group}{log_suffix}; choose a fresh --out folder. Nothing was deleted.")
 
     started = datetime.datetime.now().timestamp()
     test_filter = ";".join(f"{NAMESPACE}.{m}" for m in members)
@@ -442,12 +442,15 @@ def run_group(group, members, log_suffix=""):
     cmd = [str(UNITY), "-batchmode", "-runTests", "-projectPath", str(ROOT),
            "-buildTarget", BUILD_TARGET, "-testPlatform", "PlayMode",
            "-testCategory", CATEGORIES, "-testFilter", test_filter,
-           "-testResults", str(xml), "-logFile", str(log)]
+           "-testResults", str(xml), "-logFile", str(log), "-tp-profile", profile]
 
     if sys.platform == "win32":
         cmd = [sys.executable, str(ROOT / "tools" / "run_unity_guarded.py"), *cmd[1:]]
     proc = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True, errors="replace")
-    return read_group_xml(group, xml, started, members, proc.returncode)
+    (OUT / f"{group}{log_suffix}-runner.log").write_text(proc.stdout + "\n" + proc.stderr, encoding="utf-8")
+    row = read_group_xml(group, xml, started, members, proc.returncode)
+    row["profile"] = profile
+    return row
 
 
 def read_group_xml(group, xml, started, members, exit_code):
@@ -589,14 +592,22 @@ def print_summary(agg, label=""):
 
 
 def main():
+    global OUT
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--plan", action="store_true", help="print the partition and check it")
     ap.add_argument("--group", help="run one group by name")
+    ap.add_argument("--profile", default="playmode-suite-validation",
+                    help="named isolated profile; never run against the player's default profile")
+    ap.add_argument("--out", type=pathlib.Path, default=OUT,
+                    help="fresh evidence folder for this qualification attempt")
     ap.add_argument("--gate", action="store_true", help="run every group and aggregate")
     ap.add_argument("--twice", action="store_true",
                     help="the nationals gate: the whole thing, back to back, both green")
     args = ap.parse_args()
+    if not args.profile.strip() or args.profile.startswith("-"):
+        ap.error("--profile must name an isolated validation profile")
+    OUT = args.out.resolve()
 
     fixtures = discover_fixtures()
     problems = partition_problems(fixtures)
@@ -623,7 +634,8 @@ def main():
         if not match:
             print(f"no such group: {args.group}", file=sys.stderr)
             return 2
-        row = run_group(match[0][0], match[0][2])
+        row = run_group(match[0][0], match[0][2], profile=args.profile)
+        (OUT / f"{args.group}-summary.json").write_text(json.dumps(row, indent=2), encoding="utf-8")
         print(json.dumps(row, indent=2)[:4000])
         return 0 if row["ok"] else 1
 
@@ -636,7 +648,7 @@ def main():
 
     for attempt in range(1, passes + 1):
         suffix = f"-pass{attempt}" if passes > 1 else ""
-        rows = [run_group(g, m, suffix) for g, _w, m in GROUPS]
+        rows = [run_group(g, m, suffix, profile=args.profile) for g, _w, m in GROUPS]
         agg = aggregate(rows, fixtures)
         agg["pass"] = attempt
         agg["sha"] = head_sha()

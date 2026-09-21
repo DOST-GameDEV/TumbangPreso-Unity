@@ -15,7 +15,15 @@ class EditorInputPreferenceTests(unittest.TestCase):
             guard.restore_values({'unrelated':guard.encode('old',1)},lambda:dict(store),lambda k,v:store.__setitem__(k,v),lambda k:store.pop(k))
         self.assertEqual(store['unrelated']['value'],'new')
     def test_only_exact_names_and_unity_hash_suffixes_match(self):
-        for key in ['tumbangpreso.bindings','tumbangpreso.touchlayout_h123']:self.assertTrue(guard.allowed(key))
-        for key in ['tumbangpreso.bindings.backup','tumbangpreso.bindings_habc','volume','tumbangpreso.touchlayout2']:self.assertFalse(guard.allowed(key))
+        for key in ['tumbangpreso.bindings','tumbangpreso.touchlayout_h123','tumbangpreso.genericpad_h456']:self.assertTrue(guard.allowed(key))
+        for key in ['tumbangpreso.bindings.backup','tumbangpreso.bindings_habc','volume','tumbangpreso.touchlayout2','tumbangpreso.genericpad_backup']:self.assertFalse(guard.allowed(key))
+
+    def test_generic_mapping_setting_restores_integer_and_absence(self):
+        key='tumbangpreso.genericpad_h123';original=guard.encode(0,4)
+        store={key:guard.encode(1,4),'volume':guard.encode(73,4)}
+        guard.restore_values({key:original},lambda:dict(store),lambda k,v:store.__setitem__(k,v),lambda k:store.pop(k))
+        self.assertEqual(store[key],original)
+        guard.restore_values({},lambda:dict(store),lambda k,v:store.__setitem__(k,v),lambda k:store.pop(k))
+        self.assertEqual(store,{'volume':guard.encode(73,4)})
 
 if __name__=='__main__':unittest.main()

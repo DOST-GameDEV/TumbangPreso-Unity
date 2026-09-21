@@ -40,12 +40,53 @@ namespace TumbangPreso.PlayTests
         }
         private static void RestorePref(string key, bool existed, string value)
         { if (existed) PlayerPrefs.SetString(key, value); else PlayerPrefs.DeleteKey(key); }
+
+        [UnityTest]
+        public IEnumerator UnrecognisedControllerSwitchParticipatesInSaveAndDiscard()
+        {
+            const string key = "tumbangpreso.genericpad";
+            bool existed = PlayerPrefs.HasKey(key); int saved = PlayerPrefs.GetInt(key, 1);
+            Joystick joystick = null; TumpSettingsView view = null;
+            try
+            {
+                yield return Open(); view = Object.FindFirstObjectByType<TumpSettingsView>();
+                bool before = GenericPadBridge.Enabled;
+                int padsBefore = Gamepad.all.Count;
+                joystick = InputSystem.AddDevice<Joystick>("TumpSettingsUnrecognisedController");
+                yield return null; yield return null;
+                Assert.AreEqual(padsBefore + (before ? 1 : 0), Gamepad.all.Count,
+                    "Hotplug must create at most one fallback gamepad through the real reentrant callback.");
+                Assert.IsTrue(ControllerWatch.HasUnrecognised, "The real device-change path did not notice the synthetic joystick.");
+                var control = GameObject.Find("GenericControllerValue")?.GetComponent<Toggle>();
+                Assert.IsNotNull(control, "Controls lost the switch for unrecognised controllers.");
+                control.isOn = !before; yield return null;
+                Assert.AreEqual(!before, GenericPadBridge.Enabled);
+                Assert.IsTrue(view.Session.Dirty, "The backend switch must join the settings transaction.");
+                view.Session.Discard(); view.ShowSection(0); yield return null;
+                Assert.AreEqual(before, GenericPadBridge.Enabled);
+                GameObject.Find("GenericControllerValue").GetComponent<Toggle>().isOn = !before;
+                Press(Find("TumpSaveSettings")); yield return null;
+                Assert.IsFalse(view.Session.Dirty); Assert.AreEqual(!before, GenericPadBridge.Enabled);
+                GameObject.Find("GenericControllerValue").GetComponent<Toggle>().isOn = before;
+                Press(Find("TumpSettingsBack")); yield return null;
+                Press(Find("DiscardAndBack")); yield return null;
+                Assert.AreEqual(!before, GenericPadBridge.Enabled, "Discard must restore the most recent explicit save.");
+            }
+            finally
+            {
+                if (view != null) view.enabled = false;
+                if (joystick != null && joystick.added) InputSystem.RemoveDevice(joystick);
+                if (existed) PlayerPrefs.SetInt(key, saved); else PlayerPrefs.DeleteKey(key);
+                PlayerPrefs.Save(); GenericPadBridge.Sync();
+            }
+        }
+
         [UnityTest]
         public IEnumerator NativeSettingsPagesAndFramePacingHaveTruthfulStates()
         {
             yield return Open();
             var view = Object.FindFirstObjectByType<TumpSettingsView>();
-            var canvas = GameObject.Find("OwnerSettingsCanvas").GetComponent<Canvas>();
+            var canvas = PaintedScreens.Settings();
             Assert.IsEmpty(canvas.GetComponentsInChildren<PaperSkin>(true));
             for (int i = 0; i < TumpSettingsView.Sections.Length; i++)
             {
@@ -152,7 +193,7 @@ namespace TumbangPreso.PlayTests
             Press(Find("CancelTouchLayout")); yield return null;
             Assert.IsFalse(TouchButton.Customising);
             Assert.That(TouchLayoutStore.Scale, Is.EqualTo(scale).Within(.001f));
-            Assert.IsTrue(GameObject.Find("OwnerSettingsCanvas").activeSelf);
+            Assert.IsTrue(PaintedScreens.Settings().gameObject.activeSelf);
         }
         [UnityTest]
         public IEnumerator BindingOverridesBelongToTheSaveDiscardTransaction()
@@ -254,29 +295,16 @@ namespace TumbangPreso.PlayTests
                 actions.RemoveAllBindingOverrides(); actions.LoadBindingOverridesFromJson(original); Rebinding.Invalidate();
             }
         }
-        private static IEnumerator Open()
-        {
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(.4f);
-            OpenSettingsPanel();
-            yield return null;
-        }
-
         /// <summary>
-        /// ⚠️⚠️ THE TITLE SCREEN LOST ITS SETTINGS PENNANT ON 2026-09-18 AND THIS FIXTURE IS
-        /// ABOUT THE PANEL, NOT ABOUT THE DOOR. 🧑 asked for a title screen with no buttons
-        /// (`HomeCourtView`) and for the four doors to be dropped until the next menu pass, so
-        /// there is no SettingsButton to press here any more. The panel is still the one
-        /// `ConvertedMainMenu` builds, opened the way that screen opens it: suspend the home,
-        /// activate the owner. ⚠️ The JOURNEY to settings is covered separately and through the
-        /// door a player actually has, `GameSettingsButton` on the lobby, in
-        /// `TumpNativeFrontEndTests.TitlePlayCreditsAndSettingsReturnThroughNativeViews`.
+        /// ⚠️⚠️ THIS FIXTURE'S THREE CASES ALL DIED IN THEIR OWN SETUP WITH A BARE
+        /// `NullReferenceException`, AND THE CAUSE WAS ONE CALL: `GameObject.Find`
+        /// ("NativeSettingsOwner"). **`GameObject.Find` only sees ACTIVE objects**, and
+        /// `ConvertedMainMenu.Wire` builds the settings owner switched OFF so the door can turn
+        /// it on. So the lookup returned null on a healthy main menu, every run, and the message
+        /// named neither the object nor the screen. The route lives in `PaintedScreens` now,
+        /// where the next fixture that needs it can reach it instead of copying it.
         /// </summary>
-        private static void OpenSettingsPanel()
-        {
-            Object.FindFirstObjectByType<TumpHomeView>()?.Suspend();
-            GameObject.Find("NativeSettingsOwner").SetActive(true);
-        }
+        private static IEnumerator Open() => PaintedScreens.OpenSettings();
 
         private static Button Find(string name) => Object.FindObjectsByType<Button>(FindObjectsSortMode.None).First(b => b.name == name && b.isActiveAndEnabled);
         private static void Press(Button button)

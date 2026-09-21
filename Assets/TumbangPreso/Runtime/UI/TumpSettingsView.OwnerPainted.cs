@@ -49,6 +49,7 @@ namespace TumbangPreso.UI
             if(_session.Listening)_session.CancelRebind();
             foreach(Transform child in _list){child.gameObject.SetActive(false);Destroy(child.gameObject);}
             _bindingRows.Clear();_ownerFrameCap=null;_frameReason=null;
+            _genericSupportShown=ControllerWatch.HasUnrecognised;
             for(int i=0;i<_tabs.Count;i++)
             {
                 _tabs[i].transform.Find("SelectedSection").gameObject.SetActive(i==_tab);
@@ -60,10 +61,29 @@ namespace TumbangPreso.UI
             _list.GetComponentInParent<ScrollRect>().verticalNormalizedPosition=1;
             Changed("");_canvas.GetComponent<ScreenFocus>().Rebuild();
         }
+        /// <summary>
+        /// ⚠️⚠️ A NOTE IS THE ONE THING ON THIS SCREEN THAT MAY NOT BE CLIPPED, AND IT WAS BEING
+        /// CLIPPED TWICE OVER. `OwnerUiLayout.Text` ships `VerticalWrapMode.Truncate`, and this
+        /// method then pinned the row at **67 units** whatever the sentence was, so a note that
+        /// wrapped to a third line simply lost it with nothing reported. The one that matters is
+        /// the telemetry disclosure: the half that survives is *"Counts only: matches, modes,
+        /// maps, picks and frame rate"* and the half that goes is *"No names, chat or anything
+        /// you type"*. **A privacy disclosure that is silently truncated is worse than one that
+        /// is absent.** `ConvertedSettingsPanel.BuildTelemetryNote` recorded exactly this trap on
+        /// the retired panel and the painted rewrite did not carry the fix across.
+        ///
+        /// ⚠️ SO THE HEIGHT IS A FLOOR, NOT A SIZE. `LayoutElement` outranks `Text` in the
+        /// vertical layout group (priority 1 against 0), so a `preferredHeight` here overrides
+        /// the sentence's own measurement and there is no width at build time to compute one
+        /// from. Leaving `preferredHeight` unset lets the `Text` answer for itself once the
+        /// column has a width, and `minHeight` keeps the short notes on the rhythm of the rows
+        /// around them.
+        /// </summary>
         private void Note(string words)
         {
             var text=OwnerUiLayout.Text(_list,"Note",words,28);text.color=SettingsPalette.Muted;
-            text.alignment=TextAnchor.UpperLeft;text.gameObject.AddComponent<LayoutElement>().preferredHeight=67;
+            text.alignment=TextAnchor.UpperLeft;text.verticalOverflow=VerticalWrapMode.Overflow;
+            var box=text.gameObject.AddComponent<LayoutElement>();box.minHeight=67;box.preferredHeight=-1;
         }
         private RectTransform Row(string name,string label)=>SettingsWorkspaceRows.Row(_list,name,label);
         private void Toggle(string name,string label,bool value,Action<bool> set,Action apply=null)
@@ -138,6 +158,11 @@ namespace TumbangPreso.UI
             var controller=ActionRow("ControllerMap","Controller map","OPEN",()=>
             { _device=InputDeviceKind.Gamepad;Suspend();_controller?.Invoke(); });
             controller.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
+            if(ControllerWatch.HasUnrecognised)
+            {
+                Toggle("GenericController","Unrecognised controllers",GenericPadBridge.Enabled,v=>GenericPadBridge.Enabled=v);
+                Note("Turn this off for a flight stick or steering wheel. The controller map shows the assumed button layout.");
+            }
             Choice("BindingGroup","Control group",Rebinding.Groups.Select(g=>g.Title).ToArray(),_group,v=>{_group=v;ShowSection(0);});
             foreach(string action in Rebinding.Groups[_group].Actions)
             {

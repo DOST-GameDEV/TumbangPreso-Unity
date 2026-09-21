@@ -25,6 +25,8 @@ namespace TumbangPreso.Diagnostics
             yield return Click("StartButton");yield return Click("HeroStrikeButton");yield return Click("PracticeButton");
             if(GameLaunch.Spectator)yield return Click("SpectateButton");
             yield return Click("PrimaryButton");yield return StartReadyRound();
+            if(Environment.GetCommandLineArgs().Contains("-tp-skill-variants"))
+            {yield return ReviewKitVariants();yield break;}
             var rig=Camera.main.GetComponent<CameraRig>();int index=0;
             var report=new StringBuilder("hero,slot,body,fpp,seconds,accepted,contact_events\n");
             foreach(string hero in new[]{"sean","phaister","zack","nemu","dante","cheska"})

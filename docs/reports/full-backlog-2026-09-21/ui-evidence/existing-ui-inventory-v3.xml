@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:51Z" duration="20.0618633">
+  <test-suite type="TestSuite" id="1678" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:51Z" duration="20.061863" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1672" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:51Z" duration="20.043738" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28540" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1673" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:51Z" duration="20.035846" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1674" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:51Z" duration="20.028994" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1189" name="HudOverflowProbe" fullname="TumbangPreso.PlayTests.HudOverflowProbe" classname="TumbangPreso.PlayTests.HudOverflowProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:35Z" duration="3.615093" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1190" name="EveryHudStringFitsTheBoxItIsDrawnIn" fullname="TumbangPreso.PlayTests.HudOverflowProbe.EveryHudStringFitsTheBoxItIsDrawnIn" methodname="EveryHudStringFitsTheBoxItIsDrawnIn" classname="TumbangPreso.PlayTests.HudOverflowProbe" runstate="Runnable" seed="628588750" result="Passed" start-time="2026-09-21 20:41:31Z" end-time="2026-09-21 20:41:35Z" duration="3.597992" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[HudOverflow] wrote Logs/hud-overflow.txt
+HUD OVERFLOW, worst-case strings, all nine shipped resolutions.
+box   = the width the label is laid out in, in canvas reference units
+want  = Text.preferredWidth for the worst string it can hold
+over  = want - box, positive means it hangs out of its box
+
+---- 16:9 720p (1280x720) canvas 1920x1080
+  PlayerName           box    318 want    129  over  -189 (rect) "P1 · DANTE"
+  Score                box     96 want     60  over   -36 (rect) "-999"
+  RoleState            box    430 want     95  over  -336 (rect) "Defender"
+  PlayerName           box    318 want    141  over  -177 (rect) "P2 · PLAYER"
+  Score                box     96 want     60  over   -36 (rect) "-999"
+  RoleState            box    430 want     35  over  -396 (rect) "You"
+  PlayerName           box    318 want    131  over  -188 (rect) "P3 · DANTE"
+  Score                box     96 want     60  over   -36 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    116  over  -203 (rect) "P4 · ZACK"
+  Score                box     96 want     60  over   -36 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    159  over  -121 (rect) "01:30"
+  RoundLabel           box    620 want    288  over  -332 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    132  over  -368 (rect) "Attacker"
+  SlipperState         box    500 want    134  over  -367 (rect) "Slipper away"
+  StaminaLabel         box    142 want     78  over   -64 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    284  over  -817 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    471  over  -629 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    257  over   159 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -113 (rect) "Q"
+  PowerState           box     98 want    257  over   159 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -119 (rect) "E"
+  PowerState           box    116 want    257  over   141 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    228  over  -362 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    315  over  -109 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    315  over  -109 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    315  over  -109 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     14  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    224  over  -327 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    179  over  -356 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    207  over  -327 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    141  over  -393 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    129  over  -401 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    558  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    192  over  -285 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    140  over  -603 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    155  over  -200 (rect) "MAIN MENU"  [hidden]
+
+---- 16:9 900p (1600x900) canvas 1920x1080
+  PlayerName           box    318 want    132  over  -186 (rect) "P1 · DANTE"
+  Score                box     96 want     58  over   -38 (rect) "-999"
+  RoleState            box    430 want    100  over  -330 (rect) "Defender"
+  PlayerName           box    318 want    145  over  -173 (rect) "P2 · PLAYER"
+  Score                box     96 want     58  over   -38 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    132  over  -186 (rect) "P3 · DANTE"
+  Score                box     96 want     58  over   -38 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    119  over  -199 (rect) "P4 · ZACK"
+  Score                box     96 want     58  over   -38 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    161  over  -119 (rect) "01:30"
+  RoundLabel           box    620 want    294  over  -326 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    137  over  -363 (rect) "Attacker"
+  SlipperState         box    500 want    136  over  -364 (rect) "Slipper away"
+  StaminaLabel         box    142 want     79  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    283  over  -817 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    481  over  -619 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    264  over   166 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     19  over  -113 (rect) "Q"
+  PowerState           box     98 want    264  over   166 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -118 (rect) "E"
+  PowerState           box    116 want    264  over   148 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     14  over  -118 (rect) "F"
+  PowerInfoBinding     box    590 want    228  over  -362 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    320  over  -104 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    320  over  -104 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    320  over  -104 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    228  over  -302 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     13  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    224  over  -326 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    174  over  -360 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    205  over  -329 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    140  over  -394 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    131  over  -399 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    553  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    191  over  -286 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    140  over  -602 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    155  over  -199 (rect) "MAIN MENU"  [hidden]
+
+---- 16:9 1080p (1920x1080) canvas 1920x1080
+  PlayerName           box    318 want    134  over  -184 (rect) "P1 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want    101  over  -329 (rect) "Defender"
+  PlayerName           box    318 want    147  over  -171 (rect) "P2 · PLAYER"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    134  over  -184 (rect) "P3 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    120  over  -198 (rect) "P4 · ZACK"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    158  over  -122 (rect) "01:30"
+  RoundLabel           box    620 want    300  over  -320 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    136  over  -364 (rect) "Attacker"
+  SlipperState         box    500 want    135  over  -365 (rect) "Slipper away"
+  StaminaLabel         box    142 want     79  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    279  over  -821 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    493  over  -607 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -112 (rect) "Q"
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -118 (rect) "E"
+  PowerState           box    116 want    267  over   151 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    236  over  -354 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     13  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    231  over  -319 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    179  over  -355 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    208  over  -326 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    142  over  -392 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    132  over  -398 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    571  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    193  over  -284 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    144  over  -598 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    160  over  -194 (rect) "MAIN MENU"  [hidden]
+
+---- 16:9 1440p (2560x1440) canvas 1920x1080
+  PlayerName           box    318 want    134  over  -185 (rect) "P1 · DANTE"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want    100  over  -330 (rect) "Defender"
+  PlayerName           box    318 want    146  over  -172 (rect) "P2 · PLAYER"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    134  over  -184 (rect) "P3 · DANTE"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    120  over  -198 (rect) "P4 · ZACK"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    160  over  -120 (rect) "01:30"
+  RoundLabel           box    620 want    299  over  -321 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    137  over  -364 (rect) "Attacker"
+  SlipperState         box    500 want    136  over  -364 (rect) "Slipper away"
+  StaminaLabel         box    142 want     80  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    281  over  -820 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    490  over  -610 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    265  over   167 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -113 (rect) "Q"
+  PowerState           box     98 want    265  over   167 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -119 (rect) "E"
+  PowerState           box    116 want    265  over   149 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    231  over  -359 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     14  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     49  over   -71 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    228  over  -322 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    175  over  -359 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    203  over  -332 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    140  over  -395 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    131  over  -400 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    565  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    192  over  -285 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    143  over  -599 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    160  over  -194 (rect) "MAIN MENU"  [hidden]
+
+---- 16:9 laptop (1366x768) canvas 1921x1080
+  PlayerName           box    318 want    127  over  -191 (rect) "P1 · DANTE"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want     97  over  -333 (rect) "Defender"
+  PlayerName           box    318 want    138  over  -180 (rect) "P2 · PLAYER"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want     32  over  -398 (rect) "You"
+  PlayerName           box    318 want    127  over  -191 (rect) "P3 · DANTE"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    114  over  -204 (rect) "P4 · ZACK"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    156  over  -124 (rect) "01:30"
+  RoundLabel           box    620 want    287  over  -333 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    135  over  -365 (rect) "Attacker"
+  SlipperState         box    500 want    131  over  -369 (rect) "Slipper away"
+  StaminaLabel         box    142 want     76  over   -66 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    273  over  -827 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    474  over  -626 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    253  over   155 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -112 (rect) "Q"
+  PowerState           box     98 want    253  over   155 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -118 (rect) "E"
+  PowerState           box    116 want    253  over   137 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     14  over  -118 (rect) "F"
+  PowerInfoBinding     box    590 want    224  over  -366 (rect) "DEMONIC CARAPACE"
+  PowerName0           box    424 want    319  over  -105 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  PowerDescription0    box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  PowerName1           box    424 want    319  over  -105 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  PowerDescription1    box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  PowerName2           box    424 want    319  over  -105 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  PowerDescription2    box    530 want    224  over  -306 (rect) "DEMONIC CARAPACE"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     14  over   -62 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    217  over  -333 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    169  over  -365 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    198  over  -336 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    135  over  -399 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    129  over  -401 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    570  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    191  over  -286 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    146  over  -596 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    162  over  -192 (rect) "MAIN MENU"  [hidden]
+
+---- 16:10 (1920x1200) canvas 1920x1200
+  PlayerName           box    318 want    134  over  -184 (rect) "P1 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want    101  over  -329 (rect) "Defender"
+  PlayerName           box    318 want    147  over  -171 (rect) "P2 · PLAYER"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    134  over  -184 (rect) "P3 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    120  over  -198 (rect) "P4 · ZACK"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    158  over  -122 (rect) "01:30"
+  RoundLabel           box    620 want    300  over  -320 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    136  over  -364 (rect) "Attacker"
+  SlipperState         box    500 want    135  over  -365 (rect) "Slipper away"
+  StaminaLabel         box    142 want     79  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    279  over  -821 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    493  over  -607 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -112 (rect) "Q"
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -118 (rect) "E"
+  PowerState           box    116 want    267  over   151 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    236  over  -354 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     13  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    231  over  -319 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    179  over  -355 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    208  over  -326 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    142  over  -392 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    132  over  -398 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    571  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    193  over  -284 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    144  over  -598 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    160  over  -194 (rect) "MAIN MENU"  [hidden]
+
+---- 21:9 (2560x1080) canvas 2560x1080
+  PlayerName           box    318 want    134  over  -184 (rect) "P1 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want    101  over  -329 (rect) "Defender"
+  PlayerName           box    318 want    147  over  -171 (rect) "P2 · PLAYER"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    134  over  -184 (rect) "P3 · DANTE"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    120  over  -198 (rect) "P4 · ZACK"
+  Score                box     96 want     59  over   -37 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    158  over  -122 (rect) "01:30"
+  RoundLabel           box    620 want    300  over  -320 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    136  over  -364 (rect) "Attacker"
+  SlipperState         box    500 want    135  over  -365 (rect) "Slipper away"
+  StaminaLabel         box    142 want     79  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    279  over  -821 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    493  over  -607 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -112 (rect) "Q"
+  PowerState           box     98 want    267  over   169 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -118 (rect) "E"
+  PowerState           box    116 want    267  over   151 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    236  over  -354 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    325  over   -99 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    236  over  -294 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     13  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     48  over   -72 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    231  over  -319 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    179  over  -355 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    208  over  -326 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    142  over  -392 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    132  over  -398 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    571  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    193  over  -284 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    144  over  -598 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    160  over  -194 (rect) "MAIN MENU"  [hidden]
+
+---- 21:9 1440p (3440x1440) canvas 2580x1080
+  PlayerName           box    318 want    134  over  -185 (rect) "P1 · DANTE"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want    100  over  -330 (rect) "Defender"
+  PlayerName           box    318 want    146  over  -172 (rect) "P2 · PLAYER"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want     35  over  -395 (rect) "You"
+  PlayerName           box    318 want    134  over  -184 (rect) "P3 · DANTE"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    120  over  -198 (rect) "P4 · ZACK"
+  Score                box     96 want     61  over   -35 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    160  over  -120 (rect) "01:30"
+  RoundLabel           box    620 want    299  over  -321 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    137  over  -364 (rect) "Attacker"
+  SlipperState         box    500 want    136  over  -364 (rect) "Slipper away"
+  StaminaLabel         box    142 want     80  over   -63 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    281  over  -820 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    490  over  -610 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    265  over   167 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     20  over  -113 (rect) "Q"
+  PowerState           box     98 want    265  over   167 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     14  over  -119 (rect) "E"
+  PowerState           box    116 want    265  over   149 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    231  over  -359 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    323  over  -102 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    231  over  -299 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     14  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     49  over   -71 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    228  over  -322 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    175  over  -359 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    203  over  -332 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    140  over  -395 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    131  over  -400 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    565  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    192  over  -285 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    143  over  -599 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    160  over  -194 (rect) "MAIN MENU"  [hidden]
+
+---- 4:3 (1024x768) canvas 1920x1440
+  PlayerName           box    318 want    126  over  -192 (rect) "P1 · DANTE"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want     94  over  -336 (rect) "Defender"
+  PlayerName           box    318 want    137  over  -181 (rect) "P2 · PLAYER"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want     34  over  -396 (rect) "You"
+  PlayerName           box    318 want    126  over  -192 (rect) "P3 · DANTE"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  PlayerName           box    318 want    113  over  -206 (rect) "P4 · ZACK"
+  Score                box     96 want     62  over   -34 (rect) "-999"
+  RoleState            box    430 want      0  over  -430 (rect) ""
+  TimeLeft             box    280 want    161  over  -119 (rect) "01:30"
+  RoundLabel           box    620 want    279  over  -341 (rect) "Warm up · Scores paused"
+  CanState             box    352 want      0  over  -352 (rect) ""  [hidden]
+  CanHint              box    452 want      0  over  -452 (rect) ""  [hidden]
+  LocalRole            box    500 want    133  over  -367 (rect) "Attacker"
+  SlipperState         box    500 want    131  over  -369 (rect) "Slipper away"
+  StaminaLabel         box    142 want     77  over   -65 (rect) "Stamina"
+  TimedStatus0         box    500 want      0  over  -500 (rect) ""
+  TimedStatus1         box    500 want      0  over  -500 (rect) ""
+  TimedStatus2         box    500 want      0  over  -500 (rect) ""
+  TimedStatus3         box    500 want      0  over  -500 (rect) ""
+  ActionPrompt         box   1100 want    276  over  -824 (rect) "[R]  Ready to play"
+  ActionDetail         box   1100 want    469  over  -631 (rect) "Warm up freely. Powers star…"
+  Event0               box    450 want      0  over  -450 (rect) ""
+  Event1               box    450 want      0  over  -450 (rect) ""
+  Event2               box    450 want      0  over  -450 (rect) ""
+  MomentTitle          box    612 want      0  over  -612 (rect) ""
+  MomentPlayer         box    612 want      0  over  -612 (rect) ""
+  PowerState           box     98 want    249  over   151 (rect) "ASTRAL PROJECTION"
+  LiveBinding0         box    132 want     19  over  -113 (rect) "Q"
+  PowerState           box     98 want    249  over   151 (rect) "ASTRAL PROJECTION"
+  LiveBinding1         box    132 want     13  over  -119 (rect) "E"
+  PowerState           box    116 want    249  over   133 (rect) "ASTRAL PROJECTION"
+  LiveBinding2         box    132 want     15  over  -117 (rect) "F"
+  PowerInfoBinding     box    590 want    223  over  -367 (rect) "ASTRAL PROJECTION"
+  PowerName0           box    424 want    321  over  -103 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming0         box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription0    box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName1           box    424 want    321  over  -103 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming1         box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription1    box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerName2           box    424 want    321  over  -103 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerTiming2         box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  PowerDescription2    box    530 want    223  over  -307 (rect) "ASTRAL PROJECTION"  [hidden]
+  MatchToast           box   1080 want      0  over -1080 (rect) ""
+  Countdown            box    740 want      0  over  -740 (rect) ""
+  Reticle              box     76 want     13  over   -63 (rect) "+"
+  HitConfirmation      box    120 want     49  over   -71 (rect) "×"
+  SpectatorReadout     box   1460 want      0  over -1460 (rect) ""
+  SandboxState         box    550 want    218  over  -333 (rect) "F7 · No cooldowns off"
+  GameVersion          box    420 want      0  over  -420 (rect) ""  [hidden]
+  ResultHeadline       box   1710 want      0  over -1710 (rect) ""  [hidden]
+  ResultMode           box   1694 want      0  over -1694 (rect) ""  [hidden]
+  Label                box    534 want    176  over  -358 (rect) "STANDINGS"  [hidden]
+  Label                box    534 want    204  over  -330 (rect) "YOUR MATCH"  [hidden]
+  Label                box    534 want    141  over  -393 (rect) "PLAYERS"  [hidden]
+  FinisherPlace0       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName0        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore0       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle0       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace1       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName1        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore1       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle1       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace2       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName2        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore2       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle2       box    100 want      0  over  -100 (rect) ""  [hidden]
+  FinisherPlace3       box     88 want      0  over   -88 (rect) ""  [hidden]
+  FinisherName3        box    581 want      0  over  -581 (rect) ""  [hidden]
+  FinisherScore3       box    263 want      0  over  -263 (rect) ""  [hidden]
+  FinisherTitle3       box    100 want      0  over  -100 (rect) ""  [hidden]
+  WinnerCaption        box    530 want    131  over  -399 (rect) "WINNER"  [hidden]
+  EmptyMatchDetails    box   free want    544  over     - (group 1602) "No match summary was record…"  [hidden]
+  YourMatchSummary     box   free want      0  over     - (group 1602) ""  [hidden]
+  MatchHighlight       box   free want      0  over     - (group 1602) ""  [hidden]
+  EarnedXp             box   free want      0  over     - (group 1602) ""  [hidden]
+  RewardDetails        box   free want      0  over     - (group 1602) ""  [hidden]
+  Label                box    477 want    191  over  -286 (rect) "REMATCH"  [hidden]
+  RematchTally         box    531 want      0  over  -531 (rect) ""  [hidden]
+  Label                box    742 want    141  over  -601 (rect) "NEXT MAP"  [hidden]
+  MapVoteTally         box    728 want      0  over  -728 (rect) ""  [hidden]
+  Label                box    354 want    158  over  -197 (rect) "MAIN MENU"  [hidden]
+
+
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1389" name="PaperPurityProbe" fullname="TumbangPreso.PlayTests.PaperPurityProbe" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-21 20:41:35Z" end-time="2026-09-21 20:41:37Z" duration="2.074189" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1392" name="NothingOnTheInventoryDisappeared" fullname="TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared" methodname="NothingOnTheInventoryDisappeared" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" seed="780052230" result="Failed" start-time="2026-09-21 20:41:35Z" end-time="2026-09-21 20:41:37Z" duration="2.069036" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Inventory route is missing CreateTab
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FrontEndControlWalk+<Press>d__2.MoveNext () [0x00022] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\FrontEndControlWalk.cs:123
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1413" name="PhaseSurfaceLayoutProbe" fullname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe" classname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 20:41:37Z" end-time="2026-09-21 20:41:38Z" duration="1.571901" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1414" name="EveryRectOnTheBootSplashHasARectToResolveAgainst" fullname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe.EveryRectOnTheBootSplashHasARectToResolveAgainst" methodname="EveryRectOnTheBootSplashHasARectToResolveAgainst" classname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe" runstate="Runnable" seed="1006848911" result="Passed" start-time="2026-09-21 20:41:37Z" end-time="2026-09-21 20:41:37Z" duration="0.189131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1415" name="TheEndOfMatchXpBlockFitsItsBoxAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe.TheEndOfMatchXpBlockFitsItsBoxAtEveryShippedResolution" methodname="TheEndOfMatchXpBlockFitsItsBoxAtEveryShippedResolution" classname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe" runstate="Runnable" seed="1150045847" result="Passed" start-time="2026-09-21 20:41:37Z" end-time="2026-09-21 20:41:37Z" duration="0.317456" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PhaseSurfaceLayoutProbe] XP block
+  match-result/xp: measured 8
+16:9 720p      1280x720  xp block ok, 8 labels
+  match-result/xp: measured 8
+16:9 900p      1600x900  xp block ok, 8 labels
+  match-result/xp: measured 8
+16:9 1080p     1920x1080  xp block ok, 8 labels
+  match-result/xp: measured 8
+16:9 1440p     2560x1440  xp block ok, 8 labels
+  match-result/xp: measured 8
+16:9 laptop    1366x768  xp block ok, 8 labels
+  match-result/xp: measured 8
+16:10          1920x1200  xp block ok, 8 labels
+  match-result/xp: measured 8
+21:9           2560x1080  xp block ok, 8 labels
+  match-result/xp: measured 8
+21:9 1440p     3440x1440  xp block ok, 8 labels
+  match-result/xp: measured 8
+4:3            1024x768  xp block ok, 8 labels
+
+]]></output>
+            </test-case>
+            <test-case id="1416" name="TheTelemetryRowFitsItsBoxAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution" methodname="TheTelemetryRowFitsItsBoxAtEveryShippedResolution" classname="TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe" runstate="Runnable" seed="917825058" result="Passed" start-time="2026-09-21 20:41:37Z" end-time="2026-09-21 20:41:38Z" duration="1.057373" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PhaseSurfaceLayoutProbe] 1280x720 settings panel: no label overflows its box
+[PhaseSurfaceLayoutProbe] telemetry row
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:9 720p      1280x720  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:9 900p      1600x900  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:9 1080p     1920x1080  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:9 1440p     2560x1440  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:9 laptop    1366x768  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+16:10          1920x1200  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+21:9           2560x1080  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+21:9 1440p     3440x1440  telemetry row ok, 3 labels
+  settings/telemetry-row: measured 2
+  settings/telemetry-note: measured 1
+4:3            1024x768  telemetry row ok, 3 labels
+
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1637" name="UiClickProbe" fullname="TumbangPreso.PlayTests.UiClickProbe" classname="TumbangPreso.PlayTests.UiClickProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 20:41:38Z" end-time="2026-09-21 20:41:51Z" duration="12.692657" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1638" name="EveryButtonIsReachable" fullname="TumbangPreso.PlayTests.UiClickProbe.EveryButtonIsReachable" methodname="EveryButtonIsReachable" classname="TumbangPreso.PlayTests.UiClickProbe" runstate="Runnable" seed="2047861541" result="Passed" start-time="2026-09-21 20:41:38Z" end-time="2026-09-21 20:41:51Z" duration="12.686502" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+--- MainMenu --- (640x480)
+   OwnerHomeCanvas/StartButton: ok
+--- OwnerSettingsCanvas ---
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/ControllerMap/Control/ControllerMapAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_MoveRight/Control/Binding_MoveRightAction: ok
+   OwnerSettingsCanvas/SettingsComposition/TumpSettingsBack: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsSection1: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsSection3: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_MoveForward/Control/Binding_MoveForwardAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_MoveLeft/Control/Binding_MoveLeftAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/BindingGroup/Control/BindingGroupValue: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/InputDevice/Control/InputDeviceValue: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_Jump/Control/Binding_JumpAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsSection4: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_MoveBackward/Control/Binding_MoveBackwardAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsCredits: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsSection2: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Binding_Sprint/Control/Binding_SprintAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsSection0: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/ResetControls/Control/ResetControlsAction: ok
+   OwnerSettingsCanvas/SettingsComposition/SettingsList/Viewport/Content/Sensitivity/Control/SensitivityValue: ok
+   OwnerSettingsCanvas/SettingsComposition/TumpSaveSettings: ok
+--- OwnerCreditsCanvas ---
+   OwnerCreditsCanvas/CreditsComposition/CreditsBack: ok
+--- ModeSelect --- (640x480)
+   OwnerPlayCanvas/CourtPlayComposition/CustomButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/RankedButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/BackButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/HeroStrikeButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/TutorialButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/PracticeButton: ok
+   OwnerPlayCanvas/CourtPlayComposition/ClassicButton: ok
+--- MatchSetup --- (640x480)
+   OwnerPreparationCanvas/PreparationComposition/SeatButton2: ok
+   OwnerPreparationCanvas/PreparationComposition/SeatButton3: ok
+   OwnerPreparationCanvas/PreparationComposition/SeatButton1: ok
+   OwnerPreparationCanvas/PreparationComposition/SettingsButton: ok
+   OwnerPreparationCanvas/LobbyChat/ChatHeading/CloseChatButton: hidden (CanvasGroup alpha 0.00, blocksRaycasts off)
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/ModePrevButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/SpectateButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/BotsNextButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MapPrevButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MapNextButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/BotsPrevButton: ok
+   OwnerPreparationCanvas/PreparationComposition/ProfileButton: ok
+   OwnerPreparationCanvas/PreparationComposition/PracticeRoute: ok
+   OwnerPreparationCanvas/PreparationComposition/PrimaryButton: ok
+   OwnerPreparationCanvas/LobbyChat/ChatHeading/ChatHistoryButton: hidden (CanvasGroup alpha 0.00, blocksRaycasts off)
+   OwnerPreparationCanvas/PreparationComposition/RankedRoute: ok
+   OwnerPreparationCanvas/PreparationComposition/BackButton: ok
+   OwnerPreparationCanvas/PreparationComposition/LoadoutButton: ok
+   OwnerPreparationCanvas/LobbyChat/ChatFieldRow/ChatInput: hidden (CanvasGroup alpha 0.00, blocksRaycasts off)
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/ModeNextButton: ok
+   OwnerPreparationCanvas/PreparationComposition/MatchChoices/CustomGameButton: ok
+   OwnerPreparationCanvas/PreparationComposition/FriendsRoute: ok
+   OwnerPreparationCanvas/PreparationComposition/SeatButton0: ok
+--- CharacterSelectPanel ---
+--- LobbyJoinPanel ---
+--- MultiplayerSetup --- (640x480)
+   MultiplayerSetupCanvas/HostButton: ok
+   MultiplayerSetupCanvas/JoinField/JoinAddressEdit: ok
+   MultiplayerSetupCanvas/BrowseOnlineButton: ok
+   MultiplayerSetupCanvas/BrowseLanButton: ok
+   MultiplayerSetupCanvas/BackButton: ok
+   MultiplayerSetupCanvas/JoinButton: ok
+   MultiplayerSetupCanvas/HostOnlineButton: ok
+--- MatchResult --- (640x480)
+   MatchResultCanvas/Card/Panel/RematchButton: ok
+   MatchResultCanvas/Card/Panel/MenuButton: ok
+
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

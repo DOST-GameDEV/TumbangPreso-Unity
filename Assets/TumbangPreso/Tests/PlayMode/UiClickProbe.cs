@@ -46,9 +46,9 @@ namespace TumbangPreso.PlayTests
         private const string OutPath = "Logs/ui-clicks.txt";
 
         /// <summary>
-        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CreditsPanel` and `CharacterSelectPanel` are
+        /// ⚠️ SCENES ONLY. `SettingsPanel`, `CharacterSelectPanel` and `LobbyJoinPanel` are
         /// OVERLAYS that live inside these screens rather than scenes of their own, so asking the
-        /// build settings for them reports three false failures. They are opened in place below.
+        /// build settings for them reports false failures. They are opened in place below.
         ///
         /// ⚠️ `ModeSelect` AND `MultiplayerSetup` ARE STILL PROBED THOUGH NOTHING NAVIGATES TO
         /// THEM. Both are the kept fallbacks of `docs/TODO.md` § 68.3, and a fallback nobody
@@ -60,17 +60,36 @@ namespace TumbangPreso.PlayTests
             "MainMenu", "ModeSelect", "MatchSetup", "MultiplayerSetup", "MatchResult",
         };
 
-        /// <summary>The in-place overlays, and the screen each one lives on.</summary>
-        private static readonly (string Screen, string Node)[] Overlays =
+        /// <summary>
+        /// The in-place overlays, the screen each one lives on, and the canvas it actually
+        /// draws on.
+        ///
+        /// ⚠️⚠️ `Draws` IS THE COLUMN THIS TABLE WAS MISSING AND IT IS WHY SWITCHING THE
+        /// SETTINGS NODE ON PROVED NOTHING. `OwnerUiLayout.Canvas` builds its root DETACHED and
+        /// binds lifetime through `CanvasLifetime` (§ 111.2), so the painted screen is a
+        /// scene-root SIBLING of the node that opened it. `Probe(..., node.transform)` then
+        /// walks a node whose children are all switched off in `Awake` and reports a clean
+        /// pass over nothing. **A screen scoped to the wrong transform is the green-probe fault
+        /// of § 124.11 with the probe's own scoping as the cause.** A null `Draws` means the
+        /// overlay really does draw under its own node.
+        ///
+        /// ⚠️⚠️ AND CREDITS IS A DOOR NOW RATHER THAN A PANEL. `CreditsPanel` is the
+        /// authored node the title used to switch on; it has no canvas of its own, so it renders
+        /// UNDER the title's full-screen press target and every control on it reports as
+        /// blocked, correctly. **The credits moved to the settings screen** on 2026-09-18:
+        /// `TumpSettingsView.Build` draws `SettingsCredits`, which opens `OwnerCreditsView` on
+        /// `OwnerCreditsCanvas` with its own sorting order. So it is reached the way a player
+        /// reaches it, by pressing through the screen in front of it.
+        ///
+        /// ⚠️ `TutorialPanel` IS GONE FROM THE SCENE, NOT MERELY UNLINKED. The six-page
+        /// reference card was deleted on 2026-08-28 and TUTORIAL now enters the playable route
+        /// directly; see `ConvertedMainMenu.Wire`. Probing for it would report a missing overlay
+        /// on every run.
+        /// </summary>
+        private static readonly (string Screen, string Node, string Draws, string Door, string Behind)[] Overlays =
         {
-            ("MainMenu", "SettingsPanel"),
-
-            // ⚠️ `TutorialPanel` IS GONE FROM THE SCENE, NOT MERELY UNLINKED. The six-page
-            // reference card was deleted on 2026-08-28 and TUTORIAL now enters the playable
-            // route directly; see `ConvertedMainMenu.Wire`. Probing for it would report a
-            // missing overlay on every run.
-            ("MainMenu", "CreditsPanel"),
-            ("MatchSetup", "CharacterSelectPanel"),
+            ("MainMenu", "SettingsPanel", "OwnerSettingsCanvas", "SettingsCredits", "OwnerCreditsCanvas"),
+            ("MatchSetup", "CharacterSelectPanel", null, null, null),
 
             // ⚠️ BUILT FROM CODE AND PARKED INACTIVE, NOT AUTHORED IN THE .unity.
             // `LobbyJoinPanel.Build` constructs the card and calls `SetActive(false)` on it, so
@@ -78,7 +97,7 @@ namespace TumbangPreso.PlayTests
             // it. It carries the JOIN CODE OR IP ADDRESS field, which is one of the two controls
             // that widening this probe to `InputField` exists to check, and it is behind a
             // button rather than on the screen: nothing else in the suite ever opens it.
-            ("MatchSetup", "LobbyJoinPanel"),
+            ("MatchSetup", "LobbyJoinPanel", null, null, null),
         };
 
         /// <summary>
@@ -144,15 +163,63 @@ namespace TumbangPreso.PlayTests
 
                     Canvas.ForceUpdateCanvases();
 
-                    report.AppendLine($"--- {overlay.Node} ---");
+                    // The scope is the canvas the overlay DRAWS ON, which is usually not the
+                    // node that opened it. See the table's header.
+                    var surface = overlay.Draws == null ? node : FindByName(overlay.Draws);
+
+                    if (surface == null)
+                    {
+                        report.AppendLine($"--- {overlay.Node} --- DREW NO {overlay.Draws}");
+                        blocked.Add($"{screen}: '{overlay.Node}' opened and drew no {overlay.Draws}");
+                        node.SetActive(false);
+                        yield return null;
+                        continue;
+                    }
+
+                    report.AppendLine($"--- {surface.name} ---");
 
                     // ⚠️ ONLY THE OVERLAY'S OWN CONTROLS ARE ASSERTED ON. The screen underneath
                     // is SUPPOSED to be covered: an open character panel that let you press the
                     // map arrows behind it would be the bug. Probing everything reported a dozen
                     // correct behaviours as failures and buried the one real one.
-                    Probe(overlay.Node, report, blocked, node.transform);
+                    Probe(surface.name, report, blocked, surface.transform);
+
+                    // The door this overlay carries to a further screen, pressed rather than
+                    // switched on, for `docs/TODO.md` § 124.11's reason.
+                    if (overlay.Door != null)
+                    {
+                        var door = FindByName(overlay.Door)?.GetComponent<Button>();
+
+                        if (door == null)
+                        {
+                            report.AppendLine($"--- {overlay.Door} --- NOT PRESENT on {surface.name}");
+                            blocked.Add($"{screen}: '{surface.name}' has no {overlay.Door} door");
+                        }
+                        else
+                        {
+                            door.onClick.Invoke();
+                            for (int i = 0; i < SettleFrames; i++) yield return null;
+                            Canvas.ForceUpdateCanvases();
+
+                            var behind = FindByName(overlay.Behind);
+
+                            if (behind == null)
+                            {
+                                report.AppendLine($"--- {overlay.Behind} --- NOT DRAWN");
+                                blocked.Add($"{screen}: pressing {overlay.Door} drew no {overlay.Behind}");
+                            }
+                            else
+                            {
+                                report.AppendLine($"--- {behind.name} ---");
+                                Probe(behind.name, report, blocked, behind.transform);
+                                behind.SetActive(false);
+                                yield return null;
+                            }
+                        }
+                    }
 
                     node.SetActive(false);
+                    if (overlay.Draws != null && surface != node) surface.SetActive(false);
                     yield return null;
                 }
             }

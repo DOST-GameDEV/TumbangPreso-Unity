@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="24" result="Failed(Child)" total="24" passed="18" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:35:42Z" duration="59.485837">
+  <test-suite type="TestSuite" id="1678" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:35:42Z" duration="59.485837" total="24" passed="18" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1672" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:35:42Z" duration="59.474440" total="24" passed="18" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1673" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:35:42Z" duration="59.472543" total="24" passed="18" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1674" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:35:42Z" duration="59.471207" total="24" passed="18" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1051" name="BrandPickerTests" fullname="TumbangPreso.PlayTests.BrandPickerTests" classname="TumbangPreso.PlayTests.BrandPickerTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:34:49Z" duration="6.619583" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1053" name="HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath" fullname="TumbangPreso.PlayTests.BrandPickerTests.HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath" methodname="HeroSkillDetailsHaveOneSlotAtATimeAndKeepTheReturnPath" classname="TumbangPreso.PlayTests.BrandPickerTests" runstate="Runnable" seed="205838977" result="Failed" label="Error" start-time="2026-09-21 20:34:43Z" end-time="2026-09-21 20:34:47Z" duration="4.033942" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.IO.DirectoryNotFoundException : Could not find a part of the path "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Logs\shots-runtime\Picker-brand-v5-hero.png".]]></message>
+                <stack-trace><![CDATA[  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x00164] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.InternalWriteAllBytes (System.String path, System.Byte[] bytes) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.File.WriteAllBytes (System.String path, System.Byte[] bytes) [0x00039] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.PlayTests.UiRuntimeShots+<Capture>d__22.MoveNext () [0x001c3] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\UiRuntimeShots.cs:1006 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1052" name="RosterPreviewCanBeCancelledOrExplicitlySaved" fullname="TumbangPreso.PlayTests.BrandPickerTests.RosterPreviewCanBeCancelledOrExplicitlySaved" methodname="RosterPreviewCanBeCancelledOrExplicitlySaved" classname="TumbangPreso.PlayTests.BrandPickerTests" runstate="Runnable" seed="2111439946" result="Failed" label="Error" start-time="2026-09-21 20:34:47Z" end-time="2026-09-21 20:34:49Z" duration="2.568769" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.IO.DirectoryNotFoundException : Could not find a part of the path "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Logs\shots-runtime\Picker-brand-v5-people.png".]]></message>
+                <stack-trace><![CDATA[  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x00164] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.InternalWriteAllBytes (System.String path, System.Byte[] bytes) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.File.WriteAllBytes (System.String path, System.Byte[] bytes) [0x00039] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.PlayTests.UiRuntimeShots+<Capture>d__22.MoveNext () [0x001c3] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\UiRuntimeShots.cs:1006 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1054" name="BrandPreparationTests" fullname="TumbangPreso.PlayTests.BrandPreparationTests" classname="TumbangPreso.PlayTests.BrandPreparationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-21 20:34:49Z" end-time="2026-09-21 20:34:52Z" duration="2.542482" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1056" name="PickerBackCanBePressedImmediatelyAfterOpening" fullname="TumbangPreso.PlayTests.BrandPreparationTests.PickerBackCanBePressedImmediatelyAfterOpening" methodname="PickerBackCanBePressedImmediatelyAfterOpening" classname="TumbangPreso.PlayTests.BrandPreparationTests" runstate="Runnable" seed="1106977053" result="Passed" start-time="2026-09-21 20:34:49Z" end-time="2026-09-21 20:34:51Z" duration="1.206569" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1055" name="PreparationKeepsWiredControlsReachableAtReviewSizes" fullname="TumbangPreso.PlayTests.BrandPreparationTests.PreparationKeepsWiredControlsReachableAtReviewSizes" methodname="PreparationKeepsWiredControlsReachableAtReviewSizes" classname="TumbangPreso.PlayTests.BrandPreparationTests" runstate="Runnable" seed="216382160" result="Failed" label="Error" start-time="2026-09-21 20:34:51Z" end-time="2026-09-21 20:34:52Z" duration="1.330357" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.IO.DirectoryNotFoundException : Could not find a part of the path "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Logs\shots-runtime\Preparation-brand-v3-1920x1080.png".]]></message>
+                <stack-trace><![CDATA[  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x00164] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.InternalWriteAllBytes (System.String path, System.Byte[] bytes) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.File.WriteAllBytes (System.String path, System.Byte[] bytes) [0x00039] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.PlayTests.UiRuntimeShots+<Capture>d__22.MoveNext () [0x001c3] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\UiRuntimeShots.cs:1006 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1111" name="CosmeticSurfaceProbe" fullname="TumbangPreso.PlayTests.CosmeticSurfaceProbe" classname="TumbangPreso.PlayTests.CosmeticSurfaceProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-21 20:34:52Z" end-time="2026-09-21 20:34:55Z" duration="2.707654" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1113" name="ATitleAndATayaTagStackRatherThanOverlap" fullname="TumbangPreso.PlayTests.CosmeticSurfaceProbe.ATitleAndATayaTagStackRatherThanOverlap" methodname="ATitleAndATayaTagStackRatherThanOverlap" classname="TumbangPreso.PlayTests.CosmeticSurfaceProbe" runstate="Runnable" seed="157629414" result="Passed" start-time="2026-09-21 20:34:52Z" end-time="2026-09-21 20:34:52Z" duration="0.183088" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1112" name="NoHeroTabDrawsAnyColourControlAtAll" fullname="TumbangPreso.PlayTests.CosmeticSurfaceProbe.NoHeroTabDrawsAnyColourControlAtAll" methodname="NoHeroTabDrawsAnyColourControlAtAll" classname="TumbangPreso.PlayTests.CosmeticSurfaceProbe" runstate="Runnable" seed="1480116158" result="Passed" start-time="2026-09-21 20:34:52Z" end-time="2026-09-21 20:34:55Z" duration="2.518424" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Cosmetics] shot 10-picker-no-colour-controls
+[Cosmetics]
+picker open, camera Main Camera, 6 canvases
+picker column: 0 used of 460
+
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1176" name="HeroPickerLayoutProbe" fullname="TumbangPreso.PlayTests.HeroPickerLayoutProbe" classname="TumbangPreso.PlayTests.HeroPickerLayoutProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 20:34:55Z" end-time="2026-09-21 20:34:57Z" duration="2.393158" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1177" name="TheHeroPickerHasNoDeadBandAboveTheAbilityRows" fullname="TumbangPreso.PlayTests.HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows" methodname="TheHeroPickerHasNoDeadBandAboveTheAbilityRows" classname="TumbangPreso.PlayTests.HeroPickerLayoutProbe" runstate="Runnable" seed="1988044101" result="Passed" start-time="2026-09-21 20:34:55Z" end-time="2026-09-21 20:34:57Z" duration="2.358596" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Picker] scaleFactor=0.333  gap=24.0  description box=77 text=57 slack=20
+   CollectionReadingCard h=532 top=936 bottom=404 min=0 pref=0 flex=0
+
+[Picker] lastRow=MeetCharacter overflow=-124.0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1232" name="LoadoutSurfaceProbe" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-21 20:34:57Z" end-time="2026-09-21 20:35:10Z" duration="12.798956" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1235" name="ALockedAlternateReadsItsProgressAndRefusesToEquip" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe.ALockedAlternateReadsItsProgressAndRefusesToEquip" methodname="ALockedAlternateReadsItsProgressAndRefusesToEquip" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" seed="872505683" result="Passed" start-time="2026-09-21 20:34:57Z" end-time="2026-09-21 20:34:59Z" duration="2.350334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1236" name="AnUnlockedAlternateEquipsAndSurvivesRebuildingTheBoard" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe.AnUnlockedAlternateEquipsAndSurvivesRebuildingTheBoard" methodname="AnUnlockedAlternateEquipsAndSurvivesRebuildingTheBoard" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" seed="648983782" result="Passed" start-time="2026-09-21 20:34:59Z" end-time="2026-09-21 20:35:02Z" duration="2.680044" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1234" name="BothSlotHeadsCarryTheAbilitysOwnGlyph" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe.BothSlotHeadsCarryTheAbilitysOwnGlyph" methodname="BothSlotHeadsCarryTheAbilitysOwnGlyph" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" seed="174355471" result="Passed" start-time="2026-09-21 20:35:02Z" end-time="2026-09-21 20:35:05Z" duration="2.387818" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1237" name="EveryTileLabelFitsItsTileAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe.EveryTileLabelFitsItsTileAtEveryShippedResolution" methodname="EveryTileLabelFitsItsTileAtEveryShippedResolution" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" seed="633586588" result="Passed" start-time="2026-09-21 20:35:05Z" end-time="2026-09-21 20:35:08Z" duration="2.978776" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[LoadoutSurfaceProbe]
+16:9 720p      1280x720  4 labels on 2 readings
+16:9 900p      1600x900  4 labels on 2 readings
+16:9 1080p     1920x1080  4 labels on 2 readings
+16:9 1440p     2560x1440  4 labels on 2 readings
+16:9 laptop    1366x768  4 labels on 2 readings
+16:10          1920x1200  4 labels on 2 readings
+21:9           2560x1080  4 labels on 2 readings
+21:9 1440p     3440x1440  4 labels on 2 readings
+4:3            1024x768  4 labels on 2 readings
+
+]]></output>
+            </test-case>
+            <test-case id="1233" name="OnlyTheHeroOnTheStageHasTilesOnTheBoard" fullname="TumbangPreso.PlayTests.LoadoutSurfaceProbe.OnlyTheHeroOnTheStageHasTilesOnTheBoard" methodname="OnlyTheHeroOnTheStageHasTilesOnTheBoard" classname="TumbangPreso.PlayTests.LoadoutSurfaceProbe" runstate="Runnable" seed="1528209060" result="Passed" start-time="2026-09-21 20:35:08Z" end-time="2026-09-21 20:35:10Z" duration="2.391674" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1301" name="ModelPreviewTests" fullname="TumbangPreso.PlayTests.ModelPreviewTests" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-21 20:35:10Z" end-time="2026-09-21 20:35:31Z" duration="21.065686" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1305" name="ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" fullname="TumbangPreso.PlayTests.ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" methodname="ClassicCharacterSelectDrawsTheGodotCastAndBackdrop" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1179586413" result="Passed" start-time="2026-09-21 20:35:10Z" end-time="2026-09-21 20:35:13Z" duration="2.617219" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1307" name="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" methodname="ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="2091077466" result="Passed" start-time="2026-09-21 20:35:13Z" end-time="2026-09-21 20:35:13Z" duration="0.061055" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1306" name="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" fullname="TumbangPreso.PlayTests.ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" methodname="HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1720332228" result="Failed" start-time="2026-09-21 20:35:13Z" end-time="2026-09-21 20:35:15Z" duration="2.894761" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The selected power is named but never explained.
+  Expected: String containing "Ground slam. Shoves players and slippers away from you."
+  But was:  "BACK
+DANTE · SKILLS
+SKILL 1
+SKILL 2
+ULTIMATE
+SEISMIC STOMP
+Equipped
+LONG TREMOR
+Locked · view challenge
+SEISMIC STOMP
+Q  ·  SKILL 1
+A 2.2 m shock at your feet that launches whoever is standing in it.
+Throws them clear
+Two uses, then none
+In your loadout
+EQUIPPED
+BACK
+DANTE · SKILLS
+SKILL 1
+SKILL 2
+ULTIMATE
+DEMONIC CARAPACE
+Equipped
+HEAVY PLATING
+Locked · view challenge
+DEMONIC CARAPACE
+E  ·  SKILL 2
+Nothing stuns, shoves or slips you, and you keep full speed.
+Nothing moves you
+It is over quickly
+In your loadout
+EQUIPPED
+BACK
+DANTE · SKILLS
+SKILL 1
+SKILL 2
+ULTIMATE
+TITAN FISSURE
+F  ·  ULTIMATE
+Splits the ground ahead. Launches whoever is in front of you.
+Your hero's signature move.
+
+
+"
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.PlayTests.ModelPreviewTests+<HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes>d__8.MoveNext () [0x0038f] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\ModelPreviewTests.cs:446
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1303" name="TheCastAnimatesInAMatch" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCastAnimatesInAMatch" methodname="TheCastAnimatesInAMatch" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="1438150338" result="Passed" start-time="2026-09-21 20:35:15Z" end-time="2026-09-21 20:35:18Z" duration="2.774447" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1302" name="TheCharacterPreviewIsFramedPosedAndMovable" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheCharacterPreviewIsFramedPosedAndMovable" methodname="TheCharacterPreviewIsFramedPosedAndMovable" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="721098764" result="Passed" start-time="2026-09-21 20:35:18Z" end-time="2026-09-21 20:35:22Z" duration="3.376471" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+            <test-case id="1304" name="TheReplacedCharacterShowsOnTheSelectScreen" fullname="TumbangPreso.PlayTests.ModelPreviewTests.TheReplacedCharacterShowsOnTheSelectScreen" methodname="TheReplacedCharacterShowsOnTheSelectScreen" classname="TumbangPreso.PlayTests.ModelPreviewTests" runstate="Runnable" seed="535232170" result="Passed" start-time="2026-09-21 20:35:22Z" end-time="2026-09-21 20:35:31Z" duration="9.310452" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1389" name="PaperPurityProbe" fullname="TumbangPreso.PlayTests.PaperPurityProbe" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-21 20:35:31Z" end-time="2026-09-21 20:35:40Z" duration="8.696614" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1392" name="NothingOnTheInventoryDisappeared" fullname="TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared" methodname="NothingOnTheInventoryDisappeared" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" seed="855050407" result="Failed" start-time="2026-09-21 20:35:31Z" end-time="2026-09-21 20:35:40Z" duration="8.686736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  these front-end controls were on the screens before this pass and are not on them now, so the rebuild lost them. 🧑 asked for this by name: "it should have all the functions of old ui, make sure ntohing in old ui as functions get lost". docs/TODO.md § 133.5, and Logs/control-inventory.txt is the full live walk:
+  character  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  character  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  character  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  Button_COPY  |  COPY
+  character  |  button  |  Button_HERO  |  HERO
+  character  |  button  |  Button_LATA  |  LATA
+  character  |  button  |  Button_MATCHES  |  MATCHES
+  character  |  button  |  Button_TSINELAS  |  TSINELAS
+  character  |  button  |  CustomTab  |  CUSTOM
+  character  |  button  |  FormatNextButton  |  
+  character  |  button  |  FormatPrevButton  |  
+  character  |  button  |  GoOnlineButton  |  START SERVER
+  character  |  button  |  GuestButton  |  PLAY AS GUEST
+  character  |  button  |  JoinChip  |  JOIN A GAME
+  character  |  button  |  LoadoutDoor  |  LOADOUT
+  character  |  button  |  OpenJoinButton  |  JOIN A GAME
+  character  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  character  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  character  |  button  |  PracticeTab  |  PRACTICE
+  character  |  button  |  RoomCodeButton  |  ROOM CODE
+  character  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  character  |  field  |  ChatField  |  
+  character  |  field  |  Field_PASSWORD  |  
+  character  |  field  |  Field_USERNAME  |  
+  character  |  field  |  JoinAddressEdit  |  
+  lobby  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  lobby  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  lobby  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  Button_COPY  |  COPY
+  lobby  |  button  |  Button_MATCHES  |  MATCHES
+  lobby  |  button  |  CustomTab  |  CUSTOM
+  lobby  |  button  |  FormatNextButton  |  
+  lobby  |  button  |  FormatPrevButton  |  
+  lobby  |  button  |  GoOnlineButton  |  START SERVER
+  lobby  |  button  |  GuestButton  |  PLAY AS GUEST
+  lobby  |  button  |  JoinChip  |  JOIN A GAME
+  lobby  |  button  |  OpenJoinButton  |  JOIN A GAME
+  lobby  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  lobby  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  lobby  |  button  |  PracticeTab  |  PRACTICE
+  lobby  |  button  |  RoomCodeButton  |  ROOM CODE
+  lobby  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  lobby  |  field  |  ChatField  |  
+  lobby  |  field  |  Field_PASSWORD  |  
+  lobby  |  field  |  Field_USERNAME  |  
+  lobby  |  field  |  JoinAddressEdit  |  
+  login  |  button  |  Button_B  |  B
+  login  |  button  |  Button_C  |  C
+  login  |  button  |  Button_CUSTOMISE  |  CUSTOMISE
+  login  |  button  |  Button_E  |  E
+  login  |  button  |  Button_F  |  F
+  login  |  button  |  Button_F11  |  F11
+  login  |  button  |  Button_GAMEPAD  |  GAMEPAD
+  login  |  button  |  Button_H  |  H
+  login  |  button  |  Button_K  |  K
+  login  |  button  |  Button_KEYBOARD  |  KEYBOARD
+  login  |  button  |  Button_Left Button  |  Left Button
+  login  |  button  |  Button_Left Control  |  Left Control
+  login  |  button  |  Button_N  |  N
+  login  |  button  |  Button_ON  |  ON
+  login  |  button  |  Button_P  |  P
+  login  |  button  |  Button_Q  |  Q
+  login  |  button  |  Button_R  |  R
+  login  |  button  |  Button_RESET  |  RESET
+  login  |  button  |  Button_Right Button  |  Right Button
+  login  |  button  |  Button_SIGN IN  |  CREATE ACCOUNT
+  login  |  button  |  Button_Tab  |  Tab
+  login  |  button  |  Button_V  |  V
+  login  |  button  |  Button_X  |  X
+  login  |  button  |  Button_Y  |  Y
+  login  |  button  |  Button_Z  |  Z
+  login  |  button  |  GuestButton  |  CONTINUE AS GUEST
+  login  |  button  |  GuestButton  |  PLAY AS GUEST
+  login  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  login  |  dropdown  |  SwatchDropdown  |  MSAA 4x + FXAA
+  login  |  dropdown  |  SwatchDropdown  |  ON
+  login  |  dropdown  |  SwatchDropdown  |  Off
+  login  |  dropdown  |  SwatchDropdown  |  On
+  login  |  dropdown  |  SwatchDropdown  |  Toon (Ink Outlines)
+  login  |  field  |  Field_PASSWORD  |  
+  login  |  field  |  Field_USERNAME  |  
+  login  |  scrollbar  |  VerticalScrollbar  |  
+  login  |  toggle  |  Item  |  
+  profile  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  profile  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  profile  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  Button_COPY  |  COPY
+  profile  |  button  |  Button_HERO  |  HERO
+  profile  |  button  |  Button_LATA  |  LATA
+  profile  |  button  |  Button_MATCHES  |  MATCHES
+  profile  |  button  |  Button_TSINELAS  |  TSINELAS
+  profile  |  button  |  CustomTab  |  CUSTOM
+  profile  |  button  |  FormatNextButton  |  
+  profile  |  button  |  FormatPrevButton  |  
+  profile  |  button  |  GoOnlineButton  |  START SERVER
+  profile  |  button  |  GuestButton  |  PLAY AS GUEST
+  profile  |  button  |  JoinChip  |  JOIN A GAME
+  profile  |  button  |  LoadoutDoor  |  LOADOUT
+  profile  |  button  |  OpenJoinButton  |  JOIN A GAME
+  profile  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  profile  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  profile  |  button  |  PracticeTab  |  PRACTICE
+  profile  |  button  |  RoomCodeButton  |  ROOM CODE
+  profile  |  button  |  Section_Banner  |  +  BANNER
+  profile  |  button  |  Section_Identity  |  -  IDENTITY
+  profile  |  button  |  Section_Optional details  |  +  OPTIONAL DETAILS
+  profile  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  profile  |  field  |  ChatField  |  
+  profile  |  field  |  Field_PASSWORD  |  
+  profile  |  field  |  Field_USERNAME  |  
+  profile  |  field  |  JoinAddressEdit  |  
+  settings  |  button  |  Button_B  |  B
+  settings  |  button  |  Button_C  |  C
+  settings  |  button  |  Button_CUSTOMISE  |  CUSTOMISE
+  settings  |  button  |  Button_E  |  E
+  settings  |  button  |  Button_F  |  F
+  settings  |  button  |  Button_F11  |  F11
+  settings  |  button  |  Button_GAMEPAD  |  GAMEPAD
+  settings  |  button  |  Button_H  |  H
+  settings  |  button  |  Button_K  |  K
+  settings  |  button  |  Button_KEYBOARD  |  KEYBOARD
+  settings  |  button  |  Button_Left Button  |  Left Button
+  settings  |  button  |  Button_Left Control  |  Left Control
+  settings  |  button  |  Button_N  |  N
+  settings  |  button  |  Button_ON  |  ON
+  settings  |  button  |  Button_P  |  P
+  settings  |  button  |  Button_Q  |  Q
+  settings  |  button  |  Button_R  |  R
+  settings  |  button  |  Button_RESET  |  RESET
+  settings  |  button  |  Button_Right Button  |  Right Button
+  settings  |  button  |  Button_Tab  |  Tab
+  settings  |  button  |  Button_V  |  V
+  settings  |  button  |  Button_X  |  X
+  settings  |  button  |  Button_Y  |  Y
+  settings  |  button  |  Button_Z  |  Z
+  settings  |  dropdown  |  SwatchDropdown  |  MSAA 4x + FXAA
+  settings  |  dropdown  |  SwatchDropdown  |  ON
+  settings  |  dropdown  |  SwatchDropdown  |  Off
+  settings  |  dropdown  |  SwatchDropdown  |  On
+  settings  |  dropdown  |  SwatchDropdown  |  Toon (Ink Outlines)
+  settings  |  scrollbar  |  VerticalScrollbar  |  
+  settings  |  toggle  |  Item  |  
+  Expected: <empty>
+  But was:  < "character  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…", "character  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…", "character  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  Button_COPY  |  COPY", "character  |  button  |  Button_HERO  |  HERO", "character  |  button  |  Button_LATA  |  LATA", "character  |  button  |  Button_MATCHES  |  MATCHES", "character  |  button  |  Button_TSINELAS  |  TSINELAS"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PaperPurityProbe+<NothingOnTheInventoryDisappeared>d__17.MoveNext () [0x008e1] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\PaperPurityProbe.cs:772
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code YWBZ
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1424" name="PlayerHubLayoutProbe" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-21 20:35:40Z" end-time="2026-09-21 20:35:42Z" duration="2.513878" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1425" name="EveryTabFitsItsBoxAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe.EveryTabFitsItsBoxAtEveryShippedResolution" methodname="EveryTabFitsItsBoxAtEveryShippedResolution" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" seed="2040968181" result="Passed" start-time="2026-09-21 20:35:40Z" end-time="2026-09-21 20:35:40Z" duration="0.775923" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[PlayerHub] tabs
+camera: ProbeCamera
+canvases driven: 3
+16:9 720p      hub/PROFILE     18 labels
+16:9 720p      hub/FRIENDS     16 labels
+16:9 720p      hub/CAREER      20 labels
+16:9 720p      hub/HISTORY     18 labels
+16:9 720p      hub/ACCOUNT     23 labels
+16:9 900p      hub/PROFILE     18 labels
+16:9 900p      hub/FRIENDS     16 labels
+16:9 900p      hub/CAREER      20 labels
+16:9 900p      hub/HISTORY     18 labels
+16:9 900p      hub/ACCOUNT     23 labels
+16:9 1080p     hub/PROFILE     18 labels
+16:9 1080p     hub/FRIENDS     16 labels
+16:9 1080p     hub/CAREER      20 labels
+16:9 1080p     hub/HISTORY     18 labels
+16:9 1080p     hub/ACCOUNT     23 labels
+16:9 1440p     hub/PROFILE     18 labels
+16:9 1440p     hub/FRIENDS     16 labels
+16:9 1440p     hub/CAREER      20 labels
+16:9 1440p     hub/HISTORY     18 labels
+16:9 1440p     hub/ACCOUNT     23 labels
+16:9 laptop    hub/PROFILE     18 labels
+16:9 laptop    hub/FRIENDS     16 labels
+16:9 laptop    hub/CAREER      20 labels
+16:9 laptop    hub/HISTORY     18 labels
+16:9 laptop    hub/ACCOUNT     23 labels
+16:10          hub/PROFILE     18 labels
+16:10          hub/FRIENDS     16 labels
+16:10          hub/CAREER      20 labels
+16:10          hub/HISTORY     18 labels
+16:10          hub/ACCOUNT     23 labels
+21:9           hub/PROFILE     18 labels
+21:9           hub/FRIENDS     16 labels
+21:9           hub/CAREER      20 labels
+21:9           hub/HISTORY     18 labels
+21:9           hub/ACCOUNT     23 labels
+21:9 1440p     hub/PROFILE     18 labels
+21:9 1440p     hub/FRIENDS     16 labels
+21:9 1440p     hub/CAREER      20 labels
+21:9 1440p     hub/HISTORY     18 labels
+21:9 1440p     hub/ACCOUNT     23 labels
+4:3            hub/PROFILE     18 labels
+4:3            hub/FRIENDS     16 labels
+4:3            hub/CAREER      20 labels
+4:3            hub/HISTORY     18 labels
+4:3            hub/ACCOUNT     23 labels
+
+]]></output>
+            </test-case>
+            <test-case id="1429" name="PhotographEveryScreen" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe.PhotographEveryScreen" methodname="PhotographEveryScreen" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" seed="1665966712" result="Failed" start-time="2026-09-21 20:35:40Z" end-time="2026-09-21 20:35:42Z" duration="1.177490" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Exception] NullReferenceException: Object reference not set to an instance of an object'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.UI.InputField.GenerateCaret (UnityEngine.UI.VertexHelper vbo, UnityEngine.Vector2 roundingOffset) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2898)
+UnityEngine.UI.InputField.OnFillVBO (UnityEngine.Mesh vbo) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2828)
+UnityEngine.UI.InputField.UpdateGeometry () (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2789)
+UnityEngine.UI.InputField.Rebuild (UnityEngine.UI.CanvasUpdate update) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2741)
+UnityEngine.UI.CanvasUpdateRegistry.PerformUpdate () (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/CanvasUpdateRegistry.cs:215)
+UnityEngine.Canvas:SendWillRenderCanvases()
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[PlayerHub] shot 01-nameplate
+[PlayerHub] shot 02-hub-profile
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[PlayerHub] shot 13-hub-friends-empty
+[PlayerHub] shot 03-hub-career-collapsed
+[PlayerHubLayoutProbe] no button reading '+  ATTACK'; the page has no such group
+[PlayerHub] shot 04-hub-career-open
+[PlayerHub] shot 05-hub-matches
+[PlayerHub] shot 06-hub-account
+NullReferenceException: Object reference not set to an instance of an object
+UnityEngine.UI.InputField.GenerateCaret (UnityEngine.UI.VertexHelper vbo, UnityEngine.Vector2 roundingOffset) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2898)
+UnityEngine.UI.InputField.OnFillVBO (UnityEngine.Mesh vbo) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2828)
+UnityEngine.UI.InputField.UpdateGeometry () (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2789)
+UnityEngine.UI.InputField.Rebuild (UnityEngine.UI.CanvasUpdate update) (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/InputField.cs:2741)
+UnityEngine.UI.CanvasUpdateRegistry.PerformUpdate () (at ./Library/PackageCache/com.unity.ugui@1c4864518158/Runtime/UGUI/UI/Core/CanvasUpdateRegistry.cs:215)
+UnityEngine.Canvas:SendWillRenderCanvases()
+
+]]></output>
+            </test-case>
+            <test-case id="1428" name="TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe.TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt" methodname="TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" seed="370485201" result="Passed" start-time="2026-09-21 20:35:42Z" end-time="2026-09-21 20:35:42Z" duration="0.083906" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PlayerHub] boot-account
+login step shown on both launches, one press left the first
+
+]]></output>
+            </test-case>
+            <test-case id="1427" name="TheNameplateStaysOnScreenAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe.TheNameplateStaysOnScreenAtEveryShippedResolution" methodname="TheNameplateStaysOnScreenAtEveryShippedResolution" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" seed="1295649366" result="Passed" start-time="2026-09-21 20:35:42Z" end-time="2026-09-21 20:35:42Z" duration="0.210884" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PlayerHub] nameplate
+camera: ProbeCamera
+canvases driven: 3
+16:9 720p      1280x720  nameplate ok
+16:9 900p      1600x900  nameplate ok
+16:9 1080p     1920x1080  nameplate ok
+16:9 1440p     2560x1440  nameplate ok
+16:9 laptop    1366x768  nameplate ok
+16:10          1920x1200  nameplate ok
+21:9           2560x1080  nameplate ok
+21:9 1440p     3440x1440  nameplate ok
+4:3            1024x768  nameplate ok
+
+]]></output>
+            </test-case>
+            <test-case id="1426" name="TheSignInScreenFitsItsBoxAtEveryShippedResolution" fullname="TumbangPreso.PlayTests.PlayerHubLayoutProbe.TheSignInScreenFitsItsBoxAtEveryShippedResolution" methodname="TheSignInScreenFitsItsBoxAtEveryShippedResolution" classname="TumbangPreso.PlayTests.PlayerHubLayoutProbe" runstate="Runnable" seed="303568346" result="Passed" start-time="2026-09-21 20:35:42Z" end-time="2026-09-21 20:35:42Z" duration="0.255473" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PlayerHub] signin
+camera: ProbeCamera
+canvases driven: 3
+16:9 720p      signin          10 labels
+16:9 900p      signin          10 labels
+16:9 1080p     signin          10 labels
+16:9 1440p     signin          10 labels
+16:9 laptop    signin          10 labels
+16:10          signin          10 labels
+21:9           signin          10 labels
+21:9 1440p     signin          10 labels
+4:3            signin          10 labels
+
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

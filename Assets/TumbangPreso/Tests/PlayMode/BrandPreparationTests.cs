@@ -30,20 +30,39 @@ namespace TumbangPreso.PlayTests
             foreach (var size in new[] { new Vector2Int(1920,1080), new Vector2Int(1280,720), new Vector2Int(1200,900) })
             {
                 yield return UiRuntimeShots.Capture($"Preparation-brand-v3-{size.x}x{size.y}", size.x, size.y);
-                foreach (string name in new[] { "BackButton", "CharacterButton", "LoadoutButton", "ProfileButton", "GameSettingsButton", "SettingsDrawerToggle" })
+                // ⚠️⚠️ FIVE CONTROLS, AND THE LIST USED TO CARRY THREE NAMES THIS LOBBY DOES
+                // NOT BUILD. `CharacterButton` and `LoadoutButton` were TWO doors to the fighter
+                // picker on the retired chrome and are one door called `LoadoutButton` now;
+                // `GameSettingsButton` is `SettingsButton`; and `SettingsDrawerToggle` is gone
+                // with the drawer it opened. `OwnerPreparationView.Court` is the authority.
+                foreach (string name in new[] { "BackButton", "LoadoutButton", "ProfileButton", "SettingsButton", "CustomGameButton" })
                     Hit(Button(name));
                 Assert.AreEqual(1, Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
                     .Count(b => b.isActiveAndEnabled && (b.name == "StartButton" || b.name == "PrimaryButton")));
             }
-            var toggle = Button("SettingsDrawerToggle");
-            Press(toggle);
+
+            // ⚠️⚠️ THE MATCH RULES ARE A SHEET NOW, NOT A DRAWER, AND THE DIFFERENCE IS
+            // WHERE THEY LIVE RATHER THAN HOW THEY LOOK. `LobbyChrome.BuildSettingsChip` slid
+            // `SettingsBody` out of a chip on the left rail; `CustomGameButton` opens
+            // `CustomGameScreen` on its own canvas over the whole lobby. So the open state is
+            // asserted on `CustomGameRoot` and the shut state on the screen no longer being
+            // drawn, which is the same claim about a different object.
+            var rules = Button("CustomGameButton");
+            Press(rules);
             yield return null;
-            Assert.IsTrue(GameObject.Find("SettingsBody").activeInHierarchy);
+            yield return null;
+            var sheet = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)
+                .FirstOrDefault(t => t.name == "CustomGameRoot");
+            Assert.IsNotNull(sheet, "CUSTOM SETTINGS must open the rules sheet. See CustomGameScreen.");
+            Assert.IsTrue(sheet.gameObject.activeInHierarchy);
             yield return UiRuntimeShots.Capture("Preparation-brand-v3-rules-open", 1920, 1080);
-            Press(toggle);
+            var custom = Object.FindFirstObjectByType<CustomGameScreen>();
+            Assert.IsNotNull(custom);
+            custom.Close();
             yield return null;
-            Assert.IsFalse(Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Any(t => t.name == "SettingsBody"));
-            Press(Button("GameSettingsButton"));
+            Assert.IsFalse(sheet.gameObject.activeInHierarchy,
+                "leaving the rules sheet must put the lobby back.");
+            Press(Button("SettingsButton"));
             yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<ConvertedSettingsPanel>());
         }
@@ -57,16 +76,21 @@ namespace TumbangPreso.PlayTests
             PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
             yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
             yield return new WaitForSecondsRealtime(.6f);
-            Press(Button("CharacterButton"));
+            // ⚠️ `LoadoutButton`, NOT `CharacterButton`. One door to the fighter picker, named
+            // for what is behind it since the loadout moved onto the picker on 2026-09-02
+            // (`docs/TODO.md` § 122.5).
+            Press(Button("LoadoutButton"));
             yield return null;
             var picker = Object.FindFirstObjectByType<ConvertedCharacterSelect>();
             Assert.IsNotNull(picker);
             // Deliberately no capture or settling delay before the click: preserve evidence
             // of the previously unisolated PreviewSurface hit instead of hiding the defect.
-            Press(picker.GetComponentsInChildren<Button>().Single(b => b.name == "BackButton"));
+            // the painted picker draws on a scene-root sibling canvas, not under this component
+            // (section 111.2), so its BACK is found globally and is called TumpBack.
+            Press(Button("TumpBack"));
             yield return null;
             Assert.IsFalse(picker.gameObject.activeInHierarchy);
-            Hit(Button("CharacterButton"));
+            Hit(Button("LoadoutButton"));
         }
 
         private static Button Button(string name)

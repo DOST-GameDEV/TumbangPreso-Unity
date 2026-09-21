@@ -67,8 +67,33 @@ namespace TumbangPreso.PlayTests
             (1024,  768, "4:3"),
         };
 
-        private const string Board = "LoadoutBoard";
-        private const string Door = "LoadoutDoor";
+        /// <summary>
+        /// ⚠️⚠️ THE SURFACE MOVED A FOURTH TIME AND THE CONSTANTS ARE WHERE THAT SHOWS.
+        /// `LoadoutBoard` behind a `LoadoutDoor` was the picker's own overlay: four tiles and
+        /// three slot heads on one board. The painted pass replaced it with `TumpSkillView`,
+        /// which is **one slot at a time** on a screen of its own: `TumpSkills` on the picker
+        /// opens `OwnerSkillsCanvas`, three tabs `TumpSkillSlot0` to `TumpSkillSlot2` choose the
+        /// slot, and only that slot's readings are drawn, as `TumpVariant_&lt;id&gt;` buttons under
+        /// `VariantChoices`, with one `TumpEquipSkill` under them.
+        ///
+        /// ⚠️⚠️ AND THAT IS A NARROWING OF WHAT THIS FILE CAN CLAIM, SAID OUT LOUD RATHER
+        /// THAN QUIETLY DROPPED. "Four tiles on one board" was this probe's way of saying the
+        /// screen is not a flat list of everybody's builds (`CLAUDE.md` § 6.2, *everything the
+        /// feature can do is on screen at once*). One slot at a time is a STRONGER answer to the
+        /// same worry, so the case below asserts the new shape rather than the old count: every
+        /// reading on screen belongs to the hero on the stage AND to the slot the tabs say we
+        /// are on.
+        /// </summary>
+        private const string Skills = "OwnerSkillsCanvas";
+        private const string Choices = "VariantChoices";
+        private const string Door = "TumpSkills";
+        private const string Equip = "TumpEquipSkill";
+        private const string Unlock = "UnlockState";
+
+        /// <summary>The tab for a slot. ⚠️ `TumpSkillSlot0` IS THE ULTIMATE: the tabs read
+        /// SKILL 1, SKILL 2, ULTIMATE and are numbered 1, 2, 0, because the number is the
+        /// ability's own slot and the ultimate is slot zero everywhere else in the game.</summary>
+        private static string Tab(int slot) => "TumpSkillSlot" + slot;
 
         private GameObject _panel;
         private Camera _camera;
@@ -136,33 +161,42 @@ namespace TumbangPreso.PlayTests
             yield return OpenBoard();
 
             string heroId = CurrentHero();
-            Assert.IsNotEmpty(heroId, "the picker is on no hero, so the board has nothing to draw");
+            Assert.IsNotEmpty(heroId, "the picker is on no hero, so the skills screen has nothing to draw");
 
+            // The screen opens on SKILL 1, which is `TumpSkillView._slot`'s initial value.
+            var expected = HeroLoadoutRules.VariantsFor(heroId, 1);
             var tiles = Tiles();
-            Assert.AreEqual(4, tiles.Count,
-                $"the board drew {tiles.Count} variant tiles. A hero has two skills and each has "
-                + "two readings, so anything else means the board is drawing a kit that is not "
-                + "the one on the stage. docs/TODO.md § 122.5.");
+
+            Assert.AreEqual(expected.Count, tiles.Count,
+                $"the slot drew {tiles.Count} readings and this hero's first skill has "
+                + $"{expected.Count}. Anything else means the column is showing a kit that is "
+                + "not the one on the stage, or more than one slot at a time. docs/TODO.md "
+                + "section 122.5 and section 153.20.");
 
             foreach (var tile in tiles)
-                StringAssert.StartsWith("Variant_" + heroId + ".", tile.name,
-                    $"'{tile.name}' is on {heroId}'s board. Every tile has to belong to the hero "
-                    + "the picker is showing, or the board is a flat list of everybody's builds "
-                    + "again.");
+                StringAssert.StartsWith("TumpVariant_" + heroId + ".1.", tile.name,
+                    $"'{tile.name}' is on {heroId}'s SKILL 1 column. Every reading has to belong "
+                    + "to the hero the picker is showing AND to the slot the tabs say we are on, "
+                    + "or the column is a flat list of everybody's builds again.");
 
-            // ⚠️⚠️ THREE HEADS AND FOUR TILES, WHICH IS NOT A CONTRADICTION AND IS THE WHOLE
-            // POINT OF THE THIRD ONE. `docs/TODO.md` § 131.7: the board showed two of a hero's
-            // three powers, so a screen titled `LOADOUT · DANTE` never mentioned TITAN FISSURE.
-            // The ultimate row has a head and no tiles **on purpose**, because
-            // `AbilityVariant.Slot` refuses it options: *"an ultimate is banked once or twice a
-            // match and reading which one an opponent has is already a skill"*.
-            //
-            // ⚠️ SO THE TWO COUNTS ARE THE ASSERTION. Four tiles says only the two skills carry
-            // readings; three heads says the ultimate is still on the screen. Asserting either
-            // alone would let the ultimate row silently grow tiles or silently disappear.
-            Assert.AreEqual(3, Glyphs().Count,
-                "the board drew something other than three slot heads, so it is not showing one "
-                + "hero's two skills AND their ultimate. docs/TODO.md § 131.7.");
+            // ⚠️⚠️ THREE TABS AND ONE COLUMN, WHICH IS NOT A CONTRADICTION AND IS THE WHOLE
+            // POINT OF THE THIRD TAB. `docs/TODO.md` section 131.7: the old board showed two of a
+            // hero's three powers, so a screen titled LOADOUT never mentioned TITAN FISSURE. The
+            // ultimate has a TAB and no readings **on purpose**, because `AbilityVariant.Slot`
+            // refuses it options: *"an ultimate is banked once or twice a match and reading which
+            // one an opponent has is already a skill"*.
+            for (int slot = 0; slot <= 2; slot++)
+                Assert.IsNotNull(Under(SkillsScreen(), Tab(slot)),
+                    $"the skills screen has no {Tab(slot)}, so one of this hero's three powers "
+                    + "cannot be read at all. docs/TODO.md section 131.7.");
+
+            Press(Tab(0));
+            yield return null;
+            yield return null;
+
+            Assert.IsFalse(Under(SkillsScreen(), Choices).gameObject.activeInHierarchy,
+                "the ultimate drew a column of readings. It has none to choose between, and a "
+                + "chooser with one entry teaches a choice that is not there.");
         }
 
         /// <summary>
@@ -188,17 +222,37 @@ namespace TumbangPreso.PlayTests
         {
             yield return OpenBoard();
 
-            var glyphs = Glyphs();
-            Assert.AreEqual(3, glyphs.Count,
-                "the board has no set of three slot heads to check: two skills and the ultimate.");
+            string heroId = CurrentHero();
+            var kit = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
 
-            foreach (var glyph in glyphs)
+            // ⚠️⚠️ THE GLYPH IS DRAWN, NOT LOADED, AND THAT CHANGED WHAT CAN BE ASSERTED.
+            // `AbilityIcons.For` answered with a `Sprite` and a missing one drew a solid square;
+            // `TumpAbilitySymbol` builds the pictogram in `OnPopulateMesh` from the
+            // `AbilityGlyph` enum, so there is no sprite to be null. The two halves of the old
+            // claim survive as two assertions: the tab carries the ability's OWN glyph rather
+            // than a lookup, and the symbol actually puts geometry on screen.
+            var tabs = new[] { (1, kit.Skill1), (2, kit.Skill2), (0, kit.Ultimate) };
+
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+
+            foreach (var (slot, ability) in tabs)
             {
-                var image = glyph.GetComponent<Image>();
-                Assert.IsNotNull(image, "a SlotGlyph with no Image on it.");
-                Assert.IsNotNull(image.sprite,
-                    "a SlotGlyph with no sprite, which draws as a solid square. "
-                    + "AbilityIcons.For answered nothing for this ability's Glyph.");
+                var tab = Under(SkillsScreen(), Tab(slot));
+                Assert.IsNotNull(tab, $"no {Tab(slot)} on the skills screen.");
+
+                var symbol = tab.GetComponentInChildren<TumpAbilitySymbol>(true);
+                Assert.IsNotNull(symbol, $"{Tab(slot)} has no TumpAbilitySymbol, so the power is "
+                    + "named and never shown.");
+
+                Assert.AreEqual(ability.Glyph, symbol.Glyph,
+                    $"{Tab(slot)} draws {symbol.Glyph} and the ability says {ability.Glyph}. "
+                    + "docs/VISION.md section 3: the glyph lives on the ability, not in a lookup "
+                    + "table, so a new hero cannot ship with three blank tiles.");
+
+                Assert.Greater(symbol.canvasRenderer.GetMesh().vertexCount, 0,
+                    $"{Tab(slot)}'s symbol drew no geometry at all, which reads as an empty box "
+                    + "in the row that names this hero's power.");
             }
         }
 
@@ -231,29 +285,49 @@ namespace TumbangPreso.PlayTests
                 + "case would prove nothing.");
 
             var tile = Tile(alternate.Id);
-            Assert.IsNotNull(tile, $"no tile for '{alternate.Id}' on the board.");
+            Assert.IsNotNull(tile, $"no reading for '{alternate.Id}' in the SKILL 1 column.");
 
-            string words = TextIn(tile);
-            StringAssert.Contains("LOCKED", words.ToUpperInvariant(),
-                $"the locked tile reads '{words}'. A control that offers a choice the game will "
-                + "refuse has to say so before it is pressed.");
-
-            StringAssert.Contains(alternate.Challenge, words,
-                $"the locked tile reads '{words}' and never says what the challenge is.");
-            StringAssert.Contains($"0 / {alternate.ChallengeTarget}", words,
-                $"the locked tile reads '{words}' and never says how far along the player is. "
-                + "A challenge with no counter is a wish.");
+            // ⚠️⚠️ THE STATE IS READ OFF TWO PLACES AND BOTH ARE A PLAYER-FACING SENTENCE.
+            // The row itself carries a `Status` word, and the detail side carries the challenge
+            // and the counter under `UnlockState`. Reading only the row would pass a screen that
+            // says LOCKED and never says what to do about it, which is section 114.15 row 3's
+            // own complaint: *"a challenge string a player can never see is worse than no
+            // challenge"*, and a challenge with no counter beside it is that sentence with the
+            // number taken out.
+            StringAssert.Contains("LOCKED", TextIn(tile).ToUpperInvariant(),
+                $"the locked reading says '{TextIn(tile)}'. A control that offers a choice the "
+                + "game will refuse has to say so before it is pressed.");
 
             tile.GetComponent<Button>().onClick.Invoke();
+            yield return null;
+            yield return null;
+
+            string detail = Words(Unlock);
+            StringAssert.Contains(alternate.Challenge, detail,
+                $"the locked reading's detail says '{detail}' and never says what the challenge is.");
+            StringAssert.Contains($"0 / {alternate.ChallengeTarget}", detail,
+                $"the locked reading's detail says '{detail}' and never says how far along the "
+                + "player is. A challenge with no counter is a wish.");
+
+            // ⚠️ THE EQUIP CONTROL IS PRESSED RATHER THAN INSPECTED. "It is drawn dim" is not
+            // the same claim as "it refuses", and only one of the two is the one that matters.
+            // section 108's EQUIP button looked fine and did nothing, which is the mirror of this.
+            var equip = Under(SkillsScreen(), Equip).GetComponent<Button>();
+            Assert.IsFalse(equip.interactable,
+                "the equip control offers a locked reading. Choosing it is refused again at "
+                + "`CheckedHeroBuildFor`, so the match is safe, but the screen would then show a "
+                + "build the game is not running.");
+            StringAssert.Contains("LOCKED", equip.GetComponentInChildren<Text>().text.ToUpperInvariant(),
+                "the equip control does not say why it will not act.");
+
+            equip.onClick.Invoke();
             yield return null;
 
             // ⚠️ THE STORE, NOT THE LABEL. The words above are what the player reads; this is
             // what the match will actually run.
             var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
             Assert.AreNotEqual(alternate.Id, build.Slot1VariantId,
-                "pressing a locked tile wrote it into settings.json. It is refused again at "
-                + "`CheckedHeroBuildFor`, so the match is safe, but the screen would then show a "
-                + "build the game is not running.");
+                "pressing equip on a locked reading wrote it into settings.json.");
 
             var vetted = Settings.SettingsStore.CheckedHeroBuildFor(heroId);
             Assert.AreEqual(HeroLoadoutRules.DefaultFor(heroId, 1).Id, vetted.Slot1VariantId,
@@ -291,27 +365,35 @@ namespace TumbangPreso.PlayTests
             yield return Reopen();
 
             var tile = Tile(alternate.Id);
-            Assert.IsNotNull(tile, $"no tile for '{alternate.Id}' after the ledger was filled.");
+            Assert.IsNotNull(tile, $"no reading for '{alternate.Id}' after the ledger was filled.");
             tile.GetComponent<Button>().onClick.Invoke();
+            yield return null;
+            yield return null;
+
+            var equip = Under(SkillsScreen(), Equip).GetComponent<Button>();
+            Assert.IsTrue(equip.interactable,
+                "an unlocked reading is selected and the equip control still refuses it.");
+            equip.onClick.Invoke();
             yield return null;
 
             Assert.AreEqual(alternate.Id,
                             HeroBuildRules.RowFor(settings.HeroBuilds, heroId).Slot1VariantId,
-                "an unlocked alternate was not written to the store when its tile was pressed.");
+                "an unlocked alternate was not written to the store when equip was pressed.");
 
             // ⚠️ THE REBUILD IS THE ASSERTION. Everything above is still in one view.
             yield return Reopen();
 
             var again = Tile(alternate.Id);
-            Assert.IsNotNull(again, $"'{alternate.Id}' lost its tile after the board was rebuilt.");
+            Assert.IsNotNull(again, $"'{alternate.Id}' lost its reading after the screen was rebuilt.");
             StringAssert.Contains("EQUIPPED", TextIn(again).ToUpperInvariant(),
-                "after rebuilding the board the equipped tile does not say so, so the choice did "
-                + "not survive CLOSE and the player has no way to tell what they are bringing.");
+                "after reopening the skills screen the equipped reading does not say so, so the "
+                + "choice did not survive BACK and the player has no way to tell what they are "
+                + "bringing.");
 
             Assert.AreEqual(alternate.Id,
                             Settings.SettingsStore.CheckedHeroBuildFor(heroId).Slot1VariantId,
-                "the tile shows the alternate and the checked build does not, so the screen and "
-                + "the match disagree about what this player is bringing.");
+                "the screen shows the alternate and the checked build does not, so the screen "
+                + "and the match disagree about what this player is bringing.");
         }
 
         /// <summary>
@@ -363,7 +445,7 @@ namespace TumbangPreso.PlayTests
                         // caught the palette bug had exactly that shape.
                         Assert.LessOrEqual(rt.rect.width, band + 1.0f,
                             $"{name}: '{label.name}' on '{tile.name}' is {rt.rect.width:0} units "
-                            + $"wide in a {band:0} unit band, so it hangs off the tile.");
+                            + $"wide in a {band:0} unit band, so it hangs off the row.");
 
                         if (label.horizontalOverflow == HorizontalWrapMode.Wrap)
                         {
@@ -386,8 +468,8 @@ namespace TumbangPreso.PlayTests
                 }
 
                 Assert.Greater(measured, 0,
-                    $"{name}: the board drew no labels, so this proves nothing.");
-                report.AppendLine($"{name,-14} {w}x{h}  {measured} labels on 4 tiles");
+                    $"{name}: the slot drew no labels, so this proves nothing.");
+                report.AppendLine($"{name,-14} {w}x{h}  {measured} labels on {Tiles().Count} readings");
             }
 
             Debug.Log($"[LoadoutSurfaceProbe]\n{report}");
@@ -439,6 +521,25 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// The painted skills screen, looked up by its canvas.
+        ///
+        /// ⚠️⚠️ IT IS NOT UNDER `_panel` AND THAT IS WHY EVERY LOOKUP IN THIS FILE MOVED.
+        /// `OwnerUiLayout.Canvas` builds its root DETACHED and binds lifetime through
+        /// `CanvasLifetime` (§ 111.2), so the skills screen is a scene-root SIBLING of the
+        /// character select panel that opened it. `Under(_panel.transform, ...)` therefore
+        /// answered null about a screen drawing perfectly well, which is the shape of most of
+        /// § 153.18.
+        /// </summary>
+        private static Transform SkillsScreen()
+        {
+            var canvas = Find(Skills);
+            Assert.IsNotNull(canvas,
+                "pressing SKILLS drew no " + Skills + ". `TumpPickerView` builds the TumpSkills "
+                + "door and `TumpSkillView.Open` builds the screen behind it.");
+            return canvas.transform;
+        }
+
+        /// <summary>
         /// Presses the LOADOUT door and waits for the board to be built.
         ///
         /// ⚠️⚠️ THROUGH THE DOOR, NEVER THROUGH `ToggleLoadoutBoard`. Reflection would open the
@@ -452,30 +553,56 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private IEnumerator Reopen()
         {
-            if (Under(_panel.transform, Board) != null)
+            // ⚠️ THE DOOR IS NOT A TOGGLE ANY MORE, SO REOPENING MEANS BACKING OUT FIRST.
+            // `ToggleLoadoutBoard` used to close an open board on a second press; `TumpSkills`
+            // only ever opens. Leaving through `TumpSkillBack` is what a player does and it is
+            // also what makes the persistence cases honest: the screen is genuinely rebuilt
+            // rather than reused.
+            var open = Find(Skills);
+            if (open != null && open.activeSelf)
             {
-                Press(Door);
+                PressIn(open.transform, "TumpSkillBack");
                 yield return null;
                 yield return null;
             }
 
-            Press(Door);
+            PressIn(Picker(), Door);
             yield return null;
             yield return null;
 
-            Assert.IsNotNull(Under(_panel.transform, Board),
-                "pressing LOADOUT built no board. § 122.5 moved the ability builds from the hub "
-                + "onto this screen; `ConvertedCharacterSelect.BuildLoadoutBoard` is the builder "
-                + "and `BuildStageDoors` is the door.");
+            var screen = Find(Skills);
+            Assert.IsNotNull(screen,
+                "pressing SKILLS built no skills screen. " + S153 + " moved the ability builds off "
+                + "the board onto `TumpSkillView`; `TumpPickerView.Collection` builds the door "
+                + "and `TumpSkillView.Open` builds the screen.");
+            Assert.IsTrue(screen.activeSelf, "the skills screen was built and left switched off.");
+
+            Assert.IsNotNull(Under(screen.transform, Choices),
+                "the skills screen drew no " + Choices + " column, so there is nothing to choose "
+                + "between.");
         }
 
-        private void Press(string node)
+        private const string S153 = "docs/TODO.md section 153.20";
+
+        /// <summary>The picker's own canvas, which is where the SKILLS door lives.</summary>
+        private static Transform Picker()
         {
-            var t = Under(_panel.transform, node);
+            var canvas = Find("OwnerLoadoutCanvas");
+            Assert.IsNotNull(canvas,
+                "the character select panel drew no OwnerLoadoutCanvas, so there is no picker to "
+                + "open the skills from. `TumpPickerView.Build` is the builder.");
+            return canvas.transform;
+        }
+
+        private void Press(string node) => PressIn(SkillsScreen(), node);
+
+        private static void PressIn(Transform scope, string node)
+        {
+            var t = Under(scope, node);
             Assert.IsNotNull(t,
-                $"no '{node}' on the character select stage. In Hero Strike `BuildStageDoors` "
-                + "builds LOADOUT above MAKE YOUR OWN; if the door has been renamed, rename it "
-                + "here in the same commit.");
+                $"no '{node}' under '{scope.name}'. If the control has been renamed, rename it "
+                + "here in the same commit; " + S153 + " is the table of the last time this "
+                + "happened to five cases at once.");
 
             var button = t.GetComponentInChildren<Button>(true);
             Assert.IsNotNull(button, $"'{node}' has no Button on it, so it is not a door.");
@@ -486,16 +613,16 @@ namespace TumbangPreso.PlayTests
 
         private string CurrentHero()
         {
-            var board = Under(_panel.transform, Board);
-            if (board == null) return "";
+            var column = Under(SkillsScreen(), Choices);
+            if (column == null) return "";
 
-            // The tiles are named for the variants they carry, and every variant id opens with
-            // its hero: `dante.1.tremor`. Reading the hero off the board rather than off the
-            // picker's private cursor keeps this measuring what is DRAWN.
-            foreach (Transform child in board)
+            // The readings are named for the variants they carry, and every variant id opens
+            // with its hero and its slot: `dante.1.tremor`. Reading the hero off the SCREEN
+            // rather than off the picker's private cursor keeps this measuring what is DRAWN.
+            foreach (Transform child in column)
             {
-                if (!child.name.StartsWith("Variant_")) continue;
-                string id = child.name.Substring("Variant_".Length);
+                if (!child.name.StartsWith("TumpVariant_")) continue;
+                string id = child.name.Substring("TumpVariant_".Length);
                 int dot = id.IndexOf('.');
                 if (dot > 0) return id.Substring(0, dot);
             }
@@ -506,23 +633,11 @@ namespace TumbangPreso.PlayTests
         private List<Transform> Tiles()
         {
             var found = new List<Transform>();
-            var board = Under(_panel.transform, Board);
-            if (board == null) return found;
+            var column = Under(SkillsScreen(), Choices);
+            if (column == null) return found;
 
-            foreach (Transform child in board)
-                if (child.name.StartsWith("Variant_")) found.Add(child);
-
-            return found;
-        }
-
-        private List<Transform> Glyphs()
-        {
-            var found = new List<Transform>();
-            var board = Under(_panel.transform, Board);
-            if (board == null) return found;
-
-            foreach (Transform child in board)
-                if (child.name == "SlotGlyph") found.Add(child);
+            foreach (Transform child in column)
+                if (child.name.StartsWith("TumpVariant_")) found.Add(child);
 
             return found;
         }
@@ -530,9 +645,19 @@ namespace TumbangPreso.PlayTests
         private Transform Tile(string variantId)
         {
             foreach (var t in Tiles())
-                if (t.name == "Variant_" + variantId) return t;
+                if (t.name == "TumpVariant_" + variantId) return t;
 
             return null;
+        }
+
+        /// <summary>What one named label on the skills screen currently says.</summary>
+        private static string Words(string node)
+        {
+            var t = Under(SkillsScreen(), node);
+            Assert.IsNotNull(t, $"the skills screen has no '{node}'.");
+            var label = t.GetComponent<Text>();
+            Assert.IsNotNull(label, $"'{node}' carries no Text.");
+            return label.text;
         }
 
         /// <summary>Every word drawn on one tile, joined, so a case can ask what it says.</summary>

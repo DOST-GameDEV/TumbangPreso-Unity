@@ -65,27 +65,33 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator TheSettingsListScrollsAndItsBarCoversNothing()
         {
-            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < 10; i++) yield return null;
-
-            var panel = Find("SettingsPanel");
-            Assert.IsNotNull(panel, "MainMenu has no SettingsPanel to open.");
-
-            panel.SetActive(true);
+            // ⚠️⚠️ THE SCREEN THIS PROBE IS ABOUT MOVED, AND ASKING THE OLD OBJECT FOR IT GOT A
+            // TRUE ANSWER ABOUT THE WRONG LIST. `SettingsPanel` is the retired converted panel;
+            // switching it on builds `TumpSettingsView`, whose canvas is a scene-root SIBLING
+            // (§ 111.2), so `panel.GetComponentInChildren<ScrollRect>` walked past the painted
+            // list entirely and found the converted one behind it, which has no scrollbar. The
+            // probe then reported the missing bar it was written to report, about a list no
+            // player can open. `PaintedScreens` holds the route now.
+            yield return PaintedScreens.OpenSettings();
 
             for (int i = 0; i < 5; i++) yield return null;
 
-            var scroll = panel.GetComponentInChildren<ScrollRect>(true);
-            Assert.IsNotNull(scroll, "the settings panel has no ScrollRect at all.");
+            var canvas = PaintedScreens.Settings();
+            var scroll = PaintedScreens.SettingsScroll();
+
+            // ⚠️ THE BAR IS JUDGED AGAINST THE COMPOSITION, NOT AGAINST ITS OWN COLUMN. Measuring
+            // a scrollbar against the `ScrollRect` that placed it is a comparison between a number
+            // and itself: `OwnerScrollColumn` puts the track at `width - 12` of the column, so it
+            // is inside by arithmetic whatever the screen does. `SettingsComposition` is the
+            // 1920x1080 design area every element on this screen is placed in, which is the box a
+            // control leaving the screen actually leaves.
+            var panel = canvas.transform.Find("SettingsComposition")?.gameObject;
+            Assert.IsNotNull(panel, "the painted settings screen has no SettingsComposition to " +
+                "place anything in. See TumpSettingsView.Build.");
 
             Assert.IsNotNull(scroll.verticalScrollbar,
                 "the settings list has no scrollbar, so nothing on screen says the list is longer "
                 + "than its window. That is the report this probe was written for.");
-
-            var canvas = panel.GetComponentInParent<Canvas>();
-            Assert.IsNotNull(canvas);
 
             var camera = Camera.main != null ? Camera.main : Object.FindFirstObjectByType<Camera>();
             Assert.IsNotNull(camera, "no camera to render the menu at a chosen size.");
@@ -255,28 +261,5 @@ namespace TumbangPreso.PlayTests
             return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
         }
 
-        private static GameObject Find(string name)
-        {
-            foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
-            {
-                var hit = FindIn(root.transform, name);
-                if (hit != null) return hit;
-            }
-
-            return null;
-        }
-
-        private static GameObject FindIn(Transform where, string name)
-        {
-            if (where.name == name) return where.gameObject;
-
-            for (int i = 0; i < where.childCount; i++)
-            {
-                var hit = FindIn(where.GetChild(i), name);
-                if (hit != null) return hit;
-            }
-
-            return null;
-        }
     }
 }

@@ -434,8 +434,27 @@ namespace TumbangPreso.PlayTests
             // all. **A screenshot with another screen in it cannot be judged**, which is the
             // whole point of taking one, and the fix belongs here rather than in the game: the
             // game is never in two screens at once and the probe was.
+            // ⚠️⚠️ THE CARET IS LET GO BEFORE ANY CANVAS IS SWITCHED OFF, AND SKIPPING THAT
+            // THREW A `NullReferenceException` OUT OF uGUI ON EVERY RUN. `Boot` leaves the login
+            // screen's first field focused; the loop below then turns its canvas OFF while the
+            // field is still selected, and `Graphic.canvas` walks up for an ENABLED Canvas and
+            // answers null. The very next caret rebuild reads `m_TextComponent.canvas
+            // .targetDisplay` (`InputField.GenerateCaret`, ugui line 2898) and dies inside
+            // `Canvas.SendWillRenderCanvases`, where nothing in this fixture can catch it: the
+            // case fails as *"Unhandled log message"* and names neither the field nor the canvas.
+            //
+            // ⚠️ AND IT IS THE PROBE'S BUG RATHER THAN THE GAME'S, WHICH IS WHY THE FIX IS
+            // HERE. The game never disables a Canvas COMPONENT out from under a live screen; it
+            // deactivates the object, and `InputField.OnDisable` calls `DeactivateInputField`
+            // for exactly this reason. `c.enabled = false` is a manoeuvre only this fixture
+            // performs, so only this fixture has to hand the caret back first.
+            if (UnityEngine.EventSystems.EventSystem.current != null)
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+            yield return null;
+
             foreach (var c in _canvases)
-                if (c != null && !c.name.StartsWith("PlayerHub") && !c.name.StartsWith("SignIn")
+                if (c != null && !c.name.StartsWith("PlayerHub") && c.name != "OwnerPlayerHubCanvas"
+                    && !c.name.StartsWith("SignIn") && c.name != "OwnerSignInCanvas"
                     && !c.name.StartsWith("Nameplate"))
                     c.enabled = false;
 

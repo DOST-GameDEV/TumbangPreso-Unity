@@ -476,12 +476,15 @@ namespace TumbangPreso.PlayTests
                     break;
 
                 case "RoundLabel":
-                    // ⚠️⚠️ FROM `Hud.TopCentreLines()`, NOT FROM A STRING TYPED HERE. The first
-                    // version of this case guessed "ROUND 8 / 8" and the live label already held
-                    // something far longer: the real line is `ROUND n / N   ·   DEFENDER: name`,
-                    // and the warmup line is longer still. A probe fed a guess measures the
-                    // guess. The HUD now builds both through one method and this reads it.
-                    foreach (string line in Hud.TopCentreLines()) yield return line;
+                    // ⚠️⚠️ FROM THE READOUT THAT DRAWS IT, NOT FROM `Hud.TopCentreLines()`.
+                    // Both are "read the shipping formatter rather than guess", and the label
+                    // changed hands: the painted `TumpMatchReadout` writes `Round 8 / 8` and
+                    // names the defender on its own row, while the legacy `Hud` wrote
+                    // `ROUND n / N   ·   DEFENDER: <name>` on this one. Feeding the legacy set to
+                    // the painted box reported nine overflows across nine resolutions about a
+                    // string the HUD on screen cannot produce, which is exactly the failure the
+                    // old comment here warned about, one HUD later.
+                    foreach (string line in TumpMatchReadout.RoundLabelLines()) yield return line;
                     break;
 
                 case "TimerLabel":

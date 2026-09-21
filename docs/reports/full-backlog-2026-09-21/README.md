@@ -337,3 +337,109 @@ been registered and prevented --plan from succeeding.19arena/lifecycle fixtures
 were placed in match and3continuous-camera capture fixtures in capture. All161
 fixtures are now assigned exactly once. This is partition validation, not a full
 suite execution; preserved before/after plan logs make that boundary explicit.
+
+
+## Existing UI and role-aware kit continuation, 2026-09-22
+
+The map batch is published4a8a51ec. Current UI completion plan is existing-ui-plan.md.
+Original dirty fixture migrations were reviewed and integrated in isolation; the
+legacy338-row capability baseline is preserved. New explicit122identity migration
+requires every target, with two documented owner-removal exceptions, and labels
+conditional ready/queue/welcome controls separately. The new walk uses active
+painted owners rather than counting invisible converted controls.
+
+Settings passes7/7 (37.134s, guard09ddc5539300). Picker baseline18/24 found three
+shared-capture missing-directory failures, one stale summary assertion, one login
+canvas wrongly disabled by the screenshot fixture and the old inventory walk.
+The five non-inventory cases pass after correction; inventory routing errors and
+its pre-migration missing-capability failure are retained. Current focused inventory,
+lobby and settings capture passes3/3 (30.196s, guard29c70614dd8e). Combined screens
+passes113/114,0failures,463.937s, all45fixtures present; the sole skip is UGS identity
+sign-in intentionally disabled in batch. Actual Player/skills screenshots inspected.
+
+Current grouped runner now supports named isolated profiles and fresh output folders,
+and preserves its launcher stdout/stderr alongside XML. This avoids running screen
+checks against the player's default profile. No current full-project gate claim.
+
+The kit audit reproduced Sean E arming an unusable defender throw. Baselinev2 failed
+that case and passed strengthened inventory (13.650s, guard91d8013a8580). The small
+CanActivate role gate now preserves the finite charge, and four Sean/Zack E choice
+descriptions make the attacker-only role explicit. Fix-v3 passes4/4 (48.734s,
+guard67a1ffe14157), including all4role refusals, Afterburn, receipts and picker.
+An unmatched Flare filter in that run is not counted; its correctly named actual
+case subsequently passes in beam-and-flare-v1. The initial native diagnostic's
+missing Visual namespace compile failure is separately retained; no tests ran there.
+
+Beam-and-flare-v1 passes2/2 (16.761s, guardaf0ce7281e6d). Seven same-camera A/B samples
+include the actual beam column/pool/lamp/bloom at range and within approach fade,
+1280x720 and1600x720. Maximum changed fraction0.002650 (0.265percent), no newly white
+pixels, versus the existing12percent bound. This is sampled Editor image coverage,
+not whole-map/device/GPU certification. CSV and representative frames are in ui-evidence.
+
+Internal existing-ui-kits-v40 builds1193MB/66s (guard60a83de04fbc). New diagnostics
+follow actual title/play/lobby/settings routes and current OwnerMenuAir; original
+Sean visual route and new48choice/role native comparison are included. Native UI,
+variants, observer view and final peer qualification remain in progress. All earlier
+failed receipts and the original dirty-source intake remain. No Desktop replacement.
+
+
+### Controller parity correction after the first green inventory
+
+Manual tracing caught a false migration: the legacy Button_ON was the generic
+controller switch, not Touch selection. The old green inventory is preserved as
+insufficient evidence for that capability. The corrected mapping targets
+GenericControllerValue and exposes it through a synthetic joystick on the actual
+InputSystem device-change path. This is software evidence, not a real-pad claim.
+
+That path first exposed a reentrant GenericPadBridge.Sync loop. Creating its virtual
+Gamepad synchronously called Sync again before the bridge was recorded. The first
+baseline emitted166809551bytes of errors; only the verified owned Editor27340 was
+terminated, and guardffd36e74c8f2 restored files/input. A pending-pass guard preserves
+the existing mapping and completes its bookkeeping before nested notifications.
+The unchanged test with just that fix reached the missing UI assertion and failed
+in1.482s (guard813adbf22cf3), distinguishing both actual defects.
+
+The conditional switch/hotplug refresh now uses the current settings session's
+save/discard transaction. Corrected inventory and the new save/discard regression
+passed, but the older controller-layout case exposed a long status clipped at960x540:
+fix-v3 was6/7 in32.412s, guard2e89da456385. Contextual concise footer copy fixes that
+without moving/replacing the supplied controller diagram or its18callouts/lines.
+Fix-v4 passes2/2 in17.337s, guard3d8659b265bf. Existing ControllerSupportTests pass11/11
+in0.498s, guardfb9a5fe41c5f. Named profile preservation now includes the genericpad
+preference; four portable restoration/allowlist tests pass. Nativev41 qualification
+is still next. Nativev40 UI passed, but its first variant route stopped at case6 on
+a diagnostic assumption about silent CannotAct buffering; the partial/failure is
+retained and the corrected route must complete all48cases before it is called passed.
+
+
+### V41 native acceptance and media checkpoint
+
+V41built1193MB/54s, guarde8d2d8b42207. Full native UI passed again, including actual
+synthetic-controller switch clicks, discard, save, reopen and restoration;4existing
+named-profile files restored and all3shared input preference families unchanged.
+The actual controller-switch screenshot was inspected. Supplied diagram unchanged.
+The original SeanVisualOnly route passed through actual selection/cast/ember geometry.
+
+Both variant routes passed all48unique choice/role cases each:44casts and4silent
+role refusals per view. Exact equipped identity is checked during capture. Caster
+profiles restored2existing files; observer/Sean profiles were fresh. Input unchanged.
+The v40partial failure remains preserved as a diagnostic failure, not a game refusal
+regression. Early rush travel distinguishes4.033/4.065m normal vs2.261m Afterburn
+in these staged situations; the common later walking made maximum travel saturate.
+This is observed scenario behavior, not a universal tuning number or balance proof.
+
+98movies encoded from actual recorded timing:96variant movies include real engine
+audio aligned with captured callback/first-frame clocks;2title-motion movies have
+no audio track. Every container's audio presence and duration were verified, with
+zero mismatches (duration tolerance0.22s). Binary/movie/timing/audio hashes are in
+native-ui-kit-media-v41.json. No audio listening or human approval is claimed.
+
+A final semantic trace corrected two additional generic-name mappings without
+runtime changes: Button_RESET was touch-layout reset; ResetAllButton reset bindings.
+Their actual current targets already occur in the captured walk and the existing
+reset/cancel tests. Do not treat a generic label as a capability without tracing its
+callback. All old baseline rows and earlier imperfect mappings/evidence are retained.
+
+Current existing UI/kit software batch is ready for scoped publication. Next is the
+saved existing-network-plan.md, then selected Rafi/lagoon and the final coherent
+candidate. A published checkpoint does not finish the full TODO or active goal.

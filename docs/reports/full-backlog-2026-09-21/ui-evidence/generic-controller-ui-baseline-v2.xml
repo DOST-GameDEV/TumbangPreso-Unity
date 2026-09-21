@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.481618">
+  <test-suite type="TestSuite" id="1680" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="512" result="Failed" site="Child" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.481618" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="512" result="Failed" site="Child" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.461575" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21496" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="512" result="Failed" site="Child" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.450760" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1676" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="512" result="Failed" site="Child" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.440446" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1617" name="TumpNativeSettingsTests" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.418809" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1618" name="UnrecognisedControllerSwitchParticipatesInSaveAndDiscard" fullname="TumbangPreso.PlayTests.TumpNativeSettingsTests.UnrecognisedControllerSwitchParticipatesInSaveAndDiscard" methodname="UnrecognisedControllerSwitchParticipatesInSaveAndDiscard" classname="TumbangPreso.PlayTests.TumpNativeSettingsTests" runstate="Runnable" seed="373589637" result="Failed" start-time="2026-09-21 21:30:19Z" end-time="2026-09-21 21:30:21Z" duration="1.401989" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Controls lost the switch for unrecognised controllers.
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeSettingsTests+<UnrecognisedControllerSwitchParticipatesInSaveAndDiscard>d__9.MoveNext () [0x00121] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\TumpNativeSettingsTests.cs:58
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Controller] A controller was found that this game does not recognise: Joystick (manufacturer '', product '', interface ''). It is a Joystick rather than a Gamepad, which means Unity matched no layout for it and every <Gamepad> binding in the game resolves to nothing on it. InputLayer.GenericPadBridge will drive it through a guessed mapping unless the player has switched that off. See docs/TODO.md section 138.
+[Controller] 'Joystick' is being driven by the generic mapping. Open SETTINGS, CONTROLS, CONTROLLER MAP to see what each button does and to change any of it. See docs/TODO.md § 138.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

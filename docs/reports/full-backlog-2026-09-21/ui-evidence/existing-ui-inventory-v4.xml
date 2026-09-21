@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.7019362">
+  <test-suite type="TestSuite" id="1678" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.701936" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1672" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.685720" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30240" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1673" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.678768" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1674" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="510" result="Failed" site="Child" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.672199" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1389" name="PaperPurityProbe" fullname="TumbangPreso.PlayTests.PaperPurityProbe" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.650886" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1392" name="NothingOnTheInventoryDisappeared" fullname="TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared" methodname="NothingOnTheInventoryDisappeared" classname="TumbangPreso.PlayTests.PaperPurityProbe" runstate="Runnable" seed="1330244075" result="Failed" start-time="2026-09-21 20:43:14Z" end-time="2026-09-21 20:43:21Z" duration="6.634046" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  these front-end controls were on the screens before this pass and are not on them now, so the rebuild lost them. 🧑 asked for this by name: "it should have all the functions of old ui, make sure ntohing in old ui as functions get lost". docs/TODO.md § 133.5, and Logs/control-inventory.txt is the full live walk:
+  character  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  character  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  character  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  character  |  button  |  Button_CONTINUE  |  CONTINUE
+  character  |  button  |  Button_COPY  |  COPY
+  character  |  button  |  Button_HERO  |  HERO
+  character  |  button  |  Button_LATA  |  LATA
+  character  |  button  |  Button_MATCHES  |  MATCHES
+  character  |  button  |  Button_TSINELAS  |  TSINELAS
+  character  |  button  |  CharNextButton  |  
+  character  |  button  |  CharPrevButton  |  
+  character  |  button  |  CharacterButton  |  CHOOSE  ▸
+  character  |  button  |  CloseJoinButton  |  BACK TO LOBBY
+  character  |  button  |  ConfirmButton  |  CHOOSE
+  character  |  button  |  CustomTab  |  CUSTOM
+  character  |  button  |  DifficultyNextButton  |  
+  character  |  button  |  DifficultyPrevButton  |  
+  character  |  button  |  FormatNextButton  |  
+  character  |  button  |  FormatPrevButton  |  
+  character  |  button  |  GoOnlineButton  |  START SERVER
+  character  |  button  |  JoinChip  |  JOIN A GAME
+  character  |  button  |  LeaveGameButton  |  LEAVE GAME
+  character  |  button  |  LoadoutDoor  |  LOADOUT
+  character  |  button  |  NearbyChip  |  ON YOUR NETWORK
+  character  |  button  |  OnlineChip  |  ONLINE
+  character  |  button  |  OpenJoinButton  |  JOIN A GAME
+  character  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  character  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  character  |  button  |  PracticeTab  |  PRACTICE
+  character  |  button  |  PrimaryButton  |  CONNECTING...
+  character  |  button  |  RoomCodeButton  |  ROOM CODE
+  character  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  character  |  button  |  StartWithBotsButton  |  START WITH 3 BOTS
+  character  |  field  |  ChatField  |  
+  character  |  field  |  Field_PASSWORD  |  
+  character  |  field  |  Field_USERNAME  |  
+  character  |  field  |  JoinAddressEdit  |  
+  lobby  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  lobby  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  lobby  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  lobby  |  button  |  Button_CONTINUE  |  CONTINUE
+  lobby  |  button  |  Button_COPY  |  COPY
+  lobby  |  button  |  Button_MATCHES  |  MATCHES
+  lobby  |  button  |  CharNextButton  |  
+  lobby  |  button  |  CharPrevButton  |  
+  lobby  |  button  |  CharacterButton  |  CHOOSE  ▸
+  lobby  |  button  |  CloseJoinButton  |  BACK TO LOBBY
+  lobby  |  button  |  ConfirmButton  |  CHOOSE
+  lobby  |  button  |  CustomTab  |  CUSTOM
+  lobby  |  button  |  DifficultyNextButton  |  
+  lobby  |  button  |  DifficultyPrevButton  |  
+  lobby  |  button  |  FormatNextButton  |  
+  lobby  |  button  |  FormatPrevButton  |  
+  lobby  |  button  |  GoOnlineButton  |  START SERVER
+  lobby  |  button  |  JoinChip  |  JOIN A GAME
+  lobby  |  button  |  LeaveGameButton  |  LEAVE GAME
+  lobby  |  button  |  NearbyChip  |  ON YOUR NETWORK
+  lobby  |  button  |  OnlineChip  |  ONLINE
+  lobby  |  button  |  OpenJoinButton  |  JOIN A GAME
+  lobby  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  lobby  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  lobby  |  button  |  PracticeTab  |  PRACTICE
+  lobby  |  button  |  PrimaryButton  |  CONNECTING...
+  lobby  |  button  |  RoomCodeButton  |  ROOM CODE
+  lobby  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  lobby  |  button  |  StartWithBotsButton  |  START WITH 3 BOTS
+  lobby  |  field  |  ChatField  |  
+  lobby  |  field  |  Field_PASSWORD  |  
+  lobby  |  field  |  Field_USERNAME  |  
+  lobby  |  field  |  JoinAddressEdit  |  
+  login  |  button  |  ApplyButton  |  APPLY CHANGES
+  login  |  button  |  BackButton  |  ◀  BACK
+  login  |  button  |  Button_CONTINUE  |  CONTINUE
+  login  |  button  |  Button_CUSTOMISE  |  CUSTOMISE
+  login  |  button  |  Button_GAMEPAD  |  GAMEPAD
+  login  |  button  |  Button_KEYBOARD  |  KEYBOARD
+  login  |  button  |  Button_ON  |  ON
+  login  |  button  |  Button_SIGN IN  |  CREATE ACCOUNT
+  login  |  button  |  GuestButton  |  CONTINUE AS GUEST
+  login  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  login  |  button  |  QuitButton  |  QUIT
+  login  |  dropdown  |  SwatchDropdown  |  MSAA 4x + FXAA
+  login  |  dropdown  |  SwatchDropdown  |  ON
+  login  |  dropdown  |  SwatchDropdown  |  Off
+  login  |  dropdown  |  SwatchDropdown  |  On
+  login  |  dropdown  |  SwatchDropdown  |  Toon (Ink Outlines)
+  login  |  field  |  Field_PASSWORD  |  
+  login  |  field  |  Field_USERNAME  |  
+  login  |  field  |  PlayerNameField  |  
+  login  |  scrollbar  |  VerticalScrollbar  |  
+  login  |  slider  |  MasterVolumeSlider  |  
+  login  |  slider  |  MusicVolumeSlider  |  
+  login  |  slider  |  SensitivitySlider  |  
+  login  |  slider  |  SfxVolumeSlider  |  
+  login  |  toggle  |  FullscreenCheck  |  Fullscreen
+  login  |  toggle  |  InvertYCheck  |  Invert Y (mouse look)
+  login  |  toggle  |  Item  |  
+  profile  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…
+  profile  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…
+  profile  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE
+  profile  |  button  |  Button_CONTINUE  |  CONTINUE
+  profile  |  button  |  Button_COPY  |  COPY
+  profile  |  button  |  Button_HERO  |  HERO
+  profile  |  button  |  Button_LATA  |  LATA
+  profile  |  button  |  Button_MATCHES  |  MATCHES
+  profile  |  button  |  Button_TSINELAS  |  TSINELAS
+  profile  |  button  |  CharNextButton  |  
+  profile  |  button  |  CharPrevButton  |  
+  profile  |  button  |  CharacterButton  |  CHOOSE  ▸
+  profile  |  button  |  CloseJoinButton  |  BACK TO LOBBY
+  profile  |  button  |  ConfirmButton  |  CHOOSE
+  profile  |  button  |  CustomTab  |  CUSTOM
+  profile  |  button  |  DifficultyNextButton  |  
+  profile  |  button  |  DifficultyPrevButton  |  
+  profile  |  button  |  FormatNextButton  |  
+  profile  |  button  |  FormatPrevButton  |  
+  profile  |  button  |  GoOnlineButton  |  START SERVER
+  profile  |  button  |  JoinChip  |  JOIN A GAME
+  profile  |  button  |  LeaveGameButton  |  LEAVE GAME
+  profile  |  button  |  LoadoutDoor  |  LOADOUT
+  profile  |  button  |  NearbyChip  |  ON YOUR NETWORK
+  profile  |  button  |  OnlineChip  |  ONLINE
+  profile  |  button  |  OpenJoinButton  |  JOIN A GAME
+  profile  |  button  |  OtherAccountButton  |  SIGN IN AS SOMEBODY ELSE
+  profile  |  button  |  Plate0  |  Player#8226   <b>YOU</b>
+  profile  |  button  |  PracticeTab  |  PRACTICE
+  profile  |  button  |  PrimaryButton  |  CONNECTING...
+  profile  |  button  |  RoomCodeButton  |  ROOM CODE
+  profile  |  button  |  Section_Banner  |  +  BANNER
+  profile  |  button  |  Section_Identity  |  -  IDENTITY
+  profile  |  button  |  Section_Optional details  |  +  OPTIONAL DETAILS
+  profile  |  button  |  SettingsDrawerToggle  |  MATCH SETTINGS
+  profile  |  button  |  StartWithBotsButton  |  START WITH 3 BOTS
+  profile  |  field  |  ChatField  |  
+  profile  |  field  |  Field_PASSWORD  |  
+  profile  |  field  |  Field_USERNAME  |  
+  profile  |  field  |  JoinAddressEdit  |  
+  settings  |  button  |  ApplyButton  |  APPLY CHANGES
+  settings  |  button  |  BackButton  |  ◀  BACK
+  settings  |  button  |  Button_CUSTOMISE  |  CUSTOMISE
+  settings  |  button  |  Button_GAMEPAD  |  GAMEPAD
+  settings  |  button  |  Button_KEYBOARD  |  KEYBOARD
+  settings  |  button  |  Button_ON  |  ON
+  settings  |  button  |  QuitButton  |  QUIT
+  settings  |  dropdown  |  SwatchDropdown  |  MSAA 4x + FXAA
+  settings  |  dropdown  |  SwatchDropdown  |  ON
+  settings  |  dropdown  |  SwatchDropdown  |  Off
+  settings  |  dropdown  |  SwatchDropdown  |  On
+  settings  |  dropdown  |  SwatchDropdown  |  Toon (Ink Outlines)
+  settings  |  scrollbar  |  VerticalScrollbar  |  
+  settings  |  slider  |  MasterVolumeSlider  |  
+  settings  |  slider  |  MusicVolumeSlider  |  
+  settings  |  slider  |  SensitivitySlider  |  
+  settings  |  slider  |  SfxVolumeSlider  |  
+  settings  |  toggle  |  FullscreenCheck  |  Fullscreen
+  settings  |  toggle  |  InvertYCheck  |  Invert Y (mouse look)
+  settings  |  toggle  |  Item  |  
+  Expected: <empty>
+  But was:  < "character  |  button  |  BrowserRow0  |  CHECKING ONLINE SERVERS…", "character  |  button  |  BrowserRow0  |  SEARCHING YOUR NETWORK…", "character  |  button  |  BrowserRow1  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  BrowserRow2  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  BrowserRow3  |  AVAILABLE GAMES APPEAR HERE", "character  |  button  |  Button_CONTINUE  |  CONTINUE", "character  |  button  |  Button_COPY  |  COPY", "character  |  button  |  Button_HERO  |  HERO", "character  |  button  |  Button_LATA  |  LATA", "character  |  button  |  Button_MATCHES  |  MATCHES"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PaperPurityProbe+<NothingOnTheInventoryDisappeared>d__17.MoveNext () [0x00341] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\PaperPurityProbe.cs:689
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code KE5J
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Social] load failed, keeping the cached list: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

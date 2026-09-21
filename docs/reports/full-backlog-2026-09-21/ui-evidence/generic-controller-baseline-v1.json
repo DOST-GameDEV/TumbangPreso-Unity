@@ -1,0 +1,6 @@
+{
+  "result": "Failed before UI assertion; real hotplug callback recursively reentered GenericPadBridge.Sync. Owned Editor27340 terminated after log flood; raw evidence retained.",
+  "rawLog": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\generic-controller-ui-baseline-v1\\editor.log",
+  "bytes": 166809551,
+  "sha256": "41de75d02ad0d2ec282aaf73941c5edb57ffc49ffc2e9e75122afe64002a1219"
+}

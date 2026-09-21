@@ -42,8 +42,12 @@
     {
       "lineAtIntake": 386,
       "heading": "### 155.5 NOT DONE, named rather than left implied",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Windows build and sampled frame-coverage complete; peer-render ownership and human judgment remain",
+      "evidence": [
+        "docs/reports/presentation-pass-2026-09-21/README.md",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/beam-and-flare-v1.xml",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/beam-frame-coverage-v1.csv"
+      ]
     },
     {
       "lineAtIntake": 405,
@@ -162,8 +166,12 @@
     {
       "lineAtIntake": 875,
       "heading": "### 153.20 What is still red after this pass, and why each one is: OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "combined screen group passes113 with1expected service skip; native current-route refresh in progress",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/existing-ui-plan.md",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/full-group-screens.xml",
+        "Assets/TumbangPreso/Tests/PlayMode/control-inventory-migration.tsv"
+      ]
     },
     {
       "lineAtIntake": 906,
@@ -507,8 +515,14 @@
     {
       "lineAtIntake": 3202,
       "heading": "### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "F1-F4 software faults reconciled to later repairs; final broader request qualification remains",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/ClientRoundBoundaryProbe.cs",
+        "docs/reports/presentation-pass-2026-09-21/README.md"
+      ]
     },
     {
       "lineAtIntake": 3228,

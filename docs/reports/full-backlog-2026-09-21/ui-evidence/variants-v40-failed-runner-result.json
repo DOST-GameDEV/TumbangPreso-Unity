@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "full-backlog-kit-owner-20260922",
+  "existingFilesRestored": 0,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Wrong native role outcome: sean.2.cannon-defender-owner\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<ReviewKitVariants>d__14.MoveNext () [0x00e65] in <0ef1233d4f8a4ae2954c1d50650096ec>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__36.MoveNext () [0x00054] in <0ef1233d4f8a4ae2954c1d50650096ec>:0 "
+}

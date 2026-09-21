@@ -1,0 +1,1 @@
+No tests ran. Missing using TumbangPreso.Visual in new native diagnostic caused CS0246 CharacterVisual. Corrected namespace import; no gameplay change. Guard71f702ca6d86 restored named profile. Raw Logs/role-charge-baseline-v1/editor.log retained.

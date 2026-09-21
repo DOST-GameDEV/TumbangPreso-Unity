@@ -1,4 +1,4 @@
-"""Protect only TUMP's two shared Editor input preferences, never the player hive.
+"""Protect TUMP's shared Editor input preferences, never the player hive.
 
 Unity documents Editor PlayerPrefs separately from standalone PlayerPrefs:
 https://docs.unity3d.com/6000.0/Documentation/ScriptReference/PlayerPrefs.html
@@ -11,7 +11,7 @@ except ImportError:
     winreg=None
 
 EDITOR_KEY=r'Software\Unity\UnityEditor\BH Studios\Tumbang Preso'
-NAMES=('tumbangpreso.bindings','tumbangpreso.touchlayout')
+NAMES=('tumbangpreso.bindings','tumbangpreso.touchlayout','tumbangpreso.genericpad')
 
 def allowed(name):
     return any(re.fullmatch(re.escape(key)+r'(?:_h\d+)?',name,re.IGNORECASE) for key in NAMES)

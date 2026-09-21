@@ -43,15 +43,16 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
 
         /// <summary>
-        /// The most wood that may sit between the description and the first power.
+        /// The most paper that may sit between the description and the first control under it.
         ///
-        /// ⚠️ IT IS THE COLUMN'S OWN SPACING PLUS A LINE OF SLACK, NOT A ROUND NUMBER. `Rows` in
-        /// `CharacterSelect.unity` is a `VerticalLayoutGroup` with `m_Spacing: 10`, so 10 px is
-        /// the gap the design asks for and anything much past it is a box reserving height its
-        /// text does not use. 24 leaves room for a descender and a border and still fails the
-        /// 50-plus px band that was reported.
+        /// ⚠️ IT IS THE CARD'S OWN SPACING PLUS A LINE OF SLACK, NOT A ROUND NUMBER. It was
+        /// 24 against `Rows`' authored `m_Spacing: 10` on the converted column; the painted card
+        /// spaces the description from the links by **exactly 24** (`y += 24` in
+        /// `TumpPickerView.LateUpdate`), so a bound OF 24 would be the design's own number with
+        /// no room for a rounding and would fail on a healthy screen. 32 is that spacing plus a
+        /// descender, and it still fails the 50-plus band that was reported three times.
         /// </summary>
-        private const float MaxGap = 24.0f;
+        private const float MaxGap = 32.0f;
 
         [UnityTest]
         public IEnumerator TheHeroPickerHasNoDeadBandAboveTheAbilityRows()
@@ -72,66 +73,69 @@ namespace TumbangPreso.PlayTests
             for (int i = 0; i < 6; i++) yield return null;
             yield return new WaitForSecondsRealtime(0.5f);
 
-            var rows = Find("TraitRows");
-            var tagline = Find("TaglineLabel");
+            // ⚠️⚠️ THE COLUMN THIS PROBE WAS WRITTEN ABOUT IS GONE AND ITS THREE CLAIMS ARE
+            // NOT. `ConfigPanel` held a `TraitRows` list of `AbilityRow_n` plates under a
+            // `TaglineLabel`; the painted picker has one READING CARD,
+            // `CollectionReadingCard`, carrying `SelectedName`, `CharacterOrigin`,
+            // `Description` and the two links under them, and `TumpPickerView.LateUpdate` sizes
+            // every one of those boxes off its own `preferredHeight` rather than reserving a
+            // fixed height. **That is the fix this probe was written to hold**, so the three
+            // measurements move onto it rather than being retired with the column:
+            //
+            //   1. the gap between the hero's description and the first control under it,
+            //   2. the empty room reserved INSIDE the description's own box,
+            //   3. whether the last control is drawn below the card holding it.
+            //
+            // ⚠️ AND MEASUREMENT 2 IS THE ONE THAT CAN STILL FAIL FOR A REAL REASON, which
+            // is why it is kept rather than trimmed to the two geometric ones. The card is laid
+            // out in `LateUpdate` behind an `if(!_detailsDirty ...) return`, so a refresh that
+            // never sets that flag leaves every box at the authored height it was built with:
+            // `Description` is authored 210 units tall around about 70 units of text.
+            var card = Find("CollectionReadingCard");
+            var description = Find("Description");
+            var door = Find("TumpSkills");
 
-            Assert.IsNotNull(tagline, "no TaglineLabel in the open picker");
-            Assert.IsNotNull(rows, "no TraitRows in the open picker");
+            Assert.IsNotNull(card, "the hero picker has no CollectionReadingCard.");
+            Assert.IsNotNull(description, "no Description on the picker's reading card.");
+            Assert.IsNotNull(door,
+                "the hero picker has no SKILLS door under the description, so there is nothing "
+                + "for the description to be spaced against and no way to read the kit.\n"
+                + Dump(card, 1.0f));
 
-            Transform firstAbility = null;
-            foreach (Transform child in rows.transform)
-            {
-                if (!child.name.StartsWith("AbilityRow_")) continue;
-                firstAbility = child;
-                break;
-            }
-
-            Assert.IsNotNull(firstAbility,
-                "the hero picker built no AbilityRow_0, so either the mode did not take or " +
-                "RefreshHeroLoadout did not run. The dump below says what the column does hold.\n"
-                + Dump(FindUnder(panel, "ConfigPanel"), 1.0f));
-
-            // ⚠️⚠️ MEASURED IN THE CANVAS'S OWN 1920x1080 UNITS, NOT IN SCREEN PIXELS. The batch
-            // runner renders at whatever window size it feels like, so a raw world-corner gap is
-            // a different number on every machine and cannot be held against a layout constant
-            // that was authored in reference space. Dividing by `scaleFactor` puts the answer
-            // back into the units `Rows`' 10 px spacing is written in.
-            var canvas = panel.GetComponentInParent<Canvas>();
+            // ⚠️⚠️ MEASURED IN THE CANVAS'S OWN 1920x1080 UNITS, NOT IN SCREEN PIXELS. The
+            // batch runner renders at whatever window size it feels like, so a raw world-corner
+            // gap is a different number on every machine and cannot be held against a layout
+            // constant authored in reference space.
+            var canvas = card.GetComponentInParent<Canvas>();
             float scale = canvas != null && canvas.scaleFactor > 0.0001f ? canvas.scaleFactor : 1.0f;
 
-            float taglineBottom = BottomOf(tagline.GetComponent<RectTransform>());
-            float abilityTop = TopOf(firstAbility.GetComponent<RectTransform>());
-            float gap = (taglineBottom - abilityTop) / scale;
+            float descriptionBottom = BottomOf(description.GetComponent<RectTransform>());
+            float doorTop = TopOf(door.GetComponent<RectTransform>());
+            float gap = (descriptionBottom - doorTop) / scale;
 
-            string dump = Dump(FindUnder(panel, "ConfigPanel"), scale);
+            string dump = Dump(card, scale);
 
-            // ⚠️⚠️ THE SPACE IS INSIDE THE BOX, NOT BETWEEN THE BOXES, AND THE FIRST VERSION OF
-            // THIS PROBE MEASURED THE WRONG ONE AND PASSED. Box to box was 10 px, exactly the
-            // column's spacing, and looked healthy; the tagline's own rect was 96 px holding
-            // about 50 px of text, so the band the player sees is the bottom half of a label.
-            // A layout probe that only measures gaps between rects cannot see a box that is
-            // simply too big for what is drawn in it.
-            var taglineRt = tagline.GetComponent<RectTransform>();
-            var taglineText = tagline.GetComponent<Text>();
-            float slack = taglineRt.rect.height - taglineText.preferredHeight;
+            var descriptionRt = description.GetComponent<RectTransform>();
+            var descriptionText = description.GetComponent<Text>();
+            float slack = descriptionRt.rect.height - descriptionText.preferredHeight;
 
-            Debug.Log($"[Picker] scaleFactor={scale:F3}  gap={gap:F1}  tagline box=" +
-                      $"{taglineRt.rect.height:F0} text={taglineText.preferredHeight:F0} " +
+            Debug.Log($"[Picker] scaleFactor={scale:F3}  gap={gap:F1}  description box=" +
+                      $"{descriptionRt.rect.height:F0} text={descriptionText.preferredHeight:F0} " +
                       $"slack={slack:F0}\n{dump}");
 
             Assert.LessOrEqual(gap, MaxGap,
-                $"{gap:F0} px of empty wood sits between the hero's description and the first " +
-                $"ability row, against a column spacing of 10. The row heights below name the " +
-                $"box that is holding it.\n{dump}");
+                $"{gap:F0} px of empty paper sits between the hero's description and the SKILLS " +
+                $"door under it. TumpPickerView.LateUpdate spaces them by 24 units; anything " +
+                $"much past that is a box reserving height its text does not use.\n{dump}");
 
             Assert.LessOrEqual(slack, MaxSlack,
-                $"the tagline's box is {taglineRt.rect.height:F0} px around " +
-                $"{taglineText.preferredHeight:F0} px of text, so {slack:F0} px of empty wood is " +
-                $"reserved under the hero's description. Check the LE() values below: " +
-                $"GetPreferredHeight is Max(min, pref), so a stale minHeight beats whatever " +
-                $"Refresh writes as the preference.\n{dump}");
+                $"the description's box is {descriptionRt.rect.height:F0} px around " +
+                $"{descriptionText.preferredHeight:F0} px of text, so {slack:F0} px of empty " +
+                $"paper is reserved under the hero's description. LateUpdate writes " +
+                $"Max(65, preferredHeight + 20) here, so a box far past that means the layout " +
+                $"pass did not run at all.\n{dump}");
 
-            // ---- THE BOTTOM OF THE COLUMN AGAINST THE PANEL --------------------------------
+            // ---- THE BOTTOM OF THE CARD ----------------------------------------------------
             //
             // ⚠️⚠️ THIS PROBE WAS GREEN WHILE THE ULTIMATE'S PLATE DREW OUTSIDE THE WOOD, AND
             // THAT IS WHY THIS BLOCK EXISTS. 🧑 2026-08-29 with a screenshot of Dante's picker,
@@ -140,61 +144,50 @@ namespace TumbangPreso.PlayTests
             // it and nothing here would catch it coming back.
             //
             // ⚠️ THE TWO ASSERTIONS ABOVE CANNOT SEE IT, AND THAT IS STRUCTURAL RATHER THAN AN
-            // OVERSIGHT. Both measure INSIDE the column: one the gap between two rows, the other
-            // one box against its own text. A column whose rows are each correctly sized and
-            // correctly spaced can still be taller than the panel holding it, and every
+            // OVERSIGHT. Both measure INSIDE the card: one the gap between two rows, the other
+            // one box against its own text. A card whose rows are each correctly sized and
+            // correctly spaced can still be taller than the paper holding it, and every
             // measurement between its own children stays healthy while it runs off the bottom.
             // The only thing that can see it is a child edge against the PARENT's edge.
-            //
-            // ⚠️ THE LAST ROW IS THE ONE MEASURED, not the column's rect. The column is a
-            // `VerticalLayoutGroup` and its own rect is whatever the group computed, which is the
-            // number that was already correct; the ULTIMATE row is the last child and the thing
-            // that was drawn past the wood. Measuring the container would have passed then too.
-            Transform lastAbility = null;
-            foreach (Transform child in rows.transform)
-            {
-                if (child.name.StartsWith("AbilityRow_")) lastAbility = child;
-            }
+            var story = Find("MeetCharacter");
+            var last = story != null && story.activeInHierarchy ? story : door;
 
-            Assert.IsNotNull(lastAbility, "the hero picker built no ability rows at all.\n" + dump);
+            float lastBottom = BottomOf(last.GetComponent<RectTransform>());
+            float cardBottom = BottomOf(card.GetComponent<RectTransform>());
 
-            var configPanel = FindUnder(panel, "ConfigPanel");
-            Assert.IsNotNull(configPanel, "no ConfigPanel to measure the column against.\n" + dump);
+            // Positive means the control's bottom edge is BELOW the card's, in canvas units.
+            float overflow = (cardBottom - lastBottom) / scale;
 
-            float columnBottom = BottomOf(lastAbility.GetComponent<RectTransform>());
-            float panelBottom = BottomOf(configPanel.GetComponent<RectTransform>());
-
-            // Positive means the row's bottom edge is BELOW the panel's, in canvas units.
-            float overflow = (panelBottom - columnBottom) / scale;
-
-            Debug.Log($"[Picker] lastRow={lastAbility.name} overflow={overflow:F1}");
+            Debug.Log($"[Picker] lastRow={last.name} overflow={overflow:F1}");
 
             Assert.LessOrEqual(overflow, MaxBottomOverflow,
-                $"'{lastAbility.name}' is drawn {overflow:F0} px below the bottom of the wood " +
-                $"panel that is supposed to contain it, so the ultimate's plate hangs outside " +
-                $"the frame. This is the fault in reported/13.png. The row heights below say " +
-                $"which box is pushing the column past the panel.\n{dump}");
+                $"'{last.name}' is drawn {overflow:F0} px below the bottom of the reading card " +
+                $"that is supposed to contain it, so the control hangs outside the paper. This " +
+                $"is the fault in reported/13.png one screen later. The row heights below say " +
+                $"which box is pushing the card past its own edge.\n{dump}");
         }
 
         /// <summary>
-        /// How far the last ability row may sit below the panel's inner edge.
+        /// How far the last control on the reading card may sit below the card's edge.
         ///
-        /// ⚠️ IT IS NOT ZERO, AND THE SLACK IS THE PANEL'S OWN BORDER RATHER THAN TOLERANCE FOR
-        /// A BUG. `ConfigPanel` is a nine-patch wood box whose sliced border is a few pixels of
-        /// frame, and the column is laid out against the padded content rect inside it, so a
-        /// correctly fitted column's last row sits a little inside the panel's outer corners
-        /// and can round to a pixel or two the other way. The reported overflow was the whole
-        /// ultimate plate, tens of pixels, so this fails on the real thing and passes on the
+        /// ⚠️ IT IS NOT ZERO, AND THE SLACK IS THE CARD'S OWN BORDER RATHER THAN TOLERANCE
+        /// FOR A BUG. `CollectionReadingCard` is an `OwnerUiPaper` whose edge is a few units of
+        /// drawn paper, and `LateUpdate` lays the controls out against the height it just
+        /// computed, so a correctly fitted card's last control sits a little inside its outer
+        /// corners and can round to a unit or two the other way. The reported overflow was a
+        /// whole plate, tens of units, so this fails on the real thing and passes on the
         /// rounding, which is the same standard <see cref="MaxSlack"/> is set to.
         /// </summary>
         private const float MaxBottomOverflow = 4.0f;
 
         /// <summary>
-        /// How much taller than its text the tagline's box may be.
+        /// How much taller than its text the description's box may be.
         ///
-        /// ⚠️ IT IS ONE LINE OF SLACK, WHICH IS WHAT `HeroTaglineHeight`'s 1.35 FACTOR BUYS
-        /// against a line that actually measures about 1.16. The reported fault was 50 px, so
-        /// this fails on the real thing and passes on the rounding.
+        /// ⚠️ IT IS THE CARD'S OWN PADDING PLUS A LINE OF SLACK. `TumpPickerView.LateUpdate`
+        /// writes `Max(65, preferredHeight + 20)` for this box, so 20 units is what the design
+        /// asks for and 28 leaves room for a descender and a rounding. The authored height the
+        /// layout pass is supposed to replace is 210 units around about 70 of text, so this
+        /// fails on a layout pass that never ran and passes on one that did.
         /// </summary>
         private const float MaxSlack = 28.0f;
 
@@ -219,7 +212,7 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private static string Dump(GameObject root, float scale)
         {
-            if (root == null) return "   (no ConfigPanel found)";
+            if (root == null) return "   (no reading card found)";
 
             var sb = new StringBuilder();
 
@@ -262,20 +255,5 @@ namespace TumbangPreso.PlayTests
             return null;
         }
 
-        /// <summary>
-        /// ⚠️ SCOPED TO THE PANEL, BECAUSE `MatchSetup` HAS ITS OWN `Rows` AND IT COMES FIRST.
-        /// The first run of this probe dumped the setup screen's Map / Mode / Difficulty column
-        /// and reported it as the hero picker's, which would have sent the next reader hunting a
-        /// gap in the wrong screen.
-        /// </summary>
-        private static GameObject FindUnder(GameObject parent, string name)
-        {
-            if (parent == null) return null;
-
-            foreach (var rt in parent.GetComponentsInChildren<RectTransform>(true))
-                if (rt.name == name) return rt.gameObject;
-
-            return null;
-        }
     }
 }

@@ -14,6 +14,30 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class SeanSkillTimingProbe
     {
+        [UnityTest]
+        public IEnumerator ThrowConversionSkillsDoNotSpendAChargeWhileDefending()
+        {
+            var defender = GameServices.Round.Players.First(p => p.IsDefender);
+            defender.Intent.Parked = false;
+            defender.Teleport(GameServices.Round.Lata.transform.position + Vector3.back);
+            defender.ClearStun(); defender.ClearTrip();
+            var context = new AbilityContext(defender, defender.GetComponent<Carrier>(), defender.GetComponent<CombatVerbs>());
+            foreach (string hero in new[] { "sean", "zack" })
+            foreach (var variant in HeroLoadoutRules.VariantsFor(hero, 2))
+            {
+                defender.AbilitySystem.BindHero(hero, new HeroBuild { HeroId = hero, Slot2VariantId = variant.Id });
+                var kit = defender.AbilitySystem.Kit;
+                int charges = kit.Skill2.ChargesRemaining;
+                Assert.IsTrue(defender.CanAct(), "The role gate must be tested on an actor who can otherwise act.");
+                var answer = kit.CastSkill2(context);
+                Debug.Log($"[DefenderThrowConversion] {variant.Id}: {answer}, charges {charges}->{kit.Skill2.ChargesRemaining}");
+                Assert.AreEqual(HeroKit.CastOutcome.CannotAct, answer, variant.Id + " armed an unusable defender throw");
+                Assert.AreEqual(charges, kit.Skill2.ChargesRemaining, variant.Id + " spent a charge for a role that cannot throw");
+                Assert.IsFalse(kit.Skill2.IsActive, variant.Id + " left an unusable charge effect alive");
+                yield return null;
+            }
+        }
+
         private bool _bots, _spectator, _pinned;
         private int _seat;
         private INetProvider _net;

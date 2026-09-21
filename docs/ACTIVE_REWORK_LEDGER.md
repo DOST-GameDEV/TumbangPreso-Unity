@@ -1,109 +1,156 @@
 # Active TUMP rework ledger
 
-## Owner direction and resume contract
+## Scope and rules
 
-Complete EVERY unfinished autonomously actionable requirement in [TODO](TODO.md).
-Do not stop at a phase or close the overall goal while implementation remains.
-Keep working in this conversation, sole agent, while the owner sleeps. Preserve
-all task IDs, prior implementation, original dirty work and failed evidence.
-No questions, other chats, subagents, paid services, resets, main edits or Desktop
-replacement. [AGENTS](../AGENTS.md) contains the complete current contract.
+Complete EVERY unfinished autonomously actionable TODO in this conversation.
+Do not stop after a phase or mark the overall goal complete while implementation
+remains. Owner is asleep; no questions, subagents/other chats, paid services,
+resets, main edits or Desktop replacement. Preserve task IDs, all working progress,
+original dirty intake, failed evidence and source art/rigs. AGENTS.md is authoritative.
 
-## Workspace and source
+Dev: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+Last published/verified origin HEAD4a8a51ec1bf58f7c68627eba521e5d4c03e331ee.
+Final19-family map surfaces, sky/outline/generator and plain Inday arms are published
+in4a8a51ec/e50f8c37. Current existing UI/kit/controller work is UNCOMMITTED.
 
-Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Last published and verified origin HEAD e50f8c372b2acd079e87493a8328e92ea39c1d5a.
-The final19-family surface/generator/outline batch is ready to publish next.
-
-Validation: sibling TumbangPreso-Unity-validation, detached db976126 with explicitly
-copied owned inputs; independent Assets/Library/Temp/obj. One heavy job at a time.
-Every Editor launch uses python tools/run_unity_guarded.py with named profile
-presentation-validation-20260921 and installed Unity6000.5.8f1. Keep warm caches;
-do not mutate validation inputs during a job. Protocol48, replay schema10 unchanged.
+Validation: sibling TumbangPreso-Unity-validation, detacheddb976126 plus explicitly
+copied owned inputs; separate Assets/Library/Temp/obj. One heavy job. Every Editor
+launch via python tools/run_unity_guarded.py, profile presentation-validation-20260921,
+Unity6000.5.8f1. Keep caches. Never mutate validation inputs during an active job.
+Protocol48 and replay schema10 remain. Internal builds honestly say db976126 dirty;
+not a final coherent release stamp. Desktop unchanged.
 
 ## Exact current action
 
-NO owned jobs, players, Editors, encoding processes or browser tabs remain.
-Final internal candidate: validation/Builds/environment-v39/TumbangPreso.exe,
-1192MB/85s, guard80aa3ba39f21. Native full map route and busy-Low route both passed,
-shared input unchanged and two existing profile files restored in each route.
-96map/mode/quality/view rows,48paired frozen-scene process-frame windows,
-8walks,12s sky drift,30s each owner/spectator mixed-caster Low footage. All11movies
-encoded from actual frames.csv timestamps. Receipt native-environment-v39-media.json
-contains binary/movie/timing hashes. Audio captured but not listened to. Actual
-v39Eskinita High edge and SaBubong Low court inspected, following v37/v38 studies.
-Median process-frame delta vs v38 +0.157ms; max p95 14.106ms on RX6600/Ryzen52600.
-This is one-host diagnostic evidence, not isolatedGPU/device/live-match certification.
-The build honestly retains db976126 dirty stamp; not final whole-backlog delivery.
+NO owned jobs, Editors, native players, encoders or browser tabs remain.
+Controller contracts11/11. V41built1193MB/54s, guarde8d2d8b42207; native UIpassed,
+including synthetic controller clicks/save/discard/reopen and preserved preferences.
+Caster and observer comparisons each passed48cases (44casts+4role refusals); Sean
+native visual route passed.98timestamped movies encoded,96with real engine audio.
+All stream/duration checks pass; hashes in native-ui-kit-media-v41.json. Audio not
+listened to. Final two reset-mapping meanings corrected from original callbacks,
+verified against captured targets and copied to validation. No runtime change.
 
-Next: stage explicit Logs/environment-final-owned-paths.txt plus these final receipts,
-review ownership, commit --quiet -F, fetch/push ASTRAReworks only, verify remote HEAD.
-Then immediately continue existing-kit/movement/UI/network reconciliation and Rafi/
-lagoon implementation. Do not finalize the assignment at this checkpoint.
+Exact next: regenerate explicit Logs/existing-ui-kit-owned-paths.txt/source hashes,
+review staging, commit --quiet -F and fetch/push ASTRAReworks only. Exclude the two
+original unrelated PNG metas. Then immediately continue existing-network-plan.md,
+remaining whole-kit overlap/reconciliation and required Rafi/lagoon, not final answer.
 
-## Completed final map batch and preserved failures
+Completed native route instructions retained for reproducibility: existing-ui-kits-v41 with
+currently copied source, then run default native UI route (includes new synthetic
+controller save/discard) and --skill-variants in caster and --variant-observer views.
+Run original --sean-visual-only diagnostic before integrating its original dirty
+hook. Inspect actual captures/results, fix defects, preserve failures. Encode UI/
+variant motion from actual frames.csv only after players exit. Publish stable owned
+batch, then finish remaining peer/request/rejoin checks and full TODO reconciliation.
+RafiB/lagoonC implementation HAS NOT BEGUN and remains required LAST after existing
+work. Do not finalize at the UI/kit checkpoint.
 
-19construction families account for all2686active renderers; mapped counts E711,
-B262,I1335,Sa179, with explicit retained imagery/livery/markings/special surfaces.
-No retained/unassigned roles. Original source geometry/colors/UV0/UV1 preserved.
-CreateAsset renamed material copies and broke role classification after reload;
-TumpSurfaceName semantic tags now persist,381original names safely recovered with
-zero unresolved. Strong repeatability checks preserve FIRST-pass coverage as well
-as all27917rows. Full E/I generator repeatability passes; initial Bayan failed on
-8tiny chalk-scale drifts. SeatCourtPaint canonicalization fixes it, Bayan rerun
-0/3777. SaBubong full builder passes0/5025 plus geometry gate. Final200owner-view
-frames passed1/1,64.804s. No default AA/HDR setting changed.
+## Current verified evidence
 
-Near-fade geometric mask removes ghost outline in the actual dither band; final
-native route uses1..8extra mask draws. Distance-faded normal creases reduce distant
-roof dots while keeping depth silhouettes and near detail. Exact before/after,
-failed generator and compile receipts remain in the report. Final dependency closure
-recovered4132files/107387663bytes, recorded in surface-assets-final-v7.json.
+- Environmentv39 passed96map/mode/quality views,48paired frozen-scene process timing
+  windows,8walks,12s sky, two30s mixed-caster Low captures.11movies encoded/hashes
+  saved. All2686renderers accounted for across19families/retained authored surfaces.
+  Full generator repeatability/source tags qualified; failure and repair retained.
+  Native1192MB/85s, guard80aa3ba39f21. See map receipts, no need to repeat unchanged.
+- Existing UI settings7/7, then initial picker18/24 found stale tests/capture faults.
+  Corrected directory creation, variant summary expectation, renamed login-canvas
+  exemption and current inventory walk. Complete screens group113/114,0failed,
+ 1UGS identity skip (batch disables sign-in),463.937s, all45fixtures present.
+- Original338-row legacy inventory is untouched.122identity mappings require actual
+  current controls; two explicit owner removals retained. Conditional welcome/queue/
+  ready nodes are separately labeled constructed-state coverage. Do not call those
+  actual service qualification. A wrong Button_ON mapping WAS found later, below.
+- Sean E defender baseline1/2 failed because it spent a charge on an unusable throw.
+  CanActivate now refuses defender;4Sean/Zack E descriptions say Attacker only.
+  Fix-v3 passes4/4 (48.734s, guard67a1ffe14157). An unmatched Flare filter is NOT
+  counted; correct Flare test subsequently passes with beam coverage.
+- Beam-and-flare-v1 passes2/2 (16.761s, guardaf0ce7281e6d).7same-frame actual-camera
+  beam-off/on samples, Eskinita1280x720/1600x720, range and approach band, max0.265%
+  changed pixels and0new white pixels. Not every angle/map or GPU cost.
+- Internal existing-ui-kits-v40 builds1193MB/66s, guard60a83de04fbc. Default native
+  UI route PASSED (Logs/existing-ui-kits-v40-native), shared input unchanged. Current
+  title motion, settings, controller, both-mode picker/results and Classicrematch.
+  Actual Player720p/4:3 and Hero result frames inspected. Audio not listened to.
 
-Already published e50:4CC0PolyHaven cloud skies with scaled-time motion and replay
-rewind/return tests; both Inday source models/plain brown FPP arms with unchanged
-rigs/animations and original backups; preview-to-match race fix. Preview race had
-failed-before/passed-after regression and now all v37/v38/v39native routes pass.
+## Native variant diagnostic failure, correction still needs runtime
 
-## Next existing backlog work
+New OwnerUiPlayerReview.Variants.cs compares24ordinary choices x2roles, with optional
+observer view. Four attacker-only E cases should refuse without resource loss.
+V40caster route FAILED at case6: CannotAct intentionally buffers without publishing
+LastAnswer. Charges stayed2->2; the diagnostic incorrectly demanded an answer event.
+Corrected diagnostic now requires real press samples, CanAct/IsReady with refused
+CanActivate, no active effect and unchanged charge; it verifies choice identity each
+frame and records early travel separately from later movement. Copied to validation,
+but requires v41 rebuild and actual48-case rerun. Keep v40partialCSV/frames/failure.
+Early Afterburn/full-rush max travels happened to match in staged movement; do not
+infer absence of tradeoff from that saturated measure. Prior dedicated Afterburn
+and all kit variant contracts remain. Inspect actual new early metrics/footage.
 
-The PlayMode partition initially rejected22recent fixtures;19arena/lifecycle and
-3continuous capture fixtures are now assigned. All161fixtures assigned exactly
-once, plan passes. This is a partition check, NOT a full-suite run.
+## Controller capability correction and root cause
 
-Original dirty UI work still needs coherent review/integration: PaintedScreens.cs
-and stale fixture migrations; settings note-height fix; RoundLine/HUD catalog and
-extra halftime label; opt-in SeanVisualOnly route. Preserve compact halftime and
-original supplied art/input. Do not copy a shared hook without its companion method.
-151.9C1/C2 actual AI helpers/callers and historical failed-before/passed-after18match
-zero-idle evidence are reconciled; only specifically human feel remains there.
+Manual tracing found original Button_ON was GenericPadBridge.Enabled, NOT Touch.
+Earlier green migration receipt is retained but does not prove that capability.
+The manifest now requires toggle:GenericControllerValue; inventory adds/removes a
+synthetic joystick to expose the real conditional control.
 
-Remaining order: whole-kit alternatives/movement/equipment; existing primary and
-secondary UI/rebind/native routes and network/rejoin qualification; selected RafiB
-and sheltered-lagoonC with native rig/FPP/animation, Crosscurrent/Mirrorwake/Breakwater,
-full gameplay/network/replay, supported decks/houses/water recovery in both modes;
-final coherent source/build/peer matches and every TODO disposition.
-Rafi/lagoon implementation HAS NOT BEGUN. Do not call it external review.
+Baseline-v1 live hotplug recursively reentered GenericPadBridge.Sync while creating
+its virtual Gamepad, before recording the bridge.166809551-byte raw log retained.
+Only verified Editor27340 terminated; guardffd36e74c8f2 restored4files/input.
+Small _syncing/_syncAgain wrapper now completes one device pass before handling
+nested callbacks. Existing mapping is unchanged. Backend-only baseline-v2 reached
+and failed the genuine missing-UI assertion in1.482s, guard813adbf22cf3.
 
-## Original dirty work / publishing
+Current UI restores the conditional toggle through existing TumpSettingsSession
+save/discard and refreshes it on hotplug without interrupting a rebind/options popup.
+Fix-v3:6/7,32.412s, guard2e89da456385. Inventory and hotplug/save/discard pass; the
+long controller status clipped at960x540. ControllerMapScreen now uses concise
+contextual footer text rather than telling a user already on the map to open it.
+Fix-v4:2/2,17.337s, guard3d8659b265bf (inventory first preserves unknown-device
+state, then controller/touch layout). No assertion suppression.
 
-Initial26files backed up in Logs/presentation-pass-2026-09-21/intake.18remain byte-identical.
-Six shared paths retain original work; two old Inday arm meshes deliberately changed
-by latest owner instruction. Keep original UI PNG metas, tests and PaintedScreens,
-OwnerUiPlayerReview.Gameplay.cs, OwnerUiPlayerReview.cs, TumpMatchReadout.cs,
-TumpSettingsView.OwnerPainted.cs and tools/run_ui_player_review.py outside map staging.
-Map-only hook is already in e50; original Sean hook stays unstaged until next batch.
-No git add-all, reset, clean, force or attribution trailers. Use explicit path list,
-git -c core.safecrlf=false add, commit --quiet -F; fetch before push.
+playerprefs_guard now also protects existing tumbangpreso.genericpad. Integer and
+absent-key restoration plus narrow-name guards pass4/4 in tools/test_playerprefs_guard.py.
+The same allowlist protects the native runner comparison. New native Controls
+partial tests actual switch clicks/save/discard with a synthetic joystick, restores
+original value/key existence, and explicitly does not claim physical-pad coverage.
+This partial and its main hook are copied but only compile-checked by fix-v4.
 
-## Evidence and design pointers
+## Owned source / original dirt
 
-[Full backlog report](reports/full-backlog-2026-09-21/README.md), todo-disposition.json
-preserves366historical numbered headings. MAP_FINAL_PASS.md owns map design;
-NATIONALS_POLISH.md and BADJAO_EXPANSION.md own remaining design contracts.
-Earlier exact chronology is archived in ledger-through-final-map-v39-20260922.md,
-ledger-through-preview-race-20260922.md and material-prototype-ledger-20260922.md.
-Resume THIS action, not archived jobs. Prior presentation software,59movies, real
-3peer checks and default8round Classic/Hero matches remain preserved. Human taste,
-audio listening, physical devices and separate-machine/WAN review are specifically
-unverified; they do not justify skipping remaining implementation.
+Initial26dirty files backed up in Logs/presentation-pass-2026-09-21/intake. All original
+history preserved. UI migrations/helper and settings-note fix are now deliberately
+integrated/qualified, not unrelated dirt. Original SeanVisualOnly hook+companion+
+CLIflag were copied together for v40; require its native check before staging.
+Still exclude unrelated home-court/loading-street PNG.meta changes.
+Never git add-all. Explicit file staging, commit --quiet -F, sole author/no trailers,
+fetch before ASTRAReworks-only push, verify origin HEAD. Current no staged batch.
+
+Main changed areas: painted UI tests/PaintedScreens/FrontEndControlWalk plus explicit
+migration TSV; TumpMatchReadout shared formatter (duplicate long halftime label
+removed), settings note/layout, generic-controller switch/session UI, small backend
+reentrancy guard/footer copy; Sean role gate/Zack descriptions/HeroLoadout copy;
+new native UI/variant/control diagnostics; three input/suite/native runner tools.
+playmode_suite.py now accepts --profile/--out, retains launcher output and refuses
+to overwrite existing evidence. py_compile passes. No full-suite repeat justified
+unless final coherent candidate or a new regression requires it.
+
+## Remaining queue and design
+
+Current plans: reports/full-backlog-2026-09-21/existing-ui-plan.md and existing-kit-plan.md.
+Fix remaining genuine whole-kit/overlap/role cases, current authority/request/rejoin
+qualification (C4 reservation released), then selected RafiB and sheltered-lagoonC:
+native model/rig/FPP/animations, Crosscurrent/Mirrorwake/Breakwater, roster/network/
+replay/presentation, supported houses/decks/water recovery in both modes. Then final
+coherent source/build/real-peer/full matches and every preserved TODO disposition.
+
+F1/F2 skill receipts and F3/F4 hold/rejoin warmup already have later fixes/evidence;
+149.4 now says so without closing the final matrix. Equipment-destination.md proves
+implemented10slipper tradeoffs/settling and6can rebound cases; do not redo old audit.
+Human taste/listening, physical devices and separate-machine/WAN are specific
+unverified checks, not excuses to leave implementation unfinished.
+
+All detailed receipts/failures live in reports/full-backlog-2026-09-21. Its original
+index retains366historical headings; they are not366new features. Older ledger
+snapshots are archived there, latest ledger-through-ui-controller-20260922.md.
+Resume THIS current action, not jobs mentioned in archives.

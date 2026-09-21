@@ -390,36 +390,64 @@ namespace TumbangPreso.PlayTests
             panel.SetActive(true);
             for (int i = 0; i < 20; i++) yield return null;
 
-            var rows = FindIn(panel.transform, "TraitRows");
-            Assert.IsNotNull(rows, "Hero select has no loadout area.");
+            // ⚠️⚠️ THE KIT IS BEHIND A DOOR NOW AND THE CLAIM IS NARROWED ON PURPOSE.
+            // `TraitRows` listed all three of a hero's powers on the picker itself. The painted
+            // picker gives the hero a portrait, a paragraph and two links, and `TumpSkills`
+            // opens `TumpSkillView`: three tabs, one power named and explained on each.
+            //
+            // ⚠️⚠️ WHAT SURVIVES IS THE REASON THE OLD ASSERTION EXISTED, NOT ITS SHAPE. An
+            // earlier pass showed a ribbon of three glyphs with a details card carrying only the
+            // SELECTED power, so two of every hero's three abilities were invisible until
+            // clicked and nothing on screen said they were there. The skills screen keeps all
+            // three NAMED as tabs with their own glyphs and one press away, which is the
+            // difference between "hidden" and "one press away". **So this walks the three tabs
+            // rather than reading one screen**, and the picker is still checked for the Classic
+            // attributes it must not show.
+            var picker = FindActive("TumpSkills");
+            Assert.IsNotNull(picker,
+                "the hero picker has no SKILLS door, so a player choosing a hero cannot read "
+                + "what that hero does at all. TumpPickerView.Collection builds it.");
+
+            string pickerCopy = string.Empty;
+            var pickerCanvas = Find("OwnerLoadoutCanvas");
+            Assert.IsNotNull(pickerCanvas, "the character select panel drew no picker canvas.");
+            foreach (var label in pickerCanvas.GetComponentsInChildren<UnityEngine.UI.Text>(false))
+                pickerCopy += label.text + "\n";
+
+            picker.onClick.Invoke();
+            for (int i = 0; i < 10; i++) yield return null;
+
+            var skills = Find("OwnerSkillsCanvas");
+            Assert.IsNotNull(skills, "pressing SKILLS drew no skills screen.");
 
             string copy = string.Empty;
-            foreach (var label in rows.GetComponentsInChildren<UnityEngine.UI.Text>(true))
-                copy += label.text + "\n";
+            foreach (int slot in new[] { 1, 2, 0 })
+            {
+                var tab = FindActive("TumpSkillSlot" + slot);
+                Assert.IsNotNull(tab, $"the skills screen has no TumpSkillSlot{slot} tab.");
+                tab.onClick.Invoke();
+                for (int i = 0; i < 6; i++) yield return null;
 
-            // ⚠️⚠️ THE NAMES ARE ASKED OF THE KIT, NOT SPELLED OUT HERE. This used to hard-code
-            // three strings and went red the day an ability was renamed, which is a test failing
-            // for a reason that has nothing to do with what it is checking. What it is actually
-            // asserting is that a player choosing a hero can see the WHOLE kit named on this
-            // screen rather than one third of it, and that survives any amount of renaming.
-            //
-            // ⚠️ IT IS ALSO WHY THE PICKER LISTS ALL THREE. An earlier pass showed a ribbon of
-            // three glyphs with a details card under it carrying only the SELECTED power, so two
-            // of every hero's three abilities were invisible until clicked. On the one screen
-            // whose entire job is "what does this hero do", that is the wrong trade.
+                foreach (var label in skills.GetComponentsInChildren<UnityEngine.UI.Text>(false))
+                    copy += label.text + "\n";
+            }
+
+            // ⚠️⚠️ THE NAMES ARE ASKED OF THE KIT, NOT SPELLED OUT HERE. This used to
+            // hard-code three strings and went red the day an ability was renamed, which is a
+            // test failing for a reason that has nothing to do with what it is checking.
             var danteKit = Abilities.HeroAbilitySystem.CreateKitFor("dante");
 
-            StringAssert.Contains(danteKit.Skill1.Name, copy,
-                "Dante's first skill is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Skill2.Name, copy,
-                "Dante's second skill is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Ultimate.Name, copy,
-                "Dante's ultimate is not named on the Hero picker.");
-            StringAssert.Contains(danteKit.Skill1.Summary, copy,
+            StringAssert.Contains(danteKit.Skill1.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
+                "Dante's first skill is not named behind the Hero picker's SKILLS door.");
+            StringAssert.Contains(danteKit.Skill2.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
+                "Dante's second skill is not named behind the Hero picker's SKILLS door.");
+            StringAssert.Contains(danteKit.Ultimate.Name.ToUpperInvariant(), copy.ToUpperInvariant(),
+                "Dante's ultimate is not named behind the Hero picker's SKILLS door.");
+            StringAssert.Contains(Core.HeroLoadoutRules.DefaultFor("dante", 1).Description, copy,
                 "The selected power is named but never explained.");
-            StringAssert.DoesNotContain("SPEED", copy,
+            StringAssert.DoesNotContain("SPEED", pickerCopy,
                 "Hero select still exposes Classic SPEED attributes.");
-            StringAssert.DoesNotContain("POWER", copy,
+            StringAssert.DoesNotContain("POWER", pickerCopy,
                 "Hero select still exposes Classic POWER attributes.");
             StringAssert.DoesNotContain("GRIT", copy,
                 "Hero select still exposes Classic GRIT attributes.");
@@ -565,6 +593,15 @@ namespace TumbangPreso.PlayTests
             Object.DestroyImmediate(tex);
             rt.Release();
             Object.DestroyImmediate(rt);
+        }
+
+        /// <summary>An active button anywhere in the scene, by name.</summary>
+        private static UnityEngine.UI.Button FindActive(string name)
+        {
+            foreach (var button in Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None))
+                if (button.name == name && button.isActiveAndEnabled) return button;
+
+            return null;
         }
     }
 }
