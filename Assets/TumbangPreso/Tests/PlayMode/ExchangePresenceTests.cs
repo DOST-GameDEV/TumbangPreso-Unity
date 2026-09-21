@@ -55,10 +55,10 @@ namespace TumbangPreso.PlayTests
                 Assert.Less(braking,-.15f,"Braking had no visible opposing chest response.");
                 Assert.Greater(side,.35f,"Turning/side acceleration produced no lateral weight shift.");
                 Assert.AreSame(who,held.Holder);Assert.AreSame(held,carrier.Held);
-                anim.PlayAction("throw");yield return null;yield return new WaitForEndOfFrame();
+                anim.PlayAction("throw");yield return null;yield return null;
                 Assert.Less(anim.LocomotionLean.sqrMagnitude,.00001f,"Locomotion bent the authored throw pose.");
                 input.Move=Vector2.zero;who.Teleport(new Vector3(2,.2f,-7));
-                yield return null;yield return new WaitForEndOfFrame();
+                yield return null;yield return null;
                 Assert.Less(anim.LocomotionLean.sqrMagnitude,.00001f,"A teleport manufactured a braking kick.");
                 yield return new WaitForSeconds(.6f);
                 anim.enabled=false;yield return null;anim.enabled=true;yield return null;
@@ -70,7 +70,7 @@ namespace TumbangPreso.PlayTests
                 float began=Time.time;
                 while(Time.time-began<seconds)
                 {
-                    yield return new WaitForEndOfFrame();var lean=anim.LocomotionLean;
+                    yield return null;var lean=anim.LocomotionLean;
                     if(stage=="start")forward=Mathf.Max(forward,lean.x);
                     if(stage=="brake")braking=Mathf.Min(braking,lean.x);
                     if(stage=="turn")side=Mathf.Max(side,Mathf.Abs(lean.y));
