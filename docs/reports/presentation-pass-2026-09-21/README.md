@@ -303,3 +303,22 @@ Empty-hand variant52f29fa5 passed1/1 in6.20s, guard0b315bbc691e; frame25 keeps
 the two-hand gather. Temporary staging instrumentation removed after diagnosis.
 This is independent render-only choreography; it has not enabled a live shared
 phase or earned its native held-prop qualification.
+
+
+Native held-scene v12/460b88fa built1156MB in53s, guard951df42986af, with
+whitespace-only input differences. Actual player19188/handle9108 PASSall6
+scene, curve, held-render-copy and game-audio checks. Source bodies/equipment and
+physics ownership stay separate. Logs/introduction-native-v12 records the result;
+2existing named-profile files restored, shared input unchanged. Native Cheska
+frame45 and full-growth Nemu frame68 inspected. The six2.77-2.80s movies were
+encoded with measured frame timing and captured game output. Four native busy
+20s owner/spectator movies from v10 were also encoded with their recorded audio.
+Encoding handle55571 exited. No listening or human gameplay approval implied.
+
+Task/source preservation: docs/TODO.md is unchanged since the research merge
+cc01b97f; all existing tasks remain. MatchRpc.cs and NetSession.cs are unchanged
+since that merge.20of26intake files remain byte-identical;6shared files contain
+selected owned additions including the ledger, with original unrelated dirty
+hunks still excluded from commits. No source art, main branch, Desktop game,
+real profiles or shared input were replaced. No paid tools, reset, delegation,
+other chat or new background automation.
