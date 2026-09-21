@@ -257,7 +257,7 @@ namespace TumbangPreso.Visual
                     float form = Ease(.4f, 1.85f, t);
                     Vector3 gatherAt = _heldItem != null ? FreePalm : BothPalms;
                     for (int i = 0; i < 3; i++)
-                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form), .12f + Mathf.Abs(i - 1) * .04f, .20f),
+                        Place(i, gatherAt + new Vector3((i - 1) * Mathf.Lerp(.22f, .13f, form), .35f + Mathf.Abs(i - 1) * .04f, .35f),
                             new Vector3(.10f, .36f, .10f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
                     break;
             }
