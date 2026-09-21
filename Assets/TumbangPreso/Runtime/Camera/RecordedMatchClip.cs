@@ -52,7 +52,7 @@ namespace TumbangPreso.CameraSystem
                 }
             }
             using var packed=new MemoryStream();
-            using(var deflate=new DeflateStream(packed,CompressionLevel.Fastest,true))
+            using(var deflate=new DeflateStream(packed,System.IO.Compression.CompressionLevel.Fastest,true))
             {raw.Position=0;raw.CopyTo(deflate);}
             if(packed.Length>ByteLimit)throw new InvalidDataException("Recorded clip exceeds its transport budget");
             var result=packed.ToArray();
