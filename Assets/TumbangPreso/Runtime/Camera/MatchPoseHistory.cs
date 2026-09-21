@@ -35,6 +35,20 @@ namespace TumbangPreso.CameraSystem
             Sampled?.Invoke(Time.time);
         }
 
+        public static Transform[] StableTransforms(GameObject source)
+        {
+            var result=new System.Collections.Generic.List<Transform>();
+            foreach(var node in source.GetComponentsInChildren<Transform>(true))
+            {
+                bool transient=false;
+                for(var parent=node;parent!=null&&parent!=source.transform;parent=parent.parent)
+                    if(parent.GetComponent<DanteCarapaceVisual>()!=null||parent.GetComponent<SeanIgnitionVisual>()!=null||parent.GetComponent<ZackMagnetCharge>()!=null)
+                    {transient=true;break;}
+                if(!transient)result.Add(node);
+            }
+            return result.ToArray();
+        }
+
         public sealed class Track
         {
             public readonly CharacterMotor Actor;
@@ -47,7 +61,7 @@ namespace TumbangPreso.CameraSystem
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
             public Track(CharacterMotor actor, GameObject source)
             {
-                Actor = actor; Source = source; _bones = source.GetComponentsInChildren<Transform>(true);
+                Actor = actor; Source = source; _bones = StableTransforms(source);
                 if (_bones.Length > TransformLimit) { _frames = new Frame[0]; return; }
                 _frames = new Frame[Samples];
                 for (int i = 0; i < Samples; i++) _frames[i] = new Frame(_bones.Length);
@@ -56,7 +70,7 @@ namespace TumbangPreso.CameraSystem
             {
                 if (Source == null || _frames.Length == 0) return;
                 var frame = _frames[_cursor]; frame.Time = time;ReadState(out frame.State,out frame.Holder);
-                frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);
+                frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();
                 for (int i = 0; i < _bones.Length; i++)
                 {
                     var bone = _bones[i]; if (bone == null) { _count = 0; return; }
@@ -81,9 +95,11 @@ namespace TumbangPreso.CameraSystem
                     sample.Active[i]=bone.gameObject.activeSelf;
                 }
                 ReadState(out sample.State,out sample.Holder);
-                sample.HasCoat=ReadCoat(out sample.Frost,out sample.Flash,out sample.Element);
+                sample.HasCoat=ReadCoat(out sample.Frost,out sample.Flash,out sample.Element);sample.Epoch=ReadEpoch();
                 return sample;
             }
+            private int ReadEpoch()
+            {var motor=Source.GetComponentInParent<CharacterMotor>();return motor!=null?motor.MovementEpoch:-1;}
             private bool ReadCoat(out float frost,out float flash,out StunElement element)
             {
                 frost=flash=0;element=StunElement.None;
@@ -127,7 +143,7 @@ namespace TumbangPreso.CameraSystem
                 for(int i=from;i<=to;i++)
                 {
                     var frame=_frames[(oldest+i)%Samples];
-                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,State=frame.State,Holder=frame.Holder,HasCoat=frame.HasCoat,Frost=frame.Frost,Flash=frame.Flash,Element=frame.Element,
+                    result[i-from]=new RecordedPoseTrack.Sample{Time=frame.Time,State=frame.State,Holder=frame.Holder,Epoch=frame.Epoch,HasCoat=frame.HasCoat,Frost=frame.Frost,Flash=frame.Flash,Element=frame.Element,
                         Positions=(Vector3[])frame.Position.Clone(),Rotations=(Quaternion[])frame.Rotation.Clone(),
                         Scales=(Vector3[])frame.Scale.Clone(),Active=(bool[])frame.Active.Clone()};
                 }
@@ -233,7 +249,7 @@ namespace TumbangPreso.CameraSystem
         private sealed class Frame
         {
             public float Time;
-            public int State,Holder=-1;
+            public int State,Holder=-1,Epoch=-1;
             public bool HasCoat;public float Frost,Flash;public StunElement Element;
             public readonly Vector3[] Position, Scale;
             public readonly Quaternion[] Rotation;

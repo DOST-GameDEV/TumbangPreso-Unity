@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=5;
+        public const int WireVersion=7;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -47,7 +47,7 @@ namespace TumbangPreso.CameraSystem
                     foreach(string path in pose.Paths)WriteText(writer,path,512);
                     foreach(var sample in pose.Samples)
                     {
-                        writer.Write(sample.Time);writer.Write(sample.State);writer.Write(sample.Holder);
+                        writer.Write(sample.Time);writer.Write(sample.State);writer.Write(sample.Holder);writer.Write(sample.Epoch);
                         writer.Write(sample.HasCoat);writer.Write(sample.Frost);writer.Write(sample.Flash);writer.Write((byte)sample.Element);
                         for(int b=0;b<pose.Paths.Length;b++)
                         {
@@ -111,12 +111,12 @@ namespace TumbangPreso.CameraSystem
                     var samples=new RecordedPoseTrack.Sample[frames];float previous=float.NegativeInfinity;
                     for(int f=0;f<frames;f++)
                     {
-                        float time=reader.ReadSingle();int state=reader.ReadInt32(),holder=reader.ReadInt32();
+                        float time=reader.ReadSingle();int state=reader.ReadInt32(),holder=reader.ReadInt32(),epoch=reader.ReadInt32();
                         bool coat=reader.ReadBoolean();float frost=reader.ReadSingle(),flash=reader.ReadSingle();var element=(StunElement)reader.ReadByte();
                         if(!Finite(frost)||!Finite(flash)||frost<0||frost>1||flash<0||flash>1||!Enum.IsDefined(typeof(StunElement),element))throw new InvalidDataException("Invalid recorded body coat");
-                        if(state<0||state>2048||holder< -1||holder>=4)throw new InvalidDataException("Invalid recorded prop state");
+                        if(state<0||state>2048||holder< -1||holder>=4||epoch< -1)throw new InvalidDataException("Invalid recorded prop state");
                         if(!Finite(time)||time<=previous||time<result.Start-.3f||time>result.End+.3f)throw new InvalidDataException("Invalid pose time");
-                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,HasCoat=coat,Frost=frost,Flash=flash,Element=element,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
+                        previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,Epoch=epoch,HasCoat=coat,Frost=frost,Flash=flash,Element=element,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
                         for(int b=0;b<bones;b++)
                         {
                             sample.Positions[b]=ReadVector(reader,10000);sample.Rotations[b]=ReadRotation(reader);sample.Scales[b]=ReadVector(reader,100);
@@ -136,9 +136,10 @@ namespace TumbangPreso.CameraSystem
                     fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields]};var ids=new System.Collections.Generic.HashSet<int>();
                     for(int i=0;i<fields;i++)
                     {
-                        int id=reader.ReadInt32();var f=new WorldEffectSnapshot.Field{Type=(WorldEffectSnapshot.Kind)reader.ReadByte(),Position=ReadVector(reader,10000),Forward=ReadVector(reader,2),
+                        int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();
+                        var f=new WorldEffectSnapshot.Field{Type=kind,Position=ReadVector(reader,10000),Forward=ReadVector(reader,kind==RecordedSpecialFields.Kuro?10000:2),
                             Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
-                        if(id<=0||id>100000||!ids.Add(id)||!WorldEffectSnapshot.Valid(f))throw new InvalidDataException("Invalid recorded field");
+                        if(id<=0||id>100000||!ids.Add(id)||!RecordedSpecialFields.Valid(f))throw new InvalidDataException("Invalid recorded field");
                         frame.Fields[i]=new RecordedField{Id=id,State=f};
                     }
                     result.FieldFrames[n]=frame;

@@ -9,6 +9,13 @@ namespace TumbangPreso.Visual
     public sealed class DanteCarapaceVisual : MonoBehaviour, IVfxTimeline
     {
         private CharacterMotor _owner;
+        private Transform _worldRoot;
+        private float _recordedAge,_front;
+        public CharacterMotor RecordedOwner=>_owner;
+        public float RecordedAge=>_recordedAge;
+        public bool RecordedHeavy=>_heavy;
+        public float RecordedFront=>_front;
+        public bool RecordedVisible=>_visible;
         private float _duration;
         private bool _heavy;
         private bool _visible=true;
@@ -32,23 +39,27 @@ namespace TumbangPreso.Visual
         public static DanteCarapaceVisual Attach(CharacterMotor owner,bool heavy,float duration)
         {
             var visual=owner.GetComponent<CharacterVisual>();
-            if(visual?.Model==null)return null;
+            return visual!=null&&visual.Model!=null?BuildForModel(visual.Model,owner.transform,owner,heavy,duration,0):null;
+        }
+        public static DanteCarapaceVisual Recorded(GameObject model,Transform root,bool heavy,float duration,float front)
+        {
+            var ward=BuildForModel(model,root,null,heavy,duration,front);if(ward!=null)ward.enabled=false;return ward;
+        }
+        private static DanteCarapaceVisual BuildForModel(GameObject model,Transform worldRoot,CharacterMotor owner,bool heavy,float duration,float front)
+        {
             SkinnedMeshRenderer body=null;int bone=-1;
-            foreach(var skin in visual.Model.GetComponentsInChildren<SkinnedMeshRenderer>())
+            foreach(var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
                 if(skin.name!="body-mesh")continue;
-                for(int i=0;i<skin.bones.Length;i++)
-                    if(skin.bones[i]!=null&&skin.bones[i].name=="torso"){body=skin;bone=i;break;}
+                for(int i=0;i<skin.bones.Length;i++)if(skin.bones[i]!=null&&skin.bones[i].name=="torso"){body=skin;bone=i;break;}
                 if(body!=null)break;
             }
             if(body==null)return null;
             var bounds=TorsoBounds(body,bone);
-            var root=new GameObject("DanteStoneWard");root.transform.SetParent(body.bones[bone],false);
-            root.transform.localPosition=bounds.center;
-            var ward=root.AddComponent<DanteCarapaceVisual>();ward._owner=owner;ward._duration=duration;ward._heavy=heavy;
-            float front=Mathf.Sign(Vector3.Dot(body.bones[bone].forward,owner.transform.forward));
-            ward.Build(bounds.extents,front==0?1:front);
-            ward.StepTo(0);return ward;
+            var root=new GameObject("DanteStoneWard");root.transform.SetParent(body.bones[bone],false);root.transform.localPosition=bounds.center;
+            var ward=root.AddComponent<DanteCarapaceVisual>();ward._owner=owner;ward._worldRoot=worldRoot;ward._duration=duration;ward._heavy=heavy;
+            if(front==0)front=Mathf.Sign(Vector3.Dot(body.bones[bone].forward,worldRoot.forward));
+            ward._front=front==0?1:front;ward.Build(bounds.extents,ward._front);ward.StepTo(0);return ward;
         }
 
         private static Bounds TorsoBounds(SkinnedMeshRenderer body,int bone)
@@ -84,8 +95,8 @@ namespace TumbangPreso.Visual
                 AddPlate("HookedShoulder",3,side<0,new Vector3(side*half.x*1.02f,half.y*.22f,front*depth*.55f),
                     new Vector3(side*.7f,0,front).normalized,half.x*.37f,half.y*.62f);
             }
-            _orbitRoot=new GameObject("DanteOrbitingWard");_orbitRoot.transform.SetParent(_owner.transform,false);
-            float chestHeight=_owner.transform.InverseTransformPoint(transform.position).y;
+            _orbitRoot=new GameObject("DanteOrbitingWard");_orbitRoot.transform.SetParent(_worldRoot,false);
+            float chestHeight=_worldRoot.InverseTransformPoint(transform.position).y;
             _orbitRoot.transform.localPosition=Vector3.up*Mathf.Clamp(chestHeight,.45f,.65f);
             for(int i=0;i<3;i++)
                 _orbiting.Add(CreatePlate(_orbitRoot.transform,"OrbitingStoneProtector",4,i==1,
@@ -232,6 +243,7 @@ namespace TumbangPreso.Visual
 
         public void StepTo(float seconds)
         {
+            _recordedAge=seconds;
             _visible=seconds>=0&&seconds<LifeSeconds;
             float release=Mathf.SmoothStep(0,1,Mathf.Clamp01((LifeSeconds-seconds)/.18f));
             for(int i=0;i<_plates.Count;i++)

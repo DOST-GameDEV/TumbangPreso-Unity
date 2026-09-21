@@ -90,7 +90,7 @@ namespace TumbangPreso.CameraSystem
             // Gameplay can stats rotate with the taya while the installed art stays.
             // Compare the actual stable rendering assets, not the gameplay skin index.
             var text=new System.Text.StringBuilder();
-            foreach(var transform in root.GetComponentsInChildren<Transform>(true))
+            foreach(var transform in MatchPoseHistory.StableTransforms(root))
             {
                 var filter=transform.GetComponent<MeshFilter>();var skin=transform.GetComponent<SkinnedMeshRenderer>();
                 var mesh=filter!=null?filter.sharedMesh:skin!=null?skin.sharedMesh:null;
@@ -103,7 +103,7 @@ namespace TumbangPreso.CameraSystem
         public static GameObject PropModel(GameObject root)=>root.transform.Find("Visual")?.gameObject??root;
         private RecordedFieldFrame CaptureFields(float time)
         {
-            var captured=Net.WorldEffectSnapshot.Capture();
+            var captured=RecordedSpecialFields.Capture();
             if(captured.Count>Net.WorldEffectSnapshot.MaxFields){_unsafeAt=time;return new RecordedFieldFrame{Time=time,Fields=Array.Empty<RecordedField>()};}
             var fields=new RecordedField[captured.Count];
             for(int i=0;i<fields.Length;i++)

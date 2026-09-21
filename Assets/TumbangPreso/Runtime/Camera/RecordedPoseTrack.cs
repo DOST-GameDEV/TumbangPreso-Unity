@@ -10,7 +10,7 @@ namespace TumbangPreso.CameraSystem
         public sealed class Sample
         {
             public float Time;
-            public int State,Holder=-1;
+            public int State,Holder=-1,Epoch=-1;
             public bool HasCoat;public float Frost,Flash;public StunElement Element;
             public Vector3[] Positions, Scales;
             public Quaternion[] Rotations;
@@ -51,7 +51,8 @@ namespace TumbangPreso.CameraSystem
             {right=Samples[i];if(right.Time>=time)break;left=right;}
             float t=right.Time>left.Time?Mathf.Clamp01((time-left.Time)/(right.Time-left.Time)):0;
             // A tag/recall teleport is an edge, never a fast walk through the map.
-            bool discontinuity=(right.Positions[0]-left.Positions[0]).sqrMagnitude>4;
+            bool flight=left.Holder<0&&right.Holder<0&&(left.State&255)==(int)SlipperState.InFlight&&(right.State&255)==(int)SlipperState.InFlight;
+            bool discontinuity=left.Epoch>=0&&right.Epoch>=0?left.Epoch!=right.Epoch:!flight&&(right.Positions[0]-left.Positions[0]).sqrMagnitude>4;
             if(discontinuity&&time<right.Time)t=0;
             for(int i=0;i<bones.Length;i++)
             {

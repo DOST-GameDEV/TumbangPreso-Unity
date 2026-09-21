@@ -1279,7 +1279,9 @@ namespace TumbangPreso.Abilities
             private float _left;
             private readonly Dictionary<int, float> _nextDrowseBySlot = new Dictionary<int, float>();
 
-            private void Start() => _left = Duration;
+            private bool _started;
+            public float Remaining=>Mathf.Max(0,_started?_left:Duration);
+            private void Start() {_left=Duration;_started=true;}
 
             private void Update()
             {
@@ -2600,7 +2602,7 @@ namespace TumbangPreso.Abilities
         /// them is a star polygon.
         /// </summary>
         public static GameObject SpawnGrandCovenEclipse(Vector3 position, float radius = 5.0f,
-                                                        float duration = 5.0f, float gatherSeconds = 0.0f)
+                                                        float duration = 5.0f, float gatherSeconds = 0.0f, bool renderOnly = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("GrandCovenEclipseEffect");
@@ -2755,13 +2757,13 @@ namespace TumbangPreso.Abilities
             anim.Corona = corona.transform;
             anim.Reach = reach.transform;
             anim.Glow = light;
-            anim.Duration = life;
+            anim.Duration = life;anim.RecordedRadius=radius;
             anim.GatherSeconds = gatherSeconds;
             anim.RestHeight = height;
             anim.Initialize();
             anim.StepTo(0);
 
-            Object.Destroy(go, life);
+            if(!renderOnly)Object.Destroy(go, life);
             return go;
         }
 
@@ -3294,6 +3296,8 @@ namespace TumbangPreso.Abilities
             public Transform Corona;
             public Transform Reach;
             public Light Glow;
+            public float RecordedRadius {get;internal set;}=5;
+            public float RecordedAge=>_elapsed;
             public float Duration = 5.0f;
             public float RestHeight = 11.0f;
             public float GatherSeconds;

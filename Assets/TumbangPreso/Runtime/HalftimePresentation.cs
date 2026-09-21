@@ -37,7 +37,15 @@ namespace TumbangPreso
         {
             if(!NetAuthority.ShouldResolve())return;
             var archive=FindAnyObjectByType<MatchReplayArchive>();
-            long clip=IsMiddleBreak(nextRound-1,GameServices.Match.TotalRounds)&&archive!=null&&archive.Clips.Count>0?archive.Clips[0].Clip.Id:0;
+            long clip=0;
+            if(IsMiddleBreak(nextRound-1,GameServices.Match.TotalRounds)&&archive!=null&&archive.Clips.Count>0)
+            {
+                clip=archive.Clips[0].Clip.Id;
+                // Prefer a complete story already staged for the whole audience.
+                // A late join still shares the same end through the fallback.
+                if(NetAuthority.IsNetworked&&Net.MatchRpc.Instance!=null)
+                    foreach(var candidate in archive.Clips)if(Net.MatchRpc.Instance.ReplayReadyForAudience(candidate.Clip.Id)){clip=candidate.Clip.Id;break;}
+            }
             Receive(GameServices.Match.PresentationMatchId,nextRound-1,nextTaya,SharedUltimatePhase.Now,clip,
                 IsMiddleBreak(nextRound-1,GameServices.Match.TotalRounds),PresentationClock.RequestedScale);
             Net.MatchRpc.Instance?.BroadcastBreak();
@@ -70,9 +78,13 @@ namespace TumbangPreso
                 var archive=FindAnyObjectByType<MatchReplayArchive>();
                 if(archive!=null)foreach(var retained in archive.Clips)if(retained.Clip.Id==ClipId&&retained.Clip.MatchId==MatchId)_clip=retained.Clip;
                 if(_clip==null)_clip=Net.MatchRpc.Instance?.ReceivedReplay(ClipId);
-                if(_clip!=null&&_clip.Duration<=4.5f&&!Settings.SettingsStore.Current.ReducedUiMotion)
+                if(age<=.6f&&_clip!=null&&_clip.Duration<=4.5f&&!Settings.SettingsStore.Current.ReducedUiMotion)
                 {
-                    try{_view=new RecordedWorldView(transform,_clip);}
+                    try
+                    {
+                        _view=new RecordedWorldView(transform,_clip);
+                        if(SharedUltimatePhase.Now-Began>1){_view.Dispose();_view=null;}
+                    }
                     catch(Exception failure){Debug.LogWarning("[Replay] View unavailable: "+failure.Message);}
                 }
                 if(_view?.Ready!=true)
@@ -83,7 +95,8 @@ namespace TumbangPreso
                 // Real-time setup, a brief contact slowdown, then full consequence.
                 float elapsed=Mathf.Max(0,age-.35f),before=_clip.Contact-_clip.Start-.18f;
                 float offset=elapsed<=before?elapsed:elapsed<=before+.86f?before+(elapsed-before)*.5f:elapsed-.43f;
-                _view.Draw(_clip.Start+offset);
+                try{_view.Draw(_clip.Start+offset);}
+                catch(Exception failure){Debug.LogWarning("[Replay] Recorded view failed: "+failure.Message);_view.Dispose();_view=null;FallbackReason="Replay unavailable on this screen";}
             }
             if(!_standings&&_attempted&&(_view==null||age>=5.8f))
             {

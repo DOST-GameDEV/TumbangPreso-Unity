@@ -23,6 +23,8 @@ namespace TumbangPreso.Net
         private long _clipEpoch;
         private float _nextClipSend;
         public int ReplayReadyCount(long clip)=>_clipReady.Values.Count(ids=>ids.Contains(clip));
+        public bool ReplayReadyForAudience(long clip)=>_nm!=null&&_nm.ConnectedClientsIds.All(peer=>peer==NetworkManager.ServerClientId||
+            (_clipReady.TryGetValue(peer,out var ready)&&ready.Contains(clip)));
         public RecordedMatchClip ReceivedReplay(long id)=>_receivedClips.FirstOrDefault(c=>c.Id==id&&c.MatchId==PresentationMatchId);
         private void ClearReplayTransfer()
         {_clipSends.Clear();_clipReady.Clear();_receivedClips.Clear();_clipReceive=null;_clipEpoch=PresentationMatchId;}

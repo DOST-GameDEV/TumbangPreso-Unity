@@ -7,19 +7,20 @@ namespace TumbangPreso.Visual
     public sealed class KuroIntakePresentation : MonoBehaviour, IVfxTimeline
     {
         private GhostPetCompanion _ghost;
+        private Transform _recordedMouth;
         private float _radius,_duration,_age;
         private readonly LineRenderer[] _wisps=new LineRenderer[8];
         private Material _reachMaterial;
         private readonly Vector3[] _starts=new Vector3[8];
         public float LifeSeconds => _duration;
 
-        public static void Build(Transform parent,float radius,float duration,int ownerSlot,bool fromPet)
+        public static void Build(Transform parent,float radius,float duration,int ownerSlot,bool fromPet,Transform recordedMouth=null)
         {
             var effect=parent.gameObject.AddComponent<KuroIntakePresentation>();
-            effect._radius=radius;effect._duration=duration;
-            if (fromPet)
+            effect._radius=radius;effect._duration=duration;effect._recordedMouth=recordedMouth;
+            if (fromPet && recordedMouth==null)
                 effect._ghost=GameServices.Round?.PlayerAt(ownerSlot)?.GetComponent<CharacterVisual>()?.Companion;
-            if (effect._ghost==null)
+            if (effect._ghost==null && recordedMouth==null)
             {
                 var source=Resources.Load<RosterBook>("RosterBook")?.People.FirstOrDefault(p=>p.Id=="nemu")?.PetModel;
                 if (source!=null)
@@ -54,7 +55,7 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             _age=seconds;
-            Vector3 mouth=_ghost!=null?_ghost.MouthPosition:transform.position+Vector3.up*1.5f;
+            Vector3 mouth=_recordedMouth!=null?_recordedMouth.position:_ghost!=null?_ghost.MouthPosition:transform.position+Vector3.up*1.5f;
             float fade=Mathf.Clamp01((_duration-seconds)/.12f);
             if(_reachMaterial!=null){var c=_reachMaterial.color;c.a=.64f*fade;_reachMaterial.color=c;}
             for(int i=0;i<_wisps.Length;i++)

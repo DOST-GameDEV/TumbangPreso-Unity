@@ -16,6 +16,8 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Item> _items=new List<Item>(13);
         private readonly List<Renderer> _hidden=new List<Renderer>();
         private readonly List<bool> _previous=new List<bool>();
+        private readonly List<Light> _hiddenLights=new List<Light>();
+        private readonly List<bool> _lightWasEnabled=new List<bool>();
         private readonly RecordedMatchClip _clip;
         private GameObject _stage;
         private IDisposable _audioMix;
@@ -36,6 +38,7 @@ namespace TumbangPreso.CameraSystem
             _clip=clip;_lastTime=clip.Start;
             try
             {
+                if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null){UnavailableReason="No rendering device";return;}
                 if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name){UnavailableReason="Camera or map not ready: camera="+(Camera.main!=null)+" scene="+UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+" clip="+clip.Map;return;}
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 foreach(var track in clip.Objects)
@@ -152,20 +155,32 @@ namespace TumbangPreso.CameraSystem
                 if(audible&&cue.Time>=_lastTime)
                 {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain*Mathf.Clamp01(1-(Vector3.Distance(_camera.transform.position,cue.Position)-2)/30),Mathf.Clamp(p.x*2-1,-1,1));}
             }
-            _lastTime=time;_hidden.Clear();_previous.Clear();
-            RecordedFieldFrame frame=null;
-            foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time)break;frame=snapshot;}
+            _lastTime=time;_hidden.Clear();_previous.Clear();_hiddenLights.Clear();_lightWasEnabled.Clear();
+            RecordedFieldFrame frame=null,nextFrame=null;
+            foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time){nextFrame=snapshot;break;}frame=snapshot;}
             _visibleFields.Clear();
             if(frame!=null)foreach(var field in frame.Fields)
             {
                 if(field.State.Remaining<=time-frame.Time)continue;
                 _visibleFields.Add(field.Id);
                 if(_fields.TryGetValue(field.Id,out var existing)&&!existing.Matches(field.State)){existing.Dispose();_fields.Remove(field.Id);}
-                if(!_fields.TryGetValue(field.Id,out var view))_fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State);
-                view.Sample(field.State,time-frame.Time);
+                if(!_fields.TryGetValue(field.Id,out var view))
+                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==field.State.Owner)?.Copy.Root);
+                var state=field.State;
+                if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward))
+                {
+                    foreach(var later in nextFrame.Fields)if(later.Id==field.Id)
+                    {
+                        float t=Mathf.InverseLerp(frame.Time,nextFrame.Time,time);
+                        state.Position=Vector3.Lerp(state.Position,later.State.Position,t);
+                        state.Forward=state.Type==RecordedSpecialFields.Kuro?Vector3.Lerp(state.Forward,later.State.Forward,t):Vector3.Slerp(state.Forward,later.State.Forward,t).normalized;
+                        break;
+                    }
+                }
+                view.Sample(state,time-frame.Time);
             }
             foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
-            foreach(var field in Net.WorldEffectSnapshot.Capture())if(field.Source!=null)Hide(field.Source);
+            foreach(var field in RecordedSpecialFields.Capture())if(field.Source!=null)Hide(field.Source);
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
@@ -173,10 +188,13 @@ namespace TumbangPreso.CameraSystem
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
             try{_camera.Render();}
-            finally{foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
-        {foreach(var r in root.GetComponentsInChildren<Renderer>(true)){if(_hidden.Contains(r))continue;_hidden.Add(r);_previous.Add(r.forceRenderingOff);r.forceRenderingOff=true;}}
+        {
+            foreach(var r in root.GetComponentsInChildren<Renderer>(true)){if(_hidden.Contains(r))continue;_hidden.Add(r);_previous.Add(r.forceRenderingOff);r.forceRenderingOff=true;}
+            foreach(var light in root.GetComponentsInChildren<Light>(true)){if(_hiddenLights.Contains(light))continue;_hiddenLights.Add(light);_lightWasEnabled.Add(light.enabled);light.enabled=false;}
+        }
         public void Dispose()
         {
             Ready=false;GameServices.Audio?.StopReplayCues();_audioMix?.Dispose();_audioMix=null;

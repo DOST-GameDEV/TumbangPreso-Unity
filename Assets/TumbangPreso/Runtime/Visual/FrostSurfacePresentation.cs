@@ -11,6 +11,10 @@ namespace TumbangPreso.Visual
         private Material _skin, _veins, _edge;
         private float _elapsed;
         private bool _nova;
+        private float _radius;
+        public bool RecordedNova=>_nova;
+        public float RecordedAge=>_elapsed;
+        public float RecordedRadius=>_radius;
 
         public static FrostSurfacePresentation Build(Transform parent, float radius, float duration)
         {
@@ -26,12 +30,12 @@ namespace TumbangPreso.Visual
             return effect;
         }
 
-        public static GameObject Nova(Vector3 position, float radius)
+        public static GameObject Nova(Vector3 position, float radius, bool renderOnly=false)
         {
             var root=new GameObject("GlacialNovaWave");
             root.transform.position=VfxShapes.GroundPoint(position);
             var effect=root.AddComponent<FrostSurfacePresentation>();
-            effect.Duration=.62f;effect._nova=true;
+            effect.Duration=.62f;effect._nova=true;effect._radius=radius;
             effect._skin=Part(root.transform,"ColdFront","permafrost_skin",radius,
                 new Color(.48f,.81f,.89f,.46f),0,0);
             effect._skin.SetFloat("_Trail",.26f);
@@ -41,7 +45,7 @@ namespace TumbangPreso.Visual
             effect._edge=Part(root.transform,"NovaReach","permafrost_edge",radius,
                 new Color(.38f,.76f,.84f,.66f),0,2);
             effect.StepTo(0);
-            Object.Destroy(root,effect.Duration);
+            if(!renderOnly)Object.Destroy(root,effect.Duration);
             return root;
         }
 
