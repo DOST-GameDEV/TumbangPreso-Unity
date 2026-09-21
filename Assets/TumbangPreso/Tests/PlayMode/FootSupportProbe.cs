@@ -68,7 +68,7 @@ namespace TumbangPreso.PlayTests
                                 Assert.IsNotEmpty(bodies,"No real foot-bearing body mesh found.");
                                 foreach(var body in bodies)
                                 {
-                                    body.BakeMesh(mesh);bounds=Mathf.Min(bounds,body.bounds.min.y);
+                                    body.BakeMesh(mesh,true);bounds=Mathf.Min(bounds,body.bounds.min.y);
                                     foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);
                                 }
                                 float support=Slipper.GroundY(who.transform.position),gap=sole-support;
@@ -145,7 +145,7 @@ namespace TumbangPreso.PlayTests
                     {
                         float sole=float.PositiveInfinity;
                         foreach(var body in who.GetComponentsInChildren<SkinnedMeshRenderer>().Where(s=>s.bones.Any(b=>b!=null && b.name=="leg-left")))
-                        {body.BakeMesh(mesh);foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);}
+                        {body.BakeMesh(mesh,true);foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);}
                         float support=Slipper.GroundY(who.transform.position);
                         records.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4}",stage,who.transform.position.y,sole,support,who.IsGrounded));
                         if(planted && Mathf.Abs(support-sole)>.025f)

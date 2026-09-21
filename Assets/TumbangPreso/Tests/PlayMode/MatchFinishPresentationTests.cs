@@ -33,7 +33,7 @@ namespace TumbangPreso.PlayTests
             GameServices.Match.AddScore(1,ScoreEvent.LataKnocked);
             SettingsStore.Current.ReducedUiMotion=false;
             var result=Object.FindAnyObjectByType<MatchResult>();Assert.IsNotNull(result);
-            result.OnMatchWon(1);yield return null;
+            GameServices.Round.EndRound();result.OnMatchWon(1);yield return null;
             var figure=GameObject.Find("WinnerFigure");Assert.IsNotNull(figure);
             var preview=figure.GetComponent<ModelPreview>();Assert.IsNotNull(preview.Subject);
             Assert.AreEqual(4,Object.FindObjectsByType<CharacterMotor>().Length,"Result spawned a fifth gameplay actor.");

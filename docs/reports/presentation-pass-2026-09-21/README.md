@@ -667,3 +667,31 @@ motion/teleport tests passed. Weather failed because Unity ambientLight aliases
 ambientSkyColor;6bf08f1c fixes the duplicate write, focused weather-v2passed1/1
 in3.290s (guardff51874a1bb2). This is functional fidelity evidence, not finished
 visual approval. Native six-hero recorded footage is the next visual check.
+
+
+## Resumed implementation after the premature completion claim
+
+The owner explicitly recorded two premature stops and disappointment in AGENTS.md.
+The continuation starts at4dee8e71 without reverting earlier features. Twenty
+original unrelated dirty files were hash-verified unchanged; shared files use
+selected index additions. The canonical queue was reopened where evidence had
+covered only subsets of its requirements.
+
+b2ac4a3f/0396924c/148da2e1 add actual start/brake/turn torso/head motion and nearby
+accepted-impact animal reactions, plus the opt-in full-match native observer.
+V1motion test aborted at a batch end-of-frame yield; v2passed animal behavior but
+failed braking. Filtering observed velocity over real time fixed the lost
+fixed-tick impulse; v3passed2/2,7.705s. V4body witness scope passed those two again.
+The additional kerb-foot check failed on both current and original043d1e3d source.
+65b0bf0e introduces original-winner-rig result acknowledgement, truthful draw,
+red standings tickets and reduced-motion stillness; its focused UI test passed.
+Later source fixes duplicate seat labels observed in its image.
+
+Foot diagnostic2beae206: manual bone-matrix skinning and compensated readback
+agree at.225867m, while the default readback incorrectly reports.05456m on a2.38
+scaled rig. Actual support is.35m, so fixing the measurement does not eliminate
+the real~.124m foot penetration. The chosen correction uses cached actual rigid
+leg vertices and existing support, leaving collision/aim unchanged. It is pending
+validation while the full native match runs. This interpretation follows the
+[Unity BakeMesh scale-compensation contract](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/SkinnedMeshRenderer.BakeMesh.html)
+and the independent numerical comparison, not the docs alone. No tolerance was widened.

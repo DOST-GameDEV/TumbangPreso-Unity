@@ -19,6 +19,7 @@ namespace TumbangPreso.Diagnostics
         [Serializable] private sealed class WholeMatchReceipt
         {
             public string mode,view;
+            public bool completed;
             public int rounds,winner=-2,throws,canHits,tags,ultimateExecutions,phases,halftimes;
             public float realSeconds,ultimateHoldSeconds;
             public int[] scores;
@@ -39,6 +40,7 @@ namespace TumbangPreso.Diagnostics
                 bool spectator=mode==GameMode.HeroStrike;
                 SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));SceneFlow.SelectedMap=SceneFlow.Eskinita;
                 Stage(mode+" complete default match, four active input writers");
+                _deadline=Time.realtimeSinceStartup+1100;
                 yield return Click("StartButton");yield return Click(mode==GameMode.Classic?"ClassicButton":"HeroStrikeButton");
                 yield return Click("PracticeButton");
                 if(GameLaunch.Spectator!=spectator)yield return Click("SpectateButton");
@@ -62,7 +64,7 @@ namespace TumbangPreso.Diagnostics
                 var seenRounds=new HashSet<int>{match.RoundNumber};var phases=new HashSet<long>();var halves=new HashSet<int>();
                 var events=new StringBuilder("real,round,event,actor,subject\n");
                 var states=new StringBuilder("real,round,left,phase,halftime,p1,p2,p3,p4\n");
-                float began=Time.realtimeSinceStartup,last=began,nextSample=began;
+                float began=Time.realtimeSinceStartup,last=began,nextSample=began,nextSave=began;
                 bool ended=false,halfRecorded=false,ultimateRecorded=false;
                 WholeCapture capture=null;
                 void Outcome(MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
@@ -75,6 +77,14 @@ namespace TumbangPreso.Diagnostics
                 void Cast(CharacterMotor actor,HeroKit kit,HeroAbility ability){receipt.ultimateExecutions++;}
                 void End(int winner){receipt.winner=winner;ended=true;}
                 MatchFlair.Presented+=Outcome;HeroAbilitySystem.UltimateStarted+=Cast;match.MatchEnded+=End;
+                void SaveProgress()
+                {
+                    receipt.realSeconds=Time.realtimeSinceStartup-began;receipt.rounds=seenRounds.Count;
+                    receipt.phases=phases.Count;receipt.halftimes=halves.Count;receipt.scores=Enumerable.Range(0,4).Select(match.ScoreFor).ToArray();
+                    File.WriteAllText(Path.Combine(_folder,mode+"-whole-match.json"),JsonUtility.ToJson(receipt,true));
+                    File.WriteAllText(Path.Combine(_folder,mode+"-whole-events.csv"),events.ToString());
+                    File.WriteAllText(Path.Combine(_folder,mode+"-whole-state.csv"),states.ToString());
+                }
                 StartFrameWindow(mode+"-whole-match");
                 void Window(string name)
                 {
@@ -104,6 +114,7 @@ namespace TumbangPreso.Diagnostics
                             states.AppendLine(FormattableString.Invariant($"{now-began:F4},{match.RoundNumber},{round.TimeLeft:F4},{holding},{HalftimePresentation.Playing},{match.ScoreFor(0)},{match.ScoreFor(1)},{match.ScoreFor(2)},{match.ScoreFor(3)}"));
                             if(!float.IsFinite(round.TimeLeft)||round.Players.Count!=4)throw new InvalidOperationException("Whole match lost a participant or finite clock.");
                         }
+                        if(now>=nextSave){nextSave=now+10;SaveProgress();}
                         yield return null;
                     }
                     receipt.realSeconds=Time.realtimeSinceStartup-began;receipt.rounds=seenRounds.Count;
@@ -115,14 +126,13 @@ namespace TumbangPreso.Diagnostics
                         throw new InvalidOperationException("Complete match lacked eight rounds, halftime or representative real exchanges.");
                     if(PresentationClock.Held||SharedUltimatePhase.Instance!=null&&SharedUltimatePhase.Instance.Active)
                         throw new InvalidOperationException("Match end retained a presentation hold.");
+                    receipt.completed=true;
                     Stage(mode+" whole match ended naturally; "+receipt.phases+" shared phases, "+receipt.ultimateHoldSeconds.ToString("F2")+" held seconds");
                 }
                 finally
                 {
                     MatchFlair.Presented-=Outcome;HeroAbilitySystem.UltimateStarted-=Cast;match.MatchEnded-=End;
-                    StopFrameWindow();File.WriteAllText(Path.Combine(_folder,mode+"-whole-match.json"),JsonUtility.ToJson(receipt,true));
-                    File.WriteAllText(Path.Combine(_folder,mode+"-whole-events.csv"),events.ToString());
-                    File.WriteAllText(Path.Combine(_folder,mode+"-whole-state.csv"),states.ToString());
+                    StopFrameWindow();SaveProgress();
                 }
                 yield return Click("ResultMainMenu");yield return WaitFor(()=>GameObject.Find("OwnerHomeCanvas")!=null);
             }
