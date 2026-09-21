@@ -30,6 +30,7 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator WholeMatchesOnly()
         {
+            bool resultSmoke=Environment.GetCommandLineArgs().Contains("-tp-result-end");
             _deadline=Time.realtimeSinceStartup+2200;
             yield return WaitFor(()=>Find("GuestAccount")!=null||Find("ContinueAccount")!=null||Find("StartButton")!=null,80);
             if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
@@ -38,8 +39,11 @@ namespace TumbangPreso.Diagnostics
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})
             {
                 bool spectator=mode==GameMode.HeroStrike;
-                SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));SceneFlow.SelectedMap=SceneFlow.Eskinita;
-                Stage(mode+" complete default match, four active input writers");
+                var rules=CustomGameRules.Defaults(mode);
+                if(resultSmoke){rules.Rounds=1;rules.RoundSeconds=30;SceneFlow.PinSelectedRules(rules);}
+                else SceneFlow.SetSelectedRules(rules);
+                SceneFlow.SelectedMap=SceneFlow.Eskinita;
+                Stage(mode+(resultSmoke?" natural one-round result smoke":" complete default match")+", four active input writers");
                 _deadline=Time.realtimeSinceStartup+1100;
                 yield return Click("StartButton");yield return Click(mode==GameMode.Classic?"ClassicButton":"HeroStrikeButton");
                 yield return Click("PracticeButton");
@@ -48,7 +52,7 @@ namespace TumbangPreso.Diagnostics
                 foreach(var reader in Object.FindObjectsByType<PlayerInputReader>())reader.enabled=false;
                 foreach(var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>())switcher.enabled=false;
                 var match=GameServices.Match;var round=GameServices.Round;
-                if(match.TotalRounds!=8||SceneFlow.SelectedRules.RoundSeconds!=90)throw new InvalidOperationException("Whole-match route must preserve shipped eight-round/90-second rules.");
+                if(match.TotalRounds!=rules.Rounds||SceneFlow.SelectedRules.RoundSeconds!=rules.RoundSeconds)throw new InvalidOperationException("Native match did not adopt the requested rules.");
                 foreach(var actor in round.Players)
                 {
                     actor.IsBot=true;actor.Intent.Clear();actor.Intent.Parked=false;
@@ -61,6 +65,7 @@ namespace TumbangPreso.Diagnostics
                     var rig=Camera.main.GetComponent<CameraRig>();rig.Follow(local,true);rig.SetAimSource(AimSource.Movement);Hud.Instance.Bind(local);
                 }
                 var receipt=new WholeMatchReceipt{mode=mode.ToString(),view=spectator?"live spectator":"owner"};
+                if(resultSmoke)receipt.scope="Supported custom one-round/30-second natural result smoke; four real bot input writers, no forced ending or full-default-match claim.";
                 var seenRounds=new HashSet<int>{match.RoundNumber};var phases=new HashSet<long>();var halves=new HashSet<int>();
                 var events=new StringBuilder("real,round,event,actor,subject\n");
                 var states=new StringBuilder("real,round,left,phase,halftime,p1,p2,p3,p4\n");
@@ -121,9 +126,13 @@ namespace TumbangPreso.Diagnostics
                     receipt.phases=phases.Count;receipt.halftimes=halves.Count;receipt.scores=Enumerable.Range(0,4).Select(match.ScoreFor).ToArray();
                     if(capture!=null)yield return WaitFor(()=>capture.Done,20);
                     yield return WaitFor(()=>Find("ResultMainMenu")!=null,8);
+                    yield return null;
+                    var canMarker=Object.FindAnyObjectByType<OffscreenIndicators>();var recallMarker=Object.FindAnyObjectByType<SlipperRecall>();
+                    if(canMarker!=null&&canMarker.CanMarkerVisible||recallMarker!=null&&recallMarker.Drawing)
+                        throw new InvalidOperationException("Live world marker remained over native results.");
                     yield return Shot(mode+"-whole-match-result");
-                    if(receipt.rounds!=8||receipt.halftimes!=1||receipt.throws==0||receipt.canHits==0||receipt.tags==0)
-                        throw new InvalidOperationException("Complete match lacked eight rounds, halftime or representative real exchanges.");
+                    if(receipt.rounds!=rules.Rounds||receipt.halftimes!=(resultSmoke?0:1)||receipt.throws==0||receipt.canHits==0||receipt.tags==0)
+                        throw new InvalidOperationException("Complete match lacked its expected rounds, halftime count or representative real exchanges.");
                     if(PresentationClock.Held||SharedUltimatePhase.Instance!=null&&SharedUltimatePhase.Instance.Active)
                         throw new InvalidOperationException("Match end retained a presentation hold.");
                     receipt.completed=true;
