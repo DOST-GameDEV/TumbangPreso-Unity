@@ -115,6 +115,16 @@ namespace TumbangPreso
         /// </summary>
         internal void ApplyPresentationTime(float timeLeft)
         {if(float.IsFinite(timeLeft))TimeLeft=Mathf.Clamp(timeLeft,0,RoundLength);}
+        private int _fieldRound;
+        private long _fieldMatch;
+        private void AdoptFieldLifetime()
+        {
+            var match=GameServices.Match;
+            if(match==null)return;
+            if(_fieldRound!=0&&(_fieldRound!=match.RoundNumber||_fieldMatch!=match.PresentationMatchId))
+                Net.WorldEffectSnapshot.ClearPersistentFields();
+            _fieldRound=match.RoundNumber;_fieldMatch=match.PresentationMatchId;
+        }
 
         public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
                                   bool matchInProgress = true)
@@ -129,6 +139,7 @@ namespace TumbangPreso
             float incoming=Mathf.Clamp(timeLeft,0,RoundLength);
             TimeLeft=SharedUltimatePhase.Instance!=null?SharedUltimatePhase.Instance.HoldSnapshotClock(incoming,roundActive,matchInProgress):incoming;
             if(RoundActive&&!roundActive)Net.WorldEffectSnapshot.ClearPersistentFields();
+            AdoptFieldLifetime();
             RoundActive = roundActive;
 
             // The accepted snapshot owns the client's buffer state too. Do not raise the
@@ -230,6 +241,7 @@ namespace TumbangPreso
 
         public void BeginRound()
         {
+            AdoptFieldLifetime();
             RoundActive = true;
             TimeLeft = RoundLength;
             _throwCooldownLeft = 0.0f;
@@ -268,6 +280,7 @@ namespace TumbangPreso
         public void ResetForNewMatch()
         {
             _players.Clear();
+            _fieldRound=0;_fieldMatch=0;
 
             RoundActive = false;
             TimeLeft = RoundLength;

@@ -59,6 +59,18 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator NewRoundSnapshotRetiresFieldsEvenIfTheInactivePacketWasMissed()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,Core.GameMode.HeroStrike);
+            var pillar=DanteFissurePillar.Create(Vector3.zero,Vector3.forward,1,8);
+            yield return null;
+            GameServices.Match.ApplySnapshot(new int[4],2,true);
+            GameServices.Round.ApplySnapshot(90,true,1,true);
+            Assert.IsFalse(pillar.gameObject.activeInHierarchy,"Skipped inactive snapshot carried a solid field into the next round.");
+            yield return null;Assert.IsTrue(pillar==null);
+        }
+
+        [UnityTest]
         public IEnumerator AcceptedRoundInactiveSnapshotRetiresReplicaFields()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,Core.GameMode.HeroStrike);
