@@ -419,6 +419,7 @@ namespace TumbangPreso
         {
             if (nowUpright)
             {
+                Visual.CanContactAccent.Play(transform.position, true);
                 GameServices.Voice?.OnLataRestored();
                 return;
             }
@@ -428,6 +429,7 @@ namespace TumbangPreso
             // Ordinary contact adds no global pause or broadcast confetti.
             GameServices.Voice?.OnLataKnocked();
             Visual.ImpactBurst.SpawnTinContact(transform.position + Vector3.up * .18f);
+            Visual.CanContactAccent.Play(transform.position, false);
         }
 
         private void Update()

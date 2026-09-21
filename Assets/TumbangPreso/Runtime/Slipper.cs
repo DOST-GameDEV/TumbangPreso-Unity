@@ -151,6 +151,7 @@ namespace TumbangPreso
             if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
 
             State = next;
+            if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
             if (changed) RefreshBeam();
         }
@@ -387,6 +388,12 @@ namespace TumbangPreso
         }
 
         private Visual.SlipperBeam _beam;
+        private Visual.SlipperMotionAccent _motionAccent;
+        private void Awake()
+        {
+            _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
+            if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
+        }
 
         /// <summary>
         /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:
@@ -1023,6 +1030,7 @@ namespace TumbangPreso
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
+            if (_motionAccent != null) _motionAccent.ClearFlight();
             FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
             _chainMatch = GameServices.Match;
             _chainOwner = thrower != null ? thrower.PlayerSlot : -1;
@@ -1077,19 +1085,8 @@ namespace TumbangPreso
 
             if (Affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
             else if (Affinity == SlipperAffinity.ElectricZap) CreateZapFlightVisual();
-            else if (UI.SceneFlow.SelectedMode == GameMode.HeroStrike)
-            {
-                _affinityVfxGo = new GameObject("HeroSlipperTrail");
-                _affinityVfxGo.transform.SetParent(transform, false);
-                var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
-                trail.time = 0.22f;
-                trail.startWidth = 0.14f;
-                trail.endWidth = 0.0f;
-                var mat = new Material(Shader.Find("Sprites/Default")) { color = new Color(1.0f, 0.95f, 0.7f, 0.6f) };
-                trail.material = mat;
-                trail.startColor = mat.color;
-                trail.endColor = new Color(1.0f, 0.95f, 0.7f, 0.0f);
-            }
+            // Normal flight now uses the same public motion stroke on every peer
+            // and in both modes. Charged fire/electric effects keep their own shapes.
         }
 
         private void CreateFireFlightVisual()

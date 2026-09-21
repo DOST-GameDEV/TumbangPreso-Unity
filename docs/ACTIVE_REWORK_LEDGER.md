@@ -11,7 +11,7 @@ No paid work/credits, resets, other chats/subagents, Desktop replacement or cros
 contributor reservations. The earlier detailed plan/doc cleanup is preserved.
 
 Current phase: research/plan merge complete and checked in the canonical Nationals
-plan and TODO; publishing it, then resuming the reordered implementation. About3,096words were added to
+plan and TODO, published cc01b97f; the reordered implementation has resumed. About3,096words were added to
 the existing design; all legacy TODO content from the preserved-notes marker onward
 is byte-identical. Five PRESENTATION parents remain, with explicit child checks.
 
@@ -28,20 +28,20 @@ advance while the narrow C4 dependency remains reserved. Full pass is unfinished
 ## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest local source7a1bb8dd. Last verified remote d76171c3;
-private scene art through0f962cc4 and its receipts are pushed. New research docs
-and the tested host counters await the next scoped publication.
+branch ASTRAReworks. Latest local source f616f6ac. Last verified remote cc01b97f;
+research merge and tested host counters are published. Nemu framing is committed
+and passed its focused Editor probe; native recheck remains pending.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached7a1bb8dd, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached f616f6ac, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
 Initial24modified+2untracked files are byte-preserved under development
 Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
 Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
 Shared dirty files used selected owned hunks; never stage them wholesale or restore
-those user changes. Current owned unstaged work is the research merge in NATIONALS_POLISH/TODO/ledger,
-plus reference-research.md. Host counters are committed in7a1bb8dd. No bonuses or
-new network payloads are enabled.
+those user changes. Current owned unstaged work: SlipperMotionAccent/CanContactAccent, their Slipper/Lata
+state-edge wiring and focused ExchangeMotionTests, plus this ledger. These are not
+yet validated. Host counters remain bookkeeping only; no new network payloads.
 Validation importer rewrites are predominantly whitespace. Tests can also rewrite
 QualitySettings from the chosen profile: preserve diffs, restore only proven test
 changes after owned jobs stop, and capture the exact input manifest before building.
@@ -127,14 +127,16 @@ Host accepted throw/tag bookkeeping is now committed7a1bb8dd. Three integration
 cases plus the body-contact regression passed4/4 in22.65s, guard6d846f0592ae,
 validation Logs/host-chains-v1. Base points/ultimate gain remain unchanged; live
 bonus/recognition transport is still C4-gated. Tool11249 retired, no Unity/player job.
-Nemu's native v9 shot still clips the growing head near the upper edge. Adaptive
-bounds framing and canonical companion scale are the next bounded art correction;
-this has been planned, not implemented. Do not silently call that view finished.
+Nemu framing f616f6ac uses canonical Kuro scale and actual combined rendered bounds.
+Focused Editor probe passed 1/1 in7.51s, guard df37942c486e, validation
+Logs/nemu-introduction-framing-v1. Full silhouettes checked at4:3/16:9/21:9;
+16:9 capture inspected. Native v9 remains cropped; native fix verification pending.
 Nativev6/a505d954 remains the qualified gameplay fallback.
 
 Research checks passed:17local links, unchanged legacy TODO body, all five existing
-PRESENTATION parents and19explicit child checks. Publish and continue the new order:
-finish Nemu framing, then the coordinated ordinary exchange and its feedback layers. Sources/observed timestamps are in
+PRESENTATION parents and19explicit child checks. Current work: coordinated ordinary
+exchange flight/contact, followed by four-player busy captures and native review.
+No running job at this checkpoint. Sources/observed timestamps are in
 reports/presentation-pass-2026-09-21/reference-research.md. Browser video tab2 was
 closed. Owned hidden error tab1 cannot be selected/closed because the browser's
 URL policy blocks its generated data error-page URL; it is unmarked/temporary and
