@@ -66,7 +66,8 @@ for seat,name in enumerate(['host','scorer','observer']):
  last=rows[-1]
  if int(last['starts0'])!=1 or int(last['starts1'])!=1 or int(last['starts2'])!=0:errors.append(name+': lost/duplicated effect or accepted late cast')
  if abs(float(last['initialWarning'])-1.55)>.01:errors.append(name+': playable Phaister warning was shortened')
- if float(last['charge2'])<19.9:errors.append(name+': refused caster spent its meter')
+ baseline=float(rows[0]['charge2'])
+ if baseline<=0 or any(abs(float(r['charge2'])-baseline)>.001 for r in rows):errors.append(name+': refused caster changed its actual initial meter')
  if abs(float(last['requested'])-.5)>.001:errors.append(name+': stale phase changed requested speed')
  measured[name]={'rows':len(rows),'holdSeconds':float(active[-1]['server'])-float(active[0]['server']),'clockDrift':drift,'cohort':max(int(r['count']) for r in active),'initialWarning':float(last['initialWarning']),'starts':[int(last['starts0']),int(last['starts1']),int(last['starts2'])]}
 if a.old_exe:

@@ -31,10 +31,11 @@ qualification. Networking dependencies are now in this task after the explicit s
 ## Workspace, source and preservation
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest runtime/private-scene source460b88fa is published. Verified remote72301099
-contains this source and the consolidated evidence ledger.
+branch ASTRAReworks. Latest published runtime1ba35c92/protocol43 includes live capped awards and
+central milestones. Latest local3c2482cc integrates shared phases/protocol44;
+validation is in progress. Do not mistake published43for the new44candidate.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached460b88fa. Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached3c2482cc. Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 Every Editor launch uses run_unity_guarded.py and presentation-validation-20260921.
 One heavy job at a time; keep caches. Build only to named internal Builds paths.
 
@@ -100,20 +101,57 @@ Chain awards and central milestones now work end-to-end on protocol43. Source
 build1156MB/59s, guard39f9082ab6be. Three-real-process Classic and Hero runs PASS:
 all peers agree600base+105bonus=705after6hits,3unique milestones, duplicate/old-round
 rejection. Real42client refused. Logs/net-moment-classic-v1 and net-moment-hero-v1.
-All players exited; profiles/input preserved. This batch awaits publication.
+All players exited; profiles/input preserved. This batch is published and remote1ba35c92was verified.
 
 Current authoring: shared ultimate phase, protocol44. New PresentationClock,
 SharedUltimatePhase, UltimatePhaseView, ability reservation/request/cohort paths,
-fresh-action release gating, requested clock routing and focused tests. These
-changes are UNCOMPILED and not qualified yet. Two casts must share2.8s; reserve
-resources first, start actual abilities afterward, preserve Phaister1.55s warning.
-Current known remaining details: real-peer phase delivery/late cleanup, actor pose
-handoff/Nemu live-growth continuity, camera obstruction fallback, complete replay.
+fresh-action release gating, requested clock routing and focused tests. Core shared route now compiled and2/2focused cases passed8.15s on58f2e1dd,
+guard1e39c4303b2f. Same-boundary Sean/Phaister casts share2.8s, pay once, preserve
+full1.55warning and require fresh input after resume. Reduced view/cancellation
+retain requested pause/speed. V1compile failure and V2/V3observation/fixture
+failures are preserved. New9acec06b adds frozen familiar anchors, fresh/expired
+request handling, source-pose handoff and native real-peer phase probe. These
+source9acec06b passed3/3 in40.13s(all6actual input/cinematic/live ability routes
+plus2contract cases), guard67b74fdf15db; selected intro/live frames inspected.
+Subsequent29c00f47 grounds copied feet, suppresses redundant legacy ult cards,
+adds blocked-camera fallback and native7.5s/live-ultimate capture route.
+Visual-v1 FAILED2/2 on cloned-rig activation before the bone map existed
+(guard0a9c675db394). Fixedcc6e2107; visual-v2 passed2/2 in8.02s, guardb8b28d8ee344, handle69120retired.
+Native v14/cc6e2107 built1156MB/55s, guardf1161bc617bf, whitespace-only
+inputs. Native peer phase-v1 FAILEDits Phaister/20meter assumptions: actual replicated
+hero1wasNemu and untouched observer cost17. Host held2.7406s with0clock drift;
+clients received the phase late, only about2.07s visible, with scorer19samples.
+Correct fixture selection uses real SelectLobbyPick+confirmed SyncPicks; do not
+weaken to accept the wrong hero. Preparing clips inside the deadline caused
+noticeable cold work;47a8a25f prewarms bounded cached clips before casts.
+Prewarm-v1failed on deprecated GetInstanceID; fixedcdb19dfe uses model
+references, shares identical non-Cheska clips and prioritizes current grip.
+Prewarm-v2passed4/4 in42.55s, guardf029926bd2bd; real render targets checked.
+Nemu handoff3c2482cc passed1/1 in7.04s, guard15d81363cb84: fully revealed visual
+persists without early devour gameplay or a second grow-from-small. Image inspected.
+Native v15built1156MB/61s, guardde3ef1894e4e. Net-phase-v2behavior PASS on corrected evaluator: actualPhaistercost13remained13
+on every observer sample; first evaluator incorrectly assumed20, retained as
+result-original-evaluator.json. Re-evaluation saved separately, no new run claimed.
+All3peers:2casters, zero clock drift,1.55warning, effects once, refused late cast,
+duplicate/stale phase and previous43client refusal. Hosts/client sampled holds
+2.75/2.67/2.70s; normal capture interval/receipt delay remains explicit.
+Native live-v15 PASSall6actual InputIntent-to-shared-scene-to-real-effect routes,
+7.5s screen/audio captures, Logs/shared-live-native-v15. Player21044/63989exited.
+Next encode/inspect native motion, publish44coherent batch, then retained-world
+highlights/halftime and remaining late-join/prediction qualification. Full pass open.
+Handle24355 retired. Native44peer/live6tools are authored and await this pass. Next build protocol44for real peers
+and actual native6hero execution; remainingNemu continuity remains explicit.
+Current known remaining details: real-peer phase delivery/late cleanup, Nemu
+live-growth continuity, camera obstruction fallback, full native flow, remaining
+C4prediction refusal cases and complete retained/canonical replay.
 Do not call the six private studies or this unverified integration finished.
 
-No owned Unity/player/encoder job remains. Latest player19188/handle9108 and
-encoder55571 exited; named profiles/shared input preserved. Native v11 is the
-qualified gameplay fallback; v12adds private-scene work only. Desktop unchanged.
+No owned Unity/player job remains. Phase-v2players1300/8500/9776/6668and
+handle6269are retired; native63989/21044also exited. Original user files remain
+excluded. Encoding, retained recording and next integration continue here. Native v13
+chain award peers exited cleanly; v11remains the earlier complete control/catch
+fallback, v12private scenes and v13awards are separate qualified evidence.
+Desktop remains unchanged. Next build/prove protocol44after focused cases pass.
 
 The private-scene/docs batch is published. Continue ordinary contact/feedback
 composition and independent retained-world recording work in the

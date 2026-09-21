@@ -322,3 +322,108 @@ selected owned additions including the ledger, with original unrelated dirty
 hunks still excluded from commits. No source art, main branch, Desktop game,
 real profiles or shared input were replaced. No paid tools, reset, delegation,
 other chat or new background automation.
+
+
+## Owner handback and live chain awards
+
+Owner correction2026-09-21: answering a3D-design question did not pause the full
+implementation. Owner then stated "get everything done u are the only agent
+working on this". Required integration, including the former C4 network lane, is
+now assigned here. Historical C4 evidence/tasks are retained; no delegation.
+
+Source1ba35c92/protocol43 published: actual host chain bonuses through AddScore,
+match-scoped accepted milestone IDs, first/accuracy/catch/late/lead presentation.
+Core6/6 passed13ms. PlayMode chain integration, duplicate/stale UI and body-block
+regression5/5 passed27.41s, guarde904ee2f3482. Images exposed missing banner
+plate/title despite string assertions: explicit CanvasRenderer and bounded title
+layout corrected this. Visible geometry/payload isolation1/1 passed3.44s,
+guard9a0ed9d44f0b; triple banner image inspected. V1 images/failure observation
+retained. Warmup prompt in those controlled shots was fixture state, cleared in
+subsequent probes.
+
+Native v13 built1156MB/59s, guard39f9082ab6be. Three real local processes in BOTH
+Classic and Hero PASS: each sees705points=600base+105capped bonus after6real
+host physical throws; first/three/five milestones once each; duplicate and old-
+round packets do not replay them. Epoch agrees across all peers. Hero final
+charge agrees6.0after the staged round boundary. Actual old42client refused by43.
+Logs/net-moment-classic-v1 and net-moment-hero-v1. All processes exited; profiles
+and shared input preserved. Scope is host physical outcomes plus real delivery,
+not remote throw-input, network spectator or impaired-link coverage.
+
+## Shared ultimate integration in progress
+
+Sourceb1af10e6 adds accepted cohort reservation, shared2.8s hold, private-scene
+playback on live routes, requested-clock restoration, fresh action release, and
+protocol44request/cohort messages. No ultimate prediction spends client resources.
+Phaister's Activate override starts her1.55s ritual only after release.
+First compile failed on Unity6.5SceneHandle implicit conversion and NetCue's
+namespace; correctedbe8db9a4, failure retained Logs/shared-phase-v1,
+guard6d695178accf. V2compiled: reduced/round-cancel case passed,2caster case
+failed because its assertion sampled1.461safter a1.55sritual had legitimately
+advanced on the next frame. Guardac830cd47a8d/results retained. Replaced that
+observation with the existing UltimateStarted callback at the real activation
+boundary plus elapsed-simulation-time accounting; no warning shortened.
+Source6622a50a also freezes spectator camera/replay sampling and possessed-pet
+submissions during the hold and suppresses duplicate generic cast hitstop after
+the shared introduction. V3runtime result pending. Live actor pose handoff, Nemu
+growth continuity, obstruction, full6/native/real-peer scenarios and full replay
+remain work; do not claim the integrated phase complete from these first probes.
+
+
+Shared phase follow-up: V3failed the fresh-action assertion because the probe
+pressed Zack's release-only aimed ultimate without releasing. V458f2e1dd drives
+his real hold/release and passed2/2 in8.15s, guard1e39c4303b2f. Source9acec06b
+adds captured familiar anchors, bounded pending requests, deduped cohorts, body
+pose handoff and protocol44real-peer probe. All6default accepted-input introduction
+and live-execution routes plus the two contracts passed3/3 in40.13s, guard
+67b74fdf15db, Logs/shared-six-v1. Selected Phaister/Nemu/Sean/Cheska frames inspected.
+Native/shared-peer44coverage remains pending.
+
+Those images exposed the retained legacy lower-left ultimate card overlapping
+the personal HUD after the new scene and copied feet sitting above their support.
+29c00f47 suppresses the duplicate card on the shared route, aligns grounded copies
+and selects a clear camera side with same-duration reduced-view fallback. Its
+follow-up FAILED2/2 on an engine error, "Bones do not match bindpose": an active
+parent enabled a cloned SkinnedMeshRenderer before its bone map was assigned.
+Failure retained in Logs/shared-phase-visual-v1, guard0a9c675db394. cc6e2107 keeps
+each copied actor container inactive until mesh/bones are complete. Follow-up
+Logs/shared-phase-visual-v2 is pending at this receipt checkpoint.
+
+
+Visual follow-upcc6e2107passed2/2 in8.02s, guardb8b28d8ee344. Native v14built
+1156MB/55s, guardf1161bc617bf. Real-peer phase-v1 FAILED, preserved under
+Logs/net-ultimate-phase-v1: selected profile values had not reached actual lobby
+picks, so hero1wasNemu(warning0.4) and observer meter17, not the Phaister/20the
+evaluator required. Both accepted effects still started once; late request did
+not start, clocks held0drift, old phase left requested0.5unchanged. Host hold
+2.7406s, observer2.0695s, scorer19active samples. Source47a8a25f corrects the
+fixture through ordinary lobby pick submission/confirmed picks and moves grounded
+clip construction into a bounded cache ahead of acceptance; cold work must not
+consume the shared2.8s window. Current cache regression run pending. All native
+processes23628/6916/8852/19012exited; shared input preserved. No network-phase
+pass claimed from this failed experiment.
+
+
+Cache-v1failed compilation because6.5removes GetInstanceID; failure guard
+7449ca1aa4c3retained. cdb19dfe uses retained model references, shares identical
+non-Cheska clips, prioritizes actual grip and asserts prepared render targets.
+Cache-v2passed4/4 in42.55s, guardf029926bd2bd.3c2482cc carries Nemu's fully
+revealed form into the live warning without activating devour early or shrinking
+for a repeated reveal; focused live path1/1 passed7.04s, guard15d81363cb84.
+Actual early-execution frame inspected. Nativev15built1156MB/61s, guard
+de3ef1894e4e; corrected real-peer phase run and native live movies are next.
+
+
+Protocol44native phase-v2 uses the actual lobby-selected Phaister profiles. The
+first evaluator still assumed20meter, but PhaisterHeroKit.UltimateCost is13 and
+all recorded observer samples stay13. Original failed evaluation retained;
+result-reevaluated.json applies exact before/after preservation to the SAME trace.
+Behavior PASS: three real peers see the2caster cohort, zero round-clock drift,
+once-only effects, full1.55warning, refused late request, duplicate/old-phase
+rejection including preservation of subsequently requested0.5speed. Old43client
+refused. Sampled holds2.75/2.67/2.70s. All4processes retired/input unchanged.
+Native shared-live-v15 PASSsix actual InputIntent-to-introduction-to-execution
+routes,7.5sscreen/audio captures in Logs/shared-live-native-v15; player21044/
+handle63989exited. Staged hero/round fixture, not human freeform or impaired-link
+evidence. Full late-join, prediction-refusal, retained/canonical replay and the
+remaining complete presentation gates are still open.
