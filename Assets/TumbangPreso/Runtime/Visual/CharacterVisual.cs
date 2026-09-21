@@ -814,6 +814,8 @@ namespace TumbangPreso.Visual
 
         /// <summary>0 = normal, 1 = fully iced.</summary>
         public float FrostLevel => _frostLevel;
+        public void CaptureRecordedCoat(out float frost,out float flash,out StunElement element)
+        {frost=_frostLevel;flash=_flashTime<=0?0:Mathf.Clamp01(_flashLeft/_flashTime);element=_stunElement;}
 
         /// <summary>
         /// ⚠️ WRITTEN THROUGH THE SAME PROPERTY BLOCK AS THE TINT AND THE FLASH, which is what

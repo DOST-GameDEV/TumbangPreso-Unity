@@ -24,6 +24,7 @@ namespace TumbangPreso.CameraSystem
         private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
         private readonly HashSet<int> _visibleFields=new HashSet<int>();
+        private readonly MaterialPropertyBlock _coatBlock=new MaterialPropertyBlock();
         private int _sound;
         private float _lastTime;
         public bool Ready {get;private set;}
@@ -121,7 +122,18 @@ namespace TumbangPreso.CameraSystem
             time=Mathf.Clamp(time,_clip.Start,_clip.End);
             var can=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Can);
             if(can!=null&&_state!=null){int state=can.Track.Pose.StateAt(time).State;_state.text=(state&2)!=0?"CAN PROTECTED":(state&1)!=0?"CAN UPRIGHT":"CAN DOWN  /  RETRIEVE YOUR TSINELAS";}
-            foreach(var item in _items)item.Track.Pose.Apply(item.Bones,time);
+            foreach(var item in _items)
+            {
+                item.Track.Pose.Apply(item.Bones,time);var state=item.Track.Pose.StateAt(time);if(!state.HasCoat)continue;
+                bool ability=state.Element!=StunElement.None;var coat=StunCoat.For(state.Element);
+                foreach(var surface in item.Copy.Renderers)
+                {
+                    surface.GetPropertyBlock(_coatBlock);_coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.FlashIntensity));
+                    _coatBlock.SetFloat("_CaughtAmount",ability?0:state.Frost);_coatBlock.SetFloat("_FrostAmount",ability?state.Frost:0);
+                    if(ability){_coatBlock.SetColor("_FrostColor",coat.Body);_coatBlock.SetColor("_FrostRimColor",coat.Rim);}
+                    surface.SetPropertyBlock(_coatBlock);
+                }
+            }
             if(time<_lastTime){_sound=0;GameServices.Audio?.StopReplayCues();}
             while(_sound<_clip.Sounds.Length&&_clip.Sounds[_sound].Time<=time)
             {

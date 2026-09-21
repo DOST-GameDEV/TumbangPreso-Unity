@@ -11,6 +11,7 @@ namespace TumbangPreso.CameraSystem
         {
             public float Time;
             public int State,Holder=-1;
+            public bool HasCoat;public float Frost,Flash;public StunElement Element;
             public Vector3[] Positions, Scales;
             public Quaternion[] Rotations;
             public bool[] Active;
