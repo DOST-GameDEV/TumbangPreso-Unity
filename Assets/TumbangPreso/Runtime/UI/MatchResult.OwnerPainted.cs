@@ -80,7 +80,7 @@ namespace TumbangPreso.UI
             for(int i=0;i<3;i++)
             {
                 if(_nativePages[i]!=null)_nativePages[i].SetActive(i==page);
-                _nativeTabs[i].GetComponentInChildren<Text>().color=i==page?OwnerUiTheme.Current.Green:OwnerUiTheme.Current.ActionInk;
+                _nativeTabs[i].GetComponentInChildren<Text>().color=i==page?CourtPresentationPalette.Red:OwnerUiTheme.Current.EnteredInk;
                 _nativeTabs[i].transform.Find("SelectedPage").gameObject.SetActive(i==page);
             }
             if(page==2)NativeRecentPlayers();_canvas.GetComponent<ScreenFocus>().Rebuild();

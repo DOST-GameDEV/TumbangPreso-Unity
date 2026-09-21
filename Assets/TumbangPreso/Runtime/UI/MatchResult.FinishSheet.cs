@@ -23,7 +23,7 @@ namespace TumbangPreso.UI
                 int page = i;
                 var tab = OwnerTextAction.Create(root, "ResultTab" + i, labels[i], () => NativePage(page), 99 + i * 568, 263, 534, 72, 35);
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedPage").gameObject.AddComponent<Image>();
-                OwnerUiLayout.Place(line.rectTransform, 90, 66, 350, 4); line.color = OwnerUiTheme.Current.Green; line.raycastTarget = false;
+                OwnerUiLayout.Place(line.rectTransform, 90, 66, 350, 4); line.color = CourtPresentationPalette.Red; line.raycastTarget = false;
                 _nativeTabs[i] = tab;
             }
             BuildFinishStandings(root);
@@ -40,7 +40,7 @@ namespace TumbangPreso.UI
             track.color = new Color32(171, 137, 92, 255); track.raycastTarget = false;
             track.gameObject.AddComponent<LayoutElement>().preferredHeight = 12; _xpBarTrack = track.rectTransform;
             _xpBarFill = OwnerUiLayout.Rect(track.transform, "XpFill").gameObject.AddComponent<Image>();
-            _xpBarFill.color = OwnerUiTheme.Current.Green; _xpBarFill.raycastTarget = false; OwnerUiLayout.Fill(_xpBarFill.rectTransform);
+            _xpBarFill.color = CourtPresentationPalette.Gold; _xpBarFill.raycastTarget = false; OwnerUiLayout.Fill(_xpBarFill.rectTransform);
             _nativeRank = OwnerUiLayout.Rect(content, "RankBadge").gameObject.AddComponent<TumpRankBadge>(); _nativeRank.raycastTarget = false;
             var badge = _nativeRank.gameObject.AddComponent<LayoutElement>(); badge.preferredHeight = 138; badge.preferredWidth = 138;
             _xpDetail = OwnerUiLayout.Text(content, "RewardDetails", "", 30); _xpDetail.color = OwnerUiTheme.Current.EnteredInk; _xpDetail.gameObject.AddComponent<TumpParagraph>();
@@ -58,24 +58,23 @@ namespace TumbangPreso.UI
         }
         private void BuildFinishStandings(Transform root)
         {
-            var page = OwnerUiLayout.Rect(root, "Standings"); OwnerUiLayout.Place(page, 94, 361, 1738, 505); _nativePages[0] = page.gameObject;
-            for (int i = 0; i < 4; i++)
+            var page=OwnerUiLayout.Rect(root,"Standings");OwnerUiLayout.Place(page,94,361,1738,505);_nativePages[0]=page.gameObject;
+            for(int i=0;i<4;i++)
             {
-                float y = i * 126;
-                var line = OwnerUiLayout.Rect(page, "FinisherRule" + i).gameObject.AddComponent<Image>();
-                OwnerUiLayout.Place(line.rectTransform, 10, y + 119, 1683, 2); line.color = new Color32(147, 91, 51, 105); line.raycastTarget = false;
-                var place = OwnerUiLayout.Text(page, "FinisherPlace" + i, "", 50, OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(place.rectTransform, 10, y + 12, 112, 92); place.alignment = TextAnchor.MiddleCenter;
-                _nativePortraits[i] = OwnerUiLayout.Rect(page, "FinisherPortrait" + i).gameObject.AddComponent<Image>();
-                _nativePortraits[i].preserveAspect = true; _nativePortraits[i].raycastTarget = false;
-                OwnerUiLayout.Place(_nativePortraits[i].rectTransform, 163, y, 117, 116);
-                var name = OwnerUiLayout.Text(page, "FinisherName" + i, "", 45, OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(name.rectTransform, 338, y + 8, 935, 101);
-                var score = OwnerUiLayout.Text(page, "FinisherScore" + i, "", 47, OwnerUiLayout.TypeRole.Display);
-                OwnerUiLayout.Place(score.rectTransform, 1310, y + 8, 377, 101); score.alignment = TextAnchor.MiddleRight;
-                var title = OwnerUiLayout.Text(page, "FinisherTitle" + i, "", 28); title.enabled = false;
-                _rows.Add(new[] { place, name, score, title });
+                var row=OwnerUiLayout.Rect(page,"FinisherTicket"+i);OwnerUiLayout.Place(row,0,i*126,1138,114);
+                _finishTickets[i]=row.gameObject.AddComponent<CourtPopupGraphic>();_finishTickets[i].raycastTarget=false;
+                _finishFades[i]=row.gameObject.AddComponent<CanvasGroup>();_finishFades[i].blocksRaycasts=false;_finishRowOrigins[i]=row.anchoredPosition;
+                var place=OwnerUiLayout.Text(row,"FinisherPlace"+i,"",44,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Place(place.rectTransform,24,12,88,92);place.alignment=TextAnchor.MiddleCenter;
+                _nativePortraits[i]=OwnerUiLayout.Rect(row,"FinisherPortrait"+i).gameObject.AddComponent<Image>();
+                _nativePortraits[i].preserveAspect=true;_nativePortraits[i].raycastTarget=false;OwnerUiLayout.Place(_nativePortraits[i].rectTransform,131,10,92,92);
+                var name=OwnerUiLayout.Text(row,"FinisherName"+i,"",36,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Place(name.rectTransform,246,10,581,91);
+                var score=OwnerUiLayout.Text(row,"FinisherScore"+i,"",39,OwnerUiLayout.TypeRole.Display);
+                OwnerUiLayout.Place(score.rectTransform,837,10,263,91);score.alignment=TextAnchor.MiddleRight;
+                var title=OwnerUiLayout.Text(row,"FinisherTitle"+i,"",28);title.enabled=false;_rows.Add(new[]{place,name,score,title});
             }
+            BuildFinishFigure(page);
         }
     }
 }

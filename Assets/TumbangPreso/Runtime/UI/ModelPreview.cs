@@ -299,6 +299,8 @@ namespace TumbangPreso.UI
         public RenderTexture Target => _texture;
 
         public GameObject Subject => _model;
+        /// <summary>Disable automatic pose/sweep motion for a static presentation; manual inspection remains available.</summary>
+        public bool AnimateSubject { get; set; } = true;
 
         /// <summary>
         /// Subject CENTRED in its box and pulled in to fill it, for a caller showing this rig as
@@ -843,7 +845,7 @@ namespace TumbangPreso.UI
             if (_idle == null || _model == null) return;
 
             float elapsed = Mathf.Max(0.0f, Time.unscaledTime - _idleStartedAt);
-            _idle.SampleAnimation(_model, elapsed % Mathf.Max(0.01f, _idle.length));
+            _idle.SampleAnimation(_model, AnimateSubject ? elapsed % Mathf.Max(0.01f, _idle.length) : 0);
         }
 
         /// <summary>
@@ -1061,7 +1063,7 @@ namespace TumbangPreso.UI
             // THE MODEL TURNS. The idle sweep is a there-and-back through TurnDegrees either
             // side of front-on, over TurnPeriod seconds. It stops while the player is handling
             // it and resumes once they have left it alone.
-            if (_model != null && !_userTookOver)
+            if (_model != null && !_userTookOver && AnimateSubject)
             {
                 _turnPhase += Time.unscaledDeltaTime;
                 float sweep = Mathf.Sin(_turnPhase / TurnPeriod * Mathf.PI * 2.0f) * TurnDegrees;

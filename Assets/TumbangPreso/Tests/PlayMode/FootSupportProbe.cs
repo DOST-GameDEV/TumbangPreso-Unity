@@ -148,6 +148,13 @@ namespace TumbangPreso.PlayTests
                         {body.BakeMesh(mesh);foreach(var vertex in mesh.vertices)sole=Mathf.Min(sole,body.transform.TransformPoint(vertex).y);}
                         float support=Slipper.GroundY(who.transform.position);
                         records.Add(string.Format(CultureInfo.InvariantCulture,"{0},{1:F4},{2:F4},{3:F4},{4}",stage,who.transform.position.y,sole,support,who.IsGrounded));
+                        if(planted && Mathf.Abs(support-sole)>.025f)
+                        {
+                            foreach(var part in who.GetComponentsInChildren<Transform>())
+                                if(part.name=="Visual"||part.name=="root"||part.name=="leg-left"||part.name=="leg-right")
+                                    Debug.Log("[FootSupport] "+part.name+" parent="+part.parent?.name+" world="+part.position.ToString("F4")+" local="+part.localPosition.ToString("F4"));
+                            Debug.Log("[FootSupport] body="+who.transform.position.ToString("F4")+" model="+who.GetComponent<CharacterVisual>().ModelRoot.localPosition.ToString("F4")+" velocity="+who.Velocity);
+                        }
                         if(planted)Assert.AreEqual(support,sole,.025f,stage+" foot lost contact.");
                         else Assert.Greater(sole,support+.1f,"Ground contact correction pinned the jumping body to the floor.");
                     }

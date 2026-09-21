@@ -121,6 +121,7 @@ namespace TumbangPreso.UI
                 _nativePortraits[i].sprite=portrait;_nativePortraits[i].enabled=portrait!=null;
             }
             NativePage(0);
+            PresentFinishPerformance(winner);
         }
         private void NativeProgression(XpAward award, PlayerProfile profile)
         {
@@ -186,6 +187,7 @@ namespace TumbangPreso.UI
         }
         private void Update()
         {
+            TickFinishPerformance();
             if(!_nativeResult||!NativeVisible||!MenuNav.CancelPressed||ScreenTakeover.EscapeIsSpokenExcept(this))return;
             ScreenTakeover.ConsumeEscape();OnMenuPressed();
         }
