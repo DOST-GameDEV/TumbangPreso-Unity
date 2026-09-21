@@ -128,6 +128,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(phaister.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);
             float clock=round.TimeLeft;Vector3 at=sean.transform.position;
             Assert.AreEqual(clock,phase.FrozenRoundTime,.001f);
+            typeof(RoundDirector).GetMethod("FixedUpdate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(round,null);
+            Assert.AreEqual(clock,round.TimeLeft,.001f,"A physics callback already queued at receipt cannot advance the held clock");
             round.ApplySnapshot(clock+.2f,true,GameServices.Match.DefenderSlot,true);
             Assert.AreEqual(clock,round.TimeLeft,.001f,"An older snapshot cannot move the frozen presentation clock");
             round.ApplySnapshot(clock-.12f,true,GameServices.Match.DefenderSlot,true);

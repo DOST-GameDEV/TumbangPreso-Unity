@@ -282,7 +282,9 @@ namespace TumbangPreso
 
         private void FixedUpdate()
         {
-            if (!RoundActive) return;
+            // A physics callback may already be queued when a network receipt
+            // starts the hold. timeScale alone cannot cancel that callback.
+            if (!RoundActive || PresentationClock.Held) return;
 
             float dt = Time.fixedDeltaTime;
             _clock += dt;
