@@ -580,6 +580,7 @@ namespace TumbangPreso
             if (!taya.IsDefender || !victim.IsTaggable()) return;
             if (Lata == null || !Lata.IsUpright) return;
 
+            GameServices.Match.RecordHostTagChain(taya.PlayerSlot, victim.PlayerSlot);
             GameServices.Match.AddScore(taya.PlayerSlot, ScoreEvent.Tag);
             taya.AbilitySystem?.OnTagScored();
 

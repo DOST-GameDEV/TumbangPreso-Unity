@@ -14,7 +14,7 @@ namespace TumbangPreso
     /// function cannot be created on a client at all. When Phase 5 adds netcode, this method
     /// gets a server guard and NOT a second client-side path.
     /// </summary>
-    public sealed class MatchDirector : MonoBehaviour
+    public sealed partial class MatchDirector : MonoBehaviour
     {
         public event Action<int, int> RoundStarted;        // (roundNumber, defenderSlot)
         public event Action<int, int> IntermissionStarted; // (nextRound, nextDefenderSlot)
@@ -268,6 +268,7 @@ namespace TumbangPreso
 
         public void ResetForNewMatch()
         {
+            ResetHostChains();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = false;
@@ -278,6 +279,7 @@ namespace TumbangPreso
         public void AdvanceRound()
         {
             RoundNumber++;
+            ResetHostChains();
             IsWarmupBuffer = false;
 
             // ⚠️⚠️ THE TARGET IS ASKED BESIDE THE ROUND COUNT, NEVER INSTEAD OF IT. Both

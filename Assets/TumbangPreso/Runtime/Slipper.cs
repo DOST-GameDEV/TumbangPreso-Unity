@@ -148,6 +148,7 @@ namespace TumbangPreso
             // packet including keepalives, and a repaint per packet would rebuild four materials
             // at the wire's cadence.
             bool changed = State != next;
+            if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
 
             State = next;
             if (next != SlipperState.Loose) SetLandedHighlight(false);
@@ -175,6 +176,19 @@ namespace TumbangPreso
         private float _throwerIgnoreLeft;
         // Contact episodes, not a timed immunity: separation re-arms this body.
         private int _bodyContacts;
+        private MatchDirector _chainMatch;
+        private long _chainThrow, _chainEpoch;
+        private int _chainOwner, _launchCanSerial;
+        private void FinishChain(ThrowChainEnd outcome)
+        {
+            if (_chainThrow == 0) return;
+            int serial = GameServices.Round != null && GameServices.Round.Lata != null
+                ? GameServices.Round.Lata.HostKnockdownSerial : _launchCanSerial;
+            if (_chainMatch != null && _chainMatch == GameServices.Match)
+                _chainMatch.FinishHostThrowChain(_chainEpoch, _chainOwner, _chainThrow, outcome,
+                    serial, serial > _launchCanSerial);
+            _chainThrow = 0; _chainMatch = null;
+        }
         private int _bankCount;
         private float _closestCanFlat = float.PositiveInfinity;
         private bool _nearMissReported;
@@ -401,7 +415,11 @@ namespace TumbangPreso
         /// "Parameter 'material' is null" errors, one per surface, from a slipper freed a moment
         /// earlier while an autoload signal was still connected to it.
         /// </summary>
-        private void OnDisable() => Settings.SettingsStore.SlipperHighlightChanged -= RefreshHighlight;
+        private void OnDisable()
+        {
+            Settings.SettingsStore.SlipperHighlightChanged -= RefreshHighlight;
+            FinishChain(ThrowChainEnd.Miss);
+        }
 
         /// <summary>
         /// ⚠️ THE PREVIEW MUST CALL THIS SAME FUNCTION. The dotted aim arc and the real
@@ -1005,6 +1023,14 @@ namespace TumbangPreso
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
+            FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
+            _chainMatch = GameServices.Match;
+            _chainOwner = thrower != null ? thrower.PlayerSlot : -1;
+            _launchCanSerial = GameServices.Round != null && GameServices.Round.Lata != null
+                ? GameServices.Round.Lata.HostKnockdownSerial : 0;
+            _chainEpoch = _chainMatch != null ? _chainMatch.HostChainEpoch : 0;
+            _chainThrow = _chainMatch != null && thrower != null
+                ? _chainMatch.BeginHostThrowChain(_chainOwner, _launchCanSerial) : 0;
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
@@ -1297,8 +1323,11 @@ namespace TumbangPreso
             // The can next: it is the thing being aimed at.
             if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
+                int before = round.Lata.HostKnockdownSerial;
                 TriggerAffinityImpact();
                 round.Lata.HostKnockDown(_throwerSlot);
+                FinishChain(_throwerSlot >= 0 && round.Lata.HostKnockdownSerial > before
+                    ? ThrowChainEnd.Hit : ThrowChainEnd.Miss);
                 // REBOUND belongs to the shared can that was hit, never the thrower's
                 // own loadout. Host-owned velocity already replicates to every peer.
                 // The restore shield still returns the shoe without awarding a hit.
@@ -1565,7 +1594,10 @@ namespace TumbangPreso
             }
 
             if (_bankCount > Balance.MaxScoringBanks)
+            {
+                FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;
+            }
         }
 
         /// <summary>
@@ -1645,7 +1677,10 @@ namespace TumbangPreso
             // One authored bank can still score. Further wall contacts remain valid
             // physics but lose player credit, preventing pinball loops from farming cans.
             if (_bankCount > Balance.MaxScoringBanks)
+            {
+                FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;
+            }
         }
 
         /// <summary>
@@ -1676,6 +1711,7 @@ namespace TumbangPreso
         /// </summary>
         private void HostBlockedBy(CharacterMotor blocker)
         {
+            FinishChain(ThrowChainEnd.Block);
             // A body block is a hit too — it is the taya's entire passive verb.
             //
             // ⚠️⚠️ AND IT WAS DRAWN ON ONE SCREEN. `FixedUpdate` is host-gated, so the flash, the
@@ -1712,6 +1748,7 @@ namespace TumbangPreso
 
         public void Deflect(Vector3 horizontal, float liftScale)
         {
+            FinishChain(ThrowChainEnd.Block);
             _velocity = horizontal;
             _velocity.y = Balance.DeflectLift * liftScale;
             _flightTime = 0.0f;

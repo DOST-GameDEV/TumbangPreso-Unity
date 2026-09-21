@@ -22,6 +22,8 @@ namespace TumbangPreso
     public sealed class Lata : MonoBehaviour
     {
         public event Action<bool> UprightChanged;
+        // Host bookkeeping for consumed target cycles, never a replicated outcome.
+        public int HostKnockdownSerial { get; private set; }
 
         [SerializeField] private int _skinIndex = -1;
 
@@ -222,6 +224,7 @@ namespace TumbangPreso
             // `MatchFlair.PlayTag` calls `Hitstop.Trigger()` from the replicated path, so all
             // four screens get the tag's beat. `AnnounceUprightChange` is this event's
             // equivalent of that path and is reached exactly once per peer.
+            HostKnockdownSerial++;
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
