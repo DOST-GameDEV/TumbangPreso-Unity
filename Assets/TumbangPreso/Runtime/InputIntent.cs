@@ -41,6 +41,14 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _held = new HashSet<Verb>();
         private readonly HashSet<Verb> _heldPrev = new HashSet<Verb>();
         private readonly HashSet<Verb> _bufferedPresses = new HashSet<Verb>();
+        private readonly HashSet<Verb> _releaseRequired = new HashSet<Verb>();
+
+        public void RequireFreshActions()
+        {
+            foreach (var verb in _held) if (verb != Verb.Sprint) _releaseRequired.Add(verb);
+            _bufferedPresses.Clear(); _held.RemoveWhere(v => v != Verb.Sprint);
+            _heldPrev.RemoveWhere(v => v != Verb.Sprint); LookDelta = Vector2.zero;
+        }
 
         public Vector2 Move { get; set; }
 
@@ -114,6 +122,9 @@ namespace TumbangPreso
 
         public void Set(Verb v, bool pressed)
         {
+            if (!pressed) _releaseRequired.Remove(v);
+            else if (SharedUltimatePhase.BlocksActions && v != Verb.Sprint) _releaseRequired.Add(v);
+            if (_releaseRequired.Contains(v)) { _held.Remove(v); return; }
             if (pressed) _held.Add(v);
             else _held.Remove(v);
         }
@@ -122,7 +133,7 @@ namespace TumbangPreso
         // observed press without inventing a held state or repeat presses.
         public void BufferPress(Verb verb)
         {
-            if (!Parked && !Locked(verb)) _bufferedPresses.Add(verb);
+            if (!SharedUltimatePhase.BlocksActions && !_releaseRequired.Contains(verb) && !Parked && !Locked(verb)) _bufferedPresses.Add(verb);
         }
 
         /// <summary>Called by the motor after the physics consumers have read intent.</summary>

@@ -159,7 +159,7 @@ namespace TumbangPreso.UI
             if (!_stoppedTime) return;
 
             _stoppedTime = false;
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
         }
 
         /// <summary>True while THIS board is the reason the match clock is stopped.</summary>
@@ -225,7 +225,7 @@ namespace TumbangPreso.UI
             // time would stop answering the host.
             if (!NetAuthority.IsNetworked)
             {
-                Time.timeScale = 0.0f;
+                PresentationClock.RequestScale(0.0f);
                 _stoppedTime = true;
             }
 

@@ -247,6 +247,7 @@ namespace TumbangPreso
 
         public void StartMatch()
         {
+            SharedUltimatePhase.Instance?.Cancel();
             BeginPresentationMatch();
             _scores.Reset();
             RoundNumber = 0;
@@ -271,6 +272,7 @@ namespace TumbangPreso
 
         public void ResetForNewMatch()
         {
+            SharedUltimatePhase.Instance?.Cancel();
             ResetHostChains();
             _scores.Reset();
             RoundNumber = 0;

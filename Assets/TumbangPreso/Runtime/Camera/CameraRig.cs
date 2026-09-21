@@ -631,7 +631,7 @@ namespace TumbangPreso.CameraSystem
 
         private void LateUpdate()
         {
-            if (_character == null || !_active) return;
+            if (_character == null || !_active || PresentationClock.Held) return;
 
             ApplyLens();
             ApplyFppSelfHideIfNeeded();

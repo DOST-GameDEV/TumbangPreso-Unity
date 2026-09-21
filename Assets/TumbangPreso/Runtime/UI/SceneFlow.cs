@@ -527,7 +527,7 @@ namespace TumbangPreso.UI
             // both write `Time.timeScale`, and a scene change that happens while either is live
             // carries the frozen scale into the next screen, where nothing ever restores it.
             // The symptom is a menu that responds at one twentieth speed and reads as a hang.
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
 
             // ⚠️⚠️ ONE LOAD PER REQUEST, HOWEVER MANY CALLERS ASK. `SceneManager.LoadScene` is
             // deferred to the end of the frame, so a second call before that point QUEUES A
@@ -658,7 +658,7 @@ namespace TumbangPreso.UI
                 SelectedMode.ToString(),
                 match != null && match.MatchInProgress ? match.RoundNumber : 0);
 
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 

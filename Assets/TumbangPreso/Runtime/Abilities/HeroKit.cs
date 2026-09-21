@@ -260,6 +260,15 @@ namespace TumbangPreso.Abilities
 
         public virtual CastOutcome CastUltimate(AbilityContext ctx)
         {
+            var allowed = CheckUltimate(ctx);
+            if (allowed != CastOutcome.Cast) return allowed;
+            Ultimate.Activate(ctx);
+            UltimateCharge = 0;
+            return CastOutcome.Cast;
+        }
+
+        internal CastOutcome CheckUltimate(AbilityContext ctx)
+        {
             if (Ultimate == null) return CastOutcome.Missing;
 
             // ⚠️ THE ORDER MATTERS AND IT IS "CAN I ACT" LAST. A stunned player with an empty
@@ -276,12 +285,18 @@ namespace TumbangPreso.Abilities
             if (ctx != null && ctx.Motor != null && !ctx.Motor.CanAct()) return CastOutcome.CannotAct;
             if (!Ultimate.CanActivate(ctx)) return CastOutcome.CannotAct;
 
-            Ultimate.Activate(ctx);
-
-            UltimateCharge = 0.0f;
-
             return CastOutcome.Cast;
         }
+
+        internal CastOutcome ReserveUltimate(AbilityContext ctx)
+        {
+            var allowed = CheckUltimate(ctx);
+            if (allowed != CastOutcome.Cast) return allowed;
+            Ultimate.ReserveForIntroduction(); UltimateCharge = 0;
+            return CastOutcome.Cast;
+        }
+        internal void AdoptUltimateReservation()
+        { Ultimate?.ReserveForIntroduction(); UltimateCharge = 0; }
 
         private CastOutcome Fire(HeroAbility ability, AbilityContext ctx)
         {

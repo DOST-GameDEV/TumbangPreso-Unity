@@ -364,7 +364,8 @@ namespace TumbangPreso.Net
         // 42 preserves missing wake time slots when a movement snapshot arrives late.
         // 43 carries match-scoped accepted presentation identity and capped chain awards.
         // StartMatch/SyncWorld append the host epoch; mixed clients must be refused.
-        public const int ProtocolVersion = 43;
+        // 44 adds accepted ultimate requests/cohorts; owners no longer predict ultimate effects.
+        public const int ProtocolVersion = 44;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1119,7 +1120,7 @@ namespace TumbangPreso.Net
             // `MatchResult`'s own header records that exact failure happening once already, from
             // a different writer, and this is the same lifetime rule: whoever can stop time
             // restores it on every exit path including death.
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.

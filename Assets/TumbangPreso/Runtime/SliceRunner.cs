@@ -55,7 +55,7 @@ namespace TumbangPreso
 
             Subscribe();
 
-            if (TimeScale > 1.0f) Time.timeScale = TimeScale;
+            if (TimeScale > 1.0f) PresentationClock.RequestScale(TimeScale);
 
             Running = true;
 
@@ -334,7 +334,7 @@ namespace TumbangPreso
             // ⚠️ END THE FREEZE BEFORE RESTORING THE SCALE, or the restore writes 1.0 and the
             // freeze's own restore then writes 0.05 back over it a few frames later.
             Hitstop.End();
-            Time.timeScale = 1.0f;
+            PresentationClock.RequestScale(1.0f);
 
             var m = GameServices.Match;
             Debug.Log($"[Slice] match over. scores: " +

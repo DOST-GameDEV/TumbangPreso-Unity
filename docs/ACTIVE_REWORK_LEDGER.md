@@ -95,10 +95,21 @@ ultimate claim. Those remain substantive work, not completed by these studies.
 
 ## Jobs and next action
 
-New work in progress: actual chain bonuses and accepted central moments. Core6/6
-passed; runtime awards, epoch-bearing transport and protocol43, central banner and
-focused integration tests are authored but not yet compiled/runtime-qualified.
-After this coherent batch, integrate shared ultimate phase and retained replay.
+Chain awards and central milestones now work end-to-end on protocol43. Source
+1ba35c92: Core6/6, PlayMode5/5 plus title/plate rendering correction1/1. Native v13
+build1156MB/59s, guard39f9082ab6be. Three-real-process Classic and Hero runs PASS:
+all peers agree600base+105bonus=705after6hits,3unique milestones, duplicate/old-round
+rejection. Real42client refused. Logs/net-moment-classic-v1 and net-moment-hero-v1.
+All players exited; profiles/input preserved. This batch awaits publication.
+
+Current authoring: shared ultimate phase, protocol44. New PresentationClock,
+SharedUltimatePhase, UltimatePhaseView, ability reservation/request/cohort paths,
+fresh-action release gating, requested clock routing and focused tests. These
+changes are UNCOMPILED and not qualified yet. Two casts must share2.8s; reserve
+resources first, start actual abilities afterward, preserve Phaister1.55s warning.
+Current known remaining details: real-peer phase delivery/late cleanup, actor pose
+handoff/Nemu live-growth continuity, camera obstruction fallback, complete replay.
+Do not call the six private studies or this unverified integration finished.
 
 No owned Unity/player/encoder job remains. Latest player19188/handle9108 and
 encoder55571 exited; named profiles/shared input preserved. Native v11 is the

@@ -677,7 +677,7 @@ namespace TumbangPreso.CameraSystem
             if (_ownsTimeScale)
             {
                 Hitstop.End();
-                Time.timeScale = _initialTimeScale;
+                PresentationClock.RequestScale(_initialTimeScale);
                 _ownsTimeScale = false;
             }
         }
@@ -1038,7 +1038,7 @@ namespace TumbangPreso.CameraSystem
             Hitstop.End();
             _ownsTimeScale = true;
             _broadcastPaused = !_broadcastPaused;
-            Time.timeScale = _broadcastPaused ? 0.0f : _selectedTimeScale;
+            PresentationClock.RequestScale(_broadcastPaused ? 0.0f : _selectedTimeScale);
             UI.Hud.Instance?.ShowToast(_broadcastPaused
                 ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
                 : $"BACK TO ACTION  ·  {_selectedTimeScale:0.##}x", 1.1f);
@@ -1065,7 +1065,7 @@ namespace TumbangPreso.CameraSystem
             _ownsTimeScale = true;
             _broadcastPaused = false;
             _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
-            Time.timeScale = _selectedTimeScale;
+            PresentationClock.RequestScale(_selectedTimeScale);
             UI.Hud.Instance?.ShowToast(_selectedTimeScale < 1.0f
                 ? $"BROADCAST SLOW-MO  ·  {_selectedTimeScale:0.##}x"
                 : "BROADCAST SPEED  ·  LIVE", 1.1f);

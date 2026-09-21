@@ -73,7 +73,7 @@ namespace TumbangPreso
         /// presentation can never become a gameplay-length freeze.</summary>
         public static void Trigger(float duration, float timeScale)
         {
-            if (_active) return;
+            if (_active || PresentationClock.Held) return;
 
             _active = true;
             _restoreScale = Time.timeScale;
@@ -106,7 +106,7 @@ namespace TumbangPreso
             if (!_active) return;
 
             _active = false;
-            Time.timeScale = _restoreScale <= 0.0f ? 1.0f : _restoreScale;
+            PresentationClock.RequestScale(_restoreScale);
         }
 
         /// <summary>

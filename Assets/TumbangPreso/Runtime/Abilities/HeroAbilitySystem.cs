@@ -10,7 +10,7 @@ namespace TumbangPreso.Abilities
     /// cooldowns, inputs, and ultimate meter.
     /// </summary>
     [RequireComponent(typeof(CharacterMotor))]
-    public sealed class HeroAbilitySystem : MonoBehaviour
+    public sealed partial class HeroAbilitySystem : MonoBehaviour
     {
         public HeroKit Kit { get; private set; }
         public string HeroId { get; private set; } = "dante";
@@ -353,9 +353,10 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
+            if (SharedUltimatePhase.BlocksActions) { ClearPresentationInput(); return; }
             if (Kit == null || _motor == null) return;
 
-            float dt = Time.deltaTime;
+            float dt = PresentationClock.Held ? 0 : Time.deltaTime;
 
             // ⚠️⚠️ PRACTICE IS "THE ROUND CLOCK IS NOT RUNNING", asked of the rules rather than
             // tracked here. `RoundDirector.RoundActive` is the same flag that gates scoring and
@@ -599,12 +600,14 @@ namespace TumbangPreso.Abilities
             _answer[(int)slot] = outcome;
             _answeredAt[(int)slot] = Time.time;
 
-            if (outcome == HeroKit.CastOutcome.Cast) PlayCastConfirm(slot);
+            if (outcome == HeroKit.CastOutcome.Cast)
+            { if (slot != Slot.Ultimate) PlayCastConfirm(slot); }
             else PlayRefusal();
         }
 
         private HeroKit.CastOutcome Cast(Slot slot)
         {
+            if (slot == Slot.Ultimate) return SubmitSharedUltimate();
             // Capture before reactivation returns the pet or moves its owner.
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             bool hasFamiliar=familiar!=null;
@@ -690,7 +693,7 @@ namespace TumbangPreso.Abilities
             return outcome;
         }
 
-        private void PlayCastConfirm(Slot slot, AbilityContext acceptedContext = null)
+        private void PlayCastConfirm(Slot slot, AbilityContext acceptedContext = null, bool afterIntroduction = false)
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
@@ -749,7 +752,7 @@ namespace TumbangPreso.Abilities
 
             if (slot == Slot.Ultimate)
             {
-                PlayUltimatePresentation();
+                PlayUltimatePresentation(afterIntroduction);
             }
 
             // Visual feedback: momentary cast flash
@@ -962,7 +965,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
 
-        private void PlayUltimatePresentation()
+        private void PlayUltimatePresentation(bool afterIntroduction = false)
         {
             // ⚠️ FIRST, AND OUTSIDE EVERY EARLY RETURN BELOW. The camera work in this method
             // returns early when `Camera.main` is null (a headless probe) and when the caster is
@@ -1039,7 +1042,7 @@ namespace TumbangPreso.Abilities
             // A predicted ritual can be refused. Keep the immediate hand/circle
             // preparation, but wait for host acceptance before replacing global
             // weather. A refusal then cannot erase another hero's current sky.
-            _pendingUltimateSky = Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
+            _pendingUltimateSky = !afterIntroduction && Kit?.HeroId == "phaister" && NetAuthority.IsNetworked &&
                 !NetAuthority.IsHost && _motor.PlayerSlot == NetAuthority.LocalSlot;
             if (!_pendingUltimateSky) PlayUltimateSky();
 
@@ -1060,7 +1063,7 @@ namespace TumbangPreso.Abilities
             // this method; when that entry is closed the theme travels with the rest of the
             // presentation rather than needing its own path.
             string theme = ThemeFor(Kit != null ? Kit.HeroId : null);
-            if (!string.IsNullOrEmpty(theme))
+            if (!afterIntroduction && !string.IsNullOrEmpty(theme))
             {
                 GameServices.Audio?.PlayAt(theme, _context.Position);
             }
@@ -1396,6 +1399,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void ClearBuffers()
         {
+            _pendingUltimateRequest = 0;
             _pendingUltimateSky = false;
             _skill1BufferedAt = float.NegativeInfinity;
             _skill2BufferedAt = float.NegativeInfinity;

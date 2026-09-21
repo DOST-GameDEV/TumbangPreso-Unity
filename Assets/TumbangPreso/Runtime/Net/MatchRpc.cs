@@ -308,6 +308,7 @@ namespace TumbangPreso.Net
             // its generation one because this process previously joined another host.
             _worldFieldBatch = null; _lastWorldFieldGeneration = 0; _worldFieldGeneration = 0;
             PresentationMatchId = 0; _pendingMoments.Clear();
+            _lastUltimateRequest.Clear(); _ultimateRequestSequence = 0;
 
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
@@ -376,6 +377,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
             cm.RegisterNamedMessageHandler("MatchMoment", OnMatchMomentMsg);
+            cm.RegisterNamedMessageHandler("ReqUltimate", OnReqUltimateMsg);
+            cm.RegisterNamedMessageHandler("UltDenied", OnUltimateDeniedMsg);
+            cm.RegisterNamedMessageHandler("UltimatePhase", OnUltimatePhaseMsg);
             cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
             cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
             cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
@@ -486,6 +490,7 @@ namespace TumbangPreso.Net
         private bool AcceptMove(int slot, CharacterMotor unit, Vector3 position,
                                 float yaw, Vector3 velocity)
         {
+            if (PresentationClock.Held) return false;
             if (unit == null || !Finite(position) || !Finite(yaw) || !Finite(velocity)) return false;
 
             if (Mathf.Abs(position.x) > AIController.PlayableHalfX + 1.0f ||
@@ -1456,7 +1461,7 @@ namespace TumbangPreso.Net
             // `Time.timeScale` in this project and it restores to 1 when it expires — which would
             // quietly un-pause a paused match a fraction of a second later.
             Hitstop.End();
-            Time.timeScale = safe;
+            PresentationClock.RequestScale(safe);
             TimeScaleChanged?.Invoke(safe);
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
@@ -1483,8 +1488,8 @@ namespace TumbangPreso.Net
             if (!Finite(scale)) return;
 
             Hitstop.End();
-            Time.timeScale = Mathf.Clamp(scale, 0.0f, 1.0f);
-            TimeScaleChanged?.Invoke(Time.timeScale);
+            PresentationClock.RequestScale(Mathf.Clamp(scale, 0.0f, 1.0f));
+            TimeScaleChanged?.Invoke(PresentationClock.RequestedScale);
         }
 
         /// <summary>
@@ -2998,6 +3003,9 @@ namespace TumbangPreso.Net
                                                 Vector3 aimPoint, float heldSeconds,
                                                 bool hasFamiliar=false, Vector3 familiarPosition=default)
         {
+            if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
+            { RequestSharedUltimate(claimedSlot, position, forward, aimPoint, heldSeconds); return; }
+
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
@@ -3042,6 +3050,8 @@ namespace TumbangPreso.Net
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
+            if (abilitySlot == (int)Abilities.HeroAbilitySystem.Slot.Ultimate)
+            { HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot); return; }
 
             // ⚠️⚠️ FROM HERE DOWN EVERY REFUSAL ANSWERS THE SENDER. Above this line the message is
             // malformed or is claiming a seat it does not hold, and the host cannot know what the
@@ -5280,6 +5290,9 @@ namespace TumbangPreso.Net
             SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, timeLeft, scores,
                                        match.MatchInProgress, roundActive);
             BroadcastMatchState();
+            if (SharedUltimatePhase.Instance != null && SharedUltimatePhase.Instance.Active)
+                BroadcastUltimatePhase(SharedUltimatePhase.Instance);
+
 
             if (round?.Lata != null)
             {

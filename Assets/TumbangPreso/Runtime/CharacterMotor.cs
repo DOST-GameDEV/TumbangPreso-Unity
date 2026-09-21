@@ -780,6 +780,7 @@ namespace TumbangPreso
 
         private void FixedUpdate()
         {
+            if (PresentationClock.Held) return;
             float dt = Time.fixedDeltaTime;
 
             ResolveRig();
@@ -1429,7 +1430,7 @@ namespace TumbangPreso
         // the HUD and the rule that acts must never be able to disagree.
         // -------------------------------------------------------------------
 
-        public bool CanAct() => RoundActive && !IsStunned;
+        public bool CanAct() => RoundActive && !IsStunned && !SharedUltimatePhase.BlocksActions;
 
         // -------------------------------------------------------------------
         // § COMMITMENT

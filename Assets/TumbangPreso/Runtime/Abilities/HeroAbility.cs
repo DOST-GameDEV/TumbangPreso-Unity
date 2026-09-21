@@ -189,7 +189,24 @@ namespace TumbangPreso.Abilities
         /// ONE. A charge ability's cooldown is 0 forever, so before this every charge ability
         /// read as permanently ready and could be cast past empty.
         /// </summary>
-        public bool IsReady => UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f;
+        private bool _reservedForIntroduction;
+        public bool ReservedForIntroduction => _reservedForIntroduction;
+        public bool IsReady => !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
+        internal void ReserveForIntroduction()
+        {
+            if (_reservedForIntroduction) return;
+            _reservedForIntroduction = true;
+            if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
+            else CooldownRemaining = Cooldown;
+        }
+        internal void BeginReservedActivation(AbilityContext context)
+        {
+            if (!_reservedForIntroduction) return;
+            // Invoke the real override only now. Phaister's override creates the
+            // ritual, so reserving through Activate would start her warning early.
+            Activate(context);
+        }
+        internal void CancelIntroductionReservation() => _reservedForIntroduction = false;
 
         public float CooldownRatio => Cooldown > 0.0f ? Mathf.Clamp01(CooldownRemaining / Cooldown) : 0.0f;
         public float DurationRatio => Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
@@ -698,8 +715,12 @@ namespace TumbangPreso.Abilities
             // as well would put it behind two gates, and the deck would then draw it as Cooling
             // while it still had charges in hand: `Cooldown` is 0 on every charge ability, so
             // this is written as a branch rather than relying on that to stay true.
-            if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
-            else CooldownRemaining = Cooldown;
+            if (!_reservedForIntroduction)
+            {
+                if (UsesCharges) ChargesRemaining = Mathf.Max(0, ChargesRemaining - 1);
+                else CooldownRemaining = Cooldown;
+            }
+            _reservedForIntroduction = false;
 
             // ⚠️ THE RESOURCE IS SPENT AT THE PRESS, BEFORE THE WIND-UP, and that is deliberate:
             // the cast is committed the moment it starts, which is what lets the wind-up be
@@ -856,6 +877,7 @@ namespace TumbangPreso.Abilities
 
         public virtual void Reset()
         {
+            _reservedForIntroduction = false;
             // ⚠️ THE ROOT COMES OFF FIRST. A round can end mid-wind-up, and `Reset` zeroing the
             // timer behind the wind-up's back would strand the speed zone with nothing left to
             // release it. See `ReleaseRoot`.
