@@ -24,11 +24,18 @@ namespace TumbangPreso.Diagnostics
             if (Find("GuestAccount") != null) yield return Click("GuestAccount");
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
             SettingsStore.Current.Fullscreen = false;
-            Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
+            bool lowComfort=Environment.GetCommandLineArgs().Contains("-tp-review-low-comfort");
+            if(lowComfort)
+            {
+                var settings=SettingsStore.Current;settings.GraphicsQuality=0;settings.ReducedUiMotion=true;
+                settings.CinematicCameraMotion=false;settings.CameraShake=0;settings.FlashIntensity=0;settings.AnnouncerVolume=0;settings.Apply();
+            }
+            Screen.SetResolution(lowComfort?1920:1280,lowComfort?1080:720,FullScreenMode.Windowed);
             foreach (var mode in new[] { GameMode.Classic, GameMode.HeroStrike })
             foreach (bool spectatorView in new[] { false, true })
             {
                 string label = mode + (spectatorView ? "-spectator" : "-owner") + "-busy-native";
+                if(lowComfort)label+="-low-comfort";
                 Stage(label);
                 SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode)); SceneFlow.SelectedMap = SceneFlow.BayanPlaza;
                 yield return Click("StartButton"); yield return Click(mode == GameMode.Classic ? "ClassicButton" : "HeroStrikeButton");
