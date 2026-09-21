@@ -28,20 +28,20 @@ advance while the narrow C4 dependency remains reserved. Full pass is unfinished
 ## Workspace and source identity
 
 Development: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-branch ASTRAReworks. Latest implementation source5573b5b0. Last verified remote cc01b97f;
+branch ASTRAReworks. Latest implementation source51931eff. Last verified remote cc01b97f;
 research merge and tested host counters are published. Nemu framing is committed
 and passed its focused Editor probe; native recheck remains pending.
 Validation: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation,
-detached5573b5b0, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
+detached51931eff, Unity6000.5.8f1/Test Framework1.7.0, isolated Library/Temp/obj.
 All Editor launches use run_unity_guarded.py and presentation-validation-20260921.
 
 Initial24modified+2untracked files are byte-preserved under development
 Logs/presentation-pass-2026-09-21/intake-files and intake.json. Unrelated UI/probes,
 Sean diagnostics, Inday assets and PNG importer edits remain outside our commits.
 Shared dirty files used selected owned hunks; never stage them wholesale or restore
-those user changes. Current owned work: native BusyExchange review partial and selected flag additions
-to existing dirty diagnostic/runner, plus report/ledger. Flight/can and cancellation
-source is committed. Original unrelated dirty hunks remain excluded.
+those user changes. Current owned work: score-row feedback committed54fae7fd plus metadata repair51931eff,4/4 passed.
+Flight/can/cancellation and native capture route committed61463750.
+Original unrelated dirty hunks remain excluded; selected shared-file hooks only.
 Validation importer rewrites are predominantly whitespace. Tests can also rewrite
 QualitySettings from the chosen profile: preserve diffs, restore only proven test
 changes after owned jobs stop, and capture the exact input manifest before building.
@@ -140,8 +140,16 @@ Current focused results: busy v1 both modes PASS; its2trail cleanup failures fix
 in v2 (4/4 pass14.69s, guardb73a373d1670). Cancellation rendered snap discovered
 during inspection despite timer pass; late-pose fix5573b5b0 passed actual-bone
 check1/1 in6.20s, guard8ae63afd360d. No Editor job running at this checkpoint.
-Next: one internal Windows build, native controls/catch, all6private scenes, and
-new20s owner/live-spectator captures with HUD/audio for each mode.
+Native Windows v10/61463750 succeeded1156MB/69s, guard5aa6d58f1581.
+Busy native v10 PASS both modes, owner/live spectator,20s each with actual game
+audio and four moving participants; Logs/exchange-busy-native-v10. Selected720p
+owner/spectator frames inspected; input/profile preserved. Player20784/tool60136
+retired. Motion is automated, not human freeform or listening acceptance.
+Score feedback v1 failed compilation due to new33character GUID; fixed51931eff.
+V2 4/4 PASS12.75s, guard7bd2f0397aa7, Logs/score-feedback-v2; handle49484 retired.
+No owned runtime job. Publish then build v11 for native score/control/catch,
+six-scene Nemu framing and final busy review. Keep new milestones/shared phase
+reserved dependencies explicit; these increments do not close P1-P5.
 Sources/observed timestamps are in
 reports/presentation-pass-2026-09-21/reference-research.md. Browser video tab2 was
 closed. Owned hidden error tab1 cannot be selected/closed because the browser's

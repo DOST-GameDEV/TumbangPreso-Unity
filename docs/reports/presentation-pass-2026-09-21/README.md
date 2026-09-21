@@ -237,3 +237,27 @@ Next native route captures real HUD, live spectator direction and game-only audi
 with four real bot input writers in both modes. Existing native controls/catch and
 six private introductions will be checked on the same internal artifact. No
 Desktop replacement or live ultimate-phase completion is implied.
+
+
+## Native busy exchange and score attribution
+
+Windows v10/61463750 succeeded1156MB in69s, guard5aa6d58f1581. Four native
+20-second captures passed: Classic owner555frames/spectator543frames, Hero owner
+550/spectator556. Actual game output48kHz stereo spans20.011-20.032s, peaks
+.237-.293. Every participant travelled16.36-45.55m in its capture. Real UI entry,
+all four AI input writers and the shipped spectator director were used; no
+synthetic hits. Selected owner/spectator contact frames were inspected at720p.
+Logs/exchange-busy-native-v10 contains the events, frame clocks and audio. Player
+20784/handle60136 exited and shared input was unchanged. No audio listening,
+human freeform, network spectator or performance certification claim.
+
+Score-row feedback54fae7fd gives accepted can/tag points a .62s seat-coloured
+edge tick and small digit motion, mapped by player through ranking changes.
+Passive points/penalties stay quiet. It uses the already existing score event;
+no new network payload, bonus or milestone eligibility rule. Native source
+51931eff includes a metadata repair: score-feedback-v1 failed compilation because
+the new script GUID was33characters; fixed to a unique32character GUID, with all
+new metadata checked. V2 passed4/4 in12.75s, guard7bd2f0397aa7, including existing
+Classic/Hero exchange tests and ranking/comfort/hidden/round cleanup.
+Native review of this newest score accent and recheck of the corrected Nemu shot
+remain next. V10 is the current native gameplay candidate, not the final delivery.
