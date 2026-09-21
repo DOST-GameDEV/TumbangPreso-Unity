@@ -26,7 +26,8 @@ class PresentationLink:
         self.log = (self.out / "link.log").open("w")
         command = [sys.executable, str(self.root / "tools/net_link.py"), "--listen", str(port),
                    "--to", f"127.0.0.1:{host_port}", "--delay", str(a.delay), "--jitter", str(a.jitter),
-                   "--loss", str(a.loss), "--seed", str(a.seed), "--seconds", "115"]
+                   "--loss", str(a.loss), "--seed", str(a.seed), "--seconds", "115",
+                   "--stop-file", str(self.out / "stop-link")]
         self.process = subprocess.Popen(command, cwd=self.root, startupinfo=startup,
                                         stdout=self.log, stderr=subprocess.STDOUT)
         (self.out / "link-job.json").write_text(json.dumps({"pid": self.process.pid, "command": command,
@@ -35,8 +36,12 @@ class PresentationLink:
 
     def close(self):
         if self.process is not None and self.process.poll() is None:
-            self.process.terminate()
-            self.process.wait(timeout=10)
+            (self.out / "stop-link").write_text("completed")
+            try:
+                self.process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                self.process.terminate()
+                self.process.wait(timeout=10)
         if self.log is not None:
             self.log.close()
 
