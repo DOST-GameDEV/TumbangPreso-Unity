@@ -54,7 +54,6 @@ namespace TumbangPreso.UI
 
         private void Awake() => BuildNative();
         private void HideMarker(){if(_canArrow!=null)_canArrow.gameObject.SetActive(false);}
-        private void OnDisable()=>HideMarker();
         private void LateUpdate()
         {
             // The canvas has an independent lifetime. A finished match can stop
@@ -88,7 +87,7 @@ namespace TumbangPreso.UI
             textEdge.effectColor = OwnerUiTheme.Current.DeepInk; textEdge.effectDistance = new Vector2(1.5f, -1.5f);
             rect.gameObject.SetActive(false); return rect;
         }
-        private void OnDisable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
+        private void OnDisable() { HideMarker();if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
         private void OnEnable() { if (_canvasRect != null) _canvasRect.gameObject.SetActive(true); }
 
         private void Build()

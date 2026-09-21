@@ -13,7 +13,8 @@ namespace TumbangPreso.UI
         public Canvas Canvas { get; private set; }
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
-        private Text _crosshair, _hit;
+        private Text _crosshair, _hit, _staminaCaption;
+        private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
         private Image _stamina, _progress;
@@ -246,6 +247,25 @@ namespace TumbangPreso.UI
             _role.text = local.IsDefender ? "Defender" : "Attacker";
             _role.color = local.IsDefender ? OwnerUiTheme.Current.Lime : OwnerUiTheme.Current.Pale;
             _stock.text = local.HoldingSlipper ? "Slipper in hand" : local.IsDefender ? "Guard the can" : "Slipper away";
+            bool piloting=PilotingFamiliar(local);
+            if(piloting)
+            {
+                _role.text="Controlling Kuro";_role.color=CourtPresentationPalette.Paper;
+                bool danger=local.IsTaggable()&&GameServices.Round?.Lata!=null&&GameServices.Round.Lata.IsUpright;
+                _stock.text=local.IsStunned?"Nemu's body is recovering":danger?"Nemu's body can be tagged":
+                    local.IsDefender?"Nemu's body is the defender":local.HoldingSlipper?"Nemu's body has the slipper":"Nemu's body is unarmed";
+            }
+            if(_staminaCaption==null)
+            {
+                var caption=_personalRoot.Find("StaminaLabel");
+                if(caption!=null){_staminaCaption=caption.GetComponent<Text>();_staminaCaptionWidth=_staminaCaption.rectTransform.sizeDelta.x;}
+            }
+            string staminaName=piloting?"Nemu stamina":"Stamina";
+            if(_staminaCaption!=null&&_staminaCaption.text!=staminaName)
+            {
+                _staminaCaption.text=staminaName;var size=_staminaCaption.rectTransform.sizeDelta;
+                size.x=piloting?Mathf.Max(_staminaCaptionWidth,190):_staminaCaptionWidth;_staminaCaption.rectTransform.sizeDelta=size;
+            }
             var stock = GameServices.Tsinelas;
             if (stock != null && stock.Live && !local.IsDefender) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
             _stamina.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(local.Stamina.Ratio), 1);
@@ -289,6 +309,13 @@ namespace TumbangPreso.UI
                 _prompt.text = Hud.PressCue("ReadyUp") + (round.RoundActive ? "Ready" : "Ready to play");
                 _context.text = SceneFlow.SelectedMode == GameMode.HeroStrike ? "Warm up freely. Powers start with the round." : "Warm up freely. Scores are paused."; return;
             }
+            if(PilotingFamiliar(local))
+            {
+                _prompt.text=Hud.PressCue("Skill2")+"Bring Nemu to Kuro";
+                _context.text="Move to scout. Recall uses Kuro's last safe landing spot.";
+                if(Hud.OnTouch)TouchHud.Emphasise(Verb.Skill2);
+                return;
+            }
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
                 _prompt.text = carrier != null && carrier.ChannelRatio > 0 ? "Resetting can" : "Hold " + Hud.KeyLabelFor("Grab") + " at the can to reset";
@@ -328,6 +355,11 @@ namespace TumbangPreso.UI
             }
             if (local.IsDefender && round.IsTayaCampWarningActive)
                 _context.text = "Leave the can ring";
+        }
+        private static bool PilotingFamiliar(CharacterMotor local)
+        {
+            var visual=local!=null?local.GetComponent<Visual.CharacterVisual>():null;
+            return visual!=null&&visual.Companion!=null&&visual.Companion.IsPossessed;
         }
         private void Progress(float ratio)
         { _progress.transform.parent.gameObject.SetActive(true); _progress.enabled = ratio > .001f; _progress.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(ratio), 1); }
