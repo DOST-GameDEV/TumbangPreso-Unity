@@ -15,7 +15,7 @@ namespace TumbangPreso.Visual
         public float Remaining => Mathf.Max(0, _duration - _age);
         public int Side => _side;
 
-        public static DanteFissurePillar Create(Vector3 position, Vector3 forward, int side, float duration)
+        public static DanteFissurePillar Create(Vector3 position, Vector3 forward, int side, float duration, bool renderOnly = false)
         {
             var root = new GameObject("EarthPillar");
             root.transform.SetPositionAndRotation(VfxShapes.GroundPoint(position), Quaternion.LookRotation(forward));
@@ -26,12 +26,12 @@ namespace TumbangPreso.Visual
             MaterialKit.Dress(stone.GetComponent<Renderer>(), new Color(.15f, .18f, .20f));
             ToonSkin.Apply(stone.GetComponent<Renderer>(), .016f);
             VfxRenderTag.Attach(stone);
-            var collider = stone.AddComponent<MeshCollider>(); collider.sharedMesh = rock; collider.convex = true;
+            if(!renderOnly){var collider = stone.AddComponent<MeshCollider>(); collider.sharedMesh = rock; collider.convex = true;}
             var crack = VfxShapes.Stand(stone.transform, "ExposedMoltenFault", seam, 1);
             VfxMaterial.Ghost(crack.GetComponent<Renderer>(), new Color(1, .37f, .045f, .95f), .55f);
             effect._stone = stone.transform; effect._seam = crack.GetComponent<Renderer>().sharedMaterial;
-            root.AddComponent<HeroHazards.EarthPillarComponent>().Duration = duration;
-            HazardVolume.Attach(root, 1.4f, -1);
+            if(!renderOnly){root.AddComponent<HeroHazards.EarthPillarComponent>().Duration = duration;
+            HazardVolume.Attach(root, 1.4f, -1); }
             effect.StepTo(0);
             return effect;
         }

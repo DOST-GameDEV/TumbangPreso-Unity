@@ -14,6 +14,7 @@ namespace TumbangPreso.Net
         public struct Field
         {
             public Kind Type;
+            [System.NonSerialized] public GameObject Source;
             public Vector3 Position, Forward;
             public float Duration, Remaining, Radius, FirstScale, SecondScale;
             public int Owner;
@@ -51,7 +52,7 @@ namespace TumbangPreso.Net
             foreach (var sheet in Object.FindObjectsByType<HeroHazards.IceSheetComponent>(FindObjectsSortMode.None))
             {
                 if (sheet.Remaining <= .02f) continue;
-                fields.Add(new Field { Type = Kind.Sheet, Position = sheet.transform.position,
+                fields.Add(new Field { Type = Kind.Sheet, Source = sheet.gameObject, Position = sheet.transform.position,
                     Forward = Vector3.forward, Duration = sheet.Duration, Remaining = sheet.Remaining,
                     Radius = sheet.Radius, Owner = sheet.OwnerSlot,
                     FirstScale = sheet.ChillMultiplier, SecondScale = sheet.SlipScale });
@@ -59,28 +60,28 @@ namespace TumbangPreso.Net
             foreach (var wall in Object.FindObjectsByType<HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
             {
                 if (wall.Remaining <= .02f) continue;
-                fields.Add(new Field { Type = Kind.Barricade, Position = wall.transform.position,
+                fields.Add(new Field { Type = Kind.Barricade, Source = wall.gameObject, Position = wall.transform.position,
                     Forward = wall.transform.forward, Duration = wall.Duration, Remaining = wall.Remaining,
                     Owner = -1, FirstScale = wall.SpanScale, SecondScale = wall.ThicknessScale, Split = wall.Split });
             }
             foreach (var trail in Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None))
-                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Fire,
+                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Fire, Source = trail.gameObject,
                     Position = trail.transform.position, Forward = trail.Forward, Radius = trail.Radius,
                     Duration = trail.Duration, Remaining = trail.Remaining, Owner = trail.OwnerSlot });
             foreach (var trail in Object.FindObjectsByType<HeroHazards.ShockTrailComponent>(FindObjectsSortMode.None))
-                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Shock,
+                if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Shock, Source = trail.gameObject,
                     Position = trail.transform.position, Forward = trail.Forward, Radius = trail.Radius,
                     Duration = trail.Duration, Remaining = trail.Remaining, Owner = trail.OwnerSlot, FirstScale = trail.EffectScale });
             foreach (var crater in Object.FindObjectsByType<HeroHazards.SupernovaCraterComponent>(FindObjectsSortMode.None))
-                if (crater.Remaining > .02f) fields.Add(new Field { Type = Kind.Crater,
+                if (crater.Remaining > .02f) fields.Add(new Field { Type = Kind.Crater, Source = crater.gameObject,
                     Position = crater.transform.position, Radius = crater.Radius,
                     Duration = crater.Duration, Remaining = crater.Remaining, Owner = crater.OwnerSlot });
             foreach (var hex in Object.FindObjectsByType<HeroHazards.HexSigilComponent>(FindObjectsSortMode.None))
-                if (hex.Remaining > .02f) fields.Add(new Field { Type = Kind.Hex,
+                if (hex.Remaining > .02f) fields.Add(new Field { Type = Kind.Hex, Source = hex.gameObject,
                     Position = hex.transform.position, Radius = hex.Radius,
                     Duration = hex.Duration, Remaining = hex.Remaining, Owner = hex.OwnerSlot, FirstScale = hex.EffectScale });
             foreach (var pillar in Object.FindObjectsByType<DanteFissurePillar>(FindObjectsSortMode.None))
-                if (pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure,
+                if (pillar.isActiveAndEnabled && pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure, Source = pillar.gameObject,
                     Position = pillar.transform.position, Forward = pillar.transform.forward,
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
             return fields;

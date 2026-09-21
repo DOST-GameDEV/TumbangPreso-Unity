@@ -21,6 +21,8 @@ namespace TumbangPreso.CameraSystem
         private Canvas _canvas;
         private Camera _camera;
         private RenderTexture _target;
+        private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
+        private readonly HashSet<int> _visibleFields=new HashSet<int>();
         private int _sound;
         private float _lastTime;
         public bool Ready {get;private set;}
@@ -107,13 +109,27 @@ namespace TumbangPreso.CameraSystem
                 {Vector3 p=_camera.WorldToViewportPoint(cue.Position);GameServices.Audio?.PlayReplayCue(cue.Id,cue.Pitch,cue.Gain,Mathf.Clamp(p.x*2-1,-1,1));}
             }
             _lastTime=time;_hidden.Clear();_previous.Clear();
+            RecordedFieldFrame frame=null;
+            foreach(var snapshot in _clip.FieldFrames){if(snapshot.Time>time)break;frame=snapshot;}
+            _visibleFields.Clear();
+            if(frame!=null)foreach(var field in frame.Fields)
+            {
+                if(field.State.Remaining<=time-frame.Time)continue;
+                _visibleFields.Add(field.Id);
+                if(_fields.TryGetValue(field.Id,out var existing)&&!existing.Matches(field.State)){existing.Dispose();_fields.Remove(field.Id);}
+                if(!_fields.TryGetValue(field.Id,out var view))_fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State);
+                view.Sample(field.State,time-frame.Time);
+            }
+            foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
+            foreach(var field in Net.WorldEffectSnapshot.Capture())if(field.Source!=null)Hide(field.Source);
+            foreach(var field in _fields.Values)field.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
             if(GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
             try{_camera.Render();}
-            finally{foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {foreach(var r in root.GetComponentsInChildren<Renderer>(true)){if(_hidden.Contains(r))continue;_hidden.Add(r);_previous.Add(r.forceRenderingOff);r.forceRenderingOff=true;}}
@@ -124,7 +140,7 @@ namespace TumbangPreso.CameraSystem
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
-            _items.Clear();
+            _items.Clear();foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
         }
     }
 }

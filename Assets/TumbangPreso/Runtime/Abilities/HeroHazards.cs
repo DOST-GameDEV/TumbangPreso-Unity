@@ -2135,7 +2135,7 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
                                                float duration = 6.0f, int ownerSlot = -1,
-                                               float effectScale = 1.0f, bool silent = false)
+                                               float effectScale = 1.0f, bool silent = false, bool renderOnly = false)
         {
             position = VfxShapes.GroundPoint(position);
             var go = new GameObject("HexWardZone");
@@ -2190,8 +2190,9 @@ namespace TumbangPreso.Abilities
 
 
 
-            if (!silent) GameServices.Audio?.PlayAt("sfx_hex_cast", position);
+            if (!silent && !renderOnly) GameServices.Audio?.PlayAt("sfx_hex_cast", position);
 
+            if(!renderOnly) {
             var comp = go.AddComponent<HexSigilComponent>();
             comp.Radius = radius;
             comp.Duration = duration;
@@ -2199,6 +2200,7 @@ namespace TumbangPreso.Abilities
             comp.EffectScale = effectScale;
 
             HazardVolume.Attach(go, radius, ownerSlot);
+            }
             return go;
         }
 

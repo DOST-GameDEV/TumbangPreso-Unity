@@ -22,7 +22,7 @@ namespace TumbangPreso.CameraSystem
             public MatchPoseHistory.Track Track;
         }
         private struct Pending
-        {public float Contact,Start,End;public int Actor,Subject,Importance;public string Reason;public Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample> ContactPoses;}
+        {public float Contact,Start,End;public int Actor,Subject,Importance;public string Reason;public Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample> ContactPoses;public RecordedFieldFrame ContactFields;}
         public sealed class Retained
         {
             public readonly RecordedMatchClip Clip;
@@ -35,6 +35,9 @@ namespace TumbangPreso.CameraSystem
         private readonly List<Retained> _clips=new List<Retained>(Capacity);
         private readonly List<Pending> _pending=new List<Pending>(Capacity);
         private readonly List<RecordedWorldCue> _sounds=new List<RecordedWorldCue>(256);
+        private readonly Dictionary<GameObject,int> _fieldIds=new Dictionary<GameObject,int>();
+        private readonly List<RecordedFieldFrame> _fields=new List<RecordedFieldFrame>(MatchPoseHistory.Samples);
+        private int _fieldSequence;
         private long _match,_sequence;
         private int _round;
         private float _unsafeAt=-100;
@@ -54,7 +57,7 @@ namespace TumbangPreso.CameraSystem
             var match=GameServices.Match;
             long identity=match!=null&&(match.MatchInProgress||match.RoundNumber>0)?match.PresentationMatchId:0;int round=match!=null?match.RoundNumber:0;
             if(identity!=_match){_match=identity;_sequence=0;_clips.Clear();_pending.Clear();_sounds.Clear();}
-            if(round!=_round){_round=round;_props.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;}
+            if(round!=_round){_round=round;_props.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;_fieldIds.Clear();_fields.Clear();_fieldSequence=0;}
         }
         private void RecordSound(string id,Vector3 position,float pitch,float gain)
         {
@@ -69,9 +72,13 @@ namespace TumbangPreso.CameraSystem
             if(!NetAuthority.ShouldResolve()||_history==null||_match<=0||GameServices.Round==null)return;
             if(_props.Count==0)BindProps();
             foreach(var prop in _props)if(prop.Source!=null)prop.Track.Record(time);
-            // Do not label a body/prop-only recording as a complete ability clip.
-            // The visual-field track joins this same contract next.
-            if(UI.SceneFlow.SelectedMode==GameMode.HeroStrike)_unsafeAt=time;
+            _fields.Add(CaptureFields(time));if(_fields.Count>MatchPoseHistory.Samples)_fields.RemoveAt(0);
+            // Unsupported active performances need their own recorded visual state.
+            // Ordinary Hero exchanges and the seven recorded field families are eligible.
+            foreach(var actor in GameServices.Round.Players)
+            {
+                if(actor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp==true||actor?.AbilitySystem?.Kit?.Ultimate?.IsActive==true)_unsafeAt=time;
+            }
             for(int i=0;i<_pending.Count;)
             {
                 var pending=_pending[i];if(time<pending.End){i++;continue;}
@@ -79,6 +86,19 @@ namespace TumbangPreso.CameraSystem
             }
         }
         public static GameObject PropModel(GameObject root)=>root.transform.Find("Visual")?.gameObject??root;
+        private RecordedFieldFrame CaptureFields(float time)
+        {
+            var captured=Net.WorldEffectSnapshot.Capture();
+            if(captured.Count>Net.WorldEffectSnapshot.MaxFields){_unsafeAt=time;return new RecordedFieldFrame{Time=time,Fields=Array.Empty<RecordedField>()};}
+            var fields=new RecordedField[captured.Count];
+            for(int i=0;i<fields.Length;i++)
+            {
+                var state=captured[i];
+                if(!_fieldIds.TryGetValue(state.Source,out int id))_fieldIds[state.Source]=id=++_fieldSequence;
+                state.Source=null;fields[i]=new RecordedField{Id=id,State=state};
+            }
+            return new RecordedFieldFrame{Time=time,Fields=fields};
+        }
         private void BindProps()
         {
             var round=GameServices.Round;
@@ -109,7 +129,7 @@ namespace TumbangPreso.CameraSystem
             var contactPoses=new Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample>();
             for(int seat=0;seat<4;seat++){var track=_history?.ForSeat(seat);if(track!=null)contactPoses[track]=track.Capture(now);}
             foreach(var prop in _props)contactPoses[prop.Track]=prop.Track.Capture(now);
-            _pending.Add(new Pending{ContactPoses=contactPoses,Contact=now,Start=now-2,End=now+1.4f,Actor=actor,Subject=subject,
+            _pending.Add(new Pending{ContactPoses=contactPoses,ContactFields=CaptureFields(now),Contact=now,Start=now-2,End=now+1.4f,Actor=actor,Subject=subject,
                 Importance=kind==MatchFlair.Kind.Tag?2:1,Reason=kind==MatchFlair.Kind.Tag?"CATCH":"CAN KNOCKDOWN"});
         }
         private void Retain(Pending pending)
@@ -132,9 +152,13 @@ namespace TumbangPreso.CameraSystem
                 if(pose==null){LastSkip=$"Incomplete {prop.Kind} P{prop.Seat+1}: source={prop.Source!=null}, ready={prop.Track.Ready}, recorded={prop.Track.Oldest:F3}..{prop.Track.Newest:F3}, needed={pending.Start:F3}..{pending.End:F3}";return;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,Pose=pose});
             }
+            int from=_fields.FindLastIndex(f=>f.Time<=pending.Start),to=_fields.FindIndex(f=>f.Time>=pending.End);
+            if(from<0||to<from){LastSkip="Incomplete field history";return;}
+            var frames=_fields.GetRange(from,to-from+1);frames.RemoveAll(f=>Mathf.Abs(f.Time-pending.Contact)<.00001f);
+            frames.Add(pending.ContactFields);frames.Sort((a,b)=>a.Time.CompareTo(b.Time));
             var clip=new RecordedMatchClip{MatchId=_match,Id=++_sequence,Round=_round,Actor=pending.Actor,Subject=pending.Subject,
                 Mode=UI.SceneFlow.SelectedMode,Map=SceneManager.GetActiveScene().name,Reason=pending.Reason,
-                Start=pending.Start,End=pending.End,Contact=pending.Contact,Objects=objects.ToArray(),
+                Start=pending.Start,End=pending.End,Contact=pending.Contact,Objects=objects.ToArray(),FieldFrames=frames.ToArray(),
                 Sounds=_sounds.Where(c=>c.Time>=pending.Start&&c.Time<=pending.End).ToArray()};
             try
             {

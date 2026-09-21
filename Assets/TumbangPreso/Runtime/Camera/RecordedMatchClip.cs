@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
 using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
@@ -28,6 +29,7 @@ namespace TumbangPreso.CameraSystem
         public string Map,Reason;
         public float Start,End,Contact;
         public RecordedObjectTrack[] Objects;
+        public RecordedFieldFrame[] FieldFrames=Array.Empty<RecordedFieldFrame>();
         public RecordedWorldCue[] Sounds=Array.Empty<RecordedWorldCue>();
         public float Duration=>End-Start;
         public byte[] Encode()
@@ -53,9 +55,20 @@ namespace TumbangPreso.CameraSystem
                     }
                     if(raw.Length>RawByteLimit)throw new InvalidDataException("Recorded clip exceeds its raw budget");
                 }
+                writer.Write(FieldFrames.Length);
+                foreach(var frame in FieldFrames)
+                {
+                    writer.Write(frame.Time);writer.Write(frame.Fields.Length);
+                    foreach(var item in frame.Fields)
+                    {
+                        var f=item.State;writer.Write(item.Id);writer.Write((byte)f.Type);Write(writer,f.Position);Write(writer,f.Forward);
+                        writer.Write(f.Duration);writer.Write(f.Remaining);writer.Write(f.Radius);writer.Write(f.FirstScale);writer.Write(f.SecondScale);writer.Write(f.Owner);writer.Write(f.Split);
+                    }
+                }
                 writer.Write(Sounds.Length);
                 foreach(var cue in Sounds){writer.Write(cue.Time);WriteText(writer,cue.Id,64);Write(writer,cue.Position);writer.Write(cue.Pitch);writer.Write(cue.Gain);}
             }
+            if(raw.Length>RawByteLimit)throw new InvalidDataException("Recorded clip exceeds its raw budget");
             using var packed=new MemoryStream();
             using(var deflate=new DeflateStream(packed,System.IO.Compression.CompressionLevel.Fastest,true))
             {raw.Position=0;raw.CopyTo(deflate);}
@@ -110,6 +123,23 @@ namespace TumbangPreso.CameraSystem
                     if(samples[0].Time>result.Start+.001f||samples[frames-1].Time<result.End-.001f)throw new InvalidDataException("Incomplete object window");
                     item.Pose=new RecordedPoseTrack(paths,samples);result.Objects[i]=item;
                 }
+                int fieldFrameCount=Count(reader,0,MatchPoseHistory.Samples),totalFields=0;float fieldTime=float.NegativeInfinity;
+                result.FieldFrames=new RecordedFieldFrame[fieldFrameCount];
+                for(int n=0;n<fieldFrameCount;n++)
+                {
+                    float time=reader.ReadSingle();int fields=Count(reader,0,WorldEffectSnapshot.MaxFields);totalFields+=fields;
+                    if(!Finite(time)||time<=fieldTime||time<result.Start-.3f||time>result.End+.3f||totalFields>32768)throw new InvalidDataException("Invalid field window");
+                    fieldTime=time;var frame=new RecordedFieldFrame{Time=time,Fields=new RecordedField[fields]};var ids=new System.Collections.Generic.HashSet<int>();
+                    for(int i=0;i<fields;i++)
+                    {
+                        int id=reader.ReadInt32();var f=new WorldEffectSnapshot.Field{Type=(WorldEffectSnapshot.Kind)reader.ReadByte(),Position=ReadVector(reader,10000),Forward=ReadVector(reader,2),
+                            Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
+                        if(id<=0||id>100000||!ids.Add(id)||!WorldEffectSnapshot.Valid(f))throw new InvalidDataException("Invalid recorded field");
+                        frame.Fields[i]=new RecordedField{Id=id,State=f};
+                    }
+                    result.FieldFrames[n]=frame;
+                }
+                if(fieldFrameCount>0&&(result.FieldFrames[0].Time>result.Start+.001f||result.FieldFrames[fieldFrameCount-1].Time<result.End-.001f))throw new InvalidDataException("Incomplete field coverage");
                 int soundCount=Count(reader,0,256);result.Sounds=new RecordedWorldCue[soundCount];
                 float soundTime=float.NegativeInfinity;
                 for(int i=0;i<soundCount;i++)

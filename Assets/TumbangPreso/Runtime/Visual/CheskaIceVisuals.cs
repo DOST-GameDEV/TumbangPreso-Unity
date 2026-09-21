@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
             return go;
         }
 
-        public static void BuildWall(Transform parent, float span, float thickness, bool split = false)
+        public static void BuildWall(Transform parent, float span, float thickness, bool split = false, bool renderOnly = false)
         {
             string[] meshes = { "wall_left", "wall_center", "wall_right" };
             for (int i=0;i<3;i++)
@@ -41,9 +41,9 @@ namespace TumbangPreso.Visual
                 var position=slab.transform.position; position.y=lowest; slab.transform.position=position;
                 // The same fractured surface blocks slippers and bodies. Decorative
                 // toppers previously extended outside the three box colliders.
-                var collider=slab.AddComponent<MeshCollider>();
+                if(!renderOnly) { var collider=slab.AddComponent<MeshCollider>();
                 collider.sharedMesh=slab.GetComponent<MeshFilter>().sharedMesh;
-                collider.convex=true;
+                collider.convex=true; }
                 Cracks(slab.transform,i);
             }
         }
