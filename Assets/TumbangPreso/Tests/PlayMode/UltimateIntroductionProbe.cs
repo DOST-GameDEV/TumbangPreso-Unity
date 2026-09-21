@@ -94,7 +94,7 @@ namespace TumbangPreso.PlayTests
                         if (withScene)
                         {
                             var random = UnityEngine.Random.state;
-                            scene = new HeroIntroductionScene(stage.transform, hero, actor);
+                            scene = new HeroIntroductionScene(stage.transform, hero, actor, copy);
                             Assert.AreEqual(random, UnityEngine.Random.state, "Scene construction changed gameplay RNG.");
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<CharacterMotor>(true));
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<Abilities.HeroAbilitySystem>(true));

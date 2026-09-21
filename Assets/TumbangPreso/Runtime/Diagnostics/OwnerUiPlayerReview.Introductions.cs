@@ -81,7 +81,7 @@ namespace TumbangPreso.Diagnostics
                     {
                         if (withScene)
                         {
-                            scene = new HeroIntroductionScene(stage.transform, hero, actor);
+                            scene = new HeroIntroductionScene(stage.transform, hero, actor, copy);
                             scene.SetVisibleForCapture(true);
                             var listener = Object.FindAnyObjectByType<AudioListener>();
                             if (listener == null) throw new InvalidOperationException("No game listener for sound review");

@@ -27,12 +27,22 @@ namespace TumbangPreso.Visual
         private MatchPoseHistory.Copy _kuro;
         private KuroRagePresentation _rage;
         private Vector3 _kuroScale;
+        private Quaternion _kuroFront;
+        private readonly Transform _rightHand, _leftArm;
+        private readonly Vector3 _leftPalm;
         private Renderer[] _renderers;
         private AudioSource _sound;
         public GameObject Root => _root;
 
-        public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source)
+        public HeroIntroductionScene(Transform parent, string hero, CharacterMotor source, MatchPoseHistory.Copy body)
         {
+            foreach (var bone in body.Bones)
+            {
+                if (bone.name == "HandAnchor") _rightHand = bone;
+                if (bone.name == "arm-left") _leftArm = bone;
+            }
+            if (_rightHand != null)
+            { _leftPalm = _rightHand.localPosition; _leftPalm.x = -_leftPalm.x; }
             _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
             _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
             _root = new GameObject("IntroductionScene-" + hero);
@@ -47,7 +57,7 @@ namespace TumbangPreso.Visual
                                 new Color(1, i % 2 == 0 ? .32f : .58f, .04f, .68f));
                         break;
                     case "phaister":
-                        Add("EclipseBody", VfxShapes.TwoSided(VfxShapes.Splat(40, 0, 7)), new Color(.035f, .012f, .075f, .96f));
+                        Add("EclipseBody", MoonDisc(), new Color(.035f, .012f, .075f, .96f));
                         Add("EclipseRim", VfxShapes.Collar(40, .025f, .92f), new Color(.63f, .23f, .86f, .8f));
                         break;
                     case "zack":
@@ -71,6 +81,9 @@ namespace TumbangPreso.Visual
                         _kuro.Root.transform.localPosition = new Vector3(-.95f, .65f, .15f);
                         _kuro.Root.transform.localRotation = Quaternion.Euler(0, -18, 0);
                         _kuroScale = _kuro.Root.transform.localScale;
+                        Vector3 face = companion.MouthPosition - companion.transform.position; face.y = 0;
+                        Vector3 localFace = companion.transform.InverseTransformDirection(face.normalized);
+                        _kuroFront = localFace.sqrMagnitude > .01f ? Quaternion.FromToRotation(localFace, Vector3.forward) : Quaternion.identity;
                         var calm = GhostPetCompanion.FindForm(_kuro.Root.transform, "CalmForm");
                         var rage = GhostPetCompanion.FindForm(_kuro.Root.transform, "RageForm");
                         if (calm == null || rage == null) throw new InvalidOperationException("Retained Kuro calm/rage forms are missing.");
@@ -82,7 +95,7 @@ namespace TumbangPreso.Visual
                         break;
                     case "cheska":
                         for (int i = 0; i < 3; i++)
-                            Add("GatheredIce" + i, VfxShapes.Crystal(6, i * .12f), new Color(.46f, .86f, .94f, .62f));
+                            Add("GatheredIce" + i, VfxShapes.Spire(6, .12f, 0, i * 3), new Color(.46f, .86f, .94f, .62f));
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
@@ -93,6 +106,17 @@ namespace TumbangPreso.Visual
             catch { Dispose(); throw; }
         }
 
+        private static Mesh MoonDisc()
+        {
+            var mesh = VfxShapes.TwoSided(VfxShapes.Splat(40, 0, 7));
+            var normals = new Vector3[mesh.vertexCount];
+            for (int i = 0; i < normals.Length; i++) normals[i] = Vector3.up;
+            mesh.normals = normals; return mesh;
+        }
+        private Vector3 RightPalm => _rightHand != null ? _root.transform.InverseTransformPoint(_rightHand.position) : new Vector3(-.4f, 1.2f, .3f);
+        private Vector3 BothPalms => _rightHand != null && _leftArm != null
+            ? _root.transform.InverseTransformPoint((_rightHand.position + _leftArm.TransformPoint(_leftPalm)) * .5f)
+            : new Vector3(0, .7f, .5f);
         private void Add(string name, Mesh mesh, Color color)
         {
             var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
@@ -135,9 +159,9 @@ namespace TumbangPreso.Visual
                     for (int i = 0; i < _pieces.Count; i++)
                     {
                         float a = i * Mathf.PI / 3 + t * .65f;
-                        float radius = Mathf.Lerp(.85f, .27f, gather);
-                        Place(i, new Vector3(Mathf.Cos(a) * radius, .08f + gather * .55f, Mathf.Sin(a) * radius),
-                            new Vector3(.33f, Mathf.Lerp(.5f, .25f, gather), .33f) * enter,
+                        float radius = Mathf.Lerp(1.05f, .60f, gather);
+                        Place(i, new Vector3(Mathf.Cos(a) * radius, .06f + gather * .32f, Mathf.Sin(a) * radius),
+                            new Vector3(.8f, Mathf.Lerp(.9f, .6f, gather), .8f) * enter,
                             Quaternion.Euler(-18, -a * Mathf.Rad2Deg, 0), enter * leave);
                     }
                     break;
@@ -155,15 +179,15 @@ namespace TumbangPreso.Visual
                         {
                             float u = k / 6f;
                             float jag = k == 0 || k == 6 ? 0 : Mathf.Sin(k * 8.2f + i * 2.7f + t * 13) * .055f;
-                            line.SetPosition(k, new Vector3(-.40f + (i - 1) * .12f + jag, 1.25f + u * .85f * enter, .28f + jag));
+                            line.SetPosition(k, RightPalm + new Vector3((i - 1) * .10f + jag, u * .85f * enter, .08f + jag));
                         }
                     }
                     break;
                 case "nemu":
                     float amount = Ease(1.05f, 2.28f, t);
-                    _kuro.Root.transform.localPosition = new Vector3(-.95f - amount * .18f, .65f + .06f * Mathf.Sin(t * 2), .15f);
-                    _kuro.Root.transform.localRotation = Quaternion.Euler(0, Mathf.Lerp(-18, 8, amount), 0);
-                    _kuro.Root.transform.localScale = _kuroScale;
+                    _kuro.Root.transform.localPosition = new Vector3(-.95f - amount * .6f, (.65f + .06f * Mathf.Sin(t * 2)) * (1 - amount), .15f);
+                    _kuro.Root.transform.localRotation = Quaternion.Euler(0, Mathf.Lerp(-18, 0, amount), 0) * _kuroFront;
+                    _kuro.Root.transform.localScale = _kuroScale * Mathf.Lerp(1, GhostPetCompanion.DevourScale, amount);
                     _rage.Sample(amount, t, .12f);
                     break;
                 case "dante":
@@ -175,8 +199,8 @@ namespace TumbangPreso.Visual
                 case "cheska":
                     float form = Ease(.4f, 1.85f, t);
                     for (int i = 0; i < 3; i++)
-                        Place(i, new Vector3((i - 1) * Mathf.Lerp(.2f, .09f, form), 1.05f + Mathf.Abs(i - 1) * .05f, .50f),
-                            new Vector3(.08f, .26f, .07f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
+                        Place(i, BothPalms + new Vector3((i - 1) * Mathf.Lerp(.2f, .09f, form), .09f + Mathf.Abs(i - 1) * .04f, .12f),
+                            new Vector3(.085f, .28f, .085f) * form, Quaternion.Euler(18, i * 65, (i - 1) * 28), enter * leave);
                     break;
             }
         }
@@ -188,7 +212,7 @@ namespace TumbangPreso.Visual
             {
                 case "phaister": offset = new Vector3(1.8f, 1.5f, 5.2f); look.y = 1.45f; fov = 48; break;
                 case "zack": offset = new Vector3(-2.8f, 1.35f, 4.6f); fov = 44; break;
-                case "nemu": offset = new Vector3(2.8f, 1.5f, 5.6f); look.x = -.55f; look.y = 1.15f; fov = 50; break;
+                case "nemu": offset = new Vector3(2.8f, 1.5f, 5.6f); look.x = -.75f; look.y = 1.4f; fov = 50; break;
                 case "dante": offset = new Vector3(-3, 1, 4.3f); look.y = .8f; fov = 50; break;
                 case "cheska": offset = new Vector3(1.8f, 1.3f, 4); look.y = 1.1f; fov = 43; break;
                 default: offset = new Vector3(2.2f, 1.1f, 4.5f); break;

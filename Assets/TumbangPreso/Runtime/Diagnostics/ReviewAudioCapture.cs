@@ -14,13 +14,17 @@ namespace TumbangPreso.Diagnostics
         private bool _armed;
         private string _error;
         private double _started;
+        private float _realStarted;
+        private long _armedTicks, _firstTicks;
         public void Begin(float maximumSeconds = 4)
         {
             lock (_gate)
             {
                 _rate = AudioSettings.outputSampleRate;
                 _samples = new float[Mathf.CeilToInt(Mathf.Clamp(maximumSeconds, 1, 8) * _rate * 8)];
-                _count = _channels = 0; _error = null; _started = AudioSettings.dspTime; _armed = true;
+                _count = _channels = 0; _error = null; _started = AudioSettings.dspTime;
+                _realStarted = Time.realtimeSinceStartup; _armedTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+                _firstTicks = 0; _armed = true;
             }
         }
         private void OnAudioFilterRead(float[] data, int channels)
@@ -30,6 +34,7 @@ namespace TumbangPreso.Diagnostics
                 if (!_armed) return;
                 if (channels < 1 || channels > 8 || (_channels != 0 && channels != _channels))
                 { _error = "Output channels changed during capture"; _armed = false; return; }
+                if (_channels == 0) _firstTicks = System.Diagnostics.Stopwatch.GetTimestamp();
                 _channels = channels;
                 int remaining = _samples.Length - _count;
                 if (data.Length > remaining) { _error = "Bounded output buffer filled"; _armed = false; return; }
@@ -60,7 +65,7 @@ namespace TumbangPreso.Diagnostics
             float peak = 0; double squares = 0;
             foreach (float sample in samples) { peak = Mathf.Max(peak, Mathf.Abs(sample)); squares += sample * sample; }
             File.WriteAllText(Path.Combine(folder, "game-audio.txt"), FormattableString.Invariant(
-                $"Actual game output, no microphone.\nrate={_rate}\nchannels={channels}\nsamples={samples.Length}\nseconds={samples.Length / (double)(_rate * channels):F6}\ndsp_start={_started:F6}\npeak={peak:F6}\nrms={Math.Sqrt(squares / samples.Length):F6}\n"));
+                $"Actual game output, no microphone.\nrate={_rate}\nchannels={channels}\nsamples={samples.Length}\nseconds={samples.Length / (double)(_rate * channels):F6}\ndsp_start={_started:F6}\nfirst_callback_real={_realStarted + (_firstTicks - _armedTicks) / (double)System.Diagnostics.Stopwatch.Frequency:F6}\npeak={peak:F6}\nrms={Math.Sqrt(squares / samples.Length):F6}\n"));
         }
         private void OnDisable() { lock (_gate) _armed = false; }
     }

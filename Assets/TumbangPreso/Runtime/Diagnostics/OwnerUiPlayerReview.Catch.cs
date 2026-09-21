@@ -17,6 +17,7 @@ namespace TumbangPreso.Diagnostics
             string folder = Path.Combine(_folder, name); Directory.CreateDirectory(folder);
             var csv = new StringBuilder("frame,real_seconds\n");
             float start = Time.realtimeSinceStartup, next = 0; int frame = 0;
+            File.WriteAllText(Path.Combine(folder, "capture-start.txt"), start.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
             while (Time.realtimeSinceStartup - start < seconds)
             {
                 yield return new WaitForEndOfFrame();

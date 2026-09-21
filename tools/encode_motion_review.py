@@ -42,6 +42,18 @@ for timing in sorted(root.glob('*/frames.csv')):
             lines.extend(["file '"+path+"'",f'duration {duration:.6f}'])
         lines.append("file '"+path+"'");listing.write_text('\n'.join(lines)+'\n',encoding='utf-8')
         output=timing.parent/(label+'-ordinary-speed.mp4')
-        subprocess.run([ffmpeg,'-y','-hide_banner','-loglevel','error','-f','concat','-safe','0','-i',str(listing),
-            '-fps_mode','vfr','-c:v','libx264','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(output)],check=True)
+        command=[ffmpeg,'-y','-hide_banner','-loglevel','error','-f','concat','-safe','0','-i',str(listing)]
+        sound=timing.parent/'game-audio.wav'
+        if sound.exists():
+            # Engine output only, with the captured callback/first-frame clocks.
+            # This is review sync, not sample-accurate latency certification.
+            info=dict(line.split('=',1) for line in (timing.parent/'game-audio.txt').read_text().splitlines() if '=' in line)
+            origin=float((timing.parent/'capture-start.txt').read_text())
+            trim=origin+times[0]-float(info['first_callback_real'])
+            command+=['-i',str(sound),'-map','0:v:0','-map','1:a:0','-af',
+                (f'atrim=start={trim:.6f},asetpts=PTS-STARTPTS' if trim>=0 else f'adelay={-trim*1000:.3f}:all=1'),
+                '-c:a','aac','-b:a','192k','-shortest']
+            output=timing.parent/(label+'-ordinary-speed-with-audio.mp4')
+        command+=['-fps_mode','vfr','-c:v','libx264','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',str(output)]
+        subprocess.run(command,check=True)
         print(output, 'images',len(selected),'metric rows',len(rows),'recorded seconds',round(times[-1]-times[0],3))

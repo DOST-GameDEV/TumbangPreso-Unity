@@ -326,7 +326,7 @@ namespace TumbangPreso.Visual
         /// If this ever needs to come down again, take it out of the RADIUS in `NemuHeroKit`
         /// rather than out of him: the footprint is the budgeted quantity, not the height.
         /// </summary>
-        private const float DevourScale = 7.4f;
+        public const float DevourScale = 7.4f;
 
         /// <summary>
         /// The body's current proportion change, so children can divide it back out.
