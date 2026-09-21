@@ -92,7 +92,8 @@ namespace TumbangPreso.CameraSystem
             var text=new System.Text.StringBuilder();
             foreach(var transform in root.GetComponentsInChildren<Transform>(true))
             {
-                var mesh=transform.GetComponent<MeshFilter>()?.sharedMesh??transform.GetComponent<SkinnedMeshRenderer>()?.sharedMesh;
+                var filter=transform.GetComponent<MeshFilter>();var skin=transform.GetComponent<SkinnedMeshRenderer>();
+                var mesh=filter!=null?filter.sharedMesh:skin!=null?skin.sharedMesh:null;
                 if(mesh==null)continue;
                 text.Append(transform.name).Append('/').Append(mesh.name).Append(':').Append(mesh.vertexCount).Append(':').Append(mesh.subMeshCount).Append(';');
             }
