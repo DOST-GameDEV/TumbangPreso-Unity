@@ -419,6 +419,8 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-halftime-only"))
+            {yield return HalftimeOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-live-ultimates-only"))
             {yield return LiveUltimatesOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-busy-exchange-only"))
