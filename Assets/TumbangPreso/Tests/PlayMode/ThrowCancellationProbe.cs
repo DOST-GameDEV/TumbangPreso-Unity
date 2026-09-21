@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 namespace TumbangPreso.PlayTests
 {
@@ -30,6 +32,16 @@ namespace TumbangPreso.PlayTests
             var cancel = typeof(CharacterAnimator).GetField("_throwCancelTime", BindingFlags.Instance | BindingFlags.NonPublic);
             var release = typeof(CharacterAnimator).GetField("_throwReleaseTime", BindingFlags.Instance | BindingFlags.NonPublic);
             int throws = 0; bool sawReturn = false, returned = false;
+            var arm = who.GetComponentInChildren<SkinnedMeshRenderer>().bones.First(b => b.name == "arm-right");
+            var neutral = arm.localRotation;
+            int visibleReturnSamples = 0;
+            var sampler = who.gameObject.AddComponent<CancelPoseSampler>();
+            sampler.Read = () =>
+            {
+                float phase = (float)cancel.GetValue(animator);
+                if (phase >= 0 && phase < ThrowGesture.CancelSeconds * .5f
+                    && Quaternion.Angle(neutral, arm.localRotation) > 8) visibleReturnSamples++;
+            };
             void Count(MatchFlair.Kind kind, int actor, int target, Vector3 at, float strength)
             { if (kind == MatchFlair.Kind.Throw) throws++; }
             MatchFlair.Presented += Count;
@@ -45,6 +57,7 @@ namespace TumbangPreso.PlayTests
                     returned |= t > 1.7f && phase < 0;
                 }, new Vector3(2.4f, 1.2f, -2.6f));
                 Assert.IsTrue(sawReturn); Assert.IsTrue(returned);
+                Assert.Greater(visibleReturnSamples, 0, "Return time alone is insufficient: the actual rendered arm must unwind instead of snapping.");
                 Assert.AreSame(shoe, carrier.Held); Assert.AreEqual(SlipperState.Held, shoe.State);
                 Assert.AreEqual(0, throws, "Cancellation cannot invent a release event.");
                 carrier.ApplyObservedCharge(true, Balance.ChargeFullTime * .9f);
@@ -61,8 +74,15 @@ namespace TumbangPreso.PlayTests
             finally
             {
                 MatchFlair.Presented -= Count; carrier.ApplyObservedCharge(false);
+                sampler.Read = null; Object.Destroy(sampler);
                 Object.Destroy(camera.gameObject);
             }
+        }
+        [DefaultExecutionOrder(9990)]
+        private sealed class CancelPoseSampler : MonoBehaviour
+        {
+            public Action Read;
+            private void LateUpdate() => Read?.Invoke();
         }
     }
 }

@@ -917,6 +917,10 @@ namespace TumbangPreso.Visual
             bool throwing=_carrier!=null && _carrier.Held!=null && _carrier.ObservedChargePower>=0;
             var pose=throwing ? ThrowGesture.Prepare(ObservedCharge(),_carrier.ObservedPektusSpin)
                 : new ThrowGesture.Pose(Vector3.zero,Vector3.zero,new Vector3(ChargePoseRad*Mathf.Clamp01(ObservedCharge())*Mathf.Rad2Deg,0,0),Vector3.zero);
+            // A state update can arrive after Update but before this render.
+            // Retain the last held pose until StepChargePose starts its return;
+            // otherwise this one frame replaces the return's source with Rest.
+            if (_chargePosing && _throwPreparing && !throwing) pose = _lastThrowPose;
             if (_throwCancelTime >= 0) pose = ThrowGesture.Pose.Lerp(_throwCancelFrom,ThrowGesture.Rest,
                 Mathf.SmoothStep(0,1,_throwCancelTime/ThrowGesture.CancelSeconds));
             _chargeBoneRest=_chargeBone.localRotation;
