@@ -16,7 +16,8 @@ namespace TumbangPreso.Diagnostics
     {
         private IEnumerator LiveUltimatesOnly()
         {
-            _deadline=Time.realtimeSinceStartup+180;
+            _deadline=Time.realtimeSinceStartup+260;
+            bool retained=Environment.GetCommandLineArgs().Contains("-tp-hero-replays");
             Stage("real shared ultimate route, six controlled native actor profiles");
             yield return WaitFor(()=>Find("GuestAccount")!=null||Find("ContinueAccount")!=null||Find("StartButton")!=null,80);
             if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
@@ -47,6 +48,7 @@ namespace TumbangPreso.Diagnostics
                 Hud.Instance.Bind(actor);Hud.Instance.ShowReadyPrompt(false);
                 yield return new WaitForSecondsRealtime(.2f);
                 yield return WaitFor(()=>UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held!=null)!=null,4);
+                if(retained)yield return new WaitForSeconds(2.7f);
                 var listener=Object.FindObjectsByType<AudioListener>().FirstOrDefault(l=>l.enabled&&l.gameObject.activeInHierarchy);
                 if(listener==null)throw new InvalidOperationException("No actual game output listener");
                 var sound=listener.gameObject.AddComponent<ReviewAudioCapture>();sound.Begin(8);
@@ -69,12 +71,48 @@ namespace TumbangPreso.Diagnostics
                     yield return WaitFor(()=>!SharedUltimatePhase.Instance.Active,4);
                     if(PresentationClock.Held||actor.AbilitySystem.Kit.Ultimate.ReservedForIntroduction||starts!=1)
                         throw new InvalidOperationException(hero+" did not resume exactly one real ability");
+                    if(retained)
+                    {
+                        var round=GameServices.Round;var scorer=round.Players.First(p=>p!=actor&&!p.IsDefender);
+                        var shoe=Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include).First(s=>s.SeatOfOrigin==scorer.PlayerSlot);
+                        int serial=round.Lata.HostKnockdownSerial;
+                        shoe.HostThrow(scorer,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
+                        yield return WaitFor(()=>round.Lata.HostKnockdownSerial==serial+1,2);
+                        yield return new WaitForSeconds(1.6f);
+                    }
                     yield return movie;sound.Save(Path.Combine(_folder,movieName));
                     File.WriteAllText(Path.Combine(_folder,movieName,"accepted.txt"),"Real InputIntent to shared phase; one reserved fee and one live execution; staged profile/round, not human freeform play.\n");
                 }
                 finally{HeroAbilitySystem.UltimateStarted-=Started;sound.enabled=false;Object.Destroy(sound);actor.Intent.Clear();}
+                if(retained)yield return RetainedHeroView(hero);
             }
             Stage("six real shared introductions returned into live abilities with actual game audio");
+        }
+        private IEnumerator RetainedHeroView(string hero)
+        {
+            var archive=Object.FindAnyObjectByType<MatchReplayArchive>();
+            var saved=archive.Clips.FirstOrDefault(c=>c.Clip.Round==GameServices.Match.RoundNumber);
+            if(saved==null)throw new InvalidOperationException(hero+" did not retain its live exchange: "+archive.LastSkip);
+            if(!RecordedMatchClip.TryDecode(saved.Bytes,out var clip,out var error))throw new InvalidOperationException(error);
+            var listener=Object.FindObjectsByType<AudioListener>().First(l=>l.enabled&&l.gameObject.activeInHierarchy);
+            var sound=listener.gameObject.AddComponent<ReviewAudioCapture>();sound.Begin(5);
+            string name=hero+"-retained-exchange";PresentationClock.Hold();
+            try
+            {
+                using var view=new RecordedWorldView(transform,clip);
+                if(!view.Ready)throw new InvalidOperationException(hero+" replay unavailable: "+view.UnavailableReason);
+                var movie=StartCoroutine(RecordCatchMotion(name,4.4f));float began=Time.realtimeSinceStartup;
+                while(Time.realtimeSinceStartup-began<4.4f)
+                {
+                    float age=Time.realtimeSinceStartup-began,before=clip.Contact-clip.Start-.18f;
+                    float offset=age<=before?age:age<=before+.86f?before+(age-before)*.5f:age-.43f;
+                    view.Draw(clip.Start+offset);yield return null;
+                }
+                yield return movie;sound.Save(Path.Combine(_folder,name));
+                File.WriteAllText(Path.Combine(_folder,name,"clip.txt"),"retained-bytes="+saved.Bytes.Length+" objects="+clip.Objects.Length+" fields="+clip.FieldFrames.Max(f=>f.Fields.Length)+"\n");
+            }
+            finally{PresentationClock.Release();sound.enabled=false;Object.Destroy(sound);}
+            Stage(hero+" actual retained body/props/effects/weather/audio playback captured");
         }
     }
 }

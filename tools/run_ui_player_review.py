@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
     parser.add_argument('--halftime-only',action='store_true',help='Capture full native halftime replay, standings and return in both modes.')
+    parser.add_argument('--hero-replays',action='store_true',help='Add retained real-exchange replay captures to the six live ultimate route.')
     parser.add_argument('--live-ultimates-only',action='store_true',help='Capture six actual shared ultimate phases and live execution in the native player.')
     parser.add_argument('--review-low-comfort',action='store_true',help='Use Low, reduced motion, no shake/flash/announcer and 1080p in the busy native route.')
     parser.add_argument('--busy-exchange-only',action='store_true',help='Record native owner and live spectator views with four active bots and game audio in both modes.')
@@ -65,7 +66,8 @@ def main():
     if args.menu_only:command.append('-tp-menu-review-only')
     if args.recovery_only:command.append('-tp-recovery-review-only')
     if args.halftime_only:command.append('-tp-halftime-only')
-    if args.live_ultimates_only:command.append('-tp-live-ultimates-only')
+    if args.hero_replays:command+=['-tp-live-ultimates-only','-tp-hero-replays']
+    elif args.live_ultimates_only:command.append('-tp-live-ultimates-only')
     if args.review_low_comfort:command.append('-tp-review-low-comfort')
     if args.busy_exchange_only:command.append('-tp-busy-exchange-only')
     if args.gameplay_only:command.append('-tp-gameplay-review-only')
