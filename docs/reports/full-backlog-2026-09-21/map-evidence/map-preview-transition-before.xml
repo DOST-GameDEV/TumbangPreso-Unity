@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.4285062">
+  <test-suite type="TestSuite" id="1675" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="507" result="Failed" site="Child" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.428506" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1669" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="507" result="Failed" site="Child" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.414803" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1670" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="507" result="Failed" site="Child" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.410070" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1671" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="507" result="Failed" site="Child" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.405789" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1258" name="MapPreviewTransitionTests" fullname="TumbangPreso.PlayTests.MapPreviewTransitionTests" classname="TumbangPreso.PlayTests.MapPreviewTransitionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.384717" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1259" name="StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" fullname="TumbangPreso.PlayTests.MapPreviewTransitionTests.StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" methodname="StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" classname="TumbangPreso.PlayTests.MapPreviewTransitionTests" runstate="Runnable" seed="2087236488" result="Failed" start-time="2026-09-21 17:19:47Z" end-time="2026-09-21 17:20:08Z" duration="20.368678" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A cancelled preview left the real installer disabled
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapPreviewTransitionTests+<StartingWhileTheMapPreviewLoadsBuildsTheRealMatch>d__6.MoveNext () [0x000e6] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\MapPreviewTransitionTests.cs:39
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 32 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

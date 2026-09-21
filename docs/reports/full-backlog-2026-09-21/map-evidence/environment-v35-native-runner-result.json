@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sharedInputUnchanged": true,
+  "profile": "presentation-native-environment-20260922",
+  "existingFilesRestored": 2,
+  "reviewPassed": false,
+  "error": "System.InvalidOperationException: Expected UI state did not arrive.\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__40.MoveNext () [0x00069] in <5dc0af94afba44e5b52540cb9829fc54>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__33.MoveNext () [0x00054] in <5dc0af94afba44e5b52540cb9829fc54>:0 "
+}

@@ -138,3 +138,136 @@ Sky draft now exists in NeighbourhoodSky/MapAtmosphereAuthor: static layered clo
 form, per-map color/coverage/layout, restrained sun and compatibility with existing
 weather tint/exposure. It is not yet visually qualified or copied into development
 materials. Current guarded author job: map-cloud-materials-v1, validation only.
+
+## Surface/sky prototype evidence and continuation
+
+Source batch79bf5c26published the qualified skyline, captured-control fixes, queued
+dead-code removal and their evidence. The shaders/material author below are newer
+uncommitted work and have not been qualified in a Windows build.
+
+Sky owner-viewv1 passed1/1 in59.612s,200frames, guardc258918bf0b1, but visual review
+rejected its smeared, overly soft clouds. V2adds finer billows, tighter edges and
+different density/scale. Its material refresh and new visual review are pending.
+Static cloud form is being established first; motion/recording is still in the plan.
+
+MapSurfaceAuthor's representative building study compares source rendering and UV
+region colors. V1used Sprites/Default, whose transparent depth behavior drew internal
+floors over the facade. Those false-color images are invalid. V2uses opaque NearFade,
+but shader import exposed a parser-stack overflow in the long material branch chain;
+its exit0is not a shader pass. Flattened disjoint ranges resolve it. V3explicitly
+checks ShaderUtil.ShaderHasError before/after drawing and completed with no errors,
+guard90cbbb5adc56. The source/UV images establish walls, glazing, plinth and trim;
+splitting the first palette column by importedV isolates the roof face. Raw glTFV
+is flipped relative to Unity's imported mesh, so the author follows actual imports.
+
+The new opt-in surface include has distinct formulas for16families; role0is unchanged.
+Coordinates follow rotated/moving geometry at metre scale. Persistent variants share
+the established NearFade albedo/gamma translation. Original textures/mesh GUIDs are
+retained. Palette-role meshes copy source geometry and refuse unreviewed UVs/meaningful
+vertex colors. Texture images, signs and transparent/procedural surfaces are not
+blindly replaced. The author logs unassigned and retained material families.
+
+First surface author job: map-surfaces-eskinita-v1, validation only, session59941.
+No source mesh/material assignment is yet visually accepted. Do not promote a
+formula, study or coverage count into a claim of finished environment detail.
+
+
+## Current material, sky motion and Inday checkpoint, 2026-09-22
+
+Source is still an uncommitted extension of79bf5c26; no new native artifact yet.
+Surface author v3 assigned689/257/870/179enabled renderers in E/B/I/Sa. Besides
+building parts, this now includes concrete bridge supports/soffits, separate track
+sleepers/rails, utility timber/footings/hardware, civic stone, benches and hedges.
+All actual source colors/geometry remain; debug study colors are never game art.
+Fifteen NearFade tests passed0.564s including normal texture/strength/UV preservation.
+All-map owner viewsv3 passed1/1 in70.310s,200frames. Actual inspected frames show
+construction seams, native palettes and shaded clouds; this is Editor evidence.
+
+Four verified2KCC0PolyHaven pure-sky sources are in ArtSource/environment/skies/polyhaven
+with provenance and exact hashes. Unlike the earlier material reference links,
+these cloud-shape sources were imported. Cloud brightness is normalized within
+neutral cloud pixels to retain body shading; source sun/terrain are not pasted.
+The newest source adds slow cloud rotation at distinct per-map speeds, with fixed
+sun/horizon. NeighbourhoodSkyMotion publishes scaled Time.time. RecordedWorldView
+uses its existing clip time in a scoped override; no replay schema/network bytes change.
+First pause/seek/weather check passed2/2,6.079s. Stronger actual rendered-pixel drift,
+reverse-frame equality and pause/return checks plus Inday motion passed2/2,20.286s,
+guardad0d01523f69. Thus movement is tested in the shader, not just as a changing number.
+
+The owner explicitly replaced the old Inday-guard preservation choice with plain
+brown arms across all models. The author saves raw backups, edits only arm-owned
+geometry, retains original simple hands and brown slot14, and verifies unchanged
+nodes/skins/material identities, non-arm attributes and all33/32animation samples.
+Model hashes are in inday-plain-arms.json. Both FppDetails and RosterArms are rebuilt
+from that source. Obsolete guard author/resources and the fallback attachment call
+are removed. V1body+FPPquick/held/moving evidence is Logs/inday-plain-arms-motion-v1;
+visual inspection exposed a pinched wrist despite passing actions. V2extends the
+brown forearm beneath the retained hand centre; that correction is not yet qualified.
+The original source-arm dirty whitespace is still backed up in the initial intake.
+
+The surface repeatabilityv1 attempt never executed: a copied shared dirty review
+file included its unrelated SeanVisualOnlycall without the companion dirty method.
+The failure is retained (guardce21ffa09b17). Validation now uses HEAD plus only the
+new map-review hook; original development work remains. Repeatabilityv2is active.
+New native map route will inspect both modes/all qualities, real-time cloud/owner
+motion and matched process frame-time windows. Never call this all-TODO completion.
+
+
+## Preview-to-match lifecycle defect found by native map validation
+
+The build itself passed for v34/35/36. V34's review initially set only the mirrored
+SelectedMap value, so setup restored its own index; the review now clicks MapNextButton.
+V35 then timed out on rooftop startup. V36 inspected the target scene and passed a
+rooftop-only route in both modes, yet the complete sequence failed at its eighth map:
+setup remained visible, active scene was SaBubong, but HUD/ready gate were absent.
+All failed native result JSON, PNGs and partial frame windows remain in their Logs.
+
+A deterministic regression reproduced starting during an actual additive preview load.
+Before the fix it failed1/1 in20.429s because MatchInstaller.PreviewOnly stayed true
+when the preview's owner/coroutine was cancelled. The real installer then stood down.
+This is a runtime lifecycle bug, not a texture failure or a valid reason to retry
+until a native run happens to pass.
+
+MapPreviewSurface now drains ongoing preview work before SceneFlow changes scenes,
+blocks new swaps during exit, honours the latest requested destination, and owns/
+releases the preview guard on normal completion, failure and destruction. The same
+regression passed1/1 in6.853s. Adding the adjacent change-destination-to-main-menu
+case passed2/2 in7.628s. Scene/rules fixture state is restored. The original failures
+remain; environment-v37 is being built for complete native qualification of the fix.
+
+
+## Full native v37 map route, passed
+
+Environment-v37 built successfully (1180MB,50s; guard9f36f40872e7) with the real
+preview-lifecycle correction. The exact player completed all4maps in both modes,
+96 unique quality/view rows,8 normal-speed walking captures,12s fixed-view cloud
+motion and48 nonempty paired detail-off/detail-on frame windows. Runner exit0,
+shared input unchanged,2 existing named-profile files restored. Raw results and
+representative frame provenance remain in map-evidence; summary/pairs are in
+native-environment-v37.json. The prior native failures remain failures.
+
+On this RX6600/Ryzen2600 host, median additional detail cost across24 paired windows
+was0.6585ms; largest detail-enabled p95 was13.5744ms. These windows freeze simulation
+and exclude image encoding. They measure the process, not isolated GPU time, and
+are not an all-device or live-match performance guarantee.
+
+Inspected native images: civic stone/roof/glass distinctions, underpass concrete/
+timber/hardware, roof paving/city/clouds and plain Inday arms are present on Low and
+High without pink/missing shaders. Thin distant rooftop window/ledge edges still
+show aliasing/speckles in some High views; retain that concrete map-refinement issue
+for the existing graphics/outline follow-up rather than silently close all maps.
+The mixed-caster Low/comfort native visual check is running; near-fade band captures
+and complete material-family/generator-hook review still remain.
+
+
+Native mixed-caster Low/comfort owner and spectator checks passed on the same v37
+artifact,30s each, with four live AI writers after staged full starting meters.
+Sampled frames keep the can, chalk, player identity and distinct fields visible
+under the changed weather/materials. Audio was captured, not personally listened to.
+The existing NearFadeProbe passed1/1 in3.300s, guard949277914ccc; inspected2.50/1.10/
+0.20m post views show solid, stippled and cleared geometry. The close view still
+has thin outline remnants, retained for the existing outline/graphics follow-up.
+Eleven movies were encoded at recorded timing. Native-environment-media.json records
+exact executable/runtime-assembly and movie hashes plus their source timing CSVs.
+This completes the explicit animated-sky and plain-Inday-arm requests as software;
+it does not close the broader map finish or the full project backlog.

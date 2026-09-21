@@ -2208,5 +2208,39 @@
       "disposition": "unreviewed",
       "evidence": []
     }
+  ],
+  "activeAdditions": [
+    {
+      "id": "152.4 animated sky",
+      "status": "implemented and qualified in environment-v37; broader parent remains open",
+      "evidence": [
+        "Runtime/Visual/NeighbourhoodSkyMotion.cs",
+        "Runtime/Camera/RecordedWorldView.cs",
+        "Logs/cloud-and-inday-v2.xml 2/2; actual shader drift and reverse-frame equality",
+        "native-environment-v37.json; full8 map/mode pairs,96views,48frame windows"
+      ]
+    },
+    {
+      "id": "Inday plain arms",
+      "status": "implemented and qualified in environment-v37; broader parent remains open",
+      "evidence": [
+        "tools/inday_plain_arms.py",
+        "inday-plain-arms.json",
+        "Logs/inday-plain-arms-audit-v2.xml 3/3",
+        "Logs/inday-plain-arms-motion-v2.xml 1/1",
+        "native-environment-v37.json; full8 map/mode pairs,96views,48frame windows"
+      ]
+    },
+    {
+      "id": "Map preview transition lifecycle defect",
+      "status": "implemented and qualified in environment-v37; broader parent remains open",
+      "evidence": [
+        "Logs/map-preview-transition-before.xml failed1/1",
+        "Logs/map-preview-transition-after-v2.xml passed2/2 in7.628s",
+        "Runtime/UI/MapPreviewSurface.cs",
+        "Runtime/UI/SceneFlow.cs",
+        "native-environment-v37.json; full8 map/mode pairs,96views,48frame windows"
+      ]
+    }
   ]
 }

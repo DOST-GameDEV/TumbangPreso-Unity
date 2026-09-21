@@ -111,12 +111,25 @@ superseded designs do not override the current queue or justify repeating done w
 - Push stable verified batches to origin ASTRAReworks, fetch before push and verify
   remote HEAD. Use git commit -F, sole author, no attribution trailers or em dashes.
 
+## Latest owner additions, 2026-09-22
+
+- Animate the sky: slow per-map cloud drift, steady sun/horizon, correct pause and
+  replay sampling/return. A static sky does not satisfy the latest request.
+- Inday: remove the pogo-like arm attachments from every model and first-person
+  view; give her plain brown arms. This explicitly supersedes the older coral-guard
+  and exact-source-arm preservation requirement. Preserve the rest of her model,
+  simple hands, rig, animation, palette identity and all unrelated character work.
+- Owner is sleeping; continue the entire TODO in this conversation. These additions
+  modify the active queue and do not replace or close its remaining requirements.
+
 ## Standing product and art contracts
 
 - Latest map feedback2026-09-21: blank/poorly textured buildings and empty skies
   require thorough material/sky refinement on every map. Plan construction-specific
   treatments; do not spam one texture/noise across all buildings. Shaders are allowed.
   Keep native style, supplied imagery, different map identities and readable action.
+  Label diagnostic/false-color images before showing them; they are inspection
+  aids, not proposed replacements for the user's buildings or palette.
 
 - Both modes ship. Both default to eight rounds; custom lengths remain configurable.
   Classic people are cosmetic with neutral stats. No Street Hype mechanic or meter.

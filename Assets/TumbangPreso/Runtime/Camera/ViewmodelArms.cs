@@ -1607,7 +1607,7 @@ namespace TumbangPreso.CameraSystem
                     BuildTotoyAccessories(arm, isRight);
                     break;
                 case "inday":
-                    BuildIndayAccessories(arm, isRight, parent);
+                    // Owner-selected plain brown arms, including the fallback.
                     break;
                 case "kuya_boy":
                     BuildKuyaBoyAccessories(arm, isRight);
@@ -2203,26 +2203,6 @@ namespace TumbangPreso.CameraSystem
             // character-male-a.glb has matching green short sleeves and bare arms.
             AddBoxAccessory(arm, "GreenShortSleeve", new Vector3(0.30f, 0.35f, 0.30f),
                 new Vector3(0.0f, 0.175f, 0.0f), Quaternion.identity, darkGreenShirt);
-        }
-
-        private static void BuildIndayAccessories(Transform arm, bool isRight, ViewmodelArms parent)
-        {
-            var yellow = new Color(0.878f, 0.706f, 0.235f, 1.0f);
-
-            // character-female-a.glb uses a yellow short sleeve and the same chunky
-            // coral gauntlet with a plum centre strap on both arms.
-            AddBoxAccessory(arm, "YellowShortSleeve", new Vector3(0.30f, 0.51f, 0.30f),
-                new Vector3(0.0f, 0.255f, 0.0f), Quaternion.identity, yellow);
-            var mesh=Resources.Load<Mesh>("Models/FppDetails/inday_"+(isRight?"right":"left")+"_guard");
-            if(mesh==null)return;
-            var detail=new GameObject(AccessoryPrefix+"RestoredCoralGuard");detail.transform.SetParent(arm,false);
-            // Accessories own their meshes: character changes dispose this copy.
-            detail.AddComponent<MeshFilter>().sharedMesh=Object.Instantiate(mesh);
-            var renderer=detail.AddComponent<MeshRenderer>();var entry=RosterBook.Load().FindPersonArt("inday");
-            foreach(var surface in entry.Model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
-                if(surface.name=="body-mesh"){renderer.sharedMaterial=surface.sharedMaterial;break;}
-            var palette=parent?._characterMotor?.GetComponent<Visual.CharacterVisual>()?.AppliedPalette ?? entry.Palette;
-            Visual.ToonSkin.Apply(renderer,Visual.ToonSkin.PersonOutlineWidth*.18f,palette);
         }
 
         private static void BuildKuyaBoyAccessories(Transform arm, bool isRight)

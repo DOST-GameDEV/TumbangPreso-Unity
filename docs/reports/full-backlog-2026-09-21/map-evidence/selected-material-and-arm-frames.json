@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/Eskinita-materials-sky-editor.png",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/map-surfaces-all-views-v3/Eskinita-Classic-2-edge-High.png",
+    "sha256": "09aabadaac1a04eedd0bd26e3358b39456f67abfc58dba7c95de3dd9a8950065"
+  },
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/BayanPlaza-materials-sky-editor.png",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/map-surfaces-all-views-v3/BayanPlaza-Classic-2-edge-High.png",
+    "sha256": "cde3dbb3fd9ac5072d298bd5af24f3f7ef339962089c421608d13228240d6ac9"
+  },
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/IlalimNgTulay-materials-sky-editor.png",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/map-surfaces-all-views-v3/IlalimNgTulay-Classic-2-edge-High.png",
+    "sha256": "fc8798a0b35f80d9eae5064023c1394253d92bbcd845d0366a01f66caec88fe9"
+  },
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/SaBubong-materials-sky-editor.png",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/map-surfaces-all-views-v3/SaBubong-Classic-2-edge-High.png",
+    "sha256": "cd6c8219bb967ce1c10ddd41b5bea42878a6ef3beab8587d776b53418a47c62c"
+  },
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/Inday-plain-arms-body.jpg",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/inday-plain-arms-motion-v2/held-left/00020.jpg",
+    "sha256": "5933b3d59eae254090b36ea25c49e1f91887edbe8b98f25473567d185499d57f"
+  },
+  {
+    "path": "docs/reports/full-backlog-2026-09-21/map-evidence/Inday-plain-arms-owner.jpg",
+    "source": "C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Logs/inday-plain-arms-motion-v2/held-left/owner/00020.jpg",
+    "sha256": "667f569a115afb264f8520a0ed19edca10b0c33bb67adec9d2f1f2005ae1cb67"
+  }
+]

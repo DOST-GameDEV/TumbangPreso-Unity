@@ -11,6 +11,26 @@ namespace TumbangPreso.Tests
 {
     public sealed class RosterArmAuditTests
     {
+        [TestCase("character-female-a")]
+        [TestCase("team-inday")]
+        public void IndayModelsHaveOnlyPlainBrownArms(string modelName)
+        {
+            var model=UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/persons/"+modelName+".glb");
+            Assert.IsNotNull(model);
+            foreach(string side in new[]{"left","right"})
+            {
+                var mesh=IndayFppArmAuthor.Extract(model,side);
+                try
+                {
+                    Assert.Greater(mesh.vertexCount,24);
+                    foreach(var uv in mesh.uv)
+                        Assert.AreEqual(14,Mathf.FloorToInt(uv.x*16)/2+(Mathf.FloorToInt(uv.y*16)<=3?8:0),"An arm attachment survived in "+modelName);
+                    Assert.That(mesh.bounds.size.y,Is.EqualTo(TumbangPreso.CameraSystem.ViewmodelArms.ArmLength).Within(.00001f));
+                }
+                finally{Object.DestroyImmediate(mesh);}
+            }
+        }
+
         [Test]
         public void EveryArmHasARealForearmAxisAndCurrentCharacterGeometry()
         {

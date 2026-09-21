@@ -86,6 +86,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void FinishLoadedScene(string map, StringBuilder report = null)
         {
+            MapSurfaceAuthor.RestoreLoadedSceneSources();
             if (Surfaces.Count == 0) PrepareMaterials();
             report ??= new StringBuilder();
             var previous = GameObject.Find("NeighborhoodFinish");

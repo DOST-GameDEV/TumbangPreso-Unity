@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.8532112">
+  <test-suite type="TestSuite" id="1675" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="507" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.853211" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1669" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="507" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.839430" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14768" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1670" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="507" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.834897" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1671" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="507" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.830528" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1258" name="MapPreviewTransitionTests" fullname="TumbangPreso.PlayTests.MapPreviewTransitionTests" classname="TumbangPreso.PlayTests.MapPreviewTransitionTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.811505" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1259" name="StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" fullname="TumbangPreso.PlayTests.MapPreviewTransitionTests.StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" methodname="StartingWhileTheMapPreviewLoadsBuildsTheRealMatch" classname="TumbangPreso.PlayTests.MapPreviewTransitionTests" runstate="Runnable" seed="1866853956" result="Passed" start-time="2026-09-21 17:23:20Z" end-time="2026-09-21 17:23:27Z" duration="6.794839" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 32 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 32 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

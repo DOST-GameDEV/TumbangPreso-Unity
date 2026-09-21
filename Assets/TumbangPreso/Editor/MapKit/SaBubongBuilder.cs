@@ -41,6 +41,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 Concrete=AssetDatabase.LoadAssetAtPath<Material>(Folder+"/Warmroofconcrete.mat");
                 if(Concrete==null)throw new InvalidOperationException("Missing retained roof concrete");
                 Skyline(dressing);dressing.Find("Metro rooftops").SetSiblingIndex(sibling);
+                MapSurfaceAuthor.FinishLoadedScene("SaBubong",new System.Text.StringBuilder(),dressing.Find("Metro rooftops"));
                 EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
                 scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
                 var current=MapRepeatabilityCheck.Capture(scene);
@@ -178,6 +179,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var lifeReport=new System.Text.StringBuilder();AmbientLifeAuthor.FinishLoadedScene("SaBubong",lifeReport);Debug.Log(lifeReport.ToString());
             var sun=new GameObject("Sun").AddComponent<Light>();sun.transform.SetParent(root,false);sun.type=LightType.Directional;
             MapAtmosphereAuthor.Apply("SaBubong");
+            MapSurfaceAuthor.FinishLoadedScene("SaBubong",lifeReport);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);AssetDatabase.SaveAssets();
             if(!EditorBuildSettings.scenes.Any(s=>s.path==ScenePath))
                 EditorBuildSettings.scenes=EditorBuildSettings.scenes.Concat(new[]{new EditorBuildSettingsScene(ScenePath,true)}).ToArray();

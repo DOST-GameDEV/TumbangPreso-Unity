@@ -99,31 +99,94 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator CloudClockMovesPausesAndRestoresAcrossReverseReplayAndFailure()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            Assert.IsNotNull(Object.FindAnyObjectByType<NeighbourhoodSkyMotion>());
+            Assert.Greater(RenderSettings.skybox.GetFloat("_CloudSpeed"),0);
+            var skyCamera=new GameObject("Cloud render proof").AddComponent<Camera>();skyCamera.enabled=false;
+            skyCamera.clearFlags=CameraClearFlags.Skybox;skyCamera.cullingMask=0;skyCamera.transform.rotation=Quaternion.Euler(-24,35,0);
+            var target=new RenderTexture(256,128,16);target.Create();skyCamera.targetTexture=target;
+            var read=new Texture2D(256,128,TextureFormat.RGB24,false);var active=RenderTexture.active;
+            Color32[] At(float seconds)
+            {
+                using(var sample=NeighbourhoodSkyMotion.At(seconds))skyCamera.Render();
+                RenderTexture.active=target;read.ReadPixels(new Rect(0,0,256,128),0,0);read.Apply();return read.GetPixels32();
+            }
+            try
+            {
+                var initial=At(0);var moved=At(600);var rewind=At(0);
+                Assert.Greater(initial.Where((pixel,i)=>!pixel.Equals(moved[i])).Count(),initial.Length/20,"The actual sky shader did not drift");
+                CollectionAssert.AreEqual(initial,rewind,"Reverse seeking did not reproduce the same cloud frame");
+            }
+            finally{RenderTexture.active=active;skyCamera.targetTexture=null;target.Release();Object.Destroy(target);Object.Destroy(read);Object.Destroy(skyCamera.gameObject);}
+            float start=Shader.GetGlobalFloat("_TumpSkyTime");yield return new WaitForSeconds(.15f);
+            Assert.Greater(Shader.GetGlobalFloat("_TumpSkyTime"),start+.05f);
+            Time.timeScale=0;yield return null;float frozen=Shader.GetGlobalFloat("_TumpSkyTime");
+            try
+            {
+                yield return new WaitForSecondsRealtime(.15f);
+                Assert.AreEqual(frozen,Shader.GetGlobalFloat("_TumpSkyTime"));
+                try
+                {
+                    using(var forward=NeighbourhoodSkyMotion.At(57))
+                    {
+                        Assert.AreEqual(57,Shader.GetGlobalFloat("_TumpSkyTime"));
+                        using(var rewind=NeighbourhoodSkyMotion.At(12))Assert.AreEqual(12,Shader.GetGlobalFloat("_TumpSkyTime"));
+                        Assert.AreEqual(57,Shader.GetGlobalFloat("_TumpSkyTime"));
+                        throw new System.InvalidOperationException("intentional sky-render failure");
+                    }
+                }
+                catch(System.InvalidOperationException error){Assert.AreEqual("intentional sky-render failure",error.Message);}
+                Assert.AreEqual(frozen,Shader.GetGlobalFloat("_TumpSkyTime"));
+            }
+            finally{Time.timeScale=1;}
+            yield return new WaitForSeconds(.1f);Assert.Greater(Shader.GetGlobalFloat("_TumpSkyTime"),frozen);
+        }
+
+        [UnityTest]
         public IEnumerator RecordedWeatherRestoresTheLiveWorldEvenWhenRenderingFails()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
             SkyEvent.Play(SkyEvent.Look.Eclipse,8);yield return new WaitForSeconds(.2f);
             var before=RecordedEnvironment.Capture();var savedSky=RenderSettings.skybox;
+            Assert.IsTrue(before.HasExposure&&before.HasTint,"The authored cloud sky must participate in weather/replay tint and exposure.");
             var copy=savedSky!=null?new Material(savedSky):null;
             var root=new GameObject("RecordedWeatherProof");var camera=root.AddComponent<Camera>();camera.enabled=false;
             var grade=root.AddComponent<ColourGrade>();grade.AdoptFromScene();var fillRoot=new GameObject("RecordedFillProof");var fill=fillRoot.AddComponent<Light>();fill.enabled=false;
             var recorded=before;recorded.Sky=Color.red;recorded.FogColour=Color.blue;recorded.FillColour=Color.magenta;recorded.FillOn=true;
+            recorded.SkyTint=new Color(.24f,.33f,.46f,1);recorded.Exposure=.43f;
             try
             {
                 try
                 {
                     using(recorded.Use(grade,copy,fill))
-                    {Assert.AreEqual(Color.red,RenderSettings.ambientSkyColor);Assert.IsTrue(fill.enabled);throw new System.InvalidOperationException("intentional renderer failure");}
+                    {
+                        Assert.AreEqual(Color.red,RenderSettings.ambientSkyColor);Assert.IsTrue(fill.enabled);
+                        SameTint(recorded.SkyTint,RenderSettings.skybox.GetColor("_Tint"),"recorded sky");
+                        Assert.AreEqual(recorded.Exposure,RenderSettings.skybox.GetFloat("_Exposure"));
+                        throw new System.InvalidOperationException("intentional renderer failure");
+                    }
                 }
                 catch(System.InvalidOperationException failure){Assert.AreEqual("intentional renderer failure",failure.Message);}
                 Assert.AreEqual(before.Sky,RenderSettings.ambientSkyColor);Assert.AreEqual(before.FogColour,RenderSettings.fogColor);
                 Assert.AreSame(savedSky,RenderSettings.skybox);Assert.IsFalse(fill.enabled);
+                SameTint(before.SkyTint,savedSky.GetColor("_Tint"),"restored live sky");Assert.AreEqual(before.Exposure,savedSky.GetFloat("_Exposure"));
                 if(SkyEvent.RecordedFill!=null)Assert.AreEqual(before.FillOn,SkyEvent.RecordedFill.enabled);
                 using var stream=new System.IO.MemoryStream();using(var writer=new System.IO.BinaryWriter(stream,System.Text.Encoding.UTF8,true))recorded.Write(writer);
                 stream.Position=0;using var reader=new System.IO.BinaryReader(stream);var decoded=RecordedEnvironment.Read(reader);
                 Assert.AreEqual(recorded.Sky,decoded.Sky);Assert.AreEqual(recorded.FillPosition,decoded.FillPosition);
+                Assert.AreEqual(recorded.SkyTint,decoded.SkyTint);Assert.AreEqual(recorded.Exposure,decoded.Exposure);
             }
             finally{Object.Destroy(root);Object.Destroy(fillRoot);if(copy!=null)Object.Destroy(copy);SkyEvent.StopAll();}
+            // Material color conversion can round by a few float ULPs. Require
+            // sub-millionth agreement and record the actual delta, not 3-digit text.
+            void SameTint(Color expected,Color actual,string stage)
+            {
+                float error=Vector4.Distance(expected,actual);
+                Debug.Log($"[Recorded sky tint] {stage} delta={error:R}; expected=({expected.r:R},{expected.g:R},{expected.b:R}); actual=({actual.r:R},{actual.g:R},{actual.b:R})");
+                Assert.Less(error,.000001f,stage+" tint was not restored");
+            }
         }
 
         [Test]

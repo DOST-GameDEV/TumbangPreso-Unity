@@ -19,6 +19,16 @@ The current four-map baseline is Logs/full-backlog-maps-baseline-v1 in validatio
 refinement already has0protected-scene changes/0repeat differences and50new frames;
 it improves depth but does not close this newly specified surface/sky work.
 
+### Explicit sky-motion addition, 2026-09-22
+
+The owner asks to animate the sky, not leave it static. Use restrained panorama
+cloud drift at 0.035 degrees/second in Eskinita, 0.025 in Bayan, 0.045 in Ilalim
+and 0.022 on Sa Bubong. The sun/horizon remain fixed. A single scaled shader clock
+serves live maps and previews; recorded views temporarily sample their existing
+clip timestamps and restore the live clock even on rendering failure. No new
+network/replay bytes are needed for this deterministic presentation. Verify actual
+pixel movement, reverse seeking, pause/resume and normal-speed native footage.
+
 ### Surface design and implementation order
 
 1. Inventory actual visible building meshes, atlas UVs/materials and the runtime
@@ -216,6 +226,26 @@ Support the tint/exposure properties already understood by SkyEvent/RecordedEnvi
 where suitable. Prove interruption/replay restoration after integration. No new
 render-pipeline package, volumetric renderer or large external texture dependency is
 assumed necessary. Primary references are linked in the full-backlog report.
+
+**Prototype decisions after actual rendering:** the two fully procedural cloud
+drafts were rejected as smeared/pattern-like. Four verified CC0 Poly Haven pure-sky
+HDR sources now supply cloud form only, recolored through the authored map palette;
+source ground/exposure/sun are not pasted into the scene. Raw files and provenance
+are under ArtSource/environment/skies/polyhaven. No paid API or reset was used.
+This source-based draft still needs actual game/native review before acceptance.
+
+Material coordinates must survive Unity static batching. The current author bakes
+metre-scaled part coordinates into unusedUV3 on derived meshes, preserving UV0/UV1,
+positions/normals/indices and original assets. Shared source/scale variants avoid
+per-instance mesh copies. Do not disable global batching or rely on object matrices
+that the native batch process rewrites. The shader packs role/coordinates into one
+full-precision varying. Standard still needs11interpolators, exceeding target3.0's
+10, so target3.5provides15. This matches Unity6's supported D3D11/Metal/Vulkan/GLES3/
+WebGL2 platforms; no global batching disable or camera-fade rewrite is needed.
+
+Diagnostic color studies are temporary inspection views, not replacement building
+art. The owner asked about their purple/blue/yellow thumbnails; explain them before
+showing any further study. All saved game surface materials use_SurfaceDebug0.
 
 ### Execution batches and exact completion rules
 

@@ -37,6 +37,8 @@ Shader "TumbangPreso/NearFade"
         _Color ("Albedo", Color) = (1, 1, 1, 1)
         _MainTex ("Albedo Map", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0, 1)) = 0.5
+        [Normal] _BumpMap ("Surface normal map", 2D) = "bump" {}
+        _BumpScale ("Normal strength", Float) = 1
 
         // ⚠️ `[Gamma]` IS NOT DECORATION, IT IS WHAT MAKES THE COPY EXACT. Both shaders this
         // copies from declare metallic as `[Gamma]`: Unity's `Standard` and glTFast's
@@ -92,6 +94,14 @@ Shader "TumbangPreso/NearFade"
         // survives as the regular grid the report asked for. Raise it for a chunkier door; do not
         // drop it to 1 without looking at a render with FXAA ON.
         _NearFadeCell ("Dither Cell, px", Range(1, 8)) = 2
+        _SurfaceKind ("Authored surface family", Float) = 0
+        _SurfaceVertexRoles ("Use authored face roles", Float) = 0
+        _SurfaceCoordinates ("Use authored metre coordinates", Float) = 0
+        _SurfaceScale ("Detail scale per metre", Float) = 1
+        _SurfaceStrength ("Material detail strength", Range(0,2)) = 1
+        _SurfaceBaseY ("Building ground level", Float) = 0
+        _SurfaceDebug ("Surface role study", Float) = 0
+        _SurfaceHasTexture ("Retain existing surface pattern", Float) = 0
     }
 
     SubShader
@@ -146,8 +156,12 @@ Shader "TumbangPreso/NearFade"
         // anybody's view, and a shadow that dissolves as you walk up to the thing casting it reads
         // as a rendering fault. Without `addshadow` the caster comes from the `Fallback` below and
         // draws the full solid geometry, so the pole keeps its shadow while its body fades.
-        #pragma surface surf Standard fullforwardshadows
-        #pragma target 3.0
+        #pragma surface surf Standard fullforwardshadows vertex:SurfaceVertex
+        // Standard lighting plus batch-safe surface coordinates needs11 varying
+        // registers. Target3.5 supports15 and matches Unity6's GLES3+/D3D11/Metal
+        // platforms; keep the existing precise screen-space dissolve intact.
+        #pragma target 3.5
+        #pragma shader_feature_local _NORMALMAP
 
         // ⚠️ DO NOT DECLARE `_MainTex_ST` HERE. Naming the Input field `uv_MainTex` makes the
         // surface shader generator emit that declaration itself, and a second one is a hard
@@ -165,6 +179,11 @@ Shader "TumbangPreso/NearFade"
         struct Input
         {
             float2 uv_MainTex;
+            #ifdef _NORMALMAP
+            float2 uv_BumpMap;
+            INTERNAL_DATA
+            #endif
+            float4 surfaceData;
 
             // The radial distance is taken from here. `worldPos` is a name the surface shader
             // generator recognises and fills in; spelling it anything else silently leaves it at
@@ -175,10 +194,8 @@ Shader "TumbangPreso/NearFade"
             // rule dissolves the road underfoot without it, because the eye is 1.25 m up and the
             // band is 1.8 m. Like `worldPos`, `worldNormal` is a name the generator recognises.
             //
-            // ⚠️ NO `INTERNAL_DATA` IS NEEDED HERE AND ADDING IT WOULD BE WRONG. That macro is
-            // required only when the shader writes `o.Normal`, because the world normal then has to
-            // be reconstructed from the tangent basis. This one never writes `o.Normal`, so the
-            // interpolated vertex normal is the surface normal and arrives directly.
+            // Normal-mapped variants reconstruct the geometric normal from the
+            // tangent basis. The fade guard always uses geometry, not tiny bump detail.
             float3 worldNormal;
 
             // ⚠️⚠️ THE DITHER MUST BE INDEXED IN SCREEN SPACE OR IT IS NOT A SCREEN DOOR. Indexed
@@ -228,8 +245,26 @@ Shader "TumbangPreso/NearFade"
             return (value + 0.5) / 16.0;
         }
 
+        #include "EnvironmentSurface.cginc"
+        #include "UnityStandardUtils.cginc"
+        sampler2D _BumpMap;
+        float _BumpScale;
+
+        void SurfaceVertex(inout appdata_full v,out Input o)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input,o);
+            // Pack roles and coordinates together; keep metre coordinates at
+            // full precision rather than squeezing them into a low-precision color.
+            o.surfaceData=_SurfaceDebug>1.5?v.color:float4(v.color.r,v.texcoord2.xy,1);
+        }
+
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
+            float3 geometricNormal=IN.worldNormal;
+            #ifdef _NORMALMAP
+            geometricNormal=WorldNormalVector(IN,float3(0,0,1));
+            o.Normal=UnpackScaleNormal(tex2D(_BumpMap,IN.uv_BumpMap),_BumpScale);
+            #endif
             // ⚠️ `smoothstep` RATHER THAN A LINEAR RAMP, so the onset at the far end is gentle.
             // A linear ramp starts removing pixels the instant you cross 1.8 m and the first few
             // holes are the most noticeable ones, because there is nothing else stippled on
@@ -273,7 +308,7 @@ Shader "TumbangPreso/NearFade"
             // CANNOT. That asymmetry is the whole reason the sign matters. You stand ON things
             // that face up, so dissolving one drops you through the world. You walk UNDER things
             // that face down, so dissolving one is the same favour as dissolving a post.
-            float upness = normalize(IN.worldNormal).y;
+            float upness = normalize(geometricNormal).y;
 
             // ⚠️⚠️ FACING UP IS NOT ENOUGH TO BE THE FLOOR: IT ALSO HAS TO BE BELOW YOUR FEET.
             // 🧑 2026-08-28, looking down at a barrel whose sides had dissolved and whose lid had
@@ -313,6 +348,7 @@ Shader "TumbangPreso/NearFade"
             o.Albedo = albedo.rgb;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
+            TumpEnvironmentSurface(IN.worldPos,geometricNormal,IN.surfaceData,IN.surfaceData.gb,o);
 
             // ⚠️ ALPHA STAYS 1. The dissolve is a `clip`, never a blend: a blended prop would need
             // a transparent queue, would stop writing depth, and would then sort against the rest

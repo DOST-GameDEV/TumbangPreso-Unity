@@ -1,0 +1,91 @@
+Shader "TumbangPreso/NeighbourhoodSky"
+{
+    Properties
+    {
+        _Zenith("Upper sky", Color)=(.45,.56,.65,1)
+        _Horizon("Horizon haze", Color)=(.78,.77,.70,1)
+        _Ground("Below horizon", Color)=(.38,.36,.30,1)
+        _SunColor("Sunlight", Color)=(1,.84,.64,1)
+        _SunDirection("Sun direction", Vector)=(0,1,0,0)
+        _Tint("Weather tint", Color)=(.5,.5,.5,1)
+        _Exposure("Weather exposure", Range(0,2))=1
+        _CloudLight("Cloud sunlit face", Color)=(.92,.89,.81,1)
+        _CloudShade("Cloud body", Color)=(.57,.63,.68,1)
+        _CloudCoverage("Cloud threshold", Range(.2,.8))=.48
+        _CloudScale("Cloud bank scale", Float)=2.4
+        _CloudSoftness("Cloud edge softness", Range(.04,.25))=.12
+        _CloudLayout("Bank stretch and offset", Vector)=(1,1,2.4,6.8)
+        _HighClouds("High wisps", Range(0,1))=.22
+    }
+    SubShader
+    {
+        Tags { "Queue"="Background" "RenderType"="Background" "PreviewType"="Skybox" }
+        Cull Off ZWrite Off
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade,_CloudLayout;
+            float _Exposure,_CloudCoverage,_CloudScale,_CloudSoftness,_HighClouds;
+            struct appdata { float4 vertex:POSITION; };
+            struct v2f { float4 vertex:SV_POSITION;float3 direction:TEXCOORD0; };
+            v2f vert(appdata v)
+            {
+                v2f o;o.vertex=UnityObjectToClipPos(v.vertex);o.direction=v.vertex.xyz;return o;
+            }
+            float hash21(float2 p)
+            {
+                float3 q=frac(float3(p.xyx)*.1031);
+                q+=dot(q,q.yzx+33.33);
+                return frac((q.x+q.y)*q.z);
+            }
+            float noise(float2 p)
+            {
+                float2 cell=floor(p),f=frac(p);f=f*f*(3-2*f);
+                return lerp(lerp(hash21(cell),hash21(cell+float2(1,0)),f.x),
+                            lerp(hash21(cell+float2(0,1)),hash21(cell+1),f.x),f.y);
+            }
+            float bank(float2 p)
+            {
+                // Large lobes carry the form; just two finer layers soften their
+                // edges. No texture fetches, raymarch or full-screen white wash.
+                return noise(p)*.52+noise(p*2.07+13.4)*.28+noise(p*4.13-7.8)*.14+noise(p*8.31+9.2)*.06;
+            }
+            half4 frag(v2f i):SV_Target
+            {
+                float3 direction=normalize(i.direction);
+                float up=saturate(direction.y);
+                half3 sky=lerp(_Horizon.rgb,_Zenith.rgb,pow(up,.55));
+                sky=lerp(sky,_Ground.rgb,saturate(-direction.y*3));
+                float3 sunlight=normalize(_SunDirection.xyz);
+                float horizonFade=smoothstep(.015,.14,direction.y);
+                // A curved projection avoids a hard cloud-plane seam at the
+                // horizon. Authored stretch/offset makes each map's banks distinct.
+                float2 p=direction.xz/(max(direction.y,0)+.32)*_CloudScale;
+                p=p*_CloudLayout.xy+_CloudLayout.zw;
+                p+=float2(noise(p*.73+4.2),noise(p*.67+19.1))*.32;
+                float density=bank(p);
+                float cloud=smoothstep(_CloudCoverage,_CloudCoverage+_CloudSoftness,density)*horizonFade;
+                float shadeSample=bank(p+sunlight.xz*.20);
+                float volume=saturate(.36+(density-shadeSample)*5.5-(density-_CloudCoverage)*1.3);
+                half3 cloudColor=lerp(_CloudShade.rgb,_CloudLight.rgb,volume);
+                float rim=saturate(1-abs(density-_CloudCoverage-.04)*12)*saturate(dot(direction,sunlight))*.12;
+                cloudColor=lerp(cloudColor,_CloudLight.rgb,rim);
+                sky=lerp(sky,cloudColor,cloud*.92);
+                float wisps=smoothstep(.56,.74,bank(p*float2(.52,2.7)+float2(19.2,-7.4)));
+                sky=lerp(sky,_CloudLight.rgb,wisps*_HighClouds*smoothstep(.12,.5,up)*(1-cloud*.75));
+                // The sun remains a restrained warm focus behind the clouds.
+                float alignment=saturate(dot(direction,sunlight));
+                float sun=pow(alignment,48)*.065+pow(alignment,1500)*.12;
+                sky+=_SunColor.rgb*sun*(1-cloud*.85);
+                // Match Unity skybox tint semantics so existing ultimate weather
+                // and recorded environment restore use their established contract.
+                return half4(sky*_Tint.rgb*unity_ColorSpaceDouble.rgb*_Exposure,1);
+            }
+            ENDCG
+        }
+    }
+    Fallback Off
+}

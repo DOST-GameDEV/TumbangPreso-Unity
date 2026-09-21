@@ -47,7 +47,7 @@ namespace TumbangPreso.PlayTests
 
         private const int Width = 900;
         private const int Height = 600;
-        private const string OutDir = "Logs/shots-near-fade";
+        private static string OutDir => System.Environment.GetEnvironmentVariable("TUMP_NEAR_FADE_EVIDENCE") ?? "Logs/shots-near-fade";
 
         [UnityTest]
         [Category("WallClock")]

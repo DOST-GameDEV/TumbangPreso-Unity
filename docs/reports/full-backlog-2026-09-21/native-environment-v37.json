@@ -1,0 +1,206 @@
+{
+  "passed": true,
+  "views": 96,
+  "mapModePairs": 8,
+  "costWindows": 48,
+  "timestampedMotions": 9,
+  "gpu": "AMD Radeon RX 6600",
+  "cpu": "AMD Ryzen 5 2600 Six-Core Processor ",
+  "medianDeltaAcross24PairsMs": 0.6584962606430054,
+  "largestDetailP95Ms": 13.574398040771484,
+  "scope": "Frozen scene process frame timings on this host, no image encoding in sample windows; not isolated GPU timings or device certification.",
+  "pairs": [
+    {
+      "sceneModeProfile": "Eskinita-Classic-Low",
+      "plainMedianMs": 5.0074968338012695,
+      "detailMedianMs": 4.966099739074707,
+      "deltaMedianMs": -0.0413970947265625,
+      "detailP95Ms": 13.007397651672363,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "Eskinita-Classic-Balanced",
+      "plainMedianMs": 4.43339729309082,
+      "detailMedianMs": 6.335898399353027,
+      "deltaMedianMs": 1.902501106262207,
+      "detailP95Ms": 13.026403427124023,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "Eskinita-Classic-High",
+      "plainMedianMs": 7.060204029083252,
+      "detailMedianMs": 5.2087016105651855,
+      "deltaMedianMs": -1.8515024185180664,
+      "detailP95Ms": 12.39849853515625,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-Classic-Low",
+      "plainMedianMs": 3.07350492477417,
+      "detailMedianMs": 4.15960168838501,
+      "deltaMedianMs": 1.0860967636108398,
+      "detailP95Ms": 13.574398040771484,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-Classic-Balanced",
+      "plainMedianMs": 4.294798851013184,
+      "detailMedianMs": 4.030796527862549,
+      "deltaMedianMs": -0.26400232315063477,
+      "detailP95Ms": 13.312804222106934,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-Classic-High",
+      "plainMedianMs": 3.350602149963379,
+      "detailMedianMs": 4.815497398376465,
+      "deltaMedianMs": 1.464895248413086,
+      "detailP95Ms": 13.155400276184082,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-Classic-Low",
+      "plainMedianMs": 4.619905471801758,
+      "detailMedianMs": 4.87130069732666,
+      "deltaMedianMs": 0.25139522552490234,
+      "detailP95Ms": 12.675000190734863,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-Classic-Balanced",
+      "plainMedianMs": 7.757603645324707,
+      "detailMedianMs": 6.316900730133057,
+      "deltaMedianMs": -1.4407029151916504,
+      "detailP95Ms": 12.55160140991211,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-Classic-High",
+      "plainMedianMs": 6.376006126403809,
+      "detailMedianMs": 6.1389031410217285,
+      "deltaMedianMs": -0.23710298538208008,
+      "detailP95Ms": 12.397002220153809,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-Classic-Low",
+      "plainMedianMs": 3.993501901626587,
+      "detailMedianMs": 4.0829010009765625,
+      "deltaMedianMs": 0.08939909934997559,
+      "detailP95Ms": 13.077197074890137,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-Classic-Balanced",
+      "plainMedianMs": 3.2099063396453857,
+      "detailMedianMs": 4.448901653289795,
+      "deltaMedianMs": 1.2389953136444092,
+      "detailP95Ms": 12.751997947692871,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-Classic-High",
+      "plainMedianMs": 3.398200035095215,
+      "detailMedianMs": 4.755605220794678,
+      "deltaMedianMs": 1.357405185699463,
+      "detailP95Ms": 12.557100296020508,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "Eskinita-HeroStrike-Low",
+      "plainMedianMs": 5.739597797393799,
+      "detailMedianMs": 5.133800983428955,
+      "deltaMedianMs": -0.6057968139648438,
+      "detailP95Ms": 12.145896911621094,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "Eskinita-HeroStrike-Balanced",
+      "plainMedianMs": 4.9343037605285645,
+      "detailMedianMs": 5.157801628112793,
+      "deltaMedianMs": 0.22349786758422852,
+      "detailP95Ms": 12.126997947692871,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "Eskinita-HeroStrike-High",
+      "plainMedianMs": 4.434601783752441,
+      "detailMedianMs": 5.669196605682373,
+      "deltaMedianMs": 1.2345948219299316,
+      "detailP95Ms": 12.253600120544434,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-HeroStrike-Low",
+      "plainMedianMs": 3.5158021450042725,
+      "detailMedianMs": 4.212896823883057,
+      "deltaMedianMs": 0.6970946788787842,
+      "detailP95Ms": 12.867396354675293,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-HeroStrike-Balanced",
+      "plainMedianMs": 3.7616000175476074,
+      "detailMedianMs": 4.513704776763916,
+      "deltaMedianMs": 0.7521047592163086,
+      "detailP95Ms": 12.642403602600098,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "BayanPlaza-HeroStrike-High",
+      "plainMedianMs": 4.050999164581299,
+      "detailMedianMs": 4.670897006988525,
+      "deltaMedianMs": 0.6198978424072266,
+      "detailP95Ms": 12.482596397399902,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-HeroStrike-Low",
+      "plainMedianMs": 5.479804039001465,
+      "detailMedianMs": 6.711997032165527,
+      "deltaMedianMs": 1.2321929931640625,
+      "detailP95Ms": 12.336400985717773,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-HeroStrike-Balanced",
+      "plainMedianMs": 6.545698642730713,
+      "detailMedianMs": 6.119897842407227,
+      "deltaMedianMs": -0.42580080032348633,
+      "detailP95Ms": 12.214200973510742,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "IlalimNgTulay-HeroStrike-High",
+      "plainMedianMs": 6.880498886108398,
+      "detailMedianMs": 5.987499713897705,
+      "deltaMedianMs": -0.8929991722106934,
+      "detailP95Ms": 12.026501655578613,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-HeroStrike-Low",
+      "plainMedianMs": 3.649702310562134,
+      "detailMedianMs": 4.851700782775879,
+      "deltaMedianMs": 1.2019984722137451,
+      "detailP95Ms": 12.38880443572998,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-HeroStrike-Balanced",
+      "plainMedianMs": 4.022399425506592,
+      "detailMedianMs": 5.078798294067383,
+      "deltaMedianMs": 1.056398868560791,
+      "detailP95Ms": 12.606201171875,
+      "samples": 180
+    },
+    {
+      "sceneModeProfile": "SaBubong-HeroStrike-High",
+      "plainMedianMs": 4.181604385375977,
+      "detailMedianMs": 5.152401924133301,
+      "deltaMedianMs": 0.9707975387573242,
+      "detailP95Ms": 12.82079792022705,
+      "samples": 180
+    }
+  ]
+}

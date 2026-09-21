@@ -547,6 +547,7 @@ namespace TumbangPreso.UI
             _pendingScene = scene;
             _pendingFrame = Time.frameCount;
 
+            if(MapPreviewSurface.DeferTransition(scene))return;
             SceneManager.LoadScene(scene);
         }
 

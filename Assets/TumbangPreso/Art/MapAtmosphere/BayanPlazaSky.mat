@@ -22,14 +22,34 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _CloudMap:
+        m_Texture: {fileID: 2800000, guid: ac72d87d64d4a5746abcb7cfa1917680, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _CloudCoverage: 0.51
+    - _CloudLumaHigh: 1.9445188
+    - _CloudLumaLow: 0.48335156
+    - _CloudLumaScale: 1.540209
+    - _CloudOpacity: 0.94
+    - _CloudScale: 3
+    - _CloudSoftness: 0.045
+    - _CloudSpeed: 0.000069444446
+    - _CloudSunCutoff: 6.6844497
+    - _CloudYaw: -0.3272515
+    - _Exposure: 1
+    - _HighClouds: 0.12
     m_Colors:
+    - _CloudLayout: {r: 1, g: 0.92, b: 7.4, a: 14.2}
+    - _CloudLight: {r: 0.91, g: 0.92, b: 0.89, a: 1}
+    - _CloudShade: {r: 0.45, g: 0.54, b: 0.63, a: 1}
     - _Ground: {r: 0.4, g: 0.37, b: 0.31, a: 1}
     - _Horizon: {r: 0.8, g: 0.79, b: 0.71, a: 1}
     - _SunColor: {r: 1, g: 0.88, b: 0.7, a: 1}
     - _SunDirection: {r: 0.32612237, g: 0.71933985, b: -0.61334693, a: 0}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Zenith: {r: 0.47, g: 0.6, b: 0.69, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

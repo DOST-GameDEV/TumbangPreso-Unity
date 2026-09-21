@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CityPalette_67b73e3069f31a6459f1148e14f152da_colormap_0 / architectural
+    parts
+  m_Shader: {fileID: 4800000, guid: 9e26b4f70c8a51d4b83f5a71c6042de9, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    TumpSurfaceSource: f22c7b9d647bafa4a982d85dc2905848_2100000
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: f2157a0c7729b1842812be1a12f8a49a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Glossiness: 0
+    - _Metallic: 0
+    - _NearFadeCell: 2
+    - _NearFadeEnd: 0.35
+    - _NearFadeStart: 1.8
+    - _SurfaceBaseY: -26.049
+    - _SurfaceCoordinates: 1
+    - _SurfaceDebug: 0
+    - _SurfaceHasTexture: 1
+    - _SurfaceKind: 1
+    - _SurfaceScale: 1
+    - _SurfaceStrength: 0.8
+    - _SurfaceVertexRoles: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

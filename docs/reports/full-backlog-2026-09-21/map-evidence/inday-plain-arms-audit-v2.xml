@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.2531353">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.253135" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1675" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.229974" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29900" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1676" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.217921" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1677" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.207535" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1537" name="RosterArmAuditTests" fullname="TumbangPreso.Tests.RosterArmAuditTests" classname="TumbangPreso.Tests.RosterArmAuditTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.189657" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1541" name="EveryArmHasARealForearmAxisAndCurrentCharacterGeometry" fullname="TumbangPreso.Tests.RosterArmAuditTests.EveryArmHasARealForearmAxisAndCurrentCharacterGeometry" methodname="EveryArmHasARealForearmAxisAndCurrentCharacterGeometry" classname="TumbangPreso.Tests.RosterArmAuditTests" runstate="Runnable" seed="103469009" result="Passed" start-time="2026-09-21 16:49:19Z" end-time="2026-09-21 16:49:20Z" duration="1.109185" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1540" name="IndayModelsHaveOnlyPlainBrownArms" fullname="TumbangPreso.Tests.RosterArmAuditTests.IndayModelsHaveOnlyPlainBrownArms" classname="TumbangPreso.Tests.RosterArmAuditTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-21 16:49:20Z" end-time="2026-09-21 16:49:20Z" duration="0.061429" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1538" name="IndayModelsHaveOnlyPlainBrownArms(&quot;character-female-a&quot;)" fullname="TumbangPreso.Tests.RosterArmAuditTests.IndayModelsHaveOnlyPlainBrownArms(&quot;character-female-a&quot;)" methodname="IndayModelsHaveOnlyPlainBrownArms" classname="TumbangPreso.Tests.RosterArmAuditTests" runstate="Runnable" seed="1453692003" result="Passed" start-time="2026-09-21 16:49:20Z" end-time="2026-09-21 16:49:20Z" duration="0.019746" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1539" name="IndayModelsHaveOnlyPlainBrownArms(&quot;team-inday&quot;)" fullname="TumbangPreso.Tests.RosterArmAuditTests.IndayModelsHaveOnlyPlainBrownArms(&quot;team-inday&quot;)" methodname="IndayModelsHaveOnlyPlainBrownArms" classname="TumbangPreso.Tests.RosterArmAuditTests" runstate="Runnable" seed="761606260" result="Passed" start-time="2026-09-21 16:49:20Z" end-time="2026-09-21 16:49:20Z" duration="0.036579" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.2998181">
+  <test-suite type="TestSuite" id="1676" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="508" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.299818" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1670" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="508" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.284899" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29880" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1671" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="508" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.279412" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1672" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="508" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.274520" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1317" name="NearFadeProbe" fullname="TumbangPreso.PlayTests.NearFadeProbe" classname="TumbangPreso.PlayTests.NearFadeProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.254996" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1318" name="PhotographTheApproachToAPost" fullname="TumbangPreso.PlayTests.NearFadeProbe.PhotographTheApproachToAPost" methodname="PhotographTheApproachToAPost" classname="TumbangPreso.PlayTests.NearFadeProbe" runstate="Runnable" seed="256328693" result="Passed" start-time="2026-09-21 17:39:58Z" end-time="2026-09-21 17:40:01Z" duration="3.238296" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Category" value="WallClock" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[]]></message>
+              </reason>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 915 renderers, 135 with a roof variant.
+[NearFade] 1078 occluder nodes matched, 248 renderers moved onto TumbangPreso/NearFade.
+=== NEAR FADE PROBE ===
+post=PosteRework_Poste_6 at (7.75, 0.10, 15.00)
+renderers under it: 1
+  PosteRework_Poste_6: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_6: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_6: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+  PosteRework_Poste_6: shader=TumbangPreso/NearFade start=1.8 end=0.35 cell=2
+wrote Logs/near-fade-materials-v1\post_2.50m.png
+wrote Logs/near-fade-materials-v1\post_1.10m.png
+wrote Logs/near-fade-materials-v1\post_0.20m.png
+
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

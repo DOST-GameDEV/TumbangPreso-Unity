@@ -1,4 +1,7 @@
 using System.IO;
+using System;
+using System.Linq;
+using System.Security.Cryptography;
 using TumbangPreso.Visual;
 using UnityEditor;
 using UnityEngine;
@@ -10,6 +13,80 @@ namespace TumbangPreso.EditorTools.MapKit
     /// <summary>Each place has its own daylight, bounce and atmospheric depth.</summary>
     public static class MapAtmosphereAuthor
     {
+        [Serializable] private sealed class CloudSampling
+        {public string sourceSha256;public int version;public float sunU,lumaScale,sunCutoff,cloudLow,cloudHigh;}
+        // Update only the already referenced sky materials; no scene reconstruction.
+        public static void RefreshCloudMaterials()
+        {
+            foreach(string map in UI.SceneFlow.Maps)
+            {
+                var sky=AssetDatabase.LoadAssetAtPath<Material>("Assets/TumbangPreso/Art/MapAtmosphere/"+map+"Sky.mat");
+                if(sky==null)throw new System.InvalidOperationException("Missing authored sky for "+map);
+                Clouds(sky,map);
+            }
+            AssetDatabase.SaveAssets();EditorApplication.Exit(0);
+        }
+
+        private static void Clouds(Material sky,string map)
+        {
+            bool alley=map=="Eskinita",bridge=map=="IlalimNgTulay",roof=map=="SaBubong";
+            sky.SetColor("_Tint",new Color(.5f,.5f,.5f));sky.SetFloat("_Exposure",1);
+            sky.SetColor("_CloudLight",roof?new Color(.95f,.80f,.66f):alley?new Color(.94f,.87f,.73f):new Color(.91f,.92f,.89f));
+            sky.SetColor("_CloudShade",roof?new Color(.39f,.40f,.53f):bridge?new Color(.43f,.53f,.61f):new Color(.45f,.54f,.63f));
+            string source=roof?"wasteland_clouds_puresky":bridge?"kloppenheim_03_puresky":
+                alley?"kloofendal_38d_partly_cloudy_puresky":"kloofendal_48d_partly_cloudy_puresky";
+            var texture=CloudTexture(source,out var sampling);
+            sky.SetFloat("_CloudSpeed",(roof?.022f:bridge?.045f:alley?.035f:.025f)/360f);
+            sky.SetTexture("_CloudMap",texture);sky.SetFloat("_CloudLumaScale",sampling.lumaScale);
+            sky.SetFloat("_CloudLumaLow",sampling.cloudLow);sky.SetFloat("_CloudLumaHigh",sampling.cloudHigh);
+            sky.SetFloat("_CloudSunCutoff",sampling.sunCutoff);sky.SetFloat("_CloudOpacity",roof?.90f:.94f);
+            var direction=sky.GetVector("_SunDirection");
+            sky.SetFloat("_CloudYaw",sampling.sunU-(Mathf.Atan2(direction.x,direction.z)/(2*Mathf.PI)+.5f));
+            EditorUtility.SetDirty(sky);
+        }
+
+        private static Texture2D CloudTexture(string id,out CloudSampling sampling)
+        {
+            string source="ArtSource/environment/skies/polyhaven/"+id+"_2k.hdr";
+            if(!File.Exists(source))throw new InvalidOperationException("Missing credited cloud source "+source);
+            string folder="Assets/TumbangPreso/Art/MapAtmosphere/CloudSources";
+            Directory.CreateDirectory(folder);string path=folder+"/"+id+"_2k.hdr";
+            byte[] bytes=File.ReadAllBytes(source);string hash;
+            using(var sha=SHA256.Create())hash=BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
+            if(!File.Exists(path)||!File.ReadAllBytes(path).SequenceEqual(bytes))File.WriteAllBytes(path,bytes);
+            AssetDatabase.ImportAsset(path,ImportAssetOptions.ForceSynchronousImport);
+            var importer=(TextureImporter)AssetImporter.GetAtPath(path);
+            sampling=string.IsNullOrEmpty(importer.userData)?null:JsonUtility.FromJson<CloudSampling>(importer.userData);
+            if(sampling==null||sampling.sourceSha256!=hash||sampling.version!=2)
+            {
+                importer.textureShape=TextureImporterShape.Texture2D;importer.sRGBTexture=false;
+                importer.mipmapEnabled=true;importer.maxTextureSize=2048;importer.isReadable=true;
+                importer.wrapModeU=TextureWrapMode.Repeat;importer.wrapModeV=TextureWrapMode.Clamp;
+                importer.filterMode=FilterMode.Trilinear;importer.textureCompression=TextureImporterCompression.Uncompressed;
+                importer.SaveAndReimport();
+                var raw=AssetDatabase.LoadAssetAtPath<Texture2D>(path);var pixels=raw.GetPixels();
+                var light=new System.Collections.Generic.List<float>();
+                var cloudLight=new System.Collections.Generic.List<float>();float peak=0;int sunX=0;
+                for(int y=raw.height/2;y<raw.height;y+=2)for(int x=0;x<raw.width;x+=2)
+                {
+                    var c=pixels[y*raw.width+x];float value=c.r*.2126f+c.g*.7152f+c.b*.0722f;
+                    light.Add(value);
+                    float maximum=Mathf.Max(c.r,Mathf.Max(c.g,c.b));
+                    if(y>raw.height*.55f&&(c.b-c.r)/Mathf.Max(.00001f,maximum)<.18f)cloudLight.Add(value);
+                    if(value>peak){peak=value;sunX=x;}
+                }
+                light.Sort();cloudLight.Sort();
+                if(cloudLight.Count<100)throw new InvalidOperationException("Cloud panorama has insufficient neutral cloud samples: "+id);
+                sampling=new CloudSampling{sourceSha256=hash,version=2,cloudLow=cloudLight[(int)(cloudLight.Count*.05f)],
+                    cloudHigh=cloudLight[(int)(cloudLight.Count*.90f)],sunU=(sunX+.5f)/raw.width,
+                    lumaScale=1/Mathf.Max(.00001f,light[(int)(light.Count*.8f)]),
+                    sunCutoff=Mathf.Max(.001f,light[(int)(light.Count*.95f)]*6)};
+                importer.userData=JsonUtility.ToJson(sampling);importer.isReadable=false;
+                importer.textureCompression=TextureImporterCompression.CompressedHQ;importer.SaveAndReimport();
+                Debug.Log("[Cloud source] "+id+" "+JsonUtility.ToJson(sampling));
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
         public static void Apply(string map)
         {
             bool alley=map=="Eskinita",bridge=map=="IlalimNgTulay",roof=map=="SaBubong";
@@ -43,6 +120,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var horizon=roof?new Color(.82f,.74f,.65f):alley?new Color(.80f,.73f,.62f):bridge?new Color(.76f,.75f,.69f):new Color(.80f,.79f,.71f);
             sky.SetColor("_Horizon",horizon);sky.SetColor("_Ground",new Color(.40f,.37f,.31f));
             sky.SetColor("_SunColor",sunColor);sky.SetVector("_SunDirection",sunDirection);
+            Clouds(sky,map);
             RenderSettings.skybox=sky;EditorUtility.SetDirty(sky);
             RenderSettings.fog=true;RenderSettings.fogMode=FogMode.Linear;
             RenderSettings.fogColor=horizon;RenderSettings.fogStartDistance=bridge?68:85;

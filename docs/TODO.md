@@ -24,6 +24,23 @@ construction and purpose across every map/building; do not stamp one noise/textu
 on everything. Improve sky/clouds/atmosphere with suitable shaders or authored art,
 preserving native style, supplied signs/livery, gameplay clarity and Low settings.
 
+### Latest active additions, 2026-09-22
+
+- [x] **152.4 / animated sky:** add slow cloud movement with per-map pace, stable
+  horizon/sun, pause/slow-motion respect and recorded-frame/return continuity.
+  Retain the revised cloud forms and every existing map-detail requirement.
+- [x] **Inday plain arms:** remove arm-mounted pogo-like props/guards from both
+  Inday source models and all FPP/variant routes; use plain brown arms with her
+  retained simple hands and animation. This replaces the older guard-preservation
+  choice. Preserve source backups; inspect actual body and owner carry/throw poses.
+
+These two additions are implemented and qualified in environment-v37: actual sky
+pixel movement/pause/rewind, both-mode native map route and normal-speed footage;
+Inday's two-model/whole-roster audits, body/FPP throws and native owner views.
+This closes those specific requests, not the material/map parent or the full TODO.
+The preview-to-match lifecycle defect found during this validation is also repaired
+with a failed-before/passed-after regression and the complete native route.
+
 ### Full remaining execution order
 
 The presentation outcomes below retain their completed software/evidence states.
@@ -45,9 +62,10 @@ Continue through the following existing scope in this same assignment:
    preview/layout and feature-relevant authority/rejoin gaps. Preserve supplied art,
    input mapping and unrelated dirty work. Physical hardware, external services and
    human judgment remain separately named checks; they do not block independent work.
-4. **Inday source-arm framing:** resume the retained source-copy candidate and its
-   carrying/throw/body/FPP review. Keep actual arm geometry, proportions and palette;
-   remove obsolete reconstruction only after its replacement is verified.
+4. **Inday plain arms and framing:** the latest owner request supersedes keeping
+   the coral guards. Remove the attachments across both models/FPP variants, retain
+   simple hands and brown skin, and qualify carrying/throw/body/FPP continuity.
+   This specific arm correction now runs alongside the active map work.
 5. **BADJAO_EXPANSION, selected character B and map C:** implement the retained
    Sama Dilaut athlete (working name Rafi), native model/rig/FPP/animations, distinct
    Crosscurrent/Mirrorwake/Breakwater kit and complete gameplay/presentation/network/

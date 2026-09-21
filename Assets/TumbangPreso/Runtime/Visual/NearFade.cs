@@ -302,6 +302,15 @@ namespace TumbangPreso.Visual
             return touched;
         }
 
+#if UNITY_EDITOR
+        public static Material CopySurfaceForAuthoring(Material source)
+        {
+            var shader=FindShader();if(source==null||shader==null)return null;
+            var prepared=source.shader==shader?source:Build(source,shader);
+            return prepared!=null?new Material(prepared):null;
+        }
+#endif
+
         private static Material Build(Material source, Shader shader)
         {
             // World-space ceramic joints cannot be reconstructed by copying a
@@ -408,6 +417,16 @@ namespace TumbangPreso.Visual
             }
 
             material.SetFloat("_NearFadeStart", FadeStartMetres);
+            foreach(string property in new[]{"_BumpMap","normalTexture","_NormalMap"})
+            {
+                if(!source.HasProperty(property)||source.GetTexture(property)==null)continue;
+                material.SetTexture("_BumpMap",source.GetTexture(property));
+                material.SetTextureScale("_BumpMap",source.GetTextureScale(property));
+                material.SetTextureOffset("_BumpMap",source.GetTextureOffset(property));
+                material.SetFloat("_BumpScale",source.HasProperty("_BumpScale")?source.GetFloat("_BumpScale"):
+                    source.HasProperty("normalScale")?source.GetFloat("normalScale"):1);
+                material.EnableKeyword("_NORMALMAP");break;
+            }
             material.SetFloat("_NearFadeEnd", FadeEndMetres);
             material.SetFloat("_NearFadeCell", DitherCellPixels);
 

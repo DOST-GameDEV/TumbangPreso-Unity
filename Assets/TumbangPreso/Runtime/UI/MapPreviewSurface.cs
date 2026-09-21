@@ -186,6 +186,54 @@ namespace TumbangPreso.UI
         private Camera _camera;
         private string _showing;
         private bool _busy;
+        private bool _retiring,_ownsPreviewGate;
+        private string _transitionScene;
+        private static int _previewLoads;
+        private static bool _previousPreviewGate;
+        private static MapPreviewSurface _transitionOwner;
+
+        // A synchronous single-scene load can force an outstanding additive load
+        // to activate while its coroutine still owns PreviewOnly. Let that work
+        // finish and release its guard before destroying the setup that owns it.
+        public static bool DeferTransition(string scene)
+        {
+            if(_transitionOwner!=null){_transitionOwner._transitionScene=scene;return true;}
+            var previews=UnityEngine.Object.FindObjectsByType<MapPreviewSurface>();
+            MapPreviewSurface owner=null;
+            foreach(var preview in previews)
+            {
+                preview._retiring=true;
+                if(preview._busy&&owner==null)owner=preview;
+            }
+            if(owner==null)return false;
+            _transitionOwner=owner;owner._transitionScene=scene;
+            owner.StartCoroutine(owner.CompleteTransition(previews));return true;
+        }
+
+        private IEnumerator CompleteTransition(MapPreviewSurface[] previews)
+        {
+            bool pending;
+            do
+            {
+                pending=false;foreach(var preview in previews)pending|=preview!=null&&preview._busy;
+                if(pending)yield return null;
+            }while(pending);
+            string destination=_transitionScene;_transitionOwner=null;
+            SceneFlow.Go(destination);
+        }
+
+        private void BeginPreviewLoad()
+        {
+            if(_ownsPreviewGate)return;
+            if(_previewLoads++==0)_previousPreviewGate=MatchInstaller.PreviewOnly;
+            _ownsPreviewGate=true;MatchInstaller.PreviewOnly=true;
+        }
+        private void EndPreviewLoad()
+        {
+            if(!_ownsPreviewGate)return;
+            _ownsPreviewGate=false;
+            if(--_previewLoads==0)MatchInstaller.PreviewOnly=_previousPreviewGate;
+        }
 
         /// <summary>
         /// The camera that photographs the arena, for anything that has to project a world point
@@ -285,76 +333,80 @@ namespace TumbangPreso.UI
 
         public void Show(string map)
         {
-            if (_busy || map == _showing) return;
+            if (_retiring || _busy || map == _showing) return;
             StartCoroutine(Swap(map));
         }
 
         private IEnumerator Swap(string map)
         {
             _busy = true;
-
-            // ⚠️ THE OUTGOING MAP IS PARKED, NOT UNLOADED, exactly as `map_preview.gd` parks
-            // its instance in `_cache`. Unloading and reloading a dressed street on every arrow
-            // press is a visible stall on the one screen a player cycles fastest.
-            Park(_showing);
-
-            if (_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
+            try
             {
-                Unpark(map);
-            }
-            else
-            {
-                if (!Application.CanStreamedLevelBeLoaded(map))
+
+                // ⚠️ THE OUTGOING MAP IS PARKED, NOT UNLOADED, exactly as `map_preview.gd` parks
+                // its instance in `_cache`. Unloading and reloading a dressed street on every arrow
+                // press is a visible stall on the one screen a player cycles fastest.
+                Park(_showing);
+
+                if (_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
                 {
-                    Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
-                                     "the setup screen keeps its backdrop.");
-                    _busy = false;
-                    yield break;
+                    Unpark(map);
+                }
+                else
+                {
+                    if (!Application.CanStreamedLevelBeLoaded(map))
+                    {
+                        Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
+                                         "the setup screen keeps its backdrop.");
+                        _busy = false;
+                        yield break;
+                    }
+
+                    // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
+                    // the additive scene finishes loading, and by the time this coroutine resumes it
+                    // has already spawned four characters, the can and the directors. Stripping them
+                    // afterwards left a frame of bots mid-spawn behind the menu and a round timer
+                    // that had started. The flag makes the installer stand down before it builds
+                    // anything.
+                    BeginPreviewLoad();
+
+                    var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
+                    while (load != null && !load.isDone) yield return null;
+
+                    EndPreviewLoad();
+
+                    var loaded = SceneManager.GetSceneByName(map);
+                    _cache[map] = loaded;
+
+                    StripMatchObjects(loaded);
+                    Silence(loaded);
+
+                    // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole
+                    // GameObjects, and re-layering a subtree that is about to be deleted is wasted
+                    // work on the one screen that must not stall.
+                    Confine(loaded);
                 }
 
-                // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
-                // the additive scene finishes loading, and by the time this coroutine resumes it
-                // has already spawned four characters, the can and the directors. Stripping them
-                // afterwards left a frame of bots mid-spawn behind the menu and a round timer
-                // that had started. The flag makes the installer stand down before it builds
-                // anything.
-                MatchInstaller.PreviewOnly = true;
+                _showing = map;
 
-                var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Additive);
-                while (load != null && !load.isDone) yield return null;
+                AimAt(map);
+                EnsureCamera();
 
-                MatchInstaller.PreviewOnly = false;
+                // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
+                // does not exist on the first swap until EnsureCamera has run.
+                ApplyMapEnvironment(map);
 
-                var loaded = SceneManager.GetSceneByName(map);
-                _cache[map] = loaded;
+                _surface.texture = _target;
+                _surface.color = Color.white;
 
-                StripMatchObjects(loaded);
-                Silence(loaded);
+                _busy = false;
 
-                // ⚠️ AFTER the strip, never before. `StripMatchObjects` destroys whole
-                // GameObjects, and re-layering a subtree that is about to be deleted is wasted
-                // work on the one screen that must not stall.
-                Confine(loaded);
+                // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
+                // is to put something INTO this map, and the two things it needs (a camera to be
+                // framed by and a scene to be parented into) are both set up above.
+                MapShown?.Invoke(map);
             }
-
-            _showing = map;
-
-            AimAt(map);
-            EnsureCamera();
-
-            // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
-            // does not exist on the first swap until EnsureCamera has run.
-            ApplyMapEnvironment(map);
-
-            _surface.texture = _target;
-            _surface.color = Color.white;
-
-            _busy = false;
-
-            // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
-            // is to put something INTO this map, and the two things it needs (a camera to be
-            // framed by and a scene to be parented into) are both set up above.
-            MapShown?.Invoke(map);
+            finally{EndPreviewLoad();_busy=false;}
         }
 
         /// <summary>
@@ -1051,6 +1103,8 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            EndPreviewLoad();_busy=false;
+            if(_transitionOwner==this)_transitionOwner=null;
             if (_camera != null) Destroy(_camera.gameObject);
 
             if (_target == null) return;

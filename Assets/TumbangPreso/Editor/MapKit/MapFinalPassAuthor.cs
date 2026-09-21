@@ -61,6 +61,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="IlalimNgTulay")AsphaltRoadSurface.CompleteIlalimStreetSurface();
             if(map=="IlalimNgTulay")HoardingSupportsAuthor.RepairLoaded();
             AmbientLifeAuthor.FinishLoadedScene(map,report);
+            MapSurfaceAuthor.FinishLoadedScene(map,report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

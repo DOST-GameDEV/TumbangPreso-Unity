@@ -48,6 +48,7 @@ def main():
     parser.add_argument('--spectator-only',action='store_true',help='Exercise the real spectator entry, camera controls and manual replay.')
     parser.add_argument('--introduction-bodies-only',action='store_true',help='Render six authored introduction body studies in the native player; no shared phase claim.')
     parser.add_argument('--introduction-scenes',action='store_true',help='Include the private scene effects in the introduction art route.')
+    parser.add_argument('--map-surfaces-only',action='store_true',help='Inspect all native map finishes, matched quality views and isolated detail-cost windows.')
     args=parser.parse_args()
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
@@ -67,6 +68,7 @@ def main():
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.map_surfaces_only:command.append('-tp-map-surfaces-only')
     if args.ordinary_skills:command.append('-tp-ordinary-skills')
     if args.result_end_only:command+=['-tp-whole-matches','-tp-result-end']
     if args.whole_matches:command.append('-tp-whole-matches')
