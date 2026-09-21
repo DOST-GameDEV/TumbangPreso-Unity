@@ -95,7 +95,7 @@ namespace TumbangPreso.CameraSystem
                     var actor=GameServices.Round?.PlayerAt(seat);
                     return actor!=null?actor.AbilitySystem?.Kit?.Ultimate?.Name??"ULTIMATE":"ULTIMATE";
                 }
-                var title=OwnerUiLayout.Text(header,"UltimateName",together?"ULTIMATES TOGETHER":NameForCast(commits[0].Seat),50,OwnerUiLayout.TypeRole.Display);
+                var title=OwnerUiLayout.Text(header,"UltimateName",together?"ULTIMATES INCOMING":NameForCast(commits[0].Seat),50,OwnerUiLayout.TypeRole.Display);
                 title.alignment=TextAnchor.MiddleCenter;title.color=CourtPresentationPalette.Paper;title.supportRichText=false;
                 title.horizontalOverflow=HorizontalWrapMode.Overflow;title.verticalOverflow=VerticalWrapMode.Overflow;
                 OwnerUiLayout.Place(title.rectTransform,35,0,830,74);

@@ -205,7 +205,7 @@ namespace TumbangPreso.PlayTests
                     var phase=SharedUltimatePhase.Instance;Assert.IsTrue(phase.Active);Assert.AreEqual(4,phase.Commits.Count);Assert.Greater(phase.PhaseId,previous);
                     yield return null;
                     var title=GameObject.Find("UltimateName");Assert.IsNotNull(title);
-                    Assert.AreEqual("ULTIMATES TOGETHER",title.GetComponent<UnityEngine.UI.Text>().text);
+                    Assert.AreEqual("ULTIMATES INCOMING",title.GetComponent<UnityEngine.UI.Text>().text);
                     foreach(var actor in actors)
                     {
                         var label=GameObject.Find("CohortAbility"+actor.PlayerSlot);Assert.IsNotNull(label);
