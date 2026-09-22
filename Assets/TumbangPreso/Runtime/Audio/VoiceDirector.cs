@@ -20,6 +20,16 @@ namespace TumbangPreso.Audio
     /// </summary>
     public sealed class VoiceDirector : MonoBehaviour
     {
+        public static event System.Action<string, float> Captioned;
+        // English meanings in docs/HUMAN.md Table A. Only delivered recordings
+        // are captioned; absent takes never produce an invented spoken line.
+        public static string CaptionFor(string id) => id switch
+        {
+            "count_3" => "Three!", "count_2" => "Two!", "count_1" => "One!",
+            "count_go" => "Begin!", "clock_30" => "Thirty seconds left!",
+            "clock_10" => "Ten seconds left!", "match_win" => "Winner!",
+            "match_draw" => "It's a draw!", _ => null
+        };
         /// <summary>How far the music drops under a line, and the floor on how long that
         /// duck is held — a duck that recovers before the line ends pumps audibly.</summary>
         public const float DuckDb = -14.0f;
@@ -134,7 +144,9 @@ namespace TumbangPreso.Audio
 
         public void Play(string lineId)
         {
-            if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0 || VoiceVolume() <= .0001f) return;
+            if (!_takes.TryGetValue(lineId, out var takes) || takes.Count == 0) return;
+            bool audible = VoiceVolume() > .0001f;
+            if (!audible && !Settings.SettingsStore.Current.CalloutCaptions) return;
 
             int priority = lineId.StartsWith("count_") || lineId.StartsWith("match_") ? 3 :
                 lineId.StartsWith("clock_") ? 2 : 1;
@@ -160,9 +172,13 @@ namespace TumbangPreso.Audio
             _busyUntil = Time.unscaledTime + takes[index].length + (priority == 1 ? 1.2f : 0);
             voice.clip = takes[index];
             voice.volume = VoiceVolume();
-            voice.Play();
-
-            GameServices.Music?.Duck(DuckDb, Mathf.Max(DuckMinHold, takes[index].length));
+            if (audible)
+            {
+                voice.Play();
+                GameServices.Music?.Duck(DuckDb, Mathf.Max(DuckMinHold, takes[index].length));
+            }
+            string caption = CaptionFor(lineId);
+            if (caption != null) Captioned?.Invoke(caption, Mathf.Clamp(takes[index].length, 1.2f, 5f));
         }
 
         /// <summary>Independent announcer fader under master, separate from world SFX.</summary>

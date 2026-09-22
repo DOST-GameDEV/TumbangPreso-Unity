@@ -45,6 +45,7 @@ namespace TumbangPreso.UI
                 float alpha = spectator || Settings.SettingsStore.Current.ReducedUiMotion ? 0 :
                     Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
                 alpha *= Settings.SettingsStore.Current.FlashIntensity;
+                if (Settings.SettingsStore.Current.ReducedEffects) alpha *= .25f;
                 _danger.enabled = alpha > .001f;
                 _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
             }
@@ -53,7 +54,7 @@ namespace TumbangPreso.UI
             _coverage = Mathf.MoveTowards(_coverage, target, dt / (target > _coverage ? Hud.FrostRampIn : Hud.FrostRampOut));
             if (_caught == null) return;
             _caught.enabled = _coverage > .001f;
-            _caughtMaterial.SetFloat("_Coverage", _coverage);
+            _caughtMaterial.SetFloat("_Coverage", Settings.SettingsStore.Current.ReducedEffects ? Mathf.Min(_coverage, .18f) : _coverage);
             var element = local != null ? local.StunElement : StunElement.None;
             var coat = Visual.StunCoat.For(element);
             _caughtMaterial.SetColor("_FrostTint", element == StunElement.None ? f.DeepInk : coat.Screen);

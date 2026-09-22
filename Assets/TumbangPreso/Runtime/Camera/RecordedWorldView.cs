@@ -109,6 +109,9 @@ namespace TumbangPreso.CameraSystem
                 footer.anchoredPosition=new Vector2(48,26);footer.sizeDelta=new Vector2(480,48);
                 var footerPlate=footer.gameObject.AddComponent<CourtPopupGraphic>();footerPlate.color=CourtPresentationPalette.Ink;footerPlate.raycastTarget=false;
                 _state=OwnerUiLayout.Text(footer,"RecordedCanState","",25,OwnerUiLayout.TypeRole.Display);OwnerUiLayout.Fill(_state.rectTransform);
+                HudReadingLayout.Watch(band);
+                HudReadingLayout.Watch(credit, new Vector2(0,-62));
+                HudReadingLayout.Watch(footer);
                 _state.alignment=TextAnchor.MiddleCenter;_state.color=CourtPresentationPalette.Paper;
                 _audioMix=GameServices.Audio?.EnterReplayMix();
                 Ready=true;

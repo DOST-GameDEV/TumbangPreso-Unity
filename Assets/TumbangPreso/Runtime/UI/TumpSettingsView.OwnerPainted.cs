@@ -139,7 +139,21 @@ namespace TumbangPreso.UI
         private void Accessibility()
         {
             var s=SettingsStore.Current;
+            Toggle("LargerText","Larger text",s.LargerText,v=>s.LargerText=v);
+            SettingsWorkspaceRows.Slider(Row("HudScale","HUD size"),"HudScaleValue",
+                s.HudScale,1,1.2f,v=>{s.HudScale=v;_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");
+            Note("Larger text enlarges settings and the match HUD. HUD size keeps each readout together; larger text uses at least 120%.");
+            Choice("SprintControl","Sprint control",new[]{"Hold","Toggle"},s.ToggleSprint?1:0,v=>s.ToggleSprint=v==1);
+            Choice("RestoreControl","Restore can control",new[]{"Hold","Toggle"},s.ToggleRestore?1:0,v=>s.ToggleRestore=v==1);
+            Note("Toggle restore: press near the fallen can to start, press again to cancel. Moving away cancels it.");
+            SettingsWorkspaceRows.Slider(Row("FirstPersonFov","First-person field of view"),"FirstPersonFovValue",
+                s.FirstPersonFov,75,110,v=>{s.FirstPersonFov=v;_session.Preview();},v=>Mathf.RoundToInt(v)+"°");
             Toggle("ReducedUiMotion","Reduce interface motion",s.ReducedUiMotion,v=>s.ReducedUiMotion=v);
+            Toggle("CalloutCaptions","Announcer captions",s.CalloutCaptions,v=>s.CalloutCaptions=v);
+            Toggle("HighContrastHud","High-contrast HUD",s.HighContrastHud,v=>s.HighContrastHud=v);
+            Toggle("ReducedEffects","Reduce visual effects",s.ReducedEffects,v=>s.ReducedEffects=v);
+            Note("Reduced effects lower particle density and screen flashes. Ability shapes, status cues and gameplay stay visible.");
+            Note("English captions follow the recorded announcer, including when announcer volume is muted.");
             AudioSlider("CameraShake","Camera shake",s.CameraShake,v=>s.CameraShake=v);
             Toggle("CinematicCameraMotion","Cinematic camera movement",s.CinematicCameraMotion,v=>s.CinematicCameraMotion=v);
             AudioSlider("FlashIntensity","Flash intensity",s.FlashIntensity,v=>s.FlashIntensity=v);

@@ -174,6 +174,9 @@ namespace TumbangPreso
                 if (ai != null) ai.enabled = !driven;
 
                 var reader = unit.GetComponent<PlayerInputReader>();
+                // Bot seats are constructed without a local reader. A solo handover
+                // must create that input owner before enabling control of the seat.
+                if (reader == null && driven) reader = unit.gameObject.AddComponent<PlayerInputReader>();
                 if (reader != null) reader.enabled = driven;
 
                 // ⚠️⚠️ THE NAME FOLLOWS THE BODY YOU ARE IN, AND THE PORT DROPPED THIS ENTIRELY.

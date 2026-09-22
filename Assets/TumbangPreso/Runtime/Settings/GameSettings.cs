@@ -292,6 +292,19 @@ namespace TumbangPreso.Settings
 
         public float MouseSensitivity = 1.0f;
         public bool InvertY = false;
+        public float FirstPersonFov = 95f;
+        public float HudScale = 1f;
+        public bool LargerText = false;
+        public bool CalloutCaptions = false;
+        public bool ReducedEffects = false;
+        public bool HighContrastHud = false;
+        public static float ValidHudScale(float value) =>
+            float.IsNaN(value) || float.IsInfinity(value) ? 1f : Mathf.Clamp(value, 1f, 1.2f);
+        public bool ToggleSprint = false;
+        public bool ToggleRestore = false;
+
+        public static float ValidFirstPersonFov(float value) =>
+            float.IsNaN(value) || float.IsInfinity(value) ? 95f : Mathf.Clamp(value, 75f, 110f);
 
         /// <summary>Stops decorative interface movement without changing gameplay animation.</summary>
         public bool ReducedUiMotion = false;
@@ -581,6 +594,8 @@ namespace TumbangPreso.Settings
             CameraShake = Mathf.Clamp01(CameraShake);
             FlashIntensity = Mathf.Clamp01(FlashIntensity);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
+            FirstPersonFov = ValidFirstPersonFov(FirstPersonFov);
+            HudScale = ValidHudScale(HudScale);
             FrameRateLimit = FrameRateOptions.Normalize(FrameRateLimit);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);

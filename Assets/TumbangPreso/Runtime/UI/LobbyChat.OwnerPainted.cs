@@ -56,6 +56,7 @@ namespace TumbangPreso.UI
             _field.textComponent.fontSize=30;_field.characterLimit=Net.MatchRpc.MaxChatLength;_field.onSubmit.AddListener(Submit);
             if(_inMatch)_fieldRow.SetActive(false);else BuildNativeHistory();
             SetNativeLines();
+            if (_inMatch) HudReadingLayout.Watch(_rect, new Vector2(0, 184));
         }
         private InputField BuildChatEntry(Transform parent)
         {

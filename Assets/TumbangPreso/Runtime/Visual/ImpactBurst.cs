@@ -86,6 +86,7 @@ namespace TumbangPreso.Visual
             // feedback is a spray of bright pink error quads.
             renderer.sharedMaterial = BurstMaterial;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
 
             // Belt and braces alongside stopAction: if the system is stopped by anything else,
@@ -119,6 +120,7 @@ namespace TumbangPreso.Visual
             renderer.sharedMaterial = BurstMaterial; renderer.maxParticleSize = .009f;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
+            ComfortParticles.Configure(ps);
             ps.Play(); Object.Destroy(go, .55f);
         }
 

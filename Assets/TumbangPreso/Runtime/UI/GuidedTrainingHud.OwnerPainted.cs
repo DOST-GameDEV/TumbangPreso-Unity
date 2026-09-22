@@ -62,6 +62,8 @@ namespace TumbangPreso
             var skip=OwnerTextAction.Create(footer,"SkipTrainingLesson","N · SKIP LESSON",()=>training?.SkipFromUi(),0,0,300,58,30);
             _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=TrainingCurrent;
             var quit=OwnerTextAction.Create(footer,"QuitTraining","BACKSPACE · QUIT",()=>training?.QuitFromUi(),320,0,318,58,30);quit.GetComponentInChildren<Text>().color=TrainingMuted;
+            HudReadingLayout.Watch(card);
+            HudReadingLayout.Watch(_complete.rectTransform);
         }
         private static RectTransform OwnerRow(Transform parent,string name,float height)
         {

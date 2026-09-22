@@ -345,7 +345,11 @@ namespace TumbangPreso.UI
             }
             if (local.IsDefender && round.Lata != null && !round.Lata.IsUpright)
             {
-                _prompt.text = carrier != null && carrier.ChannelRatio > 0 ? "Resetting can" : "Hold " + Hud.KeyLabelFor("Grab") + " at the can to reset";
+                bool toggle = Settings.SettingsStore.Current.ToggleRestore;
+                string key = Hud.KeyLabelFor("Grab");
+                _prompt.text = carrier != null && carrier.ChannelRatio > 0
+                    ? toggle ? "Resetting can · press " + key + " to cancel" : "Resetting can"
+                    : (toggle ? "Press " : "Hold ") + key + " at the can to reset";
                 if (carrier != null && carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
             if (carrier != null && carrier.IsCharging)

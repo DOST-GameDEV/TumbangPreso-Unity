@@ -387,6 +387,7 @@ namespace TumbangPreso.Visual
                 new Keyframe(1.00f, 0.14f));
             emission.rateOverTime = new ParticleSystem.MinMaxCurve(peakRate, falloff);
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -775,6 +776,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             colorOverLifetime.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -848,6 +850,7 @@ namespace TumbangPreso.Visual
                         new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -894,6 +897,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -939,6 +943,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(0.0f, 0.0f), new GradientAlphaKey(0.8f, 0.3f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -990,6 +995,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -1036,6 +1042,7 @@ namespace TumbangPreso.Visual
                 new[] { new GradientAlphaKey(1.0f, 0.0f), new GradientAlphaKey(0.0f, 1.0f) });
             col.color = grad;
 
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }
@@ -1123,6 +1130,7 @@ namespace TumbangPreso.Visual
             }
 
             col.color = grad;
+            ComfortParticles.Configure(ps);
             ps.Play();
             return go;
         }

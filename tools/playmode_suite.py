@@ -193,6 +193,7 @@ GROUPS = [
         # Presentation and preview-transition contracts install real arenas and
         # assert accepted state/lifecycle outcomes; their occasional images are evidence.
         "ActionChainIntegrationTests",
+        "AccessibilityControlTests",
         "BlockContactTests",
         "CatchReconstructionTests",
         "CloseCallPresentationTests",

@@ -35,6 +35,8 @@ behavior checks. Inspect actual visible layouts at normal/large settings, wide a
 4:3, including owner/spectator. Final broad qualification follows completed features.
 No extra questions, paid service, subagent, other conversation or model redesign.
 
-Controls/camera batch1 is authored locally. Core toggle6/6 passed; Unity preference
-and real input/can/lens checks are pending. Do not mark127.3 complete after only
-the first batch. Scaling, effects, contrast, captions and role/locator proof remain.
+Execution: controls/camera, readable scaling, high contrast, reduced effects,
+recorded-announcer captions and wider role annotation are implemented. Focused
+Unity evidence is in accessibility-completion.md. Expanded native overlay integration
+and the complete remaining project queue stay open; this plan is not a completion
+claim for the full assignment.

@@ -28,6 +28,9 @@ namespace TumbangPreso.UI
             Pin(_sandbox.rectTransform, new Vector2(1, 0), new Vector2(-286, 71), new Vector2(550, 54));
             var version = Ink(_root, "GameVersion", "", 28, false);
             Pin(version.rectTransform, new Vector2(1, 0), new Vector2(-230, 22), new Vector2(420, 40)); GameVersion.ApplyTo(version);
+            CalloutCaption.Create(_root);
+            HudReadingLayout.Install(_root);
+            HudContrast.Install(_root);
         }
         private void BuildCourtScores()
         {
@@ -54,7 +57,7 @@ namespace TumbangPreso.UI
             var face = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(face.rectTransform, 157, 0, 306, 92); face.color = new Color32(35, 29, 33, 218); face.raycastTarget = false;
             _clock = Ink(_clockRoot, "TimeLeft", "", 60, true); OwnerUiLayout.Place(_clock.rectTransform, 170, 0, 280, 89);
-            _round = Ink(_clockRoot, "RoundLabel", "", 28, true); OwnerUiLayout.Place(_round.rectTransform, 0, 96, 620, 44);
+            _round = Ink(_clockRoot, "RoundLabel", "", 28, true); OwnerUiLayout.Place(_round.rectTransform, 70, 96, 480, 44);
         }
         private void BuildCourtCan()
         {

@@ -1,7 +1,7 @@
 {
   "source": "10fa4cad1db17075e1bae7583c07bdf881b1fec0",
   "scope": "Every genuinely unfinished requirement in the entire TODO, including previously deferred work. Title status is historical, not current proof.",
-  "todoSha256": "47620b6ee9093846b63dbafa4b243474c0afd1097f283bb68cb273c0a817a85d",
+  "todoSha256": "aed2b5b772c032470a37d790c006e154843f4ec08e1acf11f6dde93b6b30b3ae",
   "numberedHeadings": [
     {
       "lineAtIntake": 251,
@@ -1579,74 +1579,121 @@
     {
       "lineAtIntake": 5755,
       "heading": "## 139 · SETTINGS IS FOUR PAGES NOW, AND THE RENDERS FOUND THREE FAULTS THAT HAD SHIPPED FOR THE WHOLE PORT ⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented current five-section settings workspace and controller-map/rebinding routes supersede the former four-page converted panel. Owner visual acceptance remains separate.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.Workspace.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5762,
       "heading": "### 139.1 THE BASELINE, AND ALL THREE COMPLAINTS ARE VISIBLE IN ONE PICTURE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The former single undifferentiated scroll is superseded by five persistent section tabs and per-section content.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.Workspace.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5775,
       "heading": "### 139.2 ⚠️⚠️ \"MAKE IT REBINDABLE IN CONTROLLER\" WAS ALREADY BUILT, AND SAYING SO MATTERS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Device selection, control groups, controller map and shared per-device rebinding are implemented in the current settings flow.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsSession.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5790,
       "heading": "### 139.3 WHAT LANDED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical four-page design is preserved; current five-section workspace supplies persistent navigation, device-aware binding groups, separated profile fields and an auto-hiding scrollbar.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.Workspace.cs",
+        "Assets/TumbangPreso/Runtime/UI/OwnerScrollColumn.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5812,
       "heading": "### 139.4 ⚠️⚠️ THREE FAULTS THE RENDERS FOUND, ALL THREE OLDER THAN THIS PASS, ALL THREE INVISIBLE UNTIL NOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Former blue slider/magenta checkbox/order defects are superseded by native SettingsWorkspaceRows and current SettingsPalette. Telemetry disclosure follows its control and grows without truncation.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/SettingsWorkspaceRows.cs",
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5830,
       "heading": "### 139.5 ⚠️⚠️ AND ONE FAULT THE TEST FOUND, WHICH IS THE HALF A RENDER COULD NOT HAVE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Stale converted-node index is not used by the active native settings builder. Each section constructs current rows; native settings/session checks cover the reachable implementation.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/TumpNativeSettingsTests.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5846,
       "heading": "### 139.6 THE RENDERS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical four render receipts retained. Current native full-screen inventory and new normal/large wide/4:3 accessibility captures supersede that layout snapshot.",
+      "evidence": [
+        "Assets/TumbangPreso/Tests/PlayMode/TumpNativeSettingsTests.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-evidence"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5856,
       "heading": "### 139.7 ⚠️ WHAT IS STILL OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Owner acceptance remains external. The short paper-card layout and prefab-palette premise are superseded by the current native settings workspace, intentional current palette and actual screen review. New accessibility controls/reflow are tracked in127.3 rather than restarting the retired converted panel.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.Workspace.cs",
+        "Assets/TumbangPreso/Runtime/UI/SettingsPalette.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5877,
       "heading": "## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "All software discovery/fallback/settings paths are implemented and current hotplug/native evidence is retained. Actual unrecognised-controller vendor/product certification requires hardware.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/Input/ControllerWatch.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5891,
       "heading": "### 138.1 HOW A PAD REACHES A UNITY GAME, IN FOUR STEPS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical input-pipeline explanation retained; shared InputSystem and the current bridge remain the implementation, with no new HID binding family.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5905,
       "heading": "### 138.2 ⚠️⚠️ WHAT THAT MEANS HERE, AND IT IS EVERY CONTROLLER PATH AT ONCE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Controller discovery reaches shared gamepad consumers through the implemented bridge and settings switch. Native hotplug/recursion fix is retained.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/TumpNativeSettingsTests.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5923,
       "heading": "### 138.3 ⚠️ HOW BIG IS THIS ACTUALLY, BECAUSE THE ANSWER IS \"SMALLER THAN IT SOUNDS ON WINDOWS\"",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical Windows device-support scope retained; do not replace tested discovery with unverified universal hardware claims. Remaining exact hardware mapping is external certification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerWatch.cs",
+        "Attention.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5941,
@@ -1661,8 +1708,11 @@
     {
       "lineAtIntake": 5985,
       "heading": "### 138.5 ⚠️ AND CROSSPLAY IS NOT AFFECTED, WHICH IS WORTH SAYING BEFORE SOMEBODY WORRIES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical distinction retained: local controller mapping does not alter network crossplay. No additional implementation is assigned by this explanatory subsection.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5996,
@@ -2126,20 +2176,35 @@
     {
       "lineAtIntake": 9151,
       "heading": "## 128 · Phases 11 and 12 are almost entirely built, and this entry was wrong about it once ⚠️ OPEN, 2026-09-03, branch `ui-redesign`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Former missing format implementation is superseded by implemented LastTsinelasDirector and network map ballot; final format integration remains in the retained qualification gate.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/LastTsinelasDirector.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Core.Tests/Phase11And12Tests.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 9172,
       "heading": "### 128.1 What is actually built, so nobody rebuilds it",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Listed bot tiers, queue fill/rating weight, mirror and custom-room rules are existing implemented contracts. Preserve them, with live service validation separately scoped.",
+      "evidence": [
+        "Core.Tests/Phase11And12Tests.cs",
+        "Core.Tests/MapRotationTests.cs",
+        "ugs/cloud-code/match-record.js"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 9189,
       "heading": "### 128.2 ⚠️ What is genuinely open in Phase 12",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Both historical gaps now have implementations: LastTsinelas round/stock/score handling and SelectMapVote/MapVoteTally wire handlers. Current protocol50 supersedes the historical21/22 discussion; final format qualification remains tracked.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/LastTsinelasDirector.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Tests/LastTsinelasMatchHalfTests.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 9214,

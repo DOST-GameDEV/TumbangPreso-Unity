@@ -44,9 +44,17 @@ namespace TumbangPreso
     {
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
+        private readonly Core.ToggleControl _sprintToggle = new();
+        private readonly Core.ToggleControl _restoreToggle = new();
+        private Carrier _carrier;
+        private int _toggleRound;
+        private bool _toggleDefender, _toggleRoundActive, _toggleContextKnown;
+
+        private void ResetToggleControls() { _sprintToggle.Reset(); _restoreToggle.Reset(); }
 
         public void DiscardMenuButtonsUntilRelease()
         {
+            ResetToggleControls();
             _menuClosedFrame=Time.frameCount;
             CaptureMenuButton(_jump,Verb.Jump);CaptureMenuButton(_special,Verb.SpecialAbility);
             CaptureMenuButton(_grab,Verb.Grab);CaptureMenuButton(_lunge,Verb.Lunge);
@@ -192,6 +200,11 @@ namespace TumbangPreso
             if (_motor == null) return;
 
             var intent = _motor.Intent;
+            int roundNumber = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            if (_toggleContextKnown && (_toggleRound != roundNumber || _toggleDefender != _motor.IsDefender || _toggleRoundActive != _motor.RoundActive))
+                ResetToggleControls();
+            _toggleContextKnown = true; _toggleRound = roundNumber; _toggleDefender = _motor.IsDefender;
+            _toggleRoundActive = _motor.RoundActive;
 
             // ⚠️⚠️ A CHAT FIELD WITH THE KEYBOARD MUST NOT ALSO DRIVE THE BODY, AND "just stop
             // reading" IS THE WRONG FIX. `InputIntent.Parked`'s own note says why: a verb held
@@ -211,6 +224,7 @@ namespace TumbangPreso
             // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
             if (UI.LobbyChat.AnyTyping)
             {
+                ResetToggleControls();
                 InputLayer.TouchInput.ConsumeRecoveryPress();
                 intent.Clear();
                 intent.CommitFrame();
@@ -229,6 +243,8 @@ namespace TumbangPreso
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {
+                ResetToggleControls();
+                intent.Set(Verb.Sprint, false); intent.Set(Verb.Grab, false);
                 // Human controls Kuro the companion pet.
                 //
                 // ⚠️ THE THUMB STICK AND THE LOOK DELTA REACH KURO TOO. This branch returns
@@ -261,9 +277,22 @@ namespace TumbangPreso
                 move = InputLayer.TouchInput.Move;
 
             intent.Move = move;
-            intent.Set(Verb.Sprint, ReadButton(_sprint,Verb.Sprint));
+            var settings = Settings.SettingsStore.Current;
+            bool controlsAllowed = !intent.Parked && !PresentationClock.BlocksInput && !_motor.IsStunned && !_motor.IsTripped;
+            bool sprintDown = ReadButton(_sprint, Verb.Sprint);
+            bool sprint = _sprintToggle.Read(sprintDown, settings.ToggleSprint, controlsAllowed);
+            intent.Set(Verb.Sprint, settings.ToggleSprint ? sprint : sprintDown);
             intent.Set(Verb.SpecialAbility, ReadButton(_special,Verb.SpecialAbility));
-            intent.Set(Verb.Grab, ReadButton(_grab,Verb.Grab));
+            bool grabDown = ReadButton(_grab, Verb.Grab);
+            if (_carrier == null) _carrier = GetComponent<Carrier>();
+            bool restoreTarget = _motor.IsDefender && _carrier != null && _carrier.HasResetTarget;
+            if (settings.ToggleRestore && restoreTarget)
+                intent.Set(Verb.Grab, _restoreToggle.Read(grabDown, true, controlsAllowed));
+            else
+            {
+                _restoreToggle.Read(grabDown, settings.ToggleRestore, false);
+                intent.Set(Verb.Grab, grabDown); // Pickup and shove retain their ordinary press edge.
+            }
             intent.Set(Verb.Lunge, ReadButton(_lunge,Verb.Lunge));
             intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
@@ -425,6 +454,7 @@ namespace TumbangPreso
 
         private void OnDisable()
         {
+            ResetToggleControls();
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
             _motor?.Intent.Clear();

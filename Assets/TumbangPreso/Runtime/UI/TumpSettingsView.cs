@@ -245,6 +245,7 @@ namespace TumbangPreso.UI
         }
         private void Changed(string message)
         {
+            SettingsReadingLayout.Apply(_canvas, _list);
             if (_status != null) _status.text = message;
             if (_save != null) _save.interactable = _session.Dirty;
             foreach (var pair in _bindingRows)

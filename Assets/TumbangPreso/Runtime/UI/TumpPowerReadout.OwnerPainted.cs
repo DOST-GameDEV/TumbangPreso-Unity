@@ -29,9 +29,12 @@ namespace TumbangPreso.UI
                 if(i>0)
                 {
                     var rule=OwnerUiLayout.Rect(_detail,"ColumnRule").gameObject.AddComponent<Image>();
-                    rule.color=OwnerUiTheme.Current.Peach;rule.raycastTarget=false;OwnerUiLayout.Place(rule.rectTransform,x-22,26,2,374);
+                    rule.color=OwnerUiTheme.Current.Peach;rule.raycastTarget=false;
+                    rule.rectTransform.anchorMin=Vector2.zero;rule.rectTransform.anchorMax=new Vector2(0,1);
+                    rule.rectTransform.offsetMin=new Vector2(x-22,26);rule.rectTransform.offsetMax=new Vector2(x-20,-26);
                 }
             }
+            _detail.gameObject.AddComponent<PowerReferenceReadingLayout>().Bind(_names, _timings, _bodies);
             _detail.gameObject.SetActive(false);
         }
     }

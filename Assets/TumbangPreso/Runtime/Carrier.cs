@@ -891,19 +891,24 @@ namespace TumbangPreso
 
         // -------------------------------------------------------------------
 
+        public bool HasResetTarget
+        {
+            get
+            {
+                var lata = GameServices.Round?.Lata;
+                if (lata == null || lata.IsUpright) return false;
+                var offset = transform.position - lata.transform.position; offset.y = 0;
+                return offset.magnitude <= Balance.InteractionRadius;
+            }
+        }
+
         private void StepDefender(float dt)
         {
             var round = GameServices.Round;
             var lata = round?.Lata;
             var intent = _motor.Intent;
 
-            bool inRing = lata != null
-                          && Vector3.Distance(
-                                 new Vector3(transform.position.x, 0, transform.position.z),
-                                 new Vector3(lata.transform.position.x, 0, lata.transform.position.z))
-                             <= Balance.InteractionRadius;
-
-            bool canChannel = lata != null && !lata.IsUpright && inRing;
+            bool canChannel = HasResetTarget;
 
             if (!canChannel || !intent.Pressed(Verb.Grab))
             {

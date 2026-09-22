@@ -126,7 +126,8 @@ namespace TumbangPreso.CameraSystem
         /// TppCamera is `fov = 70.0`; Godot's `keep_aspect` defaults to KEEP_HEIGHT, so both are
         /// VERTICAL angles and transcribe straight into Unity's `fieldOfView`.
         ///
-        /// This is not a taste setting. A first-person view at 75 where the game was framed at
+        /// These remain the original defaults. The optional accessibility FOV changes how much
+        /// street the player can see: a first-person view at 75 where the game was framed at
         /// 95 shows a third less of the street, which changes how much of the box a taya can
         /// watch at once and how early an attacker sees a lunge coming, and it is most of why
         /// the two builds' arena screenshots do not look like the same game even with identical
@@ -381,7 +382,9 @@ namespace TumbangPreso.CameraSystem
         {
             if (_camera == null) return;
 
-            float want = _mode == CameraMode.Fpp && !_emoteView ? FppFieldOfView : TppFieldOfView;
+            float want = _mode == CameraMode.Fpp && !_emoteView
+                ? Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov)
+                : TppFieldOfView;
 
             // ------------------------------------------------------------------ § THE SPRINT KICK
             //

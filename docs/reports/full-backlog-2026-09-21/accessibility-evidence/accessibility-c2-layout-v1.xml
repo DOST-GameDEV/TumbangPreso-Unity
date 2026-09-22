@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.7823665">
+  <test-suite type="TestSuite" id="1692" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="522" result="Failed" site="Child" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.782367" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1686" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="522" result="Failed" site="Child" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.771099" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28980" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1687" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="522" result="Failed" site="Child" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.769892" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1688" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="522" result="Failed" site="Child" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.769137" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1008" name="AccessibilityControlTests" fullname="TumbangPreso.PlayTests.AccessibilityControlTests" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:57Z" duration="5.726370" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1013" name="EnlargedHeroHudPreservesScreenMarginsAndControlSeparation" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.EnlargedHeroHudPreservesScreenMarginsAndControlSeparation" methodname="EnlargedHeroHudPreservesScreenMarginsAndControlSeparation" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="806449016" result="Passed" start-time="2026-09-22 09:56:51Z" end-time="2026-09-22 09:56:56Z" duration="4.614212" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] accessibility-hud-large-1920x1080/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/Power0: vertices=321, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/PowerIcon: vertices=44, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/Power1: vertices=321, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/PowerIcon: vertices=56, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/Power2: vertices=321, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] accessibility-hud-large-1920x1080/PowerIcon: vertices=64, cull=False, alpha=1, depth=56, material=1
+[TumpUiCapture] accessibility-hud-large-1920x1080 cream source=252,211,159 pixel=223,215,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-hud-large-1280x960/ScoreRow0: vertices=7, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/ScoreRow1: vertices=11, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/ScoreRow2: vertices=7, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/ScoreRow3: vertices=7, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/Power0: vertices=321, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/PowerIcon: vertices=44, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/Power1: vertices=321, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/PowerIcon: vertices=56, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/Power2: vertices=321, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] accessibility-hud-large-1280x960/PowerIcon: vertices=64, cull=False, alpha=1, depth=56, material=1
+[TumpUiCapture] accessibility-hud-large-1280x960 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1012" name="LargerSettingsReflowAndDiscardRestoresOriginalRows" fullname="TumbangPreso.PlayTests.AccessibilityControlTests.LargerSettingsReflowAndDiscardRestoresOriginalRows" methodname="LargerSettingsReflowAndDiscardRestoresOriginalRows" classname="TumbangPreso.PlayTests.AccessibilityControlTests" runstate="Runnable" seed="523605740" result="Failed" start-time="2026-09-22 09:56:56Z" end-time="2026-09-22 09:56:57Z" duration="1.091328" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 104
+  But was:  168.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AccessibilityControlTests+<LargerSettingsReflowAndDiscardRestoresOriginalRows>d__14.MoveNext () [0x002aa] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\PlayMode\AccessibilityControlTests.cs:138
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpGeometry] accessibility-settings-normal-wide/BackIcon: vertices=12, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Switch: vertices=79, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Handle: vertices=25, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Expand: vertices=12, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Expand: vertices=12, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Handle: vertices=25, cull=False, alpha=1, depth=63, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Switch: vertices=79, cull=False, alpha=1, depth=69, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Handle: vertices=25, cull=False, alpha=1, depth=77, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Switch: vertices=79, cull=False, alpha=1, depth=83, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Handle: vertices=25, cull=False, alpha=1, depth=91, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Expand: vertices=12, cull=False, alpha=1, depth=98, material=1
+[TumpGeometry] accessibility-settings-normal-wide/Switch: vertices=79, cull=False, alpha=1, depth=103, material=1
+[TumpUiCapture] accessibility-settings-normal-wide cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-settings-large-wide/BackIcon: vertices=12, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-settings-large-wide/Switch: vertices=79, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] accessibility-settings-large-wide/Handle: vertices=25, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] accessibility-settings-large-wide/Expand: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] accessibility-settings-large-wide/Expand: vertices=12, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] accessibility-settings-large-wide/Handle: vertices=25, cull=False, alpha=1, depth=68, material=1
+[TumpGeometry] accessibility-settings-large-wide/Switch: vertices=79, cull=False, alpha=1, depth=75, material=1
+[TumpGeometry] accessibility-settings-large-wide/Handle: vertices=25, cull=False, alpha=1, depth=84, material=1
+[TumpGeometry] accessibility-settings-large-wide/Switch: vertices=79, cull=False, alpha=1, depth=91, material=1
+[TumpGeometry] accessibility-settings-large-wide/Handle: vertices=25, cull=False, alpha=1, depth=100, material=1
+[TumpGeometry] accessibility-settings-large-wide/Expand: vertices=12, cull=False, alpha=1, depth=108, material=1
+[TumpGeometry] accessibility-settings-large-wide/Switch: vertices=79, cull=False, alpha=1, depth=114, material=1
+[TumpUiCapture] accessibility-settings-large-wide cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-settings-large-4x3/BackIcon: vertices=12, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Switch: vertices=79, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Handle: vertices=25, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Expand: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Expand: vertices=12, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Handle: vertices=25, cull=False, alpha=1, depth=68, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Switch: vertices=79, cull=False, alpha=1, depth=75, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Handle: vertices=25, cull=False, alpha=1, depth=84, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Switch: vertices=79, cull=False, alpha=1, depth=91, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Handle: vertices=25, cull=False, alpha=1, depth=100, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Expand: vertices=12, cull=False, alpha=1, depth=108, material=1
+[TumpGeometry] accessibility-settings-large-4x3/Switch: vertices=79, cull=False, alpha=1, depth=114, material=1
+[TumpUiCapture] accessibility-settings-large-4x3 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+[TumpGeometry] accessibility-settings-large-bottom-4x3/BackIcon: vertices=12, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Switch: vertices=79, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Handle: vertices=25, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Expand: vertices=12, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Expand: vertices=12, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Handle: vertices=25, cull=False, alpha=1, depth=68, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Switch: vertices=79, cull=False, alpha=1, depth=75, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Handle: vertices=25, cull=False, alpha=1, depth=84, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Switch: vertices=79, cull=False, alpha=1, depth=91, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Handle: vertices=25, cull=False, alpha=1, depth=100, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Expand: vertices=12, cull=False, alpha=1, depth=108, material=1
+[TumpGeometry] accessibility-settings-large-bottom-4x3/Switch: vertices=79, cull=False, alpha=1, depth=114, material=1
+[TumpUiCapture] accessibility-settings-large-bottom-4x3 cream source=252,211,159 pixel=29,31,35; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,93 +1,130 @@
 # Active TUMP rework ledger
 
-## NEWEST owner rule: replace all red in-game UI outlines with BLACK
+## Mandate and source
 
-Source of photographed red stroke is TumpMatchReadout.Ink in its OwnerPainted
-partial, shared by the live spectator hint/HUD. UiTheme.InGameOutline is now
-black; gameplay text/icon Outline sites now route through it. Preserve
-role/ability fills, supplied front-end artwork and character/environment geometry.
-AGENTS.md records the standing rule. Native v55 spectator/HUD colours inspected.
-The wider POV check found an independent held-slipper visibility issue; retain
-black-ui-outline-evidence and investigate without reopening the colour change.
-Accessibility batch1 code remains LOCAL and UNVERIFIED in DEV; preserve it while
-applying this immediate correction. Its Core toggle6/6 already passed; Unity
-Preference5 and PlayMode3 cases are prepared but not run. Remaining127.3 intact.
-
-## Mandate and owner art constraints
-
-Complete EVERY unfinished autonomously actionable TODO in this conversation.
-No subagents/other chats, paid APIs/CLI services, resets, main edits, Desktop
+Complete EVERY autonomously actionable unfinished TODO in this conversation.
+Never stop/finalize/close the active goal at a build, publication or phase checkpoint.
+No subagents, other chats, paid APIs/CLI services, resets, main edits, Desktop
 replacement, destructive cleanup or questions while owner is AFK. Preserve task
-IDs, original dirty work, source art/rig/GUIDs and failed evidence. A checkpoint
-NEVER completes the overall goal. Follow AGENTS.md. Avoid verification/tool loops:
-check an actual changed risk, then return to unfinished features when it passes.
+IDs, original dirty work, models/builders/rigs/GUIDs, profiles and failed evidence.
+Quality matters; avoid verification/tool-repair loops. Once a changed risk passes,
+return to remaining implementation. Full regression follows integrated features.
 
-Latest owner: Rafi must belong to the HERO cast, with BLOCKY HAIR and NO EYEBROWS.
-Implemented ten native chamfered hair boxes, squared fringe and stepped crop;
-removed loft hair/bun and eyebrows. No gills.714012byte/.744m GLB. Body/arms/cord/
-accessories/rig and33base animation curves unchanged;12protected original inputs
-match. Native head four-angle and HERO lineup reviewed. Portrait updated. Rafi is
-Hero-only, index6 (AllPeople union18; Classic remains12). Do not redesign other
-characters or revive rejected drafts. Human art approval is not inferred.
-Report: reports/full-backlog-2026-09-21/rafi-block-hair.md. Rejected v4 archived in
-ArtSource/rafi/rejected-swept-hair-brows-20260922. Source builder is the actual
-retrofitted copy tools/build_rafi_voxel.py; original builders/models are untouched.
-Rafi-only RefreshPerson authoring now avoids rewriting other roster entries.
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,ASTRAReworks.
+Last published74ac6e9a98afbba301eca298eb65c7317a59ed72,remote verified. Black UI
+outlines and standing AGENTS rule are published. This new accessibility batch is
+ready for scoped publication after diff review. Preserve/exclude original unrelated
+Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta.
+Never blanket add/reset/clean. Fetch before push; verify remote afterward.
 
-## Current source/publication
+## Newest owner rule: BLACK in-game UI outlines
 
-DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published83027dc6ec2c8181203b5ffd4abcf946180e00a1, remote verified. Includes
-7c028dda plus corrected framing/seat label, Rafi swimming/recovery assets and native
-receipts. Only the two original unrelated metas were dirty before this ledger edit. Fetch first;
-verify remote after push. Never add the two original unrelated composition-redesign
-home-court.png.meta/loading-street.png.meta edits. No blanket add/reset/clean.
+UiTheme.InGameOutline is black across live HUD, spectator controls, replay/training,
+notifications, ability prompts and match chat. Meaningful fills/art/models retained.
+Native v55 colours inspected. Its apparent held-item spectator failure is resolved:
+that screenshot shows RETRIEVING/empty hands and a dropped shoe. Another bot had
+disarmed the fixture. Re-establishing actual held ownership before the assertion
+fixes the diagnostic. Native v56 now passes the unchanged real visibility assertions,
+release/re-equip/restoration, autopilot/manual/bookmark/pause and replay at960x720
+and1680x720. Input/profile preservation passed. No game renderer rewrite was needed.
+Reports: black-ui-outlines.md and accessibility-completion.md under
+reports/full-backlog-2026-09-21. Keep failed v55 evidence with its scope correction.
 
-Validation sibling TumbangPreso-Unity-validation:7c028dda +recorded v54 changes and
-editor/build output. Freeze inputs during each job. Old mixed work preserved:
-- stash6f716645127f374ead0a910c4a90d49cf4cb191b:6432old mixed paths, db976126.
-- Logs/qualification-2e90-source-mutations.json:8path qualification mutation stash.
-- stash1ab3cba5fedb6d12f161bc7afe3c57c00c8e86e8:123scoped qualification/author paths
-  before switching from2c737448 to coherent05c00320.
-- Logs/peer-departure-compile-stash.json:compile inputs before clean7c028dda.
-These are preservation, not permission to copy unrelated generated assets into DEV.
-Only four new Rafi swimming/recovery asset/meta paths were recovered from build
-output; current old-rig animation diffs have0text delta (stat/line-ending churn).
+## Current feature:127.3 accessibility
 
-Unity6000.5.8f1, Built-in renderer. Every Editor through run_unity_guarded.py with
-named profile; current presentation-validation-20260921. qualify.py supplies a
-workspace-specific profile and graphical EditMode. No active Editor/native/helper
-jobs, task-owned browser tabs or preview servers remain.
+Implemented opt-in toggle sprint/can restore, FPP FOV75..110(original95), HUD scale
+100..120%, larger settings/HUD text, high contrast, reduced particles/flashes and
+English captions for8delivered announcer IDs, including muted announcer. Same input
+maps/intent/network protocol50; defaults unchanged. Real restore check exposed a
+solo handover bug: bot seats could lack PlayerInputReader. Assign now creates one.
+Settings rows reflow beneath labels; previews/discard keep touch target floor.
+Training, match chat and replay labels scale around anchors. All3ability descriptions
+stay visible; larger reference fits its longest real body text. Last tiny divider
+fix anchors its vertical rules to panel bounds instead of leaving fixed374height.
 
-## Most recent completed feature:140.5 peer departure notices
+Taya annotation: old same-frame greyscale showed the hole covered by feet. Only
+its floor marker now uses a wider8-sided ring at1.95capsule radius; attackers keep
+1.375disc. Eight-metre native/greyscale-v3 shows open angular front vs filled disc.
+No character geometry, rigs, physics, supplied artwork or original builders changed.
 
-Protocol50: authenticated self-only leave intent, consumed only by actual departure;
-otherwise say DISCONNECTED. Remaining players/spectators see P-seat/name and actual
-bot takeover or reserved-seat status. Existing timeout/reconnect/bot tier/scoring
-rules are unchanged. Never infer forfeit, timeout cause or a mandatory replay.
-Intent TTL12s, capacity4, one-use and match/transport reset. Receiver validates
-host, epoch, sequence, seat, reason and bounded32character text. Startup clears
-stale local-shutdown latch through the shared successful-start registration path.
+Evidence (all jobs reaped):
+- Core toggle6/6,9ms. Unity sprint and FOV/discard passed in initial2/3; actual
+  restore start/cancel/finish passed6.311s,v4,guard05b0136db61e.
+- Settings/HUD layout/discard2/2,5.598s,guardabf16841b173. Legacy/default/bounds9/9,
+  .0789s,guard8369deb55e89.
+- Reduced status particles passed. Muted real announcer and role frame2/2,6.212s,
+  guardde021d9ff768. Wider ring native capture3.648s,guard79f8fa115c53; grey inspected.
+- Seven actual hero-name/21description large-reference assertions6.504s,v4,
+  guard7edba0fd7ebe. Compact Rafi/Phaister frames inspected; then simple divider
+  anchoring touch-up made. STOP repeating this layout check. Native overlay gate
+  below can capture that final cosmetic alignment.
+- Native Windows v56 built1211MB/85s,guard269227d5d75b,job98670. Actual spectator
+  reviewjob6694 passed all stages; no owned player remains. v56 precedes the final
+  dynamic reference-height/divider refinements, which remain local source.
 
-Native v54 passes: orderlyClassic job73531 and abruptHero job69364, each four actual
-players plus actual fifth-join spectator. All4survivors show one matching visible
-notice; host bot takeover observed. Actual host/spectator PNGs inspected. Shared
-input/named profile data preserved. Both jobs reaped; STOP this focused check.
-Runtime DLL SHA2563b23ecef26fa29224cbe04409d5b02b1e71f10954c717fc4a0580f473cbbd92f.
-Core intent5/5,20ms; Unity receiver/protocol/envelope4/4,.131s,job17283,
-guard5208e3132cd8. V54 build1211MB/62s,job78913,guard8c5a0b8b5aa8.
+Failed/misleading receipts preserved: protection precondition; missing local reader;
+hidden VoiceDirector found via GameServices, not normal object search; touch168row
+floor ignored by early assertion; reference v1 falsely labelled Zack captures for
+all heroes because Hud.Tick overwrote fixture text. V2 hid its own canvas. V3/v4
+use the actual UI builder on a dedicated test canvas and assert the displayed kit.
+Only v3/v4 prove seven-hero copy. These are not full gameplay/build qualification.
+Portable evidence and exact limits: reports/full-backlog-2026-09-21/accessibility-evidence
+and accessibility-completion.md. Full TODO and127.3 remain ACTIVE.
 
-Failures retained: missing FixedString128Bytes compile (replaced with bounded NGO
-primitives); v53 batchmode had no screenshot backbuffer; v53b revealed the REAL
-intent bug. NamedMessage.Deserialize consumes its8byte name hash in the same reader,
-so Length includes the envelope. Correct guard is Length-Position. New regression
-proves this envelope. Native runner omits-batchmode but hides owned windows, reads
-UTF-8 explicitly and preserves cleanup; null capture now writes a failed receipt.
+## Next order
 
-V53/v54 are internal DIRTY-stamped players, not clean release claims. Build starts
-from clean source but generates missing animation assets and importer formatting.
-Do not weaken qualification to hide this. Source/report/receipts are in
-reports/full-backlog-2026-09-21/peer-departure.md and peer-departure-evidence.
+1. Publish this stable implementation/evidence batch, excluding original2metas.
+2. Finish the bounded native accessibility integration: actual larger settings and
+   owner HUD, settings controls/save/discard, training/match-chat/replay label views.
+   Reuse current native runner infrastructure; avoid repeating unrelated113screens.
+   Latest source must first reach validation, including final reference divider.
+   No new native accessibility-specific route exists yet. Current runner supports
+   --spectator-only but not --accessibility-only; do not invent a working flag.
+3. Continue253unreviewed numbered TODO headings; all366preserved. Newly reconciled
+   128/128.1/128.2,138/138.1/.2/.3/.5,139/139.1..7; original138.4 retained. LastTsinelas
+   and network map ballot already exist; do not rebuild them from stale128.2 text.
+   Old4-page settings is superseded by current5sections; human acceptance remains.
+   Dispositions: reports/full-backlog-2026-09-21/todo-disposition.json.
+4. Complete remaining local requirements, then coherent whole-source qualification
+   and final build. Core604checkpoint plus later5peer-intent/6toggle cases is NOT a
+   newly run615case full suite. New partial wire handlers need audit coverage.
+5. Source hygiene still matters: editor/importer whitespace and generated animation
+   outputs can dirty build inputs. QualityLevelStamp fixes old AA write-through,
+   not every new provenance case. Never weaken dirty stamps or claim a clean build.
+6. Exact owner valid-mark export and OAuth are external: resource absent and
+   TUMP_GOOGLE_CLIENT_ID absent in Process/User/Machine,checked2026-09-22. UGS Rafi
+   mastery source updated; live deployment unperformed. Hardware/WAN/human listening/
+   balance/art acceptance are not inferred. Continue independent work first.
+
+## Workspaces and preservation
+
+Validation sibling TumbangPreso-Unity-validation:7c028dda +recorded v54,black outlines,
+C1..C4 and overlay inputs/editor output. Final dynamic reference height present;
+last divider anchoring change still only DEV. No active Editor/player/helper job,
+preview server or task-owned browser tab. Unity6000.5.8f1,Built-in renderer.
+Every Editor via run_unity_guarded.py and named profile; current
+presentation-validation-20260921. Use graphical EditMode,never-nographics.
+Every build MUST pass a fresh internal -buildOutput; default targets Desktop.
+Freeze inputs only in the workspace currently running a job. One heavy workload.
+
+Preserved stashes/inputs,do not discard/apply blindly:
+-6f716645127f374ead0a910c4a90d49cf4cb191b:6432old mixed paths,db976126.
+-Logs/qualification-2e90-source-mutations.json:8path mutation stash.
+-1ab3cba5fedb6d12f161bc7afe3c57c00c8e86e8:123scoped qualification/author paths.
+-Logs/peer-departure-compile-stash.json:inputs before7c028dda.
+-Validation Logs/accessibility-c1-input-backup,accessibility-c2-input-backup,
+ accessibility-c3-input-backup and accessibility-overlays-input-backup.
+Only four new Rafi swimming/recovery asset/meta paths were recovered earlier;
+old-rig animation diffs with0text delta are importer/stat churn,not model changes.
+
+## Retained character direction
+
+Rafi is HERO-only,index6,blocky ten-box cropped hair,no eyebrows,no gills.714012byte
+GLB/.744m. Body/arms/cord/accessories/rig/33base curves and12protected inputs unchanged
+by the hair pass. Actual copied builder tools/build_rafi_voxel.py,original preserved.
+Native part/head/HERO lineup reviewed; rejected drafts archived. Own indigo UI,
+4Bilis/2Lakas/4Tatag,three serialized casts plus base33clips; correct nativeFPP arms.
+No other character design edits. See rafi-block-hair.md and rafi-parts-and-motion.md.
 
 ## Other completed checkpoints retained
 
@@ -112,66 +149,7 @@ nativev41,338capabilities mapped and96variant/role cases. Recall actual5peer v49
 both modes. Request/rehost/outage evidence retained. No WAN, physical-device,
 human listening/balance/art approval is implied.
 
-## Next, without another stop
 
-1. Peer-departure checkpoint published and remote verified83027dc6. Continue.
-2. Continue269unreviewed numbered TODO headings. All366remain.155/154/153,
-   152/142/151,149/148/147 and140.5 were reconciled individually. Preserve the
-   existing dispositions; no broad parent closes while actionable children remain.
-   Exact owner valid-mark export and OAuth config are external: resource absent and
-   TUMP_GOOGLE_CLIENT_ID absent in Process/User/Machine, checked2026-09-22.
-3. Concrete observations to resolve without speculative rewrites: current native
-   generic FPP skin reads unusually orange versus portrait. MaterialKit.Dress uses
-   the expected SkinBayan(.851,.541,.373) property block beforeToonSkin; cause is
-   UNDIAGNOSED. Inspect lighting/shader/property-block behavior before any edit.
-   Preserve all original character geometry/designs.
-4. Finish genuine remaining UI/service/local requirements, then coherent source
-   qualification/build once. Build/test generated metadata whitespace and animation
-   assets need source hygiene; current stamps correctly say dirty.149.11's existing
-   QualityLevelStamp handles antiAliasing only. Do not claim new clean qualification.
-5. ugs/cloud-code/match-record.js includesRafi mastery; live deployment unperformed.
-   Resolve real external needs only after independent local work. Never spend
-   credits or reset allowances. Full assignment and existing goal remain ACTIVE.
-
-Detailed former ledger states are preserved in
-reports/full-backlog-2026-09-21/ledger-before-departure-publication.md and
-ledger-before-block-hair-publication.md. Do not follow their stale active-job lines.
-
-FPP observation follow-up: Toon.shader's retained design explicitly discusses the
-Godot saturated-orange look and the move to full-frame ColourGrade. Portrait and
-world captures use different lighting/grade; the screenshot alone is NOT proof of
-a palette defect. Preserve existing cast rendering until a same-light body/FPP
-comparison establishes a concrete mismatch. No speculative shader edit was made.
-
-## NEW concrete active work:127.3 accessibility completion
-
-Source confirms missing FOV, toggle inputs and UI/text scaling despite earlier
-summary guesses that all comfort options existed. Do not mark these as implemented
-or external. Current plan:reports/full-backlog-2026-09-21/accessibility-completion-plan.md.
-Read current PlayerInputReader,CameraRig,AspectSafeCanvas,TumpSettingsView.OwnerPainted
-and VoiceDirector. UI routing/uGUI and feature input/UI/serialization skills read.
-Defaults must preserve current behavior; use existing input maps and painted UI.
-Controls/camera batch is authored locally; Core toggle6/6 passed, Unity checks
-are pending. Complete that batch, then readable scaling,
-reduced effects/high contrast/captions and colour-independent role/locator proof.
-This does not reopen completed Rafi art or the qualified peer-departure feature.
-
-Accessibility batch1 now authored locally: GameSettings.FirstPersonFov default95
-clamped75..110 with nonfinite fallback; ToggleSprint/ToggleRestore defaultfalse;
-painted settings choices/slider; CameraRig live FPP lens; shared ToggleControl
-normalizer and Carrier.HasResetTarget reuse; input menu/chat/role/round/possession
-reset handling; prompt wording reflects toggle restore. Core6/6 passed9ms.
-New Preference EditMode5cases and AccessibilityControlTests PlayMode3cases are
-prepared; no Unity compile/run yet. The PlayMode fixture uses actual shared touch
-input, real restored can outcome, live FOV and settings discard, and is in match
-partition. Only this batch's changed risk is to be checked before moving on.
-The remainder of127.3 (scaling, contrast/effects/captions/role proof) stays OPEN.
-
-Black UI correction source complete across15files. Native v55 built1211MB/83s,
-guard32ee8acef6a6,job50985. Manual-flight HUD/control hint inspected: black outlines.
-Spectator-only job44763 exited1 at later POV held-world-slipper visibility assertion;
-retain that separate finding and both images in black-ui-outline-evidence. No full
-spectator pass. All jobs reaped; no owned players/previews remain.
-Only colour hunks are staged for TumpMatchReadout.cs; its ToggleRestore prompt and
-all other accessibility implementation remain local until their focused checks.
-Continue accessibility batch1, then the remaining127.3 plan and full TODO.
+Detailed prior state is retained in reports/full-backlog-2026-09-21/
+ledger-before-accessibility-publication.md and earlier ledger snapshots. Their
+active-job lines are historical. Use THIS ledger for current state.

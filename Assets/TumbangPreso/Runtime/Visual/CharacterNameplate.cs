@@ -29,6 +29,9 @@ namespace TumbangPreso.Visual
         /// smaller unit's ring reads as a ring around that unit, not a person-sized ring
         /// around a small object.</summary>
         public const float RingRadiusRatio = 1.375f;
+        // The small ring's hole was entirely covered by the hero's feet at eight
+        // metres. A wider angular annulus leaves the role shape visible beside them.
+        public const float TayaRingRadiusRatio = 1.95f;
 
         /// <summary>Small and absolute on purpose: it only has to clear the floor mesh, not
         /// scale with the unit.</summary>
@@ -89,7 +92,7 @@ namespace TumbangPreso.Visual
         {
             if (_tayaRing != null) return _tayaRing;
 
-            _tayaRing = VfxShapes.Collar(sides: 32, height: 0.10f, innerRatio: 0.66f);
+            _tayaRing = VfxShapes.Collar(sides: 8, height: 0.10f, innerRatio: 0.66f);
             _tayaRing.name = "TayaRing";
             _tayaRing.hideFlags = HideFlags.HideAndDontSave;
 
@@ -211,7 +214,7 @@ namespace TumbangPreso.Visual
             float feetY = centreY - height / 2.0f;
             float headY = centreY + height / 2.0f;
 
-            float ringRadius = radius * RingRadiusRatio;
+            float ringRadius = radius * (_character.IsDefender ? TayaRingRadiusRatio : RingRadiusRatio);
 
             // ⚠️⚠️ THE SCALE DEPENDS ON WHICH MESH IS ON, AND GETTING THIS WRONG DRAWS A MARKER
             // TWICE THE RIGHT SIZE. A Unity cylinder primitive is 1 unit ACROSS (radius 0.5), so

@@ -62,6 +62,7 @@ namespace TumbangPreso.UI
                 var colours=button.colors; colours.normalColor=i==_selected?SettingsPalette.Accent:SettingsPalette.Ink; button.colors=colours;
                 if(i==_selected)selectedButton=button;
             }
+            SettingsReadingLayout.Apply(_popup, null);
             _popup.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             selectedButton?.Select();
             ScreenTakeover.Register(this,()=>_popup!=null && _popup.gameObject.activeInHierarchy);

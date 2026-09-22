@@ -19,6 +19,7 @@ namespace TumbangPreso.UI
         {
             helper.Clear();var rect=GetPixelAdjustedRect();var theme=OwnerUiTheme.Current;
             var ink=(Color)new Color32(35,29,33,210);
+            if (Settings.SettingsStore.Current.HighContrastHud) ink = new Color(0,0,0,.94f);
             var points=new[]{new Vector2(rect.xMin+8,rect.yMax),new Vector2(rect.xMax-13,rect.yMax-2),
                 new Vector2(rect.xMax,rect.yMax-12),new Vector2(rect.xMax-6,rect.yMin+6),
                 new Vector2(rect.xMin+5,rect.yMin),new Vector2(rect.xMin,rect.yMax-12)};

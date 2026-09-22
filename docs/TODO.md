@@ -26,6 +26,14 @@ preserving native style, supplied signs/livery, gameplay clarity and Low setting
 
 ### Latest active additions, 2026-09-22
 
+- [ ] **127.3 accessibility completion:** implemented FPP FOV, hold/toggle sprint and
+  can restore, HUD size/larger text, high contrast, reduced particles/flashes and
+  delivered-announcer captions. Wider angular taya ring now reads in greyscale.
+  Controls/layout/captions checks and native spectatorv56 passed. Final compact
+  ability-reference layout and expanded overlay/native integration remain tracked
+  in reports/full-backlog-2026-09-21/accessibility-completion.md. Do not close the
+  full assignment at this checkpoint. All numbered historical entries remain.
+
 - [x] **Black in-game UI outlines:** owner rejects red/burgundy strokes, including
   the spectator FREE FLIGHT/control hint. Replace gameplay text/icon outlines with
   shared black across HUD, spectator, training/replay and in-match chat. Keep fills,
