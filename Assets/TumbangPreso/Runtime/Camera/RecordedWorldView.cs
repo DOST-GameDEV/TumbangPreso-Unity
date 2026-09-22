@@ -12,7 +12,7 @@ namespace TumbangPreso.CameraSystem
     // Playback owns rendering and its own audio voices, never simulation objects.
     public sealed class RecordedWorldView : IDisposable
     {
-        private sealed class Item { public RecordedObjectTrack Track; public MatchPoseHistory.Copy Copy; public Transform[] Bones; }
+        private sealed class Item { public RecordedObjectTrack Track; public MatchPoseHistory.Copy Copy; public Transform[] Bones; public GroundContactVisual Contact; }
         private readonly List<Item> _items=new List<Item>(13);
         private readonly List<Renderer> _hidden=new List<Renderer>();
         private readonly List<bool> _previous=new List<bool>();
@@ -39,6 +39,7 @@ namespace TumbangPreso.CameraSystem
         private float _lastTime;
         private CourtBoundaryPresentation _court;
         private LataClockPresentation _lataClock;
+        private GroundContactVisual _canLanding;
         private readonly Dictionary<int,CourtEscapePuff> _escapePuffs=new Dictionary<int,CourtEscapePuff>();
         public bool Ready {get;private set;}
         public string UnavailableReason {get;private set;}
@@ -53,6 +54,7 @@ namespace TumbangPreso.CameraSystem
                 _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
                 _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,GameServices.Round?.Lata);
                 _lataClock=LataClockPresentation.Install(_stage.transform,null,true);_lataClock.ShowForCapture(false);
+                _canLanding=new GroundContactVisual(_stage.transform,"Recorded can footprint",true);
                 foreach(var track in clip.Objects)
                 {
                     GameObject source=Source(track);
@@ -66,7 +68,8 @@ namespace TumbangPreso.CameraSystem
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
                     var bones=track.Pose.Bind(copy.Root);if(bones==null){UnavailableReason="Recorded pose binding changed: "+track.Kind;return;}
                     if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,ToonSkin.PropOutlineWidth);
-                    _items.Add(new Item{Track=track,Copy=copy,Bones=bones});
+                    _items.Add(new Item{Track=track,Copy=copy,Bones=bones,
+                        Contact=track.Kind==RecordedObjectKind.Familiar?null:new GroundContactVisual(_stage.transform,"Recorded object contact",true)});
                     track.Pose.Apply(bones,clip.Contact);
                 }
                 _stage.SetActive(true);
@@ -74,6 +77,7 @@ namespace TumbangPreso.CameraSystem
                 _camera=cameraGo.AddComponent<Camera>();_camera.CopyFrom(Camera.main);_camera.enabled=false;_camera.tag="Untagged";
                 _camera.cullingMask&=~(1<<5);_camera.nearClipPlane=.08f;_camera.fieldOfView=58;
                 _grade=cameraGo.AddComponent<ColourGrade>();_grade.AdoptFromScene();
+                cameraGo.AddComponent<WorldOutline>().PrototypeEnabled=Camera.main.GetComponent<WorldOutline>()?.PrototypeEnabled??true;
                 if(RenderSettings.skybox!=null)_sky=new Material(RenderSettings.skybox){name="RecordedSky"};
                 var fill=new GameObject("RecordedWeatherFill");fill.transform.SetParent(_stage.transform,false);_skyFill=fill.AddComponent<Light>();
                 _skyFill.type=LightType.Point;_skyFill.shadows=LightShadows.None;_skyFill.enabled=false;
@@ -155,20 +159,39 @@ namespace TumbangPreso.CameraSystem
             var can=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Can);
             if(can!=null)
             {
-                bool previous=false,known=false;float restoredAt=float.NegativeInfinity;Vector3 origin=Vector3.zero;
+                bool previous=false,known=false;float restoredAt=float.NegativeInfinity,fallenAt=float.NegativeInfinity;Vector3 origin=Vector3.zero;
                 foreach(var sample in can.Track.Pose.Samples)
                 {
                     if(sample.Time>time)break;
                     bool upright=(sample.State&1)!=0;
                     if(known && !previous && upright){restoredAt=sample.Time;origin=sample.Positions[0];}
+                    if(known && previous && !upright)fallenAt=sample.Time;
                     previous=upright;known=true;
                 }
-                _court.DrawRecorded((can.Track.Pose.StateAt(time).State&1)!=0,time-restoredAt,origin);
+                bool up=(can.Track.Pose.StateAt(time).State&1)!=0;
+                _court.DrawRecorded(up,time-restoredAt,origin);
+                can.Track.Pose.Apply(can.Bones,time);
+                float bottom=can.Bones[0].position.y-(up?0:WorldContactPresentation.RecordedCanSupport(can.Copy.Renderers,can.Bones[0].rotation));
+                bool elevated=WorldGround.TryBelow(can.Bones[0].position,.5f,3.5f,out float ground) && bottom-ground>.12f;
+                float settle=!up?Mathf.Clamp01(1-(time-fallenAt)/Core.Balance.ToppleTime):0;
+                _canLanding.Place(can.Bones[0].position,bottom,new Vector2(.29f,.29f),
+                    (elevated?.62f:settle*.62f)*WorldCueProfile.Current.HeroObjects,true);
             }
             if(can!=null&&_state!=null){int state=can.Track.Pose.StateAt(time).State;_state.text=(state&2)!=0?"CAN PROTECTED":(state&1)!=0?"CAN UPRIGHT":"CAN DOWN  /  RETRIEVE YOUR TSINELAS";}
             foreach(var item in _items)
             {
                 item.Track.Pose.Apply(item.Bones,time);var state=item.Track.Pose.StateAt(time);
+                if(item.Contact!=null)
+                {
+                    bool player=item.Track.Kind==RecordedObjectKind.Player,shoe=item.Track.Kind==RecordedObjectKind.Slipper;
+                    if(shoe && (state.State&255)!=(int)SlipperState.Loose)item.Contact.Hide();
+                    else
+                    {
+                        float bottom=WorldContactPresentation.ModelBottom(item.Copy.Renderers,item.Bones[0].position.y);
+                        item.Contact.Place(item.Bones[0].position,bottom,player?new Vector2(.45f,.45f):shoe?new Vector2(.24f,.15f):new Vector2(.25f,.22f),
+                            WorldCueProfile.Current.WorldLighting*(shoe?.16f:.20f));
+                    }
+                }
                 if(item.Track.Kind==RecordedObjectKind.Can)
                 {
                     LataClockPresentation.Unpack(state.State,out float restore,out float protection);
@@ -178,6 +201,10 @@ namespace TumbangPreso.CameraSystem
                 {
                     surface.GetPropertyBlock(_coatBlock);_coatBlock.SetFloat("_TayaCue",0);
                     _coatBlock.SetFloat("_DepthReadability",item.Track.Kind==RecordedObjectKind.Slipper?0:WorldCueProfile.Current.DistanceReadability);
+                    if(item.Track.Kind==RecordedObjectKind.Player)
+                        _coatBlock.SetVector("_WorldBody",new Vector4(item.Bones[0].position.y,1.6f,1,0));
+                    if(item.Track.Kind==RecordedObjectKind.Can)
+                    {Vector3 axis=item.Bones[0].up;_coatBlock.SetVector("_WorldMetalAxis",new Vector4(axis.x,axis.y,axis.z,1));}
                     surface.SetPropertyBlock(_coatBlock);
                 }
                 if(!state.HasCoat)continue;
@@ -243,7 +270,8 @@ namespace TumbangPreso.CameraSystem
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
             if(GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
-            foreach(var item in _items)item.Copy.ShowOnlyForCapture(true);
+            foreach(var item in _items){item.Copy.ShowOnlyForCapture(true);item.Contact?.Visible(true);}
+            _canLanding.Visible(true);
             _court.ShowForCapture(true);_lataClock.ShowForCapture(true);
             for(int i=0;i<_clip.Sounds.Length;i++)
             {
@@ -254,7 +282,7 @@ namespace TumbangPreso.CameraSystem
                 puff.Sample(age);puff.ShowForCapture(true);
             }
             try{using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
-            finally{_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items)item.Copy.ShowOnlyForCapture(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {

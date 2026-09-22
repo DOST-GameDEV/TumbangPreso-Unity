@@ -241,7 +241,7 @@ namespace TumbangPreso.Visual
             if(_renderer==null)return;
             var profile=WorldCueProfile.Current;
             _renderer.enabled=profile.Boundary>.001f;
-            _block.SetColor("_Chalk",profile.Chalk);_block.SetColor("_Ink",profile.Ink);
+            _block.SetColor("_Chalk",WorldLookPresentation.CourtChalk);_block.SetColor("_Ink",WorldLookPresentation.CourtEdge);
             _block.SetFloat("_Weight",Mathf.Clamp01(profile.Boundary));_block.SetFloat("_Armed",armed?1:0);
             bool exit=!_recorded && armed && IsThreatened(viewer,_lata) && !PresentationClock.BlocksInput;
             Vector3 closest=exit?ClosestExit(viewer.transform.position):Vector3.zero;

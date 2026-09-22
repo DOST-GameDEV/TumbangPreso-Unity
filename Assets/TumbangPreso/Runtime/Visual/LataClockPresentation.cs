@@ -81,6 +81,7 @@ namespace TumbangPreso.Visual
             {
                 if(surface==null || surface.sharedMaterial==null || !surface.sharedMaterial.HasProperty("_DepthReadability"))continue;
                 surface.GetPropertyBlock(_bodyBlock);_bodyBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
+                Vector3 axis=_lata.transform.up;_bodyBlock.SetVector("_WorldMetalAxis",new Vector4(axis.x,axis.y,axis.z,1));
                 surface.SetPropertyBlock(_bodyBlock);
             }
             ReadLive(out float restore,out float protection);

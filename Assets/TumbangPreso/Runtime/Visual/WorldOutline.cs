@@ -356,10 +356,11 @@ namespace TumbangPreso.Visual
         /// the Chromatic style also stops paying for the depth-normals request and the exclusion
         /// mask rebuild rather than only for the composite.
         /// </summary>
-        private bool Live => _prototypeEnabled
-                             && Settings.RenderStyles.InkOutlinesActive
-                             && !_missing
-                             && _opacity > 0.0f;
+        private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
+            && WorldCueProfile.Current.WorldLighting>0 && WorldLookProfile.Current.EnvironmentContact>0
+            && Settings.SettingsStore.Current.GraphicsQuality>0;
+        private bool InkLive => _prototypeEnabled && Settings.RenderStyles.InkOutlinesActive && _opacity>0;
+        private bool Live => !_missing && (InkLive || HasWorldContact);
 
         private void LateUpdate() => RequestDepthNormals(Live);
 
@@ -573,7 +574,7 @@ namespace TumbangPreso.Visual
             // drawing.
             RequestDepthNormals(Live);
 
-            if (!Live || _exclusion == Exclusion.Overlap)
+            if (!Live || (_exclusion == Exclusion.Overlap && !HasWorldContact))
             {
                 DetachBuffer();
                 return;
@@ -855,7 +856,7 @@ namespace TumbangPreso.Visual
             }
 
             _material.SetColor(OutlineColorId, _colour);
-            _material.SetFloat(OpacityId, _opacity);
+            _material.SetFloat(OpacityId, InkLive?_opacity:0);
             _material.SetFloat(ThicknessId, _thickness);
             _material.SetFloat(DepthSensitivityId, _depthSensitivity);
             _material.SetFloat(DepthBiasId, _depthBias);
@@ -878,10 +879,15 @@ namespace TumbangPreso.Visual
             ApplyFade();
             ApplyViewRay();
 
-            bool masked = _exclusion != Exclusion.Overlap && _mask != null && _bufferAttached;
-
-            _material.SetTexture(MaskId, masked ? (Texture)_mask : Texture2D.blackTexture);
-            _material.SetFloat(MaskStrengthId, masked ? _maskStrength : 0.0f);
+            bool maskReady=_mask!=null && _bufferAttached;
+            bool masked=_exclusion!=Exclusion.Overlap && maskReady;
+            _material.SetTexture(MaskId,maskReady?(Texture)_mask:Texture2D.blackTexture);
+            _material.SetFloat(MaskStrengthId,masked?_maskStrength:0);
+            float contact=HasWorldContact?WorldLookProfile.Current.EnvironmentContact*WorldCueProfile.Current.WorldLighting:0;
+            _material.SetVector("_WorldGroundContact",new Vector4(WorldLookPresentation.Current!=null?WorldLookPresentation.Current.Floor:0,0,contact,.5f));
+            _material.SetFloat("_WorldContactMask",maskReady?1:0);
+            _material.SetMatrix("_WorldContactToWorld",_camera.cameraToWorldMatrix);
+            _material.SetVector("_WorldContactProjection",new Vector4(_camera.farClipPlane,_camera.orthographic?1:0,_camera.orthographicSize,_camera.aspect));
             _material.SetTexture(MainTexId, source);
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in

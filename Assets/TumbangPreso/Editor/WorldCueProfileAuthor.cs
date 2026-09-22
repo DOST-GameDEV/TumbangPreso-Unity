@@ -14,9 +14,21 @@ namespace TumbangPreso.EditorTools
         [MenuItem("Tumbang Preso/Presentation/Ensure world cue profile")]
         public static void Ensure()
         {
-            if (System.IO.File.Exists(Path)) return;
-            AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<WorldCueProfile>(), Path);
-            AssetDatabase.SaveAssets();
+            bool changed=false;
+            if(!System.IO.File.Exists(Path))
+            {AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<WorldCueProfile>(),Path);changed=true;}
+            const string look="Assets/TumbangPreso/Resources/WorldLookProfile.asset";
+            if(!System.IO.File.Exists(look))
+            {AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<WorldLookProfile>(),look);changed=true;}
+            if(changed)AssetDatabase.SaveAssets();
+        }
+        // Explicit authoring command for the measured batchB choice. Never
+        // invoked automatically over an owner's later authored profile values.
+        public static void ApplyMeasuredWorldShadow()
+        {
+            Ensure();
+            var profile=AssetDatabase.LoadAssetAtPath<WorldLookProfile>("Assets/TumbangPreso/Resources/WorldLookProfile.asset");
+            profile.ShadowLevel=.44f;EditorUtility.SetDirty(profile);AssetDatabase.SaveAssetIfDirty(profile);
         }
     }
 }

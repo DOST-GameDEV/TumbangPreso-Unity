@@ -40,9 +40,13 @@ namespace TumbangPreso.Visual
             { if (_flying) ClearFlight(); return; }
             if (_trail == null) Build();
             bool low = Settings.SettingsStore.Current.GraphicsQuality == 0;
-            _trail.time = low ? .08f : .14f;
+            _trail.time = low ? .08f : Mathf.Lerp(.14f,.10f,WorldCueProfile.Current.HeroObjects);
+            var wanted=WorldCueProfile.Current.HeroObjects>0?Shader.Find("TumbangPreso/InkFlight"):Shader.Find("Sprites/Default");
+            if(_trail.sharedMaterial.shader!=wanted)_trail.sharedMaterial.shader=wanted;
+            if(_trail.sharedMaterial.HasProperty("_InkWeight"))_trail.sharedMaterial.SetFloat("_InkWeight",WorldCueProfile.Current.HeroObjects);
             _trail.widthMultiplier = low ? .032f : .05f;
-            Color identity = _shoe.OwnerSlot >= 0 ? PlayerIdentity.Colour(_shoe.OwnerSlot) : new Color(.86f, .87f, .78f);
+            int identitySeat=WorldCueProfile.Current.HeroObjects>0?_shoe.ThrowerSlot:_shoe.OwnerSlot;
+            Color identity = identitySeat >= 0 ? PlayerIdentity.Colour(identitySeat) : new Color(.86f, .87f, .78f);
             Color head = Color.Lerp(identity, Color.white, .55f); head.a = _shoe.Affinity == SlipperAffinity.Normal ? .65f : .35f;
             _trail.startColor = head; _trail.endColor = new Color(identity.r, identity.g, identity.b, 0);
             // A network correction/recovery cannot draw a false route across the court.

@@ -170,17 +170,22 @@ Batch A, communication:
   release sequences personally inspected. Integrated native/all-cast acceptance P7.
 
 Batch B, the world:
-- [ ] **VISUAL-1.8 Toon lighting.** Lower tinted ambient toward 2 to 2.5 : 1 lit to
-  shadow, per-map shadow tint, upper-masked rim, a metal highlight on lata rims and caps,
-  a character vertical gradient, ground-contact darkening and blob contact shadows, nearer
-  horizon fog. Same shader, two bands, Built-in pipeline.
-- [ ] **VISUAL-1.9 Court and ground as the stage.** Per-map court medium for contrast
-  (chalk on dark asphalt, charcoal or brick on light paving), chalk character, a scuffed
-  home circle, soft floor value structure with negative space around the circle. Decals
-  only.
-- [ ] **VISUAL-1.10 Hero objects.** The lata findable in every reference frame without a
-  bigger mesh or neon; a landing marker for an airborne can; an ink flight streak on every
-  thrown slipper in the thrower's seat colour.
+- [x] **VISUAL-1.8 Toon lighting.** Implementation/focused qualification DONE.
+  Authorable per-map two-band ramp, lower tinted ambient, upper rim/body foot gradient,
+  cap-only can metal accent, contact blobs/lower-wall grounding and nearer horizon fog.
+  Runtime off restores original scene settings; previews keep independent shader scope.
+  Raw HDR diagnostic1.95:1 before,2.39:1 selected look; Built-in/geometry unchanged.
+- [x] **VISUAL-1.9 Court and ground as the stage.** DONE. Reversible contrasting
+  chalk/charcoal, static grain, scuffed home area and5medium-specific floor-wear modes.
+  Multiplicative overlays preserve real lighting/shadows and omit unsupported cells.
+  No collision or route changes; original meshes/material assets retained.
+- [x] **VISUAL-1.10 Hero objects.** DONE. Can contrast/caps/ground support replace the
+  permanent red rim under the new look. A dotted footprint follows real toppling or
+  elevated authoritative poses; normal knocks have no fabricated ballistic flight.
+  Short ordinary ink trails use actual ThrowerSlot and retain their look in replay.
+  [look-batchB-world](reports/visual-research-2026-09-23/look-batchB-world/report.md)
+  contains all5normal/comfort/grey25 comparisons, inspected can/stroke frames and
+  focused receipts. Integrated native/performance/peer/human acceptance remains P7.
 
 Batch C, effects and motion:
 - [ ] **VISUAL-1.11 Effects in the ink language.** Two-tone ink shapes, erosion

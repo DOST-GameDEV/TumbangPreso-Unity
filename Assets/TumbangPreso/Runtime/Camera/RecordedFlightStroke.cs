@@ -52,7 +52,8 @@ namespace TumbangPreso.CameraSystem
             _line.numCapVertices=2;_line.shadowCastingMode=ShadowCastingMode.Off;_line.receiveShadows=false;
             _line.widthCurve=stroke.Kind==0?new AnimationCurve(new Keyframe(0,1),new Keyframe(.35f,.65f),new Keyframe(1,0)):
                 AnimationCurve.Linear(0,1,1,0);
-            var material=new Material(Shader.Find("Sprites/Default")){name="Recorded flight colour"};_line.sharedMaterial=material;VfxRenderTag.Own(_root,material);
+            var material=new Material(Shader.Find(stroke.Kind==0 && WorldCueProfile.Current.HeroObjects>0?"TumbangPreso/InkFlight":"Sprites/Default")){name="Recorded flight colour"};
+            if(stroke.Kind==0 && material.HasProperty("_InkWeight"))material.SetFloat("_InkWeight",WorldCueProfile.Current.HeroObjects);_line.sharedMaterial=material;VfxRenderTag.Own(_root,material);
             if(stroke.Kind==1||stroke.Kind==2)
             {
                 _light=_root.AddComponent<Light>();_light.type=LightType.Point;_light.shadows=LightShadows.None;

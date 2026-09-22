@@ -97,6 +97,11 @@ namespace TumbangPreso.EditorTools.MapKit
             RenderSettings.ambientEquatorColor=bridge?new Color(.46f,.49f,.49f):
                 alley?new Color(.56f,.47f,.37f):new Color(.55f,.50f,.41f);
             RenderSettings.ambientGroundColor=bridge?new Color(.30f,.29f,.26f):new Color(.34f,.28f,.22f);
+            // Share the authored targets with runtime existing-map refinement.
+            // Applying this method is explicit; it does not reconstruct a map.
+            var look=WorldLookProfile.Current.Find(map);
+            if(look!=null)
+            {RenderSettings.ambientSkyColor=look.Sky;RenderSettings.ambientEquatorColor=look.Equator;RenderSettings.ambientGroundColor=look.Ground;}
             Vector3 sunDirection=Vector3.up;
             foreach(var light in Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
             {
@@ -125,6 +130,7 @@ namespace TumbangPreso.EditorTools.MapKit
             RenderSettings.fog=true;RenderSettings.fogMode=FogMode.Linear;
             RenderSettings.fogColor=horizon;RenderSettings.fogStartDistance=bridge?68:85;
             RenderSettings.fogEndDistance=bridge?165:190;
+            if(look!=null){RenderSettings.fogStartDistance=look.FogStart;RenderSettings.fogEndDistance=look.FogEnd;}
             // The asphalt has its own texture. A mild warm binder tint counters
             // the blue-grey aggregate without repainting signs, cast or effects.
             string roadPath="Assets/TumbangPreso/Art/models/materials/"+

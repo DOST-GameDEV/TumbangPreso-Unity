@@ -1,18 +1,19 @@
 # Active TUMP rework ledger
 
-## Current resume: publish1.7 then batchB, 2026-09-23
+## Current resume: publish batchB then P3, 2026-09-23
 
 Owner is asleep. Continue every autonomously actionable queued item in THIS
 conversation, one agent, without questions or checkpoint endings. Save the exact
 state here at each meaningful checkpoint. Do not mark the full goal complete.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current HEAD/verified remote33d50bb7993891d31d72b0023bf6132de2654760 published1.5;
-88f9e6e68 published1.2,479be6a53 published1.1,f018173c4 UX-1 intake. World1.7 is
-IMPLEMENTED/FOCUSED-VALIDATED, ready for scoped commit with TODO/findings/evidence.
-No active Unity/native/server/browser/helper. Last job98593 reaped,
-guard1583cce5c39f.4generated paths restored; original2PNGmeta hashes verified.
-No native build. Do not repeat passed1.1/1.2/1.5/1.7 checks.
+Current HEAD/verified remotebbab70bbd30953039791a272c3bf9884d1a8f396 published1.7.
+Earlier33d50bb7=1.5,88f9e6e68=1.2,479be6a53=1.1,f018173c4=UX-1intake.
+BatchB implementation/focused evidence complete, ready for scoped commit.
+No active Unity/native/server/browser/helper. v7author/test shell43053 reaped,
+guardsd8dec558d970/6cbcc32a18be.4known churn files restored; protected2PNGmetas
+verified. No native build. Do not repeat passed behavior/looks.
+
 
 Completed1.1: exact ConfinementRadius square at sampled ground heights, rest/armed/
 restore sweep; per-camera nearest exit with nested-camera restoration; physical
@@ -89,29 +90,44 @@ look1/release look2. GIF timestamps rounded to centiseconds matching60Hz average
 v2CSV namespace compile fault retained; v3pre-LateUpdate photos invalid for pose
 timing, corrected by test-only LateUpdate20000 pump. Do not repeat these checks.
 
-NEXT: publish1.7 by explicit paths, fetch before push, verify remote. Then batchB:
-1.8 lighting,1.9 court,1.10 hero objects, followed byP3,C,D,UX-1,P6,P7. Save a
-concrete batchB plan before edits. Required1.8 design is NATIONALS_POLISH lines214+:
-2..2.5:1 lit/shadow via lower tinted trilight, per-map ramp/tint, upper away-light
-rim, label-safe metal highlight,10..15percent foot gradient, ground-contact
-darkening/blob shadows, horizon fog and stable bands. Keep Built-in and two bands.
-Read-only finding: Editor/MapKit/MapAtmosphereAuthor.Apply currently uses sky.65,
-equator~.46,ground.34 and fogstart68/85,end165/190. Runtime MapGrade is data only;
-ColourGrade owns camera adjustment. Do not darken the whole grade to fake shadows
-or rebuild maps blindly. Preserve each map's architecture and source materials.
-1.9 contrast medium per map, chalk wear/home circle/floor variation;1.10 can
-findability, real airborne landing mark, short seat-coloured slipper flight ink.
-Existing private/shared cues must continue to compose with these world changes.
+Completed batchB1.8/1.9/1.10: authorable5map WorldLookProfile; runtime original
+ambient/fog saved/off restored, camera-scoped linear2-band ramps, upper away-key
+rim/body foot gradient and can cap-only metal accent. WorldOutline reuses existing
+depth/normal/exclusion pass for lower-wall contact, separate from optional ink.
+Reversible authored chalk/charcoal media plus supported court floor wear; wear
+MULTIPLIES existing lit floor so shadows remain. Distinct media/scuffed home area,
+no geometry/collider/model/scene rebuild. Actual players/can/loose-shoe support
+blobs and brief dotted can settling/elevated-pose footprint, also in recorded views;
+ultimate body copies get their own contact. Ordinary flight ink uses ThrowerSlot,
+shorter tail and matching recorded shader; affinity effects retained. New world
+levers have0off values. Existing can pulse fades out under new object treatment.
 
-Carry1.2 image finding into1.11/1.12: restoring has a large red grab crescent;
-review its meaning/dominance then. Real peer/native/human acceptance remains P7.
-No task deletion, completed HUD redo or login/mainmenu edits.
+Evidence look-batchB-world/report.md: v2can support1case passed; v5ordinary stroke
+1/1,6.812s; v7final map and lighting2/2,42.088s. Raw HDR lit/shadow ratio1.9472
+before to2.3885 after, actual global scope0/1. Final shadow level.44 persisted via
+explicit Unity editor API. All5normal/comfort/grey25 comparisons personally seen,
+plus can/flight frames. Retain look3, no further tuning. v1..v4faults preserved:
+render bounds were not can flight state; bridge marks need Chalk node/parent too;
+spare identity is guided-training only; trail gradients are8bit; alpha floor paint
+washed shadows and is now multiplicative. No assertions weakened. Linear cube
+ratio is a lighting diagnostic, not a claim every coloured hero/display pixel has
+that ratio. Native/performance/full-replay/human acceptance stays P7.
+
+NEXT: review/stage batchB explicit paths, fetch before push and verify remote.
+Then P3: docs/TODO.md319+ Rafi B/lagoon C final integration, local deck sampling
+refinement. Model/kit/map and v47..v52 evidence already exist; do not recreate them
+or edit existing cast/builders. Read that section and linked expansion docs, refine
+actual local support sampling, finish focused integration items while retaining
+the owner's latest no-intermediate-build rule. Native final qualification stays P7.
+Then C1.11/1.12/1.13 with PRESENTATION-1.5, D1.14/1.15 with152.4 etc, UX-1,P6,P7.
+Carry existing red grab crescent into1.11/1.12 meaning/dominance review. Preserve
+completed HUD, login/mainmenu and every task ID. Owner still asleep, no questions.
 
 Original dirty home-court.png.meta/loading-street.png.meta under Resources/UI/
 composition-redesign MUST NEVER be committed. Expected hashes in
 Logs/visual1-world-protected-metas.json; original bytes in
 Logs/look-1.1-v1/protected-inputs/. Known generated churn (two Inday FppDetails
-assets,QualitySettings.asset,TimeManager.asset) restored after1.7v5; protected2
+assets,QualitySettings.asset,TimeManager.asset) restored afterbatchBv7; protected2
 metas verified/restored exactly. Stage by path, never blanket add/reset/clean.
 Fetch before push, verify remote HEAD. Sole author M4tyu633, no trailers/AI/em dash.
 
@@ -131,7 +147,7 @@ Open carried issues:127.3 v57 chat-line clip recheck and native shutdown0xc00000
 in D3D12Core.dll1.618.1.0 offset0x264831, after all15review stages passed. P7 owns
 the native investigation. No clean-exit claim. Preserve original characters,
 builders, rigs,GUIDs,UGS IDs and saves. No paid services/resets/delegation/main/
-Desktop replacement. Prior ledger is archived with the1.1,1.2,1.5 and1.7 reports; it is history,
+Desktop replacement. Prior ledger is archived with the1.1,1.2,1.5,1.7 andbatchB reports; it is history,
 not the current resume point.
 
 Final static1.7 scope review: ChargeAnticipation now also requires _carrying, preserving the existing empty-hand lunge charge. Held-charge proofs retained; next compilation/P7 includes this one-condition exclusion. No extra rerun needed for unchanged active branch.

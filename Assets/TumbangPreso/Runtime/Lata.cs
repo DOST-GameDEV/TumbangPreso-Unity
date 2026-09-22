@@ -41,6 +41,9 @@ namespace TumbangPreso
         public bool IsUpright => _isUpright;
         public bool IsProtected => _restoreProtectionLeft > 0.0f;
         public float ProtectionLeft => Mathf.Max(0.0f, _restoreProtectionLeft);
+        // Actual supporting offset used by the can's grounded tilt. Imported
+        // renderer bounds are not a flight state and may include artist offsets.
+        public float PresentationSupportOffset => _isUpright?0:DownedLift*Mathf.Abs(Mathf.Sin(transform.eulerAngles.x*Mathf.Deg2Rad));
 
         /// <summary>The scoring window for the CURRENT can skin, divided by its STANCE.</summary>
         public float HitWindow => ThrowRules.HitWindow(_skinIndex);
@@ -558,7 +561,9 @@ namespace TumbangPreso
                 _downCollar.localScale = new Vector3(r, 1.0f, r);
             }
 
-            SetRim(Mathf.Lerp(0.35f, 1.0f, beat));
+            // The new object treatment uses real metal/value/ground contrast.
+            // Off restores the legacy pulse without recolouring the label asset.
+            SetRim(Mathf.Lerp(0.35f,1.0f,beat)*(1-Visual.WorldCueProfile.Current.HeroObjects));
         }
 
         /// <summary>

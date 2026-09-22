@@ -15,7 +15,7 @@ namespace TumbangPreso.PlayTests
     public sealed partial class WorldCourtCueTests
     {
         private string _settings,_profile;
-        private bool _bots,_spectator,_pinned;
+        private bool _bots,_spectator,_pinned,_guided;
         private int _seat;
         private float _timeScale;
         private CustomRules _rules;
@@ -24,6 +24,7 @@ namespace TumbangPreso.PlayTests
         {
             _settings=JsonUtility.ToJson(SettingsStore.Current);_profile=JsonUtility.ToJson(WorldCueProfile.Current);
             _bots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_seat=GameLaunch.SoloSeat;
+            _guided=GameLaunch.GuidedTutorial;
             _pinned=SceneFlow.RulesPinned;_rules=SceneFlow.SelectedRules.Clone();_timeScale=Time.timeScale;
             yield return PlayModeWorld.Reset();Time.timeScale=1;
             SettingsStore.Current.CameraShake=0;SettingsStore.Current.SfxVolume=1;SettingsStore.Current.MasterVolume=1;
@@ -35,6 +36,7 @@ namespace TumbangPreso.PlayTests
             JsonUtility.FromJsonOverwrite(_profile,WorldCueProfile.Current);
             SettingsStore.Restore(JsonUtility.FromJson<GameSettings>(_settings));
             GameLaunch.AllBots=_bots;GameLaunch.Spectator=_spectator;GameLaunch.SoloSeat=_seat;
+            GameLaunch.GuidedTutorial=_guided;
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
             Time.timeScale=_timeScale;
         }

@@ -54,6 +54,8 @@ namespace TumbangPreso.Visual
                     if(index>=0)original=first.Saved[index];
                 }
                 surface.SetPropertyBlock(original);surface.GetPropertyBlock(_readBlock);
+                var bodyCapsule=_readActor.GetComponent<CharacterController>();
+                _readBlock.SetVector("_WorldBody",new Vector4(_readActor.transform.position.y,bodyCapsule!=null?bodyCapsule.height:1.6f,1,0));
                 _readBlock.SetFloat("_DepthReadability",WorldCueProfile.Current.DistanceReadability);
                 _readBlock.SetFloat("_TayaCue",catchable?1:0);
                 if(catchable)

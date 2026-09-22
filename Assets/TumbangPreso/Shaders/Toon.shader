@@ -97,6 +97,8 @@ Shader "TumbangPreso/Toon"
         _RimPower ("Rim Power", Range(0.5, 8)) = 3
         _DepthReadability ("World distance readability", Range(0, 1)) = 0
         _ViewmodelRimStrength ("Held slipper edge", Range(0, .3)) = 0
+        _WorldBody ("Body floor, height and eligibility", Vector) = (0,1.6,0,0)
+        _WorldMetalAxis ("Metal cap axis and eligibility", Vector) = (0,1,0,0)
         _TayaCue ("Camera-only catchable rim", Range(0, 1)) = 0
         _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
@@ -321,6 +323,12 @@ Shader "TumbangPreso/Toon"
         half _RimPower;
         half _DepthReadability, _TayaCue, _ViewmodelRimStrength;
         float4 _CueHeight;
+        float4 _WorldBody,_WorldMetalAxis;
+        // Global map data, deliberately not material properties: no asset tint
+        // mutation, and the world camera scope restores a preview's own look.
+        sampler2D _WorldToonRamp;
+        half _WorldLookWeight;
+        float4 _WorldLookShape,_WorldKeyDirection;
         half _ShadowBand;
         half _BandEdge;
 
@@ -378,7 +386,7 @@ Shader "TumbangPreso/Toon"
         half4 LightingToon (SurfaceOutput s, half3 lightDir, half atten)
         {
             half shade = dot(s.Normal, lightDir) * atten;
-            half band = smoothstep(0.0h, _BandEdge, shade);
+            half band = smoothstep(0.0h, lerp(_BandEdge,_WorldLookShape.x,_WorldLookWeight), shade);
             half level = lerp(_ShadowBand, 1.0h, band);
 
             half4 c;
@@ -386,7 +394,8 @@ Shader "TumbangPreso/Toon"
             // lights must still fade with range: a near-range-edge point retained
             // most of its color contribution and washed the cast in nearby colors.
             half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
-            c.rgb = s.Albedo * _LightColor0.rgb * level * falloff;
+            half3 ramp=tex2D(_WorldToonRamp,half2(band,.5h)).rgb;
+            c.rgb = s.Albedo * _LightColor0.rgb * lerp(level.xxx,ramp,_WorldLookWeight) * falloff;
             c.a = s.Alpha;
             return c;
         }
@@ -442,6 +451,23 @@ Shader "TumbangPreso/Toon"
                 half strength=max(_RimStrength,depth*.13h);
                 half3 colour=_RimStrength>0?_RimColor.rgb:half3(1,.94,.82);
                 base=lerp(base,colour,saturate(rim*strength*mask));
+            }
+
+            if(_WorldLookWeight>0)
+            {
+                half3 normal=normalize(IN.worldNormal);
+                half3 view=normalize(_WorldSpaceCameraPos-IN.worldPos);
+                half relativeHeight=(IN.worldPos.y-_WorldBody.x)/max(.1h,_WorldBody.y);
+                base*=1-_WorldLookShape.z*(1-saturate(relativeHeight/.6h))*_WorldBody.z*_WorldLookWeight;
+                half cap=pow(abs(dot(normal,normalize(_WorldMetalAxis.xyz))),8.0h)*_WorldMetalAxis.w;
+                half upper=max(smoothstep(.35h,.75h,relativeHeight)*_WorldBody.z,cap);
+                half away=1-saturate(dot(normal,normalize(_WorldKeyDirection.xyz)));
+                half edge=pow(1-saturate(dot(view,normal)),2.0h);
+                half rim=edge*upper*away*_WorldLookShape.y*_WorldLookWeight*(1-saturate(_RimStrength))*(1-_TayaCue);
+                base=lerp(base,half3(.98,.94,.84),rim);
+                half specular=saturate(dot(normal,normalize(view+normalize(_WorldKeyDirection.xyz))));
+                half metal=(step(.80h,specular)*.45h+step(.94h,specular)*.55h)*cap*_WorldLookShape.w*_WorldLookWeight;
+                base=lerp(base,half3(1,.97,.88),metal);
             }
 
             if(_ViewmodelRimStrength>0)

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.234439">
+  <test-suite type="TestSuite" id="1715" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="543" result="Failed" site="Child" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.234439" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1709" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="543" result="Failed" site="Child" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.210563" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4440" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1710" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="543" result="Failed" site="Child" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.198601" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1711" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="543" result="Failed" site="Child" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.187732" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1676" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:19:13Z" duration="33.128121" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1681" name="CanContactFollowsActualToppleElevatedPoseAndIndependentRecordedSupport" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.CanContactFollowsActualToppleElevatedPoseAndIndependentRecordedSupport" methodname="CanContactFollowsActualToppleElevatedPoseAndIndependentRecordedSupport" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="1480143865" result="Passed" start-time="2026-09-22 23:18:40Z" end-time="2026-09-22 23:18:48Z" duration="7.991220" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchB-v2/shots/can-settling-footprint.png
+[Play] wrote Logs/look-batchB-v2/shots/can-elevated-footprint.png
+]]></output>
+            </test-case>
+            <test-case id="1680" name="FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" methodname="FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="2003761549" result="Failed" start-time="2026-09-22 23:18:48Z" end-time="2026-09-22 23:19:08Z" duration="19.949800" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  IlalimNgTulay floor=0 chalk=CourtBoundaryPresentation Center: (0.00, 0.09, 0.00), Extents: (7.16, 0.08, 7.16) tag=True scene=IlalimNgTulay
+  Expected: greater than 4
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.WorldCourtCueTests+<FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting>d__8.MoveNext () [0x0013b] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\WorldCourtCueTests.Stage.cs:35
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchB-v2/shots/BayanPlaza-stage-before.png
+[Play] wrote Logs/look-batchB-v2/shots/BayanPlaza-stage-after.png
+[Play] wrote Logs/look-batchB-v2/shots/BayanPlaza-stage-comfort.png
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchB-v2/shots/Eskinita-stage-before.png
+[Play] wrote Logs/look-batchB-v2/shots/Eskinita-stage-after.png
+[Play] wrote Logs/look-batchB-v2/shots/Eskinita-stage-comfort.png
+[Env] repainted 325 of 2801 renderers, 0 with a roof variant.
+[NearFade] 3293 occluder nodes matched, 1606 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1682" name="OrdinaryFlightInkUsesActualThrowerAndReplaysItsRecordedStroke" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.OrdinaryFlightInkUsesActualThrowerAndReplaysItsRecordedStroke" methodname="OrdinaryFlightInkUsesActualThrowerAndReplaysItsRecordedStroke" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="1282693605" result="Failed" start-time="2026-09-22 23:19:08Z" end-time="2026-09-22 23:19:13Z" duration="5.165968" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  state=Held position=(-2.12, 0.95, 8.34) velocity=(0.00, 0.00, 0.00) enabled=True active=True thrower=-1 owner=1
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.WorldCourtCueTests+<OrdinaryFlightInkUsesActualThrowerAndReplaysItsRecordedStroke>d__10.MoveNext () [0x00192] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\WorldCourtCueTests.Stage.cs:101
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -20,6 +20,7 @@ namespace TumbangPreso.CameraSystem
             public MatchPoseHistory.Copy Body;
             public AnimationClip Clip;
             public HeroIntroductionScene Scene;
+            public GroundContactVisual Contact;
         }
         private readonly List<ActorScene> _actors = new List<ActorScene>(4);
         private readonly List<Renderer> _hidden = new List<Renderer>(128), _scratch = new List<Renderer>(128);
@@ -61,7 +62,8 @@ namespace TumbangPreso.CameraSystem
                     var body = track.Clone(actorStage.transform); if (body == null) continue;
                     track.Apply(body, track.Newest);
                     body.Root.SetActive(true); // The committed caster is shown even if a prior power hid their live model.
-                    var entry = new ActorScene { Actor = actor, Body = body };
+                    var entry = new ActorScene { Actor = actor, Body = body,
+                        Contact=new GroundContactVisual(_stage.transform,"Ultimate body contact",true) };
                     _actors.Add(entry);
                     entry.Clip = UltimateIntroductionCache.Find(actor,actor.GetComponent<Carrier>().Held != null);
                     if (entry.Clip == null) continue;
@@ -123,6 +125,7 @@ namespace TumbangPreso.CameraSystem
                     _camera=go.AddComponent<Camera>(); _camera.CopyFrom(liveCamera); _camera.enabled=false; _camera.tag="Untagged";
                     _camera.cullingMask &= ~(1<<5); _camera.nearClipPlane=.05f;
                     _camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+                    _camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled=liveCamera.GetComponent<WorldOutline>()?.PrototypeEnabled??true;
                     int width=Mathf.Clamp(Screen.width,960,1920), height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
                     _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32) { name="SharedUltimateFrame" };
                     _target.Create(); _camera.targetTexture=_target; _picture.texture=_target;
@@ -165,11 +168,16 @@ namespace TumbangPreso.CameraSystem
             }
             foreach(var shoe in _slippers)if(shoe!=null)Hide(shoe.transform);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.transform);
+            if(WorldContactPresentation.Current!=null)Hide(WorldContactPresentation.Current.transform);
             _primary.Body.ShowOnlyForCapture(true);_primary.Scene.SetVisibleForCapture(true);
+            float foot=WorldContactPresentation.ModelBottom(_primary.Body.Renderers,_primary.Body.Root.transform.position.y);
+            _primary.Contact.Place(_primary.Body.Root.transform.position,foot,new Vector2(.45f,.45f),WorldCueProfile.Current.WorldLighting*.20f);
+            _primary.Contact.Visible(true);
             try{_camera.Render();}
             finally
             {
                 _primary.Body.ShowOnlyForCapture(false);_primary.Scene.SetVisibleForCapture(false);
+                _primary.Contact.Visible(false);
                 for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_wasHidden[i];
             }
         }
@@ -212,7 +220,7 @@ namespace TumbangPreso.CameraSystem
             if(_camera!=null)_camera.targetTexture=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);
             if(_target!=null){_target.Release();Object.Destroy(_target);}
-            foreach(var entry in _actors)entry.Scene?.Dispose();
+            foreach(var entry in _actors){entry.Scene?.Dispose();entry.Contact?.Dispose();}
             _actors.Clear();if(_stage!=null)Object.Destroy(_stage);
             _stage=null;_canvas=null;_target=null;_camera=null;_primary=null;
         }

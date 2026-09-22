@@ -118,6 +118,9 @@ Shader "TumbangPreso/WorldOutline"
             float _FadeEnd;
             half _MaskStrength;
             float4 _ViewRay;
+            float4 _WorldGroundContact,_WorldContactProjection;
+            float4x4 _WorldContactToWorld;
+            float _WorldContactMask;
             float _Supersample;
 
             // ⚠️ NOT NAMED `Sample`, AND `offset` BELOW IS NOT NAMED `step`. Both of those are
@@ -415,7 +418,7 @@ Shader "TumbangPreso/WorldOutline"
                 }
 
                 coverage *= inv * inv;
-                if (coverage <= 0.0) return source;
+                if (coverage <= 0.0 && _WorldGroundContact.z<=0.0) return source;
 
                 // ---------------------------------------------------------- the exclusion mask
                 //
@@ -453,6 +456,26 @@ Shader "TumbangPreso/WorldOutline"
                         tex2D(_WorldOutlineMask, duv + float2( reach.x, -reach.y)).r));
 
                 coverage *= 1.0 - saturate(mask * _MaskStrength);
+                if(_WorldGroundContact.z>0)
+                {
+                    float sceneDepth;float3 viewNormal;
+                    DecodeDepthNormal(tex2D(_CameraDepthNormalsTexture,duv),sceneDepth,viewNormal);
+                    if(sceneDepth<.99999)
+                    {
+                        float eye=sceneDepth*_WorldContactProjection.x;
+                        float3 viewPoint=float3((duv*2-1)*_ViewRay.xy*eye,-eye);
+                        if(_WorldContactProjection.y>.5)
+                            viewPoint.xy=(duv*2-1)*float2(_WorldContactProjection.z*_WorldContactProjection.w,_WorldContactProjection.z);
+                        float3 world=mul(_WorldContactToWorld,float4(viewPoint,1)).xyz;
+                        float3 normal=normalize(mul((float3x3)_WorldContactToWorld,viewNormal));
+                        float a=world.y-_WorldGroundContact.x,b=world.y-_WorldGroundContact.y;
+                        float first=step(-.025,a)*(1-saturate(a/_WorldGroundContact.w));
+                        float second=step(-.025,b)*(1-saturate(b/_WorldGroundContact.w));
+                        float side=1-smoothstep(.35,.70,abs(normal.y));
+                        float contact=max(first,second)*side*_WorldGroundContact.z*(1-saturate(mask*_WorldContactMask));
+                        source.rgb*=1-contact;
+                    }
+                }
                 if (coverage <= 0.0) return source;
 
                 return half4(lerp(source.rgb, _OutlineColor.rgb, coverage * _Opacity), source.a);

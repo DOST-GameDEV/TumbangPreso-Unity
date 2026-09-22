@@ -499,3 +499,41 @@ minimum handx.4368, transient offset settles to0. Before/after34-frame60Hz studi
 and grey sheets personally inspected; keep release look2. v3's earlier apparent
 held-frame lag was a pre-LateUpdate capture error, not runtime evidence. Full
 history/receipts in look-1.7-viewmodel. STOP tuning; move to batchB. No native build.
+
+BatchB source findings: authored trilight is about.65sky/.55equator/.34ground,
+with fog beginning68..85m. New map presets lower/tint ambient without darkening
+ColourGrade, keep two-band Toon with an authorable per-map ramp, and preserve
+farther lagoon horizon reach. WorldOutline already owns a depth-normal prepass
+and excluded-body mask; lower-wall contact reuses it, not per-building mesh draws.
+Existing material/geometry assets stay intact. Court marks receive reversible
+runtime medium overrides and a supported-floor overlay with distinct wear kinds.
+
+The can's real ApplyTilt corrects its height by radius*sin(angle); normal knocks
+remain in ground contact. The new dotted footprint therefore follows actual brief
+toppling/settling or a genuinely elevated received pose, without adding ballistic
+gameplay. Ordinary SlipperMotionAccent already emitted in both modes but used the
+owner's seat and Sprites/Default; the revised short ink stroke uses actual ThrowerSlot
+and the same shader for replay. Affinity effects stay with their owners. Compilation,
+rendered ratios/readability and full comparisons are pending the first batch run.
+
+Final batchB: all five map geometry/off/camera contracts passed. The first floor
+wear alpha-painted a lighter patch over real shadows; isolation frames proved it
+was surface wear, not contact shading. Multiplicative colour modulation removes
+the polygonal patch and preserves the actual shadow. Bridge marks have explicit
+Chalk parent/node naming even when their material is not named chalk. Original
+imported geometry/material assets stay intact. Final map/comfort/grey25 images
+personally inspected; keep final look3 and stop iterating.
+
+Lighting measured in raw linear HDR on a temporary uniform Toon cube under the
+real map key, with actual camera-scope weight readback. Original ratio1.9472;
+shadow.37 gave2.7978, stronger than preferred. Selected.44 gives2.3885, within
+the2..2.5 target. This is a diagnostic lighting response, not a claim of identical
+contrast across every coloured actor/display pixel. v7map+lighting2/2,42.088s,
+guard6cbcc32a18be. Explicit profile authoring guardd8dec558d970; no scene rebuild.
+
+Can support uses the real grounded-tilt offset rather than artist render bounds.
+v2actual settle/elevated-pose case passed. Ordinary trail v5passed1/1,6.812s,
+guard84b80b438847: actual guided-training stock, true thrower identity,8bit colour
+encoding, recording/replay, off and re-equip cleanup. Live matches still forbid
+another player's owned shoe; no ownership gate was changed. Report look-batchB-world
+retains all faults and scope limits. Native/full qualification remains P7.
