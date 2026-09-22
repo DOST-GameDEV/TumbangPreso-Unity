@@ -12,6 +12,10 @@ network contract changes. Design, reasoning and file-level routes:
 Priority was rethought the same day: P0 finish in-flight work, then VISUAL-1 batches,
 with backlog paperwork moved behind visible work. See
 [the priority order](docs/TODO.md#current-implementation-queue).
+The owner then widened it: "u can edit all UI and hud in the actual game btw including
+the match end and mid round report and icon", "thoroughly revamp it too and make it more
+visually pleasing + good to look at". Every in-match surface is in scope (VISUAL-1.4,
+1.16, 1.17, 1.18); supplied artwork is still never repainted.
 
 **Docs layout after the 2026-09-23 cleanup.** `docs/TODO.md` is the only status queue and
 carries an index row per numbered entry; the open entries' whole bodies are in

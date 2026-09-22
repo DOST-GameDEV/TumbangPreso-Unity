@@ -952,7 +952,7 @@ namespace TumbangPreso.Visual
                 if (tinted)
                     foreach (int id in ColourIds) _block.SetColor(id, _tint);
 
-                _block.SetFloat(FlashAmountId, flash);
+                _block.SetFloat(FlashAmountId, flash * Settings.SettingsStore.Current.EffectiveFlashIntensity);
                 // ⚠️ ONE LEVEL, ROUTED BY ELEMENT. See the note at the end of `ProcessFrost`.
                 bool ability = _stunElement != StunElement.None;
 

@@ -311,6 +311,14 @@ namespace TumbangPreso.Settings
         public float CameraShake = 1f;
         public bool CinematicCameraMotion = true;
         public float FlashIntensity = 1f;
+        public float EffectiveFlashIntensity =>
+            (float.IsNaN(FlashIntensity) || float.IsInfinity(FlashIntensity) ? 1f : Mathf.Clamp01(FlashIntensity)) *
+            (ReducedEffects ? .25f : 1f);
+        // Reduced effects lowers optional camera motion by the same factor as flashes, on
+        // top of the player's own shake slider. Aim and gameplay never read this value.
+        public float EffectiveCameraShake =>
+            (float.IsNaN(CameraShake) || float.IsInfinity(CameraShake) ? 1f : Mathf.Clamp01(CameraShake)) *
+            (ReducedEffects ? .25f : 1f);
 
         // -------------------------------------------------------------------
         // DISPLAY

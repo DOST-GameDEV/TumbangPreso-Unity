@@ -16,7 +16,7 @@ namespace TumbangPreso.Visual
         public static void Play(Vector3 at, bool restored)
         {
             var round = GameServices.Round;
-            if (round == null || !round.RoundActive || Settings.SettingsStore.Current.FlashIntensity <= .001f) return;
+            if (round == null || !round.RoundActive || Settings.SettingsStore.Current.EffectiveFlashIntensity <= .001f) return;
             var go = new GameObject(restored ? "~CanRestoreAccent" : "~TinContactAccent");
             go.transform.position = at;
             var effect = go.AddComponent<CanContactAccent>();
@@ -46,7 +46,7 @@ namespace TumbangPreso.Visual
         {
             // The can stays visible in the centre. Restore brackets lift into the
             // upright shape; contact strokes spread a short distance and dissolve.
-            float alpha = (1 - u) * (1 - u) * .72f * Settings.SettingsStore.Current.FlashIntensity;
+            float alpha = (1 - u) * (1 - u) * .72f * Settings.SettingsStore.Current.EffectiveFlashIntensity;
             Color colour = _colour; colour.a = alpha;
             for (int i = 0; i < _strokes.Length; i++)
             {

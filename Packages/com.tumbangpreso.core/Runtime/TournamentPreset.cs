@@ -377,6 +377,8 @@ namespace TumbangPreso.Core
                 "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
             new Modifier("-tp-spectator-review-only",
                 "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
+            new Modifier("-tp-accessibility-review-only",
+                "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
             new Modifier("-tp-uireview",
                 "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),
             new Modifier("-tp-ult-disconnect",

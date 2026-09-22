@@ -63,7 +63,7 @@ namespace TumbangPreso.UI
                 int slot = _scoreRowSeats[i];
                 float remaining = slot >= 0 ? Mathf.Max(0, _scoreMomentUntil[slot] - Time.unscaledTime) : 0;
                 float u = remaining > 0 ? 1 - remaining / ScoreMomentLife : 1;
-                float accent = remaining > 0 ? (1 - u) * settings.FlashIntensity : 0;
+                float accent = remaining > 0 ? (1 - u) * settings.EffectiveFlashIntensity : 0;
                 if (_scores[i] != null)
                 {
                     float bump = !settings.ReducedUiMotion && remaining > 0

@@ -48,5 +48,31 @@ namespace TumbangPreso.Tests
             }
             finally { SettingsStore.Current.CameraShake = level; Random.state = random; Object.DestroyImmediate(go); }
         }
+        [TestCase(1f, false, 1f)] [TestCase(1f, true, .25f)] [TestCase(.4f, true, .1f)]
+        [TestCase(float.NaN, false, 1f)] [TestCase(float.PositiveInfinity, true, .25f)] [TestCase(3f, false, 1f)]
+        public void ReducedEffectsQuartersFlashesAndShakeWithoutRewritingTheSliders(float slider, bool reduced, float expected)
+        {
+            var settings = new GameSettings { FlashIntensity = slider, CameraShake = slider, ReducedEffects = reduced };
+            Assert.AreEqual(expected, settings.EffectiveFlashIntensity, .0001f);
+            Assert.AreEqual(expected, settings.EffectiveCameraShake, .0001f);
+            Assert.AreEqual(slider, settings.FlashIntensity, "The saved slider keeps the player's own value.");
+        }
+        [Test]
+        public void ReducedEffectsSkipsTheOptionalImpactPause()
+        {
+            var settings = SettingsStore.Current; bool reduced = settings.ReducedEffects; float scale = Time.timeScale;
+            try
+            {
+                Assume.That(PresentationClock.Held, Is.False, "A held presentation clock refuses every pause.");
+                Hitstop.End(); Time.timeScale = 1; settings.ReducedEffects = true;
+                Hitstop.Trigger();
+                Assert.IsFalse(Hitstop.Active); Assert.AreEqual(1f, Time.timeScale);
+                settings.ReducedEffects = false; Hitstop.Trigger();
+                Assert.IsTrue(Hitstop.Active, "Default play keeps the approved micro-hitstop.");
+                settings.ReducedEffects = true; Hitstop.Step();
+                Assert.IsFalse(Hitstop.Active, "Turning the option on mid-pause releases it at once.");
+            }
+            finally { Hitstop.End(); settings.ReducedEffects = reduced; Time.timeScale = scale; }
+        }
     }
 }

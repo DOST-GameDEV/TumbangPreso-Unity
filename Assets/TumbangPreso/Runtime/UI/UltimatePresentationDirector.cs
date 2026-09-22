@@ -356,6 +356,8 @@ namespace TumbangPreso.UI
 
             _group.alpha = Mathf.Clamp01(alpha);
 
+            if (Settings.SettingsStore.Current.ReducedEffects || Settings.SettingsStore.Current.ReducedUiMotion) slide = 0;
+
             var pos = _card.anchoredPosition;
             _card.anchoredPosition = new Vector2(CardLeftX + slide, pos.y);
         }

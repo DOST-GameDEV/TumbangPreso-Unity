@@ -63,3 +63,37 @@ The implementation and focused Unity checks are complete; remaining integration
 includes actual native large settings/owner HUD, training/chat and replay labels.
 Owner acceptance, physical device certification and final whole-source qualification
 are separate from this implementation evidence. Continue all remaining TODO items.
+
+## Native v57 closing evidence and the shared reduced-effects link, 2026-09-23
+
+Native Windows v57 (guard 2aa2d43a9ec6, built from the validation workspace at 7c028dda plus the
+recorded accessibility inputs) ran the bounded `--accessibility-only` route and passed all 15
+stages: accessibility settings through the real preparation route, native save and discard, the
+large owner HUD with a muted-announcer caption in Hero play, the larger training card after the
+match-chat display check, spectator startup, autopilot and manual flight, real POV, held-item
+release and replacement, bookmark and tactical pause, a replay buffer filled from real camera
+renders at 960x720 and 1680x720, and flight POV restoration. Receipts:
+`accessibility-evidence/native-v57-result.json` and `native-v57-runner-result.json`; frames:
+`native-v57-owner-large-wide.png`, `native-v57-settings-comfort-4x3.png`,
+`native-v57-training-large-wide.png`, `native-v57-spectator-replay-wide.png`.
+
+Two findings from that run, recorded rather than hidden:
+
+- The player process exited with 0xC0000005 during shutdown, after `[OwnerUiReview] PASS` and
+  `CodeReloadManager destroyed`. Two of the recorded native runner results carry this code; the
+  verdict is unaffected, the crash is not explained. Tracked in TODO.
+- In `native-v57-owner-large-wide.png` the injected match-chat line is clipped to "LOCA..." at
+  the larger HUD size. The uncommitted `HudReadingLayout.RebasePlacement` change (chat adopts its
+  final corner after construction) targets this placement and postdates v57; re-check it in the
+  next native build before calling it fixed.
+
+The TODO 134.10 reduced-effects contract is now linked in source: one
+`GameSettings.EffectiveFlashIntensity` and `EffectiveCameraShake` (the player's slider times 0.25
+when Reduce visual effects is on, the saved slider unchanged) drive body, replay, can-contact,
+elemental burst, sky-event, HUD edge and score-row flashes and all camera shake, ground rumble and
+impact punch. Reduced effects also skips the optional micro-hitstop (and releases one already
+running), holds ultimate introduction cameras steady and stops the ultimate card slide. Default
+play is unchanged. Focused EditMode 19/19 (`Logs/visual-p0-editmode-v1.xml`, including
+`ReducedEffectsQuartersFlashesAndShakeWithoutRewritingTheSliders` and
+`ReducedEffectsSkipsTheOptionalImpactPause`) and Core 615/615. Native confirmation of the link
+rides the next VISUAL-1 build.

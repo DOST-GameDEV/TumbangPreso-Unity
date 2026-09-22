@@ -152,7 +152,7 @@ namespace TumbangPreso.UI
             Toggle("CalloutCaptions","Announcer captions",s.CalloutCaptions,v=>s.CalloutCaptions=v);
             Toggle("HighContrastHud","High-contrast HUD",s.HighContrastHud,v=>s.HighContrastHud=v);
             Toggle("ReducedEffects","Reduce visual effects",s.ReducedEffects,v=>s.ReducedEffects=v);
-            Note("Reduced effects lower particle density and screen flashes. Ability shapes, status cues and gameplay stay visible.");
+            Note("Reduced effects lower particles, flashes and shake, remove impact pauses and keep ultimate cameras steady. Ability shapes and status cues stay visible.");
             Note("English captions follow the recorded announcer, including when announcer volume is muted.");
             AudioSlider("CameraShake","Camera shake",s.CameraShake,v=>s.CameraShake=v);
             Toggle("CinematicCameraMotion","Cinematic camera movement",s.CinematicCameraMotion,v=>s.CinematicCameraMotion=v);

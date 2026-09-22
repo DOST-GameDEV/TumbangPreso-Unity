@@ -40,6 +40,17 @@ namespace TumbangPreso.UI
         }
 
         private void LateUpdate() => Refresh();
+        public void RebasePlacement()
+        {
+            // A caller such as match chat supplies its final corner after construction.
+            // Keep the original unit scale, but adopt the newly authored anchor placement.
+            for (int i = 0; i < _groups.Count; i++)
+            {
+                var group = _groups[i]; if (group.Rect == null) continue;
+                group.Position = group.Rect.anchoredPosition; group.Size = group.Rect.sizeDelta; _groups[i] = group;
+            }
+            _scale = -1; Refresh();
+        }
         public void Refresh()
         {
             var settings = SettingsStore.Current;

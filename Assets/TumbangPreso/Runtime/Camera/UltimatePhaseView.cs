@@ -150,7 +150,7 @@ namespace TumbangPreso.CameraSystem
             // Pose staging still starts at2.4; shared time and live warning do not change.
             float returnBlend=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(2.68f,2.8f,age));
             _fade.alpha=returnBlend;
-            bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion;
+            bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion && !Settings.SettingsStore.Current.ReducedEffects;
             _picture.enabled=moving && _safeShot && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
             _primary.Scene.Shot(age,out var eye,out var target,out var fov,_camera.aspect);

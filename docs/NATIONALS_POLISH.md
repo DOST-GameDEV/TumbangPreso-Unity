@@ -281,6 +281,18 @@ move close, show the consequence; complete ultimates for all seven heroes throug
 shared phase without consuming Phaister's live warning; audio attack, body and tail per
 event, one peak at a time across world, local, announcer and music; captions intact.
 
+**1.16 Match-end board, 1.17 round and halftime reports, 1.18 the in-match icon set.**
+Owner, 2026-09-23: every in-match surface may be reworked, including the match end, the
+mid-round report and the icons, because the current ones read as unfinished. One card
+language across the three (the owner's chamfer, warm ink plate, black outlines, Darumadrop
+for names and the big number, the supporting face for labels) so the halftime popup, the
+round summary and the match end look like one family with the top bar. Standings are the
+same player chips as the HUD, grown; the one highlighted fact per card is the winner, or
+the next taya. Scores animate only toward values that are already final. Icons: one stroke
+weight, one corner treatment, silhouettes that survive the smallest HUD scale in
+greyscale, each ability keeping its `AbilityGlyph` job. Supplied artwork is never
+repainted; the project-generated placeholders are what gets replaced.
+
 Per-change checks rather than separate tasks: choose simulation, unscaled or recorded
 time for each new element and record what replay needs; no new timeScale writers; no
 stranded freeze on teardown; moving-camera shimmer check for new chalk, decals, rim and

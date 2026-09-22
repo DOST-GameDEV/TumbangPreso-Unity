@@ -73,7 +73,7 @@ namespace TumbangPreso
         /// presentation can never become a gameplay-length freeze.</summary>
         public static void Trigger(float duration, float timeScale)
         {
-            if (_active || PresentationClock.Held) return;
+            if (_active || PresentationClock.Held || Settings.SettingsStore.Current.ReducedEffects) return;
 
             _active = true;
             _restoreScale = Time.timeScale;
@@ -93,6 +93,8 @@ namespace TumbangPreso
             // set a deadline and a clock that only ran during a freeze would hand out deadlines
             // in the past.
             Advance();
+
+            if (_active && Settings.SettingsStore.Current.ReducedEffects) { End(); return; }
 
             if (!_active || _clock < _until) return;
 

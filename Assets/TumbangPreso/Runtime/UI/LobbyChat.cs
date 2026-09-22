@@ -375,6 +375,7 @@ namespace TumbangPreso.UI
 
             _rect.anchoredPosition = corner;
             _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+            GetComponent<HudReadingLayout>()?.RebasePlacement();
         }
 
         /// <summary>Places lobby chat directly below the raised lobby card. A top-right pivot
@@ -388,6 +389,7 @@ namespace TumbangPreso.UI
             _rect.pivot = Vector2.one;
             _rect.anchoredPosition = new Vector2(-rightMargin, -top);
             _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+            GetComponent<HudReadingLayout>()?.RebasePlacement();
         }
 
         /// <summary>Anchors the lobby field to the bottom-right social rail. New chat lines grow
@@ -417,6 +419,7 @@ namespace TumbangPreso.UI
             _rect.pivot = new Vector2(1.0f, 0.0f);
             _rect.anchoredPosition = new Vector2(-rightMargin, bottom);
             _rect.sizeDelta = new Vector2(width, _rect.sizeDelta.y);
+            GetComponent<HudReadingLayout>()?.RebasePlacement();
         }
 
         private static void Inset(RectTransform rt)

@@ -30,6 +30,12 @@ easy to look at; explore on-screen effects and indicators that work together wit
 overwhelming the player (Sepak U named as the example); rethink priority. This is
 VISUAL-1 below. It supersedes the 2026-09-01 "do not touch the in-match HUD" scope note
 for this pass and changes no rule, timing, authority or network contract.
+Owner, same day: "u can edit all UI and hud in the actual game btw including the match
+end and mid round report and icon", "u figure out which to edit and thoroughly revamp
+it too and make it more visually pleasing + good to look at". Every in-match surface is
+in scope: HUD, prompts, feed, banners, the halftime and round reports, the match-end
+board and the in-match icon set (VISUAL-1.4, 1.16, 1.17, 1.18). Owner and girlfriend
+supplied artwork is still preserved, and the front-end menus stay as they are.
 
 **Standing sequencing rule (owner, 2026-09-22):** avoid verification and test-repair
 loops. Use the smallest check that resolves the risk a change introduced; comprehensive
@@ -37,14 +43,16 @@ regression happens once, at final integration. Quality stays the priority.
 
 ### Priority order, rethought 2026-09-23
 
-1. **P0, finish what is in flight.** The 134.10 reduced-effects link is uncommitted in the
-   ASTRAReworks worktree (Hitstop, SkyEvent, CanContactAccent, TumpHudEffects,
-   UltimatePresentationDirector and others) together with the bounded native
-   accessibility v57 route. Land and publish it under its own check before VISUAL-1,
-   because VISUAL-1 edits several of the same files. Then close the remaining 127.3 items.
-2. **P1, VISUAL-1 batch A: communication.** 1.1, 1.2, 1.3, 1.6, 1.4, 1.5, 1.7. The game's
-   thesis (retrieval risk) currently has no picture, so this is the largest gain in both
-   playability and looks, and it is what the owner asked for first.
+1. **P0, finish what is in flight. ✅ DONE 2026-09-23.** The 134.10 reduced-effects link
+   (Hitstop, SkyEvent, CanContactAccent, TumpHudEffects, UltimatePresentationDirector and
+   others, plus camera shake) and the native `--accessibility-only` route are published;
+   native v57 passed all 15 stages, EditMode 19/19, Core 615/615. Receipts in
+   `reports/full-backlog-2026-09-21/accessibility-completion.md`. One 127.3 follow-up and
+   the shutdown crash below remain open.
+2. **P1, VISUAL-1 batch A: communication and the in-match UI.** Order: 1.4 and 1.18 (the
+   HUD and its icon family), 1.6, 1.1, 1.2, 1.3, 1.5, 1.16, 1.17, 1.7. The HUD leads because
+   the owner asked for the UI revamp twice and every later capture sits under it; the
+   danger work follows because the game's thesis (retrieval risk) has no picture yet.
 3. **P2, VISUAL-1 batch B: the world.** 1.8, 1.9, 1.10. Lighting, court and hero objects
    change every frame of every map.
 4. **P3, remaining expansion work.** The lagoon deck sampling refinement and any open
@@ -135,15 +143,35 @@ Batch D, with existing scope:
   seven-hero ultimates through the shared phase, one audio peak at a time. Tracks with
   PRESENTATION-3, PRESENTATION-4 and PRESENTATION-5.2.
 
+In-match UI revamp (owner addition, 2026-09-23), in batch A alongside 1.4:
+- [ ] **VISUAL-1.16 Match-end board.** Rework the result screen in the same visual
+  language as the new top bar and the halftime popup: a clear winner moment, the four
+  chips ranked with scores that count only after the final value is shown, per-player
+  highlights from the existing recognition facts, and one obvious next action. Keep the
+  existing flow, rematch and exit routes, ranked readouts and all three input devices.
+- [ ] **VISUAL-1.17 Mid-round and halftime reports.** The compact halftime popup and any
+  round-end summary share one card style with the match-end board: standings as chips,
+  next taya as the one highlighted fact, the court visible behind. No full-screen board.
+- [ ] **VISUAL-1.18 In-match icon set.** One consistent family for ability tiles, state
+  badges, the can glyph, role badges, feed pictograms and prompts: one stroke weight,
+  one corner treatment, black outlines, readable at the smallest HUD size. Replace
+  placeholder project-generated icons (AGENTS: swappable, not approved art); never
+  repaint supplied artwork. Every ability keeps its `AbilityGlyph` job (VISION § 3).
+
 ### Active items carried forward (status unchanged by this cleanup)
 
 - [ ] **127.3 accessibility completion.** FPP FOV, hold or toggle sprint and can restore,
   HUD size and larger text, high contrast, reduced particles and flashes, and
   delivered-announcer captions are implemented; the wider angular taya ring reads in
-  greyscale; controls, layout, captions and native spectator v56 passed. The compact
-  ability-reference layout and expanded native overlay integration remain, tracked in
-  `reports/full-backlog-2026-09-21/accessibility-completion.md`. The ledger records the
-  v57 route and the 134.10 shared reduced-effects link as the next step (P0).
+  greyscale; controls, layout, captions, native spectator v56 and the bounded native
+  accessibility route v57 (15/15 stages) passed; the 134.10 reduced-effects link is
+  published. **One follow-up remains:** v57's wide large-HUD frame shows the injected
+  match-chat line clipped to "LOCA..."; re-check it in the next native build, where the
+  `HudReadingLayout.RebasePlacement` chat placement fix first ships.
+- [ ] **Native player shutdown crash.** v57 (and one earlier recorded runner result)
+  exited with 0xC0000005 after the review had passed and `CodeReloadManager destroyed`
+  was logged. The verdict stands; the cause is unknown. Reproduce on the next build,
+  read the crash dump if one is written, fix or name the engine-side cause.
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
   qualification and the local deck sampling refinement remain. Owner addition

@@ -3941,7 +3941,7 @@ namespace TumbangPreso.Abilities
             light.type = LightType.Point;
             light.color = look.CoreColour;
             light.range = radius * 2.6f;
-            light.intensity = look.FlashIntensity * .40f;
+            light.intensity = look.FlashIntensity * .40f * Settings.SettingsStore.Current.EffectiveFlashIntensity;
             Object.Destroy(lightGo, look.FlashSeconds);
 
             // 5. The elemental particle burst, which already existed per element and was simply

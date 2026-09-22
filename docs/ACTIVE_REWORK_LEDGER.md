@@ -8,8 +8,12 @@ in docs/archive/ (old-path table in its README); docs/README.md indexes every fi
 Priority was rethought: P0 finish the in-flight 134.10 reduced-effects link (the dirty
 source listed below), then VISUAL-1 batch A (communication), batch B (world), remaining
 expansion, batches C and D with existing scope, backlog disposition, final qualification.
-Owner 2026-09-23: Codex is not editing this branch; this session takes over the dirty
-134.10 work, then starts VISUAL-1.1. Design: NATIONALS_POLISH.md, VISUAL-1 section.
+Owner 2026-09-23: Codex is not editing this branch; this session took over the dirty
+134.10 work. P0 is published: reduced-effects link incl. camera shake, EditMode 19/19
+(Logs/visual-p0-editmode-v1.xml), Core 615/615, native v57 accessibility 15/15. Open:
+the v57 chat clip re-check and the 0xC0000005 shutdown exit (TODO). Next: VISUAL-1.4 HUD
+and 1.18 icons, then 1.6, 1.1. The owner widened scope to every in-match UI surface.
+Design: NATIONALS_POLISH.md, VISUAL-1 section.
 
 
 ## Mandate and source

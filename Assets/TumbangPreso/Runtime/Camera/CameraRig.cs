@@ -1162,7 +1162,7 @@ namespace TumbangPreso.CameraSystem
             GroundRumbleOffset=Vector3.zero;
             if(_groundRumbleAge>=2.4f){_groundRumbleStrength=0;return;}
             _groundRumbleAge+=Time.deltaTime;
-            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength*Settings.SettingsStore.Current.CameraShake;
+            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength*Settings.SettingsStore.Current.EffectiveCameraShake;
             // Small smooth translation, no aim rotation, time scaling or gameplay RNG.
             GroundRumbleOffset=transform.right*(Mathf.Sin(_groundRumbleAge*50.27f)*.010f*amount)
                 +Vector3.up*(Mathf.Sin(_groundRumbleAge*73.8f+.8f)*.004f*amount);
@@ -1259,7 +1259,7 @@ namespace TumbangPreso.CameraSystem
         private void StepShake()
         {
             Vector3 eye = transform.position;
-            float level = Settings.SettingsStore.Current.CameraShake;
+            float level = Settings.SettingsStore.Current.EffectiveCameraShake;
             StepGroundRumble();
             if (_impactPunchLeft > 0)
             {

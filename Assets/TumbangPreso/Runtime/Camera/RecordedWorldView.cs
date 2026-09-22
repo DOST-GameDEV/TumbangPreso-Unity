@@ -159,7 +159,7 @@ namespace TumbangPreso.CameraSystem
                     var material=surface.sharedMaterial;
                     _coatBlock.SetFloat("_RimStrength",state.HasAccent?state.RimStrength:material!=null&&material.HasProperty("_RimStrength")?material.GetFloat("_RimStrength"):0);
                     _coatBlock.SetColor("_RimColor",state.HasAccent?state.RimColour:material!=null&&material.HasProperty("_RimColor")?material.GetColor("_RimColor"):Color.white);
-                    _coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.FlashIntensity));
+                    _coatBlock.SetFloat("_FlashAmount",state.Flash*Mathf.Clamp01(Settings.SettingsStore.Current.EffectiveFlashIntensity));
                     _coatBlock.SetFloat("_CaughtAmount",ability?0:state.Frost);_coatBlock.SetFloat("_FrostAmount",ability?state.Frost:0);
                     if(ability){_coatBlock.SetColor("_FrostColor",coat.Body);_coatBlock.SetColor("_FrostRimColor",coat.Rim);}
                     surface.SetPropertyBlock(_coatBlock);
