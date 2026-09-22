@@ -60,11 +60,15 @@ regression happens once, at final integration. Quality stays the priority.
 5. **P4, VISUAL-1 batch C with PRESENTATION-1.5.** 1.11, 1.12, 1.13.
 6. **P5, VISUAL-1 batch D with the rest of the existing scope.** 1.14 and 1.15 alongside
    152.4 / MAP_FINAL_PASS, 151.9 / 151.19 and 153 / U8 / 149.4 / 145 / 143.
-7. **P6, backlog disposition.** Review the unreviewed numbered entries in the index below
+7. **P5.5, UX-1 front-end flow and progression addition (owner2026-09-23).**
+   After the existing visible work, implement the new Home and flows below. Preserve
+   login and main menu; Home opens from the existing TAP TO START. This is separate
+   from the completed in-match UI/HUD pass.
+8. **P6, backlog disposition.** Review the unreviewed numbered entries in the index below
    against source and evidence and record each in
    `reports/full-backlog-2026-09-21/todo-disposition.json`. This changes nothing a player
    sees, so it moved behind the visible work; it must still finish before P7.
-8. **P7, final coherent qualification and build.** PRESENTATION-5.2, the final
+9. **P7, final coherent qualification and build.** PRESENTATION-5.2, the final
    integration item and 152 final delivery on one frozen, identified candidate.
 
 **Why this order.** P0 protects dirty work. P1 comes before P2 because a clearer game
@@ -213,6 +217,77 @@ In-match UI revamp (owner addition, 2026-09-23), in batch A alongside 1.4:
   one corner treatment, black outlines, readable at the smallest HUD size. Replace
   placeholder project-generated icons (AGENTS: swappable, not approved art); never
   repaint supplied artwork. Every ability keeps its `AbilityGlyph` job (VISION § 3).
+
+### UX-1 · Owner front-end flow and real progression systems, OPEN2026-09-23
+
+**Latest correction overrides the attached brief:** DO NOT TOUCH LOGIN AND MAIN
+MENU. Both existing surfaces/art stay intact. New HOME opens when the existing
+main-menu TAP TO START action is pressed; rewire only the destination needed for
+that flow. Do not replace main menu or automatically bypass it after login.
+This adds to the queue without deleting or restarting VISUAL-1. The completed
+match HUD, halftime popup and match-end board are outside this front-end lane.
+
+Full supplied requirements: [verbatim brief](reports/front-end-flow-2026-09-23/owner-brief.txt),
+[correction and intake](reports/front-end-flow-2026-09-23/intake.md). Original flow,
+custom-game, profile-door and final Home sketches plus all seven zip images are
+preserved under `ArtSource/front-end-flow-20260923/` with provenance hashes.
+The UX is prescribed; design the visuals in TUMP's playful street-game identity,
+logo palette, Darumadrop/supporting face and purposeful motion. No generic white
+or pale styling or blue/navy UI chrome; Defense blue remains a rule cue. Preserve
+supplied final artwork. Use actual engine renders for cast/map placeholders.
+
+Implementation order within UX-1:
+- [ ] **UX-1.0 Plan and route/data audit.** Read CLAUDE4a,6.2-6.5 and
+  Front_End_Design. Answer the four screen-design questions per surface. Map every
+  old feature to one visible destination and preserve saves/IDs and three devices.
+- [ ] **UX-1.1 HOME hub after TAP TO START.** Top-left square avatar opens picture
+  view/change; adjacent level/name/#tag/XP plate opens Profile Settings. Skill Tree
+  card and notification dot below. Left HERO, LOADOUT, larger SHOP with TASK beside
+  it. Top-centre elapsed queue/cancel-X only while queued. Top-right currency/+ and
+  hamburger. Bottom-right selected map/mode card above PLAY. Reserve a clean
+  full-bleed animated-scene layer; use a still/current court now, not a new animated
+  background project. Login and main menu remain intact.
+- [ ] **UX-1.2 Mode and match-entry flow.** Mode card opens four-card GAMEMODE SELECT:
+  small stacked Practice/Custom, tall Classic/Ranked, descriptions on hover/focus,
+  top-right currency/menu. Practice enters practice directly. Custom opens HOST/JOIN
+  popup. Ranked is Hero Strike and returns Home. Classic asks Classic/Hero Strike
+  casual in a popup and returns Home. PLAY queues, then MATCH FOUND, then character
+  select for everyone, then loading. Keep real queue cancellation and pick rules.
+- [ ] **UX-1.3 HERO screen.** Large illustration/model left, previous/next/back;
+  role/name, actual-kit clickable ability details, biography and real UNLOCK right.
+- [ ] **UX-1.4 LOADOUT and ITEM POPUP.** Owned/unowned tabs, currency/menu, item grid,
+  equipped tag, favourite star, selected corner brackets, dim unowned silhouettes.
+  Right categories TSINELAS/LATA only; skill alternatives move to Skill Tree. EQUIP
+  bottom-right. Item opens popup over dimmed grid with back/name/favourite, inspectable
+  3D model, fullscreen/inspect brackets and EQUIP. Remove old STATS button.
+- [ ] **UX-1.5 Character select.** After match found, big name/model,3x4 portrait grid
+  and SELECT using existing legal pick rules; preserve the complete roster.
+- [ ] **UX-1.6 Custom host/join.** Host: lobby name, defaulted map, game mode,
+  public/private/friends-only visibility, LAN/Online, CREATE LOBBY; subtle selected-map
+  art updates. Join sources: Dedicated Internet, Dedicated LAN, Code. Shared server
+  list with name/map/player count/join and correct Online/LAN heading; code field/JOIN.
+- [ ] **UX-1.7 Custom lobby and loading.** Lobby name/back, selected-map background,
+  n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
+  Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
+  UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
+- [ ] **UX-1.8 Real soft currency and hero/item shop.** SHOP is a popup exposing Hero
+  and Loadout shops; Home HERO/LOADOUT open directly. Server-authoritative Cloud Code
+  balances/unlocks, profile migration and graceful offline behavior. No client grants,
+  real-money purchases or paid services. Keep the existing UGS project/IDs.
+- [ ] **UX-1.9 Tasks, skill tree and unlocks.** Currency+ opens earning/tasks. Skill
+  Tree owns actual hero alternatives and integrates XP/levels/mastery,
+  HeroBuildRules/AbilityChallenges,Cloud Save/Cloud Code. Real unlock transactions;
+  cosmetics never alter gameplay and Classic stays neutral. Verify declared Cloud
+  Code params and UGS refused:0 when live service checks are available/authorized.
+- [ ] **UX-1.10 Profile and hamburger doors.** Separate avatar-picture view/change
+  from name-plate Profile Settings (name,achievements,friends,etc.). Hamburger retains
+  settings,party,career hub and every former feature, with one visible route each.
+- [ ] **UX-1.11 Per-screen acceptance.** Actual mouse/keyboard,controller focus/B and
+  thumb-sized touch; live bindings,one-press Back.960x540,1280x720,1920x1080,4:3 and
+  1600x680; every label28canvas units or more; High contrast/larger text. Use shared
+  approved canvas/input construction. Inspect captures of default,hover,focus,locked,
+  empty and error states. Update old-screen probes to reachable new routes with a
+  design reason. Focused changed-behavior checks only; full/native gate remains P7.
 
 ### Active items carried forward (status unchanged by this cleanup)
 

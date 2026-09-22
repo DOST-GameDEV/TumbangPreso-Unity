@@ -1,6 +1,40 @@
 # Active TUMP rework ledger
 
-## Resume pointer, 2026-09-23
+## Current resume, world VISUAL-1, 2026-09-23
+
+Owner addition: UX-1 front-end brief/sketches saved in TODO and
+reports/front-end-flow-2026-09-23; all images preserved in ArtSource. Three pasted
+briefs are identical. Latest direct correction: DO NOT TOUCH LOGIN OR MAIN MENU;
+new Home opens from existing TAP TO START. This overrides the brief's replacement
+entry flow. Queued P5.5 before backlog/final gate, with its own five-stage order.
+Continue current world VISUAL-1; no in-game HUD redo, no task deletion.
+
+
+Fetched and pulled first: local/remote090d8c4af3fbcf79b21fe6dfe8bb9837f353c492.
+Only the original home-court.png.meta/loading-street.png.meta are dirty at intake;
+never stage them. Required AGENTS,VISION,TODO queue/VISUAL-1,ledger,implementation
+plan,findings and NATIONALS VISUAL-1 design have been read in the owner's order.
+The completed in-game UI/HUD pass is excluded. Start1.1 world boundary/exit/escape,
+then1.2 world target/restore cues,1.5 leftovers,1.7,B,P3,C,D,P6,P7. No current Unity
+or native player process at intake. Latest owner goal supersedes the plan's old
+per-batch build instruction: NO intermediate builds; native/full regression at P7.
+No.cs edits while Unity runs. Use only guarded Unity with the named profile.
+
+Current implementation design: exact square from ConfinementRadius; replace only
+recognised authored Chalk boundary renderers while enabled (restore at off/teardown),
+retain throwing/home marks and all collision. Sample court heights once, including
+Ilalim's raised kerb, so a flat new line cannot disappear below it. Shared rest/armed/
+restore sweep; local viewer's closest exit only. Observe real boundary crossings with
+MovementEpoch/round guards so tags, teleports and role resets cannot fake escape.
+Existing AudioDirector owns a quiet filtered air layer and the soft escape swish.
+Per-viewer cues stay out of replay; recorded can flags drive its shared boundary.
+A small authorable world-cue profile supplies off values; no new HUD framework.
+
+Before the focused Unity run, record its exact question and stopping result here.
+Batch the completed1.1 source changes; inspect same-camera off/on states and25percent
+greyscale images before moving to1.2. No unrelated fixture repairs or widened suites.
+
+## Previous session resume, 2026-09-23
 
 Docs cleanup published on top of a1110a9e (docs only, no code). TODO.md is the queue plus
 an index row per numbered entry; open bodies are in TODO_Backlog.md; superseded plans are
