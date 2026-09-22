@@ -21,8 +21,9 @@ mark, toast brush, HUD area 3.72/5.30 percent, owner window captures) in look-1.
 the same NextRole red. Owner 2026-09-23: this session's scope is the in-game UI and HUD only;
 everything else (world, lighting, court, viewmodel, effects, maps) is handed to the next
 agent in a chat handoff. Batch A HUD (1.18, 1.6, 1.1 frame, 1.3, 1.5 HUD parts, 1.17, 1.4
-accessibility captures) in look-batchA-v4, tests 8/8. Next here: 1.16 match end, then 1.5
-tint priority, then a fresh internal Windows build.
+accessibility captures) in look-batchA-v4, tests 8/8. 1.16 match end and the 1.5 tint priority in look-1.16-v1 (10/10 with HUD and
+exchange). This session's UI and HUD scope is complete apart from an optional prompt
+keycap (draft idea only). Owner: no build this pass. Everything else is in the handoff.
 
 
 ## Mandate and source

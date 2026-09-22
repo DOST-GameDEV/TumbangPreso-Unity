@@ -142,7 +142,8 @@ Batch A, communication:
   marker speaks in glyphs (can standing or lying, a ring draining with protection or filling
   with the restore) instead of a 20-unit caption; chips, feed and deck recede to 30 percent
   during an accepted ultimate or a replay (`TumpMatchReadout.Recede`). Remaining: tint
-  priority and the remaining "lata down" copies. Original scope: meaning, shape, colour and place table (V2)
+  priority is done too (the caught edge suppresses the red flash); the one remaining "lata
+  down" copy is the world popup, handed off. Original scope: meaning, shape, colour and place table (V2)
   applied to every existing indicator; one full-screen tint at a time; non-critical HUD
   recedes during ultimates and replay; the six "lata down" copies cut to the can, the bar
   glyph and one beat. Experiments kept only if clearer: peripheral speed lines, a brief
@@ -183,7 +184,14 @@ Batch D, with existing scope:
   PRESENTATION-3, PRESENTATION-4 and PRESENTATION-5.2.
 
 In-match UI revamp (owner addition, 2026-09-23), in batch A alongside 1.4:
-- [ ] **VISUAL-1.16 Match-end board.** Rework the result screen in the same visual
+- [x] **VISUAL-1.16 Match-end board.** DONE (look-1.16-v1): the court stays visible under a
+  62 percent warm plate (still the click blocker), a brush winner line, the standings as the
+  bar's chips grown (seat-colour portrait, crown and gold border for the winner, gold
+  underline for you) with two record-backed accolades each as glyph and number
+  (`MatchResult.Accolades`: knockdowns, catches, close retrievals, sabotages, retrievals;
+  zero is never drawn), a gold REMATCH and quiet NEXT MAP and MAIN MENU. Every route, tab
+  and name kept; `TumpNativeResultTests` 5 of 5. Owner-podium with models on the court is
+  left to the world agent. Original scope: rework the result screen in the same visual
   language as the new top bar and the halftime popup: a clear winner moment, the four
   chips ranked with scores that count only after the final value is shown, per-player
   highlights from the existing recognition facts, and one obvious next action. Keep the

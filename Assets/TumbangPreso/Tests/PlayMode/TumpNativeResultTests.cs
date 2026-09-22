@@ -79,8 +79,13 @@ namespace TumbangPreso.PlayTests
             // Presentation-only record. It is never submitted or applied to the saved career.
             var line=new PlayerMatchStats{Slot=1,PlayerId=Net.CareerStore.LocalPlayerId,CharacterId="zack",Placement=1,
                 Knockdowns=4,Retrievals=6,Tags=2,DefenceTicks=74,Score=850};
+            // VISUAL-1.16: the other three seats get lines too, so every chip has accolades to draw.
+            var others=new[]{
+                new PlayerMatchStats{Slot=0,PlayerId="fixture-0",Tags=3,Retrievals=2,RetrievalsUnderPressure=1,Score=420},
+                new PlayerMatchStats{Slot=2,PlayerId="fixture-2",Retrievals=5,Score=300},
+                new PlayerMatchStats{Slot=3,PlayerId="fixture-3",Sabotages=2,Retrievals=3,RetrievalsUnderPressure=2,Score=250}};
             var record=new MatchRecord{MatchId="results-presentation-fixture",Mode=GameMode.HeroStrike.ToString(),Rounds=8,
-                WinningSlot=1,Players=new[]{line}};
+                WinningSlot=1,Players=new[]{line,others[0],others[1],others[2]}};
             var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
             typeof(MatchResult).GetMethod("OnRecordReady",flags).Invoke(result,new object[]{record});
             var profile=new PlayerProfile{Xp=1930};ProgressionRules.MasteryFor(profile,"zack").Xp=1930;
@@ -93,6 +98,13 @@ namespace TumbangPreso.PlayTests
             Assert.That(canvas.GetComponentsInChildren<Text>().First(t=>t.name=="RewardDetails").text,Does.Contain("MASTERY"));
             foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1280,960),new Vector2Int(1920,1080),new Vector2Int(3840,2160)})
                 yield return TumpUiCapture.Capture("FinishSheet-populated-fixture-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
+            // VISUAL-1.16: the standings show two record-backed accolades per player, glyph and number.
+            Press("ResultTab0");yield return null;
+            var counts=canvas.GetComponentsInChildren<Text>().Where(t=>t.name.StartsWith("AccoladeCount")&&t.enabled).Select(t=>t.text).ToList();
+            CollectionAssert.Contains(counts,"4","Zack's four knockdowns are his first accolade.");
+            Assert.AreEqual(7,counts.Count,"Two accolades each, except seat 2 whose only non-zero stat is retrievals.");
+            foreach(var size in new[]{new Vector2Int(1920,1080),TumpUiCapture.OwnerWindow,new Vector2Int(960,540)})
+                yield return TumpUiCapture.Capture("FinishSheet-podium-fixture-"+size.x+"x"+size.y,canvas,size.x,size.y,false,true,checkActionBounds:true);
         }
         [UnityTest]
         public IEnumerator AllExistingRankTiersHaveEditableVisibleEmblems()

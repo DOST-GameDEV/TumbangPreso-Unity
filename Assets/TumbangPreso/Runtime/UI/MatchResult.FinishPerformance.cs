@@ -11,13 +11,13 @@ namespace TumbangPreso.UI
         private RectTransform _finishFigure;
         private TumpSymbol _finishDraw;
         private float _finishEntered;
-        private readonly CourtPopupGraphic[] _finishTickets=new CourtPopupGraphic[4];
+        private readonly HudCard[] _finishTickets=new HudCard[4];
         private readonly CanvasGroup[] _finishFades=new CanvasGroup[4];
         private readonly Vector2[] _finishRowOrigins=new Vector2[4];
 
         private void BuildFinishFigure(RectTransform parent)
         {
-            var badge=OwnerUiLayout.Rect(parent,"WinnerBanner");OwnerUiLayout.Place(badge,1190,0,530,64);
+            var badge=OwnerUiLayout.Rect(parent,"WinnerBanner");OwnerUiLayout.Place(badge,1190,-6,530,70);
             var brush=badge.gameObject.AddComponent<CourtPopupGraphic>();brush.Brush=true;brush.color=CourtPresentationPalette.Red;brush.raycastTarget=false;
             _finishCaption=OwnerUiLayout.Text(badge,"WinnerCaption","WINNER",34,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(_finishCaption.rectTransform);_finishCaption.alignment=TextAnchor.MiddleCenter;_finishCaption.color=CourtPresentationPalette.Paper;
@@ -44,15 +44,30 @@ namespace TumbangPreso.UI
                     art.Clips,visual!=null?visual.AppliedPalette:art.Palette,art.PetModel);
                 _finishPreview.CentreSubject();_finishPreview.SetTileFraming(.94f);_finishCelebration.Bind(_finishPreview);
             }
-            var order=GameServices.Match.Ranking();
+            // VISUAL-1.16: the bar's chips grown. The winner is a gold border and a crown, not a
+            // deep-red ticket (red means "something is wrong"); you are the gold underline.
+            var order=GameServices.Match.Ranking();_accoladeOrder=order;
+            int mine=LocalResultSeat();
             for(int i=0;i<4;i++)
             {
                 bool best=hasWinner&&order[i]==winner;
-                _finishTickets[i].color=best?CourtPresentationPalette.DeepRed:new Color32(255,244,222,255);
-                foreach(var cell in _rows[i])cell.color=best?CourtPresentationPalette.Paper:CourtPresentationPalette.Ink;
+                _finishTickets[i].Style(CourtPresentationPalette.Paper,best?CourtPresentationPalette.Gold:Color.clear,best?5:0,
+                    order[i]==mine?CourtPresentationPalette.Gold:Color.clear,order[i]==mine?5:0);
+                if(_finishSwatches[i]!=null)_finishSwatches[i].color=PlayerIdentity.Colour(order[i]);
+                if(_finishCrowns[i]!=null)_finishCrowns[i].Show(best?HudBadge.Glyph.Crown:HudBadge.Glyph.None,CourtPresentationPalette.Gold,Color.clear);
+                foreach(var cell in _rows[i])cell.color=HudDraw.CardInk;
                 _rows[i][1].text=SeatLabel.WithIdentity(order[i]);
             }
+            PaintAccolades(GameServices.Stats?.Last);
             TickFinishPerformance();
+        }
+
+        private static int LocalResultSeat()
+        {
+            if(NetAuthority.IsNetworked)return NetAuthority.LocalSlot;
+            var round=GameServices.Round;if(round==null)return -1;
+            foreach(var player in round.Players)if(player!=null&&!player.IsBot)return player.PlayerSlot;
+            return -1;
         }
 
         private void TickFinishPerformance()

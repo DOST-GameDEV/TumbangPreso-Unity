@@ -354,6 +354,7 @@ namespace TumbangPreso.UI
         private void OnRecordReady(Core.MatchRecord record)
         {
             if (_yourMatchLine == null || record == null) return;
+            PaintAccolades(record); // every seat's accolades, spectators included
 
             string me = Net.CareerStore.LocalPlayerId;
             var line = Core.MatchRecordRules.LineFor(record, me);

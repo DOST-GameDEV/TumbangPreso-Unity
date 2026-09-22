@@ -60,6 +60,10 @@ namespace TumbangPreso.UI
                 float alpha = spectator || Settings.SettingsStore.Current.ReducedUiMotion ? 0 :
                     Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
                 alpha *= Settings.SettingsStore.Current.EffectiveFlashIntensity;
+                // ⚠️ VISUAL-1.5: ONE FULL-SCREEN TINT AT A TIME. The caught edge (frost, stun) is
+                // the stronger state and owns the screen while it lasts; the red onset or downed
+                // flash under it only muddied both.
+                if (_coverage > .001f) alpha = 0;
                 _danger.enabled = alpha > .001f;
                 _danger.color = new Color(f.ActionInk.r, f.ActionInk.g, f.ActionInk.b, alpha);
             }
