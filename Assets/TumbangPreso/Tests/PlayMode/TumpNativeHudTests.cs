@@ -25,9 +25,29 @@ namespace TumbangPreso.PlayTests
                 "A sprite reference alone is not a visible portrait.");
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf, "Classic has no hero power UI.");
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
-            foreach (var size in TumpUiCapture.PcViewports)
+            foreach (var size in TumpUiCapture.HudViewports)
                 yield return TumpUiCapture.Capture("CourtHud-Classic-" + size.x + "x" + size.y,
                     canvas, size.x, size.y, false, true, checkActionBounds: true);
+            // VISUAL-1.4 budget: the permanent HUD in ordinary FPP play stays under about 8
+            // percent of a 1920x1080 frame. Measured on the real canvas at that size.
+            float share = 1; string detail = "";
+            yield return TumpUiCapture.Capture("CourtHud-area-1920x1080", canvas, 1920, 1080, false, true,
+                inspectViewport: () => share = TumpUiCapture.HudShare(canvas, out detail));
+            Debug.Log($"[HudArea] Classic ordinary play: {share * 100:0.00}% of 1920x1080; {detail}");
+            Assert.Less(share, .08f, "Permanent HUD exceeds the VISUAL-1.4 budget: " + detail);
+            // The transient layer: pictogram feed, a score pop into a chip, the hit mark and a toast.
+            var readout = Object.FindFirstObjectByType<TumpMatchReadout>();
+            var lata = GameServices.Round.Lata;
+            Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Block, 2, 0, lata.transform.position);
+            Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag, GameServices.Match.DefenderSlot, (GameServices.Match.DefenderSlot + 2) % 4, lata.transform.position);
+            Visual.MatchFlair.Play(Visual.MatchFlair.Kind.LataDown, 1, -1, lata.transform.position);
+            readout.ScorePopForShot(1, ScoreEvent.LataKnocked); readout.Hit(UiTheme.Offense); hud.ShowToast("TAGGED", 2);
+            yield return null;
+            foreach (var size in new[] { new Vector2Int(1920, 1080), new Vector2Int(1280, 720), TumpUiCapture.OwnerWindow, new Vector2Int(960, 540) })
+            {
+                readout.ScorePopForShot(1, ScoreEvent.LataKnocked); readout.Hit(UiTheme.Offense);
+                yield return TumpUiCapture.Capture("CourtHud-moments-" + size.x + "x" + size.y, canvas, size.x, size.y, false, true, checkActionBounds: true);
+            }
             bool before = local.IsDefender; local.IsDefender = true; yield return null;
             Assert.AreEqual("Defender", canvas.GetComponentsInChildren<Text>().First(t => t.name == "LocalRole").text);
             local.IsDefender = before;
@@ -43,7 +63,7 @@ namespace TumbangPreso.PlayTests
             var intermission = GameObject.Find("OwnerRoundSwapCanvas").GetComponent<Canvas>();
             Assert.IsEmpty(intermission.GetComponentsInChildren<PaperSkin>(true));
             Assert.IsNotNull(intermission.GetComponentsInChildren<Image>().First(i=>i.name=="NextDefenderPortrait").sprite);
-            foreach(var size in TumpUiCapture.PcViewports)
+            foreach(var size in TumpUiCapture.HudViewports)
             {
                 swap.ShowForShot(2,(GameServices.Match.DefenderSlot+1)%4);
                 yield return TumpUiCapture.Capture("CourtBreak-"+size.x+"x"+size.y,intermission,size.x,size.y,false,true,checkActionBounds:true);
@@ -58,7 +78,11 @@ namespace TumbangPreso.PlayTests
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             Assert.IsTrue(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
             Assert.AreEqual(3, canvas.GetComponentsInChildren<OwnerAbilitySeal>().Length);
-            yield return TumpUiCapture.Capture("OwnerHud-Hero-v1", canvas, 1920, 1080, false, true);
+            float share = 1; string detail = "";
+            yield return TumpUiCapture.Capture("OwnerHud-Hero-v1", canvas, 1920, 1080, false, true,
+                inspectViewport: () => share = TumpUiCapture.HudShare(canvas, out detail));
+            Debug.Log($"[HudArea] Hero Strike ordinary play: {share * 100:0.00}% of 1920x1080; {detail}");
+            Assert.Less(share, .08f, "Permanent Hero Strike HUD exceeds the VISUAL-1.4 budget: " + detail);
             var readout = Object.FindFirstObjectByType<TumpPowerReadout>();
             var kit = local.GetComponent<Abilities.HeroAbilitySystem>().Kit;
             try
@@ -76,7 +100,7 @@ namespace TumbangPreso.PlayTests
                 }
                 finally{setter.Invoke(kit.Skill1,new object[]{duration});}
                 yield return null;
-                foreach (var size in TumpUiCapture.PcViewports)
+                foreach (var size in TumpUiCapture.HudViewports)
                     yield return TumpUiCapture.Capture("CourtHud-held-skills-" + size.x + "x" + size.y,
                         canvas, size.x, size.y, false, true, checkActionBounds: true);
             }
@@ -84,7 +108,7 @@ namespace TumbangPreso.PlayTests
             hud.EnterSpectatorMode(); yield return null;
             Assert.IsFalse(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
             Assert.IsFalse(canvas.transform.Find("LocalState").gameObject.activeSelf);
-            foreach (var size in TumpUiCapture.PcViewports)
+            foreach (var size in TumpUiCapture.HudViewports)
                 yield return TumpUiCapture.Capture("CourtHud-spectator-" + size.x + "x" + size.y,
                     canvas, size.x, size.y, false, true, checkActionBounds: true);
             hud.SetCleanFeed(true); Assert.IsFalse(canvas.gameObject.activeSelf);

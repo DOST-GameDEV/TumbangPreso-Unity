@@ -159,6 +159,13 @@ yet compiled or captured, in the ASTRAReworks worktree after `2e537f1f`:
   updates (`ScoreFeedbackTests` rank assertion becomes seat assertion), add `VisualHudShots`
   or reuse `TumpNativeHudTests` captures, compile, capture, compare against baseline.
 
+### 4b. Second 1.4 slice, measured (look-1.4-v3)
+- Permanent HUD in ordinary FPP play, measured from canvas rects on a 10-unit grid at 1920x1080:
+  Classic 3.72 percent (clock plate 0.81, each chip 0.61, round track 0.32), Hero Strike 5.30
+  percent (plus the three power discs, 1.36 together). The pre-pass HUD was estimated at 13 to 17.
+- The pictogram feed reads in the 25 percent greyscale thumbnail because each event is a
+  different outline (burst with a lying can, burst with a hand, a shield, a turning arrow).
+
 ## 5. Published analyses of what works (research added after the owner asked for it)
 
 ### Peacocke, Teather, Carette, MacKenzie, McArthur (2018), empirical

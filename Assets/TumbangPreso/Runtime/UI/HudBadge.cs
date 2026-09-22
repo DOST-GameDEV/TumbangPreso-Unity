@@ -16,7 +16,7 @@ namespace TumbangPreso.UI
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class HudBadge : MaskableGraphic
     {
-        public enum Glyph { None, Can, CanDown, Slipper, Crown, Star, Wave, Dot }
+        public enum Glyph { None, Can, CanDown, Slipper, Crown, Star, Wave, Dot, Knock, Restore, Tag, Block, Hit }
         public Glyph Kind;
         /// <summary>Marks cut into the silhouette: the can's bands, the slipper's strap.</summary>
         public Color Detail = new Color32(43, 22, 11, 255);
@@ -24,6 +24,16 @@ namespace TumbangPreso.UI
         public Color Backing = Color.clear;
         public Color Rim = new Color(0, 0, 0, .9f);
         public float RimWidth = 2;
+        /// <summary>The second colour of an event pictogram: the contact burst behind a
+        /// knockdown or a catch, the arrow round a restore. It carries the RULE colour of the
+        /// side that caused the event (`NATIONALS_POLISH.md` V2 band 1), never decoration.</summary>
+        public Color Accent = new Color32(248, 112, 32, 255);
+
+        public void Show(Glyph kind, Color fill, Color backing, Color accent)
+        {
+            if (Accent != accent) { Accent = accent; SetVerticesDirty(); }
+            Show(kind, fill, backing);
+        }
 
         public void Show(Glyph kind, Color fill, Color backing)
         {
@@ -97,7 +107,69 @@ namespace TumbangPreso.UI
                 case Glyph.Dot:
                     HudDraw.Disc(vh, c, s * .22f, fill, 20);
                     break;
+                // ⚠️ THE FOUR EVENT PICTOGRAMS (VISUAL-1.4 feed). Each is the OBJECT the event
+                // happened to plus, where it was contact, the starburst that V2 reserves for
+                // accepted contact only. A knockdown is the can lying on a burst, a restore is
+                // the can inside a turning arrow, a catch is an open hand on a burst and a block
+                // is a shield. Four outlines before four colours, so the feed reads in greyscale.
+                case Glyph.Knock:
+                    Burst(vh, c, s * .50f, s * .27f, 9, Accent);
+                    HudDraw.RoundedRect(vh, new Rect(P(-.30f, -.17f), new Vector2(.60f, .36f) * s), s * .07f, fill);
+                    HudDraw.Bar(vh, P(.14f, -.17f), P(.14f, .19f), s * .06f, Detail);
+                    HudDraw.Bar(vh, P(-.14f, -.17f), P(-.14f, .19f), s * .06f, Detail);
+                    break;
+                case Glyph.Restore:
+                    HudDraw.Arc(vh, c, s * .48f, s * .38f, 60, 290, Accent, 48);
+                    HudDraw.Fan(vh, P(.30f, .40f), new[] { P(.16f, .48f), P(.44f, .56f), P(.38f, .26f) }, Accent);
+                    HudDraw.RoundedRect(vh, new Rect(P(-.15f, -.24f), new Vector2(.30f, .48f) * s), s * .06f, fill);
+                    HudDraw.Bar(vh, P(-.15f, .12f), P(.15f, .12f), s * .05f, Detail);
+                    HudDraw.Bar(vh, P(-.15f, -.12f), P(.15f, -.12f), s * .05f, Detail);
+                    break;
+                case Glyph.Tag:
+                    Burst(vh, c, s * .50f, s * .30f, 9, Accent);
+                    // A mitten hand, like the cast's own: palm plus four fingers, no thumb.
+                    HudDraw.RoundedRect(vh, new Rect(P(-.20f, -.30f), new Vector2(.40f, .34f) * s), s * .08f, fill);
+                    for (int f = 0; f < 4; f++)
+                    {
+                        float x = -.15f + f * .10f, top = f == 0 || f == 3 ? .24f : .32f;
+                        HudDraw.Bar(vh, P(x, -.02f), P(x, top), s * .085f, fill);
+                        HudDraw.Disc(vh, P(x, top), s * .0425f, fill, 10);
+                    }
+                    break;
+                case Glyph.Block:
+                    HudDraw.Fan(vh, P(0, .02f), new[] { P(-.32f, .36f), P(0, .44f), P(.32f, .36f), P(.30f, .02f), P(0, -.44f), P(-.30f, .02f) }, fill);
+                    HudDraw.Bar(vh, P(0, .38f), P(0, -.34f), s * .07f, Detail);
+                    HudDraw.Bar(vh, P(-.26f, .10f), P(.26f, .10f), s * .07f, Detail);
+                    break;
+                case Glyph.Hit:
+                    // The hit mark: four short ticks round the aim point, each on a black keel so
+                    // it reads over sky and asphalt alike. The old mark was a "×" glyph in the
+                    // display face, whose weight and centre moved with the font.
+                    for (int k = 0; k < 4; k++)
+                    {
+                        float a = (45 + k * 90) * Mathf.Deg2Rad;
+                        var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                        HudDraw.Bar(vh, c + d * s * .16f, c + d * s * .48f, s * .13f + RimWidth * 2, Rim);
+                    }
+                    for (int k = 0; k < 4; k++)
+                    {
+                        float a = (45 + k * 90) * Mathf.Deg2Rad;
+                        var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                        HudDraw.Bar(vh, c + d * s * .18f, c + d * s * .46f, s * .13f, fill);
+                    }
+                    break;
             }
+        }
+
+        private static void Burst(VertexHelper vh, Vector2 c, float outer, float inner, int points, Color colour)
+        {
+            var star = new Vector2[points * 2];
+            for (int i = 0; i < star.Length; i++)
+            {
+                float a = Mathf.PI * .5f + i * Mathf.PI / points, r = i % 2 == 0 ? outer : inner;
+                star[i] = c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+            }
+            HudDraw.Fan(vh, c, star, colour);
         }
     }
 }

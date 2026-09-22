@@ -16,7 +16,12 @@ and 1.18 icons, then 1.6, 1.1. The owner widened scope to every in-match UI surf
 Design: NATIONALS_POLISH.md, VISUAL-1 section. Research: reports/visual-research-2026-09-23/
 findings.md. Build plan, tooling traps and remaining steps: implementation-plan.md beside it.
 VISUAL-1.4 first slice published at 4d85395c (3/4 HUD cases; the red is the pre-existing
-round-swap NextRole floor fault owned by 1.17). Next: 1.4 remainder, then 1.18, 1.6, 1.1.
+round-swap NextRole floor fault owned by 1.17). Second slice (feed pictograms, score pops, hit
+mark, toast brush, HUD area 3.72/5.30 percent, owner window captures) in look-1.4-v3, 6/7 with
+the same NextRole red. Owner 2026-09-23: this session's scope is the in-game UI and HUD only;
+everything else (world, lighting, court, viewmodel, effects, maps) is handed to the next
+agent in a chat handoff. Next here: 1.18 icon weight, 1.6 reticle, 1.1 screen frame, 1.3
+marker rings, 1.5 HUD parts, 1.17, 1.16.
 
 
 ## Mandate and source

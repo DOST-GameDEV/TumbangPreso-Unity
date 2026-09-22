@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
             contrast._texts = root.GetComponentsInChildren<Text>(true); contrast._colours = new Color[contrast._texts.Length];
             for (int i = 0; i < contrast._texts.Length; i++) contrast._colours[i] = contrast._texts[i].color;
             contrast._scores = root.GetComponentsInChildren<OwnerScoreStrip>(true);
-            foreach (string name in new[] { "CanReadout", "LocalState", "ContextualAction", "PowerSeals", "MatchEventFeed",
+            foreach (string name in new[] { "CanReadout", "LocalState", "ContextualAction", "PowerSeals",
                 "SpectatorReadout", "MatchToast", "RoundClock/TimeLeft", "RoundClock/RoundLabel", "TimedStatus0", "TimedStatus1", "TimedStatus2", "TimedStatus3" })
             {
                 var target = root.Find(name) as RectTransform; if (target == null) continue;

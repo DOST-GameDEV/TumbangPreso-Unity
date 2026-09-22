@@ -110,9 +110,15 @@ Batch A, communication:
   and pektus sentences.
 - [ ] **VISUAL-1.4 Minimalist in-game HUD.** First slice DONE at `4d85395c` (match bar, can
   glyph, taya-coloured round pips, stamina arc, prompt pill, powers in the lower right, 28-unit
-  floor; before and after in `reports/visual-research-2026-09-23/look-1.4-v2`). Remaining: feed
-  pictograms, toast and hit mark, HUD-area measurement, owner-window captures (see the plan's
-  section 3). Original scope: centred top bar of four player chips around
+  floor; before and after in `reports/visual-research-2026-09-23/look-1.4-v2`). Second slice
+  DONE (look-1.4-v3): pictogram feed (portrait, Knock/Restore/Tag/Block glyph, portrait on dark
+  plates, words kept only as `Entry()` records), "+N" pops rising into the scorer's chip instead
+  of centre score toasts, a drawn hit mark, the toast on the halftime brush under the bar,
+  "TAGGED" instead of a sentence, the owner's 1600x680 window in every HUD capture. Measured
+  permanent HUD: Classic 3.72 percent and Hero Strike 5.30 percent of 1920x1080 (budget 8,
+  asserted by `TumpNativeHudTests`). Version label confirmed hidden; sandbox line only offline
+  in warm-up or practice. Remaining: HUD 120 and High contrast captures. Original scope:
+  centred top bar of four player chips around
   the clock with state and role badges, pips for rounds and one can glyph; a compact
   bottom-centre kit with corner keycaps and a contextual stamina arc; a pictogram feed;
   no sentences in ordinary play; one plate style; permanent HUD under about 8 percent of

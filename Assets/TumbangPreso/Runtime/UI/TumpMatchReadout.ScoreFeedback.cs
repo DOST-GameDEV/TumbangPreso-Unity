@@ -37,8 +37,9 @@ namespace TumbangPreso.UI
         {
             BindScoreEvents();
             if (slot < 0 || slot >= 4 || Canvas == null || !Canvas.gameObject.activeInHierarchy
-                || GameServices.Round == null || !GameServices.Round.RoundActive
-                || (kind != ScoreEvent.LataKnocked && kind != ScoreEvent.Tag)) return;
+                || GameServices.Round == null || !GameServices.Round.RoundActive) return;
+            StartScorePop(slot, kind, _aimOwner != null ? _aimOwner.PlayerSlot : -1);
+            if (kind != ScoreEvent.LataKnocked && kind != ScoreEvent.Tag) return;
             _scoreMomentUntil[slot] = Time.unscaledTime + ScoreMomentLife;
             _scoreAt = 0; // Refresh rank/total before the accented row is drawn.
         }

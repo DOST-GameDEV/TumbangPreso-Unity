@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
         {
             var layout = root.gameObject.AddComponent<HudReadingLayout>();
             string[] names = { "MatchScores", "RoundClock", "CanReadout", "LocalState", "ContextualAction",
-                "PowerSeals", "MatchEventFeed", "SpectatorReadout", "SandboxState", "MatchToast",
+                "PowerSeals", "MatchEventFeed", "SpectatorReadout", "SandboxState", "MatchToastPlate", "MatchToast",
                 "Reticle", "HitConfirmation", "Countdown", "CalloutCaption", "StaminaArc", "TimedStatus0", "TimedStatus1", "TimedStatus2", "TimedStatus3" };
             foreach (string name in names)
             {

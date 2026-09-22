@@ -52,6 +52,64 @@ namespace TumbangPreso.PlayTests
             new Vector2Int(1920, 1080), new Vector2Int(1920, 1200), new Vector2Int(1280, 960),
             new Vector2Int(2560, 1440), new Vector2Int(3440, 1440), new Vector2Int(3840, 1080), new Vector2Int(3840, 2160)
         };
+        /// <summary>
+        /// The owner's own window (`ProbeResolutions`: 1600x680, windowed, short and wide). Every
+        /// HUD capture includes it, because `CLAUDE.md` § 6.2b row 3 records that a layout seen
+        /// only at 16:9 is a layout nobody in the room has seen.
+        /// </summary>
+        internal static readonly Vector2Int OwnerWindow = new Vector2Int(1600, 680);
+        internal static readonly Vector2Int[] HudViewports = PcViewports.Concat(new[] { OwnerWindow }).ToArray();
+
+        /// <summary>
+        /// Share of the frame covered by visible HUD, measured from canvas rects (VISUAL-1.4
+        /// budget: under about 8 percent at 1920x1080 in ordinary play). A 10-unit grid over the
+        /// canvas counts each covered cell once, so overlapping cards are not double counted.
+        /// Text counts by its drawn glyph bounds, not its layout box, which is often a whole
+        /// 1100-unit row around three words.
+        /// </summary>
+        internal static float HudShare(Canvas canvas, out string detail)
+        {
+            var root = (RectTransform)canvas.transform; var size = root.rect.size;
+            int cols = Mathf.Max(1, Mathf.RoundToInt(size.x / 10)), rows = Mathf.Max(1, Mathf.RoundToInt(size.y / 10));
+            var covered = new bool[cols, rows]; var owners = new Dictionary<string, int>();
+            var corners = new Vector3[4];
+            foreach (var graphic in canvas.GetComponentsInChildren<Graphic>())
+            {
+                if (!graphic.enabled || graphic.color.a <= .02f || graphic.canvasRenderer.GetInheritedAlpha() <= .02f) continue;
+                if (graphic is Text t && string.IsNullOrWhiteSpace(t.text)) continue;
+                Rect local;
+                if (graphic is Text text && text.cachedTextGenerator.vertexCount > 0)
+                {
+                    var min = new Vector2(float.PositiveInfinity, float.PositiveInfinity); var max = -min;
+                    float unit = 1 / Mathf.Max(.0001f, text.pixelsPerUnit);
+                    foreach (var v in text.cachedTextGenerator.verts)
+                    {
+                        Vector2 p = root.InverseTransformPoint(text.rectTransform.TransformPoint((Vector3)v.position * unit));
+                        min = Vector2.Min(min, p); max = Vector2.Max(max, p);
+                    }
+                    local = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+                }
+                else
+                {
+                    graphic.rectTransform.GetWorldCorners(corners);
+                    var min = new Vector2(float.PositiveInfinity, float.PositiveInfinity); var max = -min;
+                    foreach (var c in corners) { Vector2 p = root.InverseTransformPoint(c); min = Vector2.Min(min, p); max = Vector2.Max(max, p); }
+                    local = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+                }
+                int added = 0;
+                for (int x = 0; x < cols; x++)
+                for (int y = 0; y < rows; y++)
+                {
+                    var centre = new Vector2(root.rect.xMin + (x + .5f) * size.x / cols, root.rect.yMin + (y + .5f) * size.y / rows);
+                    if (!covered[x, y] && local.Contains(centre)) { covered[x, y] = true; added++; }
+                }
+                if (added > 0) { var key = graphic.transform.parent != null ? graphic.transform.parent.name + "/" + graphic.name : graphic.name; owners[key] = (owners.TryGetValue(key, out int n) ? n : 0) + added; }
+            }
+            int total = 0; foreach (bool b in covered) if (b) total++;
+            detail = string.Join(", ", owners.OrderByDescending(o => o.Value).Take(12).Select(o => $"{o.Key}={o.Value * 100f / (cols * rows):0.00}%"));
+            return total / (float)(cols * rows);
+        }
+
         internal static IEnumerator Capture(string name, Canvas canvas, int width, int height, bool checkPalette = true, bool includeWorld = false, Canvas[] underlays = null, bool checkActionBounds = false, System.Action inspectViewport = null)
         {
             Assert.IsNotNull(canvas);

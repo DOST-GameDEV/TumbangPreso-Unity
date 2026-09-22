@@ -73,9 +73,17 @@ The working plan for TODO VISUAL-1. Design and reasoning: `docs/NATIONALS_POLISH
   `TumpPowerReadout.DeckRect` and `SlipperRecall` dodging the real deck; `ScoreFeedbackTests`
   asserts the seat's own chip.
 
+- 1.4 second slice (look-1.4-v3): `MatchEventFeed` rows are pictograms (`HudBadge` Knock,
+  Restore, Tag, Block with an `Accent` burst colour); `TumpMatchReadout.Moments` owns the toast
+  brush plate, the drawn hit mark (`HudBadge.Glyph.Hit`, still named `HitConfirmation`) and the
+  "+N" score pops (`PopsFor`: knockdown, tag, sabotage, last tsinelas; ticks never pop);
+  `Hud.OnScored` leaves those awards to the pops; `TumpUiCapture.HudViewports` adds the owner's
+  1600x680 window and `HudShare` measures the HUD on a 10-unit grid. Classic 3.72 percent, Hero
+  Strike 5.30 percent at 1920x1080. 6 of 7 cases pass; the red is still 1.17's NextRole.
+
 ## 3. Remaining work, in the TODO priority order
 
-### 1.4 remainder
+### 1.4 remainder (DONE in v3 except the HUD 120 and High contrast captures)
 - Feed (`MatchEventFeed.cs`): at most three pictogram lines on the right edge (portrait, event
   glyph, portrait), fade after about 4 s, no sentences. Event glyphs from `HudBadge` (add
   Knock, Tag, Block, Catch glyphs).

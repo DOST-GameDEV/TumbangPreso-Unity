@@ -146,7 +146,7 @@ namespace TumbangPreso.UI
             track.gameObject.SetActive(false);
         }
         public void Toast(string words, float duration)
-        { _toast.text = words; _toastLeft = duration; _toast.enabled = true; }
+        { _toast.text = words; _toastLeft = duration; _toast.enabled = true; SizeToastPlate(); }
         public void Countdown(string words) { _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words); }
         /// <summary>
         /// The two things `RoundLabel` can ever say, and the widest form of each.
@@ -175,14 +175,22 @@ namespace TumbangPreso.UI
         internal static string RoundLine(int round, int total)
             => $"Round {Mathf.Max(1, round)} / {total}";
 
-        public void Hit(Color color) { _hit.color = color; _hit.enabled = true; _hitLeft = .25f; }
+        public void Hit(Color color)
+        {
+            if (_hitMark != null) { _hitMark.color = color; _hitMark.enabled = true; _hitLeft = HitLife; return; }
+            _hit.color = color; _hit.enabled = true; _hitLeft = .25f;
+        }
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
             Canvas.enabled=!HalftimePresentation.Playing;
             float dt = Time.unscaledDeltaTime;
-            if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) _toast.enabled = false; }
-            if (_hitLeft > 0) { _hitLeft -= dt; if (_hitLeft <= 0) _hit.enabled = false; }
+            if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
+            if (_hitLeft > 0)
+            {
+                _hitLeft -= dt;
+                if (_hitLeft <= 0) { if (_hitMark != null) _hitMark.enabled = false; else _hit.enabled = false; }
+            }
             var match = GameServices.Match; var round = GameServices.Round;
             _effects.Tick(local, spectating);
             if (match == null || round == null) return;
@@ -213,6 +221,8 @@ namespace TumbangPreso.UI
         {
             PaintScoreMoments();
             SizePromptPlate();
+            PaintHitMark();
+            PaintScorePops();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
             var view=UnityEngine.Camera.main;

@@ -843,7 +843,10 @@ namespace TumbangPreso.UI
             // telling is the moment the score system has nothing to say to them.** See `Rumble`.
             InputLayer.Rumble.WasTagged();
 
-            ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+            // ⚠️ VISUAL-1.4: ONE WORD ON THE MATCH HUD. The caught screen edge and the return
+            // walk already say where they are going; the sentence was read once and then
+            // re-read on every catch for the rest of the match.
+            ShowToast(_nativeReadout != null ? "TAGGED" : "TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
         }
 
         /// <summary>
@@ -922,7 +925,9 @@ namespace TumbangPreso.UI
 
             // Routine attribution lives in the side feed; reserve the centre for
             // recovery, required instructions and genuinely exceptional moments.
-            if (_nativeReadout != null && ordinaryContact) return;
+            // VISUAL-1.4: the match HUD shows every event award as a "+N" rising into the
+            // scorer's own chip (`TumpMatchReadout.Moments`), so the centre toast stays free.
+            if (_nativeReadout != null && (ordinaryContact || TumpMatchReadout.PopsFor(e))) return;
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 

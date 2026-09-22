@@ -17,14 +17,24 @@ namespace TumbangPreso.UI
             MatchEventFeed.Create(_root);
             MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
+            // VISUAL-1.4: the toast sits under the bar on the halftime banner's brush shape in
+            // the clock's plate colour, so a rare call-out is one family with the bar and the
+            // popup instead of loose outlined words over the sky.
+            _toastPlate = OwnerUiLayout.Rect(_root, "MatchToastPlate").gameObject.AddComponent<CourtPopupGraphic>();
+            _toastPlate.Brush = true; _toastPlate.color = HudDraw.Plate; _toastPlate.raycastTarget = false; _toastPlate.enabled = false;
+            Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -176), new Vector2(400, 64));
             _toast = Ink(_root, "MatchToast", "", 36, true);
-            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -191), new Vector2(1080, 78)); _toast.enabled = false;
+            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -176), new Vector2(1080, 64)); _toast.enabled = false;
+            BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
             _crosshair = Ink(_root, "Reticle", "+", 34, false);
             Pin(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
-            _hit = Ink(_root, "HitConfirmation", "\u00d7", 72, true);
-            Pin(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;
+            // VISUAL-1.4: a drawn hit mark (four ticks on black keels) instead of a "x" in the
+            // display face. Same name, so the reading layout still scales it.
+            _hitMark = OwnerUiLayout.Rect(_root, "HitConfirmation").gameObject.AddComponent<HudBadge>();
+            Pin(_hitMark.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(64, 64));
+            _hitMark.Kind = HudBadge.Glyph.Hit; _hitMark.RimWidth = 2; _hitMark.raycastTarget = false; _hitMark.enabled = false;
             _spectator = Ink(_root, "SpectatorReadout", "", 28, false);
             Pin(_spectator.rectTransform, new Vector2(.5f, 0), new Vector2(0, 106), new Vector2(1460, 146));
             _sandbox = Ink(_root, "SandboxState", "", 28, false);
