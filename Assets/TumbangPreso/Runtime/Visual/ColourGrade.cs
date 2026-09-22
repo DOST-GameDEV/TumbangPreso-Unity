@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     [RequireComponent(typeof(Camera))]
     [DisallowMultipleComponent]
-    public sealed class ColourGrade : MonoBehaviour
+    public sealed partial class ColourGrade : MonoBehaviour
     {
         [SerializeField] private float _brightness = 1.0f;
         [SerializeField] private float _contrast = 1.0f;
@@ -228,7 +228,7 @@ namespace TumbangPreso.Visual
         {
             PostAntiAlias.ReportOnce(_camera, source);
 
-            if (IsIdentity)
+            if (IsIdentity && !HasExperiments)
             {
                 Graphics.Blit(source, destination);
                 return;
@@ -265,11 +265,14 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ChromaticRadialId,
                                Settings.RenderStyles.RadialSplit ? 1.0f : 0.0f);
 
-            Graphics.Blit(source, destination, _material);
+            var protectedMask=PrepareExperimentMaterial(source);
+            try { Graphics.Blit(source, destination, _material); }
+            finally { if(protectedMask!=null)RenderTexture.ReleaseTemporary(protectedMask); }
         }
 
         private void OnDestroy()
         {
+            DisposeExperiments();
             if (_material != null) DestroyImmediate(_material);
         }
     }

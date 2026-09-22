@@ -149,16 +149,16 @@ Batch A, communication:
   no sentences in ordinary play; one plate style; permanent HUD under about 8 percent of
   the frame at 1920x1080. Replaces the four score slabs and duplicate can text. Checked at
   1920x1080, 1280x720 and the owner's short wide window with every accessibility setting.
-- [ ] **VISUAL-1.5 One signal language.** HUD parts DONE (look-batchA-v4): the off-screen can
-  marker speaks in glyphs (can standing or lying, a ring draining with protection or filling
-  with the restore) instead of a 20-unit caption; chips, feed and deck recede to 30 percent
-  during an accepted ultimate or a replay (`TumpMatchReadout.Recede`). Remaining: tint
-  priority is done too (the caught edge suppresses the red flash); the one remaining "lata
-  down" copy is the world popup, handed off. Original scope: meaning, shape, colour and place table (V2)
-  applied to every existing indicator; one full-screen tint at a time; non-critical HUD
-  recedes during ultimates and replay; the six "lata down" copies cut to the can, the bar
-  glyph and one beat. Experiments kept only if clearer: peripheral speed lines, a brief
-  ultimate saturation grade, optional sound visualisation (owner picks the default).
+- [x] **VISUAL-1.5 One signal language.** Implementation/comparisons DONE.
+  Completed HUD glyphs, recede and tint priority retained. The supposed remaining
+  world LATA DOWN sentence was already absent; actual event test confirms it.
+  V2 owner comments added. Existing grade supports separate off controls for quiet
+  peripheral sprint/dash strokes, audible-footstep bearing pips and world-only
+  ultimate desaturation preserving cast/can/prop colour and scene occlusion.
+  All experiments default OFF until the owner's later default choice.
+  [look-1.5-experiments](reports/visual-research-2026-09-23/look-1.5-experiments/report.md):
+  v2 behavior3/3, v3 corrected personal captures2/2; normal/25percent-grey reviewed.
+  External taste/default selection and integrated performance/native review remain P7.
 - [ ] **VISUAL-1.7 FPP viewmodel framing.** Lower, smaller rest pose; lit arms on world
   bands with matched ink; rim on the held slipper; a fixed viewmodel FOV if needed; throw
   anticipation inside the existing charge window, snap, follow-through and settle.

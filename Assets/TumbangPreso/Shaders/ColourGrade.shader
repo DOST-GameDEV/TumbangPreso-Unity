@@ -44,6 +44,9 @@ Shader "TumbangPreso/ColourGrade"
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
+            sampler2D _CueMask;
+            float _CueWorld,_CueSpeed,_CueTime,_CueEdges;
+            float4 _CuePixels,_CuePips[8];
             half _Brightness;
             half _Contrast;
             half _Saturation;
@@ -206,6 +209,34 @@ Shader "TumbangPreso/ColourGrade"
             // general and is NOT what this game was graded against. Using it here pulls the
             // greens and the orange skin apart from the build the art was signed off on, which
             // is the whole thing this pass exists to match.
+            half3 CueEdges(float2 uv,half3 colour)
+            {
+                if(_CueEdges<=0)return colour;
+                if(_CueSpeed>0)
+                {
+                    float2 p=(uv-.5)*2;float radius=length(p);
+                    float angle=atan2(p.y,p.x);float sector=floor((angle+3.141593)*5.4);
+                    float strokeDistance=abs(frac((angle+3.141593)*5.4)-.5);
+                    float travel=frac(radius*2.4-_CueTime*2.6+sector*.173);
+                    float ink=(1-smoothstep(.024,.055,strokeDistance))*step(.66,travel)*smoothstep(.70,.98,radius);
+                    float face=(1-smoothstep(.008,.019,strokeDistance))*step(.69,travel)*smoothstep(.73,1.01,radius);
+                    colour=lerp(colour,half3(.015,.015,.015),ink*_CueSpeed*.22);
+                    colour=lerp(colour,half3(.97,.93,.82),face*_CueSpeed*.18);
+                }
+                [unroll] for(int n=0;n<8;n++)
+                {
+                    if(_CuePips[n].z<=0)continue;
+                    float2 pixel=(uv-_CuePips[n].xy)*_CuePixels.xy;
+                    // Hollow diamond, fixed pixel size: a heard event, not a
+                    // precise target indicator. No label or identity colour.
+                    float d=abs(pixel.x)+abs(pixel.y);
+                    float ink=step(3.0,d)*(1-smoothstep(9.0,10.0,d));
+                    float face=step(5.0,d)*(1-smoothstep(7.0,8.0,d));
+                    colour=lerp(colour,half3(.015,.015,.015),ink*_CuePips[n].z*.44);
+                    colour=lerp(colour,half3(.97,.93,.82),face*_CuePips[n].z*.38);
+                }
+                return colour;
+            }
             half4 frag (v2f_img i) : SV_Target
             {
                 half2 split = SplitOffset(i.uv);
@@ -229,7 +260,13 @@ Shader "TumbangPreso/ColourGrade"
                 half grey = dot(half3(1, 1, 1), c) * 0.33333h;
                 c = lerp(half3(grey, grey, grey), c, _Saturation);
 
-                return half4(saturate(c), source.a);
+                if(_CueWorld>0)
+                {
+                    half keep=tex2D(_CueMask,i.uv).r;
+                    half value=dot(c,half3(.2126,.7152,.0722));
+                    c=lerp(c,half3(value,value,value),_CueWorld*(1-keep));
+                }
+                return half4(saturate(CueEdges(i.uv,c)), source.a);
             }
             ENDCG
         }

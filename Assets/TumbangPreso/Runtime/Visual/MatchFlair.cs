@@ -1,3 +1,6 @@
+// V2 owner map: accepted contact | one burst/moment | rule or power colour |
+// actual contact; travel | streak | seat identity | moving object. Events are
+// host accepted; camera confirmation belongs only to the participating viewer.
 using TumbangPreso.Core;
 using UnityEngine;
 

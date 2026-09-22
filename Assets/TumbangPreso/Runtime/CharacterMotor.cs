@@ -302,6 +302,9 @@ namespace TumbangPreso
         public Stamina Stamina { get; private set; }
 
         public Vector3 Velocity => _velocity;
+        // Read-only presentation speed includes a slide/lunge's impulse as well
+        // as steerable travel. It never feeds back into movement or networking.
+        public Vector3 PresentationTravelVelocity => _velocity + _externalVelocity;
         public bool IsGrounded => _grounded;
         public bool IsSwimming => RooftopPool.Swimming(transform.position);
         private bool _swimLeap;

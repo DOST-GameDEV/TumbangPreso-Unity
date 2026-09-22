@@ -1,3 +1,6 @@
+// V2 owner map: can down | object tilt/contact accent | Offense | can; restore
+// work/protection | filling/draining close ring | Defense/gold | can clock.
+// Voice/contact is one shared beat. No duplicate LATA DOWN world sentence.
 using System;
 using TumbangPreso.Core;
 using UnityEngine;

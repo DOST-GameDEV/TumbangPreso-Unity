@@ -38,9 +38,9 @@ namespace TumbangPreso.PlayTests
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
             Time.timeScale=_timeScale;
         }
-        private static IEnumerator Load(string map)
+        private static IEnumerator Load(string map,GameMode mode=GameMode.Classic)
         {
-            yield return MapRetrievalProbe.Load(map);
+            yield return MapRetrievalProbe.Load(map,mode);
             var gate=Object.FindFirstObjectByType<ReadyGate>();
             if(gate!=null && gate.AwaitingReady)
             {

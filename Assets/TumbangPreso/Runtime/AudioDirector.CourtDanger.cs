@@ -6,6 +6,7 @@ namespace TumbangPreso
     {
         private AudioSource _courtAir;
         private float _courtTarget, _courtLevel, _courtCueMix;
+        public bool IsInReplayMix => _replayMixDepth>0;
         public float CourtDangerLevel => _courtAir != null && _courtAir.isPlaying ? _courtAir.volume : 0;
         // Personal, non-positional air beneath real footsteps. This never relays or
         // enters WorldCuePlayed: a replay must not inherit the live viewer's danger.

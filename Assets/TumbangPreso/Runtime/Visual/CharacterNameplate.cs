@@ -1,3 +1,6 @@
+// V2 owner map: identity | disc/name | seat colour | feet/head; taya | open
+// octagon | seat colour | feet; catchable | four open brackets | Defense |
+// target feet, visible only to the taya camera. Shape carries the rule.
 using TumbangPreso.UI;
 using UnityEngine;
 

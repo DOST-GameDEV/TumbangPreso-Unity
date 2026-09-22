@@ -449,3 +449,31 @@ at capture and waits the release's Update/LateUpdate handoff. Retain target look
 from v4 and close viewer-facing clock look2 from v7. STOP tuning/retesting; move
 to1.5. Source review handles destroyed registry keys and changed can skins. Report
 look-1.2-world records evidence limits and earlier invalid capture diagnoses.
+
+1.5 implementation research: Unity's [DrawRenderer API](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.CommandBuffer.DrawRenderer.html)
+does not initialize lighting data for a custom draw, so the protected-object mask
+uses an unlit shader. [Matrix API documentation](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Rendering.CommandBuffer.SetViewProjectionMatrices.html)
+confirms the Built-in route and camera-space convention. This implementation uses
+explicit view/VP uniforms to avoid changing camera globals, checks actual scene
+depth to reject hidden objects, and allocates nothing at experiment-off. This is
+an implementation choice inferred from the documented constraints; rendered colour
+retention and occlusion are still being tested, not claimed from API support.
+
+1.5 source reconciliation: the supposed world LATA DOWN popup is already absent
+from both Lata.AnnounceUprightChange and MatchFlair.Kind.LataDown at88f9e6e68.
+Comments/TODO were stale. Preserve the current contact/voice/moment and completed
+HUD. The new experiments are deliberately separate0default authoring knobs until
+the owner chooses defaults after reviewing the comparisons. Sound pips consume
+actual world-step events in the existing2..32m audio envelope, with pre-slider
+gain for muted/deaf play. They add no enemy identity or unplayed proximity cue.
+
+Final1.5 comparison: v2 passed3/3,19.393s; accepted ultimate keeps actual body colour
+while surrounding world and a wall hiding that body desaturate. v3 passed2/2,
+13.211s with corrected FPP captures. Normal and25percent-grey images inspected.
+Speed lines are quiet at the periphery and absent in comfort mode. The hollow
+sound diamond is intentionally subtle; a detail crop confirms its actual edge
+placement against the house. It survives reduced-effects mode because it carries
+heard information and has no moving stroke. World desaturation restores full
+colour in comfort mode. Retain first usable looks, with all3defaults OFF pending
+owner selection. The broken v1 shader and v2 own-head captures are preserved and
+not claimed as visual evidence. No more tuning before other unfinished features.

@@ -1,16 +1,17 @@
 # Active TUMP rework ledger
 
-## Current resume: publish1.2 then VISUAL-1.5, 2026-09-23
+## Current resume: publish1.5 then VISUAL-1.7, 2026-09-23
 
 Owner is asleep. Continue every autonomously actionable queued item in THIS
 conversation, one agent, without questions or checkpoint endings. Save the exact
 state here at each meaningful checkpoint. Do not mark the full goal complete.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current HEAD/verified remote479be6a53f84bec4c756696305c92c830add1412 published
-world1.1; prior f018173c4 published UX-1 intake. World1.2 is implemented and focused-
-validated, ready to commit with its TODO/findings/evidence. No Unity/native/server/
-browser/helper active. No build. All jobs reaped; latest95634,guard0f87a3f9bb6b.
+Current HEAD/verified remote88f9e6e68b0e8b7ba9aac1b03560f8d4ffa1170d published
+world1.2;479be6a53 published1.1 and f018173c4 UX-1 intake. World1.5 source/evidence
+is COMPLETE and ready for scoped commit. No Unity/native/server/browser/helper
+active. Last job66829 reaped,guard6aa870df1e7e. Known4churn restored; original2meta
+hashes verified. No build. Do not repeat any passed1.1/1.2/1.5 checks.
 
 Completed1.1: exact ConfinementRadius square at sampled ground heights, rest/armed/
 restore sweep; per-camera nearest exit with nested-camera restoration; physical
@@ -49,23 +50,41 @@ waits its actual Update/LateUpdate handoff. No weakened assertions. Final static
 review also cleans destroyed registry keys and refreshes can renderers on skin
 change; next compilation/P7 includes those small lifecycle refinements.
 
-NEXT: publish1.2 by explicit paths, fetch before push and verify remote. Then1.5
-leftovers: current MatchFlair.Kind.LataDown and Lata.AnnounceUprightChange already
-have NO world text popup (exact literal only in stale comments), so confirm once
-and reconcile status, don't invent a deletion. Add V2 meaning/shape/colour/place
-header comments to owners, implement/compare peripheral speed, world-only ultimate
-desaturation and optional already-audible footstep pips. Owner owns defaults:
-keep experimental settings off pending later review, do not ask while asleep.
-Then1.7,B,P3,C,D,UX-1,P6,P7 in TODO order. No task deletion or completed HUD redo.
+Completed1.5: current source already had no LATA DOWN world popup; new actual
+event test confirms no extra ComicPopup. V2 meaning/shape/colour/place comments
+on owners. Existing ColourGrade now has optional peripheral travel strokes,
+already-played footstep bearing pips, and accepted-ultimate world desaturation
+with depth-tested colour retention for visible Toon cast/props/render copies.
+All3WorldCueProfile experiment controls default0 pending owner's later choice.
+No new HUD framework or edits to completed HUD/tint priority/recede.
+
+Evidence: look-1.5-experiments/report.md. v2 all3cases passed19.393s (actual
+sprint/sound guards, real reserved ultimate, body colour and occluding wall).
+v3 corrected FPP personal views passed2/2,13.211s. Personally inspected full normal
+frames and25percent-grey comparisons plus pip detail crop. Keep first usable look:
+speed quiet/peripheral, sound a small hollow8-sector diamond, world grade preserves
+cast/can colour. Owner may prefer them off; default decision is external review.
+v1 own shader reserved-word error and wrong global speed assumption preserved;
+v2 personal shots unhid own head and were INVALID, replaced by v3. Stop iterating.
+
+NEXT: scoped1.5 commit/fetch/push/remote verification, then1.7 FPP. Read-only
+findings: arms already use ToonSkin (lit), no unlit replacement needed. CameraRig
+ViewmodelScale=.72,Seat=(0,-.10,.16); root is camera-parented, rotationidentity,
+local position gets bob/kick near1296. Carrier.ThrowOriginFor uses AimEye plus
+MuzzleForward toward aim point, never viewmodel geometry, so framing must leave
+that physics path unchanged. Fixed viewmodel FOV must cover both surface and ink
+passes while preserving current world camera75..110 and its aim. Lower/smaller
+rest, modest held-slipper rim, anticipation inside the existing charge window;
+retain real release/cancel/follow-through. Save a concrete plan before edits.
+ThenB,P3,C,D,UX-1,P6,P7. Preserve task IDs and completed HUD/login/mainmenu.
 Carry1.2 image finding into1.11/1.12: restoring has a large red grab crescent;
-review its meaning/dominance then, without widening1.2. Integrated peer/latency,
-stranger interpretation and native replay viewing belong to P7, not claimed here.
+review its meaning/dominance then. Real peer/native/human acceptance remains P7.
 
 Original dirty home-court.png.meta/loading-street.png.meta under Resources/UI/
 composition-redesign MUST NEVER be committed. Expected hashes in
 Logs/visual1-world-protected-metas.json; original bytes in
 Logs/look-1.1-v1/protected-inputs/. Known generated churn (two Inday FppDetails
-assets,QualitySettings.asset,TimeManager.asset) restored after1.2v7; protected2
+assets,QualitySettings.asset,TimeManager.asset) restored after1.5v3; protected2
 metas verified/restored exactly. Stage by path, never blanket add/reset/clean.
 Fetch before push, verify remote HEAD. Sole author M4tyu633, no trailers/AI/em dash.
 
@@ -85,5 +104,5 @@ Open carried issues:127.3 v57 chat-line clip recheck and native shutdown0xc00000
 in D3D12Core.dll1.618.1.0 offset0x264831, after all15review stages passed. P7 owns
 the native investigation. No clean-exit claim. Preserve original characters,
 builders, rigs,GUIDs,UGS IDs and saves. No paid services/resets/delegation/main/
-Desktop replacement. Prior ledger is archived with the1.1 and1.2 reports; it is history,
+Desktop replacement. Prior ledger is archived with the1.1,1.2 and1.5 reports; it is history,
 not the current resume point.

@@ -1,3 +1,6 @@
+// V2 owner map: identity | authored body | cast palette | world body; powers
+// retain their own coat/rim. Catchable | upper rim | Defense | taya camera only.
+// Camera overrides are restored before recording the underlying body state.
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
