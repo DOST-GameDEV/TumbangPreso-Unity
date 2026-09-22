@@ -277,9 +277,14 @@ namespace TumbangPreso.UI
             // this front end ended up with hand-written offsets in the first place (§ 92.1).
             float reach = RingRadius + SlipperRecallMark.ChevronReach + TumpUiTheme.Current.Gap;
 
-            if (Mathf.Abs(at.x) > TumpPowerReadout.DeckHalfWidth + reach) return at;
+            // ⚠️ VISUAL-1.4: THE DECK IS WHERE IT IS DRAWN, NOT WHERE IT USED TO BE. It moved to
+            // the lower right on keyboard and pad and stays centred on touch, so the mark asks
+            // for the real rectangle instead of the old bottom-centre constants.
+            var deck = _deck.DeckRect();
+            if (deck.width <= 0) return at;
+            if (at.x < deck.xMin - reach || at.x > deck.xMax + reach) return at;
 
-            float clear = -(canvas.y * 0.5f) + TumpPowerReadout.DeckTop + reach;
+            float clear = deck.yMax + reach;
             if (at.y > clear) return at;
 
             at.y = clear;

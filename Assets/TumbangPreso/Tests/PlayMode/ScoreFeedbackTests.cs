@@ -33,7 +33,9 @@ namespace TumbangPreso.PlayTests
             int before = match.ScoreFor(3); can.HostKnockDown(3);
             yield return new WaitForSecondsRealtime(.10f);
             Assert.AreEqual((before + 100).ToString(), Score(3).text);
-            Assert.AreEqual("ScoreRow0", Score(3).transform.parent.name, "The credited scorer should rank above passive defence.");
+            // VISUAL-1.4: chips hold seat order (a crown marks the leader) instead of re-sorting,
+            // so the credited seat keeps its own chip and the emphasis must land on it.
+            Assert.AreEqual("ScoreRow3", Score(3).transform.parent.name, "The credited seat's chip carries the emphasis in place.");
             Assert.Greater(Score(3).rectTransform.localScale.x, 1.01f);
             Assert.AreEqual(Vector3.one, Score(1).rectTransform.localScale, "Sorting cannot transfer emphasis to a different seat.");
             SettingsStore.Current.ReducedUiMotion = true;

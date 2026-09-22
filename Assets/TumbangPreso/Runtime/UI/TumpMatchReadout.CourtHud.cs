@@ -10,7 +10,10 @@ namespace TumbangPreso.UI
             Canvas = OwnerUiLayout.Canvas(owner, "OwnerMatchCanvas", 100);
             Canvas.GetComponent<InputLayer.ScreenFocus>().enabled = false; _root = (RectTransform)Canvas.transform;
             _effects = gameObject.AddComponent<TumpHudEffects>(); _effects.Build(_root);
-            BuildCourtScores(); BuildCourtClock(); BuildCourtCan(); BuildCourtPersonal(); BuildCourtPrompts();
+            // VISUAL-1.4: the match bar replaces the corner score slabs and the clock box.
+            // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
+            // the record and no longer called.
+            BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
             MatchEventFeed.Create(_root);
             MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
@@ -85,17 +88,25 @@ namespace TumbangPreso.UI
             _stamina = OwnerUiLayout.Rect(track.transform, "StaminaFill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = CourtPresentationPalette.Gold; _stamina.raycastTarget = false;
             var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 353, 121, 142, 42);
+            // VISUAL-1.4: a stun the player cannot time is a stun they cannot play around
+            // (`Design.md` § 11), so these stay; they sit under the reticle, where the eye
+            // already is, instead of floating in the left margin under a scoreboard that moved.
             for (int i = 0; i < 4; i++)
             {
-                _status[i] = Ink(_root, "TimedStatus" + i, "", 28, false); _status[i].alignment = TextAnchor.MiddleLeft;
-                OwnerUiLayout.Place(_status[i].rectTransform, 38, 369 + i * 47, 500, 45);
+                _status[i] = Ink(_root, "TimedStatus" + i, "", 28, false); _status[i].alignment = TextAnchor.MiddleCenter;
+                Pin(_status[i].rectTransform, new Vector2(.5f, .5f), new Vector2(0, -104 - i * 38), new Vector2(560, 38));
             }
         }
         private void BuildCourtPrompts()
         {
             _promptRoot = OwnerUiLayout.Rect(_root, "ContextualAction");
             Pin(_promptRoot, new Vector2(.5f, .32f), Vector2.zero, new Vector2(1100, 174));
-            _prompt = Ink(_promptRoot, "ActionPrompt", "", 36, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
+            // VISUAL-1.4: the verb sits on a dark pill sized to its own words, the same plate as
+            // the clock, so it reads over sky, chalk and asphalt alike.
+            _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
+            _promptPlate.color = HudDraw.Plate; _promptPlate.Radius = 22; _promptPlate.raycastTarget = false;
+            _promptPlate.enabled = false;
+            _prompt = Ink(_promptRoot, "ActionPrompt", "", 32, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;

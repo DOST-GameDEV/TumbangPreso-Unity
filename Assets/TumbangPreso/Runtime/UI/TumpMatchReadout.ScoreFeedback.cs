@@ -49,6 +49,7 @@ namespace TumbangPreso.UI
             {
                 if (_scores[i] != null) _scores[i].rectTransform.localScale = Vector3.one;
                 if (_scoreAccents[i] != null) _scoreAccents[i].SetMoment(0, Color.clear);
+                if (_chipCards[i] != null) _chipCards[i].SetMoment(0, Color.clear);
             }
         }
         private void PaintScoreMoments()
@@ -72,6 +73,9 @@ namespace TumbangPreso.UI
                 }
                 if (_scoreAccents[i] != null)
                     _scoreAccents[i].SetMoment(accent, slot >= 0 ? PlayerIdentity.Colour(slot) : Color.clear);
+                // VISUAL-1.4: the chip glows in the scorer's seat colour.
+                if (_chipCards[i] != null)
+                    _chipCards[i].SetMoment(accent, slot >= 0 ? PlayerIdentity.Colour(slot) : Color.clear);
             }
         }
     }

@@ -189,8 +189,8 @@ namespace TumbangPreso.UI
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : OwnerUiTheme.Current.Pale;
             _round.text = match.IsWarmupBuffer ? WarmupRoundLine : RoundLine(match.RoundNumber, match.TotalRounds);
+            MatchBarClock(match, round, time);
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
             Can(local, training, spectating); Personal(local, spectating);
@@ -212,6 +212,7 @@ namespace TumbangPreso.UI
         private void LateUpdate()
         {
             PaintScoreMoments();
+            SizePromptPlate();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
             var view=UnityEngine.Camera.main;
@@ -224,10 +225,21 @@ namespace TumbangPreso.UI
         }
         private void Scores(CharacterMotor local, bool spectating)
         {
-            var match = GameServices.Match; var order = match.Ranking();
+            var match = GameServices.Match;
+            // VISUAL-1.4: fixed seat order and a crown for a unique leader, instead of rows
+            // that re-sort on every score. See `TumpMatchReadout.MatchBar`.
+            int leader = -1, best = 0; bool tied = false;
+            for (int seat = 0; seat < 4; seat++)
+            {
+                if (GameServices.Round.PlayerAt(seat) == null) continue;
+                int value = match.ScoreFor(seat);
+                if (value > best) { best = value; leader = seat; tied = false; }
+                else if (value == best && value > 0) tied = true;
+            }
+            if (tied) leader = -1;
             for (int i = 0; i < 4; i++)
             {
-                int slot = order[i]; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
+                int slot = i; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
                 _names[i].text = SeatLabel.WithIdentity(slot);
                 _names[i].color = PlayerIdentity.Colour(slot); _scores[i].text = match.ScoreFor(slot).ToString();
@@ -248,17 +260,18 @@ namespace TumbangPreso.UI
                     ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
                 _portraits[i].enabled = portrait != null;
-                var strip = _scoreRows[i].GetComponent<OwnerScoreStrip>();
                 bool mine = !spectating && local != null && slot == local.PlayerSlot;
-                if (strip.Local != mine) { strip.Local = mine; strip.SetVerticesDirty(); }
+                MatchBarChip(i, slot, actor, defender, mine, slot == leader, spectating);
             }
         }
         private void Can(CharacterMotor local, bool training, bool spectating)
         {
-            // Players have one world-tracking marker and their local action
-            // prompt. The operator retains a corner readout during free flight.
+            // VISUAL-1.4: the can's state is one glyph in the clock plate for players and
+            // spectators alike, so the corner readout that said it in words stays built (the
+            // reading layout and probes address it by name) and is never shown.
             var lata = GameServices.Round.Lata;
-            _canRoot.gameObject.SetActive(spectating && !training && lata != null && GameServices.Round.RoundActive);
+            MatchBarCan(lata);
+            _canRoot.gameObject.SetActive(false);
             if (lata == null || !spectating) return;
             _canState.text = lata.IsUpright ? "Can upright" : "Can down";
             _canHint.text = lata.IsProtected ? "Can protected · Defender may tag" :
@@ -270,6 +283,7 @@ namespace TumbangPreso.UI
             bool show = local != null && !spectating;
             _personalRoot.gameObject.SetActive(show);
             foreach (var text in _status) text.enabled = false;
+            StaminaArc(show ? local : null);
             if (!show) return;
             _role.text = local.IsDefender ? "Defender" : "Attacker";
             _role.color = local.IsDefender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
@@ -294,7 +308,18 @@ namespace TumbangPreso.UI
                 size.x=piloting?Mathf.Max(_staminaCaptionWidth,190):_staminaCaptionWidth;_staminaCaption.rectTransform.sizeDelta=size;
             }
             var stock = GameServices.Tsinelas;
-            if (stock != null && stock.Live && !local.IsDefender) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
+            bool stockLive = stock != null && stock.Live && !local.IsDefender;
+            if (stockLive) _stock.text += " · " + stock.StockFor(local.PlayerSlot) + " left";
+            // ⚠️ VISUAL-1.4: THESE LINES ONLY SPEAK WHEN THEY SAY SOMETHING NOTHING ELSE DOES.
+            // The role is on the chip, the slipper is in the viewmodel's hand and stamina is the
+            // arc beside the reticle, so "Attacker / Slipper in hand / Stamina" repeated the
+            // screen (and broke VISION § 3's no-sentences rule) for the whole match. They stay
+            // computed, because tests and the familiar readout read them, and are drawn only
+            // while piloting Kuro or while a limited slipper stock is counting down.
+            _role.enabled = piloting; _stock.enabled = piloting || stockLive;
+            if (_staminaCaption != null) _staminaCaption.enabled = piloting;
+            // Piloting Kuro keeps the labelled bar: whose stamina it is IS the information there.
+            if (_stamina != null && _stamina.transform.parent.gameObject.activeSelf != piloting) _stamina.transform.parent.gameObject.SetActive(piloting);
             _stamina.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(local.Stamina.Ratio), 1);
             _stamina.enabled = local.Stamina.Ratio > .001f;
             _stamina.color = local.Stamina.IsFatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
