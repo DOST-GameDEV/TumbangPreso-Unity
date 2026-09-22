@@ -97,6 +97,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 LOGS = ROOT / "Logs"
 OUT = LOGS / "qualify"
 REPORTS = ROOT / "docs" / "reports"
+VALIDATION_PROFILE = "qualify-" + ROOT.name
 
 # ⚠️⚠️ RESOLVED PER MACHINE, BECAUSE THERE ARE THREE OF THEM AND TWO ARE NOT WINDOWS.
 # `CLAUDE.md` § 7 carries the whole table and the warning that goes with it: *"a note that is
@@ -494,7 +495,8 @@ def unity(args, logfile, timeout=None):
     shipping to at nationals, and it does it silently.
     """
     cmd = [str(UNITY), "-batchmode", "-projectPath", str(ROOT),
-           "-buildTarget", BUILD_TARGET, "-logFile", str(logfile)] + args
+           "-buildTarget", BUILD_TARGET, "-logFile", str(logfile),
+           "-tp-profile", VALIDATION_PROFILE] + args
     if sys.platform == "win32":
         cmd = [sys.executable, str(ROOT / "tools" / "run_unity_guarded.py"), *cmd[1:]]
     return subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
@@ -533,7 +535,8 @@ def stage_playmode(pass_number=1):
     started = datetime.datetime.now().timestamp()
     suffix = f"-pass{pass_number}" if pass_number > 1 else ""
 
-    r = subprocess.run([sys.executable, str(ROOT / "tools" / "playmode_suite.py"), "--gate"],
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "playmode_suite.py"), "--gate",
+                        "--profile", VALIDATION_PROFILE],
                        cwd=str(ROOT), capture_output=True, text=True, errors="replace")
 
     summary_path = LOGS / "playmode-suite" / f"summary{suffix}.json"
