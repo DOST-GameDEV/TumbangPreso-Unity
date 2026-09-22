@@ -13,8 +13,10 @@ Owner 2026-09-23: Codex is not editing this branch; this session took over the d
 (Logs/visual-p0-editmode-v1.xml), Core 615/615, native v57 accessibility 15/15. Open:
 the v57 chat clip re-check and the 0xC0000005 shutdown exit (TODO). Next: VISUAL-1.4 HUD
 and 1.18 icons, then 1.6, 1.1. The owner widened scope to every in-match UI surface.
-Design: NATIONALS_POLISH.md, VISUAL-1 section. Research, plan and exact in-progress file list:
-reports/visual-research-2026-09-23/findings.md section 4 (read it first after a compaction).
+Design: NATIONALS_POLISH.md, VISUAL-1 section. Research: reports/visual-research-2026-09-23/
+findings.md. Build plan, tooling traps and remaining steps: implementation-plan.md beside it.
+VISUAL-1.4 first slice published at 4d85395c (3/4 HUD cases; the red is the pre-existing
+round-swap NextRole floor fault owned by 1.17). Next: 1.4 remainder, then 1.18, 1.6, 1.1.
 
 
 ## Mandate and source

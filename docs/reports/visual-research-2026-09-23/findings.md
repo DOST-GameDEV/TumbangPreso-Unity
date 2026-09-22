@@ -244,3 +244,110 @@ Ideas queued by task (TODO VISUAL-1):
 - 1.17 Halftime and round swap: same card family; fix the 11-unit "NextRole" label.
 - 1.18 Icons: filled silhouettes (HudBadge) replacing stroke icons in the match.
 - Prompts: keycap badge plus a verb only ("[E] Pick up"), no second line in ordinary play.
+
+## 7. Further references for the remaining tasks
+
+### Tango Gameworks, "3D Toon Rendering in 'Hi-Fi RUSH'", GDC 2024 (Kosuke Tanaka, Takashi Komada)
+GDC Vault and https://www.youtube.com (GDC channel, 57:38); summary at 80.lv, 2024-07-10.
+Topics named in the summary (the talk itself was not watched this session): deferred toon
+rendering, a comic shader, toon light, shadows, a static shadow map, global illumination and a
+dedicated toon FACE shadow. For TUMP (VISUAL-1.8): faces are flat and must never be cut by a
+two-band terminator, so the character pass needs a face rule (either bias the face toward the lit
+band or exclude the head from the band edge) before the shadow tint lands; the comic-shader idea
+maps to optional halftone in shadow only on large environment surfaces, never on characters.
+
+### First-person arms at a fixed FOV (VISUAL-1.7)
+Standard practice across engines and shipped games: the viewmodel is animated for one field of
+view and rendered at that FOV whatever the player picks, so the arms keep their size and framing.
+Unreal Engine 5 documentation, "First Person Rendering" (dev.epicgames.com); Bevy engine example
+"first person view model" (bevy.org); Team Fortress 2's separate `viewmodel_fov`; Unity forum
+threads on reprojecting the weapon to a fixed FOV. TUMP added a 75 to 110 world FOV slider in
+127.3, so the arms currently grow and shrink with it; 1.7 should render them at one authored FOV
+(a second camera layer or a projection override on the viewmodel) and keep the world slider.
+
+## 8. Gap-filling research (second pass, before publishing)
+
+### Rocket League (Psyonix), Game UI Database gameData.php?id=134
+- In play: ONE compact score bar at top centre, team scores as solid colour blocks either side of
+  the clock. Nothing else persistent except a small rank chip top right.
+- The ball carries a white ground ring under it, so it is always findable (VISUAL-1.10: the lata
+  and an airborne can get the same).
+- Goal moment: an orange starburst badge "GOAL +100" plus one big line naming the scorer; replay
+  marked by a small red dot and word at bottom left.
+- Match end (VISUAL-1.16 model): the winning team's cars pose IN THE ARENA under a huge outlined
+  "WINNER ORANGE"; each player has a name banner and TWO earned accolades with numbers
+  ("SCORER 2 Goals", "STRIKER 2 Shots on Goal", "TACTICIAN 6 Centered Balls", "ENFORCER 36 Cars
+  Bumped"). TUMP can pose its players on the court with chips and two accolades each from match
+  stats (knockdowns, tags, blocks, longest throw, escapes, time as taya with the can standing).
+
+### Riot Games, "Art Education: Visual Effects" (riotgames.com/en/artedu/visual-effects)
+- VFX artists "carry the heavy burden of restraint so players can actually tell what the hell is
+  going on".
+- Every effect must accurately represent an action or state, stay thematically cohesive, and work
+  across the kit, across the roster and across the whole game; each must clearly belong to its
+  character or source.
+- Recommended reading: Joseph Gilland, "Elemental Magic" (effects animation: shape, timing,
+  anticipation, dissipation). Applied in VISUAL-1.11.
+
+### Riot Games (Brandon Wang), "VALORANT Shaders and Gameplay Clarity", 2020-06-30
+(riotgames.com/en/news/valorant-shaders-and-gameplay-clarity, read this session)
+- Pillars: performance, competitive integrity, art, balanced equally. No dynamic shadows in the
+  playable space, because Low settings that cut them would lose information: readability must
+  not depend on a setting.
+- One directional light, "style the heck out of it". Gradient Lambert: remap N.L to 0..1 and
+  sample an artist gradient that sets highlight, midtone and core shadow brightness AND where
+  the transitions sit. VISUAL-1.8 route: a small ramp texture per map (and a warmer one for
+  skin) sampled by `Toon.shader` in place of the fixed `_ShadowBand`, keeping a hard two-band
+  ramp so the look stays TUMP's.
+- Ambient from sampled level lighting, with per-area clamps on maximum darkness and brightness.
+- Specular from a painted HDR panorama whose hotspot sits in the sun's direction, so highlight
+  and diffuse agree. VISUAL-1.8 route for the lata: a matcap or a hard band keyed to the sun.
+- Friend-or-foe FRESNEL: a coloured rim on characters, stronger on UP-facing grazing angles and
+  the upper body, modulated so it is not distracting. VISUAL-1.2's taya-only rim on taggable
+  attackers is exactly this, in Defense blue, biased upward.
+- Depth adjustments: distant characters are brightened and their rim grows, clamped, so they
+  stand out as detail breaks down. TUMP's chibi cast at 8 to 12 m needs the same.
+- Skin: diffuse falloff shifted toward red in the dark side (a cheap subsurface look). TUMP's
+  shadow tint should be warmer on skin than on the environment.
+- Cast shadows only on first-person objects (own hands and weapon).
+- Environments cheap and quieter; "players are usually mentally blocking out the environment".
+
+### Splatoon 3, press image (dualshockers.com feature image, no HUD visible)
+- The world carries the information: team ink on the ground, a lock-on ring on the target, a
+  dashed aim arc for a charger. The top bar of player icons is recalled from the game, not
+  verified from a screenshot this session.
+
+### Tumbang preso as it is played (search results: Scribd "Bato Lata", Wikipedia "Traditional
+games in the Philippines", community posts)
+- A chalk circle holds the can; a straight toe line or "home base" is drawn about 2 to 2.5 m
+  away; tsinelas, a chalk circle and friends are the whole kit; also called "Manila Lata" in
+  Bisaya; some play at dusk or under a full moon. VISUAL-1.9: the circle and the line are the
+  game's signature marks and must be the most legible chalk on every map.
+
+### Valorant (Riot), Game UI Database gameData.php?id=1043, in-match frame viewed
+- Top centre: the round timer in a small plate, teammates' portraits (small chips with a thin
+  state underline) and the team score on the left, opponents' on the right. This is the match
+  bar's layout almost exactly.
+- Top right: kill feed as pictograms on team-colour plates (portrait, weapon icon, portrait).
+- Bottom centre: health number left, abilities as one thin row of icons with tiny keycap letters
+  under them and charge pips as dots, ammo right. Minimap top left.
+- DAMAGE DIRECTION: an arc of short ticks drawn near the crosshair on the side the hit came
+  from. For TUMP (VISUAL-1.1): the taya closing from outside your view can use the same arc near
+  the reticle instead of text, bounded to what the audio already tells you.
+- Viewmodel pushed to the lower right, leaving the centre and left clear (VISUAL-1.7).
+
+### Overwatch (Blizzard), Game UI Database gameData.php?id=1341, in-match frame viewed
+- Top centre: timer, a short objective word and a progress track for the payload.
+- Objective in the world: an icon with a small label and a SILHOUETTE outline of the payload
+  through walls, so it is always findable (VISUAL-1.10 and the can).
+- Bottom left: portrait, health number and segmented bar. Bottom centre: the ultimate as a
+  large ring with a percentage (the notched F ring). Bottom right: abilities with keycap labels
+  and ammo. Crosshair: a small circle.
+- Viewmodel hands low and split left and right, leaving the centre clear (VISUAL-1.7).
+
+### Not covered, stated plainly
+- Omega Strikers (Game UI Database search found nothing) and Fall Guys (the catalogued entry
+  holds menus and the level editor, no match HUD) were not viewed; points attributed to them are
+  general knowledge. Splatoon's top bar is recalled, not viewed. Audio references were not researched (VISUAL-1.15 audio should start with the
+  existing Asset_Sourcing and AudioDirector notes). No performance profiling references beyond
+  the earlier draft's Riot profiling article.

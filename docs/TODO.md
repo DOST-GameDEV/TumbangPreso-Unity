@@ -82,8 +82,10 @@ Human taste approval is separate and never blocks the next child.
 **Research and rules (owner, 2026-09-23: "i really dont wanna have to communicate by using
 text"):** every finding, source, plan and idea for this pass is recorded in
 [reports/visual-research-2026-09-23/findings.md](reports/visual-research-2026-09-23/findings.md)
-(Sepak U, Knockout City, TF2, Peacocke et al. 2018, Fagerholt and Lorentzon 2009, Hodent's
-heuristics, the Apex ping system). Standing rules from it: no sentences in ordinary play, a
+(Sepak U, Knockout City, Rocket League, Valorant, Overwatch, TF2, the VALORANT shading article,
+Riot's VFX principles, Peacocke et al. 2018, Fagerholt and Lorentzon 2009, Hodent's heuristics,
+the Apex ping system). The step-by-step build plan with files, traps and acceptance checks is
+[reports/visual-research-2026-09-23/implementation-plan.md](reports/visual-research-2026-09-23/implementation-plan.md). Standing rules from it: no sentences in ordinary play, a
 state is a shape, colour and place; world first, then screen edge, then HUD; one card and
 badge family for every in-match surface; timers as rings; the HUD recedes when effects peak.
 - [ ] **VISUAL-1.0 Research record kept current.** Append each new reference and decision to
@@ -106,7 +108,11 @@ Batch A, communication:
 - [ ] **VISUAL-1.6 Reticle as the personal-state hub.** A drawn reticle with charge ring,
   pektus tick, cooldown sweep and refusal state, replacing the "+" glyph and the charge
   and pektus sentences.
-- [ ] **VISUAL-1.4 Minimalist in-game HUD.** Centred top bar of four player chips around
+- [ ] **VISUAL-1.4 Minimalist in-game HUD.** First slice DONE at `4d85395c` (match bar, can
+  glyph, taya-coloured round pips, stamina arc, prompt pill, powers in the lower right, 28-unit
+  floor; before and after in `reports/visual-research-2026-09-23/look-1.4-v2`). Remaining: feed
+  pictograms, toast and hit mark, HUD-area measurement, owner-window captures (see the plan's
+  section 3). Original scope: centred top bar of four player chips around
   the clock with state and role badges, pips for rounds and one can glyph; a compact
   bottom-centre kit with corner keycaps and a contextual stamina arc; a pictogram feed;
   no sentences in ordinary play; one plate style; permanent HUD under about 8 percent of
