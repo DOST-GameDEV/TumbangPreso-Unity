@@ -174,11 +174,14 @@ namespace TumbangPreso.UI
             else _roleBadges[i].Show(HudBadge.Glyph.None, Color.clear, Color.clear);
             _crowns[i].Show(leader ? HudBadge.Glyph.Crown : HudBadge.Glyph.None, CourtPresentationPalette.Gold, Color.clear);
 
-            var faded = HudDraw.CardInk; faded.a = .28f;
-            if (actor.IsSwimming) _stateBadges[i].Show(HudBadge.Glyph.Wave, HudDraw.CardInk, Color.clear);
+            // ⚠️ HIGH CONTRAST TURNS THE CARD BLACK (`HudCard.FollowContrast`), so the badge ink
+            // turns white with it; dark ink on the contrast plate was invisible (look-1.6-v1).
+            var ink = Settings.SettingsStore.Current.HighContrastHud ? Color.white : HudDraw.CardInk;
+            var faded = ink; faded.a = .32f;
+            if (actor.IsSwimming) _stateBadges[i].Show(HudBadge.Glyph.Wave, ink, Color.clear);
             else if (actor.IsTripped || actor.IsStunned) _stateBadges[i].Show(HudBadge.Glyph.Star, OwnerUiTheme.Current.Orange, Color.clear);
             else if (defender) _stateBadges[i].Show(HudBadge.Glyph.None, Color.clear, Color.clear);
-            else if (actor.HoldingSlipper) _stateBadges[i].Show(HudBadge.Glyph.Slipper, HudDraw.CardInk, Color.clear);
+            else if (actor.HoldingSlipper) _stateBadges[i].Show(HudBadge.Glyph.Slipper, ink, Color.clear);
             else _stateBadges[i].Show(HudBadge.Glyph.Slipper, faded, Color.clear);
         }
 

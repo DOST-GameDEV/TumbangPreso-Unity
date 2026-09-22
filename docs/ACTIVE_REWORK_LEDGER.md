@@ -20,8 +20,9 @@ round-swap NextRole floor fault owned by 1.17). Second slice (feed pictograms, s
 mark, toast brush, HUD area 3.72/5.30 percent, owner window captures) in look-1.4-v3, 6/7 with
 the same NextRole red. Owner 2026-09-23: this session's scope is the in-game UI and HUD only;
 everything else (world, lighting, court, viewmodel, effects, maps) is handed to the next
-agent in a chat handoff. Next here: 1.18 icon weight, 1.6 reticle, 1.1 screen frame, 1.3
-marker rings, 1.5 HUD parts, 1.17, 1.16.
+agent in a chat handoff. Batch A HUD (1.18, 1.6, 1.1 frame, 1.3, 1.5 HUD parts, 1.17, 1.4
+accessibility captures) in look-batchA-v4, tests 8/8. Next here: 1.16 match end, then 1.5
+tint priority, then a fresh internal Windows build.
 
 
 ## Mandate and source

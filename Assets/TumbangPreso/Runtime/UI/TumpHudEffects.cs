@@ -8,6 +8,10 @@ namespace TumbangPreso.UI
     public sealed class TumpHudEffects : MonoBehaviour
     {
         private Image _danger, _caught;
+        private HudDangerFrame _frame;
+        private float _frameAlpha;
+        /// <summary>True while the screen-edge frame says "the taya can catch you" (VISUAL-1.1).</summary>
+        public bool DangerFrameVisible => _frame != null && _frame.enabled && _frameAlpha > .3f;
         private Material _dangerMaterial, _caughtMaterial;
         private float _flash, _coverage, _threatCue;
         private bool _wasThreatened;
@@ -15,6 +19,8 @@ namespace TumbangPreso.UI
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
+            _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
+            OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
         private static Image Effect(Transform root, string name, string shaderName, out Material material)
         {
@@ -37,11 +43,20 @@ namespace TumbangPreso.UI
             if (!threatened) _threatCue = 0;
             _wasThreatened = threatened;
             _threatCue = Mathf.Max(0, _threatCue - dt);
+            if (_frame != null)
+            {
+                // VISUAL-1.1: a state, held for as long as the state lasts, faded in over 0.12 s
+                // and out over 0.2 s. No pulse, so Reduce UI motion has nothing to remove, and
+                // Reduce visual effects keeps it: it is information, not a flash.
+                _frameAlpha = Mathf.MoveTowards(_frameAlpha, threatened ? 1 : 0, dt / (threatened ? .12f : .2f));
+                _frame.enabled = _frameAlpha > .001f;
+                var blue = UiTheme.Defense; blue.a = .72f * _frameAlpha; _frame.color = blue;
+            }
             _flash = Mathf.Max(0, _flash - dt);
             if (_danger != null)
             {
-                // A brief peripheral cue marks danger returning. The persistent
-                // action prompt carries the state without a continuous red screen.
+                // A brief peripheral cue marks danger returning. The held state is the
+                // thin Defense-blue frame above (VISUAL-1.1), not a continuous red screen.
                 float alpha = spectator || Settings.SettingsStore.Current.ReducedUiMotion ? 0 :
                     Mathf.Max(_threatCue / .36f * .20f, _flash / Hud.DownedFlashTime * .28f);
                 alpha *= Settings.SettingsStore.Current.EffectiveFlashIntensity;

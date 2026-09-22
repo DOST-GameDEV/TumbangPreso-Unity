@@ -77,6 +77,9 @@ namespace TumbangPreso.PlayTests
             {
                 if (!graphic.enabled || graphic.color.a <= .02f || graphic.canvasRenderer.GetInheritedAlpha() <= .02f) continue;
                 if (graphic is Text t && string.IsNullOrWhiteSpace(t.text)) continue;
+                // A badge with no glyph draws nothing; the danger frame is a 7-unit edge, not its rect.
+                if (graphic is UI.HudBadge badge && badge.Kind == UI.HudBadge.Glyph.None) continue;
+                if (graphic is UI.HudDangerFrame) continue;
                 Rect local;
                 if (graphic is Text text && text.cachedTextGenerator.vertexCount > 0)
                 {

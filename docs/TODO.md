@@ -92,7 +92,11 @@ badge family for every in-match surface; timers as rings; the HUD recedes when e
   the findings file in the same commit as the work it informs.
 
 Batch A, communication:
-- [ ] **VISUAL-1.1 Danger made visible.** A live court boundary built from
+- [ ] **VISUAL-1.1 Danger made visible.** HUD half DONE (look-batchA-v4): a thin
+  Defense-blue screen-edge frame (`HudDangerFrame`, 7 units, 72 percent, still, fades 0.12 s
+  in and 0.2 s out) while the local attacker is taggable, replacing the "You can be tagged"
+  sentence; `ExchangePresentationTests` asserts it. World half (chalk box, exit, escape
+  beat, audio layer) handed to the next agent. Original scope: a live court boundary built from
   `Balance.ConfinementRadius` (rest when the lata is down, armed when upright, one sweep
   on restore); a per-viewer vulnerability frame, low audio layer and nearest-exit
   highlight while taggable; a chalk puff and swish on escaping with the slipper. Done
@@ -102,13 +106,23 @@ Batch A, communication:
   restore ring on the lata filling with `Carrier.ChannelRatio` for everyone; a draining
   protection collar. Replay records both. Done when the taya can pick a target at 10 m
   and an attacker can time an escape from the ring alone.
-- [ ] **VISUAL-1.3 Timers on objects.** Own-slipper marker ring for fetch grace, penalty
+- [x] **VISUAL-1.3 Timers on objects.** DONE (look-batchA-v4 icon sheet): the recall ring
+  drains in gold through the fetch warning, turns solid Offense orange while the penalty
+  runs and drains in the owner's seat colour during a roof or lagoon return
+  (`SlipperRecallMark.Timer`); the two prompt sentences are gone and the recall mark's own
+  edge chevron was already the off-screen cue. Original scope: own-slipper marker ring for fetch grace, penalty
   and roof or lagoon return; an edge chevron when your slipper is off-screen. No timer
   text in ordinary play.
-- [ ] **VISUAL-1.6 Reticle as the personal-state hub.** A drawn reticle with charge ring,
+- [x] **VISUAL-1.6 Reticle as the personal-state hub.** DONE (look-batchA-v4
+  reticle-states): `HudReticle` draws a dot and ticks, a charge ring from the 0.35 floor, a
+  pektus arc on the curve's side, a thin cooldown sweep for throw, shove, lunge and tag, a
+  grey refused state while the can is protected and (1.2's HUD part) a blue reach tick for
+  the taya from `Combat.InCone`. Charge text and timed status lines are gone. Original scope: a drawn reticle with charge ring,
   pektus tick, cooldown sweep and refusal state, replacing the "+" glyph and the charge
   and pektus sentences.
-- [ ] **VISUAL-1.4 Minimalist in-game HUD.** First slice DONE at `4d85395c` (match bar, can
+- [x] **VISUAL-1.4 Minimalist in-game HUD.** DONE. HUD 120 plus High contrast captured at
+  1920x1080, 1600x680 and 960x540 (look-batchA-v4); chip badges now turn white on the
+  contrast plate. Area with the drawn reticle: Classic 4.15, Hero Strike 5.71 percent. First slice DONE at `4d85395c` (match bar, can
   glyph, taya-coloured round pips, stamina arc, prompt pill, powers in the lower right, 28-unit
   floor; before and after in `reports/visual-research-2026-09-23/look-1.4-v2`). Second slice
   DONE (look-1.4-v3): pictogram feed (portrait, Knock/Restore/Tag/Block glyph, portrait on dark
@@ -124,7 +138,11 @@ Batch A, communication:
   no sentences in ordinary play; one plate style; permanent HUD under about 8 percent of
   the frame at 1920x1080. Replaces the four score slabs and duplicate can text. Checked at
   1920x1080, 1280x720 and the owner's short wide window with every accessibility setting.
-- [ ] **VISUAL-1.5 One signal language.** Meaning, shape, colour and place table (V2)
+- [ ] **VISUAL-1.5 One signal language.** HUD parts DONE (look-batchA-v4): the off-screen can
+  marker speaks in glyphs (can standing or lying, a ring draining with protection or filling
+  with the restore) instead of a 20-unit caption; chips, feed and deck recede to 30 percent
+  during an accepted ultimate or a replay (`TumpMatchReadout.Recede`). Remaining: tint
+  priority and the remaining "lata down" copies. Original scope: meaning, shape, colour and place table (V2)
   applied to every existing indicator; one full-screen tint at a time; non-critical HUD
   recedes during ultimates and replay; the six "lata down" copies cut to the can, the bar
   glyph and one beat. Experiments kept only if clearer: peripheral speed lines, a brief
@@ -170,10 +188,19 @@ In-match UI revamp (owner addition, 2026-09-23), in batch A alongside 1.4:
   chips ranked with scores that count only after the final value is shown, per-player
   highlights from the existing recognition facts, and one obvious next action. Keep the
   existing flow, rematch and exit routes, ranked readouts and all three input devices.
-- [ ] **VISUAL-1.17 Mid-round and halftime reports.** The compact halftime popup and any
+- [x] **VISUAL-1.17 Mid-round and halftime reports.** DONE (look-batchA-v4 CourtBreak): the
+  popup moved to the upper third in the match bar's family (brush headline, next taya
+  ticket with the taya border and can badge, a draining return ring, standings as cream
+  chips with crown and your underline); every label is 28 units or more, so the NextRole
+  floor fault is fixed and `TumpNativeHudTests` is 8 of 8 with the exchange and icon tests.
+  Original scope: the compact halftime popup and any
   round-end summary share one card style with the match-end board: standings as chips,
   next taya as the one highlighted fact, the court visible behind. No full-screen board.
-- [ ] **VISUAL-1.18 In-match icon set.** One consistent family for ability tiles, state
+- [x] **VISUAL-1.18 In-match icon set.** DONE (look-batchA-v4 HudIconSheet): power icons in
+  the deck draw at one stroke weight with round ends and a black keel
+  (`TumpAbilitySymbol.HudStyle`), `HudBadge` holds every state and event glyph, and the can
+  glyph replaces `TumpSymbol` in the bar and the off-screen marker. The drawings (each
+  ability's job) are unchanged; the front end keeps its thin line. Original scope: one consistent family for ability tiles, state
   badges, the can glyph, role badges, feed pictograms and prompts: one stroke weight,
   one corner treatment, black outlines, readable at the smallest HUD size. Replace
   placeholder project-generated icons (AGENTS: swappable, not approved art); never

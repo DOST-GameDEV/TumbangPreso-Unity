@@ -48,6 +48,53 @@ namespace TumbangPreso.PlayTests
                 readout.ScorePopForShot(1, ScoreEvent.LataKnocked); readout.Hit(UiTheme.Offense);
                 yield return TumpUiCapture.Capture("CourtHud-moments-" + size.x + "x" + size.y, canvas, size.x, size.y, false, true, checkActionBounds: true);
             }
+            // VISUAL-1.4 accessibility frames: HUD 120 percent and High contrast, same moment.
+            var settings = Settings.SettingsStore.Current;
+            float scaleBefore = settings.HudScale; bool contrastBefore = settings.HighContrastHud;
+            try
+            {
+                settings.HudScale = 1.2f; settings.HighContrastHud = true; yield return null;
+                foreach (var size in new[] { new Vector2Int(1920, 1080), TumpUiCapture.OwnerWindow, new Vector2Int(960, 540) })
+                {
+                    readout.ScorePopForShot(1, ScoreEvent.LataKnocked); readout.Hit(UiTheme.Offense);
+                    yield return TumpUiCapture.Capture("CourtHud-moments-hud120-contrast-" + size.x + "x" + size.y, canvas, size.x, size.y, false, true, checkActionBounds: true);
+                }
+            }
+            finally { settings.HudScale = scaleBefore; settings.HighContrastHud = contrastBefore; }
+            yield return null;
+            // VISUAL-1.6 reticle states, one frame each: idle cooldown, half charge with left
+            // pektus, full charge with right pektus, refused (can protected), taya in reach.
+            try
+            {
+                var states = new (string name, float charge, float spin, float cooldown, bool refused, bool reach)[]
+                {
+                    ("cooldown", 0, 0, .6f, false, false), ("charge-left", .6f, -.55f, 0, false, false),
+                    ("charge-full-right", 1, .9f, 0, false, false), ("refused", .7f, 0, 0, true, false), ("taya-reach", 0, 0, 0, false, true),
+                };
+                foreach (var state in states)
+                {
+                    readout.ReticleForShot(state.charge, state.spin, state.cooldown, state.refused, state.reach); yield return null;
+                    yield return TumpUiCapture.Capture("CourtHud-reticle-" + state.name + "-1280x720", canvas, 1280, 720, false, true);
+                }
+            }
+            finally { readout.EndReticleShot(); }
+            // VISUAL-1.1: an armed attacker inside the box sees the Defense-blue frame, and no sentence.
+            var effects = Object.FindFirstObjectByType<TumpHudEffects>();
+            var can = GameServices.Round.Lata;
+            float protectedUntil = Time.unscaledTime + 3;
+            while (can.IsProtected && Time.unscaledTime < protectedUntil) yield return null;
+            if (!can.IsUpright) can.HostRestore();
+            local.Teleport(can.transform.position + new Vector3(0, 0, -2.5f)); yield return null;
+            float frameBy = Time.unscaledTime + 1;
+            while (!effects.DangerFrameVisible && Time.unscaledTime < frameBy) yield return null;
+            if (local.IsTaggable())
+            {
+                Assert.IsTrue(effects.DangerFrameVisible, "A taggable attacker must see the danger frame.");
+                Assert.AreNotEqual("You can be tagged", canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt").text);
+                foreach (var size in new[] { new Vector2Int(1920, 1080), TumpUiCapture.OwnerWindow })
+                    yield return TumpUiCapture.Capture("CourtHud-danger-" + size.x + "x" + size.y, canvas, size.x, size.y, false, true);
+            }
+            else Debug.Log("[HudDanger] staged attacker was not taggable (no slipper in hand); frame capture skipped.");
             bool before = local.IsDefender; local.IsDefender = true; yield return null;
             Assert.AreEqual("Defender", canvas.GetComponentsInChildren<Text>().First(t => t.name == "LocalRole").text);
             local.IsDefender = before;

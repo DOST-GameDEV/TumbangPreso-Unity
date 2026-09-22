@@ -166,6 +166,14 @@ yet compiled or captured, in the ASTRAReworks worktree after `2e537f1f`:
 - The pictogram feed reads in the 25 percent greyscale thumbnail because each event is a
   different outline (burst with a lying can, burst with a hand, a shield, a turning arrow).
 
+### 4c. Batch A HUD, observed (look-batchA-v4)
+- High contrast exposed one fault the default look hid: dark-ink state badges on a chip
+  that High contrast turns black. Badges now follow the card.
+- The drawn reticle's five states separate in greyscale by shape (ring, arc side, sweep,
+  grey, chevron), not only by colour (`reticle-states-grey.png`).
+- The halftime popup no longer covers the viewmodel; the court and the held slipper stay
+  readable under it at 1600x680.
+
 ## 5. Published analyses of what works (research added after the owner asked for it)
 
 ### Peacocke, Teather, Carette, MacKenzie, McArthur (2018), empirical

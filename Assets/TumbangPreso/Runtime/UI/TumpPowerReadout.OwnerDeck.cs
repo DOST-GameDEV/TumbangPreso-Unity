@@ -39,7 +39,10 @@ namespace TumbangPreso.UI
                 _ownerDials[i].raycastTarget = false; OwnerUiLayout.Place(_ownerDials[i].rectTransform, x, y, size, size);
                 _symbols[i] = OwnerUiLayout.Rect(_ownerDials[i].transform, "PowerIcon").gameObject.AddComponent<TumpAbilitySymbol>();
                 OwnerUiLayout.Fill(_symbols[i].rectTransform);
-                float inset = size * .27f;
+                // VISUAL-1.18: the match weight (see `TumpAbilitySymbol.HudStyle`), a little
+                // larger inside the disc because the keel now carries the edge.
+                _symbols[i].HudStyle = true;
+                float inset = size * .24f;
                 _symbols[i].rectTransform.offsetMin = new Vector2(inset, inset); _symbols[i].rectTransform.offsetMax = new Vector2(-inset, -inset);
                 _symbols[i].raycastTarget = false;
                 _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", 28, OwnerUiLayout.TypeRole.Display);

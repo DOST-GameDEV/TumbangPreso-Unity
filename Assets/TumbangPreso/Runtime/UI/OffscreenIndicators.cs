@@ -49,6 +49,9 @@ namespace TumbangPreso.UI
         private RectTransform _canArrow, _direction;
         private Text _markerState;
         private TumpSymbol _canSymbol;
+        // VISUAL-1.5: the can marker speaks in the HUD's glyph family, not in words.
+        private HudBadge _canBadge;
+        private HudRing _canClock;
         public bool CanMarkerVisible => _canArrow != null && _canArrow.gameObject.activeInHierarchy;
         public string CanMarkerState => _markerState != null ? _markerState.text : "";
 
@@ -80,11 +83,24 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(_canSymbol.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(28, 32));
             var edge = _canSymbol.gameObject.AddComponent<Outline>();
             edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(2, -2);
+            // ⚠️ VISUAL-1.5: "CAN PROTECTED", "DOWN" and "RESETTING" were a 20-unit caption
+            // under the marker, below the reading floor and the fourth copy of the can's state.
+            // The marker now wears the match bar's glyphs: the can standing or lying down, with
+            // a ring that drains with the protection or fills with the taya's restore. The
+            // caption is kept, never drawn, as the state record `CanMarkerState` reads.
+            _canSymbol.enabled = false;
+            _canClock = TumpUiFactory.Rect(rect, "CanClock").gameObject.AddComponent<HudRing>();
+            TumpUiFactory.Anchor(_canClock.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(46, 46));
+            _canClock.Thickness = 4; _canClock.Track = Color.clear; _canClock.Fill = 0; _canClock.raycastTarget = false;
+            _canBadge = TumpUiFactory.Rect(rect, "CanBadge").gameObject.AddComponent<HudBadge>();
+            TumpUiFactory.Anchor(_canBadge.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(34, 34));
+            _canBadge.Detail = HudDraw.Plate; _canBadge.Backing = HudDraw.Plate; _canBadge.raycastTarget = false;
             _markerState = OwnerUiLayout.Text(rect, "ObjectiveState", "", 20, OwnerUiLayout.TypeRole.Reading);
             _markerState.alignment = TextAnchor.MiddleCenter; _markerState.raycastTarget = false;
             TumpUiFactory.Anchor(_markerState.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 43), new Vector2(144, 28));
             var textEdge = _markerState.gameObject.AddComponent<Outline>();
             textEdge.effectColor = UiTheme.InGameOutline; textEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            _markerState.enabled = false;
             rect.gameObject.SetActive(false); return rect;
         }
         private void OnDisable() { HideMarker();if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
@@ -155,6 +171,14 @@ namespace TumbangPreso.UI
             colour = lata != null && !lata.IsUpright ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
             _direction.GetComponent<TumpTargetPointer>().color = colour;
             if (_markerState != null) { _markerState.text = state; _markerState.color = colour; }
+            if (_canBadge != null)
+            {
+                bool down = lata != null && !lata.IsUpright;
+                _canBadge.Show(down ? HudBadge.Glyph.CanDown : HudBadge.Glyph.Can, down ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Paper, HudDraw.Plate);
+                float clock = restoring ? taya.GetComponent<Carrier>().ChannelRatio
+                    : lata != null && lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Core.Balance.ThrowRestoreCooldown) : 0;
+                _canClock.Set(clock); _canClock.Paint(restoring ? UiTheme.Defense : CourtPresentationPalette.Paper, Color.clear);
+            }
             if (_canSymbol != null)
             {
                 _canSymbol.color = colour;

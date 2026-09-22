@@ -241,7 +241,45 @@ namespace TumbangPreso.UI
             _ring.SetVerticesDirty();
 
             PaintCap(mine.IsGrabbableIgnoringReach(local));
+            PaintClock(local, mine);
         }
+
+        private float _returnTotal;
+
+        /// <summary>VISUAL-1.3: the fetch warning, the penalty and a roof or lagoon return,
+        /// drawn on the ring (`SlipperRecallMark.Timer` has the design).</summary>
+        private void PaintClock(CharacterMotor local, Slipper mine)
+        {
+            float returning = 0;
+            if (RooftopRecovery.Instance != null) returning = Mathf.Max(returning, RooftopRecovery.Instance.SecondsUntilReturn(mine));
+            if (LagoonWater.Instance != null) returning = Mathf.Max(returning, LagoonWater.Instance.SecondsUntilReturn(mine));
+            float timer = -1; Color tint = Color.white;
+            if (returning > 0)
+            {
+                // The return clock's full length is not published, so the first reading of an
+                // episode is its length: the ring starts full and drains to the return.
+                _returnTotal = Mathf.Max(_returnTotal, returning);
+                timer = returning / Mathf.Max(.01f, _returnTotal); tint = PlayerIdentity.Colour(local.PlayerSlot);
+            }
+            else
+            {
+                _returnTotal = 0;
+                var round = GameServices.Round;
+                float idle = round != null ? round.AttackerIdleSeconds(local.PlayerSlot) : 0;
+                if (Core.TournamentRules.IsSlipperPenalty(idle)) { timer = 1; tint = UiTheme.Offense; }
+                else if (Core.TournamentRules.IsSlipperWarning(idle))
+                {
+                    float span = Core.Balance.SlipperUnretrievedGracePeriod - Core.Balance.SlipperUnretrievedWarningTime;
+                    timer = (Core.Balance.SlipperUnretrievedGracePeriod - idle) / Mathf.Max(.01f, span);
+                    tint = CourtPresentationPalette.Gold;
+                }
+            }
+            _ring.Timer = timer; _ring.TimerColour = tint;
+        }
+
+        /// <summary>For tests: the ring's clock (below 0 when none) and its colour.</summary>
+        public float ClockFill => _ring != null ? _ring.Timer : -1;
+        public Color ClockColour => _ring != null ? _ring.TimerColour : Color.clear;
 
         /// <summary>
         /// Lifts a mark clamped to the bottom edge above the ability deck.

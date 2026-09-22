@@ -46,6 +46,21 @@ namespace TumbangPreso.UI
         /// </summary>
         public float? Bearing;
 
+        /// <summary>
+        /// The clock on the shoe (TODO VISUAL-1.3): 0..1 of the time left, or below 0 for none.
+        ///
+        /// ⚠️⚠️ TIMERS LIVE ON THE THING THEY TIME. "Fetch your slipper · 2.4s", "Fetch your
+        /// slipper · -5 / second" and "Slipper returning · 2.0s" were sentences under the prompt,
+        /// about an object somewhere else on screen. The ring that already says WHERE the shoe is
+        /// now also says HOW LONG: it drains clockwise from twelve in gold through the fetch
+        /// warning, turns solid Offense orange once the penalty is running, and drains in the
+        /// owner's seat colour while a roof or lagoon return brings it back
+        /// (`NATIONALS_POLISH.md` V2: seat colours carry identity, and a returning shoe is
+        /// yours; the role orange carries the rule that is costing you points).
+        /// </summary>
+        public float Timer = -1;
+        public Color TimerColour = Color.white;
+
         private const int Segments = 44;
         private const float ChevronSize = 22.0f;
         private const float ChevronGap = 11.0f;
@@ -79,7 +94,15 @@ namespace TumbangPreso.UI
             // The ink pass is one unit proud of the bright one on both edges, which is the
             // 6 px glyph outline the arrows carry expressed as a radius rather than as a shadow.
             Ring(vh, centre, radius + 3.0f, radius - thickness - 3.0f, theme.DeepOlive);
-            Ring(vh, centre, radius, radius - thickness, face);
+            if (Timer >= 0)
+            {
+                // A quiet cream track under a thicker draining arc, so the full ring still reads
+                // as "your shoe" and the arc reads as the clock.
+                var track = face; track.a = .35f;
+                Ring(vh, centre, radius, radius - thickness, track);
+                HudDraw.Arc(vh, centre, radius + 2.0f, radius - thickness - 2.0f, 90, 360 * Mathf.Clamp01(Timer), TimerColour, Segments);
+            }
+            else Ring(vh, centre, radius, radius - thickness, face);
 
             if (!Bearing.HasValue) return;
 

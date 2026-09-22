@@ -13,7 +13,10 @@ namespace TumbangPreso.UI
         public Canvas Canvas { get; private set; }
         private RectTransform _root, _scoreRoot, _clockRoot, _canRoot, _personalRoot, _promptRoot;
         private Text _clock, _round, _canState, _canHint, _role, _stock, _prompt, _context, _toast, _countdown, _spectator, _sandbox;
-        private Text _crosshair, _hit, _staminaCaption;
+        // VISUAL-1.6: a Graphic, so the court HUD's drawn `HudReticle` and the older
+        // builders' "+" Text share one enable and placement path.
+        private Graphic _crosshair;
+        private Text _hit, _staminaCaption;
         private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
@@ -223,6 +226,7 @@ namespace TumbangPreso.UI
             SizePromptPlate();
             PaintHitMark();
             PaintScorePops();
+            PaintRecede();
             if(_crosshair==null || !_crosshair.enabled)return;
             var anchor=new Vector2(.5f,.5f);
             var view=UnityEngine.Camera.main;
@@ -232,6 +236,7 @@ namespace TumbangPreso.UI
                 if(point.z>0)anchor=view.rect.min+Vector2.Scale(new Vector2(point.x,point.y),view.rect.size);
             }
             _crosshair.rectTransform.anchorMin=_crosshair.rectTransform.anchorMax=anchor;
+            PaintReticle();
         }
         private void Scores(CharacterMotor local, bool spectating)
         {
@@ -338,6 +343,12 @@ namespace TumbangPreso.UI
             foreach (var row in _statusRows)
             {
                 if (row.Label == "VULNERABLE" || index >= _status.Length) continue;
+                // ⚠️ VISUAL-1.6: TIMED ROWS ARE SHAPES NOW, NOT "· 1.0s" LINES. Verb cooldowns
+                // are the reticle's sweep, power timers are the deck's rings, fatigue is the
+                // stamina arc turning orange and a stun is the caught screen edge thawing with
+                // the time left. Only the untimed power states (Overcharge, Ignition,
+                // Witchfire) still name themselves, because nothing else draws them.
+                if (_reticle != null && row.Timed) continue;
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }
@@ -387,14 +398,22 @@ namespace TumbangPreso.UI
                     : (toggle ? "Press " : "Hold ") + key + " at the can to reset";
                 if (carrier != null && carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
+            // ⚠️ VISUAL-1.6: CHARGING SAYS NOTHING HERE. The charge ring, the pektus tick and
+            // the grey refused state are on the reticle (`HudReticle`), where the eye already
+            // is; "Release to throw", "Pektus left · 34%" and the bar under them asked the
+            // player to look away from the aim point at the moment it mattered most. The
+            // older builders without a drawn reticle keep the words.
             if (carrier != null && carrier.IsCharging)
             {
+                if (_reticle != null) return;
                 float spin = carrier.CurrentPektusSpin;
                 _prompt.text = round.Lata != null && round.Lata.IsProtected ? "Can protected" : "Release to throw";
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
-            if (local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
+            // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
+            // The older builders, which have no frame, keep the words.
+            if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
             else _prompt.color = OwnerUiTheme.Current.Pale;
             if (!local.IsDefender && !local.HoldingSlipper)
             {
@@ -413,7 +432,10 @@ namespace TumbangPreso.UI
                     if (slipper.OwnerSlot == local.PlayerSlot && LagoonWater.Instance != null)
                         returning = Mathf.Max(returning, LagoonWater.Instance.SecondsUntilReturn(slipper));
                 }
-                if (returning > 0) _context.text = $"Slipper returning · {returning:0.0}s";
+                // ⚠️ VISUAL-1.3: THESE CLOCKS ARE ON THE SHOE'S OWN RECALL RING NOW
+                // (`SlipperRecallMark.Timer`); the sentences stay only for the older builders.
+                if (_reticle != null) { }
+                else if (returning > 0) _context.text = $"Slipper returning · {returning:0.0}s";
                 else
                 {
                     float idle = round.AttackerIdleSeconds(local.PlayerSlot);

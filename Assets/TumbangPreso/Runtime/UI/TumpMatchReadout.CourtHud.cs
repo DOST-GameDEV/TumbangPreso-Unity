@@ -28,8 +28,11 @@ namespace TumbangPreso.UI
             BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
-            _crosshair = Ink(_root, "Reticle", "+", 34, false);
-            Pin(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
+            // VISUAL-1.6: a drawn reticle that carries charge, pektus, cooldown, refusal and
+            // (for the taya) reach, instead of a "+" in the display face.
+            _reticle = OwnerUiLayout.Rect(_root, "Reticle").gameObject.AddComponent<HudReticle>();
+            _reticle.color = CourtPresentationPalette.Paper; _reticle.raycastTarget = false; _crosshair = _reticle;
+            Pin(_reticle.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(96, 96));
             // VISUAL-1.4: a drawn hit mark (four ticks on black keels) instead of a "x" in the
             // display face. Same name, so the reading layout still scales it.
             _hitMark = OwnerUiLayout.Rect(_root, "HitConfirmation").gameObject.AddComponent<HudBadge>();

@@ -90,14 +90,22 @@ namespace TumbangPreso.PlayTests
             yield return null;
             Assert.IsTrue(marker.CanMarkerVisible);
             Assert.AreEqual("DOWN", marker.CanMarkerState);
-            Assert.AreNotEqual("You can be tagged", Label("ActionPrompt").text, "A down can does not permit tags.");
+            var effects = Object.FindFirstObjectByType<TumpHudEffects>();
+            // VISUAL-1.1: danger is the screen-edge frame now, not the "You can be tagged" sentence.
+            // The frame fades out over 0.2 s by design, so allow the fade before asserting.
+            float clearBy = Time.unscaledTime + .4f;
+            while (effects.DangerFrameVisible && Time.unscaledTime < clearBy) yield return null;
+            Assert.IsFalse(effects.DangerFrameVisible, "A down can does not permit tags.");
             yield return GameplayShots.Render(Camera.main, mode + "-can-down", true, outDir: "Logs/exchange-presentation-v2");
 
             lata.HostRestore(); yield return null;
             Assert.AreEqual("P1  RESTORED LATA", feed.Entry(0));
             Assert.IsFalse(Label("MatchToast").enabled, "Restore attribution belongs to the side feed.");
             Assert.AreEqual("CAN PROTECTED", marker.CanMarkerState);
-            Assert.AreEqual("You can be tagged", Label("ActionPrompt").text,
+            float frameBy = Time.unscaledTime + .5f;
+            while (!effects.DangerFrameVisible && Time.unscaledTime < frameBy) yield return null;
+            Assert.AreNotEqual("You can be tagged", Label("ActionPrompt").text, "The sentence is gone from ordinary play.");
+            Assert.IsTrue(effects.DangerFrameVisible,
                 "Can protection does not protect an armed attacker inside the box.");
             yield return GameplayShots.Render(Camera.main, mode + "-restored-danger", true, outDir: "Logs/exchange-presentation-v2");
             int count = feed.Count;

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:54:17Z" duration="63.1820729">
+  <test-suite type="TestSuite" id="1698" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:54:17Z" duration="63.182073" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1692" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:54:17Z" duration="63.150337" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19724" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1693" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:54:17Z" duration="63.133901" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1694" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="527" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:54:17Z" duration="63.119426" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1165" name="ExchangePresentationTests" fullname="TumbangPreso.PlayTests.ExchangePresentationTests" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:53:31Z" duration="16.418530" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1166" name="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="ClassicExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="1345948984" result="Passed" start-time="2026-09-22 18:53:14Z" end-time="2026-09-22 18:53:23Z" duration="8.675841" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v2/Classic-can-down.png
+[Play] wrote Logs/exchange-presentation-v2/Classic-restored-danger.png
+]]></output>
+            </test-case>
+            <test-case id="1168" name="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" methodname="ForceEquipAndThrowCannotBorrowAnotherPlayersSlipper" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="556202909" result="Passed" start-time="2026-09-22 18:53:23Z" end-time="2026-09-22 18:53:25Z" duration="2.172038" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1167" name="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" fullname="TumbangPreso.PlayTests.ExchangePresentationTests.HeroExchangeUsesTruthfulStateAndPersonalConfirmation" methodname="HeroExchangeUsesTruthfulStateAndPersonalConfirmation" classname="TumbangPreso.PlayTests.ExchangePresentationTests" runstate="Runnable" seed="1893933587" result="Passed" start-time="2026-09-22 18:53:25Z" end-time="2026-09-22 18:53:31Z" duration="5.545090" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/exchange-presentation-v2/HeroStrike-can-down.png
+[Play] wrote Logs/exchange-presentation-v2/HeroStrike-restored-danger.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1169" name="FamiliarReadoutTests" fullname="TumbangPreso.PlayTests.FamiliarReadoutTests" classname="TumbangPreso.PlayTests.FamiliarReadoutTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-22 18:53:31Z" end-time="2026-09-22 18:53:34Z" duration="2.788771" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1170" name="PossessionNamesTheControlledFamiliarAndTheRealReturnAction" fullname="TumbangPreso.PlayTests.FamiliarReadoutTests.PossessionNamesTheControlledFamiliarAndTheRealReturnAction" methodname="PossessionNamesTheControlledFamiliarAndTheRealReturnAction" classname="TumbangPreso.PlayTests.FamiliarReadoutTests" runstate="Runnable" seed="2117118827" result="Passed" start-time="2026-09-22 18:53:31Z" end-time="2026-09-22 18:53:34Z" duration="2.784457" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/familiar-readout/kuro-controls.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1196" name="HudIconSheetShots" fullname="TumbangPreso.PlayTests.HudIconSheetShots" classname="TumbangPreso.PlayTests.HudIconSheetShots" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-22 18:53:34Z" end-time="2026-09-22 18:53:34Z" duration="0.798833" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1197" name="EveryInMatchIconDrawsInOneFamily" fullname="TumbangPreso.PlayTests.HudIconSheetShots.EveryInMatchIconDrawsInOneFamily" methodname="EveryInMatchIconDrawsInOneFamily" classname="TumbangPreso.PlayTests.HudIconSheetShots" runstate="Runnable" seed="977746906" result="Passed" start-time="2026-09-22 18:53:34Z" end-time="2026-09-22 18:53:34Z" duration="0.795659" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] HudIconSheet-1920x1080/PowerZone44: vertices=420, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZone22: vertices=420, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerWall44: vertices=540, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerWall22: vertices=540, cull=False, alpha=1, depth=4, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDash44: vertices=420, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDash22: vertices=420, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerShield44: vertices=420, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerShield22: vertices=420, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerBurst44: vertices=540, cull=False, alpha=1, depth=9, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerBurst22: vertices=540, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerProjectile44: vertices=300, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerProjectile22: vertices=300, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhase44: vertices=3420, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhase22: vertices=3420, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSlam44: vertices=420, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSlam22: vertices=420, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerEmpower44: vertices=840, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerEmpower22: vertices=840, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteStomp44: vertices=420, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteStomp22: vertices=420, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteShield44: vertices=420, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteShield22: vertices=420, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteFissure44: vertices=600, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerDanteFissure22: vertices=600, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanRush44: vertices=420, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanRush22: vertices=420, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanIgnite44: vertices=540, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanIgnite22: vertices=540, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanSupernova44: vertices=1920, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerSeanSupernova22: vertices=1920, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaFrostSheet44: vertices=420, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaFrostSheet22: vertices=420, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaBarricade44: vertices=540, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaBarricade22: vertices=540, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaNova44: vertices=1620, cull=False, alpha=1, depth=35, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerCheskaNova22: vertices=1620, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackSprint44: vertices=660, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackSprint22: vertices=660, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackOvercharge44: vertices=840, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackOvercharge22: vertices=840, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackThunderstrike44: vertices=960, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerZackThunderstrike22: vertices=960, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuPhase44: vertices=3420, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuPhase22: vertices=3420, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuAstralPet44: vertices=540, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuAstralPet22: vertices=540, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuSeanceVoid44: vertices=3240, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerNemuSeanceVoid22: vertices=3240, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterHexSigil44: vertices=1740, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterHexSigil22: vertices=1740, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterShadowBlink44: vertices=360, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterShadowBlink22: vertices=360, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterEclipse44: vertices=1980, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterEclipse22: vertices=1980, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterWitchfire44: vertices=540, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerPhaisterWitchfire22: vertices=540, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiCrosscurrent44: vertices=420, cull=False, alpha=1, depth=57, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiCrosscurrent22: vertices=420, cull=False, alpha=1, depth=58, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiMirrorwake44: vertices=3240, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiMirrorwake22: vertices=3240, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiBreakwater44: vertices=600, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] HudIconSheet-1920x1080/PowerRafiBreakwater22: vertices=600, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] HudIconSheet-1920x1080 cream source=252,211,159 pixel=85,71,57; isolated UI camera, no ColourGrade.
+[TumpGeometry] HudIconSheet-960x540/PowerZone44: vertices=420, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZone22: vertices=420, cull=False, alpha=1, depth=2, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerWall44: vertices=540, cull=False, alpha=1, depth=3, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerWall22: vertices=540, cull=False, alpha=1, depth=4, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDash44: vertices=420, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDash22: vertices=420, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerShield44: vertices=420, cull=False, alpha=1, depth=7, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerShield22: vertices=420, cull=False, alpha=1, depth=8, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerBurst44: vertices=540, cull=False, alpha=1, depth=9, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerBurst22: vertices=540, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerProjectile44: vertices=300, cull=False, alpha=1, depth=11, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerProjectile22: vertices=300, cull=False, alpha=1, depth=12, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhase44: vertices=3420, cull=False, alpha=1, depth=13, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhase22: vertices=3420, cull=False, alpha=1, depth=14, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSlam44: vertices=420, cull=False, alpha=1, depth=15, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSlam22: vertices=420, cull=False, alpha=1, depth=16, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerEmpower44: vertices=840, cull=False, alpha=1, depth=17, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerEmpower22: vertices=840, cull=False, alpha=1, depth=18, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteStomp44: vertices=420, cull=False, alpha=1, depth=19, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteStomp22: vertices=420, cull=False, alpha=1, depth=20, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteShield44: vertices=420, cull=False, alpha=1, depth=21, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteShield22: vertices=420, cull=False, alpha=1, depth=22, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteFissure44: vertices=600, cull=False, alpha=1, depth=23, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerDanteFissure22: vertices=600, cull=False, alpha=1, depth=24, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanRush44: vertices=420, cull=False, alpha=1, depth=25, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanRush22: vertices=420, cull=False, alpha=1, depth=26, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanIgnite44: vertices=540, cull=False, alpha=1, depth=27, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanIgnite22: vertices=540, cull=False, alpha=1, depth=28, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanSupernova44: vertices=1920, cull=False, alpha=1, depth=29, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerSeanSupernova22: vertices=1920, cull=False, alpha=1, depth=30, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaFrostSheet44: vertices=420, cull=False, alpha=1, depth=31, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaFrostSheet22: vertices=420, cull=False, alpha=1, depth=32, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaBarricade44: vertices=540, cull=False, alpha=1, depth=33, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaBarricade22: vertices=540, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaNova44: vertices=1620, cull=False, alpha=1, depth=35, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerCheskaNova22: vertices=1620, cull=False, alpha=1, depth=36, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackSprint44: vertices=660, cull=False, alpha=1, depth=37, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackSprint22: vertices=660, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackOvercharge44: vertices=840, cull=False, alpha=1, depth=39, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackOvercharge22: vertices=840, cull=False, alpha=1, depth=40, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackThunderstrike44: vertices=960, cull=False, alpha=1, depth=41, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerZackThunderstrike22: vertices=960, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuPhase44: vertices=3420, cull=False, alpha=1, depth=43, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuPhase22: vertices=3420, cull=False, alpha=1, depth=44, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuAstralPet44: vertices=540, cull=False, alpha=1, depth=45, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuAstralPet22: vertices=540, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuSeanceVoid44: vertices=3240, cull=False, alpha=1, depth=47, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerNemuSeanceVoid22: vertices=3240, cull=False, alpha=1, depth=48, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterHexSigil44: vertices=1740, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterHexSigil22: vertices=1740, cull=False, alpha=1, depth=50, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterShadowBlink44: vertices=360, cull=False, alpha=1, depth=51, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterShadowBlink22: vertices=360, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterEclipse44: vertices=1980, cull=False, alpha=1, depth=53, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterEclipse22: vertices=1980, cull=False, alpha=1, depth=54, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterWitchfire44: vertices=540, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerPhaisterWitchfire22: vertices=540, cull=False, alpha=1, depth=56, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiCrosscurrent44: vertices=420, cull=False, alpha=1, depth=57, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiCrosscurrent22: vertices=420, cull=False, alpha=1, depth=58, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiMirrorwake44: vertices=3240, cull=False, alpha=1, depth=59, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiMirrorwake22: vertices=3240, cull=False, alpha=1, depth=60, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiBreakwater44: vertices=600, cull=False, alpha=1, depth=61, material=1
+[TumpGeometry] HudIconSheet-960x540/PowerRafiBreakwater22: vertices=600, cull=False, alpha=1, depth=62, material=1
+[TumpUiCapture] HudIconSheet-960x540 cream source=252,211,159 pixel=85,71,57; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1518" name="ScoreFeedbackTests" fullname="TumbangPreso.PlayTests.ScoreFeedbackTests" classname="TumbangPreso.PlayTests.ScoreFeedbackTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-22 18:53:34Z" end-time="2026-09-22 18:53:38Z" duration="4.073168" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1519" name="AcceptedScoreEmphasisFollowsTheSeatThroughRankingAndClearsWhenHidden" fullname="TumbangPreso.PlayTests.ScoreFeedbackTests.AcceptedScoreEmphasisFollowsTheSeatThroughRankingAndClearsWhenHidden" methodname="AcceptedScoreEmphasisFollowsTheSeatThroughRankingAndClearsWhenHidden" classname="TumbangPreso.PlayTests.ScoreFeedbackTests" runstate="Runnable" seed="1434278206" result="Passed" start-time="2026-09-22 18:53:34Z" end-time="2026-09-22 18:53:38Z" duration="4.071297" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1618" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-22 18:53:38Z" end-time="2026-09-22 18:54:17Z" duration="38.903805" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1619" name="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ClassicHudReflectsTheRealRoundRoleAndRecoveryState" methodname="ClassicHudReflectsTheRealRoundRoleAndRecoveryState" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1630668744" result="Passed" start-time="2026-09-22 18:53:38Z" end-time="2026-09-22 18:54:00Z" duration="21.959111" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] CourtHud-Classic-960x540 cream source=252,211,159 pixel=218,213,200; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1280x720 cream source=252,211,159 pixel=218,213,200; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1366x768 cream source=252,211,159 pixel=218,213,200; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1920x1080 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1920x1200 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1280x960 cream source=252,211,159 pixel=225,216,194; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-2560x1440 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3440x1440 cream source=252,211,159 pixel=168,186,204; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3840x1080 cream source=252,211,159 pixel=112,97,89; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-3840x2160 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-Classic-1600x680 cream source=252,211,159 pixel=39,43,47; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-area-1920x1080 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[HudArea] Classic ordinary play: 4.15% of 1920x1080; RoundClock/ClockFace=0.81%, MatchScores/ScoreRow0=0.61%, MatchScores/ScoreRow1=0.61%, MatchScores/ScoreRow2=0.61%, MatchScores/ScoreRow3=0.61%, OwnerMatchCanvas/Reticle=0.48%, RoundClock/RoundTrack=0.32%, RoundClock/RoundPips=0.10%, ScoreRow0/LeaderCrown=0.01%
+[TumpUiCapture] CourtHud-moments-1920x1080 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-1280x720 cream source=252,211,159 pixel=217,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-1600x680 cream source=252,211,159 pixel=38,43,47; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-960x540 cream source=252,211,159 pixel=216,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-1920x1080 cream source=252,211,159 pixel=216,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-1600x680 cream source=252,211,159 pixel=38,43,47; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-moments-hud120-contrast-960x540 cream source=252,211,159 pixel=216,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-cooldown-1280x720 cream source=252,211,159 pixel=216,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-charge-left-1280x720 cream source=252,211,159 pixel=216,213,201; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-charge-full-right-1280x720 cream source=252,211,159 pixel=216,213,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-refused-1280x720 cream source=252,211,159 pixel=216,213,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-reticle-taya-reach-1280x720 cream source=252,211,159 pixel=216,213,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-danger-1920x1080 cream source=252,211,159 pixel=215,207,197; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-danger-1600x680 cream source=252,211,159 pixel=183,195,205; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-recovery cream source=252,211,159 pixel=56,15,20; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-960x540 cream source=252,211,159 pixel=221,214,198; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x720 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1366x768 cream source=252,211,159 pixel=215,212,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1080 cream source=252,211,159 pixel=215,212,202; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1920x1200 cream source=252,211,159 pixel=210,205,193; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1280x960 cream source=252,211,159 pixel=231,217,189; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-2560x1440 cream source=252,211,159 pixel=215,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3440x1440 cream source=252,211,159 pixel=168,187,204; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x1080 cream source=252,211,159 pixel=121,89,57; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-3840x2160 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtBreak-1600x680 cream source=252,211,159 pixel=183,195,205; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1620" name="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" methodname="HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1249977870" result="Passed" start-time="2026-09-22 18:54:00Z" end-time="2026-09-22 18:54:17Z" duration="16.941416" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] OwnerHud-Hero-v1/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] OwnerHud-Hero-v1/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] OwnerHud-Hero-v1/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] OwnerHud-Hero-v1 cream source=252,211,159 pixel=213,212,204; isolated UI camera, no ColourGrade.
+[HudArea] Hero Strike ordinary play: 5.71% of 1920x1080; RoundClock/ClockFace=0.81%, MatchScores/ScoreRow0=0.61%, MatchScores/ScoreRow1=0.61%, MatchScores/ScoreRow2=0.61%, MatchScores/ScoreRow3=0.61%, PowerSeals/Power2=0.58%, OwnerMatchCanvas/Reticle=0.48%, PowerSeals/Power0=0.39%, PowerSeals/Power1=0.39%, RoundClock/RoundTrack=0.32%, PowerSeals/PowerInfoBinding=0.19%, RoundClock/RoundPips=0.10%
+[TumpGeometry] CourtHud-held-skills-960x540/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-960x540/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-960x540 cream source=252,211,159 pixel=213,212,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x720/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1280x720/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x720 cream source=252,211,159 pixel=212,212,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1366x768/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1366x768/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1366x768 cream source=252,211,159 pixel=212,212,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1080 cream source=252,211,159 pixel=212,211,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1920x1200/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1920x1200 cream source=252,211,159 pixel=223,215,197; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1280x960/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1280x960/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1280x960 cream source=252,211,159 pixel=231,217,188; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-2560x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-2560x1440 cream source=252,211,159 pixel=212,211,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-3440x1440/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-3440x1440 cream source=252,211,159 pixel=169,187,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-3840x1080/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x1080 cream source=252,211,159 pixel=112,97,89; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-3840x2160/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-3840x2160 cream source=252,211,159 pixel=212,211,204; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtHud-held-skills-1600x680/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/DetailIcon0: vertices=44, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/DetailIcon1: vertices=56, cull=False, alpha=1, depth=127, material=1
+[TumpGeometry] CourtHud-held-skills-1600x680/DetailIcon2: vertices=64, cull=False, alpha=1, depth=132, material=1
+[TumpUiCapture] CourtHud-held-skills-1600x680 cream source=252,211,159 pixel=39,43,47; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-960x540 cream source=252,211,159 pixel=214,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1280x720 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1366x768 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1920x1080 cream source=252,211,159 pixel=213,212,204; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1920x1200 cream source=252,211,159 pixel=223,215,196; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1280x960 cream source=252,211,159 pixel=233,218,186; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-2560x1440 cream source=252,211,159 pixel=213,212,204; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-3440x1440 cream source=252,211,159 pixel=170,188,205; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-3840x1080 cream source=252,211,159 pixel=112,97,89; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-3840x2160 cream source=252,211,159 pixel=213,212,203; isolated UI camera, no ColourGrade.
+[TumpUiCapture] CourtHud-spectator-1600x680 cream source=252,211,159 pixel=39,43,47; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -81,6 +81,15 @@ The working plan for TODO VISUAL-1. Design and reasoning: `docs/NATIONALS_POLISH
   1600x680 window and `HudShare` measures the HUD on a 10-unit grid. Classic 3.72 percent, Hero
   Strike 5.30 percent at 1920x1080. 6 of 7 cases pass; the red is still 1.17's NextRole.
 
+- Batch A HUD (look-batchA-v4): `TumpAbilitySymbol.HudStyle` (1.18), `HudReticle` and
+  `TumpMatchReadout.Reticle` (1.6, with 1.2's reach tick), `HudDangerFrame` in
+  `TumpHudEffects` (1.1 HUD half), `SlipperRecallMark.Timer` (1.3), glyph can marker in
+  `OffscreenIndicators` and `TumpMatchReadout.Recede` (1.5 HUD parts), the rebuilt
+  `TumpRoundSwapView.CourtBreak` (1.17). Tests 8 of 8.
+- Owner, 2026-09-23: this session does the in-game UI and HUD only; the world work (1.1
+  chalk box and escape beat, 1.2 rims and restore ring, 1.7 viewmodel, batches B to D) is
+  handed to the next agent.
+
 ## 3. Remaining work, in the TODO priority order
 
 ### 1.4 remainder (DONE in v3 except the HUD 120 and High contrast captures)

@@ -3,14 +3,55 @@ using UnityEngine.UI;
 
 namespace TumbangPreso.UI
 {
-    /// <summary>New editable pictograms. AbilityGlyph remains the semantic contract with gameplay.</summary>
+    /// <summary>
+    /// New editable pictograms. AbilityGlyph remains the semantic contract with gameplay.
+    ///
+    /// ⚠️⚠️ ONE STROKE WEIGHT, ROUND ENDS AND A BLACK KEEL IN A MATCH (TODO VISUAL-1.18).
+    /// <see cref="HudStyle"/> is set by the in-match power deck. (The touch buttons keep the
+    /// thin line beside their thin verb icons, so one button never mixes two weights.) A stroke 3.6 percent of the icon wide is right in the character select, where
+    /// the icon is large and sits on paper, and it was a 1.5-pixel hairline in the deck at
+    /// 960x540 over a moving street. In a match the same drawing is laid down twice: a black
+    /// keel, then the colour, at twice the weight, with a round cap on every joint, so every
+    /// power icon shares one weight, one corner treatment and the black in-game outline
+    /// (AGENTS standing rule, 2026-09-22). The drawings themselves, and so each ability's
+    /// `AbilityGlyph` job, are unchanged. The front end keeps the thin line.
+    /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TumpAbilitySymbol : MaskableGraphic
     {
         public AbilityGlyph Glyph;
+        public bool HudStyle;
+        /// <summary>Stroke width as a fraction of the icon's short side, match style.</summary>
+        public const float HudStroke = .115f;
+        public static readonly Color Keel = new Color(0, 0, 0, .92f);
+        private readonly System.Collections.Generic.List<Vector2> _segments = new System.Collections.Generic.List<Vector2>();
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
+            _segments.Clear();
+            Collect(vh);
+            var rect = rectTransform.rect; float size = Mathf.Min(rect.width, rect.height);
+            if (!HudStyle)
+            {
+                for (int i = 0; i + 1 < _segments.Count; i += 2)
+                    Quad(vh, rect.center + _segments[i] * size, rect.center + _segments[i + 1] * size, Mathf.Max(1.5f, size * .036f), color);
+                return;
+            }
+            float half = Mathf.Max(1.5f, size * HudStroke * .5f), keel = Mathf.Max(1.5f, size * .035f);
+            var ink = Keel; ink.a *= color.a;
+            for (int pass = 0; pass < 2; pass++)
+            {
+                float w = pass == 0 ? half + keel : half; var c = pass == 0 ? ink : color;
+                for (int i = 0; i + 1 < _segments.Count; i += 2)
+                {
+                    Vector2 a = rect.center + _segments[i] * size, b = rect.center + _segments[i + 1] * size;
+                    Quad(vh, a, b, w, c);
+                    HudDraw.Disc(vh, a, w, c, 12); HudDraw.Disc(vh, b, w, c, 12);
+                }
+            }
+        }
+        private void Collect(VertexHelper vh)
+        {
             switch (Glyph)
             {
                 case AbilityGlyph.DanteStomp: case AbilityGlyph.Slam:
@@ -88,14 +129,14 @@ namespace TumbangPreso.UI
         {var c=new Vector2(x,y);for(int i=0;i<24;i++)V(vh,c+Dir(i*Mathf.PI/12)*radius,c+Dir((i+1)*Mathf.PI/12)*radius);}
         private void P(VertexHelper vh,params float[] points)
         {for(int i=2;i<points.Length;i+=2)V(vh,new Vector2(points[i-2],points[i-1]),new Vector2(points[i],points[i+1]));}
-        private void V(VertexHelper vh,Vector2 a,Vector2 b)
+        private void V(VertexHelper vh,Vector2 a,Vector2 b){_segments.Add(a);_segments.Add(b);}
+        private static void Quad(VertexHelper vh,Vector2 a,Vector2 b,float half,Color c)
         {
-            var rect=rectTransform.rect;float size=Mathf.Min(rect.width,rect.height);
-            a=rect.center+a*size;b=rect.center+b*size;
-            var d=(b-a).normalized;var n=new Vector2(-d.y,d.x)*Mathf.Max(1.5f,size*.036f);
+            if((b-a).sqrMagnitude<1e-6f)return;
+            var d=(b-a).normalized;var n=new Vector2(-d.y,d.x)*half;
             int i=vh.currentVertCount;
-            vh.AddVert(a-n,color,Vector2.zero);vh.AddVert(b-n,color,Vector2.zero);
-            vh.AddVert(b+n,color,Vector2.zero);vh.AddVert(a+n,color,Vector2.zero);
+            vh.AddVert(a-n,c,Vector2.zero);vh.AddVert(b-n,c,Vector2.zero);
+            vh.AddVert(b+n,c,Vector2.zero);vh.AddVert(a+n,c,Vector2.zero);
             vh.AddTriangle(i,i+1,i+2);vh.AddTriangle(i,i+2,i+3);
         }
     }
