@@ -35,3 +35,8 @@ start paths now clear the old local-shutdown latch through RegisterSeatHandler.
 Core intent tests passed5/5 in20ms. Need Unity compile/authority checks and the real
 orderly/drop peer run. Do not mark140.5 complete before those observations.
 All unrelated numbered tasks remain in todo-disposition.json.
+
+Completed: corrected NGO envelope handling passed its4-case focused Unity run,
+then native v54 orderlyClassic and abruptHero five-peer runs passed with visible
+matching notices on every survivor and actual spectator. See peer-departure.md.
+No further repeat of this check is required without a new defect/change.

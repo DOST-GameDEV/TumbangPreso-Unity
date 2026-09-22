@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/SwimmingAnimations/team-rafi.asset",
+    "sha256": "78380881f4893d1f6ab7b8c33f27bc6914ae2e3a88bf2076cca2d3811f01a09d"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/SwimmingAnimations/team-rafi.asset.meta",
+    "sha256": "b61616acb282a71b8c5433efd9296fc2df5039a1326889a0e05e5368ae0a57dc"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/RecoveryAnimations/team-rafi.asset",
+    "sha256": "bd9c087ba08b5404745b8eae7469dd692f5e88316b37cfe24da650bbd3a5c46c"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/RecoveryAnimations/team-rafi.asset.meta",
+    "sha256": "3d60d0dfeebeb64244e938617786c9fcca35e5854bd6b10fcd0514543fdfcef3"
+  }
+]

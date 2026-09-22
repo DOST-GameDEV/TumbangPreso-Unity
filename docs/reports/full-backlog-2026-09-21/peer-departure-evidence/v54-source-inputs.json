@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.PeerDeparture.cs",
+    "sha256": "d688eef639359af871283e5c18bd73cdeaf42be9d6df0d4185df57d42d61f7a0"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PeerDepartureTests.cs",
+    "sha256": "13bb2c34da6d95a8059b024054d39a5b6f31f592e8f86860a98240cd1c9e043a"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetPeerDepartureProbe.cs",
+    "sha256": "d0a763e711081218b7a63b854af6a8078f087af165741d70dedef54a4bd74391"
+  },
+  {
+    "path": "tools/net_peer_departure.py",
+    "sha256": "76147bc6b42a65facb90da3d38d230215b9fd6278f0729174a90370da8fdb05b"
+  }
+]

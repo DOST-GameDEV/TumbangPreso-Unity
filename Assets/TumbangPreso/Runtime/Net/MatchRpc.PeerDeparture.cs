@@ -37,9 +37,7 @@ namespace TumbangPreso.Net
         private void OnPeerLeaveIntentMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost || _nm == null || senderClientId == _nm.LocalClientId ||
-                senderClientId > int.MaxValue || reader.Length != sizeof(long) ||
-                !reader.TryBeginRead(sizeof(long))) return;
-            reader.ReadValueSafe(out long match);
+                senderClientId > int.MaxValue || !ReadPeerLeaveIntent(ref reader, out long match)) return;
             var lobby = NetSession.Instance?.Lobby;
             var peer = lobby?.PeerById((int)senderClientId);
             if (lobby?.MatchInProgress != true || peer == null || !ValidSlot(peer.Seat) ||
@@ -47,6 +45,16 @@ namespace TumbangPreso.Net
             _peerLeaveIntents.Remember(peer.PeerId, match, Time.realtimeSinceStartupAsDouble);
             // Do not change ownership, drive a bot or show a notice here. Only the
             // actual disconnect callback may confirm that this player has gone.
+        }
+
+        private static bool ReadPeerLeaveIntent(ref FastBufferReader reader, out long match)
+        {
+            match = 0;
+            // NGO has already consumed its name hash in this same reader. Length
+            // includes that envelope; only the unread bytes are this payload.
+            if (reader.Length - reader.Position != sizeof(long) || !reader.TryBeginRead(sizeof(long))) return false;
+            reader.ReadValueSafe(out match);
+            return match > 0;
         }
 
         private void HostAnnouncePeerDeparture(PeerRecord departed, bool intentional)
@@ -58,7 +66,7 @@ namespace TumbangPreso.Net
             byte reason = (byte)(intentional ? 1 : 0);
             string name = SafeDepartureName(departed.Name, departed.Seat);
             int sequence = ++_peerDepartureSequence;
-            PresentPeerDeparture(name, intentional, bot);
+            PresentPeerDeparture(departed.Seat, name, intentional, bot);
             using var writer = new FastBufferWriter(192, Allocator.Temp);
             writer.WriteValueSafe(PresentationMatchId);
             writer.WriteValueSafe(sequence);
@@ -75,7 +83,7 @@ namespace TumbangPreso.Net
 
         private void OnPeerDepartureMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length > 192 ||
+            if (NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length - reader.Position > 192 ||
                 !reader.TryBeginRead(sizeof(long) + sizeof(int) * 3 + 2)) return;
             reader.ReadValueSafe(out long match);
             reader.ReadValueSafe(out int sequence);
@@ -90,7 +98,7 @@ namespace TumbangPreso.Net
             if (match <= 0 || match != PresentationMatchId || sequence <= _lastPeerDepartureSequence ||
                 !ValidSlot(seat) || reason > 1) return;
             _lastPeerDepartureSequence = sequence;
-            PresentPeerDeparture(SafeDepartureName(new string(characters), seat), reason == 1, bot);
+            PresentPeerDeparture(seat, SafeDepartureName(new string(characters), seat), reason == 1, bot);
         }
 
         private static string SafeDepartureName(string raw, int seat)
@@ -107,9 +115,9 @@ namespace TumbangPreso.Net
             return clean.Length > 0 ? clean : "PLAYER " + (seat + 1);
         }
 
-        private void PresentPeerDeparture(string name, bool intentional, bool bot)
+        private void PresentPeerDeparture(int seat, string name, bool intentional, bool bot)
         {
-            LastPeerDepartureText = name + (intentional ? " LEFT" : " DISCONNECTED")
+            LastPeerDepartureText = "P" + (seat + 1) + " · " + name + (intentional ? " LEFT" : " DISCONNECTED")
                 + (bot ? " · BOT TAKES OVER" : " · SEAT RESERVED");
             PeerDepartureNotices++;
             UI.Hud.Instance?.ShowToast(LastPeerDepartureText, 3.2f);

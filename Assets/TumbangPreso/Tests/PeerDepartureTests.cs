@@ -52,12 +52,26 @@ namespace TumbangPreso.Tests
             Deliver(0, 100, 1, 1, 2);
             Assert.AreEqual(0, _rpc.PeerDepartureNotices);
             Deliver(0, 100, 1, 1, 1);
-            Assert.AreEqual("Maya LEFT · BOT TAKES OVER", _rpc.LastPeerDepartureText);
+            Assert.AreEqual("P2 · Maya LEFT · BOT TAKES OVER", _rpc.LastPeerDepartureText);
             Deliver(0, 100, 1, 1, 1);
             Assert.AreEqual(1, _rpc.PeerDepartureNotices);
             Deliver(0, 100, 2, 1, 0, false);
-            Assert.AreEqual("Maya DISCONNECTED · SEAT RESERVED", _rpc.LastPeerDepartureText);
+            Assert.AreEqual("P2 · Maya DISCONNECTED · SEAT RESERVED", _rpc.LastPeerDepartureText);
             Assert.AreEqual(2, _rpc.PeerDepartureNotices);
+        }
+
+        [Test] public void IntentLengthUsesTheUnreadPayloadAfterTheNgoNameHash()
+        {
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(123UL); // NamedMessage.Deserialize consumes this hash first.
+            writer.WriteValueSafe(100L);
+            using var reader = new FastBufferReader(writer, Allocator.Temp);
+            reader.ReadValueSafe(out ulong hash);
+            Assert.AreEqual(16, reader.Length); Assert.AreEqual(8, reader.Position);
+            object[] arguments = { reader, 0L };
+            bool accepted = (bool)typeof(MatchRpc).GetMethod("ReadPeerLeaveIntent",
+                BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, arguments);
+            Assert.IsTrue(accepted); Assert.AreEqual(100L, arguments[1]);
         }
 
         [Test] public void NewTransportClearsNoticeStateAndNamesCannotInjectMarkup()

@@ -967,38 +967,62 @@
     {
       "lineAtIntake": 2984,
       "heading": "## 149 · THE FRESH-AUDIT FOLLOW-UP: MOVEMENT BUDGET, RE-ADMISSION, AND THE ONE-SHOT REQUESTS ⚠️⚠️ IN PROGRESS, 2026-09-05, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Confirmed movement/admission/request/lifecycle defects are fixed with retained failed-before/passed-after evidence. Current native request/rehost and receipt-window results supersede the old unfinished audit; final coherent qualification remains pending.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3001,
       "heading": "### 149.1 ⚠️⚠️ P0 CONFIRMED AND FIXED: PACKET FREQUENCY BOUGHT DISTANCE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Time-based per-seat MoveBudget replaces distance grants per packet. Current request-safety and core evidence retains frequency-independent authority validation.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3090,
       "heading": "### 149.2 ⚠️⚠️ P0 CONFIRMED AND FIXED: IT COULD, UNDER A TOKEN THE CLIENT CHOSE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Transport admission/identity cannot be reassigned by a client-selected token after admission. Current duplicate/re-admission and rehost evidence is retained.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3155,
       "heading": "### 149.3 ✅ P1 CONFIRMED AND FIXED: THE BUFFER-SKIP VOTE HAD A JOIN RACE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Buffer-skip requests require a connected client and preserve their delivery semantics; current buffer/round flow and peer replay evidence retain the corrected join path.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3202,
       "heading": "### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP",
-      "disposition": "F1-F4 software faults reconciled to later repairs; final broader request qualification remains",
+      "disposition": "Current scoped skill receipts, stale-request protection, free-recall accounting and request/rehost peer cases are implemented and evidenced. Original failures are retained; no blanket host-only success claim.",
       "evidence": [
         "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
         "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
         "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
         "Assets/TumbangPreso/Tests/PlayMode/ClientRoundBoundaryProbe.cs",
-        "docs/reports/presentation-pass-2026-09-21/README.md"
-      ]
+        "docs/reports/presentation-pass-2026-09-21/README.md",
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3228,
@@ -1013,56 +1037,101 @@
     {
       "lineAtIntake": 3290,
       "heading": "### 149.6 ✅ P2 MEASURED: THE COMMENT WAS FALSE, AND THE PREDICATE IS CORRECTED ANYWAY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Sandbox remains restricted to an offline allowed context; corrected lifecycle predicate and its regression are retained. No live network sandbox bypass is introduced.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3337,
       "heading": "### 149.8 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SINGLE EXIT FROM A MATCH CLEARED NOTHING",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Shared exit cleanup, re-admission and two-session/rehost paths are implemented and have retained actual process evidence. New departure-notice state is also session-scoped and is currently being qualified separately under140.5.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3393,
       "heading": "### 149.9 ⚠️⚠️ P1 CONFIRMED AND FIXED: A SPECTATOR COULD SET `Time.timeScale` TO NaN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Spectator time-scale validation rejects nonfinite values; source checks and actual authority/pause routes are retained. No direct client write to authoritative time is added.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3452,
       "heading": "### 149.11 ⚠️⚠️ FOUND WHILE VERIFYING: EVERY UNITY RUN DIRTIED A TRACKED FILE, SO THE GATE COULD NEVER PASS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "QualityLevelStamp implements the historical anti-alias write-through correction. New final-build provenance still needs canonical handling of editor/importer whitespace and generated Rafi animation assets; do not call a dirty build clean.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3480,
       "heading": "### 149.10 ✅ THE ACCEPTANCE BAR FOR THIS SECTION",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Evidence-based acceptance policy retained: false positives remain no-change findings, real defects retain reproduction and invariant tests. Overall final qualification remains an explicit pending gate.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3489,
       "heading": "## 148 · THE 2026-09-05 NATIONALS BATCH ✅ CLOSED, and archived in the commit that wrote it",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Closed historical batch index. Its cited child requirements remain individually tracked; this index does not create a second unfinished implementation.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3536,
       "heading": "## 147 · THE GAME NOTICES ITS OWN GOOD MOMENTS AND WRITES THEM DOWN ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Structured highlights, deduplication and replay-window markers are implemented; current shared highlights/replay/halftime extend this system without adding score side effects.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3549,
       "heading": "### 147.1 ✅ WHAT LANDED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Engine-free highlight records, peer-visible collection and replay marker selection remain wired; current shared replay/highlight implementation and receipts supersede the former missing display layer.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3579,
       "heading": "### 147.2 ⚠️ THE DEDUPE RULE IS THE PART WITH TEETH",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Bounded same-event deduplication is retained and current moment/replay paths preserve independent genuine events. No duplicate replay trigger is added.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 3592,
@@ -1499,8 +1568,13 @@
     {
       "lineAtIntake": 5740,
       "heading": "### 140.5 ⚠️⚠️ AND THE ONE NOBODY CAN FIX WITHOUT DECIDING SOMETHING: A DROP AND A QUIT ARE THE SAME EVENT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented and native-qualified: explicit self-leave intent distinguished from an unclassified disconnect, visible to all surviving players and the actual spectator. Existing match/reconnect/bot rules preserved; tournament adjudication remains a human decision.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/peer-departure.md",
+        "docs/reports/full-backlog-2026-09-21/peer-departure-evidence/net-peer-leave-v54/result.json",
+        "docs/reports/full-backlog-2026-09-21/peer-departure-evidence/net-peer-drop-v54/result.json"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 5755,

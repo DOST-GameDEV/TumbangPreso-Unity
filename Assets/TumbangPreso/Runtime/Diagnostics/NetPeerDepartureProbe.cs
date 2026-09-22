@@ -89,6 +89,11 @@ namespace TumbangPreso.Diagnostics
             row.visibleToast = FindObjectsByType<UnityEngine.UI.Text>(FindObjectsSortMode.None)
                 .Any(text => text.text == row.text && text.isActiveAndEnabled && text.canvas != null && text.canvas.enabled);
             var image = ScreenCapture.CaptureScreenshotAsTexture();
+            if (image == null)
+            {
+                row.error = "No player backbuffer. Run the hidden-window player without -batchmode.";
+                Finish(row); yield break;
+            }
             File.WriteAllBytes(_path + ".png", image.EncodeToPNG()); Destroy(image);
             row.passed = row.notices == 1 && row.visibleToast && row.local == row.expected
                 && (_expected != 0 || row.bot) && (_expected >= 0 || row.spectator);

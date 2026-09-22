@@ -1,0 +1,13 @@
+{
+    "passed": true,
+    "spectator": false,
+    "visibleToast": true,
+    "bot": true,
+    "local": 2,
+    "expected": 2,
+    "notices": 1,
+    "match": 639256635592028377,
+    "text": "P2 · Player#6261 DISCONNECTED · BOT TAKES OVER",
+    "error": "",
+    "mode": "HeroStrike"
+}

@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "case": "drop",
+  "mode": "hero",
+  "errors": [],
+  "measured": {
+    "host": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 0,
+      "expected": 0,
+      "notices": 1,
+      "match": 639256635592028377,
+      "text": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "HeroStrike"
+    },
+    "other": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 2,
+      "expected": 2,
+      "notices": 1,
+      "match": 639256635592028377,
+      "text": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "HeroStrike"
+    },
+    "fourth": {
+      "passed": true,
+      "spectator": false,
+      "visibleToast": true,
+      "bot": true,
+      "local": 3,
+      "expected": 3,
+      "notices": 1,
+      "match": 639256635592028377,
+      "text": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "HeroStrike"
+    },
+    "spectator": {
+      "passed": true,
+      "spectator": true,
+      "visibleToast": true,
+      "bot": true,
+      "local": -1,
+      "expected": -1,
+      "notices": 1,
+      "match": 639256635592028377,
+      "text": "P2 \u00b7 Player#6261 DISCONNECTED \u00b7 BOT TAKES OVER",
+      "error": "",
+      "mode": "HeroStrike"
+    }
+  },
+  "sharedInputUnchanged": true,
+  "existingFilesRestored": 0,
+  "runtimeSha256": "3b23ecef26fa29224cbe04409d5b02b1e71f10954c717fc4a0580f473cbbd92f",
+  "scope": "Five actual local peers including a fifth-join spectator; one orderly leave or killed test process. Not WAN or human playtesting."
+}

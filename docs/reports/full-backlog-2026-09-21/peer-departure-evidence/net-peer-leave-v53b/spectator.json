@@ -1,0 +1,13 @@
+{
+    "passed": true,
+    "spectator": true,
+    "visibleToast": true,
+    "bot": true,
+    "local": -1,
+    "expected": -1,
+    "notices": 1,
+    "match": 639256625148624236,
+    "text": "Player#6261 DISCONNECTED · BOT TAKES OVER",
+    "error": "",
+    "mode": "Classic"
+}

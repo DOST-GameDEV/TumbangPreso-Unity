@@ -1,151 +1,125 @@
 # Active TUMP rework ledger
 
-## Mandate
+## Mandate and owner art constraints
 
-Complete EVERY unfinished autonomously actionable TODO in this conversation. No
-subagents/other chats, paid APIs/CLI services, resets, main edits, Desktop replacement,
-destructive cleanup or questions while owner is AFK. Preserve task IDs, source art,
-rigs/GUIDs, original dirty work and failed evidence. A checkpoint is NOT completion.
-Known failure tendency: verification/tool-repair loops. Quality matters; resolve an
-actual changed risk with one focused check, then move to unfinished implementation.
-Full final qualification follows integrated features; never claim human acceptance.
-AGENTS.md is authoritative. The full historical ledger is preserved at
-reports/full-backlog-2026-09-21/ledger-before-block-hair-publication.md.
+Complete EVERY unfinished autonomously actionable TODO in this conversation.
+No subagents/other chats, paid APIs/CLI services, resets, main edits, Desktop
+replacement, destructive cleanup or questions while owner is AFK. Preserve task
+IDs, original dirty work, source art/rig/GUIDs and failed evidence. A checkpoint
+NEVER completes the overall goal. Follow AGENTS.md. Avoid verification/tool loops:
+check an actual changed risk, then return to unfinished features when it passes.
 
-## LATEST owner correction: blocky hair and NO eyebrows
+Latest owner: Rafi must belong to the HERO cast, with BLOCKY HAIR and NO EYEBROWS.
+Implemented ten native chamfered hair boxes, squared fringe and stepped crop;
+removed loft hair/bun and eyebrows. No gills.714012byte/.744m GLB. Body/arms/cord/
+accessories/rig and33base animation curves unchanged;12protected original inputs
+match. Native head four-angle and HERO lineup reviewed. Portrait updated. Rafi is
+Hero-only, index6 (AllPeople union18; Classic remains12). Do not redesign other
+characters or revive rejected drafts. Human art approval is not inferred.
+Report: reports/full-backlog-2026-09-21/rafi-block-hair.md. Rejected v4 archived in
+ArtSource/rafi/rejected-swept-hair-brows-20260922. Source builder is the actual
+retrofitted copy tools/build_rafi_voxel.py; original builders/models are untouched.
+Rafi-only RefreshPerson authoring now avoids rewriting other roster entries.
 
-Owner rejected Rafi's swept loft hair/brows as unlike the HERO cast, then explicitly
-allowed a new haircut using how the other characters were built. IMPLEMENTED:
-ten native chamfered hair boxes, squared fringe lengths, stepped asymmetric crop,
-compact sides/nape; no eyebrows, curved sweep or tied bun. Headwrap/float clip kept.
-Native four-angle head/body and HERO lineup inspected, Logs/rafi-block-hair-v1,
-job52839 reaped exit0, guard profile-preservation-e5d64aac38ba. New714012byte/.744m
-GLB. Exact body/arm/accessory streams, rig nodes and33base clip curves unchanged.
-All12protected original cast/builder hashes match. Portrait updated. Other heroes'
-source models/builders are unchanged. No gills. Human taste approval not inferred.
+## Current source/publication
 
-Current art report: reports/full-backlog-2026-09-21/rafi-block-hair.md and its
-rafi-block-hair-evidence folder. Rejected v4 source/model archived under
-ArtSource/rafi/rejected-swept-hair-brows-20260922. Older continuous-hair/brow plans
-are superseded. Scoped RosterBookBuilder.RefreshPerson now prevents subsequent
-Rafi reviews from rebuilding other roster entries. Do not re-render unchanged art.
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+Last published05c003209772a7db6a48d49d0e8aad24dfcc083b. Local7c028dda contains new
+peer-departure/protocol50 code. Corrected framing, seat label, Rafi swimming/recovery
+assets and native receipts now await the next scoped commit/push. Fetch first;
+verify remote after push. Never add the two original unrelated composition-redesign
+home-court.png.meta/loading-street.png.meta edits. No blanket add/reset/clean.
 
-Rafi stays HERO STRIKE ONLY: index6; AllPeople asset-union index18, not Classic.
-Actual copied builder tools/build_rafi_voxel.py retains the original modelling
-pipeline; original tools/build_person_voxel.py is untouched. Body and FPP use the
-same source sleeves/left cord. His3serialized cast clips +registration, not only
-procedural editor curves, ship in the player. Runtime clips36, raw GLB33.
+Validation sibling TumbangPreso-Unity-validation:7c028dda +recorded v54 changes and
+editor/build output. Freeze inputs during each job. Old mixed work preserved:
+- stash6f716645127f374ead0a910c4a90d49cf4cb191b:6432old mixed paths, db976126.
+- Logs/qualification-2e90-source-mutations.json:8path qualification mutation stash.
+- stash1ab3cba5fedb6d12f161bc7afe3c57c00c8e86e8:123scoped qualification/author paths
+  before switching from2c737448 to coherent05c00320.
+- Logs/peer-departure-compile-stash.json:compile inputs before clean7c028dda.
+These are preservation, not permission to copy unrelated generated assets into DEV.
+Only four new Rafi swimming/recovery asset/meta paths were recovered from build
+output; current old-rig animation diffs have0text delta (stat/line-ending churn).
 
-## Workspace and publication
+Unity6000.5.8f1, Built-in renderer. Every Editor through run_unity_guarded.py with
+named profile; current presentation-validation-20260921. qualify.py supplies a
+workspace-specific profile and graphical EditMode. No active Editor/native/helper
+jobs, task-owned browser tabs or preview servers remain.
 
-DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Published HEAD05c003209772a7db6a48d49d0e8aad24dfcc083b, verified against the remote
-on2026-09-22. This includes local2c737448 and the78-path block-hair/integration batch.
-Only the two original unrelated metas remain dirty before this ledger update.
-Never push main or force.
-Explicit owned-path manifest: Logs/integration-art-owned-paths.json (refresh for
-new report files). Never stage the two original unrelated composition-redesign
-home-court.png.meta/loading-street.png.meta edits. No blanket git-add/reset/clean.
+## Most recent completed feature:140.5 peer departure notices
 
-Validation: sibling TumbangPreso-Unity-validation, now05c00320 +eight scoped
-peer-departure inputs. The earlier123modified/generated paths were preserved in
-stash1ab3cba5fedb6d12f161bc7afe3c57c00c8e86e8; manifest
-Logs/validation-before-peer-departure-stash.json. Freeze its inputs while a job runs. The old6432mixed paths were
-preserved in stash6f716645127f374ead0a910c4a90d49cf4cb191b, from db976126. A later
-8-path test-generated mutation stash is recorded in validation
-Logs/qualification-2e90-source-mutations.json. Latest all-roster author invocation
-created unrelated validation-only generated asset changes; DO NOT copy them into
-DEV. Only the Rafi scoped paths and11Kuro idle clips have been deliberately recovered.
-Preserve remaining validation mutations before switching to a clean final SHA.
+Protocol50: authenticated self-only leave intent, consumed only by actual departure;
+otherwise say DISCONNECTED. Remaining players/spectators see P-seat/name and actual
+bot takeover or reserved-seat status. Existing timeout/reconnect/bot tier/scoring
+rules are unchanged. Never infer forfeit, timeout cause or a mandatory replay.
+Intent TTL12s, capacity4, one-use and match/transport reset. Receiver validates
+host, epoch, sequence, seat, reason and bounded32character text. Startup clears
+stale local-shutdown latch through the shared successful-start registration path.
 
-Unity6000.5.8f1, Built-in renderer. All Editor launches use tools/run_unity_guarded.py
-and an explicit named profile. Current presentation profile is
-presentation-validation-20260921; qualify.py now supplies a workspace-specific profile.
-No active Editor/native/encoding jobs or task-owned browser tabs/servers remain.
+Native v54 passes: orderlyClassic job73531 and abruptHero job69364, each four actual
+players plus actual fifth-join spectator. All4survivors show one matching visible
+notice; host bot takeover observed. Actual host/spectator PNGs inspected. Shared
+input/named profile data preserved. Both jobs reaped; STOP this focused check.
+Runtime DLL SHA2563b23ecef26fa29224cbe04409d5b02b1e71f10954c717fc4a0580f473cbbd92f.
+Core intent5/5,20ms; Unity receiver/protocol/envelope4/4,.131s,job17283,
+guard5208e3132cd8. V54 build1211MB/62s,job78913,guard8c5a0b8b5aa8.
 
-## Integration fixes and exact evidence
+Failures retained: missing FixedString128Bytes compile (replaced with bounded NGO
+primitives); v53 batchmode had no screenshot backbuffer; v53b revealed the REAL
+intent bug. NamedMessage.Deserialize consumes its8byte name hash in the same reader,
+so Length includes the envelope. Correct guard is Length-Position. New regression
+proves this envelope. Native runner omits-batchmode but hides owned windows, reads
+UTF-8 explicitly and preserves cleanup; null capture now writes a failed receipt.
 
-Baseline clean2e90: Core601/604; EditMode557/580. All failures preserved in
-reports/full-backlog-2026-09-21/qualification-2e90. Current repairs:
-- Rafi dance asset baked and hooked into Rafi-only authoring; Kuro's reusable idle
-  clips rebound to its retained original calm geometry, without changing its model.
-- Model binding now caches components even before Awake. Graphical EditMode no
-  longer uses -nographics, which cannot exercise the actual lighting tests.
-- Rafi stats4Bilis/2Lakas/4Tatag fix the duplicate Zack4/3/3; same10point budget.
-- All Rafi/Zack and variant copy fits unchanged limits. Rafi UI accent is deep-water
-  indigo, distinct from taya blue/Cheska mint; his physical water/model palette stays.
-- Stale expectations now reflect7heroes/21abilities/protocol49/8default rounds,
-  retained common hand frames plus Inday/Rafi source exceptions,2.12s ritual and
-  smooth cancelled-throw return. Meaningful geometry/ownership checks remain.
-- Settings session explicitly releases its change handler on replacement/disposal.
-- Audits understand multi-write lines, partial-class teardown, Resources shaders,
-  legitimate persistent timestamps and actual finite-validation delegates. Actual
-  host/intercept and per-peer visual audio boundaries are explicit.
-- Six diagnostic Configure/Install pairs now refuse -tp-tournament.82explicit
-  process-local diagnostic options are documented; all12modifier accessors remain.
-- RafiExpansionProbe was missing from the PlayMode partition; added to match.
+V53/v54 are internal DIRTY-stamped players, not clean release claims. Build starts
+from clean source but generates missing animation assets and importer formatting.
+Do not weaken qualification to hide this. Source/report/receipts are in
+reports/full-backlog-2026-09-21/peer-departure.md and peer-departure-evidence.
 
-Focused results, all sessions reaped:
-- Rafi dance v3:exit0,job32181,guardca16fd1def2e. Kuro rebind:exit0,job48935,
-  guard65ee8936d85e. Failed wrong-source/compile attempts remain in Logs.
-- integration-repairs-v1:40/43,8.439s,job56135,guard5b8c8de69c6e.
-- integration-repairs-v2:32/36,.700s,job31427,guardb1f9b2eee4a9.
-- integration-repairs-v3 exact remaining cases:4/4,.454s,job99610,guarde26da65d4b32.
-- Current Core604/604,173ms,job46135. TRX copied to qualification-2e90/core-after.trx.
-- Settings lifecycle PlayMode5/5,37.159s,job15894,guard10f23893c3ed.
-- Updated wire payloads/positional/cue/event/clocks/finite/tournament/shader audits
-  pass individually;19looked-up shaders retained. The current partition plan passes.
-These scoped results are NOT a fresh full candidate qualification. Detailed report:
-qualification-2e90/integration-findings.md. Do not repeat passing focused cases.
+## Other completed checkpoints retained
 
-## Completed work retained, not to restart
+Core604/604 at previous integration checkpoint; five new intent cases now added.
+Initial clean2e90 failures preserved. Focused repairs40/43, then32/36, remaining4/4;
+settings lifecycle5/5,37.159s. All those cases are resolved without assertion loss.
+Rafi dance now ships; Kuro idle clips match retained original calm geometry;
+pre-Awake model binding fixed;7heroes/21abilities/8rounds and copy limits accurate.
+Rafi stats4/2/4 avoid duplicate Zack4/3/3. Rafi UI accent indigo avoids role/Cheska
+colour ambiguity; physical model/water palettes retained. Audits handle partial
+teardown, multi-write lines, Resources shaders and actual validation delegates.
+Six diagnostic startup pairs refuse tournament mode. RafiExpansionProbe belongs
+to match PlayMode group; partition plan passes. Final coherent qualification pending.
 
-Rafi parts/accessories and native v52 owner8/observer8/shared ultimate/replay plus
-3actual delayed peers proved actual cast body playback and exact arm identity.
-Latest hair-only correction preserves those body/clip bytes. See rafi-parts-and-motion.md.
-Lagoon:8connected/10detached fixed stilt homes, diverse construction/boats/residents,
-11near islands/9mountain groups, animated water/sky and recovery. Nativev47 both modes
-and quality routes passed; v49water normal/shader fix; deck live-v3 thin-board outline
-repair shipped in269e2326. All source transfers/backups retained. No house bobbing.
-Map materials19families/2686renderers; all4older maps nativev39; animated skies and
-plain Inday arms qualifiedv37; painted UI113pass/1externalUGSskip and nativev41;
-338capabilities mapped;96variant/role cases and input hotplug fixes retained.
-Recall: actual4players+5thspectator, Classic and Hero v49c, both pass. Queue checkbox
-now reflects the existing evidence. Other request/rehost/outage results retained.
-No WAN, physical-device, human listening, balance or visual approval is implied.
+Rafi v52 owner8/observer8/shared ultimate/replay and3delayed peers proved actual
+three serialized body-cast clips and exact FPP source arms. Latest hair correction
+preserves those body/clip bytes. Lagoon8connected/10detached stilt homes, boats,
+residents,islands/mountains/animated water/sky/recovery; nativev47 both modes/quality,
+v49water shader fix and deck live-v3 thin-board outline repair retained. Older four
+maps19families/2686renderers/nativev39; sky/plainInday armsv37; UI113pass/1UGSskip,
+nativev41,338capabilities mapped and96variant/role cases. Recall actual5peer v49c
+both modes. Request/rehost/outage evidence retained. No WAN, physical-device,
+human listening/balance/art approval is implied.
 
-## Next work, without another stop
+## Next, without another stop
 
-1. Publication completed at05c00320; continue the remaining work without stopping.
-2. Current concrete next feature is140.5 peer-departure communication. Read
-   reports/full-backlog-2026-09-21/peer-departure-plan.md. Source confirms host-loss
-   UI exists but client leave/drop distinction did not. Local implementation is
-   now authored: PeerLeaveIntents +MatchRpc.PeerDeparture partial, protocol50,
-   Stop hint/HostPeerLeft notice hooks, start-latch reset and exact protocol test.
-   Core intent5/5 passed20ms. Unity/native qualification is PENDING. New source files
-   have been imported for validation; recover their .meta files only. Initial
-   Unity compile failed because this project's Collections surface has no
-   FixedString128Bytes; failed log peer-departure-edit-v1/guard71917e8aad68 retained.
-   Replaced it with explicitly bounded32-character UTF-16 fields using existing
-   NGO primitive APIs. PeerDepartureTests checks trusted-host/match/seat/reason,
-   duplicate suppression, session reset and markup handling. Native five-peer
-   opt-in probe/runner are authored; both initializer paths refuse tournament mode.
-   Corrected Unity run passed3/3,.135s,job91459 reaped,guard3e5f44b5d3c2.
-   Source metadata recovered. Prepare one internal native build, then the two
-   explicitly scoped departure cases; no more broad test expansion.
-   No native build/run yet. Native runnercases should be orderly Classic and
-   abrupt Hero, with4players+actual fifth-join spectator and visible toast PNGs.
-   Continue TODO disposition from the remaining283unreviewed numbered headings.
-   All366headings remain.155/154 and153 were reconciled individually against current
-   code/evidence;153.18/full qualification remains genuinely pending. Exact owner
-   tick export and OAuth configuration are external (google_oauth.txt is absent).
-   Do not invent other blockers, close broad parents prematurely, or redo superseded UI.
-3. Inspect outstanding actionable requirements starting with152/142/151 and old
-   gameplay/UI groups. Source old OPEN labels are history, not automatic missing work.
-4. Preserve validation generated mutations, switch to clean coherent candidate,
-   complete fresh full qualification/build stages once. Tests themselves can dirty
-   derived arm tangent channels, UI importer metas and quality settings: record/preserve
-   those separately, never silently certify a dirty tree or copy them into delivery.
-5. Reconcile real external deployment/service/device needs only after independent
-   local work is done. ugs/cloud-code/match-record.js already includesRafi mastery;
-   no live deployment has been made. Never spend credits or reset allowances.
+1. Publish the corrected peer-departure checkpoint/receipts, verify remote HEAD.
+2. Continue269unreviewed numbered TODO headings. All366remain.155/154/153,
+   152/142/151,149/148/147 and140.5 were reconciled individually. Preserve the
+   existing dispositions; no broad parent closes while actionable children remain.
+   Exact owner valid-mark export and OAuth config are external: resource absent and
+   TUMP_GOOGLE_CLIENT_ID absent in Process/User/Machine, checked2026-09-22.
+3. Concrete observations to resolve without speculative rewrites: current native
+   generic FPP skin reads unusually orange versus portrait. MaterialKit.Dress uses
+   the expected SkinBayan(.851,.541,.373) property block beforeToonSkin; cause is
+   UNDIAGNOSED. Inspect lighting/shader/property-block behavior before any edit.
+   Preserve all original character geometry/designs.
+4. Finish genuine remaining UI/service/local requirements, then coherent source
+   qualification/build once. Build/test generated metadata whitespace and animation
+   assets need source hygiene; current stamps correctly say dirty.149.11's existing
+   QualityLevelStamp handles antiAliasing only. Do not claim new clean qualification.
+5. ugs/cloud-code/match-record.js includesRafi mastery; live deployment unperformed.
+   Resolve real external needs only after independent local work. Never spend
+   credits or reset allowances. Full assignment and existing goal remain ACTIVE.
+
+Detailed former ledger states are preserved in
+reports/full-backlog-2026-09-21/ledger-before-departure-publication.md and
+ledger-before-block-hair-publication.md. Do not follow their stale active-job lines.

@@ -44,7 +44,9 @@ def main():
                     backup = out / "private-profiles" / name / source.relative_to(profile)
                     backup.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(source, backup)
                     backups.append((source, backup, hashlib.sha256(source.read_bytes()).hexdigest()))
-            command = [str(exe), "-batchmode", "-screen-width", "960", "-screen-height", "540",
+            # A real backbuffer is required for HUD ScreenCapture; the proven owner-UI
+            # runner also keeps batchmode off and hides only its own native window.
+            command = [str(exe), "-screen-width", "960", "-screen-height", "540",
                        "-screen-fullscreen", "0", "-tp-framecap", "30", "-tp-autostart", "3",
                        "-tp-map", "Eskinita", "-tp-profile", profile_name,
                        "-tp-departure-seat", str(seat), "-tp-review-mode", args.mode,
@@ -71,7 +73,7 @@ def main():
             if time.monotonic() > deadline or any(p.poll() is not None for p in processes):
                 raise RuntimeError("All five actual peers did not become ready.")
             time.sleep(.25)
-        epochs = {int((out / (name + ".json.ready")).read_text()) for name, _ in peers}
+        epochs = {int((out / (name + ".json.ready")).read_text(encoding="utf-8-sig")) for name, _ in peers}
         if len(epochs) != 1 or min(epochs) <= 0:
             raise RuntimeError("Readiness was not for one actual match identity.")
         if args.case == "leave":
@@ -85,7 +87,7 @@ def main():
             for name in wanted:
                 path = out / (name + ".json")
                 if path.exists() and name not in measured:
-                    try: measured[name] = json.loads(path.read_text())
+                    try: measured[name] = json.loads(path.read_text(encoding="utf-8-sig"))
                     except json.JSONDecodeError: pass
             time.sleep(.2)
         expected_word = " LEFT" if args.case == "leave" else " DISCONNECTED"

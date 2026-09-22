@@ -5912,6 +5912,16 @@ on the readability budget `docs/VISION.md` § 2 sets in a 14 by 14 metre box.
 
 ### 140.5 ⚠️⚠️ AND THE ONE NOBODY CAN FIX WITHOUT DECIDING SOMETHING: A DROP AND A QUIT ARE THE SAME EVENT
 
+**Current software closure,2026-09-22:** implemented informational peer-departure
+notices under the full-backlog mandate. Explicit authenticated intent plus actual
+disconnection says LEFT; otherwise DISCONNECTED. All remaining players/spectators
+see the stable seat/name and actual bot/reservation status. Existing timeout,
+reconnect, bot tier and score rules are unchanged; no automatic tournament ruling
+is inferred. Native v54 five-peer orderlyClassic and abruptHero runs pass, including
+visible HUD text and the actual fifth-join spectator. See
+[peer-departure.md](reports/full-backlog-2026-09-21/peer-departure.md).
+The original diagnosis below is retained as history, not current implementation.
+
 § 137.6's third row measured this on purpose. **"The peer went away" and "the network went away"
 are the same event to the transport**, both end at the same 8 second timer, and both produce the
 same bot in the same seat. In a tournament room those are two different sentences to say out loud,
