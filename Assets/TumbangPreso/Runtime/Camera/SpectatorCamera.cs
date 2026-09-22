@@ -1870,7 +1870,7 @@ namespace TumbangPreso.CameraSystem
             _replayLabel.text = "INSTANT REPLAY";
 
             var outline = labelGo.AddComponent<Outline>();
-            outline.effectColor = UI.UiTheme.Ink;
+            outline.effectColor = UI.UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(3.0f, -3.0f);
 
             var labelRt = _replayLabel.rectTransform;
@@ -1915,7 +1915,7 @@ namespace TumbangPreso.CameraSystem
             _replayExitLabel.text = "LIVE PLAY CONTINUES";
 
             var exitOutline = exitGo.AddComponent<Outline>();
-            exitOutline.effectColor = UI.UiTheme.Ink;
+            exitOutline.effectColor = UI.UiTheme.InGameOutline;
             exitOutline.effectDistance = new Vector2(2.0f, -2.0f);
 
             var exitRt = _replayExitLabel.rectTransform;

@@ -1,5 +1,14 @@
 # TUMP repository instructions
 
+## Standing in-game UI outline rule,2026-09-22
+
+The owner explicitly rejects red UI outlines: "replace all red outline with black
+in ingame ui". Gameplay HUD, spectator controls, notifications, prompts, countdown,
+ability readouts, training/replay overlays and in-match chat use BLACK text/icon
+strokes. Use UiTheme.InGameOutline, not the painted front-end DeepInk/brand red.
+Keep meaningful role/ability/text fills and supplied artwork intact. This is a
+standing art rule, not permission to recolour character or environment outlines.
+
 ## Current owner direction, 2026-09-21
 
 ### Full remaining backlog, latest correction

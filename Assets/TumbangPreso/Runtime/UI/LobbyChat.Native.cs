@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
                 TumpUiFactory.Height(line, NativeLineHeight);
                 if (_inMatch)
                 {
-                    var outline = line.gameObject.AddComponent<Outline>(); outline.effectColor = TumpUiTheme.Current.DeepOlive;
+                    var outline = line.gameObject.AddComponent<Outline>(); outline.effectColor = UiTheme.InGameOutline;
                     outline.effectDistance = new Vector2(2, -2);
                 }
                 _lines.Add(line); _stamps.Add(-999);

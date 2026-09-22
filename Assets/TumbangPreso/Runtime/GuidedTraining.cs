@@ -1777,7 +1777,7 @@ namespace TumbangPreso
             label.horizontalOverflow = HorizontalWrapMode.Overflow;
 
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(2.0f, -2.0f);
 
             var box = go.AddComponent<LayoutElement>();
@@ -1834,7 +1834,7 @@ namespace TumbangPreso
             text.verticalOverflow = VerticalWrapMode.Overflow;
 
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(3.0f, -3.0f);
 
             return text;
@@ -1860,7 +1860,7 @@ namespace TumbangPreso
             text.verticalOverflow = VerticalWrapMode.Overflow;
 
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(3.0f, -3.0f);
 
             var rt = text.rectTransform;

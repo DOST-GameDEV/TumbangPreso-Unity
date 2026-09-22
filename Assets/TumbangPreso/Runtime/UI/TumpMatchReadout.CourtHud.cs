@@ -62,7 +62,7 @@ namespace TumbangPreso.UI
             Pin(_canRoot, new Vector2(1, 1), new Vector2(-253, -109), new Vector2(464, 170));
             var can = OwnerUiLayout.Rect(_canRoot, "CanStateIcon").gameObject.AddComponent<TumpSymbol>();
             can.Kind = TumpSymbol.Icon.Can; can.color = OwnerUiTheme.Current.Pale; can.raycastTarget = false;
-            var edge = can.gameObject.AddComponent<Outline>(); edge.effectColor = OwnerUiTheme.Current.DeepInk; edge.effectDistance = new Vector2(2, -2);
+            var edge = can.gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(2, -2);
             OwnerUiLayout.Place(can.rectTransform, 12, 5, 68, 84);
             _canState = Ink(_canRoot, "CanState", "", 32, true); _canState.alignment = TextAnchor.MiddleLeft;
             OwnerUiLayout.Place(_canState.rectTransform, 101, 7, 352, 75);

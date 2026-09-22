@@ -33,7 +33,7 @@ namespace TumbangPreso.UI
             }
             _hint=OwnerUiLayout.Text(_deck,"PowerInfoBinding","",28);_hint.color=OwnerUiTheme.Current.Pale;_hint.alignment=TextAnchor.MiddleCenter;
             OwnerUiLayout.Place(_hint.rectTransform,-70,173,590,49);
-            var outline=_hint.gameObject.AddComponent<Outline>();outline.effectColor=OwnerUiTheme.Current.DeepInk;outline.effectDistance=new Vector2(1,-1);
+            var outline=_hint.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(1,-1);
             BuildDetails(root);
             var asset=Resources.Load<InputActionAsset>("TumbangPreso");_inspect=asset?.FindActionMap("Player",false)?.FindAction("AbilityInfo",false);_inspect?.Enable();
         }

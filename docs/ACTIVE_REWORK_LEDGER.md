@@ -1,5 +1,18 @@
 # Active TUMP rework ledger
 
+## NEWEST owner rule: replace all red in-game UI outlines with BLACK
+
+Source of photographed red stroke is TumpMatchReadout.Ink in its OwnerPainted
+partial, shared by the live spectator hint/HUD. UiTheme.InGameOutline is now
+black; gameplay text/icon Outline sites now route through it. Preserve
+role/ability fills, supplied front-end artwork and character/environment geometry.
+AGENTS.md records the standing rule. Native v55 spectator/HUD colours inspected.
+The wider POV check found an independent held-slipper visibility issue; retain
+black-ui-outline-evidence and investigate without reopening the colour change.
+Accessibility batch1 code remains LOCAL and UNVERIFIED in DEV; preserve it while
+applying this immediate correction. Its Core toggle6/6 already passed; Unity
+Preference5 and PlayMode3 cases are prepared but not run. Remaining127.3 intact.
+
 ## Mandate and owner art constraints
 
 Complete EVERY unfinished autonomously actionable TODO in this conversation.
@@ -24,9 +37,9 @@ Rafi-only RefreshPerson authoring now avoids rewriting other roster entries.
 ## Current source/publication
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published05c003209772a7db6a48d49d0e8aad24dfcc083b. Local7c028dda contains new
-peer-departure/protocol50 code. Corrected framing, seat label, Rafi swimming/recovery
-assets and native receipts now await the next scoped commit/push. Fetch first;
+Last published83027dc6ec2c8181203b5ffd4abcf946180e00a1, remote verified. Includes
+7c028dda plus corrected framing/seat label, Rafi swimming/recovery assets and native
+receipts. Only the two original unrelated metas were dirty before this ledger edit. Fetch first;
 verify remote after push. Never add the two original unrelated composition-redesign
 home-court.png.meta/loading-street.png.meta edits. No blanket add/reset/clean.
 
@@ -101,7 +114,7 @@ human listening/balance/art approval is implied.
 
 ## Next, without another stop
 
-1. Publish the corrected peer-departure checkpoint/receipts, verify remote HEAD.
+1. Peer-departure checkpoint published and remote verified83027dc6. Continue.
 2. Continue269unreviewed numbered TODO headings. All366remain.155/154/153,
    152/142/151,149/148/147 and140.5 were reconciled individually. Preserve the
    existing dispositions; no broad parent closes while actionable children remain.
@@ -123,3 +136,42 @@ human listening/balance/art approval is implied.
 Detailed former ledger states are preserved in
 reports/full-backlog-2026-09-21/ledger-before-departure-publication.md and
 ledger-before-block-hair-publication.md. Do not follow their stale active-job lines.
+
+FPP observation follow-up: Toon.shader's retained design explicitly discusses the
+Godot saturated-orange look and the move to full-frame ColourGrade. Portrait and
+world captures use different lighting/grade; the screenshot alone is NOT proof of
+a palette defect. Preserve existing cast rendering until a same-light body/FPP
+comparison establishes a concrete mismatch. No speculative shader edit was made.
+
+## NEW concrete active work:127.3 accessibility completion
+
+Source confirms missing FOV, toggle inputs and UI/text scaling despite earlier
+summary guesses that all comfort options existed. Do not mark these as implemented
+or external. Current plan:reports/full-backlog-2026-09-21/accessibility-completion-plan.md.
+Read current PlayerInputReader,CameraRig,AspectSafeCanvas,TumpSettingsView.OwnerPainted
+and VoiceDirector. UI routing/uGUI and feature input/UI/serialization skills read.
+Defaults must preserve current behavior; use existing input maps and painted UI.
+Controls/camera batch is authored locally; Core toggle6/6 passed, Unity checks
+are pending. Complete that batch, then readable scaling,
+reduced effects/high contrast/captions and colour-independent role/locator proof.
+This does not reopen completed Rafi art or the qualified peer-departure feature.
+
+Accessibility batch1 now authored locally: GameSettings.FirstPersonFov default95
+clamped75..110 with nonfinite fallback; ToggleSprint/ToggleRestore defaultfalse;
+painted settings choices/slider; CameraRig live FPP lens; shared ToggleControl
+normalizer and Carrier.HasResetTarget reuse; input menu/chat/role/round/possession
+reset handling; prompt wording reflects toggle restore. Core6/6 passed9ms.
+New Preference EditMode5cases and AccessibilityControlTests PlayMode3cases are
+prepared; no Unity compile/run yet. The PlayMode fixture uses actual shared touch
+input, real restored can outcome, live FOV and settings discard, and is in match
+partition. Only this batch's changed risk is to be checked before moving on.
+The remainder of127.3 (scaling, contrast/effects/captions/role proof) stays OPEN.
+
+Black UI correction source complete across15files. Native v55 built1211MB/83s,
+guard32ee8acef6a6,job50985. Manual-flight HUD/control hint inspected: black outlines.
+Spectator-only job44763 exited1 at later POV held-world-slipper visibility assertion;
+retain that separate finding and both images in black-ui-outline-evidence. No full
+spectator pass. All jobs reaped; no owned players/previews remain.
+Only colour hunks are staged for TumpMatchReadout.cs; its ToggleRestore prompt and
+all other accessibility implementation remain local until their focused checks.
+Continue accessibility batch1, then the remaining127.3 plan and full TODO.

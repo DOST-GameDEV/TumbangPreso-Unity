@@ -64,7 +64,7 @@ namespace TumbangPreso.UI
             var text = TumpUiFactory.Text(root, name, words, size, main);
             text.color = TumpUiTheme.Current.Cream; text.alignment = TextAnchor.MiddleCenter;
             var outline = text.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(.10f, .08f, .035f, .95f); outline.effectDistance = new Vector2(2, -2);
+            outline.effectColor = new Color(0, 0, 0, .95f); outline.effectDistance = new Vector2(2, -2);
             return text;
         }
         private void BuildScoresPrevious()
@@ -101,7 +101,7 @@ namespace TumbangPreso.UI
             TumpUiFactory.Anchor(_canRoot, new Vector2(1, 1), new Vector2(-252, -112), new Vector2(464, 176));
             var can = TumpUiFactory.Rect(_canRoot, "CanStateIcon").gameObject.AddComponent<TumpSymbol>();
             can.Kind = TumpSymbol.Icon.Can; can.color = TumpUiTheme.Current.Cream; can.raycastTarget = false;
-            var canOutline = can.gameObject.AddComponent<Outline>(); canOutline.effectColor = TumpUiTheme.Current.DeepOlive;
+            var canOutline = can.gameObject.AddComponent<Outline>(); canOutline.effectColor = UiTheme.InGameOutline;
             canOutline.effectDistance = new Vector2(2, -2);
             TumpUiFactory.Place(can.rectTransform, 0, 0, 92, 106);
             _canState = Ink(_canRoot, "CanState", "", 36, true); _canState.alignment = TextAnchor.MiddleLeft;

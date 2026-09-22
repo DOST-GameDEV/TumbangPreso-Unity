@@ -641,8 +641,7 @@ namespace TumbangPreso.UI
             // One pixel each way is enough to give a glyph a hard boundary at any scale, which is
             // exactly what was missing.
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = new Color(Visual.ToonSkin.Ink.r, Visual.ToonSkin.Ink.g,
-                                            Visual.ToonSkin.Ink.b, 0.85f);
+            outline.effectColor = new Color(0, 0, 0, 0.85f);
             outline.effectDistance = new Vector2(1.0f, -1.0f);
             outline.useGraphicAlpha = true;
 

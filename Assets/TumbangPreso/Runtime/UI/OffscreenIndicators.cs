@@ -79,12 +79,12 @@ namespace TumbangPreso.UI
             _canSymbol.Kind = TumpSymbol.Icon.Can; _canSymbol.raycastTarget = false;
             TumpUiFactory.Anchor(_canSymbol.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 12), new Vector2(28, 32));
             var edge = _canSymbol.gameObject.AddComponent<Outline>();
-            edge.effectColor = OwnerUiTheme.Current.DeepInk; edge.effectDistance = new Vector2(2, -2);
+            edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(2, -2);
             _markerState = OwnerUiLayout.Text(rect, "ObjectiveState", "", 20, OwnerUiLayout.TypeRole.Reading);
             _markerState.alignment = TextAnchor.MiddleCenter; _markerState.raycastTarget = false;
             TumpUiFactory.Anchor(_markerState.rectTransform, new Vector2(.5f, .5f), new Vector2(0, 43), new Vector2(144, 28));
             var textEdge = _markerState.gameObject.AddComponent<Outline>();
-            textEdge.effectColor = OwnerUiTheme.Current.DeepInk; textEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            textEdge.effectColor = UiTheme.InGameOutline; textEdge.effectDistance = new Vector2(1.5f, -1.5f);
             rect.gameObject.SetActive(false); return rect;
         }
         private void OnDisable() { HideMarker();if (_canvasRect != null) _canvasRect.gameObject.SetActive(false); }
@@ -128,7 +128,7 @@ namespace TumbangPreso.UI
             label.raycastTarget = false;
 
             var outline = go.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(GlyphOutline * 0.5f, -GlyphOutline * 0.5f);
 
             go.SetActive(false);

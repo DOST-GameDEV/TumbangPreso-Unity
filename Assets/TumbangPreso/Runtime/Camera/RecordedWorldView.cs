@@ -104,7 +104,7 @@ namespace TumbangPreso.CameraSystem
                 var words=OwnerUiLayout.Text(credit,"ReplayOutcome",PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+
                     (clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):" / "+clip.Reason),28,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(words.rectTransform);words.color=CourtPresentationPalette.Paper;
-                var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=CourtPresentationPalette.Ink;outline.effectDistance=new Vector2(1.5f,-1.5f);
+                var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=UI.UiTheme.InGameOutline;outline.effectDistance=new Vector2(1.5f,-1.5f);
                 var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=footer.anchorMax=Vector2.zero;footer.pivot=Vector2.zero;
                 footer.anchoredPosition=new Vector2(48,26);footer.sizeDelta=new Vector2(480,48);
                 var footerPlate=footer.gameObject.AddComponent<CourtPopupGraphic>();footerPlate.color=CourtPresentationPalette.Ink;footerPlate.raycastTarget=false;

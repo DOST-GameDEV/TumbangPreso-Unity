@@ -51,6 +51,9 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly Color Ink = Hex("1c0f06");
 
+        // Owner rule: gameplay UI strokes use black, independent of the painted menu ink.
+        public static readonly Color InGameOutline = Color.black;
+
         /// <summary>
         /// Light neutral: screen background.
         ///

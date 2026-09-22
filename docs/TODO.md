@@ -26,6 +26,13 @@ preserving native style, supplied signs/livery, gameplay clarity and Low setting
 
 ### Latest active additions, 2026-09-22
 
+- [x] **Black in-game UI outlines:** owner rejects red/burgundy strokes, including
+  the spectator FREE FLIGHT/control hint. Replace gameplay text/icon outlines with
+  shared black across HUD, spectator, training/replay and in-match chat. Keep fills,
+  role colours and supplied art. Native v55 spectator/HUD view inspected; the
+  wider POV check raised an independent held-slipper finding, retained separately.
+  See reports/full-backlog-2026-09-21/black-ui-outlines.md.
+
 - [x] **152.4 / complete environment surface pass:** account for all2686active
   renderers with19construction-specific families or explicit retained imagery,
   livery, markings, food, transparency and custom water/court. Qualify persistent

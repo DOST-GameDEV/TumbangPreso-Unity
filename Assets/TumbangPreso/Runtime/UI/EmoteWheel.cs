@@ -372,7 +372,7 @@ namespace TumbangPreso.UI
             if (label == null) return;
 
             var outline = label.gameObject.AddComponent<Outline>();
-            outline.effectColor = UiTheme.Ink;
+            outline.effectColor = UiTheme.InGameOutline;
             outline.effectDistance = new Vector2(2.0f, -2.0f);
             outline.useGraphicAlpha = false;
         }

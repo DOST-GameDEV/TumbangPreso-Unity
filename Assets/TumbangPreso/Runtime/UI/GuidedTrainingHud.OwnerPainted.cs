@@ -56,7 +56,7 @@ namespace TumbangPreso
             _complete.color=OwnerUiTheme.Current.Lime;_complete.alignment=TextAnchor.MiddleCenter;
             _complete.rectTransform.anchorMin=_complete.rectTransform.anchorMax=_complete.rectTransform.pivot=new Vector2(.5f,.5f);
             _complete.rectTransform.anchoredPosition=new Vector2(0,150);_complete.rectTransform.sizeDelta=new Vector2(790,85);_complete.enabled=false;
-            var outline=_complete.gameObject.AddComponent<Outline>();outline.effectColor=OwnerUiTheme.Current.DeepInk;outline.effectDistance=new Vector2(2,-2);
+            var outline=_complete.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(2,-2);
             var footer=OwnerRow(card,"RouteControls",58);
             var training=GetComponentInParent<GuidedTraining>();
             var skip=OwnerTextAction.Create(footer,"SkipTrainingLesson","N · SKIP LESSON",()=>training?.SkipFromUi(),0,0,300,58,30);
