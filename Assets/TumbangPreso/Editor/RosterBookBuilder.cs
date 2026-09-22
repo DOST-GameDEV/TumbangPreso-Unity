@@ -333,6 +333,8 @@ namespace TumbangPreso.EditorTools
                             clips.Add(clip);
                     }
 
+                    if(kind=="person"&&entry.Id=="rafi"&&asset.Model!=null)
+                        clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
                     asset.Clips = clips.ToArray();
 
                     if (clips.Count == 0 && kind == "person")
@@ -409,6 +411,8 @@ namespace TumbangPreso.EditorTools
                         clips.Add(clip);
                 }
 
+                if(kind=="person"&&id=="rafi"&&asset.Model!=null)
+                    clips.AddRange(RafiMotionAuthor.Bake(asset.Model));
                 asset.Clips = clips.ToArray();
 
                 if (clips.Count == 0 && kind == "person")

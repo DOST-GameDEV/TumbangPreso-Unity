@@ -5,6 +5,7 @@ using System.Linq;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso.Diagnostics
@@ -27,6 +28,7 @@ namespace TumbangPreso.Diagnostics
             public float elapsed, ultimate;
             public int local, q, e, starts, snapshots;
             public long epoch;
+            public string bodyClip;
             public Water[] fields;
         }
         private static string _path;
@@ -109,6 +111,7 @@ namespace TumbangPreso.Diagnostics
             var frame=new Frame{wall=DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond,elapsed=elapsed,
                 local=NetAuthority.LocalSlot,epoch=MatchRpc.Instance.PresentationMatchId,q=kit.Skill1.ChargesRemaining,
                 e=kit.Skill2.ChargesRemaining,ultimate=kit.UltimateCharge,starts=_starts,snapshots=_snapshots,
+                bodyClip=caster.GetComponentInChildren<CharacterAnimator>(true)?.CurrentClipName??"",
                 fields=fields.Select(f=>new Water{id=f.EventId,kind=(int)f.Type,owner=f.Owner,remaining=f.Remaining,
                     duration=f.Duration,position=f.Position,forward=f.Forward,path=f.Path}).ToArray()};
             _writer.WriteLine(JsonUtility.ToJson(frame));

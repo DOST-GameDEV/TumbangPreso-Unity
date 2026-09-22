@@ -25,7 +25,7 @@ namespace TumbangPreso.Diagnostics
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
-            var report = new StringBuilder("hero,slot,variant,role,view,expected,observed,charges_before,charges_after,input_samples,actor_early_travel,actor_travel,target_travel,target_stun_samples,seconds,body_action,fpp_action\n");
+            var report = new StringBuilder("hero,slot,variant,role,view,expected,observed,charges_before,charges_after,input_samples,actor_early_travel,actor_travel,target_travel,target_stun_samples,seconds,body_action,fpp_action,body_clip_seen\n");
             int cases = 0;
             foreach (string hero in ReviewHeroes())
             foreach (int slot in new[] { 1, 2 })
@@ -59,6 +59,8 @@ namespace TumbangPreso.Diagnostics
                 actor.AbilitySystem.BindHero(hero, build);
                 var system = actor.AbilitySystem;
                 var ability = slot == 1 ? system.Kit.Skill1 : system.Kit.Skill2;
+                if(hero=="rafi"&&!art.Clips.Any(clip=>clip!=null&&clip.name==ability.CastAction&&clip.length>0))
+                    throw new InvalidOperationException("Rafi's shipping roster is missing authored clip "+ability.CastAction);
                 if (ability.VariantName != variant.Name)
                     throw new InvalidOperationException("Native variant was not equipped: " + variant.Id);
                 foreach (var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))
@@ -99,7 +101,8 @@ namespace TumbangPreso.Diagnostics
                 int before = ability.ChargesRemaining, stunSamples = 0, inputSamples = 0;
                 float actorTravel = 0, actorEarlyTravel = 0, targetTravel = 0;
                 Vector3 actorStart = actor.transform.position, targetStart = target.transform.position;
-                bool accepted = false, refused = false, sawCharge = false, sawRelease = false;
+                bool accepted = false, refused = false, sawCharge = false, sawRelease = false, bodyClipSeen = false;
+                var bodyAnimator=actor.GetComponentInChildren<CharacterAnimator>(true);
                 var verb = slot == 1 ? Verb.Skill1 : Verb.Skill2;
                 var answerSlot = slot == 1 ? HeroAbilitySystem.Slot.Skill1 : HeroAbilitySystem.Slot.Skill2;
                 var context = new AbilityContext(actor, actor.GetComponent<Carrier>(), actor.GetComponent<CombatVerbs>());
@@ -142,16 +145,18 @@ namespace TumbangPreso.Diagnostics
                         if (age <= .8f) actorEarlyTravel = actorTravel;
                         targetTravel = Mathf.Max(targetTravel, Vector3.Distance(targetStart, target.transform.position));
                         if (target.IsStunned) stunSamples++;
+                        bodyClipSeen|=bodyAnimator!=null&&bodyAnimator.IsPlayingAction&&bodyAnimator.CurrentClipName==ability.CastAction;
                         if (observer) witness.Intent.AimPoint = actor.transform.position + Vector3.up;
                         yield return null;
                     }
                     yield return movie; audio.Save(Path.Combine(_folder, name));
-                    report.AppendLine(FormattableString.Invariant($"{hero},{slot},{variant.Id},{role},{view},{(roleRefusal ? "refuse" : "cast")},{(accepted ? "cast" : refused ? "refuse" : "none")},{before},{ability.ChargesRemaining},{inputSamples},{actorEarlyTravel:F3},{actorTravel:F3},{targetTravel:F3},{stunSamples},{seconds:F2},{ability.CastAction},{ability.ViewmodelAction}"));
+                    report.AppendLine(FormattableString.Invariant($"{hero},{slot},{variant.Id},{role},{view},{(roleRefusal ? "refuse" : "cast")},{(accepted ? "cast" : refused ? "refuse" : "none")},{before},{ability.ChargesRemaining},{inputSamples},{actorEarlyTravel:F3},{actorTravel:F3},{targetTravel:F3},{stunSamples},{seconds:F2},{ability.CastAction},{ability.ViewmodelAction},{bodyClipSeen}"));
                     File.WriteAllText(Path.Combine(_folder, "skill-variants.csv"), report.ToString());
                     if (inputSamples == 0 || (roleRefusal ? accepted || !refused || ability.IsActive || ability.ChargesRemaining != before : !accepted))
                         throw new InvalidOperationException("Wrong native role outcome: " + name);
                     if(hero=="rafi"&&!defender&&(!sawCharge||!sawRelease))
                         throw new InvalidOperationException("Rafi appearance route did not include a real charge and empty-hand release: "+name);
+                    if(hero=="rafi"&&!bodyClipSeen)throw new InvalidOperationException("Rafi's authored body clip did not actually play: "+name);
                     cases++;
                 }
                 finally { actor.Intent.Clear(); audio.enabled = false; Destroy(audio); system.ResetKit(); }

@@ -1,0 +1,32 @@
+{
+  "copied": [
+    "Assets/TumbangPreso/Resources/Roster/person_rafi.asset",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset",
+    "Assets/TumbangPreso/Resources/UI/portraits/rafi.png",
+    "Assets/TumbangPreso/Editor/RafiMotionAuthor.cs.meta",
+    "Assets/TumbangPreso/Art/characters/rafi-motion.meta",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-breakwater.anim",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-breakwater.anim.meta",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-cut.anim",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-cut.anim.meta",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-feint.anim",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-feint.anim.meta"
+  ],
+  "source": "Native part-refined-v4 and v52 baked cast authoring",
+  "sha256": {
+    "Assets/TumbangPreso/Resources/Roster/person_rafi.asset": "37d01a796f9b8acf4d060141be1a7564479eaa1f56021b11b4001b700ca9fe20",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset": "4d2ecaa2a29fddb0abf4a959f8cad596ea6367cee3492aa0ac71ef2579057bc4",
+    "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset": "9eb8d257c55808ca7adbef0d05ac851684a01996f141987629350f3fa037a925",
+    "Assets/TumbangPreso/Resources/UI/portraits/rafi.png": "c64a003970926e6e43f4215c94c9b073dece67bdf8877a4806fc673a19006c21",
+    "Assets/TumbangPreso/Editor/RafiMotionAuthor.cs.meta": "2256971720f39d1b369c86776111fc2663f3e1c8169db1c9655aadb83f436dfd",
+    "Assets/TumbangPreso/Art/characters/rafi-motion.meta": "eff0ee20905fc56bf58789f1b3300d9b7607ca698643b38ef0ee5124ee180c6c",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-breakwater.anim": "ff36700148b10a125018ff7c5a1ee375a9200279e6db7e27f97bcb5397c105fa",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-breakwater.anim.meta": "25c5b5c5ef313ee9e80564df8b56dda263cd2d8b224ec33989e9ac39c64359cc",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-cut.anim": "f07d6c545493de4213e7cbb5ce8631c7596a9f3d56214006202c976f1619a80c",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-cut.anim.meta": "842748f2a732967fd5edecc2582bad0ada8961256d657644452af2882aebab09",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-feint.anim": "a61c986c3358c6d7a483558d294f8f737073e406d6269500a0846ec0497069e5",
+    "Assets/TumbangPreso/Art/characters/rafi-motion/hero-rafi-feint.anim.meta": "4766417aeb4ebd25007415f2b4fc16a6c4f292b8b30e9dbd6689e91010438b83"
+  },
+  "limits": "Only Rafi generated outputs; latest native part/motion checks ongoing. Existing hero models/builders unchanged."
+}

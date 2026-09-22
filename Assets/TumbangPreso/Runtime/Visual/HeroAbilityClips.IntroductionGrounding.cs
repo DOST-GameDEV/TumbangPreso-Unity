@@ -8,7 +8,7 @@ namespace TumbangPreso.Visual
         // These rigs have no knees. Author compression through spine/stance and
         // bake root support, as the retained Sean animation workflow does. Work
         // on the supplied render copy, restoring every sampled transform afterward.
-        private static void GroundIntroduction(AnimationClip clip, Transform model, string rootPath)
+        private static void GroundIntroduction(AnimationClip clip, Transform model, string rootPath, bool anchorToRest = false)
         {
             var root = string.IsNullOrEmpty(rootPath) ? model : model.Find(rootPath);
             var skins = model.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -55,6 +55,14 @@ namespace TumbangPreso.Visual
                     carriesScale[i] = Mathf.Abs(a.y - a.x - height) <= Mathf.Abs(b.y - b.x - height);
                 }
                 float floor = Lowest();
+                if(anchorToRest)
+                {
+                    // Live clips can begin in a gathered pose. Anchor their
+                    // support to the source rest floor, not an already sunk key.
+                    for(int i=0;i<transforms.Length;i++)
+                    {transforms[i].localPosition=positions[i];transforms[i].localRotation=rotations[i];transforms[i].localScale=scales[i];}
+                    floor=Lowest();
+                }
                 float worldPerLocalY = root.parent != null ? root.parent.TransformVector(Vector3.up).y : 1;
                 if ((float.IsNaN(floor) || float.IsInfinity(floor)) || Mathf.Abs(worldPerLocalY) < .001f) return;
                 int steps = Mathf.CeilToInt(clip.length * 60);

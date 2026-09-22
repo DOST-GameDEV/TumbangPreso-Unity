@@ -18,6 +18,74 @@ whole character feels like a retexture without his own features. Refine Rafi ONL
 No gills. No original character/builder changes. This is steering the ongoing full
 assignment, not permission to forget the map or other TODOs.
 
+## NEWEST owner steering: HERO parts, bracelets/accessories/hair
+
+Owner reiterates Rafi is HERO ONLY, and wants every part rendered/refined against
+reference, specifically bracelets, accessories and hair. Verified Roster.cs:
+Rafi appears only in HeroPeople plus the AllPeople asset union, not ClassicPeople.
+Classic figures in recent frames were separate deck diagnostics, not style refs.
+Newest eight-step part-design plan is at TOP of BADJAO_EXPANSION.md. Published
+56a220a9 is a checkpoint, not final art acceptance. Reopen Rafi appearance quality.
+
+Baseline native part sheets completed0,guard5c8796a48c7d,job89194 reaped.
+All five sheets inspected: blocky wristband, gear-like coil, disconnected hair,
+rectangular collar/raised shoulder patch, thin palm depth and buried sandal straps.
+DEV now authors a coherent PART REFINEMENT in the copied builder: connected
+chamfer-section hair/cloth/float forms, continuous fitted headband, faceted rope
+bracelet/knot/sea-glass bead and hip coils, own graphic eyes/weighted brows, shaped
+V opening/fitted shoulder lining, deeper tapered palms, raised/connected sandal
+straps. Native skull/rig/remap/packing retained; all12protected originals unchanged.
+Native part-v2 completed0,guard808507cfb773,job77835 reaped. Inspected sheets show
+continuous hip coil, V collar, distinct eye/brow design, raised sandal straps and
+improved palm depth. Found two remaining real fit faults: ellipse bracelet clips
+square wrist corners, and old rectangular hair base remains visible. V2source/model
+archived in ArtSource/rafi/part-pass-20260922. DEV now replaces the base/nape/temples
+with connected chamfer-section volumes and fits a rounded-rectangle cord path.
+Native part-v3 completed0,guarda51e95308523,job44005 reaped. Tightened bracelet
+onto actual forearm before palm and shortened the temple lock. Part-v4 completed0,
+guardcf07629ea7fb,job56720 reaped. Actual head/bracelet/right-hand/full HERO images
+inspected; earlier unchanged torso/leg v2 sheets retained. Current682140byte GLB,
+6804body/1726head vertices,33base clips, .775m. All original cast inputs unchanged.
+
+CRITICAL integration gap found preparing motion: Rafi had three C# procedural
+curves but no shipping clip assets AND no CharacterAnimator ActionChains entries.
+Earlier native checks proved accepted skills/FPP geometry/fields, NOT those body
+casts. Fixed DEV+validation: RafiMotionAuthor bakes ONLY his three nonlegacy .anim
+assets; RosterBookBuilder attaches them (base33 retained); explicit action chains
+and actual CurrentClipName checks added. Reuses grounded-pose solver with a new
+Rafi-only rest-floor anchor; original intro behavior unchanged. Shared introduction
+already uses legacy clips and remains valid. Native/peer probes now require actual
+three named body clips, not just a kit action string. Native/peer playback now passes in v52 below.
+
+v52 built1211MB/79s,guard7e5549058aa5,job57000 reaped. Owner8/8 AND observer8/8
+pass with actual named body clips, source-arm identity and legal charge/release;
+jobs60359/89600 reaped. Sampled new hands/cord/bead/cloth and actual body cast viewed.
+Shared ultimate/replay also PASSED with actual hero-rafi-breakwater playback;
+job67513 reaped. New-animation peer check PASSED: Logs/net-rafi-v52-animation,
+job82968 reaped,150ms simulated delay.448/441/439rows; every peer played all3named
+body clips, one ultimate, exact fees,6repeated snapshots,0remaining fields. Max
+expiry offset.222s. Receipts/compressed traces saved. No unrelated mechanics reruns.
+Recovered12Rafi-only generated paths via rafi-parts-v52-transfer.json: portrait/
+arms/roster,3cast.anim assets+metas. Base33 retained; roster carries36.
+
+Also fixed real registration omission in ugs/cloud-code/match-record.js: append
+Rafi to MASTERY_HEROES. SOURCE ONLY, NOT deployed/live verified. No live UGS calls/deployment attempted. Before external deployment, verify actual
+authenticated access and whether the owner's no-paid-service rule applies; do not
+invent a permission blocker or claim deployment. Canonical
+HeroTurnaround/FPP inventory and hero hand-action test now include the seventh hero.
+No gills or Classic roster placement. UI picker uses Roster.GetPeople(selectedMode).
+
+Deck issue CLOSED locally: corrected live-v3 capture1/1 in3.979s,guard93c7ee94e029,
+job91739 reaped. Thin board batching removes the dense exaggerated lines while
+structural outlines/texture remain. Author guard374f4ce62dd3. Assets recovered
+into DEV via expansion-asset-transfer-v7.json;203kept paths.453unreferenced NEW
+generated mesh caches+metas were moved to Logs/unused-lagoon-v7-mesh-cache, not
+deleted or staged.10unrelated Ilalim material differences
+in the old dirty validation workspace were EXCLUDED/preserved. Initial broad
+transfer assertion failed before copying anything; scoped transfer succeeded.
+These old validation divergences reinforce need for clean coherent qualification.
+Deck source/assets are uncommitted after56a220a9; preserve while Rafi takes priority.
+
 ## Exact current action
 
 New distinctive Rafi model is implemented in tools/build_rafi_voxel.py, the actual
@@ -64,17 +132,35 @@ cases charge/release from outside the legal7m boundary. Source hashes/unchanged-
 captures/receipts in expansion-evidence/rafi-v51-source-inputs.json. Human approval
 not inferred. Latest model/source/palette/arms match DEV and validation exactly.
 
-NEXT: save/publish explicit owned expansion/network/Rafi source checkpoint (fetch
-already confirms origin/ASTRAReworks3b4fb19c), then investigate Lagoon deck's oblique
-fine/dashed line artifact, finish full TODO dispositions and coherent qualification.
-Owner8movies encoded at measured timing with engine audio. Observer8 + v49ultimate/
-replay2 movies currently encoding in validation (last tool output). No native players
-or Editor remain running. Do not repeat completed Rafi mechanics/peer/arm checks.
+NEXT: investigate Lagoon deck's oblique fine/dashed line artifact, finish full TODO
+dispositions and coherent qualification. Published checkpoint is now56a220a9.
+Saved-scene deck study completed0,guard0b49a62b4eb0,job15040 reaped, but did NOT
+reproduce dense native dashes. Material detail changes the fine grain; outline/
+shadow switches do not establish the native cause. No shipping change inferred.
+Reusing existing MapExperienceProbe live CameraRig comparison at1280x720.
+First new call had wrong positional helper arguments; compile failure preserved
+Logs/lagoon-deck-live-v1,guard5ccf53ffaa38,job76680 reaped. Named dimensions fixed.
+Live-v2 passed1/1 in4.724538s,guard10bc8dc6ed60,job81349 reaped. Actual A/B
+identifies WORLD OUTLINE amplifying physical board gaps; detail/shadow toggles do
+not remove them. Source cause: floor batching merged.036m planks with3m piles,
+defeating the existing .12m thin-renderer exclusion. Fixed ONLY Lagoon authoring:
+separate horizontal board batches by world-height plane from structural meshes;
+stagger plank ends by half lengths. Same collision planes/steps/positions.
+Generation Logs/lagoon-deck-author-v1 completed0 (guard in latest tool output),
+job21450 reaped. LIVE corrected comparison Logs/lagoon-deck-live-v3, new guarded
+job in latest output. Inspect corrected baseline, then stop this focused diagnostic
+and transfer new scene/mesh dependency closure. No old-map or Rafi mechanics rerun.
+MapExperienceProbe map list now follows SceneFlow.Maps (includes Lagoon).
+Owner8movies encoded at measured timing with engine audio. Observer8 + v49ultimate/replay2 movies also encoded,job88677 reaped. No native
+players, encoding helpers or Editor remain running. Do not repeat completed Rafi mechanics/peer/arm checks.
 
 ## Workspace and source state
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Published HEAD3b4fb19c81ea06dd7bbd8a1e42d4b0d707d77421. No newer commit/push yet.
+Published HEAD56a220a99fcef7301005202f2f792c7f71986918, verified remote ASTRAReworks.
+938explicit owned paths committed; original two unrelated metas remain unstaged.
+Source diff check is clean except one trailing space in the exact archived rejected
+builder snapshot, intentionally preserved as historical bytes. No live source issue.
 Validation sibling TumbangPreso-Unity-validation remains detached db976126 with
 explicit owned input copies and independent Assets/Library/Temp/obj. Its dirty
 internal builds are honestly stamped db976126+dirty, NOT final coherent releases.

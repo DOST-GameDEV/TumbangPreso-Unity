@@ -220,6 +220,9 @@ namespace TumbangPreso.Visual
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
             { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
+            { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
+            { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
+            { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
         };
 
         [SerializeField] private float _blend = 0.12f;
@@ -1032,6 +1035,7 @@ namespace TumbangPreso.Visual
         /// part-played. See `Carrier.StepDefender`, where the reset channel runs far longer than
         /// the gesture that announces it.</summary>
         public bool IsPlayingAction => _oneShotLeft > 0.0f;
+        public string CurrentClipName => _current;
 
         public void CancelHeroAction(string expected = null, string viewmodel = null)
         {

@@ -31,7 +31,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void EveryHeroUsesBothHandsAndReturnsCleanly()
         {
-            foreach(string hero in new[]{"sean","zack","dante","cheska","nemu","phaister"})
+            foreach(string hero in Core.Roster.HeroPeople.Select(person=>person.Id))
             {
                 var kit=HeroAbilitySystem.CreateKitFor(hero);
                 foreach(var ability in new[]{kit.Skill1,kit.Skill2,kit.Ultimate})

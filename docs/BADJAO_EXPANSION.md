@@ -2,6 +2,71 @@
 
 ## Owner art rejection and revised delivery contract, 2026-09-22
 
+### Newest body-part quality pass: HERO ONLY
+
+The owner reiterates Rafi belongs only to Hero Strike, never the Classic cast,
+and asks for careful renders/refinement of every body part, especially bracelets,
+accessories and hair. Roster.cs already puts him only in HeroPeople; AllPeople is
+the asset union, not the Classic selection. Classic figures in the deck diagnostic
+are not Rafi references. His only cast comparison is Sean/Cheska/Dante/Zack/Nemu/
+Phaister. The published56a220a9 model is a checkpoint, not final visual acceptance.
+
+Work order, retained before editing:
+
+1. **Native part sheets:** use the canonical four angles for head/face/hair, torso
+   and waist, each arm/hand, legs/sandals; then the full HERO lineup. Show native
+   geometry/palette/outline, not an AI picture as implementation proof. Review at
+   close-up and normal game distance, and keep the generated v3 concept as design
+   reference while native hero proportions remain authoritative.
+2. **Hair:** replace the plank-like front/crown pieces with a few connected,
+   tapered low-poly volumes following a deliberate swept path. Keep broad roots,
+   an asymmetric hook/forelock, exposed temple and compact tied tail; no floating
+   locks, flat helmet cap, copied lightning/horns or photoreal strand texture.
+3. **Face:** retain the native skull/flat graphic-face construction, but author
+   Rafi's own focused eye shapes and weighted brows rather than donor smile-eyes.
+   Keep a short restrained closed mouth. No broad grin, gills, face markings or
+   realistic sculpted eyes/nose. Check frontal and quarter expression together.
+4. **Wrist cord/bracelet:** a continuous fitted faceted rope loop with a small
+   tied closure, navy binding and one restrained sea-glass bead. Fit it around
+   the left wrist with actual clearance; avoid a thick rectangular cuff masquerading
+   as rope. The right wrist stays clean. Body and FPP are the SAME authored geometry.
+5. **Accessories:** make the hip rope a continuous elongated coil with clear hollow
+   centre and an actual hanger, rather than a gear made of repeated cubes. Refine
+   the headwrap's knot and tapered folded tails so they attach and drape visibly.
+   Keep the one orange personal float clip, with a fitted fastening. No arbitrary
+   repeated ornaments or invented cultural/tribal symbolism.
+6. **Cloth/torso:** shape the V opening and collar, shoulder lining, sash knot/tails
+   and wrapped sailcloth panel as distinct fitted volumes. Readable thickness,
+   overlap, two purposeful seams and clean intersections. No badge floating above
+   the shirt or giant flat belt that obscures the whole torso.
+7. **Hands/legs/feet:** keep native simple no-thumb block hands; improve the palm
+   depth/taper if the FPP reads edge-on and skinny. Fit the left cord to the revised
+   wrist. Keep the short HERO-family legs, distinct shorts cuffs, supported feet,
+   sandal sole/strap volumes and current pivots/grounding.
+8. **Delivery check:** regenerate ONLY Rafi's model/palette/roster/portrait/arms;
+   preserve original characters/builders/GUIDs and all33clips. Inspect the part
+   sheets and full hero lineup, then changed body/FPP carry/throw/cast poses. Make
+   specific shape corrections where necessary, not repeated unchanged broad tests.
+   Resume the full preserved backlog afterward; no task is deleted or abandoned.
+
+Part-review evidence: baseline five sheets showed blocky bracelet/coil/hair and
+buried sandal straps. The first coherent continuous-form revision improves the
+coil/collar/eyes/palms/sandals but exposed wrist-corner clipping and a rectangular
+hair base. These are being corrected together; part studies remain actual native
+four-angle source geometry, not concept approval. Both the old draft and failed
+fit evidence are retained. The reference/cast checks use HERO characters only.
+
+Latest part-v4 native views and v52 owner/observer/shared/peer motion checks now
+complete this specific authored pass. The shipping body-clip gap discovered during
+review is fixed with3Rafi-only serialized clips and explicit playback registration.
+See reports/full-backlog-2026-09-21/rafi-parts-and-motion.md for limits and evidence.
+Human art approval is not inferred; the broader assignment remains active.
+
+The Lagoon deck fix completed its focused runtime comparison before this new
+steering: separated thin board batches remove the exaggerated ink gaps, physical
+walking collision is unchanged. Assets recovered via expansion-asset-transfer-v7;
+broader final qualification remains pending. Current priority is this Rafi pass.
+
 **Further owner correction:** the copied-builder draft's broad curved smile and
 helmet-like hair are also rejected. Refine only Rafi: calm focused native eyes,
 short restrained mouth, a shaped swept fringe with visible forehead/temples and a

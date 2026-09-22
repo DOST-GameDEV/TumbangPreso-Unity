@@ -71,6 +71,7 @@ namespace TumbangPreso.Diagnostics
                     yield return WaitFor(()=>!SharedUltimatePhase.Instance.Active,4);
                     if(PresentationClock.Held||actor.AbilitySystem.Kit.Ultimate.ReservedForIntroduction||starts!=1)
                         throw new InvalidOperationException(hero+" did not resume exactly one real ability");
+                    if(hero=="rafi")yield return WaitFor(()=>actor.GetComponentInChildren<CharacterAnimator>(true)?.CurrentClipName=="hero-rafi-breakwater",1);
                     if(retained)
                     {
                         var round=GameServices.Round;var scorer=round.Players.First(p=>p!=actor&&!p.IsDefender);

@@ -56,7 +56,11 @@ def evaluate(out):
             errors.append(name + ': missing live field samples')
         if not rows or rows[-1]['fields'] or rows[-1]['q'] != 1 or rows[-1]['e'] != 1 or rows[-1]['starts'] != 1 or abs(rows[-1]['ultimate']) > .001:
             errors.append(name + ': leak, wrong fee or duplicated/missing ultimate')
+        clips = {row.get('bodyClip', '') for row in rows}
+        if not {'hero-rafi-cut', 'hero-rafi-feint', 'hero-rafi-breakwater'}.issubset(clips):
+            errors.append(name + ': missing actual authored Rafi body playback')
         measured[name] = {'rows': len(rows), 'eventIds': sorted(observed), 'starts': rows[-1]['starts'] if rows else 0,
+                          'bodyClips': sorted(clips),
                           'snapshots': rows[-1]['snapshots'] if rows else 0, 'largestExpiryOffset': 0}
         for event, samples in observed.items():
             host_samples = [(r, f) for r in data['host'] for f in r['fields'] if f['id'] == event]

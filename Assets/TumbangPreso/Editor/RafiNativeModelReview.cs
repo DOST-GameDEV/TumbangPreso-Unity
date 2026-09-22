@@ -12,7 +12,7 @@ namespace TumbangPreso.EditorTools
 {
     // Native toon/outline and actual uniform game scale. Existing character assets
     // are instantiated for comparison only; no original model or recipe is edited.
-    public static class RafiNativeModelReview
+    public static partial class RafiNativeModelReview
     {
         public static void Run()
         {
@@ -23,6 +23,7 @@ namespace TumbangPreso.EditorTools
             RosterBookBuilder.BuildFromMenu();
             Lineup(directory,"hero-lineup-front.png",180);
             Lineup(directory,"hero-lineup-quarter.png",220);
+            if(args.Contains("-tp-part-studies"))RenderPartStudies(directory);
             RafiPortraitAuthor.Build();
             HeroTurnaroundProbe.RunOne();
         }

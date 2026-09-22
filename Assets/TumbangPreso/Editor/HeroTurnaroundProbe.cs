@@ -24,6 +24,7 @@ namespace TumbangPreso.EditorTools
             ("phaister", "Phaister", "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb"),
             ("sean",     "Sean",     "Assets/TumbangPreso/Art/characters/persons/team-sean.glb"),
             ("zack",     "Zack",     "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"),
+            ("rafi",     "Rafi",     "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb"),
         };
 
         private static readonly (string Label, float Yaw)[] Angles =

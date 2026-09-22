@@ -25,7 +25,7 @@ namespace TumbangPreso.PlayTests
         private float _timeScale;
         private CustomRules _rules;
         private static string Output => Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/map-owner-review-v1";
-        private static readonly string[] Maps = { SceneFlow.Eskinita, SceneFlow.BayanPlaza, SceneFlow.IlalimNgTulay,SceneFlow.SaBubong };
+        private static readonly string[] Maps = SceneFlow.Maps;
         private static string[] ReviewMaps()
         {
             string selected = Environment.GetEnvironmentVariable("TUMP_MAP_REVIEW");
@@ -124,6 +124,43 @@ namespace TumbangPreso.PlayTests
                 }
             }
             finally{Time.timeScale=1;outline.enabled=true;for(int j=0;j<lights.Length;j++)if(lights[j]!=null)lights[j].shadows=shadows[j];}
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator LagoonDeckSeparatesDetailOutlineAndShadows()
+        {
+            yield return MapRetrievalProbe.Load("Lagoon");
+            var who=GameServices.Round.PlayerAt(1);StageOtherSeats(who);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(who,true);rig.SetAimSource(AimSource.Movement);
+            GraphicsProfiles.Apply(1);
+            int savedAA=SettingsStore.Current.AntiAliasMode;AntiAliasModes.Apply(0);
+            var outline=rig.Camera.GetComponent<WorldOutline>();Assert.IsNotNull(outline);
+            var lights=Object.FindObjectsByType<Light>().Where(l=>l.type==LightType.Directional).ToArray();
+            var shadows=lights.Select(l=>l.shadows).ToArray();Assert.Greater(lights.Length,0);
+            var materials=Object.FindObjectsByType<Renderer>().SelectMany(r=>r.sharedMaterials)
+                .Where(m=>m!=null&&m.HasProperty("_SurfaceStrength")).Distinct().ToArray();
+            var strengths=materials.Select(m=>m.GetFloat("_SurfaceStrength")).ToArray();
+            try
+            {
+                var at=new Vector3(0,0,-8.2f);at.y=Slipper.GroundY(at);who.Teleport(at);
+                who.transform.rotation=Quaternion.identity;
+                yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();Time.timeScale=0;yield return null;
+                foreach(string pass in new[]{"baseline","no-detail","no-outline","no-shadows","neither"})
+                {
+                    for(int i=0;i<materials.Length;i++)materials[i].SetFloat("_SurfaceStrength",pass=="no-detail"?0:strengths[i]);
+                    outline.enabled=pass!="no-outline"&&pass!="neither";
+                    for(int i=0;i<lights.Length;i++)lights[i].shadows=pass=="no-shadows"||pass=="neither"?LightShadows.None:shadows[i];
+                    yield return null;
+                    yield return GameplayShots.Render(rig.Camera,"lagoon-deck-"+pass,false,Output,width:1280,height:720);
+                }
+                File.WriteAllText(Path.Combine(Output,"deck-scope.txt"),"Live PlayMode CameraRig, Balanced, AA mode0, five one-factor comparisons at1280x720. Saved-scene study alone did not reproduce the native player's dense dashes.\n");
+            }
+            finally
+            {
+                Time.timeScale=1;outline.enabled=true;AntiAliasModes.Apply(savedAA);
+                for(int i=0;i<materials.Length;i++)if(materials[i]!=null)materials[i].SetFloat("_SurfaceStrength",strengths[i]);
+                for(int i=0;i<lights.Length;i++)if(lights[i]!=null)lights[i].shadows=shadows[i];
+            }
         }
 
         [UnityTest, Timeout(600000)]

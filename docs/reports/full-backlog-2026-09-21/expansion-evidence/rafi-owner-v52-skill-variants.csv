@@ -1,0 +1,9 @@
+hero,slot,variant,role,view,expected,observed,charges_before,charges_after,input_samples,actor_early_travel,actor_travel,target_travel,target_stun_samples,seconds,body_action,fpp_action,body_clip_seen
+rafi,1,rafi.1.current,attacker,owner,cast,cast,2,1,19,0.000,0.000,0.000,0,5.00,hero-rafi-cut,current-cut,True
+rafi,1,rafi.1.current,defender,owner,cast,cast,2,1,24,0.000,0.000,0.000,0,5.00,hero-rafi-cut,current-cut,True
+rafi,1,rafi.1.tightcut,attacker,owner,cast,cast,2,1,26,0.000,0.000,0.000,0,5.00,hero-rafi-cut,current-cut,True
+rafi,1,rafi.1.tightcut,defender,owner,cast,cast,2,1,23,0.000,0.000,0.000,0,5.00,hero-rafi-cut,current-cut,True
+rafi,2,rafi.2.mirror,attacker,owner,cast,cast,2,1,29,0.000,0.000,0.000,0,5.00,hero-rafi-feint,mirror-feint,True
+rafi,2,rafi.2.mirror,defender,owner,cast,cast,2,1,26,0.000,0.000,0.000,0,5.00,hero-rafi-feint,mirror-feint,True
+rafi,2,rafi.2.longwake,attacker,owner,cast,cast,2,1,29,0.000,0.000,0.000,0,5.00,hero-rafi-feint,mirror-feint,True
+rafi,2,rafi.2.longwake,defender,owner,cast,cast,2,1,25,0.000,0.000,0.000,0,5.00,hero-rafi-feint,mirror-feint,True

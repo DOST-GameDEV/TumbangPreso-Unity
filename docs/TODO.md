@@ -52,11 +52,17 @@ with a failed-before/passed-after regression and the complete native route.
 
 - [x] Replace rejected Rafi through a dedicated retrofitted copy of the repository
   voxel builder. Match the HERO cast and canonical Unity pipeline; existing people
-  and original builders stay untouched. The owner's later rejection of the face,
+  and original builders stay untouched. Latest HERO-only body-part
+  pass is implemented: continuous swept hair/cord/coil forms, own eyes/brows,
+  fitted cloth/palms/sandals. Native part-v4/HERO lineup and v52actual owner/observer,
+  shared replay and delayed peer BODY PLAYBACK checks pass. Earlier body-cast
+  claims were insufficient: missing shipping assets/registration are now fixed.
+  See rafi-parts-and-motion.md; human art approval remains distinct.
+  The owner's later rejection of the face,
   hair/retexture-like identity and mismatched FPP has a new authored replacement:
   swept/tapered hair/headwrap/float clip, original brows/closed mouth, asymmetric
-  garment shapes/sailcloth/rope coil and matching source arms. Current876968byte
-  model keeps33clips. Nativev4 four-angle/HERO-lineup review and v51owner8/observer8
+  garment shapes/sailcloth/rope coil and matching source arms. Current682140byte
+  model keeps33base clips plus3referenced authored cast clips. Nativev4 four-angle/HERO-lineup review and v51owner8/observer8
   cases include actual arm identity, real charge/release and visual parity. No gills.
   All12protected source hashes unchanged. This is implemented/inspected, not human
   approval. Concept/provenance and exact v51 source receipts are retained.

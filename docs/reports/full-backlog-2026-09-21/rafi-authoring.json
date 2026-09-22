@@ -2,13 +2,13 @@
   "original": "tools/build_person_voxel.py",
   "original_sha256": "a6dd297270b0b155412ba36be1e60a8331e8dbb533d48bc5d145ea34d2a72409",
   "copy": "tools/build_rafi_voxel.py",
-  "copy_sha256": "35d8b847c0774d3477d41b836323973c613223c87c2143787f0f658ae7b9ecc2",
+  "copy_sha256": "3b6e50e4466c2617370550b377dfc204a0b5cdacd8cf16e5747066661d70bb8b",
   "changed": "Rafi output/rig source, eight recipe tables/constants and native curved smile; original chamfer, smoothing, family remap and glTF packing pipeline retained.",
   "retarget": "7bones and25translation tracks shifted by the copied builder;33clips retained, no claim of byte-identical tracks.",
   "protected_inputs_unchanged": true,
   "output": "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb",
-  "output_bytes": 876968,
-  "output_sha256": "716afcc4145cf77a83be7dacb9ee3e1334687c673ff9c6945e8382231e48807e",
+  "output_bytes": 682140,
+  "output_sha256": "ec1b0c32e4784d28f488a6ce7fdb52d05666001d85cfc44155d4c04994b9b593",
   "animations": 33,
   "animation_names": [
     "static",
@@ -47,11 +47,15 @@
   ],
   "gills": false,
   "native_evidence": [
-    "Logs/rafi-distinct-v4/rafi-turnaround.png",
-    "Logs/rafi-distinct-v4/hero-lineup-front.png",
-    "Logs/rafi-distinct-v4/hero-lineup-quarter.png",
-    "Logs/rafi-owner-v51",
-    "Logs/rafi-observer-v51"
+    "Logs/rafi-parts-refined-v4",
+    "Logs/rafi-owner-v52",
+    "Logs/rafi-observer-v52"
   ],
-  "limits": "Newest Rafi-only identity revision: native four angles/HERO cast and owner/observer eight role-choice cases inspected. Source-arm ID/mesh selection and legal charge/release asserted. Human art/balance acceptance and audio listening remain unclaimed."
+  "limits": "Native four-angle part/full-HERO review and v52 owner/observer8cases each, shared ultimate/replay, and actual three-peer150ms body-clip/effect delivery passed. Base GLB retains33clips plus3Rafi-only authored assets referenced by roster. Human art/balance approval, WAN/hardware and audio listening not claimed.",
+  "authored_live_casts": [
+    "hero-rafi-cut",
+    "hero-rafi-feint",
+    "hero-rafi-breakwater"
+  ],
+  "runtime_roster_clip_count": 36
 }

@@ -5,6 +5,16 @@ namespace TumbangPreso.Visual
 {
     public static partial class HeroAbilityClips
     {
+#if UNITY_EDITOR
+        public static AnimationClip[] BuildRafiAuthored(Transform root)
+        {
+            var paths=ResolvePaths(root);
+            if(paths==null)throw new System.InvalidOperationException("Rafi rig is missing a required bone.");
+            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths)};
+            foreach(var clip in clips)GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
+            return clips;
+        }
+#endif
         private static AnimationClip BuildRafiCut(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-rafi-cut", paths);

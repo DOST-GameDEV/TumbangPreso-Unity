@@ -49,24 +49,51 @@ namespace TumbangPreso.EditorTools.MapKit
             var camera=new GameObject("Expansion art review").AddComponent<Camera>();
             camera.enabled=false;camera.nearClipPlane=.05f;camera.farClipPlane=380;camera.fieldOfView=65;
             camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
-            camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled=true;
+            var outline=camera.gameObject.AddComponent<WorldOutline>();outline.PrototypeEnabled=true;
+            bool deckStudy=Environment.GetCommandLineArgs().Contains("-tp-deck-study");
+            var materials=Object.FindObjectsByType<Renderer>().SelectMany(r=>r.sharedMaterials)
+                .Where(m=>m!=null&&m.HasProperty("_SurfaceStrength")).Distinct().ToArray();
+            var strengths=materials.Select(m=>m.GetFloat("_SurfaceStrength")).ToArray();
+            var lights=Object.FindObjectsByType<Light>();var shadows=lights.Select(l=>l.shadows).ToArray();
             var views=new[]{
                 ("lagoon-overview",new Vector3(34,29,-39),new Vector3(0,0,3)),
                 ("lagoon-court",new Vector3(0,1.65f,-11),new Vector3(0,1.6f,18)),
                 ("lagoon-homes",new Vector3(17,1.65f,1),new Vector3(26,1.6f,10)),
                 ("lagoon-water-entry",new Vector3(26,-.05f,2),new Vector3(21,-.5f,0)),
                 ("lagoon-boat-landing",new Vector3(-4,1.8f,-23),new Vector3(-9,-.5f,-29))};
+            if(deckStudy)
+            {
+                camera.fieldOfView=95;
+                views=new[]{"deck-baseline","deck-no-detail","deck-no-outline","deck-no-shadows","deck-msaa4"}
+                    .Select(name=>(name,new Vector3(0,1.286f,-8.2f),new Vector3(0,1.286f,10))).ToArray();
+            }
+            int width=deckStudy?1280:1440,height=deckStudy?720:900;
+            try
+            {
             foreach(var view in views)
             {
+                if(deckStudy)
+                {
+                    for(int i=0;i<materials.Length;i++)materials[i].SetFloat("_SurfaceStrength",view.Item1=="deck-no-detail"?0:strengths[i]);
+                    for(int i=0;i<lights.Length;i++)lights[i].shadows=view.Item1=="deck-no-shadows"?LightShadows.None:shadows[i];
+                    outline.PrototypeEnabled=view.Item1!="deck-no-outline";
+                }
                 camera.transform.SetPositionAndRotation(view.Item2,Quaternion.LookRotation(view.Item3-view.Item2));
-                var rt=new RenderTexture(1440,900,24,RenderTextureFormat.ARGBHalf){antiAliasing=4};rt.Create();
+                int samples=!deckStudy||view.Item1=="deck-msaa4"?4:1;camera.allowMSAA=samples>1;
+                var rt=new RenderTexture(width,height,24,RenderTextureFormat.ARGBHalf){antiAliasing=samples};rt.Create();
                 camera.targetTexture=rt;camera.Render();var previous=RenderTexture.active;
-                var display=RenderTexture.GetTemporary(1440,900,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+                var display=RenderTexture.GetTemporary(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
                 bool write=GL.sRGBWrite;GL.sRGBWrite=QualitySettings.activeColorSpace==ColorSpace.Linear;
                 Graphics.Blit(rt,display);GL.sRGBWrite=write;RenderTexture.active=display;
-                var image=new Texture2D(1440,900,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,1440,900),0,0);image.Apply();
+                var image=new Texture2D(width,height,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,width,height),0,0);image.Apply();
                 File.WriteAllBytes(output+"/"+view.Item1+".png",image.EncodeToPNG());
                 RenderTexture.active=previous;camera.targetTexture=null;RenderTexture.ReleaseTemporary(display);rt.Release();Object.DestroyImmediate(rt);Object.DestroyImmediate(image);
+            }
+            }
+            finally
+            {
+                for(int i=0;i<materials.Length;i++)materials[i].SetFloat("_SurfaceStrength",strengths[i]);
+                for(int i=0;i<lights.Length;i++)lights[i].shadows=shadows[i];
             }
             Object.DestroyImmediate(camera.gameObject);
             File.WriteAllLines(output+"/scene-dependencies.txt",AssetDatabase.GetDependencies(ScenePath,true));
@@ -174,9 +201,14 @@ namespace TumbangPreso.EditorTools.MapKit
             for(int z=0;z<rows;z++)
             {
                 int pieces=Mathf.Max(1,Mathf.CeilToInt(width/5));
-                for(int x=0;x<pieces;x++)
-                    Box(deck,"Deck board",new Vector3(-width*.5f+(x+.5f)*width/pieces,.018f,-depth*.5f+(z+.5f)*board),
-                        new Vector3(width/pieces-.018f,.036f,board-.013f),((x*37+z*19+z*z)%47)==0?_fresh:_wood);
+                float length=width/pieces;
+                for(int x=0;x<pieces+(z%2);x++)
+                {
+                    float left=Mathf.Max(-width*.5f,-width*.5f+(x-(z%2)*.5f)*length);
+                    float right=Mathf.Min(width*.5f,-width*.5f+(x+1-(z%2)*.5f)*length);
+                    Box(deck,"Deck board",new Vector3((left+right)*.5f,.018f,-depth*.5f+(z+.5f)*board),
+                        new Vector3(right-left-.018f,.036f,board-.013f),((x*37+z*19+z*z)%47)==0?_fresh:_wood);
+                }
             }
             int px=Mathf.Max(1,Mathf.CeilToInt(width/5)),pz=Mathf.Max(1,Mathf.CeilToInt(depth/5));
             for(int x=0;x<=px;x++)for(int z=0;z<=pz;z++)
@@ -404,6 +436,18 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void Bake(Transform root,string name)
         {
             var filters=root.GetComponentsInChildren<MeshFilter>().Where(f=>f.GetComponent<MeshRenderer>()!=null).ToArray();
+            // Keep horizontal planks thin after batching. Combining them with
+            // three-metre piles made WorldOutline treat every tiny board gap as
+            // a structural edge, producing noisy dashes at ordinary player eyes.
+            var boards=filters.Where(f=>f.name=="Deck board").ToArray();
+            int plane=0;
+            foreach(var group in boards.GroupBy(f=>Mathf.RoundToInt(f.transform.position.y*1000)))
+                BakeParts(Group(root,"Thin deck surface "+plane),group.ToArray(),name+"Boards"+plane++);
+            BakeParts(root,filters.Except(boards).ToArray(),name);
+        }
+        private static void BakeParts(Transform root,MeshFilter[] filters,string name)
+        {
+            if(filters.Length==0)return;
             var groups=filters.SelectMany(f=>f.GetComponent<MeshRenderer>().sharedMaterials
                 .Select((material,submesh)=>(filter:f,material,submesh)).Where(part=>part.submesh<f.sharedMesh.subMeshCount))
                 .GroupBy(part=>part.material).ToArray();

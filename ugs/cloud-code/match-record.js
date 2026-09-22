@@ -191,7 +191,7 @@ function normaliseRecord(raw) {
 // hero with no mastery path.
 // ---------------------------------------------------------------------------
 
-const MASTERY_HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister"];
+const MASTERY_HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister", "rafi"];
 
 const COMPLETION_XP = 100;
 const PLACEMENT_XP = [40, 25, 15, 10];

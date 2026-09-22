@@ -214,8 +214,9 @@ def mirrored(boxes, bone_from, bone_to):
 # Rafi's compact shorts and practical sandals use the retained cast leg proportions.
 LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.006, 0, -0.134), (0.158, 0.025, 0.082), 1),
  ('sandal-foot-left', 'leg-left', (0.015, 0.023, -0.126), (0.149, 0.07, 0.069), 15),
- ('sandal-strap-left', 'leg-left', (0.013, 0.054, -0.073), (0.151, 0.077, -0.036), 1),
- ('sandal-heel-strap-left', 'leg-left', (0.023, 0.06, 0.032), (0.143, 0.087, 0.064), 1),
+ ('sandal-strap-left', 'leg-left', (0.013, 0.069, -0.073), (0.151, 0.09, -0.036), 1),
+ ('sandal-heel-strap-left', 'leg-left', (0.023, 0.067, 0.032), (0.143, 0.091, 0.067), 1),
+ ('sandal-side-strap-left', 'leg-left', (0.138, 0.064, -0.041), (0.151, 0.087, 0.052), 1),
  ('calf-left', 'leg-left', (0.033, 0.061, -0.059), (0.133, 0.176, 0.058), 15),
  ('shorts-left', 'leg-left', (0.008, 0.147, -0.081), (0.16, 0.258, 0.079), 0),
  ('shorts-cuff-left', 'leg-left', (0.006, 0.143, -0.085), (0.162, 0.166, 0.082), 3),
@@ -229,11 +230,11 @@ TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 
  ('shirt-back-yoke', 'torso', (-0.106, 0.389, 0.082), (0.106, 0.431, 0.098), 5),
  ('shirt-bottom-hem', 'torso', (-0.111, 0.248, -0.087), (0.111, 0.275, 0.09), 5),
  ('neck-skin', 'torso', (-0.065, 0.39, -0.048), (0.065, 0.449, 0.058), 15),
- ('cream-undershirt', 'torso', (-0.028, 0.367, -0.098), (0.028, 0.443, -0.081), 3),
+ ('cream-undershirt', 'torso', (-0.042, 0.367, -0.098), (0.042, 0.443, -0.081), 3),
  ('open-collar-left', 'torso', (0.018, 0.382, -0.113), (0.079, 0.448, -0.08), 5),
  ('open-collar-right', 'torso', (-0.079, 0.382, -0.113), (-0.018, 0.448, -0.08), 5),
- ('folded-shoulder-lining', 'torso', (-0.133, 0.399, -0.122), (-0.039, 0.466, -0.085), 3),
- ('shoulder-loop-fastener', 'torso', (-0.09, 0.418, -0.136), (-0.07, 0.438, -0.116), 9),
+ ('folded-shoulder-lining', 'torso', (-0.113, 0.388, -0.114), (-0.028, 0.445, -0.086), 3),
+ ('shoulder-loop-fastener', 'torso', (-0.082, 0.405, -0.126), (-0.066, 0.422, -0.11), 9),
  ('navy-wrap-belt', 'torso', (-0.122, 0.267, -0.108), (0.123, 0.3, 0.106), 0),
  ('sash-knot', 'torso', (0.052, 0.265, -0.141), (0.095, 0.308, -0.1), 1),
  ('sash-long-tail', 'torso', (0.052, 0.172, -0.132), (0.087, 0.281, -0.103), 0),
@@ -242,49 +243,24 @@ TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 
  ('sailcloth-back-wrap', 'torso', (-0.124, 0.189, 0.079), (0.112, 0.267, 0.111), 3),
  ('sailcloth-repair-seam', 'torso', (-0.127, 0.213, -0.122), (0.014, 0.221, -0.113), 12),
  ('sailcloth-back-seam', 'torso', (-0.07, 0.221, 0.109), (0.106, 0.229, 0.118), 12),
- ('rope-hanger', 'torso', (-0.153, 0.238, -0.136), (-0.126, 0.301, -0.106), 9)]
+ ('rope-hanger', 'torso', (-0.159, 0.263, -0.145), (-0.133, 0.32, -0.107), 9)]
 
 # One fitted rope coil is a useful belonging and a broad silhouette feature.
 # Each segment is native chamfered geometry, not a repeated surface decoration.
-for coil in range(2):
-    for segment in range(16):
-        angle=segment*math.tau/16
-        x=-.151+math.cos(angle)*(.030-coil*.009)
-        y=.233+math.sin(angle)*(.077-coil*.013)
-        z=-.140-coil*.015
-        TORSO.append((f'rope-coil-{coil}-{segment}','torso',
-                      (x-.008,y-.016,z-.007),(x+.008,y+.016,z+.007),12))
+# Continuous fitted coils are emitted by _rafi_forms, not a ring of cubes.
 
 # Actual source cuffs and one modest cord also supply the matching FPP mesh.
 ARM_LEFT = [('sleeve-left', 'arm-left', (0.0999, 0.342, -0.064), (0.207, 0.458, 0.068), 4),
  ('rolled-cuff-left', 'arm-left', (0.192, 0.331, -0.073), (0.226, 0.469, 0.077), 3),
  ('forearm-left', 'arm-left', (0.218, 0.35, -0.032), (0.284, 0.45, 0.042), 15),
- ('hand-left', 'arm-left', (0.265, 0.3383, -0.02), (0.3836, 0.4617, 0.038), 15)]
+ ('hand-left', 'arm-left', (0.265, 0.3383, -0.043), (0.3836, 0.4617, 0.061), 15)]
 
 # The right hand stays clear; the personal cord is on the left only.
 ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
-ARM_LEFT += [('wrist-cord-left','arm-left',(.278,.332,-.029),(.29,.468,.047),12),
-             ('wrist-cord-knot-left','arm-left',(.276,.371,-.04),(.299,.4,-.025),0)]
+ARM_LEFT += [('wrist-glass-bead-left','arm-left',(.260,.383,-.05),(.272,.4,-.04),11)]
 
-HEAD = [('hair-nape','head',(-.165,.473,-.179),(.166,.655,-.075),6),
- ('hair-crown','head',(-.17,.61,-.166),(.166,.718,.09),6),
- ('hair-hook-high','head',(-.112,.681,-.072),(.064,.758,.125),6),
- ('hair-sweep-left','head',(-.209,.625,.025),(-.058,.722,.157),6),
- ('hair-sweep-right','head',(.03,.636,.018),(.182,.706,.137),6),
- ('hair-forelock-upper','head',(-.16,.606,.128),(-.023,.704,.188),6),
- ('hair-forelock-tip','head',(-.172,.524,.134),(-.084,.638,.193),6),
- ('hair-short-temple','head',(.144,.503,.057),(.18,.57,.125),6),
- ('hair-side-tuck','head',(-.191,.492,.033),(-.153,.567,.109),6),
- ('hair-tied-tail','head',(-.025,.633,-.27),(.126,.739,-.154),6),
- ('hair-tail-tip','head',(.023,.703,-.268),(.1,.771,-.193),6),
- ('headwrap-front','head',(-.153,.566,.161),(.173,.598,.179),0),
- ('headwrap-side-left','head',(-.184,.561,-.147),(-.164,.6,.166),0),
- ('headwrap-side-right','head',(.164,.561,-.145),(.184,.6,.17),0),
- ('headwrap-back','head',(-.175,.568,-.193),(.17,.606,-.17),0),
- ('headwrap-knot','head',(.12,.552,-.212),(.182,.619,-.172),1),
- ('headwrap-tail-long','head',(.129,.465,-.224),(.177,.569,-.194),0),
- ('headwrap-tail-short','head',(.16,.524,-.223),(.222,.585,-.184),0),
- ('personal-float-clip','head',(.139,.558,.167),(.187,.625,.203),10),
+HEAD = [('headwrap-knot','head',(.126,.554,-.222),(.176,.603,-.182),1),
+ ('float-clip-saddle','head',(.136,.559,.166),(.185,.619,.184),1),
  ('float-clip-glint','head',(.148,.608,.198),(.163,.62,.208),3)]
 
 # Recipe-local tilts make the swept silhouette instead of stacking a helmet cap.
@@ -292,7 +268,8 @@ HEAD = [('hair-nape','head',(-.165,.473,-.179),(.166,.655,-.075),6),
 BOX_TILTS = {'hair-hook-high':-11,'hair-sweep-left':-20,'hair-sweep-right':16,
              'hair-forelock-upper':-17,'hair-forelock-tip':-19,'hair-tail-tip':-16,
              'headwrap-tail-long':-13,'headwrap-tail-short':31,
-             'folded-shoulder-lining':-16,'shoulder-loop-fastener':-16,
+             'folded-shoulder-lining':-12,'shoulder-loop-fastener':-12,
+             'open-collar-left':-22,'open-collar-right':22,
              'sailcloth-hip-wrap':-10,'sailcloth-back-wrap':7,
              'sailcloth-repair-seam':-10,'sailcloth-back-seam':7,
              'sash-short-tail':16,'sash-long-tail':-8}
@@ -304,7 +281,9 @@ BOX_TAPERS = {'hair-hook-high':(1,0,1,.6),
               'hair-forelock-upper':(1,0,.55,1),'hair-forelock-tip':(1,0,.23,1),
               'hair-tail-tip':(1,0,1,.5),
               'headwrap-tail-long':(1,0,.55,1),'headwrap-tail-short':(0,1,1,.45),
-              'sailcloth-hip-wrap':(1,0,.72,1),'sailcloth-back-wrap':(1,0,.77,1)}
+              'sailcloth-hip-wrap':(1,0,.72,1),'sailcloth-back-wrap':(1,0,.77,1),
+              'cream-undershirt':(1,0,.12,1),'folded-shoulder-lining':(1,0,1,.72),
+              'hand-left':(0,2,.72,1),'hand-right':(0,2,1,.72)}
 
 DONOR_SPACE = tuple(entry[0] for entry in HEAD)
 
@@ -691,7 +670,7 @@ def _verify_expression(before, after, uv, moved):
 
 
 # ---------------------------------------------------------------------------
-# § EXPRESSION: Wide Happy Cat (:3)
+# RAFI: focused graphic eyes and a restrained closed mouth.
 # ---------------------------------------------------------------------------
 MOUTH_Z = 0.1596
 
@@ -741,7 +720,8 @@ def _donor_head():
 
     _verify_expression(before, pos, uv, eye_verts)
 
-    tris = [t for t in tris if t not in mouth_tris]
+    # Replace only the donor's graphic ink, keeping all native skull/ear skin.
+    tris = [t for t in tris if t not in mouth_tris and t not in eyes]
     plate = MOUTH_Z + PANEL_PROUD
 
     upper, lower = _mouth_ribbon()
@@ -769,13 +749,24 @@ def _donor_head():
         tris.append((u0, l0, u1))
         tris.append((u1, l0, l1))
 
-    # Graphic brows live on the same native face plate, not protruding 3D bars.
-    for brow in [((-.102,.539),(-.041,.53),(-.041,.54),(-.102,.549)),
-                 ((.04,.529),(.101,.537),(.101,.547),(.04,.539))]:
+    def ink_polygon(points):
+        points=list(points)
+        area=sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(points,points[1:]+points[:1]))
+        if area<0:points.reverse()
         first=len(pos)
-        for x,y in brow:
+        for x,y in points:
             pos.append((x,y,plate));nrm.append((0,0,1));uv.append(cell_uv(INK))
-        tris.extend([(first,first+1,first+2),(first,first+2,first+3)])
+        tris.extend((first,first+i,first+i+1) for i in range(1,len(points)-1))
+
+    # His own upright clipped eyes read focused, unlike the donor's smile-eyes.
+    for x in (-.077,.077):
+        w,h,cut=.012,.021,.004
+        ink_polygon([(x-w,.481-h+cut),(x-w,.481+h-cut),(x-w+cut,.481+h),
+                     (x+w-cut,.481+h),(x+w,.481+h-cut),(x+w,.481-h+cut),
+                     (x+w-cut,.481-h),(x-w+cut,.481-h)])
+    # Weighted graphic brows stay on the native flat face, not raised 3D bars.
+    ink_polygon([(-.108,.540),(-.042,.529),(-.041,.546),(-.102,.555)])
+    ink_polygon([(.041,.529),(.108,.537),(.103,.551),(.042,.545)])
 
     return _compact(pos, nrm, uv, tris)
 
@@ -1042,6 +1033,135 @@ def box_polygons(lo, hi, skip, bevel):
         yield (normal, _ring([vertex[(s, 0)], vertex[(s, 1)], vertex[(s, 2)]], normal))
 
 
+def _rafi_sub(a, b):
+    return tuple(a[i]-b[i] for i in range(3))
+
+
+def _rafi_mean(points):
+    return tuple(sum(p[i] for p in points)/len(points) for i in range(3))
+
+
+def _rafi_orient(points, outward):
+    points=list(points)
+    normal=_cross(_rafi_sub(points[1],points[0]),_rafi_sub(points[2],points[0]))
+    return list(reversed(points)) if _dot(normal,outward)<0 else points
+
+
+def _rafi_loft(sections):
+    """Connected chamfered sections, ordered top to bottom, in native head space.
+
+    Each section is (y, centre_x, centre_z, width, depth). Broad roots and narrower
+    bent tips make one intentional hair/cloth volume instead of stacked blocks.
+    """
+    outline=[(-.38,-.5),(.38,-.5),(.5,-.38),(.5,.38),
+             (.38,.5),(-.38,.5),(-.5,.38),(-.5,-.38)]
+    rings=[[(x+u*w,y,z+v*d) for u,v in outline] for y,x,z,w,d in sections]
+    faces=[_rafi_orient(rings[0],(0,1,0)),_rafi_orient(rings[-1],(0,-1,0))]
+    for i in range(len(rings)-1):
+        centre=_rafi_mean([_rafi_mean(rings[i]),_rafi_mean(rings[i+1])])
+        for j in range(8):
+            k=(j+1)%8
+            poly=[rings[i][j],rings[i][k],rings[i+1][k],rings[i+1][j]]
+            faces.append(_rafi_orient(poly,_rafi_sub(_rafi_mean(poly),centre)))
+    return faces
+
+
+def _rafi_tube(path, radius, plane_normal, closed=True, sides=6):
+    """Continuous faceted cord with real inner clearance and a clean silhouette."""
+    rings=[];tangents=[]
+    for i,centre in enumerate(path):
+        previous=path[(i-1)%len(path)] if closed or i>0 else path[i]
+        following=path[(i+1)%len(path)] if closed or i+1<len(path) else path[i]
+        tangent=_unit(_rafi_sub(following,previous));tangents.append(tangent)
+        normal=_unit(_cross(tangent,plane_normal));side=_unit(_cross(tangent,normal))
+        rings.append([tuple(centre[k]+radius*(normal[k]*math.cos(j*math.tau/sides)
+                         +side[k]*math.sin(j*math.tau/sides)) for k in range(3)) for j in range(sides)])
+    faces=[]
+    for i in range(len(path) if closed else len(path)-1):
+        following=(i+1)%len(path);centre=_rafi_mean([path[i],path[following]])
+        for j in range(sides):
+            k=(j+1)%sides
+            poly=[rings[i][j],rings[i][k],rings[following][k],rings[following][j]]
+            faces.append(_rafi_orient(poly,_rafi_sub(_rafi_mean(poly),centre)))
+    if not closed:
+        faces += [_rafi_orient(rings[0],tuple(-v for v in tangents[0])),
+                  _rafi_orient(rings[-1],tangents[-1])]
+    return faces
+
+
+def _rafi_headband():
+    def perimeter(x,z0,z1,cut):
+        return [(-x+cut,z0),(x-cut,z0),(x,z0+cut),(x,z1-cut),
+                (x-cut,z1),(-x+cut,z1),(-x,z1-cut),(-x,z0+cut)]
+    outer=perimeter(.179,-.191,.174,.031)
+    inner=perimeter(.165,-.178,.1602,.027)
+    lo,hi=.564,.596;faces=[]
+    for i in range(8):
+        j=(i+1)%8
+        for edge,sign in [(outer,1),(inner,-1)]:
+            poly=[(edge[i][0],lo,edge[i][1]),(edge[j][0],lo,edge[j][1]),
+                  (edge[j][0],hi,edge[j][1]),(edge[i][0],hi,edge[i][1])]
+            centre=_rafi_mean(poly)
+            faces.append(_rafi_orient(poly,(centre[0]*sign,0,centre[2]*sign)))
+        for y,direction in [(lo,-1),(hi,1)]:
+            poly=[(outer[i][0],y,outer[i][1]),(outer[j][0],y,outer[j][1]),
+                  (inner[j][0],y,inner[j][1]),(inner[i][0],y,inner[i][1])]
+            faces.append(_rafi_orient(poly,(0,direction,0)))
+    return faces
+
+
+def _rafi_forms(head):
+    # All forms feed the copied builder's own mesh/UV/weight/outline pipeline.
+    if head:
+        yield 'head',HAIR,_rafi_loft([
+            (.719,0,-.040,.31,.27),(.651,0,-.040,.336,.23),
+            (.584,0,-.118,.33,.122),(.486,0,-.133,.294,.078)])
+        yield 'head',HAIR,_rafi_loft([
+            (.637,.16,.045,.045,.085),(.574,.164,.070,.031,.062),
+            (.531,.161,.079,.016,.027)])
+        yield 'head',HAIR,_rafi_loft([
+            (.635,-.166,.026,.047,.115),(.570,-.173,.064,.042,.079),
+            (.493,-.171,.07,.014,.032)])
+        yield 'head',HAIR,_rafi_loft([
+            (.775,-.050,.014,.045,.10),(.754,-.027,.007,.145,.17),
+            (.715,-.018,-.005,.25,.19),(.681,0,-.017,.27,.19)])
+        yield 'head',HAIR,_rafi_loft([
+            (.714,-.030,.090,.18,.12),(.661,-.092,.147,.16,.094),
+            (.584,-.145,.172,.091,.065),(.536,-.162,.165,.019,.031)])
+        yield 'head',HAIR,_rafi_loft([
+            (.716,.108,.037,.078,.14),(.682,.142,.077,.096,.105),
+            (.642,.175,.096,.020,.047)])
+        yield 'head',HAIR,_rafi_loft([
+            (.767,.070,-.205,.03,.08),(.735,.075,-.224,.12,.15),
+            (.674,.055,-.229,.166,.135),(.632,.030,-.200,.095,.08)])
+        yield 'head',OVERALLS,_rafi_headband()
+        yield 'head',OVERALLS,_rafi_loft([
+            (.57,.153,-.212,.043,.014),(.522,.166,-.227,.05,.014),
+            (.474,.152,-.241,.031,.012)])
+        yield 'head',OVERALLS,_rafi_loft([
+            (.583,.162,-.209,.043,.014),(.552,.20,-.225,.047,.014),
+            (.523,.216,-.231,.017,.011)])
+        yield 'head',WOOD_GOLD,_rafi_loft([
+            (.625,.160,.187,.021,.018),(.616,.160,.190,.042,.03),
+            (.570,.160,.190,.042,.03),(.559,.160,.187,.024,.019)])
+    else:
+        for coil in range(2):
+            path=[(-.151+math.cos(i*math.tau/20)*(.029-coil*.007),
+                   .231+math.sin(i*math.tau/20)*(.079-coil*.012),-.146-coil*.012) for i in range(20)]
+            yield 'torso',WHITE,_rafi_tube(path,.0048,(0,0,1))
+        # Fit the forearm just before the palm, not the palm itself. An ellipse
+        # clips block-wrist corners; this path keeps clearance on every side.
+        wrist=[]
+        for i in range(20):
+            angle=(i+.25)*math.tau/20;c,s=math.cos(angle),math.sin(angle)
+            wrist.append((.254,.400+math.copysign(.047,c)+.0085*c,
+                          .005+math.copysign(.0325,s)+.0085*s))
+        yield 'arm-left',WHITE,_rafi_tube(wrist,.0035,(1,0,0))
+        knot=[(.245,.398,-.04),(.252,.405,-.045),(.260,.398,-.046),
+              (.252,.393,-.041),(.243,.388,-.042),(.248,.384,-.045),(.257,.39,-.046)]
+        yield 'arm-left',OVERALLS_DARK,_rafi_tube(knot,.0031,(0,0,1),closed=False)
+
+
 def build_mesh(boxes, panels=(), donor=None):
     """Boxes, pixel panels and an optional donated mesh, to flat glTF arrays."""
     pos, nrm, uv, joints, weights, idx = [], [], [], [], [], []
@@ -1112,6 +1232,23 @@ def build_mesh(boxes, panels=(), donor=None):
             # its first vertex is exact rather than an approximation.
             for k in range(1, len(points) - 1):
                 idx += [first, first + k, first + k + 1]
+
+    for bone,slot,faces in _rafi_forms(donor is not None):
+        def remap(point):
+            x,y,z=point
+            if donor is None:
+                y=y+NOW_SHOULDER-WAS_SHOULDER if bone.startswith('arm-') else _remap_y(y)
+                if FRONT_IS_MINUS_Z:z=-z
+            return x,y,z
+        for face in faces:
+            points=[remap(point) for point in face]
+            if donor is None and FRONT_IS_MINUS_Z:points.reverse()
+            normal=_unit(_cross(_rafi_sub(points[1],points[0]),_rafi_sub(points[2],points[0])))
+            first=len(pos)
+            for point in points:
+                pos.append(point);nrm.append(normal);uv.append(cell_uv(slot))
+                joints.append((BONE[bone],0,0,0));weights.append((1.,0.,0.,0.))
+            for i in range(1,len(points)-1):idx.extend((first,first+i,first+i+1))
 
     for name, bone, low, high, plane, rows in panels:
         j = BONE[bone]
