@@ -312,7 +312,11 @@ namespace TumbangPreso.Net
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             ClearReplayTransfer();
 
+            ClearPeerDepartureState();
+
             cm.RegisterNamedMessageHandler("Identify", OnIdentifyMsg);
+            cm.RegisterNamedMessageHandler("PeerLeaveIntent", OnPeerLeaveIntentMsg);
+            cm.RegisterNamedMessageHandler("PeerDeparture", OnPeerDepartureMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
             cm.RegisterNamedMessageHandler("ReqSeat", OnReqSeatMsg);
             cm.RegisterNamedMessageHandler("DeclareReady", OnDeclareReadyMsg);
@@ -5871,6 +5875,8 @@ namespace TumbangPreso.Net
         public void HostPeerLeft(int peerId)
         {
             if (!NetAuthority.IsHost) return;
+            bool intentional = _peerLeaveIntents.Consume(peerId, PresentationMatchId,
+                Time.realtimeSinceStartupAsDouble);
 
             // ⚠️ THE SKIP VOTE HAS THE SAME HOLE AS THE READY GATE AND THE REMATCH VOTE: a peer
             // that quits mid-buffer drops the denominator, and with nobody re-evaluating the
@@ -6013,6 +6019,8 @@ namespace TumbangPreso.Net
                     // put a room that never queued into the pool.
                     if (lobby.MatchInProgress)
                         FindFirstObjectByType<Matchmaker>()?.OfferBackfillSeat(true);
+
+                    if (lobby.MatchInProgress) HostAnnouncePeerDeparture(departed, intentional);
                 }
             }
 

@@ -260,7 +260,8 @@ namespace TumbangPreso.Tests
             //34 restores the joining world's held fire-charge state.
             //37 extends atomic ground snapshots beyond the two ice field types.
             //49 adds the seventh Hero roster index and bounded Rafi water snapshots.
-            Assert.AreEqual(49, NetSession.ProtocolVersion,
+            //50 distinguishes an explicit peer leave from an unclassified disconnection.
+            Assert.AreEqual(50, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

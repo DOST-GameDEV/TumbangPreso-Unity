@@ -366,7 +366,8 @@ namespace TumbangPreso.Net
         // StartMatch/SyncWorld append the host epoch; mixed clients must be refused.
         // 44 adds accepted ultimate requests/cohorts; owners no longer predict ultimate effects.
         // Round retirement must remove solid ability fields on every peer.
-        public const int ProtocolVersion = 49;
+        // 50 carries authenticated peer-leave intent and host-confirmed departure notices.
+        public const int ProtocolVersion = 50;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1070,6 +1071,7 @@ namespace TumbangPreso.Net
         /// the disconnect that a re-join produces on the way out of the old connection.
         /// </summary>
         private bool _localShutdown;
+        public bool IsStopping => _localShutdown;
 
         /// <summary>
         /// ⚠️⚠️ TRUE ONLY ONCE THIS PEER HAS ACTUALLY BEEN LET IN, AND IT IS WHAT STOPS THE
@@ -1109,6 +1111,7 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
             _localShutdown = true;
             _everConnected = false;
             _beacon.StopAll();
@@ -1619,6 +1622,9 @@ namespace TumbangPreso.Net
 
         private void RegisterSeatHandler()
         {
+            // Called only after one of the four transport starts succeeds. A stop
+            // while already offline may not produce a disconnect callback to clear this.
+            _localShutdown = false;
             if (_nm?.CustomMessagingManager == null) return;
             if (ReferenceEquals(_seatHandlerOn, _nm.CustomMessagingManager)) return;
 

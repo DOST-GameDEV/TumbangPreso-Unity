@@ -39,15 +39,18 @@ procedural editor curves, ship in the player. Runtime clips36, raw GLB33.
 ## Workspace and publication
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published2e90f54bc7d1d9e7c58436dce7292606b31d199a. Local2c737448 is an integration
-checkpoint, followed by the current uncommitted art/integration batch. Publish the
-verified owned batch next after fetch/ancestry checks; never push main or force.
+Published HEAD05c003209772a7db6a48d49d0e8aad24dfcc083b, verified against the remote
+on2026-09-22. This includes local2c737448 and the78-path block-hair/integration batch.
+Only the two original unrelated metas remain dirty before this ledger update.
+Never push main or force.
 Explicit owned-path manifest: Logs/integration-art-owned-paths.json (refresh for
 new report files). Never stage the two original unrelated composition-redesign
 home-court.png.meta/loading-street.png.meta edits. No blanket git-add/reset/clean.
 
-Validation: sibling TumbangPreso-Unity-validation, at2c737448 +owned scoped code and
-generated outputs. Freeze its inputs while a job runs. The old6432mixed paths were
+Validation: sibling TumbangPreso-Unity-validation, now05c00320 +eight scoped
+peer-departure inputs. The earlier123modified/generated paths were preserved in
+stash1ab3cba5fedb6d12f161bc7afe3c57c00c8e86e8; manifest
+Logs/validation-before-peer-departure-stash.json. Freeze its inputs while a job runs. The old6432mixed paths were
 preserved in stash6f716645127f374ead0a910c4a90d49cf4cb191b, from db976126. A later
 8-path test-generated mutation stash is recorded in validation
 Logs/qualification-2e90-source-mutations.json. Latest all-roster author invocation
@@ -113,8 +116,26 @@ No WAN, physical-device, human listening, balance or visual approval is implied.
 
 ## Next work, without another stop
 
-1. Commit/push the verified owned art/integration checkpoint; verify remote HEAD.
-2. Continue TODO disposition from the remaining320unreviewed numbered headings.
+1. Publication completed at05c00320; continue the remaining work without stopping.
+2. Current concrete next feature is140.5 peer-departure communication. Read
+   reports/full-backlog-2026-09-21/peer-departure-plan.md. Source confirms host-loss
+   UI exists but client leave/drop distinction did not. Local implementation is
+   now authored: PeerLeaveIntents +MatchRpc.PeerDeparture partial, protocol50,
+   Stop hint/HostPeerLeft notice hooks, start-latch reset and exact protocol test.
+   Core intent5/5 passed20ms. Unity/native qualification is PENDING. New source files
+   have been imported for validation; recover their .meta files only. Initial
+   Unity compile failed because this project's Collections surface has no
+   FixedString128Bytes; failed log peer-departure-edit-v1/guard71917e8aad68 retained.
+   Replaced it with explicitly bounded32-character UTF-16 fields using existing
+   NGO primitive APIs. PeerDepartureTests checks trusted-host/match/seat/reason,
+   duplicate suppression, session reset and markup handling. Native five-peer
+   opt-in probe/runner are authored; both initializer paths refuse tournament mode.
+   Corrected Unity run passed3/3,.135s,job91459 reaped,guard3e5f44b5d3c2.
+   Source metadata recovered. Prepare one internal native build, then the two
+   explicitly scoped departure cases; no more broad test expansion.
+   No native build/run yet. Native runnercases should be orderly Classic and
+   abrupt Hero, with4players+actual fifth-join spectator and visible toast PNGs.
+   Continue TODO disposition from the remaining283unreviewed numbered headings.
    All366headings remain.155/154 and153 were reconciled individually against current
    code/evidence;153.18/full qualification remains genuinely pending. Exact owner
    tick export and OAuth configuration are external (google_oauth.txt is absent).

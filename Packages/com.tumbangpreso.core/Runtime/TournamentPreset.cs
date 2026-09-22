@@ -230,6 +230,10 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("-tp-departure-review",
+                "Explicit local departure-review output. Its Configure and Install paths refuse -tp-tournament; no saved player preference is changed."),
+            new Modifier("-tp-departure-seat",
+                "Expected seat for the opt-in departure review. Inert without that probe, which is disabled under -tp-tournament."),
             // Explicit process-local diagnostic options; tournament startup refuses these probes.
             new Modifier("-tp-busy-exchange-only",
                 "Diagnostic argument for OwnerUiPlayerReview. Its installer/configuration is disabled by -tp-tournament; it is not a saved player preference."),

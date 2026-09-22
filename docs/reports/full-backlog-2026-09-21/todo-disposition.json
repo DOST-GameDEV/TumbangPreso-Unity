@@ -468,158 +468,330 @@
     {
       "lineAtIntake": 1179,
       "heading": "## 152 · Coherent game improvement and release verification: IN PROGRESS, 2026-09-09",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current expanded implementation is integrated across game feel, maps, characters and painted UI. Whole-file disposition and coherent final qualification are still active; historical UI exclusion and checkpoint stop rules are superseded.",
+      "evidence": [
+        "docs/MAP_FINAL_PASS.md",
+        "docs/reports/improvement-2026-09-13/ambient-life-and-residents.md",
+        "docs/reports/full-backlog-2026-09-21/rafi-block-hair.md",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1214,
       "heading": "### 152.4 Repeated play must feel substantially better: OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented map/animal/resident/pool/recovery, complete throw and retrieval motion, all hero casts/effects, spectator/shared replay, construction-specific materials/animated skies, Inday correction and Rafi/Lagoon expansion. Latest Rafi block-hair correction is saved. Remaining work is the full-file actionable-gap reconciliation and coherent candidate qualification; human art/audio/feel approval is not inferred.",
+      "evidence": [
+        "docs/MAP_FINAL_PASS.md",
+        "docs/reports/improvement-2026-09-13/ambient-life-and-residents.md",
+        "docs/reports/full-backlog-2026-09-21/rafi-block-hair.md",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1640,
       "heading": "## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, merged to `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Controller software paths are implemented and retain current native/synthetic-device evidence. Physical unknown-pad certification and owner art acceptance remain external; no backend replacement is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1657,
       "heading": "### 142.1 ⚠️⚠️ EVERY BACK-OUT IN THE GAME WAS KEYBOARD-ONLY, SO A PAD COULD REACH EVERY SCREEN AND LEAVE NONE OF THEM",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented shared MenuNav cancel/back routing, retained Android back handling and innermost-screen behavior; current painted-screen suite113pass plus nativev41 routes retain coverage.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1697,
       "heading": "### 142.2 ⚠️⚠️ THERE WAS NO PAUSE ON A PAD, AND `SpectatorPause` HAD TO MOVE FOR THERE TO BE ONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented rebindable Pause and distinct spectator pause binding; current spectator/player pause routes retain separate authority and UI behavior.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1717,
       "heading": "### 142.3 THE MENU HE ASKED FOR: `InputLayer.ControllerMapScreen`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented interactive ControllerMapScreen with retained supplied diagram, callouts and live bindings; current capability mapping keeps the controller route.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1771,
       "heading": "### 142.3b ⚠️⚠️ THE EMOTE WHEEL OPENED ON A PAD AND COULD NOT BE STEERED BY ONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented emote-wheel steering from absolute right-stick input with a dead zone; source no longer requires a mouse.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1786,
       "heading": "### 142.3c ⚠️⚠️ THE PAD IS A REAL ILLUSTRATION NOW, AND IT IS CC0 RATHER THAN \"OFF GOOGLE\"",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical PS3 source-art stage superseded by the retained owner-requested flat DualShock4 illustration in142.3d/e; do not restore the old image.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1834,
       "heading": "### 142.3d ⚠️⚠️ THE PAD IS THE DUALSHOCK 4 LAYOUT NOW, AND THE LEADERS BEND",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented retained flat DualShock4 illustration, attributed source and bent callouts; current controller mapping ownership is preserved.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1892,
       "heading": "### 142.3e ⚠️ A TILTED PAD WAS BUILT AND REVERTED, AND THIS IS THE RECORD SO NOBODY REDOES THE HUNT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Owner-rejected tilted pad remains rejected. Retained flat illustration is the chosen implementation; reverted designs are history, not unfinished tasks.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1919,
       "heading": "### 142.3f ⚠️⚠️ THE PAD GLYPHS ARE PS4 PROMPTS NOW, AND THE OLD ONES WERE XBOX ON A DUALSHOCK",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented PS4 prompt assets for the diagram; live HUD glyph selection additionally uses actual pad family per142.3g.3.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1973,
       "heading": "### 142.3g ⚠️⚠️ THE DEVICE SWAP WAS ONLY HALF WIRED, AND ANSWERING \"DOES IT WORK\" FOUND THREE HOLES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented menu-wide device sampling, live key-cap revisions and appropriate pad-family glyphs. Native hotplug/switch fixes and current screen evidence supersede old partial wiring.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1982,
       "heading": "#### 142.3g.1 ⚠️⚠️ THE DETECTION NEVER RAN IN THE MENUS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented LastInputDevice sampling outside match-only input readers; menu/device transitions are covered by the current screen/capability checkpoint.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1998,
       "heading": "#### 142.3g.2 ⚠️ THE ICONS ONLY SWAPPED IN THE TUTORIAL",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Discrete key caps update on binding/device revisions. Inline sentence prompts remain readable device-specific text by design; replacing all sentences with image layouts is not a missing requirement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2018,
       "heading": "#### 142.3g.3 ⚠️ AN XBOX PAD WAS SHOWN PLAYSTATION GLYPHS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented Xbox/default versus DualShock live glyph families, with the diagram intentionally using its drawn PlayStation labels.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2033,
       "heading": "### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "GenericPadBridge software path is implemented; corrected recursion/device-switch handling is covered by current synthetic input/native routes. No physical unknown-controller result is fabricated.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2075,
       "heading": "### 142.4b ⚠️ HOW THIS PASS WAS VERIFIED, AND THE ONE SUITE THAT COULD NOT BE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical Mac result is retained. Newer current-screen/native Windows evidence supersedes that baseline; full final candidate qualification remains pending.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2106,
       "heading": "### 142.5 ⚠️ WHAT IS STILL OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Remaining acceptance is owner visual judgment and physical unknown-pad testing. The old Mac cannot-build-Windows limitation is superseded by current Windows native builds. Editor source-setting churn must be preserved separately during final qualification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/ControllerMapScreen.cs",
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+        "Assets/TumbangPreso/Runtime/PauseWatcher.cs",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/settings-lifecycle-integration.xml"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2144,
       "heading": "## 151 · THE NATIONALS FUN PASS: EARS AT THE PLAYER, AN IMPACT FRAME ONE PEER GOT, AND A SLIDE NOBODY COULD SEE OR HEAR ⚠️ IN PROGRESS, 2026-09-06, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "All specified listener/feedback/slide/cue implementation and later authored hero presentation are retained. Final coherent candidate qualification remains active; human audio/feel acceptance is unverified.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2156,
       "heading": "### 151.1 ⚠️⚠️ P1 CONFIRMED AND FIXED, CLOSING § 150.7: THE LISTENER RIDES THE CAMERA NOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Camera-mounted listener and corresponding nonpositional UI audio routes are implemented; current native owner/observer capture evidence retains the intended perspective.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2205,
       "heading": "### 151.2 ⚠️⚠️ THE MANDATORY SECOND HALF: THIRTEEN CALL SITES FAKED A POSITION, AND FOUR INVENTED THE SAME WORKAROUND",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "UI sounds use the explicit UI route rather than invented world positions. Current audio source audits retain ownership/relay classifications; human listening remains separate.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2262,
       "heading": "### 151.3 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE IMPACT FRAME ON THE BIGGEST PAYOFF IN THE GAME WAS THE HOST'S ALONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Can knockdown hitstop is replicated presentation, not host-only. Current exchange/native peer evidence retains shared accepted feedback.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2286,
       "heading": "### 151.4 ⚠️⚠️ AND `audit_presentation_reach.py` COULD NOT SEE IT, WHICH IS WHY IT SURVIVED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Presentation reach audit includes hitstop and current feedback sites; the historical blind spot is fixed, not an open implementation item.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2305,
       "heading": "### 151.5 ⚠️⚠️ FIXED AND MEASURED, CLOSING § 144.8: THE JEEPNEY HAS A FINISH AND SOMETHING TO REFLECT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Jeepney finish/reflection repair is retained, including current per-construction surface refinement. Existing livery and original model are preserved.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2355,
       "heading": "### 151.7 ⚠️⚠️ CONFIRMED AND FIXED: THE RETRIEVAL SLIDE HAD NO NUMBER ANYWHERE IN THE REPOSITORY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Retrieval slide telemetry is implemented and the later multi-seed retrieval/lunge receipts are retained. Do not build a duplicate measurement path.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2377,
       "heading": "### 151.8 THE MAXIMUM-EFFECTS FRAME, MEASURED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Existing cold/warm stress and lifetime/object-count measurement is implemented. Recorded evidence did not justify pooling; historical machine FPS values are not current performance guarantees.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2441,
@@ -636,20 +808,38 @@
     {
       "lineAtIntake": 2603,
       "heading": "### 151.10 ⚠️ WHAT WAS AUDITED AND FOUND ALREADY CORRECT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Retained audit findings that were already correct remain non-bugs. No speculative refactor is required to close a false-positive lead.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2622,
       "heading": "### 151.11 ⚠️⚠️ CONFIRMED AND FIXED: THE PISONET BOOTH PLAYED THE SCORE STING AND DUCKED THE MUSIC",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Pisonet interaction has its own local cue rather than the score sting, preserving music-duck meaning; positional producer audit explicitly covers it.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2643,
       "heading": "### 151.13 ⚠️⚠️ THE COMMITTED RETRIEVAL SLIDE, THE ONE MOVE THIS BRIEF IS ABOUT, HAD THREE PRESENTATION DEFECTS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Committed retrieval slide has authored body/FPP motion, observer presentation and positional sound in the current native evidence; shared source hooks remain intact.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2649,
@@ -672,38 +862,74 @@
     {
       "lineAtIntake": 2735,
       "heading": "### 151.14 ⚠️ FIVE FREQUENT CUES HAD NO PITCH WINDOW, AND THE CODEBASE ALREADY BELIEVES THEY SHOULD",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Frequent cues use bounded pitch variation through the current audio routes. This closes routing implementation, not subjective listening quality.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2766,
       "heading": "### 151.16 ⚠️⚠️ FIXED 2026-09-09: `ClipMotionStrip` PHOTOGRAPHS A CLIP ACROSS ITS LENGTH, AND CALIBRATING IT FOUND A SILENT 2.38x",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Canonical ClipMotionStrip implementation and calibration are retained. Current hero/native evidence observes real motion rather than accepting frame-zero sheets as animation proof.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2800,
       "heading": "### 151.16b ⚠️⚠️ THE PROBE'S FIRST OUTPUT WAS WRONG IN A WAY THAT WOULD HAVE SURVIVED REVIEW, AND THE CALIBRATION IS THE FIX",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The double-scale capture calibration is retained. No model resizing is needed to fix a historical measurement error.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2834,
       "heading": "### 151.16c What the strip deliberately does NOT do",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Documented scope of the strip remains deliberate; native player and peer playback evidence supplies the transitions/authority observations it cannot establish.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2846,
       "heading": "### 151.20 ⚠️⚠️ FIXED 2026-09-09: THE CLIP-SET CHECK IS A SUPERSET ONE NOW, AND THE STALE 32 IS OUT OF EIGHT PLACES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Superset clip preservation is implemented. Latest Rafi export preserves all33base input/output curves and retains3serialized authored casts; no fixed32-count assertion is restored.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2869,
       "heading": "### 151.20b The stale 32, and the two places it was deliberately left alone",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Stale global clip-count documentation was corrected; historical mentions remain evidence. Current counts are per-rig and source-derived.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2887,
@@ -717,14 +943,26 @@
     {
       "lineAtIntake": 2940,
       "heading": "### 151.17 ✅ EVERY REGRESSION THIS PASS ADDED HAS BEEN SEEN RED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical failed-before/passed-after regression evidence is retained; current integration failures and repairs are also stored without overwriting the failed XML.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2957,
       "heading": "### 151.12 ⚠️ WHAT WAS DELIBERATELY NOT DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Old deliberate deferrals are superseded where current scope required work: request/rehost/recall and actual authored hero playback are now evidenced. Measured harmless lookups and unjustified pooling remain intentional no-change conclusions.",
+      "evidence": [
+        "docs/TODO.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/integration-findings.md"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 2984,
@@ -2515,5 +2753,11 @@
         "native-environment-v37.json; full8 map/mode pairs,96views,48frame windows"
       ]
     }
-  ]
+  ],
+  "currentReviewHead": "05c003209772a7db6a48d49d0e8aad24dfcc083b",
+  "externalConfigurationCheck": {
+    "googleOauthResourceExists": false,
+    "googleClientIdPresentInProcessUserMachine": false,
+    "checkedOn": "2026-09-22"
+  }
 }
