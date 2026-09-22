@@ -1,17 +1,18 @@
 # Active TUMP rework ledger
 
-## Current resume: publish1.5 then VISUAL-1.7, 2026-09-23
+## Current resume: publish1.7 then batchB, 2026-09-23
 
 Owner is asleep. Continue every autonomously actionable queued item in THIS
 conversation, one agent, without questions or checkpoint endings. Save the exact
 state here at each meaningful checkpoint. Do not mark the full goal complete.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current HEAD/verified remote88f9e6e68b0e8b7ba9aac1b03560f8d4ffa1170d published
-world1.2;479be6a53 published1.1 and f018173c4 UX-1 intake. World1.5 source/evidence
-is COMPLETE and ready for scoped commit. No Unity/native/server/browser/helper
-active. Last job66829 reaped,guard6aa870df1e7e. Known4churn restored; original2meta
-hashes verified. No build. Do not repeat any passed1.1/1.2/1.5 checks.
+Current HEAD/verified remote33d50bb7993891d31d72b0023bf6132de2654760 published1.5;
+88f9e6e68 published1.2,479be6a53 published1.1,f018173c4 UX-1 intake. World1.7 is
+IMPLEMENTED/FOCUSED-VALIDATED, ready for scoped commit with TODO/findings/evidence.
+No active Unity/native/server/browser/helper. Last job98593 reaped,
+guard1583cce5c39f.4generated paths restored; original2PNGmeta hashes verified.
+No native build. Do not repeat passed1.1/1.2/1.5/1.7 checks.
 
 Completed1.1: exact ConfinementRadius square at sampled ground heights, rest/armed/
 restore sweep; per-camera nearest exit with nested-camera restoration; physical
@@ -67,24 +68,50 @@ cast/can colour. Owner may prefer them off; default decision is external review.
 v1 own shader reserved-word error and wrong global speed assumption preserved;
 v2 personal shots unhid own head and were INVALID, replaced by v3. Stop iterating.
 
-NEXT: scoped1.5 commit/fetch/push/remote verification, then1.7 FPP. Read-only
-findings: arms already use ToonSkin (lit), no unlit replacement needed. CameraRig
-ViewmodelScale=.72,Seat=(0,-.10,.16); root is camera-parented, rotationidentity,
-local position gets bob/kick near1296. Carrier.ThrowOriginFor uses AimEye plus
-MuzzleForward toward aim point, never viewmodel geometry, so framing must leave
-that physics path unchanged. Fixed viewmodel FOV must cover both surface and ink
-passes while preserving current world camera75..110 and its aim. Lower/smaller
-rest, modest held-slipper rim, anticipation inside the existing charge window;
-retain real release/cancel/follow-through. Save a concrete plan before edits.
-ThenB,P3,C,D,UX-1,P6,P7. Preserve task IDs and completed HUD/login/mainmenu.
+Completed1.7: camera-plane parent compensates world75..110 to fixed95 apparent
+viewmodel FOV for all child surfaces/effects. Scoped pooled snapshots restore
+pose, lens scale, blocks, shadows and private visibility in both nested camera
+orders; spectator POV uses the same class. Rest scale.64 versus.72 and seat.08m
+lower; arms keep lit Toon, held shoe gets separate.16rim, private shadows off.
+No imported model/material/palette/rig/builder changes. One.12s wrist set lives
+inside charge. Existing.055contact/.18follow/.54settle now carries a lower-screen
+pivot sweep past centre; offsets removed before each pose, zero at settle, extra
+motion disabled by reduced motion/off. Carrier aim/launch/timing unchanged.
+
+Evidence look-1.7-viewmodel/report.md. v1 passed2/2,14.780s: invariant apparent
+held bounds75/95/110, real world lens, physical origin, both camera orders, off,
+lit/rim/shadow, accepted charge/immediate release and protected refusal. v5 passed
+new strengthened release witness1/1,9.771s: real projectile firstviewport
+(.5005,.4999), hand crosses lowercentre to x.4368, stays visible, settles to0.
+Personally inspected full before/after rest, charge, FOV/comfort/grey25, and
+post-LateUpdate34-frame60Hz release studies v4(before) andv5(after). Keep rest
+look1/release look2. GIF timestamps rounded to centiseconds matching60Hz average.
+v2CSV namespace compile fault retained; v3pre-LateUpdate photos invalid for pose
+timing, corrected by test-only LateUpdate20000 pump. Do not repeat these checks.
+
+NEXT: publish1.7 by explicit paths, fetch before push, verify remote. Then batchB:
+1.8 lighting,1.9 court,1.10 hero objects, followed byP3,C,D,UX-1,P6,P7. Save a
+concrete batchB plan before edits. Required1.8 design is NATIONALS_POLISH lines214+:
+2..2.5:1 lit/shadow via lower tinted trilight, per-map ramp/tint, upper away-light
+rim, label-safe metal highlight,10..15percent foot gradient, ground-contact
+darkening/blob shadows, horizon fog and stable bands. Keep Built-in and two bands.
+Read-only finding: Editor/MapKit/MapAtmosphereAuthor.Apply currently uses sky.65,
+equator~.46,ground.34 and fogstart68/85,end165/190. Runtime MapGrade is data only;
+ColourGrade owns camera adjustment. Do not darken the whole grade to fake shadows
+or rebuild maps blindly. Preserve each map's architecture and source materials.
+1.9 contrast medium per map, chalk wear/home circle/floor variation;1.10 can
+findability, real airborne landing mark, short seat-coloured slipper flight ink.
+Existing private/shared cues must continue to compose with these world changes.
+
 Carry1.2 image finding into1.11/1.12: restoring has a large red grab crescent;
 review its meaning/dominance then. Real peer/native/human acceptance remains P7.
+No task deletion, completed HUD redo or login/mainmenu edits.
 
 Original dirty home-court.png.meta/loading-street.png.meta under Resources/UI/
 composition-redesign MUST NEVER be committed. Expected hashes in
 Logs/visual1-world-protected-metas.json; original bytes in
 Logs/look-1.1-v1/protected-inputs/. Known generated churn (two Inday FppDetails
-assets,QualitySettings.asset,TimeManager.asset) restored after1.5v3; protected2
+assets,QualitySettings.asset,TimeManager.asset) restored after1.7v5; protected2
 metas verified/restored exactly. Stage by path, never blanket add/reset/clean.
 Fetch before push, verify remote HEAD. Sole author M4tyu633, no trailers/AI/em dash.
 
@@ -104,5 +131,7 @@ Open carried issues:127.3 v57 chat-line clip recheck and native shutdown0xc00000
 in D3D12Core.dll1.618.1.0 offset0x264831, after all15review stages passed. P7 owns
 the native investigation. No clean-exit claim. Preserve original characters,
 builders, rigs,GUIDs,UGS IDs and saves. No paid services/resets/delegation/main/
-Desktop replacement. Prior ledger is archived with the1.1,1.2 and1.5 reports; it is history,
+Desktop replacement. Prior ledger is archived with the1.1,1.2,1.5 and1.7 reports; it is history,
 not the current resume point.
+
+Final static1.7 scope review: ChargeAnticipation now also requires _carrying, preserving the existing empty-hand lunge charge. Held-charge proofs retained; next compilation/P7 includes this one-condition exclusion. No extra rerun needed for unchanged active branch.

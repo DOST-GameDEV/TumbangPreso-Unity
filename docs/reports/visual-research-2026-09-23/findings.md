@@ -477,3 +477,25 @@ heard information and has no moving stroke. World desaturation restores full
 colour in comfort mode. Retain first usable looks, with all3defaults OFF pending
 owner selection. The broken v1 shader and v2 own-head captures are preserved and
 not claimed as visual evidence. No more tuning before other unfinished features.
+
+1.7 implementation choice: the existing arms already use the lit ToonSkin path.
+A camera-plane parent compensates world FOV with tan(world/2)/tan(95/2), preserving
+all child geometry, ink and attached effect alignment together, without another
+camera/RT or double grading. It is scoped to each owner camera render, with pose,
+material blocks and shadow/visibility restored afterward. Spectator POV creates
+the same ViewmodelArms type and receives the same treatment. Carrier's actual
+launch is AimEye plus the existing muzzle displacement and never reads these arms;
+focused tests compare unchanged launch and invariant apparent held bounds.
+The new wrist preparation is a0.12s pulse inside the already accepted charge,
+not another input delay. No imported rig/model/palette/builder edits.
+
+Final1.7: v1 lens/ownership/charge cases passed2/2,14.780s. Normal andgrey25 rest,
+charge and75/95/110 frames inspected: lower/smaller hands clear the centre/right
+lane; retain first rest look. Actual release v4 post-LateUpdate photos exposed a
+weak curl-in-place rather than follow-through. A pivot sweep now uses the existing
+.055contact/.18follow/.54settle times, past lower screen centre, no physics delay.
+v5 passed1/1,9.771s,guard1583cce5c39f: first actual projectileviewport(.5005,.4999),
+minimum handx.4368, transient offset settles to0. Before/after34-frame60Hz studies
+and grey sheets personally inspected; keep release look2. v3's earlier apparent
+held-frame lag was a pre-LateUpdate capture error, not runtime evidence. Full
+history/receipts in look-1.7-viewmodel. STOP tuning; move to batchB. No native build.

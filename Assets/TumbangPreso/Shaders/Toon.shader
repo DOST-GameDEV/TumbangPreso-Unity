@@ -96,6 +96,7 @@ Shader "TumbangPreso/Toon"
         _RimStrength ("Rim Strength", Range(0, 1)) = 0
         _RimPower ("Rim Power", Range(0.5, 8)) = 3
         _DepthReadability ("World distance readability", Range(0, 1)) = 0
+        _ViewmodelRimStrength ("Held slipper edge", Range(0, .3)) = 0
         _TayaCue ("Camera-only catchable rim", Range(0, 1)) = 0
         _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
@@ -318,7 +319,7 @@ Shader "TumbangPreso/Toon"
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
-        half _DepthReadability, _TayaCue;
+        half _DepthReadability, _TayaCue, _ViewmodelRimStrength;
         float4 _CueHeight;
         half _ShadowBand;
         half _BandEdge;
@@ -441,6 +442,12 @@ Shader "TumbangPreso/Toon"
                 half strength=max(_RimStrength,depth*.13h);
                 half3 colour=_RimStrength>0?_RimColor.rgb:half3(1,.94,.82);
                 base=lerp(base,colour,saturate(rim*strength*mask));
+            }
+
+            if(_ViewmodelRimStrength>0)
+            {
+                half edge=pow(1.0h-saturate(dot(normalize(_WorldSpaceCameraPos-IN.worldPos),normalize(IN.worldNormal))),2.4h);
+                base=lerp(base,half3(1,.94,.82),edge*_ViewmodelRimStrength);
             }
 
             // § THE STUN FROST. Applied AFTER the palette so it reads as ice ON the character

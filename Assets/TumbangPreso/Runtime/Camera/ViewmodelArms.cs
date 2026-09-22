@@ -17,7 +17,7 @@ namespace TumbangPreso.CameraSystem
     /// a future reader can check the arithmetic instead of trusting that somebody nudged the
     /// values until they looked right.
     /// </summary>
-    public sealed class ViewmodelArms : MonoBehaviour
+    public sealed partial class ViewmodelArms : MonoBehaviour
     {
         /// <summary>
         /// The right arm's baked basis and origin, straight out of the .tscn:
@@ -941,6 +941,7 @@ namespace TumbangPreso.CameraSystem
 
         public void SetCharge(float power, float spin=0)
         {
+            if(_charge<0 && power>=0)_chargeBegan=Time.time;
             // A refused/cancelled wind-up keeps the real held shoe and unwinds.
             // A subsequent accepted action clears this return in PlayAction.
             if (_charge >= 0 && power < 0 && _carrying && _clip == null && !_heroAction)
@@ -1068,9 +1069,17 @@ namespace TumbangPreso.CameraSystem
                              -godotEuler.y * Mathf.Rad2Deg,
                               godotEuler.z * Mathf.Rad2Deg);
 
-        private Quaternion ChargeArmRotation => _carrying
-            ? Visual.ThrowGesture.HandPreparation(_charge,_chargeSpin)
-            : Quaternion.Euler(WindupCarry*WindupRad*_charge*Mathf.Rad2Deg,0,0);
+        private Quaternion ChargeArmRotation
+        {
+            get
+            {
+                var prepare=_carrying?Visual.ThrowGesture.HandPreparation(_charge,_chargeSpin)
+                    :Quaternion.Euler(WindupCarry*WindupRad*_charge*Mathf.Rad2Deg,0,0);
+                // A small wrist set lives inside the existing charge window.
+                // The accepted release can interrupt it immediately, at any age.
+                return prepare*Quaternion.Euler(-5*ChargeAnticipation,0,2*ChargeAnticipation);
+            }
+        }
 
         private void StepAction(float dt)
         {
@@ -2634,6 +2643,7 @@ namespace TumbangPreso.CameraSystem
 
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestoreReleaseSweep();
             RestoreSwimming();
             _phase += dt;
 
@@ -2671,6 +2681,7 @@ namespace TumbangPreso.CameraSystem
                                _rightRestScale, dt);
                 }
                 ApplySwimming(dt);
+                ApplyReleaseSweep();
                 return;
             }
 
@@ -2711,6 +2722,7 @@ namespace TumbangPreso.CameraSystem
                 StepToward(elbow, Quaternion.LookRotation(forward, dir), Vector3.one * CarryScale, dt);
             }
             ApplySwimming(dt);
+            ApplyReleaseSweep();
         }
 
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)

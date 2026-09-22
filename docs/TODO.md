@@ -159,9 +159,15 @@ Batch A, communication:
   [look-1.5-experiments](reports/visual-research-2026-09-23/look-1.5-experiments/report.md):
   v2 behavior3/3, v3 corrected personal captures2/2; normal/25percent-grey reviewed.
   External taste/default selection and integrated performance/native review remain P7.
-- [ ] **VISUAL-1.7 FPP viewmodel framing.** Lower, smaller rest pose; lit arms on world
-  bands with matched ink; rim on the held slipper; a fixed viewmodel FOV if needed; throw
-  anticipation inside the existing charge window, snap, follow-through and settle.
+- [x] **VISUAL-1.7 FPP viewmodel framing.** Implementation/focused qualification DONE.
+  Fixed95degree apparent lens independent of world75..110, lower/smaller rest,
+  lit Toon arms and separate held-slipper rim; camera scopes cover attached effects
+  and spectator copies. Existing charge/release timing unchanged, with a short
+  preparation pulse and lower-screen follow-through past centre/settle. Off and
+  reduced-motion routes retained; physics/rig/model assets untouched.
+  [look-1.7-viewmodel](reports/visual-research-2026-09-23/look-1.7-viewmodel/report.md):
+  v1 behavior2/2, v5 actual release1/1; normal/comfort/grey25 and before/after
+  release sequences personally inspected. Integrated native/all-cast acceptance P7.
 
 Batch B, the world:
 - [ ] **VISUAL-1.8 Toon lighting.** Lower tinted ambient toward 2 to 2.5 : 1 lit to
