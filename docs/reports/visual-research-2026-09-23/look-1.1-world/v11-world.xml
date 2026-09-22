@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.296942">
+  <test-suite type="TestSuite" id="1703" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="531" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.296942" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1697" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="531" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.257688" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4520" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1698" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="531" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.230520" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1699" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="531" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.214383" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1676" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:29Z" duration="15.164138" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1678" name="ExitIsViewerLocalAndPhysicalEscapeDoesNotFireOnTeleport" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.ExitIsViewerLocalAndPhysicalEscapeDoesNotFireOnTeleport" methodname="ExitIsViewerLocalAndPhysicalEscapeDoesNotFireOnTeleport" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="631991476" result="Passed" start-time="2026-09-22 20:53:14Z" end-time="2026-09-22 20:53:22Z" duration="7.971535" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Audio] no cue registered for 'court_escape'.
+[TumpUiCapture] world-owner-exit-look-1.1-v11 cream source=252,211,159 pixel=187,200,207; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1680" name="LocalExitAndEscapeBeatVisualStudy" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.LocalExitAndEscapeBeatVisualStudy" methodname="LocalExitAndEscapeBeatVisualStudy" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="836415561" result="Passed" start-time="2026-09-22 20:53:22Z" end-time="2026-09-22 20:53:29Z" duration="7.170142" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] court-local-exit-before cream source=252,211,159 pixel=140,89,81; isolated UI camera, no ColourGrade.
+[TumpUiCapture] court-local-exit-after cream source=252,211,159 pixel=136,90,81; isolated UI camera, no ColourGrade.
+[TumpUiCapture] court-local-exit-comfort cream source=252,211,159 pixel=136,90,81; isolated UI camera, no ColourGrade.
+[Audio] no cue registered for 'court_escape'.
+[Play] wrote Logs/look-1.1-v11/shots/escape-00.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-01.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-02.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-03.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-04.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-05.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-06.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-07.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-08.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-09.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-10.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-11.png
+[Play] wrote Logs/look-1.1-v11/shots/escape-12.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

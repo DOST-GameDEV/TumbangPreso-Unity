@@ -194,6 +194,7 @@ GROUPS = [
         # assert accepted state/lifecycle outcomes; their occasional images are evidence.
         "ActionChainIntegrationTests",
         "AccessibilityControlTests",
+        "WorldCourtCueTests",
         "BlockContactTests",
         "CatchReconstructionTests",
         "CloseCallPresentationTests",

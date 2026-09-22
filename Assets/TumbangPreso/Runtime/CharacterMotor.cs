@@ -370,6 +370,7 @@ namespace TumbangPreso
         /// </summary>
         public void BeginSpawnSettle()
         {
+            unchecked { PresentationTeleportSerial++; }
             _spawnSettle = Balance.SpawnSettleFrames;
             _spawnSettleAt = transform.position;
             _velocity = Vector3.zero;
@@ -396,6 +397,9 @@ namespace TumbangPreso
         }
 
         public int MovementEpoch { get; private set; }
+        // Local presentation discontinuity, including offline teleports. Never
+        // serialized onto the gameplay wire or used to decide movement/outcomes.
+        public int PresentationTeleportSerial { get; private set; }
         private int _predictingAbility=-1,_teleportAbility=-1;
         private bool _awaitingTeleport;
         public bool AwaitingAuthoritativeTeleport=>_awaitingTeleport;

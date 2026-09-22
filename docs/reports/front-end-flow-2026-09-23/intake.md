@@ -26,3 +26,17 @@ home/mode/queue, hero/loadout/item/pick, custom flows, real progression systems,
 then remaining profile/hamburger doors. Existing world VISUAL-1 order is retained.
 Before UX code, read CLAUDE sections4a and6.2-6.5 and Front_End_Design, reconcile
 current routes and data ownership, and write each screen's four design answers.
+
+## Zip sheet inventory, inspected
+
+20.png is an earlier Home arrangement; home-final-wireframe.png and the latest
+TAP TO START correction govern the final entry/composition.22.png is the hero
+model/role/name/ability-details/biography/unlock screen; its illustrative icon slots
+never authorize invented powers.23.png is the owned/unowned loadout grid. Its
+SKILLS category is explicitly removed by the later flow brief.24.png is the item
+popup; its STATS button is explicitly replaced by EQUIP, with inspect brackets.
+27.png and28.png are the mode selector states;42.png is the full-size final Home
+layout, matching home-final-wireframe.png.
+All original files remain untouched. These are UX references, not approved grey,
+white or olive styling. The final Home/flow sheet and later direct corrections
+resolve differences between draft panels.

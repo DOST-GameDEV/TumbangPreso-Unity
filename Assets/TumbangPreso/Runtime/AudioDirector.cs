@@ -22,7 +22,7 @@ namespace TumbangPreso
     /// copies the pose `CameraRig.LateUpdate` has just written, and two `LateUpdate`s with no
     /// declared order run in whichever order Unity felt like.
     [DefaultExecutionOrder(1000)]
-    public sealed class AudioDirector : MonoBehaviour
+    public sealed partial class AudioDirector : MonoBehaviour
     {
         private struct Cue
         {
@@ -133,6 +133,7 @@ namespace TumbangPreso
         /// </summary>
         private void LateUpdate()
         {
+            UpdateCourtDanger();
             if (_ears == null) return;
 
             var head = UnityEngine.Camera.main;
@@ -245,6 +246,7 @@ namespace TumbangPreso
         private readonly Dictionary<AudioSource,bool> _replayMuted=new Dictionary<AudioSource,bool>();
         public System.IDisposable EnterReplayMix()
         {
+            SetCourtDanger(0,true);
             if(_replayMixDepth++==0)foreach(var voice in _voices)if(voice!=null){_replayMuted[voice]=voice.mute;voice.mute=true;}
             return new ReplayMixLease(this);
         }

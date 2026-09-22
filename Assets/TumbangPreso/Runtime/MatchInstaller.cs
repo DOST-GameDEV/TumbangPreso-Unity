@@ -431,6 +431,7 @@ namespace TumbangPreso
             // seat at all, so it falls back to the first one and the spectator rig takes over.
             int human = Mathf.Max(0, HumanSeat);
             BuildCameraAndHud(seats[human], lata);
+            Visual.CourtBoundaryPresentation.Install(transform,lata);
 
             var runner = gameObject.AddComponent<SliceRunner>();
             runner.Lata = lata;

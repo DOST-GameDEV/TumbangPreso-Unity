@@ -96,15 +96,17 @@ badge family for every in-match surface; timers as rings; the HUD recedes when e
   the findings file in the same commit as the work it informs.
 
 Batch A, communication:
-- [ ] **VISUAL-1.1 Danger made visible.** HUD half DONE (look-batchA-v4): a thin
-  Defense-blue screen-edge frame (`HudDangerFrame`, 7 units, 72 percent, still, fades 0.12 s
-  in and 0.2 s out) while the local attacker is taggable, replacing the "You can be tagged"
-  sentence; `ExchangePresentationTests` asserts it. World half (chalk box, exit, escape
-  beat, audio layer) handed to the next agent. Original scope: a live court boundary built from
-  `Balance.ConfinementRadius` (rest when the lata is down, armed when upright, one sweep
-  on restore); a per-viewer vulnerability frame, low audio layer and nearest-exit
-  highlight while taggable; a chalk puff and swish on escaping with the slipper. Done
-  when a muted greyscale clip lets a stranger tell safe from taggable and see the exit.
+- [x] **VISUAL-1.1 Danger made visible.** Implementation and focused qualification DONE.
+  Existing HUD danger frame unchanged. World square follows `Balance.ConfinementRadius`
+  and all five map surfaces, with rest/armed/restore sweep; local nearest exit;
+  physical escape dust/swish; quiet filtered air. Per-camera restoration prevents
+  preview/replay leakage. Shared boundary and escape replay use recorded state.
+  Authorable `WorldCueProfile` supplies independent off values. Same-camera normal,
+  comfort and25percent-grey evidence personally inspected in
+  [look-1.1-world](reports/visual-research-2026-09-23/look-1.1-world/report.md).
+  Final changed checks2/2, five-map geometry1/1; earlier replay/audio check retained.
+  Muted stranger-readability and human listening acceptance remain P7 external review,
+  not a claimed result. No gameplay rule, collision or completed HUD changes.
 - [ ] **VISUAL-1.2 The taya's view and the shared restore clock.** Taya-only rim and
   "catchable" ring on taggable attackers; a reticle ready tick in punch or lunge reach; a
   restore ring on the lata filling with `Carrier.ChannelRatio` for everyone; a draining

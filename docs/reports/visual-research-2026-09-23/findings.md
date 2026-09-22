@@ -366,3 +366,48 @@ games in the Philippines", community posts)
   general knowledge. Splatoon's top bar is recalled, not viewed. Audio references were not researched (VISUAL-1.15 audio should start with the
   existing Asset_Sourcing and AudioDirector notes). No performance profiling references beyond
   the earlier draft's Riot profiling article.
+
+## 9. World continuation from090d8c4a,2026-09-23
+
+Owner scope excludes the completed in-game UI/HUD.1.1 begins with the world half.
+Source finding: Confinement is a strict square about world origin; a body exactly
+on a line is outside. Ilalim's side chalk is raised onto the kerb, so drawing every
+new boundary vertex at the lata's flat floor height would recreate the old buried-
+chalk defect. Sample the actual ground near each edge and preserve the exact X/Z
+rule. Disable only recognised Chalk boundary renderers while the new treatment is
+on, restoring them for baseline/off and teardown; never remove their colliders or
+the home/throw marks. Detect escape from real crossings and unchanged movement epoch,
+not merely taggable becomingfalse (which also happens on a tag, blink or role change).
+Personal exit/air cues belong only to the active local camera. Recorded playback
+uses recorded can flags for the shared boundary and no personal cue. No rule,
+network message, HUD or timing changes. Latest owner validation discipline defers
+native builds/full regression to P7, superseding per-batch builds in the old plan.
+
+1.1 first rendered look (look-1.1-v3): all five surfaces/rule bounds passed, but
+rest versus armed is too subtle in the inspected25percent greyscale sheet. The
+second look increases the armed ink/chalk width while keeping rest thin/dimmer;
+no new filled area inside the court and no glow. Source check also corrected a
+false assumption: MovementEpoch alone does not identify offline teleports. A
+presentation-only discontinuity serial is required; no gameplay wire changes.
+
+Correction from actual runtime discovery (look-1.1-v7): Mat_chalk is a material
+name; the node names are default and their imported meshes are read-only. The
+four edges are separate, exact thin renderer bounds at+/-7. Earlier speculation
+about combined chalk was wrong. The final route recognises material plus whole-
+edge bounds and toggles those renderers; it does not split or alter any mesh.
+Throw marks at+/-8, outer lines at+/-12.5 and the home ring remain separate/intact.
+
+1.1 local close-up/escape study (v9): the central puff was fully obscured by the
+feet despite a passing trigger test. Move it to two small lateral wisps. The near
+line looked like heavy rails, so width is reduced at close range and grows smoothly
+to the already-reviewed far width by8m. This is the third/final boundary look;
+retain the far-map evidence and capture only the changed close-up/escape views.
+
+Final1.1 evidence: look-1.1-world/report.md. v8 five-map geometry/state passes;
+v11 nested-camera ownership, actual settled crossing, teleport rejection and the
+appearance study pass. Dynamic batching had pretransformed billboard vertices,
+misplacing its object origin: DisableBatching fixes it. Personally inspected full
+local/escape frames and all25percent-grey samples; retain the third subjective
+look and stop iterating. The wisps sit outside the feet and fade over0.42s. Far
+branch is unchanged from inspected v8 map frames. Replay shared state/audio mute
+proof from v3 is retained. No native or human-listening/stranger-review claim.

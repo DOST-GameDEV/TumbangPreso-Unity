@@ -29,6 +29,7 @@ namespace TumbangPreso.Audio
                 { "reset_complete", "reset_channel_complete" },
                 { "pickup",         "grab" },
                 { "throw_release",  "throw_whoosh" },
+                { "court_escape",   "throw_whoosh" },
             };
 
         /// <summary>

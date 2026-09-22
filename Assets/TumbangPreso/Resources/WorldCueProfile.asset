@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddcffe12cab0ef546b5c4941f518dbfc, type: 3}
+  m_Name: WorldCueProfile
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.Visual.WorldCueProfile
+  Boundary: 1
+  NearestExit: 1
+  Escape: 0.8
+  DangerAudio: 0.06
+  Chalk: {r: 0.96, g: 0.92, b: 0.81, a: 1}
+  Ink: {r: 0.14, g: 0.11, b: 0.075, a: 1}

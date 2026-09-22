@@ -227,3 +227,22 @@ and the `Sprites/Default` trails in `Slipper.cs` and `CanContactAccent`.
 Same-camera before and after, a 25 percent greyscale thumbnail, the smallest test that covers
 the changed behaviour, and one line in the TODO row with the capture folder. A fresh internal
 Windows build (never the Desktop target) at the end of each batch so the owner can play it.
+
+## World continuation notes,2026-09-23
+
+The later owner instruction defers ALL native builds/full regression to P7; it
+supersedes section4's per-batch build sentence. Completed HUD work is excluded.
+1.1 uses WorldCueProfile off values and a floor-sampled square. Its focused test
+question/receipts are in the ledger. Native capture/import churn is not a change
+to the approved people. UX-1 is separately queued after the existing visible work.
+
+For1.2, preserve CharacterVisual's underlying power rim and recorded coat values.
+Apply the taya's rule rim only for that viewer's camera, restoring the original
+property block afterward so it cannot enter another camera or recorded actor art.
+Use a distinct open catchable floor shape; retain the existing defender ring and
+normal identity marks for everyone else. The restore/protection ring is shared,
+driven by the same Carrier/Lata values the completed can glyph already reads.
+Inspect existing recorded can-state capacity before adding anything: prefer a
+backward-compatible presentation encoding in its existing state field, with legacy
+fallback, over changing gameplay or room protocol. Distance readability is bounded
+and starts away from the camera; it must not bleach faces or become a neon beacon.
