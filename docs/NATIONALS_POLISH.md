@@ -323,6 +323,11 @@ per-change checks; VP-17 1.7; VP-18 and 19 1.15; VP-20 1.15; VP-21 1.4; VP-25 V4
 
 ### V6. References
 
+Full research record, including the published analyses (Peacocke et al. 2018, Fagerholt
+and Lorentzon 2009, Hodent's heuristics) and the Knockout City screen-edge danger frame:
+`reports/visual-research-2026-09-23/findings.md`.
+
+
 Game references are observations of shipped games, not measured claims.
 
 - Valve, *Illustrative Rendering in Team Fortress 2* (NPAR 2007): value and saturation

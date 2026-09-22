@@ -13,7 +13,8 @@ Owner 2026-09-23: Codex is not editing this branch; this session took over the d
 (Logs/visual-p0-editmode-v1.xml), Core 615/615, native v57 accessibility 15/15. Open:
 the v57 chat clip re-check and the 0xC0000005 shutdown exit (TODO). Next: VISUAL-1.4 HUD
 and 1.18 icons, then 1.6, 1.1. The owner widened scope to every in-match UI surface.
-Design: NATIONALS_POLISH.md, VISUAL-1 section.
+Design: NATIONALS_POLISH.md, VISUAL-1 section. Research, plan and exact in-progress file list:
+reports/visual-research-2026-09-23/findings.md section 4 (read it first after a compaction).
 
 
 ## Mandate and source

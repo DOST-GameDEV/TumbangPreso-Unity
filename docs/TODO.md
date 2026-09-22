@@ -79,6 +79,15 @@ Design, reasoning and file-level routes:
 Each child ends with a same-camera before/after pair plus a 25 percent greyscale
 thumbnail (V4). Every new look lever has an "off" value that reproduces today's look.
 Human taste approval is separate and never blocks the next child.
+**Research and rules (owner, 2026-09-23: "i really dont wanna have to communicate by using
+text"):** every finding, source, plan and idea for this pass is recorded in
+[reports/visual-research-2026-09-23/findings.md](reports/visual-research-2026-09-23/findings.md)
+(Sepak U, Knockout City, TF2, Peacocke et al. 2018, Fagerholt and Lorentzon 2009, Hodent's
+heuristics, the Apex ping system). Standing rules from it: no sentences in ordinary play, a
+state is a shape, colour and place; world first, then screen edge, then HUD; one card and
+badge family for every in-match surface; timers as rings; the HUD recedes when effects peak.
+- [ ] **VISUAL-1.0 Research record kept current.** Append each new reference and decision to
+  the findings file in the same commit as the work it informs.
 
 Batch A, communication:
 - [ ] **VISUAL-1.1 Danger made visible.** A live court boundary built from
