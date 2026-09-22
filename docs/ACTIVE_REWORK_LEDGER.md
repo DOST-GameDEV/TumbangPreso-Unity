@@ -1,5 +1,17 @@
 # Active TUMP rework ledger
 
+## Resume pointer, 2026-09-23
+
+Docs cleanup published on top of a1110a9e (docs only, no code). TODO.md is the queue plus
+an index row per numbered entry; open bodies are in TODO_Backlog.md; superseded plans are
+in docs/archive/ (old-path table in its README); docs/README.md indexes every file.
+Priority was rethought: P0 finish the in-flight 134.10 reduced-effects link (the dirty
+source listed below), then VISUAL-1 batch A (communication), batch B (world), remaining
+expansion, batches C and D with existing scope, backlog disposition, final qualification.
+Owner 2026-09-23: Codex is not editing this branch; this session takes over the dirty
+134.10 work, then starts VISUAL-1.1. Design: NATIONALS_POLISH.md, VISUAL-1 section.
+
+
 ## Mandate and source
 
 Complete EVERY autonomously actionable unfinished TODO in this conversation.
@@ -11,9 +23,9 @@ Quality matters; avoid verification/tool-repair loops. Once a changed risk passe
 return to remaining implementation. Full regression follows integrated features.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,ASTRAReworks.
-Last published74ac6e9a98afbba301eca298eb65c7317a59ed72,remote verified. Black UI
-outlines and standing AGENTS rule are published. This new accessibility batch is
-ready for scoped publication after diff review. Preserve/exclude original unrelated
+Last publisheda1110a9e6b583e787f6efe0d508755efb3469d03,remote verified. Accessibility batch
+published on top of74ac6e9a (black UI outlines/standing AGENTS rule). Raw failed
+XML whitespace is preserved; authored-source diff check passed. Preserve/exclude original unrelated
 Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta.
 Never blanket add/reset/clean. Fetch before push; verify remote afterward.
 
@@ -73,7 +85,7 @@ and accessibility-completion.md. Full TODO and127.3 remain ACTIVE.
 
 ## Next order
 
-1. Publish this stable implementation/evidence batch, excluding original2metas.
+1. Accessibility implementation/evidence published and remote verified. Continue.
 2. Finish the bounded native accessibility integration: actual larger settings and
    owner HUD, settings controls/save/discard, training/match-chat/replay label views.
    Reuse current native runner infrastructure; avoid repeating unrelated113screens.
@@ -153,3 +165,26 @@ human listening/balance/art approval is implied.
 Detailed prior state is retained in reports/full-backlog-2026-09-21/
 ledger-before-accessibility-publication.md and earlier ledger snapshots. Their
 active-job lines are historical. Use THIS ledger for current state.
+
+## Current next gate, after a1110a9e publication
+
+New bounded native --accessibility-only route is authored locally in
+OwnerUiPlayerReview.Accessibility.cs and existing runner dispatch; its new
+-tp-accessibility-review-only flag is documented in TournamentPreset.NotModifiers.
+It uses shipped focus-following scrolling and actual raycast/click controls for
+larger text, HUD size, hold/toggle choices, FOV, captions/contrast/effects, then
+save and actual discard dialog. Captures owner HUD/caption and training; reuses
+actual spectator/replay route with larger preferences. No scene/UI feature rewrite.
+Transfer this route, runner, core flag list and final divider tweak to validation;
+build fresh internal accessibility-v57, then run this bounded route. No job started
+yet. Stop testing this gate after it passes and resume253unreviewed TODO entries.
+
+Native v57 built1211MB/73s,guard2aa2d43a9ec6. ACTIVE bounded --accessibility-only
+runjob62773,process27908,Logs/accessibility-native-v57. Native input/profile guard
+owns cleanup. Validation source frozen for now. New source discovery in134.10:
+its explicit contract includes SkyEvent,Hitstop and ultimate cards, beyond the
+new particle/vignette consumers. DEV now needs that shared reduced-effects link;
+keep shared ultimate phase timing/authority unchanged, retain tells, attenuate
+world/body/replay flashes consistently, suppress optional micro-hitstop/camera
+motion, and retain default behavior. This extension is not in nativev57. Finish it
+without restarting unrelated whole-game checks. Existing253unreviewed count intact.

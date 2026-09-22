@@ -1,5 +1,24 @@
 # TUMP repository instructions
 
+## Latest owner direction, 2026-09-23: visual communication and appeal
+
+The owner asked for the game to look better and feel more satisfying WITHOUT more
+realism, for a minimalist, professional in-game HUD that is easy to look at, and for
+on-screen effects and indicators that work together without overwhelming the player
+(Sepak U named as the example). This is TODO VISUAL-1. It supersedes the 2026-09-01
+"do not touch the in-match HUD" scope note for that pass; no rule, timing, authority or
+network contract changes. Design, reasoning and file-level routes:
+[NATIONALS_POLISH, VISUAL-1](docs/NATIONALS_POLISH.md#visual-communication-and-appeal-pass-visual-1-2026-09-23).
+Priority was rethought the same day: P0 finish in-flight work, then VISUAL-1 batches,
+with backlog paperwork moved behind visible work. See
+[the priority order](docs/TODO.md#current-implementation-queue).
+
+**Docs layout after the 2026-09-23 cleanup.** `docs/TODO.md` is the only status queue and
+carries an index row per numbered entry; the open entries' whole bodies are in
+`docs/TODO_Backlog.md`; finished ones stay in `docs/TODO_Archive.md`; superseded plans and
+status files moved to `docs/archive/` (old-path table in `docs/archive/README.md`).
+`docs/README.md` indexes every document with its status. Nothing was deleted.
+
 ## Standing in-game UI outline rule,2026-09-22
 
 The owner explicitly rejects red UI outlines: "replace all red outline with black
@@ -87,13 +106,17 @@ built-in image tool; do not switch to a paid API/CLI path or spend reset credits
 
 Read [active ledger](docs/ACTIVE_REWORK_LEDGER.md), then the
 [current queue](docs/TODO.md#current-implementation-queue). They are the only active
-resume/task pointers. The Nationals plan owns detailed feature design, not a second
+resume/task pointers. [docs/README.md](docs/README.md) maps every document; an entry's
+body is in [TODO_Backlog.md](docs/TODO_Backlog.md) when its index row says so. The Nationals plan owns detailed feature design, not a second
 status queue. Read topic details as needed: [vision](docs/VISION.md),
 [play feel](docs/PLAY_FEEL_REWORK_PLAN.md), [ability plan](docs/ABILITY_REWORK_PLAN.md),
 [kit decisions](docs/HERO_KIT_REWORK_DECISIONS.md),
 [ability direction](docs/PHILIPPINE_ABILITY_DIRECTION.md), [art](docs/Art_Direction.md),
 [rigs](ASTRA.md). The supplied implementation brief is saved under
 [the current report](docs/reports/presentation-pass-2026-09-21/implementation-brief.md).
+
+The 2026-09-23 priority order in TODO governs. The paragraph below records the
+2026-09-21 presentation priorities, which are implemented and retained.
 
 Prioritize the complete throw, can, retrieval, restore, chase, escape/tag exchange;
 ownership/identity/locators/feed; victim catch reconstruction and capped chains;

@@ -4,7 +4,7 @@
 
 These notes are preserved whole as history. Their scheduling is superseded by
 the September16 demo priority order in TODO.md. Deferred work is still open in
-the current queue and GAMEPLAY_RESUME_AFTER_UI.md; this is not a completion claim.
+the current queue and archive/GAMEPLAY_RESUME_AFTER_UI.md; this is not a completion claim.
 
 <!-- OWNER_PLAYTEST_20260913 -->
 
@@ -81,7 +81,7 @@ source files, editable controls and the approved controller diagram.
 - [ ] Redesign the rejected UI creatively, then finish U8's actual art/motion/
   input/async/native-route qualification. The current native run failed a
   reduced-motion settling assertion before matches; it is NOT a pass.
-- [ ] Resume every remaining item in GAMEPLAY_RESUME_AFTER_UI.md afterward,
+- [ ] Resume every remaining item in archive/GAMEPLAY_RESUME_AFTER_UI.md afterward,
   including deferred Inday and the selected seventh hero/map LAST LAST.
 
 Current checkpoint/evidence: reports/owner-ui-u8-checkpoint.md and newest
@@ -93,7 +93,7 @@ destination continues across batch boundaries, commits and compactions.
 **NEWEST owner order,2026-09-15:** finish the currently running same-process
 reconnect check, then thoroughly analyze/plan and implement the new hand-drawn
 UI theme. Resume all unfinished gameplay afterward using
-[GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
+[archive/GAMEPLAY_RESUME_AFTER_UI.md](archive/GAMEPLAY_RESUME_AFTER_UI.md). UI is reopened;
 older cancellation text below is historical. No extra agents or reset credits.
 
 **Verified progress,2026-09-15:** complete seven-kind persistent ground snapshots

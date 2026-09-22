@@ -5,6 +5,13 @@
 > [TODO](docs/TODO.md#current-implementation-queue) and [the ledger](docs/ACTIVE_REWORK_LEDGER.md).
 > C1-C3 have a documented handback; C4 remains reserved. Older scheduling below
 > cannot override the2026-09-21 presentation-first plan or newer owner instructions.
+>
+> **2026-09-23:** the docs were cleaned up. `docs/TODO.md` is the queue plus an index row
+> per numbered entry; open entry bodies live in `docs/TODO_Backlog.md`; superseded plans
+> moved to `docs/archive/`; `docs/README.md` indexes everything. The current priority is
+> VISUAL-1 (visual communication and appeal) after the in-flight 134.10 link. § 2.3's
+> "a section lives in TODO.md while its heading says OPEN" now means its index row lives
+> there and its body in TODO_Backlog.md.
 
 
 **Additional separate-PC assignment, September15:** TODO149.4 request safety is

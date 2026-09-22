@@ -499,4 +499,4 @@ review and the approved Sa Bubong map remain part of the open improvement goal.
 Sa Bubong needs a larger believable pool, full perimeter fencing and falls over
 any outer railing. Retire the isolated paint stripe/open gap. Add restrained
 resident detail and several cosmetic bird types. Keep existing controls, mash
-get-up and10s lost-slipper penalty. Current exact state is EXECUTION_PLAN.md.
+get-up and10s lost-slipper penalty. Current exact state is archive/EXECUTION_PLAN.md.

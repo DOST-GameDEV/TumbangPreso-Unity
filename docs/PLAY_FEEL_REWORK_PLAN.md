@@ -7,7 +7,7 @@ Current presentation direction: [research-driven Nationals design](NATIONALS_POL
 This is an active but partially implemented plan. The dated scope/NOT implemented
 statements below are historical and must not trigger a restart. The owner later
 reopened UI; the finalized supplied menu/login is now qualified, and gameplay work
-continues. Follow ACTIVE_REWORK_LEDGER.md and GAMEPLAY_RESUME_AFTER_UI.md.
+continues. Follow ACTIVE_REWORK_LEDGER.md and archive/GAMEPLAY_RESUME_AFTER_UI.md.
 
 Preserve the short general-direction guide and current aim settling. The moving
 Nemu guide was verified in actual pixels without an exact landing marker in

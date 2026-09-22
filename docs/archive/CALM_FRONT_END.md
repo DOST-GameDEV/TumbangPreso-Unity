@@ -6,7 +6,7 @@ replaceable art and clear interaction, rather than claiming final visual approva
 
 ## References and decisions
 
-The original reference is [TUMP.pdf](refs/ui/TUMP.pdf). Pages 1-7 establish the logo,
+The original reference is [TUMP.pdf](../refs/ui/TUMP.pdf). Pages 1-7 establish the logo,
 fonts, palette and materials; pages 20-26 are examples; pages 36-40 carry the strongest
 composition and interaction direction. Original logo and slipper variants are beside
 the PDF in `docs/refs/ui`. They are reference sources, not instructions to add shops,
@@ -77,7 +77,7 @@ stage details are not printed as technical instructions to the player.
 - `Resources/UI/brand`: the team's existing logo, wordmark and slipper variants.
 - `HomeAssetsAuthor.SavePickerFromMenu`: regenerates `Resources/UI/home/CharacterPicker.prefab`
   from the real MatchSetup picker after authored hierarchy changes.
-- [FONT_USAGE.md](FONT_USAGE.md): Darumadrop display, Kawit Extended accents and
+- [FONT_USAGE.md](../FONT_USAGE.md): Darumadrop display, Kawit Extended accents and
   Lydian reading text. Their imports include dynamic font data and preserve sharp
   rendering at requested sizes. Lydian's signed descent was corrected without
   changing letterforms; owner embedding permission is recorded there.

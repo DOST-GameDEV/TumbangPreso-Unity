@@ -29,7 +29,7 @@ not owner acceptance of that composition. Original login remains protected.
 changes priority, not scope. Secure a tested demo candidate, then continue the rest
 immediately as time allows, including before tomorrow. Do not stop at the candidate
 or wait for the demo date. Record completed/verified/pending-playtest states in
-TODO.md, ACTIVE_REWORK_LEDGER.md and DEMO_PLAYTEST_CHECKLIST.md.
+TODO.md, ACTIVE_REWORK_LEDGER.md and archive/DEMO_PLAYTEST_CHECKLIST.md.
 
 
 **LATEST owner priority, September15: demo tomorrow, September16.** Follow the new
@@ -127,9 +127,9 @@ analyze/plan first, preserve her real artwork/aspect ratios/typography and anima
 working clickable controls. Continue independently while she sleeps. Imagegen may
 help with missing art or studies; do not redraw supplied assets. No agents/reset.
 
-Active screen-by-screen plan: [OWNER_HANDDRAWN_UI_PLAN.md](OWNER_HANDDRAWN_UI_PLAN.md).
+Active screen-by-screen plan: [archive/OWNER_HANDDRAWN_UI_PLAN.md](archive/OWNER_HANDDRAWN_UI_PLAN.md).
 Byte-exact source: ArtSource/ui/owner-handdrawn-2026-09-15, with measured manifest.
-Gameplay resumes afterward from [GAMEPLAY_RESUME_AFTER_UI.md](GAMEPLAY_RESUME_AFTER_UI.md).
+Gameplay resumes afterward from [archive/GAMEPLAY_RESUME_AFTER_UI.md](archive/GAMEPLAY_RESUME_AFTER_UI.md).
 The following cancellation record is historical, superseded by this new request.
 
 Owner instruction,2026-09-14: remove UI from the to-do list. The remaining UI

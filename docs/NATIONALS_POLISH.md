@@ -1,5 +1,338 @@
 # Nationals polish: the current implementation design
 
+## Visual communication and appeal pass (VISUAL-1), 2026-09-23
+
+Owner direction, 2026-09-23: make TUMP more visually appealing and satisfying to play
+without making it more realistic, make the in-game HUD minimalist, professional and easy
+to look at, and explore on-screen effects and indicators that work together and are not
+distracting (Sepak U was named as the example). The status queue is
+[TODO VISUAL-1](TODO.md#current-implementation-queue). This section owns the design.
+
+This supersedes the 2026-09-01 "do not touch the in-match HUD" scope note for this pass.
+It does not reopen the painted front end, and it changes no rule, timing or network
+contract.
+
+### V0. Why: what the current captures show
+
+Sources: `reports/full-backlog-2026-09-21/map-evidence/*-native-v37.png`,
+`lagoon-deck-live-v3-baseline.png`, `accessibility-evidence/accessibility-hud-large-1280x960.png`,
+`black-ui-outline-evidence/spectator-manual-flight.png`,
+`close-feedback-2026-09-16/v32/*` and `direct-gameplay-2026-09-16/v28/*`. Re-verify each on
+the current build before fixing it.
+
+1. **The rule that defines the game has no picture.** `Design.md` § 0: the tension is the
+   retrieval. An attacker is taggable while inside the box, holding their slipper, with
+   the lata upright (`CharacterMotor.IsTaggable` plus `Lata.IsUpright`). Today that state
+   is one orange text line at the bottom prompt ("You can be tagged",
+   `TumpMatchReadout.Prompts`) plus a 0.36 s edge flash at onset (`TumpHudEffects`). The
+   chalk does not change, the world does not change, and the state flips without the
+   attacker doing anything when the taya finishes a restore.
+2. **The taya cannot see who is catchable.** Nothing marks a taggable attacker for the
+   taya. `CharacterNameplate` colours rings and tags by seat and shapes the taya's ring;
+   it carries no vulnerability state. The taya's only scoring verb has no target cue at
+   8 to 12 m, where chibi hands are a few pixels.
+3. **Timers are sentences.** Restore progress (taya only, a bar under the prompt), can
+   protection ("Protected · 1.1s"), throw and tag cooldowns ("THROW CD · 1.0s",
+   "TAG CD · 0.7s"), the fetch penalty ("Fetch your slipper · -5 / second"), slipper
+   return ("Slipper returning · 2.0s"), charge and pektus ("Release to throw",
+   "Pektus left · 34%"). VISION § 3 says the match HUD carries no sentences.
+4. **Some states are said six times and others never.** `Lata.BuildDownBeacon` records
+   that "lata down" fires as a world popup, centre alert, card title, objective line,
+   toast and crosshair. Can state is also drawn twice on the HUD ("Can upright" in
+   `TumpMatchReadout`, "CAN PROTECTED" in `OffscreenIndicators`). Meanwhile attackers get
+   no picture of the restore countdown that decides their escape.
+5. **Four colour systems compete.** Role (Offense orange, Defense blue), seat identity
+   (`PlayerIdentity.Colour`), hero ability palettes and UI chrome all appear on the same
+   frame with no stated hierarchy.
+6. **Key objects lose against their backgrounds.** White chalk on Bayan's light paving is
+   the least visible line on screen although it decides safety. The lata is a speck at
+   distance and sometimes absent from spectator frames (VISION § 2 rule 5). A black
+   slipper is the highest-contrast mass in FPP and a dark slipper on Eskinita asphalt is
+   easy to lose.
+7. **Flat light.** `Toon.shader` `LightingToon` gives `albedo x light x lerp(_ShadowBand
+   0.45, 1, band)`, and the surface shader adds the scene ambient on top. Map trilight
+   ambient is about 0.55 to 0.66 at sky and equator (the lagoon up to 0.80) against a sun
+   of about 1.1 (`MapAtmosphereAuthor.Apply`, `LagoonBuilder`), so lit to shadow works out
+   near 1.5 : 1 and the shadow side is the same hue slightly darker. Specular is zero on everything, including the
+   metal lata. Rim is an unmasked view-angle lerp. Fog starts at 68 to 85 m on an arena
+   about 40 m across, so there is no depth separation.
+8. **The floor says nothing.** 40 to 50 percent of each FPP frame is an even low-contrast
+   plane. Nothing on the ground leads the eye to the lata.
+9. **The screen layer crowds the lower centre.** Arms and held slipper fill about 12
+   percent of the frame with ink several times heavier than any character's, and the
+   ability tiles and white key boxes sit on top of them. The HUD takes roughly 13 to 17
+   percent of the frame in ordinary play, most of it four score slabs
+   (`OwnerScoreStrip`, `Color32(35,29,33,210)`, reads cool grey over sky).
+10. **Some effects sit outside the art style.** Confetti is scaled primitives on
+    rigidbodies (`HeroHazards` near line 4048); `CanContactAccent` and the fire/zap
+    slipper trails use `Sprites/Default`. v32 shows large same-size flat pink squares
+    between camera and action; identify them before changing anything.
+11. **The characters are the best-looking asset** (`rafi-block-hair-evidence/hero-lineup-quarter.png`)
+    and are small in play. Everything else should frame them, the lata and the tsinelas.
+
+### V1. The information model
+
+What each player needs to know, what answers it today, and which task closes the gap.
+
+| Question | Rule source | Today | Gap | Task |
+|---|---|---|---|---|
+| Am I safe? (attacker) | inside box + holding own slipper + lata upright | orange prompt text, 0.36 s onset flash | no world or peripheral state; flips on the taya's restore | 1.1 |
+| Where is the nearest safety? (attacker) | box edge at `ConfinementRadius` 7.0, square | static chalk | the exit is never shown | 1.1 |
+| Who can I tag, and are they in reach? (taya) | same rule on other bodies; punch 1.7 m / 75 deg, lunge 1.3 m | nothing | no target cue | 1.2 |
+| When does danger come back? (attacker) | restore channel 1.36 to 1.67 s, then 1.25 s protection | taya-only bar; scoreboard word "Resetting can" | attackers cannot time an escape | 1.2 |
+| Where is my slipper, how long do I have? | own-slipper lock; fetch grace then -5/s; roof and lagoon return | owner glow, landed rim, recall mark; countdowns as text | penalty and return clocks are text | 1.3 |
+| Can I throw, how hard, which curve? | holding, outside box, post-restore cooldown; charge 0.35 to 1 over 2.5 s; pektus | crosshair greys; dotted arc; bar and two text lines; cooldown text | four texts away from where the eye is | 1.6 |
+| What is flying at the can? (taya, spectators) | 17.6 to 19.4 m/s slippers | fire and zap affinity trails only | ordinary throws are hard to read in FPP | 1.10 |
+| Is the can up, down or protected? (all) | `Lata.IsUpright` gates four rules | on-object rim pulse and collar (good), plus six more copies | repetition instead of emphasis | 1.5 |
+| Whose round is it? (all) | taya = `(round - 1) % 4` | "Round 1 / 8", chip word "Defender" | rotation has no ceremony | 1.13 |
+| What is my opponent about to do? | windups, lunge | clip poses, unmeasured at distance | unknown at 8 to 12 m | 1.12 |
+| Who is winning? (all) | cumulative score | four large slabs | heavy for what it says | 1.4 |
+
+### V2. The signal language
+
+Principles, each already argued somewhere in this repository and now applied everywhere:
+
+1. **World first, HUD second, text last.** The can is the signal (`Lata.BuildDownBeacon`),
+   the chalk is the truth (`Design.md` § 2). Sentences live behind the TAB hold and in
+   training only (VISION § 3).
+2. **One owner per signal.** A state has one canonical place plus at most one moment beat.
+   Emphasis is contrast, not repetition.
+3. **Timers live on the thing they time.** A restore ring on the can, a drain on the
+   protection collar, a sweep on the reticle, a ring on your own slipper marker.
+4. **Personal cues are per viewer; shared facts are shared.** The taya's target cue is the
+   taya's; the restore ring is everybody's.
+5. **Show the exit, not only the danger.**
+6. **Change what exists before adding geometry.** The owner rejected a beacon on the can
+   and neon rims; brighten, desaturate, outline or thicken existing objects first.
+7. **Attention budget.** Per moment one dominant signal, at most two secondary, the rest
+   ambient. Multiple necessary warnings may coexist; decoration yields.
+
+Colour hierarchy. A colour from a higher band is never used as decoration in a lower one.
+
+| Band | Colours | Carries |
+|---|---|---|
+| 1. Rule state | Offense `#f87020`, Defense `#0080e8` | role, the armed box, the taya's target cue, the taya badge |
+| 2. Identity | `PlayerIdentity.Colour` per seat | rings, chip rings, own-slipper marker, flight streak |
+| 3. Power | each hero's palette | ability VFX only |
+| 4. Chrome | UI brand palette, black in-game outlines | HUD plates and type |
+| 5. Structure | chalk white or charcoal, cream, ink | court, rules, neutral marks |
+
+Shape meaning. Starburst: accepted contact only. Ring: a zone or a timer. Chevron:
+off-screen location. Dotted: prediction. Streak: travel. Puff: ground contact. Chalk
+stroke: rules and court.
+
+Sepak U (Good Knight Collective, official itch.io screenshots): the whole persistent HUD
+sits in one band; the ball keeps the brightest colour even during a super; spectacle is
+drawn in the same ink language as the characters, sometimes in monochrome; the HUD hides
+during a super; interstitials desaturate the world behind gold on black. Take the
+principles, not the layout.
+
+### V3. Implementation routes
+
+Each route extends existing owners. No new UI framework, no new presentation framework.
+Every new look lever is a global or per-map parameter whose "off" value reproduces
+today's look, so the owner can reject a treatment without a code change.
+
+**1.1 Danger made visible.**
+- A runtime court boundary presentation built from `Balance.ConfinementRadius` and the
+  lata mark height, drawn a few millimetres above the authored chalk with the Toon depth
+  bias, so it cannot disagree with the rule on any map. States: lata down (chalk at rest),
+  lata upright (chalk a step brighter, box "armed"), the restore moment (one short
+  brightening sweep from the can outward, the only animated beat). No glow columns.
+- Per viewer, while the local attacker is taggable: a thin low-alpha Defense-blue frame
+  in the lower corners (not a full vignette), a subtle low audio layer through
+  `AudioDirector`, and the nearest boundary segment brightened under that viewer only as
+  the exit. Reduced motion keeps the frame static.
+- Crossing out of the box with the slipper: a small chalk puff at the feet, a soft
+  swish, the frame clears. The escape is the retrieval's win and should feel like one.
+- Keep `TumpHudEffects`' onset flash; drop the prompt sentence once the cues read in
+  greyscale and muted review.
+
+**1.2 The taya's view and the shared restore clock.**
+- Extends `TODO.md` § 127 (the taya is a ring, an attacker a disc). For the local taya
+  only: taggable attackers get a Defense-blue rim through the existing `_RimColor` / `_RimStrength` property-block path (`CharacterVisual`), and their
+  nameplate ring switches to a "catchable" shape. In punch or lunge reach inside the arc,
+  the reticle shows a ready tick. Spectators see a quieter version.
+- A world restore ring on the lata's collar filling with `Carrier.ChannelRatio`, visible
+  to everyone; attackers read it as the countdown to danger. After restore, the
+  protection collar drains with `Lata.ProtectionLeft`. Replay records both.
+
+**1.3 Timers on objects.** Own-slipper marker gains a ring for the fetch grace and the
+penalty state (`TournamentRules.IsSlipperWarning`), and for roof and lagoon returns.
+Edge chevron in the seat colour when your slipper is off-screen. No text in ordinary play.
+
+**1.4 In-game HUD, minimalist and professional** (`TumpMatchReadout` and its partials).
+- One centred top bar: two chips either side of the clock. Chip: portrait in its seat
+  ring, score in tabular numerals, one state badge (in hand, away, retrieving, caught).
+  Role as a badge: can badge in Defense blue for the taya, slipper badge in Offense orange
+  for attackers. Local player: gold underline. Fixed seat order in the match; a small
+  crown marks the leader. Rounds as pips or chalk tallies. Can state as one glyph under
+  the clock. Replaces the score slabs and the corner can text. References: Splatoon's
+  player-icon bar, Valorant's top bar.
+- Bottom centre (Hero Strike): Q and E share one tile shape, F a notched ring (VISION § 3),
+  keycap as a corner badge from the live binding, digits only in the last 3 s. Stamina as
+  a slim arc above the cluster (Classic: the arc alone), shown while draining or
+  refilling, 150 ms in and 400 ms out. Clear of the arms.
+- Right edge: at most three pictogram feed lines, fading after about 4 s.
+- Remove from ordinary play: "Slipper in hand", "Guard the can", "Can upright", the
+  permanent TAB hint (first round or idle only), centre warm-up sentences (one short lower
+  caption during warm-up). No sandbox or version strings in an ordinary match.
+- Type follows `TODO.md` § 133 and `FONT_USAGE.md`. One plate style (none, or warm ink `#1C0F06` at 55 to 70 percent in the owner's
+  chamfer), black outlines, Darumadrop for clock, names and moments, the supporting face
+  for small labels, three sizes at most, one spacing unit, one icon stroke weight.
+- Budget: permanent HUD under about 8 percent of the frame at 1920x1080, measured from
+  canvas rects; the central 30 percent box holds only the reticle and transients. Check
+  1920x1080, 1280x720 and the owner's short wide window, HUD scale 100 and 120, high
+  contrast, keyboard, pad and touch prompts.
+- "+100" appears at the source chip and merges; totals are correct immediately.
+
+**1.5 One signal language across effects.** Write the meaning, shape, colour and place
+table from V2 into code comments at each owner and make the existing indicators obey it.
+Fold the off-screen can indicator into the chevron family without text. At most one
+full-screen tint at a time with a priority across `DamageVignette`, `DownedVignette`,
+`FrostVignette` and caught or moment grades. Non-critical HUD recedes to 0 to 30 percent
+during an accepted ultimate and in replay. Cut the six "lata down" copies to the can,
+the bar glyph and one moment beat. Experiments, each compared against today and kept only
+if clearer: peripheral speed lines during sprint and dash (off in reduced motion); a brief
+lower-saturation world grade during a shared ultimate while players, lata and slippers
+keep full colour; sound visualisation as low-alpha edge pips for footsteps already
+audible, for muted or deaf play, with the owner choosing the default.
+
+**1.6 The reticle as the personal-state hub.** Replace the "+" text glyph with a drawn
+reticle: charge ring (0.35 to 1), pektus direction tick, cooldown sweep, greyed when a
+throw would be refused (existing rule), taya ready tick (1.2). The bottom prompt keeps
+only rare verbs (get up, break free, reset).
+
+**1.7 FPP viewmodel** (`ViewmodelArms`, `CameraRig`). Lower and slightly smaller rest
+pose, lane right of the reticle clear; held slipper lit with its own rim; arms on the same
+toon bands as the world (check no property block flattens them, `TODO_Archive.md` § 87);
+ink weight matched on screen to a nearby character; a fixed viewmodel FOV if the arms
+currently follow the 75 to 110 slider. Throw: cock back inside the existing charge
+window, 2 to 3 frame release snap, follow-through past centre, settle; the apparent
+release always matches the real launch from the sight line.
+
+**1.8 Toon lighting.** Still two bands, still Built-in, still `Toon.shader`.
+- Ambient down and tinted: aim for lit to shadow near 2 to 2.5 : 1 by lowering trilight
+  intensity per map in `MapAtmosphereAuthor.Apply` rather than darkening the grade.
+- Per-map shadow tint so shade shifts hue (violet grey at noon, warmer at dusk), low
+  saturation, away from both role hues.
+- Rim masked to the upper, away-from-light side (TF2), characters and hero props only,
+  strength up to about 0.25.
+- A hard one or two band highlight for metal: lata rims and end caps, never across the
+  owner-drawn labels; optional gloss on tsinelas rubber.
+- A subtle vertical gradient on characters (feet about 10 to 15 percent darker, gone by
+  the chest) so the eye goes to hands, face and slipper.
+- Ground-contact darkening by height above the local floor (within about 0.5 m) on
+  environment; soft blob contact shadows under players, lata and dropped slippers. No SSAO.
+- Fog toward the horizon colour starting nearer the arena edge so far buildings recede;
+  the court stays crisp.
+- Tune `_BandEdge` against band popping first. Surface and outline normals stay separate.
+- Consider an afternoon sun on maps where it fits: tumbang preso is an after-school game,
+  and a lower sun gives longer shadows (structure on the empty floor) and natural rim.
+
+**1.9 Court and ground as the stage.** Per-map court medium chosen for contrast, the way
+the game is really drawn: chalk on dark asphalt, charcoal (uling) or brick on light
+paving. Chalk with slight wobble, broken edges and smudges; an obvious scuffed home
+circle; large soft low-contrast floor variation (sun-bleach, wet patches, oil, drain
+covers, road paint, tyre marks, leaves at the edges) with negative space around the
+circle and a slight value lift toward the court centre. Decals only; no collision or
+route change.
+
+**1.10 Hero objects.** With 1.8 and 1.9 the lata must be findable in every reference
+frame; when far or behind cover rely on the glyph and chevron, not a bigger mesh or a
+permanent neon rim. A ground landing marker while the can is airborne after a knockdown,
+driven by real state. A short ink flight streak on every thrown slipper in the thrower's
+seat colour, visible to all, so the taya can read incoming throws.
+
+**1.11 Effects in the ink language.** Sources and licences follow `TODO.md` § 131 and
+`Asset_Sourcing.md`. Two-tone flat shapes with ink edges; 12 fps
+flipbooks for graphic effects where it helps (`VfxFlipbook`), smooth trails; dissipation
+by erosion, shrink or breaking into dots. Chalk dust from the circle on knockdown and from
+skids on court lines; cartoon puffs for landings and slides. Replace confetti cubes with
+fluttering paper shapes spawned outside the camera's central cone. Move
+`CanContactAccent` and slipper trails off `Sprites/Default`, keeping the open centre and
+the hit, grounded and restored distinction; profile before pooling. Each hero keeps a
+distinct main shape; Dante's orbiting protectors stay.
+
+**1.12 The exchange as one performance, and opponent readability.** Check the existing
+PRESENTATION-1 sequence against this beat sheet and change only what differs. Knockdown:
+existing 60 ms hitstop, metal transient aligned to contact, one ink starburst for 2 to 3
+frames, can flash for one frame, topple with chalk dust, thrower's reticle tick and "+100"
+at their chip, then own-slipper markers light and the restore state begins. Tag: contact
+hitstop, victim desaturates (caught), taya confirm, victim returns. Block: thunk, small
+push, a pictogram for the taya. Escape: 1.1's puff and swish. Misses, cancels, blocks and
+failed pickups must look different from success. Check that a remote attacker's charge
+pose and a taya's lunge windup read at 8 to 12 m; strengthen poses before adding markers,
+and never show an opponent's aim line.
+
+**1.13 Round rhythm.** Round start: the new taya's chip and badge swap with one clear
+beat, the taya's name tag and ring change, the box arms. Round end: a short hold, scores
+settle into the chips. Halftime keeps the compact popup over the court; chalk accents are
+allowed on it. Match end keeps the result board.
+
+**1.14 Environment appeal and life** (with PRESENTATION-1.5 and 152.4). Building base
+darkening and top light from 1.8, window glass as a sky-reflection gradient instead of
+flat dark, roof-edge highlights, distinct landmarks, phase-varied ambient motion, fiesta
+banderitas overhead where a map suits them (never covering the lata in spectator views),
+event-driven reactions to big plays. Lagoon stilt houses stay fixed; boats bob.
+
+**1.15 Spectator, ultimates, audio.** Spectator framing with hysteresis, establish then
+move close, show the consequence; complete ultimates for all seven heroes through the
+shared phase without consuming Phaister's live warning; audio attack, body and tail per
+event, one peak at a time across world, local, announcer and music; captions intact.
+
+Per-change checks rather than separate tasks: choose simulation, unscaled or recorded
+time for each new element and record what replay needs; no new timeScale writers; no
+stranded freeze on teardown; moving-camera shimmer check for new chalk, decals, rim and
+highlights; reduced settings keep source, ownership, danger, state changes and contact
+acknowledgement; frame time and draw calls on the crowded reference frame for anything
+screen-filling or per event.
+
+### V4. Evidence and stopping rule
+
+- Baseline once: an ordinary FPP exchange on Bayan Plaza, a crowded Hero Strike ultimate
+  from spectator, a quiet establishing view, an Eskinita dark-asphalt frame with a dropped
+  slipper, and a HUD frame at 1280x720, versioned `look-baseline-v1`. Reuse recent
+  captures where the camera matches.
+- Per item: implement, capture the same frames (`look-1.1-v1`, `v2`), a 25 percent
+  greyscale thumbnail, decide, commit, next. At most three variants for a subjective call.
+- Squint checks: at 25 percent size in greyscale, point to the lata, both slippers and all
+  four players; in the "am I safe" frames, a stranger can tell safe from taggable muted.
+- Tests only for behaviour that changed (HUD state bindings, indicator truth, replay
+  recording of new elements). A passing test is not evidence of looking better.
+- A fresh internal Windows player per batch, never the Desktop target. Owner taste
+  approval is recorded separately and never blocks the next batch.
+
+### V5. Coverage of the earlier VP-01 to VP-25 draft
+
+VP-01 grammar (V2); VP-02 1.8, 1.9, 1.10, 1.5; VP-03 to 07 and 09 1.12; VP-08 1.10, 1.11,
+1.12; VP-10 and 11 1.11; VP-12 1.5; VP-13 1.8; VP-14 and 16 1.9, 1.14; VP-15, 22, 23 and 24
+per-change checks; VP-17 1.7; VP-18 and 19 1.15; VP-20 1.15; VP-21 1.4; VP-25 V4.
+
+### V6. References
+
+Game references are observations of shipped games, not measured claims.
+
+- Valve, *Illustrative Rendering in Team Fortress 2* (NPAR 2007): value and saturation
+  hierarchy toward characters, rim from above, gradients, simplified backgrounds.
+  https://steamcdn-a.akamaihd.net/apps/valve/2007/NPAR07_IllustrativeRenderingInTeamFortress2.pdf
+- Sepak U, Good Knight Collective: https://teamgoodknight.itch.io/sepak-u and
+  `reports/presentation-pass-2026-09-21/reference-research.md`.
+- Splatoon (player-state top bar, the world as feedback); Valorant and Overwatch 2
+  (minimal top bar, bottom-centre ability bar with integrated keycaps); Rocket League (the
+  ball is always findable); Fall Guys (almost no persistent HUD, quick celebrations);
+  Fortnite (optional sound visualisation); Crossy Road (voxel readability through contact
+  darkening); Wind Waker and Hi-Fi Rush (graphic smoke, puffs and comic accents).
+- Martin Jonasson and Petri Purho, *Juice it or lose it*: https://www.youtube.com/watch?v=Fy0aCDmgnxg
+- Jan Willem Nijman, *The Art of Screenshake*: https://www.youtube.com/watch?v=AJdEqssNZ-U
+- Dominic Kao, *The Effects of Juiciness in an Action RPG*, Entertainment Computing 34
+  (2020): compare intensities; more is not always better. https://doi.org/10.1016/j.entcom.2020.100359
+- Earlier technique references kept for the per-change checks: Guilty Gear Xrd GDC talk,
+  Daniel Holden on springs and inertial easing, Riot VFX and VALORANT clarity articles,
+  Unity 6 mipmaps, Xbox Accessibility Guidelines 117 and 118, Riot performance profiling.
+
+
+
 ## Current delivery design, 2026-09-21
 
 The owner requested a thorough plan and documentation cleanup, then a major research-driven expansion using Sepak U and Blue Lock, with complementary spectacle and animation throughout play. This section is that design, grounded in the actual checkout. It is not a completion claim. The single execution order/status lives in [TODO](TODO.md#current-implementation-queue); the exact next action, revisions, owned jobs and blockers live in [the ledger](ACTIVE_REWORK_LEDGER.md). The [full brief](reports/presentation-pass-2026-09-21/implementation-brief.md) defines the intended experience. Ordinary creative/engineering decisions are already authorized. Improve this design when observation warrants it and record the reason.
