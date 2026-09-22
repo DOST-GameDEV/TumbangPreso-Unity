@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="36" result="Failed(Child)" total="36" passed="32" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.6999257">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="580" result="Failed" site="Child" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.699926" total="36" passed="32" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1675" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="580" result="Failed" site="Child" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.686267" total="36" passed="32" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1676" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="580" result="Failed" site="Child" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.683375" total="36" passed="32" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1677" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="580" result="Failed" site="Child" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.680811" total="36" passed="32" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1165" name="HeroPresentationTests" fullname="TumbangPreso.Tests.HeroPresentationTests" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" testcasecount="24" result="Failed" site="Child" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.613114" total="24" passed="21" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1178" name="ACoolingAbilityAnswersDifferentlyFromAnEmptyMeter" fullname="TumbangPreso.Tests.HeroPresentationTests.ACoolingAbilityAnswersDifferentlyFromAnEmptyMeter" methodname="ACoolingAbilityAnswersDifferentlyFromAnEmptyMeter" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1139416861" result="Passed" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:16Z" duration="0.021812" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1179" name="ASkillOnCooldownSaysSo" fullname="TumbangPreso.Tests.HeroPresentationTests.ASkillOnCooldownSaysSo" methodname="ASkillOnCooldownSaysSo" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="2033681315" result="Passed" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:16Z" duration="0.000722" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1177" name="CooldownReadoutIsPreciseOnlyWhenItMatters" fullname="TumbangPreso.Tests.HeroPresentationTests.CooldownReadoutIsPreciseOnlyWhenItMatters" methodname="CooldownReadoutIsPreciseOnlyWhenItMatters" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="759867611" result="Passed" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:16Z" duration="0.005095" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1184" name="EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" methodname="EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="407268658" result="Failed" start-time="2026-09-22 06:55:16Z" end-time="2026-09-22 06:55:17Z" duration="0.222789" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected 18 total abilities across 6 heroes
+  Expected: 18
+  But was:  21
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HeroPresentationTests.EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph () [0x0015a] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\HeroPresentationTests.cs:694
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1171" name="EveryAbilityNameFitsItsHeaderRow" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryAbilityNameFitsItsHeaderRow" methodname="EveryAbilityNameFitsItsHeaderRow" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1554101361" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.002160" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1189" name="EveryActionChainHasAFallbackBehindTheAspirationalClip" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryActionChainHasAFallbackBehindTheAspirationalClip" methodname="EveryActionChainHasAFallbackBehindTheAspirationalClip" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="496215608" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.003523" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1181" name="EveryHeroAbilityHasBespokeCastAndViewModelActions" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryHeroAbilityHasBespokeCastAndViewModelActions" methodname="EveryHeroAbilityHasBespokeCastAndViewModelActions" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="319154079" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.009057" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1173" name="EveryRegisteredHazardStaysUnderTheBotAvoidanceCap" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryRegisteredHazardStaysUnderTheBotAvoidanceCap" methodname="EveryRegisteredHazardStaysUnderTheBotAvoidanceCap" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="45731178" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.001325" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1170" name="EverySummaryFitsTheCardItIsDrawnIn" fullname="TumbangPreso.Tests.HeroPresentationTests.EverySummaryFitsTheCardItIsDrawnIn" methodname="EverySummaryFitsTheCardItIsDrawnIn" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="708608194" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000859" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1166" name="InspectDanteMesh" fullname="TumbangPreso.Tests.HeroPresentationTests.InspectDanteMesh" methodname="InspectDanteMesh" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1103089110" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.181284" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[DANTE_RENDERER] name=body-mesh type=SkinnedMeshRenderer mats=1
+  Mesh submeshes=1 verts=9252
+[DANTE_RENDERER] name=head-mesh type=SkinnedMeshRenderer mats=1
+  Mesh submeshes=1 verts=4533
+]]></output>
+            </test-case>
+            <test-case id="1185" name="Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesWithNoClothSolver" fullname="TumbangPreso.Tests.HeroPresentationTests.Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesWithNoClothSolver" methodname="Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesWithNoClothSolver" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="2058792024" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.055349" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1174" name="NoAbilityCarriesAnOffsetWithoutASize" fullname="TumbangPreso.Tests.HeroPresentationTests.NoAbilityCarriesAnOffsetWithoutASize" methodname="NoAbilityCarriesAnOffsetWithoutASize" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="308216896" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000481" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1167" name="NoHeroAccentSitsOnARoleColour" fullname="TumbangPreso.Tests.HeroPresentationTests.NoHeroAccentSitsOnARoleColour" methodname="NoHeroAccentSitsOnARoleColour" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="2133152672" result="Failed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.002130" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  rafi's accent is 14.4 degrees from Defence blue, so it can be read as 'this player is the taya'
+  Expected: greater than or equal to 25.0f
+  But was:  14.4437103f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HeroPresentationTests.NoHeroAccentSitsOnARoleColour () [0x00070] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\HeroPresentationTests.cs:80
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1187" name="NoHeroPlaysOneAnimationForTwoOfItsOwnPowers" fullname="TumbangPreso.Tests.HeroPresentationTests.NoHeroPlaysOneAnimationForTwoOfItsOwnPowers" methodname="NoHeroPlaysOneAnimationForTwoOfItsOwnPowers" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1720685006" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000598" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1186" name="NoTwoUltimatesPlayTheSameAnimation" fullname="TumbangPreso.Tests.HeroPresentationTests.NoTwoUltimatesPlayTheSameAnimation" methodname="NoTwoUltimatesPlayTheSameAnimation" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1607101245" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000355" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1172" name="TelegraphsMatchWhatTheAbilityPlaces" fullname="TumbangPreso.Tests.HeroPresentationTests.TelegraphsMatchWhatTheAbilityPlaces" methodname="TelegraphsMatchWhatTheAbilityPlaces" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="661690395" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000833" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1168" name="TheFiveHeroAccentsAreTellableApart" fullname="TumbangPreso.Tests.HeroPresentationTests.TheFiveHeroAccentsAreTellableApart" methodname="TheFiveHeroAccentsAreTellableApart" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1704153063" result="Failed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000515" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  cheska and rafi are only 23 degrees apart, which is one colour on a deck tile
+  Expected: greater than or equal to 30.0f
+  But was:  22.9637909f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HeroPresentationTests.TheFiveHeroAccentsAreTellableApart () [0x00031] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\HeroPresentationTests.cs:101
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1169" name="TheHeroChromeCarriesNoHueOfItsOwn" fullname="TumbangPreso.Tests.HeroPresentationTests.TheHeroChromeCarriesNoHueOfItsOwn" methodname="TheHeroChromeCarriesNoHueOfItsOwn" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="257861948" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.001217" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1176" name="TheHeroDeckStaysASlimBadge" fullname="TumbangPreso.Tests.HeroPresentationTests.TheHeroDeckStaysASlimBadge" methodname="TheHeroDeckStaysASlimBadge" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="992421805" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000164" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1175" name="TheHeroDeckWidthMatchesItsChildren" fullname="TumbangPreso.Tests.HeroPresentationTests.TheHeroDeckWidthMatchesItsChildren" methodname="TheHeroDeckWidthMatchesItsChildren" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1854901650" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000193" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1180" name="TheInputBufferIsShortEnoughToBeAnAid" fullname="TumbangPreso.Tests.HeroPresentationTests.TheInputBufferIsShortEnoughToBeAnAid" methodname="TheInputBufferIsShortEnoughToBeAnAid" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1986146542" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000160" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1188" name="ThePushAndTheTagAreToldApart" fullname="TumbangPreso.Tests.HeroPresentationTests.ThePushAndTheTagAreToldApart" methodname="ThePushAndTheTagAreToldApart" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="464953741" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000316" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1183" name="ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps" fullname="TumbangPreso.Tests.HeroPresentationTests.ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps" methodname="ViewmodelArms_PreservesHeldSlipperAndActions_AcrossCharacterSwaps" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="900270566" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.040823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1182" name="ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryCharacter" fullname="TumbangPreso.Tests.HeroPresentationTests.ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryCharacter" methodname="ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryCharacter" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1083256384" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.037418" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1636" name="TournamentGuardTests" fullname="TumbangPreso.Tests.TournamentGuardTests" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.041412" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1646" name="AHeroStrikeRuleSetIsNotATournamentMatch" fullname="TumbangPreso.Tests.TournamentGuardTests.AHeroStrikeRuleSetIsNotATournamentMatch" methodname="AHeroStrikeRuleSetIsNotATournamentMatch" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="2011080628" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.026917" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1644" name="AnExplicitChoiceReleasesThePin" fullname="TumbangPreso.Tests.TournamentGuardTests.AnExplicitChoiceReleasesThePin" methodname="AnExplicitChoiceReleasesThePin" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="2008954351" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.001648" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1641" name="ApplyClearsEverythingAndSaysWhatItCleared" fullname="TumbangPreso.Tests.TournamentGuardTests.ApplyClearsEverythingAndSaysWhatItCleared" methodname="ApplyClearsEverythingAndSaysWhatItCleared" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="1825568784" result="Failed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.002032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 4
+  But was:  8
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.TournamentGuardTests.ApplyClearsEverythingAndSaysWhatItCleared () [0x0009e] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-validation\Assets\TumbangPreso\Tests\TournamentGuardTests.cs:143
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Tournament] cleared before starting: WorldGraphicsProbe.Active: ON -> OFF, NetRoofProbe.Active: ON -> OFF, NetThrowProbe.Active: ON -> OFF, NetFamiliarProbe.Active: ON -> OFF, PracticeSandbox.Wanted: ON -> OFF, GameLaunch.AllBots: ON -> OFF, GameLaunch.Spectator: ON -> OFF, GameLaunch.GuidedTutorial: ON -> OFF, MatchInstaller.PreviewOnly: ON -> OFF, AIController.BotsEnabled: OFF -> ON, TouchHud.ForceVisible: ON -> OFF, SpectatorCamera.ProbeReplayRequest: ON -> OFF
+]]></output>
+            </test-case>
+            <test-case id="1643" name="ApplyDoesNotWriteTheTournamentPresetIntoThePlayersOwnPreference" fullname="TumbangPreso.Tests.TournamentGuardTests.ApplyDoesNotWriteTheTournamentPresetIntoThePlayersOwnPreference" methodname="ApplyDoesNotWriteTheTournamentPresetIntoThePlayersOwnPreference" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="765080373" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000598" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1645" name="ApplyIsQuietWhenThereWasNothingToClear" fullname="TumbangPreso.Tests.TournamentGuardTests.ApplyIsQuietWhenThereWasNothingToClear" methodname="ApplyIsQuietWhenThereWasNothingToClear" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="1339707832" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000977" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1642" name="ApplyPinsTheRulesSoAScreenCannotRestoreOverThem" fullname="TumbangPreso.Tests.TournamentGuardTests.ApplyPinsTheRulesSoAScreenCannotRestoreOverThem" methodname="ApplyPinsTheRulesSoAScreenCannotRestoreOverThem" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="2004661173" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000287" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1639" name="APracticeSwitchLeftOnIsRefusedByName" fullname="TumbangPreso.Tests.TournamentGuardTests.APracticeSwitchLeftOnIsRefusedByName" methodname="APracticeSwitchLeftOnIsRefusedByName" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="2096060553" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000293" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1640" name="EveryModifierIsRefusedWhenItIsWrong" fullname="TumbangPreso.Tests.TournamentGuardTests.EveryModifierIsRefusedWhenItIsWrong" methodname="EveryModifierIsRefusedWhenItIsWrong" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="1456018072" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000719" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1637" name="EveryNamedModifierIsReadableByThisBuild" fullname="TumbangPreso.Tests.TournamentGuardTests.EveryNamedModifierIsReadableByThisBuild" methodname="EveryNamedModifierIsReadableByThisBuild" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="622076827" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000508" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1638" name="TheGuardReadsEveryModifierTheCoreNames" fullname="TumbangPreso.Tests.TournamentGuardTests.TheGuardReadsEveryModifierTheCoreNames" methodname="TheGuardReadsEveryModifierTheCoreNames" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="2091089278" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000273" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1648" name="ThePracticeSandboxCannotBeActiveInANetworkedMatch" fullname="TumbangPreso.Tests.TournamentGuardTests.ThePracticeSandboxCannotBeActiveInANetworkedMatch" methodname="ThePracticeSandboxCannotBeActiveInANetworkedMatch" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="434551733" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000622" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1647" name="TheReportNamesEverySwitchSoAnOperatorCanReadIt" fullname="TumbangPreso.Tests.TournamentGuardTests.TheReportNamesEverySwitchSoAnOperatorCanReadIt" methodname="TheReportNamesEverySwitchSoAnOperatorCanReadIt" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="611342636" result="Passed" start-time="2026-09-22 06:55:17Z" end-time="2026-09-22 06:55:17Z" duration="0.000991" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

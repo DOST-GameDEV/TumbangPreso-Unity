@@ -259,28 +259,36 @@ ARM_LEFT = [('sleeve-left', 'arm-left', (0.0999, 0.342, -0.064), (0.207, 0.458, 
 ARM_RIGHT = mirrored(ARM_LEFT, "arm-left", "arm-right")
 ARM_LEFT += [('wrist-glass-bead-left','arm-left',(.260,.383,-.05),(.272,.4,-.04),11)]
 
-HEAD = [('headwrap-knot','head',(.126,.554,-.222),(.176,.603,-.182),1),
+# Match the established HERO construction: flat box faces, squared locks and
+# small native chamfers. The asymmetric cropped silhouette is Rafi's own; no
+# lofted hair, sculpted sweep or bun. All coordinates use the donor head space.
+HEAD = [
+ ('hair-back-core','head',(-.174,.495,-.188),(.174,.674,-.096),HAIR),
+ ('hair-crown-core','head',(-.174,.644,-.153),(.174,.709,.126),HAIR),
+ ('hair-crown-left-step','head',(-.166,.694,-.076),(.005,.744,.124),HAIR),
+ ('hair-crown-right-step','head',(.005,.684,-.118),(.143,.731,.104),HAIR),
+ ('hair-fringe-long','head',(-.174,.589,.111),(-.055,.716,.186),HAIR),
+ ('hair-fringe-middle','head',(-.065,.627,.118),(.067,.708,.188),HAIR),
+ ('hair-fringe-short','head',(.058,.650,.108),(.140,.701,.174),HAIR),
+ ('hair-side-left','head',(-.184,.540,-.105),(-.153,.668,.111),HAIR),
+ ('hair-side-right','head',(.154,.555,-.109),(.184,.663,.076),HAIR),
+ ('hair-temple-left','head',(-.181,.524,.070),(-.152,.624,.124),HAIR),
+ ('headwrap-knot' ,'head',(.126,.554,-.222),(.176,.603,-.182),1),
  ('float-clip-saddle','head',(.136,.559,.166),(.185,.619,.184),1),
  ('float-clip-glint','head',(.148,.608,.198),(.163,.62,.208),3)]
 
-# Recipe-local tilts make the swept silhouette instead of stacking a helmet cap.
+# Recipe-local tilts belong to cloth only. Hair keeps the native block construction.
 # Geometry and normals rotate together; the donor skull, skin and rig are untouched.
-BOX_TILTS = {'hair-hook-high':-11,'hair-sweep-left':-20,'hair-sweep-right':16,
-             'hair-forelock-upper':-17,'hair-forelock-tip':-19,'hair-tail-tip':-16,
-             'headwrap-tail-long':-13,'headwrap-tail-short':31,
+BOX_TILTS = {'headwrap-tail-long':-13,'headwrap-tail-short':31,
              'folded-shoulder-lining':-12,'shoulder-loop-fastener':-12,
              'open-collar-left':-22,'open-collar-right':22,
              'sailcloth-hip-wrap':-10,'sailcloth-back-wrap':7,
              'sailcloth-repair-seam':-10,'sailcloth-back-seam':7,
              'sash-short-tail':16,'sash-long-tail':-8}
 
-# Taper selected locks and cloth ends so the silhouette has rooted sweeps, not
-# rectangular planks. Tuple: driving axis, narrowed axis, low/high end width.
-BOX_TAPERS = {'hair-hook-high':(1,0,1,.6),
-              'hair-sweep-left':(0,1,.3,1),'hair-sweep-right':(0,1,1,.4),
-              'hair-forelock-upper':(1,0,.55,1),'hair-forelock-tip':(1,0,.23,1),
-              'hair-tail-tip':(1,0,1,.5),
-              'headwrap-tail-long':(1,0,.55,1),'headwrap-tail-short':(0,1,1,.45),
+# Taper cloth ends and palms only. Hair retains squared native box ends.
+# Tuple: driving axis, narrowed axis, low/high end width.
+BOX_TAPERS = {'headwrap-tail-long':(1,0,.55,1),'headwrap-tail-short':(0,1,1,.45),
               'sailcloth-hip-wrap':(1,0,.72,1),'sailcloth-back-wrap':(1,0,.77,1),
               'cream-undershirt':(1,0,.12,1),'folded-shoulder-lining':(1,0,1,.72),
               'hand-left':(0,2,.72,1),'hand-right':(0,2,1,.72)}
@@ -764,9 +772,7 @@ def _donor_head():
         ink_polygon([(x-w,.481-h+cut),(x-w,.481+h-cut),(x-w+cut,.481+h),
                      (x+w-cut,.481+h),(x+w,.481+h-cut),(x+w,.481-h+cut),
                      (x+w-cut,.481-h),(x-w+cut,.481-h)])
-    # Weighted graphic brows stay on the native flat face, not raised 3D bars.
-    ink_polygon([(-.108,.540),(-.042,.529),(-.041,.546),(-.102,.555)])
-    ink_polygon([(.041,.529),(.108,.537),(.103,.551),(.042,.545)])
+    # No eyebrows: the retained HERO cast communicates through eyes and mouth.
 
     return _compact(pos, nrm, uv, tris)
 
@@ -1051,7 +1057,7 @@ def _rafi_loft(sections):
     """Connected chamfered sections, ordered top to bottom, in native head space.
 
     Each section is (y, centre_x, centre_z, width, depth). Broad roots and narrower
-    bent tips make one intentional hair/cloth volume instead of stacked blocks.
+    bent tips make a connected cloth or fastening volume. Hair uses native boxes.
     """
     outline=[(-.38,-.5),(.38,-.5),(.5,-.38),(.5,.38),
              (.38,.5),(-.38,.5),(-.5,.38),(-.5,-.38)]
@@ -1113,27 +1119,6 @@ def _rafi_headband():
 def _rafi_forms(head):
     # All forms feed the copied builder's own mesh/UV/weight/outline pipeline.
     if head:
-        yield 'head',HAIR,_rafi_loft([
-            (.719,0,-.040,.31,.27),(.651,0,-.040,.336,.23),
-            (.584,0,-.118,.33,.122),(.486,0,-.133,.294,.078)])
-        yield 'head',HAIR,_rafi_loft([
-            (.637,.16,.045,.045,.085),(.574,.164,.070,.031,.062),
-            (.531,.161,.079,.016,.027)])
-        yield 'head',HAIR,_rafi_loft([
-            (.635,-.166,.026,.047,.115),(.570,-.173,.064,.042,.079),
-            (.493,-.171,.07,.014,.032)])
-        yield 'head',HAIR,_rafi_loft([
-            (.775,-.050,.014,.045,.10),(.754,-.027,.007,.145,.17),
-            (.715,-.018,-.005,.25,.19),(.681,0,-.017,.27,.19)])
-        yield 'head',HAIR,_rafi_loft([
-            (.714,-.030,.090,.18,.12),(.661,-.092,.147,.16,.094),
-            (.584,-.145,.172,.091,.065),(.536,-.162,.165,.019,.031)])
-        yield 'head',HAIR,_rafi_loft([
-            (.716,.108,.037,.078,.14),(.682,.142,.077,.096,.105),
-            (.642,.175,.096,.020,.047)])
-        yield 'head',HAIR,_rafi_loft([
-            (.767,.070,-.205,.03,.08),(.735,.075,-.224,.12,.15),
-            (.674,.055,-.229,.166,.135),(.632,.030,-.200,.095,.08)])
         yield 'head',OVERALLS,_rafi_headband()
         yield 'head',OVERALLS,_rafi_loft([
             (.57,.153,-.212,.043,.014),(.522,.166,-.227,.05,.014),
@@ -1784,7 +1769,7 @@ def write_palette(path):
         raise SystemExit(
             f"\nFACE CONSTRAINT VIOLATION - nothing written.\n"
             f"  slot 8 is #{PALETTE[8]} (luminance {lum:.2f} > {MAX_FACE_LUMINANCE:.2f}).\n"
-            f"  Slot 8 draws the eyes, brows and mouth. A light slot 8 does not give a\n"
+            f"  Slot 8 draws the eyes and mouth. A light slot 8 does not give a\n"
             f"  light-haired character, it gives one with no face.")
 
     values = []

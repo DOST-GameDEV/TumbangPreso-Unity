@@ -125,9 +125,10 @@ def collect_writers(lines):
         if METHOD.match(line) and not RELAY.match(line):
             pending = []
 
-        if WRITE.search(line):
-            pending.append(write_type(line))
-            continue
+        # Compact serializers can place several writes on one line. Count each
+        # invocation in order, just as the reader collector already does.
+        for match in WRITE.finditer(line):
+            pending.append(write_type(line[match.start():].split(";", 1)[0]))
 
         m = SEND.search(line)
         if m:

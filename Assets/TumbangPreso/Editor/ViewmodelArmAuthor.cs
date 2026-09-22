@@ -21,12 +21,12 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(0);
         }
 
-        public static void Bake(RosterBook book)
+        public static void Bake(RosterBook book, string onlyId = null)
         {
             Directory.CreateDirectory(Folder);
             AssetDatabase.Refresh();
             int count = 0;
-            foreach (var entry in book.People.Where(e => e != null && e.Model != null))
+            foreach (var entry in book.People.Where(e => e != null && e.Model != null && (onlyId == null || e.Id == onlyId)))
                 foreach (string side in new[] { "right", "left" })
                 {
                     Mesh generated = Extract(entry.Model, "arm-" + side);

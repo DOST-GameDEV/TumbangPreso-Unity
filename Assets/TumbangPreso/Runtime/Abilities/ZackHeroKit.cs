@@ -504,9 +504,9 @@ namespace TumbangPreso.Abilities
 
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
                 : base("zack_ultimate", "THUNDERSTRIKE",
-                       "Hold to pick a spot, then release a lightning strike that shocks and knocks rivals back. Your throws stay electrically charged for seven seconds after the strike.",
+                       "Aim, then release lightning to shock and knock rivals back. Your throws stay electrically charged for seven seconds.",
                        0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.ZackThunderstrike,
-                       summary: "Aim and release lightning. Shocks rivals back and charges your throws.",
+                       summary: "Aim lightning to jolt rivals and charge your throws.",
                        telegraphRadius: 4.5f, telegraphRange: MaxRange,
                        castAction: "hero-zack-summon",
                        viewmodelAction: "summon-lightning",

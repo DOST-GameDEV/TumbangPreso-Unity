@@ -612,6 +612,11 @@ namespace TumbangPreso.UI
         public static readonly Color HeroEarth = Hex("3fa65c");
         public static readonly Color HeroEarthBright = Hex("8fe0a0");
 
+        // Deep-water indigo keeps Rafi distinct from mint ice and the taya's blue.
+        // His physical water keeps its own transparent aqua/foam material.
+        public static readonly Color HeroCurrent = Hex("6065e6");
+        public static readonly Color HeroCurrentBright = Hex("a2a5ff");
+
         /// <summary>
         /// The hot orange that stays hot: Dante's magma core, the fissure light, the embers.
         ///
@@ -657,7 +662,7 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitchBright;
-                case "rafi": return new Color(.48f,.84f,.89f);
+                case "rafi": return HeroCurrentBright;
                 case "dante":
                 case "bayan":
                 default:
@@ -684,7 +689,7 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitch;
-                case "rafi": return new Color(.15f,.57f,.68f);
+                case "rafi": return HeroCurrent;
                 case "dante":
                 case "bayan":
                 default:

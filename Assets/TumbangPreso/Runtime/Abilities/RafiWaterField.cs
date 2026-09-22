@@ -131,6 +131,7 @@ namespace TumbangPreso.Abilities
 
         private void ResolveCurrent(float travel)
         {
+            if (!NetAuthority.ShouldResolve()) return;
             var before = _state.Position + Vector3.up * .85f + _state.Forward * _previousTravel;
             var now = _state.Position + Vector3.up * .85f + _state.Forward * travel;
             // Solid cover stops the current itself; players and equipment do not.

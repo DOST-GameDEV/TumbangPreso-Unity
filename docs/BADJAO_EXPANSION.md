@@ -1,5 +1,20 @@
 # Seventh hero and water-village expansion
 
+## Latest owner style correction: blocky hair, no eyebrows
+
+The v4 swept volumes and eyebrows are REJECTED. The owner identifies two concrete
+cast rules: blocky hair and no eyebrows. Remove both eyebrow meshes, replace Rafi's
+hair volumes with native box/chamfer forms and preserve his own readable layout.
+The HERO lineup is authoritative over the generated concept. Keep the fitted left
+wrist cord, functional accessories, palette, body/FPP parity, rig and clip work.
+The older continuous-hair/weighted-brow directions below are history, not current
+acceptance.
+Implementation plan: ten native chamfered hair boxes, short asymmetric crop with
+three squared fringe lengths and a stepped crown. Remove the tied bun and both
+brow polygons. Keep the headwrap/clip and expose the forehead and ears. Reuse
+the copied builder mesh/palette/outline/bone pipeline. Inspect native four-angle
+head/full body and HERO lineup before accepting this pass internally. Archive v4 and render the corrected native head plus HERO lineup.
+
 ## Owner art rejection and revised delivery contract, 2026-09-22
 
 ### Newest body-part quality pass: HERO ONLY

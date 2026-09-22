@@ -54,6 +54,8 @@ NUMERIC = ("float", "double", "Vector3", "Quaternion", "Vector2")
 # starts disagreeing with itself. Each row is a method that validates every numeric argument it
 # is handed, and the reason it is trusted.
 DELEGATES = {
+    "ValidSkillReceipt": "validates the finite cooldown and shared timestamp before any refund or pose correction",
+    r"_worldFieldBatch\?\.Add": "WorldEffectSnapshot.Batch.Add validates every numeric member of its Field before storing it",
     # `AcceptMove` opens with `!Finite(position) || !Finite(yaw) || !Finite(velocity)` and then
     # spends the seat's movement budget, which refuses NaN a second time by construction.
     "AcceptMove": "validates position, yaw and velocity and then spends Core.MoveBudget",
@@ -99,6 +101,21 @@ def handlers(text):
     return found
 
 
+def call_arguments(body, name_pattern):
+    """Keep nested casts/constructors inside a validator's argument list."""
+    for match in re.finditer(r"\b" + name_pattern + r"\s*\(", body):
+        start = match.end()
+        depth = 1
+        for end in range(start, len(body)):
+            if body[end] == "(":
+                depth += 1
+            elif body[end] == ")":
+                depth -= 1
+                if depth == 0:
+                    yield body[start:end]
+                    break
+
+
 def main():
     if not SOURCE.exists():
         print(f"audit_wire_finite: {SOURCE} is missing.")
@@ -121,8 +138,8 @@ def main():
                 continue
             if re.search(r"PlausibleIntentPose\([^)]*\b" + re.escape(var) + r"\b", body):
                 continue
-            if any(re.search(r"\b" + d + r"\([^)]*\b" + re.escape(var) + r"\b", body)
-                   for d in DELEGATES):
+            if any(re.search(r"\b" + re.escape(var) + r"\b", arguments)
+                   for d in DELEGATES for arguments in call_arguments(body, d)):
                 continue
 
             findings.append(

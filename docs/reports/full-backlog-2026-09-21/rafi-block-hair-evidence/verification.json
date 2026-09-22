@@ -1,0 +1,13 @@
+{
+  "guard": "profile-preservation-e5d64aac38ba",
+  "job": 52839,
+  "exit": 0,
+  "protectedOriginalInputs": 12,
+  "allProtectedInputsUnchanged": true,
+  "sourceBytes": 714012,
+  "bodyArmAndAccessoryStreamsUnchanged": true,
+  "rigTransformsUnchanged": true,
+  "baseAnimationCurvesUnchanged": 33,
+  "nativeHeadAndHeroLineupInspected": true,
+  "ownerApproval": false
+}

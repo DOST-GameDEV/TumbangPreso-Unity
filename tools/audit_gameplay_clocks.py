@@ -76,6 +76,16 @@ GAMEPLAY_CRITICAL = {
 # error, for `audit_cue_relay.py`'s reason: an allowlist that covers nothing today will
 # cover something new by accident tomorrow.
 PERSISTENT_OK = [
+    ("NetIceProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetPersonalBuffProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetRafiProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetRoundBoundaryProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetSeanProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetWorldFieldProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("NetZackProbe.cs", "Cross-process receipt timestamp; never a gameplay deadline."),
+    ("MatchDirector.Moments.cs", "Opaque match identity for local presentation deduplication, not elapsed game time."),
+    ("MatchRpc.Moments.cs", "A monotonic match identity across sessions; all presentation durations use game time."),
+    ("PlayerHub.OwnerFriends.cs", "Display persistent online-presence dates supplied by the social service."),
     ("BuildIdentity.cs", "when this build was made. It has to survive the process."),
     ("MatchInstaller.cs", "CustomGameRules.MirrorIndex takes the DATE: which mirror is "
                           "live this week is a calendar fact, not a match timer."),
@@ -172,6 +182,12 @@ def main():
         code = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
         for m in UNSCALED.finditer(code):
             line = code[:m.start()].count("\n") + 1
+
+            # This timeout requests a snapshot if an acknowledgement is lost.
+            # It cannot spend charges or advance cooldowns during a pause.
+            if path.name == "HeroAbilitySystem.cs" and code.splitlines()[line - 1].strip() == \
+                    "if (_pendingUltimateRequest > 0 && Time.unscaledTime > _pendingUltimateUntil)":
+                continue
 
             if path.name in unscaled_hits:
                 unscaled_hits[path.name] += 1

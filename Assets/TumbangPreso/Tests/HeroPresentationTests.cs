@@ -4,6 +4,7 @@ using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
+using System.Linq;
 
 namespace TumbangPreso.Tests
 {
@@ -23,7 +24,7 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class HeroPresentationTests
     {
-        private static readonly string[] Heroes = { "cheska", "dante", "nemu", "sean", "zack", "phaister" };
+        private static readonly string[] Heroes = Roster.HeroPeople.Select(person => person.Id).ToArray();
 
         // ------------------------------------------------------------------ the colour law
 
@@ -566,7 +567,7 @@ namespace TumbangPreso.Tests
                     if (r.gameObject.name.StartsWith("~HeroAccessory_")) accessoryCount++;
                 }
 
-                var baked = Resources.Load<Mesh>("Models/RosterArms/" + norm + "_right");
+                var baked = Resources.Load<Mesh>(norm == "inday" ? "Models/FppDetails/inday_right_arm" : "Models/RosterArms/" + norm + "_right");
                 if (norm == "rafi" || norm == "inday")
                 {
                     Assert.IsNotNull(baked, charId + " source arm was not baked");
@@ -690,8 +691,8 @@ namespace TumbangPreso.Tests
                 }
             }
 
-            Assert.AreEqual(18, totalAbilities, "Expected 18 total abilities across 6 heroes");
-            Assert.AreEqual(18, seenGlyphs.Count, "Expected 18 unique glyphs across 18 abilities");
+            Assert.AreEqual(21, totalAbilities, "Expected 21 total abilities across 7 heroes");
+            Assert.AreEqual(21, seenGlyphs.Count, "Expected 21 unique glyphs across 21 abilities");
         }
 
         private static void AssertSameRgb(Color actual, Color expected, string name)

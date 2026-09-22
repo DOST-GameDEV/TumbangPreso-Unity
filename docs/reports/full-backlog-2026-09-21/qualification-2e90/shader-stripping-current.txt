@@ -1,0 +1,22 @@
+SHADER                               LISTED    REFERENCED VERDICT
+TumbangPreso/AimGuide                no        no        Resources
+TumbangPreso/ButtonOutline           yes       no        ok
+TumbangPreso/ColourGrade             yes       no        ok
+TumbangPreso/DownedVignette          yes       no        ok
+TumbangPreso/FrostSurface            yes       no        ok
+TumbangPreso/FrostVignette           yes       no        ok
+TumbangPreso/Fxaa                    yes       no        ok
+TumbangPreso/LagoonBed               no        yes       Resources
+TumbangPreso/LagoonWater             no        yes       Resources
+TumbangPreso/NearFade                yes       yes       ok
+TumbangPreso/NeighbourhoodSky        no        yes       ok
+TumbangPreso/PoolCeramic             no        yes       Resources
+TumbangPreso/RoofPoolWater           no        yes       Resources
+TumbangPreso/SlipperBeam             yes       no        ok
+TumbangPreso/Toon                    yes       no        ok
+TumbangPreso/ToonTransparent         yes       no        ok
+TumbangPreso/VfxFlipbook             yes       no        ok
+TumbangPreso/VolcanicRock            yes       no        ok
+TumbangPreso/WorldOutline            yes       no        ok
+
+19 shaders looked up by name, 0 would be missing from a player build.

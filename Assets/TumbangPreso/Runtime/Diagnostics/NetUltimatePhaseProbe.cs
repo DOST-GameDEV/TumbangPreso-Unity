@@ -31,6 +31,7 @@ namespace TumbangPreso.Diagnostics
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             if(Arg("-tp-ulttrace")==null)return;
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             Settings.SettingsStore.Current.CharacterPick=Roster.IndexIn(Roster.HeroPeople,"phaister");
@@ -38,6 +39,7 @@ namespace TumbangPreso.Diagnostics
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path=Arg("-tp-ulttrace");if(path==null)return;
             var go=new GameObject("~NetUltimatePhaseProbe");DontDestroyOnLoad(go);var probe=go.AddComponent<NetUltimatePhaseProbe>();
             probe._started=Time.realtimeSinceStartup;

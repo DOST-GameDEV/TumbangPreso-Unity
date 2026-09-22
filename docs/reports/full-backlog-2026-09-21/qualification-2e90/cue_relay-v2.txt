@@ -1,0 +1,55 @@
+OWNER-DRIVEN Assets/TumbangPreso/Runtime/Carrier.cs:627  throw_charge             Carrier                    private void StepAttacker(float dt)
+OWNER-DRIVEN Assets/TumbangPreso/Runtime/CharacterMotor.cs:930  land                     CharacterMotor             private void FixedUpdate()
+OWNER-DRIVEN Assets/TumbangPreso/Runtime/CharacterMotor.cs:1317  jump                     CharacterMotor             private void ApplyGravity(float dt)
+OWNER-DRIVEN Assets/TumbangPreso/Runtime/CombatVerbs.cs:195  bump_swing               CombatVerbs                private void StepShove()
+OWNER-DRIVEN Assets/TumbangPreso/Runtime/CombatVerbs.cs:577  slide_scrape             CombatVerbs                private void ReleaseSlide()
+SUPPRESSED  Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs:738  ?                        HeroAbilitySystem          private void PlayCastConfirm(Slot slot, AbilityContext accepte
+SUPPRESSED  Assets/TumbangPreso/Runtime/Visual/DanteSeismicVisual.cs:63  sfx_quake_slam           Ink                        public static void Impact(Vector3 position, Vector3 forward, f
+KIT         Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs:98  hero_cheska_grunt        PermafrostSheetAbility     protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs:214  hero_cheska_ult          GlacialShatterBurstAbility protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/CheskaHeroKit.cs:221  sfx_frost_nova           GlacialShatterBurstAbility protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:77  hero_dante_grunt         SeismicStompAbility        protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:187  guard_block              DemonicCarapaceAbility     protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs:232  hero_dante_ult           DemonTitanFissureAbility   protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:116  hero_nemu_grunt          PhantomPhaseAbility        protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:230  sfx_ghost_teleport       GhostlyPoltergeistAbility  private void FinishProjection(AbilityContext ctx,bool relocate
+KIT         Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:238  sfx_ghost_teleport       GhostlyPoltergeistAbility  private void FinishProjection(AbilityContext ctx,bool relocate
+KIT         Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs:353  hero_nemu_ult            NightmareSeanceVoidAbility protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:122  hero_phaister_grunt      HexSigilAbility            protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:239  hero_phaister_grunt      ShadowPhaseBlinkAbility    protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:265  sfx_blink_arrive         ShadowPhaseBlinkAbility    protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:560  hero_phaister_ult        GrandCovenEclipseAbility   protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs:561  sfx_eclipse_toll         GrandCovenEclipseAbility   protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:207  hero_sean_grunt          RocketBurnDashAbility      protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:259  bump                     RocketBurnDashAbility      protected override void OnTick(AbilityContext ctx, float dt)
+KIT         Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:432  hero_sean_ult            SupernovaSmashdownAbility  protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs:469  sfx_explosion_heavy      SupernovaSmashdownAbility  protected override void OnTick(AbilityContext ctx, float dt)
+KIT         Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:224  hero_zack_grunt          StaticRailGrindAbility     protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:448  hero_zack_grunt          MagnetRecallAbility        protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:449  slipper_bounce           MagnetRecallAbility        protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:549  hero_zack_ult            ThunderstrikeOverdriveAbility protected override void OnActivate(AbilityContext ctx)
+KIT         Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs:550  sfx_lightning_strike     ThunderstrikeOverdriveAbility protected override void OnActivate(AbilityContext ctx)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:83  sfx_ice_shatter          IceBarricadeComponent      public void Shatter()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:215  sfx_ice_thaw             IceSheetComponent          private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:316  ability_shatter_trap     IceSheetComponent          private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:704  downed                   GhostPoltergeistComponent  private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1027  ?                        ExpiryCue                  private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:1091  sfx_void_close           SeanceVoidComponent        private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3248  sfx_hex_afflict          HexSigilComponent          private void Update()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3403  sfx_thunder_impact       HexSigilComponent          public static void CreateThunderstrike(Vector3 position, float
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:3951  ?                        HexSigilComponent          public static void CreateExplosionVisual(Vector3 center, float
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs:4023  sfx_ice_shatter          IceCubePrisonComponent     public void Shatter()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Abilities/RafiWaterField.cs:149  sfx_rafi_intercept       RafiWaterField             private void ResolveCurrent(float travel)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Carrier.cs:254  throw_release            Carrier                    public void HostThrowAt(Vector3 origin, Vector3 aimPoint, floa
+HOST-ONLY   Assets/TumbangPreso/Runtime/Lata.cs:207  lata_seal                Lata                       public void HostKnockDown(int throwerSlot)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Lata.cs:384  reset_complete           Lata                       private void SetUpright(bool value)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Lata.cs:386  can_knockdown            Lata                       private void SetUpright(bool value)
+HOST-ONLY   Assets/TumbangPreso/Runtime/RoundDirector.cs:664  tag                      RoundDirector              private void ApplyTagPenalty(CharacterMotor taya, CharacterMot
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1162  ability_flick_dash       Slipper                    private void TriggerAffinityImpact()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1417  slipper_bounce           Slipper                    private void TrackClassicNearMiss(Lata lata)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1580  slipper_land             Slipper                    private void BounceOffObstacles(Vector3 previousPos, float dt)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1661  slipper_land             Slipper                    private void BounceOffBounds()
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1729  hit_body                 Slipper                    private void HostBlockedBy(CharacterMotor blocker)
+HOST-ONLY   Assets/TumbangPreso/Runtime/Slipper.cs:1929  slipper_land             Slipper                    private void Land(bool fromFlight, float? landingGround = null
+
+53 NetCue call sites: 22 host-only, 2 suppressed, 24 inside a kit, 5 owner-driven, 0 UNGATED.

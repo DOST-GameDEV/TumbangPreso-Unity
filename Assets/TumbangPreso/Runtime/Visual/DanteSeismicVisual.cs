@@ -59,7 +59,8 @@ namespace TumbangPreso.Visual
             var randomState = Random.state;
             try
             {
-                NetCue.Play("sfx_quake_slam", position);
+                // This visual impact is constructed on each peer by the accepted cast.
+                using (NetCue.SuppressRelay()) NetCue.Play("sfx_quake_slam", position);
                 if (!fissure) ComicPopup.Spawn(position, tremor ? "RUMBLE!" : "THUD!", new Color(1, .74f, .35f), 1.1f);
                 int count = fissure ? 4 : 5;
                 for (int i = 0; i < count; i++)

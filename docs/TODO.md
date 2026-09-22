@@ -50,6 +50,14 @@ with a failed-before/passed-after regression and the complete native route.
 
 ### Latest owner art correction, 2026-09-22
 
+- [x] **Latest Rafi style correction: blocky hair, no eyebrows.** The owner rejected
+  the v4 swept loft/brow design. Replaced it with ten native chamfered hair boxes,
+  squared fringe and stepped crop; removed both brows and the tied bun. Native
+  four-angle head/body and HERO lineup inspected in rafi-block-hair-v1. Body,
+  accessories, rig and33base curves are byte-identical to v4; original cast inputs
+  unchanged. Portrait updated. See rafi-block-hair.md. Owner art approval remains
+  separate; older continuous-hair/brow notes are superseded, not active direction.
+
 - [x] Replace rejected Rafi through a dedicated retrofitted copy of the repository
   voxel builder. Match the HERO cast and canonical Unity pipeline; existing people
   and original builders stay untouched. Latest HERO-only body-part
@@ -97,8 +105,9 @@ are integrated. Do not rerun unchanged passing evidence without a new reason.
 - [ ] Implement the full selected Rafi B / lagoon C expansion below.
   Owner addition2026-09-22: varied background islands and mountain layers, with
   stable seeded construction, real terrain volume and clear playable routes.
-- [ ] At final integration, run the prepared owner/other/spectator recall renderer
-  checks in Classic and Hero Strike; these are compiled, NOT runtime-qualified.
+- [x] At final integration, run owner/other/spectator recall renderer checks in
+  Classic and Hero Strike. Actual five-peer v49c runs passed both modes; receipts
+  are in network-evidence/net-recall-classic-v49c and net-recall-hero-v49c.
 - [ ] At final integration, finish remaining overlap, real-peer, whole-backlog
   disposition and coherent candidate qualification. Preserve all existing task IDs.
 

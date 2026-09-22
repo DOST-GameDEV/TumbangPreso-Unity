@@ -23,12 +23,14 @@ namespace TumbangPreso.Diagnostics
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             if (Argument("-tp-momenttrace") == null) return;
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(Argument("-tp-momentmode") == "hero" ? GameMode.HeroStrike : GameMode.Classic));
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path = Argument("-tp-momenttrace"); if (path == null) return;
             var go = new GameObject("~NetMomentProbe"); DontDestroyOnLoad(go);
             var probe = go.AddComponent<NetMomentProbe>(); probe._started = Time.realtimeSinceStartup;

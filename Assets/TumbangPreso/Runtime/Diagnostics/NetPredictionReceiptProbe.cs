@@ -21,10 +21,12 @@ namespace TumbangPreso.Diagnostics
         private int _case;
         private static string Arg(string key){var a=Environment.GetCommandLineArgs();int i=Array.IndexOf(a,key);return i>=0&&i+1<a.Length?a[i+1]:null;}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Configure(){if(Arg("-tp-predictiontrace")!=null)SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));}
+        private static void Configure(){
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;if(Arg("-tp-predictiontrace")!=null)SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path=Arg("-tp-predictiontrace");if(path==null)return;
             var root=new GameObject("~PredictionReceiptProbe");DontDestroyOnLoad(root);var p=root.AddComponent<NetPredictionReceiptProbe>();p._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));p._trace=new StreamWriter(path){AutoFlush=true};p._trace.WriteLine("real,local,round,elapsed,case,active1,active2,charge2,hero1");

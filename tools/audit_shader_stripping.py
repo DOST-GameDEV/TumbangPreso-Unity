@@ -103,16 +103,18 @@ def main():
             bad.append((name, "no .shader declares this name"))
             print("%-36s %-9s %-9s %s" % (name, "-", "-", "NOT FOUND"))
             continue
-        guid, _path = name_to_guid[name]
+        guid, shader_path = name_to_guid[name]
         listed = guid in always
         refd = guid in referenced
-        ok = listed or refd
+        # Unity includes assets under Resources even without serialized references.
+        resource = "Resources" in os.path.relpath(shader_path, ASSETS).split(os.sep)
+        ok = listed or refd or resource
         if not ok:
             bad.append((name, "reached only by Shader.Find and nothing keeps it in the build"))
         print("%-36s %-9s %-9s %s" % (name,
                                       "yes" if listed else "no",
                                       "yes" if refd else "no",
-                                      "ok" if ok else "STRIPPED"))
+                                      "Resources" if resource else "ok" if ok else "STRIPPED"))
 
     print()
     print("%d shaders looked up by name, %d would be missing from a player build."

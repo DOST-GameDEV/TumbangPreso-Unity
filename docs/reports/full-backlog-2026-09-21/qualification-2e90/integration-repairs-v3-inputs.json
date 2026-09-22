@@ -1,0 +1,14 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/UiTheme.cs",
+    "sha256": "89b049913aba73f3a125c01a0e2dd4adc3231873d68caf54733f847cdda6a8b7"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/HeroPresentationTests.cs",
+    "sha256": "544d26d256da331d9615c781f03d73783e1a62ddc9d554aea0b0d40ab5c36ec1"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/TournamentGuardTests.cs",
+    "sha256": "9f010ffe15ee434dd7b8d19df16dc105f04f3482d36eaf00c979df5523f744c8"
+  }
+]

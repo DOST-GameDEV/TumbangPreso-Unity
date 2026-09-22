@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.4535591">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.453559" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1675" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.436491" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29024" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1676" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.419665" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1677" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="580" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.391217" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1165" name="HeroPresentationTests" fullname="TumbangPreso.Tests.HeroPresentationTests" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.274820" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1184" name="EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" fullname="TumbangPreso.Tests.HeroPresentationTests.EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" methodname="EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1434953832" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.235365" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1167" name="NoHeroAccentSitsOnARoleColour" fullname="TumbangPreso.Tests.HeroPresentationTests.NoHeroAccentSitsOnARoleColour" methodname="NoHeroAccentSitsOnARoleColour" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="1421640164" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.010062" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1168" name="TheFiveHeroAccentsAreTellableApart" fullname="TumbangPreso.Tests.HeroPresentationTests.TheFiveHeroAccentsAreTellableApart" methodname="TheFiveHeroAccentsAreTellableApart" classname="TumbangPreso.Tests.HeroPresentationTests" runstate="Runnable" seed="966972550" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.000456" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1636" name="TournamentGuardTests" fullname="TumbangPreso.Tests.TournamentGuardTests" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.041607" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1641" name="ApplyClearsEverythingAndSaysWhatItCleared" fullname="TumbangPreso.Tests.TournamentGuardTests.ApplyClearsEverythingAndSaysWhatItCleared" methodname="ApplyClearsEverythingAndSaysWhatItCleared" classname="TumbangPreso.Tests.TournamentGuardTests" runstate="Runnable" seed="137760605" result="Passed" start-time="2026-09-22 06:59:48Z" end-time="2026-09-22 06:59:48Z" duration="0.034839" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Tournament] cleared before starting: WorldGraphicsProbe.Active: ON -> OFF, NetRoofProbe.Active: ON -> OFF, NetThrowProbe.Active: ON -> OFF, NetFamiliarProbe.Active: ON -> OFF, PracticeSandbox.Wanted: ON -> OFF, GameLaunch.AllBots: ON -> OFF, GameLaunch.Spectator: ON -> OFF, GameLaunch.GuidedTutorial: ON -> OFF, MatchInstaller.PreviewOnly: ON -> OFF, AIController.BotsEnabled: OFF -> ON, TouchHud.ForceVisible: ON -> OFF, SpectatorCamera.ProbeReplayRequest: ON -> OFF
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

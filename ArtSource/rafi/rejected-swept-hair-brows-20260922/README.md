@@ -1,0 +1,1 @@
+Rejected by owner: swept loft hair and eyebrows do not match the HERO cast. Archive only, never regenerate from this version. New direction: block-built cropped hair, no eyebrows. The accessory/rig work remains retained.

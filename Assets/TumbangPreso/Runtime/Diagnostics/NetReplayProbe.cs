@@ -18,10 +18,12 @@ namespace TumbangPreso.Diagnostics
         {var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:null;}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
-        {if(Argument("-tp-replaytrace")!=null)SceneFlow.PinSelectedRules(CustomGameRules.Defaults(Argument("-tp-replaymode")=="hero"?GameMode.HeroStrike:GameMode.Classic));}
+        {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;if(Argument("-tp-replaytrace")!=null)SceneFlow.PinSelectedRules(CustomGameRules.Defaults(Argument("-tp-replaymode")=="hero"?GameMode.HeroStrike:GameMode.Classic));}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path=Argument("-tp-replaytrace");if(path==null)return;
             var root=new GameObject("~NetReplayProbe");DontDestroyOnLoad(root);var probe=root.AddComponent<NetReplayProbe>();probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));probe._trace=new StreamWriter(path){AutoFlush=true};

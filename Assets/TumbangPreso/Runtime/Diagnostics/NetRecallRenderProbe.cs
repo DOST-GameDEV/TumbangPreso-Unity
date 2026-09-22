@@ -40,12 +40,14 @@ namespace TumbangPreso.Diagnostics
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             if (Argument("-tp-recall-render") == null) return;
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(Argument("-tp-recall-mode") == "hero" ? GameMode.HeroStrike : GameMode.Classic));
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path = Argument("-tp-recall-render"); if (path == null) return;
             var root = new GameObject("~NetRecallRenderProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<NetRecallRenderProbe>(); probe._path = Path.GetFullPath(path);

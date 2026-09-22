@@ -1,0 +1,14 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb",
+    "sha256": "a17399b70f62a3c655bd7ef2d32730410ea1297bec5dfe6347447759eb6819f7"
+  },
+  {
+    "path": "MapSource/materials_persons/person_team-rafi.tres",
+    "sha256": "fb42604c9fddf4bf1661bf72fa7dc1f91564c394b801828f0ad75d310909fc15"
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/RafiNativeModelReview.cs",
+    "sha256": "517ea506b22284c43c1068854f0b68aa9ab7d26f3013fb0734bd552e377cdcb5"
+  }
+]

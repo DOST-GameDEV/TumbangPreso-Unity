@@ -159,6 +159,24 @@ namespace TumbangPreso.EditorTools
 
         public static void Build() => EditorApplication.Exit(Execute() ? 0 : 1);
 
+        // Art iteration on one existing hero must not rewrite the rest of the roster.
+        public static bool RefreshPerson(string id)
+        {
+            var book = AssetDatabase.LoadAssetAtPath<RosterBook>(BookPath);
+            if (book == null || !PersonModels.ContainsKey(id) ||
+                book.People.Find(entry => entry != null && entry.Id == id) == null)
+            {
+                Debug.LogError("[RosterBook] Cannot refresh an unregistered person: " + id);
+                return false;
+            }
+            bool ok = true;
+            BuildSingleEntry(id, PersonModels, "person", ref ok);
+            if (!ok) return false;
+            ViewmodelArmAuthor.Bake(book, id);
+            AssetDatabase.SaveAssets();
+            return true;
+        }
+
         private static bool Execute()
         {
             Directory.CreateDirectory(EntryDir);

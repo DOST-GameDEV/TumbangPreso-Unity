@@ -31,7 +31,7 @@ namespace TumbangPreso.UI
         public void Open(Transform owner, Action back, Action controller, Action touch)
         {
             _back = back; _controller = controller; _touch = touch;
-            if (_session != null) _session.Dispose();
+            ReleaseSession();
             _session = new TumpSettingsSession(); _session.Changed += Changed;
             if (_canvas == null) Build(owner);
             ScreenTakeover.Register(this, () => !_suspended && _canvas != null && _canvas.gameObject.activeInHierarchy);
@@ -42,7 +42,8 @@ namespace TumbangPreso.UI
         private void OnDisable()
         {
             if (_canvas != null) _canvas.gameObject.SetActive(false);
-            if (_session != null) { if (_session.Dirty) _session.Discard(); _session.Dispose(); }
+            if (_session != null && _session.Dirty) _session.Discard();
+            ReleaseSession();
         }
         private void Update()
         {
@@ -57,7 +58,14 @@ namespace TumbangPreso.UI
             if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
             Back();
         }
-        private void OnDestroy() => ScreenTakeover.Unregister(this);
+        private void ReleaseSession()
+        {
+            if (_session == null) return;
+            _session.Changed -= Changed;
+            _session.Dispose();
+            _session = null;
+        }
+        private void OnDestroy() { ReleaseSession(); ScreenTakeover.Unregister(this); }
         private void BuildPrevious(Transform owner)
         {
             var f = TumpUiTheme.Current;

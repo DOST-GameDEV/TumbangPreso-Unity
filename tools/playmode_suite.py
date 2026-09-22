@@ -210,6 +210,7 @@ GROUPS = [
         "ScoreFeedbackTests",
         "SharedUltimatePhaseTests",
         "SkillReceiptTests",
+        "RafiExpansionProbe",
         "SpectatorExchangeTests",
     ]),
 

@@ -120,6 +120,7 @@ namespace TumbangPreso.Tests
             Diagnostics.NetFamiliarProbe.Active=true;
             Diagnostics.NetThrowProbe.Active=true;
             Diagnostics.NetRoofProbe.Active=true;
+            Diagnostics.WorldGraphicsProbe.Active=true;
             PracticeSandbox.Wanted = true;
             GameLaunch.AllBots = true;
             GameLaunch.Spectator = true;
@@ -139,7 +140,7 @@ namespace TumbangPreso.Tests
 
             // And the rules half went through the real setter.
             Assert.AreEqual(GameMode.Classic, UI.SceneFlow.SelectedMode);
-            Assert.AreEqual(4, UI.SceneFlow.SelectedRoundCount);
+            Assert.AreEqual(8, UI.SceneFlow.SelectedRoundCount);
         }
 
         [Test]

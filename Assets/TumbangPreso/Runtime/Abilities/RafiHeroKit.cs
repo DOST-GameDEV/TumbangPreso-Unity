@@ -37,9 +37,9 @@ namespace TumbangPreso.Abilities
         {
             public override bool DefersPredictedEffect => true;
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
-                "Aim a narrow current. The first flying slipper bends toward its direction, keeping its original throw credit. A second throw passes through.",
+                "Aim a narrow current to bend one flying slipper. Its thrower keeps the credit; later throws pass through.",
                 0, glyph: AbilityGlyph.RafiCrosscurrent,
-                summary: "Bend one flying slipper toward your aim. Credit stays with its thrower.",
+                summary: "Bend one flying slipper. Its thrower keeps the credit.",
                 telegraphRadius: .65f, telegraphRange: 6,
                 castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current", charges: 2) { }
             protected override void OnActivate(AbilityContext ctx)
@@ -57,7 +57,7 @@ namespace TumbangPreso.Abilities
             private readonly RafiHeroKit _kit;
             public override bool DefersPredictedEffect => true;
             public Mirrorwake(RafiHeroKit kit) : base("rafi_skill2", "MIRRORWAKE",
-                "Leave a watery reflection of your recent route. It makes one harmless throw feint before peeling into ribbons. You remain visible and vulnerable.",
+                "Replay your route as a watery decoy with one harmless throw feint. You stay visible and vulnerable.",
                 0, glyph: AbilityGlyph.RafiMirrorwake,
                 summary: "A watery echo retraces your steps. No hit, shield or teleport.",
                 castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror", charges: 2)
@@ -75,9 +75,9 @@ namespace TumbangPreso.Abilities
         private sealed class Breakwater : HeroAbility
         {
             public Breakwater() : base("rafi_ultimate", "BREAKWATER",
-                "Gather, then release a low travelling wave. It nudges each rival once and carries loose slippers. Jump above it or leave its edge; cover cuts the wave.",
+                "Release a low wave that nudges each rival once and carries loose slippers. Jump, sidestep or use cover.",
                 0, glyph: AbilityGlyph.RafiBreakwater,
-                summary: "A low travelling crest clears a route. Jump, sidestep or use cover.",
+                summary: "Send a low wave. Rivals can jump, sidestep or use cover.",
                 telegraphRadius: 3, telegraphRange: 8,
                 castAction: "hero-rafi-breakwater", viewmodelAction: "breakwater-release", castCue: "sfx_cast_rafi_breakwater") { }
             protected override void OnActivate(AbilityContext ctx)

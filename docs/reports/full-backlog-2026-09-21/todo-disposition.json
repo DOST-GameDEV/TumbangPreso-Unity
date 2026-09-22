@@ -6,38 +6,80 @@
     {
       "lineAtIntake": 251,
       "heading": "## 155 · THE RECALL BEAM, DRAWN BY A SHADER RATHER THAN BUILT OUT OF TUBES ⚠️ IN PROGRESS, 2026-09-20, branch `feature/slipper-beam-shader`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Shader recall beam implemented and qualified in actual five-peer Classic and Hero v49c runs; human art acceptance remains separate.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 265,
       "heading": "### 155.1 The shader ✅ DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented retained additive/tapered shader and build inclusion; native v49c proves real player rendering, not only editor presence.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 318,
       "heading": "### 155.2 ⚠️⚠️ \"NO CONFLICT WITH SLIPPERRECALL\" IS A DESIGN CONSTRAINT AND IT WAS MET BY SHARING RATHER THAN BY AVOIDING ✅ DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented shared owner/colour/setting/range contracts and render tags; owner, other player and spectator views qualified in v49c.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 346,
       "heading": "### 155.3 ⚠️ THE BEAM IS BROADER THAN THE LANDED RIM, DELIBERATELY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented distinct intended beam versus landing-rim lifetimes; recovery is not a new scoring or eligibility rule.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 354,
       "heading": "### 155.4 ⚠️ `SetState` DRIVES IT AND `SetLandedHighlight` COULD NOT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented beam refresh on actual Slipper.SetState transitions; repeated snapshots and all peer render routes retained.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 362,
       "heading": "### 155.6 The faults the builds had, kept because the next one could reintroduce them",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical defects and their fixes are retained; current shader/peer render receipts supersede the failed drafts without deleting them.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 386,
@@ -52,116 +94,249 @@
     {
       "lineAtIntake": 405,
       "heading": "## 154 · THE RECALL MARK, AND OWNERSHIP BECOMES A LOCK ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Own-slipper lock and recall marker implemented; binding/device and actual peer rendering evidence retained. Human match-feel judgment is not inferred.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 417,
       "heading": "### 154.1 ⚠️⚠️ THE GAME'S OWN THESIS HAD NOTHING ON SCREEN ABOUT IT ✅ DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented on-screen ring, clamped bearing and live grab binding through ScreenTrack; current runtime marker evidence retained.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 461,
       "heading": "### 154.2 ⚠️⚠️ OWNERSHIP IS A LOCK NOW, AND THIS IS THE THIRD CALL ON THAT RULE ✅ DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented ownership rule through OwnershipAllows/IsGrabbableIgnoringReach, including absent-seat spare eligibility; current core and handover checks preserve both.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 489,
       "heading": "### 154.3 ⚠️⚠️ ONLY YOURS LIGHTS, AND FIXING THAT FOUND A HOST-ONLY FEATURE ✅ DONE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented owner-only rim/beam and client snapshot refresh; actual owner/other/spectator rendering passed in both modes.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 510,
       "heading": "### 154.4 What else this pass found and fixed",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented SeatOfOrigin request routing, deck-aware marker placement and pixel/canvas projection corrections; latest native recall evidence retains those routes.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 545,
       "heading": "### 154.5 NOT DONE, named rather than left implied",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "All listed software/render/rebind/dead-code work is complete. Remaining explicit items are owner visual judgment and human four-player feel, not missing implementation.",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c",
+        "Assets/TumbangPreso/Runtime/Visual/SlipperBeam.cs",
+        "Assets/TumbangPreso/Runtime/UI/SlipperRecall.cs",
+        "Assets/TumbangPreso/Runtime/Slipper.cs"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 570,
       "heading": "## 153 · THE TITLE STREET AND THE LOGIN, REDRAWN BY HER AND PUT IN MOTION ⚠️ IN PROGRESS, 2026-09-18, branch `ASTRAReworks`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Painted title/login and later menu routes are implemented. Whole-source final qualification remains active; original full-size valid-mark export and OAuth configuration are external dependencies.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 584,
       "heading": "### 153.1 The three plates are an animation, not three drafts",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Initial layered-menu design is retained, but its mistaken difference-mask interpretation is superseded by the implemented 153.21 correction and current painted-screen evidence.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 599,
       "heading": "### 153.2 Three things in that difference are not shadow, and all three travelled",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Caption/wire artefact fixes are retained; actual source-layer treatment is superseded by 153.21, not an unfinished second menu pass.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 624,
       "heading": "### 153.3 Subtle is a number",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Subtle local menu motion is implemented in OwnerMenuAir; later mask corrections preserve the drift/sway system and owner artwork.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 646,
       "heading": "### 153.4 The title screen is one press and it has no other doors: STATED, NOT FORGOTTEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "One-press title is implemented in HomeCourtView. The subsequent main menu now exposes the required play/tutorial/settings/credits/quit routes in the completed painted flow.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 666,
       "heading": "### 153.5 The login: her element sheet is the source, her compositions are the ruler",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Supplied login plates and measured composition are retained in SignInScreen and owner UI assets; current screen routes are implemented.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 687,
       "heading": "### 153.6 Type and colour were measured, not chosen",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Owner typography and measured palettes are implemented in OwnerUiTheme; no new replacement art or blanket recolour is required.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 707,
       "heading": "### 153.7 Validation is live, and it enforces the rules the SERVICE has",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Client field validation and shared AccountRules are implemented; current core604 pass and painted-screen checks cover local validation. Live identity-provider behavior is separately scoped.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 733,
       "heading": "### 153.8 Four sounds for four states that had none",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Four UI cue routes are implemented and retained. Routing/technical evidence does not claim human listening acceptance.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 742,
       "heading": "### 153.9 The green tick is the one drawn mark, and what would close it: OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Measured fallback valid mark is implemented. Replacement with her exact original requires the full-size owner export, which has not been supplied in the recorded source assets.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 749,
       "heading": "### 153.10 What is not done: OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Menu-door work is superseded by completed painted routes; password-change/linking/recovery explanation exists per153.15. Exact owner mark, OAuth configuration and owner judgment remain external.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 763,
       "heading": "### 153.11 The three red `HomeFlowTests` were four stale names and one race: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical names/race fix is retained; newer screen-route evidence supersedes the old failed baseline without erasing it.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 793,
       "heading": "### 153.18 The gate's first real number, and the fifty-three it found: IN PROGRESS 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical gate result remains evidence only. Current Core604 and screen113 checkpoint are retained; the new coherent full PlayMode/candidate qualification is genuinely still pending.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 875,
@@ -176,56 +351,119 @@
     {
       "lineAtIntake": 906,
       "heading": "### 153.17 The PlayMode gate could not run at all, and the reason was a list: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current partition inspection found RafiExpansionProbe missing. Added it to the match group; verify the partition plan before running final PlayMode stages.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 926,
       "heading": "### 153.16 The plank across the loadout screen was the capture, not the screen: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The photographed duplicate capture overlay was a harness defect; current native painted-screen evidence supersedes it. No replacement panel is outstanding.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 950,
       "heading": "### 153.14 The five fixtures beside those three, and the one real fault under them: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Five historical fixture failures and the underlying correction are retained; final coherent qualification is still pending and is not inferred from old passes.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 980,
       "heading": "### 153.15 Password recovery, built as far as UGS allows: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "PlayerAccount.ChangePasswordAsync, Google link/sign-in client paths and OwnerPasswordView/recovery copy are implemented. Resources/google_oauth.txt is currently absent; live provider setup is not claimed complete.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1024,
       "heading": "### 153.21 The three moving layers were each wrong in their own way: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Corrected derived shadow/cloud/leaf assets and authoring are retained; owner source plates remain unchanged. Human visual acceptance is separate.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1065,
       "heading": "### 153.22 Her login answered a press and ignored everything up to it: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "OwnerFieldSound and painted/text action hover/select cue routes are implemented. Physical listening quality is unverified, not a missing code route.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1092,
       "heading": "### 153.19 The three red core cases were three different kinds of stale, and two were product faults: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical core defects are closed; current changed source passes604/604 in173ms, including seventh-hero distinctness and unchanged copy limits.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1140,
       "heading": "### 153.13 The crop was still protecting the can, and it cost the logo: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Title focal crop correction is retained; later multi-aspect painted/native surface evidence is the current presentation checkpoint.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1158,
       "heading": "### 153.12 Her valid mark is not `Lime`, measured: CLOSED 2026-09-19",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Measured valid-mark colour correction is implemented in OwnerFieldMark/owner theme; pending exact artwork is153.9.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs",
+        "docs/TODO.md#153--the-title-street-and-the-login-redrawn-by-her-and-put-in-motion",
+        "docs/reports/full-backlog-2026-09-21/qualification-2e90/core-after.trx"
+      ],
+      "reviewedOn": "2026-09-22"
     },
     {
       "lineAtIntake": 1179,

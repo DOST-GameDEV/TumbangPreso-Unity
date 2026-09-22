@@ -29,12 +29,14 @@ namespace TumbangPreso.Diagnostics
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Configure()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             if (Argument("-tp-catchtrace") == null) return;
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-tournament") >= 0) return;
             string path = Argument("-tp-catchtrace"); if (path == null) return;
             var go = new GameObject("~NetCatchPresentationProbe"); DontDestroyOnLoad(go);
             var probe = go.AddComponent<NetCatchPresentationProbe>(); probe._started = Time.realtimeSinceStartup;

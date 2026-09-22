@@ -1,0 +1,70 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Editor/RafiNativeModelReview.cs",
+    "sha256": "9b5675399071312bbdfb46392def510629c8610bcc2d3dde434cec0f47aba510"
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/RosterBookBuilder.cs",
+    "sha256": "b92951154823ff7542ca5f45215d09cdad5060b36045b6fc49383659aa50df6b"
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/ViewmodelArmAuthor.cs",
+    "sha256": "ffb3536b10892e564ca5be658bd09aa020e2854b4f4c5982cb95e82241fff7c8"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Abilities/RafiHeroKit.cs",
+    "sha256": "222edff9665822a4e81103ddbf10c2ab5f3462faa9f5b9375ad98a709eb7b892"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Abilities/RafiWaterField.cs",
+    "sha256": "13dc1924eef62899f8223b18bd609848fd357663769b400e13aafcbba6e7842e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs",
+    "sha256": "a2d4454a6a516a4545a484b27ff6cc36de80cd5d972d17c8d224116678821805"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetCatchPresentationProbe.cs",
+    "sha256": "d028c5dd664458440fcd5f96fcefac96a5193aa7e6b1323f93d2cd411a4abff6"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetMomentProbe.cs",
+    "sha256": "59c87202964e5297f9831c9a7e2f45baa4efd56da44d2157d6febd239b936992"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetPredictionReceiptProbe.cs",
+    "sha256": "1d0fcb2db09070498177691366770b5ae1429292463e6e69ab29d0a38d63d5a6"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetRecallRenderProbe.cs",
+    "sha256": "fbcf6c278630fedaa1b892ae344d5644d923bf8676a198f7c506fccf44a631e1"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetReplayProbe.cs",
+    "sha256": "c10eb47fec9f1098b2ba07e74aa056bcabf3c1183ca07405d196121e71b254ab"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetUltimatePhaseProbe.cs",
+    "sha256": "112956f575f0ef27119e257fffe5d1babc3a39488d9653ba7ffa889b0365777e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/TumpSettingsView.cs",
+    "sha256": "a34ac6abd296ec1922307162e0fac827adcdb7892005e78f15b958741ff24b2b"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Visual/DanteSeismicVisual.cs",
+    "sha256": "e4aee2be985273186d00b62f4b41179056e543ad44d744bc93a938ced0d0e6be"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/HeroPresentationTests.cs",
+    "sha256": "1c263a7134bda6c5cd7c0f7ca25eceb9d8d8f04161a28508ce08123e0274fb38"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/TournamentGuardTests.cs",
+    "sha256": "f092f269330666a6318867531aa93176e0c64412f5d24f8d9ce8eba452a768b2"
+  },
+  {
+    "path": "Packages/com.tumbangpreso.core/Runtime/TournamentPreset.cs",
+    "sha256": "4efcb59b57cf5286f1f5be23b00a9390fb65a0ba5cb1de10e447a5df4a0da5e4"
+  }
+]

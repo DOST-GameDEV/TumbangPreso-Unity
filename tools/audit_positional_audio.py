@@ -10,6 +10,7 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 RUNTIME=ROOT/"Assets/TumbangPreso/Runtime"
 RULES={
+ ("Map/MooredBoatMotion.cs","LateUpdate"):("EVERY-PEER","Each active map copy samples its moored boats with a local cooldown; ambient lap sound is not relayed."),
  ("Carrier.cs","NotifyHolding"):("EVERY-PEER","Possession snapshots and local equips use the same idempotent notification."),
  ("Abilities/HeroAbilitySystem.cs","PlayUltimatePresentation"):("EVERY-PEER","Accepted cast presentation runs locally and through ApplyNetworkCast."),
  ("Abilities/HeroHazards.cs","SpawnIceBarricade"):("EVERY-PEER","Replicated kit activation builds the effect on each peer."),
