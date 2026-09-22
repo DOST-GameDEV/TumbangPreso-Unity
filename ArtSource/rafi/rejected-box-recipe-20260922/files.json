@@ -1,0 +1,22 @@
+[
+  {
+    "source": "tools/build_rafi.py",
+    "backup": "ArtSource\\rafi\\rejected-box-recipe-20260922\\build_rafi.py",
+    "sha256": "ff7b2c7a841999a4e75f92be7605802ea834af312d6f1472ca23f00da8dcf89a"
+  },
+  {
+    "source": "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb",
+    "backup": "ArtSource\\rafi\\rejected-box-recipe-20260922\\team-rafi.glb",
+    "sha256": "8deb215ac51e58848408b79b77bc25ee4e0117604fcedf75970da32337246288"
+  },
+  {
+    "source": "MapSource/materials_persons/person_team-rafi.tres",
+    "backup": "ArtSource\\rafi\\rejected-box-recipe-20260922\\person_team-rafi.tres",
+    "sha256": "3dba0844334cb6f27a898746831a03ca171dc3eac02a54ec5e3e7d4a6e76575e"
+  },
+  {
+    "source": "Assets/TumbangPreso/Resources/UI/portraits/rafi.png",
+    "backup": "ArtSource\\rafi\\rejected-box-recipe-20260922\\rafi.png",
+    "sha256": "57d8e823046af8c319aa16a82a4f371649c6668aa04c9ec950bcd2e747d00bc4"
+  }
+]

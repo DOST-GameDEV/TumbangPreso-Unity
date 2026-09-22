@@ -105,6 +105,9 @@ namespace TumbangPreso.UI
 
         /// <summary>Phaister Witchfire Empower (Witchfire empowered mystical slipper wisp).</summary>
         PhaisterWitchfire,
+        RafiCrosscurrent,
+        RafiMirrorwake,
+        RafiBreakwater,
     }
 
     /// <summary>
@@ -237,6 +240,9 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
+                case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";
+                case AbilityGlyph.RafiMirrorwake: return "DECOY";
+                case AbilityGlyph.RafiBreakwater: return "MOVING WAVE";
                 default:
                     return "POWER";
             }
@@ -286,6 +292,15 @@ namespace TumbangPreso.UI
         {
             switch (glyph)
             {
+                case AbilityGlyph.RafiCrosscurrent:
+                    return Mathf.Max(Sub(EllipseRing(u + .12f, v, .67f, .60f, .16f), Box(u - .5f, v + .4f, .6f, .65f)),
+                        RightTriangle(u - .38f, v - .44f, .24f, .28f));
+                case AbilityGlyph.RafiMirrorwake:
+                    return Mathf.Max(Mathf.Max(Disc(u + .3f, v - .42f, .19f), Box(u + .3f, v + .15f, .17f, .35f)),
+                        Mathf.Max(EllipseRing(u - .27f, v - .4f, .21f, .21f, .075f), Box(u - .27f, v + .15f, .075f, .33f)));
+                case AbilityGlyph.RafiBreakwater:
+                    return Mathf.Max(Box(u, v + .5f, .82f, .10f),
+                        Sub(Disc(u + .12f, v + .05f, .70f), Disc(u - .17f, v - .2f, .53f)));
                 case AbilityGlyph.Zone:
                     return EllipseRing(u, v, 0.82f, 0.54f, 0.26f);
 

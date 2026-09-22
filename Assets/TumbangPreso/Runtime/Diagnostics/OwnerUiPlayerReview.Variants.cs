@@ -27,7 +27,7 @@ namespace TumbangPreso.Diagnostics
             foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
             var report = new StringBuilder("hero,slot,variant,role,view,expected,observed,charges_before,charges_after,input_samples,actor_early_travel,actor_travel,target_travel,target_stun_samples,seconds,body_action,fpp_action\n");
             int cases = 0;
-            foreach (string hero in new[] { "sean", "zack", "dante", "cheska", "nemu", "phaister" })
+            foreach (string hero in ReviewHeroes())
             foreach (int slot in new[] { 1, 2 })
             foreach (var variant in HeroLoadoutRules.VariantsFor(hero, slot))
             foreach (bool defender in new[] { false, true })
@@ -45,9 +45,11 @@ namespace TumbangPreso.Diagnostics
                 var target = round.Players.First(p => p.IsDefender != defender);
                 var witness = round.Players.First(p => p != actor && p != target);
                 var centre = round.Lata.transform.position; centre.y = .12f;
-                var start = centre + Vector3.back * (defender ? 1.2f : 3.2f);
+                var start = centre + Vector3.back * (defender ? 1.2f : hero == "rafi" ? 8.2f : 3.2f);
                 actor.Teleport(start); actor.transform.rotation = Quaternion.identity;
-                target.Teleport(start + Vector3.forward * 1.6f);
+                // Rafi's material/arm review needs an unobstructed owner view;
+                // a body at 1.6m filled the frame instead of showing the hands.
+                target.Teleport(start + Vector3.forward * (hero == "rafi" ? 7f : 1.6f));
                 target.Intent.Parked = false; actor.Intent.Parked = false;
                 actor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, hero);
                 var art = RosterBook.Load().FindPersonArt(hero);
@@ -80,6 +82,14 @@ namespace TumbangPreso.Diagnostics
                 Hud.Instance.Bind(followed); Hud.Instance.ShowReadyPrompt(false);
                 actor.Intent.AimPoint = target.transform.position; actor.Intent.FaceAimPoint = true;
                 yield return new WaitForSecondsRealtime(.2f);
+                if(hero=="rafi"&&!observer)
+                {
+                    var arms=rig.GetComponentInChildren<ViewmodelArms>(true);
+                    var meshes=arms!=null?arms.GetComponentsInChildren<MeshFilter>(true):Array.Empty<MeshFilter>();
+                    if(arms==null||arms.CurrentHeroId!="rafi"||new[]{"left","right"}.Any(side=>
+                        !meshes.Any(m=>m.sharedMesh==Resources.Load<Mesh>("Models/RosterArms/rafi_"+side))))
+                        throw new InvalidOperationException("Rafi's actual owner hands are not his source arm meshes.");
+                }
 
                 bool roleRefusal = defender && slot == 2 && (hero == "sean" || hero == "zack");
                 float seconds = roleRefusal ? 2 : Mathf.Clamp(ability.Duration + ability.Windup + 1.8f, 5, 11);
@@ -89,7 +99,7 @@ namespace TumbangPreso.Diagnostics
                 int before = ability.ChargesRemaining, stunSamples = 0, inputSamples = 0;
                 float actorTravel = 0, actorEarlyTravel = 0, targetTravel = 0;
                 Vector3 actorStart = actor.transform.position, targetStart = target.transform.position;
-                bool accepted = false, refused = false;
+                bool accepted = false, refused = false, sawCharge = false, sawRelease = false;
                 var verb = slot == 1 ? Verb.Skill1 : Verb.Skill2;
                 var answerSlot = slot == 1 ? HeroAbilitySystem.Slot.Skill1 : HeroAbilitySystem.Slot.Skill2;
                 var context = new AbilityContext(actor, actor.GetComponent<Carrier>(), actor.GetComponent<CombatVerbs>());
@@ -111,6 +121,14 @@ namespace TumbangPreso.Diagnostics
                         if (!defender && slot == 2 && (hero == "sean" || hero == "zack"))
                             actor.Intent.Set(Verb.SpecialAbility, age > 1.5f && age < 2.1f);
                         if (hero == "nemu" && slot == 2 && age > .9f && age < 2.5f) actor.Intent.Move = Vector2.up * .5f;
+                        // Include real wind-up/release and empty hands in the
+                        // source-arm comparison after Rafi's short field ends.
+                        if (hero == "rafi" && !defender)
+                        {
+                            actor.Intent.Set(Verb.SpecialAbility, age > 2.5f && age < 3.1f);
+                            sawCharge |= actor.GetComponent<Carrier>().IsCharging;
+                            sawRelease |= age > 3.1f && actor.GetComponent<Carrier>().Held == null;
+                        }
                         if (age > .25f && system.SecondsSinceAnswer(answerSlot) < 2.5f)
                         {
                             accepted |= system.LastAnswer(answerSlot) == HeroKit.CastOutcome.Cast;
@@ -132,12 +150,15 @@ namespace TumbangPreso.Diagnostics
                     File.WriteAllText(Path.Combine(_folder, "skill-variants.csv"), report.ToString());
                     if (inputSamples == 0 || (roleRefusal ? accepted || !refused || ability.IsActive || ability.ChargesRemaining != before : !accepted))
                         throw new InvalidOperationException("Wrong native role outcome: " + name);
+                    if(hero=="rafi"&&!defender&&(!sawCharge||!sawRelease))
+                        throw new InvalidOperationException("Rafi appearance route did not include a real charge and empty-hand release: "+name);
                     cases++;
                 }
                 finally { actor.Intent.Clear(); audio.enabled = false; Destroy(audio); system.ResetKit(); }
             }
-            if (cases != 48) throw new InvalidOperationException("Expected all 48 existing-kit role/choice cases, got " + cases);
-            Stage("All 48 existing-kit role/choice cases completed: staged input and capture, not human balance or multiplayer certification");
+            int expected=ReviewHeroes().Sum(hero=>HeroLoadoutRules.VariantsFor(hero,1).Count+HeroLoadoutRules.VariantsFor(hero,2).Count)*2;
+            if (cases != expected) throw new InvalidOperationException("Expected "+expected+" selected role/choice cases, got " + cases);
+            Stage(cases+" selected role/choice cases completed: staged input and capture, not human balance or multiplayer certification");
         }
     }
 }

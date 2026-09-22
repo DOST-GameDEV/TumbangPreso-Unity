@@ -40,6 +40,9 @@ namespace TumbangPreso.UI
             { "phaister_skill1", AbilityGlyph.PhaisterHexSigil },
             { "phaister_skill2", AbilityGlyph.PhaisterShadowBlink },
             { "phaister_ultimate", AbilityGlyph.PhaisterEclipse },
+            { "rafi_skill1", AbilityGlyph.RafiCrosscurrent },
+            { "rafi_skill2", AbilityGlyph.RafiMirrorwake },
+            { "rafi_ultimate", AbilityGlyph.RafiBreakwater },
         };
 
         /// <summary>

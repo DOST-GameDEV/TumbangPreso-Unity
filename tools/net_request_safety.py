@@ -54,12 +54,18 @@ def runtime_dll(player):
 
 
 def read(path):
+    def value(key, text):
+        if key == "name":
+            return text
+        if key in ("epoch", "kitIdentity"):
+            return int(text)  # Do not round a 64-bit match identity through float.
+        return float(text)
     # Committed evidence keeps the traces gzipped; a live run writes them plain.
     if not path.exists() and path.with_name(path.name + ".gz").exists():
         with gzip.open(path.with_name(path.name + ".gz"), "rt", newline="") as f:
-            return [{k: (float(v) if k != "name" else v) for k, v in r.items()} for r in csv.DictReader(f)]
+            return [{k: value(k, v) for k, v in r.items()} for r in csv.DictReader(f)]
     with path.open(newline="") as f:
-        return [{k: (float(v) if k != "name" else v) for k, v in r.items()} for r in csv.DictReader(f)]
+        return [{k: value(k, v) for k, v in r.items()} for r in csv.DictReader(f)]
 
 
 def rising(rows, key, eps=1e-3):
@@ -81,15 +87,39 @@ def drops(rows, key, amount, tolerance=0.75):
     return sum(1 for a, b in zip(rows, rows[1:]) if abs((a[key] - b[key]) - amount) <= tolerance)
 
 
-def evaluate(folder):
-    """Every match in the run is judged on its own. Traces from before the match column
-    existed are one match."""
-    markers = read(folder / "client.markers.csv")
+def recorded(path):
+    return path.exists() or path.with_name(path.name + ".gz").exists()
+
+
+def client_rows(folder, suffix):
+    rows = read(folder / ("client" + suffix))
+    extra = folder / ("client-rehost" + suffix)
+    if recorded(extra):
+        rows += read(extra)
+    return rows
+
+
+def evaluate(folder, expected_matches=None):
+    """Judge each requested match and fail if a required second session never ran."""
+    markers = client_rows(folder, ".markers.csv")
     matches = sorted({int(m.get("match", 1)) for m in markers}) or [1]
+    if expected_matches is None:
+        for filename, key in [("run.json", "expected_matches"), ("result.json", "match_count")]:
+            path = folder / filename
+            if path.exists():
+                expected_matches = json.loads(path.read_text()).get(key)
+                if expected_matches is not None:
+                    break
     results = {m: evaluate_match(folder, m) for m in matches}
-    return {"ok": all(r["ok"] for r in results.values()),
-            "errors": [f"match {m}: {e}" for m, r in results.items() for e in r["errors"]],
-            "matches": {str(m): r for m, r in results.items()}}
+    errors = [f"match {m}: {e}" for m, r in results.items() for e in r["errors"]]
+    if expected_matches is not None and matches != list(range(1, int(expected_matches) + 1)):
+        errors.append(f"Expected matches 1..{expected_matches}, observed {matches}")
+    if recorded(folder / "client-rehost.markers.csv"):
+        host = read(folder / "host.csv")
+        epochs = {match: {int(r.get("epoch", 0)) for r in host if int(r.get("match", 1)) == match} for match in [1, 2]}
+        if any(len(values) != 1 or min(values) <= 0 for values in epochs.values()) or epochs[1] == epochs[2]:
+            errors.append("Rehost did not establish two distinct host match epochs")
+    return {"ok": not errors, "errors": errors, "matches": {str(m): r for m, r in results.items()}}
 
 
 def evaluate_match(folder, match):
@@ -97,14 +127,22 @@ def evaluate_match(folder, match):
         return [r for r in rows if int(r.get("match", 1)) == match]
 
     host = mine(r for r in read(folder / "host.csv") if r["host"] == 1)
-    client = mine(r for r in read(folder / "client.csv") if r["host"] == 0)
-    markers = mine(m for m in read(folder / "client.markers.csv") if m["name"] != "staged")
-    handover = (folder / "client-rejoin.markers.csv").exists()
+    client = mine(r for r in client_rows(folder, ".csv") if r["host"] == 0)
+    markers = mine(m for m in client_rows(folder, ".markers.csv") if m["name"] != "staged")
+    handover = recorded(folder / "client-rejoin.markers.csv")
     rejoined = []
     if handover:
         markers += mine(m for m in read(folder / "client-rejoin.markers.csv") if m["name"] != "staged")
         rejoined = mine(r for r in read(folder / "client-rejoin.csv") if r["host"] == 0)
     errors, cases = [], []
+    for label, rows in [("host", host), ("client", client + rejoined)]:
+        staged = [r for r in rows if r["elapsed"] >= 6.5 and (label == "host" or r["local"] == 1)]
+        coherent = bool(staged) and all("heroIndex" in r and "characterPick" in r
+                                       and r["heroIndex"] >= 0 and r["heroIndex"] == r["characterPick"]
+                                       for r in staged)
+        cases.append({"case": label + " staged body/kit identity", "samples": len(staged), "ok": coherent})
+        if not coherent:
+            errors.append(label + ": staged body/kit identity disagreed or was not recorded")
 
     def at(name):
         found = [m for m in markers if m["name"] == name]
@@ -154,6 +192,13 @@ def evaluate_match(folder, match):
     def delta(key):
         return lambda b, s, a: (a[key] - b[key])
 
+    if recorded(folder / "client-rehost.markers.csv") and match == 2:
+        case("stale previous-session skill request", .65, lambda b, samples, a: {
+            "no old-session charge spend": (b["stompCharges"] == 2 and all(r["stompCharges"] == 2 for r in samples),
+                                           (b["stompCharges"], min(r["stompCharges"] for r in samples))),
+            "no old-session windup": (all(r["stompWindup"] == 0 for r in samples), max(r["stompWindup"] for r in samples)),
+        })
+
     case("stale-seat grab claiming seat 2", 0.9, lambda b, s, a: {
         # Seat 2 is a parked attacker bot that already carries ITS OWN shoe from the whistle.
         "seat 2 carry unchanged": (all(r["seat2Holding"] == b["seat2Holding"] for r in s), b["seat2Holding"]),
@@ -195,6 +240,8 @@ def evaluate_match(folder, match):
         "cooldown stamped once": (rising([b] + s, "carapaceCd") == 1, rising([b] + s, "carapaceCd")),
         "cooldown never re-armed after the stamp": (not_rearmed(s, "carapaceCd"), max(r["carapaceCd"] for r in s)),
         "active": (max(r["carapaceActive"] for r in s) == 1, max(r["carapaceActive"] for r in s)),
+        "still active at the end of the window": (a["carapaceActive"] == 1 and a["carapaceCd"] > 0,
+                                                  (a["carapaceActive"], a["carapaceCd"])),
     })
     case("stomp cast x3 in one frame", 1.2, lambda b, s, a: {
         "two charges before": (b["stompCharges"] == 2, b["stompCharges"]),
@@ -272,7 +319,8 @@ def evaluate_match(folder, match):
     elif host and "seat1Bot" in host[0] and any(r["seat1Bot"] == 1 for r in host):
         errors.append("seat 1 was driven as a bot on the host while its player was connected")
     if handover:
-        pass
+        if boundary is None:
+            skipped.append("duplicate throw at the round boundary (client left earlier)")
     elif boundary is None:
         errors.append("boundary throw: client never sent it")
     else:
@@ -295,17 +343,17 @@ def evaluate_match(folder, match):
     # The two refusal counters are the pair § 145.12 built: sent on the host, taken back on
     # the client. Equal totals mean every refusal the host sent reached the peer that asked.
     if host and client:
-        last_host, last_client = host[-1], dict(client[-1])
+        last_host = host[-1]
+        parts = [client] + ([rejoined] if handover and rejoined else [])
+        host_delta = {key: last_host[key] - host[0][key] for key in ("denPunch", "denLunge", "denShove", "denSlide")}
+        client_delta = {key: sum(part[-1][key] - part[0][key] for part in parts if part) for key in host_delta}
+        for key in host_delta:
+            if host_delta[key] != client_delta[key]:
+                errors.append(f"refusal tally {key}: host sent {host_delta[key]}, client took {client_delta[key]}")
+        cases.append({"case": "refusal tallies", "host": host_delta, "client": client_delta,
+                      "scope": "Deltas within this match, summed across any reclaimed client processes"})
         if handover and rejoined:
-            # A reclaimed seat is a new process whose taken-back tally starts at zero.
-            for key in ("denPunch", "denLunge", "denShove", "denSlide"):
-                last_client[key] = client[-1][key] + rejoined[-1][key]
             client = rejoined
-        for key in ("denPunch", "denLunge", "denShove", "denSlide"):
-            if last_host[key] != last_client[key]:
-                errors.append(f"refusal tally {key}: host sent {last_host[key]}, client took {last_client[key]}")
-        cases.append({"case": "refusal tallies", "host": {k: last_host[k] for k in ("denPunch", "denLunge", "denShove", "denSlide")},
-                      "client": {k: last_client[k] for k in ("denPunch", "denLunge", "denShove", "denSlide")}})
         legit = at("legitimate stomp input")
         if legit:
             settle = legit["elapsed"] + 2.0
@@ -329,11 +377,16 @@ def main():
     ap.add_argument("--loss", type=float, default=0.0, help="net_link.py per-packet loss fraction, 0.03 is 3 per cent")
     ap.add_argument("--kill", action="store_true", help="with --handover, kill the client instead of letting it quit")
     ap.add_argument("--evaluate-only", action="store_true")
+    ap.add_argument("--rehost", action="store_true", help="same host process starts a fresh session; requires --matches 2 and excludes --handover")
     ap.add_argument("--handover", action="store_true", help="client leaves in round 1 and reclaims seat 1 for round 2")
     ap.add_argument("--matches", type=int, default=1, help="2 plays the whole script again after a real rematch")
     ap.add_argument("--leave-at", type=float, default=25.0, help="round-1 elapsed seconds at which the handover client leaves")
     a = ap.parse_args()
     folder = a.out.resolve()
+    if a.rehost and (a.matches != 2 or a.handover):
+        ap.error("--rehost requires --matches 2 and cannot be combined with --handover")
+    if a.kill and not a.handover:
+        ap.error("--kill requires --handover")
 
     if a.evaluate_only:
         result = evaluate(folder)
@@ -341,6 +394,7 @@ def main():
         return 0 if result["ok"] else 1
 
     folder.mkdir(parents=True, exist_ok=False)
+    (folder / "run.json").write_text(json.dumps({"expected_matches": a.matches, "rehost": a.rehost, "handover": a.handover}, indent=2))
     data = player_data_root()
     backup = folder / "profile-backup"
     manifest, absent = {}, []
@@ -363,8 +417,11 @@ def main():
         common = [str(exe), "-batchmode", "-screen-width", "640", "-screen-height", "360",
                   "-screen-fullscreen", "0", "-tp-autostart", "2"]
         if a.matches > 1:
-            common += ["-tp-autorematch", "-tp-requestsafety-matches", str(a.matches)]
-        host = subprocess.Popen(common + ["-tp-host", str(a.port), "-tp-profile", "c4host",
+            common += ["-tp-requestsafety-matches", str(a.matches)]
+            if not a.rehost:
+                common += ["-tp-autorematch"]
+        rehost_args = ["-tp-requestsafety-rehost", str(a.port)] if a.rehost else []
+        host = subprocess.Popen(common + rehost_args + ["-tp-host", str(a.port), "-tp-profile", "c4host",
                                           "-tp-requestsafety", str(folder / "host.csv"),
                                           "-logFile", str(folder / "host.log")],
                                 cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
@@ -393,7 +450,30 @@ def main():
         print("Running real host and client: " + str(folder), flush=True)
         deadline = time.monotonic() + 300 * a.matches
         relaunched = False
+        rehost_joined = False
+        host_exited_at = None
+        completed_client_cleanup = False
         while time.monotonic() < deadline and (host.poll() is None or client.poll() is None):
+            signal = folder / "host.rehost"
+            if a.rehost and not rehost_joined and signal.exists() and host.poll() is None:
+                old_epoch = int(signal.read_text().strip())
+                if client.poll() is None:
+                    client.terminate()
+                    client.wait(timeout=15)
+                client = join("client-rehost", ["-tp-rehost-phase", "2", "-tp-rehost-old-epoch", str(old_epoch)])
+                rehost_joined = True
+                print("Same host process restarted its session; joining the fresh session", flush=True)
+            if host.poll() is not None:
+                if host_exited_at is None:
+                    host_exited_at = time.monotonic()
+                # The player correctly remains on its disconnected/post-match UI.
+                # That is not more request evidence. Retire only this owned client;
+                # missing coverage or an early host exit still fails evaluate().
+                if client.poll() is None and time.monotonic() - host_exited_at >= 5:
+                    client.terminate()
+                    client.wait(timeout=15)
+                    completed_client_cleanup = True
+                    break
             if a.handover and a.kill and client.poll() is None and not relaunched:
                 marks = folder / "client.markers.csv"
                 if marks.exists() and "client waits to be killed" in marks.read_text():
@@ -405,9 +485,14 @@ def main():
                 print("Client left; relaunching the same profile to reclaim seat 1", flush=True)
                 client = join("client-rejoin", ["-tp-requestsafety-rejoin"])
             time.sleep(1)
-        result = evaluate(folder)
-        result.update(match_count=a.matches, delay_one_way_ms=a.delay, jitter_ms=a.jitter, loss=a.loss, killed=a.kill, handover=a.handover, leave_at=a.leave_at if a.handover else None, platform=sys.platform,
+        result = evaluate(folder, expected_matches=a.matches)
+        if a.rehost and not rehost_joined:
+            result["ok"] = False; result["errors"].append("Host never completed its fresh-session restart")
+        if host.poll() != 0:
+            result["ok"] = False; result["errors"].append("Host did not complete its requested window with exit0")
+        result.update(rehost=a.rehost, host_pid=host.pid, match_count=a.matches, delay_one_way_ms=a.delay, jitter_ms=a.jitter, loss=a.loss, killed=a.kill, handover=a.handover, leave_at=a.leave_at if a.handover else None, platform=sys.platform,
                       runtime_sha256=hashlib.sha256(runtime_dll(a.player).read_bytes()).hexdigest())
+        result.update(host_exit=host.poll(), client_cleanup_after_host_exit=completed_client_cleanup)
         (folder / "result.json").write_text(json.dumps(result, indent=2))
         print(json.dumps(result, indent=2), flush=True)
         return 0 if result["ok"] else 1

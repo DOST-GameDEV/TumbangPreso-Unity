@@ -21,7 +21,7 @@ namespace TumbangPreso.Diagnostics
             if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
             else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
             Settings.SettingsStore.Current.Fullscreen=false;Screen.SetResolution(1280,720,FullScreenMode.Windowed);
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));SceneFlow.SelectedMap=SceneFlow.Eskinita;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));SceneFlow.SelectedMap=ReviewMap();
             yield return Click("StartButton");yield return Click("HeroStrikeButton");yield return Click("PracticeButton");
             if(GameLaunch.Spectator)yield return Click("SpectateButton");
             yield return Click("PrimaryButton");yield return StartReadyRound();
@@ -29,7 +29,7 @@ namespace TumbangPreso.Diagnostics
             {yield return ReviewKitVariants();yield break;}
             var rig=Camera.main.GetComponent<CameraRig>();int index=0;
             var report=new StringBuilder("hero,slot,body,fpp,seconds,accepted,contact_events\n");
-            foreach(string hero in new[]{"sean","phaister","zack","nemu","dante","cheska"})
+            foreach(string hero in ReviewHeroes())
             {
                 if(index++>0){GameServices.Round.EndRound();GameServices.Match.AdvanceRound();}
                 foreach(var brain in Object.FindObjectsByType<AIController>())brain.enabled=false;
@@ -87,7 +87,7 @@ namespace TumbangPreso.Diagnostics
                     finally{MatchFlair.Presented-=Event;actor.Intent.Clear();sound.enabled=false;Object.Destroy(sound);}
                 }
             }
-            Stage("All twelve ordinary skills captured through native input and real audio; staged profiles and targets, not human freeform or guaranteed-hit evidence");
+            Stage("Selected ordinary skills captured through native input and real audio; staged profiles and targets, not human freeform or guaranteed-hit evidence");
         }
     }
 }

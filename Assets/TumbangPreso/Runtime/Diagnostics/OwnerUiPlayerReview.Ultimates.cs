@@ -18,19 +18,19 @@ namespace TumbangPreso.Diagnostics
         {
             _deadline=Time.realtimeSinceStartup+260;
             bool retained=Environment.GetCommandLineArgs().Contains("-tp-hero-replays");
-            Stage("real shared ultimate route, six controlled native actor profiles");
+            Stage("real shared ultimate route, selected native actor profiles");
             yield return WaitFor(()=>Find("GuestAccount")!=null||Find("ContinueAccount")!=null||Find("StartButton")!=null,80);
             if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
             else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
             Settings.SettingsStore.Current.Fullscreen=false;Screen.SetResolution(1280,720,FullScreenMode.Windowed);
             Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));SceneFlow.SelectedMap=SceneFlow.Eskinita;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));SceneFlow.SelectedMap=ReviewMap();
             yield return Click("StartButton");yield return Click("HeroStrikeButton");yield return Click("PracticeButton");
             yield return Click("PrimaryButton");yield return StartReadyRound();
             var actor=Object.FindAnyObjectByType<PauseWatcher>().Local;
             var rig=Camera.main.GetComponent<CameraRig>();rig.Follow(actor,true);rig.SetAimSource(AimSource.Movement);
             int index=0;
-            foreach(string hero in new[]{"sean","phaister","zack","nemu","dante","cheska"})
+            foreach(string hero in ReviewHeroes())
             {
                 if(index++>0){GameServices.Round.EndRound();GameServices.Match.AdvanceRound();}
                 Stage(hero+" accepted introduction, return and live effect");
@@ -86,7 +86,7 @@ namespace TumbangPreso.Diagnostics
                 finally{HeroAbilitySystem.UltimateStarted-=Started;sound.enabled=false;Object.Destroy(sound);actor.Intent.Clear();}
                 if(retained)yield return RetainedHeroView(hero);
             }
-            Stage("six real shared introductions returned into live abilities with actual game audio");
+            Stage("Selected real shared introductions returned into live abilities with actual game audio");
         }
         private IEnumerator RetainedHeroView(string hero)
         {

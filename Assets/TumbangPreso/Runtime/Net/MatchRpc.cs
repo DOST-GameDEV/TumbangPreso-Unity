@@ -349,6 +349,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
             cm.RegisterNamedMessageHandler("WorldFieldItem", OnWorldFieldItemMsg);
             cm.RegisterNamedMessageHandler("WorldFieldEnd", OnWorldFieldEndMsg);
+            cm.RegisterNamedMessageHandler("RafiWater", OnRafiWaterMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("Teleport", OnTeleportMsg);
             cm.RegisterNamedMessageHandler("Impact", OnImpactMsg);
@@ -1900,7 +1901,7 @@ namespace TumbangPreso.Net
             for (int index = 0; index < fields.Count; index++)
             {
                 var field = fields[index];
-                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                using var writer = new FastBufferWriter(512, Allocator.Temp);
                 writer.WriteValueSafe(generation);
                 writer.WriteValueSafe(index);
                 writer.WriteValueSafe((int)field.Type);
@@ -1913,6 +1914,7 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(field.FirstScale);
                 writer.WriteValueSafe(field.SecondScale);
                 writer.WriteValueSafe(field.Split);
+                WriteWaterExtra(writer, field);
                 _nm.CustomMessagingManager.SendNamedMessage("WorldFieldItem", peer, writer, NetworkDelivery.ReliableSequenced);
             }
             using (var writer = new FastBufferWriter(8, Allocator.Temp))
@@ -1953,9 +1955,10 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float firstScale);
             reader.ReadValueSafe(out float secondScale);
             reader.ReadValueSafe(out bool split);
+            if (!ReadWaterExtra(ref reader, (WorldEffectSnapshot.Kind)kind, out int eventId, out var path)) return;
             _worldFieldBatch?.Add(generation, index, new WorldEffectSnapshot.Field { Type = (WorldEffectSnapshot.Kind)kind,
                 Position = position, Forward = forward, Duration = duration, Remaining = remaining,
-                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split });
+                Radius = radius, Owner = owner, FirstScale = firstScale, SecondScale = secondScale, Split = split, EventId = eventId, Path = path });
         }
 
         private void OnWorldFieldEndMsg(ulong senderClientId, FastBufferReader reader)

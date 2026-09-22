@@ -211,6 +211,8 @@ namespace TumbangPreso.Abilities
 
                 case "phaister.1.brand":
                     Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("phaister.1.brand")); break;
+                case "rafi.1.tightcut":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("rafi.1.tightcut")); break;
             }
 
             switch (_skill2Variant?.Id)
@@ -273,6 +275,8 @@ namespace TumbangPreso.Abilities
                 case "nemu.2.leash": return "sfx_var_nemu_leash";
                 case "phaister.1.brand": return "sfx_var_phaister_brand";
                 case "phaister.2.stride": return "sfx_var_phaister_stride";
+                case "rafi.1.tightcut": return "sfx_var_rafi_tightcut";
+                case "rafi.2.longwake": return "sfx_var_rafi_longwake";
                 default: return null;
             }
         }
@@ -345,6 +349,9 @@ namespace TumbangPreso.Abilities
 
                 case "phaister":
                     return new PhaisterHeroKit();
+
+                case "rafi":
+                    return new RafiHeroKit();
 
                 default:
                     return new DanteHeroKit();
@@ -927,6 +934,7 @@ namespace TumbangPreso.Abilities
                 case "sean": return "sfx_ult_theme_sean";
                 case "dante": return "sfx_ult_theme_dante";
                 case "nemu": return "sfx_ult_theme_nemu";
+                case "rafi": return "sfx_ult_theme_rafi";
                 default: return null;
             }
         }
@@ -1021,7 +1029,7 @@ namespace TumbangPreso.Abilities
             // bleached the court for 2.2 seconds after a 0.4-second preparation.
             if (Kit != null && Kit.HeroId == "cheska")
                 Visual.CheskaColdGather.Begin(_motor.transform,Kit.Ultimate.Windup);
-            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack"))
+            else if (Kit == null || (Kit.HeroId != "nemu" && Kit.HeroId != "dante" && Kit.HeroId != "phaister" && Kit.HeroId != "sean" && Kit.HeroId != "zack" && Kit.HeroId != "rafi"))
                 Visual.UltimateColumn.Raise(_context.Position, AccentColour());
 
             // ⚠️⚠️ THE WEATHER IS THE SECOND THING THAT IS NOT LOCAL, AND IT IS HERE RATHER THAN

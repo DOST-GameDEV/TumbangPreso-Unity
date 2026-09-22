@@ -67,6 +67,15 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterEclipse:
                     Ring(vh,0,0,.28f);P(vh,.06f,.28f,-.09f,.10f,-.05f,-.12f,.11f,-.26f);
                     Rays(vh,6,.35f,.44f); break;
+                case AbilityGlyph.RafiCrosscurrent:
+                    P(vh,-.38f,-.25f,-.12f,-.25f,.10f,-.13f,.18f,.08f,.12f,.27f,-.08f,.34f);
+                    P(vh,-.08f,.34f,.08f,.42f,-.05f,.21f);break;
+                case AbilityGlyph.RafiMirrorwake:
+                    Ring(vh,-.20f,.24f,.10f);P(vh,-.32f,.06f,-.34f,-.28f,-.07f,-.28f,-.08f,.06f,-.32f,.06f);
+                    Ring(vh,.18f,.20f,.09f);P(vh,.09f,.03f,.10f,-.22f,.32f,-.27f);break;
+                case AbilityGlyph.RafiBreakwater:
+                    P(vh,-.42f,-.27f,.40f,-.27f,.35f,-.08f,.18f,.02f,.06f,.23f,.17f,.34f,.32f,.28f,.25f,.11f);
+                    P(vh,-.42f,-.27f,-.34f,-.02f,-.15f,.19f,.06f,.23f);break;
                 default:
                     P(vh,-.37f,-.21f,.06f,.24f,.34f,.30f,.27f,.01f,-.20f,-.37f,-.37f,-.21f); break;
             }

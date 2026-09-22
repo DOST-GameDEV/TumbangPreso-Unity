@@ -94,6 +94,11 @@ namespace TumbangPreso.Audio
                 { "sfx_ult_theme_sean",   -14.0f },
                 { "sfx_ult_theme_dante",  -14.0f },
                 { "sfx_ult_theme_nemu",   -14.0f },
+                { "sfx_ult_theme_rafi", -14.0f },
+                { "sfx_step_deck", -8.0f }, { "sfx_swim_stroke", -9.0f }, { "sfx_lagoon_lap", -12.0f },
+                { "sfx_cast_rafi_current", -6.0f }, { "sfx_cast_rafi_mirror", -7.0f },
+                { "sfx_cast_rafi_breakwater", -7.0f }, { "sfx_rafi_intercept", -8.0f },
+                { "sfx_var_rafi_tightcut", -6.0f }, { "sfx_var_rafi_longwake", -7.0f },
                 { "sfx_hex_cast",     -4.0f },
 
                 // ⚠️ THE BREAK IS MIXED LIKE A STATUS, NOT AN EVENT, for the same reason
@@ -357,6 +362,9 @@ namespace TumbangPreso.Audio
             "sfx_cast_zack_sprint", "sfx_cast_zack_magnet", "sfx_cast_zack_summon",
             "sfx_cast_nemu_veil", "sfx_cast_nemu_hijack", "sfx_cast_nemu_seance",
             "sfx_cast_phaister_hex", "sfx_cast_phaister_blink", "sfx_cast_phaister_coven",
+            "sfx_cast_rafi_current", "sfx_cast_rafi_mirror", "sfx_cast_rafi_breakwater", "sfx_rafi_intercept",
+            "sfx_ult_theme_rafi", "sfx_var_rafi_tightcut", "sfx_var_rafi_longwake",
+            "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
 
             // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
             // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing

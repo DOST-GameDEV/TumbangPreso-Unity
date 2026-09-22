@@ -298,6 +298,9 @@ namespace TumbangPreso.Visual
             dict["hero-phaister-blink"] = BuildPhaisterBlink(paths);
             dict["hero-phaister-eclipse"] = BuildPhaisterEclipse(paths);
 
+            dict["hero-rafi-cut"] = BuildRafiCut(paths);
+            dict["hero-rafi-feint"] = BuildRafiFeint(paths);
+            dict["hero-rafi-breakwater"] = BuildRafiBreakwater(paths);
             return dict;
         }
 

@@ -371,6 +371,8 @@ namespace TumbangPreso.UI
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
                         returning = Mathf.Max(returning, RooftopRecovery.Instance.SecondsUntilReturn(slipper));
+                    if (slipper.OwnerSlot == local.PlayerSlot && LagoonWater.Instance != null)
+                        returning = Mathf.Max(returning, LagoonWater.Instance.SecondsUntilReturn(slipper));
                 }
                 if (returning > 0) _context.text = $"Slipper returning · {returning:0.0}s";
                 else

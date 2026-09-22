@@ -31,8 +31,10 @@ def main():
     parser.add_argument('--exe',required=True)
     parser.add_argument('--out',required=True)
     parser.add_argument('--profile',required=True)
-    parser.add_argument('--ordinary-skills',action='store_true',help='Capture all twelve default ordinary skills through accepted input and actual game audio.')
-    parser.add_argument('--skill-variants',action='store_true',help='Capture all 24 existing-kit choices in both roles, including resource-preserving role refusals.')
+    parser.add_argument('--review-hero',help='Limit new-feature captures to this roster hero id.')
+    parser.add_argument('--review-map',help='Start selected hero routes on this registered arena scene.')
+    parser.add_argument('--ordinary-skills',action='store_true',help='Capture selected default ordinary skills through accepted input and actual game audio.')
+    parser.add_argument('--skill-variants',action='store_true',help='Capture selected kit choices in both roles, including resource-preserving role refusals.')
     parser.add_argument('--variant-observer',action='store_true',help='Observe the staged skill-variant route from another actual body instead of the caster.')
     parser.add_argument('--result-end-only',action='store_true',help='Run supported one-round/30-second bot matches to check natural result cleanup in both modes.')
     parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
@@ -40,8 +42,8 @@ def main():
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
     parser.add_argument('--halftime-only',action='store_true',help='Capture full native halftime replay, standings and return in both modes.')
-    parser.add_argument('--hero-replays',action='store_true',help='Add retained real-exchange replay captures to the six live ultimate route.')
-    parser.add_argument('--live-ultimates-only',action='store_true',help='Capture six actual shared ultimate phases and live execution in the native player.')
+    parser.add_argument('--hero-replays',action='store_true',help='Add retained real-exchange replay captures to the selected live ultimate route.')
+    parser.add_argument('--live-ultimates-only',action='store_true',help='Capture selected actual shared ultimate phases and live execution in the native player.')
     parser.add_argument('--review-caster-roster',action='store_true',help='Busy Hero review with Sean, Phaister, Nemu and Cheska and explicit staged full meters for overlap stress.')
     parser.add_argument('--review-muted',action='store_true',help='Record busy native play with master audio muted for visual communication review.')
     parser.add_argument('--review-low-comfort',action='store_true',help='Use Low, reduced motion, no shake/flash/announcer and 1080p in the busy native route.')
@@ -73,6 +75,8 @@ def main():
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
     command=[str(exe),'-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
              '-tp-profile',args.profile,'-tp-uireview',str(out),'-logFile',str(out/'player.log')]
+    if args.review_hero:command+=['-tp-review-hero',args.review_hero]
+    if args.review_map:command+=['-tp-review-map',args.review_map]
     if args.map_surfaces_only:command.append('-tp-map-surfaces-only')
     if args.ordinary_skills or args.skill_variants:command.append('-tp-ordinary-skills')
     if args.skill_variants:command.append('-tp-skill-variants')

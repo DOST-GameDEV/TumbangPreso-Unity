@@ -1,0 +1,55 @@
+{
+  "provenance": "Original deterministic synthesis; no external samples or paid API.",
+  "listening": "Not yet auditioned in the game mix. Peak/RMS are technical measurements, not listening approval.",
+  "cues": [
+    {
+      "cue": "sfx_cast_rafi_current",
+      "seconds": 0.42,
+      "peak": 0.67,
+      "rms": 0.11624114015958968,
+      "sha256": "31c4b3b7892675be24d9570c6577c3706cd3d028a49ca61a2e5913503331f21b"
+    },
+    {
+      "cue": "sfx_cast_rafi_mirror",
+      "seconds": 0.74,
+      "peak": 0.3510808444622684,
+      "rms": 0.09602071882544379,
+      "sha256": "b6a1a7c41bc67e6a66f81ec68cba10f10c4df83b17ce249665ea67691c900b2b"
+    },
+    {
+      "cue": "sfx_cast_rafi_breakwater",
+      "seconds": 1.55,
+      "peak": 0.67,
+      "rms": 0.10516203625104298,
+      "sha256": "f31117e62d171576d46af58ce85ba863f9745a987b5b6d8d0c51d5cf39eb708f"
+    },
+    {
+      "cue": "sfx_rafi_intercept",
+      "seconds": 0.25,
+      "peak": 0.67,
+      "rms": 0.09407057229523484,
+      "sha256": "cac9da0e329f8961cb80fa43c2d61be55ee15cde6603f592c2188dcc788efb51"
+    },
+    {
+      "cue": "sfx_ult_theme_rafi",
+      "seconds": 2.8,
+      "peak": 0.67,
+      "rms": 0.11137032660804518,
+      "sha256": "dd22312aa4b840a8ce8ec64d4ba85c1bec8e9201805290a8554d66e9866a300d"
+    },
+    {
+      "cue": "sfx_var_rafi_tightcut",
+      "seconds": 0.3,
+      "peak": 0.67,
+      "rms": 0.12119452749138951,
+      "sha256": "16ed2af656f2f57970a430152f9b3eb3456199aa46aa85816dc7a68679d0a723"
+    },
+    {
+      "cue": "sfx_var_rafi_longwake",
+      "seconds": 1.02,
+      "peak": 0.3065700312846217,
+      "rms": 0.08280764403023988,
+      "sha256": "a3b8a1ed4bb47e124c211c8e12577b08ef2f5e9982c91332ddbd6dbee62c907f"
+    }
+  ]
+}

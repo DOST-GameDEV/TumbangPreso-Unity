@@ -657,6 +657,7 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitchBright;
+                case "rafi": return new Color(.48f,.84f,.89f);
                 case "dante":
                 case "bayan":
                 default:
@@ -683,6 +684,7 @@ namespace TumbangPreso.UI
                 case "phaister":
                 case "witch":
                     return HeroWitch;
+                case "rafi": return new Color(.15f,.57f,.68f);
                 case "dante":
                 case "bayan":
                 default:

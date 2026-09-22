@@ -1,0 +1,9 @@
+{
+  "original": "tools/build_person_voxel.py",
+  "original_sha256": "a6dd297270b0b155412ba36be1e60a8331e8dbb533d48bc5d145ea34d2a72409",
+  "copy": "tools/build_rafi_voxel.py",
+  "copy_sha256": "35d8b847c0774d3477d41b836323973c613223c87c2143787f0f658ae7b9ecc2",
+  "changed": "Rafi-only output/recipe, native face stroke and brows, scoped swept/tapered hair and garment geometry. Donor skull, family remap, chamfer/smoothing, rig retarget and glTF packing retained; original builder unchanged.",
+  "retarget": "7bones and25translation tracks shifted by the copied builder;33clips retained, no claim of byte-identical tracks.",
+  "protected_inputs_unchanged": true
+}

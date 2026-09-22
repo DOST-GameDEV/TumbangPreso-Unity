@@ -1,0 +1,4 @@
+Exact native player at 1920x1080. Legal staged owner poses, both modes and all graphics profiles.
+Cost windows freeze simulation and compare identical cameras with authored detail disabled/enabled; no image encoding during measurement.
+Frame times are process-level measurements on this host, not isolated GPU timings or device certification.
+AA mode: FXAA

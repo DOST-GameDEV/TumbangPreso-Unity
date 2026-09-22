@@ -27,3 +27,16 @@ Only local test processes/services and named guarded profiles; no authentication
 paid relay traffic, real production-account data or another conversation. Existing
 native UI/variant work is the current heavy job; this network plan does not launch
 concurrent work or replace the rest of the TODO.
+
+
+## Recall-render implementation prepared while request checks run
+
+New opt-in NetRecallRenderProbe and net_recall_render.py prepare actual host,
+owner1, other-player2 and spectator peers. The fourth process first joins a seat
+then requests spectator through the normal host API, so its former shoe3 must
+also lose private glow. Host stages three loose shoes; ownership flags are never
+injected. Every peer must agree on the host epoch/positions and actual mode.
+Standardized real-camera same-frame beam-off/on PNGs check that only the proper
+owner contributes beam pixels; host/spectator contribute none. Actor/FPP hiding
+is scoped/restored solely for the world-only capture. Input/player profiles stay
+protected. This is prepared source, not compiled or passed evidence yet.

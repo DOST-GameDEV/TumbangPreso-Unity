@@ -2733,6 +2733,7 @@ namespace TumbangPreso.UI
                 case "zack": return "LIGHTNING SKIRMISHER\nSprint through fights, build charge, and call down Thunderstrike.";
                 case "nemu": return "SPIRIT TRICKSTER\nSlip beyond reach, possess the street, and turn a seance into a trap.";
                 case "phaister": return "STREET WITCH\nCurse the ground, blink out of trouble, and black out the whole street.";
+                case "rafi": return "CURRENT TRICKSTER\nBend a throw, leave a watery feint, and send a low wave through a chase.";
 
                 // Classic Roster
                 case "bayan":

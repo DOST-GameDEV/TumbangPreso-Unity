@@ -1,0 +1,119 @@
+Mono path[0] = 'C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/network-fixture-v43/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/network-fixture-v43/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-validation/Builds/network-fixture-v43/TumbangPreso_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:          ATI
+    VRAM:            8147 MB
+    App VRAM Budget: 7379 MB
+    Driver:          32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.050 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 129 of 129 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.999700 ms
+[Build] TUMBANG PRESO 1.0.0 | db9761260600+dirty | protocol 48 | StandaloneWindows64
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetReport] writing Logs/net-current-outage-v1\five-second-outage\host.txt after 58 s.
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 8NB2
+[NetBoot] host requested on 8910 dedicated=False: listening
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+[Social] presence not written: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+UnloadTime: 3.015300 ms
+Unloading 34 unused Assets to reduce memory usage. Loaded Objects now: 8377.
+Total: 2.803300 ms (FindLiveObjects: 0.354500 ms CreateObjectMapping: 0.478900 ms MarkObjects: 1.868100 ms  DeleteObjects: 0.101500 ms)
+
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Replay] readback warm-up landed in 4.0 ms (the driver reported an error, which is still a warm-up: the plumbing was built either way)
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=True | s0:-+ai+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Link] Good at 50 ms round trip (host, worst peer).
+[Net] 2 connected, seat 1
+[NetAuto] READY submitted with 2 playing peers.
+[Link] Bad at 521 ms round trip (host, worst peer).
+[Link] Good at 61 ms round trip (host, worst peer).
+[Slice] round 1 begins, taya is seat 0
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetReport] wrote Logs/net-current-outage-v1\five-second-outage\host.txt
+TUMBANG PRESO NETWORK STATE REPORT
+
+role            : HOST
+networked       : True
+local slot      : 0
+protocol        : 48
+mode            : HeroStrike
+map             : Eskinita
+sampled         : 58.0 s
+graphics        : Balanced; 640x400; vsync=1; target=-1
+hardware        : AMD Ryzen 5 2600 Six-Core Processor ; AMD Radeon RX 6600; RAM=16335 MB
+live frame rate : frames=15389; seconds=42.222; avg=364.48; p50=363.64; p5=266.67; p1=190.48; max_ms=64.74
+round           : 1
+defender        : 0
+round active    : True
+lata upright    : False   flips: 5
+tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic / GameLaunch.AllBots is ON and a tournament match needs it OFF: Fills every seat with a bot, including the one a human would take. It exists for `BotBehaviourProbe`. A bracket match that starts with it set has four bots and no players and looks like a hung lobby.
+tournament modifiers : GameLaunch.AllBots
+build identity  : TUMBANG PRESO 1.0.0 | db9761260600+dirty | protocol 48 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled  skills  ults
+--------------------------------------------------------------------------
+0         0 False       Human  True     880       85.1       0     0
+1         3  True HandedToBot False     100       90.5       1     0
+2         0  True         Bot False     100       71.1       0     0
+3         3  True         Bot False     100       81.8       1     0
+
+slipper    on  state  owner  holder  changes
+---------------------------------------------
+0           n      0     -1      -1        0
+1           y      1      1       1        4
+2           y      1      2       2       12
+3           y      1      3       3       15
+
+structural state hash : 683B6533
+discrete state hash : D2A225D9
+
+⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
+for bit on a position or a clock; they must agree on who is who, who is
+taya, what each tsinelas is doing and what the score is.
+
+⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH
+IS. Discrete is not the same as CONSTANT: the score, the slipper states and
+the defender all move during a match, and two reports stop at two different
+instants by construction (a referee has to outlive its clients). Comparing
+the discrete hash between peers therefore fails on a working link roughly
+whenever anything happens. The structural hash covers only what CANNOT
+change while a match runs: which character sits in which seat, which seats
+are bots, and the protocol. Two peers disagreeing on that are playing two
+different matches, whenever you look.
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

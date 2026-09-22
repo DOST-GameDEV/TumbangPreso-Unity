@@ -1,0 +1,18 @@
+{
+  "source": "Assets\\TumbangPreso\\Art\\characters\\persons\\character-male-a.glb",
+  "output": "Assets\\TumbangPreso\\Art\\characters\\persons\\team-rafi.glb",
+  "animation_sha256": "beb52408b823bfde45c898125c5b0eb366ce085597d47c0e318790b9711a0609",
+  "animations": 33,
+  "geometry": {
+    "body-mesh": {
+      "vertices": 3264,
+      "triangles": 1496
+    },
+    "head-mesh": {
+      "vertices": 1084,
+      "triangles": 498
+    }
+  },
+  "helper": "rafi-gills; rigid child of retained head; no new skin bone",
+  "limits": "Authored geometry; imported appearance and FPP still require integration inspection."
+}

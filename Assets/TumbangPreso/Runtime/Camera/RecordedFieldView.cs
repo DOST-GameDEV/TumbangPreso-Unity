@@ -27,7 +27,8 @@ namespace TumbangPreso.CameraSystem
             {
             _built=field;
             Root=new GameObject("RecordedField-"+field.Type);Root.transform.SetParent(parent,false);Root.transform.position=field.Position;
-            if(field.Type==WorldEffectSnapshot.Kind.Sheet){var fx=FrostSurfacePresentation.Build(Root.transform,field.Radius,field.Duration);fx.enabled=false;_step=fx.StepTo;}
+            if(RafiWaterField.IsWater(field.Type)){var fx=RafiWaterVisual.Build(Root.transform,field);fx.enabled=false;_step=fx.StepTo;}
+            else if(field.Type==WorldEffectSnapshot.Kind.Sheet){var fx=FrostSurfacePresentation.Build(Root.transform,field.Radius,field.Duration);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Fire||field.Type==WorldEffectSnapshot.Kind.Crater)
             {SeanHeatGround.Build(Root.transform,field.Radius,field.Duration,field.Forward,field.Type==WorldEffectSnapshot.Kind.Crater);var fx=Root.GetComponentInChildren<SeanHeatGround>();fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Shock)
@@ -89,7 +90,7 @@ namespace TumbangPreso.CameraSystem
             catch{Dispose();throw;}
             finally{UnityEngine.Random.state=random;}
         }
-        public bool Matches(WorldEffectSnapshot.Field field)=>field.Type==_built.Type&&field.Split==_built.Split;
+        public bool Matches(WorldEffectSnapshot.Field field)=>field.Type==_built.Type&&field.Split==_built.Split&&field.EventId==_built.EventId;
         public void Sample(WorldEffectSnapshot.Field field,float elapsed)
         {if(_ward!=null)Root.transform.SetPositionAndRotation(field.Position,Quaternion.LookRotation(field.Forward));if(_mouth!=null)_mouth.position=field.Forward;_step?.Invoke(field.Type==RecordedSpecialFields.Ignition||field.Type==RecordedSpecialFields.Charge?field.FirstScale+elapsed:Mathf.Clamp(field.Duration-field.Remaining+elapsed,0,field.Duration));}
         public void Visible(bool on){foreach(var renderer in _renderers)if(renderer!=null)renderer.forceRenderingOff=!on;foreach(var light in _lights)if(light!=null)light.enabled=on;}

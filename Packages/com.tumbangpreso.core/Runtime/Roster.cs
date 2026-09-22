@@ -137,6 +137,7 @@ namespace TumbangPreso.Core
             new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
+            new RosterEntry("rafi",        "RAFI",            4,    3,    3),
         };
 
         /// <summary>
@@ -162,6 +163,7 @@ namespace TumbangPreso.Core
             new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
+            new RosterEntry("rafi",        "RAFI",            4,    3,    3),
         };
 
         /// <summary>Default people list for global lookups.</summary>

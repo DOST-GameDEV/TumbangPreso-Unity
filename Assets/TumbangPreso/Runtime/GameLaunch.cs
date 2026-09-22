@@ -47,6 +47,8 @@ namespace TumbangPreso
                 "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
             new MapEntry("sa_bubong","SA BUBONG",
                 "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
+            new MapEntry("lagoon","LAGOON COURT",
+                "A sheltered village court. Broad bridges, boats and water steps.",SceneFlow.Lagoon),
         };
 
         public static string SelectedMap = "eskinita";

@@ -1,0 +1,5 @@
+{
+  "scope": "Current Windows request baseline across2matches. Failed5stomp checks in match1; match2passed. Not a pass.",
+  "cleanup": "Host exited naturally after final requested window. The old runner waited on its idle client. Verified client26824 was terminated after active=False/inProgress=False; runner graded then restored/deleted only named task profiles.",
+  "identityHypothesis": "Staged Dante kit may be replaced by actual lobby selection on first accepted cast; next run records hero/character/lobby identity without changing behavior."
+}

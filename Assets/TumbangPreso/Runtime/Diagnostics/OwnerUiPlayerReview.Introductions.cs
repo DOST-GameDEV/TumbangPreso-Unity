@@ -22,7 +22,7 @@ namespace TumbangPreso.Diagnostics
             Settings.SettingsStore.Current.Fullscreen = false;
             Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
             SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
-            SceneFlow.SelectedMap = SceneFlow.Eskinita;
+            SceneFlow.SelectedMap = ReviewMap();
             yield return Click("StartButton"); yield return Click("HeroStrikeButton"); yield return Click("PracticeButton");
             yield return Click("PrimaryButton"); yield return StartReadyRound();
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
@@ -42,7 +42,7 @@ namespace TumbangPreso.Diagnostics
             rig.SetActive(false); Hud.Instance.gameObject.SetActive(false);
             try
             {
-                string[] heroes = { "sean", "phaister", "zack", "nemu", "dante", "cheska" };
+                string[] heroes = ReviewHeroes();
                 for (int i = 0; i < heroes.Length; i++)
                 {
                     string hero = heroes[i]; Stage(hero + " native introduction body");

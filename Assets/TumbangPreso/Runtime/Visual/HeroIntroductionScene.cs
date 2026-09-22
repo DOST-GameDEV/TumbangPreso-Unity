@@ -120,6 +120,9 @@ namespace TumbangPreso.Visual
                         for (int i = 0; i < 3; i++)
                             Add("GatheredIce" + i, VfxShapes.Spire(6, .12f, 0, i * 3), new Color(.18f, .65f, .92f, .88f));
                         break;
+                    case "rafi":
+                        for(int i=0;i<4;i++)Add("GatheredCurrent"+i,WaterRibbon(),new Color(.25f,.67f,.78f,.46f));
+                        break;
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
@@ -129,6 +132,20 @@ namespace TumbangPreso.Visual
             catch { Dispose(); throw; }
         }
 
+        private static Mesh WaterRibbon()
+        {
+            var mesh=new Mesh{name="Rafi cupped current ribbon"};var vertices=new Vector3[26];var triangles=new int[72];
+            for(int i=0;i<13;i++)
+            {
+                float t=i/12f,a=t*2.1f;
+                var point=new Vector3(Mathf.Sin(a)*.28f,t*.4f,Mathf.Cos(a)*.28f);
+                vertices[i*2]=point-Vector3.up*.035f;vertices[i*2+1]=point+Vector3.up*.035f;
+                if(i==12)continue;int n=i*2,j=i*6;
+                int[] faces={n,n+2,n+1,n+2,n+3,n+1};
+                for(int k=0;k<6;k++)triangles[j+k]=faces[k];
+            }
+            mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
         private static Mesh MoonDisc()
         {
             var mesh = VfxShapes.TwoSided(VfxShapes.Splat(40, 0, 7));
@@ -178,7 +195,8 @@ namespace TumbangPreso.Visual
             var go = VfxShapes.Stand(_root.transform, name, mesh, 1);
             var renderer = go.GetComponent<Renderer>();
             renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
-            VfxMaterial.Ghost(renderer, color, .32f);
+            if (_hero == "rafi") RafiWaterVisual.Paint(renderer, color);
+            else VfxMaterial.Ghost(renderer, color, .32f);
             _pieces.Add(new Piece { Transform = go.transform, Renderer = renderer, Color = color });
         }
         private void Place(int index, Vector3 position, Vector3 scale, Quaternion rotation, float opacity)
@@ -253,6 +271,15 @@ namespace TumbangPreso.Visual
                         Place(i, new Vector3((i - 1) * .55f, .015f + weight * .035f, .25f + i * .1f),
                             new Vector3(.30f, .3f, .40f), Quaternion.Euler(weight * (i - 1) * 8, 20 + i * 38, 0), enter * leave);
                     break;
+                case "rafi":
+                    float current=Ease(.3f,1.9f,t);
+                    for(int i=0;i<4;i++)
+                    {
+                        float angle=i*Mathf.PI*.5f+t*.65f;
+                        var origin=FreePalm+new Vector3(Mathf.Cos(angle)*.12f,.04f+i*.025f,Mathf.Sin(angle)*.12f);
+                        Place(i,origin,Vector3.one*Mathf.Lerp(.25f,.75f,current),Quaternion.Euler(8,i*90+t*32,18),enter*leave);
+                    }
+                    break;
                 case "cheska":
                     float form = Ease(.4f, 1.85f, t);
                     Vector3 gatherAt = _heldItem != null ? FreePalm : BothPalms;
@@ -271,6 +298,7 @@ namespace TumbangPreso.Visual
                 case "phaister": offset = new Vector3(1.8f, 1.5f, 5.2f); look.y = 1.45f; fov = 48; break;
                 case "zack": offset = new Vector3(-2.8f, 1.35f, 4.6f); fov = 44; break;
                 case "nemu": offset = new Vector3(2.8f, 1.5f, 5.6f); look.x = -.75f; look.y = 1.4f; fov = 50; break;
+                case "rafi": offset = new Vector3(-2.6f,1.15f,4.7f);look.y=1.0f;fov=47;break;
                 case "dante": offset = new Vector3(-3, 1, 4.3f); look.y = .8f; fov = 50; break;
                 case "cheska": offset = new Vector3(_heldItem != null ? -1.8f : 1.8f, 1.3f, 4); look.y = 1.1f; fov = 43; break;
                 default: offset = new Vector3(2.2f, 1.1f, 4.5f); break;

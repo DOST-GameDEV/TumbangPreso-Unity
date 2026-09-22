@@ -113,6 +113,32 @@ superseded designs do not override the current queue or justify repeating done w
 
 ## Latest owner additions, 2026-09-22
 
+- Latest Rafi correction: no gills. Remove them from the active model, concept,
+  animation hooks and lore. Earlier gill requirements are superseded; preserve
+  historical evidence but do not reintroduce the feature on a later model pass.
+
+- Rafi model correction: the owner explicitly rejected the separate box-recipe
+  model as unlike the existing characters. Find the repository's old voxel guide/
+  builder, make a dedicated copy and retrofit that copy for Rafi. The identified
+  sources are docs/Voxel_Person_Guide.md and tools/build_person_voxel.py; the new
+  recipe is tools/build_rafi_voxel.py. Preserve the original builder and approved
+  characters. Use its actual native donor face/skull, family proportions, chamfer
+  and outline-normal pipeline, not merely its rig underneath unrelated geometry.
+  Retain selected B identity, kit, map and other progress. The rejected attempt is
+  archived under ArtSource/rafi/rejected-box-recipe-20260922 and is not a baseline
+  to defend or ship. Do not spend more native capture work on the rejected model.
+  The owner clarified that the reference is the HERO cast (Sean, Cheska, Dante,
+  etc.), and explicitly requested CANONICAL_RENDERING_PIPELINE.md plus related
+  modelling docs. Use image-generation ideation as requested, then the copied
+  builder and current native hero lineup for the actual model. Make Rafi his own
+  character/lore; never edit the existing characters or original builders.
+- Lagoon correction: the owner rejected the sparse regular dock village. Cross-
+  reference the supplied water-village photo and documented Sama Dilaut/Sama-Bajau
+  architecture. Refine house construction, layout and life, and add detached houses
+  standing over the water on piles. Keep the newly requested islands/mountains.
+  Preserve playable court/recovery rules. Fixed houses do not levitate or bob;
+  distinct houseboats may float. The reference photo is not a shipped texture.
+
 - Animate the sky: slow per-map cloud drift, steady sun/horizon, correct pause and
   replay sampling/return. A static sky does not satisfy the latest request.
 - Inday: remove the pogo-like arm attachments from every model and first-person
@@ -151,6 +177,23 @@ superseded designs do not override the current queue or justify repeating done w
   inventing hits or adding rooting. Preserve keyboard/mouse, controller and touch.
 
 ## Engineering and verification
+
+- Owner correction, 2026-09-22: this agent has spent too much time in verification
+  and test-tool repair loops while required features remained unimplemented.
+  Treat that as a known failure tendency. Quality remains the highest priority;
+  this is a sequencing correction, not permission to skip meaningful validation.
+- During implementation, choose the smallest check that resolves a concrete risk
+  introduced by the change. State its question and stopping condition before running.
+  After it passes, return to the next unfinished feature. Repeat or broaden only
+  for new changes, an actual failure, or a specific unresolved concern.
+- Do not expand diagnostics, repair unrelated stale fixtures, regenerate unchanged
+  evidence, or chase exhaustive coverage while major planned features are missing.
+  Preserve deferred checks and failures in TODO/ledger with their exact scope.
+  Comprehensive integration and regression testing belongs after ALL features are
+  integrated. Never trade away correctness, visual quality, or honest completion claims.
+- Current order correction: the completed rehost check closes this network pass.
+  Implement Rafi and the lagoon now; remaining recall/overlap/whole-backlog checks
+  move to final integration. They are deferred, not deleted or marked passed.
 
 - Core package is engine-free; Core compiles the same sources. Host owns outcomes;
   MatchDirector.AddScore owns points. Preserve square confinement and deduplication.

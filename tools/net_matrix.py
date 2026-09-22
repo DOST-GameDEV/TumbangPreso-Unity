@@ -41,9 +41,14 @@ what it expects of the host and of the client, and the pair is what is checked.
 """
 
 import argparse
+import contextlib
+import hashlib
+import json
+from pathlib import Path
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -353,9 +358,12 @@ def link_summary(work):
 
 
 def run(scenario, exe, outdir, python):
+    for port in ([HOST_PORT] if scenario.direct else [HOST_PORT, LINK_PORT]):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as check:
+            check.bind(("0.0.0.0", port))
     work = os.path.join(outdir, slug(scenario.name))
-    shutil.rmtree(work, ignore_errors=True)
-    os.makedirs(work, exist_ok=True)
+    # Failed evidence is never a disposable cache. Use a fresh --out for a new run.
+    os.makedirs(work, exist_ok=False)
 
     host_report = os.path.join(work, "host.txt")
     client_report = os.path.join(work, "client.txt")
@@ -364,11 +372,22 @@ def run(scenario, exe, outdir, python):
 
     procs = {}
     link = None
+    link_output = None
+    launch = {"cwd": REPO}
+    if os.name == "nt":
+        startup = subprocess.STARTUPINFO()
+        startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startup.wShowWindow = 0
+        launch["startupinfo"] = startup
 
     def spawn(tag, args):
         log = os.path.join(work, f"{tag}.log")
-        return subprocess.Popen([exe] + args + ["-logFile", log],
-                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        process = subprocess.Popen([exe, "-batchmode"] + args + ["-logFile", log],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **launch)
+        procs[tag] = process
+        with open(os.path.join(work, "processes.json"), "w") as record:
+            json.dump({name: child.pid for name, child in procs.items()}, record)
+        return process
 
     # WARNING: THE HOST MUST OUTLIVE THE CLIENT BY MORE THAN THE CLIENT'S HEAD START, AND THE
     # FIRST RUN OF THIS GOT IT WRONG IN A WAY THAT LOOKED LIKE A GAME BUG. `NetStateReport`
@@ -393,74 +412,79 @@ def run(scenario, exe, outdir, python):
     # `round active: False` and zero skills and ultimates on every seat, while the bodies
     # still drifted enough to print plausible `travelled` numbers. Two peers agreeing that a
     # round never started is not evidence about the link.
-    procs["host"] = spawn("host", [
-        "-tp-host", str(HOST_PORT), "-tp-profile", "mtxhost", "-tp-allbots",
-        "-tp-autostart", "2",
-        "-tp-netreport", host_report, "-tp-netseconds", str(host_seconds),
-        "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
+    try:
+        procs["host"] = spawn("host", [
+            "-tp-host", str(HOST_PORT), "-tp-profile", "mtxhost", "-tp-allbots",
+            "-tp-autostart", "2",
+            "-tp-netreport", host_report, "-tp-netseconds", str(host_seconds),
+            "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
 
-    time.sleep(SETTLE)
+        time.sleep(SETTLE)
 
-    if not scenario.direct:
-        link_args = [
-            python, os.path.join(HERE, "net_link.py"),
-            "--listen", str(LINK_PORT), "--to", f"127.0.0.1:{HOST_PORT}",
-            "--delay", str(scenario.delay), "--jitter", str(scenario.jitter),
-            "--loss", str(scenario.loss),
-            "--outage-at", str(scenario.outage_at), "--outage-for", str(scenario.outage_for),
-            # WARNING: IT MUST OUTLIVE THE CLIENT AND THEN STOP ON ITS OWN, and the first
-            # version got the second half wrong. At `seconds + 20` the orchestrator always
-            # reached `terminate()` first, and `TerminateProcess` on Windows runs no handler, so
-            # the proxy never printed the forwarded and dropped counts that say whether the
-            # shaping actually happened. The client starts about a second after the link and
-            # runs `seconds`, so four is enough to outlive it and still self-report.
-            "--seconds", str(scenario.seconds + 4)]
+        if not scenario.direct:
+            link_args = [
+                python, os.path.join(HERE, "net_link.py"),
+                "--listen", str(LINK_PORT), "--to", f"127.0.0.1:{HOST_PORT}",
+                "--delay", str(scenario.delay), "--jitter", str(scenario.jitter),
+                "--loss", str(scenario.loss),
+                "--outage-at", str(scenario.outage_at), "--outage-for", str(scenario.outage_for),
+                # WARNING: IT MUST OUTLIVE THE CLIENT AND THEN STOP ON ITS OWN, and the first
+                # version got the second half wrong. At `seconds + 20` the orchestrator always
+                # reached `terminate()` first, and `TerminateProcess` on Windows runs no handler, so
+                # the proxy never printed the forwarded and dropped counts that say whether the
+                # shaping actually happened. The client starts about a second after the link and
+                # runs `seconds`, so four is enough to outlive it and still self-report.
+                "--seconds", str(scenario.seconds + 4)]
 
-        link = subprocess.Popen(link_args, stdout=open(os.path.join(work, "link.log"), "w"),
-                                stderr=subprocess.STDOUT)
-        time.sleep(1.0)
+            link_output = open(os.path.join(work, "link.log"), "w")
+            link = subprocess.Popen(link_args, stdout=link_output, stderr=subprocess.STDOUT, **launch)
+            time.sleep(1.0)
 
-    procs["client"] = spawn("client", [
-        "-tp-join", "127.0.0.1", str(join_port), "-tp-profile", "mtxclient", "-tp-allbots",
-        "-tp-autostart", "2",
-        "-tp-netreport", client_report, "-tp-netseconds", str(scenario.seconds),
-        "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
+        procs["client"] = spawn("client", [
+            "-tp-join", "127.0.0.1", str(join_port), "-tp-profile", "mtxclient", "-tp-allbots",
+            "-tp-autostart", "2",
+            "-tp-netreport", client_report, "-tp-netseconds", str(scenario.seconds),
+            "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
 
-    started = time.monotonic()
-    killed_at = None
+        started = time.monotonic()
+        killed_at = None
 
-    deadline = scenario.seconds + 75.0
-    while time.monotonic() - started < deadline:
-        elapsed = time.monotonic() - started
+        deadline = scenario.seconds + 75.0
+        while time.monotonic() - started < deadline:
+            elapsed = time.monotonic() - started
 
-        if scenario.kill and killed_at is None and elapsed >= scenario.kill_at:
-            victim = procs.get(scenario.kill)
-            if victim and victim.poll() is None:
-                victim.kill()
-                killed_at = elapsed
-                print(f"    killed {scenario.kill} at {elapsed:.0f} s", flush=True)
+            if scenario.kill and killed_at is None and elapsed >= scenario.kill_at:
+                victim = procs.get(scenario.kill)
+                if victim and victim.poll() is None:
+                    victim.kill()
+                    killed_at = elapsed
+                    print(f"    killed {scenario.kill} at {elapsed:.0f} s", flush=True)
 
-        if all(p.poll() is not None for p in procs.values()):
-            break
+            if all(p.poll() is not None for p in procs.values()):
+                break
 
-        time.sleep(0.5)
+            time.sleep(0.5)
 
-    for name, p in procs.items():
-        if p.poll() is None:
-            p.kill()
-
-    if link is not None:
-        link.terminate()
-
-    time.sleep(1.0)
-
-    return {
-        "scenario": scenario,
-        "host": parse_report(host_report),
-        "client": parse_report(client_report),
-        "work": work,
-        "killed_at": killed_at,
-    }
+        return {
+            "scenario": scenario,
+            "host": parse_report(host_report),
+            "client": parse_report(client_report),
+            "work": work,
+            "killed_at": killed_at,
+        }
+    finally:
+        owned = list(procs.values()) + ([link] if link is not None else [])
+        for process in owned:
+            if process.poll() is None:
+                process.terminate()
+        for process in owned:
+            try:
+                process.wait(timeout=8)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+        if link_output is not None:
+            link_output.close()
 
 
 def describe(result):
@@ -704,6 +728,42 @@ def emit(results):
     return len(failed)
 
 
+@contextlib.contextmanager
+def preserve_matrix_profiles(outdir):
+    from net_request_safety import player_data_root, named_profile
+    data = player_data_root()
+    backup = Path(outdir) / "private-profile-preservation"
+    backup.mkdir(parents=True, exist_ok=False)
+    manifest = []
+    for name in ("mtxhost", "mtxclient"):
+        profile = named_profile(data, name)
+        for source in profile.rglob("*"):
+            if source.is_file():
+                target = backup / name / source.relative_to(profile)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+                manifest.append((source, target, hashlib.sha256(source.read_bytes()).hexdigest()))
+    read_input = None
+    if os.name == "nt":
+        from run_ui_player_review import read_input_preferences
+        read_input = read_input_preferences
+    before = read_input() if read_input else None
+    try:
+        yield
+    finally:
+        for source, target, expected in manifest:
+            source.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(target, source)
+            if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
+                raise RuntimeError("Matrix profile restore did not verify: " + str(source))
+        unchanged = read_input() == before if read_input else None
+        (Path(outdir) / "profile-preservation.json").write_text(json.dumps(dict(
+            existingFilesRestored=len(manifest), sharedInputUnchanged=unchanged,
+            scope="Only named mtxhost/mtxclient profiles; existing files hash-restored. New task-profile files retained."), indent=2))
+        if unchanged is False:
+            raise RuntimeError("Matrix run changed shared input preferences.")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--exe", default=DEFAULT_EXE)
@@ -757,17 +817,18 @@ def main():
         # evidence is the same evidence; the verdict has to be the same verdict.
         return 1 if emit(results) else 0
 
-    for i, (group, s) in enumerate(chosen, 1):
-        print(f"[{i}/{len(chosen)}] {group}: {s.name}", flush=True)
-        started = time.monotonic()
-        r = run(s, args.exe, args.out, args.python)
-        r["group"] = group
-        r["wall"] = time.monotonic() - started
-        results.append(r)
-        ok, faults = evaluate(r)
-        print(f"    {describe(r)}  ({r['wall']:.0f} s)  {'PASS' if ok else 'FAIL'}", flush=True)
-        for f in faults:
-            print(f"      - {f}", flush=True)
+    with preserve_matrix_profiles(args.out):
+        for i, (group, s) in enumerate(chosen, 1):
+            print(f"[{i}/{len(chosen)}] {group}: {s.name}", flush=True)
+            started = time.monotonic()
+            r = run(s, args.exe, args.out, args.python)
+            r["group"] = group
+            r["wall"] = time.monotonic() - started
+            results.append(r)
+            ok, faults = evaluate(r)
+            print(f"    {describe(r)}  ({r['wall']:.0f} s)  {'PASS' if ok else 'FAIL'}", flush=True)
+            for f in faults:
+                print(f"      - {f}", flush=True)
 
     return 1 if emit(results) else 0
 

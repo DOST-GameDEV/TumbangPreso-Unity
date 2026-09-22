@@ -73,14 +73,14 @@ namespace TumbangPreso.CameraSystem
             if(_props.Count==0||time>=_propsScanAt){_propsScanAt=time+.2f;BindProps();}
             foreach(var prop in _props)if(prop.Source!=null)prop.Track.Record(time);
             _fields.Add(CaptureFields(time));if(_fields.Count>MatchPoseHistory.Samples)_fields.RemoveAt(0);
-            // All six shipped kits have recorded body/prop, status, weather,
+            // The shipped kits have recorded body/prop, status, weather,
             // persistent field and distinctive held/flight presentation paths.
             // Unknown future kits require a coverage decision before nomination.
             foreach(var actor in GameServices.Round.Players)
             {
                 var kit=actor?.AbilitySystem?.Kit;if(kit==null)continue;
                 string hero=kit.HeroId;
-                if(hero!="sean"&&hero!="zack"&&hero!="nemu"&&hero!="phaister"&&hero!="cheska"&&hero!="dante")_unsafeAt=time;
+                if(hero!="sean"&&hero!="zack"&&hero!="nemu"&&hero!="phaister"&&hero!="cheska"&&hero!="dante"&&hero!="rafi")_unsafeAt=time;
             }
             for(int i=0;i<_pending.Count;)
             {

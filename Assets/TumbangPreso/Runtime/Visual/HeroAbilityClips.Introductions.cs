@@ -73,6 +73,13 @@ namespace TumbangPreso.Visual
                     PoseKey(b, 2.35f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
                     PoseKey(b, 2.8f, 0, V(0, 0, 0), V(0, 0, 0), V(-85, -8, holdingSlipper ? 75 : 42), V(-85, 8, -42));
                     break;
+                case "rafi":
+                    PoseKey(b, .40f, -.025f, V(4,12,-3), V(0,-14,0), V(-25,10,28), V(-12,0,-20));
+                    PoseKey(b, 1.05f, -.045f, V(8,-15,-4), V(-4,16,0), V(-38,-20,35), V(-20,-15,-25), V(-6,0,3), V(5,0,-3));
+                    PoseKey(b, 1.70f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
+                    PoseKey(b, 2.30f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
+                    PoseKey(b, 2.8f, -.06f, V(8,-25,-6), V(-4,20,0), V(-40,-24,32), V(-26,-24,-25), V(-10,0,5), V(8,0,-5));
+                    break;
                 default: return null;
             }
             // SetCurve is supported in native players only for legacy clips.

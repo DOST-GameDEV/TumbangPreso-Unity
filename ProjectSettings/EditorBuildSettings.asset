@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/TumbangPreso/Scenes/Maps/SaBubong.unity
     guid: c8df4b365443a3f4dbd6a2cd00fe7192
+  - enabled: 1
+    path: Assets/TumbangPreso/Scenes/Maps/Lagoon.unity
+    guid: 3a12f1a4c295618498658e6c3eadc0e8
   m_configObjects: {}

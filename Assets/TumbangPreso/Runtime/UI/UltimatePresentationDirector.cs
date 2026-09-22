@@ -630,6 +630,7 @@ namespace TumbangPreso.UI
                 // A coven ring: evenly spaced arcs on a baseline.
                 case "phaister":
                     return Mathf.Max(Line(v, -0.42f, 0.10f), Arcs(u, v));
+                case "rafi": return Mathf.Max(Line(v,Mathf.Sin(u*7)*.22f,.12f),Line(v,-.44f,.065f));
 
                 default:
                     return Line(v, 0.0f, 0.10f);

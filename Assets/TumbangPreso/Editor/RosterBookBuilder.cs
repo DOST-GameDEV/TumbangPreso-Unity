@@ -67,6 +67,7 @@ namespace TumbangPreso.EditorTools
             { "zack",        "characters/persons/team-zack.glb" },
             { "nemu",        "characters/persons/team-nemu.glb" },
             { "phaister",    "characters/persons/team-phaister.glb" },
+            { "rafi",        "characters/persons/team-rafi.glb" },
             { "custom",      "characters/persons/team-custom.glb" },
 
             // ⚠️⚠️ THE CHARACTER MAKER'S BASE RIG, AND IT IS A NEW ROW RATHER THAN A CHANGE TO
@@ -106,6 +107,7 @@ namespace TumbangPreso.EditorTools
             { "zack",        "person_team-zack.tres" },
             { "nemu",        "person_team-nemu.tres" },
             { "phaister",    "person_team-phaister.tres" },
+            { "rafi",        "person_team-rafi.tres" },
             { "custom",      "person_team-custom.tres" },
 
             // ⚠️ WRITTEN BY `tools/build_base_voxel.py`, NOT CARRIED OVER FROM GODOT. The

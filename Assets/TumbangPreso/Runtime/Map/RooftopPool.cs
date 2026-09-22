@@ -21,10 +21,11 @@ namespace TumbangPreso
         public static bool Contains(Vector3 p)=>p.x>MinX&&p.x<MaxX&&p.z>MinZ&&p.z<MaxZ;
         public static bool TrySurface(Vector3 p,out float y)
         {
+            if(LagoonWater.TrySurface(p,out y))return true;
             y=SurfaceY;
             return Instance!=null&&Instance.Active&&Contains(p);
         }
-        public static bool Swimming(Vector3 p)=>TrySurface(p,out var surface)&&p.y<surface-.72f&&p.y>FloorY-.25f;
+        public static bool Swimming(Vector3 p)=>TrySurface(p,out var surface)&&p.y<surface-.72f&&p.y>(LagoonWater.Instance!=null&&LagoonWater.Instance.Active?LagoonWater.FloorY:FloorY)-.25f;
         public static float MovementScale(Vector3 p)
             =>TrySurface(p,out var surface)&&p.y<surface-.18f?.58f:1;
 

@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=10;
+        public const int WireVersion=11;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -72,6 +72,8 @@ namespace TumbangPreso.CameraSystem
                     {
                         var f=item.State;writer.Write(item.Id);writer.Write((byte)f.Type);Write(writer,f.Position);Write(writer,f.Forward);
                         writer.Write(f.Duration);writer.Write(f.Remaining);writer.Write(f.Radius);writer.Write(f.FirstScale);writer.Write(f.SecondScale);writer.Write(f.Owner);writer.Write(f.Split);
+                        if(Abilities.RafiWaterField.IsWater(f.Type))
+                        { writer.Write(f.EventId);writer.Write(f.Path.Length);foreach(var point in f.Path)Write(writer,point); }
                     }
                 }
                 writer.Write(Sounds.Length);
@@ -97,7 +99,11 @@ namespace TumbangPreso.CameraSystem
                 while((read=deflate.Read(buffer,0,buffer.Length))>0)
                 {if(raw.Length+read>RawByteLimit)throw new InvalidDataException("Expanded clip exceeds its budget");raw.Write(buffer,0,read);}
                 raw.Position=0;using var reader=new BinaryReader(raw,Encoding.UTF8,true);
-                if(reader.ReadInt32()!=0x54554d50||reader.ReadInt32()!=WireVersion)throw new InvalidDataException("Unsupported clip schema");
+                if(reader.ReadInt32()!=0x54554d50)throw new InvalidDataException("Unsupported clip schema");
+                int version=reader.ReadInt32();
+                // Version10 has the identical layout for pre-water fields. Keep
+                // those saved clips readable; live network admission still requires49.
+                if(version!=WireVersion&&version!=10)throw new InvalidDataException("Unsupported clip schema");
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
                 result.Start=reader.ReadSingle();result.End=reader.ReadSingle();result.Contact=reader.ReadSingle();
@@ -157,6 +163,12 @@ namespace TumbangPreso.CameraSystem
                         int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();
                         var f=new WorldEffectSnapshot.Field{Type=kind,Position=ReadVector(reader,10000),Forward=ReadVector(reader,kind==RecordedSpecialFields.Kuro?10000:2),
                             Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
+                        if(Abilities.RafiWaterField.IsWater(kind))
+                        {
+                            if(version<11)throw new InvalidDataException("Water field in a pre-water clip");
+                            f.EventId=reader.ReadInt32();int points=Count(reader,0,Abilities.RafiWaterField.MaxPathPoints);
+                            f.Path=new Vector3[points];for(int p=0;p<points;p++)f.Path[p]=ReadVector(reader,10000);
+                        }
                         if(id<=0||id>100000||!ids.Add(id)||!RecordedSpecialFields.Valid(f))throw new InvalidDataException("Invalid recorded field");
                         frame.Fields[i]=new RecordedField{Id=id,State=f};
                     }

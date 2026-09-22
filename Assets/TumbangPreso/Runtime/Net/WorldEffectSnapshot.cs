@@ -10,7 +10,7 @@ namespace TumbangPreso.Net
     public static class WorldEffectSnapshot
     {
         public const int MaxFields = 256;
-        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7 }
+        public enum Kind { Sheet = 1, Barricade = 2, Fire = 3, Shock = 4, Crater = 5, Hex = 6, Fissure = 7, Current = 8, Mirrorwake = 9, Breakwater = 10 }
         public struct Field
         {
             public Kind Type;
@@ -19,6 +19,8 @@ namespace TumbangPreso.Net
             public float Duration, Remaining, Radius, FirstScale, SecondScale;
             public int Owner;
             public bool Split;
+            public int EventId;
+            public Vector3[] Path;
         }
 
         public sealed class Batch
@@ -84,6 +86,8 @@ namespace TumbangPreso.Net
                 if (pillar.isActiveAndEnabled && pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure, Source = pillar.gameObject,
                     Position = pillar.transform.position, Forward = pillar.transform.forward,
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
+            foreach (var water in RafiWaterField.Active)
+                if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
             return fields;
         }
 
@@ -95,6 +99,7 @@ namespace TumbangPreso.Net
                 || !Finite(field.Radius) || !Finite(field.FirstScale) || !Finite(field.SecondScale)
                 || field.Duration <= 0 || field.Duration > 60 || field.Remaining < 0 || field.Remaining > field.Duration + .05f
                 || field.Owner < -1 || field.Owner >= Core.Balance.PlayerCount) return false;
+            if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
             if (field.Type == Kind.Sheet)
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
                     && field.SecondScale > 0 && field.SecondScale <= 3;
@@ -124,7 +129,8 @@ namespace TumbangPreso.Net
             {
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
                 if (remaining <= .02f) continue;
-                if (field.Type == Kind.Sheet)
+                if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
+                else if (field.Type == Kind.Sheet)
                 {
                     var go = HeroHazards.SpawnIceSheet(field.Position, field.Radius, field.Duration,
                         field.Owner, field.SecondScale, silent: true);
@@ -184,6 +190,7 @@ namespace TumbangPreso.Net
         // Map hazards and render-only replay copies are deliberately outside it.
         public static void ClearPersistentFields()
         {
+            Retire<RafiWaterField>();
             Retire<HeroHazards.IceSheetComponent>();
             Retire<HeroHazards.IceBarricadeComponent>();
             Retire<HeroHazards.FireTrailComponent>();

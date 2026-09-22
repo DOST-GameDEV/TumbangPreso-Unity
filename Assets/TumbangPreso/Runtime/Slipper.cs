@@ -1267,6 +1267,7 @@ namespace TumbangPreso
             BounceOffBounds();
             SpinInFlight(dt);
             if(RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.TryLoseSlipper(this))return;
+            if(LagoonWater.Instance!=null&&LagoonWater.Instance.TryRecoverSlipper(this))return;
 
             // ⚠️ LOST BELOW THE WORLD IS A REAL CASE, NOT A SAFETY NET. A slipper that
             // clears the arena falls forever and the round quietly loses a piece of its
@@ -1746,6 +1747,40 @@ namespace TumbangPreso
             _velocity.y = Balance.DeflectLift * liftScale;
             _flightTime = 0.0f;
             _throwerSlot = -1; // a deflected slipper credits nobody
+        }
+
+        // A current bends an existing throw; it is not a block or a new throw.
+        // Preserve vertical speed, spin, affinity, owner, chain and ignore clocks.
+        public bool HostSteerFlight(Vector3 toward, float degrees)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight
+                || !float.IsFinite(degrees) || !float.IsFinite(toward.sqrMagnitude)) return false;
+            toward.y = 0;
+            var horizontal = new Vector3(_velocity.x, 0, _velocity.z);
+            if (toward.sqrMagnitude < .001f || horizontal.sqrMagnitude < .001f) return false;
+            float turn = Mathf.Clamp(Vector3.SignedAngle(horizontal, toward, Vector3.up),
+                -Mathf.Clamp(degrees, 0, 60), Mathf.Clamp(degrees, 0, 60));
+            var bent = Quaternion.AngleAxis(turn, Vector3.up) * horizontal;
+            _velocity.x = bent.x; _velocity.z = bent.z;
+            return true;
+        }
+
+        // Water carries loose equipment along the floor without arming a throw.
+        public float HostSweepLoose(Vector3 displacement)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Loose
+                || !float.IsFinite(displacement.sqrMagnitude)) return 0;
+            displacement.y = 0; float distance = Mathf.Min(displacement.magnitude, 1.4f);
+            if (distance < .001f) return 0;
+            var direction = displacement.normalized;
+            foreach (var hit in Physics.SphereCastAll(transform.position + Vector3.up * .14f,
+                         .10f, direction, distance, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.GetComponentInParent<Slipper>() == this) continue;
+                distance = Mathf.Min(distance, Mathf.Max(0, hit.distance - .035f));
+            }
+            transform.position += direction * distance;
+            return distance;
         }
 
         /// <summary>

@@ -42,11 +42,11 @@
     {
       "lineAtIntake": 386,
       "heading": "### 155.5 NOT DONE, named rather than left implied",
-      "disposition": "Windows build and sampled frame-coverage complete; peer-render ownership and human judgment remain",
+      "disposition": "software implementation, sampled frame coverage, and actual five-peer ownership rendering passed in Classic and Hero Strike; owner aesthetic judgment remains",
       "evidence": [
-        "docs/reports/presentation-pass-2026-09-21/README.md",
-        "docs/reports/full-backlog-2026-09-21/ui-evidence/beam-and-flare-v1.xml",
-        "docs/reports/full-backlog-2026-09-21/ui-evidence/beam-frame-coverage-v1.csv"
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/beam-frame-coverage-v1.csv",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-classic-v49c/result.json",
+        "docs/reports/full-backlog-2026-09-21/network-evidence/net-recall-hero-v49c/result.json"
       ]
     },
     {
@@ -166,11 +166,11 @@
     {
       "lineAtIntake": 875,
       "heading": "### 153.20 What is still red after this pass, and why each one is: OPEN",
-      "disposition": "combined screen group passes113 with1expected service skip; native current-route refresh in progress",
+      "disposition": "current screens/capabilities reconciled, original338-row inventory preserved;113pass/1external UGS skip and corrected generic-controller routing qualified",
       "evidence": [
-        "docs/reports/full-backlog-2026-09-21/existing-ui-plan.md",
-        "docs/reports/full-backlog-2026-09-21/ui-evidence/full-group-screens.xml",
-        "Assets/TumbangPreso/Tests/PlayMode/control-inventory-migration.tsv"
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/full-group-screens-summary.json",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/generic-fixed-control-migration-results.tsv",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/native-v41-result.json"
       ]
     },
     {
@@ -527,8 +527,12 @@
     {
       "lineAtIntake": 3228,
       "heading": "### 149.5 ⚠️ P2: REPEATED SCENE LOOKUPS IN NETWORK HOT PATHS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "completed by measured no-change decision; no registry rewrite required",
+      "evidence": [
+        "docs/TODO.md section149.5: Claude C3 measurement2026-09-15",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs: SlipperFor validated cache",
+        "docs/reports/claude-engineering-2026-09-15"
+      ]
     },
     {
       "lineAtIntake": 3290,
@@ -1097,8 +1101,12 @@
     {
       "lineAtIntake": 5941,
       "heading": "### 138.4 WHAT DONE LOOKS LIKE, IN THE ORDER THAT PAYS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "software steps1-3 implemented, including restored generic-pad switch and hotplug recursion repair; step4 requires actual unrecognised controller hardware",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/GenericPadBridge.cs",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/generic-controller-ui-fix-v4.xml",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/native-v41-generic-controller.png"
+      ]
     },
     {
       "lineAtIntake": 5985,
@@ -1427,8 +1435,11 @@
     {
       "lineAtIntake": 8329,
       "heading": "### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "current custom-room layout and actual UI route pass; historical 720p defect is superseded",
+      "evidence": [
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/full-group-screens.xml: CustomGameScreenProbe",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/native-v41-viewports.csv"
+      ]
     },
     {
       "lineAtIntake": 8363,
@@ -1991,8 +2002,12 @@
     {
       "lineAtIntake": 11462,
       "heading": "## 96 · OPEN: he has never found the way into the hub ⚠️⚠️",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "superseded by the implemented lobby player-card/profile door; native UI route qualified, user discoverability judgment remains",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/PlayerNameplate.cs: retained unused legacy, documents moved door",
+        "Assets/TumbangPreso/Runtime/UI/LobbyChrome.cs",
+        "docs/reports/full-backlog-2026-09-21/ui-evidence/native-v41-result.json"
+      ]
     },
     {
       "lineAtIntake": 11501,

@@ -351,6 +351,20 @@ namespace TumbangPreso.Core
                 "LONG STRIDE", "Reaches much further, and takes long enough to aim to be read.",
                 0.30f, -0.30f, "Crosses the court", "They see it coming",
                 "Use Shadow Blink eight times", true, 8),
+            new AbilityVariant("rafi.1.current", "rafi", 1, "CROSSCURRENT", "RafiCrosscurrent",
+                "CROSSCURRENT", "Bend one flying slipper toward your aim. Keep its throw credit.",
+                0, 0, "Turns a throw", "One slipper only"),
+            new AbilityVariant("rafi.1.tightcut", "rafi", 1, "CROSSCURRENT", "RafiCrosscurrent",
+                "TIGHT CUT", "A faster current, with a narrower interception band.",
+                .35f, -.35f, "Arrives sooner", "Needs precise aim",
+                "Use Crosscurrent eight times", true, 8),
+            new AbilityVariant("rafi.2.mirror", "rafi", 2, "MIRRORWAKE", "RafiMirrorwake",
+                "MIRRORWAKE", "A watery reflection retraces your steps and feints a throw.",
+                0, 0, "Invites a wrong turn", "You stay vulnerable"),
+            new AbilityVariant("rafi.2.longwake", "rafi", 2, "MIRRORWAKE", "RafiMirrorwake",
+                "LONG WAKE", "The echo lasts longer, but reveals its watery ribbons sooner.",
+                .35f, -.35f, "Lingers in view", "Easier to read",
+                "Use Mirrorwake six times", true, 6),
         };
 
         /// <summary>

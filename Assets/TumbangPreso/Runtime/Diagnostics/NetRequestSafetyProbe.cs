@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,6 +8,9 @@ using System.Reflection;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Unity.Collections;
+using Unity.Netcode;
 
 namespace TumbangPreso.Diagnostics
 {
@@ -16,9 +20,9 @@ namespace TumbangPreso.Diagnostics
     /// over a real transport from a separate player process.
     ///
     /// ⚠️⚠️ IT SENDS THROUGH THE SAME PUBLIC REQUEST METHODS THE GAME DOES AND BYPASSES NO HOST
-    /// GUARD. A duplicate here is the exact payload the real producer sends, written twice in
-    /// one frame, which is what a modified client or an application-level retry would put on
-    /// the wire. Every admission check (`SenderOwnsClaimedSeat`, `PlausibleIntentPose`, the
+    /// GUARD. Repeated calls carry the same action values; current skill calls receive fresh
+    /// receipt IDs. Exact-ID replay is separately exercised by NetPredictionReceiptProbe.
+    /// Every admission check (`SenderOwnsClaimedSeat`, `PlausibleIntentPose`, the
     /// `HostResolve*` predicates, `CanThrow`, `CanBeGrabbedBy`, the kit's own readiness) runs
     /// unchanged on the host. What the fixture DOES stage is the world: where bodies and the
     /// loose tsinelas stand, with bots and local input switched off, the same staging
@@ -70,6 +74,9 @@ namespace TumbangPreso.Diagnostics
         private int _lastRound;
         private float _pressUntil = -1;
         private Verb _pressVerb;
+        private int _lastKitIdentity;
+        private bool _rehost, _rehosting, _rehosted;
+        private long _oldEpoch;
 
         private static readonly FieldInfo DenialsSent =
             typeof(MatchRpc).GetField("_denialsSent", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -113,19 +120,23 @@ namespace TumbangPreso.Diagnostics
             probe._rejoined = Environment.GetCommandLineArgs().Contains(RejoinSwitch);
             probe._awaitKill = Environment.GetCommandLineArgs().Contains(KillSwitch);
             if (int.TryParse(Argument(MatchesSwitch), out int matches) && matches > 1) probe._matchesWanted = matches;
+            probe._rehost = Argument("-tp-requestsafety-rehost") != null;
+            if (int.TryParse(Argument("-tp-rehost-phase"), out int phase)) probe._match = phase - 1;
+            long.TryParse(Argument("-tp-rehost-old-epoch"), out probe._oldEpoch);
             string path = Path.GetFullPath(Argument(TraceSwitch));
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._trace = new StreamWriter(path) { AutoFlush = true };
             probe._trace.WriteLine("real,host,local,match,round,elapsed,defender,punchCd,lungeCd,shoveCd,slideCd,stamina," +
                                    "holding,shoeState,shoeHolder,throws,retrievals,shoveAttempts,lungeAttempts,tags," +
                                    "denPunch,denLunge,denShove,denSlide,stompCharges,stompWindup,carapaceCd,carapaceActive," +
-                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z,seat1Bot");
+                                   "seat0PunchCd,seat2Holding,seat2Stun,x,z,seat1Bot,heroIndex,characterPick,lobbyPick,characterMode,kitIdentity,epoch");
             probe._markers = new StreamWriter(Path.ChangeExtension(path, ".markers.csv")) { AutoFlush = true };
             probe._markers.WriteLine("real,local,match,round,elapsed,name");
         }
 
         private void Update()
         {
+            if (_rehosting) return;
             var round = GameServices.Round;
             var match = GameServices.Match;
             // Once a second, whatever the gates below decide, so a peer that stops sampling says
@@ -171,20 +182,77 @@ namespace TumbangPreso.Diagnostics
             if (_stagedRound != number && elapsed >= 4.5f) Stage(round, caster, number);
             if (_stagedRound == number)
             {
+                int dante = Roster.IndexIn(Roster.HeroPeople, "dante");
+                if (caster.CharacterIndex != dante || caster.AbilitySystem.HeroId != "dante")
+                {
+                    // Allow the host's staged pick announcement to reach the client,
+                    // but never send requests against a different body/kit silently.
+                    if (elapsed >= 6.5f)
+                    {
+                        Mark(number, elapsed, "fixture caster identity did not settle");
+                        _trace.Flush(); _markers.Flush(); Application.Quit(2);
+                    }
+                    return;
+                }
                 if (NetAuthority.IsHost) HostStaging(round, caster, number, elapsed);
                 if (NetAuthority.LocalSlot == Caster) ClientSends(caster, number, elapsed);
             }
 
             Sample(round, caster, number, elapsed);
+            if (_rehost && !_rehosted && NetAuthority.IsHost && _match == 1 && number >= 2 && elapsed > 24)
+            { BeginRehost(); return; }
             // ⚠️ THE HOST LEAVES FIRST. When the client left first the host's AI takeover of seat 1
             // changed that seat's kit on the way out, which is a seat handover and not one of the
             // requests under test, and it landed inside the last sampled second.
             if (_match >= _matchesWanted && number >= 2 && elapsed > (NetAuthority.IsHost ? 24.0f : 26.0f)) { _trace.Flush(); _markers.Flush(); Application.Quit(); }
         }
 
+        private async void BeginRehost()
+        {
+            _rehosting = _rehosted = true;
+            _oldEpoch = GameServices.Match.PresentationMatchId;
+            Scene previousScene = SceneManager.GetActiveScene();
+            string map = UI.SceneFlow.SelectedMap;
+            try
+            {
+                Mark(GameServices.Match.RoundNumber, UI.SceneFlow.SelectedRoundSeconds - GameServices.Round.TimeLeft, "host begins fresh session in same process");
+                int port = int.Parse(Argument("-tp-requestsafety-rehost"), CultureInfo.InvariantCulture);
+                if (!await NetSession.Instance.StartHostAsync(port)) throw new InvalidOperationException("Same-process rehost refused.");
+                UI.SceneFlow.Go(map);
+                StartCoroutine(AfterRehostScene(previousScene, map));
+            }
+            catch (Exception error) { Debug.LogException(error); Application.Quit(2); }
+        }
+
+        private IEnumerator AfterRehostScene(Scene previousScene, string map)
+        {
+            float until = Time.realtimeSinceStartup + 25;
+            bool Loaded() => SceneManager.GetActiveScene() != previousScene
+                && SceneManager.GetActiveScene().name == map && SceneManager.GetActiveScene().isLoaded;
+            while (!Loaded() && Time.realtimeSinceStartup < until) yield return null;
+            if (!Loaded())
+            { Debug.LogError("[RequestSafetyProbe] Rehost scene did not reload."); Application.Quit(2); yield break; }
+            _wasInProgress = false; _lastRound = _stagedRound = 0; _done.Clear();
+            _rehosting = false;
+            string signal = Path.ChangeExtension(Argument(TraceSwitch), ".rehost");
+            File.WriteAllText(signal + ".tmp", _oldEpoch.ToString(CultureInfo.InvariantCulture));
+            File.Move(signal + ".tmp", signal);
+            Debug.Log("[RequestSafetyProbe] same host process listening in a fresh session; previous epoch=" + _oldEpoch);
+        }
+
         private void Stage(RoundDirector round, CharacterMotor caster, int number)
         {
             _stagedRound = number;
+            if (NetAuthority.IsHost)
+            {
+                // Direct-arena automation may begin with a bot's existing body.
+                // Binding only its kit makes the next legitimate appearance refresh
+                // restore that body's original hero. Stage the actual caster pick
+                // through the same snapshot path used by the other network probes.
+                int dante = Roster.IndexIn(Roster.HeroPeople, "dante");
+                MatchRpc.Instance.SyncPicksClientRpc(new[] { Caster, dante, -1, -1 });
+                MatchRpc.Instance.BroadcastPicks();
+            }
             caster.AbilitySystem.BindHero("dante", new HeroBuild { HeroId = "dante" });
 
             // Round 1 seat 1 attacks from outside the box; round 2 it is the taya inside it.
@@ -235,6 +303,19 @@ namespace TumbangPreso.Diagnostics
             Vector3 at = caster.transform.position;
             Vector3 facing = caster.transform.forward;
             Vector3 aim = at + facing * 3;
+            if (_oldEpoch != 0 && _match == 2 && number == 1 && Once("old-session-skill", elapsed >= 6.7f))
+            {
+                // Current valid pose/role/round, but the prior session's match stamp.
+                // A high sequence also checks that rejection cannot poison fresh IDs.
+                // Keep this opt-in packet in step with MatchRpc's current ReqAbility schema.
+                using var writer = new FastBufferWriter(128, Allocator.Temp);
+                writer.WriteValueSafe(Caster); writer.WriteValueSafe(0); writer.WriteValueSafe(at);
+                writer.WriteValueSafe(facing); writer.WriteValueSafe(aim); writer.WriteValueSafe(0f);
+                writer.WriteValueSafe(false); writer.WriteValueSafe(Vector3.zero);
+                writer.WriteValueSafe(_oldEpoch); writer.WriteValueSafe(number); writer.WriteValueSafe(1000000L);
+                NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ReqAbility", NetworkManager.ServerClientId, writer);
+                Mark(number, elapsed, "stale previous-session skill request");
+            }
 
             if (number == 1)
             {
@@ -357,6 +438,16 @@ namespace TumbangPreso.Diagnostics
             var stats = line as PlayerMatchStats;
             var denials = (NetAuthority.IsHost ? DenialsSent : DenialsTaken)?.GetValue(MatchRpc.Instance) as int[];
             var kit = caster.AbilitySystem.Kit;
+            int kitIdentity = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(kit);
+            int heroIndex = Roster.IndexIn(Roster.HeroPeople, caster.AbilitySystem.HeroId);
+            int lobbyPick = MatchRpc.Instance.GetSeatInfo(Caster)?.CharacterPick ?? -1;
+            if (_lastKitIdentity != kitIdentity)
+            {
+                Debug.Log($"[RequestSafetyIdentity] match={_match} round={number} elapsed={elapsed:F3} " +
+                    $"kit={caster.AbilitySystem.HeroId} characterPick={caster.CharacterIndex} lobbyPick={lobbyPick} " +
+                    $"mode={caster.Mode} identity={kitIdentity} previous={_lastKitIdentity}");
+                _lastKitIdentity = kitIdentity;
+            }
             var seat0 = round.PlayerAt(0).GetComponent<CombatVerbs>();
             var seat2 = round.PlayerAt(2);
 
@@ -371,7 +462,8 @@ namespace TumbangPreso.Diagnostics
                 denials != null ? denials[2] : -1, denials != null ? denials[3] : -1,
                 kit.Skill1.ChargesRemaining, kit.Skill1.WindupRemaining, kit.Skill2.CooldownRemaining, kit.Skill2.IsActive ? 1 : 0,
                 seat0 != null ? seat0.PunchCooldownLeft : -1, seat2.HoldingSlipper ? 1 : 0, seat2.StunLeft,
-                caster.transform.position.x, caster.transform.position.z, caster.IsBot ? 1 : 0
+                caster.transform.position.x, caster.transform.position.z, caster.IsBot ? 1 : 0,
+                heroIndex, caster.CharacterIndex, lobbyPick, (int)caster.Mode, kitIdentity, GameServices.Match.PresentationMatchId
             };
             _trace.WriteLine(string.Join(",", row.Select(v => Convert.ToString(v, CultureInfo.InvariantCulture))));
         }

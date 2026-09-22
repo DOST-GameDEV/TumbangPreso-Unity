@@ -963,6 +963,21 @@ namespace TumbangPreso.CameraSystem
         /// <summary>
         /// Play `throw`, `grab`, `slam`, `cast`, or bespoke hero actions on the viewmodel arm.
         /// </summary>
+        // Off-hand cut, opposing shoulder feint, then a low-to-side water release.
+        private static readonly Key[] CurrentCutClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.09f,-.08f,.03f,0,-.35f,-.32f,.25f,true),
+            new Key(.18f,-.10f,-.03f,0,-.70f,.55f,.42f,true), new Key(.33f,-.05f,0,0,-.32f,.48f,.18f,true),
+            new Key(.58f,0,0,0,0,0,0,true) };
+        private static readonly Key[] MirrorFeintClip = {
+            new Key(0,0,0,0,0,0,0,true), new Key(.14f,-.25f,-.16f,-.08f,-.18f,.28f,.12f,true),
+            new Key(.30f,-.12f,.20f,.04f,-.28f,-.18f,.20f,true), new Key(.47f,-.05f,.08f,0,-.10f,-.06f,.08f,true),
+            new Key(.66f,0,0,0,0,0,0,true) };
+        private static readonly Key[] BreakwaterReleaseClip = {
+            new Key(0,-.12f,-.18f,-.10f,-.18f,-.24f,.20f,true),
+            new Key(.26f,-.32f,-.06f,-.16f,-.65f,-.12f,.30f,true),
+            new Key(.55f,-.24f,.25f,-.12f,-.55f,.60f,.62f,true),
+            new Key(.76f,-.10f,.12f,-.05f,-.26f,.42f,.28f,true),new Key(1.05f,0,0,0,0,0,0,true) };
+
         public bool PlayAction(string clip)
         {
             _clipFromRight = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
@@ -1019,6 +1034,9 @@ namespace TumbangPreso.CameraSystem
                   : clip == "seance-channel" ? SeanceChannelClip
                   : clip == "cast-hex" ? CastHexClip
                   : clip == "blink" ? BlinkClip
+                  : clip == "current-cut" ? CurrentCutClip
+                  : clip == "mirror-feint" ? MirrorFeintClip
+                  : clip == "breakwater-release" ? BreakwaterReleaseClip
                   : clip == "coven-eclipse" ? CovenEclipseClip
                   : null;
 
@@ -1250,6 +1268,7 @@ namespace TumbangPreso.CameraSystem
                 case "cheska": return SkinCheska;
                 case "nemu": return SkinNemu;
                 case "phaister": return SkinPhaister;
+                case "rafi": return new Color32(184,129,81,255);
 
                 // Classic Characters
                 case "bayan": return SkinBayan;
@@ -1293,6 +1312,8 @@ namespace TumbangPreso.CameraSystem
                 case "phaister":
                 case "witch":
                     return "phaister";
+                case "rafi":
+                    return "rafi";
 
                 case "bayan":
                 case "berto":
@@ -1398,6 +1419,9 @@ namespace TumbangPreso.CameraSystem
             ClearAccessories(_rightArm);
             ClearAccessories(_leftArm);
             if(characterId=="inday" && UseIndaySourceArms())return;
+            // Rafi has simple source hands/sleeves. Keep their exact palette and
+            // geometry instead of giving this new hero the generic wrist kit.
+            if(characterId=="rafi" && UseRosterArms(characterId))return;
             // Use the retained solid block-hand frame with character-specific
             // sleeves and skin. Extracting every body gauntlet/prop into this
             // close view created the rejected fragmented hands. All action

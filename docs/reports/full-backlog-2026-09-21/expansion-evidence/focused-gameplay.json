@@ -1,0 +1,52 @@
+[
+  {
+    "run": "rafi-gameplay-v1",
+    "result": "Failed(Child)",
+    "total": "4",
+    "passed": "3",
+    "failed": "1",
+    "duration": "37.2740149",
+    "cases": [
+      {
+        "name": "CurrentSteersOneFlightWithoutStealingCredit",
+        "result": "Passed",
+        "failure": null
+      },
+      {
+        "name": "InnerAndOuterStairsLetBothModesLeaveTheWater",
+        "result": "Failed",
+        "failure": "  Classic failed the inner stairs.\n  Expected: greater than or equal to 0.0f\n  But was:  -1.99999988f\n"
+      },
+      {
+        "name": "MirrorAndItsRecordedViewCannotCreateActorsOrEquipment",
+        "result": "Passed",
+        "failure": null
+      },
+      {
+        "name": "WaveCarriesLooseEquipmentWithoutScoringOrMovingHeldEquipment",
+        "result": "Passed",
+        "failure": null
+      }
+    ]
+  },
+  {
+    "run": "rafi-stairs-v2",
+    "result": "compile failure",
+    "reason": "Fixture tried to assign private MouseAimed; corrected by moving the camera follow target to seat0."
+  },
+  {
+    "run": "rafi-stairs-v3",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "duration": "21.2761864",
+    "cases": [
+      {
+        "name": "InnerAndOuterStairsLetBothModesLeaveTheWater",
+        "result": "Passed",
+        "failure": null
+      }
+    ]
+  }
+]

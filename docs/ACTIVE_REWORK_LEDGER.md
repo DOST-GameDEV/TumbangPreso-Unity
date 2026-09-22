@@ -1,156 +1,160 @@
 # Active TUMP rework ledger
 
-## Scope and rules
+## Scope and latest owner direction
 
 Complete EVERY unfinished autonomously actionable TODO in this conversation.
-Do not stop after a phase or mark the overall goal complete while implementation
-remains. Owner is asleep; no questions, subagents/other chats, paid services,
-resets, main edits or Desktop replacement. Preserve task IDs, all working progress,
-original dirty intake, failed evidence and source art/rigs. AGENTS.md is authoritative.
+No subagents/other chats, paid API/CLI services, resets, main edits, Desktop replacement
+or destructive cleanup. No questions while owner is AFK. Preserve every task ID,
+original dirty work, source art/rig/GUIDs and failed evidence. A checkpoint never
+ends the assignment. AGENTS.md remains authoritative.
 
-Dev: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published/verified origin HEAD4a8a51ec1bf58f7c68627eba521e5d4c03e331ee.
-Final19-family map surfaces, sky/outline/generator and plain Inday arms are published
-in4a8a51ec/e50f8c37. Current existing UI/kit/controller work is UNCOMMITTED.
+Known failure tendency: verification/test-tool loops consumed excessive time.
+Quality still matters most. Run a focused check for an actual changed risk, fix
+real failures, and move on when it passes. Broad final qualification belongs after
+features are integrated. Do not regenerate unchanged evidence as a default.
 
-Validation: sibling TumbangPreso-Unity-validation, detacheddb976126 plus explicitly
-copied owned inputs; separate Assets/Library/Temp/obj. One heavy job. Every Editor
-launch via python tools/run_unity_guarded.py, profile presentation-validation-20260921,
-Unity6000.5.8f1. Keep caches. Never mutate validation inputs during an active job.
-Protocol48 and replay schema10 remain. Internal builds honestly say db976126 dirty;
-not a final coherent release stamp. Desktop unchanged.
+LATEST owner: Rafi face/expression/hair rejected, FPP arms do not match body, and
+whole character feels like a retexture without his own features. Refine Rafi ONLY.
+No gills. No original character/builder changes. This is steering the ongoing full
+assignment, not permission to forget the map or other TODOs.
 
 ## Exact current action
 
-NO owned jobs, Editors, native players, encoders or browser tabs remain.
-Controller contracts11/11. V41built1193MB/54s, guarde8d2d8b42207; native UIpassed,
-including synthetic controller clicks/save/discard/reopen and preserved preferences.
-Caster and observer comparisons each passed48cases (44casts+4role refusals); Sean
-native visual route passed.98timestamped movies encoded,96with real engine audio.
-All stream/duration checks pass; hashes in native-ui-kit-media-v41.json. Audio not
-listened to. Final two reset-mapping meanings corrected from original callbacks,
-verified against captured targets and copied to validation. No runtime change.
+New distinctive Rafi model is implemented in tools/build_rafi_voxel.py, the actual
+retrofitted copy of the original builder. Current876968byte GLB,76body/20head boxes,
+33clips;7bones/25translation tracks retargeted. No claim of byte-identical tracks.
+Native donor skull, family proportions, chamfer/outline smoothing and packing kept.
+Swept/tapered hair crest, tied tail, navy headwrap/float clip, short closed mouth/
+graphic brows, asymmetric shoulder lining/sash/sailcloth panel, elongated rope coil,
+and one LEFT wrist cord. All12protected original model/builder hashes unchanged.
 
-Exact next: regenerate explicit Logs/existing-ui-kit-owned-paths.txt/source hashes,
-review staging, commit --quiet -F and fetch/push ASTRAReworks only. Exclude the two
-original unrelated PNG metas. Then immediately continue existing-network-plan.md,
-remaining whole-kit overlap/reconciliation and required Rafi/lagoon, not final answer.
+Built-in concept rafi-distinctive-hero-v3.png and decision brief are under
+ArtSource/badjao/rafi-refinement-20260922. Tool has no version selector; never claim
+verified GPT Images2.5. No paid API/reset. Concept is ideation, native model governs.
+Rejected source/model/palette remain in ArtSource/rafi/rejected-face-hair-20260922.
+Earlier separate-box recipe also preserved under rejected-box-recipe-20260922.
 
-Completed native route instructions retained for reproducibility: existing-ui-kits-v41 with
-currently copied source, then run default native UI route (includes new synthetic
-controller save/discard) and --skill-variants in caster and --variant-observer views.
-Run original --sean-visual-only diagnostic before integrating its original dirty
-hook. Inspect actual captures/results, fix defects, preserve failures. Encode UI/
-variant motion from actual frames.csv only after players exit. Publish stable owned
-batch, then finish remaining peer/request/rejoin checks and full TODO reconciliation.
-RafiB/lagoonC implementation HAS NOT BEGUN and remains required LAST after existing
-work. Do not finalize at the UI/kit checkpoint.
+FPP ROOT CAUSE: ApplyCharacterStyle never called UseRosterArms for Rafi, so he used
+generic hands/material/accessories even though his source arm meshes existed.
+ViewmodelArms.cs now routes ONLY Rafi to extracted source geometry/AppliedPalette.
+Other heroes' FPP unchanged. New left cord exists on both source body and extracted
+left arm; no generic black wrist patch. This is implemented but runtime check NEXT.
 
-## Current verified evidence
+Native art v3 completed0,guard3a38a0315acd,job7820 reaped. It exposed rectangular
+locks and badge-like coil. Refined local taper/tilts and elongated coil. V4 completed0,
+guard595303bb8589,job95214 reaped. Four angles and hero lineup inspected; actual
+native images are validation Logs/rafi-distinct-v4. Original heroes unchanged.
+Only Rafi portrait/palette/left-arm output changes recovered into DEV via
+reports/full-backlog-2026-09-21/rafi-distinct-v4-transfer.json.
 
-- Environmentv39 passed96map/mode/quality views,48paired frozen-scene process timing
-  windows,8walks,12s sky, two30s mixed-caster Low captures.11movies encoded/hashes
-  saved. All2686renderers accounted for across19families/retained authored surfaces.
-  Full generator repeatability/source tags qualified; failure and repair retained.
-  Native1192MB/85s, guard80aa3ba39f21. See map receipts, no need to repeat unchanged.
-- Existing UI settings7/7, then initial picker18/24 found stale tests/capture faults.
-  Corrected directory creation, variant summary expectation, renamed login-canvas
-  exemption and current inventory walk. Complete screens group113/114,0failed,
- 1UGS identity skip (batch disables sign-in),463.937s, all45fixtures present.
-- Original338-row legacy inventory is untouched.122identity mappings require actual
-  current controls; two explicit owner removals retained. Conditional welcome/queue/
-  ready nodes are separately labeled constructed-state coverage. Do not call those
-  actual service qualification. A wrong Button_ON mapping WAS found later, below.
-- Sean E defender baseline1/2 failed because it spent a charge on an unusable throw.
-  CanActivate now refuses defender;4Sean/Zack E descriptions say Attacker only.
-  Fix-v3 passes4/4 (48.734s, guard67a1ffe14157). An unmatched Flare filter is NOT
-  counted; correct Flare test subsequently passes with beam coverage.
-- Beam-and-flare-v1 passes2/2 (16.761s, guardaf0ce7281e6d).7same-frame actual-camera
-  beam-off/on samples, Eskinita1280x720/1600x720, range and approach band, max0.265%
-  changed pixels and0new white pixels. Not every angle/map or GPU cost.
-- Internal existing-ui-kits-v40 builds1193MB/66s, guard60a83de04fbc. Default native
-  UI route PASSED (Logs/existing-ui-kits-v40-native), shared input unchanged. Current
-  title motion, settings, controller, both-mode picker/results and Classicrematch.
-  Actual Player720p/4:3 and Hero result frames inspected. Audio not listened to.
+v50 built1211MB/58s,guard a69b12c3ea29,job30634 reaped. Owner/observer routes
+jobs80429/51795 reaped; existing skill checks passed BUT FPP appearance FAILED.
+Actual owner frames still showed classic fallback arms. Second root cause found:
+NormalizeCharacterId omitted Rafi and converted it to classic before arm selection.
+Both DEV+validation now preserve Rafi's ID and route to its actual source arms.
+Native route now asserts CurrentHeroId and actual left/right mesh references.
+It also stages Rafi outside7m and asserts real charge/release; old attempted throw
+inside3.2m was correctly refused. No gameplay rule change. Failed evidence preserved.
 
-## Native variant diagnostic failure, correction still needs runtime
+v51 built1211MB/95s,guard a3d72187d149,job88339 reaped. Actual owner8/8 and
+observer8/8 pass, jobs14579/94011 reaped. Actual owner images inspected: green sleeve,
+cream cuff, source hand shape and LEFT wrist cord; generic black patches gone.
+Actual mesh reference and canonical Rafi ID assertions passed, and all attacker
+cases charge/release from outside the legal7m boundary. Source hashes/unchanged-pixel
+captures/receipts in expansion-evidence/rafi-v51-source-inputs.json. Human approval
+not inferred. Latest model/source/palette/arms match DEV and validation exactly.
 
-New OwnerUiPlayerReview.Variants.cs compares24ordinary choices x2roles, with optional
-observer view. Four attacker-only E cases should refuse without resource loss.
-V40caster route FAILED at case6: CannotAct intentionally buffers without publishing
-LastAnswer. Charges stayed2->2; the diagnostic incorrectly demanded an answer event.
-Corrected diagnostic now requires real press samples, CanAct/IsReady with refused
-CanActivate, no active effect and unchanged charge; it verifies choice identity each
-frame and records early travel separately from later movement. Copied to validation,
-but requires v41 rebuild and actual48-case rerun. Keep v40partialCSV/frames/failure.
-Early Afterburn/full-rush max travels happened to match in staged movement; do not
-infer absence of tradeoff from that saturated measure. Prior dedicated Afterburn
-and all kit variant contracts remain. Inspect actual new early metrics/footage.
+NEXT: save/publish explicit owned expansion/network/Rafi source checkpoint (fetch
+already confirms origin/ASTRAReworks3b4fb19c), then investigate Lagoon deck's oblique
+fine/dashed line artifact, finish full TODO dispositions and coherent qualification.
+Owner8movies encoded at measured timing with engine audio. Observer8 + v49ultimate/
+replay2 movies currently encoding in validation (last tool output). No native players
+or Editor remain running. Do not repeat completed Rafi mechanics/peer/arm checks.
 
-## Controller capability correction and root cause
+## Workspace and source state
 
-Manual tracing found original Button_ON was GenericPadBridge.Enabled, NOT Touch.
-Earlier green migration receipt is retained but does not prove that capability.
-The manifest now requires toggle:GenericControllerValue; inventory adds/removes a
-synthetic joystick to expose the real conditional control.
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+Published HEAD3b4fb19c81ea06dd7bbd8a1e42d4b0d707d77421. No newer commit/push yet.
+Validation sibling TumbangPreso-Unity-validation remains detached db976126 with
+explicit owned input copies and independent Assets/Library/Temp/obj. Its dirty
+internal builds are honestly stamped db976126+dirty, NOT final coherent releases.
+Built-in pipeline, Unity6000.5.8f1, protocol49, replay11. Reader supports water-free
+schema10 clips. Append-only Rafi Hero index6/AllPeople18 and Lagoon map5.
+Every Editor through tools/run_unity_guarded.py, profile presentation-validation-20260921.
+One heavy workload. Keep caches warm; freeze inputs of active validation jobs.
 
-Baseline-v1 live hotplug recursively reentered GenericPadBridge.Sync while creating
-its virtual Gamepad, before recording the bridge.166809551-byte raw log retained.
-Only verified Editor27340 terminated; guardffd36e74c8f2 restored4files/input.
-Small _syncing/_syncAgain wrapper now completes one device pass before handling
-nested callbacks. Existing mapping is unchanged. Backend-only baseline-v2 reached
-and failed the genuine missing-UI assertion in1.482s, guard813adbf22cf3.
+Do not stage/copy/edit original unrelated metas home-court.png.meta and
+loading-street.png.meta under Resources/UI/composition-redesign. Original26dirty
+intake is backed up in Logs/presentation-pass-2026-09-21/intake.json/intake-files.
+Explicit owned staging only, fetch before ASTRAReworks-only push, verify origin HEAD.
+No git add-all/reset/clean/force. No task-owned browser tabs/servers opened.
 
-Current UI restores the conditional toggle through existing TumpSettingsSession
-save/discard and refreshes it on hotplug without interrupting a rebind/options popup.
-Fix-v3:6/7,32.412s, guard2e89da456385. Inventory and hotplug/save/discard pass; the
-long controller status clipped at960x540. ControllerMapScreen now uses concise
-contextual footer text rather than telling a user already on the map to open it.
-Fix-v4:2/2,17.337s, guard3d8659b265bf (inventory first preserves unknown-device
-state, then controller/touch layout). No assertion suppression.
+## Retained implementation and new integration evidence
 
-playerprefs_guard now also protects existing tumbangpreso.genericpad. Integer and
-absent-key restoration plus narrow-name guards pass4/4 in tools/test_playerprefs_guard.py.
-The same allowlist protects the native runner comparison. New native Controls
-partial tests actual switch clicks/save/discard with a synthetic joystick, restores
-original value/key existence, and explicitly does not claim physical-pad coverage.
-This partial and its main hook are copied but only compile-checked by fix-v4.
+Rafi Q Crosscurrent steers first flying slipper, retains thrower/owner/chain/affinity;
+E Mirrorwake is bounded host-history harmless echo; Breakwater is low covered/jumpable
+wave, one impulse per rival and bounded1.4m loose-shoe carry, no can hit/scoring.
+Alternatives derive declared35% gain/cost. Host messages/snapshot bounded paths,
+body/FPP/intro/roster/glyphs/bots/audio/replay all integrated. No gill hooks remain.
+Focused gameplay3pass plus corrected stair1pass (both modes x inner/outer) retained
+under expansion-evidence. Stair failure was camera-relative fixture input; no
+buoyancy workaround. Audio technical levels checked, not human listening approval.
 
-## Owned source / original dirt
+v47 choices8owner+8observer pass, Lagoon both-mode/3quality native route passes.
+v47 replay failed old six-hero coverage list; MatchReplayArchive explicit Rafi
+coverage fixed, v48 retained8675bytes/8objects/1field. Frames then exposed BLACK
+water from shared opposite normals. Single-winding meshes + dedicated CullOff
+transparent RafiWater shader fixed ribbons/crest/echo/foam; removed generic column.
+v49 native shared/replay passes, actual frame30/99 show translucent water and court.
+v49 build1210MB/59s,guard4721244d7d1e,job9645 reaped; native job5904 reaped.
 
-Initial26dirty files backed up in Logs/presentation-pass-2026-09-21/intake. All original
-history preserved. UI migrations/helper and settings-note fix are now deliberately
-integrated/qualified, not unrelated dirt. Original SeanVisualOnly hook+companion+
-CLIflag were copied together for v40; require its native check before staging.
-Still exclude unrelated home-court/loading-street PNG.meta changes.
-Never git add-all. Explicit file staging, commit --quiet -F, sole author/no trailers,
-fetch before ASTRAReworks-only push, verify origin HEAD. Current no staged batch.
+Three actual peers on Lagoon,150ms simulated delay, v49 pass:447/441/439rows,
+all3event IDs/paths, exact fees, one ultimate,6repeated snapshots,0final fields,
+max expiry offset.236s. NetRafiProbe/tools/net_rafi_review.py;job26732 reaped.
+Receipts/compressed traces in reports/full-backlog-2026-09-21/expansion-evidence.
 
-Main changed areas: painted UI tests/PaintedScreens/FrontEndControlWalk plus explicit
-migration TSV; TumpMatchReadout shared formatter (duplicate long halftime label
-removed), settings note/layout, generic-controller switch/session UI, small backend
-reentrancy guard/footer copy; Sean role gate/Zack descriptions/HeroLoadout copy;
-new native UI/variant/control diagnostics; three input/suite/native runner tools.
-playmode_suite.py now accepts --profile/--out, retains launcher output and refuses
-to overwrite existing evidence. py_compile passes. No full-suite repeat justified
-unless final coherent candidate or a new regression requires it.
+Recall ownership now PASSES Classic AND Hero with4players + actual fifth spectator:
+Logs/net-recall-classic-v49c and net-recall-hero-v49c; jobs85316/88571 reaped.
+Evidence in network-evidence. Failed v49/v49b preserved: direct arena boot marks
+lobby in-progress before READY, so attempted seat-to-spectator conversion correctly
+refused. Runner now uses actual fifth join. No gameplay workaround; no rerun needed.
 
-## Remaining queue and design
+Lagoon revised village:8connected/10detached stilt homes, diverse roof/wall/open
+families, raised decks/piles/braces, household/repair details,4residents,4curved
+canoes/2houseboats,11near islands/9distant mountain forms. Generous court/loop,
+4stair exits, shared water/swim/recovery in Classic/Hero retained. Reference photo
+internal only; fixed houses never bob. BADJAO_EXPANSION owns researched design.
+Latest194new/updated asset paths copied DEV with0conflicts via expansion-transfer-v6.
+Boat NaN from fractional sin(pi) and coplanar slab/boards fixed. Warm generation
+Editor can retain stale combined-mesh GPU buffers: fresh saved-scene-only review
+confirmed saved assets. Use -tp-review-saved-scene, not repeated geometry rewrites.
 
-Current plans: reports/full-backlog-2026-09-21/existing-ui-plan.md and existing-kit-plan.md.
-Fix remaining genuine whole-kit/overlap/role cases, current authority/request/rejoin
-qualification (C4 reservation released), then selected RafiB and sheltered-lagoonC:
-native model/rig/FPP/animations, Crosscurrent/Mirrorwake/Breakwater, roster/network/
-replay/presentation, supported houses/decks/water recovery in both modes. Then final
-coherent source/build/real-peer/full matches and every preserved TODO disposition.
+## Remaining whole-assignment work after current Rafi correction
 
-F1/F2 skill receipts and F3/F4 hold/rejoin warmup already have later fixes/evidence;
-149.4 now says so without closing the final matrix. Equipment-destination.md proves
-implemented10slipper tradeoffs/settling and6can rebound cases; do not redo old audit.
-Human taste/listening, physical devices and separate-machine/WAN are specific
-unverified checks, not excuses to leave implementation unfinished.
+1. Finish current actual FPP/body/new-model native review and source asset receipts.
+2. Encode new native recordings at measured timestamps using existing encoder;
+   preserve audio/listening limits and inspect relevant changed effects.
+3. Reconcile EVERY historical TODO requirement to actual source/later evidence or
+   concrete external dependency. All366original headings preserved in
+   reports/full-backlog-2026-09-21/todo-disposition.json; many still unreviewed.
+   Most headings explain historical implementations, not366new features. Do not
+   blanket-close them, delete them, or rerun all old tests just for old OPEN titles.
+4. Resolve actual remaining implementation gaps found in that reconciliation.
+   Specific visual follow-up saved from nativev50: Lagoon's deck has conspicuous
+   fine dark/dashed board patterns at oblique player angles. After current Rafi
+   correction, determine whether this is material frequency, geometry/depth or
+   outline sampling and refine the local deck treatment. Do not alter old maps
+   or claim a cause from the screenshot alone.
+5. Publish coherent owned source; prepare clean matching validation snapshot without
+   losing unrelated dirty files/caches. Final current qualification/overlap/all-roster
+   and all-map routes then run against that source. No final-source claim from dirty
+   db976126 builds. Goal stays active until all independent actionable work is done.
 
-All detailed receipts/failures live in reports/full-backlog-2026-09-21. Its original
-index retains366historical headings; they are not366new features. Older ledger
-snapshots are archived there, latest ledger-through-ui-controller-20260922.md.
-Resume THIS current action, not jobs mentioned in archives.
+Earlier six-hero/UI/4map evidence remains valid for unchanged behavior: commits
+79bf5c26,e50f8c37,4a8a51ec,3b4fb19c.19surface families/2686renderers; animated skies;
+plain Inday arms; nativev39maps,113/114screens with1externalUGSskip,96choice cases,
+controller hotplug/rebind and full capability mapping. Do not redo these foundations.
+Network request clean46checks, impaired23, outage and same-process rehost2matches
+already passed. Current-source whole-candidate qualification still distinct.
+Historical details retained in ledger-through-rafi-v49-20260922.md and earlier
+ledger-through-rehost-20260922.md, plus linked reports. Never resume archived PIDs.

@@ -1,0 +1,16 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "rafi.1.current-attacker-observer: staged native role and actual equipped choice",
+        "rafi.1.current-defender-observer: staged native role and actual equipped choice",
+        "rafi.1.tightcut-attacker-observer: staged native role and actual equipped choice",
+        "rafi.1.tightcut-defender-observer: staged native role and actual equipped choice",
+        "rafi.2.mirror-attacker-observer: staged native role and actual equipped choice",
+        "rafi.2.mirror-defender-observer: staged native role and actual equipped choice",
+        "rafi.2.longwake-attacker-observer: staged native role and actual equipped choice",
+        "rafi.2.longwake-defender-observer: staged native role and actual equipped choice",
+        "8 selected role/choice cases completed: staged input and capture, not human balance or multiplayer certification"
+    ],
+    "frameWindows": []
+}

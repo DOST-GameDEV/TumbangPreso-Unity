@@ -48,7 +48,53 @@ This closes those specific requests, not the material/map parent or the full TOD
 The preview-to-match lifecycle defect found during this validation is also repaired
 with a failed-before/passed-after regression and the complete native route.
 
+### Latest owner art correction, 2026-09-22
+
+- [x] Replace rejected Rafi through a dedicated retrofitted copy of the repository
+  voxel builder. Match the HERO cast and canonical Unity pipeline; existing people
+  and original builders stay untouched. The owner's later rejection of the face,
+  hair/retexture-like identity and mismatched FPP has a new authored replacement:
+  swept/tapered hair/headwrap/float clip, original brows/closed mouth, asymmetric
+  garment shapes/sailcloth/rope coil and matching source arms. Current876968byte
+  model keeps33clips. Nativev4 four-angle/HERO-lineup review and v51owner8/observer8
+  cases include actual arm identity, real charge/release and visual parity. No gills.
+  All12protected source hashes unchanged. This is implemented/inspected, not human
+  approval. Concept/provenance and exact v51 source receipts are retained.
+- [x] Refine the rejected sparse lagoon using the supplied village photograph and
+  primary sources: distinct houses, offset clusters, detached offshore stilt homes,
+  boatcraft/life and retained islands/mountains. Preserve legal routes and recovery.
+  The detailed revised delivery contract is at the top of BADJAO_EXPANSION.md.
+  Implemented8connected/10detached stilt homes, distinct structural/roof families,
+  curved canoes/houseboats, residents and layered islands. Cold saved-scene renders
+  and nativev47 Classic/Hero Low/Balanced/High routes pass. Human art acceptance is
+  separate. All updated assets are integrated via expansion-asset-transfer-v6.json.
+
+The full expansion below remains open for final integration. Rafi's v47 replay
+failed the old six-hero coverage list, fixed and passed inv48. Actual frames then
+exposed black water from opposite shared mesh normals; the dedicated transparent
+water material/single-winding repair passes actual nativev49 visual/replay review.
+Three actual peers at150ms simulated delay also pass all water identities/paths,
+fees, repeated snapshots and expiry. The latest v51 art/FPP fix is separate. Final
+coherent qualification and the local deck sampling refinement remain open.
+
 ### Full remaining execution order
+
+**Owner sequencing correction,2026-09-22:** avoid the model's verification-loop
+tendency without compromising quality. The current request/rehost pass is complete.
+Rafi B and lagoon C implementation is the next work, ahead of further validation
+expansion. Steps below retain their task scope and history, not a requirement to
+exhaust old tests before building the missing expansion. Use focused risk-based
+checks during implementation; perform comprehensive integration after all features
+are integrated. Do not rerun unchanged passing evidence without a new reason.
+
+- [x] Preserve this quality/verification rule in AGENTS.md and the active ledger.
+- [ ] Implement the full selected Rafi B / lagoon C expansion below.
+  Owner addition2026-09-22: varied background islands and mountain layers, with
+  stable seeded construction, real terrain volume and clear playable routes.
+- [ ] At final integration, run the prepared owner/other/spectator recall renderer
+  checks in Classic and Hero Strike; these are compiled, NOT runtime-qualified.
+- [ ] At final integration, finish remaining overlap, real-peer, whole-backlog
+  disposition and coherent candidate qualification. Preserve all existing task IDs.
 
 The presentation outcomes below retain their completed software/evidence states.
 Continue through the following existing scope in this same assignment:
@@ -432,7 +478,11 @@ Human visual judgment and explicit peer-render ownership remain separate below.
   number this was written against and the beam is not in that probe's cast, so the claim that a
   beam cannot blow out a first-person frame is argued rather than measured. ⚠️ **The additive
   blend makes this MORE worth measuring than it was for the mesh version, not less.**
-- [ ] **No peer has watched another peer's screen.** The beam is per-peer by construction and
+- [x] **Automated actual peer rendering now qualified,2026-09-22.** Four playing
+  Windows peers plus an actual fifth-join spectator pass both Classic and Hero
+  ownership/beam pixels onv49c; receipts under full-backlog-2026-09-21/network-evidence.
+  This closes the software peer-render gap, not human aesthetic approval. Historical
+  scope: **No peer had watched another peer's screen.** The beam is per-peer by construction and
   nothing about it crosses the wire, which is an argument rather than an observation. It is the
   same gap § 126.11 records for crossplay.
 - [x] **Built into current Windows candidates.** Historical gap: This Mac has no Windows Standalone module, so the shader has

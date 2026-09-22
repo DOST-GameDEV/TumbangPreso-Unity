@@ -2191,7 +2191,8 @@ namespace TumbangPreso.UI
                         : "CAMPING  ·  DEFENSE SCORE PAUSED";
                 }
             }
-            else if (!_local.HoldingSlipper&&RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+            else if (!_local.HoldingSlipper&&((RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.WaitingForReturnWithoutLooseStock())
+                ||(LagoonWater.Instance!=null&&LagoonWater.Instance.WaitingForReturnWithoutLooseStock())))
             {
                 line="SLIPPER RETURNING";
             }

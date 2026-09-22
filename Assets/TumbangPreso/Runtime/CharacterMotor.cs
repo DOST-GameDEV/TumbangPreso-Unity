@@ -1293,7 +1293,8 @@ namespace TumbangPreso
                     // eye .27m underwater. Keep a short, visible settling descent
                     // without carrying the dry-air terminal speed into the pool.
                     _velocity.y=Mathf.Max(_velocity.y,-1.8f);
-                    float target=RooftopPool.SurfaceY-RooftopPool.FloatDepth;
+                    RooftopPool.TrySurface(transform.position,out float floatSurface);
+                    float target=floatSurface-RooftopPool.FloatDepth;
                     float rise=Mathf.Clamp((target-transform.position.y)*5,-1.8f,1.8f);
                     _velocity.y=Mathf.MoveTowards(_velocity.y,rise,9*dt);
                 }

@@ -2966,6 +2966,7 @@ namespace TumbangPreso
         private void Drive(InputIntent intent, Vector3 direction, bool sprint,
                            bool pausesOnTurn = true)
         {
+            if(LagoonWater.TryExitAim(transform.position,out var waterExit))direction=waterExit-transform.position;
             Vector3 flat = new Vector3(direction.x, 0.0f, direction.z);
 
             if (flat.magnitude < 0.001f) { Stop(intent); return; }
@@ -4574,6 +4575,8 @@ namespace TumbangPreso
                     if (overTheCan || WouldCatch(kit.Ultimate, stunPayload: true))
                         Consider(intent, Verb.Ultimate, dt);
                 }
+                else if (kit is Abilities.RafiHeroKit && target != null && targetDistance < 8 && Facing(target, 42))
+                    Consider(intent, Verb.Ultimate, dt);
             }
 
             if (SlotIsSpendable(kit.Skill1))
@@ -4621,6 +4624,13 @@ namespace TumbangPreso
                     // a target said nothing about where it would land or whether one was already
                     // lying there. Two sigils on one another is the § 19 stacking exactly.
                     if (WorthDenying(kit.Skill1)) Consider(intent, Verb.Skill1, dt);
+                }
+                else if (kit is Abilities.RafiHeroKit)
+                {
+                    foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                        if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
+                            && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
+                        { Consider(intent,Verb.Skill1,dt);break; }
                 }
             }
 
@@ -4685,6 +4695,9 @@ namespace TumbangPreso
                                      || targetDistance <= 5.5f))
                         Consider(intent, Verb.Skill2, dt);
                 }
+                else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
+                    && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))
+                    Consider(intent,Verb.Skill2,dt);
             }
 
             // ⚠️ THE CLOCK RESTARTS ON A TOUCH, NOT ON A CONFIRMED CAST, because this side has
