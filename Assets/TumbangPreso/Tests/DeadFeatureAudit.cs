@@ -198,25 +198,12 @@ namespace TumbangPreso.Tests
             string playerMenu = File.ReadAllText(Path.Combine(
                 RuntimeRoot, "UI", "PausePanel.cs"));
 
-            // ⚠️⚠️ MATCHED AS A PATTERN, NOT AS A LITERAL, BECAUSE THE LITERAL WENT STALE
-            // AND FAILED A GREEN FEATURE. This read `StringAssert.Contains("Time.timeScale =
-            // 0.0f", ...)`, and `ToggleBroadcastPause` later became
-            // `Time.timeScale = _broadcastPaused ? 0.0f : _selectedTimeScale` when the broadcast
-            // speed keys landed. The pause was still there, still bound to P, still zeroing the
-            // clock: the only thing that changed was the shape of the assignment. A source audit
-            // that pins the exact spelling of a line reports a refactor as a deleted feature,
-            // which is the opposite of what this file is for.
-            //
-            // The pattern asks the question the test's name asks: is there a write to
-            // `Time.timeScale` in this file whose value can be zero. It survives a ternary, a
-            // named constant and whitespace, and it still catches the removal.
-            //
-            // ⚠️ THE LOOKBEHIND IS LOAD-BEARING. Without it `[^;]*0(\.0+)?f` matches the `0f`
-            // inside `Time.timeScale = 1.0f`, which is `PausePanel`'s RESUME line, so the second
-            // assertion would fail the menu for restoring the clock rather than for stopping it.
-            Assert.IsTrue(Regex.IsMatch(spectator, @"Time\.timeScale\s*=[^;]*(?<![\d.])0(\.0+)?f"),
+            // Broadcast pause now routes through the shared presentation clock so
+            // replay holds can preserve and restore the spectator's requested speed.
+            const string pauseWrite = @"(?:Time\.timeScale\s*=|PresentationClock\.RequestScale\s*\()[^;]*(?<![\d.])0(\.0+)?f";
+            Assert.IsTrue(Regex.IsMatch(spectator, pauseWrite),
                 "Spectator broadcast controls should own tactical pause");
-            Assert.IsFalse(Regex.IsMatch(playerMenu, @"Time\.timeScale\s*=[^;]*(?<![\d.])0(\.0+)?f"),
+            Assert.IsFalse(Regex.IsMatch(playerMenu, pauseWrite),
                 "The ordinary player menu must never freeze the live match");
         }
 

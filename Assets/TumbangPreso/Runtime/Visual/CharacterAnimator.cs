@@ -306,6 +306,9 @@ namespace TumbangPreso.Visual
             ReleaseGraph();
             if (model == null) return;
 
+            // Editor previews and inactive actors can bind before Unity invokes Awake.
+            Awake();
+
             _animator = model.GetComponentInChildren<Animator>();
             if (_animator == null) _animator = model.AddComponent<Animator>();
 
@@ -569,7 +572,7 @@ namespace TumbangPreso.Visual
         {
             if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
             CalibrateGait(walk,run);
-            _gaitTravelDirection=Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
+            _gaitTravelDirection=_motor!=null&&Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
             _gait = AnimationMixerPlayable.Create(_graph, 2);
             _walkGait = AnimationClipPlayable.Create(_graph, walk);
             _runGait = AnimationClipPlayable.Create(_graph, run);

@@ -28,6 +28,8 @@ namespace TumbangPreso.EditorTools
             {
                 var animator=copy.GetComponentInChildren<Animator>(true);
                 var root=animator!=null?animator.transform:copy.transform;
+                if(!GeneratedAnimationAuthor.BakeRig(root,"rafi"))
+                    throw new InvalidOperationException("Rafi's player dance could not be baked.");
                 generated=HeroAbilityClips.BuildRafiAuthored(root);
                 var saved=new AnimationClip[generated.Length];
                 for(int i=0;i<generated.Length;i++)

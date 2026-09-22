@@ -40,6 +40,11 @@ namespace TumbangPreso.Tests
                     Assert.Greater(Quaternion.Angle(offBefore,off.localRotation),6,entry.Id+" has no balancing off-hand.");
                     Assert.Less(Quaternion.Angle(legBefore,leg.localRotation),.1f,"Upper-body windup must leave the gait's legs alone.");
                     carrier.ApplyObservedCharge(false);Call(driver,"StepChargePose");graph.Evaluate(0);Call(driver,"LateUpdate");
+                    Assert.Greater(Quaternion.Angle(torsoBefore,torso.localRotation),6,
+                        entry.Id+" snapped instead of starting its smooth cancel return.");
+                    typeof(CharacterAnimator).GetField("_throwCancelTime",Private)
+                        .SetValue(driver,ThrowGesture.CancelSeconds);
+                    Call(driver,"Update");graph.Evaluate(0);Call(driver,"LateUpdate");
                     Assert.Less(Quaternion.Angle(torsoBefore,torso.localRotation),.1f,entry.Id+" retains the cancelled windup.");
                 }
                 finally{if(driver!=null)Call(driver,"ReleaseGraph");Object.DestroyImmediate(seat);}

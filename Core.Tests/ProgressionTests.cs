@@ -328,20 +328,19 @@ namespace TumbangPreso.Core.Tests
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// ⚠️ THE SIX HEROES ONLY, `FUTURE.md` PHASE 4, narrowed from eighteen on 2026-08-31.
+        /// Only the Hero Strike roster has mastery; Classic remains cosmetic.
         /// The other twelve keep a played count in `PlayerProfile.Characters` and no path.
         /// </summary>
         [Fact]
-        public void OnlyTheSixHeroesHaveAMasteryPath()
+        public void OnlyHeroRosterPeopleHaveAMasteryPath()
         {
-            Assert.Equal(6, Roster.HeroPeople.Count);
+            Assert.Equal(7, Roster.HeroPeople.Count);
 
             foreach (var hero in Roster.HeroPeople)
                 Assert.True(ProgressionRules.HasMasteryPath(hero.Id), hero.Id);
 
             foreach (var person in Roster.ClassicPeople)
-                if (!ProgressionRules.HasMasteryPath(person.Id))
-                    Assert.False(ProgressionRules.HasMasteryPath(person.Id), person.Id);
+                Assert.False(ProgressionRules.HasMasteryPath(person.Id), person.Id);
 
             Assert.False(ProgressionRules.HasMasteryPath("maring"));
             Assert.False(ProgressionRules.HasMasteryPath(""));

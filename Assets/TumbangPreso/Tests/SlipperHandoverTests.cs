@@ -36,6 +36,8 @@ namespace TumbangPreso.Tests
         }
         [Test] public void ForceEquippingAnotherShoeReleasesTheDisplacedRelationship()
         {
+            // Exercise displacement after an explicit ownership reassignment.
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             Assert.IsTrue(_shoes[1].HostForceEquip(_players[1]));
             Assert.IsNull(_shoes[0].Holder,"The displaced warmup shoe still claims this hand.");
@@ -52,6 +54,8 @@ namespace TumbangPreso.Tests
             _players[1].transform.position=new Vector3(0,3.6f,0);_shoes[0].OwnerSlot=1;
             Physics.SyncTransforms();
             Assert.AreEqual(9,Slipper.GroundY(_players[1].transform.position),.01f,"Fixture must expose the broad overhead query.");
+            // Exercise displacement after an explicit ownership reassignment.
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             Assert.IsTrue(_shoes[1].HostForceEquip(_players[1]));
             Assert.AreEqual(3.5f+_shoes[0].RestHeight,_shoes[0].transform.position.y,.01f,
@@ -89,6 +93,7 @@ namespace TumbangPreso.Tests
         }
         [Test] public void ParkingDefendersShoeClearsItsWarmupHolderBeforeRoundEquipment()
         {
+            _shoes[0].OwnerSlot=1;
             Assert.IsTrue(_shoes[0].HostForceEquip(_players[1]));
             var runner=_root.AddComponent<SliceRunner>();runner.AutoStart=false;runner.Seats=_players;runner.Slippers=_shoes;
             typeof(SliceRunner).GetMethod("EquipOwnedSlippers",Private).Invoke(runner,new object[]{0});

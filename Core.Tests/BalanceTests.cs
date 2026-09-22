@@ -894,8 +894,9 @@ namespace TumbangPreso.Core.Tests
         public void AllPersonRows_AreDistinct()
         {
             Assert.Equal(12, Roster.ClassicPeople.Count);
-            Assert.Equal(6, Roster.HeroPeople.Count);
-            Assert.Equal(18, Roster.AllPeople.Count);
+            Assert.Equal(7, Roster.HeroPeople.Count);
+            Assert.Equal(19, Roster.AllPeople.Count);
+            Assert.DoesNotContain(Roster.ClassicPeople, person => person.Id == "rafi");
 
             var seenClassic = new HashSet<string>();
             foreach (var e in Roster.ClassicPeople)

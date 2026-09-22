@@ -26,7 +26,9 @@ namespace TumbangPreso.EditorTools
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
-        public static bool Execute()
+        public static void RunRafi() => EditorApplication.Exit(Execute("rafi") ? 0 : 1);
+
+        public static bool Execute(string onlyId = null)
         {
             Directory.CreateDirectory(OutputDirectory);
             var book = AssetDatabase.LoadAssetAtPath<RosterBook>(
@@ -43,6 +45,7 @@ namespace TumbangPreso.EditorTools
             foreach (var entry in book.People)
             {
                 if (entry == null || entry.Model == null) continue;
+                if (onlyId != null && entry.Id != onlyId) continue;
 
                 var animator = entry.Model.GetComponentInChildren<Animator>();
                 Transform root = animator != null ? animator.transform : entry.Model.transform;
@@ -56,10 +59,7 @@ namespace TumbangPreso.EditorTools
 
                 if (!authored.Add(resourceName)) continue;
 
-                var clip = DanceClip.Build(root);
-                if (clip == null || !EveryBindingFits(root, entry.Id, new[] { clip })) return false;
-
-                Save(resourceName, clip);
+                if (!BakeRig(root, entry.Id)) return false;
             }
 
             AssetDatabase.SaveAssets();
@@ -67,6 +67,20 @@ namespace TumbangPreso.EditorTools
 
             Debug.Log($"[GeneratedAnimationAuthor] baked the dance for each of {authored.Count} " +
                       $"rig hierarchies into {OutputDirectory}.");
+            return true;
+        }
+
+        // Called by a new hero's authoring path as well as the explicit whole-roster bake.
+        // It writes only this rig's set, leaving every existing character asset alone.
+        public static bool BakeRig(Transform root, string id)
+        {
+            Directory.CreateDirectory(OutputDirectory);
+            string resourceName = DanceClip.ResourceName(root);
+            if (string.IsNullOrEmpty(resourceName)) return false;
+            var clip = DanceClip.Build(root);
+            if (clip == null || !EveryBindingFits(root, id, new[] { clip })) return false;
+            Save(resourceName, clip);
+            if (!AssetDatabase.Contains(clip)) Object.DestroyImmediate(clip);
             return true;
         }
 

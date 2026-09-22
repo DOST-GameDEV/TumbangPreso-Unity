@@ -241,11 +241,11 @@ namespace TumbangPreso.Core
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
                 "IGNITION CANNON",
-                "Attacker only. Your next throw explodes where it lands, on a slipper arc.",
+                "Attacker only. Your next arcing throw explodes where it lands.",
                 0.0f, 0.0f, "It still arcs over", "You have to lead it"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "FLARE SHOT", "Attacker only. Flat, fast, and cracks in a tight circle. Made for the can.",
+                "FLARE SHOT", "Attacker only. A fast, flat throw with a tight blast.",
                 0.25f, -0.25f, "Hard to dodge", "You must hit it",
                 "Use Ignition Cannon eight times", true, 8),
 
@@ -279,14 +279,14 @@ namespace TumbangPreso.Core
             // exact fault § 108.3 records about `berto`.
             new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
                 "MAGNET",
-                "Attacker only. Your slipper comes back charged, so you never walk in for it.",
+                "Attacker only. Recall your slipper, charged for the next throw.",
                 0.0f, 0.0f, "You never walk in", "One use per knockdown"),
 
             // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade
             // Snap Discharge made and the one row of the old pair that still describes something
             // the ability does. What changed is what it is attached to.
             new AbilityVariant("zack.2.discharge", "zack", 2, "MAGNET", "ZackOvercharge",
-                "SNAP DISCHARGE", "Attacker only. It comes back hot and does not stay hot. Throw it now.",
+                "SNAP DISCHARGE", "Attacker only. Recall it hot; throw before the charge fades.",
                 0.50f, -0.50f, "No time to read it", "Gone in a moment",
                 "Use Magnet eight times", true, 8),
 

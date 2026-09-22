@@ -540,7 +540,7 @@ namespace TumbangPreso.Tests
             string[] allCharacters =
             {
                 // Heroes
-                "sean", "zack", "dante", "cheska", "nemu",
+                "sean", "zack", "dante", "cheska", "nemu", "phaister", "rafi",
                 // Classic Roster
                 "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie",
                 "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
@@ -567,11 +567,19 @@ namespace TumbangPreso.Tests
                 }
 
                 var baked = Resources.Load<Mesh>("Models/RosterArms/" + norm + "_right");
-                if (baked != null)
+                if (norm == "rafi" || norm == "inday")
+                {
+                    Assert.IsNotNull(baked, charId + " source arm was not baked");
                     Assert.AreSame(baked,vm.transform.Find("RightPivot/Arm").GetComponent<MeshFilter>().sharedMesh,
                         charId + " is not using its actual authored sleeve and hand");
+                }
                 else
-                    Assert.Greater(accessoryCount, 0, $"{charId} viewmodel fallback has no clothing");
+                {
+                    // Retained cast uses the approved solid hand frame plus authored sleeves.
+                    Assert.AreSame(Resources.Load<Mesh>("Models/viewmodel_arm"),
+                        vm.transform.Find("RightPivot/Arm").GetComponent<MeshFilter>().sharedMesh);
+                    Assert.Greater(accessoryCount, 0, $"{charId} viewmodel has no clothing");
+                }
             }
 
             Object.DestroyImmediate(vm.gameObject);
@@ -729,11 +737,14 @@ namespace TumbangPreso.Tests
             Assert.IsNotNull(rightArm, "RightPivot/Arm missing");
             Assert.IsNotNull(leftArm, "LeftPivot/Arm missing");
 
-            // The whole sleeve, hem, stripe and hand now come from the actual roster mesh.
-            // RosterArmGeometryTests compares the baked vertices and UVs to that source.
             var mf = rightArm.GetComponent<MeshFilter>();
-            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_right"), mf.sharedMesh);
-            Assert.AreSame(Resources.Load<Mesh>("Models/RosterArms/nemu_left"), leftArm.GetComponent<MeshFilter>().sharedMesh);
+            Assert.AreSame(Resources.Load<Mesh>("Models/viewmodel_arm"), mf.sharedMesh);
+            Assert.AreSame(mf.sharedMesh, leftArm.GetComponent<MeshFilter>().sharedMesh);
+            foreach (var arm in new[] { rightArm, leftArm })
+                foreach (string part in new[] { "HoodieSleeve", "HoodieCuff", "HoodieHem", "HoodieMouth", "LavenderCuffTrim", "SpiritHand" })
+                    Assert.IsNotNull(arm.Find("~HeroAccessory_" + part), part);
+            Assert.IsFalse(vm.GetComponentsInChildren<Component>(true)
+                .Any(component => component != null && component.GetType().Name == "ViewmodelClothPhysics"));
             Assert.IsFalse(mf.sharedMesh.name.Contains("Deformed"),
                 "The sleeve must remain the shared authored geometry, without a per-instance cloth solver.");
 

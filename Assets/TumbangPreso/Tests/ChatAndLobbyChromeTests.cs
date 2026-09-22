@@ -259,7 +259,8 @@ namespace TumbangPreso.Tests
             //33 adds the atomic IceBegin/IceItem/IceEnd world snapshot.
             //34 restores the joining world's held fire-charge state.
             //37 extends atomic ground snapshots beyond the two ice field types.
-            Assert.AreEqual(37, NetSession.ProtocolVersion,
+            //49 adds the seventh Hero roster index and bounded Rafi water snapshots.
+            Assert.AreEqual(49, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

@@ -13,7 +13,10 @@ namespace TumbangPreso.EditorTools
     public static class KuroIdleClipAuthor
     {
         public const string Folder="Assets/TumbangPreso/Art/animations/kuro-idles";
-        public static void Build()
+        public static void Build() => Build(true);
+        public static void RebindRetainedIdles() => Build(false);
+
+        private static void Build(bool includeRage)
         {
             var entry=Resources.Load<RosterBook>("RosterBook").People.First(p=>p.Id=="nemu");
             var imported=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb");
@@ -22,6 +25,8 @@ namespace TumbangPreso.EditorTools
             {
                 entry.PetModel=imported;EditorUtility.SetDirty(entry);AssetDatabase.SaveAssets();
             }
+            if (includeRage)
+            {
             var rageSource=AssetDatabase.LoadAllAssetsAtPath("Assets/TumbangPreso/Art/characters/pets/pet-nemu-ghost.glb")
                 .OfType<AnimationClip>().FirstOrDefault(c=>c.name.Contains("KuroRageInhale"));
             if(rageSource==null)throw new InvalidOperationException("Kuro's authored giant animation did not import.");
@@ -31,6 +36,7 @@ namespace TumbangPreso.EditorTools
             if(oldRage==null)AssetDatabase.CreateAsset(rageClip,ragePath);
             else {EditorUtility.CopySerialized(rageClip,oldRage);EditorUtility.SetDirty(oldRage);Object.DestroyImmediate(rageClip);}
             AssetDatabase.SaveAssets();
+            }
             Directory.CreateDirectory(Folder);
             var target=new GameObject("Kuro clip origin");
             var actor=Object.Instantiate(entry.PetModel);

@@ -508,7 +508,8 @@ def stage_editmode():
     xml = LOGS / "qualify-editmode.xml"
     if xml.exists():
         xml.unlink()
-    r = unity(["-runTests", "-nographics", "-testPlatform", "EditMode",
+    # EditMode includes actual shader/light rendering; a NullGfxDevice cannot qualify it.
+    r = unity(["-runTests", "-testPlatform", "EditMode",
                "-testResults", str(xml)], LOGS / "qualify-editmode.log")
     ok, detail = read_nunit_xml(xml, started)
     detail["exit"] = r.returncode

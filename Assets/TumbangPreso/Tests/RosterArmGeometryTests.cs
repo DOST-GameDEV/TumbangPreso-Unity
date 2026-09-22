@@ -43,7 +43,8 @@ namespace TumbangPreso.Tests
                         var right=go.transform.Find("RightPivot/Arm");var left=go.transform.Find("LeftPivot/Arm");
                         Assert.IsTrue(arms.PlayAction(ability.ViewmodelAction));
                         float rightTravel=0,leftTravel=0;
-                        for(int frame=0;frame<120;frame++)
+                        // Phaister's retained ritual ends at 2.12s; allow its complete recovery.
+                        for(int frame=0;frame<180;frame++)
                         {
                             arms.StepVisuals(1f/60f);
                             rightTravel=Mathf.Max(rightTravel,Quaternion.Angle(Quaternion.identity,right.localRotation));

@@ -1,0 +1,130 @@
+{
+  "ok": false,
+  "started": "2026-09-22T14:19:56",
+  "audits": [
+    {
+      "audit": "ability authority",
+      "script": "audit_ability_authority.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "54 effect call sites, 35 host-gated, 1 ungated on another body, 18 ungated on the caster"
+    },
+    {
+      "audit": "request call sites",
+      "script": "audit_request_call_sites.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "67 wire entry points, 0 unreachable."
+    },
+    {
+      "audit": "wire payloads",
+      "script": "audit_wire_payloads.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "  ReqAbility: MISMATCH: writer emits 9 fields, reader takes 11"
+    },
+    {
+      "audit": "audio reach",
+      "script": "audit_audio_reach.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "51 call sites, 0 host-only"
+    },
+    {
+      "audit": "positional audio ownership",
+      "script": "audit_positional_audio.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "Unclassified positional producer: ('Map/MooredBoatMotion.cs', 'LateUpdate'):33"
+    },
+    {
+      "audit": "presentation reach",
+      "script": "audit_presentation_reach.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "95 presentation call sites, 95 reachable by every peer, 0 HOST-ONLY"
+    },
+    {
+      "audit": "cue relay",
+      "script": "audit_cue_relay.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "   using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);"
+    },
+    {
+      "audit": "shader stripping",
+      "script": "audit_shader_stripping.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "  TumbangPreso/AimGuide: reached only by Shader.Find and nothing keeps it in the build"
+    },
+    {
+      "audit": "ability stat drift",
+      "script": "audit_ability_stat_drift.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "18 ability constructors across 18 files, 0 stat drift finding(s)."
+    },
+    {
+      "audit": "event subscriptions",
+      "script": "audit_event_subscriptions.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "149 named subscriptions in Runtime/, 17 anonymous, 36 finding(s), 0 stale allowlist entries."
+    },
+    {
+      "audit": "tournament defaults",
+      "script": "audit_tournament_defaults.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "12 tournament modifiers named, 23 exempted with a reason, 12 read cases, 12 write cases, 112 launch switches discovered, 82 finding(s)."
+    },
+    {
+      "audit": "gameplay clocks",
+      "script": "audit_gameplay_clocks.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "26 wall-clock reads across Runtime/ and the core, 33 gameplay-critical files checked, 11 finding(s)."
+    },
+    {
+      "audit": "harness contracts",
+      "script": "audit_harness_contracts.py",
+      "ok": true,
+      "gating": true,
+      "exit": 0,
+      "summary": "audit_harness_contracts: 152 checks, 0 finding(s)."
+    },
+    {
+      "audit": "wire finite values",
+      "script": "audit_wire_finite.py",
+      "ok": false,
+      "gating": true,
+      "exit": 1,
+      "summary": "audit_wire_finite: 72 wire handlers, 98 numeric field(s), 9 finding(s)."
+    },
+    {
+      "audit": "cue audio",
+      "script": "audit_cue_audio.py",
+      "ok": false,
+      "gating": false,
+      "exit": 1,
+      "summary": "134 files, 7 flagged"
+    }
+  ],
+  "reason": "wire payloads, positional audio ownership, cue relay, shader stripping, event subscriptions, tournament defaults, gameplay clocks, wire finite values reported findings",
+  "stage": "audits",
+  "sha": "2e90f54bc7d1d9e7c58436dce7292606b31d199a",
+  "finished": "2026-09-22T14:19:56"
+}

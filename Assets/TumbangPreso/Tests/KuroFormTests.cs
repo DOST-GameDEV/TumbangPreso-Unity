@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
@@ -24,10 +24,10 @@ namespace TumbangPreso.Tests
                 companion.SampleIdleForCapture(gesture,GhostPetCompanion.IdleGestureDuration(gesture)*.5f);
                 Assert.AreEqual(Vector3.one,group.localScale);
                 Assert.AreEqual(Vector3.one,nodes.Single(n=>n.name==visiblePart).localScale);
-                Assert.AreEqual(Vector3.zero,nodes.Single(n=>n.name=="ghost-mouth").localScale,"Neutral and expression mouths overlap.");
+                Assert.AreEqual(Vector3.zero,nodes.Single(n=>n.name=="ghost-mouth-dot").localScale,"Neutral and expression mouths overlap.");
                 companion.SampleIdleForCapture(GhostPetCompanion.FidgetState.None,0);
                 Assert.AreEqual(Vector3.zero,group.localScale);
-                Assert.Greater(nodes.Single(n=>n.name=="ghost-mouth").localScale.sqrMagnitude,0);
+                Assert.Greater(nodes.Single(n=>n.name=="ghost-mouth-dot").localScale.sqrMagnitude,0);
                 companion.SampleIdleForCapture(gesture,GhostPetCompanion.IdleGestureDuration(gesture)*.5f);
                 companion.Devour(2);companion.StepTo(.1f);
                 Assert.AreEqual(Vector3.zero,group.localScale,"A cute idle expression survives into the ultimate.");
@@ -114,11 +114,11 @@ namespace TumbangPreso.Tests
             try
             {
                 var transforms=pet.GetComponentsInChildren<Transform>();
-                var mouth=transforms.Single(t=>t.name=="ghost-mouth");
+                var mouth=transforms.Single(t=>t.name=="ghost-mouth-dot");
                 var left=transforms.Single(t=>t.name=="ghost-eye-l");
                 var tail=transforms.Where(t=>t.name.Contains("ghost-tail")).ToArray();
-                Assert.AreEqual(3,tail.Length);
-                Assert.IsTrue(transforms.Any(t=>t.name=="ghost-arm-l"));
+                Assert.AreEqual(5,tail.Length,"Retain all five original wisp pieces.");
+                Assert.IsTrue(transforms.Any(t=>t.name=="RestoredCalm"),"The approved original familiar was replaced.");
                 var mouthRest=mouth.localScale;var eyeRest=left.localRotation;
                 var sourceMaterials=pet.GetComponentsInChildren<Renderer>().Select(r=>r.sharedMaterial).Distinct().ToArray();
                 var colors=sourceMaterials.Select(m=>m.color).ToArray();

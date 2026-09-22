@@ -139,6 +139,12 @@ was not claimed as verified. No paid API or reset was used.
 
 ### Rafi's own character
 
+Initial qualification found his prototype4/3/3stat row duplicated Zack. The
+retained distinct-row rule is not weakened: Rafi now has4Bilis/2Lakas/4Tatag,
+trading direct throwing power for endurance while retaining his agile utility
+identity. This is a prototype tuning choice, not a human balance verdict; other
+characters' stats are unchanged. Classic remains neutral and excludes Rafi.
+
 Rafi is an inventive boat-repairer and athlete from a fictional Sama Dilaut community
 in Tawi-Tawi. He notices the loose board, the awkward stair and the predictable
 opponent, then immediately has an idea. He repairs his own gear and makes a small

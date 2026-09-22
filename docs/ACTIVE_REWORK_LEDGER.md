@@ -1,5 +1,20 @@
 # Active TUMP rework ledger
 
+## Current exact continuation: final integration failures
+
+Qualification at clean2e90 completed: Core601/604, EditMode557/580; failed receipts
+preserved in qualification-2e90. Audits53443 reaped exit1; no jobs remain running.
+DEV corrections in progress:7-Hero roster/protocol49 tests; actual Rafi dance bake
+hook; distinct Rafi4/2/4 stats (Zack remains4/3/3); tile copy fits unchanged budgets;
+model Bind can initialize before Awake; graphical EditMode runner. Stale tests
+updated to retained source-arm exceptions, common cast hand frame,2.12s ritual,
+smooth throw-cancel recovery, own-shoe locks, shared presentation clock and original
+restored Kuro calm geometry. Kuro trailer clips need rebinding to retained geometry;
+NO original model or rig is edited. All meaningful visual/ownership assertions stay.
+Next: generate only missing Rafi dance and rebind Kuro idle clip paths, focused
+rerun of the changed failures, then actual audit findings/full TODO disposition.
+Do not rerun the already qualified Rafi parts/native/network/deck passes by default.
+
 ## Scope and latest owner direction
 
 Complete EVERY unfinished autonomously actionable TODO in this conversation.
@@ -132,8 +147,22 @@ cases charge/release from outside the legal7m boundary. Source hashes/unchanged-
 captures/receipts in expansion-evidence/rafi-v51-source-inputs.json. Human approval
 not inferred. Latest model/source/palette/arms match DEV and validation exactly.
 
-NEXT: investigate Lagoon deck's oblique fine/dashed line artifact, finish full TODO
-dispositions and coherent qualification. Published checkpoint is now56a220a9.
+LIVE final qualification at clean2e90f54: Core finished601/604,3failures;
+Logs/qualify-core.trx and Logs/qualify/core.json,job50838 reaped. Read failures
+before editing. Findings: two stale6hero/18total counts; updating them exposed
+Rafi's copied Zack stat tuple. DEV now gives Rafi4/2/4 (agile utility/endurance,
+lower direct power), retains distinctness assertions and explicitly excludes him
+from Classic. Four attacker-only descriptions shortened within the unchanged67char
+budget. Mastery test now actually refuses ALL Classic IDs. Validation is still
+frozen at2e90. EditMode stage LIVE,job26749,Logs/qualify-editmode.log/.xml,
+workspace-specific named profile. Validation source is FROZEN while it runs.
+
+NEXT: full TODO dispositions and coherent qualification. Deck issue and Rafi
+part/motion refinements are published in269e2326. No native/Editor jobs remain.
+Found a real safety gap before running qualify.py: its direct Editor stages omitted
+a named profile. DEV now supplies a workspace-specific qualify profile to every
+Editor/group. Commit this narrow runner correction, switch clean validation to it,
+archive old qualify outputs, and run final stages once, fixing actual failures.
 Saved-scene deck study completed0,guard0b49a62b4eb0,job15040 reaped, but did NOT
 reproduce dense native dashes. Material detail changes the fine grain; outline/
 shadow switches do not establish the native cause. No shipping change inferred.
@@ -157,13 +186,15 @@ players, encoding helpers or Editor remain running. Do not repeat completed Rafi
 ## Workspace and source state
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Published HEAD56a220a99fcef7301005202f2f792c7f71986918, verified remote ASTRAReworks.
+Published HEAD2e90f54bc7d1d9e7c58436dce7292606b31d199a; profile-safety follow-up
+pushed after269e2326. Verify remote in the next publication pass.
 938explicit owned paths committed; original two unrelated metas remain unstaged.
 Source diff check is clean except one trailing space in the exact archived rejected
 builder snapshot, intentionally preserved as historical bytes. No live source issue.
-Validation sibling TumbangPreso-Unity-validation remains detached db976126 with
-explicit owned input copies and independent Assets/Library/Temp/obj. Its dirty
-internal builds are honestly stamped db976126+dirty, NOT final coherent releases.
+Validation sibling TumbangPreso-Unity-validation is NOW clean at2e90f54. All6432
+previous mixed source inputs preserved in git stash6f716645127f374ead0a910c4a90d49cf4cb191b
+(named Codex owned validation source through v52); Logs/Builds/Library/Temp/obj kept.
+Manifest: validation Logs/validation-source-stash-269e.json. No reset/clean/deletion. Older internal builds are honestly stamped db976126+dirty, NOT final coherent releases.
 Built-in pipeline, Unity6000.5.8f1, protocol49, replay11. Reader supports water-free
 schema10 clips. Append-only Rafi Hero index6/AllPeople18 and Lagoon map5.
 Every Editor through tools/run_unity_guarded.py, profile presentation-validation-20260921.

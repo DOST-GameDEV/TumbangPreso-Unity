@@ -1,0 +1,113 @@
+{
+  "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-validation\\Logs\\qualify-editmode.xml",
+  "total": 580,
+  "passed": 557,
+  "failed": 23,
+  "skipped": 0,
+  "inconclusive": 0,
+  "result": "Failed(Child)",
+  "duration": "14.3596511",
+  "failures": [
+    {
+      "name": "TumbangPreso.Tests.ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump",
+      "message": "a message, a replicated roster index or a connection-hello field has been added or removed. Bump this number and `NetSession.ProtocolVersion` together, in the same commit. Expected: 37 But was: 49"
+    },
+    {
+      "name": "TumbangPreso.Tests.DeadFeatureAudit.TacticalPauseBelongsOnlyToSpectatorCamera",
+      "message": "Spectator broadcast controls should own tactical pause Expected: True But was: False"
+    },
+    {
+      "name": "TumbangPreso.Tests.GeneratedAnimationTests.EveryGeneratedBindingExistsOnEveryRosterPerson",
+      "message": "rafi Expected: not null But was: null"
+    },
+    {
+      "name": "TumbangPreso.Tests.GeneratedAnimationTests.TheBakedDanceMovesBothArmsFarFromTheBindPose",
+      "message": "System.NullReferenceException : Object reference not set to an instance of an object"
+    },
+    {
+      "name": "TumbangPreso.Tests.GeneratedAnimationTests.ThePlayerCarriesOneBakedDancePerRig",
+      "message": "rafi has no generated animation set Expected: not null But was: null"
+    },
+    {
+      "name": "TumbangPreso.Tests.HeroPresentationTests.EverySummaryFitsTheCardItIsDrawnIn",
+      "message": "zack: MAGNET's description is 136 characters. The inspect tray body wraps and OVERFLOWS rather than truncating, so anything over about four lines draws over the card under it. Move the detail into the summary or cut a clause. Expected: less than or equal to 125 But was: 136"
+    },
+    {
+      "name": "TumbangPreso.Tests.HeroPresentationTests.Nemu_ViewmodelArms_CreatesBespokeDrapedHoodieSleevesWithNoClothSolver",
+      "message": "Expected: same as <team-nemu_arm-right (UnityEngine.Mesh)> But was: <default (UnityEngine.Mesh)>"
+    },
+    {
+      "name": "TumbangPreso.Tests.HeroPresentationTests.ViewmodelArms_StylesUniqueSkinToneAndAccessories_ForEveryCharacter",
+      "message": "sean is not using its actual authored sleeve and hand Expected: same as <team-sean_arm-right (UnityEngine.Mesh)> But was: <default (UnityEngine.Mesh)>"
+    },
+    {
+      "name": "TumbangPreso.Tests.KuroFormTests.BakedTrailerClipsMatchTheLiveGestureSampler",
+      "message": "Hover scale ghost-mouth-dot Expected: less than 0.00100000005f But was: 0.262029618f"
+    },
+    {
+      "name": "TumbangPreso.Tests.KuroFormTests.CuteExpressionsUseAuthoredShapesAndClearBeforeACast(CatSmile,\"KuroCatMouth\")",
+      "message": "System.InvalidOperationException : Sequence contains no matching element"
+    },
+    {
+      "name": "TumbangPreso.Tests.KuroFormTests.CuteExpressionsUseAuthoredShapesAndClearBeforeACast(GoofyDizzy,\"KuroCrossLeft\")",
+      "message": "System.InvalidOperationException : Sequence contains no matching element"
+    },
+    {
+      "name": "TumbangPreso.Tests.KuroFormTests.CuteExpressionsUseAuthoredShapesAndClearBeforeACast(ShyPout,\"KuroShyEye\")",
+      "message": "System.InvalidOperationException : Sequence contains no matching element"
+    },
+    {
+      "name": "TumbangPreso.Tests.KuroFormTests.TheActualFamiliarHasAWorkingFaceAndReturnsToItsOwnMaterials",
+      "message": "System.InvalidOperationException : Sequence contains no matching element"
+    },
+    {
+      "name": "TumbangPreso.Tests.RosterArmGeometryTests.EveryHeroUsesBothHandsAndReturnsCleanly",
+      "message": "phaister_ultimate Expected: less than 0.00999999978f But was: 3.65555477f"
+    },
+    {
+      "name": "TumbangPreso.Tests.RuntimeLayerTests.GameMode_Rosters_AreDistinctAndCorrectSizes",
+      "message": "Expected: 6 But was: 7"
+    },
+    {
+      "name": "TumbangPreso.Tests.SlipperHandoverTests.ForceEquippingAnotherShoeReleasesTheDisplacedRelationship",
+      "message": "Expected: True But was: False"
+    },
+    {
+      "name": "TumbangPreso.Tests.SlipperHandoverTests.ParkingDefendersShoeClearsItsWarmupHolderBeforeRoundEquipment",
+      "message": "Expected: True But was: False"
+    },
+    {
+      "name": "TumbangPreso.Tests.ThrowEquipmentClearanceTests.EveryRetainedPersonCanPrepareEveryEquipmentWithoutEnteringTheHead",
+      "message": "System.NullReferenceException : Object reference not set to an instance of an object"
+    },
+    {
+      "name": "TumbangPreso.Tests.ThrowMotionTests.FullWindupMovesTheTorsoAndOffHandOnEveryRetainedPerson",
+      "message": "bayan retains the cancelled windup. Expected: less than 0.100000001f But was: 27.2491817f"
+    },
+    {
+      "name": "TumbangPreso.Tests.ToonLightFalloffTests.PointLightFallsOffBeforeItsRangeAndDoesNotTintBeyondIt(\"TumbangPreso/Toon\")",
+      "message": "The fixture did not illuminate its near surface. Expected: greater than 0.0199999996f But was: 0.0f"
+    },
+    {
+      "name": "TumbangPreso.Tests.ToonLightFalloffTests.PointLightFallsOffBeforeItsRangeAndDoesNotTintBeyondIt(\"TumbangPreso/ToonTransparent\")",
+      "message": "The fixture did not illuminate its near surface. Expected: greater than 0.0199999996f But was: 0.0f"
+    },
+    {
+      "name": "TumbangPreso.Tests.TournamentGuardTests.ApplyClearsEverythingAndSaysWhatItCleared",
+      "message": "Apply did not report clearing every switch that was wrong Expected: 12 But was: 11"
+    },
+    {
+      "name": "TumbangPreso.Tests.TournamentGuardTests.EveryModifierIsRefusedWhenItIsWrong",
+      "message": "WorldGraphicsProbe.Active is named in TournamentPreset.Modifiers and this test cannot set it. Both switches need the row."
+    }
+  ],
+  "written": "2026-09-22T14:13:32",
+  "testcasecount": 580,
+  "reason": "23 FAILED of 580.",
+  "exit": 2,
+  "started": "2026-09-22T14:13:34",
+  "ok": false,
+  "stage": "editmode",
+  "sha": "2e90f54bc7d1d9e7c58436dce7292606b31d199a",
+  "finished": "2026-09-22T14:13:34"
+}
