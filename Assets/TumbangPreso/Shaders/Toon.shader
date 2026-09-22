@@ -95,6 +95,9 @@ Shader "TumbangPreso/Toon"
         _RimColor ("Rim Colour", Color) = (1, 0.87, 0.72, 1)
         _RimStrength ("Rim Strength", Range(0, 1)) = 0
         _RimPower ("Rim Power", Range(0.5, 8)) = 3
+        _DepthReadability ("World distance readability", Range(0, 1)) = 0
+        _TayaCue ("Camera-only catchable rim", Range(0, 1)) = 0
+        _CueHeight ("Catchable body height", Vector) = (0,1.6,0,0)
 
         // The two-band ramp. `_ShadowBand` is how bright the unlit half is and `_BandEdge` is
         // how hard the step between them is. Godot's `diffuse_toon` is a hard step; a little
@@ -315,6 +318,8 @@ Shader "TumbangPreso/Toon"
         fixed4 _RimColor;
         half _RimStrength;
         half _RimPower;
+        half _DepthReadability, _TayaCue;
+        float4 _CueHeight;
         half _ShadowBand;
         half _BandEdge;
 
@@ -421,11 +426,21 @@ Shader "TumbangPreso/Toon"
 
             base *= _Color.rgb;
 
-            if (_RimStrength > 0.0)
+            half depth = saturate((distance(_WorldSpaceCameraPos,IN.worldPos)-5.0h)/9.0h)*_DepthReadability;
+            // A small value lift preserves the painted palette. Only registered
+            // cast/lata renderers opt in; map materials and viewmodels stay unchanged.
+            base = lerp(base,base*1.12h+0.025h,depth);
+            if (_RimStrength > 0.0 || depth > 0.0)
             {
-                half rim = pow(1.0h - saturate(dot(normalize(IN.viewDir),
-                                                   normalize(IN.worldNormal))), _RimPower);
-                base = lerp(base, _RimColor.rgb, rim * _RimStrength);
+                half grazing=1.0h-saturate(dot(normalize(IN.viewDir),normalize(IN.worldNormal)));
+                if(_TayaCue>0 || depth>0)grazing=1.0h-saturate(dot(normalize(_WorldSpaceCameraPos-IN.worldPos),normalize(IN.worldNormal)));
+                half rim=pow(grazing,lerp(_RimPower,max(1.5h,_RimPower-0.8h),depth));
+                half upper=smoothstep(0.25h,0.70h,(IN.worldPos.y-_CueHeight.x)/max(.1h,_CueHeight.y));
+                half facing=lerp(.58h,1.0h,saturate(IN.worldNormal.y*.5h+.5h));
+                half mask=lerp(1.0h,upper*facing,_TayaCue);
+                half strength=max(_RimStrength,depth*.13h);
+                half3 colour=_RimStrength>0?_RimColor.rgb:half3(1,.94,.82);
+                base=lerp(base,colour,saturate(rim*strength*mask));
             }
 
             // § THE STUN FROST. Applied AFTER the palette so it reads as ice ON the character

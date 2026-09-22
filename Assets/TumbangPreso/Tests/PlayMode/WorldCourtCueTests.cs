@@ -12,7 +12,7 @@ using Object=UnityEngine.Object;
 
 namespace TumbangPreso.PlayTests
 {
-    public sealed class WorldCourtCueTests
+    public sealed partial class WorldCourtCueTests
     {
         private string _settings,_profile;
         private bool _bots,_spectator,_pinned;

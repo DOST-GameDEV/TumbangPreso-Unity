@@ -411,3 +411,41 @@ local/escape frames and all25percent-grey samples; retain the third subjective
 look and stop iterating. The wisps sit outside the feet and fade over0.42s. Far
 branch is unchanged from inspected v8 map frames. Replay shared state/audio mute
 proof from v3 is retained. No native or human-listening/stranger-review claim.
+
+1.2 source discovery: Carrier.ChannelRatio only advances on the controlling peer;
+the host separately times validated remote reset requests. Repeated grab animation
+is not a safe clock (cancellation and late joins lose timing). Existing SyncLata
+therefore gains an optional version1 suffix with two finite presentation floats,
+while retaining the entire original prefix and host-only handler guard. New peers
+read legacy messages; old readers ignore the suffix. During an active clock it
+updates at10Hz plus edges. This does not change gameplay protection, authority,
+reset admission or network protocol50. Real multi-peer transport stays P7.
+
+The existing bounded recorded can State has room for an8bit clock plus a presence
+bit; upright/protected flags choose restore versus protection. Values stay below
+2048, so clip wire11 and its decoder bound remain unchanged. Legacy clips do not
+invent missing timing. Camera-scoped taya material/mesh overrides restore their
+originals even for nested cameras, preserving identity and authored power state.
+
+1.2 inspected evidence: v3 passed3/3behavior checks; v4 passed target/clock2/2.
+The first clock witness was blocked by the taya, so the corrected angle is from
+the front/side. The absent blue arc was initially attributed to can occlusion; v5 source
+inspection disproved that diagnosis: freezing Time.timeScale makes CanAct false,
+so Carrier cancelled the photographed hold. The corrected fixture preserves an
+actual accepted channel and asserts progress/visibility at capture. Clock look2
+billboards its close ring around the real body centre with normal depth testing;
+its final appearance remains pending this corrected capture. It is a
+shared world timer, not an immunity zone, and cannot show through a wall.
+Catchable brackets gained a6.5cm lip for the low10m eye angle; target look2 retained.
+
+Carry into1.11/1.12 review, not another1.2 task: the actual grab/restore gesture
+produces a large red crescent in these frames. Assess its meaning and dominance
+against the shared small blue clock during the effects/choreography batch.
+
+Final1.2: v7 actual-held clock/cancel/protection and unchanged quantization bound
+passed11.383s,guard0f87a3f9bb6b. Inspected blue and gold arcs in full frames and
+all25percent-grey comparisons. The fixture now asserts active progress/renderer
+at capture and waits the release's Update/LateUpdate handoff. Retain target look2
+from v4 and close viewer-facing clock look2 from v7. STOP tuning/retesting; move
+to1.5. Source review handles destroyed registry keys and changed can skins. Report
+look-1.2-world records evidence limits and earlier invalid capture diagnoses.

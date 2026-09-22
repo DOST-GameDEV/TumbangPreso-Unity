@@ -5,6 +5,9 @@ namespace TumbangPreso.Visual
     [CreateAssetMenu(menuName = "Tumbang Preso/World cue profile")]
     public sealed class WorldCueProfile : ScriptableObject
     {
+        [Range(0,1)] public float TayaTarget = 1;
+        [Range(0,1)] public float RestoreClock = 1;
+        [Range(0,1)] public float DistanceReadability = 1;
         [Range(0,1)] public float Boundary = 1;
         [Range(0,1)] public float NearestExit = 1;
         [Range(0,1)] public float Escape = .8f;

@@ -115,7 +115,7 @@ namespace TumbangPreso.CameraSystem
             {
                 state=0;holder=-1;
                 var can=Source.GetComponentInParent<Lata>();
-                if(can!=null){state=(can.IsUpright?1:0)|(can.IsProtected?2:0);return;}
+                if(can!=null){state=LataClockPresentation.Pack(can);return;}
                 var shoe=Source.GetComponentInParent<Slipper>();
                 if(shoe!=null){state=(int)shoe.State|((int)shoe.Affinity<<8);holder=shoe.Holder!=null?shoe.Holder.PlayerSlot:-1;}
             }

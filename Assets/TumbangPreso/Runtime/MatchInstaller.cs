@@ -432,6 +432,7 @@ namespace TumbangPreso
             int human = Mathf.Max(0, HumanSeat);
             BuildCameraAndHud(seats[human], lata);
             Visual.CourtBoundaryPresentation.Install(transform,lata);
+            Visual.LataClockPresentation.Install(transform,lata);
 
             var runner = gameObject.AddComponent<SliceRunner>();
             runner.Lata = lata;

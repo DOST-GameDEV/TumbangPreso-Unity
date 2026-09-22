@@ -14,7 +14,7 @@ namespace TumbangPreso.Visual
     /// the tag: "P3" is who you have been chasing all match, "TAYA" is what they happen to be
     /// doing this round. Roles rotate every round, so the refresh cannot be a one-shot.
     /// </summary>
-    public sealed class CharacterNameplate : MonoBehaviour
+    public sealed partial class CharacterNameplate : MonoBehaviour
     {
         /// <summary>
         /// §4.5: "Fades out past ~15m." Without this every tag in the match renders at full

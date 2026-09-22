@@ -575,6 +575,7 @@ namespace TumbangPreso
             {
                 if (r == null) continue;
                 r.GetPropertyBlock(_rimBlock);
+                _rimBlock.SetFloat("_DepthReadability", Visual.WorldCueProfile.Current.DistanceReadability);
                 _rimBlock.SetFloat(RimStrengthId, strength);
                 _rimBlock.SetColor(RimColorId, UI.UiTheme.Danger);
                 r.SetPropertyBlock(_rimBlock);
@@ -605,6 +606,8 @@ namespace TumbangPreso
         private float _protectionPulse;
         private void BuildProtectionShell()
         {
+            if (Visual.WorldCueProfile.Current.RestoreClock > 0)
+            { ClearProtectionShell(); return; }
             if (_protectionShell != null) return;
             // A close collar protects this can, without making a shield bubble
             // around nearby attackers. The marker supplies the explicit state.

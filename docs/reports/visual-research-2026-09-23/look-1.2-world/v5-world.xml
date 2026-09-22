@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.1618946">
+  <test-suite type="TestSuite" id="1706" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="534" result="Failed" site="Child" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.161895" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1700" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="534" result="Failed" site="Child" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.141352" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27204" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1701" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="534" result="Failed" site="Child" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.129167" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1702" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="534" result="Failed" site="Child" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.117974" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1676" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.095749" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1678" name="ActualRestoreAndProtectionClocksSurviveRecording" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.ActualRestoreAndProtectionClocksSurviveRecording" methodname="ActualRestoreAndProtectionClocksSurviveRecording" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="148044617" result="Failed" start-time="2026-09-22 21:19:59Z" end-time="2026-09-22 21:20:09Z" duration="10.078518" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.91788530349731445d +/- 0.0039215688593685627d
+  But was:  0.91372549533843994d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.WorldCourtCueTests+<ActualRestoreAndProtectionClocksSurviveRecording>d__2.MoveNext () [0x005e6] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\WorldCourtCueTests.TargetClock.cs:91
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-1.2-v5/shots/restore-before.png
+[Play] wrote Logs/look-1.2-v5/shots/restore-after.png
+[Play] wrote Logs/look-1.2-v5/shots/restore-comfort.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

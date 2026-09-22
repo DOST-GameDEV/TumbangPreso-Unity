@@ -107,11 +107,16 @@ Batch A, communication:
   Final changed checks2/2, five-map geometry1/1; earlier replay/audio check retained.
   Muted stranger-readability and human listening acceptance remain P7 external review,
   not a claimed result. No gameplay rule, collision or completed HUD changes.
-- [ ] **VISUAL-1.2 The taya's view and the shared restore clock.** Taya-only rim and
-  "catchable" ring on taggable attackers; a reticle ready tick in punch or lunge reach; a
-  restore ring on the lata filling with `Carrier.ChannelRatio` for everyone; a draining
-  protection collar. Replay records both. Done when the taya can pick a target at 10 m
-  and an attacker can time an escape from the ring alone.
+- [x] **VISUAL-1.2 The taya's view and shared restore clock.** Implementation and
+  focused qualification DONE. Camera-only Defense-blue upper rim and open catchable
+  brackets use actual tag predicates and restore after nested views. Existing reach
+  tick unchanged. Close can clock fills with actual reset progress, drains protection,
+  shares presentation snapshots with peers and records both in existing clip11 state.
+  Bounded distance readability for cast/can preserves their authored colours. Normal,
+  comfort and25percent-grey frames personally inspected in
+  [look-1.2-world](reports/visual-research-2026-09-23/look-1.2-world/report.md).
+  Target checks passed v4; wire compatibility v3; strengthened actual clock v7 (1/1).
+  Real peer/latency and native/human interpretation acceptance remain P7.
 - [x] **VISUAL-1.3 Timers on objects.** DONE (look-batchA-v4 icon sheet): the recall ring
   drains in gold through the fetch warning, turns solid Offense orange while the penalty
   runs and drains in the owner's seat colour during a roof or lagoon return

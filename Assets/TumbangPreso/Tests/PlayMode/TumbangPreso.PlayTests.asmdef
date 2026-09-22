@@ -5,6 +5,7 @@
         "TumbangPreso.TestSupport",
         "TumbangPreso.Core",
         "TumbangPreso.Runtime",
+        "Unity.Netcode.Runtime",
         "UnityEngine.TestRunner",
         "Unity.InputSystem",
         "Unity.Services.Core",

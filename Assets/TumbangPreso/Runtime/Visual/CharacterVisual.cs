@@ -21,7 +21,7 @@ namespace TumbangPreso.Visual
     /// ⚠️ THE ART HERE IS ALL PLACEHOLDER (docs/Port_Plan.md section 8). Invest in the
     /// MECHANISM, which survives the swap, not in matching the current look.
     /// </summary>
-    public sealed class CharacterVisual : MonoBehaviour
+    public sealed partial class CharacterVisual : MonoBehaviour
     {
         /// <summary>
         /// ⚠️⚠️ FOUR SPELLINGS, AND WRITING ONLY TWO OF THEM MADE EVERY CHARACTER TINT A SILENT

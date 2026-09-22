@@ -2608,6 +2608,20 @@ namespace TumbangPreso.Net
         /// </summary>
         private const float ResetChannelLeeway = 0.05f;
 
+        // Read-only presentation of the host's validated remote hold. This value
+        // never changes channel admission or decides when a reset completes.
+        public float ObservedHostResetRatio
+        {
+            get
+            {
+                var lata=GameServices.Round?.Lata;if(lata==null)return 0;
+                float ratio=0;
+                foreach(var pair in _resetChannelStart)if(HostMayChannelReset(pair.Key))
+                    ratio=Mathf.Max(ratio,Mathf.Clamp01((Time.time-pair.Value)/lata.ResetChannelTime));
+                return ratio;
+            }
+        }
+
         public void RequestLataResetServerRpc(int slot, ResetPhase phase)
         {
             if (NetAuthority.IsHost)
@@ -5109,6 +5123,8 @@ namespace TumbangPreso.Net
         private readonly Dictionary<int, int> _lastSlipperActive = new Dictionary<int, int>();
         private readonly Dictionary<int, float> _slipperKeepaliveLeft = new Dictionary<int, float>();
 
+        private float _lataClockSyncLeft;
+        private bool _lastLataClockActive;
         private void BroadcastLataStateIfChanged()
         {
             var lata = GameServices.Round?.Lata;
@@ -5119,10 +5135,15 @@ namespace TumbangPreso.Net
             bool moved = (lata.transform.position - _lastLataPosition).sqrMagnitude
                          > PropMoveEpsilon * PropMoveEpsilon;
 
+            bool clockActive=Visual.LataClockPresentation.ActualRestore(lata)>0 || lata.IsProtected;
+            _lataClockSyncLeft-=Time.fixedDeltaTime;
+            bool clockChanged=clockActive!=_lastLataClockActive || (clockActive && _lataClockSyncLeft<=0);
+            _lastLataClockActive=clockActive;
+            if(clockChanged)_lataClockSyncLeft=.1f;
             bool toppled = lata.IsUpright != _lastLataUpright;
             bool keepalive = _lataKeepaliveLeft <= 0.0f;
 
-            if (!moved && !toppled && !keepalive) return;
+            if (!moved && !toppled && !keepalive && !clockChanged) return;
 
             _lastLataPosition = lata.transform.position;
             _lastLataUpright = lata.IsUpright;
@@ -5130,7 +5151,7 @@ namespace TumbangPreso.Net
 
             // ⚠️ A ROLL IS A POSE AND TRAVELS AS ONE; GOING OVER IS THE EVENT THAT SCORES AND
             // TRAVELS AS THE FULL RELIABLE SNAPSHOT. See the § note above.
-            if (toppled || keepalive) BroadcastLataState();
+            if (toppled || keepalive || clockChanged) BroadcastLataState();
             else BroadcastLataPose();
         }
 
@@ -5243,6 +5264,12 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(lata.transform.rotation);
             writer.WriteValueSafe(lata.IsUpright);
             writer.WriteValueSafe(lata.SkinIndex);
+            // Optional presentation suffix: old readers consume the original
+            // prefix; new readers accept old hosts without inventing a clock.
+            // No new message, protocol bump, reset request or authority path.
+            writer.WriteValueSafe((byte)1);
+            writer.WriteValueSafe(Visual.LataClockPresentation.ActualRestore(lata));
+            writer.WriteValueSafe(lata.ProtectionLeft);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
         }
 
@@ -5538,6 +5565,12 @@ namespace TumbangPreso.Net
             if (!Finite(pos) || !Finite(rot)) return;
 
             SyncLataClientRpc(pos, rot, isUpright, skinIndex);
+            if(reader.Length-reader.Position>=9)
+            {
+                reader.ReadValueSafe(out byte clockVersion);
+                reader.ReadValueSafe(out float restore);reader.ReadValueSafe(out float protection);
+                if(clockVersion==1)Visual.LataClockPresentation.For(GameServices.Round?.Lata)?.ApplySnapshot(restore,protection);
+            }
         }
 
         private void OnSyncSlipperMsg(ulong senderClientId, FastBufferReader reader)
