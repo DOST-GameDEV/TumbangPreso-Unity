@@ -65,6 +65,10 @@ namespace TumbangPreso.UI.Hub
             ground.color = HubStyle.Night;
             ground.raycastTarget = false;
             AdoptCourt();
+            // ⚠️ THE OWNER'S ANIMATED HOME SCENE, in the slot this layer was reserved for, above the
+            // court. The court stays underneath as the fallback: if the clip is missing or cannot be
+            // decoded the scene shows its poster, and with no poster the court shows through.
+            HubSceneVideo.Install(Scene);
 
             _shade = HubKit.Stretch(HubKit.Rect(root, "CourtShade")).gameObject.AddComponent<Image>();
             _shade.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0);
