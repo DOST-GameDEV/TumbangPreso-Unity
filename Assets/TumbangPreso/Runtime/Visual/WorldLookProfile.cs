@@ -111,18 +111,27 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float Bloom=.12f;
         [Range(.5f,3)] public float BloomThreshold=1.7f;
 
+        // ⚠️⚠️ A WARM HORIZON NEEDS A CYAN ZENITH OR THE SKY BETWEEN THEM TURNS LAVENDER. The
+        // sky shader blends horizon to zenith in linear light, and the first render paired a
+        // peach horizon (red well above green) with a violet-leaning blue: every sky pixel in
+        // between kept the red and the blue and lost the green, and Eskinita and SaBubong
+        // measured (195,196,239) where PEAK is a clean blue. The warm maps now pair a cream or
+        // gold horizon (green close to red) with a zenith whose green sits near 0.62, so the
+        // blend passes through pale neutral. Warmth comes from the sun, the haze and the clouds'
+        // lit faces instead. The shade tints (Sky ambient, CloudShade) moved the same way,
+        // because a lavender shadow is the same fault on the ground.
         public MapLook[] Maps={
             new MapLook("BayanPlaza",new Color(.56f,.63f,.80f),new Color(.66f,.62f,.56f),new Color(.56f,.46f,.36f),new Color(.86f,.88f,1.08f),38,210,0,true)
                 .Air(new Color(.87f,.91f,.95f),new Color(.33f,.62f,.93f),new Color(.90f,.93f,.94f),new Color(1,.99f,.96f),new Color(.70f,.76f,.90f))
                 .Key(new Color(1,.95f,.84f),1.32f,52,.76f,new Color(.012f,.012f,.022f)),
-            new MapLook("Eskinita",new Color(.58f,.60f,.80f),new Color(.70f,.60f,.54f),new Color(.60f,.45f,.33f),new Color(.92f,.86f,1.06f),34,190,1,false)
-                .Air(new Color(.96f,.86f,.76f),new Color(.40f,.64f,.92f),new Color(.98f,.88f,.76f),new Color(1,.97f,.90f),new Color(.74f,.72f,.88f))
+            new MapLook("Eskinita",new Color(.54f,.63f,.8f),new Color(.70f,.60f,.54f),new Color(.60f,.45f,.33f),new Color(.92f,.86f,1.06f),34,190,1,false)
+                .Air(new Color(.95f,.9f,.8f),new Color(.3f,.62f,.94f),new Color(.97f,.93f,.82f),new Color(1,.97f,.90f),new Color(.72f,.78f,.9f))
                 .Key(new Color(1,.91f,.76f),1.34f,50,.74f,new Color(.018f,.011f,.020f)),
             new MapLook("IlalimNgTulay",new Color(.52f,.66f,.76f),new Color(.60f,.64f,.62f),new Color(.52f,.47f,.40f),new Color(.84f,.94f,1.06f),36,180,2,false)
                 .Air(new Color(.82f,.91f,.92f),new Color(.36f,.66f,.88f),new Color(.88f,.93f,.90f),new Color(1,.99f,.95f),new Color(.66f,.76f,.84f))
                 .Key(new Color(1,.94f,.82f),1.30f,52,.72f,new Color(.010f,.016f,.020f)),
-            new MapLook("SaBubong",new Color(.62f,.58f,.82f),new Color(.74f,.60f,.56f),new Color(.62f,.46f,.38f),new Color(.96f,.84f,1.08f),40,210,3,true)
-                .Air(new Color(.98f,.84f,.76f),new Color(.44f,.58f,.90f),new Color(1,.84f,.70f),new Color(1,.93f,.82f),new Color(.76f,.68f,.88f))
+            new MapLook("SaBubong",new Color(.58f,.62f,.82f),new Color(.74f,.60f,.56f),new Color(.62f,.46f,.38f),new Color(.96f,.84f,1.08f),40,210,3,true)
+                .Air(new Color(.98f,.88f,.74f),new Color(.32f,.62f,.94f),new Color(1,.91f,.74f),new Color(1,.93f,.82f),new Color(.74f,.78f,.88f))
                 .Key(new Color(1,.87f,.70f),1.32f,42,.74f,new Color(.020f,.012f,.024f)),
             new MapLook("Lagoon",new Color(.52f,.72f,.86f),new Color(.62f,.74f,.72f),new Color(.60f,.56f,.44f),new Color(.84f,.96f,1.06f),55,290,4,false)
                 .Air(new Color(.80f,.92f,.95f),new Color(.26f,.62f,.92f),new Color(.86f,.95f,.96f),new Color(1,1,.97f),new Color(.66f,.78f,.90f))
