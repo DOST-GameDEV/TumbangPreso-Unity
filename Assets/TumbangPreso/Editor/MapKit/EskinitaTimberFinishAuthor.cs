@@ -56,9 +56,11 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (string.IsNullOrEmpty(source)) throw new InvalidOperationException("Timber source must be persistent.");
                     string label = joint ? "CourseJoints" : original.name.Contains("warm") ? "WarmBoards" : "QuietBoards";
                     string path = folder + "/" + label + ".mat";
-                    var material = AssetDatabase.LoadAssetAtPath<Material>(path);
-                    if (material == null) { material = new Material(original); AssetDatabase.CreateAsset(material, path); }
-                    else EditorUtility.CopySerialized(original, material);
+                    var saved = AssetDatabase.LoadAssetAtPath<Material>(path);
+                    // Configure a fresh native material before replacing the saved contents.
+                    // Resetting an already configured material first left its cached float
+                    // value at1while the serialized value reverted to0during re-authoring.
+                    var material = new Material(original);
                     material.name = "Eskinita" + lot.Replace("_", "") + "_" + label;
                     material.SetOverrideTag(OriginalTag, source);
                     // Real horizontal boards already provide the joints. The existing
@@ -66,7 +68,9 @@ namespace TumbangPreso.EditorTools.MapKit
                     // retaining filtered lengthwise grain in the measured facade UV basis.
                     material.SetFloat("_DeckSurface", 1);
                     material.SetFloat("_SurfaceStrength", joint ? 0 : .8f);
-                    EditorUtility.SetDirty(material); materials[i] = material; changed++;
+                    if (saved == null) { AssetDatabase.CreateAsset(material, path); saved = material; }
+                    else { EditorUtility.CopySerialized(material, saved); UnityEngine.Object.DestroyImmediate(material); }
+                    EditorUtility.SetDirty(saved); materials[i] = saved; changed++;
                 }
                 renderer.sharedMaterials = materials;
             }

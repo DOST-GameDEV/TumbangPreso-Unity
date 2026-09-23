@@ -120,6 +120,13 @@ generation for critically reviewed inspiration. Extra background copies are not
 house-quality completion. Each map gets its own distance plan and individual
 building/material decisions, preserving the one-map-at-a-time order.
 
+Owner also explicitly requests recognizable Filipino street life, including
+TRICYCLES, researched thoroughly first. Inspect the existing passenger/cargo
+tricycle and jeepney assets, choose map-appropriate forms and purposeful pickup,
+parking, service/household settings. Ground/support them and preserve routes.
+Include other researched place-specific objects; no identical cultural-prop pack
+scattered across all maps. Execute inside each map's existing refinement row.
+
 - [ ] **REFINE-2.0 Older-work gate.** Finish/account for older actionable TODOs with
   actual implementation/evidence; preserve shared/concurrent and external dependencies.
 - [ ] **REFINE-2.1 Thorough reference research and plan.** First research good-game
@@ -158,6 +165,10 @@ building/material decisions, preserving the one-map-at-a-time order.
   at2_E/5_E/6_E, each inspected from a lit side and its shadowed street frontage;
   focused1/1passed. [East timber evidence](reports/map-by-map-refinement-2026-09-23/eskinita-east-timber/report.md).
   Other primary homes and5_W's remaining roof/composition details remain open.
+  Home3_Wnow differs from0_W's shop: raised bamboo shade, basket and folded cloth
+  on the retained sill. Neighbor shop/windows/steps preserved, no new collision.
+  Matched near/street/small/grey inspected; focused1/1passed including the corrected
+  persistence of reauthored timber materials.[Domestic evidence](reports/map-by-map-refinement-2026-09-23/eskinita-domestic3w/report.md).
   Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.

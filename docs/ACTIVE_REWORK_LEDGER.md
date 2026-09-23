@@ -9,17 +9,17 @@ instructions/current designs supersede old OPEN headings and retired FUTURE.
 Keep all original task identities and evidence. No unnecessary questions.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Map source includes timber commit3d80ffbb5after e68a8ab4b. Before publishing it,
-remote29288e180arrived with mode posters, avatars and Rafi v8/motion updates through
-60783a070/86cd3c076. Merge resolved automatically, preserving the parallel UI-REVIEW
-checklist and ledger section below. No UI/Rafi refinement performed in this lane.
+Verified published HEAD66ec5d7b76ea9bd409a41f228abaf6621dd0babf includes timber
+3d80ffbb5and remote29288e180(mode posters, avatars, Rafi v8/motion updates through
+60783a070/86cd3c076). Merge resolved automatically, preserving parallel UI-REVIEW
+checklist/ledger below. No UI/Rafi refinement performed in this lane.
 House4_Wccd4285f5and context2f2c55917were already published. Fetch/reconcile before
 each later push; verify remote HEAD. Explicit path staging,
 sole authorM4tyu633, no trailers/AI mentions/em dashes. NEVER commit or restore
 original composition-redesign/home-court.png.meta or loading-street.png.meta.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detachede68a8ab4b. Prior208context and12house candidate paths matched their
+owned detached66ec5d7b7. Prior208context and12house candidate paths matched their
 published source, then were preserved in named stashes before advancing. Independent
 warm Library. Original map/house qualified receipts remain in Logs/reports.
 Job59931baseline completed1/1in9.687s, ten actual house views inspected; several
@@ -45,10 +45,39 @@ each lit-side before/after, small street view andgrey25inspected. Original geome
 colors/windows remain untouched;12local materials total for all four timber homes.
 Qualified assets/evidence copied to DEV/eskinita-east-timber. Generated churn
 preserved then restored. NO JOBS running. No more unchanged timber rechecks.
-Publish this group with the incoming UI/Rafi merge, then continue near-house decisions;
-0_W/3_Wduplicate shop treatment and plain masonry fronts are next. Existing
+Timber group/merge published.0_W/3_Wduplicate shop treatment and plain masonry
+fronts are next. Existing
 supported c-family entrance canopies should be kept. Tree coverage/east-side
 darkness, roof/material and household details are still open, not whole-house done.
+
+Domestic author20682completed, but check37214failed on the new persistence
+assertion:5_Wsaved _DeckSurfacewas0. This is a real new author regression, not a
+capture fixture problem. CopyPropertiesFromMaterialalone did not solve it.
+Fresh configured draft material, then copying its final serialized contents into
+the existing asset, now preserves1in all12saved files. Corrective author62775
+and check10754completed/reaped;1/1pass4.995s, all12persistent modes confirmed.
+Matched domestic near/street images, small andgrey25inspected.1176addedvertices,
+one renderer/material, no new collision; original neighbor shop/windows/steps kept.
+Qualified output copied to DEV/eskinita-domestic3w; source/churn patches preserved
+then owned generated churn restored. NO JOBS running. Publish this group and
+continue the remaining house/vehicle/place work. No unchanged rerun needed.
+Domestic3_W plan/research and generated reference critique saved in
+eskinita-domestic3w.md and concepts/eskinita-domestic3w-v1.png. New scoped author
+retains the neighbor0_Wshop, removes only3_W's two product submeshes, and fits a
+raised shade/basket/cloth to its measured existing sill. No new collision.
+The original reauthor defect was caught in source-copy comparison, preserved in
+QUALstash and regeneration-difference.json. Published first qualified materials
+remain1. New check verifies all12saved timber modes along with the domestic
+window/source preservation. No whole-suite rerun or unchanged timber image set.
+
+Latest owner request saved verbatim: add researched Filipino street-life objects,
+explicitly TRICYCLES. Initial inventory/place-use plan in filipino-street-life.md;
+existing passenger/cargo tricycles and jeepney must be inspected/refined, not
+assumed absent. Continue house work while researching appropriate local models
+and sensible waiting/parking/service contexts. Two real tricycle photographs have
+now been visually inspected, distinguishing motorcycle-sidecar from integrated
+three-wheelers; notes saved. Temporary browser tab closed, tab list verified empty.
+No new vehicle placed yet.
 Other validation checkout has111dirty paths; never reset it or main/home/net/ilalim.
 QUAL retained earlier candidate inputs in named stash and Logs patches. Preserve.
 Remote lighting/peak-bright-overhaul053e5274e is NOT integrated; its lighting/toon/
@@ -83,9 +112,10 @@ patches, tiny grille, foliage softness and arbitrary green recolor. Full prompt
 saved, concept is not runtime evidence. Existing19surface treatments/details are
 already implemented; inspect why actual houses remain weak before duplicating them.
 
-NEXT: publish inspected timber group, then remaining primary homes individually,
-starting0_W/3_Wservice-versus-domestic distinction.4_Whouse and distance groups
-are published. Do not repeat unchanged qualification.
+NEXT: publish qualified domestic3_W/persistence fix/research, then inspect the
+existing tricycle model and its Eskinita placement before a map-local street-life
+improvement; return to remaining primary home/roof/composition work. Existing
+4_W/timber/distance groups are published. Do not repeat unchanged qualification.
 Plan for roof/wall/opening/domestic detail, retain useful source parts/collision,
 use map-local derivatives. One matched actual-game comparison/small/grey view and
 one focused changed-risk check. Then other Eskinita buildings/props/vegetation/sky,

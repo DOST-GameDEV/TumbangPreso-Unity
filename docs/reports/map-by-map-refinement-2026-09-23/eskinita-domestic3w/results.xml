@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 15:41:02Z" end-time="2026-09-23 15:41:07Z" duration="4.9952614">
+  <test-suite type="TestSuite" id="1744" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="568" result="Passed" start-time="2026-09-23 15:41:02Z" end-time="2026-09-23 15:41:07Z" duration="4.995261" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1738" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="568" result="Passed" start-time="2026-09-23 15:41:02Z" end-time="2026-09-23 15:41:07Z" duration="4.976704" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20964" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1739" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="568" result="Passed" start-time="2026-09-23 15:41:02Z" end-time="2026-09-23 15:41:07Z" duration="4.968346" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1740" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="568" result="Passed" start-time="2026-09-23 15:41:02Z" end-time="2026-09-23 15:41:07Z" duration="4.962718" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1282" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-23 15:41:03Z" end-time="2026-09-23 15:41:07Z" duration="4.937282" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1288" name="EskinitaDomesticFrontagePreservesNeighborsAndReauthoredFinishes" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.EskinitaDomesticFrontagePreservesNeighborsAndReauthoredFinishes" methodname="EskinitaDomesticFrontagePreservesNeighborsAndReauthoredFinishes" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="1880170850" result="Passed" start-time="2026-09-23 15:41:03Z" end-time="2026-09-23 15:41:07Z" duration="4.916704" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1097 renderers, 161 with a roof variant.
+[NearFade] 1324 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-domestic3w-v2/domestic3w-frontage-before.png
+[Play] wrote Logs/refine2-domestic3w-v2/domestic3w-frontage-after.png
+[Play] wrote Logs/refine2-domestic3w-v2/domestic3w-street-before.png
+[Play] wrote Logs/refine2-domestic3w-v2/domestic3w-street-after.png
+[Play] wrote Logs/refine2-domestic3w-v2/domestic3w-small.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

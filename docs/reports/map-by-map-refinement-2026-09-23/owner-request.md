@@ -118,3 +118,14 @@ built-in image generator for critiqued blocky-style inspiration. Inspect individ
 houses and improve weak surfaces, openings, roof construction and domestic details.
 Do not apply one generic dirt/noise texture or decorative cultural motif everywhere.
 Save research, concept provenance, keep/reject decisions and actual game evidence.
+
+## Recognizable Filipino street life,2026-09-23
+
+> ADD FILIpino shit like tricyclkes idk u thhoroughly research it
+
+Research and add meaningful local vehicles, household/street objects and activity
+relationships. Tricycles are explicit scope. Inspect existing passenger/cargo
+tricycle and jeepney assets first, then refine/place the right local form with
+supported wheels, credible access/parking and clear gameplay routes. Do not scatter
+the same vehicle into every map or replace local references with generic motifs.
+This adds to the current house/context pass; it does not cancel existing tasks.

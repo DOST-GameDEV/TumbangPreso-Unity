@@ -1,0 +1,10 @@
+5_W:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+2_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+5_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+6_E:3local material derivatives; original geometry, UVs, board joints, color, windows and collision unchanged.
+Filtered lengthwise grain replaces the second procedural vertical board grid on real horizontal cladding.
+3_W only: removed2product submeshes, retained all other detail indices; 1176 added vertices/one renderer/material.
+Measured opening: Center: (2.00, 1.25, 2.45), Extents: (0.72, 0.23, 0.03); sillY=0.7450002; original mesh=Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_301ea2da83f615c41942e58834366727_6995655510436753321_1.0000_1.0000_1.0000.asset.0_Wshop and original masters unchanged.

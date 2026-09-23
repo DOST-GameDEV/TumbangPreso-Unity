@@ -207,6 +207,57 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaDomesticFrontagePreservesNeighborsAndReauthoredFinishes()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig = Object.FindFirstObjectByType<CameraRig>(); rig.enabled = false;
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.gameObject.SetActive(false);
+            var camera = rig.Camera; camera.fieldOfView = 48;
+            var added = GameObject.Find("Eskinita/Dressing/EskinitaDomestic3W");
+            Assert.IsNotNull(added); Assert.IsEmpty(added.GetComponentsInChildren<Collider>());
+            string originalPath = added.GetComponent<MeshRenderer>().sharedMaterial.GetTag("TumpRefineOriginalMesh", false);
+            var original = AssetDatabase.LoadAssetAtPath<Mesh>(originalPath); Assert.IsNotNull(original);
+            var detail = GameObject.Find("Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_3_W").GetComponentInChildren<MeshFilter>();
+            var shop = GameObject.Find("Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_0_W").GetComponentInChildren<MeshFilter>();
+            Assert.AreSame(original, shop.sharedMesh, "The neighboring shop's source must stay unchanged.");
+            var after = detail.sharedMesh; var materials = detail.GetComponent<MeshRenderer>().sharedMaterials;
+            int removed = 0;
+            for (int sub = 0; sub < original.subMeshCount; sub++)
+            {
+                bool goods = materials[sub].name.StartsWith("Cream goods") || materials[sub].name.StartsWith("Oxblood goods");
+                if (goods) { Assert.IsEmpty(after.GetTriangles(sub)); removed++; }
+                else CollectionAssert.AreEqual(original.GetTriangles(sub), after.GetTriangles(sub), "Keep jalousies, sill, brackets and steps.");
+            }
+            Assert.AreEqual(2, removed);
+            // This author run also fixes a real re-authoring serialization regression:
+            // existing timber materials must retain the already accepted grain mode.
+            int timber = 0;
+            foreach (string lot in new[] { "5_W", "2_E", "5_E", "6_E" })
+                foreach (var renderer in GameObject.Find("Eskinita/Dressing/NeighborhoodRework/HouseFinish_Bahay_" + lot).GetComponentsInChildren<MeshRenderer>())
+                    foreach (var material in renderer.sharedMaterials)
+                        if (!string.IsNullOrEmpty(material.GetTag("TumpRefineOriginalMaterial", false)))
+                        { Assert.AreEqual(1, material.GetFloat("_DeckSurface"), lot + " reverted its fitted grain after re-authoring."); timber++; }
+            Assert.AreEqual(12, timber);
+            var home = GameObject.Find("Eskinita/Dressing/Bahay/Bahay_Rework_Bahay_3_W");
+            var bodies = home.GetComponentsInChildren<MeshRenderer>(); var bounds = bodies[0].bounds;
+            foreach (var body in bodies) bounds.Encapsulate(body.bounds);
+            foreach (string angle in new[] { "frontage", "street" })
+            {
+                camera.transform.position = new Vector3(bounds.center.x + (angle == "frontage" ? 9 : 12), angle == "frontage" ? 2.7f : 3.7f, bounds.center.z + 3.8f);
+                camera.transform.LookAt(new Vector3(bounds.center.x, 1.6f, bounds.center.z));
+                foreach (string state in new[] { "before", "after" })
+                {
+                    detail.sharedMesh = state == "after" ? after : original;
+                    added.SetActive(state == "after");
+                    using (Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera, "domestic3w-" + angle + "-" + state, false, Output, width: 1280, height: 800);
+                }
+            }
+            using (Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera, "domestic3w-small", false, Output, width: 960, height: 540);
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
         {
             var canvas = new GameObject("Context preview canvas", typeof(Canvas));
