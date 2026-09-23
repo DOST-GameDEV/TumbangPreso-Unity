@@ -132,6 +132,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(solids.Count!=map.GetComponentsInChildren<Collider>(true).Length||solids.Any(p=>p.Key==null||p.Key.bounds!=p.Value))
                 throw new InvalidOperationException("Roof neighbors changed original collision.");
             report.AppendLine($"Six roofs, {vertices}vertices, six renderers/one palette, no new collision or shadow casters. Retained footprints and street clearance verified.");
+            RooftopApartmentFinishAuthor.FinishLoadedScene(report);
         }
         private static void Building(Geometry g,float width,float depth,float height,int wall)
         {

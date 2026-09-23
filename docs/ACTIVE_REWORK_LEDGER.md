@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: SaBubong outer district ready to publish
+## Current resume,2026-09-24: six-apartment surface refinement
 
 Overall goal ACTIVE and NOT complete. Continue independently actionable TODO without
 checkpoint stops. Owner is AFK and prioritizes product quality over verification and
@@ -8,16 +8,17 @@ capture-tool loops. No routine questions, delegation/other chats, paid services,
 credit resets, main edits or Desktop replacement. Preserve older tasks and history.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remotecd245e5f1786ab7cabc3a9ddb94cbb134a5f96e9.
+HEAD and verified remote8b7d082e7fd3eaa8414f8e22d6b1a323703e1353.
 Original home-court.png.meta and loading-street.png.meta under
 Resources/UI/composition-redesign stay protected: NEVER restore/stage these DEV files.
-Current own candidate: RooftopDistrictAuthor, its outer-district JSON, local geometry
-access, builder hook, context plan and this ledger. Neighbor unit already published.
+Current own files: saved sabubong-surfaces-v1concept/prompt/provenance, apartment
+surface plan and this ledger. ApartmentFinishAuthor, neighbor reauthor hook and one paired review case now authored/copied to QUAL.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detachedcd245e5f1 with copied district candidate. Neighbor candidate stash
-retained after exact source match. Author32726and review65370completed/reaped. Native case1/1in5.034s; actual paired
-preview/neighbor/grey25and six roof views inspected. No active Unity job.
-No native players, task browser tabs or temporary servers.
+owned detached8b7d082e7, clean after exact-match candidate stash. Preserve stashes.
+Apartment author79556and revised review30314completed/reaped. Native1/1in3.451s;
+paired detail/court/grey25and full detail inspected, keepv1. First failed fixture
+result retained. No active Unity job.
+Freeze.cs. No native player, task browser tab or temporary server is active.
 Explicit staging, sole author M4tyu633, no trailers/AI mentions/em dashes.
 Fetch before push and verify remote. Never reset/clean/force-push or discard stashes.
 
@@ -160,3 +161,34 @@ restored after patch. Ground edge fixed and lower urban layer now reads through
 gaps. Existing haze already softens the distance; no extra ring beyond its fade.
 Publish this unit then local Sa building-surface refinements. New all-map texture
 feedback remains open on all five parents, not closed by this district addition.
+
+8b7d082e7district PUBLISHED/remote verified. QUAL exact matched/stashed/advanced.
+New built-in surface concept generated and inspected, saved with prompt/hash. Keep
+plaster fields/concrete corners/sill depth, reject realistic micro-wear and fake
+reflections. Next six-apartment local material/mesh finish per
+reports/map-by-map-refinement-2026-09-23/sabubong-building-surfaces.md. No new Unity
+run until actual implementation. Broader map surface and final gates remain open.
+
+Apartment finish candidate:528px local atlas with seamless4m plaster fields on
+three plaster swatches only, derived quad mesh preserves source silhouette, original
+source paths retained. Concrete corner strips, fitted sills/jambs and two-storey
+reveals stay within measured plot. Outer district/shared shaders untouched. Author
+question is valid derived geometry/material setup and unchanged collision. After
+success run one native before/after material/detail case and inspect.
+
+Apartment author passed guards:76992total derived vertices/12renderers/two materials
+for six near buildings. Original silhouette/collision preserved, outer district
+unchanged. Saved full patch and restored known profile/PNGmeta churn. Current
+focused before/after material/detail review in flight, .cs frozen.
+
+First apartment review55056failed before images at fixture line100: provenance
+lookup assumed runtime mesh has an AssetImporter. Author succeeded. Bounded fix
+reads provenance from the known saved derivative asset, preserving assertions and
+source swap. Revised review30314runs check-v2.log/results-v2.xml; keep failed
+results.xml and after-failed-check.patch. Freeze.cs. No broader fixture work.
+
+Apartment unit ready to publish. Qualified scene/derived assets/evidence copied to
+DEV; known churn restored after full patch. Six-house family improved, all-map
+surface acceptance still open. Next individually review/refine retained tower
+families and main roof-building surfaces. Do not restart the successful near-unit
+check or broaden fixture work. Source originals/outer district remain untouched.

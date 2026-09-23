@@ -87,6 +87,41 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongApartmentSurfaceReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=60;
+            var root=GameObject.Find("SaBubong/Dressing/Metro rooftops/Inhabited neighbor roofs");Assert.AreEqual(6,root.transform.childCount);
+            var pairs=root.transform.Cast<Transform>().Select((t,index)=>
+            {
+                var filter=t.GetComponent<MeshFilter>();var renderer=t.GetComponent<MeshRenderer>();
+                // Provenance belongs to the saved derivative, not a runtime mesh instance.
+                string path=AssetImporter.GetAtPath("Assets/TumbangPreso/Art/SaBubong/ApartmentFinish/Apartment"+index+".asset").userData;
+                Assert.IsTrue(path.StartsWith("TUMP_ROOF_APARTMENT_SOURCE:"));
+                var beforeMesh=AssetDatabase.LoadAssetAtPath<Mesh>(path.Substring("TUMP_ROOF_APARTMENT_SOURCE:".Length));
+                var beforeMaterial=AssetDatabase.LoadAssetAtPath<Material>(renderer.sharedMaterial.GetTag("TumpApartmentSource",false));
+                Assert.IsNotNull(beforeMesh);Assert.IsNotNull(beforeMaterial);
+                return new {filter,renderer,beforeMesh,beforeMaterial,afterMesh=filter.sharedMesh,afterMaterial=renderer.sharedMaterial,details=t.Find("Apartment construction finish").gameObject};
+            }).ToArray();
+            Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
+            foreach(string view in new[]{"detail","court"})
+            {
+                camera.transform.position=view=="detail"?new Vector3(12,10,21):new Vector3(3,1.8f,8);
+                camera.transform.LookAt(new Vector3(0,1.7f,39));
+                foreach(string state in new[]{"before","after"})
+                {
+                    bool after=state=="after";
+                    foreach(var p in pairs){p.filter.sharedMesh=after?p.afterMesh:p.beforeMesh;p.renderer.sharedMaterial=after?p.afterMaterial:p.beforeMaterial;p.details.SetActive(after);}
+                    yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-apartment-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongNeighborRoofReview()
         {
             var canvas=new GameObject("SaBubong neighbor preview",typeof(Canvas));

@@ -303,7 +303,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Outer72-block district/284homes/four planted courts and connected streets now
   continue the city; visual ground edge removed. Existing native case1/1passed and
   paired/grey/roof views inspected. [District evidence](reports/map-by-map-refinement-2026-09-23/sabubong-district/report.md).
-  Building-texture review and final integrated map acceptance remain.
+  Six neighboring apartments now have local metre-scaled plaster textures, concrete
+  corners, sills/jambs and floor reveals. Representative native pairs/grey inspected;
+  [surface evidence](reports/map-by-map-refinement-2026-09-23/sabubong-apartment-surfaces/report.md),1/1passed after one bounded provenance-fixture fix.
+  Other building families and final integrated map acceptance remain open.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
   Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
   each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
