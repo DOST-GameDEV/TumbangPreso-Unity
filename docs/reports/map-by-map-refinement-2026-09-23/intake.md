@@ -93,3 +93,17 @@ better map. Continue using3d-asset.com and independent real-world/game reference
 Compare actual in-engine before/after at player/spectator distances for each map.
 No global texture/noise/recolour sweep, no deleting older tasks, no premature closure.
 Current generated images are loading-screen illustrations, not a started map rebuild.
+
+## Owner additions: PEAK, Filipino identity and visible lobby context
+
+Research PEAK and other suitable games thoroughly before later map implementation.
+Each map should showcase a different part of Filipino culture, using independent
+real-place/cultural references rather than copying foreign motifs. Preserve the
+stylised, pleasing direction and the per-map workflow. The owner specifically
+points out the empty real map behind the lobby: add coherent surrounding structures,
+connections and lived detail that make sense as a place. LOBBY becomes an explicit
+acceptance camera alongside gameplay, introduction and spectator views.
+See [the detailed research/camera brief](cultural-and-camera-brief.md). Both supplied
+images and provenance are in ArtSource/map-refinement-20260923/owner-references/.
+These requirements are saved for after UI/current tests, not claimed researched or
+implemented now. Older tasks, image-generation critique and all-map coverage remain.

@@ -59,3 +59,24 @@ make sure old unfinished todo and this new todo arent lost thhoroughly go thru e
 
 > improve all animated sky island and backgrounds as well thank you
 > js finish ui first
+
+## PEAK and Filipino culture, owner2026-09-23
+
+> in making maps better later pls thoroughly reseach games similar to us like peak and use them as reference to make maps better BUT also try to make it more FILIPINO , eachh map is supposed to showcase different parts of our culture
+>
+> thoroughly plan and research different games first as well as how to make it look better and more filipino and then start implementing
+>
+> PLS add this lang for later when u finish ur tests and shhit
+
+## The map visible behind the lobby, owner2026-09-23
+
+> people will see that map later btw
+>
+> pls fill map up more, so taht ppl see smth good whhen they see this
+>
+> make sure the filled up map makes sens etoo
+>
+> PLS feed this to the mpa pass
+
+Both owner-supplied images are retained with provenance in
+ArtSource/map-refinement-20260923/owner-references/.

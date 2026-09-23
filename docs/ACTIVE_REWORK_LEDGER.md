@@ -9,7 +9,7 @@ work before naming external dependencies. User is AFK; optional questions are no
 needed. Keep concise progress updates while continuing tools.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current local and verified remote HEAD:8f81e96bdf39de04dfbad9d6cf967c884e13c05a.
+Current local and verified remote HEAD:937313108ad55398571b2617f5187eed2ac9d640.
 UX source, owner-copy changes and receipts were published as8f81e96bd; remote HEAD
 verified after push. Earlier qualification receipts remain ind9fe0d275.
 Fetch before publishing, preserve concurrent commits, no force. Sole authorM4tyu633,
@@ -17,41 +17,44 @@ no trailers/AI mentions/em dashes; stage explicit paths. DEV residual dirt is on
 the protected original two metas and the other contributor's HOME video work.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached checkout at8f81e96bd. Prior copied candidate retained in stash
+owned detached checkout at937313108. Prior copied candidate retained in stash
 a6c0f7bc306357aa92c7916fb5ad09936443dde1 and a local patch receipt; no work lost.
 Do NOT reset old TumbangPreso-Unity-validation (111dirtypaths), main/home/net/ilalim
 worktrees or other people's work. Candidate has an independent Library, not shared.
 
-### Current work: native startup profile fix and two-peer arrival
+### Current resume: native arrival passed; logo/map-intake publication next
 
-70011internal Windows build succeeded(8f81e96bd,1235MB,87s). Host20312 and client28608
-joined by address with distinct seats; both intentionally terminated after handshake,
-not graceful-exit evidence. Desktop capture failed twice, bounded retry spent. Native
-notes/first-pass receipt are in completion/. Do not rebuild capture tools.
+No Unity or task-owned native player is active.26428build succeeded1267MB/101s.
+25337native run finished: host22984/client8648 both exited0 and wrote reports.
+Both observed visible hub lobby, arrival and automatic countdown; neither received
+an injected diagnostic READY; both rematched. Correct isolated UGS profiles, no
+already-signing-in error, shared input unchanged. Receipt copied to completion/.
+This qualifies automatic custom rooms, not a live UGS queued map ballot or pixels.
+Windows capture-helper limitation remains; no more capture-tool repair.
 
-Named-profile startup race fixed in source: BootSting creates PlayerAccount before
-NetBootstrap selects the launch profile. NetIdentity now reads the existing parser
-on first access.13identity EditMode cases passed in94139. No Unity job active.
-Own uncommitted source extends existing opt-in NetAutomationProbe/NetStateReport
-for one native hub-to-automatic-arrival/rematch run; diagnostic READY is suppressed
-for auto rooms. One review flag; tournament/clock audits pass. QUAL has this source.
-Next: publish the narrow fix, build internal player, run two peers. The combined
-long docs/commit/push shell command was blocked by automatic approval review without
-a specific reason; do local docs and Git actions separately, within existing scope.
-All older TODO and REFINE-2 remain open. No full-regression/completion claim.
+Owner then requested PEAK/other-game research and distinct Filipino cultural identity
+per map, plus coherent filled context visible behind the lobby. Saved exact requests,
+both images/hashes, TODO/intake and cultural-and-camera-brief.md. Later map work,
+after UI/current tests; no research or map implementation claimed yet.
+
+Owner also reported stretched BH Studios. Runtime logo import was nPOTScale1,
+distorting445x370 despite Image.preserveAspect. Set nPOTScale0, no mipmaps, proper
+alpha. No supplied image pixels changed.3311existing hub loading/room-flow case
+passed; corrected normal960x540frame inspected and saved. UX-1.16 complete.
+These latest docs/reference/import/evidence changes await explicit-path commit/push.
+Next: publish these, continue remaining UI peer/queue/economy checks and older queue
+without full-regression loops; whole P6/P7 and REFINE-2 are still assigned.
 
 Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-
 20260921; NEVER --help or-nographics. Internal Builds/<name>/TumbangPreso.exe only.
 
-### Protect these concurrent/original edits
+### Protect originals and collaborator work
 
-Original dirty2composition PNGmetas (home-court,loading-street) never committed.
-DEV has concurrent author's HubSceneVideo.cs/test/metas, zack-home-loop/poster metas,
-4line HubSceneVideo.Install hook in TumpHub.Build and its playmode_suite registration.
-Preserve them; do not stage as ours. Our TumpHub and playmode_suite edits now share
-those files: stage only our delta using current content with known foreign additions
-removed in the INDEX only, leave working files untouched. QUAL intentionally omits
-that unpublished video hook/files. Verify current diff before staging, do not guess.
+Never commit DEV's original composition-redesign/home-court.png.meta or
+loading-street.png.meta. The HOME video, its TumpHub hook and suite registration
+were published by the other contributor and integrated at937313108. Preserve them;
+they are now tracked source, no longer an untracked exclusion for QUAL or the index.
+The BH Studios resource meta is a separate authorized logo fix, not one of those two.
 
 After each run restore only owned generated churn: Inday2FppDetails, QualitySettings,
 TimeManager, ProjectAuditorSettings; inspect extra Rafi arms/recovery/swim/PNGmetas.
@@ -308,3 +311,13 @@ stages can run independently (no Unity launches), then final registered Checks.
 No more general capture plumbing. Native peers/build after qualified source publication.
 Latest fetch:remote unchanged, no incoming commits after23ba6ce82. Original metas and
 concurrent assets preserved; no source batch committed yet.
+
+## Latest later-map steering, preserved before continuing native work
+
+Owner supplied PEAK and sparse-lobby images. Saved both plus hashes in
+ArtSource/map-refinement-20260923/owner-references/. REFINE-2.1 and every map now
+include thorough comparative-game research first, distinct sourced Filipino cultural
+identity per map, and sensible filled surroundings at actual lobby/introduction/play/
+spectator cameras. Full brief:reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md.
+Exact quotes, intake, research plan and TODO updated. This is later work after UI/
+current tests; no research or map implementation claimed now and no older task lost.

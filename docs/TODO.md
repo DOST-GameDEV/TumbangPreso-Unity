@@ -95,6 +95,11 @@ references. Work one map, character/movement or aspect at a time.
 Owner reiterated: finish assigned UI first. During this later map pass, generate
 additional visual references, critique them and adopt only useful ideas; iterate
 references to solve concrete gaps and verify the improvement in the actual3D game.
+Latest owner additions: research PEAK and other relevant games first; make every
+map more distinctly Filipino, each showcasing different cultural/place aspects.
+The real map is visible behind LOBBY: fill sparse surrounding context with a
+coherent spatial plan, not random decoration. Detailed later research/camera scope:
+[cultural and camera brief](reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md).
 The owner says assets still feel bland, animals repeat obvious fixed routes, and
 bots were sometimes AFK/standing. Treat these as new experience reports; earlier
 passing checks do not prove these complaints resolved. Do not start another global
@@ -108,6 +113,9 @@ map shader sweep as a substitute for individually improving all five places.
   have begun; this research is not complete. Inspect actual rendered
   assets, cross-reference place/material construction, inventory per-map assets,
   write concrete keep/refine/replace decisions and ordered implementation plans.
+  Include comparative game research, a sourced Filipino cultural/place brief per
+  map, and a context-density plan at actual lobby/introduction/play/spectator angles.
+  Owner PEAK and sparse-lobby reference images are preserved in ArtSource.
 - [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
@@ -385,8 +393,9 @@ Implementation order within UX-1:
   public/private/friends-only visibility, LAN/Online, CREATE LOBBY; subtle selected-map
   art updates. Join sources: Dedicated Internet, Dedicated LAN, Code. Shared server
   list with name/map/player count/join and correct Online/LAN heading; code field/JOIN.
-- [ ] **UX-1.7 Custom lobby and loading.** Built (`HubLobby`, `HubLoading`). Open: rematch and
-  reconnect into the hub lobby with real peers. Lobby name/back, selected-map background,
+- [ ] **UX-1.7 Custom lobby and loading.** Built (`HubLobby`, `HubLoading`). Actual two-native-peer lobby entry, automatic
+  intro/countdown and rematch passed; both exited0 and shared input prefs stayed intact.
+  Open: reconnect into the hub lobby with real peers. Lobby name/back, selected-map background,
   n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
@@ -425,9 +434,10 @@ Implementation order within UX-1:
   existing ballot/load/intro/countdown authority; inspect and fill actual missing
   connections, do not replace working stages or remove prior TODO requirements.
   Exact request and implementation decisions in the UX-1 completion plan.
-  Local arrival/manual/reduced-motion cases pass; internal Windows build and LAN
-  address join pass. Native auto-arrival/rematch remains open. Named-profile early
-  sign-in race fixed in source with13identity checks, pending native reproduction.
+  Local arrival/manual/reduced-motion cases pass. Two native peers entered the lobby,
+  saw arrival/automatic countdown and rematched without any diagnostic READY press.
+  Both exited0; correct authentication profiles and no duplicate-sign-in errors.
+  Native evidence is custom automatic rooms, not a live UGS queued-map-ballot claim.
   Build missing UI to finished quality now; keep every built/changed surface in
   [the UI inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md)
   for a possible later refinement review, with paths/evidence/remaining issues.
@@ -458,6 +468,15 @@ Implementation order within UX-1:
   Implemented and passed: normal/large text at five shapes, scroll, unchanged consent
   on open/Back, solid fill and actual validation. Latest arrow-only popup inspected.
   Product draft remains subject to the owner's public-release legal/contact review.
+
+- [x] **UX-1.16 BH Studios proportions (owner2026-09-23).** Fix the stretched studio
+  mark without repainting the supplied logo. The runtime copy's power-of-two import
+  changed its445x370 proportions despite preserveAspect on the Image. Preserve
+  original texture dimensions and alpha; check the actual loading mark and dismissal.
+  Existing loading/room-flow case passed; actual five-shape loading captures checked.
+  Corrected screenshot:completion/Loading-studio-proportions-960x540.png.
+  Owner screenshot retained under the UX-1 completion references. Map emptiness in
+  the same screenshot belongs to the later per-map context/cultural brief.
 
 ### Active items carried forward (status unchanged by this cleanup)
 

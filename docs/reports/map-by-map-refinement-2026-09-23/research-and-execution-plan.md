@@ -26,6 +26,12 @@ verify the intended scope, without rerunning the whole game for every small edit
 
 ## Research-first foundation
 
+Latest owner additions are captured in [the cultural and camera brief](cultural-and-camera-brief.md):
+study PEAK and other games before implementation; give each map its own researched
+Filipino place/cultural identity; fill sparse context coherently at the lobby's real
+overview as well as gameplay/introduction/spectator views. This is queued after UI
+and current tests. The brief extends the existing per-map order and research gate.
+
 Before the asset/motion prescriptions, research what makes this kind of game good:
 player goals/agency, meaningful choices and counterplay, responsiveness, challenge,
 pacing, readable causality and satisfying feedback. Connect that to visual appeal:

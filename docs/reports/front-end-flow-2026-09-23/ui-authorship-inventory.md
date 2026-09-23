@@ -113,3 +113,17 @@ or destination labels were removed. User feedback is not blanket approval of all
 Latest Terms-popup-normal-960x540.png in completion/ now shows the arrow-only
 control and expanded reading column, personally inspected. Latest UI completion
 run passed Terms/profile/story/custom-rules cases; complete a11y route through lobby/loading passed at five shapes. Older footer captures remain historical only.
+
+## Studio mark proportions, owner2026-09-23
+
+Runtime Resources/UI/brand/bh_studios_logo.png.meta now preserves the supplied
+445x370 texture rather than independently rounding width/height to powers of two.
+UI mipmaps disabled and transparent-edge sampling enabled, matching logo use.
+The Image already preserves aspect; no logo pixels repainted. Existing hub loading/
+room-flow case passed at five shapes and the corrected960x540render was personally
+inspected. Evidence:completion/Loading-studio-proportions-960x540.png.
+
+Native937313108 two-peer result is in completion/native-arrival-results.json:
+visible lobby state, arrival and automatic countdown observed on both peers; real
+rematch happened, no diagnostic READY sent, correct auth profiles, clean exits and
+shared input unchanged. This is not a native pixel/render review or live UGS queue.
