@@ -612,6 +612,18 @@ Implementation order within UX-1:
   Owner screenshot retained under the UX-1 completion references. Map emptiness in
   the same screenshot belongs to the later per-map context/cultural brief.
 
+- [x] **UX-1.17 Per-hero HOME loops, picked at random (owner 2026-09-24).** "i decided to
+  make diff character lobby screens and the current one will js be random", "make it
+  random which one shows up". Phaister's loop (Ilalim ng Tulay at night, a three-act trick
+  in one unbroken shot) is built: research, design and timetable in
+  [phaister.md](reports/home-scene/phaister.md), source `ArtSource/home-scene/src/phaister/`.
+  `HubSceneVideo.Pick` rolls over `HubSceneVideo.Heroes` whose clip ships and falls back
+  to Zack's; `HubSceneVideoTests` covers every listed hero's files, the pick and the
+  fallback, and Phaister's loop playing in the real hub. Evidence and remaining limits
+  are recorded in phaister.md § 5. Next heroes (Sean, Dante, Cheska, Nemu) each need their
+  own place and hero moment by the method, never a copy; at 25 to 38 MB per clip and no
+  LFS, raise repo size with the owner before shipping all six.
+
 ### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
 
 Owner brief: research first, then refine the whole game's UI and HUD, with Settings as a

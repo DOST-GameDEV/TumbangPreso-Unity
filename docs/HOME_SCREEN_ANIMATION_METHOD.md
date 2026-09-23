@@ -149,8 +149,19 @@ wasnt smooth"*. Every one of these was a real hitch, found by the motion audit i
 - **Send the owner the video after every meaningful pass**, and take the reaction literally. Every
   big fix in this piece came from one sentence of owner feedback on a render.
 
+## 5b · A second loop is a different film, not a new palette
+
+Phaister's loop (`docs/reports/home-scene/phaister.md`) is the worked example of reusing the method
+without the piece. Her place, hour, editing, hero moment, idles and sound word were each chosen as
+the deliberate opposite of Zack's, and her set is authored in metres and projected by hand
+(`src/phaister/view.ts`) so a ONE-SHOT camera can orbit, tilt, dolly into her face and whip-pan
+without a cut, which a layered painting cannot do. Compare the new loop's frames against the shipped
+ones side by side before calling it done: the owner's bar is *"atleast same level or EVEN better"*.
+
 ## 6 · Shipping it into the game
 
+- HOME picks one hero's loop AT RANDOM (🧑 2026-09-24): ship `Resources/UI/home/<hero>-home-loop.mp4`
+  and `<hero>-home-poster.png` (`npm run ship:<hero>`), then add the id to `HubSceneVideo.Heroes`.
 - The hub's `Scene` layer is where a home background lives (`TumpHub.Install`); a `VideoPlayer`
   into a `RenderTexture` on a `RawImage`, enveloped at 16:9, poster first, reduced motion shows the
   poster, and it is HOME's only (the lobby shows the room's map).
@@ -174,3 +185,7 @@ wasnt smooth"*. Every one of these was a real hitch, found by the motion audit i
 | Stretched whip pans with the re-time | Long blurs, harder to follow |
 | Guessed which texels are the eyes | Lit the fringe instead; read the glb |
 | Three.js default colour management | Every hex darker than written; washes did not match flat fields |
+| Filmed a hatted hero from eye height, and let her bend or lean back (Phaister, 2026-09-24) | The brim's black underside became a slab over the whole figure; the lens went down to 1.35 m and every lean stays under about 20 degrees |
+| Raised her arms past about 45 degrees | They vanished behind her hair and hat on the test board; a V to the sides reads, straight up does not |
+| Put the train on the guideway right over the lens | From under the deck's edge the deck hides everything on top; the guideway moved 5.3 m off and the train was re-timed to clear her hat |
+| Hung the sigil and the KLANG! over her | Both hid her face; effects sit BESIDE the face they belong to |
