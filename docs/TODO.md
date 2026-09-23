@@ -300,7 +300,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Six individually used neighboring roofs now occupy verified vacant plots, with
   grouped windows/access and per-part material roles. Paired/grey/Lowinspected,1/1pass.
   [Neighbor roof evidence](reports/map-by-map-refinement-2026-09-23/sabubong-neighbors/report.md).
-  Farther city/ground continuity, building-texture review and final acceptance remain.
+  Outer72-block district/284homes/four planted courts and connected streets now
+  continue the city; visual ground edge removed. Existing native case1/1passed and
+  paired/grey/roof views inspected. [District evidence](reports/map-by-map-refinement-2026-09-23/sabubong-district/report.md).
+  Building-texture review and final integrated map acceptance remain.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
   Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
   each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).

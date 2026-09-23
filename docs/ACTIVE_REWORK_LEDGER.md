@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: SaBubong neighboring roof context
+## Current resume,2026-09-24: SaBubong outer district ready to publish
 
 Overall goal ACTIVE and NOT complete. Continue independently actionable TODO without
 checkpoint stops. Owner is AFK and prioritizes product quality over verification and
@@ -8,12 +8,16 @@ capture-tool loops. No routine questions, delegation/other chats, paid services,
 credit resets, main edits or Desktop replacement. Preserve older tasks and history.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remote163d0e01d8e6bc3c6e6f3bdae58967ebb7530b2b.
-Only original home-court.png.meta and loading-street.png.meta under
-Resources/UI/composition-redesign are dirty: NEVER restore/stage these DEV files.
+HEAD and verified remotecd245e5f1786ab7cabc3a9ddb94cbb134a5f96e9.
+Original home-court.png.meta and loading-street.png.meta under
+Resources/UI/composition-redesign stay protected: NEVER restore/stage these DEV files.
+Current own candidate: RooftopDistrictAuthor, its outer-district JSON, local geometry
+access, builder hook, context plan and this ledger. Neighbor unit already published.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached163d0e01d, clean. Candidate stash retained after exact source match.
-No active Unity jobs, native players, task browser tabs or temporary servers.
+owned detachedcd245e5f1 with copied district candidate. Neighbor candidate stash
+retained after exact source match. Author32726and review65370completed/reaped. Native case1/1in5.034s; actual paired
+preview/neighbor/grey25and six roof views inspected. No active Unity job.
+No native players, task browser tabs or temporary servers.
 Explicit staging, sole author M4tyu633, no trailers/AI mentions/em dashes.
 Fetch before push and verify remote. Never reset/clean/force-push or discard stashes.
 
@@ -133,3 +137,26 @@ and full detail/Low inspected. Context unit kept; broad wall materials still nee
 the newly requested building-surface review, not claimed complete. Qualified assets/
 scene/evidence copied to DEV; known churn restored after full patch. No active jobs.
 Next farther city/ground continuity, then individual Sa building surface weaknesses.
+
+cd245e5f1neighbor/context and new owner building-texture requirement PUBLISHED;
+remote verified. QUAL candidate preserved in named stash and advanced after exact
+match. No active Unity. Next72outer blocks/connected streets from saved JSON,
+retained180m region and ground/collision guards. See context plan.
+
+Outer district author now running in QUAL, Logs/refine2-sabubong-district-v1.
+Question:72blocks plus planted exceptions fit outside180m protected region and
+connect to retained street ends while ground/collision remain correct. End on
+author guards/report; then reuse SaBubongArtBaselineReview for native views, no new
+capture framework. Freeze.cs until run ends.
+
+District author guards passed:72blocks/284homes/4planted courts,299800vertices/
+73renderers, one palette. Ground enlarged to3000m at retained level. Only source
+mesh/material display-name and redundant DeckSurface0churn restored, plus known
+profile/PNGmetas after full patch. No changes to shared mesh content. Reused native
+SaBubongArtBaselineReview now runs for actual appearance, not full-game acceptance.
+
+Outer district keptv1, scene/assets/evidence copied to DEV, known generated churn
+restored after patch. Ground edge fixed and lower urban layer now reads through
+gaps. Existing haze already softens the distance; no extra ring beyond its fade.
+Publish this unit then local Sa building-surface refinements. New all-map texture
+feedback remains open on all five parents, not closed by this district addition.

@@ -24,7 +24,7 @@ namespace TumbangPreso.EditorTools.MapKit
             new Color32(162,171,167,255),new Color32(85,117,127,255),new Color32(117,138,79,255),
             new Color32(65,92,52,255),new Color32(162,109,77,255),new Color32(227,213,179,255),
             new Color32(187,139,88,255)};
-        private sealed class Geometry
+        internal sealed class Geometry
         {
             private readonly List<Vector3> vertices=new List<Vector3>();
             private readonly List<Vector2> uv=new List<Vector2>();
@@ -216,7 +216,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool Overlaps(Bounds a,Bounds b,float gap)=>a.min.x-gap<b.max.x&&a.max.x+gap>b.min.x&&a.min.z-gap<b.max.z&&a.max.z+gap>b.min.z;
         private static Bounds DrawnBounds(Transform root)
         {var rows=root.GetComponentsInChildren<Renderer>();if(rows.Length==0)throw new InvalidOperationException("Empty retained body "+root.name);var b=rows[0].bounds;foreach(var r in rows)b.Encapsulate(r.bounds);return b;}
-        private static Material Palette()
+        internal static Material Palette()
         {
             string texPath=Folder+"/RoofNeighbors.png";var tex=new Texture2D(16,1,TextureFormat.RGBA32,false);tex.SetPixels32(Colours);tex.Apply();
             File.WriteAllBytes(texPath,tex.EncodeToPNG());Object.DestroyImmediate(tex);AssetDatabase.ImportAsset(texPath);

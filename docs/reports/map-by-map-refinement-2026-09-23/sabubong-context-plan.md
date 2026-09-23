@@ -36,3 +36,23 @@ colours alone. Existing EnvironmentSurface rendering is reused with authored loc
 roles; no global shader/strength change. Grouped window recesses, shades, roof coping
 and actual roof access provide mid-scale construction detail. Inspect the result
 at real distance; procedural detail existence is not visual acceptance.
+
+
+## Farther district continuation
+
+The six-roof before/after confirms that the exposed empty city plane is still a
+separate defect. Preserve everything within180m. Add72outer blocks on52m spacing
+from the saved outer-district JSON. Each block has four separate plots with modest
+mixed roof bodies; selected plots are planted courts instead. Keep them below the
+retained tower landmarks, with grouped facade openings and mixed flat/service or
+pitched sheet roofs. These are simplified distance assets, not a substitute for
+near-building texture/detail acceptance. Reuse the map-local palette/part roles.
+
+Connect outer streets to existing eight street ends at170m, then a perimeter road
+and orthogonal block streets. Keep roads/plots disjoint by their actual footprints.
+Extend the existing visual ground to3000m while retaining its height/material and
+all collision. No new gameplay area, runtime movement or distant shadow casters.
+Review actual map preview and two roof-level horizons. Stop after one useful visual
+check; native performance remains the later integrated gate. Do not add taller
+landmarks or change fog/sun to conceal gaps. Beyond this first ring, only add more
+if those views show a remaining visible edge or abrupt city ending.
