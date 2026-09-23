@@ -1179,7 +1179,7 @@ namespace TumbangPreso.UI
 
             var glyph = glyphGo.GetComponent<Image>();
             glyph.sprite = ability != null ? AbilityIcons.For(ability.Glyph) : null;
-            glyph.color = accent;
+            glyph.color = AbilityIcons.Tint(glyph.sprite, accent);
             glyph.preserveAspect = true;
             glyph.raycastTarget = false;
             MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
@@ -2072,7 +2072,7 @@ namespace TumbangPreso.UI
                 // for the paper pass under a note saying `HeroGlyphOn` would draw the icon in the
                 // colour of the plate behind it; that note was correct then and is now correct in
                 // the other direction, which is why the colour is `BoardInk` rather than a literal.
-                glyph.color = BoardInk;
+                glyph.color = AbilityIcons.Tint(glyph.sprite, BoardInk);
                 glyph.preserveAspect = true;
                 glyph.raycastTarget = false;
 

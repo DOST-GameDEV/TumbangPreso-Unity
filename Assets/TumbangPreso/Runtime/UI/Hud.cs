@@ -4681,7 +4681,7 @@ namespace TumbangPreso.UI
             glyphGo.transform.SetParent(tileGo.transform, false);
             card.Glyph = glyphGo.AddComponent<Image>();
             card.Glyph.sprite = AbilityIcons.For(AbilityGlyph.Burst);
-            card.Glyph.color = UiTheme.HeroGlyphOn;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
             card.Glyph.preserveAspect = true;
             card.Glyph.raycastTarget = false;
             MenuKit.Stretch(card.Glyph.rectTransform);
@@ -5221,7 +5221,7 @@ namespace TumbangPreso.UI
             {
                 // A hero without this power draws an empty plate rather than a stale one.
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.HeroGlyphOff;
                 card.State.text = "";
                 if (card.Fill != null) card.Fill.fillAmount = 0.0f;
@@ -5263,7 +5263,7 @@ namespace TumbangPreso.UI
             if (roundClockStopped && !skill.IsActive)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
                 card.State.text = "WAIT";
 
@@ -5289,7 +5289,7 @@ namespace TumbangPreso.UI
             if (skill.UsesCharges && !skill.IsActive && skill.ChargesRemaining <= 0)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
                 card.State.text = "";
 
@@ -5317,7 +5317,7 @@ namespace TumbangPreso.UI
                 // the accent, and a fixed lift toward white is brighter than the old sine's
                 // average was anyway.
                 card.Rim.color = Color.Lerp(heroColor, Color.white, 0.30f);
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
 
                 // ⚠️⚠️ A RECASTABLE POWER SAYS SO, AND UNTIL NOW NOTHING IN THE GAME DID.
@@ -5363,7 +5363,7 @@ namespace TumbangPreso.UI
             else if (skill.CooldownRemaining > 0.0f)
             {
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
 
                 // ⚠️ ONE DECIMAL UNDER THREE SECONDS, WHOLE SECONDS ABOVE IT. A countdown that
@@ -5388,7 +5388,7 @@ namespace TumbangPreso.UI
                 // there permanently is a deck that is always shouting, and it leaves nothing
                 // louder to say when a power actually fires.
                 card.Rim.color = UiTheme.HeroRimLit;
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
 
                 // ⚠️⚠️ READY PRINTS NOTHING. See `docs/Hero_Strike_UI.md` section 4.
@@ -5662,7 +5662,7 @@ namespace TumbangPreso.UI
                 // branch had right: that IS what the player starts the round holding, and
                 // blanking it would lose the only readout of an ultimate carried across a round.
                 card.Rim.color = UiTheme.HeroRim;
-                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
                 card.Key.color = UiTheme.CreamMuted;
 
                 // ⚠️⚠️ "WAIT", NOT "NOT YET", AND `HudOverflowProbe` IS WHY. The first version of
@@ -5700,7 +5700,7 @@ namespace TumbangPreso.UI
                 // the deck worth interrupting a fight for, so it takes the top of the range it
                 // used to sweep rather than the middle of it.
                 card.Rim.color = Color.Lerp(heroColor, Color.white, 0.55f);
-                card.Glyph.color = UiTheme.HeroGlyphOn;
+                card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOn);
                 card.Key.color = UiTheme.Cream;
                 card.State.text = "";
 
@@ -5723,7 +5723,7 @@ namespace TumbangPreso.UI
             _lastUltReady = false;
 
             card.Rim.color = UiTheme.HeroRim;
-            card.Glyph.color = UiTheme.HeroGlyphOff;
+            card.Glyph.color = AbilityIcons.Tint(card.Glyph.sprite, UiTheme.HeroGlyphOff, true);
             card.Key.color = UiTheme.CreamMuted;
 
             // Only worth reading once it is nearly there. Below that the notches say enough.

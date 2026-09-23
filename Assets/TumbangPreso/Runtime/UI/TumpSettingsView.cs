@@ -248,8 +248,12 @@ namespace TumbangPreso.UI
             SettingsReadingLayout.Apply(_canvas, _list);
             if (_status != null) _status.text = message;
             if (_save != null) _save.interactable = _session.Dirty;
+            RefreshSave();
             foreach (var pair in _bindingRows)
-                if (pair.Value != null) pair.Value.GetComponentInChildren<Text>().text = BindingLabel(pair.Key);
+                if (pair.Value != null) { pair.Value.GetComponentInChildren<Text>().text = BindingLabel(pair.Key); SettingsWorkspaceRows.FitChip(pair.Value); }
+            if (_list != null)
+                foreach (var chip in _list.GetComponentsInChildren<Button>(true))
+                    if (chip.transform.Find("ChipFace") != null) SettingsWorkspaceRows.FitChip(chip);
         }
         public void Back()
         {

@@ -26,7 +26,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 41);
+            HubPattern.Ground(Root, HubStyle.Maroon, 41);
             HubChrome.Back(Root, Hub);
             HubChrome.Title(Root, "TASKS", "EARN " + EconomyRules.CurrencyName);
             HubChrome.TopRight(Root, Hub);
@@ -91,7 +91,7 @@ namespace TumbangPreso.UI.Hub
             // Dark cards with honey lettering: the brief's "no pale default" applied to the one screen
             // that is a list of six cards. A finished card lights up golden, which is the thing the
             // eye should find first; a claimed one drops back to night.
-            Color cardFill = task.Claimed ? HubStyle.Night : task.Done ? HubStyle.Golden : HubStyle.ArmyDeep;
+            Color cardFill = task.Claimed ? HubStyle.Deep(HubStyle.Night) : task.Done ? HubStyle.Golden : HubStyle.Night;
             var plate = HubKit.Shape(card, "Plate", cardFill, false, 600 + index, 5, 22);
             HubKit.Stretch(plate.rectTransform);
             Color ink = task.Claimed ? HubStyle.HoneySoft : HubStyle.TextOn(cardFill);

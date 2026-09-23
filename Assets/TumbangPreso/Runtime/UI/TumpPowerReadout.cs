@@ -130,6 +130,7 @@ namespace TumbangPreso.UI
                 float ratio = i == 2 ? kit.UltimateRatio : skill.IsActive ? skill.DurationRatio : 1 - skill.CooldownRatio;
                 _dials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? f.Lime : f.Cream;
+                if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
                 string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate ? "Again" : skill.DurationRemaining.ToString("0.0")
                     : i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%"
                     : skill.UsesCharges ? skill.ChargesRemaining.ToString() : skill.CooldownRemaining > 0 ? AbilityDeckHud.CooldownLabel(skill.CooldownRemaining) : "";

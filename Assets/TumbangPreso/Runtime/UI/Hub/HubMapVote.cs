@@ -37,7 +37,7 @@ namespace TumbangPreso.UI.Hub
             {
                 int index = i;
                 var map = SceneFlow.MapRegistry[i];
-                var card = HubKit.Button(row, "VoteMap" + i, null, HubStyle.ArmyDeep, () => Hub.Host.VoteMap(index), 0, 1110 + i);
+                var card = HubKit.Button(row, "VoteMap" + i, null, HubStyle.Night, () => Hub.Host.VoteMap(index), 0, 1110 + i);
                 _cards[i] = card;
                 HubKit.Place((RectTransform)card.transform, HubKit.TopLeft, new Vector2(i * 340, 0), new Vector2(316, 480));
                 var picture = HubKit.Rect(card.Body, "CourtImage").gameObject.AddComponent<RawImage>();
@@ -94,7 +94,7 @@ namespace TumbangPreso.UI.Hub
                     face.sprite = HubKit.Portrait(Roster.At(Roster.GetPeople(SceneFlow.SelectedMode), Mathf.Max(0, seat.CharacterPick))?.Id);
                 }
                 _counts[map].text = winner == map ? "NEXT UP" : mine ? "YOUR VOTE" : votes + (votes == 1 ? " VOTE" : " VOTES");
-                HubKit.SetFill(_cards[map], winner == map ? HubStyle.Persimmon : mine ? HubStyle.Army : HubStyle.ArmyDeep);
+                HubKit.SetFill(_cards[map], winner == map ? HubStyle.Persimmon : mine ? HubStyle.Golden : HubStyle.Night);
                 _counts[map].color = winner == map || mine ? HubStyle.Ink : HubStyle.Honey;
                 _names[map].color = _counts[map].color;
                 _cards[map].interactable = winner < 0 && !Hub.Host.Spectating;

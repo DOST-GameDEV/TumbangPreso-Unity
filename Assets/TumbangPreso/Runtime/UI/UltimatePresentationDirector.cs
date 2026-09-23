@@ -293,7 +293,7 @@ namespace TumbangPreso.UI
             _ultimateLine.text = ultimate.Name;
 
             _icon.sprite = AbilityIcons.For(ultimate.Glyph);
-            _icon.color = accent;
+            _icon.color = AbilityIcons.Tint(_icon.sprite, accent);
 
             _motif.sprite = UltimateMotifs.For(kit.HeroId);
             _motif.color = new Color(accent.r, accent.g, accent.b, 0.55f);

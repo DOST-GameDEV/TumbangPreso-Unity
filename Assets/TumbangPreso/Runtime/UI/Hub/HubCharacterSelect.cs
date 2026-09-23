@@ -54,14 +54,19 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.Night, 51);
+            HubPattern.Ground(Root, HubStyle.Maroon, 51);
             _pick = Mathf.Clamp(Settings.SettingsStore.Current.CharacterPick, 0, People.Count - 1);
 
             // The stage and the name: the left 55 per cent.
             var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), Vector2.zero, new Vector2(Mode == GameMode.HeroStrike ? 0.46f : 0.55f, 1),
                                     new Vector2(HubKit.Margin, 190), new Vector2(0, 150));
-            var floor = HubKit.Shape(stage, "Floor", HubStyle.ArmyDeep, false, 701, 5, 34);
-            HubKit.Place(floor.rectTransform, HubKit.Bottom, new Vector2(0, 0), new Vector2(760, 110));
+            // ⚠️ A CONTACT SHADOW, NOT A PLINTH (2026-09-23 UI review). The model used to stand on
+            // a 760 by 110 olive rounded rectangle with an ink outline, which read as an empty
+            // text field under the hero's feet and was the largest flat shape on the screen. A
+            // soft ink ellipse grounds the figure the way the HOME court's shadows do, and leaves
+            // the hero as the one big thing on the left.
+            var floor = HubKit.Shape(stage, "Floor", new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.55f), false, 701, 0, 23);
+            HubKit.Place(floor.rectTransform, HubKit.Bottom, new Vector2(0, 62), new Vector2(420, 46));
             var model = HubKit.Stretch(HubKit.Rect(stage, "Model"));
             _preview = model.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(model);
@@ -74,9 +79,19 @@ namespace TumbangPreso.UI.Hub
             var shadow = _name.gameObject.AddComponent<Shadow>();
             shadow.effectColor = HubStyle.Ink; shadow.effectDistance = new Vector2(6, -7);
 
-            _clock = HubKit.Text(Root, "Clock", "", HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleCenter);
-            HubKit.Place(_clock.rectTransform, HubKit.Top, new Vector2(0, -HubKit.Margin), new Vector2(240, 100));
-            _clock.gameObject.SetActive(Timed);
+            // ⚠️ THE CLOCK IS A NUMBER ON A PLATE WITH ITS JOB BESIDE IT. Valorant draws a big bare
+            // number and Overwatch writes "ASSEMBLE YOUR TEAM: 19" (both inspected 2026-09-23,
+            // `docs/reports/ui-hud-review-2026-09-23/research.md` finding 4), so the number stays a
+            // number; an earlier plan's draining ring had no precedent in either. What it lacked was
+            // a job: a bare "28" floating over the court could be a score. The plate and the PICK
+            // caption say it is the time left to choose, and it still turns persimmon under six.
+            var clockPlate = HubKit.Place(HubKit.Rect(Root, "ClockPlate"), HubKit.Top, new Vector2(0, -HubKit.Margin), new Vector2(260, 100));
+            HubKit.Stretch(HubKit.Shape(clockPlate, "Plate", HubStyle.Night, false, 702, 4, 24).rectTransform);
+            var clockCaption = HubKit.Text(clockPlate, "ClockCaption", "PICK", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleLeft);
+            HubKit.Place(clockCaption.rectTransform, HubKit.Left, new Vector2(24, 0), new Vector2(90, 60));
+            _clock = HubKit.Text(clockPlate, "Clock", "", HubStyle.Display, true, HubStyle.Honey, TextAnchor.MiddleRight);
+            HubKit.Place(_clock.rectTransform, HubKit.Right, new Vector2(-24, 0), new Vector2(140, 100));
+            clockPlate.gameObject.SetActive(Timed);
 
             // The grid: 3 columns by 4 rows, right side.
             var grid = HubKit.Place(HubKit.Rect(Root, "Grid"), HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + 110)), new Vector2(3 * 160 + 2 * 16, 4 * 160 + 3 * 16));
@@ -94,7 +109,7 @@ namespace TumbangPreso.UI.Hub
                 else
                 {
                     cell.interactable = false;
-                    HubKit.SetFill(cell, HubStyle.ArmyDeep);
+                    HubKit.SetFill(cell, HubStyle.Night);
                 }
                 _cells.Add(cell);
             }
@@ -224,7 +239,11 @@ namespace TumbangPreso.UI.Hub
                 glyph.color = HubStyle.Ink; glyph.raycastTarget = false;
                 _abilityButtons[i] = button; _abilitySymbols[i] = glyph;
             }
-            _abilityName = HubKit.Text(panel, "AbilityName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.UpperLeft);
+            // ⚠️ NAME, THEN META, THEN SENTENCE, STACKED BY MEASURED HEIGHT (`StackAbilityText`).
+            // The three sat in fixed boxes sized for the worst case, which left a 70-unit dead gap
+            // under every one-line name and drew the ability's name lighter than its own metadata.
+            // The name is now the panel's one Title-size line.
+            _abilityName = HubKit.Text(panel, "AbilityName", "", HubStyle.Title, true, HubStyle.Honey, TextAnchor.UpperLeft);
             HubKit.Place(_abilityName.rectTransform, HubKit.TopLeft, new Vector2(20, -145), new Vector2(340, 108));
             _abilityMeta = HubKit.Text(panel, "AbilityMeta", "", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.UpperLeft);
             HubKit.Place(_abilityMeta.rectTransform, HubKit.TopLeft, new Vector2(20, -264), new Vector2(340, 92));
@@ -251,8 +270,26 @@ namespace TumbangPreso.UI.Hub
                 : ability.UsesCharges ? ability.MaxCharges + (ability.MaxCharges == 1 ? " USE" : " USES")
                 : ability.Cooldown.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s cooldown";
             _abilityMeta.text = AbilityIcons.LabelFor(ability.Glyph) + "\n" + resource;
+            StackAbilityText();
             for (int i = 0; i < _abilityButtons.Length; i++)
                 HubKit.SetFill(_abilityButtons[i], i == _inspectedAbility ? HubStyle.Persimmon : i == 2 ? HubStyle.Golden : HubStyle.Honey);
+        }
+
+        /// <summary>Lay the name, the meta lines and the sentence one under another at their real
+        /// heights, so a one-line name does not leave a hole the size of a two-line one.</summary>
+        private void StackAbilityText()
+        {
+            const float left = 20, width = 340, gap = 14, panelHeight = 610;
+            _abilityName.fontSize = HubStyle.Size(HubStyle.Title);
+            float y = 142;
+            foreach (var text in new[] { _abilityName, _abilityMeta, _abilitySummary })
+            {
+                text.rectTransform.sizeDelta = new Vector2(width, text.rectTransform.sizeDelta.y);
+                float height = Mathf.Ceil(text.preferredHeight) + 4;
+                if (text == _abilitySummary) height = Mathf.Max(height, panelHeight - y - 20);
+                HubKit.Place(text.rectTransform, HubKit.TopLeft, new Vector2(left, -y), new Vector2(width, height));
+                y += height + gap;
+            }
         }
 
         public override bool Back()
@@ -299,7 +336,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var seat = seats[i];
                 var card = HubKit.Place(HubKit.Rect(_seats, "Seat" + i), HubKit.BottomLeft, new Vector2(i * 300, 0), new Vector2(284, 130));
-                var plate = HubKit.Shape(card, "Plate", seat.Mine ? HubStyle.Persimmon : HubStyle.ArmyDeep, false, 740 + i, 4, 18);
+                var plate = HubKit.Shape(card, "Plate", seat.Mine ? HubStyle.Persimmon : HubStyle.Night, false, 740 + i, 4, 18);
                 HubKit.Stretch(plate.rectTransform);
                 var person = seat.Occupied ? Roster.At(People, seat.CharacterPick) : null;
                 var face = HubKit.Picture(card, "Face", HubKit.Portrait(person?.Id));

@@ -27,7 +27,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 28);
+            HubPattern.Ground(Root, HubStyle.Maroon, 28);
             HubChrome.Back(Root, Hub);
             HubChrome.Title(Root, "GAMEMODE", "SELECT");
             HubChrome.TopRight(Root, Hub);
@@ -51,7 +51,7 @@ namespace TumbangPreso.UI.Hub
                 new[] { "nemu", "zack" }, HubGlyph.Mark.Friends, () => Hub.Push<HubCustomPopup>());
             HubKit.Place((RectTransform)custom.transform, HubKit.BottomLeft, new Vector2(0, 0), new Vector2(small, half));
 
-            var classic = HubCards.Art(row, "ClassicCard", "CLASSIC", HubStyle.Army, 203,
+            var classic = HubCards.Art(row, "ClassicCard", "CLASSIC", HubStyle.Honey, 203,
                 "Casual matchmaking. Pick the street game with no powers, or Hero Strike.",
                 new[] { "maring", "bayan", "lola_pacing" }, HubGlyph.Mark.Can, () => Hub.Push<HubClassicPopup>(), 400);
             HubKit.Place((RectTransform)classic.transform, HubKit.TopLeft, new Vector2(small + gap, 0), new Vector2(tall, h));
@@ -80,7 +80,7 @@ namespace TumbangPreso.UI.Hub
         public override void Build()
         {
             var panel = HubCards.Panel(Root, this, "CLASSIC", "Casual matchmaking. Which game?", new Vector2(1180, 700));
-            var classic = HubCards.Art(panel, "ClassicChoice", "CLASSIC", HubStyle.Army, 211,
+            var classic = HubCards.Art(panel, "ClassicChoice", "CLASSIC", HubStyle.Honey, 211,
                 "Tumbang preso as the street plays it. No powers; every character plays the same.",
                 new[] { "totoy", "maring", "kuya_boy" }, HubGlyph.Mark.Can, () => Pick(1));
             HubKit.Place((RectTransform)classic.transform, HubKit.BottomLeft, new Vector2(48, 48), new Vector2(520, 460));

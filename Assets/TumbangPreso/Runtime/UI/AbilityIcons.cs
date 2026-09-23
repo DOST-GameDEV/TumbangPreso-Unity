@@ -136,9 +136,56 @@ namespace TumbangPreso.UI
         {
             if (Cache.TryGetValue(glyph, out var cached) && cached != null) return cached;
 
-            var sprite = Bake(glyph);
+            // ⚠️⚠️ THE DRAWN SET WINS OVER THE BAKE (2026-09-23). The owner asked for every skill
+            // icon to be improved, then for "a drawing for all": `tools/build_ability_icons.py`
+            // draws each one as a coloured, cel-shaded illustration with an ink keyline, into
+            // `Resources/UI/ability-icons/<AbilityGlyph>.png`. This is the swap the header above
+            // always anticipated ("when real icons land, replace Bake and nothing else changes").
+            // The bake stays as the fallback for a glyph added before its drawing exists.
+            var sprite = Illustration(glyph) ?? Bake(glyph);
             Cache[glyph] = sprite;
             return sprite;
+        }
+
+        /// <summary>The drawn illustration for a glyph, or null if none has been drawn yet.</summary>
+        public static Sprite Illustration(AbilityGlyph glyph)
+        {
+            if (Drawn.TryGetValue(glyph, out var known)) return known;
+            var sprite = Resources.Load<Sprite>("UI/ability-icons/" + glyph);
+            Drawn[glyph] = sprite;
+            return sprite;
+        }
+
+        private static readonly Dictionary<AbilityGlyph, Sprite> Drawn = new Dictionary<AbilityGlyph, Sprite>();
+
+        /// <summary>
+        /// The colour an Image showing an ability icon should wear.
+        ///
+        /// ⚠️ A DRAWN ICON CARRIES ITS OWN COLOURS, SO IT IS NEVER HUE-TINTED. Every call site used
+        /// to tint the white glyph (gold when ready, cream when not, the hero's colour on a card),
+        /// and `Image.color` multiplies, so a tinted illustration turns into a muddy monochrome.
+        /// The drawing is shown as drawn; a site's "off" state becomes a dim instead of a hue, and
+        /// its alpha is kept. A glyph with no drawing keeps the caller's tint exactly as before.
+        /// </summary>
+        public static Color Tint(AbilityGlyph glyph, Color wanted, bool muted = false)
+        {
+            if (Illustration(glyph) == null) return wanted;
+            float v = muted ? 0.5f : 1.0f;
+            return new Color(v, v, v, wanted.a);
+        }
+
+        /// <summary>The same rule when the caller holds the sprite rather than the glyph.</summary>
+        public static Color Tint(Sprite shown, Color wanted, bool muted = false)
+        {
+            if (shown == null || !IsDrawn(shown)) return wanted;
+            float v = muted ? 0.5f : 1.0f;
+            return new Color(v, v, v, wanted.a);
+        }
+
+        private static bool IsDrawn(Sprite sprite)
+        {
+            foreach (var pair in Drawn) if (pair.Value == sprite) return true;
+            return false;
         }
 
         /// <summary>A soft-edged disc used by the HUD's radial cooldown veil.</summary>

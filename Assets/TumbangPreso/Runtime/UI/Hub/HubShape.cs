@@ -54,6 +54,41 @@ namespace TumbangPreso.UI.Hub
         /// <summary>Extra outline weight the button adds on hover ("the pen pressed harder").</summary>
         public float OutlineBoost;
 
+        // ------------------------------------------------------------------ the pressable finish
+
+        /// <summary>
+        /// The cream die-cut border outside the ink outline, on pressable stickers only.
+        ///
+        /// ⚠️⚠️ THE FINISH BELOW IS THE 2026-09-23 ANSWER TO "THE BUTTONS ARE BLAND AND UGLY", AND IT IS
+        /// THE OWNER'S OWN ART, MEASURED. `CLAUDE.md` § 6.5 sampled his authored buttons pixel by pixel:
+        /// "a chamfered or rounded slab with a BRIGHT keyline outside a DARK rim, over a full-height
+        /// gradient with a varnish band". Every sticker drawn in code until now was the opposite
+        /// (one flat hex inside an ink line), so the code-drawn controls looked like placeholders
+        /// beside his. The four parts, bottom up:
+        ///   rim      a Honey keyline outside the ink: a real sticker's die-cut edge, and what keeps a
+        ///            dark sticker readable over the animated HOME scene
+        ///   face     a vertical gradient from the lit fill at the top to the fill, shaded by hue
+        ///            (`HubStyle.Lit`/`Deep`), never by mixing in black
+        ///   varnish  the top two fifths one step lighter again, the two-tone face every mobile game
+        ///            button reads as "pressable" by
+        ///   lip      the bottom sixth in the deep fill: the slab's thickness, like a keycap. It
+        ///            replaces the old ink-muddied `BandFraction` under-bar and keeps its role
+        /// ⚠️ PLATES (rounded, not pressable) GET NONE OF IT and stay flat furniture, so the shape
+        /// rule "a chamfer means pressable" is now also a material rule.
+        /// </summary>
+        public float RimWidth = 4.5f;
+        public Color Rim = HubStyle.Honey;
+
+        /// <summary>Hover and focus brighten the face by this much (0 to 1), set by `HubButton`.</summary>
+        public float Lit;
+
+        /// <summary>A diagonal light sweep across the face, 0 to 1 left to right; below 0 draws none.
+        /// Only the one primary per screen runs it (`HubButton.Shimmer`).</summary>
+        public float Shine = -1.0f;
+
+        private const float LipFraction = 0.15f;
+        private const float VarnishFrom = 0.60f;
+
         public override Texture mainTexture => s_WhiteTexture;
 
         private static readonly List<Vector2> Outer = new List<Vector2>();
@@ -67,17 +102,25 @@ namespace TumbangPreso.UI.Hub
 
             float width = (OutlineWidth + OutlineBoost) * HubStyle.OutlineScale;
             float corner = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);
+            bool finish = Pressable && width > 0.0f;
+            float rim = finish ? RimWidth * HubStyle.OutlineScale : 0.0f;
 
             if (ShadowOffset.sqrMagnitude > 0.01f && ShadowColor.a > 0.0f)
             {
-                Build(Outer, Offset(r, ShadowOffset), corner, 0.0f);
+                Build(Outer, Offset(Grow(r, rim), ShadowOffset), corner + rim, 0.0f);
                 Fan(vh, Outer, ShadowColor * color);
             }
 
             if (RingWidth > 0.0f)
             {
-                Build(Outer, Grow(r, width + RingWidth), corner + width + RingWidth, 0.0f);
+                Build(Outer, Grow(r, rim + RingWidth), corner + rim + RingWidth, 0.0f);
                 Fan(vh, Outer, RingColor * color);
+            }
+
+            if (rim > 0.0f)
+            {
+                Build(Outer, Grow(r, rim), corner + rim, 0.0f);
+                Fan(vh, Outer, Rim * color);
             }
 
             if (width > 0.0f)
@@ -87,19 +130,84 @@ namespace TumbangPreso.UI.Hub
             }
 
             Rect inside = Grow(r, -width);
-            Build(Inner, inside, Mathf.Max(0.0f, corner - width * 0.6f), width);
-            Fan(vh, Inner, Fill * color);
+            float innerCorner = Mathf.Max(0.0f, corner - width * 0.6f);
+            Build(Inner, inside, innerCorner, width);
 
-            if (BandFraction > 0.0f)
+            if (!finish)
             {
-                // The same outline as the fill, flattened above the band's top: a convex shape
-                // clipped by a horizontal line is still convex, so it fans cleanly.
-                Color under = Color.Lerp(Fill, Outline, 0.28f);
-                ClipTop(Inner, inside.yMin + inside.height * BandFraction);
-                Fan(vh, Inner, under * color);
+                Fan(vh, Inner, Fill * color);
+                if (BandFraction > 0.0f)
+                {
+                    // The same outline as the fill, flattened above the band's top: a convex shape
+                    // clipped by a horizontal line is still convex, so it fans cleanly.
+                    Color under = Color.Lerp(Fill, Outline, 0.28f);
+                    ClipTop(Inner, inside.yMin + inside.height * BandFraction);
+                    Fan(vh, Inner, under * color);
+                }
+                if (Hatched) Hatch(vh, inside, Color.Lerp(Fill, Outline, 0.35f) * color);
+                return;
             }
 
-            if (Hatched) Hatch(vh, inside, Color.Lerp(Fill, Outline, 0.35f) * color);
+            // ⚠️ A DARK FILL IS LIT LESS. At full strength the varnish turned the warm-dark door family
+            // into two-tone wooden planks (the first 2026-09-23 capture), which is the "brown and
+            // boring" the owner rejected in `CLAUDE.md` § 6.5. Brawl Stars' dark slabs carry only a
+            // thin bevel; so below a value of 0.2 the finish runs at a third of its strength.
+            Color.RGBToHSV(Fill, out _, out _, out float value);
+            float strength = Mathf.Lerp(0.33f, 1.0f, Mathf.InverseLerp(0.2f, 0.6f, value));
+            Color baseFill = Lit > 0.0f ? Color.Lerp(Fill, HubStyle.Lit(Fill, 0.6f), Lit) : Fill;
+            Color top = HubStyle.Lit(baseFill, 0.5f * strength);
+            FanGradient(vh, Inner, top * color, baseFill * color, inside.yMin, inside.yMax);
+
+            // The varnish: the top two fifths, one step lighter, inset from the chamfers.
+            Build(Inner, inside, innerCorner, width);
+            ClipBottom(Inner, inside.yMin + inside.height * VarnishFrom);
+            Color varnish = HubStyle.Lit(baseFill, 1.0f); varnish.a *= 0.36f * strength;
+            Fan(vh, Inner, varnish * color);
+
+            if (Shine >= 0.0f) Sweep(vh, inside, innerCorner, Shine);
+
+            // The lip. `BandFraction` callers asked for a deeper under-bar; honour the larger one.
+            float lip = Mathf.Max(LipFraction, BandFraction);
+            Build(Inner, inside, innerCorner, width);
+            ClipTop(Inner, inside.yMin + Mathf.Max(6.0f, inside.height * lip));
+            Fan(vh, Inner, HubStyle.Deep(Fill, 0.85f) * color);
+
+            if (Hatched) Hatch(vh, inside, HubStyle.Deep(Fill, 0.6f) * color);
+        }
+
+        /// <summary>A 45-degree band of light, kept inside the face's straight edges so it never
+        /// leaks past a chamfer.</summary>
+        private static void Sweep(VertexHelper vh, Rect face, float corner, float t)
+        {
+            float band = Mathf.Max(18.0f, face.height * 0.34f);
+            var clip = new Rect(face.xMin + corner * 0.5f, face.yMin + corner * 0.5f,
+                                face.width - corner, face.height - corner);
+            if (clip.width <= 0 || clip.height <= 0) return;
+            float x = Mathf.Lerp(clip.xMin - clip.height - band, clip.xMax, t);
+            Vector2 a0 = new Vector2(x, clip.yMin), a1 = new Vector2(x + clip.height, clip.yMax);
+            Vector2 b0 = a0 + new Vector2(band, 0), b1 = a1 + new Vector2(band, 0);
+            Quad(vh, ClipX(a0, a1, clip), ClipX(b0, b1, clip), new Color(1.0f, 0.97f, 0.86f, 0.30f));
+        }
+
+        private static void ClipBottom(List<Vector2> points, float bottom)
+        {
+            for (int i = 0; i < points.Count; i++)
+                if (points[i].y < bottom) points[i] = new Vector2(points[i].x, bottom);
+        }
+
+        private static void FanGradient(VertexHelper vh, List<Vector2> points, Color top, Color bottom, float yMin, float yMax)
+        {
+            if (points.Count < 3) return;
+            Vector2 centre = Vector2.zero;
+            foreach (var p in points) centre += p;
+            centre /= points.Count;
+            Color At(float y) => Color.Lerp(bottom, top, Mathf.InverseLerp(yMin, yMax, y));
+
+            int start = vh.currentVertCount;
+            vh.AddVert(centre, At(centre.y), Vector2.zero);
+            foreach (var p in points) vh.AddVert(p, At(p.y), Vector2.zero);
+            for (int i = 0; i < points.Count; i++)
+                vh.AddTriangle(start, start + 1 + i, start + 1 + (i + 1) % points.Count);
         }
 
         // ------------------------------------------------------------------ geometry

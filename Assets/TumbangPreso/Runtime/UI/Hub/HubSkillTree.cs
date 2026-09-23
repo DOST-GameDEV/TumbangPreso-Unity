@@ -46,7 +46,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            HubPattern.Ground(Root, HubStyle.ArmyDeep, 31);
+            HubPattern.Ground(Root, HubStyle.Maroon, 31);
             HubChrome.Back(Root, Hub);
             HubChrome.Title(Root, "SKILL TREE");
             HubChrome.TopRight(Root, Hub);
