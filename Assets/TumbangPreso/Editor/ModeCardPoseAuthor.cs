@@ -49,7 +49,11 @@ namespace TumbangPreso.EditorTools
             Directory.CreateDirectory(Output);
             var book = RosterBook.Load();
             var listing = new System.Text.StringBuilder();
-            foreach (var id in Ids)
+            // `-tp-pose-ids rafi,zack` re-renders only those characters (after a model change).
+            var args = Environment.GetCommandLineArgs();
+            int flag = Array.IndexOf(args, "-tp-pose-ids");
+            var only = flag >= 0 && flag + 1 < args.Length ? args[flag + 1].Split(',') : Ids;
+            foreach (var id in Ids.Where(i => only.Contains(i)))
             {
                 var entry = book.FindPersonArt(id);
                 if (entry?.Model == null) { listing.AppendLine(id + ": missing"); continue; }

@@ -557,8 +557,10 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   door inspected. `avatar_rafi` rebuilt from the v7 portrait. Saved old ids still load.
 - [ ] Rafi model (his own builder only): saturated palette, voxel-stepped crest, nape hair,
   slanted eyes without brows, small hip coil and float, decluttered waist. v7 lineup, turnaround
-  and head study inspected (evidence/rafi-v7-*). Owner approval of the look is still required;
-  the waist is still busier than the cast's and the back wrap keeps a diagonal slab.
+  and head study inspected (evidence/rafi-v7-*). Owner of v7: "rafi looks weird". v8: hair frames
+  the face (locks over the wrap to just above the eyes, sideburns), one clean waist (no coil,
+  straight cream wrap, orange float), chunky cream soles; evidence/rafi-v8-*. His motion clips
+  re-baked from the new feet (RafiMotionAuthor). Owner approval of v8 still required.
 - [x] GAMEMODE posters: `Editor/ModeCardPoseAuthor.cs` renders the real models in their clips
   (1061 poses); `tools/build_mode_cards.py` composes PRACTICE, CUSTOM, CLASSIC, RANKED and the
   two choice cards; `HubCards.Art` shows a poster when one exists. Inspected at 1920x1080,

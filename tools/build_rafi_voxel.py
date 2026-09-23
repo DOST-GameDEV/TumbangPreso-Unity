@@ -218,8 +218,8 @@ def mirrored(boxes, bone_from, bone_to):
 
 # Hips at 0.240, so the leg owns everything below it.
 # Rafi's compact shorts and practical sandals use the retained cast leg proportions.
-LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.006, 0, -0.134), (0.158, 0.025, 0.082), 1),
- ('sandal-foot-left', 'leg-left', (0.015, 0.023, -0.126), (0.149, 0.07, 0.069), 15),
+LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.004, 0, -0.138), (0.160, 0.040, 0.086), 3),
+ ('sandal-foot-left', 'leg-left', (0.015, 0.038, -0.126), (0.149, 0.078, 0.069), 15),
  ('sandal-strap-left', 'leg-left', (0.013, 0.069, -0.073), (0.151, 0.09, -0.036), 1),
  ('sandal-heel-strap-left', 'leg-left', (0.023, 0.067, 0.032), (0.143, 0.091, 0.067), 1),
  ('sandal-side-strap-left', 'leg-left', (0.138, 0.064, -0.041), (0.151, 0.087, 0.052), 1),
@@ -244,7 +244,7 @@ TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 
  ('navy-wrap-belt', 'torso', (-0.122, 0.267, -0.108), (0.123, 0.3, 0.106), 0),
  ('sash-knot', 'torso', (0.052, 0.265, -0.141), (0.095, 0.308, -0.1), 1),
  ('sash-long-tail', 'torso', (0.052, 0.172, -0.132), (0.087, 0.281, -0.103), 0),
- ('sailcloth-hip-wrap', 'torso', (-0.120, 0.190, -0.103), (0.070, 0.267, -0.084), 3),
+ ('sailcloth-hip-wrap', 'torso', (-0.118, 0.205, -0.100), (0.118, 0.267, -0.084), 3),
  ('sailcloth-back-wrap', 'torso', (-0.124, 0.189, 0.079), (0.112, 0.267, 0.111), 3),
  ('sailcloth-back-seam', 'torso', (-0.07, 0.221, 0.109), (0.106, 0.229, 0.118), 12),
  ('rope-hanger', 'torso', (-0.150, 0.262, -0.128), (-0.132, 0.298, -0.106), 9),
@@ -296,10 +296,18 @@ HEAD = [
  ('hair-flare-right','head',(.182,.628,-.060),(.222,.700,.060),HAIR),
  ('hair-flare-left','head',(-.222,.640,-.020),(-.182,.708,.080),HAIR),
  ('hair-lock-1','head',(-.170,.598,.122),(-.098,.712,.194),HAIR),
- ('hair-lock-1-tip','head',(-.160,.566,.132),(-.118,.600,.186),HAIR),
+ # ⚠️⚠️ THE HAIR FRAMES THE FACE (owner 2026-09-23, of v7: "rafi looks weird"). Beside Dante and
+ # Zack his crest sat ON TOP of the head like a small wig: theirs comes down the sides past the
+ # temples and over the forehead to just above the eyes, and his stopped at the headband, leaving
+ # a tall bald band of forehead. The locks now fall in front of the wrap to just above the eyes
+ # (0.52, eyes top out at 0.507) and sideburn blocks come down the temples to 0.49.
+ ('hair-lock-1-tip','head',(-.160,.520,.132),(-.112,.600,.190),HAIR),
+ ('hair-lock-2-tip','head',(-.078,.548,.140),(-.030,.625,.200),HAIR),
+ ('hair-sideburn-left','head',(-.234,.490,-.010),(-.190,.612,.128),HAIR),
+ ('hair-sideburn-right','head',(.190,.490,-.010),(.234,.612,.128),HAIR),
  ('hair-lock-2','head',(-.092,.622,.128),(-.012,.716,.198),HAIR),
  ('hair-lock-3','head',(-.005,.640,.120),(.078,.712,.192),HAIR),
- ('hair-lock-3-tip','head',(.012,.610,.128),(.052,.642,.184),HAIR),
+ ('hair-lock-3-tip','head',(.012,.556,.130),(.058,.642,.192),HAIR),
  ('hair-lock-4','head',(.082,.652,.112),(.160,.708,.176),HAIR),
  ('headwrap-knot' ,'head',(.126,.554,-.222),(.176,.603,-.182),1),
  ('float-clip-saddle','head',(.136,.559,.166),(.185,.619,.184),1),
@@ -310,7 +318,7 @@ HEAD = [
 BOX_TILTS = {'headwrap-tail-long':-13,'headwrap-tail-short':31,
              'folded-shoulder-lining':-12,'shoulder-loop-fastener':-12,
              'open-collar-left':-22,'open-collar-right':22,
-             'sailcloth-hip-wrap':-6,'sailcloth-back-wrap':7,
+             'sailcloth-hip-wrap':0,'sailcloth-back-wrap':0,
              'sailcloth-repair-seam':-6,'sailcloth-back-seam':7,
              'sash-short-tail':16,'sash-long-tail':-8}
 
@@ -1168,10 +1176,10 @@ def _rafi_forms(head):
         # ⚠️ A SMALL HORIZONTAL COIL, NOT AN UPRIGHT RING (2026-09-23). Two 0.079-tall loops
         # stood on the hip like a shield and were the largest shape on the front of the body.
         # A rope carried coiled is three short loops lying across the hip.
-        for coil in range(3):
-            path=[(-.150+math.cos(i*math.tau/20)*.040,
-                   .252-coil*.016+math.sin(i*math.tau/20)*.022,-.140-coil*.004) for i in range(20)]
-            yield 'torso',WHITE,_rafi_tube(path,.0055,(0,0,1))
+        # ⚠️ NO COIL (v8). Even small and flat, three loops on the hip read as a toy spring
+        # beside the cast's one clean belt line; the orange float on its hanger carries the
+        # sea-going identity alone.
+        pass
         # Fit the forearm just before the palm, not the palm itself. An ellipse
         # clips block-wrist corners; this path keeps clearance on every side.
         wrist=[]
