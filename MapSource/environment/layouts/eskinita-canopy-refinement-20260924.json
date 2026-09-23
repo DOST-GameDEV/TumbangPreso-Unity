@@ -1,0 +1,116 @@
+{
+  "status": "planned; not authored yet",
+  "basis": "Existing actual scene inventory and house views; source geometry unchanged since inventory. Keep all trunk positions and colliders. Shape only upper growth of five named trees.",
+  "trees": [
+    {
+      "name": "Broadleaf_7_mango-yard",
+      "sourceMesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_8a7e3c87e09f9d841a218865441cceef_-8139495298790915039_0.8482_0.8482_0.8482.asset",
+      "widthFactor": 0.76,
+      "crownLift": 0,
+      "rootPosition": {
+        "x": 7.373155117034912,
+        "y": 0.03359555825591087,
+        "z": -17.244447708129883
+      },
+      "originalMin": {
+        "x": 5.628639221191406,
+        "y": 0.022663116455078125,
+        "z": -19.314565658569336
+      },
+      "originalMax": {
+        "x": 9.39261531829834,
+        "y": 4.598640441894531,
+        "z": -14.914565086364746
+      },
+      "parentColliders": 0
+    },
+    {
+      "name": "Broadleaf_0_mango-yard",
+      "sourceMesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_8a7e3c87e09f9d841a218865441cceef_-8139495298790915039_0.8712_0.8712_0.8712.asset",
+      "widthFactor": 0.84,
+      "crownLift": 0.1,
+      "rootPosition": {
+        "x": 6.930549621582031,
+        "y": 0.11122874915599823,
+        "z": 16.24887466430664
+      },
+      "originalMin": {
+        "x": 4.845784664154053,
+        "y": 0.09999990463256836,
+        "z": 14.953153610229492
+      },
+      "originalMax": {
+        "x": 8.671106338500977,
+        "y": 4.799999713897705,
+        "z": 17.724740982055664
+      },
+      "parentColliders": 1
+    },
+    {
+      "name": "Broadleaf_8_mango-yard",
+      "sourceMesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_8a7e3c87e09f9d841a218865441cceef_-8139495298790915039_0.9561_0.9561_0.9561.asset",
+      "widthFactor": 0.7,
+      "crownLift": 0.15,
+      "rootPosition": {
+        "x": 6.6072845458984375,
+        "y": -0.05279785022139549,
+        "z": -18.906902313232422
+      },
+      "originalMin": {
+        "x": 4.602593421936035,
+        "y": -0.06512045860290527,
+        "z": -20.655874252319336
+      },
+      "originalMax": {
+        "x": 9.002593994140625,
+        "y": 5.092836380004883,
+        "z": -17.328798294067383
+      },
+      "parentColliders": 0
+    },
+    {
+      "name": "Broadleaf_2_street-broadleaf",
+      "sourceMesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_a5dafbcb8cff1544cb9bcbf3c45de56f_-8340933307559876055_0.8174_0.8174_0.8174.asset",
+      "widthFactor": 0.76,
+      "crownLift": 0.2,
+      "rootPosition": {
+        "x": 5.825191497802734,
+        "y": 0.1126265823841095,
+        "z": 15.261927604675293
+      },
+      "originalMin": {
+        "x": 3.66935396194458,
+        "y": 0.09999990463256836,
+        "z": 13.069124221801758
+      },
+      "originalMax": {
+        "x": 8.03114128112793,
+        "y": 5.7439866065979,
+        "z": 17.46912384033203
+      },
+      "parentColliders": 1
+    },
+    {
+      "name": "Broadleaf_6_street-broadleaf",
+      "sourceMesh": "Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_a5dafbcb8cff1544cb9bcbf3c45de56f_-8340933307559876055_0.8114_0.8114_0.8114.asset",
+      "widthFactor": 0.74,
+      "crownLift": 0.2,
+      "rootPosition": {
+        "x": -6.638988971710205,
+        "y": 0.11253301799297333,
+        "z": -13.66132926940918
+      },
+      "originalMin": {
+        "x": -8.846996307373047,
+        "y": 0.09999990463256836,
+        "z": -15.779852867126465
+      },
+      "originalMax": {
+        "x": -4.446995258331299,
+        "y": 5.7021613121032715,
+        "z": -11.493592262268066
+      },
+      "parentColliders": 1
+    }
+  ]
+}

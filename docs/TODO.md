@@ -232,6 +232,9 @@ scattered across all maps. Execute inside each map's existing refinement row.
   colliders preserved;3grounded tyres and old footprint checked. Placement variant2
   inspected in matched street/small/grey and four model views; focused1/1passed.
   [Vehicle evidence and limits](reports/map-by-map-refinement-2026-09-23/eskinita-tricycle/report.md).
+  Five remaining primary masonry homes retain original plaster with fitted lower
+  courses, roof detail and foliage fixes. Whole-wall draft rejected; clipped revision
+  inspected under adopted bright lighting, focused1/1passed.[Masonry evidence](reports/map-by-map-refinement-2026-09-23/eskinita-masonry/report.md).
   Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.

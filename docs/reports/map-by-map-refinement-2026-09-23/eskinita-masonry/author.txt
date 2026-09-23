@@ -1,0 +1,6 @@
+0_W: 46 wall/36 roof triangles, 582 finish vertices, one renderer/material; base course 0.48m.
+1_W: 78 wall/34 roof triangles, 504 finish vertices, one renderer/material; base course 0.64m.
+3_W: 46 wall/36 roof triangles, 582 finish vertices, one renderer/material; base course 0.36m.
+1_E: 72 wall/34 roof triangles, 486 finish vertices, one renderer/material; base course 0.54m.
+3_E: 48 wall/34 roof triangles, 414 finish vertices, one renderer/material; base course 0.43m.
+Only five named Eskinita homes; original solids, openings, details and collision unchanged.

@@ -35,6 +35,22 @@ answered merged locally,
 not yet pushed, and clarified silhouettes means recognizable forms, not the
 entire map-improvement plan. Materials/textures/place detail remain central.
 
+Lighting merge/evidence now PUBLISHED: DEV/verified remote52686a6e194372ca2fb952266b1ff0f1f66e7507,
+containing origin/lighting/peak-bright-overhaul50f1fc255. QUAL advanced cleanly to
+52686a6e1. Restored only revised masonry source from stash67c02608(stash retained),
+NOT the rejected generated scene. Current revised author runs
+Logs/refine2-masonry-bright-v2/author.log. Original broad plaster stays; only base
+coating/roof/foliage finish is generated. Use the adopted bright look for its next
+existing focused capture. Inputs frozen during author; no new test machinery.
+Author91273/check50548completed/reaped: revised total2568vertices across five local
+finishes;1/1passed6.720s. Five matched near views and small/grey inspected under the
+adopted bright look. Original plaster retained; corrected output/evidence copied
+to DEV/eskinita-masonry. Known generated churn restored; no active jobs. Publish
+this unit and move to canopy/planting. No more unchanged masonry checks.
+Next local canopy plan/actual five source-mesh records saved in eskinita-canopy-plan.md
+and MapSource/environment/layouts/eskinita-canopy-refinement-20260924.json. Not
+implemented yet. Keep original roots/colliders and other trees; reuse render routes.
+
 Owner's latest AFK instruction: "ok ill go to sleep now js give me one final
 acknowledgement that ull go autonomous and do everything i want pls save it on ledger".
 Acknowledged in the active conversation; keep pursuing the FULL queue, with product

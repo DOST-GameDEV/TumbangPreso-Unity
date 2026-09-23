@@ -327,6 +327,44 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaMasonryHomesKeepTheirSolidBodiesAndIndividualFinishes()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=48;
+            var root=GameObject.Find("Eskinita/Dressing/EskinitaMasonryFinishes");Assert.IsNotNull(root);
+            Assert.AreEqual(5,root.transform.childCount);Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
+            Assert.AreEqual(5,root.GetComponentsInChildren<MeshRenderer>().Select(r=>r.sharedMaterial).Distinct().Count());
+            foreach(string lot in new[]{"0_W","1_W","3_W","1_E","3_E"})
+            {
+                var original=GameObject.Find("Eskinita/Dressing/Bahay/Bahay_Rework_Bahay_"+lot);
+                var finish=root.transform.Find("Finish_"+lot).gameObject;
+                var bodies=original.GetComponentsInChildren<MeshRenderer>();var bounds=bodies[0].bounds;
+                foreach(var body in bodies)bounds.Encapsulate(body.bounds);
+                var renderer=finish.GetComponent<MeshRenderer>();var allowed=bounds;allowed.Expand(.04f);
+                Assert.IsTrue(allowed.Contains(renderer.bounds.min)&&allowed.Contains(renderer.bounds.max),lot+" finish is not fitted.");
+                Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off,renderer.shadowCastingMode);
+                Assert.Greater(finish.GetComponent<MeshFilter>().sharedMesh.vertexCount,100);
+                bool east=lot.EndsWith("E");int side=east?-1:1;
+                foreach(string angle in new[]{"street","clear-side"})
+                {
+                    camera.transform.position=angle=="street"?new Vector3(bounds.center.x+side*12,3.7f,bounds.center.z+4.2f):
+                        new Vector3(bounds.center.x+(east?7:9),east?6.0f:3.6f,bounds.center.z+(east?-8:-3.8f));
+                    camera.transform.LookAt(new Vector3(bounds.center.x,2.1f,bounds.center.z));
+                    foreach(string state in new[]{"before","after"})
+                    {
+                        finish.SetActive(state=="after");
+                        using(Visual.NeighbourhoodSkyMotion.At(20))
+                            yield return GameplayShots.Render(camera,"masonry-"+lot+"-"+angle+"-"+state,false,Output,width:1280,height:800);
+                    }
+                }
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"masonry-"+lot+"-small",false,Output,width:960,height:540);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
         {
             var canvas = new GameObject("Context preview canvas", typeof(Canvas));
