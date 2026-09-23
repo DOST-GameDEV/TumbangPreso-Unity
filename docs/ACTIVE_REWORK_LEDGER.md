@@ -195,3 +195,40 @@ near-faded columns in diagnostics are recorded, not a fixture repair task. Nativ
 evidence copied; known churn and redundant DeckSurface0material serialization
 restored after patch. Ilalim art batch ready for integrated camera/native acceptance;
 parent stays open for that gate. Publish final unit, then SaBubong. No active jobs.
+
+Ilalim final-artf128f57c0e59beb50253348938865366243e4731PUBLISHED/remote verified.
+QUAL exact candidate matched/stashed then advancedf128f57c0. SaBubong now active:
+199surfaces/69solids,128neighbor-rooftop renderers plus existing household corners.
+Platform21primary text/exterior photos viewed, useful shade/plant/material principles;
+DFAutility PDFphotos unavailable, not visual evidence. Saved sabubong-reference-notes.
+Native baseline probe drafted/copied: actual preview and six named roof/context
+views. Next guarded run Logs/refine2-sabubong-baseline, freeze.cs while active. No
+SaBubong art edits yet. All own browser tabs closed, no unrelated task contacted.
+
+Sa baseline94200completed/reaped1/1in4.343s; preview/corners/neighbor views inspected.
+Actual weaknesses: sparse contextual roofs beyond the immediate tower ring, visible
+outer ground edge, very plain stairhead door/vent/service treatment and ambiguous
+plain water cylinder. Existing shade furniture, resident plants/basins, pool/steps,
+railings and clear court remain useful. Check source purpose of the cylinder before
+adding utility parts. Plan/research/generated ideation precedes map edits. No Sa art
+changes or active Unity job yet. Ground/city/laundry physics must stay protected.
+
+Sa roof concept saved/critically reviewed: keep supported utility/shade refinements
+and layered lower neighboring roofs; reject moving the tank, luxury planting density
+and altered pool/court. Tank plan/source now drafted/copied to QUAL. Original body/
+plinth/collision retained, one fitted lid/cap/bands/outlet/valve mesh within plinth
+footprint and a local dull-steel material. Full-builder hook preserves regeneration.
+Next guarded author Logs/refine2-sabubong-tank-v1, then one paired service/near review.
+No.cs edits during run. Baseline94200completed/reaped; no other jobs/tabs active.
+
+Tank author93908completed/reaped,540detail vertices/one renderer, original body/
+plinth/collision guards pass. Current paired service/near case runs
+Logs/refine2-sabubong-tank-v1/check.log; no.cs edits during run. Inspect before keeping.
+Next measured stairhead: original baked body at(8,.1,18.5),doorcenter(7.35,1.14,16.482),
+ventcenter(9.2,2.35,16.475). Keep existing body/noticeboard/mural; later add fitted
+frame/handle, actual louvre blades and modest flashing, no new access/collision.
+
+Tank case25316completed/reaped1/1in3.398s; paired service/near/grey25inspected, keep
+v1. Qualified scene/assets/evidence copied to DEV, known generated churn restored
+from saved patch. No active job. Publish tank/ref/plan unit then stairhead finish;
+source plan already saved. This does not close SaBubong or the overall goal.

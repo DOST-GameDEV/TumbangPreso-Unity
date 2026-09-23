@@ -279,6 +279,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   focused1/1passed. Parent remains open for integrated intro/spectator/native gate;
   continue SaBubong art next.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
+  Active map. [Primary reference and concept critique](reports/map-by-map-refinement-2026-09-23/sabubong-reference-notes.md)
+  saved. Existing water tank now has fitted lid/bands/service outlet, original body/
+  collision retained. Paired/grey25inspected, focused1/1passed.
+  [Tank evidence](reports/map-by-map-refinement-2026-09-23/sabubong-tank/report.md).
+  Stairhead, shade and neighboring/distant roof context remain next.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on

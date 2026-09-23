@@ -87,6 +87,58 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongTankFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=55;
+            var finish=GameObject.Find("SaBubong/Dressing/Resident tank finish");Assert.IsNotNull(finish);Assert.IsEmpty(finish.GetComponentsInChildren<Collider>());
+            var tank=GameObject.Find("SaBubong/Dressing/Laundry service corner/Resident water tank").GetComponent<MeshRenderer>();
+            var after=tank.sharedMaterial;var before=AssetDatabase.LoadAssetAtPath<Material>(after.GetTag("TumpRoofTankSource",false));Assert.IsNotNull(before);
+            foreach(string view in new[]{"service","near"})
+            {
+                camera.transform.position=view=="service"?new Vector3(-3,2.4f,13):new Vector3(-.6f,2.2f,17.5f);
+                camera.transform.LookAt(view=="service"?new Vector3(-5.2f,1.3f,19):new Vector3(-2.9f,1.15f,19.5f));
+                foreach(string state in new[]{"before","after"})
+                {
+                    finish.SetActive(state=="after");tank.sharedMaterial=state=="after"?after:before;yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-tank-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongArtBaselineReview()
+        {
+            var canvas=new GameObject("SaBubong preview review",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.SaBubong);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.SaBubong && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.SaBubong,preview.Showing);preview.enabled=false;
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(preview.Camera,"SaBubong-preview",false,Output,width:1280,height:720);
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=60;GraphicsProfiles.Apply(2);yield return null;
+            foreach(string view in new[]{"court","shade","laundry","stairhead","pool","neighbor-roofs"})
+            {
+                camera.transform.position=view=="court"?new Vector3(-3,1.7f,-10):view=="shade"?new Vector3(-6,2.4f,-11):
+                    view=="laundry"?new Vector3(-3,2.4f,13):view=="stairhead"?new Vector3(3,2.8f,12):
+                    view=="pool"?new Vector3(-3,2.5f,1):new Vector3(0,12,-10);
+                camera.transform.LookAt(view=="court"?new Vector3(3,2.2f,16):view=="shade"?new Vector3(-10.6f,1,-7.2f):
+                    view=="laundry"?new Vector3(-5.2f,1.3f,19):view=="stairhead"?new Vector3(8.4f,1.5f,18.3f):
+                    view=="pool"?new Vector3(-10,0,5):new Vector3(32,-5,32));
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"SaBubong-"+view,false,Output,width:1280,height:800);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator IlalimFinalArtReview()
         {
             var canvas=new GameObject("Ilalim final preview",typeof(Canvas));

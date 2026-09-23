@@ -1,0 +1,8 @@
+{
+  "created": "2026-09-24",
+  "tool": "built-in image generation",
+  "purpose": "Reference only, not implementation evidence",
+  "prompt": "sabubong-roof-v1.prompt.txt",
+  "reference": "QUAL/Logs/refine2-sabubong-baseline/SaBubong-preview.png",
+  "sha256": "ff84266aad88f8709ca4e7c1b788c30bec6c239135ce6289aa59628225807ac0"
+}

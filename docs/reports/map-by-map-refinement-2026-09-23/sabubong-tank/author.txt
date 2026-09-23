@@ -1,0 +1,1 @@
+Retained tank/plinth/collision; capped lid, service cap, two bands and contained outlet/valve. 540detail vertices, one renderer, no new collision.
