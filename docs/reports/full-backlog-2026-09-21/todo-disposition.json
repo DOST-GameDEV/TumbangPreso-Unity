@@ -844,20 +844,40 @@
     {
       "lineAtIntake": 2649,
       "heading": "#### 151.13a ⚠️⚠️ THE FIRST-PERSON ARM STOPPED ANIMATING ON THE SLIDE, AND IT BROKE ON 2026-09-05",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented and superseded by the dedicated SlideClip. The action bridge reaches body and FPP, including successful carry transition and failed recovery. Current native motion acceptance belongs to P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+        "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/RetrievalSlideTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 2699,
       "heading": "#### 151.13b ⚠️⚠️ THE SLIDE IS ANNOUNCED ON THE WIRE AS A LUNGE, IN TWO PLACES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Both ReleaseSlide and the host request receiver now broadcast the literal slide action. No missing rename remains.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 2716,
       "heading": "#### 151.13c ⚠️⚠️ THREE PLAYERS OUT OF FOUR CANNOT HEAR A SLIDE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Slide scrape uses the owner-driven NetCue relay; new court-line skid is separately sampled locally on each peer. No duplicated relay was introduced.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Audio/NetCue.cs",
+        "Assets/TumbangPreso/Runtime/Visual/MotionFoley.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 2735,
@@ -1136,188 +1156,363 @@
     {
       "lineAtIntake": 3592,
       "heading": "## 146 · CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dedicated body/FPP slide, shared eligibility, host pickup, commitment, refusal rollback, bot intent and relay are implemented. Fresh candidate motion/transport checks stay P7; subjective slide feel stays external.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+        "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/RetrievalSlideTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3601,
       "heading": "### 146.1 ✅ IT ADDS NO BUTTON, AND THE ONE IT USES WAS DEAD",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Existing Lunge verb is reused for attacker retrieval; no new input backend or button was added. Source and named regression retained.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3612,
       "heading": "### 146.2 ✅ EVERY NUMBER IS SOLVED FROM ONE THE GAME ALREADY HAD",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Friction/distance-derived slide constants and their named NationalsHardeningTests remain. No unrequested numerical retune.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3637,
       "heading": "### 146.3 ✅ THE PUNISHMENT IS COMMITMENT, NOT A STATUS EFFECT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Commitment covers SlideActiveTime plus SlideRecoveryTime. Refusal clears the active window/refunds stamina; no replacement stun penalty.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3647,
       "heading": "### 146.4 ✅ HOST-AUTHORITATIVE, AND THE PICKUP RULE IS NOT RESTATED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Local and host paths share SlideMayStartFrom; HostGrab remains the actual pickup authority. Eligibility does not bypass the ordinary ownership/wall rules.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3660,
       "heading": "### 146.4b ✅ AND AN AUDIT CAUGHT A DOUBLE AWARD ON THE RUN IT WAS WRITTEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Successful slide clears its active window and leaves pickup/style accounting with the idempotent NotifyHolding funnel; duplicate style award removed.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Carrier.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3680,
       "heading": "### 146.4c ⚠️ AND THE FIXTURE'S OWN FIRST RED WAS A TRAP WORTH WRITING DOWN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical fixture finding, not missing game work. RetrievalSlideTests now waits game seconds derived from the active time, not a frame count. Preserve original failure.",
+      "evidence": [
+        "Assets/TumbangPreso/Tests/PlayMode/RetrievalSlideTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3708,
       "heading": "### 146.5 ✅ THE BOT IS TAUGHT IT, DELIBERATELY, AND ONLY WHERE A PERSON WOULD",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "AIController.StepSlideIntent checks cooldown, approach distance and legal target before using normal input intent. C1/C2 evidence is retained; no repeated seed sweep.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/AIController.cs",
+        "Assets/TumbangPreso/Runtime/AiRetrievalRules.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3720,
       "heading": "### 146.6 ⚠️ OPEN: THE ART, AND THE NUMBERS AFTER A HUMAN HAS FELT THEM",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dedicated body and FPP slide are implemented; newer151.23 and current ViewmodelArms supersede the old fallback request. Full-speed candidate alignment is P7; human balance/feel remains external.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs",
+        "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/RetrievalSlideTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3735,
       "heading": "## 145 · THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Qualification/harness hardening is implemented in current source. A fresh exact Windows candidate qualification remains P7; historic gate passes are not that result.",
+      "evidence": [
+        "tools/qualify.py",
+        "tools/audit_harness_contracts.py",
+        "tools/net_matrix.py",
+        "tools/cold_start.py",
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "Assets/TumbangPreso/Runtime/BuildIdentity.cs",
+        "Assets/TumbangPreso/Runtime/TournamentGuard.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3741,
       "heading": "### 145.1 ✅ A QUALIFICATION MAY NOT CERTIFY A TREE IT CANNOT TIE TO A COMMIT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "qualify.py treats source dirt/unknown identity as non-qualified, not a warning that still passes. Fresh candidate report is P7.",
+      "evidence": [
+        "tools/qualify.py",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3767,
       "heading": "### 145.2 ✅ THE BUILD-SIDE DIRTY FLAG WAS A HEURISTIC THAT COULD NOT SEE AN ORDINARY EDIT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "GameBuilder stamps inspected tracked/untracked tree state and unknown distinctly. Candidate source dirt cannot be certified clean.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "Assets/TumbangPreso/Runtime/BuildIdentity.cs",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3786,
       "heading": "### 145.3 ✅ THE TOURNAMENT AUDIT COULD NOT SEE SWITCH NUMBER NINE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "TournamentGuard resolves named core modifiers and fails closed on unknown names; audit_harness_contracts retains coverage checks.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/TournamentGuard.cs",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3812,
       "heading": "### 145.4 ✅ THE REFEREE VERIFIER PRINTED MORE THAN IT GATED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "net_matrix evaluate/emit return failure for peer disagreement rather than printing divergence with exit0; current candidate peer matrix remains P7.",
+      "evidence": [
+        "tools/net_matrix.py",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3840,
       "heading": "### 145.6 ✅ THE BOT SWEEP CAN ANSWER \"DID THIS CHANGE MOVE ANYTHING\", WHICH IT COULD NOT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Seed comparison/config-digest machinery exists and the completed C1/C2 sweep is preserved under151.9. No fresh sweep is required merely to clear this historic heading. Human feel remains external.",
+      "evidence": [
+        "tools/bot_sweep.py",
+        "docs/reports/claude-engineering-2026-09-15/README.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 3878,
       "heading": "### 145.4b ✅ MEASURED AND FIXED: THE ROSTERS AGREED; `IsBot` WAS BEING GATED AS IF IT WERE CONSTANT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Peer parsing distinguishes stable roster identity from changing bot control. Existing parser/verdict checks retained; fresh room qualification remains P7.",
+      "evidence": [
+        "tools/net_matrix.py",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4031,
       "heading": "### 145.7 ✅ `net_matrix.py` PRINTED `DIVERGED` AND EXITED 0",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "net_matrix returns nonzero when emit reports faults/divergence. No new implementation gap in the old exit-code finding.",
+      "evidence": [
+        "tools/net_matrix.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4062,
       "heading": "### 145.8 ✅ THE COLD START PROVED HERO STRIKE ON macOS, NOT CLASSIC ON WINDOWS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Cold-start tool takes an explicit executable/drive/preset and qualification resolves the platform build target. Windows artifact/launch proof is P7.",
+      "evidence": [
+        "tools/cold_start.py",
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4126,
       "heading": "### 145.9 ✅ AN UNTRACKED SOURCE FILE WAS NOT A DIRTY TREE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Untracked source is included in both qualification and build-side identity inspection, with retained synthetic contract checks.",
+      "evidence": [
+        "tools/qualify.py",
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4162,
       "heading": "### 145.10 ✅ A DIRTY ARTIFACT COULD QUALIFY, AND UGS IDENTITY WAS NOT PART OF CROSSPLAY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Candidate identity validation rejects dirty/unknown artifacts and mismatched source/protocol/target/service identity. Actual paired candidate identity remains P7.",
+      "evidence": [
+        "tools/qualify.py",
+        "tools/audit_harness_contracts.py",
+        "Assets/TumbangPreso/Runtime/BuildIdentity.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4182,
       "heading": "### 145.11 ⚠️⚠️ P0 CLOSED: THE RETRIEVAL SLIDE WAS A FREE DASH OVER THE WIRE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "HostResolveSlide calls the same SlideMayStartFrom eligibility before stamina spend/commit/impulse. The free-dash request hole is closed.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4207,
       "heading": "### 145.12 ⚠️⚠️ P0 CLOSED: THE SLIDE'S REFUSAL COULD NEVER BE ROLLED BACK",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "DeniedVerb.Slide is accepted by the receiver and clears/refunds active slide state. Named NationalsHardeningTests retain the case.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4220,
       "heading": "### 145.13 ✅ `cold_start --clean-profile` COULD DELETE THE ONLY BACKUP",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "cold_start profile vault restores in finally; clean-profile remains explicit opt-in. Existing audit_harness_contracts includes vault failure cases. No real profile deletion performed here.",
+      "evidence": [
+        "tools/cold_start.py",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4243,
       "heading": "### 145.14 ✅ THE AUDIT OF THE GRADERS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Harness source contracts cover dirty-tree, peer parsing/verdicts, profile vault, cold-start flags and candidate identity. No need to rerun heavy harnesses to rediscover these implemented functions.",
+      "evidence": [
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4257,
       "heading": "### 145.5 ⚠️ OPEN: `qualify.py` STILL HAS TO RUN ON A WINDOWS MACHINE FOR A NATIONALS CANDIDATE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Environment is now Windows with the required editor; this is an actionable final qualification task under P7, not a current external-machine blocker.",
+      "evidence": [
+        "tools/qualify.py",
+        "ProjectSettings/ProjectVersion.txt"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4269,
       "heading": "## 144 · THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Sourced audio, delivered jeepney and actual Resources audio-gate path are implemented. Final listening/material taste and current-candidate proof remain separate; old account-download blockers are superseded.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "tools/build_jeepney.py",
+        "tools/build_ability_audio.py",
+        "tools/audit_cue_audio.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4275,
       "heading": "### 144.1 ✅ THE SIXTEEN RECORDINGS, AND 42 CUES THAT WERE SYNTHESISED ARE SOURCED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Licensed-source audio selection/attribution and reproducible builder are present. No new download or paid service needed. Sourced provisional audio still requires listening acceptance.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "tools/build_ability_audio.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4302,
       "heading": "### 144.2 ✅ THE GENERATOR DECAYED A CUE BY ITS OWN GAIN ON EVERY RE-RUN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Builder uses saved final cue_reference_peaks targets, not the overwritten file as a decaying gain reference. Preserved repeatability result retained; no re-generation requested.",
+      "evidence": [
+        "tools/build_ability_audio.py",
+        "tools/assets/cue_reference_peaks.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4318,
       "heading": "### 144.3 ⚠️⚠️ OPEN: BOTH AUDIO GATES WERE READING A DIRECTORY THE GAME CANNOT LOAD FROM",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Both audit_cue_audio and runtime load Resources/Sfx. D review measured that actual directory, fixed the rubber-step DC and retained six other flags for their owners/final review. Old unreachable-directory defect is resolved.",
+      "evidence": [
+        "tools/audit_cue_audio.py",
+        "Assets/TumbangPreso/Runtime/AudioDirector.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4348,
       "heading": "### 144.3b ✅ MEASURED 2026-09-05: IT IS A MIRROR, THREE GENERATORS WERE STILL FEEDING IT, AND IT HAS DRIFTED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Legacy Art mirror is not the runtime input. Current source builders and the gate target Resources/Sfx; historical61differences remain a dated finding rather than a request to overwrite current sounds.",
+      "evidence": [
+        "tools/generate_hero_audio.py",
+        "tools/generate_ability_audio.py",
+        "tools/generate_skill_audio.py",
+        "tools/build_ability_audio.py",
+        "tools/audit_cue_audio.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4397,
       "heading": "### 144.4 ✅ THE JEEPNEY SHIPS AS DELIVERED, AND § 6.0 EXISTS BECAUSE THE FIRST ATTEMPT DID NOT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Delivered jeepney and licence-preserving build path retained. Later151.5 handles finish/reflection; no original mesh/livery repaint is needed.",
+      "evidence": [
+        "tools/build_jeepney.py",
+        "docs/Asset_Sourcing.md",
+        "Assets/TumbangPreso/Editor/MapKit/IlalimNgTulayBuilder.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4458,
@@ -1334,104 +1529,193 @@
     {
       "lineAtIntake": 4521,
       "heading": "### 144.7 ✅ CLOSED 2026-09-05: THE SEAT HANDOVER'S RATING TRAVELS, AND IT COST `ProtocolVersion` 24",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Seat handover reads the departing peer rating and transfers it through the current handshake/snapshot. Old protocol24 is historical, not a number to restore; current-source peer identity is P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "Packages/com.tumbangpreso.core/Runtime/SessionEnd.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4592,
       "heading": "### 144.8 ⚠️⚠️ OPEN, AND HANDED TO ANOTHER SESSION: THE JEEPNEY'S METAL FINISH DOES NOT SHOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Superseded by151.5: current builder writes Unity/glTFast metal/roughness names and authors a north-boundary reflection probe. Existing finish evidence retained; human chrome taste is not inferred.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/MapKit/IlalimNgTulayBuilder.cs",
+        "Assets/TumbangPreso/Shaders/NearFade.shader",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4698,
       "heading": "### 143.15 ✅ CLOSED 2026-09-05: THE COLD START RAN, AND THE FIRST RUN FOUND A HOLE IN THE HARNESS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical cold-start result and profile-vault fix retained; current tools use explicit executable and profile preservation. Current candidate launch/exit belongs to P7.",
+      "evidence": [
+        "tools/cold_start.py",
+        "tools/audit_harness_contracts.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4742,
       "heading": "### 143.15b ✅ CLOSED 2026-09-05: THE STEP ASSERTS A ROUND RAN, AND IT IS A SEPARATE ROW NOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Cold-start step asserts a driven round instead of merely a loaded menu. Exact fresh Windows candidate run is P7.",
+      "evidence": [
+        "tools/cold_start.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4820,
       "heading": "## 143 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Core qualification machinery is implemented. Historical baseline counts remain dated evidence; the current exact Windows candidate gate, native exit and multi-peer checks remain P7.",
+      "evidence": [
+        "tools/qualify.py",
+        "tools/playmode_suite.py",
+        "tools/cold_start.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4846,
       "heading": "### 143.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY \"RUN IT TWICE\" WOULD NOT HAVE HELPED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Isolated PlayMode grouping and nonzero XML/coverage gates are implemented in playmode_suite.py. Fresh grouped candidate run belongs to P7; do not repeat the old contaminated monolithic run.",
+      "evidence": [
+        "tools/playmode_suite.py",
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4905,
       "heading": "### 143.1a ✅ THE WHOLE GATE RAN ON `0ae070e`, AND THE COMPARISON IS THE ENTRY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical whole-gate result retained as a comparison record, not a new task or current-candidate pass. P7 owns the fresh exact-source result.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4936,
       "heading": "### 143.1b ⚠️⚠️ THE COVERAGE CHECK'S FIRST RUN FAILED THE GATE OVER SEVEN FIXTURES THAT WERE MEANT TO BE SILENT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The historical coverage failure is preserved; current grouped-run coverage logic remains in playmode_suite.py. No missing game feature is implied by this old run record.",
+      "evidence": [
+        "tools/playmode_suite.py",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4968,
       "heading": "### 143.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "GameBuilder emits resource and StreamingAssets build identities; BuildIdentity exposes runtime identity and qualify.py checks candidates. Fresh source/target matching is P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "Assets/TumbangPreso/Runtime/BuildIdentity.cs",
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 4986,
       "heading": "### 143.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Both core preset and Unity TournamentGuard are implemented, with unknown-switch rejection and dedicated tests. Old missing Unity-half claim is stale.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/TournamentGuard.cs",
+        "Assets/TumbangPreso/Tests/TournamentGuardTests.cs",
+        "Packages/com.tumbangpreso.core/Runtime/TournamentPreset.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5012,
       "heading": "### 143.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Soak/invariant harness and preserved multi-match results exist. Latest full candidate soak remains P7, with bounded windows and exact artifact identity.",
+      "evidence": [
+        "tools/qualify.py",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5044,
       "heading": "### 143.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Preserved original soak problem statement, superseded by143.4 implementation and P7current-candidate acceptance. Not a second independent soak task.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5056,
       "heading": "### 143.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "MatchBootstrap caches its subscribed director, unsubscribes before resubscribe, cancels pending advance and releases on destruction. Source audit retains explicit process-lifetime exceptions; no blanket rerun required. A new disposable AudioDirector test was corrected to respect the existing singleton contract.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/MatchBootstrap.cs",
+        "tools/audit_event_subscriptions.py",
+        "Assets/TumbangPreso/Runtime/GameServices.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5091,
       "heading": "### 143.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "SceneDependencyCheck exists as the asset-reference complement to script scanning. Exact candidate scene checks remain P7, not a missing checker implementation.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/SceneDependencyCheck.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5125,
       "heading": "### 143.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Superseded by the current149.4 receipt/rehost work: scoped request receipts and stale/refused-cast handling plus real peer evidence exist. Fresh whole-candidate request/outage matrix remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.SkillReceipts.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs",
+        "docs/reports/full-backlog-2026-09-21/network-evidence"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5143,
       "heading": "### 143.8 ✅ THE AUDITS ARE A GATE NOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Audits are staged by qualify.py and retained in the candidate report. Fresh candidate audit execution remains P7.",
+      "evidence": [
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5150,
       "heading": "### 143.9 ✅ CLOSED 2026-09-05: HOST LOSS IS ONE OUTCOME ON EVERY PEER, AND ONE EXPRESSION WAS THE HOLE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "MatchAbandon and NetAuthority.ShouldResolve revoke host-loss authority instead of allowing a disconnected client to become referee. Existing native/network receipts retained; candidate outage remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/MatchAbandon.cs",
+        "Assets/TumbangPreso/Runtime/NetAuthority.cs",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5210,
@@ -1478,8 +1762,12 @@
     {
       "lineAtIntake": 5382,
       "heading": "### 143.13 to 143.16",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "This heading is a historical pointer to sibling entries, not a separate feature. Preserve sibling IDs and current P7acceptance.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5389,
@@ -1490,26 +1778,44 @@
     {
       "lineAtIntake": 5400,
       "heading": "### 141.1 WHAT THE SCREENSHOT SHOWS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical driven-seat/spectator screenshot is explained by the ownership fixes in141.3/141.4. Current non-UI source reactivates/follows the player rig and disables spectator ownership when taking a seat.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/DebugPlayerSwitcher.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5414,
       "heading": "### 141.2 ✅ VERIFIED: F1, F2, F3 AND F4 EACH HAVE TWO READERS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Two readers still exist by design but are mutually gated: offline switcher takes F1-F4, networked spectator retains POV control. No input backend replacement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/DebugPlayerSwitcher.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5441,
       "heading": "### 141.3 ✅ THE CAUSE, AND IT IS NOT THE KEY COLLISION",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Taking a local seat restores and follows the actual CameraRig rather than looking for it on spectator Camera.main; the spectator component is disabled.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/DebugPlayerSwitcher.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5478,
       "heading": "### 141.4 ✅ THE KEY COLLISION, AND WHAT IS STILL OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "SpectatorCamera checks whether the offline DebugPlayerSwitcher owns F-keys before processing them. Current simultaneous-reader fault is closed.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5486,
@@ -1520,8 +1826,13 @@
     {
       "lineAtIntake": 5507,
       "heading": "### 141.7 ✅ 2026-09-05: THE INVARIANT MODEL CAN NOW EXPRESS BOTH FAULTS, WHICH IT COULD NOT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Core SeatClaim includes driving and spectating flags plus owner/seat claims; both double-owner and double-seat faults can be expressed and checked. Current multi-peer ownership proof remains P7.",
+      "evidence": [
+        "Packages/com.tumbangpreso.core/Runtime/MatchInvariants.cs",
+        "Core.Tests/MatchInvariantTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5552,
@@ -1544,8 +1855,12 @@
     {
       "lineAtIntake": 5656,
       "heading": "### 140.1 FIRST, THE CHECK: NOTHING WAS BROKEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical transport baseline was not a discovered gameplay defect. Current NetSession transport and link measurement remain; native current-candidate checks are P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5672,
@@ -1556,8 +1871,12 @@
     {
       "lineAtIntake": 5694,
       "heading": "### 140.3 ✅ THE MEASURABLE HALF IS BUILT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "NetSession polls actual UTP RTT and exposes LinkRttMs/Link with poor/bad thresholds and stall state. This is the implemented measurable backend half, not a claim about current UI appearance.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 5714,
@@ -1729,44 +2048,85 @@
     {
       "lineAtIntake": 6088,
       "heading": "### 134.2 ⚠️⚠️ THE ATTACKER SHOVE: FOUR FAULTS THAT PRODUCED ONE BEHAVIOUR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current AI shove planning projects meaningful consequences and uses the normal verb/authority path. Existing diagnostic/sabotage evidence retained; no retune or duplicate seed sweep.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/AIController.cs",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6185,
       "heading": "### 134.3 ⚠️ BASELINE: WHAT THE SPECTATOR AUTOPILOT ACTUALLY DID BEFORE THIS PASS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical autopilot baseline superseded by current committed event model, outcome grace, distinct shot solves and hysteresis. Current native qualification stays P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorInterest.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6220,
       "heading": "### 134.4 ⚠️ BASELINE: WHAT MANUAL REPLAY ACTUALLY SHOWED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical replay baseline superseded by saved-pose/world reconstruction and native replay receipts; current timeline/cleanup acceptance stays P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6253,
       "heading": "### 134.5 THE SHOT VOCABULARY, THE EVENT INTEREST MODEL AND WHAT THE AUTOPILOT DOES NOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current director retains nine shot solves,2.4s beat commitment and consequence grace. No missing autopilot rewrite; Dsource review preserved these intentionally.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorInterest.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6354,
       "heading": "### 134.6 THE REPLAY MARKERS AND THE EVENT WINDOW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Event/highlight windows are implemented through MatchReplayArchive and recorded clips. Fresh current-source native replay remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6443,
       "heading": "### 134.7 THE ULTIMATE INTRODUCTIONS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Superseded by seven hero-specific shared-phase introductions with real power activation after the introduction. Rafi is included; Phaister warning timing is preserved.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs",
+        "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SharedUltimate.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6490,
       "heading": "### 134.8 ⚠️ REJECTED APPROACHES, AND WHY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical rejected approaches retained as constraints; not an instruction to reimplement or retry them. Current director/replay/hero systems follow the later presentation design.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "docs/NATIONALS_POLISH.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6505,
@@ -1777,14 +2137,26 @@
     {
       "lineAtIntake": 6553,
       "heading": "### 134.10 ⚠️ OPEN: THERE IS NO REDUCED-EFFECTS OR FLASH-REDUCTION SETTING TO RESPECT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Reduced effects, reduced motion and flash intensity already exist and are consumed by current world effects/shake. Existing settings/HUD work is retained; Dcloth and Cpaper also respect them.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Visual/WorldCueProfile.cs",
+        "Assets/TumbangPreso/Runtime/Visual/PaperConfetti.cs",
+        "Assets/TumbangPreso/Runtime/Visual/FiestaBunting.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6569,
       "heading": "### 134.12 ✅ CLOSED 2026-09-05: THE REPLAY CAPTURE IS ASYNCHRONOUS, BOUNDED AND POOLED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "SpectatorCamera uses bounded640x360 async readback with reserved ring slots and a texture pool, with an explicit synchronous fallback for unsupported hardware. Current capture cost is P7, not the old measured number.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/ReplayCaptureProbe.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6667,
@@ -1795,50 +2167,92 @@
     {
       "lineAtIntake": 6700,
       "heading": "### 134.14 ✅ ESKINITA WAS THE ONLY MAP THE GEOMETRY CHECK DID NOT GATE, AND IT HAD TEN FINDINGS",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Old ten-findings map baseline is superseded by the implemented full surface/sky/map pass and later native evidence. Current five-map local look contracts pass; final native routes remain P7.",
+      "evidence": [
+        "docs/MAP_FINAL_PASS.md",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6739,
       "heading": "### 134.15 ⚠️ OPEN: THE MAP SOURCES IN `Asset_Sourcing.md` § 7 ARE NOT IN THE REPOSITORY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Old missing-source claim is superseded by shipped jeepney/credited Manila recording and authored map foundations. Rejected paid-tier packs remain rejected, not silently pending downloads.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "tools/build_jeepney.py",
+        "docs/MAP_FINAL_PASS.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6763,
       "heading": "### 134.16 ⚠️ THE CONTROLLED DIAGNOSTIC RAN AND REPORTED ZERO SHOVES, AND THE FIRST READING OF THAT WAS UNREADABLE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical controlled shove diagnostic/reporting lesson retained. Current AI consequence planning and the later151.9C1/C2receipts supersede this as an implementation blocker.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/AIController.cs",
+        "docs/reports/claude-engineering-2026-09-15/README.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6846,
       "heading": "### 134.17 ⚠️⚠️ THE CAPTURE PROBE HUNG THE RUN AND WOULD HAVE GONE GREEN OVER AN EMPTY FOLDER",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical capture-harness failure retained, not a new capture-tool rebuilding task. Current policy requires nonzero results and bounded fixture repair; P7owns final capture coverage.",
+      "evidence": [
+        "AGENTS.md",
+        "tools/playmode_suite.py",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6885,
       "heading": "### 134.18 ⚠️⚠️ WHAT THE FIRST REAL CAPTURE FOUND, AND ALL FOUR WERE INVISIBLE IN THE SOURCE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical visual/capture findings are preserved. Current director bounds occlusion re-solves and holds outcomes; actual later native skill/replay receipts supersede forced-but-uncast pictures. Current final visual acceptance remains P7.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6924,
       "heading": "### 134.19 · THE CAPTURE, AND WHAT FOUR RUNS OF IT MEASURED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated comparison runs retained as evidence history, not a fresh implementation task or certification of current HEAD.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6975,
       "heading": "### 134.20 · VERIFIED: actual native replay overlay, 2026-09-16",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Actual native replay overlay already qualified in retained presentation receipts. Current-source replay check is P7; no second overlay implementation.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 6986,
       "heading": "### 134.11 · VERIFIED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated Windows/Android/core/editor results are historical evidence only. Do not rerun the old commit twice or use old protocol literals; P7owns one current coherent candidate.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "tools/qualify.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 7082,
@@ -1988,49 +2402,102 @@
       "lineAtIntake": 8145,
       "heading": "### 132.5 ⚠️ WHAT IS STILL OPEN",
       "disposition": "unreviewed",
-      "evidence": []
+      "evidence": [],
+      "partialReview": "Gameplay portion reviewed2026-09-23: later kit reports contain actual trajectory/lane/occupation/speed/time/passage tradeoffs; current native variants route iterates both roles and all registered heroes including Rafi. Do not replace them because the old heading says numbers-only. Final mixed-role/motion/native acceptance remains P7; new owner dissatisfaction with walking/throw/pektus is explicitly queued under REFINE-2.9. UI typography/icon portions remain unreviewed.",
+      "partialEvidence": [
+        "docs/HERO_KIT_REWORK_DECISIONS.md",
+        "docs/ABILITY_REWORK_PLAN.md",
+        "docs/reports/improvement-2026-09-14/sean-skills.md",
+        "docs/reports/improvement-2026-09-14/zack-skills.md",
+        "docs/reports/improvement-2026-09-14/dante-skills.md",
+        "docs/reports/improvement-2026-09-14/cheska-network-review.md",
+        "docs/reports/improvement-2026-09-14/nemu-laptop-review.md",
+        "docs/reports/improvement-2026-09-14/phaister-skills.md",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Variants.cs",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md"
+      ]
     },
     {
       "lineAtIntake": 8170,
       "heading": "## 131 · Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Licensed sourcing and distinct hero families have since been implemented and expanded by the approved presentation pass. Preserve rejected replacements and current hero shapes. Remaining aesthetic/listening approval is external/current-candidate P7.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "docs/NATIONALS_POLISH.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8182,
       "heading": "### 131.1 The style is the game's, not the downloaded pack's",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Standing game-style constraint retained: source art is adapted to distinct hero forms, not a mandate to reuse one downloaded pack across all actions.",
+      "evidence": [
+        "docs/Art_Direction.md",
+        "docs/NATIONALS_POLISH.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8194,
       "heading": "### 131.2 Done looks like",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Acceptance now maps to current presentation/visual rows and their retained native receipts. Licences remain in Asset_Sourcing; human style/listening approval is separate.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8214,
       "heading": "### 131.3 ✅ THE SOURCED ART IS IN, AND FIVE OF THE SIX FAMILIES ARE WIRED, 2026-09-03, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The sourced VFX pipeline and licence register are present. Later authored hero work supersedes the old five-family count; do not force unused generic sheets into approved powers.",
+      "evidence": [
+        "tools/build_vfx_sheets.py",
+        "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs",
+        "docs/Asset_Sourcing.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8248,
       "heading": "### 131.4 Four faults the renders found and no test could",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical four visual findings are retained and superseded by later per-hero/native presentation receipts. They are not current fresh failures without corresponding evidence.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8281,
       "heading": "### 131.5 ✅ The source pass changed twenty-seven cues; twenty-four remain, and the rest are a credential",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Sourced audio builder and assets/attribution are present; old account-gated acquisition was completed under144.1. No repeat login/download or paid service needed.",
+      "evidence": [
+        "tools/build_ability_audio.py",
+        "docs/Asset_Sourcing.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8304,
       "heading": "### 131.5b ✅ THREE OF THE TWENTY-SEVEN WERE REJECTED BY EAR AND THE OLD CUES ARE BACK",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Owner-rejected sound replacements remain rejected; existing can/hover/landing/dash masters were preserved during the current pass. Only the derived rubber-step DC was corrected.",
+      "evidence": [
+        "docs/Asset_Sourcing.md",
+        "tools/author_motion_foley.py",
+        "docs/reports/visual-research-2026-09-23/look-batchD-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8329,
@@ -2044,8 +2511,15 @@
     {
       "lineAtIntake": 8363,
       "heading": "### 131.6 ⚠️ WHAT IS STILL OPEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Old generic-sheet suggestions/download blockers are superseded by authored hero families and shipped/licensed maps. Dead SpawnSeanceVoid is removed; live Kuro/Phaister/Zack shapes and native acceptance are covered by later presentation work, not a requirement to reinsert every unused sheet. Current ThunderShockRing uses StarOutline rather than the rejected filled Star; source verified during this review.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs",
+        "Assets/TumbangPreso/Runtime/Abilities/PhaisterHeroKit.cs",
+        "docs/Asset_Sourcing.md",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8389,
@@ -2056,32 +2530,56 @@
     {
       "lineAtIntake": 8397,
       "heading": "### 130.1 ✅ The crossplay ARCHITECTURE was already right, and nothing on the wire needed to move",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Transport/wire architecture is shared across platforms; current native peer evidence exists. This does not substitute for a real current phone/PC pairing.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "docs/reports/presentation-pass-2026-09-21/current-candidate-receipts.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8408,
       "heading": "### 130.2 ⚠️⚠️ A FAILED SIGN-IN WAS CACHED FOR THE LIFE OF THE PROCESS, AND ON A PHONE THAT IS FATAL",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "NetIdentity already retries transient failed attempts with cooldown and shares concurrent work; permanent configuration failure remains explicit. No cached-failure implementation gap remains, and no real service test was run during this review.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8447,
       "heading": "### 130.3 ✅ The second UGS sign-in in the test suite, which is § 126.11's other bullet AND part of § 126.8",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "UgsServicesProbe uses the shared boot identity path and explicitly recognises disabled batch sign-in instead of starting a competing SDK sign-in. Real service/device qualification stays separate.",
+      "evidence": [
+        "Assets/TumbangPreso/Tests/PlayMode/UgsServicesProbe.cs",
+        "Assets/TumbangPreso/Runtime/Net/NetIdentity.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8467,
       "heading": "### 130.4 ⚠️⚠️ CASUAL QUICK MATCH BANDED BY PLATFORM, SO A PHONE AND A PC COULD NEVER MEET THROUGH THE FRONT DOOR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "MatchmakingRules.PoolKey drops device/platform for non-ranked pools and retains them for ranked. Current casual-crossplay rule is implemented.",
+      "evidence": [
+        "Packages/com.tumbangpreso.core/Runtime/Matchmaking.cs",
+        "Core.Tests/MatchmakingTests.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8486,
       "heading": "### 130.5 ✅ `Shader.WarmupAllShaders()` is gone, which is § 126.10's ANR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Boot uses the bounded progressive shader variant collection path and never falls back to WarmupAllShaders. The old Android ANR mechanism was removed; actual current handset performance is still external. No boot UI edits in this review.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8536,
@@ -2092,14 +2590,24 @@
     {
       "lineAtIntake": 8565,
       "heading": "### 130.7 ✅ `MapPreview.cs` was dead code that looked exactly like the live class, and it is gone",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical dead MapPreview removal is retained. Current runtime map-preview/lifecycle work has newer evidence; do not resurrect the dead class for an old probe.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "docs/reports/full-backlog-2026-09-21/todo-disposition.json"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8602,
       "heading": "### 130.8 ⚠️ NOT DONE: nobody has still watched a phone and a PC join each other",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current real handset/PC crossplay remains unverified. This host editor has Windows/Linux/WebGL modules but no AndroidPlayer module (checked2026-09-23); LAN multicast behaviour needs a real handset. Retain as device/environment qualification, not proof from PC-only peers.",
+      "evidence": [
+        "ProjectSettings/ProjectVersion.txt",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8614,
@@ -2110,8 +2618,13 @@
     {
       "lineAtIntake": 8633,
       "heading": "### 130.10 ✅ § 126.8: the five named fixtures tear their world down, and the cause was one line",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "PlayModeWorld Reset setup/teardown is present on the named fixtures; current playmode_suite groups and nonzero evidence checks own P7. Do not revive withdrawn broad cleanup experiments.",
+      "evidence": [
+        "Assets/TumbangPreso/Tests/PlayMode/PlayModeWorld.cs",
+        "tools/playmode_suite.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8672,
@@ -2122,32 +2635,57 @@
     {
       "lineAtIntake": 8694,
       "heading": "### 130.12 ✅ Phase 12: map rotation and the map vote, which § 128.2 called the cheapest unbuilt thing",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Host-authoritative map vote/rotation message path is implemented. Existing result UI is retained separately; no duplicate map-rotation implementation is needed.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8739,
       "heading": "### 130.13 ✅ LAST TSINELAS STANDING HAS A MATCH HALF, AND IT COST THE PROTOCOL BUMP THIS ENTRY PREDICTED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "LastTsinelasDirector implements stock loss/elimination/early decision on host, with replicated stocks and RoundActive gating. Protocol literals in this historic entry are not current truth.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/LastTsinelasDirector.cs",
+        "Assets/TumbangPreso/Runtime/RoundDirector.cs",
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8864,
       "heading": "### 130.14 ✅ CLOSED 2026-09-03: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` WAS DETERMINISTICALLY RED, AND § 130.14b IS WHY",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical steering red was a buried test capsule, not a movement defect. Preserve the corrected fixture and do not retune current steering to that old failure.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "Assets/TumbangPreso/Runtime/CharacterMotor.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8892,
       "heading": "### 130.14b ✅ FIXED 2026-09-03, AND THE STEERING WAS NEVER WRONG. THE TEST BURIED ITS OWN SEAT IN THE FLOOR",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical fixture correction retained; no new game implementation requested. Current movement candidate checks remain P7.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "Assets/TumbangPreso/Runtime/CharacterMotor.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8959,
       "heading": "### 130.17 ✅ EVERY ANDROID REBUILD ON THIS MACHINE FAILED, AND IT IS THE SAME GUARD BEING TOO NARROW FOR THE THIRD TIME",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "GameBuilder purge guard recognises apk/aab/Burst outputs as well as desktop players, while protecting roots/non-build folders. Current Android module/device qualification remains separate.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/GameBuilder.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 8992,
@@ -2158,14 +2696,22 @@
     {
       "lineAtIntake": 9054,
       "heading": "### 130.16 · Verified",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated verification record preserved, not a current candidate pass. Its code findings are mapped to current source/P7 elsewhere.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9083,
       "heading": "### 130.19 · Verified, the second batch on this branch",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated second-batch verification is historical evidence. Do not recreate old reports or infer fresh current-head certification from them.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9129,
@@ -2215,14 +2761,26 @@
     {
       "lineAtIntake": 9223,
       "heading": "### 127.1 Half of that claim was already stale, and the half that was not is the one that matters",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "World-role distinction is implemented: defender ring versus attacker identity disc, with newer viewer-scoped catchable brackets. VISUAL1target and exchange tests cover the current world treatment; remaining chat/UI acceptance stays separately in127.3.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.cs",
+        "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.Catchable.cs",
+        "docs/reports/visual-research-2026-09-23/look-1.2-world/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9241,
       "heading": "### 127.2 A shape, not a second colour, and it costs less floor rather than more",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "World shape distinction and bounded role-swap settle are implemented without a second identity-colour system. Camera-local catchable brackets restore the original ring after rendering.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.cs",
+        "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.Catchable.cs",
+        "docs/reports/visual-research-2026-09-23/look-batchC-exchange/report.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9263,
@@ -2269,20 +2827,35 @@
     {
       "lineAtIntake": 9629,
       "heading": "### 89.1 · \"Retrievals under pressure\" needed a threshold, and it is derived rather than picked",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Gameplay statistic uses MatchRecordRules.PressureRadius when an owned slipper is retrieved. It remains a derived statistics threshold, not a new gameplay range.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/MatchStatsCollector.cs",
+        "Packages/com.tumbangpreso.core/Runtime/PlayerProfile.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9659,
       "heading": "### 89.2 · \"Longest survival as last attacker\" is an interpretation, because nothing is eliminated",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "MatchStatsCollector tracks the last not-yet-tagged attacker and closes the survival clock at tag/round end. LastTsinelas actual elimination is a separate later mode; do not conflate the two metrics.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/MatchStatsCollector.cs",
+        "Assets/TumbangPreso/Runtime/LastTsinelasDirector.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9674,
       "heading": "### 89.3 · ⚠️⚠️ EACH PEER SUBMITS ITS OWN LINE, WHICH DEPARTS FROM THE LETTER OF § 19.2",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Each authenticated caller writes only its own career through match-record.js; host record broadcast remains the input and newer witness/verdict rules are present. This source review is not proof of current live Cloud Code deployment.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+        "ugs/cloud-code/match-record.js"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9701,
@@ -2293,26 +2866,44 @@
     {
       "lineAtIntake": 9717,
       "heading": "### 89.5 · The protocol is 15, and § 88.4's probe duplication is resolved",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Match records use a buffer sized from the JSON and ReliableFragmentedSequenced RecordDelivery. Old protocol15 is historical; current protocol/identity is read from source.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9751,
       "heading": "### 89.6 · `ProfileRules` is written twice, in C# and in JavaScript",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "CSharp profile rules and cloud script remain an explicit mirrored contract. Current source includes the seven-hero set; live deployment and future economy/profile changes require their own matching qualification. No server writes performed.",
+      "evidence": [
+        "Packages/com.tumbangpreso.core/Runtime/PlayerProfile.cs",
+        "ugs/cloud-code/match-record.js",
+        "docs/reports/full-backlog-2026-09-21/rafi-parts-and-motion.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9766,
       "heading": "### 89.7 · The offline path, and the LAN run it must not regress",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "CareerStore persists a bounded20record upload queue before flushing, retains failures and separates account caches. This is implemented local/source behaviour; exact fresh offline/online recovery is P7/service qualification.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9792,
       "heading": "### 89.8 · Verified",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Dated profile verification retained as history. Current source qualification and live deployment must not be inferred from the old result.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 9829,
@@ -2347,8 +2938,13 @@
     {
       "lineAtIntake": 10007,
       "heading": "### 126.4 The six stored quality levels are asserted now, and the note that protected them is stale",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "AntiAliasModes retains the six stored-level sample table and applies the player choice at runtime. Current source preserves user settings; there is no missing quality-table implementation.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Settings/AntiAliasModes.cs",
+        "ProjectSettings/QualitySettings.asset"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10036,
@@ -2365,32 +2961,56 @@
     {
       "lineAtIntake": 10100,
       "heading": "### 126.7 Rumble, on the four moments that change the player's own situation",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Rumble implements four distinct local-event cues with max-combined motor/time envelopes and the settings enable gate. Physical controller feel remains external; no input backend change.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Input/Rumble.cs",
+        "Assets/TumbangPreso/Runtime/Settings/GameSettings.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10140,
       "heading": "### 126.8 ⚠️⚠️ OPEN: THE FULL PLAYMODE SUITE IS NOT A RELIABLE GATE ON THIS BRANCH, AND TARGETED RUNS ARE WHY NOBODY KNEW",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical monolithic-suite contamination is superseded by named grouped qualification with fresh nonzero XML. Current candidate grouped run remains P7, not another repeated old full-suite run.",
+      "evidence": [
+        "tools/playmode_suite.py",
+        "Assets/TumbangPreso/Tests/PlayMode/PlayModeWorld.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10199,
       "heading": "### 126.8b ⚠️⚠️ THE THIRD FULL RUN, 2026-09-03: 56 RED, AND THE EXECUTION ORDER NAMES THE CAUSE IN ONE LINE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Preserved historical failure/ordering evidence. It does not require a fresh third monolithic run; current grouped P7coverage remains explicit.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "tools/playmode_suite.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10275,
       "heading": "### 126.8c ⚠️⚠️ THE FIRST VERSION OF THE SWEEP RAN THE WHOLE SUITE AND THEN WROTE AN EMPTY `.xml`, WHICH IS A NEW INSTANCE OF § 7'S RULE",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current playmode_suite rejects stale/empty/missing result evidence and records actual totals. The historical empty-XML gate fault is not missing implementation.",
+      "evidence": [
+        "tools/playmode_suite.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10318,
       "heading": "### 126.8d ❌ THE PERSISTENT-SCREEN SWEEP WAS BUILT, MEASURED AND WITHDRAWN, AND THE MEASUREMENT IS THE POINT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "WITHDRAWN approach stays withdrawn. Preserve its measurement and use current explicit lifetime contracts/grouped runner; do not restart a persistent-screen sweep.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "tools/playmode_suite.py"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10367,
@@ -2401,20 +3021,34 @@
     {
       "lineAtIntake": 10432,
       "heading": "### 126.10 The .apk was built, installed and run for the first time, and two of its settings were never taking",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historic Android build/manifest findings led to current ConfigureAndroid settings. No new APK/current handset result claimed; this installed editor lacks AndroidPlayer support.",
+      "evidence": [
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "ProjectSettings/ProjectVersion.txt"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10515,
       "heading": "### 126.11 ⚠️ NOT DONE: crossplay is still argued rather than demonstrated",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Same unresolved physical-device/service pairing acceptance as130.8, not a second independent implementation. Do not label desktop-only loopback as phone crossplay.",
+      "evidence": [
+        "docs/TODO_Backlog.md",
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10533,
       "heading": "### 126.12 · Verified",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical verification section retained with its dated limits. P7owns fresh exact-source candidate results.",
+      "evidence": [
+        "docs/TODO_Backlog.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "reviewKind": "current source and preserved evidence; no new runtime pass claimed"
     },
     {
       "lineAtIntake": 10575,
@@ -2893,7 +3527,7 @@
       ]
     }
   ],
-  "currentReviewHead": "05c003209772a7db6a48d49d0e8aad24dfcc083b",
+  "currentReviewHead": "7f0ee10d05d8d3345a37bd4a78e92f662db39b53",
   "externalConfigurationCheck": {
     "googleOauthResourceExists": false,
     "googleClientIdPresentInProcessUserMachine": false,

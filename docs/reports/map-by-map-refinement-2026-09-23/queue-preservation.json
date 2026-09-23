@@ -1,0 +1,33 @@
+{
+  "sourceHead": "7f0ee10d05d8d3345a37bd4a78e92f662db39b53",
+  "originalHeadings": 366,
+  "preservedHeadings": 366,
+  "removedHeadings": [],
+  "newQueuedIds": [
+    "REFINE-2.0",
+    "REFINE-2.1",
+    "REFINE-2.10",
+    "REFINE-2.2",
+    "REFINE-2.3",
+    "REFINE-2.4",
+    "REFINE-2.5",
+    "REFINE-2.6",
+    "REFINE-2.7",
+    "REFINE-2.8",
+    "REFINE-2.9",
+    "REFINE-2.9a",
+    "REFINE-2.9b",
+    "REFINE-2.9c",
+    "REFINE-2.9d",
+    "REFINE-2.9e",
+    "REFINE-2.9f",
+    "REFINE-2.9g"
+  ],
+  "newQueuedCount": 18,
+  "unreviewedOriginalHeadings": 136,
+  "originalBodiesUnchanged": [
+    "docs/TODO_Backlog.md",
+    "docs/TODO_Archive.md"
+  ],
+  "note": "Preservation check only. It does not mark implementation or research complete."
+}

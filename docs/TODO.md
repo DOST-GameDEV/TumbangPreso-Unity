@@ -70,11 +70,59 @@ regression happens once, at final integration. Quality stays the priority.
    sees, so it moved behind the visible work; it must still finish before P7.
 9. **P7, final coherent qualification and build.** PRESENTATION-5.2, the final
    integration item and 152 final delivery on one frozen, identified candidate.
+10. **P8, REFINE-2: map-by-map asset and actual-gameplay refinement (owner2026-09-23).**
+    After the older actionable work above, thorough reference research and planning,
+    then each map individually, natural ambient life, all-bot inactivity diagnosis
+    and gameplay/animation refinement. Existing tasks remain; this is additional work.
 
 **Why this order.** P0 protects dirty work. P1 comes before P2 because a clearer game
 reads better even with today's lighting, and because it removes HUD and text that P2's
 captures would otherwise have to be retaken around. Paperwork (P6) moved behind visible
 work because the owner's standing complaint is loops that do not change the game.
+
+### REFINE-2 · Map-by-map assets, natural life and actual play (queued after older work)
+
+Owner reference: [3D Asset](https://3d-asset.com/). Requirements, order and research
+questions are preserved in [the intake](reports/map-by-map-refinement-2026-09-23/intake.md).
+[Exact owner feedback](reports/map-by-map-refinement-2026-09-23/owner-request.md) and
+[the research/execution plan](reports/map-by-map-refinement-2026-09-23/research-and-execution-plan.md)
+are saved. Aesthetic appeal matters more than realism; research must use multiple
+references. Work one map, character/movement or aspect at a time.
+The owner says assets still feel bland, animals repeat obvious fixed routes, and
+bots were sometimes AFK/standing. Treat these as new experience reports; earlier
+passing checks do not prove these complaints resolved. Do not start another global
+map shader sweep as a substitute for individually improving all five places.
+
+- [ ] **REFINE-2.0 Older-work gate.** Finish/account for older actionable TODOs with
+  actual implementation/evidence; preserve shared/concurrent and external dependencies.
+- [ ] **REFINE-2.1 Thorough reference research and plan.** First research good-game
+  qualities and visual/motion satisfaction, then translate them into TUMP criteria.
+  [Initial foundation notes](reports/map-by-map-refinement-2026-09-23/foundation-research.md)
+  have begun; this research is not complete. Inspect actual rendered
+  assets, cross-reference place/material construction, inventory per-map assets,
+  write concrete keep/refine/replace decisions and ordered implementation plans.
+- [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
+- [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
+- [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+- [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
+- [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
+- [ ] **REFINE-2.7 Natural ambient movement.** Diagnose repeated paths and author
+  plausible habitat/goal/activity choices, motion and reactions per map.
+- [ ] **REFINE-2.8 All-bot behaviour.** Observe both modes/roles/maps/roster/choices,
+  trace idle decisions and fix actual stalls; distinguish deliberate tactical waits.
+- [ ] **REFINE-2.9 Gameplay and animation.** Review actual complete exchanges,
+  movement/collision, interaction and interruption, body/FPP/contact/observer timing.
+  Owner specifically reopens walking (Sean arms stick to body; similar across cast),
+  throwing and left/right pektus. Earlier tests are not final visual acceptance.
+  - [ ] REFINE-2.9a motion reference research and every-character/state coverage list.
+  - [ ] REFINE-2.9b Sean walking/arm clearance, weight and carrying blends first.
+  - [ ] REFINE-2.9c each other character walking, inspected and fitted individually.
+  - [ ] REFINE-2.9d run/strafe/start/stop/turn and locomotion transitions separately.
+  - [ ] REFINE-2.9e ordinary throw anticipation/release/follow-through/recovery.
+  - [ ] REFINE-2.9f left pektus and right pektus, distinct real release/flight intent.
+  - [ ] REFINE-2.9g cancel/interruption/pickup and remaining verbs/hero performances.
+- [ ] **REFINE-2.10 Integrated qualification.** One coherent candidate with specific
+  evidence/limits; no blanket completion from screenshots or object-spawn tests.
 
 ### VISUAL-1 · Visual communication and appeal pass ⚠️ OPEN, 2026-09-23
 
@@ -449,8 +497,8 @@ not proof of what is missing.
 | [§ 149](TODO_Backlog.md#s149) | THE FRESH-AUDIT FOLLOW-UP: MOVEMENT BUDGET, RE-ADMISSION, AND THE ONE-SHOT REQUESTS ⚠️⚠️ IN PROGRESS, 2026-09-05, branch `main` | Confirmed movement/admission/request/lifecycle defects are fixed with retained failed-before/passed-after evidence. Current native request/rehost and receipt-window results supersede the old unfinished audit; final coherent qualification remains pending. |
 | [§ 148](TODO_Backlog.md#s148) | THE 2026-09-05 NATIONALS BATCH ✅ CLOSED, and archived in the commit that wrote it | Closed historical batch index. Its cited child requirements remain individually tracked; this index does not create a second unfinished implementation. |
 | [§ 147](TODO_Backlog.md#s147) | THE GAME NOTICES ITS OWN GOOD MOMENTS AND WRITES THEM DOWN ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Structured highlights, deduplication and replay-window markers are implemented; current shared highlights/replay/halftime extend this system without adding score side effects. |
-| [§ 146](TODO_Backlog.md#s146) | CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | unreviewed (P6) |
-| [§ 145](TODO_Backlog.md#s145) | THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | unreviewed (P6) |
+| [§ 146](TODO_Backlog.md#s146) | CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Dedicated slide/input/host/relay/bot implementation retained; final candidate motion and human feel remain P7/external. |
+| [§ 145](TODO_Backlog.md#s145) | THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Harness and identity implementation retained; exact Windows candidate qualification remains P7. |
 | [§ 144](TODO_Backlog.md#s144) | THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
 | [§ 143](TODO_Backlog.md#s143) | THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
 | [§ 141](TODO_Backlog.md#s141) | SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | unreviewed (P6) |

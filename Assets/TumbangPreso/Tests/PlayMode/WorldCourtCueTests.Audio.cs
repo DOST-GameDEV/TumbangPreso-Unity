@@ -11,9 +11,11 @@ namespace TumbangPreso.PlayTests
     {
         [UnityTest] public IEnumerator OverlappingImpactsKeepEveryAttackAndOneLeadingBody()
         {
-            // A standalone audio owner avoids a scene/capture fixture for this
-            // purely audible mix contract. Actual resource cues and routing run.
-            var owner=new GameObject("Impact mix witness");var director=owner.AddComponent<AudioDirector>();
+            // Use the real process-lifetime service: constructing a disposable
+            // second director would leave its sceneLoaded listener behind.
+            GameServices.Ensure();var director=GameServices.Audio;
+            var window=typeof(AudioDirector).GetField("_impactBodyUntil",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            float previousWindow=(float)window.GetValue(director);window.SetValue(director,float.NegativeInfinity);
             var gains=new List<(string Id,float Gain,Vector3 At)>();
             void Played(string id,Vector3 at,float pitch,float gain)=>gains.Add((id,gain,at));
             AudioDirector.WorldCuePlayed+=Played;
@@ -36,7 +38,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(1,foot.channels);Assert.AreEqual(44100,foot.frequency);
                 Assert.AreEqual(4671,foot.samples,"DC repair must not move the foot contact timing.");
             }
-            finally{AudioDirector.WorldCuePlayed-=Played;Object.Destroy(owner);}
+            finally{AudioDirector.WorldCuePlayed-=Played;window.SetValue(director,previousWindow);}
         }
     }
 }

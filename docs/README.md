@@ -42,6 +42,12 @@ Everything else is reference. Read it when the task needs it.
 
 ## Active topic plans
 
+Queued after older actionable work: [REFINE-2 research/execution plan](reports/map-by-map-refinement-2026-09-23/research-and-execution-plan.md),
+[exact owner feedback](reports/map-by-map-refinement-2026-09-23/owner-request.md) and
+[initial foundations research](reports/map-by-map-refinement-2026-09-23/foundation-research.md).
+Map-by-map, character/movement-by-character/movement; research and implementation remain open.
+Older source/evidence reconciliation: [2026-09-23 review](reports/legacy-review-2026-09-23/report.md).
+
 | File | Status | What it is |
 |---|---|---|
 | [`MAP_FINAL_PASS.md`](MAP_FINAL_PASS.md) | Active (152.4) | Map final pass, reactivated 2026-09-21. Resume from current source and evidence. |

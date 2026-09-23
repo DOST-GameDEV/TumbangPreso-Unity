@@ -23,6 +23,20 @@ carries an index row per numbered entry; the open entries' whole bodies are in
 status files moved to `docs/archive/` (old-path table in `docs/archive/README.md`).
 `docs/README.md` indexes every document with its status. Nothing was deleted.
 
+## Follow-on refinement mandate,2026-09-23
+
+The owner added REFINE-2 after the older actionable queue: research good-game
+qualities and pleasing/satisfying stylised visuals first, then genuinely improve
+each of the five maps individually, natural animal behaviour, bot inactivity and
+actual gameplay/animation. Realism is not the target and 3d-asset.com is only one
+reference. Sean's walking arms, the other characters' walking, throwing and both
+pektus directions are explicitly rejected for further refinement. Do not treat
+earlier passing checks as final motion/art acceptance. Work one map, character,
+movement or aspect at a time, with a local plan; no universal texture/animation
+patch as a substitute. Preserve every older task. Exact requests and the queued
+[research/execution plan](docs/reports/map-by-map-refinement-2026-09-23/research-and-execution-plan.md)
+are saved; status remains in TODO and the resume point in the active ledger.
+
 ## Standing in-game UI outline rule,2026-09-22
 
 The owner explicitly rejects red UI outlines: "replace all red outline with black
