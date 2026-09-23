@@ -27,8 +27,10 @@ namespace TumbangPreso.UI.Hub
     ///     screen is never empty while the decoder prepares, and it is what stays if the clip fails.
     ///   - REDUCED MOTION SHOWS THE POSTER AND NEVER STARTS THE DECODER
     ///     (`SettingsStore.Current.ReducedUiMotion`, as `HomeCourtScene` honours it).
-    ///   - IT PLAYS ONLY WHILE HOME IS THE TOP SCREEN and resumes where it left off, so the hero
-    ///     moment is not running behind LOADOUT or a popup's dim.
+    ///   - ⚠️ IT IS HOME'S AND ONLY HOME'S. Under every other hub screen it is HIDDEN and paused, so
+    ///     the live court (the room's map, which the lobby is meant to show) is behind them.
+    ///     Paused-but-visible froze whatever frame was up (a whip pan's blur, an impact frame)
+    ///     behind the lobby. It resumes where it left off on returning HOME.
     ///   - NO AUDIO TRACK. The loop is silent by design; `docs/reports/home-scene/README.md` § 4 lists
     ///     the cue times if the hub ever wants to play its own sounds against it.
     /// </summary>
@@ -97,6 +99,7 @@ namespace TumbangPreso.UI.Hub
             _image.texture = _target;
             _image.enabled = true;
             if (AtHome) player.Play();
+            else _image.enabled = false;
         }
 
         private void OnError(VideoPlayer player, string message)
@@ -112,8 +115,11 @@ namespace TumbangPreso.UI.Hub
 
         private void Update()
         {
-            if (Player == null || !Prepared) return;
+            // HOME only, in every state: the poster before the clip prepares, with reduced motion, and
+            // after a decode failure too, or a hub opened straight into the lobby would cover its map.
             bool home = AtHome;
+            _image.enabled = home && _image.texture != null;
+            if (Player == null || !Prepared) return;
             if (home && !Player.isPlaying) Player.Play();
             else if (!home && Player.isPlaying) Player.Pause();
         }
