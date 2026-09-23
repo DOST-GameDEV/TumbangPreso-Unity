@@ -115,3 +115,36 @@ UX1 LANE (teammate's preserved note): separate machine implements front end over
 MatchSetup, Runtime/UI/Hub, Core Economy, ugs/cloud-code/wallet.js and WalletStore;
 plan reports/front-end-flow-2026-09-23/ux1-plan.md. Expect concurrent pushes and
 preserve their work. Shared TODO/old IDs remain authoritative for their features.
+
+
+Published23d959912deb3bfe808bd91eb2960a3253c22c82, remote verified. Own main source is
+committed; only original2metas dirty before P7planning docs. Preparing P7scoped older
+non-UIcandidate in new owned detached world-qualification-20260923 checkout at23d959912.
+No old UI/new REFINE-2completion claim. Plan qualification-2026-09-23/plan.md records
+order and limits. Cache copy is independent ordinary files from DEVLibrary(~6.45GB);
+DEVAssets~.62GB. No active Unity.exe on this machine when checked. Do not reset old
+validation or share writable caches. Next inspect clean candidate then final Core/
+source audits and one meaningful Editor/build sequence; no reassurance reruns.
+
+
+P7owned candidate checkout created at23d959912 and independently copied warmLibrary;
+session72004completed/reaped, git status was CLEAN. No Unity running yet. Next
+Core question: do engine-free contracts pass on this frozen source? End at one
+fresh nonzero TRX result. Source-audit question: do required current code/authority/
+wire/lifetime/stripping contracts pass? End at one recorded audit stage; classify
+findings rather than repeat the whole stage for reassurance. Commands qualify.py
+--stage core and--stage audits do not launch Unity; outputs in candidateLogs/qualify.
+These can run in parallel. No live service tests or UI implementation. Candidate
+production source stays frozen; fixes will be made/reviewed in DEV if needed.
+
+
+P7source baseline: Core615/615pass;13/14gating source audits pass, one wire-finite
+finding. Informational audio6unchanged DCflags. Sessions76464/74264reaped. Candidate
+stillclean, noUnity launched. Exact raw stages saved underqualification-2026-09-23/
+source-baseline-23d959912. Cause is audit recognition, not unsafe clock: ApplySnapshot
+already first-checks float.IsFinite for both fields. DEVfix recognises only that
+qualified delegate IF its leading guards remain. Mutation test1/1passes (real guard,
+removed guard, unrelated receiver), audit72handlers/100fields/0findings. No gameplay
+code changed. P7tool-repair1/1used; do not broaden/refactor diagnostic tools. Commit
+this small correction/plan/receipts, advance clean candidate to thatcommit, then
+fresh final source-stage records and Editor/runtime/build. Do not loop on old passes.
