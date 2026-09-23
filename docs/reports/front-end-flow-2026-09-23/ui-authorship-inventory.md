@@ -138,3 +138,28 @@ portrait grid, seats and Classic neutrality remain. Readout layout/source detail
 completion-plan.md. Focused case passed all7heroes/3slots, both text modes, five
 shapes, live timer and Classic neutrality. Normal/large960x540frames inspected;
 XML and frames are in completion/. No live UGS queue claim from this case.
+
+## UI and HUD review pass (second machine, 2026-09-23)
+
+Research, critique and plan: docs/reports/ui-hud-review-2026-09-23/. TODO "UI-REVIEW" owns
+status. Surfaces and their owners after this pass:
+
+- Every pressable sticker's finish (rim, gradient, varnish, lip, hover light, breathing
+  focus ring, primary shimmer): Runtime/UI/Hub/HubShape.cs and HubButton.cs. Lettering by
+  fill: HubKit.Letterpress. Shading rule: HubStyle.Lit / HubStyle.Deep (hue shift).
+- Grounds: HubStyle.Maroon on HERO, LOADOUT, GAMEMODE, SKILL TREE, TASKS, JOIN, CHARACTER
+  SELECT. Card and seat fills formerly ArmyDeep/Army are Night/Honey/Golden.
+- HOME door family and wells: HubHome.cs (Door, Well).
+- Settings look: SettingsPalette.cs, SettingsControlFocus.cs, SettingsWorkspaceRows.cs
+  (Chip, FitChip, Header), TumpSettingsView.Workspace.cs (SAVE face, UNSAVED marker),
+  TumpSettingsView.OwnerPainted.cs (groups, copy). Pause card: PausePanel.LiveMenu.cs.
+- Skill icons: tools/build_ability_icons.py writes Resources/UI/ability-icons/<glyph>.png;
+  AbilityIcons.For/Illustration/Tint and TumpAbilitySymbol (Muted) draw them untinted.
+- Profile pictures: tools/build_avatars.py from Resources/UI/portraits; Avatars.Ids;
+  HubMenus.HubAvatar grid sizes itself.
+- GAMEMODE posters: Editor/ModeCardPoseAuthor.cs (real poses to Logs/mode-card-poses),
+  tools/build_mode_cards.py writes Resources/UI/mode-cards/<CardName>.png; HubCards.Art
+  shows a poster when present.
+- Rafi model: tools/build_rafi_voxel.py only (palette, crest hair, nape, eyes, hip coil and
+  float, waist). Review renders: Logs/rafi-v6, Logs/rafi-v7 (not committed). Owner look
+  approval pending.

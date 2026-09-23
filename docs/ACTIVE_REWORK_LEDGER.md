@@ -9,10 +9,11 @@ instructions/current designs supersede old OPEN headings and retired FUTURE.
 Keep all original task identities and evidence. No unnecessary questions.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remotee68a8ab4bb451d983953a7cff95db0995c3cea4e. Context and4_Whouse
-finishccd4285f5are published. Parallel UI commits39373c325/7db6fe28f arrived through
-23deea413and were merged without conflict, preserving both contributors' changes.
-No UI refinement performed here. Fetch/reconcile before
+Map source includes timber commit3d80ffbb5after e68a8ab4b. Before publishing it,
+remote29288e180arrived with mode posters, avatars and Rafi v8/motion updates through
+60783a070/86cd3c076. Merge resolved automatically, preserving the parallel UI-REVIEW
+checklist and ledger section below. No UI/Rafi refinement performed in this lane.
+House4_Wccd4285f5and context2f2c55917were already published. Fetch/reconcile before
 each later push; verify remote HEAD. Explicit path staging,
 sole authorM4tyu633, no trailers/AI mentions/em dashes. NEVER commit or restore
 original composition-redesign/home-court.png.meta or loading-street.png.meta.
@@ -44,7 +45,7 @@ each lit-side before/after, small street view andgrey25inspected. Original geome
 colors/windows remain untouched;12local materials total for all four timber homes.
 Qualified assets/evidence copied to DEV/eskinita-east-timber. Generated churn
 preserved then restored. NO JOBS running. No more unchanged timber rechecks.
-Publish this group, then continue the remaining actual near-house decisions;
+Publish this group with the incoming UI/Rafi merge, then continue near-house decisions;
 0_W/3_Wduplicate shop treatment and plain masonry fronts are next. Existing
 supported c-family entrance canopies should be kept. Tree coverage/east-side
 darkness, roof/material and household details are still open, not whole-house done.
@@ -126,6 +127,11 @@ True multi-peer UGS queue/lockin/ballot, browser interaction/live buy-claim, nat
 physical typing/chat/rename/running-match rejoin, final regression/build identity,
 earlier D3D12shutdown0xC0000005cause remain open. Later clean exits do not diagnose
 that earlier crash. Physical Android/pad unavailable; human listening separate.
+The incoming UI lane also reports RematchActuallyLoadsTheChosenArena retaining
+Eskinita. Preserve that reported failure for the remaining actual rematch gate;
+do not assume the prior native receipt proves the new report false, or repair its
+fixture without tracing the current chosen-map path. New Rafi v8source supersedes
+older model/FPP qualification assumptions; its parallel lane remains authoritative.
 Complete independent work, record real external dependencies, no invented blockers.
 Manual Claude UI/HUD/settings review prompt delivered in Downloads, different machine
 and PULLFIRST included. No agent contacted and no repository-wide UI-work ban.
@@ -141,3 +147,16 @@ No task-owned browser tabs/preview servers remain.
 Prior ledger preserved verbatim in
 [history through distance](reports/map-by-map-refinement-2026-09-23/ledger-through-eskinita-distance.md),
 which links all earlier history. Its old pending/running/resume claims are historical.
+
+## Parallel lane: UI and HUD review (second machine), 2026-09-23
+
+Checkout C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks (worktree of
+C:/Users/Matthew/dev/TumbangPreso-Unity), branch ASTRAReworks. Status and checklist:
+TODO "UI-REVIEW". Research and plan: docs/reports/ui-hud-review-2026-09-23/.
+Pushed 23deea41 (UI batch 39373c32 merged over the map lane's 2f2c5591, no overlap).
+Guarded Unity only, profile presentation-validation-20260921; runs so far:
+ui-batch1 11/11, ui-batch2 12/12, art-batch3 (Rafi v6 lineup/head written, then the
+turnaround step needed -rig; bounded repair used), art-batch4 running (Rafi v7 review
+plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two original
+composition-redesign .meta files. Next: avatar compile and picker capture, posters,
+Rafi v7 inspection, five-shape captures of the changed screens, push.

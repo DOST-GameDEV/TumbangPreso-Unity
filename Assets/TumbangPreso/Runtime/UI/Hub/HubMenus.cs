@@ -113,15 +113,19 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(_big.rectTransform, 26);
 
             var grid = HubKit.Place(HubKit.Rect(panel, "Grid"), HubKit.BottomRight, new Vector2(-48, 60), new Vector2(690, 460));
-            const float size = 126, gap = 15;
+            // The grid sizes its tiles to the set: five across, as many rows as it takes, each tile
+            // as large as the 690 by 460 area allows (20 pictures: 106 units).
+            const int columns = 5; const float gap = 12;
+            int rows = (Avatars.Ids.Length + columns - 1) / columns;
+            float size = Mathf.Min((690 - gap * (columns - 1)) / columns, (460 - (gap + 8) * (rows - 1)) / rows);
             for (int i = 0; i < Avatars.Ids.Length; i++)
             {
                 string id = Avatars.Ids[i];
-                int col = i % 5, row = i / 5;
+                int col = i % columns, row = i / columns;
                 var tile = HubKit.Button(grid, "Avatar_" + id, null, HubStyle.Night, () => Choose(id), 0, 170 + i);
                 HubKit.Place((RectTransform)tile.transform, HubKit.TopLeft, new Vector2(col * (size + gap), -row * (size + gap + 8)), new Vector2(size, size));
                 var face = HubKit.Picture(tile.Body, "Face", Avatars.Get(id));
-                HubKit.Stretch(face.rectTransform, 12);
+                HubKit.Stretch(face.rectTransform, 9);
                 _tiles.Add(tile);
             }
             Show();

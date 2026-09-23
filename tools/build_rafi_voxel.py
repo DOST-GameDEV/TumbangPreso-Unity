@@ -181,19 +181,25 @@ SHOE_CYAN, COLLAR_TRIM, HAIR, SHADOW_CYAN = 4, 5, 6, 7
 INK, SILVER, WOOD_GOLD, FROST_ACCENT = 8, 9, 10, 11
 WHITE, SKIN, SKIN_DARK, SKIN_LIT = 12, 13, 14, 15
 
-PALETTE = {0: '303D57',
- 1: '253047',
+# ⚠️⚠️ THE CAST'S COLOUR INTENSITY (2026-09-23, owner: "it doesnt look like it belongs in
+# hero cast"). Every other hero owns one saturated signature hue (Sean red, Cheska cyan, Zack
+# yellow, Nemu violet, Phaister magenta, Dante gold and green); Rafi's shirt was a muted sage
+# (568565) with a darker sage trim, which next to them read as a background extra. The same
+# hues, pushed to the cast's saturation: a clear sea-green, a richer navy, a brighter orange
+# accent and a cleaner cream.
+PALETTE = {0: '2D3C6E',
+ 1: '1F2A55',
  2: '458EAD',
- 3: 'EFE1BE',
- 4: '568565',
- 5: '3E654B',
+ 3: 'F7EACB',
+ 4: '3FA06E',
+ 5: '2A7650',
  6: '342B29',
  7: '465673',
  8: '211B21',
  9: '775737',
- 10: 'E98948',
+ 10: 'F27A2C',
  11: '72C9C4',
- 12: 'E7CAA3',
+ 12: 'F3DEB8',
  13: 'B88151',
  14: 'AA7246',
  15: 'B88151'}
@@ -212,8 +218,8 @@ def mirrored(boxes, bone_from, bone_to):
 
 # Hips at 0.240, so the leg owns everything below it.
 # Rafi's compact shorts and practical sandals use the retained cast leg proportions.
-LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.006, 0, -0.134), (0.158, 0.025, 0.082), 1),
- ('sandal-foot-left', 'leg-left', (0.015, 0.023, -0.126), (0.149, 0.07, 0.069), 15),
+LEG_LEFT = [('sandal-sole-left', 'leg-left', (0.004, 0, -0.138), (0.160, 0.040, 0.086), 3),
+ ('sandal-foot-left', 'leg-left', (0.015, 0.038, -0.126), (0.149, 0.078, 0.069), 15),
  ('sandal-strap-left', 'leg-left', (0.013, 0.069, -0.073), (0.151, 0.09, -0.036), 1),
  ('sandal-heel-strap-left', 'leg-left', (0.023, 0.067, 0.032), (0.143, 0.091, 0.067), 1),
  ('sandal-side-strap-left', 'leg-left', (0.138, 0.064, -0.041), (0.151, 0.087, 0.052), 1),
@@ -238,12 +244,12 @@ TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 
  ('navy-wrap-belt', 'torso', (-0.122, 0.267, -0.108), (0.123, 0.3, 0.106), 0),
  ('sash-knot', 'torso', (0.052, 0.265, -0.141), (0.095, 0.308, -0.1), 1),
  ('sash-long-tail', 'torso', (0.052, 0.172, -0.132), (0.087, 0.281, -0.103), 0),
- ('sash-short-tail', 'torso', (0.017, 0.216, -0.135), (0.047, 0.281, -0.107), 1),
- ('sailcloth-hip-wrap', 'torso', (-0.143, 0.185, -0.115), (0.102, 0.267, -0.083), 3),
+ ('sailcloth-hip-wrap', 'torso', (-0.118, 0.205, -0.100), (0.118, 0.267, -0.084), 3),
  ('sailcloth-back-wrap', 'torso', (-0.124, 0.189, 0.079), (0.112, 0.267, 0.111), 3),
- ('sailcloth-repair-seam', 'torso', (-0.127, 0.213, -0.122), (0.014, 0.221, -0.113), 12),
  ('sailcloth-back-seam', 'torso', (-0.07, 0.221, 0.109), (0.106, 0.229, 0.118), 12),
- ('rope-hanger', 'torso', (-0.159, 0.263, -0.145), (-0.133, 0.32, -0.107), 9)]
+ ('rope-hanger', 'torso', (-0.150, 0.262, -0.128), (-0.132, 0.298, -0.106), 9),
+ # ⚠️ THE ORANGE FLOAT HANGS UNDER THE COIL (the reference sheet's one warm accent at the hip).
+ ('hip-float', 'torso', (-0.165, 0.176, -0.132), (-0.120, 0.230, -0.090), 10)]
 
 # One fitted rope coil is a useful belonging and a broad silhouette feature.
 # Each segment is native chamfered geometry, not a repeated surface decoration.
@@ -263,16 +269,46 @@ ARM_LEFT += [('wrist-glass-bead-left','arm-left',(.260,.383,-.05),(.272,.4,-.04)
 # small native chamfers. The asymmetric cropped silhouette is Rafi's own; no
 # lofted hair, sculpted sweep or bun. All coordinates use the donor head space.
 HEAD = [
- ('hair-back-core','head',(-.174,.495,-.188),(.174,.674,-.096),HAIR),
- ('hair-crown-core','head',(-.174,.644,-.153),(.174,.709,.126),HAIR),
- ('hair-crown-left-step','head',(-.166,.694,-.076),(.005,.744,.124),HAIR),
- ('hair-crown-right-step','head',(.005,.684,-.118),(.143,.731,.104),HAIR),
- ('hair-fringe-long','head',(-.174,.589,.111),(-.055,.716,.186),HAIR),
- ('hair-fringe-middle','head',(-.065,.627,.118),(.067,.708,.188),HAIR),
- ('hair-fringe-short','head',(.058,.650,.108),(.140,.701,.174),HAIR),
- ('hair-side-left','head',(-.184,.540,-.105),(-.153,.668,.111),HAIR),
- ('hair-side-right','head',(.154,.555,-.109),(.184,.663,.076),HAIR),
- ('hair-temple-left','head',(-.181,.524,.070),(-.152,.624,.124),HAIR),
+ # ⚠️⚠️ A CREST, BUILT FROM STEPPED BLOCKS (2026-09-23). The previous hair was ten big slabs
+ # topping out at 0.744, a flat helmet-shaped cap: from the lineup it was the one head in the
+ # cast with no silhouette of its own, while Zack's bolt fringe, Dante's horn and mop,
+ # Cheska's goggles and Phaister's hat all read at game distance. The reference sheet's
+ # identity IS a tall messy crest over the headwrap. It is rebuilt here the way the cast
+ # builds hair, as stacked stepped blocks (a wide lower block and a narrower upper one per
+ # tuft, so every tuft has the voxel step), plus side flares and chunky locks falling over the
+ # wrap. Owner rulings kept: block-built only, no brows, no swept or lofted curve, no bun.
+ # ⚠️ THE TOP IS 0.788, UNDER THE CAST'S MEASURED 0.7928 CAP (`verify`), on purpose.
+ ('hair-back-core','head',(-.178,.470,-.196),(.178,.690,-.090),HAIR),
+ # the back of the head down to the nape: the previous back view showed skin below the band
+ ('hair-nape','head',(-.160,.400,-.192),(.160,.475,-.118),HAIR),
+ ('hair-crown-core','head',(-.182,.640,-.160),(.182,.715,.132),HAIR),
+ ('hair-side-left','head',(-.192,.545,-.110),(-.155,.672,.112),HAIR),
+ ('hair-side-right','head',(.155,.556,-.112),(.192,.668,.082),HAIR),
+ ('hair-temple-left','head',(-.186,.520,.068),(-.152,.628,.126),HAIR),
+ ('hair-tuft-a1','head',(-.176,.700,-.030),(-.080,.748,.120),HAIR),
+ ('hair-tuft-a2','head',(-.160,.742,.000),(-.105,.776,.080),HAIR),
+ ('hair-tuft-b1','head',(-.085,.708,-.070),(.035,.762,.110),HAIR),
+ ('hair-tuft-b2','head',(-.060,.755,-.040),(.015,.788,.060),HAIR),
+ ('hair-tuft-c1','head',(.030,.700,-.120),(.150,.752,.080),HAIR),
+ ('hair-tuft-c2','head',(.055,.745,-.090),(.125,.778,.020),HAIR),
+ ('hair-tuft-d1','head',(-.120,.690,-.175),(.110,.742,-.060),HAIR),
+ ('hair-tuft-d2','head',(-.070,.735,-.160),(.040,.768,-.090),HAIR),
+ ('hair-flare-right','head',(.182,.628,-.060),(.222,.700,.060),HAIR),
+ ('hair-flare-left','head',(-.222,.640,-.020),(-.182,.708,.080),HAIR),
+ ('hair-lock-1','head',(-.170,.598,.122),(-.098,.712,.194),HAIR),
+ # ⚠️⚠️ THE HAIR FRAMES THE FACE (owner 2026-09-23, of v7: "rafi looks weird"). Beside Dante and
+ # Zack his crest sat ON TOP of the head like a small wig: theirs comes down the sides past the
+ # temples and over the forehead to just above the eyes, and his stopped at the headband, leaving
+ # a tall bald band of forehead. The locks now fall in front of the wrap to just above the eyes
+ # (0.52, eyes top out at 0.507) and sideburn blocks come down the temples to 0.49.
+ ('hair-lock-1-tip','head',(-.160,.520,.132),(-.112,.600,.190),HAIR),
+ ('hair-lock-2-tip','head',(-.078,.548,.140),(-.030,.625,.200),HAIR),
+ ('hair-sideburn-left','head',(-.234,.490,-.010),(-.190,.612,.128),HAIR),
+ ('hair-sideburn-right','head',(.190,.490,-.010),(.234,.612,.128),HAIR),
+ ('hair-lock-2','head',(-.092,.622,.128),(-.012,.716,.198),HAIR),
+ ('hair-lock-3','head',(-.005,.640,.120),(.078,.712,.192),HAIR),
+ ('hair-lock-3-tip','head',(.012,.556,.130),(.058,.642,.192),HAIR),
+ ('hair-lock-4','head',(.082,.652,.112),(.160,.708,.176),HAIR),
  ('headwrap-knot' ,'head',(.126,.554,-.222),(.176,.603,-.182),1),
  ('float-clip-saddle','head',(.136,.559,.166),(.185,.619,.184),1),
  ('float-clip-glint','head',(.148,.608,.198),(.163,.62,.208),3)]
@@ -282,8 +318,8 @@ HEAD = [
 BOX_TILTS = {'headwrap-tail-long':-13,'headwrap-tail-short':31,
              'folded-shoulder-lining':-12,'shoulder-loop-fastener':-12,
              'open-collar-left':-22,'open-collar-right':22,
-             'sailcloth-hip-wrap':-10,'sailcloth-back-wrap':7,
-             'sailcloth-repair-seam':-10,'sailcloth-back-seam':7,
+             'sailcloth-hip-wrap':0,'sailcloth-back-wrap':0,
+             'sailcloth-repair-seam':-6,'sailcloth-back-seam':7,
              'sash-short-tail':16,'sash-long-tail':-8}
 
 # Taper cloth ends and palms only. Hair retains squared native box ends.
@@ -766,12 +802,19 @@ def _donor_head():
             pos.append((x,y,plate));nrm.append((0,0,1));uv.append(cell_uv(INK))
         tris.extend((first,first+i,first+i+1) for i in range(1,len(points)-1))
 
-    # His own upright clipped eyes read focused, unlike the donor's smile-eyes.
+    # ⚠️⚠️ THE EYES CARRY THE ATTITUDE, BECAUSE THE BROWS ARE GONE (2026-09-23). The owner
+    # ruled brows off; the upright 24 by 42 mm rounded slots that were left made his face the
+    # blandest in the cast (two dots beside Sean's scowl, Zack's smug lids, Dante's glare).
+    # The concept sheet's read is "observant, quietly mischievous": so each eye is larger and
+    # its TOP edge slopes down toward the nose, the lid a brow would otherwise have drawn.
+    # Bottom corners keep a small cut, the top keeps its hard slant.
     for x in (-.077,.077):
-        w,h,cut=.012,.021,.004
-        ink_polygon([(x-w,.481-h+cut),(x-w,.481+h-cut),(x-w+cut,.481+h),
-                     (x+w-cut,.481+h),(x+w,.481+h-cut),(x+w,.481-h+cut),
-                     (x+w-cut,.481-h),(x-w+cut,.481-h)])
+        w,h,cut,slant=.016,.026,.004,.013
+        inner=-1.0 if x>0 else 1.0          # which side of this eye faces the nose
+        xi,xo=x+inner*w,x-inner*w
+        pts=[(xo,.481-h+cut),(xo,.481+h),(xi,.481+h-slant),(xi,.481-h+cut),
+             (xi-inner*cut*-1 if False else xi+(-inner)*cut,.481-h),(xo+inner*cut,.481-h)]
+        ink_polygon(pts)
     # No eyebrows: the retained HERO cast communicates through eyes and mouth.
 
     return _compact(pos, nrm, uv, tris)
@@ -1130,10 +1173,13 @@ def _rafi_forms(head):
             (.625,.160,.187,.021,.018),(.616,.160,.190,.042,.03),
             (.570,.160,.190,.042,.03),(.559,.160,.187,.024,.019)])
     else:
-        for coil in range(2):
-            path=[(-.151+math.cos(i*math.tau/20)*(.029-coil*.007),
-                   .231+math.sin(i*math.tau/20)*(.079-coil*.012),-.146-coil*.012) for i in range(20)]
-            yield 'torso',WHITE,_rafi_tube(path,.0048,(0,0,1))
+        # ⚠️ A SMALL HORIZONTAL COIL, NOT AN UPRIGHT RING (2026-09-23). Two 0.079-tall loops
+        # stood on the hip like a shield and were the largest shape on the front of the body.
+        # A rope carried coiled is three short loops lying across the hip.
+        # ⚠️ NO COIL (v8). Even small and flat, three loops on the hip read as a toy spring
+        # beside the cast's one clean belt line; the orange float on its hanger carries the
+        # sea-going identity alone.
+        pass
         # Fit the forearm just before the palm, not the palm itself. An ellipse
         # clips block-wrist corners; this path keeps clearance on every side.
         wrist=[]
