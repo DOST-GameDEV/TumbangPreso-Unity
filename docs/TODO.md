@@ -318,6 +318,22 @@ scattered across all maps. Execute inside each map's existing refinement row.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
   Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
   each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
+  Active map: current18-home/six-watercraft layout retained. [Fresh primary source
+  intake](reports/map-by-map-refinement-2026-09-23/lagoon-reference-notes.md) includes
+  actually viewed Embassy stilt-house and NCCA boat photos. Native family/material
+  assessment precedes local edits; preserve court/deck/water recovery and collision.
+- [x] **REFINE-2.6b Lagoon fall and mash recovery, owner2026-09-24.** Adapt SaBubong's
+  physical edge fall and existing press-gated get-up to Lagoon. Both modes, all cast,
+  existing input/camera/animation/authority path. Record effects on intentional water
+  access and slipper return; no new protocol or duplicate recovery UI unless required.
+  Implemented real platform-fall detection, existing press-gated recovery and eight-
+  second held-stock return. Both-mode fall/press/stock and existing stair cases2/2pass.
+  [Evidence and debug-view limits](reports/map-by-map-refinement-2026-09-23/lagoon-fall-recovery/report.md);
+  real-peer/device/normal-match presentation remain in the final integrated gate.
+- [ ] **REFINE-2.6c Lagoon flying birds, owner2026-09-24.** Check existing ambient
+  birds first; add coastal flying life if absent, with varied glide/flap/transit
+  choices around village/islands. Preserve readable action and avoid repetitive
+  fixed circles. Coordinate with REFINE-2.7natural ambient movement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on
   every map. Evaluate composition, silhouettes, depth, materials, motion and harmony

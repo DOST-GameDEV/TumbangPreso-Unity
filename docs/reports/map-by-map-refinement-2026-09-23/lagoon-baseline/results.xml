@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.6527566">
+  <test-suite type="TestSuite" id="1771" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="595" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.652757" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1765" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="595" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.637892" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5140" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1766" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="595" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.632398" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1767" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="595" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.626744" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1285" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="29" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.604557" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1287" name="LagoonArtBaselineReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.LagoonArtBaselineReview" methodname="LagoonArtBaselineReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="1959897488" result="Passed" start-time="2026-09-23 23:11:53Z" end-time="2026-09-23 23:12:02Z" duration="8.585672" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 182 renderers, 0 with a roof variant.
+[NearFade] 7764 occluder nodes matched, 56 renderers moved onto TumbangPreso/NearFade.
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-preview.png
+[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-gable-home0.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-repair-home1.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-metal-home2.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-screen-home3.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-hip-home4.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-shared-home5.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-piles.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-houseboat4.png
+[Play] wrote Logs/refine2-lagoon-baseline/Lagoon-islands.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

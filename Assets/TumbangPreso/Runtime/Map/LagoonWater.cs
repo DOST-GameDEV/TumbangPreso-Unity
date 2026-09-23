@@ -6,7 +6,7 @@ namespace TumbangPreso
 {
     public sealed class LagoonWater : MonoBehaviour
     {
-        public const float SurfaceY = -1.1f, FloorY = -3, Limit = 42;
+        public const float SurfaceY = -1.1f, FloorY = -3, Limit = 42, SlipperReturnDelay = 8;
         public static LagoonWater Instance { get; private set; }
         public bool Active => gameObject.scene == SceneManager.GetActiveScene() && gameObject.scene.name == "Lagoon";
         [SerializeField] private Renderer _surface;
@@ -16,9 +16,14 @@ namespace TumbangPreso
         private readonly Vector4[] _swimmers = new Vector4[4];
         private MaterialPropertyBlock _properties;
         private readonly float[] _underDeck = new float[4];
+        private readonly CharacterMotor[] _tracked = new CharacterMotor[4];
+        private readonly int[] _teleportSerial = new int[4];
+        private readonly float[] _supportedY = new float[4];
+        private readonly bool[] _drySupport = new bool[4], _falling = new bool[4];
+        private int _round = -1;
         public void SetSurface(Renderer surface) => _surface = surface;
         private void OnEnable() { if (Active) Instance = this; }
-        private void OnDisable() { if (Instance == this) Instance = null; _lost.Clear(); }
+        private void OnDisable() { if (Instance == this) Instance = null; _lost.Clear(); _round = -1; ClearFallTracking(); }
         public static bool TrySurface(Vector3 p, out float y)
         { y = SurfaceY; return Instance != null && Instance.Active && Mathf.Abs(p.x) <= Limit && Mathf.Abs(p.z) <= Limit; }
         public float SecondsUntilReturn(Slipper shoe) => _lost.TryGetValue(shoe, out var end) ? Mathf.Max(0, end - Time.time) : 0;
@@ -55,25 +60,75 @@ namespace TumbangPreso
             if (!Active || !NetAuthority.ShouldResolve() || shoe == null || !shoe.gameObject.activeSelf) return false;
             var p = shoe.transform.position;
             if (Mathf.Abs(p.x) <= Limit && Mathf.Abs(p.z) <= Limit && p.y >= FloorY - 1) return false;
+            return BeginSlipperReturn(shoe);
+        }
+        private bool BeginSlipperReturn(Slipper shoe)
+        {
+            SyncRound();
             if (!shoe.HostBeginMapRecovery()) return false;
-            _lost[shoe] = Time.time + 8; return true;
+            _lost[shoe] = Time.time + SlipperReturnDelay; return true;
+        }
+        private void ClearFallTracking()
+        {
+            System.Array.Clear(_tracked, 0, _tracked.Length);
+            System.Array.Clear(_drySupport, 0, _drySupport.Length);
+            System.Array.Clear(_falling, 0, _falling.Length);
+            System.Array.Clear(_underDeck, 0, _underDeck.Length);
+        }
+        private void SyncRound()
+        {
+            int round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            if (round == _round) return;
+            _round = round; _lost.Clear(); ClearFallTracking();
+        }
+        private bool ReachedWaterAfterPlatformFall(CharacterMotor player)
+        {
+            int slot = player.PlayerSlot; var p = player.transform.position;
+            // A warp, rejoin or a replacement body is not an observed airborne fall.
+            // The motor already increments this serial for every teleport/respawn.
+            if (_tracked[slot] != player || _teleportSerial[slot] != player.PresentationTeleportSerial)
+            {
+                _tracked[slot] = player; _teleportSerial[slot] = player.PresentationTeleportSerial;
+                _drySupport[slot] = false; _falling[slot] = false; _underDeck[slot] = 0;
+            }
+            if (player.IsGrounded)
+            {
+                _supportedY[slot] = p.y;
+                _drySupport[slot] = p.y > SurfaceY + .35f;
+                _falling[slot] = false;
+            }
+            else if (_drySupport[slot] && _supportedY[slot] - p.y >= .75f)
+                _falling[slot] = true;
+            // Supported stair entry and an existing swim remain valid. A real fall
+            // has already armed above this depth, before buoyancy arrests the descent.
+            if (!_falling[slot] && player.IsSwimming) _drySupport[slot] = false;
+            return _falling[slot] && p.y <= SurfaceY - .72f;
         }
         private void FixedUpdate()
         {
             if (!Active || !NetAuthority.ShouldResolve() || GameServices.Round == null) return;
+            SyncRound();
             if (_slice == null) _slice = FindFirstObjectByType<SliceRunner>();
             if (_slice?.Slippers != null) foreach (var shoe in _slice.Slippers) TryRecoverSlipper(shoe);
             foreach (var player in GameServices.Round.Players)
             {
-                if (player == null || player.PlayerSlot < 0 || player.PlayerSlot >= 4) continue;
+                if (player == null || !player.gameObject.activeInHierarchy || player.PlayerSlot < 0 || player.PlayerSlot >= 4) continue;
                 var p = player.transform.position;
+                bool platformFall = ReachedWaterAfterPlatformFall(player);
                 bool under = p.y < -.55f && Physics.Raycast(p + Vector3.up * .3f, Vector3.up, out var hit, 1.7f,
                     ~0, QueryTriggerInteraction.Ignore) && hit.collider.GetComponentInParent<CharacterMotor>() == null;
                 _underDeck[player.PlayerSlot] = under ? _underDeck[player.PlayerSlot] + Time.fixedDeltaTime : 0;
-                if (Mathf.Abs(p.x) > Limit || Mathf.Abs(p.z) > Limit || p.y < FloorY - 1 || _underDeck[player.PlayerSlot] > 2)
+                if (platformFall || Mathf.Abs(p.x) > Limit || Mathf.Abs(p.z) > Limit || p.y < FloorY - 1 || _underDeck[player.PlayerSlot] > 2)
                 {
-                    // A visible splash/recovery, never a score or a Rafi-only exit.
+                    // Same prone, press-gated recovery as SaBubong. Keep Lagoon's
+                    // established stock-return delay and existing water stair routes.
+                    if (platformFall)
+                    {
+                        var held = player.GetComponent<Carrier>()?.Held;
+                        if (held != null) BeginSlipperReturn(held);
+                    }
                     player.Respawn(); player.ApplyFallRecovery(); _underDeck[player.PlayerSlot] = 0;
+                    _drySupport[player.PlayerSlot] = false; _falling[player.PlayerSlot] = false;
                 }
             }
             _returned.Clear();

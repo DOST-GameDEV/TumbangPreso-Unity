@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:31:09Z" duration="47.9213466">
+  <test-suite type="TestSuite" id="1773" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="596" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:31:09Z" duration="47.921347" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1767" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="596" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:31:09Z" duration="47.908027" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3868" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1768" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="596" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:31:09Z" duration="47.903343" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1769" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="596" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:31:09Z" duration="47.899042" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1252" name="LagoonRecoveryProbe" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:30:49Z" duration="27.999186" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1253" name="ActualPlatformFallRequiresPressesAndReturnsStockInBothModes" fullname="TumbangPreso.PlayTests.LagoonRecoveryProbe.ActualPlatformFallRequiresPressesAndReturnsStockInBothModes" methodname="ActualPlatformFallRequiresPressesAndReturnsStockInBothModes" classname="TumbangPreso.PlayTests.LagoonRecoveryProbe" runstate="Runnable" seed="103622382" result="Passed" start-time="2026-09-23 23:30:21Z" end-time="2026-09-23 23:30:49Z" duration="27.983998" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-lagoon-fall-v1/Lagoon-fall-prone.png
+[Play] wrote Logs/refine2-lagoon-fall-v1/Lagoon-fall-standing.png
+[Lagoon fall] Classic: actual descent-1.669, no passive progress, held1press, 9tap pulses, delayed stock return/pickup.
+[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Lagoon fall] HeroStrike: actual descent-1.667, no passive progress, held1press, 9tap pulses, delayed stock return/pickup.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1501" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-23 23:30:49Z" end-time="2026-09-23 23:31:09Z" duration="19.857552" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1505" name="InnerAndOuterStairsLetBothModesLeaveTheWater" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.InnerAndOuterStairsLetBothModesLeaveTheWater" methodname="InnerAndOuterStairsLetBothModesLeaveTheWater" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="15700005" result="Passed" start-time="2026-09-23 23:30:49Z" end-time="2026-09-23 23:31:09Z" duration="19.855009" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

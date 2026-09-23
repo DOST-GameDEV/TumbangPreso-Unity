@@ -175,6 +175,17 @@ change or redesign those heroes. Rafi's movement is an off-hand cut, an abandone
 heel-turn and a cupped hip-to-side wave release. No borrowed weapon, armor or outfit.
 His water magic is an individual fantasy power.
 
+### Latest Lagoon gameplay addition,2026-09-24
+
+Owner asks for SaBubong-style falling and button-mash recovery, plus flying birds.
+Genuine airborne platform falls now enter the shared prone get-up at water-entry
+depth, with Lagoon's existing eight-second held-stock return. Intentional stair
+entry/swimming remains available. Host authority and existing recovery/input/camera/
+HUD/network paths are reused; no new protocol, score or collision change. Details
+and evidence: [Lagoon fall report](reports/map-by-map-refinement-2026-09-23/lagoon-fall-recovery/report.md).
+Birds and the newer building/water/island refinement remain in REFINE-2.6. This does
+not reopen historical Rafi designs or replace newer cast work.
+
 ### Lagoon: reference-to-construction decisions
 
 The owner photo shows the important missing relationships: water between houses,

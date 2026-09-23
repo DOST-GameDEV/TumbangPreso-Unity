@@ -1,103 +1,117 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: SaBubong art ready to publish, Lagoon next
+## Current resume, 2026-09-24: Lagoon fall/mash mechanic, then birds and art
 
-Overall goal ACTIVE and NOT complete. Owner expects autonomous progress through all
-independently actionable TODO, with quality product work ahead of test/capture loops.
-No routine permission questions or checkpoint stops. Preserve every task and prior
-work; newer owner requirements override retired proposals. No other tasks/chats,
-delegation, paid services, usage resets, main edits or Desktop replacement.
+Overall goal ACTIVE and NOT complete. Continue every independently actionable TODO
+without checkpoint stops. Owner is AFK and wants quality product work ahead of test/
+capture-tool loops. No routine questions, other tasks/chats, delegation, paid services,
+credit resets, main edits or Desktop replacement. Preserve every older task and work;
+newer requirements supersede retired designs. Do not claim broad completion from a
+subset, passing test, report or pushed art batch.
 
-DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote: e09c44e2f7aad269c2b3b8c47997326172745866.
-Only original home-court.png.meta and loading-street.png.meta under
-Resources/UI/composition-redesign remain dirty. NEVER restore or stage these DEV
-files. Own candidate: RooftopTowerBFinishAuthor, builder hook, surface plan, ledger/history. Use explicit staging,
-sole author M4tyu633, no trailers/AI mentions/em dashes. Fetch before every push and
-verify remote. Preserve all contributor work; never reset, clean or force-push.
-QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached4193e9ac6 with tower B candidate copied. Prior candidate exactly matched
-before named stash/advance; all stashes retained. Author47814completed/reaped:15 fitted secondary divisions/60vertices/one renderer
-on three B towers, no body/material/collision edits. Existing native review31639completed/reaped1/1in4.474s, matched preview/pool/laundry
-and grey inspected. Keepv1. No active Unity job. No native player,
-task-owned browser tab or temporary server. Do not touch other dirty worktrees.
+DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+HEAD and verified remote6cc04ebb65713729e4bcacee133fcece42a7a0a4. Protected original
+Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
+remain dirty: NEVER restore/stage them. Own current work: Lagoon baseline method
+in MapGraphicsReviewProbe, lagoon-reference-notes.md, TODO, ledger/history. No Lagoon
+scene/art edits yet. Explicit staging, sole author M4tyu633, no trailers/AI mentions/
+em dashes. Fetch before push, verify remote; never reset/clean/force-push.
+QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
+owned detached6cc04ebb6 with baseline case copied. Previous exact candidates stashed
+and advanced safely; preserve all named stashes/other dirty worktrees.
 
-## Latest owner feedback applies to ALL five maps
+No active job. Baseline38101completed/reaped1/1in8.653s; actual preview, six near
+families, piles, houseboat and islands inspected. Full patch saved, known generated
+churn restored. Existing18homes/boats/structures retained. First weak family is
+ThatchGable0/8/12/16: plain roof reads as wood slabs. Native reference/concept study
+and local fibre/fringe plan precede edits. Water depth/contact, brown value
+repetition and near island detail remain later local units. No art edits yet.
+No native player, task browser tab or temporary server remains active.
 
-Owner says all buildings still lack texture/detail. Saved exact request and individual
-map material directions in building-texture-brief-20260924.md; linked explicitly
-from REFINE-2.2 through2.6. Earlier map art batches are not exempt. Shader parameters,
-extra windows or additional scenery do not establish material acceptance. Inspect
-actual bright-lighting results at gameplay/preview/intro scale; improve demonstrated
-weaknesses per building family, retain good parts. No universal noise/strength patch.
+## Latest all-map building requirement
 
-The status question about the last few hours was answered with verified pushed
-commits, and work continued. This continuation has also pushed the three concrete
-SaBubong units below, not just performed validation.
+Owner says all buildings lack texture/detail. Exact request saved in owner-request.md
+and building-texture-brief-20260924.md, linked from ALL five REFINE-2 map rows. Earlier
+art batches are not exempt. Shader parameters/added windows/more scenery are not
+material acceptance. Inspect actual gameplay/preview/intro scale under bright lighting.
+Refine each weak family locally, preserve good parts; no universal noise/grime/strength
+patch. Old tasks remain. The status question about shipping vs validation was answered
+with verified commits and implementation continued in this same conversation.
 
-## SaBubong current result and next work
+## Lagoon research and protected baseline
 
-Retain original playable deck, pool, stairhead, laundry/recovery, 69 colliders,
-14 commercial towers, 15 residential skyline blocks and street-front buildings.
-Already published local finishes: tank8c891ad2c, stairheadc1cbf8cf5, shade163d0e01d.
-Do not re-run unchanged checks for them.
+Read docs/BADJAO_EXPANSION.md section178-243 for architecture/design, but do not revive
+old Rafi model instructions: incoming RafiV9 remains protected. Current Lagoon is
+already18homes (eight connected, ten detached) and six watercraft,174surfaces and
+1066collision components. Preserve28x26m legal deck, broad safe routes, water/recovery
+levels, all four exits and existing collision. Fixed homes stand on piles and do not
+bob. Boat motion is separate. No tricycles or generic heritage motifs on these decks.
 
-- cd245e5f1: six inhabited neighboring apartment roofs on measured vacant sites.
-  Distinct shade, water/laundry, garden, drying and quiet service uses; grouped
-  openings/access/parapets, per-part material roles. 41616 vertices, six renderers,
-  no added collision/shadows. Current footprints/roads guarded. Native 1/1 in4.596s,
-  paired preview/player/detail/Low and grey25 inspected. Context improvement only.
-- 8b7d082e7: 72 outer blocks with284 homes/four planted courts, connected to eight
-  original street ends; original180m region retained, visual ground extended3000m.
-  299800 vertices/73renderers/one material, no new collision/shadows. Existing native
-  baseline case1/1 in5.034s, paired preview/neighbor/grey and six roof views inspected.
-  Keep v1. Existing haze softens the distance; more invisible farther geometry would
-  not improve these views. No global fog/sun/shader change. Shared mesh/material
-  display-name and redundant DeckSurface0churn were restored after saved patch.
-- 4193e9ac6: six-apartment surface finish. Local528px atlas adds metre-scaled
-  maintained-plaster variation only to the three plaster swatches; other materials
-  keep distinct roles. Derived meshes preserve original silhouette. Fitted concrete
-  corner strips, window sills/jambs and restrained two-storey reveals stay in12x11m
-  plots. 76992derived vertices/12renderers/two materials, collision preserved.
-  Representative warm-plaster native pair/court/grey/full detail inspected, keepv1.
-  First fixture55056failed at runtime-mesh AssetImporter lookup; saved-asset
-  provenance fix only. Revised30314passed1/1 in3.451s. Failed XML retained.
+lagoon-reference-notes.md saves refreshed primary research:
+- National Museum Southwestern Peoples text: distinguish stilt home, dugout and lepa.
+- Embassy Canberra MF Ubalde2022Lookan Banaran photograph actually viewed: slender
+  piles/braces, boardwalk/boat relationships, painted board wall, sheet roof, visible
+  shallow seabed. Not proof of the owner's different photo location or a universal
+  palette/occupation. No source photo downloaded or shipped.
+- NCCA official lepa text and photo actually viewed in public Flickr page. Direct
+  image web fetch403, browser page succeeded. Functional hull/shelter/storage useful;
+  decorated festival boats are not a daily-village template. No copied specific prow
+  motifs or named artists' patterns. Temporary tab closed, empty IAB list verified.
+Earlier PEAK/A Short Hike/3d-asset and Philippine studies remain style/context inputs.
 
-Reports and plans: docs/reports/map-by-map-refinement-2026-09-23/, especially
-sabubong-context-plan.md, sabubong-building-surfaces.md and the three named reports.
-Built-in sabubong-surfaces-v1concept/prompt/hash saved under ArtSource/.../concepts.
-Keep its material/corner/sill principles; reject realistic wear/fake glass reflections.
-Generated images are reference, not runtime proof. Original apartment sources and
-outer district are untouched by the near-surface derivative. Author reauthor hook
-runs ApartmentFinish after Neighbors; outer district remains separate.
+Current source already has timber/repair/wet-pile/metal/clay roles. Layered palm
+thatch still uses plain Standard material; brown values repeat widely. This is an
+inspection lead, not automatic proof of bad art. Native baseline must identify the
+real weakness. Then local order: gabled thatch family, other roof/screen/repair
+families and considered painted landmark, boats/household use, water/coast/islands/
+sky. Critiqued generated inspiration follows actual native findings. Do not rebuild
+whole Lagoon, repeat old deck checks or paint everything with the apartment texture.
 
-NEXT: individually inspect/refine retained tower families and main roof-building
-surfaces where native views still look flat. Existing native images are in QUAL
-Logs/refine2-sabubong-district-v1 and ...apartment-v1. No new Unity run just to repeat
-those pictures. Retained tower source families: building-m atCityBlock_0, building-n
-at3; skyscraper-b at1/6/11, c at2/7/12, d at8/13, e at4/9, a at5/10. Surface source
-roles/materials are already present; assess actual weakness, not parameter absence.
-IlalimSkylineFinishAuthor contains fitted face containment/overlay methods if useful,
-but do not change Ilalim or blindly apply its treatment to every tower family.
-Final Sa card/sky/intro/spectator/Low/native gate remains open. Then Lagoon and the
-reopened earlier-map building acceptance, natural animals, bot inactivity and
-per-character movement/throw/left-right pektus, then final qualification.
+## Published map art retained
 
-## Lighting and earlier map art retained
+SaBubong current art batch ready for integrated acceptance, parent remains OPEN.
+-8c891ad2c tank, c1cbf8cf5 stairhead,163d0e01d shade framing, individually native/grey
+ inspected and focused checks passed. Original objects/collision retained.
+-cd245e5f1 six near roof neighbors: distinct supported household uses on measured
+ clear plots, original14towers/15far residential blocks and streets retained.
+-8b7d082e7 outer72blocks/284homes/four planted courts, connected streets,3000m visual
+ ground.299800vertices/73renderers/one material, no new collision/shadows. Current
+ haze softens outer layer; more hidden far geometry would not help. Native1/1passed,
+ actual paired/grey/roof views inspected.
+-4193e9ac6 local six-apartment plaster atlas and corner/sill/jamb/reveal finish.
+ 76992derived vertices/12renderers/two materials. Original silhouette/collision and
+ outer district unchanged. Native1/1in3.451s after one saved-asset-provenance fixture
+ fix; failed XML retained. Representative warm-plaster views/grey inspected, keepv1.
+ Built-in concept/prompt/hash sabubong-surfaces-v1 saved and critically used.
+-e09c44e2f three retained B towers get15secondary glazing divisions/60vertices, no
+ source body/palette/glass changes. Native1/1in4.474s and paired/grey inspected.
+-6cc04ebb6 main condo local painted wall material/metre UVs,70end-window finishes,
+ 98side casement divisions/four supported exterior downpipes. Original mesh topology,
+ floor-band/glass slots, pool/roof/recovery/collision retained. Native map card updated
+ with existing importer. Final art case1/1in4.823s, then corrected sky case1/1in5.189s.
+ Main pair/grey, four scenery directions/Low/card inspected, other-family retention
+ decisions recorded in sabubong-final-art/report.md. Not native performance proof.
 
-lighting/peak-bright-overhaul source50f1fc255 last fetched unchanged. Merged241e13bb5,
-evidence52686a6e1. Owner rejected old darkness and approved silhouette clarity.
-Use the adopted bright look for decisions. LIGHT-1.8ec1d3a9cd previews selected
-sun/floor correctly, scopes cameras and fixes cached return. Prior4/4then2/2 receipts
-stand. LIGHT-1.6 tune and1.9 performance/native window remain open.
+Important evidence correction: GameplayShots.Render yields two frames. Using SkyMotion.At
+around that coroutine alone does NOT hold20/180times because live Update overwrites it.
+Final Sa case locally disables/restores sky clock and pins/removes camera callback.
+Corrected sky pair has identical court pixels and subtle sky drift. Older similarly
+sampled reports are art views, not reliable timed-motion proof. Carry this limit into
+integrated sky/replay work; do not rerun all old captures during feature work. Final
+scenery views hide cast bodies, but held slippers/markers remain; not gameplay proof.
 
-Eskinita art: district/deeper context, ten house fronts, tricycle07, canopies/planters,
-supplied mountain staging, shop signs/native card90401410f. Bayan: planted beds,
-connected town, monument pots,16fitted houses/card56a068418. Ilalim: neutral structure,
-34fitted skyline facades, ground/cardf128f57c0; existing shops/vendors and moving sky
-reviewed/retained. All three parents remain open for new building-texture acceptance
-and integrated cameras/native gates. Do not restart their successful unchanged units.
-Incoming UI/RafiV9/Phaister work preserved. No other task contacted.
+Eskinita art through90401410f, Bayan through56a068418, Ilalim throughf128f57c0 retained.
+Detailed reports in map-by-map-refinement-2026-09-23. Their building-surface acceptance
+was reopened by latest feedback; integrated intro/spectator/native gates also remain.
+After Lagoon: earlier-map surface review as needed, natural animals, bot stalls in
+both modes/roles/maps, per-character movement starting Sean, throw/left-right pektus,
+remaining actual gameplay and final qualification. No task silently deleted.
+
+Lighting branch50f1fc255 last fetched unchanged, merged241e13bb5/evidence52686a6e1.
+Owner rejects old darkness and approves silhouettes. Adopted bright look is baseline.
+LIGHT-1.8ec1d3a9cd fixes selected-map preview sun/floor/cached return, prior4/4then2/2
+stand. LIGHT-1.6tuning and1.9performance/native remain open. Incoming UI/Rafi/Phaister
+work preserved. No other task contacted.
 
 ## Older qualification still open
 
@@ -123,15 +137,15 @@ remain unreconciled; no false clean stamp. No native build during these map unit
 
 ## Execution guardrails
 
-Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-20260921.
-Never --help or -nographics. Background, freeze.cs during runs, read fresh nonzero XML.
-State the run's question/end condition. Back up full diff, then restore only known own
-churn: IndayFppDetails2, ProjectAuditor/Quality/TimeManager, QUALtwoPNGmetas when changed.
-Never touch DEV protected metas. Native Unity approval views only. Builds into internal
-Builds/<name>/TumbangPreso.exe only at final gate. No unneeded full runs or capture tools.
+Unity only python tools/run_unity_guarded.py -tp-profile presentation-validation-20260921.
+Never --help or -nographics. Background, freeze.cs during run, fresh nonzero XML.
+One question/end condition, bounded native inspection; no capture-framework detours.
+Back up full diff then restore only own known churn: IndayFppDetails2, ProjectAuditor/
+Quality/TimeManager, QUALtwoPNGmetas when changed. Never touch DEVprotected metas.
+Native Unity approval views only. Final builds only internal Builds/<name>/TumbangPreso.exe.
 
-[History through apartment surfaces](reports/map-by-map-refinement-2026-09-23/ledger-through-apartment-surfaces-20260924.md) preserves prior receipts,
-failures and stash state. Old running/pending notes in history are not active jobs.
+[History through SaBubong art](reports/map-by-map-refinement-2026-09-23/ledger-through-sabubong-art-20260924.md) retains prior receipts, failures,
+source routes, decisions and stash history. Historical running notes are not live jobs.
 
 ## Parallel lane: UI and HUD review (second machine), 2026-09-23
 
@@ -146,57 +160,34 @@ plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two ori
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
 
-Next scoped unit planned: three retained skyscraper-b instances1/6/11. Existing
-glass/frame gradients remain; fit narrow secondary vertical glazing divisions to
-actual glass planes (sourceu0.71875). Do not reuse Ilalim low-detail UV assumption,
-retint every tower or coat glass in plaster. Plan in sabubong-building-surfaces.md.
+NEW OWNER TASKS: copy SaBubong fall/button-mash recovery to Lagoon; then add flying
+birds if absent. Saved as REFINE-2.6b/c, art queue preserved. Gable concept saved/
+critiqued, no art implementation yet. Current code: Lagoon swims/escapes via stairs
+and only uses fall recovery for out-of-bounds/under-deck failsafes. SaBubong tracks
+actual descent then Respawn+ApplyFallRecovery; shared trip is press-gated with
+existing anti-stranding guard, animations/camera/HUD/input and host snapshot. Reuse
+that path for genuine lagoon platform falls; inspect stair swimming separately.
+No Unity job active. No question/approval needed for assigned gameplay/birds.
 
-Tower B author47814started. Question: fitted secondary divisions exist on exactly
-three retained B models and remain inside actual glass planes with collision intact.
-Source/material bodies untouched. After author guards, reuse native baseline roof
-views once to judge line readability; no new test/capture framework.
+LagoonWater now tracks dry support, genuine0.75m drops, water-entry depth, body and
+PresentationTeleportSerial. Actual platform fall returns prone through existing
+ApplyFallRecovery and eight-second held-stock return. Teleports/round reset/stairs
+are separated. No new protocol/UI/collision. Candidate copied to QUAL. Guarded
+focused run starts Logs/refine2-lagoon-fall-v1/check.log/results.xml: real rail jump/
+press-only recovery/held input/stock in both modes plus existing inner/outer stairs.
+Freeze.cs during run. Flying birds and all art still queued; gable concept saved.
 
-Tower B assets/scene/evidence copied to DEV, known churn restored after patch.
-Keep15secondary divisions/60vertices, original glass/body/palette and other tower
-families untouched. Publish then main condo local material/construction refinement;
-source reveals existing concrete floor bands and side sills, but end windows lack
-frames/sills and broad main wall finish remains very uniform. Preserve pool and
-playable roof/collision, no rebuild of full SaBubong.
+Lagoon fall run11581completed/reaped2/2in47.921s. Both-mode real rail fall/press-only
+recovery/held input/stock return and existing stairs pass. Prone/standing debug
+images inspected: meter reached, staged actor/ready-overlay contamination means
+not clean normal-match motion approval. Report saves that limit; no fixture repair
+loop. Known churn restored after full patch. No active Unity. Source/test metadata/
+research/baseline/concept/report ready to publish. Flying birds absent in Lagoon
+(existing AmbientLifeAuthor only4maps); next use existing bird models/clips with
+map-specific varied flight, preserving other maps. All gable/art work still queued.
 
-e09c44e2ftower B PUBLISHED/remote verified. QUAL exact matched/stashed/advanced to
-e09c44e2f. No active job. Main condo local plan now saved: derived painted-mineral
-wall texture using existing metre coordinates, unchanged other material slots/pool,
-fitted end-window details/side divisions and supported corner rainwater pipes below
-deck. Preserve all roof/pool/recovery/collision. Final art cameras follow this unit.
-
-Main condo source/finish and final art-view case copied to QUAL. Author runs
-Logs/refine2-sabubong-condo-v1/author.log. Question: local wall material/UV finish
-and fitted windows/downpipes preserve main mesh topology, pool/material separation,
-below-deck envelope and collision. Freeze.cs. Then one final art case: actual
-preview/card, four scenery directions, Low and sky20/180. No gameplay/native
-performance claim from those scenery-only views.
-
-Condo author42165completed/reaped: local wall slot/UV finish, unchanged source
-positions/topology and all collision,70end windows/98side divisions/four supported
-downpipes, below-deck guard passed. Known profile/PNGmeta churn restored after full
-patch. Final art review now runs Logs/refine2-sabubong-condo-v1/check.log/results.xml.
-Freeze.cs, inspect actual result before copying scene/card.
-
-First condo/final art review89856passed1/1in4.823s. Main condo pair/grey, four world
-directions, Low and card inspected; condo finish kept. Sky labels were NOT valid
-20/180proof: GameplayShots.Render yields two frames and live SkyMotion.Update
-overwrites the sampling scope. Camera also drifted between samples. One local
-fixture correction now holds the clock and camera for this case only, restores
-both in finally; no runtime/capture-framework change. Final-v2 runs
-Logs/refine2-sabubong-final-v2/check.log/results.xml, .cs frozen. Earlier reports
-using the same coroutine sky scope are art views, not reliable timed-motion proof;
-retain that limitation for integrated sky/replay qualification, do not rerun all.
-
-Condo/final-v2review81420completed/reaped1/1in5.189s. Corrected sky pair, four
-roof directions/grey, Low/card inspected. Court crop identical across sky samples;
-clouds change subtly. Main condo finish kept; source topology/material separation/
-collision intact. Qualified assets/scene/native card/evidence copied to DEV, known
-churn restored after patches. No active job. Current Sa art batch disposition saved
-in sabubong-final-art/report.md; parent stays open for integrated acceptance. Publish
-this unit then Lagoon research/current native assessment. Earlier-map new texture
-requirement stays open. No blanket completion or uninspected camera-motion claim.
+Fetched/fast-forwarded9305a8344incoming title-weather work before publishing this
+mechanic. Files are UI/title-weather and separate backlog/report, no overlap with
+Lagoon implementation; contributor work retained unchanged. Focused mechanic tests
+ran on6cc04ebb6plus this candidate, before that independent UI arrival. No repeated
+world check justified by the UI-only merge; full integration gate remains open.

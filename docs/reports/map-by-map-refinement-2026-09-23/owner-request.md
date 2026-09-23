@@ -155,3 +155,15 @@ material/construction improvement where each family is weak, under the adopted
 bright look. Existing shader settings and extra scenery do not close acceptance.
 Do not cover everything with one texture, noise or grime treatment. Preserve good
 parts and the stylized game identity; each map still needs its own material review.
+
+## Lagoon fall recovery and flying birds,2026-09-24
+
+> copy mechabic of sa bubong make it possible to fall off lagoon map and they have to button mash to get back up
+>
+> put flying birds there too if u havent
+
+New gameplay/ambient requirements are tracked as REFINE-2.6b/c. They join the existing
+map art queue. The fall route reuses SaBubong's prone press-gated recovery for genuine
+platform falls; intentional water stairs remain usable. Flying birds should use
+varied natural-looking flight and avoid obstructing the court. Existing map tasks,
+including texture, house/boat detail, water, islands and sky, remain assigned.

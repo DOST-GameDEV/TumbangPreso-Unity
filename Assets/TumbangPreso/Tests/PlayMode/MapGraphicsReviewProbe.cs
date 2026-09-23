@@ -87,6 +87,40 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator LagoonArtBaselineReview()
+        {
+            var canvas=new GameObject("Lagoon art preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.Lagoon);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.Lagoon&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.Lagoon,preview.Showing);preview.enabled=false;
+            yield return GameplayShots.Render(preview.Camera,"Lagoon-preview",false,Output,width:1280,height:720);
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.Lagoon);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=60;GraphicsProfiles.Apply(2);
+            var names=new[]{"gable-home0","repair-home1","metal-home2","screen-home3","hip-home4","shared-home5","piles","houseboat4","islands"};
+            var eyes=new[]{new Vector3(-17,2.8f,-10.5f),new Vector3(-18,2.7f,10),new Vector3(17,2.8f,-11.8f),
+                new Vector3(18,2.4f,9),new Vector3(-9,3,18),new Vector3(8.5f,2.7f,17),new Vector3(-18,-.45f,-5),
+                new Vector3(-28,2.2f,17),new Vector3(0,2.1f,10)};
+            var targets=new[]{new Vector3(-25,2,-10.5f),new Vector3(-27.4f,1.9f,10),new Vector3(25,2,-11.8f),
+                new Vector3(26.5f,1.7f,8.9f),new Vector3(-9,2.2f,26.5f),new Vector3(8.6f,1.9f,25.5f),new Vector3(-25,-1.2f,-10),
+                new Vector3(-34,-.25f,26),new Vector3(0,14,150)};
+            var eye=eyes[0];var rotation=Quaternion.LookRotation(targets[0]-eye);
+            Camera.CameraCallback pin=cam=>{if(cam==camera){cam.transform.SetPositionAndRotation(eye,rotation);cam.fieldOfView=60;}};
+            Camera.onPreCull+=pin;
+            try
+            {
+                for(int i=0;i<names.Length;i++)
+                {eye=eyes[i];rotation=Quaternion.LookRotation(targets[i]-eye);yield return null;
+                    yield return GameplayShots.Render(camera,"Lagoon-"+names[i],false,Output,width:1280,height:800);}
+            }
+            finally{Camera.onPreCull-=pin;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongFinalArtReview()
         {
             var canvas=new GameObject("SaBubong final art preview",typeof(Canvas));
