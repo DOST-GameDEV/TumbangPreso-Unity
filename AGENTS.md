@@ -280,6 +280,13 @@ superseded designs do not override the current queue or justify repeating done w
 
 ## Engineering and verification
 
+- Owner reiterated on2026-09-24: prioritize the quality of the product over
+  perfecting tests or capture fixtures. This model tends to overinvest in validation.
+  Use existing checks/render routes where possible; do not grow a new test framework
+  for every reversible art change. Inspect the real result, check the relevant risk,
+  then return to implementation. Quality remains required; extensive regression is
+  the final gate after the assigned features, not the main activity of every batch.
+
 - Owner correction, 2026-09-23: the agent again spent excessive time and tokens
   repairing capture fixtures, camera staging and test assumptions while the main
   feature queue remained unfinished. The owner explicitly rejected this repeated
