@@ -87,6 +87,27 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongShadeFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=55;
+            var finish=GameObject.Find("SaBubong/Dressing/Resident shade finish");Assert.IsNotNull(finish);Assert.IsEmpty(finish.GetComponentsInChildren<Collider>());
+            foreach(string view in new[]{"under","roof"})
+            {
+                camera.transform.position=view=="under"?new Vector3(-7,2,-12):new Vector3(-6,6.5f,-12);
+                camera.transform.LookAt(new Vector3(-10.25f,view=="under"?2.8f:3.3f,-8.4f));
+                foreach(string state in new[]{"before","after"})
+                {
+                    finish.SetActive(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-shade-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongStairheadFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);

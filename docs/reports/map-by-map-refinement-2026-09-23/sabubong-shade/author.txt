@@ -1,0 +1,1 @@
+Retained shade/posts/furniture/plants/collision; two beams, five rafters and nine restrained roof seams. 384vertices, one renderer, no new collision.

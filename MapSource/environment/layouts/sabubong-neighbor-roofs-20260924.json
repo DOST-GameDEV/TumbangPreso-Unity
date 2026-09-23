@@ -1,0 +1,57 @@
+{
+  "status": "Measured proposal; not generated",
+  "baseY": -26.049,
+  "width": 12,
+  "depth": 11,
+  "sites": [
+    {
+      "name": "North shared terrace",
+      "x": 0,
+      "z": 39,
+      "height": 27.5,
+      "use": "shade"
+    },
+    {
+      "name": "South household service",
+      "x": 0,
+      "z": -39,
+      "height": 23.8,
+      "use": "water-laundry"
+    },
+    {
+      "name": "West north roof garden",
+      "x": -75,
+      "z": 39,
+      "height": 28,
+      "use": "garden"
+    },
+    {
+      "name": "West south drying roof",
+      "x": -75,
+      "z": -39,
+      "height": 19,
+      "use": "laundry"
+    },
+    {
+      "name": "East north quiet roof",
+      "x": 75,
+      "z": 39,
+      "height": 22,
+      "use": "service"
+    },
+    {
+      "name": "East south family shade",
+      "x": 75,
+      "z": -39,
+      "height": 25,
+      "use": "shade"
+    }
+  ],
+  "preserve": "Existing tower/street layout, playable roof, pool/recovery/laundry and all collision",
+  "guards": [
+    "Retained-building footprint exclusion with0.7m margin",
+    "Keep outside existing5.7m roads",
+    "No new gameplay collider",
+    "New props sit on their authored roof/support"
+  ]
+}

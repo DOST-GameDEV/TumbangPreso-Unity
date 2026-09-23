@@ -286,7 +286,10 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Stairhead now has fitted door/vent/entry housing/flashing detail; original body/
   noticeboard/mural/collision retained. Paired/grey25inspected, focused1/1passed.
   [Stairhead evidence](reports/map-by-map-refinement-2026-09-23/sabubong-stairhead/report.md).
-  Shade and neighboring/distant roof context remain next.
+  Shade now has supported beams/rafters and restrained panel seams; original
+  furniture/posts/plants/collision retained. Paired/grey25inspected, focused1/1passed.
+  [Shade evidence](reports/map-by-map-refinement-2026-09-23/sabubong-shade/report.md).
+  Neighboring/distant roof context and final map acceptance remain next.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on

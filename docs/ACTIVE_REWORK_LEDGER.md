@@ -249,3 +249,26 @@ Stairhead case54048completed/reaped1/1in3.367s. Paired court/near/grey25inspecte
 keep v1. Qualified scene/assets/evidence copied to DEV, known churn restored after
 patch. Publish this unit; then shade plan is already saved with measured source
 positions. No active jobs. SaBubong context/remaining maps/gameplay are not complete.
+
+Stairhead c1cbf8cf535e32a6c4345326481deb2e3b3869a8PUBLISHED/remote verified; QUAL
+advanced after exact candidate match/stash. Shade finish source drafted/copied:
+two beams/five rafters meet retained posts/roof, nine quiet raised panel seams keep
+existing green top. Original furniture/plants/footprint/collision untouched; all
+new framing above2.95m. Source material name is Resident green tile; this is a local
+panel-construction finish, not a claim about a changed physical roofing product.
+Author next Logs/refine2-sabubong-shade-v1, paired under/roof case ready. Freeze.cs.
+
+Shade author70907completed/reaped. Current paired under/roof case runs
+Logs/refine2-sabubong-shade-v1. Inputs frozen. Source skyline review confirms existing
+14towers,15distant residential blocks and measured street-front buildings; keep them.
+Context issue is insufficient inhabited lower roof/use layering and open distance,
+not permission to rebuild the protected deck or stamp a duplicate generic city.
+
+Shade case1929completed/reaped1/1in3.373s. Paired underside/top/grey25inspected, keep
+v1. Qualified scene/assets/evidence copied to DEV and known churn restored after
+patch. Publish shade unit next. No active jobs. Current context planning measured
+vacant12x11m plots against existing buildings/roads: nearest(0,+/-39); additional
+side plots(+/-75,+/-39)are clear. These are candidates, not authored buildings yet.
+Existing street-building roofs are often far below the playable roof, explaining
+why the current overview reads as an isolated tower ring despite128context renderers.
+Use local roof-use layers and coherent deeper city, preserve all original content.
