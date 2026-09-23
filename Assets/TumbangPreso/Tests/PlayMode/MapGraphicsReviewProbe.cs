@@ -87,6 +87,84 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimSkylineFinishReview()
+        {
+            var canvas=new GameObject("Ilalim skyline preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.IlalimNgTulay);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.IlalimNgTulay,preview.Showing);preview.enabled=false;
+            var toggle=IlalimSkylineSwitch();
+            foreach(string state in new[]{"before","after"})
+            {
+                toggle(state=="after");yield return null;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(preview.Camera,"Ilalim-skyline-preview-"+state,false,Output,width:1280,height:720);
+            }
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=58;toggle=IlalimSkylineSwitch();
+            foreach(string view in new[]{"street","district"})
+            {
+                camera.transform.position=view=="street"?new Vector3(-2.8f,1.8f,-10):new Vector3(25,25,-30);
+                camera.transform.LookAt(view=="street"?new Vector3(3,5,30):new Vector3(45,9,15));
+                foreach(string state in new[]{"before","after"})
+                {
+                    toggle(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Ilalim-skyline-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+        private static Action<bool> IlalimSkylineSwitch()
+        {
+            const string tag="TumpIlalimSkylineSource";
+            var root=GameObject.Find("IlalimNgTulay/Dressing/IlalimSkylineFinishes");Assert.IsNotNull(root);
+            Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
+            var originals=new System.Collections.Generic.List<(MeshRenderer renderer,Material[] before,Material[] after)>();
+            foreach(var renderer in GameObject.Find("IlalimNgTulay/Dressing/SkylineKit").GetComponentsInChildren<MeshRenderer>())
+            {
+                var after=renderer.sharedMaterials;if(!after.Any(m=>!string.IsNullOrEmpty(m.GetTag(tag,false))))continue;
+                var before=after.Select(m=>string.IsNullOrEmpty(m.GetTag(tag,false))?m:AssetDatabase.LoadAssetAtPath<Material>(m.GetTag(tag,false))).ToArray();
+                Assert.IsTrue(before.All(m=>m!=null));originals.Add((renderer,before,after));
+            }
+            Assert.IsNotEmpty(originals);
+            return after=>{root.SetActive(after);foreach(var item in originals)item.renderer.sharedMaterials=after?item.after:item.before;};
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimSkylineMaterialStudy()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;var camera=rig.Camera;
+            var targets=GameObject.Find("IlalimNgTulay/Dressing/SkylineKit").GetComponentsInChildren<MeshRenderer>();
+            var all=Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);var states=all.Select(r=>r.enabled).ToArray();
+            bool fog=RenderSettings.fog;
+            try
+            {
+                foreach(var renderer in all)renderer.enabled=false;
+                RenderSettings.fog=false;camera.fieldOfView=35;
+                foreach(char kind in "abc")
+                {
+                    string guid=AssetDatabase.AssetPathToGUID("Assets/TumbangPreso/Art/models/kits/commercial/low-detail-building-"+kind+".glb");
+                    var target=targets.Where(r=>AssetDatabase.GetAssetPath(r.GetComponent<MeshFilter>().sharedMesh).Contains(guid))
+                        .OrderBy(r=>r.bounds.center.sqrMagnitude).First();
+                    target.enabled=true;var bounds=target.bounds;
+                    camera.transform.position=bounds.center+new Vector3(.65f,.15f,-1).normalized*bounds.size.y*2;
+                    camera.transform.LookAt(bounds.center);
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Ilalim-skyline-study-"+kind,false,Output,width:960,height:960);
+                    target.enabled=false;
+                }
+            }
+            finally
+            {RenderSettings.fog=fog;for(int i=0;i<all.Length;i++)if(all[i]!=null)all[i].enabled=states[i];}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator IlalimStructureFinishReview()
         {
             var canvas=new GameObject("Ilalim structure preview",typeof(Canvas));

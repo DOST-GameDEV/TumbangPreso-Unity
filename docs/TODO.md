@@ -269,7 +269,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   with neutral structural materials on24pillars/28bays/56tracks. Original geometry,
   collision, palettes and train livery retained. Paired preview/eye/under-deck/grey25
   inspected, focused1/1passed. [Evidence](reports/map-by-map-refinement-2026-09-23/ilalim-structure/report.md).
-  Existing skyline/backlot, shop surfaces, sky and final card remain open.
+  The34existing low-detail skyline bodies now have distinct fitted facade treatments:
+  514window groups/144glass divisions in3overlay renderers. Shapes/positions/collision
+  preserved. Paired preview/street/district/grey25inspected, focused1/1passed.
+  [Skyline evidence](reports/map-by-map-refinement-2026-09-23/ilalim-skyline/report.md).
+  Outer ground edge, near shops/service details, sky and final card remain open.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
