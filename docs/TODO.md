@@ -516,6 +516,52 @@ Implementation order within UX-1:
   Owner screenshot retained under the UX-1 completion references. Map emptiness in
   the same screenshot belongs to the later per-map context/cultural brief.
 
+### UI-REVIEW · Research-first UI and HUD refinement ⚠️ IN PROGRESS, 2026-09-23
+
+Owner brief: research first, then refine the whole game's UI and HUD, with Settings as a
+priority; later the same day "improve ui LOOK of all current screens", "genuinly improve all
+buttons theyre so bland and ugly", "their colors are ugly", "make sure the colors all work
+well tgthr with the background", "improve all skill icons" then "do a drawing for all",
+"generate profile pics too", and Rafi "DOESNT LOOK GOOD ... compared to reference" and "doesnt
+look like it belongs in hero cast". Research, critique and plan:
+`docs/reports/ui-hud-review-2026-09-23/` (`research.md`, `critique-and-plan.md`).
+This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
+
+- [x] Settings (both routes): warm grey palette, grouped sections, loud row focus (band,
+  bar, accent label), keycap and pill chips, filled SAVE with UNSAVED marker, patronising
+  notes cut. `ui-batch1`/`ui-batch2` 11/11 and 12/12 (HubFlow, NativeSettings, NativeHud,
+  HudIconSheet); five tabs inspected at 1920x1080.
+- [x] Pause card as the sticker family (RESUME primary, SETTINGS, LEAVE MATCH destructive).
+- [x] Button finish for every pressable sticker (`HubShape`): cream die-cut rim, hue-shifted
+  gradient, varnish, same-hue lip, hover light, breathing focus ring, primary shimmer; paper
+  lettering with an ink outline on saturated and dark stickers (`HubKit.Letterpress`).
+- [x] Palette: olive grounds and fills replaced; full screens on `HubStyle.Maroon`, secondary
+  stickers one warm-dark family; HOME doors with coloured wells. Mock of olive/Night/maroon
+  on the real HERO capture chose maroon.
+- [x] Character select: contact shadow, clock plate with PICK, stacked ability text.
+- [x] HOME hero door and XP rim, LOADOUT selected-item name, JOIN one-line empty state,
+  keyboard ESC cap removed from BACK (pad glyph kept).
+- [x] Skill icons: 31 coloured cel-shaded illustrations (`tools/build_ability_icons.py`,
+  `Resources/UI/ability-icons`), drawn untinted by `TumpAbilitySymbol` and `AbilityIcons.Tint`.
+  Checked in HERO, character select, skill tree and the in-match tray.
+- [x] Profile pictures: 20 composed from the real roster portraits (`tools/build_avatars.py`),
+  `Avatars.Ids` and a self-sizing picker grid. `ui-batch3` HubFlowTests 4/4; picker and HOME
+  door inspected. `avatar_rafi` rebuilt from the v7 portrait. Saved old ids still load.
+- [ ] Rafi model (his own builder only): saturated palette, voxel-stepped crest, nape hair,
+  slanted eyes without brows, small hip coil and float, decluttered waist. v7 lineup, turnaround
+  and head study inspected (evidence/rafi-v7-*). Owner approval of the look is still required;
+  the waist is still busier than the cast's and the back wrap keeps a diagonal slab.
+- [x] GAMEMODE posters: `Editor/ModeCardPoseAuthor.cs` renders the real models in their clips
+  (1061 poses); `tools/build_mode_cards.py` composes PRACTICE, CUSTOM, CLASSIC, RANKED and the
+  two choice cards; `HubCards.Art` shows a poster when one exists. Inspected at 1920x1080,
+  1280x960 and 1600x680 Larger text (PRACTICE sits close to its card edge there, fitted).
+  The CLASSIC/HERO STRIKE choice popup is not in the capture set yet.
+- [ ] Remaining critique rows once the above land: five-shape and Larger-text captures of the
+  changed screens, 4:3 and 1600x680 checks, and the owner's look approval.
+- Known pre-existing failures, not caused here: `OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms`
+  (retired "PLAY FAIR" copy), `TitlePlayCreditsAndSettingsReturnThroughNativeViews` (retired
+  title route), `RematchActuallyLoadsTheChosenArena` (rematch stays on Eskinita; gameplay lane).
+
 ### P6 supersession decisions
 
 - **140.4:** the historical textual connection/countdown layout is not reactivated.

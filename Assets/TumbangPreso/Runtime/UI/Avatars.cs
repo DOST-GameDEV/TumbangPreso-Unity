@@ -29,17 +29,33 @@ namespace TumbangPreso.UI
         /// <summary>
         /// Every avatar id, in picker order.
         ///
-        /// ⚠️ THE THREE OBJECTS COME LAST AND THAT IS DELIBERATE. Most people want a face, so the
-        /// twelve faces are what a picker opens on; the tsinelas, the lata and the chalk star are
-        /// for somebody who does not, and they are the game's own subject rather than a fourth
-        /// kind of thing.
+        /// ⚠️ THE OBJECTS COME LAST AND THAT IS DELIBERATE. Most people want a face, so the faces
+        /// are what a picker opens on; the tsinelas and the lata are for somebody who does not,
+        /// and they are the game's own subject rather than another kind of thing.
+        ///
+        /// ⚠️⚠️ THE FACES ARE THE GAME'S OWN CHARACTERS SINCE 2026-09-23 (owner: "generate profile
+        /// pics too"). The twelve drawn faces were one generic face in twelve tints and showed no
+        /// character the game has. `tools/build_avatars.py` now composes each picture from the
+        /// approved in-engine roster portrait (`TumpPortraitAuthor`, one camera rule for all, so
+        /// the framing problem described above is gone) on a warm logo-colour sunburst. Heroes
+        /// first, then the street kids, then the two objects. ⚠️ THE OLD IDS STILL LOAD: `Get` reads
+        /// any id from `Resources/UI/avatars`, so a player who saved `avatar_07` keeps that picture
+        /// until they choose again; they are only no longer offered.
         /// </summary>
         public static readonly string[] Ids =
         {
-            "avatar_01", "avatar_02", "avatar_03", "avatar_04", "avatar_05", "avatar_06",
-            "avatar_07", "avatar_08", "avatar_09", "avatar_10", "avatar_11", "avatar_12",
-            "avatar_tsinelas", "avatar_lata", "avatar_star",
+            "avatar_dante", "avatar_sean", "avatar_cheska", "avatar_zack", "avatar_nemu",
+            "avatar_phaister", "avatar_rafi",
+            "avatar_maring", "avatar_totoy", "avatar_inday", "avatar_kuya_boy", "avatar_ate_girlie",
+            "avatar_tikboy", "avatar_bebang", "avatar_jun_jun", "avatar_lola_pacing", "avatar_mang_kanor",
+            "avatar_aling_nena",
+            "avatar_tsinelas", "avatar_boyben",
         };
+
+        /// <summary>How many of <see cref="Ids"/> are faces (the rest are objects).</summary>
+        public const int FaceCount = 18;
+
+        /// <summary>
 
         /// <summary>Loads one by id, or the first face if the id is unknown.</summary>
         public static Sprite Get(string id)
@@ -72,7 +88,7 @@ namespace TumbangPreso.UI
             {
                 int k = 17;
                 foreach (char c in playerName) k = (k * 31) + c;
-                return Ids[Mathf.Abs(k) % 12];
+                return Ids[Mathf.Abs(k) % FaceCount];
             }
         }
 

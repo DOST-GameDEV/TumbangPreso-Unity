@@ -110,3 +110,16 @@ No task-owned browser tabs/preview servers remain.
 Prior ledger preserved verbatim in
 [history through distance](reports/map-by-map-refinement-2026-09-23/ledger-through-eskinita-distance.md),
 which links all earlier history. Its old pending/running/resume claims are historical.
+
+## Parallel lane: UI and HUD review (second machine), 2026-09-23
+
+Checkout C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks (worktree of
+C:/Users/Matthew/dev/TumbangPreso-Unity), branch ASTRAReworks. Status and checklist:
+TODO "UI-REVIEW". Research and plan: docs/reports/ui-hud-review-2026-09-23/.
+Pushed 23deea41 (UI batch 39373c32 merged over the map lane's 2f2c5591, no overlap).
+Guarded Unity only, profile presentation-validation-20260921; runs so far:
+ui-batch1 11/11, ui-batch2 12/12, art-batch3 (Rafi v6 lineup/head written, then the
+turnaround step needed -rig; bounded repair used), art-batch4 running (Rafi v7 review
+plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two original
+composition-redesign .meta files. Next: avatar compile and picker capture, posters,
+Rafi v7 inspection, five-shape captures of the changed screens, push.

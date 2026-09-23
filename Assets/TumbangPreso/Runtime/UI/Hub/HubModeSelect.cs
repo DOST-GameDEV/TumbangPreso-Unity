@@ -136,6 +136,23 @@ namespace TumbangPreso.UI.Hub
             var art = HubKit.Stretch(HubKit.Rect(card.Body, "Art"), 7);
             art.gameObject.AddComponent<RectMask2D>();
 
+            // ⚠️⚠️ A CARD WITH A POSTER SHOWS THE POSTER (2026-09-23). The owner asked for each mode
+            // to have its own picture, then called the built cards (a flat fill, a faint mark and
+            // cropped portrait heads along the bottom) "this shit sucks". `tools/build_mode_cards.py`
+            // composes each poster from the REAL models posed by their real clips
+            // (`Editor/ModeCardPoseAuthor.cs`), with the setting drawn in the logo palette. It is
+            // fitted to COVER the card's own art region (`CLAUDE.md` § 6.2c: fitted to the region it
+            // is seen in), and the fill, the chalk, the mark and the heads are skipped under it.
+            // A card without a poster keeps the drawn layout below.
+            var poster = Resources.Load<Sprite>("UI/mode-cards/" + name);
+            if (poster != null)
+            {
+                var picture = HubKit.Picture(art, "Poster", poster, false);
+                var fitter = picture.gameObject.AddComponent<AspectRatioFitter>();
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = poster.rect.width / poster.rect.height;
+            }
+
             var chalk = HubKit.Stretch(HubKit.Rect(art, "Chalk")).gameObject.AddComponent<HubPattern>();
             chalk.Seed = seed;
             chalk.Density = 1.6f;
@@ -145,8 +162,10 @@ namespace TumbangPreso.UI.Hub
             var glyph = HubKit.Glyph(art, "Mark", mark, new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.22f), 0.07f);
             HubKit.Place(glyph.rectTransform, HubKit.TopRight, new Vector2(-24, -24), new Vector2(150, 150));
 
+            if (poster != null) { chalk.gameObject.SetActive(false); glyph.gameObject.SetActive(false); }
+
             // The cast stands along the bottom, the middle one forward, cropped by the card's edge.
-            for (int i = 0; i < cast.Length; i++)
+            for (int i = 0; poster == null && i < cast.Length; i++)
             {
                 var face = HubKit.Picture(art, "Cast" + i, HubKit.Portrait(cast[i]));
                 // ⚠️ EVERY BUST SITS BELOW THE CARD'S BOTTOM EDGE. The portraits are cropped flat at
