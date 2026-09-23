@@ -273,7 +273,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   514window groups/144glass divisions in3overlay renderers. Shapes/positions/collision
   preserved. Paired preview/street/district/grey25inspected, focused1/1passed.
   [Skyline evidence](reports/map-by-map-refinement-2026-09-23/ilalim-skyline/report.md).
-  Outer ground edge, near shops/service details, sky and final card remain open.
+  Outer visual ground edge corrected without new collision; near shop/service
+  pockets, Low street and sky20/180reviewed and retained. Native card refreshed.
+  [Final art-batch disposition](reports/map-by-map-refinement-2026-09-23/ilalim-final-art/report.md),
+  focused1/1passed. Parent remains open for integrated intro/spectator/native gate;
+  continue SaBubong art next.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve

@@ -1,0 +1,3 @@
+Existing240m visual-only ground now3000m wide; original height/material and gameplay collision retained.
+IlalimNgTulay: 1 renderers receive explicit surface roles.
+  1 | family 12 Ilalim_FarGroundPlate

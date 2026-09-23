@@ -87,6 +87,50 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimFinalArtReview()
+        {
+            var canvas=new GameObject("Ilalim final preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.IlalimNgTulay);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.IlalimNgTulay,preview.Showing);preview.enabled=false;
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(preview.Camera,"Ilalim-final-preview",false,Output,width:960,height:540);
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=58;
+            var ground=GameObject.Find("IlalimNgTulay/Dressing/Lupa/FarGroundPlate");Assert.IsEmpty(ground.GetComponentsInChildren<Collider>());
+            var filter=ground.GetComponent<MeshFilter>();var mesh=filter.sharedMesh;var scale=ground.transform.localScale;
+            var previous=AssetDatabase.LoadAssetAtPath<Mesh>("Assets/TumbangPreso/Art/EnvironmentSurfaces/Meshes/Surface_0000000000000000e000000000000000_10202_240.0000_0.8000_240.0000.asset");Assert.IsNotNull(previous);
+            camera.transform.position=new Vector3(25,25,-30);camera.transform.LookAt(new Vector3(45,9,15));
+            foreach(string state in new[]{"before","after"})
+            {
+                ground.transform.localScale=state=="after"?scale:new Vector3(240,scale.y,240);filter.sharedMesh=state=="after"?mesh:previous;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"Ilalim-ground-"+state,false,Output,width:1280,height:720);
+            }
+            foreach(string view in new[]{"west-north","west-south","east-north","east-south"})
+            {
+                bool west=view.StartsWith("west");float z=view.EndsWith("north")?9:-9;
+                camera.transform.position=new Vector3(west?-3.7f:3.7f,2,z);
+                camera.transform.LookAt(new Vector3(west?-11.5f:11.5f,1.7f,z+1.5f));
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"Ilalim-final-"+view,false,Output,width:1280,height:800);
+            }
+            camera.transform.position=new Vector3(-2.8f,1.8f,-10);camera.transform.LookAt(new Vector3(3,2.2f,20));
+            GraphicsProfiles.Apply(0);yield return null;
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera,"Ilalim-final-low",false,Output,width:960,height:540);
+            GraphicsProfiles.Apply(2);camera.transform.position=new Vector3(-9,2,0);camera.transform.LookAt(new Vector3(-25,25,30));
+            foreach(int seconds in new[]{20,180})
+                using(Visual.NeighbourhoodSkyMotion.At(seconds))
+                    yield return GameplayShots.Render(camera,"Ilalim-sky-"+seconds,false,Output,width:1280,height:720);
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator IlalimSkylineFinishReview()
         {
             var canvas=new GameObject("Ilalim skyline preview",typeof(Canvas));

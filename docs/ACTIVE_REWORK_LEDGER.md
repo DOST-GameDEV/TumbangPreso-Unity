@@ -174,3 +174,24 @@ Skyline case41990completed/reaped1/1in7.117s. Paired preview/district, street an
 inspected; selected v1, no further variants. Qualified scene/assets/evidence copied
 to DEV, generated churn backed up/restored. Publish unit then check outer visual
 ground edge and near shop/service details before final Ilalim card. No active jobs.
+
+Skyline97630cf71committed, push pending reaping; QUAL exact candidate matched/stashed
+and advanced97630cf71. Next measured defect: FarGroundPlate is240m square and ends
+visibly at120m; no colliders. Plan/code extend its visual x/z to3000m, retain height/
+material, resample surface metre coordinates only on that slab. Dedicated guarded
+author next. No new city or gameplay area. Final near-shop/sky/card review follows.
+
+Skyline push verified97630cf7147cfef2049b6f28a10d132c2e9b0caf. Ground author80325
+completed/reaped: visual plate3000m, height/material/collision retained, metre surface
+coordinates reapplied only there. Current IlalimFinalArtReview runs
+Logs/refine2-ilalim-final-v1: same-camera old/new ground edge, four near shop pockets,
+Low street, sky20/180and native960x540card. No.cs edits while active. Inspect before
+keeping/refining anything further. No full-game regression or native build yet.
+
+Final Ilalim case68797completed/reaped1/1in8.311s. Ground before/after, four shop
+pockets, Low street and sky20/180inspected. Keep useful existing shops/signs/carts;
+near-faded columns in diagnostics are recorded, not a fixture repair task. Native
+960x540card copied to DEV with importer retained. Qualified scene/new ground mesh/
+evidence copied; known churn and redundant DeckSurface0material serialization
+restored after patch. Ilalim art batch ready for integrated camera/native acceptance;
+parent stays open for that gate. Publish final unit, then SaBubong. No active jobs.
