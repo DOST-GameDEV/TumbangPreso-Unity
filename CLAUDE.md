@@ -50,6 +50,13 @@ Better animation also includes skill VFX, casting and separate animations for
 different actions. Do not repeat animations unless necessary; see the same
 canonical document, section0.1.
 
+**Home-screen and menu-background animation (owner, 2026-09-23):** before making ANY home
+screen, menu background, season or hero-showcase animation, read
+[docs/HOME_SCREEN_ANIMATION_METHOD.md](docs/HOME_SCREEN_ANIMATION_METHOD.md). It is the method
+behind the Zack HOME loop: research first, the real models never drawn, faces never altered,
+re-timing so every moment breathes, and the review loop. Reuse the method; do not copy the Zack
+loop's shots, timetable or gags.
+
 Historical repository rules and incident receipts. Current rules are in AGENTS.md.
 
 **Current read order: [`AGENTS.md`](AGENTS.md), then [`docs/VISION.md`](docs/VISION.md), then

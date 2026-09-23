@@ -1,6 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, branchesFor, Pt } from '../lib/bolt';
 import { inCubic, kf, outBack, outCubic, outQuad } from '../lib/kf';
 import { clamp01, env, onN } from '../lib/time';
@@ -29,7 +29,7 @@ import { ActorImage, addPose, Built, drawActor, DUSK, HAND_R, Light, mixPose, Po
 // frame (the first render of this pass, and the same fault the drawn version had at 1.7x).
 const BACK = { x: 360, y: 990, ppu: 860 };
 
-const RELEASE = B.snap + 2;
+const RELEASE = B.snap + bt(2);
 
 // Key poses, on his real rig. Arms: x forward-negative, y across, z out from the body.
 const AIM: Pose = { root: [4, 0, 0], torso: [2, 18, 0], head: [6, 14, 0], armR: [-84, -6, 4], armL: [16, 0, 14] };
@@ -38,11 +38,11 @@ const SNAP: Pose = { root: [14, 0, 0], torso: [16, -26, 4], head: [10, 10, 0], a
 const FOLLOW: Pose = { root: [10, 0, 0], torso: [12, -30, 2], head: [6, 16, 0], armR: [-70, 40, 4], armL: [26, 0, 16] };
 
 const armAt = (f: number): Pose => {
-  const settle = kf(f, [[B.reverse, 0], [B.reverse + 12, 1, outCubic]]);
-  if (f < B.snap - 7) return mixPose(addPose(AIM, { armR: [18, 0, 0] }), AIM, settle);
-  if (f < B.snap) return mixPose(AIM, WINDUP, kf(f, [[B.snap - 7, 0], [B.snap, 1, outCubic]]));
-  if (f < B.snap + 3) return mixPose(WINDUP, SNAP, outQuad((f - B.snap + 1) / 3));
-  const drift = kf(f, [[B.snap + 3, 0], [B.hit, 0.5], [B.hit + 20, 1]]);
+  const settle = kf(f, [[B.reverse, 0], [B.reverse + bt(12), 1, outCubic]]);
+  if (f < B.snap - bt(7)) return mixPose(addPose(AIM, { armR: [18, 0, 0] }), AIM, settle);
+  if (f < B.snap) return mixPose(AIM, WINDUP, kf(f, [[B.snap - bt(7), 0], [B.snap, 1, outCubic]]));
+  if (f < B.snap + bt(3)) return mixPose(WINDUP, SNAP, outQuad((f - B.snap + bt(1)) / bt(3)));
+  const drift = kf(f, [[B.snap + bt(3), 0], [B.hit, 0.5], [B.hit + bt(20), 1]]);
   return mixPose(SNAP, FOLLOW, drift);
 };
 
@@ -56,21 +56,23 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
   // Hit-stop: three frames where the world does not advance at all.
   const frozen = f >= B.hit && f < B.tump;
   const ff = frozen ? B.hit : f;
-  const after = Math.max(0, ff - B.tump);
+  // In the original cut's frames, so the can's flight and the dust keep their shape over the
+  // longer TUMP! hold instead of the can leaving the frame half way through it.
+  const after = Math.max(0, ff - B.tump) / K;
 
-  const charge = kf(ff, [[B.reverse, 0.35], [B.snap - 7, 0.5], [B.snap, 1], [RELEASE, 1], [RELEASE + 1, 0.2], [B.hit + 20, 0]]);
+  const charge = kf(ff, [[B.reverse, 0.35], [B.snap - bt(7), 0.5], [B.snap, 1], [RELEASE, 1], [RELEASE + 1, 0.2], [B.hit + bt(20), 0]]);
 
   // ⚠️ The camera is the throw's second actor (🧑 2026-09-23: *"dynamic camera movement"*). It
   // creeps toward the can while he aims, PULLS BACK with his wind-up (the anticipation belongs to
   // the lens too), rushes down the court with the tsinelas, punches in on the hit, then tilts up
   // after the can as it flies, all while rolling a few degrees against each move.
   const zoom = kf(ff, [
-    [B.reverse, 1.0], [B.snap - 7, 1.06], [B.snap, 0.98, outCubic], [B.hit, 1.34, inCubic], [B.tump, 1.46, outBack], [B.tump + 10, 1.28], [B.run, 1.2],
+    [B.reverse, 1.0], [B.snap - bt(7), 1.06], [B.snap, 0.98, outCubic], [B.hit, 1.34, inCubic], [B.tump, 1.46, outBack], [B.tump + bt(10), 1.28], [B.run, 1.2],
   ]);
-  const fx = kf(ff, [[B.reverse, 900], [B.snap - 7, 980], [B.snap, 860], [B.hit, CAN_AT.x], [B.tump + 14, CAN_AT.x + 60], [B.run, CAN_AT.x + 160]]);
-  const fy = kf(ff, [[B.reverse, 640], [B.snap, 700], [B.hit, CAN_AT.y - 30], [B.tump + 6, CAN_AT.y - 90], [B.run, CAN_AT.y - 210]]);
-  const roll = kf(ff, [[B.reverse, -1.5], [B.snap - 7, 0], [B.snap, 2.5], [B.hit, -3], [B.tump + 6, 1.5], [B.run, 3]]);
-  const shakeAmt = env(f, B.hit, B.hit + 1, B.tump + 6, B.tump + 22) * 26;
+  const fx = kf(ff, [[B.reverse, 900], [B.snap - bt(7), 980], [B.snap, 860], [B.hit, CAN_AT.x], [B.tump + bt(14), CAN_AT.x + 60], [B.run, CAN_AT.x + 160]]);
+  const fy = kf(ff, [[B.reverse, 640], [B.snap, 700], [B.hit, CAN_AT.y - 30], [B.tump + bt(6), CAN_AT.y - 90], [B.run, CAN_AT.y - 210]]);
+  const roll = kf(ff, [[B.reverse, -1.5], [B.snap - bt(7), 0], [B.snap, 2.5], [B.hit, -3], [B.tump + bt(6), 1.5], [B.run, 3]]);
+  const shakeAmt = env(f, B.hit, B.hit + bt(1), B.tump + bt(6), B.tump + bt(22)) * 26;
   const sx = (random(`rsx${onN(f, 2)}`) - 0.5) * shakeAmt;
   const sy = (random(`rsy${onN(f, 2)}`) - 0.5) * shakeAmt;
   const cam = `translate(${960 + sx} ${540 + sy}) rotate(${roll}) scale(${zoom}) translate(${-fx} ${-fy})`;
@@ -96,7 +98,7 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
     yaw: 124,
     pitch: 6,
     pose: armAt(ff),
-    slipper: ff < RELEASE ? { at: 'hand', swing: ff < B.snap - 7 ? -80 : ff < B.snap ? kf(ff, [[B.snap - 7, -80], [B.snap, 30]]) : -120, twist: 0 } : { at: 'none' },
+    slipper: ff < RELEASE ? { at: 'hand', swing: ff < B.snap - bt(7) ? -80 : ff < B.snap ? kf(ff, [[B.snap - bt(7), -80], [B.snap, 30]]) : -120, twist: 0 } : { at: 'none' },
     res: 1.1,
     light,
   });
@@ -110,8 +112,8 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
   const target: Pt = [CAN_AT.x - 20, CAN_AT.y - 48];
   const pos: Pt = [start[0] + (target[0] - start[0]) * flightT, start[1] + (target[1] - start[1]) * flightT - 60 * Math.sin(flightT * Math.PI)];
   const trailEnd = inFlight ? pos : target;
-  const trailOn = ff >= RELEASE && f < B.tump + 14;
-  const trailFade = f >= B.tump ? 1 - (f - B.tump) / 14 : 1;
+  const trailOn = ff >= RELEASE && f < B.tump + bt(14);
+  const trailFade = f >= B.tump ? 1 - (f - B.tump) / bt(14) : 1;
   const trail = trailOn ? boltPoints(start, trailEnd, `trail${onN(f, 2)}`, 5, 0.14) : null;
 
   // The can: frozen on the hit, then thrown up and away from him, turning.
@@ -123,7 +125,7 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
   const slipperDown: Pt = [CAN_AT.x - 70 + after * 2, CAN_AT.y - 4 - Math.abs(Math.sin(Math.min(dropT, 2) * Math.PI)) * 40 * Math.max(0, 1 - dropT / 2)];
 
   // Sean, the taya, bored by the can until it goes, then he flinches back from it.
-  const flinch = kf(f, [[B.hit, 0], [B.tump + 2, 1, outCubic], [B.tump + 14, 0.85], [B.run, 0.8]]);
+  const flinch = kf(f, [[B.hit, 0], [B.tump + bt(2), 1, outCubic], [B.tump + bt(14), 0.85], [B.run, 0.8]]);
   const seanPose: Pose = mixPose(
     { root: [0, 0, 0], torso: [4, 0, 0], head: [8, 10 * Math.sin(f * 0.05), 0], armL: [0, 0, 12], armR: [0, 0, 12] },
     { root: [-16, 0, 0], torso: [-12, 0, 0], head: [-14, 0, 0], armL: [-120, -20, 30], armR: [-120, 20, 30], legR: [-20, 0, 0] },
@@ -198,7 +200,7 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
           never crops or shrinks it. */}
       <Tump f={f} start={B.tump} x={560} y={330} size={236} />
       {f === B.hit && <rect x={0} y={0} width={1920} height={1080} fill="#FFF6D0" opacity={0.7} />}
-      {f === B.hit + 1 && <rect x={0} y={0} width={1920} height={1080} fill="#FFF6D0" opacity={0.25} />}
+      {f === B.hit + bt(1) && <rect x={0} y={0} width={1920} height={1080} fill="#FFF6D0" opacity={0.25} />}
     </Whip>
   );
 };

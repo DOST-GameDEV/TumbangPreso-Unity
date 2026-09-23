@@ -2,7 +2,8 @@
 
 The animated scene behind the HOME hub (`docs/TODO.md` UX-1.1 reserves "a clean full-bleed
 animated-scene layer" for it). Source is `ArtSource/home-scene/`, a Remotion project that
-renders one seamless 1920x1080, 30 fps loop. This file is the research, the design that came
+renders one seamless 1920x1080, 30 fps, 42 s loop. The reusable method behind it is
+`docs/HOME_SCREEN_ANIMATION_METHOD.md`. This file is the research, the design that came
 out of it, and the numbers the HOME lane needs to put it on screen.
 
 ## 1 · What the owner supplied, and what it is not
@@ -82,39 +83,39 @@ offscreen with Three.js and places each one into the SVG shot as an image. The s
 - **The camera is never still**, even at rest (🧑: *"dynamic camera movement"*): idle drift,
   a dutch push-in on the wind, whip pans between shots, a whip-in on the run home.
 
-## 4 · The loop, shot by shot (30 fps, 900 frames, 30.0 s)
+## 4 · The loop, shot by shot (30 fps, 1260 frames, 42.0 s)
 
-⚠️ **`src/lib/beats.ts` is the one timetable.** Every shot reads it; if this table and that file
-ever disagree, the file is right.
+⚠️ **`src/lib/beats.ts` is the one timetable**, and every in-beat offset goes through `bt(n)`
+(1.6x the original cut's frames). 🧑 2026-09-23: *"give each moment time to breathe"*. If this
+table and that file ever disagree, the file is right.
 
-| Time (s) | Beat | Shot | What happens | Storyboard frames |
-|---|---|---|---|---|
-| 0.0 to 2.0 | | WIDE, frontal | Calm idle while the hub's UI arrives | |
-| 2.0 | `pushIn` | WIDE, pushing in | The wind rises, laundry and banderitas snap, he closes his eyes | |
-| 3.5 | `cu` | CLOSE-UP, face | Eyes shut, hair whipping in the wind | 1 to 12 |
-| 4.6 | `eyesOpen` | CLOSE-UP | Crash zoom as the eyes open, the first spark | 13 to 15 |
-| 4.9 | `black` | IMPACT FRAME | Flat black, only the eyes, glowing | 16 to 17 |
-| 5.07 | `yellow` | IMPACT FRAME | Flat golden flash, eyes and zigzag brows | 18 |
-| 5.17 | `powered` | CLOSE-UP, powered | Glowing eyes, hair lifted by static, arcs at both sides | 19 to 20 |
-| 5.8 | `hand` | CLOSE-UP, hand | Low and in front: his fist and the tsinelas big and crackling, his glowing eyes behind | 21 to 24 |
-| 6.4 | `reverse` | REVERSE, over the shoulder | His arm aims at the far lata, Sean waiting by it | 25 to 27 |
-| 7.0 | `snap` | REVERSE | The pause, then the snap: smear, release, a narrow branching bolt | 28 to 29 |
-| 7.23 | `hit` | REVERSE, hit-stop | Three frozen frames, her burst behind the can | 30 |
-| 7.33 | `tump` | REVERSE | The can flies, Sean flinches, pigeons scatter, **TUMP!** | 31 to 34 |
-| 8.4 | `run` | SIDE-ON tracking, parallax | He sprints for his tsinelas (🧑: *"ITS supposed to show running"*) | |
-| 9.6 | `scoop` | SIDE-ON, slow motion | The slide; Magnet snaps the tsinelas into his hand | |
-| 10.2 | `turn` | SIDE-ON | He plants and turns back | |
-| 10.6 | `lunge` | SIDE-ON, slow motion | Sean dives for the tag and closes on the afterimage | |
-| 11.3 | `arrive` | WIDE, whip-in | Side-on run-in and skid onto the throw line | |
-| 11.9 | `settle` | WIDE | Squash-and-pop to the front drawing, dead stop, chatter, the calm | |
-| 0 to 30 | calm stretches | WIDE | Between every beat he lobs the tsinelas a hand's height and catches it without looking (`toss` in `src/three/zackWide.ts`, a 75-frame grid, only whole cycles inside calm) |
-| 14.6 | `peek` | WIDE | Idle: his eyes come up to the camera and hold it | |
-| 17.8 | `flip` | WIDE | Idle: flips the slipper up and catches it without looking | |
-| 22.4 | `spin` | WIDE | Idle: spins it on one finger by the strap | |
-| 26.8 | `shake` | WIDE | Idle: shakes static off his hand | |
+| Time (s) | Beat | Shot | What happens |
+|---|---|---|---|
+| 0.0 to 2.5 | | WIDE | Calm idle while the hub's UI arrives: breath, weight, the casual toss |
+| 2.5 | `pushIn` | WIDE, pushing in | The wind rises; he squares up, chin into it, arms float out as the charge builds |
+| 4.9 | `cu` | CLOSE-UP, face | His resting face in the gust, held long enough to read |
+| 6.7 | `eyesOpen` | CLOSE-UP, crash zoom | His own eyes ignite electric yellow (never redrawn) |
+| 7.2 | `black` | IMPACT FRAME | Flat black, only crackling arcs |
+| 7.45 | `yellow` | IMPACT FRAME | Flat gold, his own eyes in ink |
+| 7.6 | `powered` | CLOSE-UP, powered | Glowing eyes, arcs off his head |
+| 8.7 | `hand` | CLOSE-UP, hand | Low and in front: fist and tsinelas crackling, eyes behind; the grip tightens |
+| 9.8 | `reverse` | OVER THE SHOULDER | He aims at the far lata and HOLDS |
+| 11.0 | `snap` | REVERSE | Wind-up and snap, the bolt to the can |
+| 11.35 | `hit` | REVERSE, hit-stop | Frozen frames, her burst behind the can |
+| 11.5 | `tump` | REVERSE | The can flies, Sean flinches, **TUMP!** held to read |
+| 13.4 | `run` | SIDE-ON tracking | He sprints for his tsinelas, turned toward us |
+| 15.2 | `scoop` | SIDE-ON, slow motion | The slide; Magnet snaps it into his hand |
+| 16.1 | `turn` | SIDE-ON | He plants and turns back |
+| 16.8 | `lunge` | SIDE-ON, slow motion | Sean dives and closes on his afterimage |
+| 17.9 | `arrive` | WIDE, whip-in | He runs home onto the throw line |
+| 18.9 | `settle` | WIDE | Snap turn to face us, dead stop, eyes lit through the chatter |
+| 0 to 42 | calm | WIDE | Between beats: the casual toss (`toss` in `zackWide.ts`) |
+| 22.5 | `peek` | WIDE | A glance to camera |
+| 27.0 | `flip` | WIDE | Flip and catch without looking |
+| 32.0 | `spin` | WIDE | Strap spin, stops dead |
+| 37.0 | `shake` | WIDE | Static builds in his hair, his eyes flare, he shakes it off |
 
-The taya resets the lata off screen, as the rules say, so the next reverse shot finds it
-standing again. Every ambient motion is periodic on 900 frames, so frame 900 is frame 0.
+Whip pans between shots stay 4 to 6 frames on purpose: cuts are not re-timed.
 
 ## 5 · Safe areas (1920x1080 source pixels)
 
@@ -141,8 +142,8 @@ hub's reserved `Scene` layer, above the live court (which stays underneath as th
   at 1920x1080 and 1600x680, and it hides and pauses behind HERO and resumes on Back.
   The same fixture holds the BH Studios mark at its true 445x370 (`nPOTScale: 0`).
 
-Sound cues, if the hub wants them: wind rise 2.0 s, eyes open 4.6 s, impact frame 4.9 s, snap
-7.0 s, hit 7.23 s, TUMP! 7.33 s, run 8.4 s, Magnet catch 9.6 s, tag miss 10.6 s, skid 11.3 s.
+Sound cues, if the hub wants them: wind rise 2.5 s, eyes ignite 6.7 s, impact frame 7.2 s, snap
+11.0 s, hit 11.35 s, TUMP! 11.5 s, run 13.4 s, Magnet catch 15.2 s, tag miss 16.8 s, run home 17.9 s.
 
 ## 7 · Working on it (any machine)
 

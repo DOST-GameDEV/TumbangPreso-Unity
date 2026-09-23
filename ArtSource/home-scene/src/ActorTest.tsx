@@ -7,14 +7,13 @@ export const ActorTest: React.FC = () => {
   const zack = useActor('team-zack', true);
   if (!zack) return null;
   const cells: [string, Omit<ActorProps, 'x' | 'y'>][] = [
-    ['slipper free front', { ppu: 1400, reach: 0.16, focus: 0.4, pitch: 40, slipper: { at: 'free', pos: [0, 0.4, 0.4], rot: [0, 0, 0] } }],
-    ['slipper free rotx90', { ppu: 1400, reach: 0.16, focus: 0.4, pitch: 10, slipper: { at: 'free', pos: [0, 0.4, 0.4], rot: [90, 0, 0] } }],
+    ['face measure', { ppu: 2000, reach: 0.12, focus: 0.45, pitch: 0, fov: 2, face: 'rest', ink: 0, light: { dir: [0, 0, 1], lit: '#ffffff', shade: '#ffffff', rim: '#ffffff', rim_strength: 0 } }],
   ];
   return (
     <AbsoluteFill style={{ background: 'linear-gradient(#C8452A, #F2A15A)' }}>
       <svg width={1920} height={1080}>
         {cells.map(([label, props], i) => {
-          const d = drawActor(zack, { ...props, x: 240 + (i % 4) * 480, y: 270 + Math.floor(i / 4) * 540 });
+          const d = drawActor(zack, { ...props, x: 960, y: 540 });
           const h = d.at('arm-right', [-0.2, 0, 0.02]);
           return (
             <g key={i}>

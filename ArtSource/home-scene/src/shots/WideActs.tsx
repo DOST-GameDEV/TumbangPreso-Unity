@@ -1,5 +1,5 @@
 import React from 'react';
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { inCubic, kf, outBack } from '../lib/kf';
 import { loopSin, onN } from '../lib/time';
@@ -32,15 +32,15 @@ export const wideCam = (f: number): Cam => {
       rot: kf(f, [[B.pushIn, drift.rot ?? 0], [B.cu, -5, inCubic]]),
     };
   }
-  if (f >= B.arrive && f < B.settle + 40) {
+  if (f >= B.arrive && f < B.settle + bt(40)) {
     // The camera chases him in from the left, lags, then catches up and settles on its mark.
     const dx = arriveDX(f);
-    const follow = kf(f, [[B.arrive, 0.7], [B.settle, 0.4], [B.settle + 40, 0]]);
+    const follow = kf(f, [[B.arrive, 0.7], [B.settle, 0.4], [B.settle + bt(40), 0]]);
     return {
-      zoom: kf(f, [[B.arrive, 1.22], [B.settle, 1.12], [B.settle + 3, 1.17, outBack], [B.settle + 40, drift.zoom]]),
+      zoom: kf(f, [[B.arrive, 1.22], [B.settle, 1.12], [B.settle + bt(3), 1.17, outBack], [B.settle + bt(40), drift.zoom]]),
       cx: drift.cx + dx * follow,
-      cy: kf(f, [[B.arrive, 580], [B.settle + 40, drift.cy]]),
-      rot: kf(f, [[B.arrive, 4], [B.settle, 2], [B.settle + 3, -1.5, outBack], [B.settle + 40, drift.rot ?? 0]]),
+      cy: kf(f, [[B.arrive, 580], [B.settle + bt(40), drift.cy]]),
+      rot: kf(f, [[B.arrive, 4], [B.settle, 2], [B.settle + bt(3), -1.5, outBack], [B.settle + bt(40), drift.rot ?? 0]]),
     };
   }
   return drift;
@@ -89,8 +89,8 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
   under.push(<path key="sh" d={`M ${feet[0] - 150} ${feet[1] - 6} L ${feet[0] + 150} ${feet[1] - 6} L ${feet[0] + 80} ${feet[1] + 130} L ${feet[0] - 380} ${feet[1] + 130} Z`} fill="#8E3E2C" opacity={0.42} />);
 
   // The run home: electric skid marks scored along the court behind his feet.
-  if (f >= B.arrive && f < B.settle + 26) {
-    const fade = f < B.settle ? 1 : 1 - (f - B.settle) / 26;
+  if (f >= B.arrive && f < B.settle + bt(26)) {
+    const fade = f < B.settle ? 1 : 1 - (f - B.settle) / bt(26);
     for (let k = 0; k < 2; k++) {
       const y = feet[1] - 6 + k * 14;
       const mark = boltPoints([feet[0] - 900, y], [feet[0] - 40, y], `sk${step}${k}`, 5, 0.03);
@@ -103,14 +103,14 @@ export const WideActs: React.FC<{ f: number }> = ({ f }) => {
   }
 
   const over: React.ReactNode[] = [];
-  if (f >= B.settle - 7 && f < B.settle + 26) over.push(<Dust key="sd" t={(f - B.settle + 5) / 18} x={feet[0] + 60} y={feet[1]} s={1.5} seed="ad" />);
+  if (f >= B.settle - bt(7) && f < B.settle + bt(26)) over.push(<Dust key="sd" t={(f - B.settle + bt(5)) / bt(18)} x={feet[0] + 60} y={feet[1]} s={1.5} seed="ad" />);
   // Electricity on him: at his fists and feet in proportion to the charge.
   over.push(<Sparks key="sh" at={hand} step={step} seed="hr" amount={z.charge} n={2 + Math.round(z.charge * 2)} />);
   over.push(<Sparks key="sl" at={handL} step={step} seed="hl" amount={z.charge * 0.8} />);
   if (z.charge > 0.5) over.push(<Sparks key="sf" at={feet} step={step} seed="ft" amount={z.charge - 0.3} r={140} />);
   // The static shake: arcs off the top of his streak, then one spark pops off it.
   if (z.hairStatic > 0) over.push(<Sparks key="hs" at={head} step={step} seed="hair" amount={z.hairStatic} r={120} n={3} />);
-  const pop = f - (B.shake + 22);
+  const pop = f - (B.shake + bt(22));
   if (pop >= 0 && pop < 18) {
     over.push(
       <g key="pop" transform={`translate(${head[0] + pop * 9} ${head[1] - pop * 14 + pop * pop * 0.9})`} opacity={1 - pop / 18}>

@@ -1,6 +1,6 @@
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { inCubic, kf, linear, outBack, outCubic, outElastic, outQuad } from '../lib/kf';
-import { clamp01, env, loopNoise, loopSin } from '../lib/time';
+import { clamp01, env, LOOP, loopNoise, loopSin } from '../lib/time';
 import { wind } from '../lib/wind';
 import { addPose, Face, mixPose, Pose, SlipperState } from './actor';
 
@@ -96,13 +96,13 @@ export const runCycle = (t: number, period = 10, amp = 1): { pose: Pose; lift: [
  */
 const TOSS = 75;
 const BUSY: [number, number][] = [
-  [B.pushIn, B.settle + 40],
-  [B.peek - 4, B.peek + 48],
-  [B.flip - 4, B.flip + 66],
-  [B.spin - 4, B.spin + 74],
-  [B.shake - 4, B.shake + 50],
+  [B.pushIn, B.settle + bt(40)],
+  [B.peek - bt(4), B.peek + bt(48)],
+  [B.flip - bt(4), B.flip + bt(66)],
+  [B.spin - bt(4), B.spin + bt(74)],
+  [B.shake - bt(4), B.shake + bt(50)],
 ];
-const calm = (a: number, b: number) => BUSY.every(([x, y]) => b <= x || a >= y) && b <= 900;
+const calm = (a: number, b: number) => BUSY.every(([x, y]) => b <= x || a >= y) && b <= LOOP;
 export const toss = (f: number) => {
   const c0 = Math.floor(f / TOSS) * TOSS;
   if (!calm(c0, c0 + 60)) return null;
@@ -116,8 +116,8 @@ export const toss = (f: number) => {
 
 /** Where the flipped tsinelas is, relative to his fist, and how far it has turned. */
 export const flipArc = (f: number) => {
-  const t0 = B.flip + 12;
-  const t1 = B.flip + 36;
+  const t0 = B.flip + bt(12);
+  const t1 = B.flip + bt(36);
   if (f < t0 || f > t1) return null;
   const t = (f - t0) / (t1 - t0);
   return { up: 0.44 * 4 * t * (1 - t), rot: 720 * outQuad(t), t };
@@ -125,7 +125,7 @@ export const flipArc = (f: number) => {
 
 /** How far left of his mark he is while running home, in wide pixels. 0 at rest. */
 export const arriveDX = (f: number) =>
-  f >= B.arrive && f < B.settle + 10 ? kf(f, [[B.arrive, -1250], [B.settle, 0, outCubic], [B.settle + 3, 22, outQuad], [B.settle + 10, 0, outCubic]]) : 0;
+  f >= B.arrive && f < B.settle + bt(10) ? kf(f, [[B.arrive, -1250], [B.settle, 0, outCubic], [B.settle + bt(3), 22, outQuad], [B.settle + bt(10), 0, outCubic]]) : 0;
 
 export const zackWide = (f: number): ZackFrame => {
   const a = alive(f);
@@ -164,7 +164,7 @@ export const zackWide = (f: number): ZackFrame => {
 
   // ---------------------------------------------------------------- the run home and the skid
   if (f >= B.arrive && f < B.settle) {
-    const skid = f >= B.settle - 7;
+    const skid = f >= B.settle - bt(7);
     if (!skid) {
       const r = runCycle(f - B.arrive, 9, 1.1);
       return {
@@ -172,14 +172,14 @@ export const zackWide = (f: number): ZackFrame => {
         yaw: 90,
         pose: r.pose,
         lift: r.lift,
-        face: 'sharp',
+        face: 'rest',
         slipper: { at: 'hand', swing: -60, twist: 0 },
         dx: arriveDX(f),
         charge: 0.8,
       };
     }
     // Plant: heels dig in, the body leans back hard against his own speed, arms thrown back.
-    const t = (f - (B.settle - 7)) / 7;
+    const t = (f - (B.settle - bt(7))) / bt(7);
     return {
       ...base,
       yaw: 90,
@@ -193,7 +193,7 @@ export const zackWide = (f: number): ZackFrame => {
         armR: [50 - 20 * t, 0, 34],
       },
       lift: [0, -0.02, 0],
-      face: 'grit',
+      face: 'glow',
       slipper: { at: 'hand', swing: -80 + 30 * t, twist: 0 },
       dx: arriveDX(f),
       charge: 1,
@@ -203,19 +203,20 @@ export const zackWide = (f: number): ZackFrame => {
   // ---------------------------------------------------------------- the dead stop
   // He snaps round to face us in FOUR frames with an overshoot, squashes into the stop, and the
   // electricity chatters off him instead of a settle (ASTRA.md). Only then does the smirk return.
-  if (f >= B.settle && f < B.settle + 36) {
-    const turn = kf(f, [[B.settle, 90], [B.settle + 4, STANCE_YAW - 14, outCubic], [B.settle + 12, STANCE_YAW + 4, outQuad], [B.settle + 22, STANCE_YAW]]);
-    const squash = kf(f, [[B.settle, 1], [B.settle + 3, 0, outCubic], [B.settle + 14, 1, outElastic]]);
-    const recover = kf(f, [[B.settle + 4, 0], [B.settle + 30, 1, outCubic]]);
+  if (f >= B.settle && f < B.settle + bt(36)) {
+    const turn = kf(f, [[B.settle, 90], [B.settle + bt(4), STANCE_YAW - 14, outCubic], [B.settle + bt(12), STANCE_YAW + 4, outQuad], [B.settle + bt(22), STANCE_YAW]]);
+    const squash = kf(f, [[B.settle, 1], [B.settle + bt(3), 0, outCubic], [B.settle + bt(14), 1, outElastic]]);
+    const recover = kf(f, [[B.settle + bt(4), 0], [B.settle + bt(30), 1, outCubic]]);
     const stop: Pose = { root: [8, 0, 0], torso: [10, 0, 0], head: [-6, 0, 0], armR: [26, 0, 30], armL: [22, 0, 28], legL: [-6, 0, 14], legR: [10, 0, -10] };
-    const chatter = env(f, B.settle, B.settle + 1, B.settle + 14, B.settle + 24);
+    const chatter = env(f, B.settle, B.settle + bt(1), B.settle + bt(14), B.settle + bt(24));
     return {
       ...base,
       yaw: turn,
       pose: addPose(mixPose(stop, base.pose, recover), { head: [3 * chatter * Math.sin(f * 2.3), 4 * chatter * Math.sin(f * 1.7), 0] }),
       lift: [0, -0.03 * (1 - squash), 0],
-      face: f < B.settle + 14 ? 'sharp' : 'rest',
-      slipper: { at: 'hand', swing: kf(f, [[B.settle, -70], [B.settle + 8, 40, outQuad], [B.settle + 18, -14], [B.settle + 30, swing]]), twist: 0 },
+      // His eyes stay lit through the chatter, then go back to his resting look.
+      face: f < B.settle + bt(14) ? 'glow' : 'rest',
+      slipper: { at: 'hand', swing: kf(f, [[B.settle, -70], [B.settle + bt(8), 40, outQuad], [B.settle + bt(18), -14], [B.settle + bt(30), swing]]), twist: 0 },
       dx: arriveDX(f),
       charge: chatter,
     };
@@ -223,37 +224,37 @@ export const zackWide = (f: number): ZackFrame => {
 
   // ---------------------------------------------------------------- idle personality
   // The glance: his eyes come up to the camera, hold it, and the smirk comes back.
-  if (f >= B.peek && f < B.peek + 44) {
-    const look = env(f, B.peek, B.peek + 5, B.peek + 30, B.peek + 40);
+  if (f >= B.peek && f < B.peek + bt(44)) {
+    const look = env(f, B.peek, B.peek + bt(5), B.peek + bt(30), B.peek + bt(40));
     return {
       ...base,
       pose: addPose(base.pose, { head: [-4 * look, 12 * look, -4 * look], torso: [0, 4 * look, 0] }),
-      face: look > 0.5 && f < B.peek + 30 ? 'sharp' : 'rest',
+      face: 'rest',
     };
   }
 
   // The flip: a dip, a flick, the tsinelas turns twice in the air, caught without looking. He
   // never takes his eyes off the camera; that is the whole joke.
-  if (f >= B.flip && f < B.flip + 62) {
-    const x = kf(f, [[B.flip, -10], [B.flip + 8, 18, outQuad], [B.flip + 12, -78, outCubic], [B.flip + 30, -70], [B.flip + 36, -58], [B.flip + 40, -40, outBack], [B.flip + 62, -10]]);
+  if (f >= B.flip && f < B.flip + bt(62)) {
+    const x = kf(f, [[B.flip, -10], [B.flip + bt(8), 18, outQuad], [B.flip + bt(12), -78, outCubic], [B.flip + bt(30), -70], [B.flip + bt(36), -58], [B.flip + bt(40), -40, outBack], [B.flip + bt(62), -10]]);
     const arc = flipArc(f);
-    const pose = addPose(base.pose, { armR: [x + 10, 0, 0], torso: [0, kf(f, [[B.flip, 0], [B.flip + 12, -6], [B.flip + 40, 0]]), 0] });
+    const pose = addPose(base.pose, { armR: [x + 10, 0, 0], torso: [0, kf(f, [[B.flip, 0], [B.flip + bt(12), -6], [B.flip + bt(40), 0]]), 0] });
     return {
       ...base,
       pose,
       slipper: arc
         ? { at: 'fromHand', offset: [0, 0.08 + arc.up, 0.02], rot: [90, 0, arc.rot] }
-        : { at: 'hand', swing: f > B.flip + 36 ? kf(f, [[B.flip + 36, -50], [B.flip + 48, 22, outQuad], [B.flip + 62, swing]]) : swing, twist: 0 },
-      charge: env(f, B.flip + 36, B.flip + 37, B.flip + 42, B.flip + 50),
+        : { at: 'hand', swing: f > B.flip + bt(36) ? kf(f, [[B.flip + bt(36), -50], [B.flip + bt(48), 22, outQuad], [B.flip + bt(62), swing]]) : swing, twist: 0 },
+      charge: env(f, B.flip + bt(36), B.flip + bt(37), B.flip + bt(42), B.flip + bt(50)),
       face: 'rest',
     };
   }
 
   // The strap spin: forearm up, the tsinelas goes round his fist twice and stops dead, hanging.
-  if (f >= B.spin && f < B.spin + 70) {
-    const up = env(f, B.spin, B.spin + 10, B.spin + 52, B.spin + 66);
-    const ang = kf(f, [[B.spin + 8, 0], [B.spin + 46, 720, linear], [B.spin + 52, 720, outElastic]]);
-    const spinning = f >= B.spin + 8 && f < B.spin + 52;
+  if (f >= B.spin && f < B.spin + bt(70)) {
+    const up = env(f, B.spin, B.spin + bt(10), B.spin + bt(52), B.spin + bt(66));
+    const ang = kf(f, [[B.spin + bt(8), 0], [B.spin + bt(46), 720, linear], [B.spin + bt(52), 720, outElastic]]);
+    const spinning = f >= B.spin + bt(8) && f < B.spin + bt(52);
     const r = 0.13;
     const th = (ang * Math.PI) / 180;
     return {
@@ -261,15 +262,15 @@ export const zackWide = (f: number): ZackFrame => {
       pose: addPose(base.pose, { armR: [-55 * up, 10 * up, 6 * up], head: [0, 6 * up, 0] }),
       slipper: spinning
         ? { at: 'fromHand', offset: [Math.sin(th) * r * 0.3, -Math.cos(th) * r, Math.sin(th) * r], rot: [90 + ang, 0, 90] }
-        : { at: 'hand', swing: f >= B.spin + 52 ? kf(f, [[B.spin + 52, 30], [B.spin + 62, -12, outQuad], [B.spin + 70, swing]]) : swing, twist: 0 },
-      charge: env(f, B.spin + 46, B.spin + 47, B.spin + 52, B.spin + 60) * 0.8,
+        : { at: 'hand', swing: f >= B.spin + bt(52) ? kf(f, [[B.spin + bt(52), 30], [B.spin + bt(62), -12, outQuad], [B.spin + bt(70), swing]]) : swing, twist: 0 },
+      charge: env(f, B.spin + bt(46), B.spin + bt(47), B.spin + bt(52), B.spin + bt(60)) * 0.8,
     };
   }
 
   // The static shake: his streak crackles, he shakes it off like a wet dog, a spark pops.
-  if (f >= B.shake && f < B.shake + 46) {
-    const build = env(f, B.shake, B.shake + 12, B.shake + 16, B.shake + 22);
-    const shake = env(f, B.shake + 14, B.shake + 16, B.shake + 26, B.shake + 32);
+  if (f >= B.shake && f < B.shake + bt(46)) {
+    const build = env(f, B.shake, B.shake + bt(12), B.shake + bt(16), B.shake + bt(22));
+    const shake = env(f, B.shake + bt(14), B.shake + bt(16), B.shake + bt(26), B.shake + bt(32));
     const osc = Math.sin((f - B.shake) * 2.2);
     return {
       ...base,
@@ -279,7 +280,7 @@ export const zackWide = (f: number): ZackFrame => {
         armR: [0, 0, 16 * shake * (0.5 + 0.5 * osc)],
         armL: [0, 0, 16 * shake * (0.5 - 0.5 * osc)],
       }),
-      face: shake > 0.3 ? 'grit' : 'rest',
+      face: build > 0.5 ? 'glow' : 'rest',
       hairStatic: build * 0.9,
       slipper: { at: 'hand', swing: swing + 30 * shake * osc, twist: 0 },
     };

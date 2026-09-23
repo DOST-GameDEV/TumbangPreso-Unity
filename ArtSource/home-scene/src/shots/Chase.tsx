@@ -1,6 +1,6 @@
 import React from 'react';
 import { random } from 'remotion';
-import { B } from '../lib/beats';
+import { B, bt, K } from '../lib/beats';
 import { Bolt, boltPoints, Crackle, Pt } from '../lib/bolt';
 import { kf, outBack, outCubic, inCubic, outQuad } from '../lib/kf';
 import { clamp01, env, onN } from '../lib/time';
@@ -24,9 +24,13 @@ const RAMPS: [number, number][] = [
   [B.scoop, 0.35],
   [B.turn, 1],
   [B.lunge, 0.42],
-  [B.lunge + 14, 1],
+  [B.lunge + bt(14), 1],
 ];
-export const ct = (f: number) => {
+/** The chase's clock in the ORIGINAL cut's frames: re-timed by K so every beat has room. */
+export const ct = (f: number) => ctRaw(f) / K;
+
+/** Frames actually elapsed on screen, with the slow-motion ramps applied: the legs run on this. */
+const ctRaw = (f: number) => {
   let t = 0;
   for (let i = 0; i < RAMPS.length; i++) {
     const [a, rate] = RAMPS[i];
@@ -60,11 +64,11 @@ const seanX = (t: number) => 2300 - 46 * Math.max(0, t - (T_TURN - 2)) - (t > T_
  * held, the way limited animation is shot; the timing sells them.
  * Side-on, yaw +90 faces screen right and -90 faces left.
  */
-type Act = { pose: Pose; lift: [number, number, number]; facing: 1 | -1; face: 'rest' | 'sharp' | 'glow' | 'grit'; holding: boolean };
+type Act = { pose: Pose; lift: [number, number, number]; facing: 1 | -1; face: 'rest' | 'glow'; holding: boolean };
 const poseAt = (t: number): Act => {
   if (t < T_SCOOP - 2) {
-    const r = runCycle(t, 8, 1.15);
-    return { ...r, facing: 1, face: 'sharp', holding: false };
+    const r = runCycle(t * K, 8, 1.15);
+    return { ...r, facing: 1, face: 'rest', holding: false };
   }
   if (t < T_TURN) {
     // The slide, two poses: the drop (leaning back, lead leg out, the hand down for it), then the
@@ -88,17 +92,17 @@ const poseAt = (t: number): Act => {
       pose: { root: [16, 0, 0], torso: [8, 0, 0], head: [-10, 0, 0], legL: [-30, 0, 8], legR: [34, 0, -8], armR: [-105, 0, 34], armL: [50, 0, 20] },
       lift: [0, -0.05, 0],
       facing: -1,
-      face: 'grit',
+      face: 'glow',
       holding: true,
     };
   }
-  const r = runCycle(t, 8, 1.15);
-  return { pose: { ...r.pose, armR: [-100, 0, 30] }, lift: r.lift, facing: -1, face: "sharp", holding: true };
+  const r = runCycle(t * K, 8, 1.15);
+  return { pose: { ...r.pose, armR: [-100, 0, 30] }, lift: r.lift, facing: -1, face: "rest", holding: true };
 };
 
 /** Sean: running in, then a dive that lays him out flat with both arms at full stretch. */
 const seanPose = (t: number, dive: number, grab: number): { pose: Pose; lift: [number, number, number] } => {
-  const r = runCycle(t + 3, 8, 1.1);
+  const r = runCycle((t + 3) * K, 8, 1.1);
   if (dive <= 0) return r;
   return {
     pose: {
@@ -258,7 +262,7 @@ export const Chase: React.FC<{ f: number }> = ({ f }) => {
           return <rect key={i} x={xx} y={y} width={len} height={5 + random(`ch${i}`) * 6} fill="#FFE6B0" opacity={0.3} />;
         })}
       {/* Slow motion reads as a held breath: the frame darkens a touch and the edges close in. */}
-      {((f >= B.scoop && f < B.turn) || (f >= B.lunge && f < B.lunge + 14)) && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" />}
+      {((f >= B.scoop && f < B.turn) || (f >= B.lunge && f < B.lunge + bt(14))) && <rect x={0} y={0} width={1920} height={1080} fill="url(#vignette)" />}
       <MotionBlurDef amount={blur} />
     </g>
   );

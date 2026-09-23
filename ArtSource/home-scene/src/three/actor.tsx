@@ -73,11 +73,12 @@ export const DUSK: Light = {
 };
 
 const toonVertex = `
-  varying vec2 vUv; varying vec3 vN; varying vec3 vView; varying vec3 vWp;
+  varying vec2 vUv; varying vec3 vN; varying vec3 vView; varying vec3 vWp; varying vec3 vBind;
   #include <common>
   #include <skinning_pars_vertex>
   void main() {
     vUv = uv;
+    vBind = position;
     #include <skinbase_vertex>
     #include <begin_vertex>
     #include <beginnormal_vertex>
@@ -94,7 +95,8 @@ const toonFragment = `
   uniform sampler2D map; uniform vec3 palette[16]; uniform float usePalette; uniform vec3 tint;
   uniform vec3 lightDir; uniform vec3 lit; uniform vec3 shade; uniform vec3 rim; uniform float rimStrength;
   uniform float flash; uniform vec3 flashColour; uniform float hasMap;
-  varying vec2 vUv; varying vec3 vN; varying vec3 vView; varying vec3 vWp;
+  uniform float eyeMix; uniform vec3 eyeColour;
+  varying vec2 vUv; varying vec3 vN; varying vec3 vView; varying vec3 vWp; varying vec3 vBind;
   void main() {
     vec3 c = vec3(1.0);
     float col = floor(clamp(vUv.x, 0.0, 0.9999) * 16.0);
@@ -118,6 +120,14 @@ const toonFragment = `
     float back = clamp(-dot(normalize(vView), normalize(lightDir)) * 0.5 + 0.6, 0.0, 1.0);
     lc = mix(lc, rim, clamp(graze * back * rimStrength * step(0.08, graze), 0.0, 1.0));
     lc = mix(lc, flashColour, flash);
+    // ⚠️ HIS OWN EYES, RECOLOURED IN PLACE. Read off the glb: the eyes are PALETTE SLOT 8 (atlas
+    // rows 12 to 15, columns 0 to 1), on the head at bind-pose height 0.464 to 0.488 and depth
+    // 0.160. Guessing them by darkness or depth failed twice (the fringe lit up, the eyes did
+    // not), so the test is the slot itself, limited to the eye band so no other slot-8 surface
+    // can light. Nothing is laid over the face, so nothing can float off it at an angle.
+    float eye = step(0.5, usePalette) * step(12.0, row) * (1.0 - step(2.0, col))
+      * step(0.455, vBind.y) * (1.0 - step(0.497, vBind.y)) * step(0.1, vBind.z);
+    lc = mix(lc, eyeColour, eyeMix * eye);
     gl_FragColor = vec4(lc, 1.0);
   }`;
 
@@ -136,7 +146,7 @@ const outlineVertex = `
 
 const outlineFragment = `
   uniform vec3 ink; uniform float flash; uniform vec3 flashColour;
-  void main() { gl_FragColor = vec4(mix(ink, flashColour, flash * 0.6), 1.0); }`;
+  void main() { gl_FragColor = vec4(mix(ink, flashColour, flash), 1.0); }`;
 
 /** The game welds the hull normals so a cube's hull closes instead of splitting at its edges. */
 const weldNormals = (g: THREE.BufferGeometry) => {
@@ -175,6 +185,8 @@ const toonMaterial = (map: THREE.Texture | null, palette: number[][] | null, tin
       rimStrength: { value: 0 },
       flash: { value: 0 },
       flashColour: { value: new THREE.Color() },
+      eyeMix: { value: 0 },
+      eyeColour: { value: new THREE.Color() },
     },
     vertexShader: toonVertex,
     fragmentShader: toonFragment,
@@ -229,61 +241,20 @@ const loadGlb = (name: string) =>
 // ------------------------------------------------------------------------------------ face
 
 /**
- * ⚠️ EXPRESSIONS ARE DECALS ON THE HEAD BONE, NOT A SECOND FACE. The model's own face texture is
- * his resting look (half-lidded arcs and a smirk) and it stays for everything calm. Only the
- * storyboard's beats that his texture cannot do (eyes snapping open, the glow) lay a thin plate
- * over the face, in head space, so it turns and tilts with the head exactly.
- *
- * Measured off the front board: eyes at model (±0.075, 0.455), mouth at y 0.40, face plane
- * z 0.218. The head bone sits at (0, 0.343, -0.0024), so in head space the eyes are at y 0.112.
+ * ⚠️⚠️ HIS EYES NEVER CHANGE SHAPE. 🧑 2026-09-23, on drawn "open" and "sharp" eyes laid over the
+ * face: *"the eyes u put looks like shit"*, *"that shit is floating on his face"*, *"if ur gonan do
+ * eye shit js make it glow dont fucking change the actual eyes"*, *"he doesnt have eyeballs too
+ * just black shits"*. So there is no expression system: `rest` is the model, `glow` lights his own
+ * black eye shapes electric yellow, and `ink` holds them near-black through a full-figure wash
+ * (the gold impact frame). The recolour happens in the toon shader, on the texels themselves.
  */
-export type Face = 'rest' | 'open' | 'sharp' | 'glow' | 'grit';
+export type Face = 'rest' | 'glow' | 'ink';
 
-const FACE_Z = 0.2215;
-const EYE_Y = 0.112;
-const EYE_X = 0.075;
-
-const flatMat = (hex: string) => new THREE.MeshBasicMaterial({ color: new THREE.Color(hex), side: THREE.DoubleSide });
-
-const buildFace = (skin: string) => {
-  const faces = {} as Record<Exclude<Face, 'rest'>, THREE.Group>;
-  for (const kind of ['open', 'sharp', 'glow', 'grit'] as const) {
-    const k = new THREE.Group();
-    const plane = (w: number, h: number, hex: string, x: number, y: number, z = 0, rot = 0) => {
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), flatMat(hex));
-      m.position.set(x, y, FACE_Z + z);
-      m.rotation.z = rot;
-      // The skin patches take the figure's wash (the impact frames); the eyes never do.
-      if (hex === skin) m.userData.skin = new THREE.Color(hex);
-      k.add(m);
-    };
-    // Skin patch over the texture's own eyes, so the new ones replace rather than stack.
-    plane(0.29, 0.085, skin, 0, EYE_Y + 0.004, 0.0005);
-    for (const side of [-1, 1]) {
-      const x = side * EYE_X;
-      if (kind === 'open') {
-        plane(0.056, 0.058, '#1B0D0A', x, EYE_Y, 0.001);
-        plane(0.02, 0.02, '#FFF6E6', x + 0.012, EYE_Y + 0.012, 0.0015);
-      } else if (kind === 'sharp' || kind === 'grit') {
-        // Narrowed and angled down toward the nose: his focus, not anger.
-        plane(0.066, 0.04, '#1B0D0A', x, EYE_Y - 0.004, 0.001, side * 0.22);
-        plane(0.018, 0.016, '#FFF6E6', x + 0.014 * side, EYE_Y - 0.001, 0.0015);
-        plane(0.08, 0.016, '#1B0D0A', x + side * 0.004, EYE_Y + 0.044, 0.001, side * -0.32);
-      } else {
-        plane(0.07, 0.05, '#F6FFA0', x, EYE_Y, 0.001, side * 0.18);
-        plane(0.036, 0.024, '#FFFDE8', x, EYE_Y, 0.0015, side * 0.18);
-        plane(0.09, 0.018, '#1B0D0A', x + side * 0.004, EYE_Y + 0.046, 0.001, side * -0.36);
-      }
-    }
-    if (kind === 'grit') {
-      plane(0.13, 0.05, skin, 0.01, EYE_Y - 0.058, 0.0005);
-      plane(0.11, 0.028, '#1B0D0A', 0.01, EYE_Y - 0.058, 0.001);
-      plane(0.09, 0.012, '#FFF6E6', 0.01, EYE_Y - 0.054, 0.0015);
-    }
-    faces[kind] = k;
-  }
-  return faces;
-};
+// Where the eyes are, for anchoring glows and sparks: head space (the head bone sits at
+// y 0.343, z -0.0024; the eyes are at model y 0.479, x -0.06 and +0.05, face plane z 0.218).
+const FACE_Z = 0.2205;
+const EYE_Y = 0.136;
+const EYE_X = 0.057;
 
 // ------------------------------------------------------------------------------------ build
 
@@ -296,7 +267,6 @@ export type Built = {
   rest: Record<string, THREE.Quaternion>;
   restPos: Record<string, THREE.Vector3>;
   mats: Mats;
-  faces: Record<Exclude<Face, 'rest'>, THREE.Group> | null;
   slipper: THREE.Group | null;
 };
 
@@ -321,12 +291,6 @@ const buildActor = (gltf: GLTF, model: string, slipper: GLTF | null): Built => {
   });
   const clips: Record<string, THREE.AnimationClip> = {};
   for (const a of gltf.animations) clips[a.name] = a;
-  let faces = null;
-  if (model === 'team-zack') {
-    const p = PALETTES[model][13];
-    faces = buildFace(`#${new THREE.Color(p[0], p[1], p[2]).multiply(new THREE.Color(DUSK.lit)).getHexString()}`);
-    for (const f of Object.values(faces)) { f.visible = false; bones.head.add(f); }
-  }
   let held: THREE.Group | null = null;
   if (slipper) {
     const s = slipper.scene.clone(true);
@@ -337,7 +301,7 @@ const buildActor = (gltf: GLTF, model: string, slipper: GLTF | null): Built => {
     held.visible = false;
     scene.add(held);
   }
-  return { model, scene, mixer: new THREE.AnimationMixer(scene), clips, bones, rest, restPos, mats, faces, slipper: held };
+  return { model, scene, mixer: new THREE.AnimationMixer(scene), clips, bones, rest, restPos, mats, slipper: held };
 };
 
 // ------------------------------------------------------------------------------------ pose
@@ -452,7 +416,6 @@ const poseRig = (b: Built, p: ActorProps) => {
   if (p.lift) b.bones.root.position.add(new THREE.Vector3(...p.lift));
   b.scene.rotation.set(0, (p.yaw ?? 0) * deg, 0);
 
-  if (b.faces) for (const [k, g] of Object.entries(b.faces)) g.visible = (p.face ?? 'rest') === k && p.only !== 'slipper';
   b.scene.traverse((o) => {
     if ((o as THREE.Mesh).isMesh && !isInSlipper(b, o)) o.visible = p.only !== 'slipper';
   });
@@ -506,12 +469,9 @@ const light = (b: Built, p: ActorProps) => {
     m.uniforms.rimStrength.value = L.rim_strength;
     m.uniforms.flash.value = L.flash ?? 0;
     (m.uniforms.flashColour.value as THREE.Color).set(L.flashColour ?? '#ffffff');
-  }
-  if (b.faces) {
-    for (const g of Object.values(b.faces)) g.traverse((o) => {
-      const base = o.userData.skin as THREE.Color | undefined;
-      if (base) ((o as THREE.Mesh).material as THREE.MeshBasicMaterial).color.copy(base).lerp(new THREE.Color(L.flashColour ?? '#ffffff'), L.flash ?? 0);
-    });
+    const face = p.face ?? 'rest';
+    m.uniforms.eyeMix.value = face === 'rest' ? 0 : 1;
+    (m.uniforms.eyeColour.value as THREE.Color).set(face === 'glow' ? '#F6FFA0' : '#140806');
   }
   for (const h of b.mats.hull) {
     h.m.uniforms.width.value = h.w ?? p.ink ?? 0.0075;
