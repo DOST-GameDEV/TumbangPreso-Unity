@@ -428,6 +428,8 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator Walk()
         {
+            if(Environment.GetCommandLineArgs().Contains("-tp-match-chat-review-only"))
+            {yield return MatchChatOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-accessibility-review-only"))
             {yield return AccessibilityOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-map-surfaces-only"))

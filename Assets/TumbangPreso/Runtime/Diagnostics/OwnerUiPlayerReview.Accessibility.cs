@@ -10,6 +10,37 @@ namespace TumbangPreso.Diagnostics
 {
     public sealed partial class OwnerUiPlayerReview
     {
+        // Focused native follow-up for127.3. Uses the actual match canvas and existing
+        // screenshot path without depending on retired front-end menu automation.
+        private IEnumerator MatchChatOnly()
+        {
+            Stage("first match-chat line at enlarged HUD size");
+            SceneFlow.Networked = false;
+            SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike));
+            SettingsStore.Current.HudScale = 1.2f;
+            SettingsStore.Current.LargerText = true;
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            yield return WaitFor(() => GameObject.Find("OwnerMatchCanvas") != null && GameServices.Round != null, 30);
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            var chat = LobbyChat.Attach(canvas.transform, true);
+            chat.PlaceBottomRight(38, 232, 540);
+            const string message = "LOCAL UI REVIEW: a readable chat line.";
+            typeof(LobbyChat).GetMethod("AddLocal", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(chat, new object[] { message });
+            var row = chat.transform.Find("ChatLine5").GetComponent<Text>();
+            foreach (var size in new[] { new Vector2Int(1680, 720), new Vector2Int(960, 540) })
+            {
+                Screen.SetResolution(size.x, size.y, FullScreenMode.Windowed);
+                yield return WaitFor(() => Screen.width == size.x && Screen.height == size.y, 8);
+                yield return Shot("match-chat-first-line-large-" + size.x + "x" + size.y);
+                if (row.text != message || row.preferredHeight > row.rectTransform.rect.height + .5f ||
+                    row.cachedTextGenerator.characterCountVisible < row.text.Length ||
+                    ((RectTransform)chat.transform).anchoredPosition.x >= 0)
+                    throw new InvalidOperationException("Native match chat lost content, clipped its row or lost its right anchor: " + row.text);
+            }
+            Stage("native first message fully rendered at both enlarged-HUD sizes");
+        }
+
         private IEnumerator AccessibleClick(string name)
         {
             yield return WaitFor(() => Find(name) != null);

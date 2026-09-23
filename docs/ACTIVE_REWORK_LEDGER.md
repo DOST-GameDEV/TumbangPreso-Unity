@@ -9,8 +9,8 @@ Current owner instructions/adopted designs supersede old OPEN headings and retir
 FUTURE plans. Preserve all tasks and evidence; do not revive obsolete proposals.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Source/last verified remote52ef6244390b2dfc9be5a06640d6bafcfea93749. P6 documentation
-is published. Stage explicit paths; sole authorM4tyu633, no
+Source/last verified remote7a0ae33638a186cb865a6153c6b718b5392692db. P6 documentation
+and functional chat fix are published. Stage explicit paths; sole authorM4tyu633, no
 trailers/AI mentions/em dashes. Fetch/reconcile before push and verify remote HEAD.
 Never commit original composition-redesign/home-court.png.meta or loading-street.png.meta.
 Other contributor's HOME video commits are integrated, not generated churn.
@@ -18,12 +18,16 @@ Remote lighting/peak-bright-overhaul exists but is NOT integrated here; inspect
 adopted source before later map work rather than blindly cherry-picking it.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached47d5502cb with copied HubCharacterSelect.cs/MatchArrivalFlowTests.cs
-from6c713a6b3. Independent warm Library. Preserve these intentional tested inputs.
-No Unity/native job active. Chat baseline failed1/1in15.997s, targeted follow-up
+owned detached7a0ae3363 plus the new opt-in chat diagnostic2.cs files and runner.py.
+Earlier owned inputs saved in Logs/chat-native-candidate-inputs.patch and a retained
+stash named owned chat candidate inputs before published7a0ae3363. Independent warm
+Library. Build78174 and native2108 completed/reaped. No owned Unity/player/helper
+currently running. Native chat passed, full text visible both shapes, exit0/shared
+input unchanged. Generated build churn restored after full diff saved.
+Chat baseline failed1/1in15.997s, targeted follow-up
 passed1/1in8.347s; first message now fully visible at1680x720 and960x540, inspected.
-QUALalso holds copied LobbyChat.OwnerPainted.cs/LobbyChatStripProbe.cs for this fix.
-Both jobs reaped, generated churn restored and profiles preserved. Old validation
+Those4selector/chat files are now part of QUALHEAD, not uncommitted inputs.
+Both test jobs reaped, their churn restored and profiles preserved. Old validation
 checkout has111dirtypaths and MUST NOT be reset; preserve main/home/net/ilalim too.
 
 ### Latest actual work and owner steering
@@ -78,7 +82,16 @@ Owned candidate stashes/patch receipts remain in QUALLogs; never drop blindly.
    passed after laying out the visible column before Ellipsise. Wide/small frames,
    XML and grey25 in completion/chat-first-line. No test-tool repair was needed.
    Stop condition met; do not repeat this check. Native confirmation stays separate
-   for the next current candidate. Publish this functional fix, then advance UX/P7.
+   for the next current candidate. Functional fix published7a0ae3363, remote verified.
+   A small opt-in --match-chat-only route now reuses the existing native match canvas
+   and screenshot machinery without migrating the old menu traversal. Build/run
+   question: does the complete line render at1680x720 and960x540 with enlarged HUD,
+   and does this player exit cleanly? Stop after one native receipt and visual review;
+   no replay/settings expansion or desktop-capture repair. Internal candidate
+   Builds/p7-chat-7a0ae3363/TumbangPreso.exe in QUAL,1278MB/157s, plus recorded source.
+   PASSED both native shapes, personally inspected; exit0/shared input unchanged.
+   Specific127.3now complete. Publish diagnostic/receipts and advance. Do not repeat
+   this run. Full current services/peer/regression acceptance remains separate.
 3. Current gaps: true multi-peer UGS queue/ballot, browser interaction/live buy-claim,
    native typing/chat/rename/running-match rejoin, coherent final regression/identity,
    earlier D3D12shutdown crash diagnosis. Physical mobile/pad and human listening

@@ -510,18 +510,21 @@ Implementation order within UX-1:
 
 ### Active items carried forward (status unchanged by this cleanup)
 
-- [ ] **127.3 accessibility completion.** FPP FOV, hold or toggle sprint and can restore,
+- [x] **127.3 accessibility software and targeted native completion.** FPP FOV, hold or toggle sprint and can restore,
   HUD size and larger text, high contrast, reduced particles and flashes, and
   delivered-announcer captions are implemented; the wider angular taya ring reads in
   greyscale; controls, layout, captions, native spectator v56 and the bounded native
   accessibility route v57 (15/15 stages) passed; the 134.10 reduced-effects link is
-  published. **One follow-up remains:** v57's wide large-HUD frame shows the injected
+  published. The final specific follow-up was v57's wide large-HUD frame showing the injected
   match-chat line clipped to "LOCA...". The current focused check reproduced a second
   cause: `Ellipsise` ran before the row received its width. Fixed by laying out the
   visible column before fitting text; before0/1, after1/1, wide/small enlarged-HUD
   frames inspected in [chat-first-line](reports/front-end-flow-2026-09-23/completion/chat-first-line/README.md).
-  The right anchor is also asserted. Native confirmation remains for the next P7
-  candidate; the old native runner's retired menu route was not silently counted.
+  The right anchor is also asserted. Native7a0ae3363plus the opt-in diagnostic passed
+  both1680x720 and960x540: full line visible over the actual map, personally inspected;
+  player exit0 and shared input unchanged. The focused route bypasses retired menu
+  traversal and does not claim a new whole-settings run. Physical device and final
+  integrated acceptance remain separately in P7.
 - [ ] **Native player shutdown crash.** v57 (and one earlier recorded runner result)
   exited with 0xC0000005 after the review had passed and `CodeReloadManager destroyed`
   was logged. The verdict stands; the cause is unknown. Reproduce on the next build,
