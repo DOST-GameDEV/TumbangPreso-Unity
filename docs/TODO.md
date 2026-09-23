@@ -253,7 +253,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   68far homes and22planted plots. Original collision/landmarks retained; actual
   preview/overview/grey25inspected, focused1/1passed.
   [Context evidence](reports/map-by-map-refinement-2026-09-23/bayan-context/report.md).
-  Remaining monument pots/buildings/sky stay open; keep successful civic landmarks.
+  Four monument-edge pots now have supported shrubs/contained soil, original concrete
+  retained. Paired/grey25/native preview inspected; focused2/2passed. Civic fronts/rear
+  and south High/Low reviewed; sky20/180motion samples inspected and retained.
+  [Pot and near-art findings](reports/map-by-map-refinement-2026-09-23/bayan-potted-shrubs/report.md).
+  Next the source-confirmed e/o house-detail omission, then final card/integrated gate.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.

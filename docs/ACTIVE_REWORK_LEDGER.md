@@ -162,3 +162,45 @@ qualified scene/assets/evidence copied to DEV, known churn restored after patch.
 Keep this context result; publish it, then review four block-like monument pots and
 remaining local buildings/sky. Full native/camera traversal is still in final gate.
 No active Unity job. See bayan-context/report.md for counts and exact limits.
+
+Contexta5c06f7eafd49db2b49f4e34772cd329622cbf80PUBLISHED, remote verified. QUAL
+advanced after exact candidate match/stash, now detacheda5c06f7ea. Next local pot
+plan saved in bayan-potted-plan.md: original OBJ confirms two stacked green boxes;
+keep concrete/coping and replace foliage only on four named monument-edge pots.
+BayanPottedShrubAuthor source drafted/copied, compact three-crown leafy shrub per
+pot with four individual arrangements and connecting stems. Shared existing plaza
+leaf material; original renderers retained disabled; no new collision. Bounded
+native paired group/near case ready in existing probe. Author next; freeze.cs inputs.
+
+Pot author18600completed/reaped: each pot retains original concrete/coping submeshes
+and has558foliage vertices in a supported three-crown arrangement,4pots total2232.
+Bounded pot pair and final Bayan art review now run together in
+Logs/refine2-bayan-pots-v1/check.log. Includes real960x540preview,4near house families,
+church/hall/service rear, a south eye view offset from actors, Low version and sky
+sample20/180. Inputs frozen while active. Inspect before deciding further changes;
+keep useful existing architecture rather than changing it for activity's sake.
+
+Pot/final review2829completed/reaped2/2in7.001s. Pot shape is clearer, but inherited
+solid white coping reads as a bare plinth. Add one contained soil quad inside each
+rim (no collision), preserving the concrete. Native review also exposed two witness
+positions inside first-row roofs: alternating Civic IDs are back rows. Their camera
+moves into the existing service lane for a bounded correction, not new machinery.
+V2author now writes Logs/refine2-bayan-pots-v2/author.log; no.cs edits while active.
+Church/hall/rear and clear south/Low images exist from v1; sky20/180still need viewing.
+Other preliminary Ilalim primary reference leads were found (LRMC vertical gardens,
+PNA organized vendor stalls); not yet read/visually verified, so do not claim them
+as completed visual research. No Ilalim source changes.
+
+Pot v2author70876/check84972completed/reaped2/2in6.937s. Soil treatment and matched
+pot/grey25accepted; civic front/rear and clear south High/Low inspected, sky20/180
+samples differ in cloud region only. Existing architecture/sky retained. Qualified
+pot scene/assets/evidence copied to DEV and known churn restored. Publish pot unit.
+Source-confirmed next issue: CivicTownAuthor only adds fitted a/c detail models,
+so16e/oBayan bodies lack existing upper wood/jalousie/terrace details. Saved
+bayan-house-finish-plan.md. Use their existing fitted GLBs locally, preserve bodies/
+collision and other maps, use corrected single-plank timber materials. One paired
+front/back review, then card and next map. No new balcony: original odoor is a
+retained terrace door, confirmed in source. No active jobs or browser tabs.
+Ilalim identity is Gilmore/LRT2; LRMC Line1photo is general support/context reference,
+not a new train/station specification. Read LRMC articles and viewed2023Photo2;
+2020vertical-garden image failed. Notes retain that distinction.
