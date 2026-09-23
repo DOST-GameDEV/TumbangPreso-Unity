@@ -90,8 +90,14 @@ namespace TumbangPreso.UI
             {
                 bool shown=!string.IsNullOrEmpty(line.text);line.gameObject.SetActive(shown);if(!shown)continue;
                 line.color=_inMatch?OwnerUiTheme.Current.Pale:ChatInk;
-                line.fontSize=30;Height(line.rectTransform,NativeLineHeight);Ellipsise(line,NativeLineHeight);
+                line.fontSize=30;Height(line.rectTransform,NativeLineHeight);
             }
+            // Newly activated rows have not received the column's width yet. Fitting now
+            // permanently reduces the first match message to a few letters. Lay out all
+            // visible rows once per received message before measuring their text.
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
+            foreach(var line in _lines)
+                if(line.gameObject.activeSelf)Ellipsise(line,NativeLineHeight);
         }
         private void BuildNativeHistory()
         {

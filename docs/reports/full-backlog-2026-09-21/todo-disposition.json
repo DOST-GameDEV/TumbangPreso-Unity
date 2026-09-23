@@ -3222,11 +3222,13 @@
         "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
         "docs/reports/visual-research-2026-09-23/implementation-plan.md",
         "Assets/TumbangPreso/Runtime/UI/HudReadingLayout.cs",
-        "docs/TODO.md"
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/chat-first-line/README.md"
       ],
       "classification": "implemented_with_specific_current_qualification_remaining",
       "reviewedOn": "2026-09-23",
-      "supersessionCheckedOn": "2026-09-23"
+      "supersessionCheckedOn": "2026-09-23",
+      "currentFollowUp": "First-message clipping reproduced and fixed in native chat layout: before0/1, after1/1 focused Editor check with wide/small large-HUD frames. Native-player confirmation remains P7; no repeated full accessibility run."
     },
     {
       "lineAtIntake": 9338,

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.9973474">
+  <test-suite type="TestSuite" id="1738" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="562" result="Failed" site="Child" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.997347" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1732" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="562" result="Failed" site="Child" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.969571" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30172" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1733" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="562" result="Failed" site="Child" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.958214" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1734" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="562" result="Failed" site="Child" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.949412" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1262" name="LobbyChatStripProbe" fullname="TumbangPreso.PlayTests.LobbyChatStripProbe" classname="TumbangPreso.PlayTests.LobbyChatStripProbe" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.902519" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1263" name="FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" fullname="TumbangPreso.PlayTests.LobbyChatStripProbe.FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" methodname="FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize" classname="TumbangPreso.PlayTests.LobbyChatStripProbe" runstate="Runnable" seed="1275149693" result="Failed" start-time="2026-09-23 10:00:59Z" end-time="2026-09-23 10:01:15Z" duration="15.871194" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The first message was shortened against its pre-layout width and never recovered.
+  Expected: String starting with "LOCAL UI REVIEW"
+  But was:  "LOCAL…"
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.StringAssert.StartsWith (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.PlayTests.LobbyChatStripProbe+<FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize>d__4.MoveNext () [0x001ed] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-world-qualification-20260923\Assets\TumbangPreso\Tests\PlayMode\LobbyChatStripProbe.cs:76
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] MatchChat-first-line-large-1680x720/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] MatchChat-first-line-large-1680x720 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] MatchChat-first-line-large-960x540/Power0: vertices=659, cull=False, alpha=1, depth=103, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=660, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=840, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/Power2: vertices=418, cull=False, alpha=1, depth=115, material=1
+[TumpGeometry] MatchChat-first-line-large-960x540/PowerIcon: vertices=960, cull=False, alpha=1, depth=116, material=1
+[TumpUiCapture] MatchChat-first-line-large-960x540 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

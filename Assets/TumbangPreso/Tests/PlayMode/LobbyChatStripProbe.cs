@@ -32,6 +32,8 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class LobbyChatStripProbe
     {
+        private float _hudScale;
+        private bool _largerText;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -39,10 +41,45 @@ namespace TumbangPreso.PlayTests
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _hudScale = Settings.SettingsStore.Current.HudScale;
+            _largerText = Settings.SettingsStore.Current.LargerText;
+            yield return PlayModeWorld.Reset();
+        }
 
         [UnityTearDown]
-        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldAfter()
+        {
+            Settings.SettingsStore.Current.HudScale = _hudScale;
+            Settings.SettingsStore.Current.LargerText = _largerText;
+            yield return PlayModeWorld.Reset();
+        }
+
+        [UnityTest]
+        public IEnumerator FirstMatchLineUsesItsLaidOutWidthAtLargeHudSize()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, Core.GameMode.HeroStrike);
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            Settings.SettingsStore.Current.HudScale = 1.2f;
+            Settings.SettingsStore.Current.LargerText = true;
+            var chat = LobbyChat.Attach(canvas.transform, inMatch: true);
+            chat.PlaceBottomRight(38, 232, 540);
+            // Deliver before the first layout frame, as a real queued message can arrive.
+            typeof(LobbyChat).GetMethod("AddLocal", BindingFlags.Instance | BindingFlags.NonPublic)
+                .Invoke(chat, new object[] { "LOCAL UI REVIEW: a readable chat line." });
+            yield return null;
+            var row = chat.transform.Find("ChatLine5").GetComponent<Text>();
+            foreach (var size in new[] { new Vector2Int(1680, 720), new Vector2Int(960, 540) })
+                yield return TumpUiCapture.Capture("MatchChat-first-line-large-" + size.x + "x" + size.y,
+                    canvas, size.x, size.y, checkPalette: false, checkActionBounds: false);
+            StringAssert.StartsWith("LOCAL UI REVIEW", row.text,
+                "The first message was shortened against its pre-layout width and never recovered.");
+            Assert.LessOrEqual(row.preferredHeight, row.rectTransform.rect.height + .5f);
+            Assert.GreaterOrEqual(row.cachedTextGenerator.characterCountVisible, row.text.TrimEnd().Length);
+            Assert.Less(((RectTransform)chat.transform).anchoredPosition.x, 0,
+                "Large HUD text must preserve the final right-hand anchor.");
+        }
 
         /// <summary>
         /// ⚠️ REAL SENTENCES AT A REAL LENGTH. `MatchRpc.MaxChatLength` is 120 and § 79.3's
