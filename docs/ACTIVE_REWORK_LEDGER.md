@@ -9,11 +9,10 @@ plans. No other chats/delegation, paid services, credit resets, main edits or De
 replacement. Latest owner: "aight lock in i expect great work".
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Last published head083321bf464fb008e8f9cfb5579dfb2c79d9a538; current garden unit
-ready to publish. Original home-court.png.meta/loading-street.png.meta in
+Garden published800c282407526d18c2d67376441b5d70638ae545; remote verified. Original home-court.png.meta/loading-street.png.meta in
 Resources/UI/composition-redesign remain dirty and must NEVER be restored/staged.
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached083321bf4, qualified garden candidate retained. Do not reset/clean
+owned detached800c28240, published garden candidate stashed after exact match. Do not reset/clean
 other worktrees or discard named candidate stashes. Stage owned paths explicitly.
 Sole authorM4tyu633; no trailers/AI mentions/em dashes. Fetch before push and verify
 remote. Other contributor's UI/Rafi work must be preserved.
@@ -48,7 +47,7 @@ No Unity job remains running. No task-owned browsers or temporary servers.
 
 ## Next implementation, exact order
 
-1. Publish the garden unit, then review Eskinita's sky/background composition and
+1. Review Eskinita's sky/background composition and
    remaining ordinary props under the bright look. Near frames now show oversized
    pale mountain triangles: supplied Mountain.png painting stays unchanged; judge
    apparent height/distance with the actual district and camera before changing it.
@@ -111,3 +110,17 @@ turnaround step needed -rig; bounded repair used), art-batch4 running (Rafi v7 r
 plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two original
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
+
+Backdrop plan saved in eskinita-backdrop-plan.md; source lowers only three existing
+painted cards. Next guarded StageEskinitaBackdrop, then existing house/preview
+capture routes. Baseline is garden-v1; do not regenerate it.
+
+Backdrop author54802/check31060completed/reaped: two active cards lowered, third
+inside inactive Malayo preserved. Existing2/2passed6.244s, matched game/grey25and
+preview/small inspected. Known churn restored and scene/evidence copied to DEV.
+New observed product gap: preview still uses old dark lighting. Lighting source
+still50f1fc255after fetch, no incoming updates. Complete LIGHT-1.8integration using
+its documented explicit-sun/WorldLookCamera route and reuse same-map install on
+ReapplyEnvironment. This replaces the earlier speculative wait for unpublished
+code; no other contributor files or conversations were touched. One bounded
+preview/transition check, then continue map assets. No new test framework.

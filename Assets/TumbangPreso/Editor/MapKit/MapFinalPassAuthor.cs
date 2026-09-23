@@ -16,6 +16,15 @@ namespace TumbangPreso.EditorTools.MapKit
     public static class MapFinalPassAuthor
     {
         private const string Folder="Assets/TumbangPreso/Art/MapFinalPass";
+        public static void StageEskinitaBackdrop()
+        {
+            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity");
+            var report=new StringBuilder();SetPaintedDistance("Eskinita",report);
+            EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
+            Directory.CreateDirectory("Logs/eskinita-backdrop");
+            File.WriteAllText("Logs/eskinita-backdrop/author.txt",report.ToString());
+            Debug.Log(report.ToString());EditorApplication.Exit(0);
+        }
         public static void Run()
         {
             var report=new StringBuilder();
@@ -366,11 +375,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 var t = renderer.transform;
                 Vector3 at;
                 float width;
-                // The painting's top22% is transparent. Keep its actual peaks
-                // above the roofline without returning to the old looming cutouts.
-                if (t.name == "MountainBackdrop") { at = new Vector3(0, 28, 180); width = 180; }
-                else if (t.name == "Quad") { at = new Vector3(155, 34, 25); width = 140; }
-                else if (t.name == "Quad (1)") { at = new Vector3(-145, 34, -65); width = 140; }
+                // The painting's top22% is transparent. Its visible ridge should sit
+                // just above the district, not loom over near houses. The adopted
+                // bright atmosphere exposed the old elevated quads as huge triangles.
+                if (t.name == "MountainBackdrop") { at = new Vector3(0, -3, 180); width = 180; }
+                else if (t.name == "Quad") { at = new Vector3(155, -6, 25); width = 140; }
+                else if (t.name == "Quad (1)") { at = new Vector3(-145, -4, -65); width = 140; }
                 else continue;
                 var texture = renderer.sharedMaterial.mainTexture;
                 float aspect = texture != null && texture.height > 0 ? (float)texture.width / texture.height : 1.926f;
