@@ -265,7 +265,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
   Next active map. [Primary reference intake and Gilmore/LRT2identity](reports/map-by-map-refinement-2026-09-23/ilalim-reference-notes.md)
-  saved. Judge current bright views before deciding local concrete/shop/context changes.
+  saved. First local finish replaces mint concrete/pink-yellow track lookup colors
+  with neutral structural materials on24pillars/28bays/56tracks. Original geometry,
+  collision, palettes and train livery retained. Paired preview/eye/under-deck/grey25
+  inspected, focused1/1passed. [Evidence](reports/map-by-map-refinement-2026-09-23/ilalim-structure/report.md).
+  Existing skyline/backlot, shop surfaces, sky and final card remain open.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve

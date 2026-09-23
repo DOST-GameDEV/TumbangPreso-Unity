@@ -59,6 +59,7 @@ namespace TumbangPreso.EditorTools.MapKit
             BayanTownContextAuthor.ClearPrevious(map);
             BayanPottedShrubAuthor.ClearPrevious(map);
             BayanHouseFinishAuthor.ClearPrevious(map);
+            IlalimStructureFinishAuthor.ClearPrevious(map);
             MapPlaceAuthor.ClearPrevious(map);
             EskinitaNeighborhoodAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
@@ -94,6 +95,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="BayanPlaza")BayanTownContextAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanPottedShrubAuthor.FinishLoadedScene(report);
             if(map=="BayanPlaza")BayanHouseFinishAuthor.FinishLoadedScene(report);
+            if(map=="IlalimNgTulay")IlalimStructureFinishAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

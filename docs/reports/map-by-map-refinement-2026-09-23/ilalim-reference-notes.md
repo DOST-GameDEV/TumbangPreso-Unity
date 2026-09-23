@@ -37,3 +37,23 @@ under Line2; the PC Express primary branch page also locates its Gilmore branch
 on Aurora Boulevard. Those latter pages are currently indexed leads, not inspected
 photographs. The old design's24second train interval is historical; verify current
 runtime before citing it, and do not alter mechanics as part of this art pass.
+
+
+## Native baseline and generated study
+
+Native baseline1/1passed7.085s; actual preview, north/south street, two shop sides and
+under-deck view inspected. Structure and existing shop content now read under bright
+lighting. The concrete is conspicuously mint and track rails/sleepers pink/yellow;
+these large high-chroma stripes dominate the preview. Existing skyline/backlot
+already has substantial geometry (inventory1509surfaces/97solids), so don't copy a
+new generic city over it. Tall background masses need actual surface/form review.
+
+Built-in ilalim-structure-v1study saved with exact prompt/SHA beside the image.
+Keep: warm-neutral concrete/cooler soffit separation, quiet steel rails/sleepers,
+legible joints/caps, restrained grouped background windows and roof service forms.
+Reject: extra realistic concrete mottling, detailed merchandise hardware, moved
+piers/altered street widths and any generated sign lettering. The source shop art
+stays intact. The right shop panel is more detailed than TUMP and must be simplified.
+The existing structure already has useful bearing/cap/joint geometry; no geometry
+addition is needed merely to match the reference's polish. First improve only its
+local material palette while preserving bright readability. No Ilalim art edits yet.

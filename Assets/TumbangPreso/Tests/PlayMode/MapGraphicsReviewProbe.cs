@@ -87,6 +87,95 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimStructureFinishReview()
+        {
+            var canvas=new GameObject("Ilalim structure preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.IlalimNgTulay);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.IlalimNgTulay,preview.Showing);preview.enabled=false;
+            var toggle=IlalimStructureSwitch();
+            foreach(string state in new[]{"before","after"})
+            {
+                toggle(state=="after");yield return null;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(preview.Camera,"Ilalim-structure-preview-"+state,false,Output,width:1280,height:720);
+            }
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=65;toggle=IlalimStructureSwitch();
+            foreach(string view in new[]{"north","under-deck"})
+            {
+                camera.transform.position=view=="north"?new Vector3(-2.8f,1.8f,-10):new Vector3(0,2,-5);
+                camera.transform.LookAt(view=="north"?new Vector3(3,2.2f,20):new Vector3(0,9,15));
+                foreach(string state in new[]{"before","after"})
+                {
+                    toggle(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Ilalim-structure-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+        private static Action<bool> IlalimStructureSwitch()
+        {
+            const string tag="TumpIlalimStructureSource",marker="TUMP_ILALIM_STRUCTURE_MESH_SOURCE:";
+            var materials=new System.Collections.Generic.List<(MeshRenderer renderer,Material[] before,Material[] after)>();
+            var meshes=new System.Collections.Generic.List<(MeshFilter filter,Mesh before,Mesh after)>();
+            var root=GameObject.Find("IlalimNgTulay/Dressing/Tulay");Assert.IsNotNull(root);
+            foreach(var renderer in root.GetComponentsInChildren<MeshRenderer>())
+            {
+                var after=renderer.sharedMaterials;if(!after.Any(m=>!string.IsNullOrEmpty(m.GetTag(tag,false))))continue;
+                var before=after.Select(m=>string.IsNullOrEmpty(m.GetTag(tag,false))?m:AssetDatabase.LoadAssetAtPath<Material>(m.GetTag(tag,false))).ToArray();
+                Assert.IsTrue(before.All(m=>m!=null));materials.Add((renderer,before,after));
+                var filter=renderer.GetComponent<MeshFilter>();string path=AssetDatabase.GetAssetPath(filter.sharedMesh);
+                var importer=AssetImporter.GetAtPath(path);string data=importer!=null?importer.userData:"";
+                if(data.StartsWith(marker,StringComparison.Ordinal))
+                {
+                    var original=AssetDatabase.LoadAssetAtPath<Mesh>(data.Substring(marker.Length));Assert.IsNotNull(original);
+                    meshes.Add((filter,original,filter.sharedMesh));
+                }
+            }
+            Assert.IsNotEmpty(materials);Assert.IsNotEmpty(meshes);
+            return after=>
+            {
+                foreach(var item in materials)item.renderer.sharedMaterials=after?item.after:item.before;
+                foreach(var item in meshes)item.filter.sharedMesh=after?item.after:item.before;
+            };
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlalimArtBaselineReview()
+        {
+            var canvas=new GameObject("Ilalim preview review",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.IlalimNgTulay);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.IlalimNgTulay,preview.Showing);preview.enabled=false;
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(preview.Camera,"Ilalim-preview",false,Output,width:1280,height:720);
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();
+            yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=65;GraphicsProfiles.Apply(2);yield return null;
+            foreach(string view in new[]{"north","south","west-shops","east-shops","structure"})
+            {
+                camera.transform.position=view=="north"?new Vector3(-2.8f,1.8f,-10):view=="south"?new Vector3(2.8f,1.8f,10):
+                    view=="west-shops"?new Vector3(-3.5f,2.6f,0):view=="east-shops"?new Vector3(3.5f,2.6f,-2):new Vector3(0,2,-5);
+                camera.transform.LookAt(view=="north"?new Vector3(3,2.2f,20):view=="south"?new Vector3(-2,2.2f,-25):
+                    view=="west-shops"?new Vector3(-11,2,0):view=="east-shops"?new Vector3(11,2,0):new Vector3(0,9,15));
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"Ilalim-"+view,false,Output,width:1280,height:800);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator BayanHouseFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);

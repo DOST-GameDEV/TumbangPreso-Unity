@@ -240,3 +240,47 @@ with a notably cool/mint pier tint. Inventory has1509surfaces/97solids, includin
 substantial existing SkylineKit/BacklotKit; do not duplicate a city from an old crop.
 Next actual preview/near concrete/shop inventory review and local plan, using the
 adopted bright lighting. No Ilalim assets changed yet. Browser reference tabs closed.
+
+Bayan house/card56a068418committed and push67400receipt pending reaping. QUAL exact
+candidate matched/stashed then advanced56a068418. Current first Ilalim native art
+survey28828runs Logs/refine2-ilalim-baseline: actual preview and five ordinary/
+shop/structural views under adopted bright look. Source inputs frozen. No Ilalim
+asset or material changes yet. Need inspect these before local palette/context plan.
+
+House/card push confirmed56a068418ac433cc09cd4c7393a35c16aedd78fe. Ilalim baseline
+28828completed/reaped1/1in7.085s; actual preview, ordinary/shop/under-deck views
+inspected. No active Unity job. Observed real issues: mint concrete and pink/yellow
+track palette dominate the preview; tall background masses are flat/blank. Existing
+piers/caps/bearings/joints and shop fixtures already supply geometry. Preserve those
+and the bright readability, focus a local structural material finish first, then
+inspect/refine existing skyline/backlot rather than adding another duplicate city.
+The south diagnostic includes a nearby actor at its edge; no fixture repair detour.
+Pillar inventory24renderers, all using existing roads/Textures/tumbang-warm-a.png;
+track uses tumbang-lrt palette. Locate exact source palette semantics before edits.
+All older tasks/maps/animals/bots/animation remain assigned. New Ilalim source work
+is only the capture probe so far, not material implementation.
+
+Ilalim structural plan/source now drafted and copied to QUAL.108scoped renderers:
+24pillars,28guideway bays,56track sections. Original lookup atlases and train livery
+preserved; local neutral concrete/steel palette data, concrete guideway surface,
+track-only sleeper vertex roles changed wood->concrete. Original references saved
+in material tags/mesh importer metadata for restore/rebuild and same-camera toggle.
+Source code guards target counts, unchanged renderer/collider bounds and72sleeper
+vertices. Paired actual preview/north/under-deck native case ready. Author next in
+Logs/refine2-ilalim-structure-v1; freeze.cs while running. No visual acceptance yet.
+
+Structural author23880completed/reaped:24pillars/28bays/56track segments, unchanged
+bounds/collision, original palettes/train bodies retained. Paired actual preview/
+north/under-deck case now runs Logs/refine2-ilalim-structure-v1/check.log; freeze.cs.
+Need inspect result before acceptance. Existing blank skyline source identified as
+commercial/low-detail-building-a/b/c.glb, not missing geometry. Inspect their real
+facade mesh/UV semantics before planning local fenestration or palette corrections.
+
+Structural case40278completed/reaped1/1in7.212s. Preview/under-deck pairs, north-eye
+andgrey25inspected: quieter neutral structure with bright readable shade, no need
+for further taste variants. Qualified scene/assets/evidence copied to DEV; churn
+backed up/restored. Publish this unit. No active Unity job or browser tabs.
+Skyline a/b/clow-detail source models have252/280/210vertices and u.09375glass,
+u.46875wall. Large glass regions span multiple storeys, so inspect actual used UV
+colors/geometry before choosing material correction or grouped facade detail.
+No skyline edits yet. More geometry is not automatically necessary.
