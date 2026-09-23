@@ -27,8 +27,8 @@ MonoBehaviour:
   CastInkSelf: 0.88
   CastInkWidth: 0.72
   Vibrance: 0.24
-  Bloom: 0.22
-  BloomThreshold: 1.2
+  Bloom: 0.12
+  BloomThreshold: 1.7
   Maps:
   - Map: BayanPlaza
     Sky: {r: 0.56, g: 0.63, b: 0.8, a: 1}

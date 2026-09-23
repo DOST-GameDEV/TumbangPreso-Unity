@@ -101,9 +101,15 @@ namespace TumbangPreso.Visual
         [Header("Grade")]
         // Colour-protecting saturation lift after the tonemap.
         [Range(0,.6f)] public float Vibrance=.24f;
-        // HDR glow on sky, clouds and sunlit highlights.
-        [Range(0,1)] public float Bloom=.22f;
-        [Range(.5f,3)] public float BloomThreshold=1.2f;
+        // HDR glow on true highlights: the sun, VFX cores and glints.
+        // ⚠️ 1.7 AND 0.12, DOWN FROM 1.2 AND 0.22, BECAUSE THE FIRST RENDER HALOED THE CAST.
+        // A lit toon body is albedo times a 1.3 sun plus the bright ambient, so a yellow shirt
+        // sits near 1.5 to 1.8 in HDR and cleared a 1.2 threshold on every frame: Sean and the
+        // Mini Bruja wore a glowing rim in all five maps. The sky is under 1.0 and never bloomed
+        // at all. Above 1.7 only real highlights reach the chain, and the up-walk sums five
+        // levels, so 0.12 already lands a visible glow on them.
+        [Range(0,1)] public float Bloom=.12f;
+        [Range(.5f,3)] public float BloomThreshold=1.7f;
 
         public MapLook[] Maps={
             new MapLook("BayanPlaza",new Color(.56f,.63f,.80f),new Color(.66f,.62f,.56f),new Color(.56f,.46f,.36f),new Color(.86f,.88f,1.08f),38,210,0,true)
