@@ -14,6 +14,13 @@ namespace TumbangPreso.Visual
         private Slipper[] _slippers;private Lata _can;private Renderer[] _canArt;private int _canSkin;
         private GroundContactVisual _canShadow,_landing;private bool _upright;private float _fellAt=-100;
         public bool LandingVisible=>_landing!=null && _landing.Renderer.enabled;
+        private void OnEnable(){AudioDirector.WorldCuePlayed+=ContactHeard;}
+        private void OnDisable(){AudioDirector.WorldCuePlayed-=ContactHeard;}
+        private void ContactHeard(string cue,Vector3 at,float pitch,float gain)
+        {
+            if(GameServices.Round==null || !GameServices.Round.RoundActive || GameServices.Audio?.IsInReplayMix==true)return;
+            CourtContactDust.Play(cue,at);
+        }
         public static WorldContactPresentation Install(Transform parent,Lata can)
         {
             var go=new GameObject("World object contacts");go.transform.SetParent(parent,false);

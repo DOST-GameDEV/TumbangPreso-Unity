@@ -557,6 +557,10 @@ namespace TumbangPreso
 
             if (_downCollar != null)
             {
+                // The shared clock, ground footprint and can glyph already carry
+                // this state. The legacy collar rotates with the fallen can and
+                // becomes an upright red crescent; retain it only for look-off.
+                _downCollar.gameObject.SetActive(Visual.WorldCueProfile.Current.HeroObjects < .001f);
                 float r = DownCollarRadius * (1.0f + beat * 0.07f);
                 _downCollar.localScale = new Vector3(r, 1.0f, r);
             }

@@ -12,6 +12,7 @@ namespace TumbangPreso.Visual
         private float _began;
         private int _round;
         private Color _colour;
+        private Material _material;
         private const float Life = .38f;
         public static void Play(Vector3 at, bool restored)
         {
@@ -23,14 +24,15 @@ namespace TumbangPreso.Visual
             effect._restore = restored; effect._began = Time.unscaledTime;
             effect._round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
             effect._colour = restored ? new Color(1, .77f, .26f) : new Color(.91f, .94f, .84f);
+            effect._material = new Material(Shader.Find("TumbangPreso/InkContact")) { name = "Can ink stroke" };
+            VfxRenderTag.Own(go, effect._material);
             for (int i = 0; i < effect._strokes.Length; i++)
             {
                 var child = new GameObject("ObjectStroke" + i); child.transform.SetParent(go.transform, false);
                 var line = child.AddComponent<LineRenderer>(); effect._strokes[i] = line;
-                line.useWorldSpace = false; line.positionCount = 5; line.widthMultiplier = .022f;
+                line.useWorldSpace = false; line.positionCount = 5; line.widthMultiplier = .032f;
                 line.numCapVertices = 2; line.shadowCastingMode = ShadowCastingMode.Off; line.receiveShadows = false;
-                var material = new Material(Shader.Find("Sprites/Default")) { name = "Can object stroke" };
-                line.sharedMaterial = material; VfxRenderTag.Own(child, material);
+                line.sharedMaterial = effect._material;
             }
             effect.Draw(0);
         }
@@ -48,9 +50,12 @@ namespace TumbangPreso.Visual
             // upright shape; contact strokes spread a short distance and dissolve.
             float alpha = (1 - u) * (1 - u) * .72f * Settings.SettingsStore.Current.EffectiveFlashIntensity;
             Color colour = _colour; colour.a = alpha;
+            _material.SetFloat("_Age", u);
+            _material.SetFloat("_InkWeight", WorldCueProfile.Current.InkEffects);
             for (int i = 0; i < _strokes.Length; i++)
             {
                 var line = _strokes[i]; if (line == null) continue;
+                line.widthMultiplier=Mathf.Lerp(.022f,.032f,WorldCueProfile.Current.InkEffects);
                 line.startColor = line.endColor = colour;
                 Quaternion around = Quaternion.Euler(0, i * 120, 0);
                 float side = _restore ? .30f + .05f * u : .27f + .32f * u;

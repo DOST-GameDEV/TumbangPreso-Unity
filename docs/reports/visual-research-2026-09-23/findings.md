@@ -547,3 +547,17 @@ unchanged. v3refinement1/1,9.655s,guarddae0f59a8c16; normal andgrey25 before/aft
 comfort inspected. First look retained. Real joints remain; do not promise zero
 native motion aliasing/performance without P7. Rafi/lagoon coherent qualification
 stays P7 per the owner's no-intermediate-build instruction.
+
+
+BatchC ink: the red crescent was the rotating LataDownMark collar, not grab VFX.
+The new hero-object treatment hides it; off restores it. Open can strokes erode
+with black edges, tin chips are flat two-tone, and fire/electric flight retain
+separate silhouettes with InkFlight. Paper uses folded sheets and deterministic
+motion, no physics or gameplay RNG. It stays outside central view per camera.
+Existing contact audio supplies grounded dust and recorded replay samples.
+
+v1 found real initial flutter displacement entering the protected cone; subtracting
+its initial phase fixes spawn position. v2passed1/1,16.214s,guard5aab87facefa. All
+normal/comfort/grey25 pictures inspected, first look kept. No capture-tool repairs
+(0/1), no further looks. Chalk-line skid crossing remains next; P7 owns integrated
+motion/replay/performance. See look-batchC-ink/report.md for exact evidence/limits.

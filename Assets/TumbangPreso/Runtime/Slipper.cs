@@ -1095,7 +1095,8 @@ namespace TumbangPreso
             var trail = _affinityVfxGo.AddComponent<TrailRenderer>();
             trail.time = .22f; trail.startWidth = .14f; trail.endWidth = 0;
             trail.minVertexDistance = .04f;
-            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            var material = new Material(Shader.Find("TumbangPreso/InkFlight"));
+            material.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
             trail.sharedMaterial = material; Visual.VfxRenderTag.Own(_affinityVfxGo, material);
             trail.startColor = Visual.AbilityVfx.FireHotColour;
             trail.endColor = new Color(1, .22f, .015f, 0);
@@ -1108,7 +1109,8 @@ namespace TumbangPreso
             var light = _affinityVfxGo.AddComponent<Light>();
             light.color = UI.UiTheme.HeroElectricBright; light.range = 1.6f; light.intensity = .45f;
             light.shadows = LightShadows.None;
-            var material = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
+            var material = new Material(Shader.Find("TumbangPreso/InkFlight"));
+            material.SetFloat("_InkWeight", Visual.WorldCueProfile.Current.InkEffects);
             Visual.VfxRenderTag.Own(_affinityVfxGo, material);
             for (int i = 0; i < 2; i++)
             {

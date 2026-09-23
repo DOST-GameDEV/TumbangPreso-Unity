@@ -191,6 +191,9 @@ Batch C, effects and motion:
 - [ ] **VISUAL-1.11 Effects in the ink language.** Two-tone ink shapes, erosion
   dissipation, chalk dust and puffs, confetti rebuilt as fluttering paper outside the
   camera's central cone, `CanContactAccent` and slipper trails off `Sprites/Default`.
+  Ink/paper/contact-dust slice implemented and focused1/1 passed; first look retained.
+  [Evidence](reports/visual-research-2026-09-23/look-batchC-ink/report.md).
+  Chalk-line skid sampling remains with the exchange slice; native qualification P7.
 - [ ] **VISUAL-1.12 The exchange as one performance.** Check PRESENTATION-1 against the
   V3 beat sheet for knockdown, tag, block, escape and failure cases; confirm remote charge
   and lunge windups read at 8 to 12 m and strengthen poses before adding markers.

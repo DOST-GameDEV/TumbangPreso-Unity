@@ -4030,35 +4030,7 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         public static void SpawnConfettiShower(Vector3 center, int count = 24)
         {
-            Color[] colors =
-            {
-                new Color(1.0f, 0.25f, 0.35f), // Pink Red
-                new Color(1.0f, 0.85f, 0.15f), // Gold
-                new Color(0.25f, 0.85f, 1.0f), // Sky Blue
-                new Color(0.35f, 1.0f, 0.45f), // Emerald Green
-                new Color(0.95f, 0.45f, 1.0f), // Magenta
-                new Color(1.0f, 0.55f, 0.15f), // Orange
-            };
-
-            for (int i = 0; i < count; i++)
-            {
-                var confetti = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                confetti.name = "ConfettiRibbon";
-                confetti.transform.position = center + Vector3.up * 1.2f + Random.insideUnitSphere * 0.4f;
-                confetti.transform.localScale = new Vector3(0.10f, 0.006f, 0.035f);
-                confetti.transform.rotation = Random.rotation;
-
-                ConfettiPaperMaterial.Apply(confetti.GetComponent<Renderer>(), colors[Random.Range(0, colors.Length)]);
-                VfxMaterial.StripCollider(confetti);
-
-                var rb = confetti.AddComponent<Rigidbody>();
-                rb.linearDamping = 1.8f;
-                rb.angularDamping = 2.5f;
-                rb.linearVelocity = (Random.insideUnitSphere * 4.0f + Vector3.up * Random.Range(6.0f, 11.0f));
-                rb.angularVelocity = Random.insideUnitSphere * 35.0f;
-
-                Object.Destroy(confetti, Random.Range(2.2f, 3.2f));
-            }
+            PaperConfetti.Play(center, count);
         }
 
         // -------------------------------------------------------------------

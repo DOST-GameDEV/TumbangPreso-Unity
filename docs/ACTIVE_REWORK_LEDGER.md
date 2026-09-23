@@ -180,6 +180,15 @@ precise unverified scope, continue independent features, defer capture repair to
 Actual game defects still get fixed and narrowly checked. No false completion.
 BatchC capture-tool retry count:0/1. No run started. No new helper/process owns work.
 
+Owner concurrency update: Claude is working on another feature outside the current
+TODO. Preserve unexpected changes and inspect overlaps; never blanket-revert them.
+v1 ended/reaped, guard07b14973231e restored4profile files/1preference. Compilation
+passed; the one case caught a real paper spawn defect: Sample(0) applied a nonzero
+phase offset after central-cone placement. Fixed flutter to be zero at age0, with
+the same ongoing motion. This is a game fix, not capture-fixture repair (still0/1).
+v2 repeats only that case: expect grounded dust, RNG/collider/count/off contracts
+and same-camera looks; stop if passed. No additional screenshot refinement loop.
+
 Read NATIONALS_POLISH V3 1.11..1.15 and plan batchC/D. ScopeC: ink effects,
 ordinary exchange/opponent windups, round rhythm. Completed in-match HUD,
 halftime popup/result layout are EXCLUDED from redo; use world accents if needed.
@@ -210,7 +219,27 @@ nameplate/box state and completed UI; qualify actual transition and add only a
 missing world beat, no fresh halftime screen. Final listening/human review remains
 external/P7, not a reason to stop implementing independent work.
 
-NEXT read actual effect owners/ground-landing hooks, save final scopedC implementation
-plan, implement complete batch, then one smallest changed-behavior/appearance run.
+Scoped C1.11 implementation: suppress the legacy rotating down collar under the
+HeroObjects treatment, retain its off fallback; ink-edge/eroding contact strokes,
+distinct fire ribbon and electric double rail using InkFlight; deterministic folded
+paper confetti with no rigidbodies, near/central-view protection; ground-sampled
+chalk puffs from existing can_knockdown/land/slide_scrape cues, with recorded sound
+sampling for replay. Do not add confetti to ordinary contacts. InkEffects owns off.
+Then check existing exchange and round owners against1.12/1.13; change actual gaps
+only. No global hitstop restoration, imported art edits or completed HUD redo.
+First check question: do the new effects keep the can centre/ground visible, obey
+off/reduced settings, preserve gameplay RNG and clean up? Stop after the focused
+behavior case plus normal/comfort same-camera evidence. Tool retry remains0/1.
+
+NEXT implement this scopedC slice, then one smallest changed-behavior/appearance run.
 Same-camera normal/grey25 and comfort, max3looks. No intermediate native build,
 no old-suite repetition, no questions while owner asleep. AfterC:D,UX-1,P6,P7.
+
+
+C ink slice ready: v2passed1/1,16.214s,guard5aab87facefa, all three normal/grey25
+frames inspected; first look retained. Report look-batchC-ink has XML/captures and
+limits. v1 was an actual flutter-at-zero defect, fixed. Tool repair0/1. No active
+Unity/process jobs; session15221 reaped. Four known churn paths restored, original
+2metas preserved. No native build. NEXT C exchange: chalk-line skid crossings,
+readable body-led taya preparation, world role-swap beat, existing miss/cancel/block/
+pickup grammar and round rhythm. Preserve accepted timing/HUD/hero art. ThenD,UX1,P6,P7.

@@ -132,6 +132,12 @@ superseded designs do not override the current queue or justify repeating done w
 
 ## Workspace, ownership and delivery
 
+- Owner update, 2026-09-23: Claude is also working on a different feature that is
+  not yet in TODO. Continue this queue normally. Treat unexpected edits as possible
+  concurrent contributor work: preserve them, inspect direct overlap, and do not
+  revert or stage them as generated churn without confirming provenance. This
+  supersedes the earlier assumption that this is the only active contributor.
+
 - Work/deliver on ASTRAReworks. Fetch and inspect dirty/diverged state. Never edit,
   merge into or push main; never reset, clean, force-push or discard another's work.
   Relevant friend branches may be read, tested and scoped-integrated. Preserve authorship.

@@ -9,6 +9,7 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float LagoonDeckDetail=1;
         [Range(0,1)] public float CourtSurface=1;
         [Range(0,1)] public float HeroObjects=1;
+        [Range(0,1)] public float InkEffects=1;
         [Range(0,1)] public float ViewmodelFraming=1;
         [Range(0,.3f)] public float ViewmodelRim=.16f;
         // Experiments remain off until the owner's later default choice.

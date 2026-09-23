@@ -41,6 +41,7 @@ namespace TumbangPreso.CameraSystem
         private LataClockPresentation _lataClock;
         private GroundContactVisual _canLanding;
         private readonly Dictionary<int,CourtEscapePuff> _escapePuffs=new Dictionary<int,CourtEscapePuff>();
+        private readonly Dictionary<int,CourtContactDust> _contactDust=new Dictionary<int,CourtContactDust>();
         public bool Ready {get;private set;}
         public string UnavailableReason {get;private set;}
         public RenderTexture Target=>_target;
@@ -276,13 +277,19 @@ namespace TumbangPreso.CameraSystem
             for(int i=0;i<_clip.Sounds.Length;i++)
             {
                 var cue=_clip.Sounds[i];float age=time-cue.Time;
+                if(CourtContactDust.Supports(cue.Id) && age>=0 && age<CourtContactDust.Life)
+                {
+                    if(!_contactDust.TryGetValue(i,out var dust) || dust==null)
+                        _contactDust[i]=dust=CourtContactDust.Play(cue.Id,cue.Position,_stage.transform);
+                    if(dust!=null){dust.Sample(age);dust.ShowForCapture(true);}
+                }
                 if(cue.Id!="court_escape" || age<0 || age>=CourtEscapePuff.Life)continue;
                 if(!_escapePuffs.TryGetValue(i,out var puff))
                     _escapePuffs[i]=puff=CourtEscapePuff.Play(cue.Position,WorldCueProfile.Current.Escape,_stage.transform);
                 puff.Sample(age);puff.ShowForCapture(true);
             }
             try{using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
-            finally{_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {

@@ -117,7 +117,7 @@ namespace TumbangPreso.Visual
             var size = ps.sizeOverLifetime; size.enabled = true;
             size.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0, 1, 1, 0));
             var renderer = ps.GetComponent<ParticleSystemRenderer>();
-            renderer.sharedMaterial = BurstMaterial; renderer.maxParticleSize = .009f;
+            renderer.sharedMaterial = WorldCueProfile.Current.InkEffects>0 ? TinMaterial : BurstMaterial; renderer.maxParticleSize = .009f;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             ComfortParticles.Configure(ps);
@@ -125,6 +125,19 @@ namespace TumbangPreso.Visual
         }
 
         private static Material _burstMaterial;
+        private static Material _tinMaterial;
+        private static Material TinMaterial
+        {
+            get
+            {
+                if(_tinMaterial==null)
+                {
+                    _tinMaterial=new Material(Shader.Find("TumbangPreso/InkDust")){name="Tin ink chips",hideFlags=HideFlags.DontSave};
+                    _tinMaterial.SetFloat("_Chip",1);
+                }
+                return _tinMaterial;
+            }
+        }
 
         /// <summary>
         /// One shared material for every burst. ⚠️ THE SHADER IS RESOLVED RATHER THAN NAMED
