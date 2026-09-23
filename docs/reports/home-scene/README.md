@@ -133,10 +133,12 @@ hub's reserved `Scene` layer, above the live court (which stays underneath as th
 - Poster first, so the screen is never empty while the decoder prepares, and the poster stays
   if the clip fails to decode. `ReducedUiMotion` shows the poster and never starts the decoder.
 - Enveloped at 16:9 (`AspectRatioFitter.EnvelopeParent`), never stretched.
-- Plays only while HOME is the top screen and resumes where it paused.
+- ⚠️ **HOME only.** Under every other hub screen it is hidden and paused, so the lobby shows the
+  room's map (the live court), never a frozen HOME frame. It resumes where it paused.
 - Guarded by `Tests/PlayMode/HubSceneVideoTests.cs` (in the `screens` group of
   `tools/playmode_suite.py`): the clip prepares, the frame counter advances, it is photographed
-  at 1920x1080 and 1600x680, and it pauses behind HERO and resumes on Back.
+  at 1920x1080 and 1600x680, and it hides and pauses behind HERO and resumes on Back.
+  The same fixture holds the BH Studios mark at its true 445x370 (`nPOTScale: 0`).
 
 Sound cues, if the hub wants them: wind rise 2.0 s, eyes open 4.6 s, impact frame 4.9 s, snap
 7.0 s, hit 7.23 s, TUMP! 7.33 s, run 8.4 s, Magnet catch 9.6 s, tag miss 10.6 s, skid 11.3 s.
