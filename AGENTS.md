@@ -214,6 +214,23 @@ superseded designs do not override the current queue or justify repeating done w
 
 ## Engineering and verification
 
+- Owner correction, 2026-09-23: the agent again spent excessive time and tokens
+  repairing capture fixtures, camera staging and test assumptions while the main
+  feature queue remained unfinished. The owner explicitly rejected this repeated
+  verification loop. That was an execution failure, not feature delivery.
+- For each coherent implementation batch, run one focused verification pass.
+  Capture/test tooling gets at most ONE bounded repair and retry for that batch,
+  including across compaction; restarting context does not reset the allowance.
+  If the tooling still fails, preserve the failure, record the exact unverified
+  claim and next diagnostic in the ledger, and continue independent feature work.
+  Do not spend another cycle perfecting screenshots or recreating existing proof.
+- Fix genuine game defects exposed by verification and run their smallest relevant
+  check. This exception does not authorize unrelated fixture work or broader suites.
+  Never mark a failed/unverified requirement complete. Final integration owns the
+  deferred evidence; quality and honest status remain mandatory.
+- Record the check's question, stop condition and tooling retry count before a run.
+  After it passes, implement the next queued feature. Do not seek more reassurance.
+
 - Owner correction, 2026-09-22: this agent has spent too much time in verification
   and test-tool repair loops while required features remained unimplemented.
   Treat that as a known failure tendency. Quality remains the highest priority;

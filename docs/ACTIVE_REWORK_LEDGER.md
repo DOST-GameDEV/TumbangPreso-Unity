@@ -1,18 +1,17 @@
 # Active TUMP rework ledger
 
-## Current resume: publishP3 then batchC, 2026-09-23
+## Current resume: batchC1.11/1.12/1.13, 2026-09-23
 
 Owner is asleep. Continue every autonomously actionable queued item in THIS
 conversation, one agent, without questions or checkpoint endings. Save the exact
 state here at each meaningful checkpoint. Do not mark the full goal complete.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current HEAD/verified remote1419db83b0a13cf8378342e62e0eb4de9b6c2b90 publishedB.
-Earlierbbab70bbd=1.7,33d50bb7=1.5,88f9e6e68=1.2,479be6a53=1.1,f018173c4=UXintake.
-P3 local deck fix is implemented/focused-validated, ready for scoped commit.
-No active Unity/native/server/browser/helper. Latest job46014 reaped,
-guarddae0f59a8c16; known4churn restored and protected2metas verified.
-No native build. Keep first refinement look and do not repeat passed checks.
+Current HEAD/verified remote7ea1a89a2a9818745bf5e952cad42e9834ad7fe1 publishedP3.
+Earlier1419db83=B,bbab70bbd=1.7,33d50bb7=1.5,88f9e6e68=1.2,479be6a53=1.1,
+f018173c4=UXintake. No active Unity/native/server/browser/helper. Original2PNGmetas
+remain dirty/protected; known4churn restored. Current work: batchC intake below.
+
 
 
 Completed1.1: exact ConfinementRadius square at sampled ground heights, rest/armed/
@@ -132,7 +131,7 @@ support andoff restoration. Full/comfort/grey25 before/after personally inspecte
 Retain first look: dense synthetic grid removed, real joints/grain remain. Native
 motion alias/performance and coherent Rafi/lagoon qualification remain P7.
 
-NEXT publishP3 explicit files, fetch before push, verify remote. Then C1.11/1.12/
+NEXT C1.11/1.12/
 1.13 with PRESENTATION-1.5: read NATIONALS_POLISH V3/queue and current owners.
 Use two-tone ink effects/erosion, grounded dust, paper confetti outside the central
 view; remove the existing red grab crescent's misleading dominance; inspect
@@ -170,3 +169,48 @@ Desktop replacement. Prior ledger is archived with the1.1,1.2,1.5,1.7 andbatchB 
 not the current resume point.
 
 Final static1.7 scope review: ChargeAnticipation now also requires _carrying, preserving the existing empty-hand lunge charge. Held-charge proofs retained; next compilation/P7 includes this one-condition exclusion. No extra rerun needed for unchanged active branch.
+
+## BatchC concrete intake and next work (no production edits yet)
+
+Owner correction2026-09-23: excessive capture-fixture/camera/test-assumption repair
+consumed implementation time and tokens again. Recorded in AGENTS.md as an explicit
+execution failure. One focused pass per coherent batch; capture tooling gets ONE
+bounded repair/retry total, surviving compaction. Then retain failed evidence and
+precise unverified scope, continue independent features, defer capture repair to P7.
+Actual game defects still get fixed and narrowly checked. No false completion.
+BatchC capture-tool retry count:0/1. No run started. No new helper/process owns work.
+
+Read NATIONALS_POLISH V3 1.11..1.15 and plan batchC/D. ScopeC: ink effects,
+ordinary exchange/opponent windups, round rhythm. Completed in-match HUD,
+halftime popup/result layout are EXCLUDED from redo; use world accents if needed.
+
+Confirmed source gap: HeroHazards.SpawnConfettiShower still creates24thin cubes
+with rigidbodies. ConfettiPaperMaterial/Resources/Vfx/ConfettiPaper.shader already
+cap apparent size and fade near camera, but no central-cone protection/fluttering
+paper geometry. Replace the source shape/motion locally, retain semantic use.
+CanContactAccent still uses Sprites/Default line material with three open strokes,
+.38s unscaled lifetime, cream hit vs gold restore. Ordinary flight ink is already
+done inB; Slipper fire/electric affinity trails still use their existing shaders.
+ImpactBurst.SpawnTinContact uses9small deterministic particles (.12..24s), old
+generic burst material; add/retain distinctive short ink/chalk contact, no glow spam.
+
+IMPORTANT corrected diagnosis: the huge red crescent in earlier restore photos is
+Lata.BuildDownBeacon's DownCollar, radius.95, emissive Danger colour. Its parent is
+the can, so it rotates up when the can topples. CharacterAnimator.PlayAction(grab)
+does not spawn an arc. It was incorrectly called a grab crescent in earlier notes.
+Use this actual owner, remove/reduce the redundant large rotated marker under the
+new signal language and retain physical tilt/shared clock/glyph/contact meaning.
+
+1.12 design mentions existing60ms hitstop, but current Lata deliberately removed
+global pause for ordinary contacts; source/earlier owner policy preserves local
+confirmation. Do not blindly reintroduce a timeScale writer. Audit actual accepted
+contact, failure/cancel/block/retrieval and remote charge/lunge at8..12m. Preserve
+current authority and warning timing; no opponent aim line.1.13 already has role/
+nameplate/box state and completed UI; qualify actual transition and add only a
+missing world beat, no fresh halftime screen. Final listening/human review remains
+external/P7, not a reason to stop implementing independent work.
+
+NEXT read actual effect owners/ground-landing hooks, save final scopedC implementation
+plan, implement complete batch, then one smallest changed-behavior/appearance run.
+Same-camera normal/grey25 and comfort, max3looks. No intermediate native build,
+no old-suite repetition, no questions while owner asleep. AfterC:D,UX-1,P6,P7.
