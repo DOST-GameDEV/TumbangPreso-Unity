@@ -20,6 +20,12 @@ separate assigned tasks. Plan first and preserve progress/old tasks in the ledge
 
 ## Baseline and concurrent work
 
+Update2026-09-24: owner explicitly requested merging the lighting branch and using
+it for art decisions.50f1fc255is integrated at241e13bb5; existing Stage/ramp cases
+passed2/2and the five-map after frames were inspected. New lighting replaces the
+old dark look as the art baseline. Reassess hidden detail before changing assets.
+The lighting lane's remaining preview/performance work is still tracked separately.
+
 First visual review used existing native High frames for all five maps in the
 owned qualification checkout's Logs/p7-native-world-auto, plus the owner's lobby
 image. The selected map scenes and Eskinita authoring assets have no content

@@ -8,6 +8,11 @@ the earlier hold on merging that separate lane. Preserve current map work first,
 fetch/inspect current branch changes, merge safely, resolve real integration issues
 and perform a bounded compile/visual check. Keep tracking its remote updates during
 the ongoing queue. No other conversation contacted or delegated.
+Owner clarified the old look was too dark to see and the merged lighting/shaders
+MUST inform art decisions. Silhouette clarity is approved. Reassess dark/hidden
+facades, trees and materials under the adopted look; retain good details that now
+read, and do not add extra geometry or local brightness to compensate for old
+lighting. Research/materials/place detail remain central alongside clear forms.
 
 Lighting50f1fc255merged cleanly into the working tree. Preserve the original
 map/house work and the parallel lane's open LIGHT-1items. Current branch contains
@@ -16,6 +21,19 @@ uncommitted work in its lane, so do not race it by inventing a parallel preview
 implementation. Next bounded integration check uses the two existing Stage/ramp
 cases. No new test framework. Fetch this tracked branch before later published
 batches and merge newly available work when it advances.
+
+Local merge HEAD241e13bb586b16261498fb1a605faf5710d7de6a. QUAL
+advanced cleanly to that head after preserving rejected masonry candidate in
+stashb8a0ff20ae1710db37d09905df1bb21eb09ec758. Revised clipped-coating source is
+in DEVstash67c02608f65817b2e604c69cd208e30b7abd3d3e. Do not pop the rejected
+generated scene over the merged candidate. Integration79220completed/reaped:
+2/2passed61.384s. Five-map after/Eskinita paired frames and selectedgrey25inspected;
+visibility is much improved. Reports/lighting-integration-2026-09-24has receipts.
+Known churn restored after patch backup, no jobs running. Publish merge/evidence
+then resume revised art; do not repeat these unchanged checks. Owner asked status;
+answered merged locally,
+not yet pushed, and clarified silhouettes means recognizable forms, not the
+entire map-improvement plan. Materials/textures/place detail remain central.
 
 Owner's latest AFK instruction: "ok ill go to sleep now js give me one final
 acknowledgement that ull go autonomous and do everything i want pls save it on ledger".

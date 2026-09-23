@@ -129,3 +129,18 @@ tricycle and jeepney assets first, then refine/place the right local form with
 supported wheels, credible access/parking and clear gameplay routes. Do not scatter
 the same vehicle into every map or replace local references with generic motifs.
 This adds to the current house/context pass; it does not cancel existing tasks.
+
+## Adopt the lighting improvements as the art baseline,2026-09-24
+
+> the probelm with our old shaders or lughting was the shhit was soo dark and could barely see shit
+>
+> pls integrate the lighting and shaders improvements to ur current decision making or smth
+>
+> ohh okay silhhoettes are goood
+
+Owner explicitly requests tracking/merging lighting/peak-bright-overhaul into
+ASTRAReworks and judging subsequent map improvements under that adopted look.
+Reassess previously dark/hidden surfaces before deciding to add geometry, texture
+or brighten materials locally. Preserve good existing details that become visible.
+Recognizable forms remain approved alongside texture/material/place work. Old dark
+captures remain historical diagnosis, not the final visual target or acceptance.

@@ -94,6 +94,12 @@ work because the owner's standing complaint is loops that do not change the game
 
 ### LIGHT-1 · Bright PEAK-style lighting and edges ⚠️ IN PROGRESS, 2026-09-23
 
+Integrated into ASTRAReworks on2026-09-24at owner request, through lighting branch
+50f1fc255(merge241e13bb5). Existing Windows Stage/ramp checks2/2passed; five-map
+after frames inspected. This is now the map-art baseline. Remaining preview,
+tuning and performance rows below stay open; keep tracking the source branch.
+[Integration evidence](reports/lighting-integration-2026-09-24/report.md).
+
 Owner request: overhaul the "gloomy and dark" lighting to be bright and pleasing like PEAK
 (Aggro Crab and Landfall, 2025), not realistic, and make the edges similar to PEAK. Work is on
 branch `lighting/peak-bright-overhaul` (off `ASTRAReworks` at `2a3c7e16`), one commit per

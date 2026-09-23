@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.3840988">
+  <test-suite type="TestSuite" id="1747" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="571" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.384099" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1741" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="571" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.362715" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5256" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1742" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="571" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.351008" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1743" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="571" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.339520" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1700" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:05Z" duration="61.292118" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1711" name="FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" methodname="FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="836667677" result="Passed" start-time="2026-09-23 17:04:04Z" end-time="2026-09-23 17:05:00Z" duration="55.733443" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-merge-20260924/BayanPlaza-stage-before.png
+[Play] wrote Logs/lighting-merge-20260924/BayanPlaza-stage-after.png
+[Play] wrote Logs/lighting-merge-20260924/BayanPlaza-stage-comfort.png
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1098 renderers, 161 with a roof variant.
+[NearFade] 1326 occluder nodes matched, 236 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-merge-20260924/Eskinita-stage-before.png
+[Play] wrote Logs/lighting-merge-20260924/Eskinita-stage-after.png
+[Play] wrote Logs/lighting-merge-20260924/Eskinita-stage-comfort.png
+[Play] wrote Logs/lighting-merge-20260924/Eskinita-lighting-only.png
+[Play] wrote Logs/lighting-merge-20260924/Eskinita-surface-only.png
+[Env] repainted 325 of 2801 renderers, 0 with a roof variant.
+[NearFade] 3293 occluder nodes matched, 1606 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] IlalimNgTulay: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-merge-20260924/IlalimNgTulay-stage-before.png
+[Play] wrote Logs/lighting-merge-20260924/IlalimNgTulay-stage-after.png
+[Play] wrote Logs/lighting-merge-20260924/IlalimNgTulay-stage-comfort.png
+[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 24 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-merge-20260924/SaBubong-stage-before.png
+[Play] wrote Logs/lighting-merge-20260924/SaBubong-stage-after.png
+[Play] wrote Logs/lighting-merge-20260924/SaBubong-stage-comfort.png
+[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/lighting-merge-20260924/Lagoon-stage-before.png
+[Play] wrote Logs/lighting-merge-20260924/Lagoon-stage-after.png
+[Play] wrote Logs/lighting-merge-20260924/Lagoon-stage-comfort.png
+]]></output>
+            </test-case>
+            <test-case id="1714" name="ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" methodname="ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="829939399" result="Passed" start-time="2026-09-23 17:05:00Z" end-time="2026-09-23 17:05:05Z" duration="5.536269" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
