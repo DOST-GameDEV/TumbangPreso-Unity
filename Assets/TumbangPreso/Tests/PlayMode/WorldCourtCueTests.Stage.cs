@@ -44,8 +44,23 @@ namespace TumbangPreso.PlayTests
                 Color beforeSky=RenderSettings.ambientSkyColor;float beforeFog=RenderSettings.fogStartDistance;
                 yield return GameplayShots.Render(observer,map+"-stage-before",false,Output,GameServices.Round.PlayerAt(1),960,540);
                 StageWeights(1);yield return null;
-                Assert.Less(RenderSettings.ambientSkyColor.maxColorComponent,beforeSky.maxColorComponent);
-                Assert.Less(RenderSettings.fogStartDistance,beforeFog);
+                // ⚠️ LIGHT-1.7. This asserted VISUAL-1.8's darker design (ambient falls, fog moves
+                // in), which the bright look deliberately reversed. It now asserts the rig that was
+                // applied and the two claims the look is built on: the shade colour stays bright,
+                // and the haze starts past the court so it never softens a player.
+                var applied=look.Look;
+                void Near(Color expected,Color actual,string what)
+                {Assert.That(Mathf.Max(Mathf.Abs(expected.r-actual.r),Mathf.Abs(expected.g-actual.g),Mathf.Abs(expected.b-actual.b)),Is.LessThan(.002f),map+" "+what);}
+                Assert.AreEqual(UnityEngine.Rendering.AmbientMode.Trilight,RenderSettings.ambientMode,map);
+                Near(applied.Sky,RenderSettings.ambientSkyColor,"ambient sky");Near(applied.Fog,RenderSettings.fogColor,"haze");
+                Assert.AreEqual(applied.FogStart,RenderSettings.fogStartDistance,.01f,map);
+                Assert.Greater(applied.Sky.maxColorComponent,.5f,map+": the shade colour must stay bright; nothing in the look is black.");
+                Assert.Greater(applied.FogStart,Balance.ConfinementRadius*2,map+": the haze must start past the court.");
+                if(applied.GroundLift>1)
+                {
+                    var ground=(ICollection)typeof(WorldLookPresentation).GetField("_court",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(look);
+                    Assert.Greater(ground.Count,0,map+": the dark court ground must be found before it can be lifted.");
+                }
                 float shaderBefore=Shader.GetGlobalFloat("_WorldLookWeight");
                 Private(look,"BeginCamera",observer);Assert.AreEqual(1,Shader.GetGlobalFloat("_WorldLookWeight"));
                 var preview=new GameObject("Unowned portrait").AddComponent<Camera>();preview.enabled=false;
@@ -180,8 +195,12 @@ namespace TumbangPreso.PlayTests
                 var block=new MaterialPropertyBlock();body.GetPropertyBlock(block);
                 output.AppendLine("body_shader="+body.sharedMaterial.shader.name+",flash="+block.GetFloat("_FlashAmount")+",probe="+body.lightProbeUsage);
                 System.IO.Directory.CreateDirectory(Output);System.IO.File.WriteAllText(System.IO.Path.Combine(Output,"lighting-response.csv"),output.ToString());
-                Assert.Greater(newRatio,oldRatio*1.04f,"The chosen map lighting must produce a measurable contrast increase.");
-                Assert.That(newRatio,Is.InRange(2f,2.5f),"The selected default must meet the2..2.5:1 linear lighting target.");
+                // ⚠️ LIGHT-1.7. VISUAL-1.8 asked for MORE contrast here (2 to 2.5:1 and above the
+                // authored lighting). The bright look asks for the opposite on purpose: PEAK's cast
+                // turns from light to a bright coloured shade, so the shade side opens up against the
+                // authored lighting while staying far enough below the lit side to read the form.
+                Assert.Less(newRatio,oldRatio,"The bright look must open the shade side up against the authored lighting.");
+                Assert.That(newRatio,Is.InRange(1.35f,2f),"Plush but readable: the lit side stays 1.35 to 2 times the shade side.");
             }
             finally{WorldCueProfile.Current.WorldLighting=1;Object.Destroy(cube);Object.Destroy(material);Object.Destroy(camera.gameObject);}
         }
