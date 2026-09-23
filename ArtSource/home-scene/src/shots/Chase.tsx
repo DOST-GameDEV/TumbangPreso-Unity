@@ -110,6 +110,8 @@ const seanPose = (t: number, dive: number, grab: number): { pose: Pose; lift: [n
   };
 };
 
+// ⚠️ Turned about 20 degrees toward the lens (yaw 68, not 90): dead side-on, the model's hair
+// hides the whole face and the runner reads as a black block with legs.
 const PPU = 700;
 const SIDE_LIGHT: Light = { ...DUSK, dir: [-0.6, 0.6, 0.55] };
 
@@ -178,16 +180,16 @@ export const Chase: React.FC<{ f: number }> = ({ f }) => {
 
   const place = (wx: number, lift = 0) => ({ x: sx(wx), y: GROUND - 0.4 * PPU - lift });
   const zd = drawActor(zackB, {
-    ...place(x), ppu: PPU, reach: 0.62, yaw: 90 * facing, pitch: 2, pose: act.pose, lift: act.lift, face: act.face,
+    ...place(x), ppu: PPU, reach: 0.62, yaw: 68 * facing, pitch: 4, pose: act.pose, lift: act.lift, face: act.face,
     slipper: act.holding ? { at: 'hand', swing: facing * 20, twist: 0 } : { at: 'none' }, res: 1.5 * zoom, light: SIDE_LIGHT,
   });
   const ghost = afterAlpha > 0 && !burst
-    ? drawActor(zackB, { ...place(zackX(ZIP_T)), ppu: PPU, reach: 0.62, yaw: -90, pitch: 2, ...runCycle(ZIP_T, 8, 1.15), ink: 0, res: 1.2 * zoom,
+    ? drawActor(zackB, { ...place(zackX(ZIP_T)), ppu: PPU, reach: 0.62, yaw: -68, pitch: 4, ...runCycle(ZIP_T, 8, 1.15), ink: 0, res: 1.2 * zoom,
       light: { ...SIDE_LIGHT, flash: 0.85, flashColour: '#E8F53A' }, slipper: { at: 'hand', swing: -20 } })
     : null;
   const sp = seanPose(t, dive, grab);
   const sd = seanOn
-    ? drawActor(seanB, { ...place(sean), ppu: PPU, reach: 0.7, yaw: -90, pitch: 2, pose: sp.pose, lift: sp.lift, res: 1.4 * zoom, light: SIDE_LIGHT })
+    ? drawActor(seanB, { ...place(sean), ppu: PPU, reach: 0.7, yaw: -64, pitch: 4, pose: sp.pose, lift: sp.lift, res: 1.4 * zoom, light: SIDE_LIGHT })
     : null;
   const courtSlipper = t < T_SCOOP + 1 ? drawSlipper(zackB, [sx(SLIPPER_X), GROUND - 12 - 0.4 * PPU + 0.4 * PPU], [0, 20, -6]) : null;
   const snapT = clamp01((t - T_SCOOP - 1) / 2);
