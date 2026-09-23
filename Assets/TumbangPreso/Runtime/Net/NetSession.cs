@@ -33,8 +33,29 @@ namespace TumbangPreso.Net
     /// </summary>
     public sealed class NetSession : MonoBehaviour, INetProvider
     {
+        /// <summary>
+        /// UX-1.6's custom room settings, written by the HOST form before a host starts.
+        ///
+        /// ⚠️ PRESENTATION OF THE ROOM, NOT PART OF THE MATCH. They name and list the room (the UGS
+        /// lobby record, the LAN beacon's name and presence) and never go on the match wire, so
+        /// `ProtocolVersion` does not move. Empty and 0 are exactly today's behaviour: the host's
+        /// handle as the name, listed publicly.
+        /// </summary>
+        public static string RoomTitle = "";
+        public static string RoomMap = "";
+        public static int RoomVisibility;
+
+        /// <summary>Back to today's defaults, when a room is left.</summary>
+        public static void ClearRoomSettings()
+        {
+            RoomTitle = "";
+            RoomMap = "";
+            RoomVisibility = 0;
+        }
+
         private static string LocalLobbyName()
         {
+            if (!string.IsNullOrWhiteSpace(RoomTitle)) return RoomTitle.Trim();
             string account = GameServices.Account?.LobbyName;
             if (!string.IsNullOrWhiteSpace(account)) return account;
             string local = Settings.SettingsStore.Current.PlayerName;

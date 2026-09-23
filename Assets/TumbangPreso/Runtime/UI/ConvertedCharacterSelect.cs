@@ -2722,7 +2722,7 @@ namespace TumbangPreso.UI
             return Mathf.Ceil(tagline.fontSize * 1.35f) * lines + 6.0f;
         }
 
-        private static string TaglineFor(string id)
+        internal static string TaglineFor(string id)
         {
             switch (id)
             {

@@ -89,6 +89,20 @@ P7is not done, no fresh final build exists. Original127.3chat clip remains share
 UI acceptance; do not silently remove it. Six other old DC flags remain in
 boot_sting,match_win,round_win,ui_back,ui_click,ui_hover; no unrelated waveform edits.
 
+UX1 LANE (separate machine, 2026-09-23): implementation started from
+reports/front-end-flow-2026-09-23/ux1-plan.md. Touches the front end (MatchSetup view,
+title destination, new Runtime/UI/Hub), Core Economy, ugs/cloud-code/wallet.js and a
+WalletStore. It does not touch the match HUD, halftime popup, results board or world
+lanes. Expect concurrent pushes to ASTRAReworks; rebase, never force.
+UX1 state: all hub screens and the TANSAN economy are built (map: ux1-plan.md 7b).
+Checks: Core 626/626 incl. EconomyTests; node tools/test_wallet_script.js passes;
+PlayMode HubFlowTests + HomeFlowTests + OwnerMenuEditsTests (runs ux1-hub-v1..v7, v7 7/7,
+each run's question "do the hub screens build, navigate and fit the five shapes",
+stop at XML; v1 tooling retry was the only one). Old preparation-board fixtures
+(OwnerPreparationTests, TumpNativePickerTests, LobbyChat*, PaperPurityProbe, etc.)
+still address the retired board and are next to be moved to hub doors.
+External: wallet.js deployment needs a machine with the ugs CLI and project login.
+
 ## Qualification environment and preservation
 
 Installed6000.5.8f1 has Windows/Linux/WebGL support, noAndroidPlayer; adb not onPATH.
@@ -148,3 +162,14 @@ removed guard, unrelated receiver), audit72handlers/100fields/0findings. No game
 code changed. P7tool-repair1/1used; do not broaden/refactor diagnostic tools. Commit
 this small correction/plan/receipts, advance clean candidate to thatcommit, then
 fresh final source-stage records and Editor/runtime/build. Do not loop on old passes.
+
+
+Concurrent65b8a05df adds teammate HOME/UI/economy source and tests. Merged without
+source conflicts; preserve all their implementation. Their retained note says626Core,
+wallet JS and7/7hub flow tests passed on their machine; old preparation-board fixtures
+are still being adapted there, and wallet deployment needs their UGScredentials/CLI.
+Those are teammate reports, not fresh local proof. Our merge whitespace check flagged
+only three standard empty YAML fields in upstreamHub.meta; preserved unchanged.
+Candidate will advance to this integration commit before first Unity run because
+GameServices/NetSession/Core changed. A fresh Core/source stage is warranted; old
+23d959912baseline remains preserved, no production clock validation was changed.

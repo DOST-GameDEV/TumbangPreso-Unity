@@ -153,6 +153,21 @@ is never under 1920x1080 units (`Expand`), so 960x540, 1280x720, 1920x1080, 4:3 
 owner's 1600x680 window all resolve. Prompts use `Rebinding.DisplayNameFor`. Larger text and
 High contrast read `GameSettings.LargerText` / `HighContrastHud`.
 
+## 7b · Where it is built
+
+| Piece | Files |
+|---|---|
+| Kit (sticker surface, icons, buttons, popups, prompts, motion, chalk) | `Runtime/UI/Hub/HubStyle.cs`, `HubShape.cs`, `HubGlyph.cs`, `HubButton.cs`, `HubKit.cs`, `HubPrompt.cs`, `HubSlap.cs`, `HubPattern.cs`, `HubForms.cs`, `HubChrome.cs` |
+| Router and contract | `TumpHub.cs`, `HubScreen.cs`, `IHubHost.cs`, controller side `ConvertedMatchSetup.Hub.cs` |
+| HOME, mode select and its popups | `HubHome.cs`, `HubModeSelect.cs` |
+| Queue plate, MATCH FOUND, toast | `HubQueue.cs` |
+| HERO, LOADOUT, ITEM, CHARACTER SELECT | `HubHero.cs`, `HubLoadout.cs`, `HubCharacterSelect.cs` |
+| HOST, JOIN, LOBBY, LOADING | `HubCustom.cs`, `HubLoading.cs` |
+| SHOP popup, TASKS, SKILL TREE, hamburger, picture | `HubMenus.cs`, `HubTasks.cs`, `HubSkillTree.cs` |
+| Economy rules and server | `Packages/com.tumbangpreso.core/Runtime/Economy.cs`, `ugs/cloud-code/wallet.js`, `Runtime/Net/WalletStore.cs`, tests `Core.Tests/EconomyTests.cs`, `tools/test_wallet_script.js` |
+| Routing | `HomeCourtView` (TAP TO START), `SceneFlow.GoHome`, `SceneFlow.LeaveMatchToMainMenu`, `SceneFlow.Go` (loading) |
+| Room listing | `NetSession.RoomTitle/RoomMap/RoomVisibility`, `ServerQuery` `Map`/`Vis` lobby data (additive), `SocialStore` presence |
+
 ## 8 · Verification plan (one focused pass per batch)
 
 Batch 1 (HOME, mode select, queue): `HubFlowTests` PlayMode fixture: HOME builds from the

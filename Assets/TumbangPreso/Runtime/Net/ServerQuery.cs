@@ -90,6 +90,13 @@ namespace TumbangPreso.Net
             public bool Backfill;
             public string HostPlayerId = "";
 
+            /// <summary>The room's map id, or empty from an older host. UX-1.6.</summary>
+            public string Map = "";
+
+            /// <summary>`RoomVisibility` as an int: 0 public, 1 friends only, 2 private. The browser
+            /// lists only 0; the code works for all three.</summary>
+            public int Visibility;
+
             public int Players => Seated;
             public bool IsJoinable => !InProgress && Occupied < Capacity;
 
@@ -273,6 +280,14 @@ namespace TumbangPreso.Net
                                 if (lobby.Data.TryGetValue("Backfill", out var bf)) backfill = bf.Value == "1";
                             }
 
+                            string map = "";
+                            int visibility = 0;
+                            if (lobby.Data != null)
+                            {
+                                if (lobby.Data.TryGetValue("Map", out var mp)) map = mp.Value ?? "";
+                                if (lobby.Data.TryGetValue("Vis", out var vs)) int.TryParse(vs.Value, out visibility);
+                            }
+
                             if (!_seen.TryGetValue(lobby.Id, out var entry))
                             {
                                 entry = new Entry { Id = lobby.Id };
@@ -293,6 +308,8 @@ namespace TumbangPreso.Net
                             entry.SeatLow = seatLow;
                             entry.SeatHigh = seatHigh;
                             entry.Backfill = backfill;
+                            entry.Map = map;
+                            entry.Visibility = visibility;
                             entry.LastSeen = Time.unscaledTime;
                         }
 
@@ -449,7 +466,15 @@ namespace TumbangPreso.Net
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
                         { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
                         { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
-                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") },
+
+                        // ⚠️ UX-1.6: the map a custom room is on, and who may SEE it listed. ADDITIVE
+                        // data keys, so an older client ignores them and lists the room as before.
+                        // Visibility is a listing filter rather than `IsPrivate`, because a private
+                        // UGS lobby cannot be found by `ResolveCodeAsync`'s query, and a room whose
+                        // code stops working is a worse private room than one that is merely unlisted.
+                        { "Map", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomMap ?? "") },
+                        { "Vis", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomVisibility.ToString()) }
                     }
                 };
 
@@ -529,7 +554,9 @@ namespace TumbangPreso.Net
                         { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
                         { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
                         { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
-                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") },
+                        { "Map", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomMap ?? "") },
+                        { "Vis", new DataObject(DataObject.VisibilityOptions.Public, NetSession.RoomVisibility.ToString()) }
                     }
                 };
 

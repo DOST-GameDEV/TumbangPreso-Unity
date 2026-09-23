@@ -44,6 +44,7 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            if(_hubView!=null)return HubCancel();
             if(_ownerPreparation!=null && _chat!=null && _chat.IsPresented){_chat.SetPresented(false);return true;}
             // ⚠️⚠️ THE HUB ANSWERS ITS OWN ESCAPE AND THIS SCREEN MUST NOT ANSWER THE SAME ONE.
             // `ConvertedScreen.Update` and `PlayerHub.Update` both read `GetKeyDown` on the frame
@@ -2786,6 +2787,9 @@ namespace TumbangPreso.UI
                 : NetSession.LastDisconnectReason;
 
             NetSession.LastDisconnectReason = "";
+
+            // ⚠️ UX-1: the hub has no join card to fall back to; it says why and goes HOME.
+            if (HubDisconnected(detail)) { Refresh(); return; }
 
             SetAlert(string.IsNullOrWhiteSpace(detail)
                      ? "The connection to the host ended. Press JOIN to try again."
