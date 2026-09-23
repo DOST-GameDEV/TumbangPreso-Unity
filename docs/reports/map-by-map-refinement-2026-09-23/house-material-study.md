@@ -70,3 +70,16 @@ The other maps use their own construction: civic/heritage relationships at Bayan
 infrastructure and working frontages at Ilalim, roof utilities and neighboring
 homes at SaBubong, and locally grounded Sama Bajau timber/pile/boat relationships
 at Lagoon. Research their specific next targets before authoring them.
+
+## Next individual material finding: terrace home5_W
+
+Actual views show a grid on the timber upper. Source confirms that its geometry
+already has horizontal courses at.25m spacing, while the generic timber shader
+adds another procedural board division across the horizontal facade coordinate.
+That is a construction mismatch, not missing mesh detail. The existing shader has
+a filtered single-plank treatment that omits that extra division and retains grain.
+Apply it only to this home's two plank materials, with its real joint backing
+kept plain. Preserve its measured board geometry, material colors and window finish.
+Compare from a frontage angle that avoids the large tree and retain the ordinary
+street view as evidence of the separate remaining occlusion problem. No new global
+shader or mass cladding replacement is warranted for this specific finding.

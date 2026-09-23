@@ -9,15 +9,19 @@ instructions/current designs supersede old OPEN headings and retired FUTURE.
 Keep all original task identities and evidence. No unnecessary questions.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote2f2c5591731091df2a6eea3cab176494f2cd14e3. Both context commits,
-house research and the latest owner request are published. Fetch/reconcile before
+Map source includes timber commit3d80ffbb5after e68a8ab4b. Before publishing it,
+remote29288e180arrived with mode posters, avatars and Rafi v8/motion updates through
+60783a070/86cd3c076. Merge resolved automatically, preserving the parallel UI-REVIEW
+checklist and ledger section below. No UI/Rafi refinement performed in this lane.
+House4_Wccd4285f5and context2f2c55917were already published. Fetch/reconcile before
 each later push; verify remote HEAD. Explicit path staging,
 sole authorM4tyu633, no trailers/AI mentions/em dashes. NEVER commit or restore
 original composition-redesign/home-court.png.meta or loading-street.png.meta.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached2f2c55917. Prior208candidate files matched published source, then
-were preserved in a named stash before advancing. Independent warm Library.
+owned detachede68a8ab4b. Prior208context and12house candidate paths matched their
+published source, then were preserved in named stashes before advancing. Independent
+warm Library. Original map/house qualified receipts remain in Logs/reports.
 Job59931baseline completed1/1in9.687s, ten actual house views inspected; several
 obscured by trees/very dark east-side lighting, so hidden surfaces are NOT approved.
 Source/churn patch saved then owned churn restored. First house author49502 and
@@ -28,8 +32,23 @@ upper, measured supported door shade, and actual shrubs incorrectly rust-red fro
 the roof atlas. Author64460and check14124completed/reaped.1/1pass4.408s; matched
 near images, small view andgrey25personally inspected. Qualified output copied to
 DEV; evidence in eskinita-house-b.1509vertices/one renderer/material/no new collision.
-Owned churn restored after patch backup. NO JOB currently running. Do not rerun
-this unchanged group. Next publish it, then5_Wtimber material direction/readability.
+Owned churn restored after patch backup. Do not rerun this unchanged group.
+5_Wtimber author24154/check22217completed,1/1pass4.670s. Matched frontage/street,
+small andgrey25inspected.3local material derivatives remove the generic vertical
+grid over real horizontal courses, preserving geometry/UVs/colors/windows.
+Evidence/copied qualified assets now in DEV/eskinita-timber5w, not yet committed.
+This closes that material mismatch only; street tree occlusion and remaining
+house/map parts stay open. Next account for the same measured mismatch at each
+east-side timber home, using a clear view as well as its shadowed frontage.
+Author63502and east check7517completed/reaped.1/1pass6.204s covering2_E/5_E/6_E;
+each lit-side before/after, small street view andgrey25inspected. Original geometry,
+colors/windows remain untouched;12local materials total for all four timber homes.
+Qualified assets/evidence copied to DEV/eskinita-east-timber. Generated churn
+preserved then restored. NO JOBS running. No more unchanged timber rechecks.
+Publish this group with the incoming UI/Rafi merge, then continue near-house decisions;
+0_W/3_Wduplicate shop treatment and plain masonry fronts are next. Existing
+supported c-family entrance canopies should be kept. Tree coverage/east-side
+darkness, roof/material and household details are still open, not whole-house done.
 Other validation checkout has111dirty paths; never reset it or main/home/net/ilalim.
 QUAL retained earlier candidate inputs in named stash and Logs patches. Preserve.
 Remote lighting/peak-bright-overhaul053e5274e is NOT integrated; its lighting/toon/
@@ -64,8 +83,9 @@ patches, tiny grille, foliage softness and arbitrary green recolor. Full prompt
 saved, concept is not runtime evidence. Existing19surface treatments/details are
 already implemented; inspect why actual houses remain weak before duplicating them.
 
-NEXT: publish qualified4_Whouse group, then refine actual Eskinita primary homes
-individually, continuing5_Wtimber. Distance group/research are already published.
+NEXT: publish inspected timber group, then remaining primary homes individually,
+starting0_W/3_Wservice-versus-domestic distinction.4_Whouse and distance groups
+are published. Do not repeat unchanged qualification.
 Plan for roof/wall/opening/domestic detail, retain useful source parts/collision,
 use map-local derivatives. One matched actual-game comparison/small/grey view and
 one focused changed-risk check. Then other Eskinita buildings/props/vegetation/sky,
@@ -107,6 +127,11 @@ True multi-peer UGS queue/lockin/ballot, browser interaction/live buy-claim, nat
 physical typing/chat/rename/running-match rejoin, final regression/build identity,
 earlier D3D12shutdown0xC0000005cause remain open. Later clean exits do not diagnose
 that earlier crash. Physical Android/pad unavailable; human listening separate.
+The incoming UI lane also reports RematchActuallyLoadsTheChosenArena retaining
+Eskinita. Preserve that reported failure for the remaining actual rematch gate;
+do not assume the prior native receipt proves the new report false, or repair its
+fixture without tracing the current chosen-map path. New Rafi v8source supersedes
+older model/FPP qualification assumptions; its parallel lane remains authoritative.
 Complete independent work, record real external dependencies, no invented blockers.
 Manual Claude UI/HUD/settings review prompt delivered in Downloads, different machine
 and PULLFIRST included. No agent contacted and no repository-wide UI-work ban.

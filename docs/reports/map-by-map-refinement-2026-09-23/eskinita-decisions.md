@@ -45,6 +45,15 @@ Use one renderer and preserve original shadow casting from the solid house. Do n
 touch global shaders or recolor the other houses. Variant2is now implemented and
 inspected after rejecting variant1; [evidence](eskinita-house-b/report.md).
 
+The5_Wtimber mismatch is now corrected and inspected: the clear frontage shows
+real horizontal courses without the extra vertical procedural grid. Its ordinary
+street view still exposes tree occlusion. Next the same construction mismatch is
+present in2_E/5_E/6_E: they use the same horizontal-course authors and materials.
+Use an individual local derivative set for each retained home, preserve their
+existing colors/windows/geometry, and inspect each from a lit side plus its actual
+dark street frontage. This is one demonstrated material error, not a new universal
+texture/palette or whole-house approval. No extra cladding geometry is needed.
+
 **Latest owner correction:** the region beyond that row is still an empty plane
 and is visible in map-select renders. The initial extension does not complete the
 background requirement. The exact crop is saved as owner-references/eskinita-empty-distance.png.
