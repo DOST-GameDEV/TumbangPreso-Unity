@@ -346,6 +346,7 @@ namespace TumbangPreso.UI
                 // ⚠️ THE OUTGOING MAP IS PARKED, NOT UNLOADED, exactly as `map_preview.gd` parks
                 // its instance in `_cache`. Unloading and reloading a dressed street on every arrow
                 // press is a visible stall on the one screen a player cycles fastest.
+                ReleasePreviewLook();
                 Park(_showing);
 
                 if (_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
@@ -790,6 +791,7 @@ namespace TumbangPreso.UI
         private struct MapEnvironment
         {
             public Color Ambient;
+            public Color SkyAmbient,EquatorAmbient,GroundAmbient;
             public UnityEngine.Rendering.AmbientMode Mode;
             public float Intensity;
             public Material Skybox;
@@ -809,6 +811,7 @@ namespace TumbangPreso.UI
 
         private readonly System.Collections.Generic.Dictionary<string, MapEnvironment> _envs =
             new System.Collections.Generic.Dictionary<string, MapEnvironment>();
+        private Visual.WorldLookPresentation _previewLook;
 
         public void ReapplyEnvironment()
         {
@@ -830,6 +833,9 @@ namespace TumbangPreso.UI
                 env = new MapEnvironment
                 {
                     Ambient = RenderSettings.ambientLight,
+                    SkyAmbient = RenderSettings.ambientSkyColor,
+                    EquatorAmbient = RenderSettings.ambientEquatorColor,
+                    GroundAmbient = RenderSettings.ambientGroundColor,
                     Mode = RenderSettings.ambientMode,
                     Intensity = RenderSettings.ambientIntensity,
                     Skybox = RenderSettings.skybox,
@@ -869,6 +875,9 @@ namespace TumbangPreso.UI
 
             RenderSettings.ambientMode = env.Mode;
             RenderSettings.ambientLight = env.Ambient;
+            RenderSettings.ambientSkyColor = env.SkyAmbient;
+            RenderSettings.ambientEquatorColor = env.EquatorAmbient;
+            RenderSettings.ambientGroundColor = env.GroundAmbient;
             RenderSettings.ambientIntensity = env.Intensity;
             RenderSettings.fog = env.Fog;
             RenderSettings.fogColor = env.FogColour;
@@ -891,6 +900,39 @@ namespace TumbangPreso.UI
 
             cameraGrade.Set(env.Brightness, env.Contrast, env.Saturation,
                             env.Exposure, env.White);
+            ApplyPreviewLook(map);
+        }
+
+        private void ApplyPreviewLook(string map)
+        {
+            if(_previewLook!=null && _previewLook.Look.Map==map)
+            {_previewLook.ReapplyPreview();return;}
+            ReleasePreviewLook();
+            if(!_cache.TryGetValue(map,out var scene) || !scene.IsValid() || !scene.isLoaded)return;
+            Transform parent=null;Light sun=null;
+            foreach(var root in scene.GetRootGameObjects())
+            {
+                if(!root.activeInHierarchy)continue;
+                if(parent==null)parent=root.transform;
+                foreach(var light in root.GetComponentsInChildren<Light>())
+                    if(light.enabled && light.type==LightType.Directional &&
+                        (sun==null || light.shadows!=LightShadows.None))sun=light;
+            }
+            if(parent==null)return;
+            if(_camera.GetComponent<Visual.WorldLookCamera>()==null)
+                _camera.gameObject.AddComponent<Visual.WorldLookCamera>();
+            Physics.SyncTransforms();
+            float floor=Visual.WorldGround.TryBelow(_pivot,2,15,out float ground)?ground:_pivot.y;
+            _previewLook=Visual.WorldLookPresentation.InstallPreview(parent,floor,sun);
+        }
+
+        private void ReleasePreviewLook()
+        {
+            if(_previewLook==null)return;
+            // Disable now: Destroy is deferred, and the next map needs the previous
+            // sun, globals and temporary ground properties restored before it loads.
+            _previewLook.gameObject.SetActive(false);
+            Destroy(_previewLook.gameObject);_previewLook=null;
         }
 
         /// <summary>
@@ -1103,6 +1145,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            ReleasePreviewLook();
             EndPreviewLoad();_busy=false;
             if(_transitionOwner==this)_transitionOwner=null;
             if (_camera != null) Destroy(_camera.gameObject);

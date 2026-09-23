@@ -7,7 +7,8 @@ namespace TumbangPreso.Visual
         // ⚠️⚠️ § THE BRIGHT LOOK'S GRADE. See `ColourGrade.shader`'s note of the same name for
         // what the three terms are for. This half decides WHICH cameras get them: only a camera
         // the map's world look owns, at the look's own weight, so WorldLighting 0 grades exactly
-        // as before and the character portrait and map preview never pick up a map's lift.
+        // as before and unrelated character/menu cameras never pick up a map's lift.
+        // Map previews explicitly install their own selected map look.
         //
         // ⚠️ THE BLOOM CHAIN IS SKIPPED ON THE LOW GRAPHICS TIER, read off the static
         // `GraphicsProfiles.Current` for `EffectiveChromatic`'s reason: this runs inside

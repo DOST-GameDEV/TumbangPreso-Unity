@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Eskinita garden finished, background review next
+## Current resume, 2026-09-24: Eskinita backdrop and bright previews finished
 
 Overall goal ACTIVE and NOT complete. Continue all independently actionable work
 without checkpoint stops. Owner is asleep and expects quality product work ahead
@@ -25,9 +25,9 @@ Silhouette clarity is approved, alongside materials/textures/place identity.
 Source50f1fc255d0770976808ed12db4ca865f3757b1c is merged at241e13bb5 and published
 with evidence52686a6e1. Latest fetch still50f1fc255, no incoming ASTRA changes.
 Existing Stage/ramp checks2/2passed61.384s; five-map after frames inspected. No
-unchanged rechecks. LIGHT-1.6/1.8/1.9 remain open; the source lane's bright preview
-integration is described as uncommitted, not part of the merge. Do not race its
-active implementation. Track/fetch it at meaningful publishes.
+unchanged rechecks. LIGHT-1.6/1.9remain open. LIGHT-1.8was subsequently integrated
+here after the source branch remained unchanged; evidence below. Track/fetch the
+lighting branch at meaningful publishes and reconcile incoming work safely.
 
 Eskinita published: connected26-house context40ca8a1b9, deeper96-block district
 2f2c55917; fitted4_Wfinishccd4285f5; timber5_W/east corrections3d80ffbb5;
@@ -52,8 +52,8 @@ No Unity job remains running. No task-owned browsers or temporary servers.
    pale mountain triangles: supplied Mountain.png painting stays unchanged; judge
    apparent height/distance with the actual district and camera before changing it.
    NeighbourhoodSky already has animated panorama drift, deterministic sample time.
-2. Full Eskinita lobby/intro/eye/spectator/small/Low review, integrate available
-   bright-preview work, refresh static map cards after stable map appearance.
+2. Finish Eskinita remaining-prop/whole-map review and refresh its static map card
+   with the adopted bright look. Bright preview integration is now implemented.
    Use existing routes. Do not build another capture framework.
 3. Bayan, Ilalim, SaBubong and Lagoon one at a time, each with sourced local identity,
    critically judged generated concepts, individual weak-asset decisions and context
@@ -124,3 +124,17 @@ its documented explicit-sun/WorldLookCamera route and reuse same-map install on
 ReapplyEnvironment. This replaces the earlier speculative wait for unpublished
 code; no other contributor files or conversations were touched. One bounded
 preview/transition check, then continue map assets. No new test framework.
+
+LIGHT-1.8source drafted and copied to QUALdetached4631c1800. Backdrop locally
+committed4631c1800, not yet pushed. Four-case bounded preview/transition run next;
+no.cs edits while running. Plan: lighting-integration-2026-09-24/preview-plan.md.
+
+LIGHT-1.8implemented: explicit selected sun/floor, tagged camera scoping, cached
+same-map reapply, ambient-triplet preservation and immediate teardown on switch.
+Run65338initial4/4passed11.934s but output exposed empty property-block ownership
+preventing ground lift on cached return. Fixed actual cleanup with null; run46685
+focused2/2passed3.475s, ground lift2slots on both visits. Both runs reaped. Actual
+preview/before/small/grey25inspected, result much clearer. Qualified runtime source
+in DEV/QUAL, test-only weight save/restore added after run. Churn patches backed up,
+known churn restored. Publish backdrop plus preview, then resume Eskinita props/
+final views/static card and continue next map. No further unchanged lighting checks.

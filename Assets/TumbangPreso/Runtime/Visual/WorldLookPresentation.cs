@@ -17,6 +17,7 @@ namespace TumbangPreso.Visual
         /// <summary>The live look weight, 0 for the scene's own lighting.</summary>
         public float Weight => Mathf.Max(0,_weight);
         private Texture2D _ramp;
+        private bool _preview;
         private Color _sky,_equator,_ground;private AmbientMode _ambientMode;
         private bool _fog;private FogMode _fogMode;private float _fogStart,_fogEnd,_weight=-1;private Color _fogColour;
         // The key light and sky as the scene authored them, restored exactly on the way out.
@@ -35,17 +36,22 @@ namespace TumbangPreso.Visual
         private const string ArchitectureId="_WorldArchitecture",GlassSkyId="_WorldGlassSky",GlassHorizonId="_WorldGlassHorizon";
         private const string SoftId="_WorldSoftLight";
         public static WorldLookPresentation Install(Transform parent,float floor)
+            =>Create(parent,floor,null,false);
+        public static WorldLookPresentation InstallPreview(Transform parent,float floor,Light sun)
+            =>Create(parent,floor,sun,true);
+        private static WorldLookPresentation Create(Transform parent,float floor,Light sun,bool preview)
         {
             var look=WorldLookProfile.Current.Find(parent.gameObject.scene.name);if(look==null)return null;
             var go=new GameObject("WorldLookPresentation");go.SetActive(false);go.transform.SetParent(parent,false);
-            var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;owner.Build();go.SetActive(true);return owner;
+            var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;owner._preview=preview;
+            owner.Build(sun);go.SetActive(true);return owner;
         }
-        private void Build()
+        private void Build(Light previewSun)
         {
             _sky=RenderSettings.ambientSkyColor;_equator=RenderSettings.ambientEquatorColor;_ground=RenderSettings.ambientGroundColor;
             _ambientMode=RenderSettings.ambientMode;_fog=RenderSettings.fog;_fogMode=RenderSettings.fogMode;
             _fogStart=RenderSettings.fogStartDistance;_fogEnd=RenderSettings.fogEndDistance;_fogColour=RenderSettings.fogColor;
-            _sun=SkyEvent.RecordedSun;
+            _sun=_preview?previewSun:SkyEvent.RecordedSun;
             if(_sun!=null){_sunColour=_sun.color;_sunIntensity=_sun.intensity;_sunShadow=_sun.shadowStrength;_sunRotation=_sun.transform.rotation;}
             _skyAuthored=RenderSettings.skybox;
             // ⚠️ THE SKYBOX IS INSTANCED, NEVER WRITTEN THROUGH, for SkyEvent's reason: the map's
@@ -71,8 +77,12 @@ namespace TumbangPreso.Visual
             _ramp.Apply(false,true);Current=this;ApplyScene();
         }
         public static bool HandlesCamera(Camera camera)
-            =>Current!=null && camera!=null && (camera==Camera.main || camera.GetComponent<WorldLookCamera>()!=null ||
-                camera.GetComponent<CameraSystem.CameraRig>()!=null || camera.name=="RecordedWorldCamera" || camera.name=="UltimateSceneCamera");
+            =>Current!=null && camera!=null && (camera.GetComponent<WorldLookCamera>()!=null ||
+                (!Current._preview && (camera==Camera.main || camera.GetComponent<CameraSystem.CameraRig>()!=null ||
+                camera.name=="RecordedWorldCamera" || camera.name=="UltimateSceneCamera")));
+        // Menu refresh restores its cached authored environment first. Reapply the
+        // same live rig without rebuilding ramps, sky instances or ground discovery.
+        public void ReapplyPreview(){if(_preview && Current==this)ApplyScene();}
         private void OnEnable(){Camera.onPreCull+=BeginCamera;Camera.onPostRender+=EndCamera;}
         private void OnDisable()
         {
@@ -135,8 +145,9 @@ namespace TumbangPreso.Visual
                     Color c=materials[index].GetColor("_Color");
                     _groundBlock.SetColor("_Color",new Color(c.r*lift,c.g*lift,c.b*lift,c.a));
                 }
-                // An empty block is no block, so weight 0 is the authored floor exactly.
-                renderer.SetPropertyBlock(_groundBlock,index);
+                // Null removes ownership as well as values. An empty block can
+                // still make HasPropertyBlock true when a cached map is revisited.
+                renderer.SetPropertyBlock(_groundBlock.isEmpty?null:_groundBlock,index);
             }
         }
         private void ApplyScene()
@@ -186,8 +197,7 @@ namespace TumbangPreso.Visual
             RenderSettings.fogColor=_fogColour;
             if(_sun!=null){_sun.color=_sunColour;_sun.intensity=_sunIntensity;_sun.shadowStrength=_sunShadow;_sun.transform.rotation=_sunRotation;}
             if(_skyLook!=null && RenderSettings.skybox==_skyLook)RenderSettings.skybox=_skyAuthored;
-            if(_court.Count>0){_groundBlock??=new MaterialPropertyBlock();_groundBlock.Clear();
-                foreach(var (renderer,index) in _court)if(renderer!=null)renderer.SetPropertyBlock(_groundBlock,index);}
+            foreach(var (renderer,index) in _court)if(renderer!=null)renderer.SetPropertyBlock(null,index);
         }
         private void BeginCamera(Camera camera)
         {
@@ -200,7 +210,7 @@ namespace TumbangPreso.Visual
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             Shader.SetGlobalVector(SoftId,new Vector4(profile.Softness,profile.Wrap,profile.CastInkSelf,profile.CastInkWidth));
-            var sun=SkyEvent.RecordedSun;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
+            Vector3 direction=_sun!=null?-_sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
             // Use this map's authored sky palette, not a universal blue pane.
             // The same camera scope prevents leakage into character/menu previews.

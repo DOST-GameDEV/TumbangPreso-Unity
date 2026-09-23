@@ -134,16 +134,12 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 - [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
   bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
   look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
-- [ ] LIGHT-1.8 Decided: the map-select and lobby preview SHOULD show the bright look, because
-  `MapPreviewSurface` promises the map is graded the way it will be played. In progress:
-  `WorldLookPresentation.InstallPreview(parent, floor, sun)` (explicit sun, handles only cameras
-  tagged `WorldLookCamera`, never `Camera.main`, so the menu UI is not graded) is written but
-  uncommitted and uncompiled. Remaining: call it from `MapPreviewSurface.ApplyMapEnvironment`
-  after the env is applied (destroy the previous preview install first; parent under the shown
-  arena's first active root; sun = its shadow-casting directional light; floor from
-  `WorldGround.TryBelow` at the pivot rather than the spawn-marker height), add `WorldLookCamera`
-  to the preview camera, and note `ConvertedMatchSetup` calls `ReapplyEnvironment` on refresh, so
-  reinstalling there must stay cheap or reuse the live install for the same map.
+- [x] LIGHT-1.8 Map-select/lobby previews now install the adopted selected-map look
+  with an explicit sun and measured floor. Tagged world cameras only; same-map
+  refresh reuses the live rig/sky. Map switches and destruction release the old
+  state; cached-map court brightening fixed by clearing property-block ownership.
+  Initial preview/transitions4/4passed, focused revisit/preview2/2passed; actual
+  overview/small/grey25inspected. [Evidence](reports/lighting-integration-2026-09-24/preview/report.md).
 - [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
   look at the owner's window shape.
 
