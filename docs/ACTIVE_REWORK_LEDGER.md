@@ -102,6 +102,16 @@ stop at XML; v1 tooling retry was the only one). Old preparation-board fixtures
 (OwnerPreparationTests, TumpNativePickerTests, LobbyChat*, PaperPurityProbe, etc.)
 still address the retired board and are next to be moved to hub doors.
 External: wallet.js deployment needs a machine with the ugs CLI and project login.
+UX1 old-fixture run ux1-old-hub (hub on, 20 MatchSetup fixtures, one process): 51 cases,
+31 passed, 20 failed. Failing: BrandPicker x2, BrandPreparation x2, CosmeticSurface
+NoHeroTab, LobbyStyle AdvancedRules, LobbyTyping, ModelPreview ClassicCharacterSelect
+(team-dante vs character-male-f), NetworkedLobbyTyping, OwnerPlayerHub x3,
+OwnerPreparation x3, OwnerUiAuthoring RealPickerLighting, PaperPurity Inventory,
+TumpNativePicker x3. Most read "no BackButton/ChatButton/picker" (the board's doors are
+hidden under the hub). The two unhandled NREs are inside UGUI InputField.GenerateCaret
+(a hidden board field), not hub code. NOT YET CLASSIFIED: the same run with
+-tp-preparation-board is next; only a case that passes there and fails here is caused
+by the hub. Do not treat this list as regressions or as pre-existing until that run.
 
 ## Qualification environment and preservation
 
