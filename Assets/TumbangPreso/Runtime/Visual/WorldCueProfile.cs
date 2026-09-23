@@ -12,6 +12,8 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float InkEffects=1;
         [Range(0,1)] public float ExchangePoses=1;
         [Range(0,1)] public float RoundRhythm=1;
+        [Range(0,1)] public float EnvironmentAppeal=1;
+        [Range(0,1)] public float ImpactSeparation=1;
         [Range(0,1)] public float ViewmodelFraming=1;
         [Range(0,.3f)] public float ViewmodelRim=.16f;
         // Experiments remain off until the owner's later default choice.

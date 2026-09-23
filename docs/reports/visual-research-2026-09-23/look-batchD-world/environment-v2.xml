@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 01:36:37Z" end-time="2026-09-23 01:37:27Z" duration="49.4153635">
+  <test-suite type="TestSuite" id="1721" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="549" result="Passed" start-time="2026-09-23 01:36:37Z" end-time="2026-09-23 01:37:27Z" duration="49.415364" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1715" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="549" result="Passed" start-time="2026-09-23 01:36:38Z" end-time="2026-09-23 01:37:27Z" duration="49.392825" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1716" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="549" result="Passed" start-time="2026-09-23 01:36:38Z" end-time="2026-09-23 01:37:27Z" duration="49.381462" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1717" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="549" result="Passed" start-time="2026-09-23 01:36:38Z" end-time="2026-09-23 01:37:27Z" duration="49.369825" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1676" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-09-23 01:36:38Z" end-time="2026-09-23 01:37:27Z" duration="49.347529" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1677" name="ArchitectureIsCameraScopedAndFiestaStaysOutsideTheCourt" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.ArchitectureIsCameraScopedAndFiestaStaysOutsideTheCourt" methodname="ArchitectureIsCameraScopedAndFiestaStaysOutsideTheCourt" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="268250507" result="Passed" start-time="2026-09-23 01:36:38Z" end-time="2026-09-23 01:37:27Z" duration="49.328879" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 798 renderers, 108 with a roof variant.
+[NearFade] 910 occluder nodes matched, 584 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchD-environment-v2/shots/BayanPlaza-appeal-before.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/BayanPlaza-appeal-after.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/BayanPlaza-appeal-comfort.png
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchD-environment-v2/shots/Eskinita-appeal-before.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/Eskinita-appeal-after.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/Eskinita-appeal-comfort.png
+[Env] repainted 325 of 2801 renderers, 0 with a roof variant.
+[NearFade] 3293 occluder nodes matched, 1606 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchD-environment-v2/shots/IlalimNgTulay-appeal-before.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/IlalimNgTulay-appeal-after.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/IlalimNgTulay-appeal-comfort.png
+[Env] repainted 0 of 203 renderers, 0 with a roof variant.
+[NearFade] 2205 occluder nodes matched, 24 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchD-environment-v2/shots/SaBubong-appeal-before.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/SaBubong-appeal-after.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/SaBubong-appeal-comfort.png
+[Env] repainted 0 of 195 renderers, 0 with a roof variant.
+[NearFade] 7781 occluder nodes matched, 50 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/look-batchD-environment-v2/shots/Lagoon-appeal-before.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/Lagoon-appeal-after.png
+[Play] wrote Logs/look-batchD-environment-v2/shots/Lagoon-appeal-comfort.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

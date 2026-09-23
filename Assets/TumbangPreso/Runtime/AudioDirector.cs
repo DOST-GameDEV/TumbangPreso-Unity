@@ -444,15 +444,23 @@ namespace TumbangPreso
         /// supplies weight while the primary keeps the event recognisable. A very short music
         /// duck makes room for the transient without making the whole mix louder.
         /// </summary>
+        private float _impactBodyUntil=float.NegativeInfinity;
         public void PlayImpact(string primary, string weightLayer, Vector3 position,
                                float energy = 1.0f)
         {
             energy = Mathf.Clamp01(energy);
+            // Keep every spatial attack audible. When contacts overlap inside one
+            // transient, only the first gets the full low body; following bodies
+            // leave headroom rather than stacking identical bass peaks. Captures
+            // record the resulting gains, so replay does not re-decide the mix.
+            float bodyGain=Time.unscaledTime<_impactBodyUntil
+                ? Mathf.Lerp(1,.30f,Visual.WorldCueProfile.Current.ImpactSeparation):1;
+            if(bodyGain>=.999f)_impactBodyUntil=Time.unscaledTime+.10f;
             PlayAtVaried(primary, position, 0.96f, 1.04f, Mathf.Lerp(0.82f, 1.0f, energy));
 
             if (!string.IsNullOrEmpty(weightLayer) && weightLayer != primary)
                 PlayAtVaried(weightLayer, position, 0.72f, 0.84f,
-                             Mathf.Lerp(0.28f, 0.52f, energy));
+                             Mathf.Lerp(0.28f, 0.52f, energy)*bodyGain);
 
             GameServices.Music?.Duck(Mathf.Lerp(-2.5f, -5.0f, energy),
                                      Mathf.Lerp(0.10f, 0.20f, energy));

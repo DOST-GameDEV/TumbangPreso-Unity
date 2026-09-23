@@ -16,11 +16,12 @@ namespace TumbangPreso.Visual
         private bool _fog;private FogMode _fogMode;private float _fogStart,_fogEnd,_weight=-1;
         private struct ShaderFrame
         {
-            public Camera Camera;public Texture Ramp;public Vector4 Shape,Key;
-            public float Weight;
+            public Camera Camera;public Texture Ramp;public Vector4 Shape,Key,GlassSky,GlassHorizon;
+            public float Weight,Architecture;
         }
         private readonly List<ShaderFrame> _frames=new List<ShaderFrame>();
         private const string RampId="_WorldToonRamp",WeightId="_WorldLookWeight",ShapeId="_WorldLookShape",KeyId="_WorldKeyDirection";
+        private const string ArchitectureId="_WorldArchitecture",GlassSkyId="_WorldGlassSky",GlassHorizonId="_WorldGlassHorizon";
         public static WorldLookPresentation Install(Transform parent,float floor)
         {
             var look=WorldLookProfile.Current.Find(parent.gameObject.scene.name);if(look==null)return null;
@@ -46,7 +47,7 @@ namespace TumbangPreso.Visual
             Camera.onPreCull-=BeginCamera;Camera.onPostRender-=EndCamera;
             for(int i=_frames.Count-1;i>=0;i--)RestoreShader(_frames[i]);_frames.Clear();
             if(Current!=this)return;
-            RestoreScene();Current=null;Shader.SetGlobalFloat(WeightId,0);
+            RestoreScene();Current=null;Shader.SetGlobalFloat(WeightId,0);Shader.SetGlobalFloat(ArchitectureId,0);
         }
         private void Update(){if(_weight!=Mathf.Clamp01(WorldCueProfile.Current.WorldLighting))ApplyScene();}
         private void ApplyScene()
@@ -70,13 +71,22 @@ namespace TumbangPreso.Visual
         {
             if(Current!=this)return;
             _frames.Add(new ShaderFrame{Camera=camera,Ramp=Shader.GetGlobalTexture(RampId),Weight=Shader.GetGlobalFloat(WeightId),
-                Shape=Shader.GetGlobalVector(ShapeId),Key=Shader.GetGlobalVector(KeyId)});
+                Shape=Shader.GetGlobalVector(ShapeId),Key=Shader.GetGlobalVector(KeyId),Architecture=Shader.GetGlobalFloat(ArchitectureId),
+                GlassSky=Shader.GetGlobalVector(GlassSkyId),GlassHorizon=Shader.GetGlobalVector(GlassHorizonId)});
             var profile=WorldLookProfile.Current;
             Shader.SetGlobalFloat(WeightId,HandlesCamera(camera)?_weight:0);
             Shader.SetGlobalTexture(RampId,_ramp);
             Shader.SetGlobalVector(ShapeId,new Vector4(profile.BandEdge,profile.UpperRim,profile.FeetShade,profile.MetalHighlight));
             var sun=SkyEvent.RecordedSun;Vector3 direction=sun!=null?-sun.transform.forward:Vector3.up;
             Shader.SetGlobalVector(KeyId,direction);
+            // Use this map's authored sky palette, not a universal blue pane.
+            // The same camera scope prevents leakage into character/menu previews.
+            var sky=RenderSettings.skybox;
+            Color top=sky!=null && sky.HasProperty("_Zenith")?sky.GetColor("_Zenith"):new Color(.47f,.60f,.69f);
+            Color horizon=sky!=null && sky.HasProperty("_Horizon")?sky.GetColor("_Horizon"):new Color(.80f,.79f,.71f);
+            Color tint=sky!=null && sky.HasProperty("_Tint")?sky.GetColor("_Tint"):Color.white;
+            Shader.SetGlobalVector(GlassSkyId,(top*tint).linear);Shader.SetGlobalVector(GlassHorizonId,(horizon*tint).linear);
+            Shader.SetGlobalFloat(ArchitectureId,HandlesCamera(camera)?WorldCueProfile.Current.EnvironmentAppeal:0);
         }
         private void EndCamera(Camera camera)
         {
@@ -87,6 +97,7 @@ namespace TumbangPreso.Visual
         {
             Shader.SetGlobalTexture(RampId,frame.Ramp);Shader.SetGlobalFloat(WeightId,frame.Weight);
             Shader.SetGlobalVector(ShapeId,frame.Shape);Shader.SetGlobalVector(KeyId,frame.Key);
+            Shader.SetGlobalFloat(ArchitectureId,frame.Architecture);Shader.SetGlobalVector(GlassSkyId,frame.GlassSky);Shader.SetGlobalVector(GlassHorizonId,frame.GlassHorizon);
         }
         public static Color CourtChalk
             =>Current==null?WorldCueProfile.Current.Chalk:Color.Lerp(WorldCueProfile.Current.Chalk,Current.Look.Chalk,WorldCueProfile.Current.CourtSurface);

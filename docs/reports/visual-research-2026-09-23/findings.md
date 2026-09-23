@@ -576,3 +576,19 @@ Cheap source audits:67wire entries reachable;24positional calls classified after
 adding the missing prior court-escape row. Cue-file audit has7unchanged DC flags
 (boot_sting,match_win,round_win,step_rubber,ui_back,ui_click,ui_hover); D1.15 should
 resolve actual runtime source/aliases before treating them. See look-batchC-exchange.
+
+
+D1.14: glazing(kind7) previously only had smoothness/noise. Added map-sky gradient
+in camera scope, broad wall base shade and roof shoulder, retaining original assets.
+Peripheral fiesta strings use actual tree/pole supports only in Bayan/Eskinita and
+phase-varied pinned cloth on the existing replay/sky clock. First run exposed wrong
+Eskinita support cutoff; saved prefab x=+-7.75 corrected placement without moving
+architecture. v2passed1/1,49.415s,guardda7614115b73. All5normal/comfort/grey25 views
+inspected; first design kept, cloth subtle in court views. D repair allowance1/1.
+
+D1.15 retained committed spectator shots and seven hero intro/real-warning phases.
+Reduced secondary bass bodies inside.10s to30percent while keeping every directional
+attack. Existing single-announcer/caption/music priorities stay. Rubber step residual
+DC fixed after fade in its reproducible author; mean.0000071933,4671samples/44100mono,
+peak.359985; slide_scrape byte-identical. Audio case1/1,.306s,guarda2d38b506a3a.
+No subjective listening claim or extra full-suite/native run. P7 keeps those limits.

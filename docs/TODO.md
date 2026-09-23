@@ -208,12 +208,19 @@ Batch C, effects and motion:
   and settle verified in the exchange case; completed HUD/popup/results preserved.
 
 Batch D, with existing scope:
-- [ ] **VISUAL-1.14 Environment appeal and life.** Building value structure, window
+- [x] **VISUAL-1.14 Environment appeal and life.** Building value structure, window
   glass, roof edges, landmarks, banderitas where they fit, event reactions. Tracks with
-  PRESENTATION-1.5 and 152.4.
-- [ ] **VISUAL-1.15 Spectator, ultimates and audio.** Framing hysteresis, complete
+  PRESENTATION-1.5 and 152.4. Implemented sky-gradient glazing, wall/roof value
+  treatment and supported peripheral cloth in Bayan/Eskinita; retained existing
+  distinct map motion/reactions. Five-map focused1/1 passed; normal/comfort/grey25
+  inspected. [Evidence and limits](reports/visual-research-2026-09-23/look-batchD-world/report.md).
+- [x] **VISUAL-1.15 Spectator, ultimates and audio.** Framing hysteresis, complete
   seven-hero ultimates through the shared phase, one audio peak at a time. Tracks with
-  PRESENTATION-3, PRESENTATION-4 and PRESENTATION-5.2.
+  PRESENTATION-3, PRESENTATION-4 and PRESENTATION-5.2. Existing committed shot
+  and seven-hero shared-phase paths retained; overlapping bass bodies now leave
+  headroom while every attack remains audible. Rubber-step DC corrected without
+  changing contact timing. Focused audio1/1 passed; live listening/device/normal-speed
+  qualification stays P7. This is not human approval or a final build claim.
 
 In-match UI revamp (owner addition, 2026-09-23), in batch A alongside 1.4:
 - [x] **VISUAL-1.16 Match-end board.** DONE (look-1.16-v1): the court stays visible under a

@@ -7,6 +7,8 @@ float _SurfaceKind, _SurfaceVertexRoles, _SurfaceCoordinates, _SurfaceScale, _Su
 float _SurfaceDebug;
 float _SurfaceHasTexture;
 float _DeckSurface;
+float _WorldArchitecture;
+float4 _WorldGlassSky,_WorldGlassHorizon;
 
 float TumpSurfaceHash(float2 p)
 {
@@ -106,10 +108,18 @@ void TumpEnvironmentSurface(float3 world,float3 normal,float4 roles,float2 coord
         shade=(TumpSurfaceHash(floor(tile))-.5)*.15+curve*.055-joints*.20;
         smoothness=.24;
     }
-    if(kind>=6.5&&kind<7.5) // Glazing stays clean; reflections supply most of its detail.
+    if(kind>=6.5&&kind<7.5) // Quiet stylized sky reflection; retain the pane's source tint.
     {
         shade=(TumpSurfaceNoise(uv*float2(2,.12))-.5)*.035;
         smoothness=.64;
+        float3 view=normalize(_WorldSpaceCameraPos-world);
+        float3 reflected=reflect(-view,normalize(normal));
+        float skyHeight=smoothstep(-.12,.65,reflected.y);
+        float3 skyColour=lerp(_WorldGlassHorizon.rgb,_WorldGlassSky.rgb,skyHeight);
+        float facing=1-saturate(abs(dot(normalize(normal),view)));
+        float reflection=(.34+.12*facing)*saturate(_WorldArchitecture*_SurfaceStrength);
+        o.Albedo=lerp(o.Albedo,skyColour,reflection);
+        smoothness=lerp(smoothness,.40,saturate(_WorldArchitecture));
     }
     if(kind>=7.5&&kind<8.5) // Painted hardware: calmer and less reflective than bare sheet metal.
     {
@@ -173,6 +183,11 @@ void TumpEnvironmentSurface(float3 world,float3 normal,float4 roles,float2 coord
         shade=(TumpSurfaceHash(floor(tile))-.5)*.045-grout*.11;
         smoothness=.38;
     }
+    // Broad base shade on constructed walls, and a restrained light shoulder on
+    // roof sheets/tiles. Grain remains construction-specific above, not a new
+    // universal dirt/noise overlay. Signs, leaves, cloth and art remain unchanged.
+    if(kind<4.5)shade-=(1-saturate(n.y))*exp(-height*.8)*.10*_WorldArchitecture;
+    if(kind>=4.5&&kind<6.5)shade+=saturate(n.y-.2)*.065*_WorldArchitecture;
     o.Albedo*=max(.55,1+shade*_SurfaceStrength);
     o.Smoothness=lerp(o.Smoothness,smoothness,saturate(_SurfaceStrength));
     o.Metallic=lerp(o.Metallic,metallic,saturate(_SurfaceStrength));
