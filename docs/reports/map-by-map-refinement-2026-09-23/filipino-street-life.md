@@ -43,6 +43,40 @@ The photographic observations are visual reference, not engineering dimensions,
 current transport policy, or evidence of our existing model's quality. Existing
 model/scene inspection and map-local design are still required before placement.
 
+## Existing model and chosen Eskinita variant
+
+The actual Bayan passenger tricycle was inspected in native Unity front/quarter/
+side/back images, saved in tricycle-existing. Diagnostic1/1passed6.043s; this is
+an inventory, not new art approval.2148vertices, about2.04x1.64x1.98m, seven already
+mapped surface materials. The side image is partly obscured by a neighboring
+vehicle's near-camera fade; other views show the relevant construction. Do not
+repair the capture fixture or claim a complete unobstructed side review.
+
+Keep the understandable motorcycle/sidecar split, seated passenger space, grounded
+wheels and broad blocky forms. Weak: the windscreen reads as a black slab, body
+panels and fenders are plain, mirrors are absent, and the driver has no shade.
+The source is a useful base. Eskinita currently has no named tricycle placement.
+
+Generated concept: concepts/eskinita-tricycle-v1.png, built-in tool with the actual
+quarter view as reference. Keep muted blue/cream/metal separation, readable glass,
+an octagonal lamp, small mirrors, a simple unit stripe and supported driver shade.
+Reject over-wide tyres, excessive bolts/chips/diamond tread, ambiguous canopy
+supports and altered entry proportions. Preserve the original model's scale;
+the driver shade mounts to the rear frame, not the handlebar. No real branding.
+
+Make a new Eskinita variant by copying the existing original author; preserve the
+Bayan model and its waiting bay. Add only medium-scale construction/readability
+improvements and a small fictional07identifier. Keep three wheel contacts and
+clear entry. Use native Unity for all preview/qualification; Blender only generates
+the mesh/native source, never approval images.
+
+First proposed placement: the existing west vehicle lot2_W, now occupied by a
+generic delivery vehicle, is sunlit and visible from the court. Measure its live
+bounds before adopting the swap. A tricycle parked at an operator's household bay
+is coherent; do not label a closed private driveway a public terminal. Preserve
+the lot/court collision and neighbor houses. Check fitting/support and real preview/
+player view before accepting. Other vehicle lots and each map retain their own plan.
+
 1. Inspect real local passenger tricycle photographs and distinguish motorcycle
    plus sidecar, passenger entry/seat, canopy supports, windscreen and three wheel
    contacts. Compare with the existing blocky asset and the hero/world scale.

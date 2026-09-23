@@ -258,6 +258,75 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator ExistingPassengerTricycleConstructionReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var rig = Object.FindFirstObjectByType<CameraRig>(); rig.enabled = false;
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.gameObject.SetActive(false);
+            var vehicle = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).FirstOrDefault(t => t.name == "TerminalTricycle_0");
+            Assert.IsNotNull(vehicle, "Inspect the actual shipped passenger tricycle before making a new one.");
+            var renderers = vehicle.GetComponentsInChildren<MeshRenderer>();
+            var bounds = renderers[0].bounds; foreach (var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+            var camera = rig.Camera; camera.fieldOfView = 40;
+            var report = new StringBuilder("Read-only existing model review in its actual map. Not new placement or final acceptance.\n");
+            report.AppendLine("bounds " + bounds);
+            report.AppendLine("mesh vertices " + vehicle.GetComponentsInChildren<MeshFilter>().Sum(f => f.sharedMesh.vertexCount));
+            report.AppendLine("materials " + string.Join(", ", renderers.SelectMany(r => r.sharedMaterials).Select(m => m.name)));
+            File.WriteAllText(Path.Combine(Output, "existing-tricycle.txt"), report.ToString());
+            for (int angle = 0; angle < 4; angle++)
+            {
+                float yaw = new[] { 0, 45, 90, 180 }[angle];
+                Vector3 offset = Quaternion.Euler(0, yaw, 0) * new Vector3(0, 1.05f, 3.8f);
+                camera.transform.position = bounds.center + vehicle.rotation * offset;
+                camera.transform.LookAt(bounds.center);
+                using (Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera, "existing-tricycle-" + new[] { "front", "quarter", "side", "back" }[angle], false, Output, width: 1200, height: 900);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaPassengerTricycleFitsItsExistingHouseholdBay()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var original=GameObject.Find("Eskinita/Dressing/Bahay/Sasakyan_Rework_Sasakyan_2_W");
+            var vehicle=GameObject.Find("Eskinita/Dressing/EskinitaStreetLife/ParkedPassengerTricycle07");
+            Assert.IsNotNull(original);Assert.IsNotNull(vehicle);Assert.IsEmpty(vehicle.GetComponentsInChildren<Collider>());
+            var oldRenderers=original.GetComponentsInChildren<MeshRenderer>();
+            Assert.IsTrue(oldRenderers.All(r=>!r.enabled));
+            var oldBounds=oldRenderers[0].bounds;foreach(var renderer in oldRenderers)oldBounds.Encapsulate(renderer.bounds);
+            var renderers=vehicle.GetComponentsInChildren<MeshRenderer>();var bounds=renderers[0].bounds;
+            foreach(var renderer in renderers)bounds.Encapsulate(renderer.bounds);
+            Assert.That(bounds.min.y,Is.EqualTo(oldBounds.min.y).Within(.002f));
+            Assert.GreaterOrEqual(bounds.min.x,oldBounds.min.x-.01f);Assert.LessOrEqual(bounds.max.x,oldBounds.max.x+.01f);
+            Assert.GreaterOrEqual(bounds.min.z,oldBounds.min.z-.01f);Assert.LessOrEqual(bounds.max.z,oldBounds.max.z+.01f);
+            Assert.IsTrue(renderers.SelectMany(r=>r.sharedMaterials).All(m=>m!=null&&m.shader.name=="TumbangPreso/NearFade"));
+            var camera=rig.Camera;camera.fieldOfView=45;
+            // Keep the retained bay as the look point across placement variants.
+            camera.transform.position=new Vector3(0,2.1f,oldBounds.center.z+3.8f);
+            camera.transform.LookAt(new Vector3(oldBounds.center.x,bounds.center.y+.2f,oldBounds.center.z));
+            foreach(string state in new[]{"before","after"})
+            {
+                foreach(var renderer in oldRenderers)renderer.enabled=state=="before";
+                vehicle.SetActive(state=="after");
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"tricycle-street-"+state,false,Output,width:1280,height:800);
+            }
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera,"tricycle-street-small",false,Output,width:960,height:540);
+            camera.fieldOfView=40;
+            for(int angle=0;angle<4;angle++)
+            {
+                float yaw=new[]{0,45,90,180}[angle];
+                camera.transform.position=bounds.center+vehicle.transform.rotation*(Quaternion.Euler(0,yaw,0)*new Vector3(0,1.05f,3.8f));
+                camera.transform.LookAt(bounds.center);
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera,"tricycle-"+new[]{"front","quarter","side","back"}[angle],false,Output,width:1200,height:900);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
         {
             var canvas = new GameObject("Context preview canvas", typeof(Canvas));

@@ -6,7 +6,8 @@
     "eskinita-v1.png": "1c0178a22a83f6d725e7f6ed618d5fbf9a1e7ea77e2a2cbecc35d199b879939c",
     "eskinita-v2.png": "801be35e567d767d4fa20a62951cab4235336459fb01be85047c485343995122",
     "eskinita-house-materials-v3.png": "59eefd1ca32f55c9438f642ec71b2bc99acde14b02f6a671e5771dc1a3a95b94",
-    "eskinita-domestic3w-v1.png": "d2fd18898484339cce9c22e5ac004e2b6c2b1ed3aa579850d94280b5bc361085"
+    "eskinita-domestic3w-v1.png": "d2fd18898484339cce9c22e5ac004e2b6c2b1ed3aa579850d94280b5bc361085",
+    "eskinita-tricycle-v1.png": "7511d40f750cd00fba3003f41189df7c5014955b2742d605c4907c1529cfb470"
   },
   "references": [
     "owner-references/lobby-map-context.png",
@@ -17,5 +18,6 @@
   "v1": "Connected neighborhood and functional frontage study; realistic finish and enclosed-court design rejected",
   "v2": "Fit additions to retained chunky house family; preserve source body and existing good details; concept colours are not recolour instructions",
   "v3": "Focused plaster/timber/roof construction study requested by owner; prompt saved alongside; critique in house-material-study.md; not a game asset",
-  "domestic3w_v1": "Actual home3_W game camera reference; domestic frontage use study, not game texture; critique/plan in eskinita-domestic3w.md"
+  "domestic3w_v1": "Actual home3_W game camera reference; domestic frontage use study, not game texture; critique/plan in eskinita-domestic3w.md",
+  "eskinita_tricycle_v1": "Existing native tricycle quarter view as style reference; real photos inspected separately. Concept only; critique in filipino-street-life.md."
 }

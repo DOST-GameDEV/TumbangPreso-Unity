@@ -169,6 +169,11 @@ scattered across all maps. Execute inside each map's existing refinement row.
   on the retained sill. Neighbor shop/windows/steps preserved, no new collision.
   Matched near/street/small/grey inspected; focused1/1passed including the corrected
   persistence of reauthored timber materials.[Domestic evidence](reports/map-by-map-refinement-2026-09-23/eskinita-domestic3w/report.md).
+  Bay2_Wnow has a researched, map-specific motorcycle/sidecar tricycle with improved
+  glass, panels, mirrors, lamp and supported driver shade. Original vehicle sources/
+  colliders preserved;3grounded tyres and old footprint checked. Placement variant2
+  inspected in matched street/small/grey and four model views; focused1/1passed.
+  [Vehicle evidence and limits](reports/map-by-map-refinement-2026-09-23/eskinita-tricycle/report.md).
   Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.

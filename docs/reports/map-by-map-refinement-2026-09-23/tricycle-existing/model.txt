@@ -1,0 +1,4 @@
+Read-only existing model review in its actual map. Not new placement or final acceptance.
+bounds Center: (-10.00, 0.93, -15.80), Extents: (1.02, 0.82, 0.99)
+mesh vertices 2148
+materials Tyres and grips / surface 11, Brushed sheet metal / surface 8, Terminal oxblood paint / surface 8, Dark vinyl seats / surface 11, Headlamp lens / surface 7, Smoked windscreen / surface 7, Warm canopy / surface 9

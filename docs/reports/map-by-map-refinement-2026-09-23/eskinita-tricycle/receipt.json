@@ -1,0 +1,11 @@
+{
+  "base_commit": "123652274556d73523df0d43e32cf2ac8b354d07",
+  "scope": "Eskinita private vehicle bay2_W only; Editor world rendering",
+  "passed": "1",
+  "duration": "5.0875089",
+  "placement_variant": 2,
+  "tyre_contacts": 3,
+  "original_collision": "unchanged by author assertion",
+  "model_sha256": "d23ebfab9b137240695f8c30a31c5db4a11b7169ec15ec820bf045cb887a2968",
+  "worker_limits": "2job/1GC/1import/0standby; one background process"
+}
