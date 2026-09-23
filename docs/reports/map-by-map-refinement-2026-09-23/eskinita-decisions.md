@@ -1,8 +1,49 @@
 # Eskinita decisions before implementation, 2026-09-23
 
-Status: first outer-context group implemented and inspected; see
-[the bounded report](eskinita-context/report.md). No new textures or lighting
-changes. Individual near-asset work and whole-map completion remain open.
+Status: outer context and deeper district implemented/inspected, then the first
+individual home4_Wreceived a fitted texture/construction finish. See the linked
+reports below. No lighting changes. Other near assets and whole map remain open.
+
+## Primary-house diagnosis after the owner's material request
+
+Actual ten-house game-camera set: QUALLogs/refine2-house-baseline, case1/1passed
+in9.687s. These are diagnosis views, not art acceptance. All images were viewed;
+several houses are obscured by existing trees/poles and the entire east side is
+very dark. The held viewmodel also covers parts of lower walls. This set establishes
+those problems, not approval of the hidden surfaces. Subsequent paired finish
+views hide only that viewmodel to expose the wall; gameplay cameras are unchanged.
+
+-0_W, family a: shop/service opening and ledge exist; keep those. Broad painted
+  wall/roof regions still look similarly treated. Near corner supports/threshold
+  need final review, with a quiet home finish rather than extra sachets.
+-1_W, family c: substantial supported entrance canopy already exists. Preserve
+  it; no duplicate canopy. Plain lower wall and roof sheet rhythm can improve.
+-3_W, family a: repeats0_W's service treatment. Preserve its body but distinguish
+  domestic/shop use deliberately. Existing overhead laundry is visually prominent.
+-4_W, family b: wall planes and roof dominate the visible front. Jalousies and
+  downpipe exist. First local change: fitted plaster finish with a maintained
+  lower paint course and restrained local variation, plus readable sheet overlaps
+  retaining its existing roof hue. Do not add random upper-story damage.
+-5_W, family o: tree masks much of the house. Timber upper reads as a small grid
+  instead of clear horizontal boards. Inspect the existing timber geometry's
+  material/UV direction before adding more cladding. Terrace use already exists.
+-1_E, family c: deep shadow/tree/pole masks its body and entry canopy. Shadow
+  visibility belongs partly to the unmerged LIGHT-1 work; more geometry alone
+  will not resolve this view.
+-2_E, family e: timber upper is almost black and gridded. Preserve deep windows;
+  evaluate board grain direction/material separation independently of exposure.
+-3_E, family c: same hidden canopy and laundry/pole dominance, not missing detail.
+-5_E, family o: timber courses, tree and laundry overlap. Check a clear frontage
+  angle before deciding which extra household details are needed.
+-6_E, family e: tree covers most facade. A coverage/composition problem remains;
+  no claim that its hidden wall finish is already satisfactory.
+
+First fitted finish is isolated to4_W through a new map-local texture/mesh/material.
+Original solid triangles provide exact surface and opening boundaries; only those
+wall and roof regions receive the finish, with original masters/collision retained.
+Use one renderer and preserve original shadow casting from the solid house. Do not
+touch global shaders or recolor the other houses. Variant2is now implemented and
+inspected after rejecting variant1; [evidence](eskinita-house-b/report.md).
 
 **Latest owner correction:** the region beyond that row is still an empty plane
 and is visible in map-select renders. The initial extension does not complete the

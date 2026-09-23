@@ -40,6 +40,7 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void FinishLoadedScene(string map,StringBuilder report)
         {
             EskinitaContextAuthor.ClearPrevious(map);
+            EskinitaHouseFinishAuthor.ClearPrevious(map);
             MapPlaceAuthor.ClearPrevious(map);
             EskinitaNeighborhoodAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
@@ -64,6 +65,7 @@ namespace TumbangPreso.EditorTools.MapKit
             AmbientLifeAuthor.FinishLoadedScene(map,report);
             MapSurfaceAuthor.FinishLoadedScene(map,report);
             if(map=="Eskinita")EskinitaContextAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaHouseFinishAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 

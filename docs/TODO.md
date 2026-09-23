@@ -128,7 +128,10 @@ building/material decisions, preserving the one-map-at-a-time order.
   and [comparative reference notes](reports/map-by-map-refinement-2026-09-23/comparative-reference-notes.md)
   have begun; this research is not complete. Brown City, official PEAK media and
   A Short Hike's gallery were visually inspected; initial Philippine place sources
-  and current Eskinita authoring routes are recorded. No new map edit yet. Inspect actual rendered
+  and current Eskinita authoring routes are recorded. Eskinita context is implemented;
+  the fresh [house material study](reports/map-by-map-refinement-2026-09-23/house-material-study.md)
+  adds primary construction research, generated inspiration and explicit critique.
+  Inspect actual rendered
   assets, cross-reference place/material construction, inventory per-map assets,
   write concrete keep/refine/replace decisions and ordered implementation plans.
   Include comparative game research, a sourced Filipino cultural/place brief per
@@ -144,6 +147,11 @@ building/material decisions, preserving the one-map-at-a-time order.
   retained middle-distance geometry and simpler distant houses, one palette material
   and no new collision. Matched preview/small/grey25inspected; focused1/1passed.
   [Distance evidence](reports/map-by-map-refinement-2026-09-23/eskinita-distance/report.md).
+  Primary home4_W now has individually fitted plaster/roof finishes, a measured
+  supported door shade and a local correction for roof-tinted shrubs. Variant1
+  rejected, variant2inspected at matched near cameras/small/grey; focused1/1pass.
+  [House evidence](reports/map-by-map-refinement-2026-09-23/eskinita-house-b/report.md).
+  Other primary houses still require their individual refinements; next5_Wtimber.
   Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.

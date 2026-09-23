@@ -1,0 +1,15 @@
+{
+  "base_commit": "2f2c5591731091df2a6eea3cab176494f2cd14e3",
+  "scope": "One Eskinita stepped home; Editor actual world-camera render, not native performance",
+  "tests": {
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "duration": "4.4082887"
+  },
+  "art_variant": 2,
+  "generated_image": "ArtSource/map-refinement-20260923/concepts/eskinita-house-materials-v3.png",
+  "scene_sha256": "33b3d733f60830cabf30bbcbba5e62f9e57bca7131061630ccccbf1b050ada62",
+  "original_colliders": "author checked unchanged",
+  "generated_assets_bytes": 342763
+}

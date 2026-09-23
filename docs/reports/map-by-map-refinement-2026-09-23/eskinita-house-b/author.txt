@@ -1,0 +1,2 @@
+Bahay_Rework_Bahay_4_W: 200 fitted wall triangles, 47 roof triangles, 1509 vertices; one renderer/material.
+Original opening holes, solid house mesh, household details, roof hue and gameplay colliders preserved. Only one Eskinita home changed.

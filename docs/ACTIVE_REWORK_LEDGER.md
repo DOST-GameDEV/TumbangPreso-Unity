@@ -9,15 +9,27 @@ instructions/current designs supersede old OPEN headings and retired FUTURE.
 Keep all original task identities and evidence. No unnecessary questions.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD40ca8a1b9; last fetched remote6c792aa24, no incoming commits. First context
-commit is local; deeper district and house research are ready for the next commit
-and push. Fetch/reconcile before push; verify remote HEAD. Explicit path staging,
+HEAD/verified remote2f2c5591731091df2a6eea3cab176494f2cd14e3. Both context commits,
+house research and the latest owner request are published. Fetch/reconcile before
+each later push; verify remote HEAD. Explicit path staging,
 sole authorM4tyu633, no trailers/AI mentions/em dashes. NEVER commit or restore
 original composition-redesign/home-court.png.meta or loading-street.png.meta.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached6c792aa24 plus current map source/assets. Independent warm Library.
-No owned Unity/player/helper job currently running. All author/check handles reaped.
+owned detached2f2c55917. Prior208candidate files matched published source, then
+were preserved in a named stash before advancing. Independent warm Library.
+Job59931baseline completed1/1in9.687s, ten actual house views inspected; several
+obscured by trees/very dark east-side lighting, so hidden surfaces are NOT approved.
+Source/churn patch saved then owned churn restored. First house author49502 and
+check83599completed;1/1passed5.729s BUT visual variant1rejected: wall became flatter
+and low-roof seams ran across its slope. Preserve Logs/refine2-house-b-v1.
+Variant2corrects ridge/slope axes, warm mineral lower story versus retained terra
+upper, measured supported door shade, and actual shrubs incorrectly rust-red from
+the roof atlas. Author64460and check14124completed/reaped.1/1pass4.408s; matched
+near images, small view andgrey25personally inspected. Qualified output copied to
+DEV; evidence in eskinita-house-b.1509vertices/one renderer/material/no new collision.
+Owned churn restored after patch backup. NO JOB currently running. Do not rerun
+this unchanged group. Next publish it, then5_Wtimber material direction/readability.
 Other validation checkout has111dirty paths; never reset it or main/home/net/ilalim.
 QUAL retained earlier candidate inputs in named stash and Logs patches. Preserve.
 Remote lighting/peak-bright-overhaul053e5274e is NOT integrated; its lighting/toon/
@@ -52,8 +64,8 @@ patches, tiny grille, foliage softness and arbitrary green recolor. Full prompt
 saved, concept is not runtime evidence. Existing19surface treatments/details are
 already implemented; inspect why actual houses remain weak before duplicating them.
 
-NEXT: publish qualified distance group plus preserved research/owner request, then
-inspect/refine actual Eskinita primary houses individually, beginning family b.
+NEXT: publish qualified4_Whouse group, then refine actual Eskinita primary homes
+individually, continuing5_Wtimber. Distance group/research are already published.
 Plan for roof/wall/opening/domestic detail, retain useful source parts/collision,
 use map-local derivatives. One matched actual-game comparison/small/grey view and
 one focused changed-risk check. Then other Eskinita buildings/props/vegetation/sky,

@@ -87,6 +87,72 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaPrimaryHomesMaterialReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig = Object.FindFirstObjectByType<CameraRig>();
+            rig.enabled = false;
+            var camera = rig.Camera;
+            camera.fieldOfView = 48;
+            var houses = GameObject.Find("Eskinita/Dressing/Bahay").transform;
+            string[] names = { "0_W", "1_W", "3_W", "4_W", "5_W", "1_E", "2_E", "3_E", "5_E", "6_E" };
+            foreach (string name in names)
+            {
+                var home = houses.Find("Bahay_Rework_Bahay_" + name);
+                Assert.IsNotNull(home, name);
+                var renderers = home.GetComponentsInChildren<MeshRenderer>();
+                var bounds = renderers[0].bounds;
+                foreach (var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+                int side = name.EndsWith("W") ? 1 : -1;
+                camera.transform.position = new Vector3(bounds.center.x + side * 12, 3.7f, bounds.center.z + 4.2f);
+                camera.transform.LookAt(new Vector3(bounds.center.x, 2.2f, bounds.center.z));
+                using (Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(camera, "home-" + name, false, Output, width: 1280, height: 800);
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaSteppedHomeKeepsOpeningsAndCollisionWithFittedMaterials()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig = Object.FindFirstObjectByType<CameraRig>();
+            rig.enabled = false;
+            // Compare the world finish without a held viewmodel covering the lower wall.
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.gameObject.SetActive(false);
+            var camera = rig.Camera; camera.fieldOfView = 48;
+            var original = GameObject.Find("Eskinita/Dressing/Bahay/Bahay_Rework_Bahay_4_W");
+            var finish = GameObject.Find("Eskinita/Dressing/EskinitaHouseRefinement/Bahay_4_W_FittedFinish");
+            Assert.IsNotNull(original); Assert.IsNotNull(finish);
+            Assert.IsEmpty(finish.GetComponentsInChildren<Collider>());
+            var renderer = finish.GetComponent<MeshRenderer>();
+            Assert.AreEqual("Bahay_4_W_materials", renderer.sharedMaterial.mainTexture.name);
+            Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off, renderer.shadowCastingMode);
+            var filter = finish.GetComponent<MeshFilter>();
+            Assert.Greater(filter.sharedMesh.vertexCount, 100);
+            var originals = original.GetComponentsInChildren<MeshRenderer>();
+            var bounds = originals[0].bounds;
+            foreach (var body in originals) bounds.Encapsulate(body.bounds);
+            var allowed = bounds; allowed.Expand(.04f);
+            Assert.IsTrue(allowed.Contains(renderer.bounds.min) && allowed.Contains(renderer.bounds.max), "Finish must remain fitted to the original solid.");
+            var solids = original.GetComponentsInChildren<Collider>().Select(c => c.bounds).ToArray();
+            foreach (string angle in new[] { "street", "frontage" })
+            {
+                camera.transform.position = angle == "street" ? new Vector3(bounds.center.x + 12, 3.7f, bounds.center.z + 4.2f) :
+                    new Vector3(bounds.center.x + 8, 3.1f, bounds.center.z - 1.2f);
+                camera.transform.LookAt(new Vector3(bounds.center.x, 2.3f, bounds.center.z));
+                foreach (string state in new[] { "before", "after" })
+                {
+                    finish.SetActive(state == "after");
+                    using (Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera, "stepped-" + angle + "-" + state, false, Output, width: 1280, height: 800);
+                }
+            }
+            using (Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera, "stepped-small", false, Output, width: 960, height: 540);
+            CollectionAssert.AreEqual(solids, original.GetComponentsInChildren<Collider>().Select(c => c.bounds).ToArray());
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
         {
             var canvas = new GameObject("Context preview canvas", typeof(Canvas));
