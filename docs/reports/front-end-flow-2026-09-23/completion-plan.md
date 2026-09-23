@@ -96,3 +96,32 @@ network quorum/countdown. MatchInstaller.BuildReadyGate wires it to the HUD and 
    transitions and automatic-vs-manual gate; camera cleanup/reduced motion/late load;
    focused native peers on final candidate. Add source paths and real screenshots to
    ui-authorship-inventory as surfaces land. Do not certify network timing from a still.
+
+## Preserved older requirement: Learn layer in timed character select
+
+P6 review of143.17/143.19 against VISION3 found a concrete gap: new HubCharacterSelect
+has name/role/model/portraits but no skill readout. The full HERO screen has ability
+popups, which does not fulfill learning while choosing a character after MATCH FOUND.
+Restore a compact icon-driven readout on the selector, fitted to its existing model/
+grid/seat composition. Inspect and reuse actual kit/equipped-variant metadata rather
+than duplicate descriptions. Show name, kind, short sentence and correct cooldown or
+ultimate charge. Keep the cast identity and primary SELECT action clear.
+
+Use an inline selection/focus readout so inspecting an ability does not hide the
+parent screen or suspend its host-owned selection deadline. Do not add a modal that
+would prevent HubCharacterSelect.Tick from running. Keep Classic neutral, live input
+bindings, Larger text/High contrast and the28unit floor. Preserve all portraits/locks.
+Plan exact layout after inspecting existing readout helpers, then implement and run
+one focused selector/timer check. This is a required missing capability, not a new
+restyle or permission to redo the other finished UI surfaces.
+
+Chosen selector layout: keep the full model height and make its Hero-only stage
+46percent wide. Place a380x610readout column32units left of the existing512wide
+portrait grid, under the headings and above the seat rail. Three existing ability
+glyph buttons change an inline name/kind/resource/short-description block. The
+column has108/92/220units for name/metadata/summary, so Larger text fits without
+shrinking below28. Move the existing Hero lock/refusal hint above the portrait grid
+and retain a short meaningful unlock/Practice sentence. Classic layout stays as-is.
+Use HeroAbilitySystem.CreateKitFor, AbilityIcons.LabelFor and the equipped non-default
+HeroBuildRules variant; keep default ability.Summary and genuine charges/cooldown/
+ultimate cost. Ability clicks do not select/lock a hero, push a popup or alter time.

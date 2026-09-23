@@ -388,16 +388,24 @@ Implementation order within UX-1:
 - [ ] **UX-1.5 Character select.** Built (`HubCharacterSelect`, today's pick RPC, lock-in via
   the ready tally, host start on all-locked or 30 s). Open: a multi-peer lock-in check. After match found, big name/model,3x4 portrait grid
   and SELECT using existing legal pick rules; preserve the complete roster.
+  P6 review found the timed selector lost VISION3's Learn layer. Add a compact
+  selected-ability readout using actual kit/variant data: icon, name, kind, one
+  sentence and cooldown/ultimate charge. Keep the selection clock running while
+  inspecting it; no modal that suspends host Tick, no redundant navigation tutorial.
+  Implemented: all7heroes/3slots checked with normal and large/high-contrast text,
+  five shapes and running timer; both960x540frames inspected. Peer lock-in remains open.
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
   second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
   Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;
-  bounded discovery/query-spacing fix and its actual datagram regression are in progress. Host: lobby name, defaulted map, game mode,
+  bounded discovery/query-spacing fix passed its actual datagram case and native
+  immediate code/rejoin run. Both clients were seated and saw LOBBY; no429. Host: lobby name, defaulted map, game mode,
   public/private/friends-only visibility, LAN/Online, CREATE LOBBY; subtle selected-map
   art updates. Join sources: Dedicated Internet, Dedicated LAN, Code. Shared server
   list with name/map/player count/join and correct Online/LAN heading; code field/JOIN.
 - [ ] **UX-1.7 Custom lobby and loading.** Built (`HubLobby`, `HubLoading`). Actual two-native-peer lobby entry, automatic
   intro/countdown and rematch passed; both exited0 and shared input prefs stayed intact.
-  Open: reconnect into the hub lobby with real peers. Lobby name/back, selected-map background,
+  Native code reconnect into LOBBY also passed using the same isolated profile.
+  Online list/Relay coverage stays separate under UX-1.6. Lobby name/back, selected-map background,
   n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.

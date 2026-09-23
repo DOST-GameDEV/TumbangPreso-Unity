@@ -1,0 +1,30 @@
+{
+  "source": "47d5502cbf0bf57754f4a06eb9872cd9a8e7e786",
+  "players": {
+    "joined": {
+      "exitCode": 0,
+      "reportWritten": true,
+      "joined": true,
+      "queryRateLimited": false,
+      "isClient": true,
+      "slot1": true,
+      "lobbySeen": true
+    },
+    "rejoined": {
+      "exitCode": 0,
+      "reportWritten": true,
+      "joined": true,
+      "queryRateLimited": false,
+      "isClient": true,
+      "slot1": true,
+      "lobbySeen": true
+    },
+    "host": {
+      "exitCode": 0,
+      "reportWritten": true
+    }
+  },
+  "code": "E87X",
+  "sharedInputUnchanged": true,
+  "passed": true
+}

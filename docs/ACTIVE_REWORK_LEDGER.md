@@ -9,7 +9,7 @@ work before naming external dependencies. User is AFK; optional questions are no
 needed. Keep concise progress updates while continuing tools.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current local and verified remote HEAD:084dbdd047f417cbf00e9f892fb522caac72043f.
+Current local and verified remote HEAD:47d5502cbf0bf57754f4a06eb9872cd9a8e7e786.
 UX source, owner-copy changes and receipts were published as8f81e96bd; remote HEAD
 verified after push. Earlier qualification receipts remain ind9fe0d275.
 Fetch before publishing, preserve concurrent commits, no force. Sole authorM4tyu633,
@@ -17,35 +17,37 @@ no trailers/AI mentions/em dashes; stage explicit paths. DEV residual dirt is on
 the protected original two metas and the other contributor's HOME video work.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached checkout at084dbdd04. Prior copied candidate retained in stash
+owned detached checkout at47d5502cb. Prior copied candidate retained in stash
 a6c0f7bc306357aa92c7916fb5ad09936443dde1 and a local patch receipt; no work lost.
 Do NOT reset old TumbangPreso-Unity-validation (111dirtypaths), main/home/net/ilalim
 worktrees or other people's work. Candidate has an independent Library, not shared.
 
-### Active cold-code regression: real join failure found
+### Current resume: selector Learn passed; publish then continue backlog
 
-Native20240finished all processes at exit0, but BOTH code joins FAILED. Do not mark
-this a join pass: joined/rejoined reports remainedHOST and did not see the hub lobby.
-Both logs show Lobby queryHTTP429. Failure receipt saved in completion/. First
-address-based and automatic-arrival native passes remain valid and separate.
+No Unity run or task-owned native player remains. Current DEV/remote47d5502cb.
+QUAL is detached47d5502cb with copied HubCharacterSelect/MatchArrivalFlowTests edits.
+70916selector Learn case passed1/1(55.69s): all7hero/3slot text, normal+large/high
+contrast, five shapes, timer continues while inspecting, Classic has no hero panel.
+Normal and large960x540frames personally inspected, readable, no overlap. XML and
+frames copied to completion/. No repeat capture/test needed absent new changes.
 
-Source: ResolveCodeAsync only checks the current LAN dictionary, while the new
-browser has not received its first1sbeacon; browse and code lookup also make
-independent QueryLobbies calls despite the player1request/second limit. Own source
-fix in ServerQuery starts listening and permits1.5beacon intervals, keeps cached
-results immediate, and shares one query-spacing gate across both online callsites.
-No repeated429retry. Research/reasoning saved in completion/cold-code-join-notes.md.
+Uncommitted own changes: Hero-only inline Learn panel beside full-height model,
+its focused test,5P6row dispositions, plans/TODO/ledger/inventory and successful
+native code/rejoin receipt. Publish by explicit paths with sole author and remote
+fetch/merge/check. Original two composition PNG metas stay excluded. Other active
+contributor continues HOME art; preserve and integrate incoming commits.
 
-Guarded exec20511 ColdLobbyCodeTests passed1/1 in QUAL Logs/ux1-cold-code.
-No Unity run is active; XML copied to completion/cold-code-results.xml. This meaningful case sends a real local datagram after
-the JOIN request and requires LAN resolution, then immediate cached lookup. No UGS.
-Source/tests/meta/suite registration copied to QUAL. Publish the fix, build its internal player, then one native code/rejoin follow-up;
-do not broaden QA. Gameplay-clock audit is clean.
-Actual broadcast availability remains unproven until that native result.
+Native22261proved immediate4character code entry AND same-profile reconnection:
+both CLIENT slot1, visible lobby state, no429; all3processes exit0; shared input
+unchanged. Actual automatic intro/countdown/rematch also passed previously25337.
+Cold-code source fix already published ine2223caa3/47d5502cb. Do not rebuild/rerun it.
 
-Merged HOME-layer29662passed2/2, no more logo/video checks needed. UI/new later-map
-requirements published084dbdd04; all older P6/P7/REFINE-2 remain assigned. No map
-research or implementation begun; no overall completion claim.
+P6 reviewed144.5,144.6,143.18,143.19,143.17;131unreviewed rows remain. Newly found
+selector Learn gap is implemented and checked, but actual live UGS queue/multipeer
+lock-in and wallet buy/claim remain separate qualification gaps, not blanket passes.
+Live wallet loads have already succeeded in fresh native profiles. Keep every old
+row and external-device/owner-review limit. Continue actionable backlog, then later
+REFINE-2 research and per-map work as ordered; no new map implementation yet.
 
 Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-
 20260921; NEVER --help or-nographics. Internal Builds/<name>/TumbangPreso.exe only.
@@ -323,3 +325,16 @@ identity per map, and sensible filled surroundings at actual lobby/introduction/
 spectator cameras. Full brief:reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md.
 Exact quotes, intake, research plan and TODO updated. This is later work after UI/
 current tests; no research or map implementation claimed now and no older task lost.
+
+## In-flight native build and newly identified older UI requirement
+
+Cold-code fix committede2223caa3, concurrent HOME art275155ea5 merged as47d5502cb,
+pushed and remote SHA verified. QUAL detached47d5502cb. Guarded build exec58190
+active, Logs/ux1-code-build/unity.log ->Builds/ux1-code-47d5502cb/TumbangPreso.exe.
+No.cs edits until it ends. Next one native code/rejoin reproduction from this build.
+
+P6 reviewed144.5,144.6,143.18,143.19,143.17 against current source/receipts:131rows
+remain unreviewed. Important actual gap: timed HubCharacterSelect lacks VISION3
+ability Learn readout. Added to existing UX-1.5 and completion-plan with inline
+readout/timer-safe design direction. Do not mark that requirement done because
+HERO popups exist. Implement after the in-flight join fix check; no maps yet.

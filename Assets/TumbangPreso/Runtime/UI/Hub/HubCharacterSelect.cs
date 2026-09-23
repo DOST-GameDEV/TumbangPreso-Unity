@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,13 @@ namespace TumbangPreso.UI.Hub
         private RectTransform _seats;
         private int _pick;
         private string _shownSeats = "";
+        private HubButton[] _abilityButtons;
+        private TumpAbilitySymbol[] _abilitySymbols;
+        private Text _abilityName, _abilityMeta, _abilitySummary;
+        private HeroKit _shownKit;
+        private HeroAbility[] _shownAbilities;
+        private string _shownHero;
+        private int _inspectedAbility;
 
         private GameMode Mode => SceneFlow.SelectedMode;
         private IReadOnlyList<RosterEntry> People => Roster.GetPeople(Mode);
@@ -50,7 +58,7 @@ namespace TumbangPreso.UI.Hub
             _pick = Mathf.Clamp(Settings.SettingsStore.Current.CharacterPick, 0, People.Count - 1);
 
             // The stage and the name: the left 55 per cent.
-            var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), Vector2.zero, new Vector2(0.55f, 1),
+            var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), Vector2.zero, new Vector2(Mode == GameMode.HeroStrike ? 0.46f : 0.55f, 1),
                                     new Vector2(HubKit.Margin, 190), new Vector2(0, 150));
             var floor = HubKit.Shape(stage, "Floor", HubStyle.ArmyDeep, false, 701, 5, 34);
             HubKit.Place(floor.rectTransform, HubKit.Bottom, new Vector2(0, 0), new Vector2(760, 110));
@@ -97,6 +105,12 @@ namespace TumbangPreso.UI.Hub
             _hint = HubKit.Text(Root, "Hint", "", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleRight);
             HubKit.Place(_hint.rectTransform, HubKit.BottomRight, new Vector2(-(HubKit.Margin + 512 + 30), HubKit.Margin + 140), new Vector2(700, 96));
             _hint.alignment = TextAnchor.LowerRight;
+            if (Mode == GameMode.HeroStrike)
+            {
+                HubKit.Place(_hint.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -HubKit.Margin), new Vector2(512, 96));
+                _hint.alignment = TextAnchor.UpperRight;
+                BuildAbilityReadout();
+            }
 
             // Everyone in the match along the bottom left, with their pick and whether they locked.
             _seats = HubKit.Place(HubKit.Rect(Root, "Seats"), HubKit.BottomLeft, new Vector2(HubKit.Margin, HubKit.Margin), new Vector2(4 * 300, 130));
@@ -164,6 +178,14 @@ namespace TumbangPreso.UI.Hub
             var art = RosterBook.Load().PersonArt(_pick, Mode);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
             _preview.SetTileFraming(0.95f);
+            if (_abilityButtons != null)
+            {
+                _shownHero = person.Id;
+                _shownKit = HeroAbilitySystem.CreateKitFor(person.Id);
+                _shownAbilities = new[] { _shownKit.Skill1, _shownKit.Skill2, _shownKit.Ultimate };
+                for (int i = 0; i < _shownAbilities.Length; i++) _abilitySymbols[i].Glyph = _shownAbilities[i].Glyph;
+                InspectAbility(_inspectedAbility);
+            }
 
             for (int i = 0; i < _cells.Count && i < People.Count; i++)
             {
@@ -178,8 +200,59 @@ namespace TumbangPreso.UI.Hub
             HubKit.LabelOf(_select).fontSize = HubStyle.Size(HubStyle.Display);
             _select.interactable = !_locked;
             HubKit.SetFill(_select, can ? HubStyle.Chartreuse : HubStyle.Honey);
-            _hint.text = !can ? "Not unlocked for online play. Unlock it in the SHOP, or try it in Practice."
+            _hint.text = !can ? "Unlock in the SHOP, or try it in Practice."
                        : _locked ? "Waiting for everyone to lock in." : "";
+        }
+
+        private void BuildAbilityReadout()
+        {
+            // VISION 3's Learn layer stays on the timed selector. A popup would make
+            // TumpHub stop ticking this screen and could suspend the host's deadline.
+            var panel = HubKit.Place(HubKit.Rect(Root, "SelectionAbilities"), HubKit.TopRight,
+                new Vector2(-(HubKit.Margin + 512 + 32), -(HubKit.Margin + 210)), new Vector2(380, 610));
+            HubKit.Stretch(HubKit.Shape(panel, "Plate", HubStyle.Night, false, 745, 5, 24).rectTransform);
+            _abilityButtons = new HubButton[3];
+            _abilitySymbols = new TumpAbilitySymbol[3];
+            for (int i = 0; i < 3; i++)
+            {
+                int slot = i;
+                var button = HubKit.Button(panel, "SelectionAbility" + i, null, HubStyle.Honey,
+                    () => InspectAbility(slot), 0, 746 + i);
+                HubKit.Place((RectTransform)button.transform, HubKit.TopLeft, new Vector2(20 + i * 120, -22), new Vector2(100, 100));
+                var glyph = HubKit.Rect(button.Body, "Glyph").gameObject.AddComponent<TumpAbilitySymbol>();
+                HubKit.Stretch(glyph.rectTransform, 12);
+                glyph.color = HubStyle.Ink; glyph.raycastTarget = false;
+                _abilityButtons[i] = button; _abilitySymbols[i] = glyph;
+            }
+            _abilityName = HubKit.Text(panel, "AbilityName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.UpperLeft);
+            HubKit.Place(_abilityName.rectTransform, HubKit.TopLeft, new Vector2(20, -145), new Vector2(340, 108));
+            _abilityMeta = HubKit.Text(panel, "AbilityMeta", "", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.UpperLeft);
+            HubKit.Place(_abilityMeta.rectTransform, HubKit.TopLeft, new Vector2(20, -264), new Vector2(340, 92));
+            _abilitySummary = HubKit.Text(panel, "AbilitySummary", "", HubStyle.Body, false, HubStyle.Honey, TextAnchor.UpperLeft);
+            HubKit.Place(_abilitySummary.rectTransform, HubKit.TopLeft, new Vector2(20, -366), new Vector2(340, 220));
+        }
+
+        private void InspectAbility(int slot)
+        {
+            if (_shownAbilities == null) return;
+            _inspectedAbility = Mathf.Clamp(slot, 0, 2);
+            var ability = _shownAbilities[_inspectedAbility];
+            AbilityVariant variant = null;
+            if (_inspectedAbility < 2)
+            {
+                var settings = Settings.SettingsStore.Current;
+                var build = HeroBuildRules.RowFor(settings.HeroBuilds, _shownHero);
+                variant = HeroBuildRules.Equipped(build, _shownHero, _inspectedAbility + 1, settings.AbilityChallenges);
+            }
+            bool alternate = variant != null && !variant.IsDefault;
+            _abilityName.text = (alternate ? variant.Name : ability.Name).ToUpperInvariant();
+            _abilitySummary.text = alternate ? variant.Description : ability.Summary;
+            string resource = _inspectedAbility == 2 ? _shownKit.UltimateCost.ToString("0") + " CHARGE"
+                : ability.UsesCharges ? ability.MaxCharges + (ability.MaxCharges == 1 ? " USE" : " USES")
+                : ability.Cooldown.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s cooldown";
+            _abilityMeta.text = AbilityIcons.LabelFor(ability.Glyph) + "\n" + resource;
+            for (int i = 0; i < _abilityButtons.Length; i++)
+                HubKit.SetFill(_abilityButtons[i], i == _inspectedAbility ? HubStyle.Persimmon : i == 2 ? HubStyle.Golden : HubStyle.Honey);
         }
 
         public override bool Back()

@@ -1517,14 +1517,23 @@
     {
       "lineAtIntake": 4458,
       "heading": "### 144.5 ✅ THE LOBBY'S CHARACTERS AND MAP WERE ONE 960 x 540 TEXTURE STRETCHED ACROSS THE SCREEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Retained adaptive MapPreviewSurface rendering follows display width960..2048 at fixed framing, MSAA4 and bilinear filtering. Current five-shape hub captures and native owner lobby images show the live map. New environment sparsity/material appeal is REFINE-2, not this retired fixed-resolution defect.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/a11y-complete-results.xml"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 4495,
       "heading": "### 144.6 ✅ THE LOGO IS ALREADY THE LOGO, AND THE FILE HE SENT IS BYTE-IDENTICAL TO THE ONE IN THE REPO",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical supplied TUMP wordmark is retained; current owner-painted brand surfaces and build icon have their own explicit later sources. No regeneration or substitution is needed to close this original intake. The newly reported BH Studios distortion is separate UX-1.16, now corrected.",
+      "evidence": [
+        "Assets/TumbangPreso/Resources/UI/brand/tump_logo.png",
+        "Assets/TumbangPreso/Editor/GameBuilder.cs",
+        "Assets/TumbangPreso/Runtime/UI/OwnerUiTheme.cs"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 4521,
@@ -1744,20 +1753,37 @@
     {
       "lineAtIntake": 5267,
       "heading": "### 143.18 ⚠️⚠️ OPEN: ENTERING MATCH SETUP OVERWRITES THE SELECTED RULE SET WITH WHATEVER THE PLAYER LAST SAVED, AND THAT REACHES THE TOURNAMENT PRESET",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented RulesPinned guard prevents MatchSetup from overwriting an explicit rule set; normal unpinned restore remains. TournamentGuard pins its preset. Actual native automatic custom rooms retained the explicit1round/30second rules across entry. Full tournament/device qualification remains P7, not inferred from this custom-room evidence.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.cs",
+        "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs",
+        "Assets/TumbangPreso/Runtime/TournamentGuard.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5327,
       "heading": "### 143.19 ✅ CLOSED 2026-09-04: THE HERO PICKER SPENT ITS ONE SENTENCE ON THE WRONG STRING",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Retained ConvertedCharacterSelect chooses a variant description only for a non-default equipped variant. The default uses ability.Summary. Current HERO details deliberately carry full descriptions. Timed character-select learning coverage is separately reopened under143.17/UX-1.5.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/ConvertedCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5363,
       "heading": "### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Original mode-reset cause fixed by143.18; the old LoadoutDoor is the current UX-1 HOME/LOADOUT route. Review found and restored the missing timed-selector Learn layer underUX-1.5: real kit/variant short readout, no modal, timer continues. All7heroes/3slots and normal/large five-shape cases passed; selected frames inspected. True UGS queued peer lock-in remains a separate acceptance gap.",
+      "evidence": [
+        "docs/VISION.md",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubCharacterSelect.cs",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs",
+        "docs/TODO.md",
+        "docs/reports/front-end-flow-2026-09-23/completion/selection-learn-results.xml"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5382,

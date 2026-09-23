@@ -127,3 +127,14 @@ Native937313108 two-peer result is in completion/native-arrival-results.json:
 visible lobby state, arrival and automatic countdown observed on both peers; real
 rematch happened, no diagnostic READY sent, correct auth profiles, clean exits and
 shared input unchanged. This is not a native pixel/render review or live UGS queue.
+
+## Timed-selector Learn layer, implementation under focused review
+
+HubCharacterSelect was missing VISION3's ability information while choosing a
+character. Restored a Hero-only inline column with three existing glyph controls,
+actual equipped alternate/default short description, name, kind and correct resource
+label. No popup, selection/lock side effect or suspended timer. Existing model height,
+portrait grid, seats and Classic neutrality remain. Readout layout/source details in
+completion-plan.md. Focused case passed all7heroes/3slots, both text modes, five
+shapes, live timer and Classic neutrality. Normal/large960x540frames inspected;
+XML and frames are in completion/. No live UGS queue claim from this case.

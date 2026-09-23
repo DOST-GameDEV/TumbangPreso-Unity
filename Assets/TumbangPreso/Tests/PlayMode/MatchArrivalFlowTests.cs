@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TumbangPreso.Abilities;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
@@ -8,6 +10,7 @@ using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace TumbangPreso.PlayTests
 {
@@ -16,6 +19,65 @@ namespace TumbangPreso.PlayTests
         private string _settings;
         private CustomRules _rules;
         private bool _pinned;
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator CharacterSelectionExplainsItsKitWithoutPausingTheClock()
+        {
+            foreach (bool large in new[] { false, true })
+            {
+                Settings.SettingsStore.Current.LargerText = large;
+                Settings.SettingsStore.Current.HighContrastHud = large;
+                SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                yield return HubFlowTests.OpenHome();
+                // Entry/routing is covered by HubFlowTests. This exercises the inline Learn
+                // layer for every selectable hero without a live selection deadline expiring.
+                var selector = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
+                var people = Roster.GetPeople(GameMode.HeroStrike);
+                for (int hero = 0; hero < people.Count; hero++)
+                {
+                    yield return HubFlowTests.Press("Portrait" + hero);
+                    var kit = HeroAbilitySystem.CreateKitFor(people[hero].Id);
+                    HeroAbility[] abilities = { kit.Skill1, kit.Skill2, kit.Ultimate };
+                    for (int slot = 0; slot < abilities.Length; slot++)
+                    {
+                        yield return HubFlowTests.Press("SelectionAbility" + slot);
+                        Assert.AreSame(selector, TumpHub.Current.Top, "Skill inspection must stay inline.");
+                        var settings = Settings.SettingsStore.Current;
+                        var variant = slot < 2 ? HeroBuildRules.Equipped(HeroBuildRules.RowFor(settings.HeroBuilds,
+                            people[hero].Id), people[hero].Id, slot + 1, settings.AbilityChallenges) : null;
+                        bool alternate = variant != null && !variant.IsDefault;
+                        var labels = selector.GetComponentsInChildren<Text>();
+                        Assert.AreEqual(alternate ? variant.Description : abilities[slot].Summary,
+                            labels.Single(t => t.name == "AbilitySummary").text);
+                        Assert.AreEqual((alternate ? variant.Name : abilities[slot].Name).ToUpperInvariant(),
+                            labels.Single(t => t.name == "AbilityName").text);
+                        StringAssert.Contains(AbilityIcons.LabelFor(abilities[slot].Glyph),
+                            labels.Single(t => t.name == "AbilityMeta").text);
+                        Canvas.ForceUpdateCanvases();
+                        foreach (var label in labels.Where(t => t.name.StartsWith("Ability")))
+                        {
+                            Assert.GreaterOrEqual(label.fontSize, HubStyle.Floor);
+                            Assert.LessOrEqual(label.preferredHeight, label.rectTransform.rect.height + 3,
+                                people[hero].Id + "/" + slot + "/" + label.name);
+                        }
+                    }
+                }
+                yield return HubFlowTests.Shots(large ? "CharacterSelect-learn-large" : "CharacterSelect-learn");
+                TumpHub.Current.Home();
+            }
+            var timed = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = true);
+            yield return null;
+            var clock = timed.GetComponentsInChildren<Text>().Single(t => t.name == "Clock");
+            int before = int.Parse(clock.text);
+            yield return HubFlowTests.Press("SelectionAbility1");
+            yield return new WaitForSecondsRealtime(1.1f);
+            Assert.AreSame(timed, TumpHub.Current.Top);
+            Assert.Less(int.Parse(clock.text), before, "Reading a skill must not hold the selection timer.");
+            TumpHub.Current.Home();
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
+            Assert.IsNull(classic.transform.Find("SelectionAbilities"), "Classic stays neutral and has no hero kit.");
+        }
 
         [UnitySetUp] public IEnumerator Before()
         {
