@@ -106,16 +106,30 @@ convex bevels, coloured inside corners), not black lines; soft bloom on sky and 
 - [x] LIGHT-1.4 World edges: near-side silhouette deepening, sun-side convex highlight,
   coloured concave crease, replacing black ink under the look (`WorldOutline`).
 - [x] LIGHT-1.5 Grade: HDR bloom (off on Low tier), coloured lift, vibrance (`ColourGrade`).
-- [ ] LIGHT-1.6 Tune from the first render (v1, same cameras as the baseline). Seen problems:
-  bloom haloes the cast (raise threshold toward 1.6-1.8 or lower intensity toward 0.12, or keep
-  toon surfaces out of the prefilter); Eskinita and SaBubong zenith read lavender (move toward
-  blue); Bayan and Lagoon haze near white; Eskinita and Ilalim asphalt still dark grey; check the
-  convex/concave sign on real edges and whether silhouettes are strong enough to read the cast.
-- [ ] LIGHT-1.7 Update the two tests that assert VISUAL-1.8's darker design in
-  `WorldCourtCueTests.Stage.cs`: the five-map test asserts ambient gets darker, and the toon ramp
-  test asserts a 2..2.5:1 lit/shade ratio. Assert the applied look and a new measured ratio instead.
-- [ ] LIGHT-1.8 Map-select preview (`MapPreviewSurface`) still uses each scene's original
-  lighting; decide whether it should show the bright look.
+- [ ] LIGHT-1.6 Tune from the first render. The v2 render fixed four
+  of the five v1 problems, each its own commit: bloom threshold 1.7 and intensity 0.12 so the lit
+  cast no longer haloes (`7f7dc42e`); Eskinita and SaBubong skies blue instead of lavender, top of
+  frame (195,196,239) to (154,191,241), by pairing a cream or gold horizon with a cyan-leaning
+  zenith (`d30fcb16`); Bayan and Lagoon haze deepened to a light sky blue (`eb27679c`); per-map
+  `GroundLift` 1.6 on the Eskinita and Ilalim court asphalt through a property block, sunlit road
+  (90,85,71) to (158,150,119) on Eskinita and (124,126,106) to (181,185,156) on Ilalim, found by
+  shape and logged (`68d297ba`). Edge close-up checked: no black ink, silhouettes darken their own
+  colour, eaves carry a lighter bevel. Still open: SaBubong read milky in v2, so its haze now runs
+  60 to 300 m (`848e21d4`, NOT yet rendered); whether Ilalim's sunlit road at 181 is too pale is a
+  taste call; overall contrast is lower than PEAK's, left for the owner rather than tuned blind.
+- [x] LIGHT-1.7 The two Stage tests assert the bright look's own claims (`20c977e5`): applied rig,
+  bright shade colour, haze past the court, court ground found; toon ramp measured 1.70:1 under the
+  look against 1.95:1 authored, asserted inside 1.35 to 2. WorldCourtCueTests 3/3 on the Mac.
+- [ ] LIGHT-1.8 Decided: the map-select and lobby preview SHOULD show the bright look, because
+  `MapPreviewSurface` promises the map is graded the way it will be played. In progress:
+  `WorldLookPresentation.InstallPreview(parent, floor, sun)` (explicit sun, handles only cameras
+  tagged `WorldLookCamera`, never `Camera.main`, so the menu UI is not graded) is written but
+  uncommitted and uncompiled. Remaining: call it from `MapPreviewSurface.ApplyMapEnvironment`
+  after the env is applied (destroy the previous preview install first; parent under the shown
+  arena's first active root; sun = its shadow-casting directional light; floor from
+  `WorldGround.TryBelow` at the pivot rather than the spawn-marker height), add `WorldLookCamera`
+  to the preview camera, and note `ConvertedMatchSetup` calls `ReapplyEnvironment` on refresh, so
+  reinstalling there must stay cheap or reuse the live install for the same map.
 - [ ] LIGHT-1.9 Performance check of bloom plus edges on the Balanced tier, and a native build
   look at the owner's window shape.
 
