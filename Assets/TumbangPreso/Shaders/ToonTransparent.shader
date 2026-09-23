@@ -93,18 +93,27 @@ Shader "TumbangPreso/ToonTransparent"
 
         // Transcribed from Toon.shader. The two must agree or a fur strand shades on a
         // different ramp from the shoe it grows out of.
+        // The world look's globals; see § THE SOFT TERMINATOR in Toon.shader.
+        sampler2D _WorldToonRamp;
+        half _WorldLookWeight;
+        float4 _WorldSoftLight;
+
         half4 LightingToon (SurfaceOutput s, half3 lightDir, half atten)
         {
-            half shade = dot(s.Normal, lightDir) * atten;
+            half ndl = dot(s.Normal, lightDir);
+            half shade = ndl * atten;
             half band = smoothstep(0.0h, _BandEdge, shade);
             half level = lerp(_ShadowBand, 1.0h, band);
+            half shadowed = lerp(atten, 1.0h, _WorldSpaceLightPos0.w);
+            half softBand = smoothstep(-_WorldSoftLight.y, max(0.02h, _WorldSoftLight.x) - _WorldSoftLight.y, ndl) * shadowed;
+            half3 ramp = tex2D(_WorldToonRamp, half2(softBand, .5h)).rgb;
 
             half4 c;
             // Preserve the authored directional-light toon shadow band. Positional
             // lights must still fade with range: a near-range-edge point retained
             // most of its color contribution and washed the cast in nearby colors.
             half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
-            c.rgb = s.Albedo * _LightColor0.rgb * level * falloff;
+            c.rgb = s.Albedo * _LightColor0.rgb * lerp(level.xxx, ramp, _WorldLookWeight) * falloff;
             c.a = s.Alpha;
             return c;
         }

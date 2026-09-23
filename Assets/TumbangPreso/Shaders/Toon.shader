@@ -328,7 +328,7 @@ Shader "TumbangPreso/Toon"
         // mutation, and the world camera scope restores a preview's own look.
         sampler2D _WorldToonRamp;
         half _WorldLookWeight;
-        float4 _WorldLookShape,_WorldKeyDirection;
+        float4 _WorldLookShape,_WorldKeyDirection,_WorldSoftLight;
         half _ShadowBand;
         half _BandEdge;
 
@@ -385,16 +385,33 @@ Shader "TumbangPreso/Toon"
         /// multiplied down into mud.
         half4 LightingToon (SurfaceOutput s, half3 lightDir, half atten)
         {
-            half shade = dot(s.Normal, lightDir) * atten;
-            half band = smoothstep(0.0h, lerp(_BandEdge,_WorldLookShape.x,_WorldLookWeight), shade);
+            half ndl = dot(s.Normal, lightDir);
+            half shade = ndl * atten;
+            half band = smoothstep(0.0h, _BandEdge, shade);
             half level = lerp(_ShadowBand, 1.0h, band);
+
+            // ⚠️⚠️ § THE SOFT TERMINATOR, the world look's replacement for the two-band step.
+            // PEAK's cast reads like soft toys: light turns to shade over a wide, wrapped band
+            // rather than at a hard line. The step starts `Wrap` past the geometric terminator
+            // and spans `Softness` of N.L, and the ramp it samples carries the map's coloured
+            // shade and a faint warm band (see `WorldLookPresentation.Build`). This is the cast
+            // and hero props only: the world keeps its own shaders, per the 2026-07-29 revert.
+            //
+            // ⚠️ SHADOW, NOT DISTANCE. A directional light's `atten` is its shadow term and folds
+            // into the band, so a body standing in a building's shadow lands on the same shade
+            // colour as its own back. A positional light's `atten` is range falloff and is
+            // applied once, below, rather than twice.
+            half soft = max(0.02h, _WorldSoftLight.x);
+            half wrap = _WorldSoftLight.y;
+            half shadowed = lerp(atten, 1.0h, _WorldSpaceLightPos0.w);
+            half softBand = smoothstep(-wrap, soft - wrap, ndl) * shadowed;
 
             half4 c;
             // Preserve the authored directional-light toon shadow band. Positional
             // lights must still fade with range: a near-range-edge point retained
             // most of its color contribution and washed the cast in nearby colors.
             half falloff = lerp(1.0h, atten, _WorldSpaceLightPos0.w);
-            half3 ramp=tex2D(_WorldToonRamp,half2(band,.5h)).rgb;
+            half3 ramp=tex2D(_WorldToonRamp,half2(softBand,.5h)).rgb;
             c.rgb = s.Albedo * _LightColor0.rgb * lerp(level.xxx,ramp,_WorldLookWeight) * falloff;
             c.a = s.Alpha;
             return c;
