@@ -87,6 +87,27 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongStairheadFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=55;
+            var finish=GameObject.Find("SaBubong/Dressing/Resident stairhead finish");Assert.IsNotNull(finish);Assert.IsEmpty(finish.GetComponentsInChildren<Collider>());
+            foreach(string view in new[]{"court","near"})
+            {
+                camera.transform.position=view=="court"?new Vector3(3,2.8f,12):new Vector3(7.9f,1.9f,12.4f);
+                camera.transform.LookAt(new Vector3(8,1.55f,17.5f));
+                foreach(string state in new[]{"before","after"})
+                {
+                    finish.SetActive(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-stairhead-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongTankFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);

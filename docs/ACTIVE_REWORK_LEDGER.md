@@ -232,3 +232,20 @@ Tank case25316completed/reaped1/1in3.398s; paired service/near/grey25inspected, 
 v1. Qualified scene/assets/evidence copied to DEV, known generated churn restored
 from saved patch. No active job. Publish tank/ref/plan unit then stairhead finish;
 source plan already saved. This does not close SaBubong or the overall goal.
+
+Tank8c891ad2ccommitted/push57439pending final receipt. QUAL exact candidate matched/
+stashed then advanced8c891ad2c. Stairhead local source drafted/copied: one fitted
+frame/lever/louvre/light-housing/flashing mesh, existing baked body/noticeboard/mural
+and collision retained. Measured envelope guard; no new functional door/light/runtime
+system. Paired court/near native case ready. Author next
+Logs/refine2-sabubong-stairhead-v1; no.cs edits during run. Shade/context remain next.
+
+Tank remote verified8c891ad2c3af7923bf5325abd3c50a55ed7fbfe6. Stairhead author48510
+completed/reaped:456vertices/one renderer; original body/noticeboard/mural/collision
+retained. Current paired court/near review runs Logs/refine2-sabubong-stairhead-v1;
+no.cs edits during run. Need inspect before publication. Shade/context still open.
+
+Stairhead case54048completed/reaped1/1in3.367s. Paired court/near/grey25inspected,
+keep v1. Qualified scene/assets/evidence copied to DEV, known churn restored after
+patch. Publish this unit; then shade plan is already saved with measured source
+positions. No active jobs. SaBubong context/remaining maps/gameplay are not complete.

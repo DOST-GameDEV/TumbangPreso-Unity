@@ -1,0 +1,1 @@
+Retained stairhead/noticeboard/mural/collision; fitted door frame/lever, five ventilation blades, light housing and front flashing. 456vertices, one renderer, no new light or runtime script.
