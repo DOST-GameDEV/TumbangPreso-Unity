@@ -1,8 +1,9 @@
 # Individual map refinement plan, 2026-09-23
 
-Status: RESEARCH AND PLANNING. The new map refinement is not implemented or
-complete. Older successful passes remain the baseline; their completion does
-not satisfy the owner's new visual rejection. Keep REFINE-2 rows open.
+Status: Eskinita's connected visible-distance group is implemented and inspected;
+individual houses/props and the remaining maps are still open. Follow the current
+ledger and eskinita-decisions.md for evidence. Older successful passes remain the
+baseline; they do not satisfy the owner's new rejection. Keep REFINE-2 rows open.
 
 ## Owner request, restated without losing scope
 
