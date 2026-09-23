@@ -85,5 +85,74 @@ namespace TumbangPreso.PlayTests
             }
             finally{File.WriteAllText(Path.Combine(Output,"world-render.csv"),report.ToString());}
         }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaOuterContextKeepsTheCourtAndUsesTheRealPreviewCamera()
+        {
+            var canvas = new GameObject("Context preview canvas", typeof(Canvas));
+            var surface = new GameObject("Actual map preview", typeof(RectTransform), typeof(CanvasRenderer), typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform, false);
+            ((RectTransform)surface.transform).sizeDelta = new Vector2(1920, 1080);
+            var preview = surface.AddComponent<MapPreviewSurface>();
+            preview.Show(SceneFlow.Eskinita);
+            float deadline = Time.realtimeSinceStartup + 30;
+            while (preview.Showing != SceneFlow.Eskinita && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(SceneFlow.Eskinita, preview.Showing);
+            Assert.IsNotNull(preview.Camera);
+            // Freeze this real preview pose for the paired geometry comparison. This component
+            // has no OnDisable teardown; its camera and owned scene remain alive until destroy.
+            preview.enabled = false;
+            var context = GameObject.Find("Eskinita/Dressing/EskinitaContextRefinement");
+            Assert.IsNotNull(context);
+            var bodies = context.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("Bahay_Context_")).ToArray();
+            Assert.AreEqual(26, bodies.Length);
+            Assert.IsEmpty(context.GetComponentsInChildren<Collider>(true));
+            var district = context.transform.Find("DistantDistrict");
+            Assert.IsNotNull(district, "The owner's exposed background needs more than the first added row.");
+            var blocks = district.GetComponentsInChildren<MeshRenderer>().Where(r => r.name.StartsWith("Block_")).ToArray();
+            Assert.AreEqual(96, blocks.Length);
+            Assert.AreEqual(1, blocks.Select(r => r.sharedMaterial).Distinct().Count(), "The distant blocks share a palette material.");
+            foreach(var block in blocks)
+            {
+                Assert.Greater(block.GetComponent<MeshFilter>().sharedMesh.vertexCount, 100);
+                Assert.AreEqual("EskinitaDistrictPalette", block.sharedMaterial.mainTexture.name);
+                Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off, block.shadowCastingMode);
+                var bounds = block.bounds;
+                Assert.IsTrue(bounds.min.x >= 48 || bounds.max.x <= -48 || bounds.min.z >= 66 || bounds.max.z <= -66,
+                    block.name + " enters the existing neighborhood.");
+            }
+            foreach (var body in bodies)
+            {
+                var renderers = body.GetComponentsInChildren<MeshRenderer>();
+                Assert.IsNotEmpty(renderers);
+                Assert.IsTrue(renderers.SelectMany(r => r.sharedMaterials).Any(m => m != null &&
+                    m.mainTexture != null && m.mainTexture.name.StartsWith("colormap_roof_")),
+                    body.name + " missed the existing neighborhood palette and kept the mint source roof.");
+                var bounds = renderers[0].bounds;
+                foreach (var renderer in renderers) bounds.Encapsulate(renderer.bounds);
+                Assert.That(bounds.min.y, Is.EqualTo(.1f).Within(.01f), body.name + " floats.");
+                Assert.IsTrue(bounds.min.x >= 28 || bounds.max.x <= -28 || bounds.min.z >= 47 || bounds.max.z <= -47,
+                    body.name + " enters the retained neighborhood.");
+            }
+            Vector3 position = preview.Camera.transform.position;
+            Quaternion rotation = preview.Camera.transform.rotation;
+            foreach (string state in new[] { "before", "after" })
+            {
+                // Keep the initial row present in both images. The owner reported the empty
+                // distance beyond it, so compare only the new, deeper neighborhood here.
+                district.gameObject.SetActive(state == "after");
+                yield return null;
+                using (Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(preview.Camera, "Eskinita-preview-context-" + state,
+                        false, Output, width: 1280, height: 720);
+                Assert.AreEqual(position, preview.Camera.transform.position);
+                Assert.AreEqual(rotation, preview.Camera.transform.rotation);
+            }
+            using (Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(preview.Camera, "Eskinita-preview-context-small",
+                    false, Output, width: 960, height: 540);
+            Object.Destroy(canvas);
+            yield return null;
+        }
     }
 }

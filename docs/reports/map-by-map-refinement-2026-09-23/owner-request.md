@@ -92,3 +92,29 @@ ArtSource/map-refinement-20260923/owner-references/.
 
 Answered directly: the new map refinement is NOT finished. Research has started;
 no new map edits in REFINE-2 yet. Recap given, and research/per-map planning continues.
+
+## Follow-up on the first Eskinita extension,2026-09-23
+
+> background is js empty and that is seen in map select renders and shit
+
+The crop shows the remaining empty distance beyond the first added row. Preserve
+it in owner-references/eskinita-empty-distance.png. The background remains open;
+continue into connected middle/distant context rather than calling that row enough.
+
+## All-map surroundings and Filipino house finishes,2026-09-23
+
+> please do that to all maps making shit beyond stuff
+>
+> AND thoroughly figure out as well how to make the houses look better bcz it looks so plain and bland
+>
+> add some sort of texture or detail or anything to make all houses look better and more filipino thank you
+>
+> research first before u do it and also use gpt images for inspo
+
+Extend meaningful surroundings on all five maps, one map at a time. Extra copies
+in the distance do not complete the house-quality requirement. Research each
+place's house construction and material/use relationships first, then use the
+built-in image generator for critiqued blocky-style inspiration. Inspect individual
+houses and improve weak surfaces, openings, roof construction and domestic details.
+Do not apply one generic dirt/noise texture or decorative cultural motif everywhere.
+Save research, concept provenance, keep/reject decisions and actual game evidence.

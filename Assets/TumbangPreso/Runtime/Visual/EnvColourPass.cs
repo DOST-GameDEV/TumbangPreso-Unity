@@ -110,6 +110,7 @@ namespace TumbangPreso.Visual
         {
             "Bahay", "Likod", "Malayo", "Kanto", "Puno", "TreesNear", "TreesFar",
             "Layer1", "Layer2", "Belt", "CrossRow",
+            "EskinitaContextRefinement", // New outer lots use the same existing roof/facade palette.
         };
 
         /// <summary>Hanging laundry sways. The anchor is the line it hangs from, so the drop
@@ -317,6 +318,10 @@ namespace TumbangPreso.Visual
             long value = (long)NameHash(instance) * multiplier + offset;
             return (int)(value % count);
         }
+
+        // Baked distant streets use the same choices as named runtime house instances.
+        public static int FacadeIndexFor(string instance) => Pick(instance, 7, 0, FacadeTints.Length);
+        public static int RoofIndexFor(string instance) => Pick(instance, 13, 5, RoofAtlases.Length);
 
         /// <summary>
         /// The colour properties a material might actually carry, in the order they are tried.

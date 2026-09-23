@@ -113,6 +113,13 @@ bots were sometimes AFK/standing. Treat these as new experience reports; earlier
 passing checks do not prove these complaints resolved. Do not start another global
 map shader sweep as a substitute for individually improving all five places.
 
+Owner reiterated: extend meaningful surroundings beyond the arena on ALL maps,
+and improve plain/bland houses themselves with appropriate texture/construction
+detail and stronger Filipino place identity. Research first and use built-in image
+generation for critically reviewed inspiration. Extra background copies are not
+house-quality completion. Each map gets its own distance plan and individual
+building/material decisions, preserving the one-map-at-a-time order.
+
 - [ ] **REFINE-2.0 Older-work gate.** Finish/account for older actionable TODOs with
   actual implementation/evidence; preserve shared/concurrent and external dependencies.
 - [ ] **REFINE-2.1 Thorough reference research and plan.** First research good-game
@@ -128,6 +135,16 @@ map shader sweep as a substitute for individually improving all five places.
   map, and a context-density plan at actual lobby/introduction/play/spectator angles.
   Owner PEAK and sparse-lobby reference images are preserved in ArtSource.
 - [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
+  First context group implemented:26retained-family outer houses and4connected
+  streets, existing collision preserved. Matched actual-preview/small/grey25
+  inspected; focused1/1passed after correcting new-group roof palette routing.
+  [Evidence and remaining work](reports/map-by-map-refinement-2026-09-23/eskinita-context/report.md).
+  Owner correctly rejected the remaining empty distance beyond that first row.
+  A continuing96-block district now fills the exposed preview background using
+  retained middle-distance geometry and simpler distant houses, one palette material
+  and no new collision. Matched preview/small/grey25inspected; focused1/1passed.
+  [Distance evidence](reports/map-by-map-refinement-2026-09-23/eskinita-distance/report.md).
+  Near assets/materials, vegetation, sky and whole-map acceptance remain open.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.

@@ -1,0 +1,20 @@
+{
+  "base": "6c792aa240d9804976b84620dd9f3b516e9efe99",
+  "initialContextCommit": "40ca8a1b9f11f3060df5b28068ca1449b6707ace",
+  "blocks": 96,
+  "retainedMediumHouses": 104,
+  "simplifiedFarHouses": 448,
+  "sharedPlantedYards": 24,
+  "districtVertices": 315742,
+  "sharedPaletteMaterials": 1,
+  "paletteSize": [
+    408,
+    416
+  ],
+  "distantShadowCasting": false,
+  "newGameplayColliders": 0,
+  "testPassed": 1,
+  "testTotal": 1,
+  "testSeconds": 1.7811458,
+  "wholeMapComplete": false
+}
