@@ -257,8 +257,15 @@ scattered across all maps. Execute inside each map's existing refinement row.
   retained. Paired/grey25/native preview inspected; focused2/2passed. Civic fronts/rear
   and south High/Low reviewed; sky20/180motion samples inspected and retained.
   [Pot and near-art findings](reports/map-by-map-refinement-2026-09-23/bayan-potted-shrubs/report.md).
-  Next the source-confirmed e/o house-detail omission, then final card/integrated gate.
+  Sixteen e/o houses now have their existing fitted timber/jalousie/terrace finishes;
+  original bodies/collision retained. Paired front/back/grey25and final preview
+  inspected, focused2/2passed. Native map-vote card refreshed.
+  [House finish evidence and art-batch disposition](reports/map-by-map-refinement-2026-09-23/bayan-house-finish/report.md).
+  Art batch ready for integrated intro/spectator/native acceptance; keep parent open
+  for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Next active map. [Primary reference intake and Gilmore/LRT2identity](reports/map-by-map-refinement-2026-09-23/ilalim-reference-notes.md)
+  saved. Judge current bright views before deciding local concrete/shop/context changes.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve

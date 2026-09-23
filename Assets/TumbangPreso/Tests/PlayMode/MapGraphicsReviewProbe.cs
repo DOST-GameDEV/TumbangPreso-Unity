@@ -87,6 +87,30 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator BayanHouseFinishReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=55;
+            var finishes=GameObject.Find("BayanPlaza/Dressing/BayanHouseFinishes");Assert.IsNotNull(finishes);
+            Assert.IsEmpty(finishes.GetComponentsInChildren<Collider>());
+            foreach(int index in new[]{4,6,1,3})
+            {
+                var home=GameObject.Find("BayanPlaza/Dressing/Bahay/Bahay_Civic_"+index);var body=home.GetComponent<MeshRenderer>().bounds;
+                camera.transform.position=index%2==0?new Vector3(body.center.x+11,3.8f,body.center.z+3.5f):
+                    new Vector3(body.center.x+5.5f,6.2f,body.center.z+6.4f);
+                camera.transform.LookAt(body.center);
+                foreach(string state in new[]{"before","after"})
+                {
+                    finishes.SetActive(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"Bayan-finish-"+index+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator BayanFinalArtReview()
         {
             var canvas=new GameObject("Bayan final preview",typeof(Canvas));

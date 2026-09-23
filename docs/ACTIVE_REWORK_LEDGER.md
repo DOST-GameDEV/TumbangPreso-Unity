@@ -204,3 +204,39 @@ retained terrace door, confirmed in source. No active jobs or browser tabs.
 Ilalim identity is Gilmore/LRT2; LRMC Line1photo is general support/context reference,
 not a new train/station specification. Read LRMC articles and viewed2023Photo2;
 2020vertical-garden image failed. Notes retain that distinction.
+
+Potted-shrub unit committed3791a1569; push5905pending tool reaping/remote receipt.
+QUAL candidate exactly matched/stashed and advanced3791a1569. Current house source
+BayanHouseFinishAuthor drafted/copied: only16e/o retained bodies receive existing
+fitted GLBs; authored bounds and original collision guarded. Surface generation
+scoped to new group,6shared local timber materials use corrected _DeckSurface1.
+Existing near/back paired native review ready, four representative e/o bodies.
+Author starts Logs/refine2-bayan-house-v1; no.cs edits during run. No final card yet.
+
+House author60470stopped/reaped before scene save: new surface assets receive hashed
+filenames on first CreateAsset, so display-name matching missed timber semantics.
+Resolve the existing original-material identity/name contract instead; keep the
+three-slot guard unchanged. The exact source GUIDs also correct witness IDs:
+front e/o are4/6, back e/o are1/3 (not the earlier assumed2/8/7/3). This is a bounded
+source/selection correction. Revised author uses author-semantics.log, not a new
+capture framework. Pot push confirmed3791a156926dd5517fc842ff35815357eea02a49.
+
+House author68957completed/reaped after original-material semantic resolution.
+All16e/o additions fit; six timber material derivatives and collision guards pass.
+Current paired house/final-native-card cases run in Logs/refine2-bayan-house-v1;
+inputs frozen. Keep card unpublished until inspected. Exact primary e IDs:
+1,4,11,12,22,27,32,37; o IDs3,6,13,14,23,28,33,38. Do not infer family by IDmod5
+for the first20, because back rows use a different family sequence.
+
+House/final art53902completed/reaped2/2in7.412s. Front4/6andback1/3pairs plusgrey25
+inspected, result fits and reads better. Final960x540preview inspected and copied
+into BayanPlaza map-vote card, importer/GUID retained. Qualified scene/materials/
+evidence copied to DEV; known churn and two unchanged shared surface-mesh line
+endings restored after full patch. No active Unity job. Publish this house/card
+unit. Bayan art batch ready for integrated camera/native acceptance; keep parent
+open for that gate and proceed Ilalim. No unchanged Bayan runs.
+Current Ilalim Stage after frame inspected: structural forms/shops are visible now,
+with a notably cool/mint pier tint. Inventory has1509surfaces/97solids, including
+substantial existing SkylineKit/BacklotKit; do not duplicate a city from an old crop.
+Next actual preview/near concrete/shop inventory review and local plan, using the
+adopted bright lighting. No Ilalim assets changed yet. Browser reference tabs closed.

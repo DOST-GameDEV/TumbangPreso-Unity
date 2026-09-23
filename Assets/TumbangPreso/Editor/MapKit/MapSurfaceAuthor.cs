@@ -382,6 +382,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(a,out string _,out long value)&&value==id);
         }
         internal static Mesh SourceMeshForAuthoring(Mesh mesh)=>OriginalMesh(mesh);
+        internal static string SourceMaterialNameForAuthoring(Material material)=>SourceName(OriginalMaterial(material));
 
         private static Mesh OriginalMesh(Mesh mesh)
         {
