@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-23: P6 accounted for, current qualifications next
+## Current resume, 2026-09-23: chat follow-up complete; map reference research
 
 The full assigned goal is NOT complete. Keep working in this conversation after
 status answers/checkpoints. No other chats, delegation, resets, paid services,
@@ -9,8 +9,8 @@ Current owner instructions/adopted designs supersede old OPEN headings and retir
 FUTURE plans. Preserve all tasks and evidence; do not revive obsolete proposals.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Source/last verified remote7a0ae33638a186cb865a6153c6b718b5392692db. P6 documentation
-and functional chat fix are published. Stage explicit paths; sole authorM4tyu633, no
+Source/last verified remotea7c4d1b35ab409471e5aa52a8b4b1a9ce89cc6e4. P6 documentation,
+functional chat fix and native receipts are published. Stage explicit paths; sole authorM4tyu633, no
 trailers/AI mentions/em dashes. Fetch/reconcile before push and verify remote HEAD.
 Never commit original composition-redesign/home-court.png.meta or loading-street.png.meta.
 Other contributor's HOME video commits are integrated, not generated churn.
@@ -43,6 +43,29 @@ especially last12hours and SETTINGS appearance/behavior. Delivered locally at
 C:/Users/matth/Downloads/TUMP_Claude_UI_HUD_Review_2026-09-23.md. Includes DIFFERENT
 MACHINE and PULL FIRST. No other task contacted; do not add a global UI-work ban.
 This worker continues current remaining qualification/backlog work.
+
+Latest turn interruption was a session turn_aborted event, not task completion.
+The event does not identify its trigger; do not invent a Stop/app/update diagnosis.
+Owner asked why work stopped; answered honestly and resumed. Overall goal stays active.
+
+Map research has now started, without map implementation or dropping older checks.
+Saved comparative-reference-notes.md under reports/map-by-map-refinement-2026-09-23:
+Brown City gallery, official PEAK media and A Short Hike gallery personally viewed;
+Nintendo worldbuilding interview and Philippine museum/UNESCO/UP sources examined.
+One task-owned IAB tab was closed; tab list verified empty. No downloads/purchases.
+Next research step: current Eskinita views and object/source decision register,
+then critiqued generated references and individual-map implementation. Existing
+Eskinita neighborhood/detail/utility/surface authors already do substantial work;
+inspect actual weak results and preserve good parts. Use TUMP_MAP_AUTHOR=Eskinita
+for the existing map author rather than running its multi-map default. No.cs job active.
+
+Owner reiterated map research/plan first and requested recap; recap delivered.
+New map-by-map-plan.md records all five distinct directions, concrete initial
+visual weaknesses/keep decisions and local task order. All five saved native High
+frames personally inspected; no new map edits yet. Current selected scene/author
+paths unchanged2d43fc0eb..7a0ae3363. Remote LIGHT-1at053e5274e inspected read-only:
+grading/toon/coloured-world-edges scope, not integrated. Avoid duplicating that work.
+Next: Eskinita object register and generated reference study, critique before meshes.
 
 ### Completed current implementation and evidence, do not repeat without new cause
 

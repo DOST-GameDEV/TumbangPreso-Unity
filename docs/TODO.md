@@ -118,7 +118,10 @@ map shader sweep as a substitute for individually improving all five places.
 - [ ] **REFINE-2.1 Thorough reference research and plan.** First research good-game
   qualities and visual/motion satisfaction, then translate them into TUMP criteria.
   [Initial foundation notes](reports/map-by-map-refinement-2026-09-23/foundation-research.md)
-  have begun; this research is not complete. Inspect actual rendered
+  and [comparative reference notes](reports/map-by-map-refinement-2026-09-23/comparative-reference-notes.md)
+  have begun; this research is not complete. Brown City, official PEAK media and
+  A Short Hike's gallery were visually inspected; initial Philippine place sources
+  and current Eskinita authoring routes are recorded. No new map edit yet. Inspect actual rendered
   assets, cross-reference place/material construction, inventory per-map assets,
   write concrete keep/refine/replace decisions and ordered implementation plans.
   Include comparative game research, a sourced Filipino cultural/place brief per
