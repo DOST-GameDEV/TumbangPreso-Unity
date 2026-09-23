@@ -1,0 +1,35 @@
+{
+  "name": "tump-home-scene",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HOME screen background scene: Zack at Sa Bubong, rendered to a seamless loop for the Unity HOME background layer.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "refs": "node scripts/refs.mjs",
+    "stills": "node scripts/stills.mjs",
+    "sheet": "node scripts/sheet.mjs",
+    "draft": "remotion render src/index.ts HomeScene out/draft_half.mp4 --scale=0.5 --concurrency=6 --crf=20 --gl=angle",
+    "master": "remotion render src/index.ts HomeScene out/zack_home_loop_1080p30.mp4 --concurrency=6 --crf=17 --pixel-format=yuv420p --gl=angle",
+    "ship": "node scripts/ship.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.2.0",
+    "@remotion/cli": "4.0.527",
+    "@remotion/noise": "4.0.527",
+    "@remotion/paths": "4.0.527",
+    "@remotion/three": "^4.0.527",
+    "@types/three": "^0.178.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.527",
+    "three": "^0.178.0",
+    "@remotion/bundler": "4.0.527",
+    "@remotion/renderer": "4.0.527"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "sharp": "^0.34.3",
+    "typescript": "5.8.3"
+  }
+}
