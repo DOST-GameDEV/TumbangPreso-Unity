@@ -238,8 +238,16 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Oversized mountain paintings now sit lower behind the district; original art
   retained. Matched game/grey25 and actual preview inspected, existing2/2passed.
   [Background evidence](reports/map-by-map-refinement-2026-09-23/eskinita-backdrop/report.md).
-  Remaining props, preview/card integration and whole-map acceptance remain open.
+  Remaining shop/seating/court views inspected at High/Low; retained useful props,
+  lettered two blank shop boards and replaced the outdated map-vote card with the
+  actual bright preview. Sign pass1/1passed and paired/grey25inspected.
+  [Final art-batch decisions and remaining integrated acceptance](reports/map-by-map-refinement-2026-09-23/eskinita-prop-review.md).
+  Art implementation is ready for the integrated intro/spectator/native gate;
+  this parent remains open until that acceptance. Continue Bayan art next.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
+  Next active map. [Primary place references and generated-study critique](reports/map-by-map-refinement-2026-09-23/bayan-reference-notes.md)
+  saved. Inspect mint hedge bars first; retain successful civic landmarks. Broader
+  connected town/planting context must differ from Eskinita's denser district.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.

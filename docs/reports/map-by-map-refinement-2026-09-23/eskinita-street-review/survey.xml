@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.8378287">
+  <test-suite type="TestSuite" id="1753" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="577" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.837829" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1747" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="577" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.822689" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19392" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1748" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="577" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.817082" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1749" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="577" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.811493" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1285" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.788741" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1287" name="EskinitaStreetCompositionReview" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.EskinitaStreetCompositionReview" methodname="EskinitaStreetCompositionReview" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="894083661" result="Passed" start-time="2026-09-23 18:07:43Z" end-time="2026-09-23 18:07:48Z" duration="4.771880" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1107 renderers, 161 with a roof variant.
+[NearFade] 1337 occluder nodes matched, 236 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/refine2-eskinita-review/court-north-quality2.png
+[Play] wrote Logs/refine2-eskinita-review/court-south-quality2.png
+[Play] wrote Logs/refine2-eskinita-review/court-east-quality2.png
+[Play] wrote Logs/refine2-eskinita-review/court-west-quality2.png
+[Play] wrote Logs/refine2-eskinita-review/court-north-quality0.png
+[Play] wrote Logs/refine2-eskinita-review/court-south-quality0.png
+[Play] wrote Logs/refine2-eskinita-review/court-east-quality0.png
+[Play] wrote Logs/refine2-eskinita-review/court-west-quality0.png
+[Play] wrote Logs/refine2-eskinita-review/shop-W--1.png
+[Play] wrote Logs/refine2-eskinita-review/shop-W-1.png
+[Play] wrote Logs/refine2-eskinita-review/shop-E--1.png
+[Play] wrote Logs/refine2-eskinita-review/shop-E-1.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -27,3 +27,22 @@ remain region-specific; don't combine every heritage motif or reproduce sacred
 ornament as generic decoration. Generated ideation should target an actually weak
 asset after the baseline review, retaining the existing blocky world and clear court.
 Browser reference tab closed and empty tab list verified after viewing.
+
+
+## Generated study critique
+
+ArtSource/map-refinement-20260923/concepts/bayan-civic-v1.png, built-in generation;
+prompt and SHA provenance beside it. Reference is the actual bright Stage image.
+Useful: retained civic silhouettes, quieter stone/plaster/wood separation, varied
+planted street edges, connected low town beyond the first row, green shrub masses
+inside real planters. Existing mint-colored hedge bars are a concrete weak part
+visible in the game baseline; inspect those individual assets first. The church's
+existing arches, bands and roof are already useful and should not be rebuilt just
+because the generated image is smoother.
+
+Reject: tuk-tuk-like vehicle (does not match the researched motorcycle-sidecar
+tricycles), generic bus, every roof becoming orange ceramic, overly detailed leaf
+fringes, altered exact landmark proportions and extra competing distant towers.
+Do not copy its universal terracotta roof or the whole composition. Keep TUMP's
+existing terminal and varied retained house families. The generated study guides
+selected changes, not proof that anything is implemented or culturally exact.

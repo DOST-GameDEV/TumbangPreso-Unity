@@ -87,6 +87,43 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator EskinitaStreetCompositionReview()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=65;
+            foreach(int quality in new[]{2,0})
+            {
+                GraphicsProfiles.Apply(quality);yield return null;
+                foreach(string direction in new[]{"north","south","east","west"})
+                {
+                    Vector3 eye=direction=="north"?new Vector3(0,1.6f,-10):direction=="south"?new Vector3(0,1.6f,10):
+                        direction=="east"?new Vector3(-5,1.6f,0):new Vector3(5,1.6f,0);
+                    Vector3 aim=direction=="north"?new Vector3(0,1.6f,15):direction=="south"?new Vector3(0,1.6f,-15):
+                        direction=="east"?new Vector3(10,1.6f,0):new Vector3(-10,1.6f,0);
+                    camera.transform.position=eye;camera.transform.LookAt(aim);
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"court-"+direction+"-quality"+quality,false,Output,width:960,height:540);
+                }
+            }
+            GraphicsProfiles.Apply(2);camera.fieldOfView=55;yield return null;
+            foreach(string lot in new[]{"W","E"})
+            {
+                var shop=GameObject.Find("Eskinita/Dressing/Kalat/SariSari_"+lot);Assert.IsNotNull(shop);
+                var bodies=shop.GetComponentsInChildren<MeshRenderer>();var bounds=bodies[0].bounds;
+                foreach(var body in bodies)bounds.Encapsulate(body.bounds);
+                foreach(int side in new[]{-1,1})
+                {
+                    camera.transform.position=bounds.center+new Vector3(5,1.6f,side*6);
+                    camera.transform.LookAt(bounds.center+Vector3.up*.2f);
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"shop-"+lot+"-"+side,false,Output,width:1280,height:800);
+                }
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator EskinitaPrimaryHomesMaterialReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);

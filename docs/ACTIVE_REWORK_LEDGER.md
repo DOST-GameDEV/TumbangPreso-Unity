@@ -1,6 +1,6 @@
 # Active TUMP rework ledger
 
-## Current resume, 2026-09-24: Eskinita backdrop and bright previews finished
+## Current resume, 2026-09-24: Eskinita art batch ready, Bayan next
 
 Overall goal ACTIVE and NOT complete. Continue all independently actionable work
 without checkpoint stops. Owner is asleep and expects quality product work ahead
@@ -138,3 +138,31 @@ preview/before/small/grey25inspected, result much clearer. Qualified runtime sou
 in DEV/QUAL, test-only weight save/restore added after run. Churn patches backed up,
 known churn restored. Publish backdrop plus preview, then resume Eskinita props/
 final views/static card and continue next map. No further unchanged lighting checks.
+
+Backdrop4631c1800/previewec1d3a9cdPUBLISHED through mergee3c6c6aa7eccd72d9e5a365b0a86417b44a0fb96,
+remote verified. Incoming6363f73a6Phaister HOME/random loops preserved. Lighting
+branch still50f1fc255. QUAL advanced after matched candidate stash; no source loss.
+Eskinita map-vote card now copied from inspected960x540actual bright preview; its
+importer/GUID retained. Next one bounded art-review set for two remaining street
+shop/seating pockets plus ordinary court directions/Low. This is content inspection,
+not another fixture project. Then record whole-map keep/refine decisions and move
+into Bayan using saved primary reference notes.
+
+Eskinita street survey53742completed1/1in4.838s; signs author2459and check16707
+completed/reaped, after1/1in4.842s. High/Lowcourt directions and both shop fronts
+inspected; opposite shop diagnostic views/south actor occlusion are recorded limits,
+not a capture-tool repair task. Existing props retained, two blank signs lettered,
+shop source scene/assets copied to DEV and paired/grey25inspected. Map-vote card
+uses actual bright preview960x540, importer/GUID unchanged. See eskinita-prop-review.
+Eskinita art implementation ready for integrated intro/spectator/native acceptance;
+REFINE-2.2parent stays open for that gate. Continue Bayan art now, no unchanged loops.
+
+Bayan primary National Museum/Cabatuan refs read, displayed photos inspected;
+browser tab closed/empty list verified. Built-in conceptbayan-civic-v1saved with
+prompt/SHA. Keep layered green civic-edge/context/material separation; reject
+invented tuk-tuk/bus, universal orange tiles and altered landmark proportions.
+Current observed weakness is mint hedge bars; native5-map read-only inventory57869
+running in QUALLogs/refine2-place-inventory to identify their meshes/materials/
+bounds. No.cs edits while active. It changes no scenes/assets intentionally.
+Next inspect Bayan rows, plan local shrub forms/materials inside retained planters,
+then implement that unit and continue buildings/context. No Bayan art change yet.

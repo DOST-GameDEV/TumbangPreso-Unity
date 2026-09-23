@@ -1,0 +1,8 @@
+{
+  "created": "2026-09-24",
+  "tool": "built-in image generation",
+  "purpose": "Reference study, not implementation evidence",
+  "prompt": "bayan-civic-v1.prompt.txt",
+  "reference": "docs/reports/lighting-integration-2026-09-24/BayanPlaza-stage-after.png",
+  "sha256": "d421d2c64e11db54f8fdee44d98c17b8bf15785df2c799cd10c06997f9950767"
+}
