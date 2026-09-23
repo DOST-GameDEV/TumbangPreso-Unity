@@ -39,7 +39,9 @@ const STANCE: Pose = {
   root: [0, 0, -1.5],
   torso: [2, 8, 1],
   head: [-3, -16, 2],
-  armR: [-10, 4, 9],
+  // The tsinelas is held up in front of his jacket by the strap, where it reads: hung at his
+  // side it vanished against his black shorts in the first real-model render.
+  armR: [-52, -14, 6],
   armL: [12, -4, 7],
   legL: [0, 0, 9],
   legR: [-5, 0, -5],
@@ -82,13 +84,43 @@ export const runCycle = (t: number, period = 10, amp = 1): { pose: Pose; lift: [
   };
 };
 
+/**
+ * ⚠️ THE CASUAL TOSS: THE IDLE'S HEARTBEAT. 🧑 2026-09-23 on the first real-model render: the
+ * idle read as a mannequin, standing still for most of the loop. LORE.md's Zack makes the hard
+ * thing look casual, so between the big tricks he keeps lobbing his tsinelas a hand's height and
+ * catching it without looking, the way a player waits for his turn. A small dip, a flick, one turn
+ * in the air, a soft catch that the whole arm absorbs.
+ *
+ * Only whole cycles that sit entirely inside a calm stretch play, so a toss never collides with a
+ * beat; cycles are on a fixed 75-frame grid so the loop seam lands between two tosses.
+ */
+const TOSS = 75;
+const BUSY: [number, number][] = [
+  [B.pushIn, B.settle + 40],
+  [B.peek - 4, B.peek + 48],
+  [B.flip - 4, B.flip + 66],
+  [B.spin - 4, B.spin + 74],
+  [B.shake - 4, B.shake + 50],
+];
+const calm = (a: number, b: number) => BUSY.every(([x, y]) => b <= x || a >= y) && b <= 900;
+export const toss = (f: number) => {
+  const c0 = Math.floor(f / TOSS) * TOSS;
+  if (!calm(c0, c0 + 60)) return null;
+  const t = f - c0;
+  const h = 0.12 + 0.05 * ((c0 / TOSS) % 3) / 2;
+  const arm = kf(t, [[0, 0], [7, 9, outQuad], [11, -16, outCubic], [16, -4], [36, -6], [40, 12, outQuad], [48, -3, outQuad], [60, 0]]);
+  const inAir = t >= 11 && t < 40;
+  const u = (t - 11) / 29;
+  return { arm, inAir, up: h * 4 * u * (1 - u), rot: 360 * u, catchBump: env(t, 39, 40, 42, 48) };
+};
+
 /** Where the flipped tsinelas is, relative to his fist, and how far it has turned. */
 export const flipArc = (f: number) => {
   const t0 = B.flip + 12;
   const t1 = B.flip + 36;
   if (f < t0 || f > t1) return null;
   const t = (f - t0) / (t1 - t0);
-  return { up: 0.62 * 4 * t * (1 - t), rot: 720 * outQuad(t), t };
+  return { up: 0.44 * 4 * t * (1 - t), rot: 720 * outQuad(t), t };
 };
 
 /** How far left of his mark he is while running home, in wide pixels. 0 at rest. */
@@ -99,12 +131,15 @@ export const zackWide = (f: number): ZackFrame => {
   const a = alive(f);
   const w = wind(f);
   const swing = 6 * loopSin(f, 10, 0.6) + 12 * w;
+  const tt = toss(f);
   const base: ZackFrame = {
     yaw: STANCE_YAW,
-    pose: addPose(STANCE, a.pose),
+    pose: addPose(STANCE, a.pose, tt ? { armR: [tt.arm, 0, 0], torso: [0.4 * tt.arm * 0.2, 0, 0], head: [-0.6 * tt.catchBump, 0, 0] } : undefined),
     lift: a.lift,
     face: 'rest',
-    slipper: { at: 'hand', swing, twist: 8 * loopSin(f, 5) },
+    slipper: tt?.inAir
+      ? { at: 'fromHand', offset: [-0.08, 0.05 + tt.up, 0.05], rot: [90 + tt.rot, 0, 90] }
+      : { at: 'hand', swing: swing + (tt ? 26 * tt.catchBump : 0), twist: 8 * loopSin(f, 5) },
     dx: 0,
     charge: 0,
     hairStatic: 0,

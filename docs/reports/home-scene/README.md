@@ -96,7 +96,7 @@ ever disagree, the file is right.
 | 4.9 | `black` | IMPACT FRAME | Flat black, only the eyes, glowing | 16 to 17 |
 | 5.07 | `yellow` | IMPACT FRAME | Flat golden flash, eyes and zigzag brows | 18 |
 | 5.17 | `powered` | CLOSE-UP, powered | Glowing eyes, hair lifted by static, arcs at both sides | 19 to 20 |
-| 5.8 | `hand` | EXTREME CLOSE-UP, hand | His real fist block on the tsinelas strap from above his right side; sparks gather | 21 to 24 |
+| 5.8 | `hand` | CLOSE-UP, hand | Low and in front: his fist and the tsinelas big and crackling, his glowing eyes behind | 21 to 24 |
 | 6.4 | `reverse` | REVERSE, over the shoulder | His arm aims at the far lata, Sean waiting by it | 25 to 27 |
 | 7.0 | `snap` | REVERSE | The pause, then the snap: smear, release, a narrow branching bolt | 28 to 29 |
 | 7.23 | `hit` | REVERSE, hit-stop | Three frozen frames, her burst behind the can | 30 |
@@ -107,6 +107,7 @@ ever disagree, the file is right.
 | 10.6 | `lunge` | SIDE-ON, slow motion | Sean dives for the tag and closes on the afterimage | |
 | 11.3 | `arrive` | WIDE, whip-in | Side-on run-in and skid onto the throw line | |
 | 11.9 | `settle` | WIDE | Squash-and-pop to the front drawing, dead stop, chatter, the calm | |
+| 0 to 30 | calm stretches | WIDE | Between every beat he lobs the tsinelas a hand's height and catches it without looking (`toss` in `src/three/zackWide.ts`, a 75-frame grid, only whole cycles inside calm) |
 | 14.6 | `peek` | WIDE | Idle: his eyes come up to the camera and hold it | |
 | 17.8 | `flip` | WIDE | Idle: flips the slipper up and catches it without looking | |
 | 22.4 | `spin` | WIDE | Idle: spins it on one finger by the strap | |

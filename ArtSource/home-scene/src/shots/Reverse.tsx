@@ -27,7 +27,7 @@ import { ActorImage, addPose, Built, drawActor, DUSK, HAND_R, Light, mixPose, Po
 // Where his collar sits in frame, and how big he is. He is cropped at the waist.
 // ⚠️ At 1450 ppu from straight behind, the back of his hair was a black block over half the
 // frame (the first render of this pass, and the same fault the drawn version had at 1.7x).
-const BACK = { x: 400, y: 930, ppu: 1050 };
+const BACK = { x: 360, y: 990, ppu: 860 };
 
 const RELEASE = B.snap + 2;
 
@@ -77,15 +77,23 @@ export const Reverse: React.FC<{ f: number }> = ({ f }) => {
   const whipIn = f < B.reverse + 5 ? 1 - (f - B.reverse) / 5 : 0;
   const whipOut = f >= B.run - 4 ? (f - (B.run - 4)) / 4 : 0;
 
-  const light: Light = { ...DUSK, dir: [0.4, 0.7, -0.6], rim: '#FFD27A', rim_strength: 0.9, flash: 0.1 * charge, flashColour: '#E8F53A' };
+  // ⚠️ The sun is BEHIND THE LENS in this shot (the east court is lit gold), so it lights his back.
+  // Lit from beyond him, his back and his near-black hair went to one flat black mass.
+  const light: Light = { ...DUSK, dir: [0.35, 0.55, 0.76], rim: '#FFD27A', rim_strength: 0.9, flash: 0.1 * charge, flashColour: '#E8F53A' };
   // Zack from behind: yaw 180 shows his back, a little more turns him toward the can.
+  // ⚠️ FOREGROUND PARALLAX. He is much nearer the lens than the court, so when the camera rushes
+  // down to the can he slides out of frame faster than the world does. Drawn at the court's
+  // depth, the back of his head sat in the corner as a black block through the hit and TUMP!.
+  const fgX = BACK.x - 1.1 * (fx - 900) - 260 * clamp01((ff - RELEASE) / 6);
+  const fgY = BACK.y + 0.6 * (fy - 640);
   const z = drawActor(zack, {
-    x: BACK.x,
-    y: BACK.y,
+    x: fgX,
+    y: fgY,
     focus: 0.34,
     reach: 0.52,
     ppu: BACK.ppu,
-    yaw: 142,
+    // Turned toward profile, so his face and throwing arm read over his shoulder, not his crown.
+    yaw: 124,
     pitch: 6,
     pose: armAt(ff),
     slipper: ff < RELEASE ? { at: 'hand', swing: ff < B.snap - 7 ? -80 : ff < B.snap ? kf(ff, [[B.snap - 7, -80], [B.snap, 30]]) : -120, twist: 0 } : { at: 'none' },
