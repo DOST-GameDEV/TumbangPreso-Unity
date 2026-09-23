@@ -41,6 +41,10 @@ supplied artwork is still preserved, and the front-end menus stay as they are.
 loops. Use the smallest check that resolves the risk a change introduced; comprehensive
 regression happens once, at final integration. Quality stays the priority.
 
+**Latest quality rule (owner2026-09-23):** inspect before changing. Improve only a
+concrete visual, usability or functional weakness; keep successful parts. Apply this
+to UX-1 and each REFINE-2 map/character/aspect, without dropping unfinished tasks.
+
 ### Priority order, rethought 2026-09-23
 
 1. **P0, finish what is in flight. ✅ DONE 2026-09-23.** The 134.10 reduced-effects link

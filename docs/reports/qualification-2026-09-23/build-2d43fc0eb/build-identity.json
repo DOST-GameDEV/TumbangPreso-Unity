@@ -1,0 +1,12 @@
+{
+    "sha": "2d43fc0ebe8520cfe5f14a19b5671841a9aa7062",
+    "branch": "",
+    "protocol": 50,
+    "target": "StandaloneWindows64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-09-23 11:43:07",
+    "dirty": true,
+    "treeState": "dirty"
+}

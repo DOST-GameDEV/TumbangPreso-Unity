@@ -1,6 +1,27 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-23
+## Latest resume: UX-1 handback and targeted-quality rule,2026-09-23
+
+The owner has now explicitly assigned unfinished UX-1 to this conversation.
+Read AGENTS, CLAUDE, VISION, TODO and this ledger, then ux1-plan, before changes.
+Login and main-menu surfaces remain protected; TAP TO START opens HOME.
+Latest owner rule: do not improve for its own sake. Identify the concrete visual,
+usability or functional fault first; retain successful parts. Applies to UX-1 and
+REFINE-2 maps/motion. An inspected keep decision is valid; arbitrary restyling is not.
+Older unfinished tasks and REFINE-2 remain assigned and must not be dropped.
+
+UX-1 next: one old-board comparison using -tp-preparation-board, classify against
+retained 51-case hub result, then migrate only affected routes. Actual external
+room entry needs an idempotent ShowLobby used by room transition/Host/Join/install.
+Add one accessibility flow case at five shapes; focused EditMode plus Checks.RunAll;
+real-peer flow qualification and final internal build. No paid-service work.
+Current concurrent HOME video work in DEV (TumpHub Build, HubSceneVideo and its
+fixture/partition) is not ours; preserve it and never stage it as our implementation.
+Native graphics session18261 ended cleanly: exact15map/quality rows, runtime hash
+in qualification/build-2d43fc0eb. This is a rendering baseline, not combat FPS or
+proof the historical intermittent shutdown crash is fixed. No active owned jobs.
+
+## Previous resume,2026-09-23
 
 Continue all assigned actionable work in this conversation without checkpoint
 endings. The overall goal is NOT complete. Older unfinished work stays ahead of
@@ -251,3 +272,42 @@ playerY.1 with actual support sampling so Lagoon cannot be photographed from bel
 its deck. This is required expansion qualification support, not another art pass or
 capture retry. No native run has happened yet. This small support batch will compile
 once in the internal build; no old menu-harness repair and no broad new framework.
+
+
+Published2d43fc0ebe8520cfe5f14a19b5671841a9aa7062, remote verified; candidate advanced
+cleanly to that exact source. Last changes are diagnostics support only: local graphics
+UGSbypass, existing lunge trace columns, declared exact five-map/quality matrix and
+real-floor placement; graphics runner has explicitd3d11/d3d12for bounded crash comparison.
+No need to repeat old passing Core/gameplay checks for those trace/helper changes.
+
+BUILD question: does this exact integrated source compile and produce an internal
+Windows exe/data with an honest identity? Stop after one build result and verify
+actual outputs/manifest. Known UIclassification/stale-reticle test gaps remain;
+this build is not a release-ready claim. Command uses guardedGameBuilder.BuildWindows,
+Win64, profilepresentation-validation-20260921, output candidateBuilds/
+world-qualification-20260923/TumbangPreso.exe, logsLogs/p7-build-v1. No Desktop target.
+No.cs edits while the build runs. Record all generated source churn, never hide it
+or weaken the identity gate to manufacture clean status.
+
+
+Build owned execsession65980 active in world-qualification checkout. No source
+edits until it exits. While waiting, read-only crash research on official Unity
+reports; do not assume any issue matches this case until native API/log/exit evidence
+supports it. No driver/editor upgrade or ProjectSettings workaround applied.
+
+
+Build65980ended/reaped:success1212MB/112s,11scenes,guardd1af0acfce0f. Exe/data/runtimeDLL
+verified under candidateBuilds/world-qualification-20260923; hashes/identity inDEV
+qualification-2026-09-23/build-2d43fc0eb. Identity is honestlyDIRTY: builder changed
+4derived clips(Recovery+Swimming character-female-a/team-rafi), plus2protectedPNGmeta
+empty-scalar whitespace. No other content changes. Do not hide/restamp this artifact
+clean or commit those2metas. Inspect/reconcile derivedclips separately, no unplanned
+motion redesign. Existing imported-source proof and failures retained.
+
+NATIVE question: does the exact internal player render all5maps x3qualityprofiles with
+positive counters, sensible support and a clean process exit? One graphics_review.py
+run, no new UI navigation/capture harness. It uses the existing-tp-graphicsreport and
+now bypassesUGS, hidden native window, guardedgraphics-review-player profile. Output
+candidateLogs/p7-native-world-auto. Record actualAPI/exit/logs; only use one explicit
+backend comparison if an actual failure warrants it. Do not claim worst-case combatFPS
+from this four-parked-player baseline. No shader/driver/editor changes while it runs.
