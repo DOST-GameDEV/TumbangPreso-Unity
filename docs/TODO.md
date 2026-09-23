@@ -199,6 +199,8 @@ scattered across all maps. Execute inside each map's existing refinement row.
   map, and a context-density plan at actual lobby/introduction/play/spectator angles.
   Owner PEAK and sparse-lobby reference images are preserved in ArtSource.
 - [ ] **REFINE-2.2 Eskinita.** Individual asset/material/shape/detail refinement.
+  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
+  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
   First context group implemented:26retained-family outer houses and4connected
   streets, existing collision preserved. Matched actual-preview/small/grey25
   inspected; focused1/1passed after correcting new-group roof palette routing.
@@ -245,6 +247,8 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art implementation is ready for the integrated intro/spectator/native gate;
   this parent remains open until that acceptance. Continue Bayan art next.
 - [ ] **REFINE-2.3 Bayan Plaza.** Individual asset/material/shape/detail refinement.
+  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
+  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
   Next active map. [Primary place references and generated-study critique](reports/map-by-map-refinement-2026-09-23/bayan-reference-notes.md)
   saved. Eight mint hedge bars now have locally authored low foliage in the retained
   planter shells; variant3selected after paired/overview/grey25inspection,1/1passed.
@@ -264,6 +268,8 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Art batch ready for integrated intro/spectator/native acceptance; keep parent open
   for that gate and continue Ilalim art next.
 - [ ] **REFINE-2.4 Ilalim ng Tulay.** Individual asset/material/shape/detail refinement.
+  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
+  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
   Next active map. [Primary reference intake and Gilmore/LRT2identity](reports/map-by-map-refinement-2026-09-23/ilalim-reference-notes.md)
   saved. First local finish replaces mint concrete/pink-yellow track lookup colors
   with neutral structural materials on24pillars/28bays/56tracks. Original geometry,
@@ -279,6 +285,8 @@ scattered across all maps. Execute inside each map's existing refinement row.
   focused1/1passed. Parent remains open for integrated intro/spectator/native gate;
   continue SaBubong art next.
 - [ ] **REFINE-2.5 Sa Bubong.** Individual asset/material/shape/detail refinement.
+  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
+  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
   Active map. [Primary reference and concept critique](reports/map-by-map-refinement-2026-09-23/sabubong-reference-notes.md)
   saved. Existing water tank now has fitted lid/bands/service outlet, original body/
   collision retained. Paired/grey25inspected, focused1/1passed.
@@ -289,8 +297,13 @@ scattered across all maps. Execute inside each map's existing refinement row.
   Shade now has supported beams/rafters and restrained panel seams; original
   furniture/posts/plants/collision retained. Paired/grey25inspected, focused1/1passed.
   [Shade evidence](reports/map-by-map-refinement-2026-09-23/sabubong-shade/report.md).
-  Neighboring/distant roof context and final map acceptance remain next.
+  Six individually used neighboring roofs now occupy verified vacant plots, with
+  grouped windows/access and per-part material roles. Paired/grey/Lowinspected,1/1pass.
+  [Neighbor roof evidence](reports/map-by-map-refinement-2026-09-23/sabubong-neighbors/report.md).
+  Farther city/ground continuity, building-texture review and final acceptance remain.
 - [ ] **REFINE-2.6 Lagoon.** Individual homes/piles/boats/water/context refinement.
+  Owner2026-09-24: building texture/detail acceptance remains OPEN; inspect and refine
+  each family under bright lighting per [the all-map requirement](reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md).
 - [ ] **REFINE-2.6a Skies, islands and backgrounds.** After UI, inspect and improve
   animated skies, island/mountain layers and other distant/background scenery on
   every map. Evaluate composition, silhouettes, depth, materials, motion and harmony

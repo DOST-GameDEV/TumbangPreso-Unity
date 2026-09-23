@@ -28,3 +28,11 @@ beyond its currently exposed180m edge. Do not regenerate the whole protected roo
 run the old full RefreshSkyline loop, or mistake these six roofs for all remaining
 context acceptance. Keep small/grey and Low review bounded; native performance is
 part of the final integrated gate.
+
+Owner2026-09-24building-texture correction is part of this unit. New bodies use
+face-specific mineral plaster variation, concrete joints on supports/coping, glass
+reflection, sheet-roof ribs, timber grain, cloth and tank plastic rather than flat
+colours alone. Existing EnvironmentSurface rendering is reused with authored local
+roles; no global shader/strength change. Grouped window recesses, shades, roof coping
+and actual roof access provide mid-scale construction detail. Inspect the result
+at real distance; procedural detail existence is not visual acceptance.

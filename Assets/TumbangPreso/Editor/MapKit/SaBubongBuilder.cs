@@ -190,6 +190,7 @@ namespace TumbangPreso.EditorTools.MapKit
             RooftopTankFinishAuthor.FinishLoadedScene(lifeReport);
             RooftopStairheadFinishAuthor.FinishLoadedScene(lifeReport);
             RooftopShadeFinishAuthor.FinishLoadedScene(lifeReport);
+            RooftopNeighborsAuthor.FinishLoadedScene(lifeReport);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);AssetDatabase.SaveAssets();
             if(!EditorBuildSettings.scenes.Any(s=>s.path==ScenePath))
                 EditorBuildSettings.scenes=EditorBuildSettings.scenes.Concat(new[]{new EditorBuildSettingsScene(ScenePath,true)}).ToArray();

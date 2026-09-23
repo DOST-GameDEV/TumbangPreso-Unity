@@ -1,0 +1,7 @@
+North shared terrace: shade, roofY=1.451, vertices=7848
+South household service: water-laundry, roofY=-2.249001, vertices=7416
+West north roof garden: garden, roofY=1.951, vertices=8112
+West south drying roof: laundry, roofY=-7.049, vertices=5496
+East north quiet roof: service, roofY=-4.049, vertices=5760
+East south family shade: shade, roofY=-1.049, vertices=6984
+Six roofs, 41616vertices, six renderers/one palette, no new collision or shadow casters. Retained footprints and street clearance verified.

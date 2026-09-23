@@ -7,6 +7,12 @@ Owner's exact words are in [owner-request.md](owner-request.md); scope intake is
 [intake.md](intake.md). New playtest feedback reopens aesthetic/motion acceptance:
 previous software checks do not prove that walking, throwing or pektus feel good.
 
+## Latest building feedback,2026-09-24
+
+[All-map building texture/detail brief](building-texture-brief-20260924.md) is now an
+explicit acceptance requirement for each map, including previously inspected art
+batches. Older render passes do not override this new owner feedback.
+
 ## Direction
 
 Aesthetically pleasing stylised3D, not a realism target. Preserve TUMP's cute blocky

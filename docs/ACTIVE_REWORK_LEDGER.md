@@ -1,99 +1,72 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: Ilalim structure published, skyline diagnosis in flight
+## Current resume,2026-09-24: SaBubong neighboring roof context
 
-Overall goal ACTIVE and NOT complete. Continue all independently actionable TODO
-without checkpoint stops. Owner is asleep/AFK and prioritizes quality product work
-above verification/tooling loops. Preserve older tasks and completed work; newer
-requirements supersede retired plans. No questions for routine implementation,
-no other chats/delegation, paid services, credit resets, main edits or Desktop build.
-Normal workers while asleep. Keep progress and exact resume state current.
+Overall goal ACTIVE and NOT complete. Continue independently actionable TODO without
+checkpoint stops. Owner is AFK and prioritizes product quality over verification and
+capture-tool loops. No routine questions, delegation/other chats, paid services,
+credit resets, main edits or Desktop replacement. Preserve older tasks and history.
 
 DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD/verified remote724a6be88a9b65513ae032cfafdb85fd36ebfec1. Protected original
-Resources/UI/composition-redesign/home-court.png.meta and loading-street.png.meta
-remain dirty: NEVER restore/stage them in DEV. Explicit staging, sole author
-M4tyu633, no trailers/AI mentions/em dashes. Fetch before push, verify remote.
+HEAD and verified remote163d0e01d8e6bc3c6e6f3bdae58967ebb7530b2b.
+Only original home-court.png.meta and loading-street.png.meta under
+Resources/UI/composition-redesign are dirty: NEVER restore/stage these DEV files.
 QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached724a6be88after exact candidate match/stash. Preserve all named stashes,
-other worktrees and contributor work; no reset/clean/force push.
+owned detached163d0e01d, clean. Candidate stash retained after exact source match.
+No active Unity jobs, native players, task browser tabs or temporary servers.
+Explicit staging, sole author M4tyu633, no trailers/AI mentions/em dashes.
+Fetch before push and verify remote. Never reset/clean/force-push or discard stashes.
 
-Current process53874: native IlalimSkylineMaterialStudy in QUAL
-Logs/refine2-ilalim-skyline-study. Three existing low-detail model variants, isolated
-from other renderers with fog temporarily off to identify the actual defect. This
-is a construction/material diagnosis, NOT an ordinary gameplay acceptance view.
-No.cs edits during the run. Reap/read XML and inspect these three images once,
-then implement the justified local skyline change. No new capture framework.
+## Latest owner feedback,2026-09-24
 
-## Lighting baseline and retained completed art
+All buildings still feel short on texture/detail. Requirement saved in
+reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md and
+explicitly linked from all five TODO rows. Reopen building-surface acceptance for
+earlier map art batches; inspect actual bright-lighting results, not shader existence.
+Current six neighboring roofs get per-part material roles rather than flat palette
+only. Finish this local unit, then review map-specific weak surfaces in sequence.
 
-lighting/peak-bright-overhaul source50f1fc255d0770976808ed12db4ca865f3757b1c merged
-at241e13bb5, evidence52686a6e1. Last fetch still50f1fc255. Track at meaningful pushes.
-Owner said old lighting was too dark; use the adopted bright look for every art
-decision, retaining detail it now reveals. Silhouette clarity is approved alongside
-materials/textures/Filipino place identity. No return to the dark look.
+## Current implementation
 
-LIGHT-1.8preview integrationec1d3a9cdpublished: selected sun/measured floor, same
-world look, tagged camera scoping, same-map refresh reuse, immediate cleanup.
-Cached-return ground lift fixed by clearing property blocks with null.4/4then2/2
-passed, preview/small/grey inspected. LIGHT-1.6/1.9remain open. No unchanged rechecks.
-Incoming UI/RafiV9and6363f73a6Phaister HOME/random-loop work retained. No task contacted.
+SaBubong retains199surfaces/69solids,14towers,15far residential blocks, existing
+street frontages/trees and all playable deck/pool/recovery/laundry geometry.
+Published native-inspected local finishes: tank8c891ad2c, stairheadc1cbf8cf5,
+shade163d0e01d. Each has paired actual views,25percent grey and one focused pass.
+Do not rerun these unchanged units. Research/concept decisions are saved in
+reports/map-by-map-refinement-2026-09-23/sabubong-reference-notes.md.
 
-Eskinita art batch ready for integrated intro/spectator/native acceptance; parent
-REFINE-2.2remains open for that gate. Published context/deeper district, individually
-reviewed ten fronts, domestic3_W, tricycle07, canopy/planter800c28240, quieter supplied
-mountains4631c1800, shop signs and native bright card90401410f. High/Lowcourt/shop/
-paired/grey views inspected. Keep successful work, no unchanged Eskinita loops.
+Next: implement six supported neighboring apartment roofs from sabubong-context-plan.md
+and MapSource/environment/layouts/sabubong-neighbor-roofs-20260924.json. Selected
+12x11m plots at(0,+/-39), (+/-75,+/-39), with distinct terrace/water/laundry/garden/
+quiet-service uses. Validate against current retained building footprints and roads.
+Combine static materials/meshes; no new collision or distant shadow casters. Do not
+run full RefreshSkyline or rebuild the protected main roof. Inspect actual preview
+and player views after this unit; then choose farther-city continuation and extend
+the currently exposed visual ground edge. Six roofs do not finish the context pass.
 
-Bayan art batch likewise ready for integrated acceptance, REFINE-2.3parent open.
-Published eight planted side beds10b3e54e3,32-block contexta5c06f7ea (38retained-family
-homes/68far homes/22green plots/110343vertices, no new collision/shadows), four planted
-pots/soil3791a1569,16e/o fitted house finishes/native card56a068418. Civic fronts/rear,
-ordinary SouthHigh/Lowand moving sky20/180samples inspected and retained. House pairs/
-grey final2/2passed7.412s. Timber single-plank mode preserved. Original-material
-semantic lookup fixes first-creation hashed display names. No shared mesh change.
-All named reports in reports/map-by-map-refinement-2026-09-23.
+## Adopted lighting and completed map art batches
 
-## Ilalim findings, current scope and next order
+lighting/peak-bright-overhaul50f1fc255 merged at241e13bb5, evidence52686a6e1.
+Owner approved silhouettes and rejected old darkness. Use the bright adopted look
+for every art judgment; keep detail already revealed by it. LIGHT-1.8ec1d3a9cd
+makes preview/lobby use the selected sun/floor and fixes cached return cleanup.
+Its focused4/4then2/2receipts remain; LIGHT-1.6/1.9 still open. Track source branch.
 
-Identity: Gilmore/Aurora Boulevard LRT2electronics/repair/pisonet/pares strip.
-Preserve original signs and supplied art, streets, structural layout and train
-identity. Old doc train24sinterval is historical, not authority for a timing change.
-LRMC2023Photo2was actually viewed for general concrete joint/cap/street/context
-principles; it is Line1, not a train/station specification to copy.2020planted-pillar
-article read but its image failed. Primary/independent reference distinctions and
-built-in concept critique saved in ilalim-reference-notes.md. All own browser tabs
-closed/empty list verified; no task-owned servers/native players active.
+Eskinita art ready for integrated intro/spectator/native acceptance: district and
+outer context, ten house fronts, tricycle07, canopy/planters800c28240, supplied
+mountain staging4631c1800, shop signs/native card90401410f. REFINE-2.2parent open.
+Bayan art ready for same gate: planted beds10b3e54e3, connected towna5c06f7ea,
+monument pots3791a1569,16house finishes/native card56a068418. REFINE-2.3parent open.
+Ilalim art ready for same gate: structure724a6be88,34retained skylines with fitted
+facades97630cf71, extended visual ground/native cardf128f57c0. Shops/signs/vendors
+retained after actual inspection, moving sky reviewed. REFINE-2.4parent open.
+Detailed reports, failures and evidence remain in map-by-map-refinement-2026-09-23.
+Incoming UI/RafiV9/Phaister HOME work retained. No other task contacted.
 
-Native5-map inventory in QUALLogs/refine2-place-inventory. Ilalim1509surfaces/97solids,
-including SkylineKit167/BacklotKit90. Existing city must be accounted for before
-adding more. Baseline28828passed1/1in7.085s; actual preview/street/shop/under-deck
-images inspected. Real weakness: mint structure and candy-colored rails plus flat
-background masses. Existing joints/caps/bearings/shop geometry is already useful.
-
-Structural unit724a6be88PUBLISHED/remote verified.24pillars/28bays/56tracks now use
-local neutral concrete/steel material lookup data; original atlases, train livery,
-shops/vehicles/global lighting and other maps retained. Track-only derived mesh
-changes72sleeper vertex roles wood->concrete, no positions/normals/UV/bounds changes.
-Source references kept in material tags/mesh importer metadata for reauthoring.
-Author23880/case40278completed/reaped,1/1in7.212s. Paired actual preview/north/under-
-deck/grey25inspected: calm structure, bright readable shade. No more taste variants.
-Known generated churn restored after full patches. Evidence in ilalim-structure.
-
-1. Finish current skyline diagnosis53874. Sources commercial/low-detail-building-a,
-   b,c have252/280/210vertices, glassu.09375/wallu.46875. Actual glass colors already
-   differ from wall, and glass regions span multiple storeys; familyc has only one
-   diagonal glass face. Determine what the isolated native views show before adding
-   window geometry or changing materials. Existing city layout and bodies stay.
-2. Write local skyline/backlot asset decisions, implement justified detail/material
-   changes, then review each near shop/roof/service pocket and sky. Use actual preview,
-   fixed eye views, small/grey and a bounded behavior/geometry check. No test loops.
-3. Refresh final Ilalim static card, then SaBubong and Lagoon individually. Lagoon is
-   Sama Bajau with detached pile homes/boats/islands; don't move tricycles onto decks
-   or roof courts. All map backgrounds and animated skies remain assigned.
-4. Natural animals, all-bot stalls, per-character locomotion starting Sean, ordinary
-   throw and left/right pektus, remaining actual gameplay and final qualification.
-   All older TODOs preserved; no blanket completion from art renders or passes.
+After SaBubong: Lagoon homes/piles/boats/water/islands and detached pile homes,
+then natural animals, bot stalls across both modes/roles/maps, per-character
+locomotion starting Sean, ordinary throw and both pektus directions. Preserve all
+older qualification. Full integration/build after implemented changes, not per prop.
 
 ## Older qualification still open
 
@@ -121,15 +94,14 @@ remain unreconciled; no false clean stamp. No native build during these map unit
 
 Unity only python tools/run_unity_guarded.py with
 -tp-profile presentation-validation-20260921. Never --help or -nographics. Background,
-freeze.cs, read fresh nonzero XML. Back up full generated diff then restore only
-known own churn: IndayFppDetails2, ProjectAuditor/Quality/TimeManager and QUALtwoPNG
-metas when changed. DEVprotected twoPNGmetas never touched. Internal Builds/<name>/
-only for final gate. Canonical Unity-native approval views; Blender authors mesh/
-source only. Native screen-capture repair budget spent, use existing routes.
+freeze.cs during run, read fresh nonzero XML. Back up full generated diff then
+restore only known own churn (IndayFppDetails2, ProjectAuditor/Quality/TimeManager,
+QUALtwoPNGmetas when changed). DEVprotected twoPNGmetas never touched. Internal
+Builds/<name>/ only for final gate. Canonical Unity-native approval views. Each run
+has one question/stopping condition; no unnecessary test or fixture perfection.
 
-[History through Ilalim structural pass](reports/map-by-map-refinement-2026-09-23/ledger-through-ilalim-structure-20260924.md)
-retains prior receipts, intermediate failures and stash history. Old pending/running
-notes in history are not current instructions.
+[History through SaBubong shade](reports/map-by-map-refinement-2026-09-23/ledger-through-sabubong-shade-20260924.md) retains prior receipts, failed
+runs, stash history and intermediate notes. Historical pending jobs are not active.
 
 ## Parallel lane: UI and HUD review (second machine), 2026-09-23
 
@@ -144,131 +116,20 @@ plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two ori
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
 
-Skyline study53874completed/reaped1/1in4.685s. Three isolated native images inspected:
-a has long undivided glass panels, bhas a mostly blank upper shaft/stepped base,
-chas a mostly blank tall body with one diagonal glazed face. Thus the blankness is
-largely the low-detail geometry, not missing city objects. Keep silhouettes/positions,
-add restrained model-specific facade detail: a floor divisions within existing
-recessed glazing, bgrouped windows on opaque shaft, cslender grouped windows on its
-remaining broad faces, plus quiet local glass palette. Inspect actual wall triangles
-so new panels do not bridge cutouts or steps. No global shader/city replacement.
-Study is diagnostic only, not gameplay acceptance. Known churn backed up/restored;
-no active Unity job. Structural publish724a6be88remote verified.
+Six-neighbor author and one focused review case copied to QUAL. Next author run
+Logs/refine2-sabubong-neighbors-v1: question is whether six selected roof uses
+fit retained city/roads without changing collision and retain part-specific surface
+roles. Success ends authoring check; then one paired preview/player/detail/Low review.
+No global shader edit. Do not edit .cs during Unity runs.
 
-Ilalim skyline plan/source now drafted/copied to QUAL:34existing a/b/cbodies retain
-shape/placement. agets divisions inside glazing, bpaired shaft windows, cnarrower
-windows on broad walls. Candidates project into each actual vertical triangle group
-and must pass nine-point containment, avoiding gaps/steps. Three combined overlay
-renderers, quiet glass lookup copies, no colliders/shadows/runtime scripts. Original
-materials tagged for restore. Author and matched preview/street/district case ready;
-next guarded author in Logs/refine2-ilalim-skyline-v1. Freeze.cs while active.
+Neighbor author65735completed/reaped: six plots pass current retained-building/road
+clearance and original collision preservation.41616vertices/six renderers/one local
+palette, per-part material roles, no new collider/shadow caster. Current focused
+review72907runs Logs/refine2-sabubong-neighbors-v1/check.log and results.xml. Freeze.cs.
+Inspect paired preview/player/detail and Low once; do not claim visual acceptance yet.
 
-Skyline first author51537stopped at a wrong namespace on AirborneByDesign; fixed
-that code reference, no scene saved. Revised author99324completed/reaped:
-34original bodies,514fitted window groups,144glass divisions,10856overlay vertices
-in3renderers. All original collision retained. Current focused paired preview/
-street/district capture runs Logs/refine2-ilalim-skyline-v1/check.log. No.cs edits
-while active. Inspect actual result before publishing; no further feature expansion.
-
-Skyline case41990completed/reaped1/1in7.117s. Paired preview/district, street andgrey25
-inspected; selected v1, no further variants. Qualified scene/assets/evidence copied
-to DEV, generated churn backed up/restored. Publish unit then check outer visual
-ground edge and near shop/service details before final Ilalim card. No active jobs.
-
-Skyline97630cf71committed, push pending reaping; QUAL exact candidate matched/stashed
-and advanced97630cf71. Next measured defect: FarGroundPlate is240m square and ends
-visibly at120m; no colliders. Plan/code extend its visual x/z to3000m, retain height/
-material, resample surface metre coordinates only on that slab. Dedicated guarded
-author next. No new city or gameplay area. Final near-shop/sky/card review follows.
-
-Skyline push verified97630cf7147cfef2049b6f28a10d132c2e9b0caf. Ground author80325
-completed/reaped: visual plate3000m, height/material/collision retained, metre surface
-coordinates reapplied only there. Current IlalimFinalArtReview runs
-Logs/refine2-ilalim-final-v1: same-camera old/new ground edge, four near shop pockets,
-Low street, sky20/180and native960x540card. No.cs edits while active. Inspect before
-keeping/refining anything further. No full-game regression or native build yet.
-
-Final Ilalim case68797completed/reaped1/1in8.311s. Ground before/after, four shop
-pockets, Low street and sky20/180inspected. Keep useful existing shops/signs/carts;
-near-faded columns in diagnostics are recorded, not a fixture repair task. Native
-960x540card copied to DEV with importer retained. Qualified scene/new ground mesh/
-evidence copied; known churn and redundant DeckSurface0material serialization
-restored after patch. Ilalim art batch ready for integrated camera/native acceptance;
-parent stays open for that gate. Publish final unit, then SaBubong. No active jobs.
-
-Ilalim final-artf128f57c0e59beb50253348938865366243e4731PUBLISHED/remote verified.
-QUAL exact candidate matched/stashed then advancedf128f57c0. SaBubong now active:
-199surfaces/69solids,128neighbor-rooftop renderers plus existing household corners.
-Platform21primary text/exterior photos viewed, useful shade/plant/material principles;
-DFAutility PDFphotos unavailable, not visual evidence. Saved sabubong-reference-notes.
-Native baseline probe drafted/copied: actual preview and six named roof/context
-views. Next guarded run Logs/refine2-sabubong-baseline, freeze.cs while active. No
-SaBubong art edits yet. All own browser tabs closed, no unrelated task contacted.
-
-Sa baseline94200completed/reaped1/1in4.343s; preview/corners/neighbor views inspected.
-Actual weaknesses: sparse contextual roofs beyond the immediate tower ring, visible
-outer ground edge, very plain stairhead door/vent/service treatment and ambiguous
-plain water cylinder. Existing shade furniture, resident plants/basins, pool/steps,
-railings and clear court remain useful. Check source purpose of the cylinder before
-adding utility parts. Plan/research/generated ideation precedes map edits. No Sa art
-changes or active Unity job yet. Ground/city/laundry physics must stay protected.
-
-Sa roof concept saved/critically reviewed: keep supported utility/shade refinements
-and layered lower neighboring roofs; reject moving the tank, luxury planting density
-and altered pool/court. Tank plan/source now drafted/copied to QUAL. Original body/
-plinth/collision retained, one fitted lid/cap/bands/outlet/valve mesh within plinth
-footprint and a local dull-steel material. Full-builder hook preserves regeneration.
-Next guarded author Logs/refine2-sabubong-tank-v1, then one paired service/near review.
-No.cs edits during run. Baseline94200completed/reaped; no other jobs/tabs active.
-
-Tank author93908completed/reaped,540detail vertices/one renderer, original body/
-plinth/collision guards pass. Current paired service/near case runs
-Logs/refine2-sabubong-tank-v1/check.log; no.cs edits during run. Inspect before keeping.
-Next measured stairhead: original baked body at(8,.1,18.5),doorcenter(7.35,1.14,16.482),
-ventcenter(9.2,2.35,16.475). Keep existing body/noticeboard/mural; later add fitted
-frame/handle, actual louvre blades and modest flashing, no new access/collision.
-
-Tank case25316completed/reaped1/1in3.398s; paired service/near/grey25inspected, keep
-v1. Qualified scene/assets/evidence copied to DEV, known generated churn restored
-from saved patch. No active job. Publish tank/ref/plan unit then stairhead finish;
-source plan already saved. This does not close SaBubong or the overall goal.
-
-Tank8c891ad2ccommitted/push57439pending final receipt. QUAL exact candidate matched/
-stashed then advanced8c891ad2c. Stairhead local source drafted/copied: one fitted
-frame/lever/louvre/light-housing/flashing mesh, existing baked body/noticeboard/mural
-and collision retained. Measured envelope guard; no new functional door/light/runtime
-system. Paired court/near native case ready. Author next
-Logs/refine2-sabubong-stairhead-v1; no.cs edits during run. Shade/context remain next.
-
-Tank remote verified8c891ad2c3af7923bf5325abd3c50a55ed7fbfe6. Stairhead author48510
-completed/reaped:456vertices/one renderer; original body/noticeboard/mural/collision
-retained. Current paired court/near review runs Logs/refine2-sabubong-stairhead-v1;
-no.cs edits during run. Need inspect before publication. Shade/context still open.
-
-Stairhead case54048completed/reaped1/1in3.367s. Paired court/near/grey25inspected,
-keep v1. Qualified scene/assets/evidence copied to DEV, known churn restored after
-patch. Publish this unit; then shade plan is already saved with measured source
-positions. No active jobs. SaBubong context/remaining maps/gameplay are not complete.
-
-Stairhead c1cbf8cf535e32a6c4345326481deb2e3b3869a8PUBLISHED/remote verified; QUAL
-advanced after exact candidate match/stash. Shade finish source drafted/copied:
-two beams/five rafters meet retained posts/roof, nine quiet raised panel seams keep
-existing green top. Original furniture/plants/footprint/collision untouched; all
-new framing above2.95m. Source material name is Resident green tile; this is a local
-panel-construction finish, not a claim about a changed physical roofing product.
-Author next Logs/refine2-sabubong-shade-v1, paired under/roof case ready. Freeze.cs.
-
-Shade author70907completed/reaped. Current paired under/roof case runs
-Logs/refine2-sabubong-shade-v1. Inputs frozen. Source skyline review confirms existing
-14towers,15distant residential blocks and measured street-front buildings; keep them.
-Context issue is insufficient inhabited lower roof/use layering and open distance,
-not permission to rebuild the protected deck or stamp a duplicate generic city.
-
-Shade case1929completed/reaped1/1in3.373s. Paired underside/top/grey25inspected, keep
-v1. Qualified scene/assets/evidence copied to DEV and known churn restored after
-patch. Publish shade unit next. No active jobs. Current context planning measured
-vacant12x11m plots against existing buildings/roads: nearest(0,+/-39); additional
-side plots(+/-75,+/-39)are clear. These are candidates, not authored buildings yet.
-Existing street-building roofs are often far below the playable roof, explaining
-why the current overview reads as an isolated tower ring despite128context renderers.
-Use local roof-use layers and coherent deeper city, preserve all original content.
+Neighbor review72907completed/reaped1/1in4.596s. Paired preview/player/detail/grey25
+and full detail/Low inspected. Context unit kept; broad wall materials still need
+the newly requested building-surface review, not claimed complete. Qualified assets/
+scene/evidence copied to DEV; known churn restored after full patch. No active jobs.
+Next farther city/ground continuity, then individual Sa building surface weaknesses.

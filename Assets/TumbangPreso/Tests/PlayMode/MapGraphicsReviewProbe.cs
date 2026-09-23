@@ -87,6 +87,48 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator SaBubongNeighborRoofReview()
+        {
+            var canvas=new GameObject("SaBubong neighbor preview",typeof(Canvas));
+            var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
+            surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
+            var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(SceneFlow.SaBubong);
+            float deadline=Time.realtimeSinceStartup+30;
+            while(preview.Showing!=SceneFlow.SaBubong&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.AreEqual(SceneFlow.SaBubong,preview.Showing);preview.enabled=false;
+            var context=Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Single(t=>t.name=="Inhabited neighbor roofs").gameObject;
+            Assert.AreEqual(6,context.transform.childCount);Assert.IsEmpty(context.GetComponentsInChildren<Collider>());
+            foreach(var r in context.GetComponentsInChildren<MeshRenderer>())
+            {Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off,r.shadowCastingMode);Assert.AreEqual(1,r.sharedMaterial.GetFloat("_SurfaceVertexRoles"));}
+            foreach(string state in new[]{"before","after"})
+            {
+                context.SetActive(state=="after");yield return null;
+                using(Visual.NeighbourhoodSkyMotion.At(20))
+                    yield return GameplayShots.Render(preview.Camera,"SaBubong-neighbors-preview-"+state,false,Output,width:1280,height:720);
+            }
+            Object.Destroy(canvas);yield return PlayModeWorld.Reset();yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.gameObject.SetActive(false);
+            var camera=rig.Camera;camera.fieldOfView=60;
+            context=GameObject.Find("SaBubong/Dressing/Metro rooftops/Inhabited neighbor roofs");
+            foreach(string view in new[]{"north-player","west-player","roof-detail"})
+            {
+                camera.transform.position=view=="north-player"?new Vector3(3,1.8f,8):view=="west-player"?new Vector3(-8,1.8f,8):new Vector3(12,10,21);
+                camera.transform.LookAt(view=="west-player"?new Vector3(-75,1,39):new Vector3(0,1.7f,39));
+                foreach(string state in new[]{"before","after"})
+                {
+                    context.SetActive(state=="after");yield return null;
+                    using(Visual.NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,"SaBubong-neighbors-"+view+"-"+state,false,Output,width:1280,height:800);
+                }
+            }
+            GraphicsProfiles.Apply(0);yield return null;
+            camera.transform.position=new Vector3(3,1.8f,8);camera.transform.LookAt(new Vector3(0,1.7f,39));
+            using(Visual.NeighbourhoodSkyMotion.At(20))
+                yield return GameplayShots.Render(camera,"SaBubong-neighbors-low",false,Output,width:960,height:540);
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator SaBubongShadeFinishReview()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.SaBubong);
