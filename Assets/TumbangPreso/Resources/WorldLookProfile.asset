@@ -100,8 +100,8 @@ MonoBehaviour:
     ShadowTint: {r: 0.96, g: 0.84, b: 1.08, a: 1}
     Chalk: {r: 0.18, g: 0.16, b: 0.14, a: 1}
     ChalkEdge: {r: 0.79, g: 0.75, b: 0.65, a: 1}
-    FogStart: 40
-    FogEnd: 210
+    FogStart: 60
+    FogEnd: 300
     WearKind: 3
     Sun: {r: 1, g: 0.87, b: 0.7, a: 1}
     SunIntensity: 1.32
