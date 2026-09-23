@@ -1,0 +1,71 @@
+ out   in  method                             declared                   note
+--------------------------------------------------------------------------------------------------------
+   1    0  BeginCountdownClientRpc            MatchRpc.cs:1540           Assets\TumbangPreso\Runtime\ReadyGate.cs:146
+   1    0  BeginRematchClientRpc              MatchRpc.cs:1705           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1492
+   1    2  BroadcastAbilityCast               MatchRpc.cs:3162           Assets\TumbangPreso\Runtime\Abilities\HeroAbilitySystem.cs:644
+   4    5  BroadcastAction                    MatchRpc.cs:3773           
+   1    2  BroadcastActionExceptOwner         MatchRpc.cs:3769           Assets\TumbangPreso\Runtime\Carrier.cs:313
+   1    1  BroadcastBreak                     MatchRpc.Replay.cs:121     Assets\TumbangPreso\Runtime\HalftimePresentation.cs:51
+   1    0  BroadcastCue                       MatchRpc.cs:2840           Assets\TumbangPreso\Runtime\Audio\NetCue.cs:137
+   1    1  BroadcastFamiliarEffect            MatchRpc.cs:1781           Assets\TumbangPreso\Runtime\Abilities\NemuHeroKit.cs:398
+   1    0  BroadcastFlair                     MatchRpc.cs:2956           Assets\TumbangPreso\Runtime\Visual\MatchFlair.cs:125
+   1    0  BroadcastImpact                    MatchRpc.cs:2062           Assets\TumbangPreso\Runtime\CharacterMotor.cs:1987
+   0    1  BroadcastLataPose                  MatchRpc.cs:5289           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5167
+   1    3  BroadcastLataState                 MatchRpc.cs:5268           Assets\TumbangPreso\Runtime\Carrier.cs:990
+   2    8  BroadcastLobbyPicks                MatchRpc.cs:4289           Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.cs:334, Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.OwnerPainted.cs:31
+   3    0  BroadcastMatchMoment               MatchRpc.Moments.cs:27     
+   1    0  BroadcastMatchRecord               MatchRpc.cs:3658           Assets\TumbangPreso\Runtime\MatchStatsCollector.cs:459
+  13    3  BroadcastPicks                     MatchRpc.cs:4747           
+   2    0  BroadcastRafiWater                 MatchRpc.RafiWater.cs:32   Assets\TumbangPreso\Runtime\Abilities\RafiWaterField.cs:55, Assets\TumbangPreso\Runtime\Abilities\RafiWaterField.cs:153
+   0    4  BroadcastReadyTally                MatchRpc.cs:1225           
+   1    0  BroadcastScore                     MatchRpc.cs:3593           Assets\TumbangPreso\Runtime\MatchDirector.cs:134
+   0    1  BroadcastSlipperPose               MatchRpc.cs:5340           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5259
+   5    2  BroadcastSlipperState              MatchRpc.cs:5308           
+   1    0  BroadcastTeleport                  MatchRpc.cs:2087           Assets\TumbangPreso\Runtime\CharacterMotor.cs:465
+   1    0  BroadcastTsinelas                  MatchRpc.cs:3625           Assets\TumbangPreso\Runtime\LastTsinelasDirector.cs:203
+   2    2  BroadcastUltimatePhase             MatchRpc.UltimatePhase.cs:95 Assets\TumbangPreso\Runtime\SharedUltimatePhase.cs:144, Assets\TumbangPreso\Runtime\Diagnostics\NetUltimatePhaseProbe.cs:114
+  10    3  BroadcastWorldSnapshot             MatchRpc.cs:5356           
+   5    0  DeclareReadyServerRpc              MatchRpc.cs:1087           
+   0    4  HostAuthoriseCosmetics             MatchRpc.cs:871            
+   1    0  HostBeginningArenaLoad             MatchRpc.cs:4983           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1456
+   0    6  HostDenyAbilityCast                MatchRpc.cs:3276           
+   0    6  HostDenyVerb                       MatchRpc.cs:3379           
+   0    1  HostLateJoin                       MatchRpc.cs:5658           exempt: NetSession.OnClientConnected
+   0    1  HostPeerLeft                       MatchRpc.cs:5922           exempt: NetSession.OnClientDisconnected
+   1    2  HostSetTimeScale                   MatchRpc.cs:1449           Assets\TumbangPreso\Runtime\Diagnostics\NetUltimatePhaseProbe.cs:119
+   1    0  HostStartMatch                     MatchRpc.cs:3807           Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.cs:2632
+   1    0  MapVoteTallyClientRpc              MatchRpc.cs:1650           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1430
+   2    0  RematchTallyClientRpc              MatchRpc.cs:1685           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1209, Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1233
+   7    0  RequestAbilityCastServerRpc        MatchRpc.cs:3032           
+   2    0  RequestEmoteServerRpc              MatchRpc.cs:2764           Assets\TumbangPreso\Runtime\Social\EmotePlayer.cs:80, Assets\TumbangPreso\Runtime\Social\EmotePlayer.cs:94
+   3    0  RequestGrabServerRpc               MatchRpc.cs:2499           
+   1    0  RequestLataResetServerRpc          MatchRpc.cs:2625           Assets\TumbangPreso\Runtime\Carrier.cs:1002
+   2    0  RequestLungeServerRpc              MatchRpc.cs:2324           Assets\TumbangPreso\Runtime\CombatVerbs.cs:360, Assets\TumbangPreso\Runtime\Diagnostics\NetRequestSafetyProbe.cs:388
+   1    0  RequestMashServerRpc               MatchRpc.cs:3480           Assets\TumbangPreso\Runtime\CharacterMotor.cs:1830
+   4    0  RequestPunchServerRpc              MatchRpc.cs:2282           
+   4    0  RequestSeatServerRpc               MatchRpc.cs:956            
+   2    1  RequestSharedUltimate              MatchRpc.UltimatePhase.cs:14 Assets\TumbangPreso\Runtime\Abilities\HeroAbilitySystem.SharedUltimate.cs:24, Assets\TumbangPreso\Runtime\Diagnostics\NetUltimatePhaseProbe.cs:111
+   4    0  RequestShoveServerRpc              MatchRpc.cs:2445           
+   2    0  RequestSkipBufferServerRpc         MatchRpc.cs:5854           Assets\TumbangPreso\Runtime\BufferSkipVote.cs:128, Assets\TumbangPreso\Runtime\BufferSkipVote.cs:146
+   2    0  RequestSlideServerRpc              MatchRpc.cs:2390           Assets\TumbangPreso\Runtime\CombatVerbs.cs:606, Assets\TumbangPreso\Runtime\Diagnostics\NetRequestSafetyProbe.cs:357
+   5    0  RequestThrowServerRpc              MatchRpc.cs:2533           
+   2    0  RequestTimeScaleServerRpc          MatchRpc.cs:1413           Assets\TumbangPreso\Runtime\Camera\SpectatorCamera.cs:1016, Assets\TumbangPreso\Runtime\Camera\SpectatorCamera.cs:1060
+   8    3  RequestWorldSnapshot               MatchRpc.cs:5746           
+   1    0  SelectDifficultyServerRpc          MatchRpc.cs:4030           Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.cs:2692
+  14    1  SelectLobbyPickServerRpc           MatchRpc.cs:4199           
+   2    0  SelectMapServerRpc                 MatchRpc.cs:3875           Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.cs:2644, Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1490
+   1    0  SelectMapVoteServerRpc             MatchRpc.cs:1611           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1406
+   1    0  SelectModeServerRpc                MatchRpc.cs:3958           Assets\TumbangPreso\Runtime\UI\ConvertedMatchSetup.cs:2677
+   1    0  SelectRulesServerRpc               MatchRpc.cs:4111           Assets\TumbangPreso\Runtime\UI\CustomGameScreen.cs:529
+   1    0  SubmitFamiliarPose                 MatchRpc.cs:1736           Assets\TumbangPreso\Runtime\Visual\GhostPetCompanion.cs:1679
+   1    0  SubmitMoveServerRpc                MatchRpc.cs:2116           Assets\TumbangPreso\Runtime\CharacterMotor.cs:1019
+   0    2  SyncAbilityStateClientRpc          MatchRpc.cs:5474           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5453, Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5529
+   0    2  SyncLataClientRpc                  MatchRpc.cs:4811           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5387, Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5581
+   0    4  SyncModeClientRpc                  MatchRpc.cs:3980           
+  10    2  SyncPicksClientRpc                 MatchRpc.cs:4659           
+   0    2  SyncSlipperClientRpc               MatchRpc.cs:4819           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5398, Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5617
+   1    5  SyncUnitTransformClientRpc         MatchRpc.cs:2181           Assets\TumbangPreso\Runtime\CharacterMotor.cs:1042
+   0    2  SyncWorldSnapshotClientRpc         MatchRpc.cs:4860           Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5376, Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:5560
+   1    0  VoteRematchServerRpc               MatchRpc.cs:1573           Assets\TumbangPreso\Runtime\UI\MatchResult.cs:1185
+
+67 wire entry points, 0 unreachable.

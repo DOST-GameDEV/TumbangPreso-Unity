@@ -30,6 +30,7 @@ namespace TumbangPreso.Audio
                 { "pickup",         "grab" },
                 { "throw_release",  "throw_whoosh" },
                 { "court_escape",   "throw_whoosh" },
+                { "court_skid",     "slide_scrape" },
             };
 
         /// <summary>

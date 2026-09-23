@@ -561,3 +561,18 @@ its initial phase fixes spawn position. v2passed1/1,16.214s,guard5aab87facefa. A
 normal/comfort/grey25 pictures inspected, first look kept. No capture-tool repairs
 (0/1), no further looks. Chalk-line skid crossing remains next; P7 owns integrated
 motion/replay/performance. See look-batchC-ink/report.md for exact evidence/limits.
+
+
+C exchange first run passed1/1,9.414s,guardafb61da24548. Crucial source gap:
+remote lunge prep was absent even though release actions replicated. Optional
+kind1 suffix on the existing throw prefix now drives bounded observed state, with
+.12s driver heartbeat/stop and.85s expiry; no actual gameplay mutation. Added body
+counterbalance, real chalk skid crossing and one role-ring settle. Existing ordinary
+success/failure/cancel/tag/block/round UI grammar retained. All8/12m normal/comfort/
+grey25 frames inspected; keep first look,12m change subtle. Live room/human motion
+acceptance remains P7. No fixture repair and no additional look/build.
+
+Cheap source audits:67wire entries reachable;24positional calls classified after
+adding the missing prior court-escape row. Cue-file audit has7unchanged DC flags
+(boot_sting,match_win,round_win,step_rubber,ui_back,ui_click,ui_hover); D1.15 should
+resolve actual runtime source/aliases before treating them. See look-batchC-exchange.

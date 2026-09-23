@@ -1,0 +1,25 @@
+EVERY-PEER   Abilities/HeroAbilitySystem.cs:1081 PlayUltimatePresentation: Accepted cast presentation runs locally and through ApplyNetworkCast.
+EVERY-PEER   Abilities/HeroHazards.cs:42 SpawnIceBarricade: Replicated kit activation builds the effect on each peer.
+EVERY-PEER   Abilities/HeroHazards.cs:106 SpawnIceSheet: Replicated kit activation builds the effect on each peer.
+EVERY-PEER   Abilities/HeroHazards.cs:1753 SpawnKuroUnbound: The actual replicated Nemu ultimate creates this effect.
+EVERY-PEER   Abilities/HeroHazards.cs:1992 SpawnHexSigil: Replicated kit activation builds the effect on each peer.
+RELAY-BRIDGE Audio/NetCue.cs:78 Play: Local sound followed by the guarded relay.
+RELAY-BRIDGE Audio/NetCue.cs:87 PlayVaried: Local sound followed by the guarded relay.
+RELAY-BRIDGE Audio/NetCue.cs:115 PlayImpact: Local layered impact followed by the guarded relay.
+EVERY-PEER   Carrier.cs:337 NotifyHolding: Possession snapshots and local equips use the same idempotent notification.
+EVERY-PEER   Map/BridgeHoop.cs:97 Score: Each peer sweeps the moving shoe; only the score mutation is host-gated.
+EVERY-PEER   Map/MooredBoatMotion.cs:33 LateUpdate: Each active map copy samples its moored boats with a local cooldown; ambient lap sound is not relayed.
+EVERY-PEER   Map/OverclockBoostPad.cs:60 TryBoost: Cooldown-bounded local trigger on each copy of the map.
+EVERY-PEER   Map/PisonetInteractive.cs:59 TriggerArcade: Local map trigger, without relay duplication.
+EVERY-PEER   Map/StreetParesInteractive.cs:35 TriggerPares: Local map trigger, without relay duplication.
+EVERY-PEER   Map/StreetTripHazard.cs:300 TryTrip: Local visit/cooldown gating; motor mutation enforces authority separately.
+HOST-RELAY   Net/MatchRpc.cs:2935 OnReqCueMsg: Host hears a permitted owner's cue, then relays except that owner.
+RECEIVER     Net/MatchRpc.cs:3013 OnPlayCueMsg: Only host-originated PlayCue messages are accepted.
+EVERY-PEER   Visual/CharacterAnimator.cs:1130 PlayAction: Live replicated lunge action owns its rush; restoring a pose suppresses sound.
+EVERY-PEER   Visual/CourtBoundaryPresentation.cs:211 LateUpdate: Observed physical court escape with teleport/round guards; played and recorded locally without relay duplication.
+EVERY-PEER   Visual/GhostPetCompanion.cs:898 BeginReturn: Replicated companion state enters and returns on each peer.
+EVERY-PEER   Visual/GhostPetCompanion.cs:1093 BeginPossession: Kit activation enters possession on each peer.
+EVERY-PEER   Visual/GhostPetCompanion.cs:1108 EndPossession: Kit end restores the companion on each peer.
+EVERY-PEER   Visual/MotionFoley.cs:36 LateUpdate: Observed grounded displacement; never an input-only proximity cue.
+EVERY-PEER   Visual/MotionFoley.cs:64 LateUpdate: Observed grounded displacement; never an input-only proximity cue.
+24 positional calls classified; 0 findings

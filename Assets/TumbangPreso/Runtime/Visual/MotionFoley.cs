@@ -13,6 +13,9 @@ namespace TumbangPreso.Visual
         private float _distance;
         private bool _sampled;
         private bool _left;
+        private int _teleport;
+        private float _lastSkid=-100;
+        private CombatVerbs _verbs;
         private void Awake() { _motor=GetComponent<CharacterMotor>(); _animator=GetComponent<CharacterAnimator>(); }
         private void OnEnable() { _sampled=false; _distance=0; }
         private void LateUpdate()
@@ -20,6 +23,20 @@ namespace TumbangPreso.Visual
             if (_animator == null) _animator=GetComponent<CharacterAnimator>();
             Vector3 now=transform.position;
             float travel=_sampled ? new Vector2(now.x-_last.x,now.z-_last.z).magnitude : 0;
+            if(_verbs==null)_verbs=GetComponent<CombatVerbs>();
+            bool sliding=(_verbs!=null && _verbs.SlideActive) || (_animator!=null && _animator.IsPlayingAction && _animator.CurrentClipName=="slide");
+            if(_sampled && _teleport==_motor.PresentationTeleportSerial && travel>.005f && travel<.8f &&
+                _motor.IsGrounded && _motor.RoundActive && sliding && Time.time-_lastSkid>.3f && WorldCueProfile.Current.InkEffects>0 &&
+                TryChalkCrossing(_last,now,out var chalk))
+            {
+                _lastSkid=Time.time;
+                // Each peer already observes the motion. Do not relay a second
+                // sound or claim a pickup; the local cue supplies replay timing.
+                var skidRandom=Random.state;
+                try{GameServices.Audio?.PlayAtVaried("court_skid",chalk,1,1,.16f);}
+                finally{Random.state=skidRandom;}
+            }
+            _teleport=_motor.PresentationTeleportSerial;
             _last=now;_sampled=true;
             float speed=new Vector2(_motor.Velocity.x,_motor.Velocity.z).magnitude;
             bool swimming=_motor.IsSwimming;
@@ -46,6 +63,21 @@ namespace TumbangPreso.Visual
             }
             try { GameServices.Audio?.PlayAtVaried(cue,contact,.96f,1.04f,swimming?.65f:.9f); }
             finally { Random.state=randomState; } // Cosmetic contacts must not advance the AI's random stream.
+        }
+        public static bool TryChalkCrossing(Vector3 from,Vector3 to,out Vector3 at)
+        {
+            float radius=Core.Balance.ConfinementRadius,first=2;at=to;
+            for(int axis=0;axis<2;axis++)for(int side=-1;side<=1;side+=2)
+            {
+                float a=axis==0?from.x:from.z,b=axis==0?to.x:to.z;
+                if(Mathf.Abs(b-a)<.00001f)continue;
+                float t=(side*radius-a)/(b-a);
+                if(t<=0 || t>1 || t>=first)continue;
+                var point=Vector3.Lerp(from,to,t);float other=axis==0?point.z:point.x;
+                if(Mathf.Abs(other)>radius+.12f)continue;
+                first=t;at=point;
+            }
+            return first<=1;
         }
     }
 }

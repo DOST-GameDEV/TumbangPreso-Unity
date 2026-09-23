@@ -31,6 +31,7 @@ RULES={
  ("Visual/GhostPetCompanion.cs","BeginPossession"):("EVERY-PEER","Kit activation enters possession on each peer."),
  ("Visual/GhostPetCompanion.cs","EndPossession"):("EVERY-PEER","Kit end restores the companion on each peer."),
  ("Visual/MotionFoley.cs","LateUpdate"):("EVERY-PEER","Observed grounded displacement; never an input-only proximity cue."),
+ ("Visual/CourtBoundaryPresentation.cs","LateUpdate"):("EVERY-PEER","Observed physical court escape with teleport/round guards; played and recorded locally without relay duplication."),
  ("Visual/CharacterAnimator.cs","PlayAction"):("EVERY-PEER","Live replicated lunge action owns its rush; restoring a pose suppresses sound."),
 }
 SIG=re.compile(r"(?:public|private|protected|internal)\s+(?:static\s+)?[\w<>,.?\[\]]+\s+(\w+)\s*\(")

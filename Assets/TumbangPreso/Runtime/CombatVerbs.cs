@@ -31,6 +31,8 @@ namespace TumbangPreso
 
         private float _lungeCharge;
         private bool _lungeCharging;
+        private float _observedLunge=-1,_observedLungeAt=-100,_lungeSyncAt;
+        private bool _sentLunge;
         private float _lungeActiveLeft;
         private Vector3 _lungeFrom;
 
@@ -70,7 +72,30 @@ namespace TumbangPreso
         /// that is what the .gd replicates and two fields can disagree across a peer boundary.
         /// </summary>
         public float ObservedLungeCharge =>
-            _lungeCharging ? Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime) : -1.0f;
+            _lungeCharging ? Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime) :
+            _motor!=null && _motor.IsDefender && _motor.CanAct() && _observedLunge>=0 && Time.time-_observedLungeAt<.85f
+                ? Mathf.Clamp01((_observedLunge+Time.time-_observedLungeAt)/Balance.LungeChargeTime) : -1.0f;
+
+        public void ApplyObservedLungeCharge(bool active,float seconds=0)
+        {
+            if(float.IsNaN(seconds) || float.IsInfinity(seconds))return;
+            _observedLunge=active?Mathf.Clamp(seconds,0,Balance.LungeChargeTime):-1;
+            _observedLungeAt=Time.time;
+        }
+
+        private void LateUpdate()
+        {
+            // Only the actual driver publishes input. Remote presentation never
+            // writes _lungeCharging, input, impulse, recovery, score or tag state.
+            bool driver=!NetAuthority.IsNetworked || _motor.PlayerSlot==NetAuthority.LocalSlot || (NetAuthority.IsHost && _motor.IsBot);
+            if(!driver)return;
+            bool active=_motor.IsDefender && _motor.CanAct() && _lungeCharging;
+            if(active!=_sentLunge || (active && Time.time>=_lungeSyncAt))
+            {
+                _sentLunge=active;_lungeSyncAt=Time.time+.12f;
+                if(NetAuthority.IsNetworked)Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot,active,_lungeCharge,0,true);
+            }
+        }
 
         /// <summary>The unit's animator, if it has a model bound yet.</summary>
         private Visual.CharacterAnimator Animator => _animator != null

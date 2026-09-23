@@ -13,7 +13,7 @@ namespace TumbangPreso.Visual
         private bool _recorded;
         private float _age;
         private static Material _material;
-        public static bool Supports(string cue)=>cue=="can_knockdown" || cue=="land" || cue=="slide_scrape";
+        public static bool Supports(string cue)=>cue=="can_knockdown" || cue=="land" || cue=="slide_scrape" || cue=="court_skid";
         public static CourtContactDust Play(string cue,Vector3 at,Transform recordedParent=null)
         {
             if(!Supports(cue) || WorldCueProfile.Current.InkEffects<=0 ||
@@ -25,7 +25,7 @@ namespace TumbangPreso.Visual
             var ps=go.AddComponent<ParticleSystem>();effect._particles=ps;
             ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
             ps.useAutoRandomSeed=false;ps.randomSeed=cue=="land"?947u:cue=="slide_scrape"?331u:731u;
-            bool reduced=Settings.SettingsStore.Current.ReducedEffects,slide=cue=="slide_scrape";
+            bool reduced=Settings.SettingsStore.Current.ReducedEffects,slide=cue=="slide_scrape" || cue=="court_skid";
             var main=ps.main;main.duration=Life;main.loop=false;main.playOnAwake=false;main.simulationSpace=ParticleSystemSimulationSpace.Local;
             main.startLifetime=new ParticleSystem.MinMaxCurve(.26f,Life);main.startSpeed=new ParticleSystem.MinMaxCurve(.35f,.9f);
             main.startSize=new ParticleSystem.MinMaxCurve(slide?.09f:.12f,slide?.17f:.23f);

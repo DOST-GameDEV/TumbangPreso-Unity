@@ -63,6 +63,9 @@ namespace TumbangPreso.Visual
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
+        private bool _roleKnown,_previousDefense;
+        private float _roleChangedAt=-100;
+        private Vector3 _roleRingRest;
 
         /// <summary>
         /// How many of THIS mesh's own radii make one unit of `localScale`. See `ApplySizing`:
@@ -228,6 +231,7 @@ namespace TumbangPreso.Visual
             // The flat Y is what makes either of them a disc rather than a column.
             _ring.localScale = new Vector3(ringRadius * _ringUnitSpan, 0.005f,
                                            ringRadius * _ringUnitSpan);
+            _roleRingRest=_ring.localScale;
             _ring.localPosition = new Vector3(0.0f, feetY + RingFloorMargin, 0.0f);
             _landRingPosition = _ring.localPosition;
 
@@ -281,6 +285,8 @@ namespace TumbangPreso.Visual
             if (_character == null) return;
 
             bool isDefense = _character.IsDefender;
+            if(_roleKnown && isDefense!=_previousDefense)_roleChangedAt=Time.unscaledTime;
+            _roleKnown=true;_previousDefense=isDefense;
             _roleColor = PlayerIdentity.Colour(_character.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S MARKER IS A RING AND AN ATTACKER'S IS A DISC, AND THAT IS THE ONLY
@@ -365,6 +371,12 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void LateUpdate()
         {
+            if(_ring!=null)
+            {
+                float u=Mathf.Clamp01((Time.unscaledTime-_roleChangedAt)/.32f);
+                float beat=Settings.SettingsStore.Current.ReducedUiMotion?0:Mathf.Sin(u*Mathf.PI)*(1-u)*.18f*WorldCueProfile.Current.RoundRhythm;
+                _ring.localScale=new Vector3(_roleRingRest.x*(1+beat),_roleRingRest.y,_roleRingRest.z*(1+beat));
+            }
             PlaceForCurrentSurface();
             var cam = UnityEngine.Camera.main;
             if (cam == null || _label == null) return;

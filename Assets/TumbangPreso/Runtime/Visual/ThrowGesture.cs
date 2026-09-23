@@ -28,6 +28,15 @@ namespace TumbangPreso.Visual
                 offset.Head*basis.Head,offset.Right*basis.Right,offset.Left*basis.Left);
         }
         public static Pose Rest=>new Pose(Vector3.zero,Vector3.zero,Vector3.zero,Vector3.zero);
+        public static Pose LungePreparation(float charge)
+        {
+            float p=Mathf.Clamp01(charge),weight=WorldCueProfile.Current.ExchangePoses;
+            // Body-led commitment reads across the court. Keep the legacy arm
+            // clock/range, add counterbalance rather than an opponent aim marker.
+            return new Pose(new Vector3(12,-10,0)*p*weight,new Vector3(-6,8,0)*p*weight,
+                new Vector3(CharacterAnimator.ChargePoseRad*p*Mathf.Rad2Deg,-12*p*weight,-10*p*weight),
+                new Vector3(18,0,18)*p*weight);
+        }
         public static Pose Prepare(float charge,float spin)
         {
             float p=(1-Mathf.Exp(-4.5f*Mathf.Clamp01(charge)))/(1-Mathf.Exp(-4.5f));

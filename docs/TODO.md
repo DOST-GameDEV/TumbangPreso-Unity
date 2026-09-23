@@ -188,17 +188,24 @@ Batch B, the world:
   focused receipts. Integrated native/performance/peer/human acceptance remains P7.
 
 Batch C, effects and motion:
-- [ ] **VISUAL-1.11 Effects in the ink language.** Two-tone ink shapes, erosion
+- [x] **VISUAL-1.11 Effects in the ink language.** Two-tone ink shapes, erosion
   dissipation, chalk dust and puffs, confetti rebuilt as fluttering paper outside the
   camera's central cone, `CanContactAccent` and slipper trails off `Sprites/Default`.
   Ink/paper/contact-dust slice implemented and focused1/1 passed; first look retained.
   [Evidence](reports/visual-research-2026-09-23/look-batchC-ink/report.md).
-  Chalk-line skid sampling remains with the exchange slice; native qualification P7.
-- [ ] **VISUAL-1.12 The exchange as one performance.** Check PRESENTATION-1 against the
+  Chalk-line skid sampling is integrated through real motion and saved cue timing;
+  native qualification remains P7.
+- [x] **VISUAL-1.12 The exchange as one performance.** Check PRESENTATION-1 against the
   V3 beat sheet for knockdown, tag, block, escape and failure cases; confirm remote charge
   and lunge windups read at 8 to 12 m and strengthen poses before adding markers.
-- [ ] **VISUAL-1.13 Round rhythm.** Round-start role swap beat, round-end settle,
-  chalk accents on the compact halftime popup.
+  Implemented: remote lunge preparation was missing and now uses a compatible
+  presentation suffix; body counterbalance, expiry/stop, no gameplay mutation.
+  [Focused1/1 and8/12m views](reports/visual-research-2026-09-23/look-batchC-exchange/report.md).
+  Live peer/readability acceptance remains P7; stills are not that acceptance.
+- [x] **VISUAL-1.13 Round rhythm.** Round-start role swap beat, round-end settle,
+  chalk accents on the compact halftime popup. Existing role ring now gives one
+  bounded settle on a real role change, removed by reduced motion. Round arm/rest
+  and settle verified in the exchange case; completed HUD/popup/results preserved.
 
 Batch D, with existing scope:
 - [ ] **VISUAL-1.14 Environment appeal and life.** Building value structure, window

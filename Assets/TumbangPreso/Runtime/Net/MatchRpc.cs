@@ -3503,8 +3503,8 @@ namespace TumbangPreso.Net
                                        unit.transform.eulerAngles.y, unit.Velocity);
         }
 
-        /// <summary>Replicates a throw wind-up, which is counterplay rather than decoration.</summary>
-        public void SetThrowCharge(int claimedSlot, bool active,float seconds=0,float spin=0)
+        /// <summary>Replicates visible preparation. Optional trailing kind1 is lunge; the original throw prefix stays intact.</summary>
+        public void SetThrowCharge(int claimedSlot, bool active,float seconds=0,float spin=0,bool lunge=false)
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             if (!NetAuthority.IsHost)
@@ -3514,10 +3514,11 @@ namespace TumbangPreso.Net
                 ask.WriteValueSafe(active);
                 ask.WriteValueSafe(seconds);
                 ask.WriteValueSafe(spin);
+                if(lunge)ask.WriteValueSafe((byte)1);
                 _nm.CustomMessagingManager.SendNamedMessage("ReqThrowCharge", NetworkManager.ServerClientId, ask);
                 return;
             }
-            BroadcastThrowCharge(claimedSlot,active,null,seconds,spin);
+            BroadcastThrowCharge(claimedSlot,active,null,seconds,spin,lunge);
         }
 
         private void OnReqThrowChargeMsg(ulong senderClientId, FastBufferReader reader)
@@ -3527,17 +3528,24 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool active);
             reader.ReadValueSafe(out float seconds);
             reader.ReadValueSafe(out float spin);
+            byte kind=0;if(reader.Length-reader.Position>=1)reader.ReadValueSafe(out kind);
+            if(kind>1)return;bool lunge=kind==1;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var who)) return;
             if(!Finite(seconds) || !Finite(spin))return;
-            if(active && (!who.CanAct() || who.GetComponent<Carrier>()?.Held==null))return;
-            BroadcastThrowCharge(claimedSlot,active,senderClientId,Mathf.Clamp(seconds,0,Balance.ChargeFullTime),Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin));
+            if(lunge)
+            {
+                if(!who.IsDefender || (active && (!who.CanAct() || who.GetComponent<Carrier>()?.ChannelRatio>0 || who.GetComponent<CombatVerbs>()?.LungeCooldownLeft>0)))return;
+            }
+            else if(active && (!who.CanAct() || who.GetComponent<Carrier>()?.Held==null))return;
+            BroadcastThrowCharge(claimedSlot,active,senderClientId,Mathf.Clamp(seconds,0,lunge?Balance.LungeChargeTime:Balance.ChargeFullTime),lunge?0:Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin),lunge);
         }
 
-        private void BroadcastThrowCharge(int slot, bool active, ulong? except,float seconds=0,float spin=0)
+        private void BroadcastThrowCharge(int slot, bool active, ulong? except,float seconds=0,float spin=0,bool lunge=false)
         {
             // A listen host is an observer too. Apply even without a messaging
             // manager so local state does not depend on somebody else being connected.
-            Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
+            if(lunge)Unit(slot)?.GetComponent<CombatVerbs>()?.ApplyObservedLungeCharge(active,seconds);
+            else Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
             if (_nm == null || _nm.CustomMessagingManager == null) return;
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
@@ -3547,6 +3555,7 @@ namespace TumbangPreso.Net
                 writer.WriteValueSafe(active);
                 writer.WriteValueSafe(seconds);
                 writer.WriteValueSafe(spin);
+                if(lunge)writer.WriteValueSafe((byte)1);
                 _nm.CustomMessagingManager.SendNamedMessage("ThrowCharge", clientId, writer);
             }
         }
@@ -3558,11 +3567,14 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out bool active);
             reader.ReadValueSafe(out float seconds);
             reader.ReadValueSafe(out float spin);
+            byte kind=0;if(reader.Length-reader.Position>=1)reader.ReadValueSafe(out kind);
+            if(kind>1)return;bool lunge=kind==1;
             // The owner samples its own input. A reconnect snapshot must not
             // restart a held button that is no longer physically pressed there.
             if(!Finite(seconds) || !Finite(spin))return;
             if(slot==NetAuthority.LocalSlot)return;
-            Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
+            if(lunge)Unit(slot)?.GetComponent<CombatVerbs>()?.ApplyObservedLungeCharge(active,seconds);
+            else Unit(slot)?.GetComponent<Carrier>()?.ApplyObservedCharge(active,seconds,spin);
         }
 
 
@@ -5399,6 +5411,8 @@ namespace TumbangPreso.Net
                     bool charging=carrier!=null && carrier.Held!=null && carrier.ObservedChargePower>=0 && unit.CanAct();
                     BroadcastThrowCharge(slot,charging,null,charging ? carrier.ObservedChargePower*Balance.ChargeFullTime : 0,
                         charging ? carrier.ObservedPektusSpin : 0);
+                    var verbs=unit.GetComponent<CombatVerbs>();bool lunging=unit.IsDefender && verbs!=null && verbs.ObservedLungeCharge>=0 && unit.CanAct();
+                    BroadcastThrowCharge(slot,lunging,null,lunging?verbs.ObservedLungeCharge*Balance.LungeChargeTime:0,0,true);
                 }
             }
         }
@@ -5980,6 +5994,7 @@ namespace TumbangPreso.Net
                     // never charging: `ApplyObservedCharge(false)` writes the resting -1.
                     // Found by walking the disconnect paths in `docs/TODO.md` § 135.5.
                     BroadcastThrowCharge(seat, false, null);
+                    BroadcastThrowCharge(seat, false, null,0,0,true);
                     Unit(seat)?.GetComponent<Carrier>()?.ApplyObservedCharge(false);
 
                     var unit = Unit(seat);
