@@ -389,7 +389,9 @@ Implementation order within UX-1:
   the ready tally, host start on all-locked or 30 s). Open: a multi-peer lock-in check. After match found, big name/model,3x4 portrait grid
   and SELECT using existing legal pick rules; preserve the complete roster.
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
-  second process joining by code and from the LAN and online lists (`tools/net_matrix.py`). Host: lobby name, defaulted map, game mode,
+  second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
+  Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;
+  bounded discovery/query-spacing fix and its actual datagram regression are in progress. Host: lobby name, defaulted map, game mode,
   public/private/friends-only visibility, LAN/Online, CREATE LOBBY; subtle selected-map
   art updates. Join sources: Dedicated Internet, Dedicated LAN, Code. Shared server
   list with name/map/player count/join and correct Online/LAN heading; code field/JOIN.

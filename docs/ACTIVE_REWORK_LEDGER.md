@@ -9,7 +9,7 @@ work before naming external dependencies. User is AFK; optional questions are no
 needed. Keep concise progress updates while continuing tools.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current local and verified remote HEAD:937313108ad55398571b2617f5187eed2ac9d640.
+Current local and verified remote HEAD:084dbdd047f417cbf00e9f892fb522caac72043f.
 UX source, owner-copy changes and receipts were published as8f81e96bd; remote HEAD
 verified after push. Earlier qualification receipts remain ind9fe0d275.
 Fetch before publishing, preserve concurrent commits, no force. Sole authorM4tyu633,
@@ -17,33 +17,35 @@ no trailers/AI mentions/em dashes; stage explicit paths. DEV residual dirt is on
 the protected original two metas and the other contributor's HOME video work.
 
 QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached checkout at937313108. Prior copied candidate retained in stash
+owned detached checkout at084dbdd04. Prior copied candidate retained in stash
 a6c0f7bc306357aa92c7916fb5ad09936443dde1 and a local patch receipt; no work lost.
 Do NOT reset old TumbangPreso-Unity-validation (111dirtypaths), main/home/net/ilalim
 worktrees or other people's work. Candidate has an independent Library, not shared.
 
-### Current resume: native arrival passed; logo/map-intake publication next
+### Active cold-code regression: real join failure found
 
-No Unity or task-owned native player is active.26428build succeeded1267MB/101s.
-25337native run finished: host22984/client8648 both exited0 and wrote reports.
-Both observed visible hub lobby, arrival and automatic countdown; neither received
-an injected diagnostic READY; both rematched. Correct isolated UGS profiles, no
-already-signing-in error, shared input unchanged. Receipt copied to completion/.
-This qualifies automatic custom rooms, not a live UGS queued map ballot or pixels.
-Windows capture-helper limitation remains; no more capture-tool repair.
+Native20240finished all processes at exit0, but BOTH code joins FAILED. Do not mark
+this a join pass: joined/rejoined reports remainedHOST and did not see the hub lobby.
+Both logs show Lobby queryHTTP429. Failure receipt saved in completion/. First
+address-based and automatic-arrival native passes remain valid and separate.
 
-Owner then requested PEAK/other-game research and distinct Filipino cultural identity
-per map, plus coherent filled context visible behind the lobby. Saved exact requests,
-both images/hashes, TODO/intake and cultural-and-camera-brief.md. Later map work,
-after UI/current tests; no research or map implementation claimed yet.
+Source: ResolveCodeAsync only checks the current LAN dictionary, while the new
+browser has not received its first1sbeacon; browse and code lookup also make
+independent QueryLobbies calls despite the player1request/second limit. Own source
+fix in ServerQuery starts listening and permits1.5beacon intervals, keeps cached
+results immediate, and shares one query-spacing gate across both online callsites.
+No repeated429retry. Research/reasoning saved in completion/cold-code-join-notes.md.
 
-Owner also reported stretched BH Studios. Runtime logo import was nPOTScale1,
-distorting445x370 despite Image.preserveAspect. Set nPOTScale0, no mipmaps, proper
-alpha. No supplied image pixels changed.3311existing hub loading/room-flow case
-passed; corrected normal960x540frame inspected and saved. UX-1.16 complete.
-These latest docs/reference/import/evidence changes await explicit-path commit/push.
-Next: publish these, continue remaining UI peer/queue/economy checks and older queue
-without full-regression loops; whole P6/P7 and REFINE-2 are still assigned.
+Guarded exec20511 ColdLobbyCodeTests passed1/1 in QUAL Logs/ux1-cold-code.
+No Unity run is active; XML copied to completion/cold-code-results.xml. This meaningful case sends a real local datagram after
+the JOIN request and requires LAN resolution, then immediate cached lookup. No UGS.
+Source/tests/meta/suite registration copied to QUAL. Publish the fix, build its internal player, then one native code/rejoin follow-up;
+do not broaden QA. Gameplay-clock audit is clean.
+Actual broadcast availability remains unproven until that native result.
+
+Merged HOME-layer29662passed2/2, no more logo/video checks needed. UI/new later-map
+requirements published084dbdd04; all older P6/P7/REFINE-2 remain assigned. No map
+research or implementation begun; no overall completion claim.
 
 Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-
 20260921; NEVER --help or-nographics. Internal Builds/<name>/TumbangPreso.exe only.

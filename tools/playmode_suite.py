@@ -159,7 +159,7 @@ GROUPS = [
 
         # UX-1, 2026-09-23: HOME and the hub's screens, over the `MatchSetup` scene.
         "HubFlowTests",
-        "MatchArrivalFlowTests",
+        "MatchArrivalFlowTests", "ColdLobbyCodeTests",
         # The animated HOME scene in the hub's reserved background layer (docs/reports/home-scene).
         "HubSceneVideoTests",
     ]),

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.5433019">
+  <test-suite type="TestSuite" id="1734" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="559" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.543302" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1728" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="559" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.527841" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2596" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1729" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="559" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.523764" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1730" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="559" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.519553" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1201" name="HubSceneVideoTests" fullname="TumbangPreso.PlayTests.HubSceneVideoTests" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.500702" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1202" name="HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" methodname="HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1204342990" result="Passed" start-time="2026-09-23 07:23:51Z" end-time="2026-09-23 07:24:02Z" duration="10.401655" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 220 of 944 renderers, 135 with a roof variant.
+[NearFade] 1168 occluder nodes matched, 235 renderers moved onto TumbangPreso/NearFade.
+[TumpUiCapture] Hub-HomeScene-1920x1080 cream source=252,211,159 pixel=53,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-HomeScene-1600x680 cream source=252,211,159 pixel=53,21,14; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1203" name="TheStudioMarkLoadsAtItsOwnShape" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.TheStudioMarkLoadsAtItsOwnShape" methodname="TheStudioMarkLoadsAtItsOwnShape" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="689438006" result="Passed" start-time="2026-09-23 07:24:02Z" end-time="2026-09-23 07:24:02Z" duration="0.078990" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

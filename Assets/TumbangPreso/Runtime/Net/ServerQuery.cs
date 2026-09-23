@@ -146,6 +146,9 @@ namespace TumbangPreso.Net
         private float _sinceHeartbeat;
         private string _activeHostLobbyId;
         private bool _queryInFlight;
+        // Browsing and code lookup share the same one-query-per-second player limit.
+        private readonly System.Threading.SemaphoreSlim _lobbyQueryGate = new System.Threading.SemaphoreSlim(1, 1);
+        private float _nextLobbyQueryAt;
 
         // ⚠️⚠️ LOBBY CREATION IS A NETWORK ROUND TRIP AND PLAYERS ARRIVE DURING IT. `NetSession`
         // fires `CreateHostedLobbyAsync` and does not await it, so `_activeHostLobbyId` is null
@@ -231,7 +234,7 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                QueryResponse response = await QueryLobbiesSpacedAsync(options);
                 var freshIds = new HashSet<string>();
 
                 if (response?.Results != null)
@@ -346,28 +349,38 @@ namespace TumbangPreso.Net
             string code = rawCode.Trim().ToUpperInvariant();
             if (code.Length < LobbySession.JoinCodeLength) return null;
 
-            // 1. Check LAN beacon first
+            // A pasted code or invite can arrive in the frame the browser opens, before
+            // its first LAN advertisement. Give discovery one beacon interval plus margin
+            // instead of prematurely treating a local room as an online lookup.
             var beacon = GetComponent<LanBeacon>() ?? FindFirstObjectByType<LanBeacon>();
             if (beacon != null)
             {
-                foreach (var entry in beacon.Entries)
+                beacon.StartListening();
+                float until = Time.realtimeSinceStartup + LanBeacon.BeaconInterval * 1.5f;
+                while (true)
                 {
-                    if (string.Equals(entry.JoinCode, code, StringComparison.OrdinalIgnoreCase))
+                    foreach (var entry in beacon.Entries)
                     {
-                        return new ResolvedMatch
+                        if (string.Equals(entry.JoinCode, code, StringComparison.OrdinalIgnoreCase))
                         {
-                            Found = true,
-                            IsLan = true,
-                            Address = entry.Address,
-                            Port = entry.Port,
-                            JoinCode = entry.JoinCode,
-                            HostName = entry.HostName,
-                            Seated = entry.Players,
-                            Occupied = entry.Players,
-                            MaxPlayers = entry.MaxPlayers,
-                            InProgress = entry.InProgress
-                        };
+                            return new ResolvedMatch
+                            {
+                                Found = true,
+                                IsLan = true,
+                                Address = entry.Address,
+                                Port = entry.Port,
+                                JoinCode = entry.JoinCode,
+                                HostName = entry.HostName,
+                                Seated = entry.Players,
+                                Occupied = entry.Players,
+                                MaxPlayers = entry.MaxPlayers,
+                                InProgress = entry.InProgress
+                            };
+                        }
                     }
+                    if (!beacon.Listening || Time.realtimeSinceStartup >= until) break;
+                    await Task.Delay(50);
+                    if (this == null || beacon == null) return null;
                 }
             }
 
@@ -386,7 +399,7 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                QueryResponse response = await LobbyService.Instance.QueryLobbiesAsync(options);
+                QueryResponse response = await QueryLobbiesSpacedAsync(options);
                 if (response?.Results != null && response.Results.Count > 0)
                 {
                     var lobby = response.Results[0];
@@ -425,6 +438,20 @@ namespace TumbangPreso.Net
             }
 
             return null;
+        }
+
+        private async Task<QueryResponse> QueryLobbiesSpacedAsync(QueryLobbiesOptions options)
+        {
+            await _lobbyQueryGate.WaitAsync();
+            try
+            {
+                float delay = _nextLobbyQueryAt - Time.realtimeSinceStartup;
+                if (delay > 0) await Task.Delay(Mathf.CeilToInt(delay * 1000));
+                if (this == null) return null;
+                _nextLobbyQueryAt = Time.realtimeSinceStartup + 1.1f;
+                return await LobbyService.Instance.QueryLobbiesAsync(options);
+            }
+            finally { _lobbyQueryGate.Release(); }
         }
 
         /// <summary>
