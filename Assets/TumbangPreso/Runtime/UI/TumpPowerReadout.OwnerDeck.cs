@@ -24,6 +24,8 @@ namespace TumbangPreso.UI
     {
         private readonly OwnerAbilitySeal[] _ownerDials = new OwnerAbilitySeal[3];
         private readonly HudCard[] _ownerKeycaps = new HudCard[3];
+        private readonly HudCard[] _chargePips = new HudCard[3];
+        private readonly Text[] _chargeCounts = new Text[3];
         private static bool _referenceOpened;
         private int _deckPlacement = -1;
         private const float OwnerDeckWidth = 316, OwnerDeckHeight = 124;
@@ -42,7 +44,9 @@ namespace TumbangPreso.UI
                 // VISUAL-1.18: the match weight (see `TumpAbilitySymbol.HudStyle`), a little
                 // larger inside the disc because the keel now carries the edge.
                 _symbols[i].HudStyle = true;
-                float inset = size * .24f;
+                // ⚠️ A DRAWN ICON FILLS MORE OF THE DISC (2026-09-23): the illustrations carry their own
+                // ink keyline, so the stroke glyph's .24 inset left them small inside the ring.
+                float inset = size * .15f;
                 _symbols[i].rectTransform.offsetMin = new Vector2(inset, inset); _symbols[i].rectTransform.offsetMax = new Vector2(-inset, -inset);
                 _symbols[i].raycastTarget = false;
                 _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", 28, OwnerUiLayout.TypeRole.Display);
@@ -52,6 +56,20 @@ namespace TumbangPreso.UI
                 _ownerKeycaps[i] = OwnerUiLayout.Rect(_deck, "KeyboardCap" + i).gameObject.AddComponent<HudCard>();
                 _ownerKeycaps[i].color = CourtPresentationPalette.Paper; _ownerKeycaps[i].Radius = 7; _ownerKeycaps[i].ShadowOffset = new Vector2(0, -2);
                 _ownerKeycaps[i].raycastTarget = false; OwnerUiLayout.Place(_ownerKeycaps[i].rectTransform, x + size - 34, y + size - 30, 40, 34);
+                // ⚠️⚠️ CHARGES ARE A PIP, NOT A NUMBER OVER THE ICON (2026-09-23 UI review). "2" was drawn
+                // across the middle of the power with the icon faded to 22 per cent, so a player saw a
+                // number and could not tell WHICH power it counted. Valorant and Overwatch show the
+                // icon whole and count charges at its edge; the pip sits at the bottom left, opposite
+                // the keycap, in the ready gold.
+                _chargePips[i] = OwnerUiLayout.Rect(_deck, "ChargePip" + i).gameObject.AddComponent<HudCard>();
+                _chargePips[i].color = CourtPresentationPalette.Gold; _chargePips[i].Radius = 17; _chargePips[i].ShadowOffset = new Vector2(0, -2);
+                _chargePips[i].raycastTarget = false; OwnerUiLayout.Place(_chargePips[i].rectTransform, x - 4, y + size - 34, 36, 36);
+                _chargeCounts[i] = OwnerUiLayout.Text(_chargePips[i].transform, "ChargeCount", "", 28, OwnerUiLayout.TypeRole.Display);
+                _chargeCounts[i].color = HudDraw.CardInk; _chargeCounts[i].alignment = TextAnchor.MiddleCenter;
+                _chargeCounts[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chargeCounts[i].verticalOverflow = VerticalWrapMode.Overflow;
+                OwnerUiLayout.Fill(_chargeCounts[i].rectTransform);
+                _chargePips[i].gameObject.SetActive(false);
+
                 _keys[i] = OwnerUiLayout.Text(_deck, "LiveBinding" + i, "", 28, OwnerUiLayout.TypeRole.Display);
                 _keys[i].alignment = TextAnchor.MiddleCenter; _keys[i].verticalOverflow = VerticalWrapMode.Overflow;
                 _keys[i].horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -107,7 +125,13 @@ namespace TumbangPreso.UI
                     else if (answer == HeroKit.CastOutcome.NoCharge) state = "Empty";
                     else if (answer == HeroKit.CastOutcome.NotYet) state = "Not yet";
                 }
-                _states[i].text = state; _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : .22f);
+                bool pip = i != 2 && !kit.PracticeMode && !skill.IsActive && skill.UsesCharges
+                           && state == skill.ChargesRemaining.ToString();
+                _chargePips[i].gameObject.SetActive(pip);
+                if (pip) { _chargeCounts[i].text = state; state = ""; }
+                _states[i].text = state;
+                bool drawn = AbilityIcons.Illustration(skill.Glyph) != null;
+                _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : drawn ? .5f : .22f);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
                 _keyGlyphs[i].sprite = pad ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;

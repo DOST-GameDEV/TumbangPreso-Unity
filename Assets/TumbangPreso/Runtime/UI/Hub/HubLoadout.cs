@@ -328,6 +328,10 @@ namespace TumbangPreso.UI.Hub
             var art = kind == ShopKind.Slipper ? book.SlipperArt(index) : book.CanArt(index);
             preview.ShowingSlipper = kind == ShopKind.Slipper;
             if (art != null) preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
+            // ⚠️ CLOSER (2026-09-23 UI review): at the default distance a can stood about a sixth of
+            // the stage's height in a 1224-wide dark plate, so the item the popup is about read as a
+            // speck. Zoom is a distance multiplier (`ModelPreview.LookAt`); the wheel still zooms.
+            preview.LookAt(0.5f, 0.62f);
 
             var inspect = HubKit.IconButton(_stage, "InspectButton", HubGlyph.Mark.Expand, HubStyle.Honey, ToggleFull, 433);
             HubKit.Place((RectTransform)inspect.transform, HubKit.BottomRight, new Vector2(-20, 20), new Vector2(86, 86));

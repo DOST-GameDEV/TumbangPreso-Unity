@@ -32,6 +32,16 @@ namespace TumbangPreso.UI.Hub
         private HubButton _play;
         private GameObject _skillNotice, _taskNotice;
         private RectTransform _modeFaces;
+        private Image _modePoster;
+        private AspectRatioFitter _modePosterFit;
+        private GameObject _modeVeil;
+
+        /// <summary>Card lettering that must hold over a picture: the ink outline the posters use.</summary>
+        private static void Outlined(Text text)
+        {
+            var edge = text.gameObject.AddComponent<Outline>();
+            edge.effectColor = HubStyle.Ink; edge.effectDistance = new Vector2(2.5f, -3f); edge.useGraphicAlpha = false;
+        }
 
         public override void Build()
         {
@@ -195,6 +205,27 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place((RectTransform)card.transform, HubKit.BottomRight, new Vector2(-m, m + 168 + 24), new Vector2(520, 300));
             _modeShape = card.Shape;
 
+            // ⚠️⚠️ THE CARD WEARS THE MODE'S POSTER (2026-09-23). PLAY's card is the one place HOME says
+            // what PLAY will do, and it was a flat dark plate with three small heads. It now shows the
+            // same poster GAMEMODE SELECT uses for the chosen mode (`RefreshModeCard`), masked to the
+            // card and fitted to cover it, under a warm-dark veil so the map, the mode word and the
+            // stake stay the first read. With no poster the heads below take its place, as before.
+            var window = HubKit.Stretch(HubKit.Rect(card.Body, "PosterWindow"), 7);
+            window.gameObject.AddComponent<RectMask2D>();
+            // ⚠️ FITTED TO THE CARD'S HEIGHT AND ANCHORED RIGHT, NOT COVERING IT. The first capture
+            // covered the card and put the poster's centre figure behind CASUAL, the word this card
+            // exists to say (the same fault the note on `_modeFaces` below records). Anchored right,
+            // the cast stands where the peeking heads stood and the words keep the calm left.
+            _modePoster = HubKit.Picture(window, "Poster", null, false);
+            var posterRect = _modePoster.rectTransform;
+            posterRect.anchorMin = new Vector2(1, 0); posterRect.anchorMax = new Vector2(1, 1); posterRect.pivot = new Vector2(1, 0.5f);
+            posterRect.anchoredPosition = Vector2.zero; posterRect.sizeDelta = Vector2.zero;
+            _modePosterFit = _modePoster.gameObject.AddComponent<AspectRatioFitter>();
+            _modePosterFit.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
+            var veil = HubKit.Stretch(HubKit.Rect(window, "Veil")).gameObject.AddComponent<Image>();
+            veil.color = new Color(HubStyle.Night.r, HubStyle.Night.g, HubStyle.Night.b, 0.22f); veil.raycastTarget = false;
+            _modeVeil = veil.gameObject;
+
             // ⚠️ THE CAST STANDS IN THE TOP RIGHT, OVER THE MAP NAME'S ROW AND CLEAR OF THE MODE WORD.
             // The first capture put them along the bottom and the faces sat on CASUAL: the one word
             // on this card the player must read was the one thing the picture covered.
@@ -203,12 +234,14 @@ namespace TumbangPreso.UI.Hub
 
             _mapName = HubKit.Text(card.Body, "MapName", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_mapName.rectTransform, HubKit.TopLeft, new Vector2(28, -20), new Vector2(300, 48));
+            Outlined(_mapName);
             _modeTitle = HubKit.Text(card.Body, "ModeTitle", "", 90, true, HubStyle.Honey, TextAnchor.LowerLeft);
             HubKit.Place(_modeTitle.rectTransform, HubKit.BottomLeft, new Vector2(24, 70), new Vector2(460, 110));
             _modeTitle.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
             _modeTitle.GetComponent<Shadow>().effectDistance = new Vector2(4, -4);
             _modeSub = HubKit.Text(card.Body, "ModeSubtitle", "", HubStyle.Label, true, HubStyle.Golden, TextAnchor.MiddleLeft);
             HubKit.Place(_modeSub.rectTransform, HubKit.BottomLeft, new Vector2(28, 22), new Vector2(460, 48));
+            Outlined(_modeSub);
             var change = HubKit.Glyph(card.Body, "ChangeIcon", HubGlyph.Mark.Right, HubStyle.Honey, 0.14f);
             HubKit.Place(change.rectTransform, HubKit.TopRight, new Vector2(-18, -18), new Vector2(48, 48));
             HubSlap.On(card.transform, 0.14f, 2);
@@ -332,8 +365,15 @@ namespace TumbangPreso.UI.Hub
             _modeShape.Fill = choice == 0 ? HubStyle.DeepRed : HubStyle.Night;
             _modeShape.Redraw();
 
-            // Three of the cast who play this mode peek out of the card's right side.
+            var poster = Resources.Load<Sprite>("UI/mode-cards/" + (choice == 0 ? "RankedCard" : choice == 1 ? "ClassicChoice" : "HeroStrikeChoice"));
+            _modePoster.sprite = poster;
+            _modePoster.color = poster != null ? Color.white : new Color(0, 0, 0, 0);
+            if (poster != null) _modePosterFit.aspectRatio = poster.rect.width / poster.rect.height;
+            _modeVeil.SetActive(poster != null);
+
+            // Three of the cast who play this mode peek out of the card's right side (no poster only).
             for (int i = _modeFaces.childCount - 1; i >= 0; i--) Destroy(_modeFaces.GetChild(i).gameObject);
+            if (poster != null) return;
             var cast = Roster.GetPeople(ChoiceMode);
             int[] pick = choice == 1 ? new[] { 1, 3, 9 } : new[] { 2, 0, 1 };
             for (int i = 0; i < pick.Length; i++)
