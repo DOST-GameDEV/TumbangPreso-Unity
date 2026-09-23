@@ -583,6 +583,10 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   two choice cards; `HubCards.Art` shows a poster when one exists. Inspected at 1920x1080,
   1280x960 and 1600x680 Larger text (PRACTICE sits close to its card edge there, fitted).
   The CLASSIC/HERO STRIKE choice popup is not in the capture set yet.
+- [x] Follow-up round (`ui-batch4` 11/11, `ui-batch5`/`ui-batch6` 4/4): in-match charges moved to a
+  gold pip so the icon stays whole, drawn icons larger in the dials; Settings "KEEP YOUR CHANGES?"
+  as three ranked slabs; JOIN source labels on two lines; HOME's mode card wears the mode poster
+  anchored right (words keep the left); item popup frames the item closer; Rafi v9 chest pocket.
 - [ ] Remaining critique rows once the above land: five-shape and Larger-text captures of the
   changed screens, 4:3 and 1600x680 checks, and the owner's look approval.
 - Known pre-existing failures, not caused here: `OwnerAccountUsesExactArtworkTypeColoursAndWorkingTerms`

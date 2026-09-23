@@ -222,12 +222,19 @@ namespace TumbangPreso.UI
             paper.rectTransform.sizeDelta=new Vector2(950,604);paper.raycastTarget=true;
             var title=OwnerUiLayout.Text(paper.transform,"DecisionHeading","KEEP YOUR CHANGES?",50,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform,65,51,828,108);title.alignment=TextAnchor.MiddleCenter;title.color=SettingsPalette.Ink;
-            var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},413);
-            OwnerUiLayout.Place((RectTransform)save.transform,267,224,413,91);
-            var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},670);
-            OwnerUiLayout.Place((RectTransform)discard.transform,139,358,670,78);
-            var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),670);
-            OwnerUiLayout.Place((RectTransform)keep.transform,139,474,670,78);
+            // ⚠️ THREE BUTTONS THAT LOOK LIKE BUTTONS AND RANK THEMSELVES (2026-09-23 UI review). The
+            // three choices were floating words at three different widths and indents, so nothing
+            // said which one was the expected answer. Now one column of equal slabs: SAVE & BACK is
+            // the filled accent (the one primary), DISCARD and KEEP EDITING are outlined.
+            var save=SettingsWorkspaceRows.Action(paper.transform,"SaveAndBack","SAVE & BACK",()=>{_session.Save();_decision.SetActive(false);Back();},560);
+            OwnerUiLayout.Place((RectTransform)save.transform,195,200,560,96);
+            SettingsWorkspaceRows.Slab(save,true);
+            var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},560);
+            OwnerUiLayout.Place((RectTransform)discard.transform,195,326,560,88);
+            SettingsWorkspaceRows.Slab(discard,false);
+            var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),560);
+            OwnerUiLayout.Place((RectTransform)keep.transform,195,444,560,88);
+            SettingsWorkspaceRows.Slab(keep,false);
             ScreenFocus.Install(root.gameObject).Rebuild();
         }
     }

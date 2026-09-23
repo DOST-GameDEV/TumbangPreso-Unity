@@ -247,6 +247,10 @@ TORSO = [('shirt-body', 'torso', (-0.108, 0.252, -0.082), (0.108, 0.43, 0.086), 
  ('sailcloth-hip-wrap', 'torso', (-0.118, 0.205, -0.100), (0.118, 0.267, -0.084), 3),
  ('sailcloth-back-wrap', 'torso', (-0.124, 0.189, 0.079), (0.112, 0.267, 0.111), 3),
  ('sailcloth-back-seam', 'torso', (-0.07, 0.221, 0.109), (0.106, 0.229, 0.118), 12),
+ # ⚠️ A CHEST POCKET WITH ONE CREAM BUTTON (v9): the cast's clothing carries two or three small
+ # accents (Zack's jacket pockets, Dante's trims); Rafi's shirt front was one plain green block.
+ ('shirt-pocket-left', 'torso', (0.028, 0.328, -0.091), (0.086, 0.380, -0.081), 5),
+ ('pocket-button-left', 'torso', (0.050, 0.364, -0.095), (0.064, 0.377, -0.089), 3),
  ('rope-hanger', 'torso', (-0.150, 0.262, -0.128), (-0.132, 0.298, -0.106), 9),
  # ⚠️ THE ORANGE FLOAT HANGS UNDER THE COIL (the reference sheet's one warm accent at the hip).
  ('hip-float', 'torso', (-0.165, 0.176, -0.132), (-0.120, 0.230, -0.090), 10)]

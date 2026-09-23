@@ -107,6 +107,29 @@ namespace TumbangPreso.UI
             FitChip(button);
         }
 
+        /// <summary>A full-width decision button face: filled accent for the one expected answer,
+        /// an outline for the others. The label centres on it and takes the matching ink.</summary>
+        public static void Slab(Button button, bool primary)
+        {
+            var label = button.GetComponentInChildren<Text>();
+            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<Image>();
+            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false;
+            face.color = primary ? SettingsPalette.Accent : new Color(0, 0, 0, 0);
+            var edge = face.gameObject.AddComponent<Outline>();
+            edge.effectColor = primary ? SettingsPalette.OnAccent : SettingsPalette.Rule;
+            edge.effectDistance = new Vector2(3, -3); edge.useGraphicAlpha = false;
+            label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
+            OwnerUiLayout.Fill(label.rectTransform);
+            if (primary)
+            {
+                var colours = button.colors;
+                colours.normalColor = colours.highlightedColor = colours.selectedColor = SettingsPalette.OnAccent;
+                colours.pressedColor = SettingsPalette.Background;
+                button.colors = colours;
+            }
+            button.gameObject.AddComponent<SettingsControlFocus>();
+        }
+
         public static void FitChip(Button button)
         {
             var face = button.transform.Find("ChipFace") as RectTransform;

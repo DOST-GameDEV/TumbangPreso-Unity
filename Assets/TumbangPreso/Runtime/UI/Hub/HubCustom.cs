@@ -149,7 +149,8 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(sourcePlate.rectTransform);
             var sourceTitle = HubKit.Text(left, "SourceLabel", "SOURCE", HubStyle.Floor, false, HubStyle.Golden, TextAnchor.MiddleLeft);
             HubKit.Place(sourceTitle.rectTransform, HubKit.TopLeft, new Vector2(34, -24), new Vector2(360, 48));
-            string[] names = { "DEDICATED (INTERNET)", "DEDICATED (LAN)", "CODE" };
+            // Two lines, so the owner's words fit at full size instead of squeezing onto one.
+            string[] names = { "DEDICATED\n(INTERNET)", "DEDICATED\n(LAN)", "CODE" };
             HubGlyph.Mark[] marks = { HubGlyph.Mark.Globe, HubGlyph.Mark.House, HubGlyph.Mark.Key };
             _sources = new HubButton[3];
             for (int i = 0; i < 3; i++)
