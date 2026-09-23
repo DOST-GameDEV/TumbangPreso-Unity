@@ -107,6 +107,20 @@ namespace TumbangPreso.PlayTests
             var bodies = context.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("Bahay_Context_")).ToArray();
             Assert.AreEqual(26, bodies.Length);
             Assert.IsEmpty(context.GetComponentsInChildren<Collider>(true));
+            var district = context.transform.Find("DistantDistrict");
+            Assert.IsNotNull(district, "The owner's exposed background needs more than the first added row.");
+            var blocks = district.GetComponentsInChildren<MeshRenderer>().Where(r => r.name.StartsWith("Block_")).ToArray();
+            Assert.AreEqual(96, blocks.Length);
+            Assert.AreEqual(1, blocks.Select(r => r.sharedMaterial).Distinct().Count(), "The distant blocks share a palette material.");
+            foreach(var block in blocks)
+            {
+                Assert.Greater(block.GetComponent<MeshFilter>().sharedMesh.vertexCount, 100);
+                Assert.AreEqual("EskinitaDistrictPalette", block.sharedMaterial.mainTexture.name);
+                Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.Off, block.shadowCastingMode);
+                var bounds = block.bounds;
+                Assert.IsTrue(bounds.min.x >= 48 || bounds.max.x <= -48 || bounds.min.z >= 66 || bounds.max.z <= -66,
+                    block.name + " enters the existing neighborhood.");
+            }
             foreach (var body in bodies)
             {
                 var renderers = body.GetComponentsInChildren<MeshRenderer>();
@@ -124,7 +138,9 @@ namespace TumbangPreso.PlayTests
             Quaternion rotation = preview.Camera.transform.rotation;
             foreach (string state in new[] { "before", "after" })
             {
-                context.SetActive(state == "after");
+                // Keep the initial row present in both images. The owner reported the empty
+                // distance beyond it, so compare only the new, deeper neighborhood here.
+                district.gameObject.SetActive(state == "after");
                 yield return null;
                 using (Visual.NeighbourhoodSkyMotion.At(20))
                     yield return GameplayShots.Render(preview.Camera, "Eskinita-preview-context-" + state,

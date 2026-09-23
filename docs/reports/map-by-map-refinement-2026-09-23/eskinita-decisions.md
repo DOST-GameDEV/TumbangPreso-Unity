@@ -4,6 +4,25 @@ Status: first outer-context group implemented and inspected; see
 [the bounded report](eskinita-context/report.md). No new textures or lighting
 changes. Individual near-asset work and whole-map completion remain open.
 
+**Latest owner correction:** the region beyond that row is still an empty plane
+and is visible in map-select renders. The initial extension does not complete the
+background requirement. The exact crop is saved as owner-references/eskinita-empty-distance.png.
+Continue the background now before moving on to near-house polish.
+
+Follow-up implemented and inspected: the deeper district now fills that exposed
+distance in the actual preview comparison. See [distance evidence](eskinita-distance/report.md).
+This closes that specific empty-band finding for the inspected views; it does not
+close the whole map or remove the remaining individual near-asset work.
+
+The next layer extends connected residential blocks across the preview's exposed
+distance, with medium-distance retained geometry and simplified distant rooflines.
+Use grouped meshes and a small palette atlas derived from the existing roof/facade
+colours to avoid hundreds of separate detailed renderers/materials. Distant plots
+must include ground/use relationships and road connections, not rows floating on
+the same exposed grid. Keep real roofs/window proportions near the camera and
+reduce detail with distance. Existing court, first rows, models and collision stay.
+Judge the full map-select/lobby view, including the top band the owner circled.
+
 ## First asset and context inventory
 
 Verified in the current scene/source:10primary retained house lots,4vehicle lots,

@@ -95,6 +95,8 @@ namespace TumbangPreso.EditorTools.MapKit
                             new Vector3(span.y - span.x, .03f, 1.8f));
             }
 
+            EskinitaDistrictAuthor.Add(root, sources, report);
+
             for (int i = 0; i < bodies.Count; i++)
             {
                 var a = bodies[i];

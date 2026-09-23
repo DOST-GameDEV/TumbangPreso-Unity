@@ -319,6 +319,10 @@ namespace TumbangPreso.Visual
             return (int)(value % count);
         }
 
+        // Baked distant streets use the same choices as named runtime house instances.
+        public static int FacadeIndexFor(string instance) => Pick(instance, 7, 0, FacadeTints.Length);
+        public static int RoofIndexFor(string instance) => Pick(instance, 13, 5, RoofAtlases.Length);
+
         /// <summary>
         /// The colour properties a material might actually carry, in the order they are tried.
         ///
