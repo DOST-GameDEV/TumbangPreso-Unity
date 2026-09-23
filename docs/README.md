@@ -48,6 +48,22 @@ Queued after older actionable work: [REFINE-2 research/execution plan](reports/m
 Map-by-map, character/movement-by-character/movement; research and implementation remain open.
 Older source/evidence reconciliation: [2026-09-23 review](reports/legacy-review-2026-09-23/report.md).
 
+Newer owner directions and adopted designs govern this reconciliation. Retired
+FUTURE.md prompts, archived proposals and old OPEN headings do not independently
+reactivate work. Preserve their history and record the current replacement/reason.
+
+| Current reference | Status | Purpose |
+|---|---|---|
+| [UX-1 plan](reports/front-end-flow-2026-09-23/ux1-plan.md) | Adopted design | Current HOME/front-end routes and ownership. |
+| [UX-1 completion plan](reports/front-end-flow-2026-09-23/completion-plan.md) | Current implementation reference | Owner additions and concrete integration decisions; status stays in TODO. |
+| [UI authorship inventory](reports/front-end-flow-2026-09-23/ui-authorship-inventory.md) | Reference | Surfaces, source owners, evidence and limits for later refinement. |
+| [UI completion evidence](reports/front-end-flow-2026-09-23/completion/README.md) | Evidence index | Results/captures; older failure reports are historical, not new instructions. |
+| [Terms content notes](reports/front-end-flow-2026-09-23/terms-content-notes.md) | Draft-content reference | Implemented product facts and public-release review limits. |
+| [First native follow-up](reports/front-end-flow-2026-09-23/completion/native-followup-notes.md) | Historical diagnosis | Initial build/profile/capture findings; later receipts and the ledger supersede pending-work wording. |
+| [Cold-code join diagnosis](reports/front-end-flow-2026-09-23/completion/cold-code-join-notes.md) | Evidence | Original code-entry failure and fix rationale; native after-fix result is adjacent. |
+| [Per-map cultural/camera brief](reports/map-by-map-refinement-2026-09-23/cultural-and-camera-brief.md) | Active later requirement | PEAK/other-game research, distinct Filipino places and coherent visible lobby context. |
+| [Connection-readout investigation](reports/full-backlog-2026-09-21/connection-readout-plan.md) | Not adopted | Research draft preserved for traceability; not authorized execution scope. |
+
 | File | Status | What it is |
 |---|---|---|
 | [`MAP_FINAL_PASS.md`](MAP_FINAL_PASS.md) | Active (152.4) | Map final pass, reactivated 2026-09-21. Resume from current source and evidence. |

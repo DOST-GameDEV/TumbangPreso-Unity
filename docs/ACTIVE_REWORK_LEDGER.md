@@ -9,7 +9,7 @@ work before naming external dependencies. User is AFK; optional questions are no
 needed. Keep concise progress updates while continuing tools.
 
 DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Current local and verified remote HEAD:47d5502cbf0bf57754f4a06eb9872cd9a8e7e786.
+Current local and verified remote HEAD:bc25db34ec9c465e53025e745949a92cbc61b2e1.
 UX source, owner-copy changes and receipts were published as8f81e96bd; remote HEAD
 verified after push. Earlier qualification receipts remain ind9fe0d275.
 Fetch before publishing, preserve concurrent commits, no force. Sole authorM4tyu633,
@@ -22,32 +22,36 @@ a6c0f7bc306357aa92c7916fb5ad09936443dde1 and a local patch receipt; no work lost
 Do NOT reset old TumbangPreso-Unity-validation (111dirtypaths), main/home/net/ilalim
 worktrees or other people's work. Candidate has an independent Library, not shared.
 
-### Current resume: selector Learn passed; publish then continue backlog
+### Current resume: supersession correction before more legacy work
 
-No Unity run or task-owned native player remains. Current DEV/remote47d5502cb.
-QUAL is detached47d5502cb with copied HubCharacterSelect/MatchArrivalFlowTests edits.
-70916selector Learn case passed1/1(55.69s): all7hero/3slot text, normal+large/high
-contrast, five shapes, timer continues while inspecting, Classic has no hero panel.
-Normal and large960x540frames personally inspected, readable, no overlap. XML and
-frames copied to completion/. No repeat capture/test needed absent new changes.
+No Unity/native job active. Current DEV/verified remote bc25db34e includes own
+selector Learn commit6c713a6b3 and concurrent HOME animation75b8ea419. Original two
+composition PNGmetas remain excluded. Pending own edits are docs/P6disposition only.
 
-Uncommitted own changes: Hero-only inline Learn panel beside full-height model,
-its focused test,5P6row dispositions, plans/TODO/ledger/inventory and successful
-native code/rejoin receipt. Publish by explicit paths with sole author and remote
-fetch/merge/check. Original two composition PNG metas stay excluded. Other active
-contributor continues HOME art; preserve and integrate incoming commits.
+OWNER LATEST: old TODO must not contradict newer changes; FUTURE.md is mostly retired.
+Rechecked FUTURE header (retired2026-09-08), archive rule (history, not task source),
+current VISUAL-1 and UX-1. New AGENTS/TODOsupersession rule records that an old OPEN
+label or absent old class does not reactivate a proposal. Preserve IDs/history,
+classify implemented/replaced/retired/current with current design evidence first.
 
-Native22261proved immediate4character code entry AND same-profile reconnection:
-both CLIENT slot1, visible lobby state, no429; all3processes exit0; shared input
-unchanged. Actual automatic intro/countdown/rematch also passed previously25337.
-Cold-code source fix already published ine2223caa3/47d5502cb. Do not rebuild/rerun it.
+Corrected the premature promotion of140.4and136.1. NO CODE was written for either.
+The old textual network/countdown design and my text-based draft conflict with
+newer VISUAL-1 signal grammar/completed-HUD scope; draft explicitly NOT ADOPTED.
+The old debug-key catalogue was a proposed remedy; current context guards already
+resolve the reported collision, so no speculative catalogue refactor is queued.
+P6JSON and TODO index reflect these decisions.124rows remain unreviewed,366preserved.
+Do not follow older appended ledger paragraphs that call those two active gaps.
 
-P6 reviewed144.5,144.6,143.18,143.19,143.17;131unreviewed rows remain. Newly found
-selector Learn gap is implemented and checked, but actual live UGS queue/multipeer
-lock-in and wallet buy/claim remain separate qualification gaps, not blanket passes.
-Live wallet loads have already succeeded in fresh native profiles. Keep every old
-row and external-device/owner-review limit. Continue actionable backlog, then later
-REFINE-2 research and per-map work as ordered; no new map implementation yet.
+The selector Learn addition remains consistent with current VISION3 and UX-1:
+read-only actual-kit info during selection, no loadout editing/mode change, no popup
+or clock suspension. Its normal/large7hero/3slot/five-shape check passed and frames
+were inspected. Native code/rejoin and automatic arrival/rematch already passed.
+Do not repeat those tests or builds without new cause.
+
+Next: publish this supersession correction, then reconcile remaining old rows against
+CURRENT scope before implementation. Keep current UI qualifications/new map research
+requests and all active older work. Retired future prompts stay retired. No new map
+research or implementation yet; later per-map/cultural/camera brief is saved.
 
 Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-
 20260921; NEVER --help or-nographics. Internal Builds/<name>/TumbangPreso.exe only.
@@ -338,3 +342,24 @@ remain unreviewed. Important actual gap: timed HubCharacterSelect lacks VISION3
 ability Learn readout. Added to existing UX-1.5 and completion-plan with inline
 readout/timer-safe design direction. Do not mark that requirement done because
 HERO popups exist. Implement after the in-flight join fix check; no maps yet.
+
+Next P6 review has started with TODO_Backlog141(spectator/identity labels) and
+140(connection/readout). Read their bodies against live owners/evidence before
+changing disposition. Do not repeat previously passed UI/code tests. No Unity/native
+run active.131unreviewed numbered rows remain; all366original headings preserved.
+
+P6 further reviewed141parent/141.5/141.6/141.8 and140parent/140.2/140.4.124rows
+remain unreviewed. Found two genuine implementable gaps and surfaced their existing
+IDs in TODO:140.4poor/bad/liveness/host-peer UI has no consumer at all;136.1debug-key
+catalogue absent despite the correct F1-F4context guard. These are not human-review
+blockers or excuses to redo HUD art. Plan accurate liveness before showing a countdown;
+stale RTT or paused simulation packets cannot measure transport silence. No new code
+for either gap yet. No tests currently running. Continue P6 or these named gaps.
+
+140.4source research is saved in reports/full-backlog-2026-09-21/connection-readout-plan.md.
+Installed NGO publicly maps transport IDs; GetCurrentRtt already maps NGO IDs correctly.
+Existing unscaled1Hzhost time-sync delivers Data even with paused gameplay. Observe
+transport Data passively, no added heartbeat/RPC. Show measured host silence after4s;
+exact disconnect deadline is not public, so do not invent an8minus-age countdown.
+Need inspect current HUD and pause composition before implementing. Plan is not done
+work. Current pending edits are P6disposition/docs only; no Unity/native job active.

@@ -47,6 +47,20 @@ preserve parts that already work. This applies to UX-1 and the later map, asset 
 animation reviews. Inspect every assigned part, but do not manufacture changes to
 make a review look busy or mistake a passing test for aesthetic approval.
 
+## Supersession check, owner2026-09-23
+
+The owner clarified that old TODOs must not contradict newer changes, especially
+retired FUTURE.md plans. Completing the TODO means resolving current requirements,
+not reviving every historical proposal. New owner instructions and current adopted
+designs win. Check the retirement/supersession notices, later implementation and
+current scope before acting on an old entry; an OPEN heading or missing old class
+is not enough to make it an active task. Classify replaced, retired and already
+implemented entries with their replacement/evidence, preserving IDs and history.
+When current relevance is uncertain, finish the source/design reconciliation first.
+Do not turn that uncertainty into a new feature, a speculative refactor or an
+invented external blocker. In particular, the completed in-game HUD must not regain
+retired layouts, extra text/timers or other superseded UI through the backlog audit.
+
 ## Follow-on refinement mandate,2026-09-23
 
 The owner added REFINE-2 after the older actionable queue: research good-game

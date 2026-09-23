@@ -1798,8 +1798,19 @@
     {
       "lineAtIntake": 5389,
       "heading": "## 141 · SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current implementation resolves spectator/body handover through explicit HUD exit paths, and spectator F1-F4 yields to the offline switcher. Label/ownership rules and native spectator evidence are retained. The old debug-key catalogue was a proposed remedy, not a remaining gameplay requirement: do not revive that refactor solely because a named catalogue class is absent. Preserve the current context guard and investigate actual new clashes if found.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+        "Assets/TumbangPreso/Runtime/MatchHost.cs",
+        "Assets/TumbangPreso/Runtime/DebugPlayerSwitcher.cs",
+        "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+        "docs/reports/full-backlog-2026-09-21/accessibility-completion.md",
+        "AGENTS.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "classification": "implemented_with_historical_proposal_retired",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5400,
@@ -1846,8 +1857,12 @@
     {
       "lineAtIntake": 5486,
       "heading": "### 141.5 ✅ THE `#7645` IS OFF THE IN-MATCH LABEL",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Implemented display-only handle stripping in CharacterMotor. Network/account identity retains the full handle; this is not a reason to remove identifiers from saved records or room identity.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+        "Assets/TumbangPreso/Runtime/MatchStatsCollector.cs"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5507,
@@ -1863,20 +1878,41 @@
     {
       "lineAtIntake": 5552,
       "heading": "### 141.8 ✅ 2026-09-05: THE DUPLICATE NAME, AND WHY IT IS NOT ONE FAULT",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "SeatLabel delegates board collisions to Core.BoardNames, separately from MatchInvariants ownership checks. Current board adapters use the shared identity/label rules; full629core run covers BoardNames and ownership cases.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/UI/SeatLabel.cs",
+        "Packages/com.tumbangpreso.core/Runtime/BoardNames.cs",
+        "Core.Tests/BoardNamesTests.cs",
+        "Core.Tests/MatchInvariantTests.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/core-final.json"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5592,
       "heading": "### 141.6 ✅ AND NO TWO SEATS CAN READ THE SAME, WHICH IS THE TOURNAMENT QUESTION",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Per-room duplicate labels are disambiguated with stable seat identity; CharacterMotor strips ordinary tags and resolves duplicates, and SeatLabel/Core.BoardNames keep boards distinguishable. This does not assert globally collision-free account hashes or replace the separate seat-owner invariant.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/CharacterMotor.cs",
+        "Assets/TumbangPreso/Runtime/UI/SeatLabel.cs",
+        "Core.Tests/BoardNamesTests.cs"
+      ],
+      "reviewedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5650,
       "heading": "## 140 · THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Current RTT sampling and qualified peer-departure notices are retained. The old textual warning/countdown/placement proposal is not reactivated: newer adopted VISUAL-1 signal grammar and completed-HUD scope govern. Source telemetry without a consumer does not alone establish a current feature request. Any new network UI needs current-scope justification and must fit the adopted design.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/PausePanel.cs",
+        "docs/reports/full-backlog-2026-09-21/peer-departure.md",
+        "AGENTS.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "classification": "supersession_reconciled",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5656,
@@ -1891,8 +1927,16 @@
     {
       "lineAtIntake": 5672,
       "heading": "### 140.2 ⚠️⚠️ THE GAP: THERE IS NO CONNECTION READOUT OF ANY KIND",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "The original no-telemetry diagnosis is superseded by NetSession.SampleLink and the current peer-departure notices. Historical screen proposals must be reconciled with the newer adopted HUD; do not automatically convert this old OPEN heading into extra on-screen text.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "docs/reports/front-end-flow-2026-09-23/completion/native-arrival-results.json",
+        "AGENTS.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "classification": "superseded_diagnosis",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5694,
@@ -1907,8 +1951,17 @@
     {
       "lineAtIntake": 5714,
       "heading": "### 140.4 ⚠️ WHAT IS NOT BUILT: THE SCREEN",
-      "disposition": "unreviewed",
-      "evidence": []
+      "disposition": "Historical screen proposal is superseded by the current VISUAL-1 signal grammar/completed-HUD scope. The newly drafted elapsed-text warning conflicts with the newer ordinary-play signal rules and was not adopted or implemented. Preserve investigation as reference; it is not execution work absent a current requirement.",
+      "evidence": [
+        "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+        "Assets/TumbangPreso/Runtime/UI/PausePanel.cs",
+        "docs/TODO_Backlog.md",
+        "AGENTS.md",
+        "docs/reports/visual-research-2026-09-23/implementation-plan.md"
+      ],
+      "reviewedOn": "2026-09-23",
+      "classification": "superseded_ui_proposal",
+      "supersessionCheckedOn": "2026-09-23"
     },
     {
       "lineAtIntake": 5740,

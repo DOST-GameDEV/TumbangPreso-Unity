@@ -24,6 +24,13 @@ implementation plus evidence, a specific completed replacement, or a named exter
 dependency. An old OPEN heading is not proof code is missing, and a task may not be
 skipped because it is old. No parent is checked while an actionable child is open.
 
+**Supersession check (owner2026-09-23):** newer instructions and current adopted
+designs win. FUTURE.md and archived plans are historical, not independent task
+sources. Resolve each old entry as current work, already implemented, superseded
+or retired before adding it to execution. An old OPEN label does not reactivate a
+proposal. Preserve the original IDs/body and link its replacement or reason; never
+restore obsolete behavior or completed-UI layouts merely to clear a checkbox.
+
 **Owner direction, 2026-09-23:** make the game more visually appealing and satisfying to
 play without making it more realistic; make the in-game HUD minimalist, professional and
 easy to look at; explore on-screen effects and indicators that work together without
@@ -488,6 +495,18 @@ Implementation order within UX-1:
   Owner screenshot retained under the UX-1 completion references. Map emptiness in
   the same screenshot belongs to the later per-map context/cultural brief.
 
+### P6 supersession decisions
+
+- **140.4:** the historical textual connection/countdown layout is not reactivated.
+  Current VISUAL-1's adopted signal language and the completed HUD scope take
+  precedence. Existing RTT telemetry and peer-departure notices remain. The new
+  [research draft](reports/full-backlog-2026-09-21/connection-readout-plan.md) is
+  explicitly not adopted; no HUD/network changes were made from it.
+- **136.1:** the old shared debug-key catalogue was a proposed implementation
+  approach. Current context guards already resolve the documented F1-F4 collision.
+  Do not add a catalogue solely because the old proposal has no corresponding class;
+  retain the one-action-per-context rule and investigate actual new clashes if found.
+
 ### Active items carried forward (status unchanged by this cleanup)
 
 - [ ] **127.3 accessibility completion.** FPP FOV, hold or toggle sprint and can restore,
@@ -590,7 +609,7 @@ one texture or noise stamped everywhere.
 ## Open backlog index
 
 One row per numbered entry whose body lives in [TODO_Backlog.md](TODO_Backlog.md), in the
-order they appear there. The disposition column is the 2026-09-22 review recorded in
+order they appear there. The disposition column follows the cumulative review recorded in
 `reports/full-backlog-2026-09-21/todo-disposition.json`; "unreviewed (P6)" rows are the
 backlog disposition work in the priority order. The heading's own status word is history,
 not proof of what is missing.
@@ -610,8 +629,8 @@ not proof of what is missing.
 | [§ 145](TODO_Backlog.md#s145) | THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main` | Harness and identity implementation retained; exact Windows candidate qualification remains P7. |
 | [§ 144](TODO_Backlog.md#s144) | THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
 | [§ 143](TODO_Backlog.md#s143) | THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main` | unreviewed (P6) |
-| [§ 141](TODO_Backlog.md#s141) | SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | unreviewed (P6) |
-| [§ 140](TODO_Backlog.md#s140) | THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | unreviewed (P6) |
+| [§ 141](TODO_Backlog.md#s141) | SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Current implementation resolves spectator/body handover through explicit HUD exit paths, and spectator F1-F4 yields to the offline switcher. Label/ownership rules and native spectator evidence are retained. The old debug-key catalogue was a proposed remedy, not a remaining gameplay requirement: do not revive that refactor solely because a named catalogue class is absent. Preserve the current context guard and investigate actual new clashes if found. |
+| [§ 140](TODO_Backlog.md#s140) | THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Current RTT sampling and qualified peer-departure notices are retained. The old textual warning/countdown/placement proposal is not reactivated: newer adopted VISUAL-1 signal grammar and completed-HUD scope govern. Source telemetry without a consumer does not alone establish a current feature request. Any new network UI needs current-scope justification and must fit the adopted design. |
 | [§ 139](TODO_Backlog.md#s139) | SETTINGS IS FOUR PAGES NOW, AND THE RENDERS FOUND THREE FAULTS THAT HAD SHIPPED FOR THE WHOLE PORT ⚠️ OPEN, 2026-09-04, branch `abilities-rework` | Implemented current five-section settings workspace and controller-map/rebinding routes supersede the former four-page converted panel. Owner visual acceptance remains separate. |
 | [§ 138](TODO_Backlog.md#s138) | A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework` | All software discovery/fallback/settings paths are implemented and current hotplug/native evidence is retained. Actual unrecognised-controller vendor/product certification requires hardware. |
 | [§ 134](TODO_Backlog.md#s134) | THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework` | unreviewed (P6) |
