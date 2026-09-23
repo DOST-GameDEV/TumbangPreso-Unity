@@ -210,7 +210,8 @@ namespace TumbangPreso.Visual
             && Mathf.Approximately(_contrast, 1.0f)
             && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
             && _exposure <= 0.0f
-            && EffectiveChromatic <= 0.0f;
+            && EffectiveChromatic <= 0.0f
+            && BrightLookWeight <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -266,8 +267,13 @@ namespace TumbangPreso.Visual
                                Settings.RenderStyles.RadialSplit ? 1.0f : 0.0f);
 
             var protectedMask=PrepareExperimentMaterial(source);
-            try { Graphics.Blit(source, destination, _material); }
-            finally { if(protectedMask!=null)RenderTexture.ReleaseTemporary(protectedMask); }
+            var bloom=PrepareBrightLook(source);
+            try { Graphics.Blit(source, destination, _material, 0); }
+            finally
+            {
+                if(protectedMask!=null)RenderTexture.ReleaseTemporary(protectedMask);
+                if(bloom!=null)RenderTexture.ReleaseTemporary(bloom);
+            }
         }
 
         private void OnDestroy()

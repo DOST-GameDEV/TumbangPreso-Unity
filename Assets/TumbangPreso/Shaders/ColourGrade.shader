@@ -30,6 +30,11 @@ Shader "TumbangPreso/ColourGrade"
         // § THE SPLIT'S SHAPE note in the fragment. `Visual.ColourGrade` writes it off
         // `Settings.RenderStyles.RadialSplit`, so it is 0 in the default Toon style.
         _ChromaticRadial ("Chromatic Split Is Radial", Range(0, 1)) = 0
+        _BloomTex ("Bloom", 2D) = "black" {}
+        _BloomIntensity ("Bloom Intensity", Range(0, 2)) = 0
+        _BloomThreshold ("Bloom Threshold and knee", Vector) = (1.2, 0.6, 0, 0)
+        _Lift ("Coloured black lift", Color) = (0, 0, 0, 0)
+        _Vibrance ("Vibrance", Range(0, 1)) = 0
     }
 
     SubShader
@@ -54,6 +59,24 @@ Shader "TumbangPreso/ColourGrade"
             half _White;
             half _Chromatic;
             half _ChromaticRadial;
+
+            // ⚠️⚠️ § THE BRIGHT LOOK'S GRADE, 2026-09-23. Three terms, all zero unless the
+            // camera belongs to a map's world look, so menus and portraits grade exactly as
+            // before:
+            //   * BLOOM, added in HDR before the tonemap. PEAK's skies, clouds and sunlit sand
+            //     carry a soft glow; the threshold sits above lit albedo so a sunny wall does not
+            //     glow, only the sky and true highlights do.
+            //   * A COLOURED BLACK LIFT after the tonemap. Nothing in PEAK is black; its darkest
+            //     values are plum, brown or teal. `c + lift * (1 - c)` raises the floor and
+            //     leaves white where it was.
+            //   * VIBRANCE, a saturation lift weighted toward the colours that have least. It
+            //     brightens the grey asphalt and plaster without pushing the cast's already
+            //     saturated shirts past their palette.
+            sampler2D _BloomTex;
+            half _BloomIntensity;
+            float4 _BloomThreshold;
+            half4 _Lift;
+            half _Vibrance;
 
             // ⚠️⚠️ THE TONEMAP BELONGS TO THE FRAME, NOT TO A MATERIAL, AND HAVING IT ON THE
             // MATERIAL IS WHY THE SKY BLEW OUT. `Toon.shader` was carrying the ACES curve because
@@ -243,6 +266,7 @@ Shader "TumbangPreso/ColourGrade"
                 half4 source = tex2D(_MainTex, i.uv);
                 source.r = tex2D(_MainTex, i.uv + split).r;
                 source.b = tex2D(_MainTex, i.uv - split).b;
+                source.rgb += tex2D(_BloomTex, i.uv).rgb * _BloomIntensity;
 
                 // ⚠️ TONEMAP FIRST, THEN THE BCS ADJUSTMENT. That is the order Godot's
                 // `tonemap.glsl` runs them in, and it is not interchangeable: grading before the
@@ -260,6 +284,17 @@ Shader "TumbangPreso/ColourGrade"
                 half grey = dot(half3(1, 1, 1), c) * 0.33333h;
                 c = lerp(half3(grey, grey, grey), c, _Saturation);
 
+                // § THE BRIGHT LOOK'S GRADE. Vibrance first so the lift does not count as colour.
+                if (_Vibrance > 0.0h || _Lift.a > 0.0h)
+                {
+                    half high = max(c.r, max(c.g, c.b));
+                    half low = min(c.r, min(c.g, c.b));
+                    half chroma = (high - low) / max(high, 0.0001h);
+                    half value = dot(c, half3(0.2126h, 0.7152h, 0.0722h));
+                    c = max(lerp(value.xxx, c, 1.0h + _Vibrance * (1.0h - chroma)), 0.0h);
+                    c = c + _Lift.rgb * (1.0h - saturate(c));
+                }
+
                 if(_CueWorld>0)
                 {
                     half keep=tex2D(_CueMask,i.uv).r;
@@ -268,6 +303,84 @@ Shader "TumbangPreso/ColourGrade"
                 }
                 return half4(saturate(CueEdges(i.uv,c)), source.a);
             }
+            ENDCG
+        }
+
+        // ------------------------------------------------------------ § THE BRIGHT LOOK'S BLOOM
+        //
+        // ⚠️ A FOUR-TAP BOX CHAIN, THE CHEAPEST BLOOM THAT DOES NOT FLICKER. Pass 1 thresholds
+        // with a soft knee and halves, pass 2 halves again, pass 3 walks back up adding each level
+        // into the one above it (Blend One One). Five levels from half resolution is a glow about
+        // a twentieth of the frame wide, which is the soft haze in PEAK's frames rather than a
+        // lens-flare streak. `ColourGrade.Bloom` skips the whole chain on the Low graphics tier.
+        Pass
+        {
+            Name "BLOOM_PREFILTER"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target
+            {
+                half3 c = BoxSample(i.uv, 1.0);
+                half brightness = max(c.r, max(c.g, c.b));
+                half knee = _BloomThreshold.x * _BloomThreshold.y;
+                half soft = clamp(brightness - _BloomThreshold.x + knee, 0.0h, 2.0h * knee);
+                soft = soft * soft / (4.0h * knee + 0.00001h);
+                half contribution = max(soft, brightness - _BloomThreshold.x) / max(brightness, 0.00001h);
+                // A clamp keeps one blown pixel (a sun glint, a VFX core) from ringing the frame.
+                return half4(min(c * contribution, 8.0h), 1.0h);
+            }
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "BLOOM_DOWN"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target { return half4(BoxSample(i.uv, 1.0), 1.0h); }
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "BLOOM_UP"
+            Blend One One
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            sampler2D _MainTex;
+            float4 _MainTex_TexelSize;
+            float4 _BloomThreshold;
+            half3 BoxSample (float2 uv, float delta)
+            {
+                float4 o = _MainTex_TexelSize.xyxy * float2(-delta, delta).xxyy;
+                return (tex2D(_MainTex, uv + o.xy).rgb + tex2D(_MainTex, uv + o.zy).rgb +
+                        tex2D(_MainTex, uv + o.xw).rgb + tex2D(_MainTex, uv + o.zw).rgb) * 0.25h;
+            }
+            half4 frag (v2f_img i) : SV_Target { return half4(BoxSample(i.uv, 0.5), 1.0h); }
             ENDCG
         }
     }
