@@ -381,6 +381,8 @@ namespace TumbangPreso.EditorTools.MapKit
             return AssetDatabase.LoadAllAssetsAtPath(path).OfType<T>().FirstOrDefault(a=>
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(a,out string _,out long value)&&value==id);
         }
+        internal static Mesh SourceMeshForAuthoring(Mesh mesh)=>OriginalMesh(mesh);
+
         private static Mesh OriginalMesh(Mesh mesh)
         {
             string path=AssetDatabase.GetAssetPath(mesh);

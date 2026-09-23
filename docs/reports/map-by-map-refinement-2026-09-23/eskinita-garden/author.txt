@@ -1,0 +1,35 @@
+Eskinita: 1 renderers receive explicit surface roles.
+  1 | family 14 tree_bark
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+Broadleaf_7_mango-yard: upper width factor 0.76, lift 0m; lower1.4m and root unchanged.
+Eskinita: 1 renderers receive explicit surface roles.
+  1 | family 14 tree_bark
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+Broadleaf_0_mango-yard: upper width factor 0.84, lift 0.1m; lower1.4m and root unchanged.
+Eskinita: 1 renderers receive explicit surface roles.
+  1 | family 14 tree_bark
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+Broadleaf_8_mango-yard: upper width factor 0.7, lift 0.15m; lower1.4m and root unchanged.
+Eskinita: 1 renderers receive explicit surface roles.
+  1 | family 14 tree_bark
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+Broadleaf_2_street-broadleaf: upper width factor 0.76, lift 0.2m; lower1.4m and root unchanged.
+Eskinita: 1 renderers receive explicit surface roles.
+  1 | family 14 tree_bark
+  1 | family 15 tree_foliage
+  1 | family 15 tree_new_growth
+  1 | family 15 tree_shaded_foliage
+Broadleaf_6_street-broadleaf: upper width factor 0.74, lift 0.2m; lower1.4m and root unchanged.
+5_W: corrected 336 foliage vertices; planter and building unchanged.
+2_E: corrected 336 foliage vertices; planter and building unchanged.
+5_E: corrected 336 foliage vertices; planter and building unchanged.
+6_E: corrected 336 foliage vertices; planter and building unchanged.
+Five canopies only; all roots/colliders and four other trees retained. Four timber-house planter colors corrected.

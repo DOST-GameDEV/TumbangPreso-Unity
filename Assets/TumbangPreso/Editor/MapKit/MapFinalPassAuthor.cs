@@ -44,6 +44,7 @@ namespace TumbangPreso.EditorTools.MapKit
             EskinitaDomesticFinishAuthor.ClearPrevious(map);
             EskinitaVehicleAuthor.ClearPrevious(map);
             EskinitaMasonryFinishAuthor.ClearPrevious(map);
+            EskinitaCanopyAuthor.ClearPrevious(map);
             MapPlaceAuthor.ClearPrevious(map);
             EskinitaNeighborhoodAuthor.ClearPrevious(map);
             MapPlaceAuthor.PrepareExistingPlacement(map);
@@ -73,6 +74,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(map=="Eskinita")EskinitaDomesticFinishAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaVehicleAuthor.FinishLoadedScene(report);
             if(map=="Eskinita")EskinitaMasonryFinishAuthor.FinishLoadedScene(report);
+            if(map=="Eskinita")EskinitaCanopyAuthor.FinishLoadedScene(report);
             report.AppendLine(map+": final-pass renderers="+root.GetComponentsInChildren<Renderer>().Length);
         }
 
