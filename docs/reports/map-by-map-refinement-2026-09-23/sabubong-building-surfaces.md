@@ -25,3 +25,21 @@ After this family, judge the retained14tower models and main building independen
 Existing glass/frames need actual map-camera critique, not pasted material noise.
 Lagoon and the earlier three maps keep their separate building-surface acceptance
 requirement. The overall goal and all five map parents remain open.
+
+
+## Retained straight tower family B, next local unit
+
+Native roof views show broad blue glazing and substantial pale frames already
+present, including source gradients. Keep those working material cues; putting the
+apartment plaster texture over glazing would be wrong. Source inspection identifies
+building-skyscraper-b at CityBlock_1,6,11. Its4.48unit-high mesh already has repeated
+primary floor frames, with glazing on the0.71875 atlas column and large continuous
+backing planes. Do not copy the Ilalim low-detail0.09375glass mapping.
+
+Fit two slender secondary vertical mullions inside each broad glazing plane when
+its actual world width warrants three bays. Use the real mesh triangles, normal/
+plane grouping and containment so details cannot bridge doors/cutouts. Preserve the
+primary horizontal floor frames, body positions, source palette and glass response.
+This is construction-scale glass detail, not blanket painted weathering. No new
+colliders/shadows, no treatment of other tower families in this unit. Reuse existing
+native roof-view route for review. Other families retain their own decisions.

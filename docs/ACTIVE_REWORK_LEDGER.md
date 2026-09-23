@@ -1,77 +1,103 @@
 # Active TUMP rework ledger
 
-## Current resume,2026-09-24: six-apartment surface refinement
+## Current resume, 2026-09-24: tower B ready to publish, main condo next
 
-Overall goal ACTIVE and NOT complete. Continue independently actionable TODO without
-checkpoint stops. Owner is AFK and prioritizes product quality over verification and
-capture-tool loops. No routine questions, delegation/other chats, paid services,
-credit resets, main edits or Desktop replacement. Preserve older tasks and history.
+Overall goal ACTIVE and NOT complete. Owner expects autonomous progress through all
+independently actionable TODO, with quality product work ahead of test/capture loops.
+No routine permission questions or checkpoint stops. Preserve every task and prior
+work; newer owner requirements override retired proposals. No other tasks/chats,
+delegation, paid services, usage resets, main edits or Desktop replacement.
 
-DEV C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-HEAD and verified remote8b7d082e7fd3eaa8414f8e22d6b1a323703e1353.
-Original home-court.png.meta and loading-street.png.meta under
-Resources/UI/composition-redesign stay protected: NEVER restore/stage these DEV files.
-Current own files: saved sabubong-surfaces-v1concept/prompt/provenance, apartment
-surface plan and this ledger. ApartmentFinishAuthor, neighbor reauthor hook and one paired review case now authored/copied to QUAL.
-QUAL C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
-owned detached8b7d082e7, clean after exact-match candidate stash. Preserve stashes.
-Apartment author79556and revised review30314completed/reaped. Native1/1in3.451s;
-paired detail/court/grey25and full detail inspected, keepv1. First failed fixture
-result retained. No active Unity job.
-Freeze.cs. No native player, task browser tab or temporary server is active.
-Explicit staging, sole author M4tyu633, no trailers/AI mentions/em dashes.
-Fetch before push and verify remote. Never reset/clean/force-push or discard stashes.
+DEV: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
+HEAD/verified remote: 4193e9ac68a03982f19c2a7e026c81c8fb687f9a.
+Only original home-court.png.meta and loading-street.png.meta under
+Resources/UI/composition-redesign remain dirty. NEVER restore or stage these DEV
+files. Own candidate: RooftopTowerBFinishAuthor, builder hook, surface plan, ledger/history. Use explicit staging,
+sole author M4tyu633, no trailers/AI mentions/em dashes. Fetch before every push and
+verify remote. Preserve all contributor work; never reset, clean or force-push.
+QUAL: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-world-qualification-20260923,
+owned detached4193e9ac6 with tower B candidate copied. Prior candidate exactly matched
+before named stash/advance; all stashes retained. Author47814completed/reaped:15 fitted secondary divisions/60vertices/one renderer
+on three B towers, no body/material/collision edits. Existing native review31639completed/reaped1/1in4.474s, matched preview/pool/laundry
+and grey inspected. Keepv1. No active Unity job. No native player,
+task-owned browser tab or temporary server. Do not touch other dirty worktrees.
 
-## Latest owner feedback,2026-09-24
+## Latest owner feedback applies to ALL five maps
 
-All buildings still feel short on texture/detail. Requirement saved in
-reports/map-by-map-refinement-2026-09-23/building-texture-brief-20260924.md and
-explicitly linked from all five TODO rows. Reopen building-surface acceptance for
-earlier map art batches; inspect actual bright-lighting results, not shader existence.
-Current six neighboring roofs get per-part material roles rather than flat palette
-only. Finish this local unit, then review map-specific weak surfaces in sequence.
+Owner says all buildings still lack texture/detail. Saved exact request and individual
+map material directions in building-texture-brief-20260924.md; linked explicitly
+from REFINE-2.2 through2.6. Earlier map art batches are not exempt. Shader parameters,
+extra windows or additional scenery do not establish material acceptance. Inspect
+actual bright-lighting results at gameplay/preview/intro scale; improve demonstrated
+weaknesses per building family, retain good parts. No universal noise/strength patch.
 
-## Current implementation
+The status question about the last few hours was answered with verified pushed
+commits, and work continued. This continuation has also pushed the three concrete
+SaBubong units below, not just performed validation.
 
-SaBubong retains199surfaces/69solids,14towers,15far residential blocks, existing
-street frontages/trees and all playable deck/pool/recovery/laundry geometry.
-Published native-inspected local finishes: tank8c891ad2c, stairheadc1cbf8cf5,
-shade163d0e01d. Each has paired actual views,25percent grey and one focused pass.
-Do not rerun these unchanged units. Research/concept decisions are saved in
-reports/map-by-map-refinement-2026-09-23/sabubong-reference-notes.md.
+## SaBubong current result and next work
 
-Next: implement six supported neighboring apartment roofs from sabubong-context-plan.md
-and MapSource/environment/layouts/sabubong-neighbor-roofs-20260924.json. Selected
-12x11m plots at(0,+/-39), (+/-75,+/-39), with distinct terrace/water/laundry/garden/
-quiet-service uses. Validate against current retained building footprints and roads.
-Combine static materials/meshes; no new collision or distant shadow casters. Do not
-run full RefreshSkyline or rebuild the protected main roof. Inspect actual preview
-and player views after this unit; then choose farther-city continuation and extend
-the currently exposed visual ground edge. Six roofs do not finish the context pass.
+Retain original playable deck, pool, stairhead, laundry/recovery, 69 colliders,
+14 commercial towers, 15 residential skyline blocks and street-front buildings.
+Already published local finishes: tank8c891ad2c, stairheadc1cbf8cf5, shade163d0e01d.
+Do not re-run unchanged checks for them.
 
-## Adopted lighting and completed map art batches
+- cd245e5f1: six inhabited neighboring apartment roofs on measured vacant sites.
+  Distinct shade, water/laundry, garden, drying and quiet service uses; grouped
+  openings/access/parapets, per-part material roles. 41616 vertices, six renderers,
+  no added collision/shadows. Current footprints/roads guarded. Native 1/1 in4.596s,
+  paired preview/player/detail/Low and grey25 inspected. Context improvement only.
+- 8b7d082e7: 72 outer blocks with284 homes/four planted courts, connected to eight
+  original street ends; original180m region retained, visual ground extended3000m.
+  299800 vertices/73renderers/one material, no new collision/shadows. Existing native
+  baseline case1/1 in5.034s, paired preview/neighbor/grey and six roof views inspected.
+  Keep v1. Existing haze softens the distance; more invisible farther geometry would
+  not improve these views. No global fog/sun/shader change. Shared mesh/material
+  display-name and redundant DeckSurface0churn were restored after saved patch.
+- 4193e9ac6: six-apartment surface finish. Local528px atlas adds metre-scaled
+  maintained-plaster variation only to the three plaster swatches; other materials
+  keep distinct roles. Derived meshes preserve original silhouette. Fitted concrete
+  corner strips, window sills/jambs and restrained two-storey reveals stay in12x11m
+  plots. 76992derived vertices/12renderers/two materials, collision preserved.
+  Representative warm-plaster native pair/court/grey/full detail inspected, keepv1.
+  First fixture55056failed at runtime-mesh AssetImporter lookup; saved-asset
+  provenance fix only. Revised30314passed1/1 in3.451s. Failed XML retained.
 
-lighting/peak-bright-overhaul50f1fc255 merged at241e13bb5, evidence52686a6e1.
-Owner approved silhouettes and rejected old darkness. Use the bright adopted look
-for every art judgment; keep detail already revealed by it. LIGHT-1.8ec1d3a9cd
-makes preview/lobby use the selected sun/floor and fixes cached return cleanup.
-Its focused4/4then2/2receipts remain; LIGHT-1.6/1.9 still open. Track source branch.
+Reports and plans: docs/reports/map-by-map-refinement-2026-09-23/, especially
+sabubong-context-plan.md, sabubong-building-surfaces.md and the three named reports.
+Built-in sabubong-surfaces-v1concept/prompt/hash saved under ArtSource/.../concepts.
+Keep its material/corner/sill principles; reject realistic wear/fake glass reflections.
+Generated images are reference, not runtime proof. Original apartment sources and
+outer district are untouched by the near-surface derivative. Author reauthor hook
+runs ApartmentFinish after Neighbors; outer district remains separate.
 
-Eskinita art ready for integrated intro/spectator/native acceptance: district and
-outer context, ten house fronts, tricycle07, canopy/planters800c28240, supplied
-mountain staging4631c1800, shop signs/native card90401410f. REFINE-2.2parent open.
-Bayan art ready for same gate: planted beds10b3e54e3, connected towna5c06f7ea,
-monument pots3791a1569,16house finishes/native card56a068418. REFINE-2.3parent open.
-Ilalim art ready for same gate: structure724a6be88,34retained skylines with fitted
-facades97630cf71, extended visual ground/native cardf128f57c0. Shops/signs/vendors
-retained after actual inspection, moving sky reviewed. REFINE-2.4parent open.
-Detailed reports, failures and evidence remain in map-by-map-refinement-2026-09-23.
-Incoming UI/RafiV9/Phaister HOME work retained. No other task contacted.
+NEXT: individually inspect/refine retained tower families and main roof-building
+surfaces where native views still look flat. Existing native images are in QUAL
+Logs/refine2-sabubong-district-v1 and ...apartment-v1. No new Unity run just to repeat
+those pictures. Retained tower source families: building-m atCityBlock_0, building-n
+at3; skyscraper-b at1/6/11, c at2/7/12, d at8/13, e at4/9, a at5/10. Surface source
+roles/materials are already present; assess actual weakness, not parameter absence.
+IlalimSkylineFinishAuthor contains fitted face containment/overlay methods if useful,
+but do not change Ilalim or blindly apply its treatment to every tower family.
+Final Sa card/sky/intro/spectator/Low/native gate remains open. Then Lagoon and the
+reopened earlier-map building acceptance, natural animals, bot inactivity and
+per-character movement/throw/left-right pektus, then final qualification.
 
-After SaBubong: Lagoon homes/piles/boats/water/islands and detached pile homes,
-then natural animals, bot stalls across both modes/roles/maps, per-character
-locomotion starting Sean, ordinary throw and both pektus directions. Preserve all
-older qualification. Full integration/build after implemented changes, not per prop.
+## Lighting and earlier map art retained
+
+lighting/peak-bright-overhaul source50f1fc255 last fetched unchanged. Merged241e13bb5,
+evidence52686a6e1. Owner rejected old darkness and approved silhouette clarity.
+Use the adopted bright look for decisions. LIGHT-1.8ec1d3a9cd previews selected
+sun/floor correctly, scopes cameras and fixes cached return. Prior4/4then2/2 receipts
+stand. LIGHT-1.6 tune and1.9 performance/native window remain open.
+
+Eskinita art: district/deeper context, ten house fronts, tricycle07, canopies/planters,
+supplied mountain staging, shop signs/native card90401410f. Bayan: planted beds,
+connected town, monument pots,16fitted houses/card56a068418. Ilalim: neutral structure,
+34fitted skyline facades, ground/cardf128f57c0; existing shops/vendors and moving sky
+reviewed/retained. All three parents remain open for new building-texture acceptance
+and integrated cameras/native gates. Do not restart their successful unchanged units.
+Incoming UI/RafiV9/Phaister work preserved. No other task contacted.
 
 ## Older qualification still open
 
@@ -97,16 +123,15 @@ remain unreconciled; no false clean stamp. No native build during these map unit
 
 ## Execution guardrails
 
-Unity only python tools/run_unity_guarded.py with
--tp-profile presentation-validation-20260921. Never --help or -nographics. Background,
-freeze.cs during run, read fresh nonzero XML. Back up full generated diff then
-restore only known own churn (IndayFppDetails2, ProjectAuditor/Quality/TimeManager,
-QUALtwoPNGmetas when changed). DEVprotected twoPNGmetas never touched. Internal
-Builds/<name>/ only for final gate. Canonical Unity-native approval views. Each run
-has one question/stopping condition; no unnecessary test or fixture perfection.
+Unity ONLY python tools/run_unity_guarded.py -tp-profile presentation-validation-20260921.
+Never --help or -nographics. Background, freeze.cs during runs, read fresh nonzero XML.
+State the run's question/end condition. Back up full diff, then restore only known own
+churn: IndayFppDetails2, ProjectAuditor/Quality/TimeManager, QUALtwoPNGmetas when changed.
+Never touch DEV protected metas. Native Unity approval views only. Builds into internal
+Builds/<name>/TumbangPreso.exe only at final gate. No unneeded full runs or capture tools.
 
-[History through SaBubong shade](reports/map-by-map-refinement-2026-09-23/ledger-through-sabubong-shade-20260924.md) retains prior receipts, failed
-runs, stash history and intermediate notes. Historical pending jobs are not active.
+[History through apartment surfaces](reports/map-by-map-refinement-2026-09-23/ledger-through-apartment-surfaces-20260924.md) preserves prior receipts,
+failures and stash state. Old running/pending notes in history are not active jobs.
 
 ## Parallel lane: UI and HUD review (second machine), 2026-09-23
 
@@ -121,74 +146,19 @@ plus ModeCardPoseAuthor poses to Logs/mode-card-poses). Never commit the two ori
 composition-redesign .meta files. Next: avatar compile and picker capture, posters,
 Rafi v7 inspection, five-shape captures of the changed screens, push.
 
-Six-neighbor author and one focused review case copied to QUAL. Next author run
-Logs/refine2-sabubong-neighbors-v1: question is whether six selected roof uses
-fit retained city/roads without changing collision and retain part-specific surface
-roles. Success ends authoring check; then one paired preview/player/detail/Low review.
-No global shader edit. Do not edit .cs during Unity runs.
+Next scoped unit planned: three retained skyscraper-b instances1/6/11. Existing
+glass/frame gradients remain; fit narrow secondary vertical glazing divisions to
+actual glass planes (sourceu0.71875). Do not reuse Ilalim low-detail UV assumption,
+retint every tower or coat glass in plaster. Plan in sabubong-building-surfaces.md.
 
-Neighbor author65735completed/reaped: six plots pass current retained-building/road
-clearance and original collision preservation.41616vertices/six renderers/one local
-palette, per-part material roles, no new collider/shadow caster. Current focused
-review72907runs Logs/refine2-sabubong-neighbors-v1/check.log and results.xml. Freeze.cs.
-Inspect paired preview/player/detail and Low once; do not claim visual acceptance yet.
+Tower B author47814started. Question: fitted secondary divisions exist on exactly
+three retained B models and remain inside actual glass planes with collision intact.
+Source/material bodies untouched. After author guards, reuse native baseline roof
+views once to judge line readability; no new test/capture framework.
 
-Neighbor review72907completed/reaped1/1in4.596s. Paired preview/player/detail/grey25
-and full detail/Low inspected. Context unit kept; broad wall materials still need
-the newly requested building-surface review, not claimed complete. Qualified assets/
-scene/evidence copied to DEV; known churn restored after full patch. No active jobs.
-Next farther city/ground continuity, then individual Sa building surface weaknesses.
-
-cd245e5f1neighbor/context and new owner building-texture requirement PUBLISHED;
-remote verified. QUAL candidate preserved in named stash and advanced after exact
-match. No active Unity. Next72outer blocks/connected streets from saved JSON,
-retained180m region and ground/collision guards. See context plan.
-
-Outer district author now running in QUAL, Logs/refine2-sabubong-district-v1.
-Question:72blocks plus planted exceptions fit outside180m protected region and
-connect to retained street ends while ground/collision remain correct. End on
-author guards/report; then reuse SaBubongArtBaselineReview for native views, no new
-capture framework. Freeze.cs until run ends.
-
-District author guards passed:72blocks/284homes/4planted courts,299800vertices/
-73renderers, one palette. Ground enlarged to3000m at retained level. Only source
-mesh/material display-name and redundant DeckSurface0churn restored, plus known
-profile/PNGmetas after full patch. No changes to shared mesh content. Reused native
-SaBubongArtBaselineReview now runs for actual appearance, not full-game acceptance.
-
-Outer district keptv1, scene/assets/evidence copied to DEV, known generated churn
-restored after patch. Ground edge fixed and lower urban layer now reads through
-gaps. Existing haze already softens the distance; no extra ring beyond its fade.
-Publish this unit then local Sa building-surface refinements. New all-map texture
-feedback remains open on all five parents, not closed by this district addition.
-
-8b7d082e7district PUBLISHED/remote verified. QUAL exact matched/stashed/advanced.
-New built-in surface concept generated and inspected, saved with prompt/hash. Keep
-plaster fields/concrete corners/sill depth, reject realistic micro-wear and fake
-reflections. Next six-apartment local material/mesh finish per
-reports/map-by-map-refinement-2026-09-23/sabubong-building-surfaces.md. No new Unity
-run until actual implementation. Broader map surface and final gates remain open.
-
-Apartment finish candidate:528px local atlas with seamless4m plaster fields on
-three plaster swatches only, derived quad mesh preserves source silhouette, original
-source paths retained. Concrete corner strips, fitted sills/jambs and two-storey
-reveals stay within measured plot. Outer district/shared shaders untouched. Author
-question is valid derived geometry/material setup and unchanged collision. After
-success run one native before/after material/detail case and inspect.
-
-Apartment author passed guards:76992total derived vertices/12renderers/two materials
-for six near buildings. Original silhouette/collision preserved, outer district
-unchanged. Saved full patch and restored known profile/PNGmeta churn. Current
-focused before/after material/detail review in flight, .cs frozen.
-
-First apartment review55056failed before images at fixture line100: provenance
-lookup assumed runtime mesh has an AssetImporter. Author succeeded. Bounded fix
-reads provenance from the known saved derivative asset, preserving assertions and
-source swap. Revised review30314runs check-v2.log/results-v2.xml; keep failed
-results.xml and after-failed-check.patch. Freeze.cs. No broader fixture work.
-
-Apartment unit ready to publish. Qualified scene/derived assets/evidence copied to
-DEV; known churn restored after full patch. Six-house family improved, all-map
-surface acceptance still open. Next individually review/refine retained tower
-families and main roof-building surfaces. Do not restart the successful near-unit
-check or broaden fixture work. Source originals/outer district remain untouched.
+Tower B assets/scene/evidence copied to DEV, known churn restored after patch.
+Keep15secondary divisions/60vertices, original glass/body/palette and other tower
+families untouched. Publish then main condo local material/construction refinement;
+source reveals existing concrete floor bands and side sills, but end windows lack
+frames/sills and broad main wall finish remains very uniform. Preserve pool and
+playable roof/collision, no rebuild of full SaBubong.
